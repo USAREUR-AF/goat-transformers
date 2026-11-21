@@ -1,0 +1,20 @@
+{
+  "name": "wind-two-stations-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohA?0@9NPR121I000oH7d569L1054U1NPRD92B470oHnT56PpOwwww0",
+  "expect": "8030ohA?0@9NPR121I000oH7d569L1054U1NPRD92B470oHnT56PpOwwww0",
+  "model": {
+    "aisbin.dac": "316",
+    "aisbin.fid": "1",
+    "aisregion.message_id": "2",
+    "aisregion.reports.#": "2",
+    "aisregion.reports[0].aisregion.station_id": "ABAY",
+    "aisregion.reports[0].aisregion.lon": "-4521000",
+    "aisregion.reports[0].aisregion.wind_speed": "32",
+    "aisregion.reports[0].aisregion.wind_dir": "293",
+    "aisregion.reports[1].aisregion.wind_gust": "1023",
+    "aisregion.reports[1].aisregion.wind_dir": "511"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 3; two wind reports, the second not available; expect derived there, no engine run"
+}

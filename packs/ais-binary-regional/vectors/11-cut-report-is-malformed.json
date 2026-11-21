@@ -1,0 +1,8 @@
+{
+  "name": "cut-report-is-malformed",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohA?0@INPR=?C5C0",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 6; the water flow message of vector 04 cut inside its report; expect derived there, no engine run"
+}

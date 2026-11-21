@@ -1,0 +1,18 @@
+{
+  "name": "lockage-order-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohA?0P5Q>5C>5<<00oH7d569L00h4dF0<598TE:0trhWg01@E=B09DhdE80000h`FP0",
+  "expect": "8030ohA?0P5Q>5C>5<<00oH7d569L00h4dF0<598TE:0trhWg01@E=B09DhdE80000h`FP0",
+  "model": {
+    "aisbin.fid": "2",
+    "aisregion.message_id": "1",
+    "aisregion.lock_id": "SNELL",
+    "aisregion.hour": "14",
+    "aisregion.schedule.#": "2",
+    "aisregion.schedule[0].aisregion.vessel_name": "LAKE CARRIER ON",
+    "aisregion.schedule[0].aisregion.upbound": "1",
+    "aisregion.schedule[1].aisregion.eta_minute": "45"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 7; a lockage order with two vessels; expect derived there, no engine run"
+}

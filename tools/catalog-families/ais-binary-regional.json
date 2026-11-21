@@ -1,0 +1,7 @@
+{
+  "name": "AIS regional binary messages (St. Lawrence Seaway, USCG PAWSS)",
+  "domain": "sea",
+  "exact": [
+    "ais-binary-regional"
+  ]
+}

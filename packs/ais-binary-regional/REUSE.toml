@@ -1,0 +1,9 @@
+# The licence of this pack: every file of its directory (REUSE 3.3; the
+# flags of the licence are in licences.toml at the repository root).
+version = 1
+
+[[annotations]]
+path = "**"
+precedence = "override"
+SPDX-FileCopyrightText = "U.S. Department of Transportation, Volpe Center, for the Saint Lawrence Seaway Development Corporation and Saint Lawrence Seaway Management Corporation (Seaway AIS specification R4.1; no copyright notice or licence stated)"
+SPDX-License-Identifier = "LicenseRef-unstated"

@@ -1,0 +1,13 @@
+{
+  "name": "pawss-hydro-current-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohAKP@ANPR@1GChi0oH7d569L1qJ000",
+  "expect": "8030ohAKP@ANPR@1GChi0oH7d569L1qJ000",
+  "model": {
+    "aisregion.message_id": "4",
+    "aisregion.reports[0].aisregion.current_speed": "15",
+    "aisregion.reports[0].aisregion.current_dir": "90"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, Appendix A, Hydro/Current; one report; expect derived there, no engine run"
+}

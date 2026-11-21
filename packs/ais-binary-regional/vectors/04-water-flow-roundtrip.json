@@ -1,0 +1,12 @@
+{
+  "name": "water-flow-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohA?0@INPR=?C5C00oH7d569L=oP000",
+  "expect": "8030ohA?0@INPR=?C5C00oH7d569L=oP000",
+  "model": {
+    "aisregion.message_id": "6",
+    "aisregion.reports[0].aisregion.water_flow": "7100"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 6; one water flow report; expect derived there, no engine run"
+}

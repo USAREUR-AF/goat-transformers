@@ -1,0 +1,20 @@
+{
+  "name": "estimated-lock-times-addressed-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "6030ohE;EiupFp82HC051Dm80UC2iDP0000hD1@0064da<pDhh01Q=059C5>8?HCU00000000",
+  "expect": "6030ohE;EiupFp82HC051Dm80UC2iDP0000hD1@0064da<pDhh01Q=059C5>8?HCU00000000",
+  "model": {
+    "ais.msg_type": "6",
+    "ais.dest_mmsi": "316000222",
+    "aisregion.message_id": "2",
+    "aisregion.vessel_name": "TEST BULKER",
+    "aisregion.last_location": "CAPE",
+    "aisregion.first_lock": "SNELL",
+    "aisregion.first_eta_hour": "13",
+    "aisregion.second_lock": "EISENHO",
+    "aisregion.second_eta_minute": "20",
+    "aisregion.locktimes_spare": "0"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 8; an addressed estimated lock times message with no delayed lock (all @); expect derived there, no engine run"
+}
