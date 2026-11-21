@@ -1,0 +1,5 @@
+Packs csp-v1-packet, csp-v2-packet
+  CSP 1.x and 2.x headers restated from libcsp src/csp_id.c and
+  include/csp/csp_types.h, https://github.com/libcsp/libcsp tag v2.1 commit
+  48f7fb0b and tag v1.6 commit 87006959. Copyright (c) 2009-2021 CSP
+  Contributors. MIT License. No code or comments copied.
