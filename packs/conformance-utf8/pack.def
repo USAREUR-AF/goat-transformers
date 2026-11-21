@@ -1,0 +1,18 @@
+# Conformance probe pack for the transform `utf8` on `bits` (spec 0.55, UTF-8
+# text on bits). Fixed layout, most significant bit first, one byte per word.
+# Public. No kinds.
+#
+#   bytes 0-7    probe.s1     utf8, 8 bytes
+#   bytes 8-11   probe.s2     utf8 trim, 4 bytes
+#   bytes 12-15  probe.label  utf8 swap, 4 bytes (bytes reversed before decode, after encode)
+format     conformance-utf8
+version    0.55.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.s1     0:0:64   utf8
+field   probe.s2     8:0:32   utf8  trim
+field   probe.label  12:0:32  utf8  swap

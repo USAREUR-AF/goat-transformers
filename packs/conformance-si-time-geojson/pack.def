@@ -1,0 +1,9 @@
+# Conformance probe pack for the transform `iso8601_si` (spec 0.55) on the
+# `geojson` wire. Public. No kinds.
+format  conformance-si-time-geojson
+version 0.55.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+wire    geojson
+field   uid      id            string
+field   time_ms  properties.t  iso8601_si
