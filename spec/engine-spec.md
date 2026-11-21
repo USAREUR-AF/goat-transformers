@@ -4978,12 +4978,13 @@ or `>=` or `<=` followed by one.
 - `null` on a wire other than `json` and `geojson`, or on a `geojson`
   `geometry` locator;
 - `implicit` on a wire other than `protobuf`, with a transform other than
-  `pvarint`, `psint`, `pdouble`, `pfloat` and `pstring`, or on a field inside
-  a packed group;
+  `pvarint`, `psint`, `pdouble`, `pfloat` and `pstring`, or on a scalar item
+  (a `.` field inside a group, packed or not);
 - `range` with fewer than two arguments, with `<min>` not less than `<max>`,
   with an argument that is not the text its key type takes, on a key that is
-  not `int` or `float`, or given twice on one line; `wrap` that does not
-  follow `range <min> <max>`;
+  not `int` or `float`, or given twice on one line; `wrap` that is not the
+  argument directly after `range <min> <max>` (`range 0 10 null wrap` is
+  refused);
 - `null`, `implicit` or `wrap` given twice on one line;
 - a range sentinel whose `<n>` is not the text its wire takes, or on
   `pdouble`, `pfloat` or `bool`.
@@ -4993,7 +4994,8 @@ The form of each option and its arguments is checked as the line is read
 `absent` option, range sentinels included, at step 10): there `<min>` and
 `<max>` must be number text (2b). A check that needs the wire, the key's
 type or the group (an `int` key's integer text, `<min>` < `<max>` read as
-that type) is made after the file (ruling 10 of 0.10).
+that type, `null` and `implicit` on their wires) is made after the file
+(ruling 10 of 0.10), in fixed and sequential layouts alike.
 
 ## Rulings for 0.56
 
