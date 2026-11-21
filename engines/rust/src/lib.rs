@@ -1603,6 +1603,7 @@ impl Wire {
             Wire::Json => "json",
             Wire::Text => "text",
             Wire::Tlv => "tlv",
+            Wire::Cdr => "cdr",
         }
     }
 }
