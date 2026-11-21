@@ -1,0 +1,15 @@
+{
+  "name": "push-data-roundtrip",
+  "from": "semtech-udp-forwarder",
+  "to": "semtech-udp-forwarder",
+  "input": "021f2e00aa555a00000001017b2273746174223a7b2272786e62223a322c2272786f6b223a327d7d",
+  "expect": "021f2e00aa555a00000001017b2273746174223a7b2272786e62223a322c2272786f6b223a327d7d",
+  "model": {
+    "semtechudp.protocol_version": "2",
+    "semtechudp.token": "7982",
+    "semtechudp.identifier": "0",
+    "semtechudp.gateway_eui": "aa555a0000000101",
+    "semtechudp.json.#": "28"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from Lora-net/packet_forwarder PROTOCOL.TXT; PUSH_DATA with a stat object; expect derived there, no engine run"
+}

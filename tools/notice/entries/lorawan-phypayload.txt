@@ -1,0 +1,5 @@
+Packs lorawan-phypayload; module lorawan
+  brocaar/lorawan, https://github.com/brocaar/lorawan at commit
+  4bb09b3bdacba097680894e8d35dbcbc0d260c7e (phypayload.go, fhdr.go,
+  macpayload.go, payload.go, netid.go). MIT License, Copyright (c) 2019 Orne
+  Brocaar. Layouts restated; no text copied.

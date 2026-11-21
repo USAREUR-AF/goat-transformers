@@ -1,0 +1,12 @@
+{
+  "name": "pull-data-roundtrip",
+  "from": "semtech-udp-forwarder",
+  "to": "semtech-udp-forwarder",
+  "input": "02004202aa555a0000000101",
+  "expect": "02004202aa555a0000000101",
+  "model": {
+    "semtechudp.identifier": "2",
+    "semtechudp.gateway_eui": "aa555a0000000101"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from Lora-net/packet_forwarder PROTOCOL.TXT; expect derived there, no engine run"
+}

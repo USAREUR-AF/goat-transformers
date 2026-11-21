@@ -1,0 +1,32 @@
+# Semtech UDP packet forwarder datagram: version, token, identifier, gateway identifier and the JSON object.
+# Written by tools/gen/lpwan2-pack.py; do not edit by hand.
+format        semtech-udp-forwarder
+version       0.1.0
+distribution  public
+source        "Lora-net/packet_forwarder, https://github.com/Lora-net/packet_forwarder at commit d0226eae6e7b6bbaec6117d0d2372bf17819c438, PROTOCOL.TXT (Copyright (C) 2013 Semtech S.A., the repository licence, BSD-3-Clause terms); layout restated, no text copied"
+uses          semtechudp
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  semtechudp.protocol_version  8  uint
+field  semtechudp.token  16  uint
+field  semtechudp.identifier  8  uint
+switch  semtechudp.identifier
+  case  0,5
+    field  semtechudp.gateway_eui  64  hex
+    group  semtechudp.json  rest
+      field  semtechudp.octet  8  uint
+    end
+  case  2
+    field  semtechudp.gateway_eui  64  hex
+  case  3
+    group  semtechudp.json  rest
+      field  semtechudp.octet  8  uint
+    end
+  case  1,4
+  else
+    group  semtechudp.json  rest
+      field  semtechudp.octet  8  uint
+    end
+end

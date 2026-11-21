@@ -1,0 +1,16 @@
+{
+  "name": "join-request-roundtrip",
+  "from": "lorawan-phypayload",
+  "to": "lorawan-phypayload",
+  "input": "00080706050403020118171615141312113412a1b2c3d4",
+  "expect": "00080706050403020118171615141312113412a1b2c3d4",
+  "model": {
+    "lorawan.mtype": "0",
+    "lorawan.major": "0",
+    "lorawan.join_eui": "0807060504030201",
+    "lorawan.dev_eui": "1817161514131211",
+    "lorawan.dev_nonce": "4660",
+    "lorawan.mic": "a1b2c3d4"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from brocaar/lorawan phypayload.go, fhdr.go, payload.go; a join request; expect derived there, no engine run"
+}

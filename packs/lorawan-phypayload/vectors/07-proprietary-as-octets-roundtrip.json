@@ -1,0 +1,12 @@
+{
+  "name": "proprietary-as-octets-roundtrip",
+  "from": "lorawan-phypayload",
+  "to": "lorawan-phypayload",
+  "input": "e0deadbeef",
+  "expect": "e0deadbeef",
+  "model": {
+    "lorawan.mtype": "7",
+    "lorawan.payload.#": "4"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from brocaar/lorawan phypayload.go, fhdr.go, payload.go; a proprietary frame; expect derived there, no engine run"
+}

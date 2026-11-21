@@ -1,0 +1,16 @@
+{
+  "name": "unconfirmed-uplink-roundtrip",
+  "from": "lorawan-phypayload",
+  "to": "lorawan-phypayload",
+  "input": "40da1b01268007000a1c2d3ea1b2c3d4",
+  "expect": "40da1b01268007000a1c2d3ea1b2c3d4",
+  "model": {
+    "lorawan.mtype": "2",
+    "lorawan.dev_addr": "637606874",
+    "lorawan.fctrl_adr": "1",
+    "lorawan.fcnt": "7",
+    "lorawan.fopts.#": "0",
+    "lorawan.port_payload_mic.#": "8"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from brocaar/lorawan phypayload.go, fhdr.go, payload.go; ADR set, FCnt 7, FPort 10, three payload octets and the MIC; expect derived there, no engine run"
+}
