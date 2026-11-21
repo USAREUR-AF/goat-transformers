@@ -1,0 +1,23 @@
+{
+  "name": "shelly-notify-full-status",
+  "from": "shelly-notify-status",
+  "to": "shelly-notify-status",
+  "input": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"method\":\"NotifyFullStatus\",\"params\":{\"ts\":1795256162.0,\"ble\":{},\"cloud\":{\"connected\":true},\"cover:0\":{\"id\":0,\"source\":\"limit_switch\",\"state\":\"stopped\",\"apower\":0,\"current_pos\":35,\"target_pos\":null,\"pos_control\":true,\"last_direction\":\"close\"},\"input:0\":{\"id\":0,\"state\":null},\"sys\":{\"mac\":\"0C8B95F1E2D4\",\"restart_required\":false,\"time\":\"11:16\",\"unixtime\":1795256162,\"uptime\":86400,\"ram_size\":246128,\"ram_free\":117300,\"fs_size\":458752,\"fs_free\":135168,\"cfg_rev\":12,\"kvs_rev\":0,\"available_updates\":{},\"utc_offset\":3600},\"temperature:100\":{\"id\":100,\"tC\":21.5,\"tF\":70.7},\"wifi\":{\"sta_ip\":\"192.0.2.20\",\"rssi\":-58}}}",
+  "expect": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"method\":\"NotifyFullStatus\",\"params\":{\"ts\":1795256162,\"cover:0\":{\"id\":0,\"source\":\"limit_switch\",\"state\":\"stopped\",\"apower\":0,\"current_pos\":35,\"pos_control\":true,\"last_direction\":\"close\"},\"input:0\":{\"id\":0},\"temperature:100\":{\"id\":100,\"tC\":21.5,\"tF\":70.7},\"sys\":{\"mac\":\"0C8B95F1E2D4\",\"restart_required\":false,\"time\":\"11:16\",\"unixtime\":1795256162,\"uptime\":86400,\"ram_size\":246128,\"ram_free\":117300,\"fs_size\":458752,\"fs_free\":135168,\"cfg_rev\":12,\"kvs_rev\":0,\"utc_offset\":3600},\"cloud\":{\"connected\":true},\"wifi\":{\"sta_ip\":\"192.0.2.20\",\"rssi\":-58}}}",
+  "model": {
+    "@kind": "notify_full_status",
+    "time_ms": "1795256162000",
+    "shelly.cover0_current_pos": "35",
+    "shelly.cover0_pos_control": "1",
+    "shelly.sys_restart_required": "0",
+    "shelly.temperature100_tc": "21.5",
+    "shelly.sys_utc_offset": "3600",
+    "@absent": [
+      "shelly.cover0_target_pos",
+      "shelly.input0_state",
+      "shelly.sys_available_updates_stable_version"
+    ]
+  },
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; ts written .0 comes back as an integer; null members absent; the empty available_updates and ble objects are not written; components in line order (cover, input, temperature, sys), then the unmapped cloud and wifi objects"
+}

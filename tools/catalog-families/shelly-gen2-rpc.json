@@ -1,0 +1,7 @@
+{
+  "name": "Shelly Gen2+ RPC",
+  "domain": "iot",
+  "prefixes": [
+    "shelly-"
+  ]
+}

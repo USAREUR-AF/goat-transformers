@@ -1,0 +1,14 @@
+{
+  "name": "shelly-rpc-request-switch-set",
+  "from": "shelly-rpc-request",
+  "to": "shelly-rpc-request",
+  "input": "{\"id\":3,\"jsonrpc\":\"2.0\",\"src\":\"user_1\",\"method\":\"Switch.Set\",\"params\":{\"on\":true,\"id\":1,\"toggle_after\":30}}",
+  "expect": "{\"jsonrpc\":\"2.0\",\"src\":\"user_1\",\"method\":\"Switch.Set\",\"params\":{\"id\":1,\"on\":true,\"toggle_after\":30},\"id\":3}",
+  "model": {
+    "shelly.method": "Switch.Set",
+    "shelly.param_id": "1",
+    "shelly.param_on": "1"
+  },
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; params.toggle_after is residue after the mapped params"
+}

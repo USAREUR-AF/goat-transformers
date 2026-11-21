@@ -1,0 +1,9 @@
+{
+  "name": "shelly-rpc-response-to-notify-status",
+  "from": "shelly-rpc-response",
+  "to": "shelly-notify-status",
+  "input": "{\"id\":7,\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"result\":{\"switch:0\":{\"id\":0,\"output\":true}}}",
+  "expect": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"method\":\"NotifyStatus\",\"params\":{\"switch:0\":{\"id\":0,\"output\":true}}}",
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; no kind carries over, so the first kind is chosen and its method written; no ts"
+}
