@@ -5407,6 +5407,13 @@ the pack does not `uses` is `module-not-used`; an undeclared key is
     `field` or `also` line in any `case`, `if`, `opt`, `chain`, `length`,
     `ext` or `choice` body of that scope conflicts with an `as` key; a group
     body is a separate scope (ruling 21).
+34. **`@kind` in a vector with `@complete`** (spec/vector-format.md, step 3)
+    names the kind `decode(from, input)` selected, with or without
+    `@complete` and whether or not `from == to`. The entity `convert` hands to
+    the encoder has no kind for another format (Version 0.6), but a vector's
+    `@kind` checks decode, not that entity. Vector
+    `conformance-whenas-kinds` `cross-format-complete-keeps-the-decoded-kind`
+    pins it.
 
 ## Not in this version
 

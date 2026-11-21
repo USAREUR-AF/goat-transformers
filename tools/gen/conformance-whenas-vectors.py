@@ -976,7 +976,12 @@ def build(sink):
         if model:
             have = model_of(ent)
             for k, v in model.items():
-                if k == "@absent":
+                if k == "@complete":
+                    # step 3 of vector-format: the completed entity is the
+                    # decoded one plus derived keys; no listed key is a derive
+                    # target, and @kind names the decoded kind (ruling 34)
+                    assert v is True and not any(m.split(".#")[0] in derive_targets for m in model), name
+                elif k == "@absent":
                     for gone in v:
                         assert gone not in have and gone + ".#" not in have, (name, gone)
                 else:
@@ -1018,6 +1023,16 @@ def build(sink):
         ref="spec 0.30 Decode: the `when` line tests the bits as before (0.8, 0.20); 5 matches no kind (0.5 Decode step 2)")
     vec("kinds", "to-json-carries-the-label", "kinds", "json", "07030102", '{"n":7,"x":3,"z":258}',
         ref=D + "x = 3 is a model key; the json pack writes it")
+    # The same message to json with "@complete": the completed entity holds
+    # n, x and z as decoded (no derive line of probe targets them); convert
+    # clears the kind for json, but "@kind" names what decode selected: span.
+    vec("kinds", "cross-format-complete-keeps-the-decoded-kind", "kinds", "json", "07030102",
+        '{"n":7,"x":3,"z":258}',
+        model={"@complete": True, "@kind": "span", "probe.n": "7", "probe.x": "3", "probe.z": "258",
+               "@absent": ["probe.y"]},
+        ref="spec 0.30 ruling 34 and vector-format step 3: with \"@complete\" and from != to, \"@kind\" names the "
+            "kind decode(from, input) selected (03 lies in span's 2..4), although convert hands json an entity "
+            "with no kind; the completed entity keeps n = 7, x = 3, z = 258")
     # from json: no kind recorded; the first kind whose `when` matches x.
     vec("json", "kinds-encode-chooses-the-kind-by-a-single-value", "json", "kinds", '{"n":7,"x":1,"y":42}', "07012a",
         ref=E + "x = 1 matches one")

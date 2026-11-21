@@ -49,7 +49,11 @@ is the pack that owns the input. Fields:
    relative: `|got - want| < 1e-9 * max(|got|, |want|)`, or within `1e-7`
    absolute (Version 0.16), or equal. `"@complete"`
    is not a model key. A vector states a derived float this way and keeps it
-   out of `expect`, unless the value derives exactly.
+   out of `expect`, unless the value derives exactly. `"@kind"` and
+   `"<list>[<i>].@kind"` are not moved: with or without `"@complete"`, and
+   whether or not `from == to`, they name the kind that `decode(from, input)`
+   selected. Clearing the kind for another format is part of `convert`, not of
+   what a vector checks (Version 0.30, ruling 34).
 
 A `from == to` vector checks that decode then encode returns the canonical form
 of the input, which proves residue carries unmapped fields.

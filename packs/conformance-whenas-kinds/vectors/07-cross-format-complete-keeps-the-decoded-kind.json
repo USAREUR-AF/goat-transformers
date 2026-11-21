@@ -1,0 +1,19 @@
+{
+  "name": "cross-format-complete-keeps-the-decoded-kind",
+  "from": "conformance-whenas-kinds",
+  "to": "conformance-whenas-json",
+  "input": "07030102",
+  "expect": "{\"n\":7,\"x\":3,\"z\":258}",
+  "model": {
+    "@complete": true,
+    "@kind": "span",
+    "probe.n": "7",
+    "probe.x": "3",
+    "probe.z": "258",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 34 and vector-format step 3: with \"@complete\" and from != to, \"@kind\" names the kind decode(from, input) selected (03 lies in span's 2..4), although convert hands json an entity with no kind; the completed entity keeps n = 7, x = 3, z = 258"
+}
