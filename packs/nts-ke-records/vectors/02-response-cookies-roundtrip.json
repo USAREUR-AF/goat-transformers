@@ -1,0 +1,14 @@
+{
+  "name": "response-cookies-roundtrip",
+  "from": "nts-ke-records",
+  "to": "nts-ke-records",
+  "input": "80010002000080040002000f00050020000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f00050020202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f80000000",
+  "expect": "80010002000080040002000f00050020000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f00050020202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f80000000",
+  "model": {
+    "ntske.records.#": "5",
+    "ntske.records[2].ntske.record_type": "5",
+    "ntske.records[2].ntske.cookie.#": "32",
+    "ntske.records[3].ntske.cookie.#": "32"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from RFC 8915 section 4; a server response with two new cookies; expect derived there, no engine run"
+}

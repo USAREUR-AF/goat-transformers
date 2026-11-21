@@ -1,0 +1,20 @@
+{
+  "name": "sync-two-step-roundtrip",
+  "from": "ptp-message",
+  "to": "ptp-message",
+  "input": "0002002c00000208000000000000000000000000001b21fffe1234560001006400fd00006553f100075bcd15",
+  "expect": "0002002c00000208000000000000000000000000001b21fffe1234560001006400fd00006553f100075bcd15",
+  "model": {
+    "ptp.message_type": "0",
+    "ptp.version": "2",
+    "ptp.two_step": "1",
+    "ptp.ptp_timescale": "1",
+    "ptp.source_clock_identity": "001b21fffe123456",
+    "ptp.source_port_number": "1",
+    "ptp.sequence_id": "100",
+    "ptp.log_message_interval": "-3",
+    "ptp.origin_seconds": "1700000000",
+    "ptp.origin_nanoseconds": "123456789"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from IEEE 1588 as linuxptp msg.h, ddt.h and tlv.h lay it out; a two-step Sync; expect derived there, no engine run"
+}

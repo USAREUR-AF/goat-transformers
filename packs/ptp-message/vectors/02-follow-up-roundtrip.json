@@ -1,0 +1,14 @@
+{
+  "name": "follow-up-roundtrip",
+  "from": "ptp-message",
+  "to": "ptp-message",
+  "input": "0802002c00000008fffffffffff6000000000000001b21fffe1234560001006402fd00006553f100075bd9a0",
+  "expect": "0802002c00000008fffffffffff6000000000000001b21fffe1234560001006402fd00006553f100075bd9a0",
+  "model": {
+    "ptp.message_type": "8",
+    "ptp.control": "2",
+    "ptp.correction": "-655360",
+    "ptp.precise_origin_nanoseconds": "123460000"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from IEEE 1588 as linuxptp msg.h, ddt.h and tlv.h lay it out; a Follow_Up with a negative correction; expect derived there, no engine run"
+}

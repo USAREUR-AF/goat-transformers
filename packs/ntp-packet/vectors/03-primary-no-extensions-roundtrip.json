@@ -1,0 +1,13 @@
+{
+  "name": "primary-no-extensions-roundtrip",
+  "from": "ntp-packet",
+  "to": "ntp-packet",
+  "input": "240106ec000008000000100047505300ecfcf20040000000ecfcf26440000000ecfcf2c840000000ecfcf32c40000000",
+  "expect": "240106ec000008000000100047505300ecfcf20040000000ecfcf26440000000ecfcf2c840000000ecfcf32c40000000",
+  "model": {
+    "inet.ntp_stratum": "1",
+    "inet.ntp_ref_clock": "GPS",
+    "ntpext.extensions.#": "0"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from RFC 5905 section 7.3, RFC 7822 section 3 and RFC 8915 section 5; a stratum 1 response with no extension fields; expect derived there, no engine run"
+}

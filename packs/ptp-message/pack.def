@@ -1,0 +1,115 @@
+# PTP (IEEE 1588) message as linuxptp lays it out: the common header, the body by message type, and the
+# suffix TLVs to the message length. Written by tools/gen/gnss-time-pack.py; do not edit by hand.
+format        ptp-message
+version       0.1.0
+distribution  public
+source        "linuxptp v4.4 (commit 0188667308e62b6ac61151193320ec052e2fd023), msg.h (sha256 4fcb3192f77ca15ab848857f21854bf3ac3d3d849ce47b97b071180cbb387c55), ddt.h and tlv.h, GPL-2.0-or-later, https://github.com/richardcochran/linuxptp; the IEEE 1588 message layouts as linuxptp packs them; restated, no code copied"
+uses          ptp
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ptp.transport_specific  4  uint
+field  ptp.message_type  4  uint
+field  ptp.minor_version  4  uint
+field  ptp.version  4  uint
+length  16  whole
+field  ptp.domain_number  8  uint
+field  ptp.reserved1  8  uint
+field  ptp.flags0_other  5  uint
+field  ptp.unicast  1  uint
+field  ptp.two_step  1  uint
+field  ptp.alternate_master  1  uint
+field  ptp.flags1_reserved  1  uint
+field  ptp.sync_uncertain  1  uint
+field  ptp.frequency_traceable  1  uint
+field  ptp.time_traceable  1  uint
+field  ptp.ptp_timescale  1  uint
+field  ptp.utc_offset_valid  1  uint
+field  ptp.leap59  1  uint
+field  ptp.leap61  1  uint
+field  ptp.correction  64  twos
+field  ptp.reserved2  32  uint
+field  ptp.source_clock_identity  64  hex
+field  ptp.source_port_number  16  uint
+field  ptp.sequence_id  16  uint
+field  ptp.control  8  uint
+field  ptp.log_message_interval  8  twos
+switch  ptp.message_type
+  case  0,1
+    field  ptp.origin_seconds  48  uint
+    field  ptp.origin_nanoseconds  32  uint
+  case  2
+    field  ptp.origin_seconds  48  uint
+    field  ptp.origin_nanoseconds  32  uint
+    field  ptp.reserved_clock_identity  64  hex
+    field  ptp.reserved_port_number  16  uint
+  case  3
+    field  ptp.request_receipt_seconds  48  uint
+    field  ptp.request_receipt_nanoseconds  32  uint
+    field  ptp.requesting_clock_identity  64  hex
+    field  ptp.requesting_port_number  16  uint
+  case  8
+    field  ptp.precise_origin_seconds  48  uint
+    field  ptp.precise_origin_nanoseconds  32  uint
+  case  9
+    field  ptp.receive_seconds  48  uint
+    field  ptp.receive_nanoseconds  32  uint
+    field  ptp.requesting_clock_identity  64  hex
+    field  ptp.requesting_port_number  16  uint
+  case  10
+    field  ptp.response_origin_seconds  48  uint
+    field  ptp.response_origin_nanoseconds  32  uint
+    field  ptp.requesting_clock_identity  64  hex
+    field  ptp.requesting_port_number  16  uint
+  case  11
+    field  ptp.origin_seconds  48  uint
+    field  ptp.origin_nanoseconds  32  uint
+    field  ptp.current_utc_offset  16  twos
+    field  ptp.announce_reserved  8  uint
+    field  ptp.gm_priority1  8  uint
+    field  ptp.gm_clock_class  8  uint
+    field  ptp.gm_clock_accuracy  8  uint
+    field  ptp.gm_offset_scaled_log_variance  16  uint
+    field  ptp.gm_priority2  8  uint
+    field  ptp.gm_identity  64  hex
+    field  ptp.steps_removed  16  uint
+    field  ptp.time_source  8  uint
+  case  12
+    field  ptp.target_clock_identity  64  hex
+    field  ptp.target_port_number  16  uint
+  case  13
+    field  ptp.target_clock_identity  64  hex
+    field  ptp.target_port_number  16  uint
+    field  ptp.starting_boundary_hops  8  uint
+    field  ptp.boundary_hops  8  uint
+    field  ptp.management_reserved  4  uint
+    field  ptp.action  4  uint
+    field  ptp.management_reserved2  8  uint
+end
+group  ptp.tlvs  rest
+  field  ptp.tlv_type  16  uint
+  length  16  bytes
+    switch  ptp.tlv_type
+      case  1
+        field  ptp.management_id  16  uint
+        group  ptp.tlv_data  rest
+          field  ptp.octet  8  uint
+        end
+      case  3,16384,32768
+        field  ptp.organization_id  24  hex
+        field  ptp.organization_subtype  24  hex
+        group  ptp.tlv_data  rest
+          field  ptp.octet  8  uint
+        end
+      case  8
+        group  ptp.path_trace  rest
+          field  ptp.path_clock_identity  64  hex
+        end
+      else
+        group  ptp.tlv_data  rest
+          field  ptp.octet  8  uint
+        end
+    end
+  end
+end

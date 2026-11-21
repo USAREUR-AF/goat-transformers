@@ -1,0 +1,20 @@
+{
+  "name": "request-roundtrip",
+  "from": "nts-ke-records",
+  "to": "nts-ke-records",
+  "input": "80010002000080040004000f00110006001074696d652e6578616d706c652e6f726700070002007b80000000",
+  "expect": "80010002000080040004000f00110006001074696d652e6578616d706c652e6f726700070002007b80000000",
+  "model": {
+    "ntske.records.#": "5",
+    "ntske.records[0].ntske.record_type": "1",
+    "ntske.records[0].ntske.protocols.#": "1",
+    "ntske.records[1].ntske.aead_algorithms.#": "2",
+    "ntske.records[1].ntske.aead_algorithms[1].ntske.aead_id": "17",
+    "ntske.records[2].ntske.critical": "0",
+    "ntske.records[2].ntske.server.#": "16",
+    "ntske.records[3].ntske.port": "123",
+    "ntske.records[4].ntske.record_type": "0",
+    "ntske.records[4].ntske.critical": "1"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from RFC 8915 section 4; a client request: next protocol, AEAD algorithms, server and port, end of message; expect derived there, no engine run"
+}

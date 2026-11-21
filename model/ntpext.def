@@ -1,0 +1,15 @@
+# The ntpext module: NTP extension fields (RFC 7822, RFC 8915). Written by tools/gen/gnss-time-pack.py.
+module        ntpext
+version       0.1.0
+distribution  public
+source        "IETF RFC 5905 section 7.3, RFC 7822 section 3 and RFC 8915 section 5, https://www.rfc-editor.org/rfc/rfc8915.txt; layout restated"
+list  extensions          "the extension fields after the header, in order"
+key   field_type          int     -  "extension field type (0x0104 unique identifier, 0x0204 NTS cookie, 0x0304 cookie placeholder, 0x0404 NTS authenticator and encrypted fields)"
+list  unique_identifier   "unique identifier field: its body, as octets"
+list  cookie              "NTS cookie field: its body, as octets"
+list  cookie_placeholder  "NTS cookie placeholder field: its body, as octets"
+key   nonce_length        int     -  "NTS authenticator: nonce length, octets, without padding"
+key   ciphertext_length   int     -  "NTS authenticator: ciphertext length, octets, without padding"
+list  authenticator       "NTS authenticator: nonce, ciphertext and their padding, as octets"
+list  value               "an extension field of another type: its body, as octets"
+key   octet               int     -  "one octet"

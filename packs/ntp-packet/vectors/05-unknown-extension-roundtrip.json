@@ -1,0 +1,12 @@
+{
+  "name": "unknown-extension-roundtrip",
+  "from": "ntp-packet",
+  "to": "ntp-packet",
+  "input": "247f06ec000008000000100000000001ecfcf20040000000ecfcf26440000000ecfcf2c840000000ecfcf32c40000000abcd000801020304",
+  "expect": "247f06ec000008000000100000000001ecfcf20040000000ecfcf26440000000ecfcf2c840000000ecfcf32c40000000abcd000801020304",
+  "model": {
+    "ntpext.extensions[0].ntpext.field_type": "43981",
+    "ntpext.extensions[0].ntpext.value.#": "4"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from RFC 5905 section 7.3, RFC 7822 section 3 and RFC 8915 section 5; an extension field of an unassigned type, kept as octets; expect derived there, no engine run"
+}

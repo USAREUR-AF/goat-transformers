@@ -1,0 +1,24 @@
+{
+  "name": "server-nts-roundtrip",
+  "from": "ntp-packet",
+  "to": "ntp-packet",
+  "input": "240206ec0000080000001000c0000201ecfcf20040000000ecfcf26440000000ecfcf2c840000000ecfcf32c4000000001040024000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f020400446465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a30404003800100020000102030405060708090a0b0c0d0e0fc8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7",
+  "expect": "240206ec0000080000001000c0000201ecfcf20040000000ecfcf26440000000ecfcf2c840000000ecfcf32c4000000001040024000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f020400446465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a30404003800100020000102030405060708090a0b0c0d0e0fc8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7",
+  "model": {
+    "inet.ntp_mode": "4",
+    "inet.ntp_stratum": "2",
+    "inet.ntp_poll": "6",
+    "inet.ntp_precision": "-20",
+    "inet.ntp_root_delay": "0.03125",
+    "inet.ntp_ref_id": "3221225985",
+    "inet.ntp_xmt_ts_sec": "3976000300",
+    "ntpext.extensions.#": "3",
+    "ntpext.extensions[0].ntpext.field_type": "260",
+    "ntpext.extensions[0].ntpext.unique_identifier.#": "32",
+    "ntpext.extensions[1].ntpext.cookie.#": "64",
+    "ntpext.extensions[2].ntpext.nonce_length": "16",
+    "ntpext.extensions[2].ntpext.ciphertext_length": "32",
+    "ntpext.extensions[2].ntpext.authenticator.#": "48"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from RFC 5905 section 7.3, RFC 7822 section 3 and RFC 8915 section 5; a server response with the unique identifier, a cookie and the NTS authenticator; expect derived there, no engine run"
+}

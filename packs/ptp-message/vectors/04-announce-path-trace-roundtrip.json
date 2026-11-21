@@ -1,0 +1,23 @@
+{
+  "name": "announce-path-trace-roundtrip",
+  "from": "ptp-message",
+  "to": "ptp-message",
+  "input": "0b02004c0000000c000000000000000000000000001b21fffe123456000100640001000000000000000000000025008006214e5d800050c2fffe000001000020000800080050c2fffe000001",
+  "expect": "0b02004c0000000c000000000000000000000000001b21fffe123456000100640001000000000000000000000025008006214e5d800050c2fffe000001000020000800080050c2fffe000001",
+  "model": {
+    "ptp.message_type": "11",
+    "ptp.utc_offset_valid": "1",
+    "ptp.current_utc_offset": "37",
+    "ptp.gm_priority1": "128",
+    "ptp.gm_clock_class": "6",
+    "ptp.gm_clock_accuracy": "33",
+    "ptp.gm_offset_scaled_log_variance": "20061",
+    "ptp.gm_identity": "0050c2fffe000001",
+    "ptp.time_source": "32",
+    "ptp.tlvs.#": "1",
+    "ptp.tlvs[0].ptp.tlv_type": "8",
+    "ptp.tlvs[0].ptp.path_trace.#": "1",
+    "ptp.tlvs[0].ptp.path_trace[0].ptp.path_clock_identity": "0050c2fffe000001"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from IEEE 1588 as linuxptp msg.h, ddt.h and tlv.h lay it out; an Announce from a GNSS-locked grandmaster with a path trace TLV; expect derived there, no engine run"
+}
