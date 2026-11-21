@@ -33,10 +33,15 @@ below, and every vector of another pack that converts from or to one of them.
 | [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0/) | yes | no | yes | none | `open` |
 | [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) | yes | no | yes | none | `open` |
 | [CC-BY-NC-SA-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | no | yes | yes | none | `everything` |
+| [CC-BY-SA-2.0](https://creativecommons.org/licenses/by-sa/2.0/) | yes | yes | yes | none | `open+copyleft` |
+| [CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/) | yes | no | no | none | `open` |
 | [LicenseRef-NGA-MSI](https://msi.nga.mil) | yes | no | yes | none | `open` |
 | [LicenseRef-OASIS-Notice](https://www.oasis-open.org/policies-guidelines/ipr/) | yes | no | yes | none | `open` |
 | [LicenseRef-OGC-Software](https://www.ogc.org/legal/) | yes | no | yes | none | `open` |
 | [LicenseRef-OMA-Internal](http://www.openmobilealliance.org/UseAgreement.html) | no | no | yes | none | `everything` |
+| [LicenseRef-OpenAQ](https://docs.openaq.org/about/terms) | yes | no | yes | using the hosted OpenAQ API to build products or services that substantially duplicate or directly compete with OpenAQ | `everything` |
+| [LicenseRef-OpenSky](https://opensky-network.org/about/terms-of-use) | no | no | yes | any use other than non-profit research and non-profit education without a written licence, operational use of the REST API without a written agreement | `everything` |
+| [LicenseRef-sFlow-License](http://www.inmon.com/technology/sflowlicense.txt) | yes | no | yes | none | `open` |
 | LicenseRef-unstated | unknown | no | yes | none | `everything` |
 
 ## Packs outside `open`, or not under Apache-2.0
@@ -45,6 +50,7 @@ below, and every vector of another pack that converts from or to one of them.
 |---|---|---|---|---|
 | `packs/adsb` | `adsb` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
 | `packs/adsb-df18` | `adsb-df18` | Apache-2.0 | `everything` | uses module adsb (CC-BY-NC-SA-4.0) |
+| `packs/aisstream` | `aisstream` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/arsdk-proto-antiflicker` | `arsdk-proto-antiflicker` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/arsdk-proto-backuplink` | `arsdk-proto-backuplink` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/arsdk-proto-calibration` | `arsdk-proto-calibration` | LicenseRef-unstated | `everything` | its own licence |
@@ -93,6 +99,153 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/cds-curb-status` | `cds-curb-status` | CC-BY-4.0 | `open` | its own licence |
 | `packs/cds-curb-zone` | `cds-curb-zone` | CC-BY-4.0 | `open` | its own licence |
 | `packs/cds-session` | `cds-session` | CC-BY-4.0 | `open` | its own licence |
+| `packs/cef` | `cef` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/fhir-r4-account` | `fhir-r4-account` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-activity-definition` | `fhir-r4-activity-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-adverse-event` | `fhir-r4-adverse-event` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-allergy-intolerance` | `fhir-r4-allergy-intolerance` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-appointment` | `fhir-r4-appointment` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-appointment-response` | `fhir-r4-appointment-response` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-audit-event` | `fhir-r4-audit-event` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-basic` | `fhir-r4-basic` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-binary` | `fhir-r4-binary` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-biologically-derived-product` | `fhir-r4-biologically-derived-product` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-body-structure` | `fhir-r4-body-structure` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-bundle` | `fhir-r4-bundle` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-capability-statement` | `fhir-r4-capability-statement` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-care-plan` | `fhir-r4-care-plan` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-care-team` | `fhir-r4-care-team` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-catalog-entry` | `fhir-r4-catalog-entry` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-charge-item` | `fhir-r4-charge-item` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-charge-item-definition` | `fhir-r4-charge-item-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-claim` | `fhir-r4-claim` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-claim-response` | `fhir-r4-claim-response` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-clinical-impression` | `fhir-r4-clinical-impression` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-code-system` | `fhir-r4-code-system` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-communication` | `fhir-r4-communication` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-communication-request` | `fhir-r4-communication-request` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-compartment-definition` | `fhir-r4-compartment-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-composition` | `fhir-r4-composition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-concept-map` | `fhir-r4-concept-map` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-condition` | `fhir-r4-condition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-consent` | `fhir-r4-consent` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-contract` | `fhir-r4-contract` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-coverage` | `fhir-r4-coverage` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-coverage-eligibility-request` | `fhir-r4-coverage-eligibility-request` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-coverage-eligibility-response` | `fhir-r4-coverage-eligibility-response` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-detected-issue` | `fhir-r4-detected-issue` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-device` | `fhir-r4-device` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-device-definition` | `fhir-r4-device-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-device-metric` | `fhir-r4-device-metric` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-device-request` | `fhir-r4-device-request` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-device-use-statement` | `fhir-r4-device-use-statement` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-diagnostic-report` | `fhir-r4-diagnostic-report` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-document-manifest` | `fhir-r4-document-manifest` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-document-reference` | `fhir-r4-document-reference` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-effect-evidence-synthesis` | `fhir-r4-effect-evidence-synthesis` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-encounter` | `fhir-r4-encounter` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-endpoint` | `fhir-r4-endpoint` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-enrollment-request` | `fhir-r4-enrollment-request` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-enrollment-response` | `fhir-r4-enrollment-response` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-episode-of-care` | `fhir-r4-episode-of-care` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-event-definition` | `fhir-r4-event-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-evidence` | `fhir-r4-evidence` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-evidence-variable` | `fhir-r4-evidence-variable` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-example-scenario` | `fhir-r4-example-scenario` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-explanation-of-benefit` | `fhir-r4-explanation-of-benefit` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-family-member-history` | `fhir-r4-family-member-history` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-flag` | `fhir-r4-flag` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-goal` | `fhir-r4-goal` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-graph-definition` | `fhir-r4-graph-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-group` | `fhir-r4-group` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-guidance-response` | `fhir-r4-guidance-response` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-healthcare-service` | `fhir-r4-healthcare-service` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-imaging-study` | `fhir-r4-imaging-study` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-immunization` | `fhir-r4-immunization` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-immunization-evaluation` | `fhir-r4-immunization-evaluation` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-immunization-recommendation` | `fhir-r4-immunization-recommendation` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-implementation-guide` | `fhir-r4-implementation-guide` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-insurance-plan` | `fhir-r4-insurance-plan` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-invoice` | `fhir-r4-invoice` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-library` | `fhir-r4-library` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-linkage` | `fhir-r4-linkage` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-list` | `fhir-r4-list` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-location` | `fhir-r4-location` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-measure` | `fhir-r4-measure` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-measure-report` | `fhir-r4-measure-report` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-media` | `fhir-r4-media` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medication` | `fhir-r4-medication` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medication-administration` | `fhir-r4-medication-administration` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medication-dispense` | `fhir-r4-medication-dispense` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medication-knowledge` | `fhir-r4-medication-knowledge` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medication-request` | `fhir-r4-medication-request` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medication-statement` | `fhir-r4-medication-statement` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product` | `fhir-r4-medicinal-product` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-authorization` | `fhir-r4-medicinal-product-authorization` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-contraindication` | `fhir-r4-medicinal-product-contraindication` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-indication` | `fhir-r4-medicinal-product-indication` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-ingredient` | `fhir-r4-medicinal-product-ingredient` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-interaction` | `fhir-r4-medicinal-product-interaction` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-manufactured` | `fhir-r4-medicinal-product-manufactured` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-packaged` | `fhir-r4-medicinal-product-packaged` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-pharmaceutical` | `fhir-r4-medicinal-product-pharmaceutical` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-medicinal-product-undesirable-effect` | `fhir-r4-medicinal-product-undesirable-effect` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-message-definition` | `fhir-r4-message-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-message-header` | `fhir-r4-message-header` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-molecular-sequence` | `fhir-r4-molecular-sequence` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-naming-system` | `fhir-r4-naming-system` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-nutrition-order` | `fhir-r4-nutrition-order` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-observation` | `fhir-r4-observation` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-observation-definition` | `fhir-r4-observation-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-operation-definition` | `fhir-r4-operation-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-operation-outcome` | `fhir-r4-operation-outcome` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-organization` | `fhir-r4-organization` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-organization-affiliation` | `fhir-r4-organization-affiliation` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-parameters` | `fhir-r4-parameters` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-patient` | `fhir-r4-patient` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-payment-notice` | `fhir-r4-payment-notice` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-payment-reconciliation` | `fhir-r4-payment-reconciliation` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-person` | `fhir-r4-person` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-plan-definition` | `fhir-r4-plan-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-practitioner` | `fhir-r4-practitioner` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-practitioner-role` | `fhir-r4-practitioner-role` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-procedure` | `fhir-r4-procedure` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-provenance` | `fhir-r4-provenance` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-questionnaire` | `fhir-r4-questionnaire` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-questionnaire-response` | `fhir-r4-questionnaire-response` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-related-person` | `fhir-r4-related-person` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-request-group` | `fhir-r4-request-group` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-research-definition` | `fhir-r4-research-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-research-element-definition` | `fhir-r4-research-element-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-research-study` | `fhir-r4-research-study` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-research-subject` | `fhir-r4-research-subject` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-risk-assessment` | `fhir-r4-risk-assessment` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-risk-evidence-synthesis` | `fhir-r4-risk-evidence-synthesis` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-schedule` | `fhir-r4-schedule` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-search-parameter` | `fhir-r4-search-parameter` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-service-request` | `fhir-r4-service-request` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-slot` | `fhir-r4-slot` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-specimen` | `fhir-r4-specimen` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-specimen-definition` | `fhir-r4-specimen-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-structure-definition` | `fhir-r4-structure-definition` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-structure-map` | `fhir-r4-structure-map` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-subscription` | `fhir-r4-subscription` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-substance` | `fhir-r4-substance` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-substance-nucleic-acid` | `fhir-r4-substance-nucleic-acid` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-substance-polymer` | `fhir-r4-substance-polymer` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-substance-protein` | `fhir-r4-substance-protein` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-substance-reference-information` | `fhir-r4-substance-reference-information` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-substance-source-material` | `fhir-r4-substance-source-material` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-substance-specification` | `fhir-r4-substance-specification` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-supply-delivery` | `fhir-r4-supply-delivery` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-supply-request` | `fhir-r4-supply-request` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-task` | `fhir-r4-task` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-terminology-capabilities` | `fhir-r4-terminology-capabilities` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-test-report` | `fhir-r4-test-report` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-test-script` | `fhir-r4-test-script` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-value-set` | `fhir-r4-value-set` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-verification-result` | `fhir-r4-verification-result` | CC0-1.0 | `open` | its own licence |
+| `packs/fhir-r4-vision-prescription` | `fhir-r4-vision-prescription` | CC0-1.0 | `open` | its own licence |
 | `packs/gbfs-1.0-free-bike-status` | `gbfs-1.0-free-bike-status` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gbfs-1.0-gbfs` | `gbfs-1.0-gbfs` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gbfs-1.0-station-information` | `gbfs-1.0-station-information` | CC-BY-3.0 | `open` | its own licence |
@@ -177,9 +330,33 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/gbfs-3.0-vehicle-status` | `gbfs-3.0-vehicle-status` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gbfs-3.0-vehicle-types` | `gbfs-3.0-vehicle-types` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gbfs-3.1-rc3-vehicle-availability` | `gbfs-3.1-rc3-vehicle-availability` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gcn-boom-alert` | `gcn-boom-alert` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-burstcube-alert` | `gcn-burstcube-alert` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-burstcube-test` | `gcn-burstcube-test` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-chime-frb` | `gcn-chime-frb` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-circular` | `gcn-circular` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-dsa110-frb` | `gcn-dsa110-frb` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-einstein-probe-wxt-alert` | `gcn-einstein-probe-wxt-alert` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-fermi-gbm-trigger` | `gcn-fermi-gbm-trigger` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-fermi-lat-flare` | `gcn-fermi-lat-flare` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-glowbug-alert` | `gcn-glowbug-alert` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-heasarc-archive-alert` | `gcn-heasarc-archive-alert` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-icecube-lvk-nu-search` | `gcn-icecube-lvk-nu-search` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-icecube-single-neutrino` | `gcn-icecube-single-neutrino` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-km3net-alert` | `gcn-km3net-alert` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-maxi-gsc-known` | `gcn-maxi-gsc-known` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-maxi-gsc-unknown` | `gcn-maxi-gsc-unknown` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-neutrino-alert` | `gcn-neutrino-alert` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-snews2-coincidence` | `gcn-snews2-coincidence` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-superk-sn-alert` | `gcn-superk-sn-alert` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-svom-trigger` | `gcn-svom-trigger` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/gcn-swift-bat-guano` | `gcn-swift-bat-guano` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/gpx` | `gpx` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/igs-ssr` | `igs-ssr` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/kml` | `kml` | LicenseRef-OGC-Software | `open` | its own licence |
+| `packs/leef` | `leef` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/lwm2m-json` | `lwm2m-json` | LicenseRef-OMA-Internal | `everything` | its own licence |
+| `packs/massrobotics-amr` | `massrobotics-amr` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mavsdk-action-server-arm-disarm` | `mavsdk-action-server-arm-disarm` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mavsdk-action-server-flight-mode-change` | `mavsdk-action-server-flight-mode-change` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mavsdk-action-server-land` | `mavsdk-action-server-land` | LicenseRef-unstated | `everything` | its own licence |
@@ -295,13 +472,243 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/mavsdk-winch-status` | `mavsdk-winch-status` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mds` | `mds` | CC-BY-4.0 | `open` | its own licence |
 | `packs/mvt` | `mvt` | CC-BY-3.0 | `open` | its own licence |
+| `packs/netflow5` | `netflow5` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/nga-msi-asam` | `nga-msi-asam` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `packs/nga-msi-broadcast-warn` | `nga-msi-broadcast-warn` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `packs/nga-msi-ngalol` | `nga-msi-ngalol` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `packs/nga-msi-wpi` | `nga-msi-wpi` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `packs/ocpp16-authorize` | `ocpp16-authorize` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-authorize-response` | `ocpp16-authorize-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-boot-notification` | `ocpp16-boot-notification` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-boot-notification-response` | `ocpp16-boot-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-cancel-reservation` | `ocpp16-cancel-reservation` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-cancel-reservation-response` | `ocpp16-cancel-reservation-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-certificate-signed` | `ocpp16-certificate-signed` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-certificate-signed-response` | `ocpp16-certificate-signed-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-change-availability` | `ocpp16-change-availability` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-change-availability-response` | `ocpp16-change-availability-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-change-configuration` | `ocpp16-change-configuration` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-change-configuration-response` | `ocpp16-change-configuration-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-clear-cache` | `ocpp16-clear-cache` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-clear-cache-response` | `ocpp16-clear-cache-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-clear-charging-profile` | `ocpp16-clear-charging-profile` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-clear-charging-profile-response` | `ocpp16-clear-charging-profile-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-data-transfer` | `ocpp16-data-transfer` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-data-transfer-response` | `ocpp16-data-transfer-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-delete-certificate` | `ocpp16-delete-certificate` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-delete-certificate-response` | `ocpp16-delete-certificate-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-diagnostics-status-notification` | `ocpp16-diagnostics-status-notification` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-diagnostics-status-notification-response` | `ocpp16-diagnostics-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-extended-trigger-message` | `ocpp16-extended-trigger-message` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-extended-trigger-message-response` | `ocpp16-extended-trigger-message-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-firmware-status-notification` | `ocpp16-firmware-status-notification` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-firmware-status-notification-response` | `ocpp16-firmware-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-composite-schedule` | `ocpp16-get-composite-schedule` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-composite-schedule-response` | `ocpp16-get-composite-schedule-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-configuration` | `ocpp16-get-configuration` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-configuration-response` | `ocpp16-get-configuration-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-diagnostics` | `ocpp16-get-diagnostics` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-diagnostics-response` | `ocpp16-get-diagnostics-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-installed-certificate-ids` | `ocpp16-get-installed-certificate-ids` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-installed-certificate-ids-response` | `ocpp16-get-installed-certificate-ids-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-local-list-version` | `ocpp16-get-local-list-version` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-local-list-version-response` | `ocpp16-get-local-list-version-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-log` | `ocpp16-get-log` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-get-log-response` | `ocpp16-get-log-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-heartbeat` | `ocpp16-heartbeat` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-heartbeat-response` | `ocpp16-heartbeat-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-install-certificate` | `ocpp16-install-certificate` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-install-certificate-response` | `ocpp16-install-certificate-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-log-status-notification` | `ocpp16-log-status-notification` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-log-status-notification-response` | `ocpp16-log-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-meter-values` | `ocpp16-meter-values` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-meter-values-response` | `ocpp16-meter-values-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-remote-start-transaction` | `ocpp16-remote-start-transaction` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-remote-start-transaction-response` | `ocpp16-remote-start-transaction-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-remote-stop-transaction` | `ocpp16-remote-stop-transaction` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-remote-stop-transaction-response` | `ocpp16-remote-stop-transaction-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-reserve-now` | `ocpp16-reserve-now` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-reserve-now-response` | `ocpp16-reserve-now-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-reset` | `ocpp16-reset` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-reset-response` | `ocpp16-reset-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-security-event-notification` | `ocpp16-security-event-notification` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-security-event-notification-response` | `ocpp16-security-event-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-send-local-list` | `ocpp16-send-local-list` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-send-local-list-response` | `ocpp16-send-local-list-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-set-charging-profile` | `ocpp16-set-charging-profile` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-set-charging-profile-response` | `ocpp16-set-charging-profile-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-sign-certificate` | `ocpp16-sign-certificate` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-sign-certificate-response` | `ocpp16-sign-certificate-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-signed-firmware-status-notification` | `ocpp16-signed-firmware-status-notification` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-signed-firmware-status-notification-response` | `ocpp16-signed-firmware-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-signed-update-firmware` | `ocpp16-signed-update-firmware` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-signed-update-firmware-response` | `ocpp16-signed-update-firmware-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-start-transaction` | `ocpp16-start-transaction` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-start-transaction-response` | `ocpp16-start-transaction-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-status-notification` | `ocpp16-status-notification` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-status-notification-response` | `ocpp16-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-stop-transaction` | `ocpp16-stop-transaction` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-stop-transaction-response` | `ocpp16-stop-transaction-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-trigger-message` | `ocpp16-trigger-message` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-trigger-message-response` | `ocpp16-trigger-message-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-unlock-connector` | `ocpp16-unlock-connector` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-unlock-connector-response` | `ocpp16-unlock-connector-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-update-firmware` | `ocpp16-update-firmware` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp16-update-firmware-response` | `ocpp16-update-firmware-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-authorize-request` | `ocpp201-authorize-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-authorize-response` | `ocpp201-authorize-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-boot-notification-request` | `ocpp201-boot-notification-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-boot-notification-response` | `ocpp201-boot-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-cancel-reservation-request` | `ocpp201-cancel-reservation-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-cancel-reservation-response` | `ocpp201-cancel-reservation-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-certificate-signed-request` | `ocpp201-certificate-signed-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-certificate-signed-response` | `ocpp201-certificate-signed-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-change-availability-request` | `ocpp201-change-availability-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-change-availability-response` | `ocpp201-change-availability-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-clear-cache-request` | `ocpp201-clear-cache-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-clear-cache-response` | `ocpp201-clear-cache-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-clear-charging-profile-request` | `ocpp201-clear-charging-profile-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-clear-charging-profile-response` | `ocpp201-clear-charging-profile-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-clear-display-message-request` | `ocpp201-clear-display-message-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-clear-display-message-response` | `ocpp201-clear-display-message-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-clear-variable-monitoring-request` | `ocpp201-clear-variable-monitoring-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-clear-variable-monitoring-response` | `ocpp201-clear-variable-monitoring-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-cleared-charging-limit-request` | `ocpp201-cleared-charging-limit-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-cleared-charging-limit-response` | `ocpp201-cleared-charging-limit-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-cost-updated-request` | `ocpp201-cost-updated-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-cost-updated-response` | `ocpp201-cost-updated-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-customer-information-request` | `ocpp201-customer-information-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-customer-information-response` | `ocpp201-customer-information-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-data-transfer-request` | `ocpp201-data-transfer-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-data-transfer-response` | `ocpp201-data-transfer-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-delete-certificate-request` | `ocpp201-delete-certificate-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-delete-certificate-response` | `ocpp201-delete-certificate-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-firmware-status-notification-request` | `ocpp201-firmware-status-notification-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-firmware-status-notification-response` | `ocpp201-firmware-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-base-report-request` | `ocpp201-get-base-report-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-base-report-response` | `ocpp201-get-base-report-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-certificate-status-request` | `ocpp201-get-certificate-status-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-certificate-status-response` | `ocpp201-get-certificate-status-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-charging-profiles-request` | `ocpp201-get-charging-profiles-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-charging-profiles-response` | `ocpp201-get-charging-profiles-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-composite-schedule-request` | `ocpp201-get-composite-schedule-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-composite-schedule-response` | `ocpp201-get-composite-schedule-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-display-messages-request` | `ocpp201-get-display-messages-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-display-messages-response` | `ocpp201-get-display-messages-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-installed-certificate-ids-request` | `ocpp201-get-installed-certificate-ids-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-installed-certificate-ids-response` | `ocpp201-get-installed-certificate-ids-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-local-list-version-request` | `ocpp201-get-local-list-version-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-local-list-version-response` | `ocpp201-get-local-list-version-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-log-request` | `ocpp201-get-log-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-log-response` | `ocpp201-get-log-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-monitoring-report-request` | `ocpp201-get-monitoring-report-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-monitoring-report-response` | `ocpp201-get-monitoring-report-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-report-request` | `ocpp201-get-report-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-report-response` | `ocpp201-get-report-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-transaction-status-request` | `ocpp201-get-transaction-status-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-transaction-status-response` | `ocpp201-get-transaction-status-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-variables-request` | `ocpp201-get-variables-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get-variables-response` | `ocpp201-get-variables-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get15118-ev-certificate-request` | `ocpp201-get15118-ev-certificate-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-get15118-ev-certificate-response` | `ocpp201-get15118-ev-certificate-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-heartbeat-request` | `ocpp201-heartbeat-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-heartbeat-response` | `ocpp201-heartbeat-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-install-certificate-request` | `ocpp201-install-certificate-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-install-certificate-response` | `ocpp201-install-certificate-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-log-status-notification-request` | `ocpp201-log-status-notification-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-log-status-notification-response` | `ocpp201-log-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-meter-values-request` | `ocpp201-meter-values-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-meter-values-response` | `ocpp201-meter-values-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-charging-limit-request` | `ocpp201-notify-charging-limit-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-charging-limit-response` | `ocpp201-notify-charging-limit-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-customer-information-request` | `ocpp201-notify-customer-information-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-customer-information-response` | `ocpp201-notify-customer-information-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-display-messages-request` | `ocpp201-notify-display-messages-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-display-messages-response` | `ocpp201-notify-display-messages-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-ev-charging-needs-request` | `ocpp201-notify-ev-charging-needs-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-ev-charging-needs-response` | `ocpp201-notify-ev-charging-needs-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-ev-charging-schedule-request` | `ocpp201-notify-ev-charging-schedule-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-ev-charging-schedule-response` | `ocpp201-notify-ev-charging-schedule-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-event-request` | `ocpp201-notify-event-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-event-response` | `ocpp201-notify-event-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-monitoring-report-request` | `ocpp201-notify-monitoring-report-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-monitoring-report-response` | `ocpp201-notify-monitoring-report-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-report-request` | `ocpp201-notify-report-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-notify-report-response` | `ocpp201-notify-report-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-publish-firmware-request` | `ocpp201-publish-firmware-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-publish-firmware-response` | `ocpp201-publish-firmware-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-publish-firmware-status-notification-request` | `ocpp201-publish-firmware-status-notification-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-publish-firmware-status-notification-response` | `ocpp201-publish-firmware-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-report-charging-profiles-request` | `ocpp201-report-charging-profiles-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-report-charging-profiles-response` | `ocpp201-report-charging-profiles-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-request-start-transaction-request` | `ocpp201-request-start-transaction-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-request-start-transaction-response` | `ocpp201-request-start-transaction-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-request-stop-transaction-request` | `ocpp201-request-stop-transaction-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-request-stop-transaction-response` | `ocpp201-request-stop-transaction-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-reservation-status-update-request` | `ocpp201-reservation-status-update-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-reservation-status-update-response` | `ocpp201-reservation-status-update-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-reserve-now-request` | `ocpp201-reserve-now-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-reserve-now-response` | `ocpp201-reserve-now-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-reset-request` | `ocpp201-reset-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-reset-response` | `ocpp201-reset-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-security-event-notification-request` | `ocpp201-security-event-notification-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-security-event-notification-response` | `ocpp201-security-event-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-send-local-list-request` | `ocpp201-send-local-list-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-send-local-list-response` | `ocpp201-send-local-list-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-charging-profile-request` | `ocpp201-set-charging-profile-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-charging-profile-response` | `ocpp201-set-charging-profile-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-display-message-request` | `ocpp201-set-display-message-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-display-message-response` | `ocpp201-set-display-message-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-monitoring-base-request` | `ocpp201-set-monitoring-base-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-monitoring-base-response` | `ocpp201-set-monitoring-base-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-monitoring-level-request` | `ocpp201-set-monitoring-level-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-monitoring-level-response` | `ocpp201-set-monitoring-level-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-network-profile-request` | `ocpp201-set-network-profile-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-network-profile-response` | `ocpp201-set-network-profile-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-variable-monitoring-request` | `ocpp201-set-variable-monitoring-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-variable-monitoring-response` | `ocpp201-set-variable-monitoring-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-variables-request` | `ocpp201-set-variables-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-set-variables-response` | `ocpp201-set-variables-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-sign-certificate-request` | `ocpp201-sign-certificate-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-sign-certificate-response` | `ocpp201-sign-certificate-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-status-notification-request` | `ocpp201-status-notification-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-status-notification-response` | `ocpp201-status-notification-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-transaction-event-request` | `ocpp201-transaction-event-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-transaction-event-response` | `ocpp201-transaction-event-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-trigger-message-request` | `ocpp201-trigger-message-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-trigger-message-response` | `ocpp201-trigger-message-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-unlock-connector-request` | `ocpp201-unlock-connector-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-unlock-connector-response` | `ocpp201-unlock-connector-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-unpublish-firmware-request` | `ocpp201-unpublish-firmware-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-unpublish-firmware-response` | `ocpp201-unpublish-firmware-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-update-firmware-request` | `ocpp201-update-firmware-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ocpp201-update-firmware-response` | `ocpp201-update-firmware-response` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ogc-dggs-zone` | `ogc-dggs-zone` | LicenseRef-OGC-Software | `open` | its own licence |
+| `packs/ogc-dggs-zone-data` | `ogc-dggs-zone-data` | LicenseRef-OGC-Software | `open` | its own licence |
+| `packs/ogc-dggs-zones` | `ogc-dggs-zones` | LicenseRef-OGC-Software | `open` | its own licence |
+| `packs/ogc-joins-join` | `ogc-joins-join` | LicenseRef-OGC-Software | `open` | its own licence |
+| `packs/ogc-joins-joins` | `ogc-joins-joins` | LicenseRef-OGC-Software | `open` | its own licence |
+| `packs/omsf-json` | `omsf-json` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/open311-request` | `open311-request` | CC-BY-3.0 | `open` | its own licence |
 | `packs/open311-request-response` | `open311-request-response` | CC-BY-3.0 | `open` | its own licence |
 | `packs/open311-service` | `open311-service` | CC-BY-3.0 | `open` | its own licence |
+| `packs/openaq-annual` | `openaq-annual` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-countries` | `openaq-countries` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-daily` | `openaq-daily` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-hourly` | `openaq-hourly` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-instruments` | `openaq-instruments` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-latest` | `openaq-latest` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-licenses` | `openaq-licenses` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-location-flags` | `openaq-location-flags` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-locations` | `openaq-locations` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-manufacturers` | `openaq-manufacturers` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-measurements` | `openaq-measurements` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-owners` | `openaq-owners` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-parameters` | `openaq-parameters` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-providers` | `openaq-providers` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/openaq-sensors` | `openaq-sensors` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `packs/opensky-states` | `opensky-states` | LicenseRef-OpenSky | `everything` | its own licence |
+| `packs/opensky-track` | `opensky-track` | LicenseRef-OpenSky | `everything` | its own licence |
 | `packs/overture-address` | `overture-address` | CC-BY-4.0 | `open` | its own licence |
 | `packs/overture-bathymetry` | `overture-bathymetry` | CC-BY-4.0 | `open` | its own licence |
 | `packs/overture-building` | `overture-building` | CC-BY-4.0 | `open` | its own licence |
@@ -710,13 +1117,21 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/sdm-weather-weather-alert` | `sdm-weather-weather-alert` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sdm-weather-weather-forecast` | `sdm-weather-weather-forecast` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sdm-weather-weather-observed` | `sdm-weather-weather-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sensorml-3-json` | `sensorml-3-json` | LicenseRef-OGC-Software | `open` | its own licence |
+| `packs/sflow5-datagram` | `sflow5-datagram` | LicenseRef-sFlow-License | `open` | its own licence |
+| `packs/signalk-delta` | `signalk-delta` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `packs/signalk-full` | `signalk-full` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `packs/signalk-vessel` | `signalk-vessel` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `packs/swe-common-3-json` | `swe-common-3-json` | LicenseRef-OGC-Software | `open` | its own licence |
 | `packs/tcx` | `tcx` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/wis2-notification` | `wis2-notification` | LicenseRef-unstated | `everything` | its own licence |
 
 ## Model modules outside `open`, or not under Apache-2.0
 
 | Module | Licence | Profile | Why |
 |---|---|---|---|
 | `model/adsb.def` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
+| `model/aisstream.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/arsdkprotoantiflicker.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/arsdkprotobackuplink.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/arsdkprotocalibration.def` | LicenseRef-unstated | `everything` | its own licence |
@@ -765,6 +1180,153 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/cdscurbstatus.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/cdscurbzone.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/cdssession.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/cef.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/fhirr4account.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4activitydefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4adverseevent.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4allergyintolerance.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4appointment.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4appointmentresponse.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4auditevent.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4basic.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4binary.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4biologicallyderivedproduct.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4bodystructure.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4bundle.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4capabilitystatement.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4careplan.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4careteam.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4catalogentry.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4chargeitem.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4chargeitemdefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4claim.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4claimresponse.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4clinicalimpression.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4codesystem.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4communication.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4communicationrequest.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4compartmentdefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4composition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4conceptmap.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4condition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4consent.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4contract.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4coverage.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4coverageeligibilityrequest.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4coverageeligibilityresponse.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4detectedissue.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4device.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4devicedefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4devicemetric.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4devicerequest.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4deviceusestatement.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4diagnosticreport.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4documentmanifest.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4documentreference.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4effectevidencesynthesis.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4encounter.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4endpoint.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4enrollmentrequest.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4enrollmentresponse.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4episodeofcare.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4eventdefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4evidence.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4evidencevariable.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4examplescenario.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4explanationofbenefit.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4familymemberhistory.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4flag.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4goal.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4graphdefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4group.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4guidanceresponse.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4healthcareservice.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4imagingstudy.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4immunization.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4immunizationevaluation.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4immunizationrecommendation.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4implementationguide.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4insuranceplan.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4invoice.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4library.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4linkage.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4list.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4location.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4measure.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4measurereport.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4media.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medication.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicationadministration.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicationdispense.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicationknowledge.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicationrequest.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicationstatement.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproduct.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductauthorization.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductcontraindication.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductindication.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductingredient.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductinteraction.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductmanufactured.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductpackaged.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductpharmaceutical.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4medicinalproductundesirableeffect.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4messagedefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4messageheader.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4molecularsequence.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4namingsystem.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4nutritionorder.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4observation.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4observationdefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4operationdefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4operationoutcome.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4organization.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4organizationaffiliation.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4parameters.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4patient.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4paymentnotice.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4paymentreconciliation.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4person.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4plandefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4practitioner.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4practitionerrole.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4procedure.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4provenance.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4questionnaire.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4questionnaireresponse.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4relatedperson.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4requestgroup.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4researchdefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4researchelementdefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4researchstudy.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4researchsubject.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4riskassessment.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4riskevidencesynthesis.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4schedule.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4searchparameter.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4servicerequest.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4slot.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4specimen.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4specimendefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4structuredefinition.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4structuremap.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4subscription.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4substance.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4substancenucleicacid.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4substancepolymer.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4substanceprotein.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4substancereferenceinformation.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4substancesourcematerial.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4substancespecification.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4supplydelivery.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4supplyrequest.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4task.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4terminologycapabilities.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4testreport.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4testscript.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4valueset.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4verificationresult.def` | CC0-1.0 | `open` | its own licence |
+| `model/fhirr4visionprescription.def` | CC0-1.0 | `open` | its own licence |
 | `model/gbfs10freebikestatus.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gbfs10gbfs.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gbfs10stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
@@ -849,9 +1411,33 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/gbfs30vehiclestatus.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gbfs30vehicletypes.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gbfs31rc3vehicleavailability.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gcnboom.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnburstcube.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnburstcubetest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnchime.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcncircular.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcndsa110.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnepwxt.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnfermigbm.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnfermilat.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnglowbug.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnheasarc.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnicecubelvk.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnicecubesingle.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnkm3net.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnmaxiknown.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnmaxiunknown.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnneutrino.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnsnews2.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnsuperk.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnsvom.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/gcnswiftguano.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/gpx.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/igsssr.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/kml.def` | LicenseRef-OGC-Software | `open` | its own licence |
+| `model/leef.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/lwm2m.def` | LicenseRef-OMA-Internal | `everything` | its own licence |
+| `model/massrobotics.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mavsdkactionserverarmdisarm.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mavsdkactionserverflightmodechange.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mavsdkactionserverland.def` | LicenseRef-unstated | `everything` | its own licence |
@@ -967,13 +1553,242 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/mavsdkwinchstatus.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mds.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/mvt.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/netflow5.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/ngaasam.def` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `model/ngabwarn.def` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `model/ngalol.def` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `model/ngawpi.def` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `model/ocpp16authorize.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16authorizeresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16bootnotification.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16bootnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16cancelreservation.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16cancelreservationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16certificatesigned.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16certificatesignedresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16changeavailability.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16changeavailabilityresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16changeconfiguration.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16changeconfigurationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16clearcache.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16clearcacheresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16clearchargingprofile.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16clearchargingprofileresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16datatransfer.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16datatransferresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16deletecertificate.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16deletecertificateresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16diagnosticsstatusnotification.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16diagnosticsstatusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16extendedtriggermessage.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16extendedtriggermessageresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16firmwarestatusnotification.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16firmwarestatusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getcompositeschedule.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getcompositescheduleresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getconfiguration.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getconfigurationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getdiagnostics.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getdiagnosticsresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getinstalledcertificateids.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getinstalledcertificateidsresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getlocallistversion.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getlocallistversionresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getlog.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16getlogresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16heartbeat.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16heartbeatresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16installcertificate.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16installcertificateresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16logstatusnotification.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16logstatusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16metervalues.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16metervaluesresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16remotestarttransaction.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16remotestarttransactionresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16remotestoptransaction.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16remotestoptransactionresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16reservenow.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16reservenowresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16reset.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16resetresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16securityeventnotification.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16securityeventnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16sendlocallist.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16sendlocallistresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16setchargingprofile.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16setchargingprofileresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16signcertificate.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16signcertificateresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16signedfirmwarestatusnotification.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16signedfirmwarestatusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16signedupdatefirmware.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16signedupdatefirmwareresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16starttransaction.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16starttransactionresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16statusnotification.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16statusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16stoptransaction.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16stoptransactionresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16triggermessage.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16triggermessageresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16unlockconnector.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16unlockconnectorresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16updatefirmware.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp16updatefirmwareresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201authorizerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201authorizeresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201bootnotificationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201bootnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201cancelreservationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201cancelreservationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201certificatesignedrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201certificatesignedresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201changeavailabilityrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201changeavailabilityresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201clearcacherequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201clearcacheresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201clearchargingprofilerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201clearchargingprofileresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201cleardisplaymessagerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201cleardisplaymessageresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201clearedcharginglimitrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201clearedcharginglimitresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201clearvariablemonitoringrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201clearvariablemonitoringresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201costupdatedrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201costupdatedresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201customerinformationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201customerinformationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201datatransferrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201datatransferresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201deletecertificaterequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201deletecertificateresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201firmwarestatusnotificationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201firmwarestatusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201get15118evcertificaterequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201get15118evcertificateresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getbasereportrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getbasereportresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getcertificatestatusrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getcertificatestatusresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getchargingprofilesrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getchargingprofilesresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getcompositeschedulerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getcompositescheduleresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getdisplaymessagesrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getdisplaymessagesresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getinstalledcertificateidsrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getinstalledcertificateidsresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getlocallistversionrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getlocallistversionresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getlogrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getlogresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getmonitoringreportrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getmonitoringreportresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getreportrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getreportresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201gettransactionstatusrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201gettransactionstatusresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getvariablesrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201getvariablesresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201heartbeatrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201heartbeatresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201installcertificaterequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201installcertificateresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201logstatusnotificationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201logstatusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201metervaluesrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201metervaluesresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifycharginglimitrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifycharginglimitresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifycustomerinformationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifycustomerinformationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifydisplaymessagesrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifydisplaymessagesresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifyevchargingneedsrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifyevchargingneedsresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifyevchargingschedulerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifyevchargingscheduleresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifyeventrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifyeventresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifymonitoringreportrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifymonitoringreportresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifyreportrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201notifyreportresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201publishfirmwarerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201publishfirmwareresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201publishfirmwarestatusnotificationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201publishfirmwarestatusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201reportchargingprofilesrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201reportchargingprofilesresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201requeststarttransactionrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201requeststarttransactionresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201requeststoptransactionrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201requeststoptransactionresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201reservationstatusupdaterequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201reservationstatusupdateresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201reservenowrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201reservenowresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201resetrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201resetresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201securityeventnotificationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201securityeventnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201sendlocallistrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201sendlocallistresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setchargingprofilerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setchargingprofileresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setdisplaymessagerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setdisplaymessageresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setmonitoringbaserequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setmonitoringbaseresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setmonitoringlevelrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setmonitoringlevelresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setnetworkprofilerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setnetworkprofileresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setvariablemonitoringrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setvariablemonitoringresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setvariablesrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201setvariablesresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201signcertificaterequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201signcertificateresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201statusnotificationrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201statusnotificationresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201transactioneventrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201transactioneventresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201triggermessagerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201triggermessageresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201unlockconnectorrequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201unlockconnectorresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201unpublishfirmwarerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201unpublishfirmwareresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201updatefirmwarerequest.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ocpp201updatefirmwareresponse.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ogcdggsd.def` | LicenseRef-OGC-Software | `open` | its own licence |
+| `model/ogcdggsz.def` | LicenseRef-OGC-Software | `open` | its own licence |
+| `model/ogcdggszl.def` | LicenseRef-OGC-Software | `open` | its own licence |
+| `model/ogcjoin.def` | LicenseRef-OGC-Software | `open` | its own licence |
+| `model/ogcjoins.def` | LicenseRef-OGC-Software | `open` | its own licence |
+| `model/omsf.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/open311request.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/open311requestresponse.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/open311service.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/openaqannual.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqcountries.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqdaily.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqflags.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqhourly.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqinstr.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqlatest.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqlicenses.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqloc.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqmeas.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqmfr.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqowners.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqparams.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqproviders.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/openaqsensors.def` | LicenseRef-OpenAQ | `everything` | its own licence |
+| `model/opensky.def` | LicenseRef-OpenSky | `everything` | its own licence |
 | `model/overtureaddress.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/overturebathymetry.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/overturebuilding.def` | CC-BY-4.0 | `open` | its own licence |
@@ -1082,7 +1897,14 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/sdmweatheralert.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sdmweatherforecast.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sdmweatherobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sensorml3.def` | LicenseRef-OGC-Software | `open` | its own licence |
+| `model/sflow.def` | LicenseRef-sFlow-License | `open` | its own licence |
+| `model/signalkdelta.def` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `model/signalkfull.def` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `model/signalkvessel.def` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `model/swecommon3.def` | LicenseRef-OGC-Software | `open` | its own licence |
 | `model/tcx.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/wis2.def` | LicenseRef-unstated | `everything` | its own licence |
 
 Every pack and module not listed here is Apache-2.0, profile `open`.
 [NOTICE](NOTICE) carries the attribution each licence asks for.

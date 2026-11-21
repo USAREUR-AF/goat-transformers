@@ -50,6 +50,26 @@
       "distribution": "public",
       "profile": "everything"
     },
+    "CC-BY-SA-2.0": {
+      "name": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+      "url": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "commercial": "yes",
+      "share_alike": true,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open+copyleft"
+    },
+    "CC0-1.0": {
+      "name": "Creative Commons Zero v1.0 Universal",
+      "url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": false,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    },
     "LicenseRef-NGA-MSI": {
       "name": "NGA Maritime Safety Information: no copyright claimed; NGA disclaimer required where NGA is named",
       "url": "https://msi.nga.mil",
@@ -90,6 +110,41 @@
       "distribution": "public",
       "profile": "everything"
     },
+    "LicenseRef-OpenAQ": {
+      "name": "OpenAQ terms of use",
+      "url": "https://docs.openaq.org/about/terms",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [
+        "using the hosted OpenAQ API to build products or services that substantially duplicate or directly compete with OpenAQ"
+      ],
+      "distribution": "public",
+      "profile": "everything"
+    },
+    "LicenseRef-OpenSky": {
+      "name": "OpenSky Network terms of use and data licence agreement",
+      "url": "https://opensky-network.org/about/terms-of-use",
+      "commercial": "no",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [
+        "any use other than non-profit research and non-profit education without a written licence",
+        "operational use of the REST API without a written agreement"
+      ],
+      "distribution": "public",
+      "profile": "everything"
+    },
+    "LicenseRef-sFlow-License": {
+      "name": "sFlow License Agreement of InMon Corp. (free, royalty-free; accepted by use; section 2.3: a licensee's Products that implement the specifications must strictly adhere to and fully comply with them and identify themselves with the sFlow(R) trademark, and their documentation must carry the phrase sFlow(R); section 7: InMon may terminate after three months of uncorrected non-compliance)",
+      "url": "http://www.inmon.com/technology/sflowlicense.txt",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    },
     "LicenseRef-unstated": {
       "name": "No licence stated by the source",
       "commercial": "unknown",
@@ -111,6 +166,11 @@
       "licence": "Apache-2.0",
       "profile": "everything",
       "because": "uses module adsb (CC-BY-NC-SA-4.0)"
+    },
+    "aisstream": {
+      "format": "aisstream",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "arsdk-proto-antiflicker": {
       "format": "arsdk-proto-antiflicker",
@@ -350,6 +410,741 @@
     "cds-session": {
       "format": "cds-session",
       "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cef": {
+      "format": "cef",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "fhir-r4-account": {
+      "format": "fhir-r4-account",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-activity-definition": {
+      "format": "fhir-r4-activity-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-adverse-event": {
+      "format": "fhir-r4-adverse-event",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-allergy-intolerance": {
+      "format": "fhir-r4-allergy-intolerance",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-appointment": {
+      "format": "fhir-r4-appointment",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-appointment-response": {
+      "format": "fhir-r4-appointment-response",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-audit-event": {
+      "format": "fhir-r4-audit-event",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-basic": {
+      "format": "fhir-r4-basic",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-binary": {
+      "format": "fhir-r4-binary",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-biologically-derived-product": {
+      "format": "fhir-r4-biologically-derived-product",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-body-structure": {
+      "format": "fhir-r4-body-structure",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-bundle": {
+      "format": "fhir-r4-bundle",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-capability-statement": {
+      "format": "fhir-r4-capability-statement",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-care-plan": {
+      "format": "fhir-r4-care-plan",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-care-team": {
+      "format": "fhir-r4-care-team",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-catalog-entry": {
+      "format": "fhir-r4-catalog-entry",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-charge-item": {
+      "format": "fhir-r4-charge-item",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-charge-item-definition": {
+      "format": "fhir-r4-charge-item-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-claim": {
+      "format": "fhir-r4-claim",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-claim-response": {
+      "format": "fhir-r4-claim-response",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-clinical-impression": {
+      "format": "fhir-r4-clinical-impression",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-code-system": {
+      "format": "fhir-r4-code-system",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-communication": {
+      "format": "fhir-r4-communication",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-communication-request": {
+      "format": "fhir-r4-communication-request",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-compartment-definition": {
+      "format": "fhir-r4-compartment-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-composition": {
+      "format": "fhir-r4-composition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-concept-map": {
+      "format": "fhir-r4-concept-map",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-condition": {
+      "format": "fhir-r4-condition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-consent": {
+      "format": "fhir-r4-consent",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-contract": {
+      "format": "fhir-r4-contract",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-coverage": {
+      "format": "fhir-r4-coverage",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-coverage-eligibility-request": {
+      "format": "fhir-r4-coverage-eligibility-request",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-coverage-eligibility-response": {
+      "format": "fhir-r4-coverage-eligibility-response",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-detected-issue": {
+      "format": "fhir-r4-detected-issue",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-device": {
+      "format": "fhir-r4-device",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-device-definition": {
+      "format": "fhir-r4-device-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-device-metric": {
+      "format": "fhir-r4-device-metric",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-device-request": {
+      "format": "fhir-r4-device-request",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-device-use-statement": {
+      "format": "fhir-r4-device-use-statement",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-diagnostic-report": {
+      "format": "fhir-r4-diagnostic-report",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-document-manifest": {
+      "format": "fhir-r4-document-manifest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-document-reference": {
+      "format": "fhir-r4-document-reference",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-effect-evidence-synthesis": {
+      "format": "fhir-r4-effect-evidence-synthesis",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-encounter": {
+      "format": "fhir-r4-encounter",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-endpoint": {
+      "format": "fhir-r4-endpoint",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-enrollment-request": {
+      "format": "fhir-r4-enrollment-request",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-enrollment-response": {
+      "format": "fhir-r4-enrollment-response",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-episode-of-care": {
+      "format": "fhir-r4-episode-of-care",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-event-definition": {
+      "format": "fhir-r4-event-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-evidence": {
+      "format": "fhir-r4-evidence",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-evidence-variable": {
+      "format": "fhir-r4-evidence-variable",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-example-scenario": {
+      "format": "fhir-r4-example-scenario",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-explanation-of-benefit": {
+      "format": "fhir-r4-explanation-of-benefit",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-family-member-history": {
+      "format": "fhir-r4-family-member-history",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-flag": {
+      "format": "fhir-r4-flag",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-goal": {
+      "format": "fhir-r4-goal",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-graph-definition": {
+      "format": "fhir-r4-graph-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-group": {
+      "format": "fhir-r4-group",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-guidance-response": {
+      "format": "fhir-r4-guidance-response",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-healthcare-service": {
+      "format": "fhir-r4-healthcare-service",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-imaging-study": {
+      "format": "fhir-r4-imaging-study",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-immunization": {
+      "format": "fhir-r4-immunization",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-immunization-evaluation": {
+      "format": "fhir-r4-immunization-evaluation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-immunization-recommendation": {
+      "format": "fhir-r4-immunization-recommendation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-implementation-guide": {
+      "format": "fhir-r4-implementation-guide",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-insurance-plan": {
+      "format": "fhir-r4-insurance-plan",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-invoice": {
+      "format": "fhir-r4-invoice",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-library": {
+      "format": "fhir-r4-library",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-linkage": {
+      "format": "fhir-r4-linkage",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-list": {
+      "format": "fhir-r4-list",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-location": {
+      "format": "fhir-r4-location",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-measure": {
+      "format": "fhir-r4-measure",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-measure-report": {
+      "format": "fhir-r4-measure-report",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-media": {
+      "format": "fhir-r4-media",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medication": {
+      "format": "fhir-r4-medication",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medication-administration": {
+      "format": "fhir-r4-medication-administration",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medication-dispense": {
+      "format": "fhir-r4-medication-dispense",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medication-knowledge": {
+      "format": "fhir-r4-medication-knowledge",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medication-request": {
+      "format": "fhir-r4-medication-request",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medication-statement": {
+      "format": "fhir-r4-medication-statement",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product": {
+      "format": "fhir-r4-medicinal-product",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-authorization": {
+      "format": "fhir-r4-medicinal-product-authorization",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-contraindication": {
+      "format": "fhir-r4-medicinal-product-contraindication",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-indication": {
+      "format": "fhir-r4-medicinal-product-indication",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-ingredient": {
+      "format": "fhir-r4-medicinal-product-ingredient",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-interaction": {
+      "format": "fhir-r4-medicinal-product-interaction",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-manufactured": {
+      "format": "fhir-r4-medicinal-product-manufactured",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-packaged": {
+      "format": "fhir-r4-medicinal-product-packaged",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-pharmaceutical": {
+      "format": "fhir-r4-medicinal-product-pharmaceutical",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-medicinal-product-undesirable-effect": {
+      "format": "fhir-r4-medicinal-product-undesirable-effect",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-message-definition": {
+      "format": "fhir-r4-message-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-message-header": {
+      "format": "fhir-r4-message-header",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-molecular-sequence": {
+      "format": "fhir-r4-molecular-sequence",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-naming-system": {
+      "format": "fhir-r4-naming-system",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-nutrition-order": {
+      "format": "fhir-r4-nutrition-order",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-observation": {
+      "format": "fhir-r4-observation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-observation-definition": {
+      "format": "fhir-r4-observation-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-operation-definition": {
+      "format": "fhir-r4-operation-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-operation-outcome": {
+      "format": "fhir-r4-operation-outcome",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-organization": {
+      "format": "fhir-r4-organization",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-organization-affiliation": {
+      "format": "fhir-r4-organization-affiliation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-parameters": {
+      "format": "fhir-r4-parameters",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-patient": {
+      "format": "fhir-r4-patient",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-payment-notice": {
+      "format": "fhir-r4-payment-notice",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-payment-reconciliation": {
+      "format": "fhir-r4-payment-reconciliation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-person": {
+      "format": "fhir-r4-person",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-plan-definition": {
+      "format": "fhir-r4-plan-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-practitioner": {
+      "format": "fhir-r4-practitioner",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-practitioner-role": {
+      "format": "fhir-r4-practitioner-role",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-procedure": {
+      "format": "fhir-r4-procedure",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-provenance": {
+      "format": "fhir-r4-provenance",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-questionnaire": {
+      "format": "fhir-r4-questionnaire",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-questionnaire-response": {
+      "format": "fhir-r4-questionnaire-response",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-related-person": {
+      "format": "fhir-r4-related-person",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-request-group": {
+      "format": "fhir-r4-request-group",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-research-definition": {
+      "format": "fhir-r4-research-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-research-element-definition": {
+      "format": "fhir-r4-research-element-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-research-study": {
+      "format": "fhir-r4-research-study",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-research-subject": {
+      "format": "fhir-r4-research-subject",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-risk-assessment": {
+      "format": "fhir-r4-risk-assessment",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-risk-evidence-synthesis": {
+      "format": "fhir-r4-risk-evidence-synthesis",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-schedule": {
+      "format": "fhir-r4-schedule",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-search-parameter": {
+      "format": "fhir-r4-search-parameter",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-service-request": {
+      "format": "fhir-r4-service-request",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-slot": {
+      "format": "fhir-r4-slot",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-specimen": {
+      "format": "fhir-r4-specimen",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-specimen-definition": {
+      "format": "fhir-r4-specimen-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-structure-definition": {
+      "format": "fhir-r4-structure-definition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-structure-map": {
+      "format": "fhir-r4-structure-map",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-subscription": {
+      "format": "fhir-r4-subscription",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-substance": {
+      "format": "fhir-r4-substance",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-substance-nucleic-acid": {
+      "format": "fhir-r4-substance-nucleic-acid",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-substance-polymer": {
+      "format": "fhir-r4-substance-polymer",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-substance-protein": {
+      "format": "fhir-r4-substance-protein",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-substance-reference-information": {
+      "format": "fhir-r4-substance-reference-information",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-substance-source-material": {
+      "format": "fhir-r4-substance-source-material",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-substance-specification": {
+      "format": "fhir-r4-substance-specification",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-supply-delivery": {
+      "format": "fhir-r4-supply-delivery",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-supply-request": {
+      "format": "fhir-r4-supply-request",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-task": {
+      "format": "fhir-r4-task",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-terminology-capabilities": {
+      "format": "fhir-r4-terminology-capabilities",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-test-report": {
+      "format": "fhir-r4-test-report",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-test-script": {
+      "format": "fhir-r4-test-script",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-value-set": {
+      "format": "fhir-r4-value-set",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-verification-result": {
+      "format": "fhir-r4-verification-result",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhir-r4-vision-prescription": {
+      "format": "fhir-r4-vision-prescription",
+      "licence": "CC0-1.0",
       "profile": "open"
     },
     "gbfs-1.0-free-bike-status": {
@@ -772,8 +1567,118 @@
       "licence": "CC-BY-3.0",
       "profile": "open"
     },
+    "gcn-boom-alert": {
+      "format": "gcn-boom-alert",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-burstcube-alert": {
+      "format": "gcn-burstcube-alert",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-burstcube-test": {
+      "format": "gcn-burstcube-test",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-chime-frb": {
+      "format": "gcn-chime-frb",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-circular": {
+      "format": "gcn-circular",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-dsa110-frb": {
+      "format": "gcn-dsa110-frb",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-einstein-probe-wxt-alert": {
+      "format": "gcn-einstein-probe-wxt-alert",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-fermi-gbm-trigger": {
+      "format": "gcn-fermi-gbm-trigger",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-fermi-lat-flare": {
+      "format": "gcn-fermi-lat-flare",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-glowbug-alert": {
+      "format": "gcn-glowbug-alert",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-heasarc-archive-alert": {
+      "format": "gcn-heasarc-archive-alert",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-icecube-lvk-nu-search": {
+      "format": "gcn-icecube-lvk-nu-search",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-icecube-single-neutrino": {
+      "format": "gcn-icecube-single-neutrino",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-km3net-alert": {
+      "format": "gcn-km3net-alert",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-maxi-gsc-known": {
+      "format": "gcn-maxi-gsc-known",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-maxi-gsc-unknown": {
+      "format": "gcn-maxi-gsc-unknown",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-neutrino-alert": {
+      "format": "gcn-neutrino-alert",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-snews2-coincidence": {
+      "format": "gcn-snews2-coincidence",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-superk-sn-alert": {
+      "format": "gcn-superk-sn-alert",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-svom-trigger": {
+      "format": "gcn-svom-trigger",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcn-swift-bat-guano": {
+      "format": "gcn-swift-bat-guano",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "gpx": {
       "format": "gpx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "igs-ssr": {
+      "format": "igs-ssr",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -782,9 +1687,19 @@
       "licence": "LicenseRef-OGC-Software",
       "profile": "open"
     },
+    "leef": {
+      "format": "leef",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "lwm2m-json": {
       "format": "lwm2m-json",
       "licence": "LicenseRef-OMA-Internal",
+      "profile": "everything"
+    },
+    "massrobotics-amr": {
+      "format": "massrobotics-amr",
+      "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
     "mavsdk-action-server-arm-disarm": {
@@ -1362,6 +2277,11 @@
       "licence": "CC-BY-3.0",
       "profile": "open"
     },
+    "netflow5": {
+      "format": "netflow5",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "nga-msi-asam": {
       "format": "nga-msi-asam",
       "licence": "LicenseRef-NGA-MSI",
@@ -1382,6 +2302,1066 @@
       "licence": "LicenseRef-NGA-MSI",
       "profile": "open"
     },
+    "ocpp16-authorize": {
+      "format": "ocpp16-authorize",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-authorize-response": {
+      "format": "ocpp16-authorize-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-boot-notification": {
+      "format": "ocpp16-boot-notification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-boot-notification-response": {
+      "format": "ocpp16-boot-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-cancel-reservation": {
+      "format": "ocpp16-cancel-reservation",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-cancel-reservation-response": {
+      "format": "ocpp16-cancel-reservation-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-certificate-signed": {
+      "format": "ocpp16-certificate-signed",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-certificate-signed-response": {
+      "format": "ocpp16-certificate-signed-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-change-availability": {
+      "format": "ocpp16-change-availability",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-change-availability-response": {
+      "format": "ocpp16-change-availability-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-change-configuration": {
+      "format": "ocpp16-change-configuration",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-change-configuration-response": {
+      "format": "ocpp16-change-configuration-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-clear-cache": {
+      "format": "ocpp16-clear-cache",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-clear-cache-response": {
+      "format": "ocpp16-clear-cache-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-clear-charging-profile": {
+      "format": "ocpp16-clear-charging-profile",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-clear-charging-profile-response": {
+      "format": "ocpp16-clear-charging-profile-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-data-transfer": {
+      "format": "ocpp16-data-transfer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-data-transfer-response": {
+      "format": "ocpp16-data-transfer-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-delete-certificate": {
+      "format": "ocpp16-delete-certificate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-delete-certificate-response": {
+      "format": "ocpp16-delete-certificate-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-diagnostics-status-notification": {
+      "format": "ocpp16-diagnostics-status-notification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-diagnostics-status-notification-response": {
+      "format": "ocpp16-diagnostics-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-extended-trigger-message": {
+      "format": "ocpp16-extended-trigger-message",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-extended-trigger-message-response": {
+      "format": "ocpp16-extended-trigger-message-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-firmware-status-notification": {
+      "format": "ocpp16-firmware-status-notification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-firmware-status-notification-response": {
+      "format": "ocpp16-firmware-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-composite-schedule": {
+      "format": "ocpp16-get-composite-schedule",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-composite-schedule-response": {
+      "format": "ocpp16-get-composite-schedule-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-configuration": {
+      "format": "ocpp16-get-configuration",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-configuration-response": {
+      "format": "ocpp16-get-configuration-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-diagnostics": {
+      "format": "ocpp16-get-diagnostics",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-diagnostics-response": {
+      "format": "ocpp16-get-diagnostics-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-installed-certificate-ids": {
+      "format": "ocpp16-get-installed-certificate-ids",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-installed-certificate-ids-response": {
+      "format": "ocpp16-get-installed-certificate-ids-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-local-list-version": {
+      "format": "ocpp16-get-local-list-version",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-local-list-version-response": {
+      "format": "ocpp16-get-local-list-version-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-log": {
+      "format": "ocpp16-get-log",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-get-log-response": {
+      "format": "ocpp16-get-log-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-heartbeat": {
+      "format": "ocpp16-heartbeat",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-heartbeat-response": {
+      "format": "ocpp16-heartbeat-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-install-certificate": {
+      "format": "ocpp16-install-certificate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-install-certificate-response": {
+      "format": "ocpp16-install-certificate-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-log-status-notification": {
+      "format": "ocpp16-log-status-notification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-log-status-notification-response": {
+      "format": "ocpp16-log-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-meter-values": {
+      "format": "ocpp16-meter-values",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-meter-values-response": {
+      "format": "ocpp16-meter-values-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-remote-start-transaction": {
+      "format": "ocpp16-remote-start-transaction",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-remote-start-transaction-response": {
+      "format": "ocpp16-remote-start-transaction-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-remote-stop-transaction": {
+      "format": "ocpp16-remote-stop-transaction",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-remote-stop-transaction-response": {
+      "format": "ocpp16-remote-stop-transaction-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-reserve-now": {
+      "format": "ocpp16-reserve-now",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-reserve-now-response": {
+      "format": "ocpp16-reserve-now-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-reset": {
+      "format": "ocpp16-reset",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-reset-response": {
+      "format": "ocpp16-reset-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-security-event-notification": {
+      "format": "ocpp16-security-event-notification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-security-event-notification-response": {
+      "format": "ocpp16-security-event-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-send-local-list": {
+      "format": "ocpp16-send-local-list",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-send-local-list-response": {
+      "format": "ocpp16-send-local-list-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-set-charging-profile": {
+      "format": "ocpp16-set-charging-profile",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-set-charging-profile-response": {
+      "format": "ocpp16-set-charging-profile-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-sign-certificate": {
+      "format": "ocpp16-sign-certificate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-sign-certificate-response": {
+      "format": "ocpp16-sign-certificate-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-signed-firmware-status-notification": {
+      "format": "ocpp16-signed-firmware-status-notification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-signed-firmware-status-notification-response": {
+      "format": "ocpp16-signed-firmware-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-signed-update-firmware": {
+      "format": "ocpp16-signed-update-firmware",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-signed-update-firmware-response": {
+      "format": "ocpp16-signed-update-firmware-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-start-transaction": {
+      "format": "ocpp16-start-transaction",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-start-transaction-response": {
+      "format": "ocpp16-start-transaction-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-status-notification": {
+      "format": "ocpp16-status-notification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-status-notification-response": {
+      "format": "ocpp16-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-stop-transaction": {
+      "format": "ocpp16-stop-transaction",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-stop-transaction-response": {
+      "format": "ocpp16-stop-transaction-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-trigger-message": {
+      "format": "ocpp16-trigger-message",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-trigger-message-response": {
+      "format": "ocpp16-trigger-message-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-unlock-connector": {
+      "format": "ocpp16-unlock-connector",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-unlock-connector-response": {
+      "format": "ocpp16-unlock-connector-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-update-firmware": {
+      "format": "ocpp16-update-firmware",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16-update-firmware-response": {
+      "format": "ocpp16-update-firmware-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-authorize-request": {
+      "format": "ocpp201-authorize-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-authorize-response": {
+      "format": "ocpp201-authorize-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-boot-notification-request": {
+      "format": "ocpp201-boot-notification-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-boot-notification-response": {
+      "format": "ocpp201-boot-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-cancel-reservation-request": {
+      "format": "ocpp201-cancel-reservation-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-cancel-reservation-response": {
+      "format": "ocpp201-cancel-reservation-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-certificate-signed-request": {
+      "format": "ocpp201-certificate-signed-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-certificate-signed-response": {
+      "format": "ocpp201-certificate-signed-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-change-availability-request": {
+      "format": "ocpp201-change-availability-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-change-availability-response": {
+      "format": "ocpp201-change-availability-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-clear-cache-request": {
+      "format": "ocpp201-clear-cache-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-clear-cache-response": {
+      "format": "ocpp201-clear-cache-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-clear-charging-profile-request": {
+      "format": "ocpp201-clear-charging-profile-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-clear-charging-profile-response": {
+      "format": "ocpp201-clear-charging-profile-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-clear-display-message-request": {
+      "format": "ocpp201-clear-display-message-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-clear-display-message-response": {
+      "format": "ocpp201-clear-display-message-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-clear-variable-monitoring-request": {
+      "format": "ocpp201-clear-variable-monitoring-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-clear-variable-monitoring-response": {
+      "format": "ocpp201-clear-variable-monitoring-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-cleared-charging-limit-request": {
+      "format": "ocpp201-cleared-charging-limit-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-cleared-charging-limit-response": {
+      "format": "ocpp201-cleared-charging-limit-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-cost-updated-request": {
+      "format": "ocpp201-cost-updated-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-cost-updated-response": {
+      "format": "ocpp201-cost-updated-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-customer-information-request": {
+      "format": "ocpp201-customer-information-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-customer-information-response": {
+      "format": "ocpp201-customer-information-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-data-transfer-request": {
+      "format": "ocpp201-data-transfer-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-data-transfer-response": {
+      "format": "ocpp201-data-transfer-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-delete-certificate-request": {
+      "format": "ocpp201-delete-certificate-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-delete-certificate-response": {
+      "format": "ocpp201-delete-certificate-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-firmware-status-notification-request": {
+      "format": "ocpp201-firmware-status-notification-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-firmware-status-notification-response": {
+      "format": "ocpp201-firmware-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-base-report-request": {
+      "format": "ocpp201-get-base-report-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-base-report-response": {
+      "format": "ocpp201-get-base-report-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-certificate-status-request": {
+      "format": "ocpp201-get-certificate-status-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-certificate-status-response": {
+      "format": "ocpp201-get-certificate-status-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-charging-profiles-request": {
+      "format": "ocpp201-get-charging-profiles-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-charging-profiles-response": {
+      "format": "ocpp201-get-charging-profiles-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-composite-schedule-request": {
+      "format": "ocpp201-get-composite-schedule-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-composite-schedule-response": {
+      "format": "ocpp201-get-composite-schedule-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-display-messages-request": {
+      "format": "ocpp201-get-display-messages-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-display-messages-response": {
+      "format": "ocpp201-get-display-messages-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-installed-certificate-ids-request": {
+      "format": "ocpp201-get-installed-certificate-ids-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-installed-certificate-ids-response": {
+      "format": "ocpp201-get-installed-certificate-ids-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-local-list-version-request": {
+      "format": "ocpp201-get-local-list-version-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-local-list-version-response": {
+      "format": "ocpp201-get-local-list-version-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-log-request": {
+      "format": "ocpp201-get-log-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-log-response": {
+      "format": "ocpp201-get-log-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-monitoring-report-request": {
+      "format": "ocpp201-get-monitoring-report-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-monitoring-report-response": {
+      "format": "ocpp201-get-monitoring-report-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-report-request": {
+      "format": "ocpp201-get-report-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-report-response": {
+      "format": "ocpp201-get-report-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-transaction-status-request": {
+      "format": "ocpp201-get-transaction-status-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-transaction-status-response": {
+      "format": "ocpp201-get-transaction-status-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-variables-request": {
+      "format": "ocpp201-get-variables-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get-variables-response": {
+      "format": "ocpp201-get-variables-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get15118-ev-certificate-request": {
+      "format": "ocpp201-get15118-ev-certificate-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-get15118-ev-certificate-response": {
+      "format": "ocpp201-get15118-ev-certificate-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-heartbeat-request": {
+      "format": "ocpp201-heartbeat-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-heartbeat-response": {
+      "format": "ocpp201-heartbeat-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-install-certificate-request": {
+      "format": "ocpp201-install-certificate-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-install-certificate-response": {
+      "format": "ocpp201-install-certificate-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-log-status-notification-request": {
+      "format": "ocpp201-log-status-notification-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-log-status-notification-response": {
+      "format": "ocpp201-log-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-meter-values-request": {
+      "format": "ocpp201-meter-values-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-meter-values-response": {
+      "format": "ocpp201-meter-values-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-charging-limit-request": {
+      "format": "ocpp201-notify-charging-limit-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-charging-limit-response": {
+      "format": "ocpp201-notify-charging-limit-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-customer-information-request": {
+      "format": "ocpp201-notify-customer-information-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-customer-information-response": {
+      "format": "ocpp201-notify-customer-information-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-display-messages-request": {
+      "format": "ocpp201-notify-display-messages-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-display-messages-response": {
+      "format": "ocpp201-notify-display-messages-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-ev-charging-needs-request": {
+      "format": "ocpp201-notify-ev-charging-needs-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-ev-charging-needs-response": {
+      "format": "ocpp201-notify-ev-charging-needs-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-ev-charging-schedule-request": {
+      "format": "ocpp201-notify-ev-charging-schedule-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-ev-charging-schedule-response": {
+      "format": "ocpp201-notify-ev-charging-schedule-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-event-request": {
+      "format": "ocpp201-notify-event-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-event-response": {
+      "format": "ocpp201-notify-event-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-monitoring-report-request": {
+      "format": "ocpp201-notify-monitoring-report-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-monitoring-report-response": {
+      "format": "ocpp201-notify-monitoring-report-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-report-request": {
+      "format": "ocpp201-notify-report-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-notify-report-response": {
+      "format": "ocpp201-notify-report-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-publish-firmware-request": {
+      "format": "ocpp201-publish-firmware-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-publish-firmware-response": {
+      "format": "ocpp201-publish-firmware-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-publish-firmware-status-notification-request": {
+      "format": "ocpp201-publish-firmware-status-notification-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-publish-firmware-status-notification-response": {
+      "format": "ocpp201-publish-firmware-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-report-charging-profiles-request": {
+      "format": "ocpp201-report-charging-profiles-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-report-charging-profiles-response": {
+      "format": "ocpp201-report-charging-profiles-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-request-start-transaction-request": {
+      "format": "ocpp201-request-start-transaction-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-request-start-transaction-response": {
+      "format": "ocpp201-request-start-transaction-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-request-stop-transaction-request": {
+      "format": "ocpp201-request-stop-transaction-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-request-stop-transaction-response": {
+      "format": "ocpp201-request-stop-transaction-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-reservation-status-update-request": {
+      "format": "ocpp201-reservation-status-update-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-reservation-status-update-response": {
+      "format": "ocpp201-reservation-status-update-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-reserve-now-request": {
+      "format": "ocpp201-reserve-now-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-reserve-now-response": {
+      "format": "ocpp201-reserve-now-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-reset-request": {
+      "format": "ocpp201-reset-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-reset-response": {
+      "format": "ocpp201-reset-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-security-event-notification-request": {
+      "format": "ocpp201-security-event-notification-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-security-event-notification-response": {
+      "format": "ocpp201-security-event-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-send-local-list-request": {
+      "format": "ocpp201-send-local-list-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-send-local-list-response": {
+      "format": "ocpp201-send-local-list-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-charging-profile-request": {
+      "format": "ocpp201-set-charging-profile-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-charging-profile-response": {
+      "format": "ocpp201-set-charging-profile-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-display-message-request": {
+      "format": "ocpp201-set-display-message-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-display-message-response": {
+      "format": "ocpp201-set-display-message-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-monitoring-base-request": {
+      "format": "ocpp201-set-monitoring-base-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-monitoring-base-response": {
+      "format": "ocpp201-set-monitoring-base-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-monitoring-level-request": {
+      "format": "ocpp201-set-monitoring-level-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-monitoring-level-response": {
+      "format": "ocpp201-set-monitoring-level-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-network-profile-request": {
+      "format": "ocpp201-set-network-profile-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-network-profile-response": {
+      "format": "ocpp201-set-network-profile-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-variable-monitoring-request": {
+      "format": "ocpp201-set-variable-monitoring-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-variable-monitoring-response": {
+      "format": "ocpp201-set-variable-monitoring-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-variables-request": {
+      "format": "ocpp201-set-variables-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-set-variables-response": {
+      "format": "ocpp201-set-variables-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-sign-certificate-request": {
+      "format": "ocpp201-sign-certificate-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-sign-certificate-response": {
+      "format": "ocpp201-sign-certificate-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-status-notification-request": {
+      "format": "ocpp201-status-notification-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-status-notification-response": {
+      "format": "ocpp201-status-notification-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-transaction-event-request": {
+      "format": "ocpp201-transaction-event-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-transaction-event-response": {
+      "format": "ocpp201-transaction-event-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-trigger-message-request": {
+      "format": "ocpp201-trigger-message-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-trigger-message-response": {
+      "format": "ocpp201-trigger-message-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-unlock-connector-request": {
+      "format": "ocpp201-unlock-connector-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-unlock-connector-response": {
+      "format": "ocpp201-unlock-connector-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-unpublish-firmware-request": {
+      "format": "ocpp201-unpublish-firmware-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-unpublish-firmware-response": {
+      "format": "ocpp201-unpublish-firmware-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-update-firmware-request": {
+      "format": "ocpp201-update-firmware-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201-update-firmware-response": {
+      "format": "ocpp201-update-firmware-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogc-dggs-zone": {
+      "format": "ogc-dggs-zone",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogc-dggs-zone-data": {
+      "format": "ogc-dggs-zone-data",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogc-dggs-zones": {
+      "format": "ogc-dggs-zones",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogc-joins-join": {
+      "format": "ogc-joins-join",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogc-joins-joins": {
+      "format": "ogc-joins-joins",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "omsf-json": {
+      "format": "omsf-json",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "open311-request": {
       "format": "open311-request",
       "licence": "CC-BY-3.0",
@@ -1396,6 +3376,91 @@
       "format": "open311-service",
       "licence": "CC-BY-3.0",
       "profile": "open"
+    },
+    "openaq-annual": {
+      "format": "openaq-annual",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-countries": {
+      "format": "openaq-countries",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-daily": {
+      "format": "openaq-daily",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-hourly": {
+      "format": "openaq-hourly",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-instruments": {
+      "format": "openaq-instruments",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-latest": {
+      "format": "openaq-latest",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-licenses": {
+      "format": "openaq-licenses",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-location-flags": {
+      "format": "openaq-location-flags",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-locations": {
+      "format": "openaq-locations",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-manufacturers": {
+      "format": "openaq-manufacturers",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-measurements": {
+      "format": "openaq-measurements",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-owners": {
+      "format": "openaq-owners",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-parameters": {
+      "format": "openaq-parameters",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-providers": {
+      "format": "openaq-providers",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaq-sensors": {
+      "format": "openaq-sensors",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "opensky-states": {
+      "format": "opensky-states",
+      "licence": "LicenseRef-OpenSky",
+      "profile": "everything"
+    },
+    "opensky-track": {
+      "format": "opensky-track",
+      "licence": "LicenseRef-OpenSky",
+      "profile": "everything"
     },
     "overture-address": {
       "format": "overture-address",
@@ -3437,8 +5502,43 @@
       "licence": "CC-BY-4.0",
       "profile": "open"
     },
+    "sensorml-3-json": {
+      "format": "sensorml-3-json",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "sflow5-datagram": {
+      "format": "sflow5-datagram",
+      "licence": "LicenseRef-sFlow-License",
+      "profile": "open"
+    },
+    "signalk-delta": {
+      "format": "signalk-delta",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
+    "signalk-full": {
+      "format": "signalk-full",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
+    "signalk-vessel": {
+      "format": "signalk-vessel",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
+    "swe-common-3-json": {
+      "format": "swe-common-3-json",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
     "tcx": {
       "format": "tcx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "wis2-notification": {
+      "format": "wis2-notification",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     }
@@ -3447,6 +5547,11 @@
     "adsb.def": {
       "module": "adsb",
       "licence": "CC-BY-NC-SA-4.0",
+      "profile": "everything"
+    },
+    "aisstream.def": {
+      "module": "aisstream",
+      "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
     "arsdkprotoantiflicker.def": {
@@ -3687,6 +5792,741 @@
     "cdssession.def": {
       "module": "cdssession",
       "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cef.def": {
+      "module": "cef",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "fhirr4account.def": {
+      "module": "fhirr4account",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4activitydefinition.def": {
+      "module": "fhirr4activitydefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4adverseevent.def": {
+      "module": "fhirr4adverseevent",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4allergyintolerance.def": {
+      "module": "fhirr4allergyintolerance",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4appointment.def": {
+      "module": "fhirr4appointment",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4appointmentresponse.def": {
+      "module": "fhirr4appointmentresponse",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4auditevent.def": {
+      "module": "fhirr4auditevent",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4basic.def": {
+      "module": "fhirr4basic",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4binary.def": {
+      "module": "fhirr4binary",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4biologicallyderivedproduct.def": {
+      "module": "fhirr4biologicallyderivedproduct",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4bodystructure.def": {
+      "module": "fhirr4bodystructure",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4bundle.def": {
+      "module": "fhirr4bundle",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4capabilitystatement.def": {
+      "module": "fhirr4capabilitystatement",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4careplan.def": {
+      "module": "fhirr4careplan",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4careteam.def": {
+      "module": "fhirr4careteam",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4catalogentry.def": {
+      "module": "fhirr4catalogentry",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4chargeitem.def": {
+      "module": "fhirr4chargeitem",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4chargeitemdefinition.def": {
+      "module": "fhirr4chargeitemdefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4claim.def": {
+      "module": "fhirr4claim",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4claimresponse.def": {
+      "module": "fhirr4claimresponse",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4clinicalimpression.def": {
+      "module": "fhirr4clinicalimpression",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4codesystem.def": {
+      "module": "fhirr4codesystem",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4communication.def": {
+      "module": "fhirr4communication",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4communicationrequest.def": {
+      "module": "fhirr4communicationrequest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4compartmentdefinition.def": {
+      "module": "fhirr4compartmentdefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4composition.def": {
+      "module": "fhirr4composition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4conceptmap.def": {
+      "module": "fhirr4conceptmap",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4condition.def": {
+      "module": "fhirr4condition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4consent.def": {
+      "module": "fhirr4consent",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4contract.def": {
+      "module": "fhirr4contract",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4coverage.def": {
+      "module": "fhirr4coverage",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4coverageeligibilityrequest.def": {
+      "module": "fhirr4coverageeligibilityrequest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4coverageeligibilityresponse.def": {
+      "module": "fhirr4coverageeligibilityresponse",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4detectedissue.def": {
+      "module": "fhirr4detectedissue",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4device.def": {
+      "module": "fhirr4device",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4devicedefinition.def": {
+      "module": "fhirr4devicedefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4devicemetric.def": {
+      "module": "fhirr4devicemetric",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4devicerequest.def": {
+      "module": "fhirr4devicerequest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4deviceusestatement.def": {
+      "module": "fhirr4deviceusestatement",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4diagnosticreport.def": {
+      "module": "fhirr4diagnosticreport",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4documentmanifest.def": {
+      "module": "fhirr4documentmanifest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4documentreference.def": {
+      "module": "fhirr4documentreference",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4effectevidencesynthesis.def": {
+      "module": "fhirr4effectevidencesynthesis",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4encounter.def": {
+      "module": "fhirr4encounter",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4endpoint.def": {
+      "module": "fhirr4endpoint",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4enrollmentrequest.def": {
+      "module": "fhirr4enrollmentrequest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4enrollmentresponse.def": {
+      "module": "fhirr4enrollmentresponse",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4episodeofcare.def": {
+      "module": "fhirr4episodeofcare",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4eventdefinition.def": {
+      "module": "fhirr4eventdefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4evidence.def": {
+      "module": "fhirr4evidence",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4evidencevariable.def": {
+      "module": "fhirr4evidencevariable",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4examplescenario.def": {
+      "module": "fhirr4examplescenario",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4explanationofbenefit.def": {
+      "module": "fhirr4explanationofbenefit",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4familymemberhistory.def": {
+      "module": "fhirr4familymemberhistory",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4flag.def": {
+      "module": "fhirr4flag",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4goal.def": {
+      "module": "fhirr4goal",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4graphdefinition.def": {
+      "module": "fhirr4graphdefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4group.def": {
+      "module": "fhirr4group",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4guidanceresponse.def": {
+      "module": "fhirr4guidanceresponse",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4healthcareservice.def": {
+      "module": "fhirr4healthcareservice",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4imagingstudy.def": {
+      "module": "fhirr4imagingstudy",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4immunization.def": {
+      "module": "fhirr4immunization",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4immunizationevaluation.def": {
+      "module": "fhirr4immunizationevaluation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4immunizationrecommendation.def": {
+      "module": "fhirr4immunizationrecommendation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4implementationguide.def": {
+      "module": "fhirr4implementationguide",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4insuranceplan.def": {
+      "module": "fhirr4insuranceplan",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4invoice.def": {
+      "module": "fhirr4invoice",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4library.def": {
+      "module": "fhirr4library",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4linkage.def": {
+      "module": "fhirr4linkage",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4list.def": {
+      "module": "fhirr4list",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4location.def": {
+      "module": "fhirr4location",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4measure.def": {
+      "module": "fhirr4measure",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4measurereport.def": {
+      "module": "fhirr4measurereport",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4media.def": {
+      "module": "fhirr4media",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medication.def": {
+      "module": "fhirr4medication",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicationadministration.def": {
+      "module": "fhirr4medicationadministration",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicationdispense.def": {
+      "module": "fhirr4medicationdispense",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicationknowledge.def": {
+      "module": "fhirr4medicationknowledge",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicationrequest.def": {
+      "module": "fhirr4medicationrequest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicationstatement.def": {
+      "module": "fhirr4medicationstatement",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproduct.def": {
+      "module": "fhirr4medicinalproduct",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductauthorization.def": {
+      "module": "fhirr4medicinalproductauthorization",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductcontraindication.def": {
+      "module": "fhirr4medicinalproductcontraindication",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductindication.def": {
+      "module": "fhirr4medicinalproductindication",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductingredient.def": {
+      "module": "fhirr4medicinalproductingredient",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductinteraction.def": {
+      "module": "fhirr4medicinalproductinteraction",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductmanufactured.def": {
+      "module": "fhirr4medicinalproductmanufactured",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductpackaged.def": {
+      "module": "fhirr4medicinalproductpackaged",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductpharmaceutical.def": {
+      "module": "fhirr4medicinalproductpharmaceutical",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4medicinalproductundesirableeffect.def": {
+      "module": "fhirr4medicinalproductundesirableeffect",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4messagedefinition.def": {
+      "module": "fhirr4messagedefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4messageheader.def": {
+      "module": "fhirr4messageheader",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4molecularsequence.def": {
+      "module": "fhirr4molecularsequence",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4namingsystem.def": {
+      "module": "fhirr4namingsystem",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4nutritionorder.def": {
+      "module": "fhirr4nutritionorder",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4observation.def": {
+      "module": "fhirr4observation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4observationdefinition.def": {
+      "module": "fhirr4observationdefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4operationdefinition.def": {
+      "module": "fhirr4operationdefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4operationoutcome.def": {
+      "module": "fhirr4operationoutcome",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4organization.def": {
+      "module": "fhirr4organization",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4organizationaffiliation.def": {
+      "module": "fhirr4organizationaffiliation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4parameters.def": {
+      "module": "fhirr4parameters",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4patient.def": {
+      "module": "fhirr4patient",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4paymentnotice.def": {
+      "module": "fhirr4paymentnotice",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4paymentreconciliation.def": {
+      "module": "fhirr4paymentreconciliation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4person.def": {
+      "module": "fhirr4person",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4plandefinition.def": {
+      "module": "fhirr4plandefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4practitioner.def": {
+      "module": "fhirr4practitioner",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4practitionerrole.def": {
+      "module": "fhirr4practitionerrole",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4procedure.def": {
+      "module": "fhirr4procedure",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4provenance.def": {
+      "module": "fhirr4provenance",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4questionnaire.def": {
+      "module": "fhirr4questionnaire",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4questionnaireresponse.def": {
+      "module": "fhirr4questionnaireresponse",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4relatedperson.def": {
+      "module": "fhirr4relatedperson",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4requestgroup.def": {
+      "module": "fhirr4requestgroup",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4researchdefinition.def": {
+      "module": "fhirr4researchdefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4researchelementdefinition.def": {
+      "module": "fhirr4researchelementdefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4researchstudy.def": {
+      "module": "fhirr4researchstudy",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4researchsubject.def": {
+      "module": "fhirr4researchsubject",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4riskassessment.def": {
+      "module": "fhirr4riskassessment",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4riskevidencesynthesis.def": {
+      "module": "fhirr4riskevidencesynthesis",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4schedule.def": {
+      "module": "fhirr4schedule",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4searchparameter.def": {
+      "module": "fhirr4searchparameter",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4servicerequest.def": {
+      "module": "fhirr4servicerequest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4slot.def": {
+      "module": "fhirr4slot",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4specimen.def": {
+      "module": "fhirr4specimen",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4specimendefinition.def": {
+      "module": "fhirr4specimendefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4structuredefinition.def": {
+      "module": "fhirr4structuredefinition",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4structuremap.def": {
+      "module": "fhirr4structuremap",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4subscription.def": {
+      "module": "fhirr4subscription",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4substance.def": {
+      "module": "fhirr4substance",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4substancenucleicacid.def": {
+      "module": "fhirr4substancenucleicacid",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4substancepolymer.def": {
+      "module": "fhirr4substancepolymer",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4substanceprotein.def": {
+      "module": "fhirr4substanceprotein",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4substancereferenceinformation.def": {
+      "module": "fhirr4substancereferenceinformation",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4substancesourcematerial.def": {
+      "module": "fhirr4substancesourcematerial",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4substancespecification.def": {
+      "module": "fhirr4substancespecification",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4supplydelivery.def": {
+      "module": "fhirr4supplydelivery",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4supplyrequest.def": {
+      "module": "fhirr4supplyrequest",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4task.def": {
+      "module": "fhirr4task",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4terminologycapabilities.def": {
+      "module": "fhirr4terminologycapabilities",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4testreport.def": {
+      "module": "fhirr4testreport",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4testscript.def": {
+      "module": "fhirr4testscript",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4valueset.def": {
+      "module": "fhirr4valueset",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4verificationresult.def": {
+      "module": "fhirr4verificationresult",
+      "licence": "CC0-1.0",
+      "profile": "open"
+    },
+    "fhirr4visionprescription.def": {
+      "module": "fhirr4visionprescription",
+      "licence": "CC0-1.0",
       "profile": "open"
     },
     "gbfs10freebikestatus.def": {
@@ -4109,8 +6949,118 @@
       "licence": "CC-BY-3.0",
       "profile": "open"
     },
+    "gcnboom.def": {
+      "module": "gcnboom",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnburstcube.def": {
+      "module": "gcnburstcube",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnburstcubetest.def": {
+      "module": "gcnburstcubetest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnchime.def": {
+      "module": "gcnchime",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcncircular.def": {
+      "module": "gcncircular",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcndsa110.def": {
+      "module": "gcndsa110",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnepwxt.def": {
+      "module": "gcnepwxt",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnfermigbm.def": {
+      "module": "gcnfermigbm",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnfermilat.def": {
+      "module": "gcnfermilat",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnglowbug.def": {
+      "module": "gcnglowbug",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnheasarc.def": {
+      "module": "gcnheasarc",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnicecubelvk.def": {
+      "module": "gcnicecubelvk",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnicecubesingle.def": {
+      "module": "gcnicecubesingle",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnkm3net.def": {
+      "module": "gcnkm3net",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnmaxiknown.def": {
+      "module": "gcnmaxiknown",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnmaxiunknown.def": {
+      "module": "gcnmaxiunknown",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnneutrino.def": {
+      "module": "gcnneutrino",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnsnews2.def": {
+      "module": "gcnsnews2",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnsuperk.def": {
+      "module": "gcnsuperk",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnsvom.def": {
+      "module": "gcnsvom",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gcnswiftguano.def": {
+      "module": "gcnswiftguano",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "gpx.def": {
       "module": "gpx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "igsssr.def": {
+      "module": "igsssr",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -4119,9 +7069,19 @@
       "licence": "LicenseRef-OGC-Software",
       "profile": "open"
     },
+    "leef.def": {
+      "module": "leef",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "lwm2m.def": {
       "module": "lwm2m",
       "licence": "LicenseRef-OMA-Internal",
+      "profile": "everything"
+    },
+    "massrobotics.def": {
+      "module": "massrobotics",
+      "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
     "mavsdkactionserverarmdisarm.def": {
@@ -4699,6 +7659,11 @@
       "licence": "CC-BY-3.0",
       "profile": "open"
     },
+    "netflow5.def": {
+      "module": "netflow5",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "ngaasam.def": {
       "module": "ngaasam",
       "licence": "LicenseRef-NGA-MSI",
@@ -4719,6 +7684,1066 @@
       "licence": "LicenseRef-NGA-MSI",
       "profile": "open"
     },
+    "ocpp16authorize.def": {
+      "module": "ocpp16authorize",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16authorizeresponse.def": {
+      "module": "ocpp16authorizeresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16bootnotification.def": {
+      "module": "ocpp16bootnotification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16bootnotificationresponse.def": {
+      "module": "ocpp16bootnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16cancelreservation.def": {
+      "module": "ocpp16cancelreservation",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16cancelreservationresponse.def": {
+      "module": "ocpp16cancelreservationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16certificatesigned.def": {
+      "module": "ocpp16certificatesigned",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16certificatesignedresponse.def": {
+      "module": "ocpp16certificatesignedresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16changeavailability.def": {
+      "module": "ocpp16changeavailability",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16changeavailabilityresponse.def": {
+      "module": "ocpp16changeavailabilityresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16changeconfiguration.def": {
+      "module": "ocpp16changeconfiguration",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16changeconfigurationresponse.def": {
+      "module": "ocpp16changeconfigurationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16clearcache.def": {
+      "module": "ocpp16clearcache",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16clearcacheresponse.def": {
+      "module": "ocpp16clearcacheresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16clearchargingprofile.def": {
+      "module": "ocpp16clearchargingprofile",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16clearchargingprofileresponse.def": {
+      "module": "ocpp16clearchargingprofileresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16datatransfer.def": {
+      "module": "ocpp16datatransfer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16datatransferresponse.def": {
+      "module": "ocpp16datatransferresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16deletecertificate.def": {
+      "module": "ocpp16deletecertificate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16deletecertificateresponse.def": {
+      "module": "ocpp16deletecertificateresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16diagnosticsstatusnotification.def": {
+      "module": "ocpp16diagnosticsstatusnotification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16diagnosticsstatusnotificationresponse.def": {
+      "module": "ocpp16diagnosticsstatusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16extendedtriggermessage.def": {
+      "module": "ocpp16extendedtriggermessage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16extendedtriggermessageresponse.def": {
+      "module": "ocpp16extendedtriggermessageresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16firmwarestatusnotification.def": {
+      "module": "ocpp16firmwarestatusnotification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16firmwarestatusnotificationresponse.def": {
+      "module": "ocpp16firmwarestatusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getcompositeschedule.def": {
+      "module": "ocpp16getcompositeschedule",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getcompositescheduleresponse.def": {
+      "module": "ocpp16getcompositescheduleresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getconfiguration.def": {
+      "module": "ocpp16getconfiguration",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getconfigurationresponse.def": {
+      "module": "ocpp16getconfigurationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getdiagnostics.def": {
+      "module": "ocpp16getdiagnostics",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getdiagnosticsresponse.def": {
+      "module": "ocpp16getdiagnosticsresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getinstalledcertificateids.def": {
+      "module": "ocpp16getinstalledcertificateids",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getinstalledcertificateidsresponse.def": {
+      "module": "ocpp16getinstalledcertificateidsresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getlocallistversion.def": {
+      "module": "ocpp16getlocallistversion",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getlocallistversionresponse.def": {
+      "module": "ocpp16getlocallistversionresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getlog.def": {
+      "module": "ocpp16getlog",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16getlogresponse.def": {
+      "module": "ocpp16getlogresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16heartbeat.def": {
+      "module": "ocpp16heartbeat",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16heartbeatresponse.def": {
+      "module": "ocpp16heartbeatresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16installcertificate.def": {
+      "module": "ocpp16installcertificate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16installcertificateresponse.def": {
+      "module": "ocpp16installcertificateresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16logstatusnotification.def": {
+      "module": "ocpp16logstatusnotification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16logstatusnotificationresponse.def": {
+      "module": "ocpp16logstatusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16metervalues.def": {
+      "module": "ocpp16metervalues",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16metervaluesresponse.def": {
+      "module": "ocpp16metervaluesresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16remotestarttransaction.def": {
+      "module": "ocpp16remotestarttransaction",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16remotestarttransactionresponse.def": {
+      "module": "ocpp16remotestarttransactionresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16remotestoptransaction.def": {
+      "module": "ocpp16remotestoptransaction",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16remotestoptransactionresponse.def": {
+      "module": "ocpp16remotestoptransactionresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16reservenow.def": {
+      "module": "ocpp16reservenow",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16reservenowresponse.def": {
+      "module": "ocpp16reservenowresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16reset.def": {
+      "module": "ocpp16reset",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16resetresponse.def": {
+      "module": "ocpp16resetresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16securityeventnotification.def": {
+      "module": "ocpp16securityeventnotification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16securityeventnotificationresponse.def": {
+      "module": "ocpp16securityeventnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16sendlocallist.def": {
+      "module": "ocpp16sendlocallist",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16sendlocallistresponse.def": {
+      "module": "ocpp16sendlocallistresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16setchargingprofile.def": {
+      "module": "ocpp16setchargingprofile",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16setchargingprofileresponse.def": {
+      "module": "ocpp16setchargingprofileresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16signcertificate.def": {
+      "module": "ocpp16signcertificate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16signcertificateresponse.def": {
+      "module": "ocpp16signcertificateresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16signedfirmwarestatusnotification.def": {
+      "module": "ocpp16signedfirmwarestatusnotification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16signedfirmwarestatusnotificationresponse.def": {
+      "module": "ocpp16signedfirmwarestatusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16signedupdatefirmware.def": {
+      "module": "ocpp16signedupdatefirmware",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16signedupdatefirmwareresponse.def": {
+      "module": "ocpp16signedupdatefirmwareresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16starttransaction.def": {
+      "module": "ocpp16starttransaction",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16starttransactionresponse.def": {
+      "module": "ocpp16starttransactionresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16statusnotification.def": {
+      "module": "ocpp16statusnotification",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16statusnotificationresponse.def": {
+      "module": "ocpp16statusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16stoptransaction.def": {
+      "module": "ocpp16stoptransaction",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16stoptransactionresponse.def": {
+      "module": "ocpp16stoptransactionresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16triggermessage.def": {
+      "module": "ocpp16triggermessage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16triggermessageresponse.def": {
+      "module": "ocpp16triggermessageresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16unlockconnector.def": {
+      "module": "ocpp16unlockconnector",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16unlockconnectorresponse.def": {
+      "module": "ocpp16unlockconnectorresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16updatefirmware.def": {
+      "module": "ocpp16updatefirmware",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp16updatefirmwareresponse.def": {
+      "module": "ocpp16updatefirmwareresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201authorizerequest.def": {
+      "module": "ocpp201authorizerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201authorizeresponse.def": {
+      "module": "ocpp201authorizeresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201bootnotificationrequest.def": {
+      "module": "ocpp201bootnotificationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201bootnotificationresponse.def": {
+      "module": "ocpp201bootnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201cancelreservationrequest.def": {
+      "module": "ocpp201cancelreservationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201cancelreservationresponse.def": {
+      "module": "ocpp201cancelreservationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201certificatesignedrequest.def": {
+      "module": "ocpp201certificatesignedrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201certificatesignedresponse.def": {
+      "module": "ocpp201certificatesignedresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201changeavailabilityrequest.def": {
+      "module": "ocpp201changeavailabilityrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201changeavailabilityresponse.def": {
+      "module": "ocpp201changeavailabilityresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201clearcacherequest.def": {
+      "module": "ocpp201clearcacherequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201clearcacheresponse.def": {
+      "module": "ocpp201clearcacheresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201clearchargingprofilerequest.def": {
+      "module": "ocpp201clearchargingprofilerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201clearchargingprofileresponse.def": {
+      "module": "ocpp201clearchargingprofileresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201cleardisplaymessagerequest.def": {
+      "module": "ocpp201cleardisplaymessagerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201cleardisplaymessageresponse.def": {
+      "module": "ocpp201cleardisplaymessageresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201clearedcharginglimitrequest.def": {
+      "module": "ocpp201clearedcharginglimitrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201clearedcharginglimitresponse.def": {
+      "module": "ocpp201clearedcharginglimitresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201clearvariablemonitoringrequest.def": {
+      "module": "ocpp201clearvariablemonitoringrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201clearvariablemonitoringresponse.def": {
+      "module": "ocpp201clearvariablemonitoringresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201costupdatedrequest.def": {
+      "module": "ocpp201costupdatedrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201costupdatedresponse.def": {
+      "module": "ocpp201costupdatedresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201customerinformationrequest.def": {
+      "module": "ocpp201customerinformationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201customerinformationresponse.def": {
+      "module": "ocpp201customerinformationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201datatransferrequest.def": {
+      "module": "ocpp201datatransferrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201datatransferresponse.def": {
+      "module": "ocpp201datatransferresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201deletecertificaterequest.def": {
+      "module": "ocpp201deletecertificaterequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201deletecertificateresponse.def": {
+      "module": "ocpp201deletecertificateresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201firmwarestatusnotificationrequest.def": {
+      "module": "ocpp201firmwarestatusnotificationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201firmwarestatusnotificationresponse.def": {
+      "module": "ocpp201firmwarestatusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201get15118evcertificaterequest.def": {
+      "module": "ocpp201get15118evcertificaterequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201get15118evcertificateresponse.def": {
+      "module": "ocpp201get15118evcertificateresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getbasereportrequest.def": {
+      "module": "ocpp201getbasereportrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getbasereportresponse.def": {
+      "module": "ocpp201getbasereportresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getcertificatestatusrequest.def": {
+      "module": "ocpp201getcertificatestatusrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getcertificatestatusresponse.def": {
+      "module": "ocpp201getcertificatestatusresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getchargingprofilesrequest.def": {
+      "module": "ocpp201getchargingprofilesrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getchargingprofilesresponse.def": {
+      "module": "ocpp201getchargingprofilesresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getcompositeschedulerequest.def": {
+      "module": "ocpp201getcompositeschedulerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getcompositescheduleresponse.def": {
+      "module": "ocpp201getcompositescheduleresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getdisplaymessagesrequest.def": {
+      "module": "ocpp201getdisplaymessagesrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getdisplaymessagesresponse.def": {
+      "module": "ocpp201getdisplaymessagesresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getinstalledcertificateidsrequest.def": {
+      "module": "ocpp201getinstalledcertificateidsrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getinstalledcertificateidsresponse.def": {
+      "module": "ocpp201getinstalledcertificateidsresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getlocallistversionrequest.def": {
+      "module": "ocpp201getlocallistversionrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getlocallistversionresponse.def": {
+      "module": "ocpp201getlocallistversionresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getlogrequest.def": {
+      "module": "ocpp201getlogrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getlogresponse.def": {
+      "module": "ocpp201getlogresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getmonitoringreportrequest.def": {
+      "module": "ocpp201getmonitoringreportrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getmonitoringreportresponse.def": {
+      "module": "ocpp201getmonitoringreportresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getreportrequest.def": {
+      "module": "ocpp201getreportrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getreportresponse.def": {
+      "module": "ocpp201getreportresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201gettransactionstatusrequest.def": {
+      "module": "ocpp201gettransactionstatusrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201gettransactionstatusresponse.def": {
+      "module": "ocpp201gettransactionstatusresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getvariablesrequest.def": {
+      "module": "ocpp201getvariablesrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201getvariablesresponse.def": {
+      "module": "ocpp201getvariablesresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201heartbeatrequest.def": {
+      "module": "ocpp201heartbeatrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201heartbeatresponse.def": {
+      "module": "ocpp201heartbeatresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201installcertificaterequest.def": {
+      "module": "ocpp201installcertificaterequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201installcertificateresponse.def": {
+      "module": "ocpp201installcertificateresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201logstatusnotificationrequest.def": {
+      "module": "ocpp201logstatusnotificationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201logstatusnotificationresponse.def": {
+      "module": "ocpp201logstatusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201metervaluesrequest.def": {
+      "module": "ocpp201metervaluesrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201metervaluesresponse.def": {
+      "module": "ocpp201metervaluesresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifycharginglimitrequest.def": {
+      "module": "ocpp201notifycharginglimitrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifycharginglimitresponse.def": {
+      "module": "ocpp201notifycharginglimitresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifycustomerinformationrequest.def": {
+      "module": "ocpp201notifycustomerinformationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifycustomerinformationresponse.def": {
+      "module": "ocpp201notifycustomerinformationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifydisplaymessagesrequest.def": {
+      "module": "ocpp201notifydisplaymessagesrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifydisplaymessagesresponse.def": {
+      "module": "ocpp201notifydisplaymessagesresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifyevchargingneedsrequest.def": {
+      "module": "ocpp201notifyevchargingneedsrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifyevchargingneedsresponse.def": {
+      "module": "ocpp201notifyevchargingneedsresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifyevchargingschedulerequest.def": {
+      "module": "ocpp201notifyevchargingschedulerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifyevchargingscheduleresponse.def": {
+      "module": "ocpp201notifyevchargingscheduleresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifyeventrequest.def": {
+      "module": "ocpp201notifyeventrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifyeventresponse.def": {
+      "module": "ocpp201notifyeventresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifymonitoringreportrequest.def": {
+      "module": "ocpp201notifymonitoringreportrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifymonitoringreportresponse.def": {
+      "module": "ocpp201notifymonitoringreportresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifyreportrequest.def": {
+      "module": "ocpp201notifyreportrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201notifyreportresponse.def": {
+      "module": "ocpp201notifyreportresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201publishfirmwarerequest.def": {
+      "module": "ocpp201publishfirmwarerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201publishfirmwareresponse.def": {
+      "module": "ocpp201publishfirmwareresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201publishfirmwarestatusnotificationrequest.def": {
+      "module": "ocpp201publishfirmwarestatusnotificationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201publishfirmwarestatusnotificationresponse.def": {
+      "module": "ocpp201publishfirmwarestatusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201reportchargingprofilesrequest.def": {
+      "module": "ocpp201reportchargingprofilesrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201reportchargingprofilesresponse.def": {
+      "module": "ocpp201reportchargingprofilesresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201requeststarttransactionrequest.def": {
+      "module": "ocpp201requeststarttransactionrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201requeststarttransactionresponse.def": {
+      "module": "ocpp201requeststarttransactionresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201requeststoptransactionrequest.def": {
+      "module": "ocpp201requeststoptransactionrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201requeststoptransactionresponse.def": {
+      "module": "ocpp201requeststoptransactionresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201reservationstatusupdaterequest.def": {
+      "module": "ocpp201reservationstatusupdaterequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201reservationstatusupdateresponse.def": {
+      "module": "ocpp201reservationstatusupdateresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201reservenowrequest.def": {
+      "module": "ocpp201reservenowrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201reservenowresponse.def": {
+      "module": "ocpp201reservenowresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201resetrequest.def": {
+      "module": "ocpp201resetrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201resetresponse.def": {
+      "module": "ocpp201resetresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201securityeventnotificationrequest.def": {
+      "module": "ocpp201securityeventnotificationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201securityeventnotificationresponse.def": {
+      "module": "ocpp201securityeventnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201sendlocallistrequest.def": {
+      "module": "ocpp201sendlocallistrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201sendlocallistresponse.def": {
+      "module": "ocpp201sendlocallistresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setchargingprofilerequest.def": {
+      "module": "ocpp201setchargingprofilerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setchargingprofileresponse.def": {
+      "module": "ocpp201setchargingprofileresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setdisplaymessagerequest.def": {
+      "module": "ocpp201setdisplaymessagerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setdisplaymessageresponse.def": {
+      "module": "ocpp201setdisplaymessageresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setmonitoringbaserequest.def": {
+      "module": "ocpp201setmonitoringbaserequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setmonitoringbaseresponse.def": {
+      "module": "ocpp201setmonitoringbaseresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setmonitoringlevelrequest.def": {
+      "module": "ocpp201setmonitoringlevelrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setmonitoringlevelresponse.def": {
+      "module": "ocpp201setmonitoringlevelresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setnetworkprofilerequest.def": {
+      "module": "ocpp201setnetworkprofilerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setnetworkprofileresponse.def": {
+      "module": "ocpp201setnetworkprofileresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setvariablemonitoringrequest.def": {
+      "module": "ocpp201setvariablemonitoringrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setvariablemonitoringresponse.def": {
+      "module": "ocpp201setvariablemonitoringresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setvariablesrequest.def": {
+      "module": "ocpp201setvariablesrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201setvariablesresponse.def": {
+      "module": "ocpp201setvariablesresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201signcertificaterequest.def": {
+      "module": "ocpp201signcertificaterequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201signcertificateresponse.def": {
+      "module": "ocpp201signcertificateresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201statusnotificationrequest.def": {
+      "module": "ocpp201statusnotificationrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201statusnotificationresponse.def": {
+      "module": "ocpp201statusnotificationresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201transactioneventrequest.def": {
+      "module": "ocpp201transactioneventrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201transactioneventresponse.def": {
+      "module": "ocpp201transactioneventresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201triggermessagerequest.def": {
+      "module": "ocpp201triggermessagerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201triggermessageresponse.def": {
+      "module": "ocpp201triggermessageresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201unlockconnectorrequest.def": {
+      "module": "ocpp201unlockconnectorrequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201unlockconnectorresponse.def": {
+      "module": "ocpp201unlockconnectorresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201unpublishfirmwarerequest.def": {
+      "module": "ocpp201unpublishfirmwarerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201unpublishfirmwareresponse.def": {
+      "module": "ocpp201unpublishfirmwareresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201updatefirmwarerequest.def": {
+      "module": "ocpp201updatefirmwarerequest",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ocpp201updatefirmwareresponse.def": {
+      "module": "ocpp201updatefirmwareresponse",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcdggsd.def": {
+      "module": "ogcdggsd",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcdggsz.def": {
+      "module": "ogcdggsz",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcdggszl.def": {
+      "module": "ogcdggszl",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcjoin.def": {
+      "module": "ogcjoin",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcjoins.def": {
+      "module": "ogcjoins",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "omsf.def": {
+      "module": "omsf",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "open311request.def": {
       "module": "open311request",
       "licence": "CC-BY-3.0",
@@ -4733,6 +8758,86 @@
       "module": "open311service",
       "licence": "CC-BY-3.0",
       "profile": "open"
+    },
+    "openaqannual.def": {
+      "module": "openaqannual",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqcountries.def": {
+      "module": "openaqcountries",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqdaily.def": {
+      "module": "openaqdaily",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqflags.def": {
+      "module": "openaqflags",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqhourly.def": {
+      "module": "openaqhourly",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqinstr.def": {
+      "module": "openaqinstr",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqlatest.def": {
+      "module": "openaqlatest",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqlicenses.def": {
+      "module": "openaqlicenses",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqloc.def": {
+      "module": "openaqloc",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqmeas.def": {
+      "module": "openaqmeas",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqmfr.def": {
+      "module": "openaqmfr",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqowners.def": {
+      "module": "openaqowners",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqparams.def": {
+      "module": "openaqparams",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqproviders.def": {
+      "module": "openaqproviders",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "openaqsensors.def": {
+      "module": "openaqsensors",
+      "licence": "LicenseRef-OpenAQ",
+      "profile": "everything"
+    },
+    "opensky.def": {
+      "module": "opensky",
+      "licence": "LicenseRef-OpenSky",
+      "profile": "everything"
     },
     "overtureaddress.def": {
       "module": "overtureaddress",
@@ -5274,8 +9379,43 @@
       "licence": "CC-BY-4.0",
       "profile": "open"
     },
+    "sensorml3.def": {
+      "module": "sensorml3",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "sflow.def": {
+      "module": "sflow",
+      "licence": "LicenseRef-sFlow-License",
+      "profile": "open"
+    },
+    "signalkdelta.def": {
+      "module": "signalkdelta",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
+    "signalkfull.def": {
+      "module": "signalkfull",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
+    "signalkvessel.def": {
+      "module": "signalkvessel",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
+    "swecommon3.def": {
+      "module": "swecommon3",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
     "tcx.def": {
       "module": "tcx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "wis2.def": {
+      "module": "wis2",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     }
