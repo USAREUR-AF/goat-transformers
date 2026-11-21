@@ -182,9 +182,9 @@ zz-first-by-format	lic-aa	Apache-2.0	open
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 23349 conversion vectors, 1312 load vectors, 18 capability vectors, 0 failed |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 23545 conversion vectors, 1351 load vectors, 18 capability vectors, 0 failed |
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 6633645 inputs over 4481 packs and 23346 vectors |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 6683646 inputs over 4514 packs and 23542 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
 | `tests/cbor.rs` | spec 0.28: the `cbor` wire on byte strings built by hand from RFC 8949: heads of every length, the core deterministic encoding (key order, shortest floats), the depth limit, equal keys, UTF-8 across chunks, tags, residue and the `tag` directive | 17 tests |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
@@ -274,15 +274,15 @@ another set. Measured on 2026-11-21 with rustc 1.99.1 on x86_64 Linux:
 
 | Reduced build (`xml,json,geojson`) | Measured |
 |---|---|
-| conversion vectors | 8357 run, 0 failed (14992 on other wires left out) |
-| load vectors | 389 run, 0 failed (923 left out) |
+| conversion vectors | 8375 run, 0 failed (15170 on other wires left out) |
+| load vectors | 391 run, 0 failed (960 left out) |
 | capability vectors | 16 run, 0 failed (2 left out) |
 | `unknown-wire` loads | 5 of 5: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv), `conformance-cbor` (cbor) |
 
 | Release artifact | All eight wires | `xml,json,geojson` |
 |---|---|---|
-| `goat-xf` | 2368992 bytes | 1770432 bytes |
-| `libgoat_transformers.rlib` | 5605876 bytes | 4381132 bytes |
+| `goat-xf` | 2372784 bytes | 1772232 bytes |
+| `libgoat_transformers.rlib` | 5616338 bytes | 4385676 bytes |
 
 ## Static and WebAssembly builds
 
