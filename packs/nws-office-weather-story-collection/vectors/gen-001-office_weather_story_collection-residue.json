@@ -1,0 +1,7 @@
+{
+ "name": "gen-office_weather_story_collection-residue",
+ "from": "nws-office-weather-story-collection",
+ "to": "nws-office-weather-story-collection",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7}",
+ "expect": "{\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

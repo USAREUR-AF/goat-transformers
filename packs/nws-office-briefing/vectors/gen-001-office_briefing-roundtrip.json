@@ -1,0 +1,17 @@
+{
+ "name": "gen-office_briefing-roundtrip",
+ "from": "nws-office-briefing",
+ "to": "nws-office-briefing",
+ "input": "{\"id\":\"ae8e628a-aa96-4cf6-82fc-862d728de3ad\",\"startTime\":\"2024-05-09T14:39:35.949Z\",\"endTime\":\"2025-01-21T10:52:54.848Z\",\"updateTime\":\"2026-12-23T20:33:54.026Z\",\"title\":\"s62778\",\"description\":\"s86946\",\"priority\":true,\"download\":\"https://example.org/266\"}",
+ "expect": "{\"id\":\"ae8e628a-aa96-4cf6-82fc-862d728de3ad\",\"startTime\":\"2024-05-09T14:39:35.949Z\",\"endTime\":\"2025-01-21T10:52:54.848Z\",\"updateTime\":\"2026-12-23T20:33:54.026Z\",\"title\":\"s62778\",\"description\":\"s86946\",\"priority\":true,\"download\":\"https://example.org/266\"}",
+ "model": {
+  "nwsofficebrief.id": "ae8e628a-aa96-4cf6-82fc-862d728de3ad",
+  "nwsofficebrief.start_time": "2024-05-09T14:39:35.949Z",
+  "nwsofficebrief.end_time": "2025-01-21T10:52:54.848Z",
+  "nwsofficebrief.update_time": "2026-12-23T20:33:54.026Z",
+  "nwsofficebrief.title": "s62778",
+  "nwsofficebrief.description": "s86946",
+  "nwsofficebrief.priority": "1",
+  "nwsofficebrief.download": "https://example.org/266"
+ }
+}

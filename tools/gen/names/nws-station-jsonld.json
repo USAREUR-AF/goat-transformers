@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "|@id|string": "id",
+  "|@type|string": "type",
+  "|bearing.maxValue|float": "bearing_max_value",
+  "|bearing.minValue|float": "bearing_min_value",
+  "|bearing.qualityControl|string": "bearing_quality_control",
+  "|bearing.unitCode|string": "bearing_unit_code",
+  "|bearing.value|float": "bearing_value",
+  "|county|string": "county",
+  "|distance.maxValue|float": "distance_max_value",
+  "|distance.minValue|float": "distance_min_value",
+  "|distance.qualityControl|string": "distance_quality_control",
+  "|distance.unitCode|string": "distance_unit_code",
+  "|distance.value|float": "distance_value",
+  "|elevation.maxValue|float": "elevation_max_value",
+  "|elevation.minValue|float": "elevation_min_value",
+  "|elevation.qualityControl|string": "elevation_quality_control",
+  "|elevation.unitCode|string": "elevation_unit_code",
+  "|elevation.value|float": "elevation_value",
+  "|fireWeatherZone|string": "fire_weather_zone",
+  "|forecast|string": "forecast",
+  "|geometry|string": "geometry",
+  "|name|string": "name",
+  "|provider|string": "provider",
+  "|stationIdentifier|string": "station_identifier",
+  "|subProvider|string": "sub_provider",
+  "|timeZone|string": "time_zone"
+ },
+ "lists": {}
+}

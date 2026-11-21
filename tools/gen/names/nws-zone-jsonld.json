@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "cwa|.|string": "cwa_value",
+  "forecast_offices|.|string": "forecast_offices_value",
+  "observation_stations|.|string": "observation_stations_value",
+  "time_zone|.|string": "time_zone_value",
+  "|@id|string": "id",
+  "|@type|string": "type",
+  "|awipsLocationIdentifier|string": "awips_location_identifier",
+  "|effectiveDate|string": "effective_date",
+  "|expirationDate|string": "expiration_date",
+  "|forecastOffice|string": "forecast_office",
+  "|geometry|string": "geometry",
+  "|gridIdentifier|string": "grid_identifier",
+  "|id|string": "id_2",
+  "|name|string": "name",
+  "|radarStation|string": "radar_station",
+  "|state|string": "state",
+  "|type|string": "type_2"
+ },
+ "lists": {
+  "|cwa": "cwa",
+  "|forecastOffices": "forecast_offices",
+  "|observationStations": "observation_stations",
+  "|timeZone": "time_zone"
+ }
+}

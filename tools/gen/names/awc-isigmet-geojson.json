@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "geometry_coordinates|.|float": "geometry_coordinates_value",
+  "|geometry.type|string": "geometry_type",
+  "|id|float": "id",
+  "|properties.base|int": "properties_base",
+  "|properties.chng|string": "properties_chng",
+  "|properties.dir|string": "properties_dir",
+  "|properties.firId|string": "properties_fir_id",
+  "|properties.firName|string": "properties_fir_name",
+  "|properties.hazard|string": "properties_hazard",
+  "|properties.icaoId|string": "properties_icao_id",
+  "|properties.qualifier|string": "properties_qualifier",
+  "|properties.rawSigmet|string": "properties_raw_sigmet",
+  "|properties.seriesId|string": "properties_series_id",
+  "|properties.spd|float": "properties_spd",
+  "|properties.top|int": "properties_top",
+  "|properties.validTimeFrom|int": "properties_valid_time_from",
+  "|properties.validTimeTo|int": "properties_valid_time_to",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.coordinates": "geometry_coordinates"
+ }
+}

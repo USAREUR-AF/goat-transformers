@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "geometry_coordinates|.|float": "geometry_coordinates_value",
+  "|geometry.type|string": "geometry_type",
+  "|id|float": "id",
+  "|properties.airSigmetType|string": "properties_air_sigmet_type",
+  "|properties.alphaChar|string": "properties_alpha_char",
+  "|properties.altitudeHi1|int": "properties_altitude_hi1",
+  "|properties.altitudeHi2|int": "properties_altitude_hi2",
+  "|properties.altitudeLo1|int": "properties_altitude_lo1",
+  "|properties.altitudeLo2|int": "properties_altitude_lo2",
+  "|properties.hazard|string": "properties_hazard",
+  "|properties.icaoId|string": "properties_icao_id",
+  "|properties.movementDir|int": "properties_movement_dir",
+  "|properties.movementSpd|int": "properties_movement_spd",
+  "|properties.rawAirSigmet|string": "properties_raw_air_sigmet",
+  "|properties.seriesId|string": "properties_series_id",
+  "|properties.severity|int": "properties_severity",
+  "|properties.validTimeFrom|string": "properties_valid_time_from",
+  "|properties.validTimeTo|string": "properties_valid_time_to",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.coordinates": "geometry_coordinates"
+ }
+}

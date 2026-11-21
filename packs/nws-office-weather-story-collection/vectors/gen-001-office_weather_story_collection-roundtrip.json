@@ -1,0 +1,8 @@
+{
+ "name": "gen-office_weather_story_collection-roundtrip",
+ "from": "nws-office-weather-story-collection",
+ "to": "nws-office-weather-story-collection",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

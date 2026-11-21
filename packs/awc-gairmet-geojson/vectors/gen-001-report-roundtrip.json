@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-gairmet-geojson",
+ "to": "awc-gairmet-geojson",
+ "input": "{\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"tag\":\"s51088\",\"forecastHour\":80908,\"receiptTime\":\"s6827\",\"issueTime\":\"s563\",\"validTime\":\"s93206\",\"hazard\":\"s97022\",\"due_to\":\"s9758\",\"product\":\"TANGO\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]}}",
+ "expect": "{\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"tag\":\"s51088\",\"forecastHour\":80908,\"receiptTime\":\"s6827\",\"issueTime\":\"s563\",\"validTime\":\"s93206\",\"hazard\":\"s97022\",\"due_to\":\"s9758\",\"product\":\"TANGO\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]}}",
+ "model": {
+  "awcgairmetgeo.type": "Feature",
+  "awcgairmetgeo.id": "-0.5",
+  "awcgairmetgeo.properties_tag": "s51088",
+  "awcgairmetgeo.properties_forecast_hour": "80908",
+  "awcgairmetgeo.properties_receipt_time": "s6827",
+  "awcgairmetgeo.properties_issue_time": "s563",
+  "awcgairmetgeo.properties_valid_time": "s93206",
+  "awcgairmetgeo.properties_hazard": "s97022"
+ }
+}

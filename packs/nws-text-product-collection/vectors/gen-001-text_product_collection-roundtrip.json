@@ -1,0 +1,10 @@
+{
+ "name": "gen-text_product_collection-roundtrip",
+ "from": "nws-text-product-collection",
+ "to": "nws-text-product-collection",
+ "input": "{\"@graph\":[{\"@id\":\"https://example.org/320\",\"id\":\"s34834\",\"wmoCollectiveId\":\"s46365\",\"issuingOffice\":\"s43350\",\"issuanceTime\":\"2024-07-31T04:12:45.609Z\",\"productCode\":\"s95028\",\"productName\":\"s95545\",\"productText\":\"s36795\"},{\"@id\":\"https://example.org/100\",\"id\":\"s89175\",\"wmoCollectiveId\":\"s86413\",\"issuingOffice\":\"s59303\",\"issuanceTime\":\"2025-06-09T09:36:29.913Z\",\"productCode\":\"s52443\",\"productName\":\"s19784\",\"productText\":\"s23062\"}]}",
+ "expect": "{\"@graph\":[{\"@id\":\"https://example.org/320\",\"id\":\"s34834\",\"wmoCollectiveId\":\"s46365\",\"issuingOffice\":\"s43350\",\"issuanceTime\":\"2024-07-31T04:12:45.609Z\",\"productCode\":\"s95028\",\"productName\":\"s95545\",\"productText\":\"s36795\"},{\"@id\":\"https://example.org/100\",\"id\":\"s89175\",\"wmoCollectiveId\":\"s86413\",\"issuingOffice\":\"s59303\",\"issuanceTime\":\"2025-06-09T09:36:29.913Z\",\"productCode\":\"s52443\",\"productName\":\"s19784\",\"productText\":\"s23062\"}]}",
+ "model": {
+  "nwstextprodc.graph.#": "2"
+ }
+}

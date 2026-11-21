@@ -110,6 +110,13 @@ awc awc-airmet awcairmet $C/AirmetJSON/items json
 awc awc-gairmet awcgairmet $C/GairmetJSON/items json
 awc awc-cwa awccwa $C/CwaJSON/items json
 awc awc-tcf awctcf $C/TcfGeoJSON/$FI json
+# The GeoJSON forms of the advisories: one Feature of the collection, on the json wire (the
+# geometry is a polygon, which the geojson wire does not carry); no shared key, as above
+awc awc-airsigmet-geojson awcairsigmetgeo $C/AirSigmetGeoJSON/$FI json
+awc awc-isigmet-geojson awcisigmetgeo $C/ISigmetGeoJSON/$FI json
+awc awc-sigmet-geojson awcsigmetgeo $C/SigmetGeoJSON/$FI json
+awc awc-gairmet-geojson awcgairmetgeo $C/GairmetGeoJSON/$FI json
+awc awc-cwa-geojson awccwageo $C/CwaGeoJSON/$FI json
 # Navigational data: the schema gives no descriptions, so nothing is bound
 awc awc-airport awcairport '/paths/~1api~1data~1airport/get/responses/200/content/application~1json/schema/items' json
 awc awc-navaid awcnavaid '/paths/~1api~1data~1navaid/get/responses/200/content/application~1json/schema/items' json

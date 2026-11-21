@@ -1,0 +1,10 @@
+{
+ "name": "gen-office_headline_collection-roundtrip",
+ "from": "nws-office-headline-collection",
+ "to": "nws-office-headline-collection",
+ "input": "{\"@graph\":[{\"@id\":\"https://example.org/975\",\"id\":\"s63771\",\"office\":\"https://example.org/96\",\"important\":false,\"issuanceTime\":\"2025-11-04T07:07:42.783Z\",\"link\":\"https://example.org/266\",\"name\":\"s89162\",\"title\":\"s25423\",\"summary\":\"s5801\",\"content\":\"s45801\"},{\"@id\":\"https://example.org/100\",\"id\":\"s71368\",\"office\":\"https://example.org/458\",\"important\":true,\"issuanceTime\":\"2026-05-17T22:58:31.977Z\",\"link\":\"https://example.org/203\",\"name\":\"s89058\",\"title\":\"s22708\",\"summary\":\"s31978\",\"content\":\"s6670\"}]}",
+ "expect": "{\"@graph\":[{\"@id\":\"https://example.org/975\",\"id\":\"s63771\",\"office\":\"https://example.org/96\",\"important\":false,\"issuanceTime\":\"2025-11-04T07:07:42.783Z\",\"link\":\"https://example.org/266\",\"name\":\"s89162\",\"title\":\"s25423\",\"summary\":\"s5801\",\"content\":\"s45801\"},{\"@id\":\"https://example.org/100\",\"id\":\"s71368\",\"office\":\"https://example.org/458\",\"important\":true,\"issuanceTime\":\"2026-05-17T22:58:31.977Z\",\"link\":\"https://example.org/203\",\"name\":\"s89058\",\"title\":\"s22708\",\"summary\":\"s31978\",\"content\":\"s6670\"}]}",
+ "model": {
+  "nwsofficehlc.graph.#": "2"
+ }
+}

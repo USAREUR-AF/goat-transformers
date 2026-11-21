@@ -1,0 +1,43 @@
+{
+ "keys": {
+  "graph_affected_zones|.|string": "graph_affected_zones_value",
+  "graph_geocode_same|.|string": "graph_geocode_same_value",
+  "graph_geocode_ugc|.|string": "graph_geocode_ugc_value",
+  "graph_references|@id|string": "graph_references_id",
+  "graph_references|identifier|string": "graph_references_identifier",
+  "graph_references|sender|string": "graph_references_sender",
+  "graph_references|sent|string": "graph_references_sent",
+  "graph|areaDesc|string": "graph_area_desc",
+  "graph|category|string": "graph_category",
+  "graph|certainty|string": "graph_certainty",
+  "graph|code|string": "graph_code",
+  "graph|description|string": "graph_description",
+  "graph|effective|string": "graph_effective",
+  "graph|ends|string": "graph_ends",
+  "graph|event|string": "graph_event",
+  "graph|expires|string": "graph_expires",
+  "graph|headline|string": "graph_headline",
+  "graph|id|string": "graph_id",
+  "graph|instruction|string": "graph_instruction",
+  "graph|language|string": "graph_language",
+  "graph|messageType|string": "graph_message_type",
+  "graph|note|string": "graph_note",
+  "graph|onset|string": "graph_onset",
+  "graph|response|string": "graph_response",
+  "graph|scope|string": "graph_scope",
+  "graph|senderName|string": "graph_sender_name",
+  "graph|sender|string": "graph_sender",
+  "graph|sent|string": "graph_sent",
+  "graph|severity|string": "graph_severity",
+  "graph|status|string": "graph_status",
+  "graph|urgency|string": "graph_urgency",
+  "graph|web|string": "graph_web"
+ },
+ "lists": {
+  "graph|affectedZones": "graph_affected_zones",
+  "graph|geocode.SAME": "graph_geocode_same",
+  "graph|geocode.UGC": "graph_geocode_ugc",
+  "graph|references": "graph_references",
+  "|@graph": "graph"
+ }
+}

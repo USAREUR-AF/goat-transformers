@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|description|string": "description",
+  "|download|string": "download",
+  "|endTime|string": "end_time",
+  "|id|string": "id",
+  "|priority|int": "priority",
+  "|startTime|string": "start_time",
+  "|title|string": "title",
+  "|updateTime|string": "update_time"
+ },
+ "lists": {}
+}

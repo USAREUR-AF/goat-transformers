@@ -1,0 +1,7 @@
+{
+ "name": "gen-office_headline-residue",
+ "from": "nws-office-headline",
+ "to": "nws-office-headline",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"@id\":\"https://example.org/66\",\"id\":\"s38068\",\"office\":\"https://example.org/529\",\"important\":true,\"issuanceTime\":\"2026-07-30T02:42:30.719Z\",\"link\":\"https://example.org/549\",\"name\":\"s82356\",\"title\":\"s60711\",\"summary\":\"s67936\",\"content\":\"s3270\"}",
+ "expect": "{\"@id\":\"https://example.org/66\",\"id\":\"s38068\",\"office\":\"https://example.org/529\",\"important\":true,\"issuanceTime\":\"2026-07-30T02:42:30.719Z\",\"link\":\"https://example.org/549\",\"name\":\"s82356\",\"title\":\"s60711\",\"summary\":\"s67936\",\"content\":\"s3270\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

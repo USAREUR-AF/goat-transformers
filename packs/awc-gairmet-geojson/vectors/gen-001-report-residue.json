@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-gairmet-geojson",
+ "to": "awc-gairmet-geojson",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"tag\":\"s51088\",\"forecastHour\":80908,\"receiptTime\":\"s6827\",\"issueTime\":\"s563\",\"validTime\":\"s93206\",\"hazard\":\"s97022\",\"due_to\":\"s9758\",\"product\":\"TANGO\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]}}",
+ "expect": "{\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"tag\":\"s51088\",\"forecastHour\":80908,\"receiptTime\":\"s6827\",\"issueTime\":\"s563\",\"validTime\":\"s93206\",\"hazard\":\"s97022\",\"due_to\":\"s9758\",\"product\":\"TANGO\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

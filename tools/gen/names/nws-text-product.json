@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|@id|string": "id",
+  "|id|string": "id_2",
+  "|issuanceTime|string": "issuance_time",
+  "|issuingOffice|string": "issuing_office",
+  "|productCode|string": "product_code",
+  "|productName|string": "product_name",
+  "|productText|string": "product_text",
+  "|wmoCollectiveId|string": "wmo_collective_id"
+ },
+ "lists": {}
+}

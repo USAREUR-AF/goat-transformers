@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "graph|@id|string": "graph_id",
+  "graph|id|string": "graph_id_2",
+  "graph|issuanceTime|string": "graph_issuance_time",
+  "graph|issuingOffice|string": "graph_issuing_office",
+  "graph|productCode|string": "graph_product_code",
+  "graph|productName|string": "graph_product_name",
+  "graph|productText|string": "graph_product_text",
+  "graph|wmoCollectiveId|string": "graph_wmo_collective_id"
+ },
+ "lists": {
+  "|@graph": "graph"
+ }
+}
