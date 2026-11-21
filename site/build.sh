@@ -30,6 +30,12 @@ echo "build.sh: the command-line tool (engines/rust, release)"
 echo "build.sh: the page's counts, from the tree"
 python3 -I "$here/bundle.py" --counts-only --write
 
+# The catalog chart (the page's first section) is drawn from the family table
+# and packs/ on every build, as the counts are, so it is never behind the tree.
+# It stops the build when a pack has no family.
+echo "build.sh: the catalog chart, from tools/catalog-families and packs/"
+python3 -I "$repo/tools/catalog-radial.py" --site
+
 python3 -I "$here/bundle.py" \
   --wasm "$repo/bindings/wasm/target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm" \
   --goat-xf "$repo/engines/rust/target/release/goat-xf"

@@ -338,3 +338,48 @@ footer ul { display: flex; flex-wrap: wrap; gap: 6px 22px; list-style: none; mar
   .sig-bytes .off { display: none; }
   .sig-src { display: none; }
 }
+
+/* The catalog chart (written by tools/catalog-radial.py): every family as a
+   bar around the shared model, coloured by domain. Domain colours are set in
+   the chart's own <style>, as --rd on each .rd-<domain>. */
+.radial { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.radial-fig { margin: 0; display: grid; gap: 12px; }
+.radial-chart { position: relative; max-width: 680px; }
+.radial-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.radial-chart svg:focus { outline: none; }
+.rd-t { font-family: var(--sans); fill: var(--ink); }
+.rd-core { fill: var(--accent-soft); }
+.rd-core-t { font-size: 15px; font-weight: 600; }
+.rd-dom { fill: var(--rd); fill-opacity: 0.22; }
+.rd-dom-t { font-size: 12px; font-weight: 700; }
+.rd-bar { fill: var(--rd); cursor: default; }
+.rd-bar:hover, .rd-bar.is-on { stroke: var(--ink); stroke-width: 1.5px; }
+.rd-bar:focus { outline: none; }
+.rd-bar:focus-visible { stroke: var(--ink); stroke-width: 2.5px; }
+.rd-private { fill: none; stroke: var(--quiet); stroke-width: 1.5px; stroke-dasharray: 6 6; }
+.radial-tip {
+  position: absolute; z-index: 2; pointer-events: none; width: max-content; max-width: 260px;
+  padding: 6px 10px; border: 1px solid var(--rule); border-radius: 4px;
+  background: var(--panel); color: var(--ink); font-size: 0.85rem; line-height: 1.35;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); transform: translate(-50%, calc(-100% - 10px));
+}
+.radial-private { display: block; margin-top: 4px; }
+.radial-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; font-size: 0.9rem; line-height: 1.4; }
+.radial-legend li { display: grid; grid-template-columns: 12px minmax(0, 1fr); column-gap: 10px; }
+.radial-legend .rl-sw { width: 12px; height: 12px; margin-top: 0.3em; border-radius: 2px; background: var(--rd); }
+.radial-legend .rl-count { color: var(--quiet); font-family: var(--mono); font-size: 0.78rem; white-space: nowrap; }
+.radial-legend .rl-top { display: block; color: var(--quiet); font-size: 0.82rem; line-height: 1.4; }
+.radial-table summary { cursor: pointer; color: var(--accent); font-size: 0.92rem; }
+.radial-table .table-scroll { margin-top: 12px; max-height: 28rem; overflow-y: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .radial.pre .rd-bar { opacity: 0; }
+  .radial.grow .rd-bar { transform-box: view-box; transform-origin: 50% 50%; animation: rd-grow 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  @keyframes rd-grow { from { transform: scale(0.45); opacity: 0; } }
+}
+@media (max-width: 860px) {
+  .radial { grid-template-columns: minmax(0, 1fr); }
+  .radial-chart { margin: 0 auto; width: 100%; }
+}
+@media (forced-colors: active) {
+  .rd-bar { fill: CanvasText; } .rd-dom { fill: Canvas; stroke: CanvasText; }
+}
