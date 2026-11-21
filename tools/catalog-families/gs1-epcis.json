@@ -1,0 +1,7 @@
+{
+  "name": "GS1 EPCIS 2.0 events",
+  "domain": "transport",
+  "exact": [
+    "gs1-epcis-event"
+  ]
+}

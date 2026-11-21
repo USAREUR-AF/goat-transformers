@@ -1,0 +1,6 @@
+Packs gs1-epcis-event; module epcis
+  GS1 EPCIS 2.0 JSON Schema, https://github.com/gs1/EPCIS at commit
+  6f71468231838e424bb5dfa836e006e8dc69615c, JSON-Schema/schemas/*.json. GS1
+  AISBL; no licence stated (the repository LICENSE file is a disclaimer),
+  LicenseRef-unstated. GS1 is a registered trademark of GS1 AISBL. Structure
+  restated; no text copied.
