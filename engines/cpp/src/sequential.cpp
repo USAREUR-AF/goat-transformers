@@ -767,6 +767,10 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 if (!ok)
                     throw bad("transform '" + std::string(transform_name(tf)) + "' does not apply to the locator '" +
                               f.locator + "'");
+                // v0.55: <places> is for a bit position or bit length, not an `int:` locator.
+                if (f.scale_places >= 0)
+                    throw bad("transform '" + std::string(transform_name(tf)) + "' takes no <places> on the locator '" +
+                              f.locator + "'");
                 for (std::size_t k = 4; k < t.size(); ++k) {
                     if (t[k] == "via") {
                         if (k + 1 >= t.size() || t[k + 1].empty() || !f.via.empty())
@@ -811,8 +815,6 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (tf == -1) throw bad(terr + " for field '" + f.key + "'");
             // A transform of the text wire (v0.10) is bad-directive on another wire.
             if (transform_is_text_only(f.transform)) throw bad("transform '" + t[3] + "' applies to wire text only");
-            // So is one of the tlv wire (v0.13).
-            if (transform_is_tlv_only(f.transform)) throw bad("transform '" + t[3] + "' applies to wire tlv only");
             if (!transform_is_bits(f.transform))
                 throw Error(ErrorKind::BadDirective, p.format, f.locator,
                             where + ": transform '" + std::string(transform_name(f.transform)) +
@@ -872,8 +874,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (!f.until && !bits_len_allowed(f.transform, n.len))
                 throw bad("transform '" + std::string(transform_name(f.transform)) + "' does not allow a length of " +
                           std::to_string(n.len) + " bits");
-            if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit)
-                throw bad("option 'trim' applies to transforms ascii and sixbit only");
+            if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit && f.transform != Transform::Utf8)
+                throw bad("option 'trim' applies to transforms ascii, utf8 and sixbit only");
             if (f.swap && (f.transform == Transform::Sixbit || chars_width(f.transform) || f.transform == Transform::Octal ||
                            f.transform == Transform::Hex))
                 throw bad("option 'swap' does not apply to transform " + std::string(transform_name(f.transform)));

@@ -96,6 +96,8 @@ void check_field_line(const Pack& p, FieldLine& f) {
         case Transform::Uscale:
         case Transform::Sscale:
             if (f.tlv_size == 0) bad(p, f.locator, f.line, std::string("transform '") + name + "' needs a size ':<n>'");
+            // v0.55: <places> belongs to a bit position or bit length of bits.
+            if (f.scale_places >= 0) bad(p, f.locator, f.line, std::string("transform '") + name + "' takes no <places> on wire tlv");
             break;
         case Transform::F32:
             if (f.tlv_size != 0 && f.tlv_size != 4) bad(p, f.locator, f.line, "transform 'f32' takes no size or ':4'");

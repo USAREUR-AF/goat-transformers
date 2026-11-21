@@ -123,6 +123,7 @@ KeyType transform_yields(Transform t) {
         case Transform::Int:
         case Transform::Iso8601Ms:
         case Transform::Iso8601Short:
+        case Transform::Iso8601Si:
         case Transform::Uint:
         case Transform::Twos:
         case Transform::Pvarint:
@@ -527,10 +528,12 @@ void resolve_when(const Pack& p, WhenLine& w, const std::string& word) {
 // v0.15: a transform of this version on a wire it does not list (bad-directive).
 void check_v015_wire(const Pack& p, const FieldLine& f) {
     // v0.18 ruling 11: iso8601_short on bits or protobuf.
-    if (f.transform == Transform::Iso8601Short && (p.wire == Wire::Bits || p.wire == Wire::Protobuf))
+    // v0.55: so is iso8601_si.
+    if ((f.transform == Transform::Iso8601Short || f.transform == Transform::Iso8601Si) &&
+        (p.wire == Wire::Bits || p.wire == Wire::Protobuf))
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
-                    p.source + ":" + std::to_string(f.line) + ": transform 'iso8601_short' is not valid on wire " +
-                        wire_name(p.wire));
+                    p.source + ":" + std::to_string(f.line) + ": transform '" + transform_name(f.transform) +
+                        "' is not valid on wire " + wire_name(p.wire));
     if (!detail::transform_is_v015(f.transform)) return;
     const bool ok = detail::transform_is_text_scale(f.transform)
                         ? p.wire == Wire::Xml || p.wire == Wire::Json || p.wire == Wire::GeoJson
@@ -570,9 +573,9 @@ void check_field_options(const Pack& p, const std::unordered_map<std::string, in
     if (p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
                     where + ": option '" + option + "' applies to wire bits only");
-    if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit)
+    if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit && f.transform != Transform::Utf8)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
-                    where + ": option 'trim' applies to transforms ascii and sixbit only");
+                    where + ": option 'trim' applies to transforms ascii, utf8 and sixbit only");
     if (f.swap && (f.transform == Transform::Sixbit || detail::chars_width(f.transform) || f.transform == Transform::Octal ||
                    f.transform == Transform::Hex))
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
@@ -1627,28 +1630,19 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                                         transform_name(f.transform) + "' applies to wire text only");
             });
         }
-        // v0.13: `tag`, `length`, `key` and `checksum sum16` belong to the tlv
-        // wire, and `utf8` and `hex` are valid on it only.
-        if (p.wire != Wire::Tlv) {
-            if (tlv_directive_line != 0)
-                throw Error(ErrorKind::BadDirective, p.format, "",
-                            source + ":" + std::to_string(tlv_directive_line) +
-                                ": 'tag', 'length', 'key' and 'checksum sum16' apply to wire tlv only");
-            each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
-                for (const auto& f : fields)
-                    if (detail::transform_is_tlv_only(f.transform))
-                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
-                                    source + ":" + std::to_string(f.line) + ": transform '" +
-                                        transform_name(f.transform) + "' applies to wire tlv only");
-            });
-        }
-        // v0.22: `hex` is a transform of the bits and tlv wires.
+        // v0.13: `tag`, `length`, `key` and `checksum sum16` belong to the tlv wire.
+        if (p.wire != Wire::Tlv && tlv_directive_line != 0)
+            throw Error(ErrorKind::BadDirective, p.format, "",
+                        source + ":" + std::to_string(tlv_directive_line) +
+                            ": 'tag', 'length', 'key' and 'checksum sum16' apply to wire tlv only");
+        // `hex` (v0.22) and `utf8` (v0.55) are transforms of the bits and tlv wires.
         if (p.wire != Wire::Bits && p.wire != Wire::Tlv)
             each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
                 for (const auto& f : fields)
-                    if (f.transform == Transform::Hex)
+                    if (f.transform == Transform::Hex || f.transform == Transform::Utf8)
                         throw Error(ErrorKind::BadDirective, p.format, f.locator,
-                                    source + ":" + std::to_string(f.line) + ": transform 'hex' applies to wires bits and tlv only");
+                                    source + ":" + std::to_string(f.line) + ": transform '" +
+                                        transform_name(f.transform) + "' applies to wires bits and tlv only");
             });
         // v0.14: `sixbit` is a transform of the bits wire only.
         if (p.wire != Wire::Bits)

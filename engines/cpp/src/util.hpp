@@ -51,6 +51,9 @@ std::string format_iso8601_ms(std::int64_t ms);
 // three digits with trailing zeros removed. Throws std::domain_error outside
 // the years 0000-9999.
 std::string format_iso8601_short(std::int64_t ms);
+// v0.55 `iso8601_si`: no fraction when the milliseconds are 0, otherwise all
+// three digits; years 0001 to 9999 (throws std::domain_error outside them).
+std::string format_iso8601_si(std::int64_t ms);
 
 void append_utf8(std::string& out, std::uint32_t cp);
 
