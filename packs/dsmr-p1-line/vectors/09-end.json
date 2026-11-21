@@ -1,0 +1,13 @@
+{
+  "name": "dsmr-p1-line-end",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "!1A2B",
+  "expect": "!1A2B",
+  "model": {
+    "@kind": "end",
+    "dsmr.end": "!1A2B"
+  },
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py; the CRC is not checked"
+}

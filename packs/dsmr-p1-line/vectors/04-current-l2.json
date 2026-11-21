@@ -1,0 +1,13 @@
+{
+  "name": "dsmr-p1-line-current-l2",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "1-0:51.7.0(007*A)",
+  "expect": "1-0:51.7.0(007*A)",
+  "model": {
+    "@kind": "current_l2_a",
+    "dsmr.current_l2_a": "7"
+  },
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py; F3(0,0) A"
+}

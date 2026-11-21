@@ -1,0 +1,13 @@
+{
+  "name": "dsmr-p1-line-energy-tariff1",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "1-0:1.8.1(004567.891*kWh)",
+  "expect": "1-0:1.8.1(004567.891*kWh)",
+  "model": {
+    "@kind": "energy_delivered_tariff1_kwh",
+    "dsmr.energy_delivered_tariff1_kwh": "4567.891"
+  },
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py; F9(3,3) kWh"
+}

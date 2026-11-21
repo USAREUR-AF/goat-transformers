@@ -1,0 +1,16 @@
+{
+  "name": "dsmr-p1-line-power-failure-log",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "1-0:99.97.0(2)(0-0:96.7.19)(261120101500W)(0000000120*s)(261119080000W)(0000000045*s)",
+  "expect": "1-0:99.97.0(2)(0-0:96.7.19)(261120101500W)(0000000120*s)(261119080000W)(0000000045*s)",
+  "model": {
+    "@kind": "power_failure_log",
+    "dsmr.power_failure_log_count": "2)",
+    "dsmr.power_failure_log.#": "2",
+    "dsmr.power_failure_log[0].dsmr.power_failure_end_time": "261120101500W)",
+    "dsmr.power_failure_log[1].dsmr.power_failure_duration": "0000000045*s)"
+  },
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py; two log entries as a group of two fields each"
+}

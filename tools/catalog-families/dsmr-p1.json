@@ -1,0 +1,7 @@
+{
+  "name": "DSMR P1 (Dutch smart meters)",
+  "domain": "iot",
+  "prefixes": [
+    "dsmr-"
+  ]
+}

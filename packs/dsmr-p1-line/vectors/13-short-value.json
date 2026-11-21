@@ -1,0 +1,9 @@
+{
+  "name": "dsmr-p1-line-short-value",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "1-0:1.8.1(4567.891*kWh)",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py; the value is not in its F9(3,3) width: the ten-character column holds '4567.891*k', not a number"
+}
