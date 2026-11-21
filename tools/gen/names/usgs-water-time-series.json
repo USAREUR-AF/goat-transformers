@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.begin_utc|string": "properties_begin_utc",
+  "|properties.begin|string": "properties_begin",
+  "|properties.computation_identifier|string": "properties_computation_identifier",
+  "|properties.computation_period_identifier|string": "properties_computation_period_identifier",
+  "|properties.data_gap_interval|string": "properties_data_gap_interval",
+  "|properties.end_utc|string": "properties_end_utc",
+  "|properties.end|string": "properties_end",
+  "|properties.hydrologic_unit_code|string": "properties_hydrologic_unit_code",
+  "|properties.id|string": "properties_id",
+  "|properties.last_modified|string": "properties_last_modified",
+  "|properties.monitoring_location_id|string": "properties_monitoring_location_id",
+  "|properties.parameter_code|string": "properties_parameter_code",
+  "|properties.parameter_description|string": "properties_parameter_description",
+  "|properties.parameter_name|string": "properties_parameter_name",
+  "|properties.parent_time_series_id|string": "properties_parent_time_series_id",
+  "|properties.primary|string": "properties_primary",
+  "|properties.state_name|string": "properties_state_name",
+  "|properties.statistic_id|string": "properties_statistic_id",
+  "|properties.sublocation_identifier|string": "properties_sublocation_identifier",
+  "|properties.thresholds|string": "properties_thresholds",
+  "|properties.unit_of_measure|string": "properties_unit_of_measure",
+  "|properties.web_description|string": "properties_web_description"
+ },
+ "lists": {}
+}

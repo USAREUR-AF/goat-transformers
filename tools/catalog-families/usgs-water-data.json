@@ -1,0 +1,8 @@
+{
+  "name": "USGS Water Data API",
+  "domain": "maps",
+  "prefixes": [
+    "usgs-water-"
+  ],
+  "detail": "continuous, daily, field measurements, peaks, time series, monitoring locations"
+}

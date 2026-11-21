@@ -1,0 +1,17 @@
+{
+ "name": "gen-field_measurement-roundtrip",
+ "from": "usgs-water-field-measurements",
+ "to": "usgs-water-field-measurements",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"approval_status\":\"Provisional\",\"control_condition\":\"s35965\",\"day\":64546,\"field_measurements_series_id\":\"s68551\",\"field_visit_id\":\"94b5f3ea-2f6f-4fd8-8724-28e6577c3f6a\",\"last_modified\":\"s80959\",\"measurement_rated\":\"s47348\",\"measuring_agency\":\"s55679\",\"monitoring_location_id\":\"s89696\",\"month\":5946,\"observing_procedure\":\"s10691\",\"observing_procedure_code\":\"s27229\",\"parameter_code\":\"s73470\",\"qualifier\":\"s43276\",\"reading_type\":\"s41530\",\"time\":\"2026-08-21T02:59:45.470Z\",\"time_of_day\":\"s2009\",\"unit_of_measure\":\"s69544\",\"value\":\"s68602\",\"vertical_datum\":\"s90803\",\"year\":6891},\"id\":\"s52278\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"approval_status\":\"Provisional\",\"control_condition\":\"s35965\",\"day\":64546,\"field_measurements_series_id\":\"s68551\",\"field_visit_id\":\"94b5f3ea-2f6f-4fd8-8724-28e6577c3f6a\",\"last_modified\":\"s80959\",\"measurement_rated\":\"s47348\",\"measuring_agency\":\"s55679\",\"monitoring_location_id\":\"s89696\",\"month\":5946,\"observing_procedure\":\"s10691\",\"observing_procedure_code\":\"s27229\",\"parameter_code\":\"s73470\",\"qualifier\":\"s43276\",\"reading_type\":\"s41530\",\"time\":\"2026-08-21T02:59:45.470Z\",\"time_of_day\":\"s2009\",\"unit_of_measure\":\"s69544\",\"value\":\"s68602\",\"vertical_datum\":\"s90803\",\"year\":6891},\"id\":\"s52278\"}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "time_ms": "1787281185470",
+  "usgswaterfield.id": "s52278",
+  "usgswaterfield.properties_approval_status": "Provisional",
+  "usgswaterfield.properties_control_condition": "s35965",
+  "usgswaterfield.properties_day": "64546",
+  "usgswaterfield.properties_field_measurements_series_id": "s68551"
+ }
+}

@@ -1,0 +1,17 @@
+# Environment Agency (England) real-time flood-monitoring API: a readings response (/data/readings,
+# /id/stations/{id}/readings, /id/measures/{id}/readings): the readings as a list. Public; licensed
+# OGL-UK-3.0. Written by hand from the API reference. pack.md says why no reading time is time_ms.
+format  ea-flood-readings
+version 0.1.0
+distribution public
+source  "Environment Agency real-time flood-monitoring API reference, https://environment.data.gov.uk/flood-monitoring/doc/reference (sha256 87b7156f3fea64b54b92473cc67f62227b9fb4bf678bd76761c4a907a5b07b92, read 2026-11-21); Open Government Licence v3.0"
+uses    eaflood
+wire    json
+
+field  eaflood.context  @context  string
+group  eaflood.readings  items
+  field  eaflood.reading_uri      @id       string
+  field  eaflood.reading_time     dateTime  string
+  field  eaflood.reading_measure  measure   string
+  field  eaflood.reading_value    value     float
+end

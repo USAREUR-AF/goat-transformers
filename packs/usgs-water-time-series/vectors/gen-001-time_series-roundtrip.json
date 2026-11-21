@@ -1,0 +1,17 @@
+{
+ "name": "gen-time_series-roundtrip",
+ "from": "usgs-water-time-series",
+ "to": "usgs-water-time-series",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"begin\":\"s95570\",\"begin_utc\":\"s69965\",\"computation_identifier\":\"s86154\",\"computation_period_identifier\":\"s91709\",\"data_gap_interval\":\"s37427\",\"end\":\"s62773\",\"end_utc\":\"s36307\",\"hydrologic_unit_code\":\"s85578\",\"id\":\"s59723\",\"last_modified\":\"s91148\",\"monitoring_location_id\":\"s38761\",\"parameter_code\":\"s84588\",\"parameter_description\":\"s60895\",\"parameter_name\":\"s88784\",\"parent_time_series_id\":\"s51458\",\"primary\":\"s31171\",\"state_name\":\"s19520\",\"statistic_id\":\"s33303\",\"sublocation_identifier\":\"s93036\",\"thresholds\":\"s90165\",\"unit_of_measure\":\"s8568\",\"web_description\":\"s17636\"},\"id\":\"s77027\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"begin\":\"s95570\",\"begin_utc\":\"s69965\",\"computation_identifier\":\"s86154\",\"computation_period_identifier\":\"s91709\",\"data_gap_interval\":\"s37427\",\"end\":\"s62773\",\"end_utc\":\"s36307\",\"hydrologic_unit_code\":\"s85578\",\"id\":\"s59723\",\"last_modified\":\"s91148\",\"monitoring_location_id\":\"s38761\",\"parameter_code\":\"s84588\",\"parameter_description\":\"s60895\",\"parameter_name\":\"s88784\",\"parent_time_series_id\":\"s51458\",\"primary\":\"s31171\",\"state_name\":\"s19520\",\"statistic_id\":\"s33303\",\"sublocation_identifier\":\"s93036\",\"thresholds\":\"s90165\",\"unit_of_measure\":\"s8568\",\"web_description\":\"s17636\"},\"id\":\"s77027\"}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "usgswaterseries.id": "s77027",
+  "usgswaterseries.properties_begin": "s95570",
+  "usgswaterseries.properties_begin_utc": "s69965",
+  "usgswaterseries.properties_computation_identifier": "s86154",
+  "usgswaterseries.properties_computation_period_identifier": "s91709",
+  "usgswaterseries.properties_data_gap_interval": "s37427"
+ }
+}

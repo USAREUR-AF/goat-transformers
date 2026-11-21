@@ -1,0 +1,17 @@
+{
+ "name": "gen-continuous-roundtrip",
+ "from": "usgs-water-continuous",
+ "to": "usgs-water-continuous",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"approval_status\":\"Approved\",\"last_modified\":\"s8353\",\"monitoring_location_id\":\"s29675\",\"parameter_code\":\"s57791\",\"qualifier\":\"s60261\",\"statistic_id\":\"s44052\",\"time\":\"2024-07-25T22:53:11.719Z\",\"time_series_id\":\"s86876\",\"unit_of_measure\":\"s75390\",\"value\":\"s18109\"},\"id\":\"s90073\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"approval_status\":\"Approved\",\"last_modified\":\"s8353\",\"monitoring_location_id\":\"s29675\",\"parameter_code\":\"s57791\",\"qualifier\":\"s60261\",\"statistic_id\":\"s44052\",\"time\":\"2024-07-25T22:53:11.719Z\",\"time_series_id\":\"s86876\",\"unit_of_measure\":\"s75390\",\"value\":\"s18109\"},\"id\":\"s90073\"}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "time_ms": "1721947991719",
+  "usgswatercont.id": "s90073",
+  "usgswatercont.properties_approval_status": "Approved",
+  "usgswatercont.properties_last_modified": "s8353",
+  "usgswatercont.properties_monitoring_location_id": "s29675",
+  "usgswatercont.properties_parameter_code": "s57791"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-peak-roundtrip",
+ "from": "usgs-water-peaks",
+ "to": "usgs-water-peaks",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"day\":95385,\"last_modified\":\"s98688\",\"monitoring_location_id\":\"s81441\",\"month\":22456,\"parameter_code\":\"s91376\",\"peak_since\":35301,\"qualifier\":\"s94395\",\"time\":\"s36194\",\"time_of_day\":\"s98613\",\"time_series_id\":\"s326\",\"unit_of_measure\":\"s35868\",\"value\":\"s23880\",\"water_year\":55229,\"year\":1067},\"id\":\"s82222\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"day\":95385,\"last_modified\":\"s98688\",\"monitoring_location_id\":\"s81441\",\"month\":22456,\"parameter_code\":\"s91376\",\"peak_since\":35301,\"qualifier\":\"s94395\",\"time\":\"s36194\",\"time_of_day\":\"s98613\",\"time_series_id\":\"s326\",\"unit_of_measure\":\"s35868\",\"value\":\"s23880\",\"water_year\":55229,\"year\":1067},\"id\":\"s82222\"}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "usgswaterpeaks.id": "s82222",
+  "usgswaterpeaks.properties_day": "95385",
+  "usgswaterpeaks.properties_last_modified": "s98688",
+  "usgswaterpeaks.properties_monitoring_location_id": "s81441",
+  "usgswaterpeaks.properties_month": "22456",
+  "usgswaterpeaks.properties_parameter_code": "s91376"
+ }
+}
