@@ -1,0 +1,9 @@
+{
+  "name": "to-held-partial-cover-over-a-pad",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-held",
+  "input": "{\"n\":7,\"x\":21,\"y\":3}",
+  "expect": "0715a3",
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 12 and 13: x = 0x15 agrees with the high nibble of 0x5a; the pad nibble takes a"
+}

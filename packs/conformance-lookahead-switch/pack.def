@@ -1,0 +1,26 @@
+# Conformance probe pack for a switch on a key inside a look-ahead window
+# (spec 0.33, Encode: windows are settled before a switch reads its key
+# back), most significant bit first. Public.
+#
+#   byte 0      n
+#   kind a      x (8), y (8: the window, 1 or 2), then by y: z (8) for 1,
+#               w (16) for 2
+format     conformance-lookahead-switch
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+kind    a
+when    8  1,2  at 8
+field   probe.x  8  uint
+field   probe.y  8  uint
+switch  probe.y
+  case  1
+    field  probe.z  8  uint
+  case  2
+    field  probe.w  16  uint
+end

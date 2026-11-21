@@ -5530,6 +5530,193 @@ group line, or not a `count` name. On a layout or wire where 0.21 refuses
 - Two counts in different packs (a transport pack and the pack it carries):
   that is the wire inside a binary field (Version 0.34).
 
+# Version 0.33: a kind decided by a field after other fields
+
+Status: Written. In a `layout sequential` pack the `when` lines of a kind are
+its first lines, read where the common lines ended (Version 0.8). Some formats
+decide the layout of a body by a field that comes after other fields of the
+body, and those earlier fields mean different things in each kind. Declaring
+them as common lines would give them one name for every kind. This version
+lets a `when` look ahead.
+
+```
+when  <len> <value>[,<value>…]  at <offset>  [as <model-key>]
+```
+
+`at <offset>` is valid on a `when` of a message kind or of an item kind in a
+`layout sequential` pack. `<offset>` is an unsigned decimal number of bits,
+counted from the **kind start**: the cursor position where the common lines
+(of the message, or of the item) ended, the same position from which every
+kind's `when` lines are read. `as` is Version 0.30's and may follow.
+
+## Decode
+
+A `when … at <offset>` reads its `len` bits at kind start plus `<offset>` and
+tests them as a `when` does. It does not move the cursor. A `when` without
+`at` reads at the cursor and moves it, as before. A kind holds when all its
+`when` lines hold; the first kind in pack order that holds is selected
+(Version 0.5). Then the kind's other lines are read from the cursor, so the
+kind's own `field` lines read the bits the look-ahead tested, under the
+kind's own key names.
+
+When the bits at kind start plus `<offset>` plus `len` lie beyond the input
+(or beyond the enclosing `length` extent), that `when` does not hold and the
+next kind is tried. If no kind holds, the message or item is `no-kind`.
+
+## Encode
+
+The kind is chosen as before (the kind recorded on the entity or item, or
+`requires`, with Version 0.30's implicit term for an `as` key). The kind's
+lines are written. Then each `when … at` of the selected kind settles its
+window, in line order (ruling 1):
+
+- when the window's bits as written match the `when`, and agree with the
+  value of a held `as` key, they stand;
+- otherwise the window's value is the value of the `as` key (Version 0.30)
+  when the entity holds it, or else the first listed value. When a bit of that
+  value differs from a bit that a key the entity holds wrote in the window,
+  encode is `transform-encode`: the output would decode a different value.
+  Otherwise the window is written with that value.
+
+A `default` does not count as a held key (ruling 29 of 0.20). The windows are
+settled before any `switch` reads its key back and before the prediction of
+ruling 33 of 0.20, so a switch reads its key from the bits as they stand
+after the windows are written. Presence and `fx` bits do not interact with
+a window, which ends before any `presence`, `opt` or `chain` line (the fixed
+rule below), and presence is computed from content, not from bits.
+
+## Load errors
+
+`bad-directive`: `at` on a `when` of a pack that is not `layout sequential`;
+`at` on a common `when` (before the first `kind`, a group body's common lines
+included); `at` without a value, twice, or with a value that is not plain
+digits or does not fit in 64 bits (leading zeros allowed); a `when` whose
+tokens are not exactly `when <len> <values> [at <n>] [as <k>]`, in that order.
+Also `bad-directive`: the look-ahead window is not **fixed in the kind**.
+
+The window of a `when … at` is the bits from kind start plus `<offset>` to
+kind start plus `<offset>` plus `len`. To test it, walk the kind's lines in
+reading order from its first line, skipping lines that occupy no bits (`when
+… at`, `requires`, `default`, `also`) and summing the lengths of the others, until
+the sum reaches or passes the window's end. Every line walked, the last one
+included, must be one of: a `when` without `at`; `const`; `pad`; `also`; a
+`field` whose locator is a bit length. That list is exhaustive. Field options
+that keep the width keep a field fixed: `via`, `swap`, `trim`, `absent`,
+`stop`, `with` (a suppressed field writes its `len` zero bits) and `hex`. Any
+other line walked makes the window not fixed: for example `align`,
+`presence`, `if`, `opt`, `chain`, `fx`, `length`, `group` (`group … count`
+included), the 0.21 `count <name>` line, `switch`, `ext`, `choice`, `alt`, or
+a `field` with an `until:` or UPER locator. A window that ends past the
+kind's last line is not fixed either.
+
+## Rulings for 0.33
+
+1. **Settling a window** (Encode) follows ruling 3 of 0.20 for bits a held
+   key wrote that match, and 0.30's rule against a silent change for bits that
+   do not. The window may cover a whole `field`, part of one, or several;
+   a partial cover is settled as ruling 13 states.
+2. **Plain and look-ahead `when` lines in one kind** may be interleaved among
+   the kind's first lines (ruling 10 of 0.8). Offsets count from kind start,
+   not from the cursor; plain `when` lines consume bits in their line order.
+3. **A window over a `const`.** A `const` is not checked on decode (0.6), so
+   the kind holds whatever the `const` bits are; encode writes the `when`'s
+   value over the `const`.
+4. **Item kinds.** In a group body, kind start is where the item's common
+   lines ended, for each item.
+5. **Two windows** of one kind may overlap, and a window may cover a plain
+   `when` of the same kind with another value. These load; windows are
+   settled in line order with no check between them, so the later one's bits
+   stand.
+6. **Past the end.** A `when` (with `at` or without, in a sequential pack)
+   any of whose bits lie beyond the input, beyond `length … whole`, or beyond
+   the enclosing extent, does not hold, and the next kind is tried. A kind's
+   `when` lines are tested in line order. Once a kind is selected it is
+   final: a later line of it past the end is `malformed-wire`, and no other
+   kind is tried.
+7. **The enclosing extent** is the innermost `length` block around kind
+   start (a group item is not an extent, ruling 12 of 0.22). A window that
+   starts at or past its end does not hold; an item with no kind that holds
+   is `no-kind`, which fails the whole decode (ruling 11 of 0.20).
+8. **Raw bits.** A window reads and writes raw stream bits in the pack's
+   bit order, independent of any field's transform or `swap`.
+9. **Wire lines.** A `when … at` is a wire line for rulings 11 and 32 of
+   0.21.
+10. **When the checks run** (0.11 ruling 5b). Every `at` error is a check
+    after the file. Order: `module-not-used` and `undeclared-key` first
+    (ruling 19 of 0.20), then the 0.30 `as` checks, then the `at` form, then
+    the fixed-window check.
+11. **The token order** amends ruling 23 of 0.20 with 0.30's amendment:
+    `when <len> <values> [at <n>] [as <k>]` is the only form with more than
+    two arguments, on `layout sequential`.
+
+12. **Bits a held key wrote** are the bits of a `field` (or `also`) line
+    whose key the entity holds and whose line wrote its value. Bits of a
+    `pad`, a `const`, a plain `when`, an earlier window, an absent key's zero
+    bits or sentinel (`absent`), and a line that `with` suppressed are not;
+    the window is written over them without a check.
+13. **A partial cover** (ruling 1) is settled by the Encode rule above: the
+    window's value is chosen first, and only the bits a held key wrote are
+    compared with it.
+14. **Error order against the header checks.** The `at` checks run after the
+    key passes of ruling 10, which Version 0.4 orders after
+    `missing-distribution` and `missing-source`; so those come before any
+    `at` error. `missing-format`, `missing-version` and `missing-wire` come
+    before them too (0.11 ruling 5b).
+15. **The keyword.** `at` is a keyword only in a `when` of a sequential pack,
+    in the position the token order of ruling 11 gives it; on a text wire
+    `when @t at` matches the text `at`.
+16. **The fixed-window check is a check after the file,** like every other
+    `at` error: a line `bogus` after a pack whose window is not fixed gives
+    `unknown-directive`.
+17. **Ruling 6 amends Version 0.8** ("Reading past the end of the input … is
+    `malformed-wire`") for `when` lines only: a `when` past the end does not
+    hold.
+18. **The extent of a message kind** is the message, or `length … whole`; the
+    innermost `length` block of ruling 7 concerns item kinds.
+
+### Stated, not yet pinned by a vector
+
+19. Ruling 9 for conversion (load vectors only).
+20. Presence and `fx` bits not interacting with a window, and windows settled
+    before the prediction of ruling 33 of 0.20: packs with `opt` or
+    `presence` after a window load but are never encoded.
+21. Ruling 5 with held keys in both overlapping windows.
+22. `as` with `at` in item kinds (ruling 4 of 0.30, the implicit term per
+    item), and a switch on an `as` key that a window binds.
+23. A window of an item kind inside a group-body block, and an item kind's
+    window ending past its last line (the load side is pinned at message
+    level only).
+24. The order of the `at` form check and the fixed-window check, both
+    `bad-directive`.
+25. **The `at` checks run last among the module checks:** after the
+    `default` value checks and the `requires =` and `case` value checks, so a
+    bad `default` value is reported before an `at` error.
+26. **Overlapping windows and held bits** (ruling 5 with ruling 12): a window
+    that writes its value makes its bits "bits of an earlier window", so a
+    later window writes over them without a check. A window whose bits stand
+    leaves them a held key's bits, so a later window that would change them
+    is `transform-encode`.
+27. **A line holding `at` with its tokens out of order** (`when 8 1 as k at 0`,
+    `at 0 as k y`, `at 0 as`) is an `at` form error, with the timing of
+    rulings 10 and 14, even where the misplaced token is `as`. A line with
+    `as` and no `at` keeps 0.30's checks.
+28. **The key on a line whose token order is broken** (ruling 27) is not
+    read as a key: `when 8 1 as probe.nosuch at 0` is the late `at` form
+    error, not `undeclared-key`. On a line in the right order whose offset
+    alone is bad (`at +8 as k`), the key is read and checked first
+    (ruling 10, load vector 3341).
+29. **A third token that is neither `at` nor `as`** (`when 8 1 x at 0`) stays
+    the argument-count line check of ruling 23 of 0.20.
+30. **`at` on a pack that is not `layout sequential`** (a fixed `bits`
+    layout, `json`, any other wire) is an `at` error like the others, with
+    the late timing of rulings 10 and 14: a pack with no `distribution` line
+    and `when 0:0:8 1 at 0` on a fixed layout is `missing-distribution`.
+
+## Not in this version
+
+- A look-ahead past lines of variable width.
+- `at` on a fixed layout, where every `when` is already positional.
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in

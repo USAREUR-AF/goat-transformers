@@ -1,0 +1,8 @@
+{
+  "name": "3319-lookahead-window-over-plain-when-const-pad-field-and-also-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey w int -\nkey a float -\nkey s string -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.33.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 4 1\nwhen 16 3 at 4\nconst 4 2\npad 4\nfield probe.x 4 uint\nalso probe.y\nfield probe.z 4 uint\n"
+}

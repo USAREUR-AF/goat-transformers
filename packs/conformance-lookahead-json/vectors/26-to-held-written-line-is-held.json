@@ -1,0 +1,9 @@
+{
+  "name": "to-held-written-line-is-held",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-held",
+  "input": "{\"n\":7,\"y\":9,\"z\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 12 and 13: with z held the line writes y = 9, a held key's bits that differ from 7"
+}

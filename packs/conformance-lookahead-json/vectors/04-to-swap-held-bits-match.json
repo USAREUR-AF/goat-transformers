@@ -1,0 +1,9 @@
+{
+  "name": "to-swap-held-bits-match",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-swap",
+  "input": "{\"n\":7,\"x\":13330}",
+  "expect": "071234",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 8: a window reads and writes raw stream bits in the pack's bit order; x = 13330 is written 12 34, so the window's raw first byte is 18 and the bits stand"
+}

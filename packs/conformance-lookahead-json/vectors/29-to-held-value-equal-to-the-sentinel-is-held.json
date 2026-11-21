@@ -1,0 +1,9 @@
+{
+  "name": "to-held-value-equal-to-the-sentinel-is-held",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-held",
+  "input": "{\"n\":7,\"w\":255,\"c1\":3}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 12 and 13: w = 255 is held (0.9: a held value is written even when it equals a sentinel), so its bits are compared with 4"
+}

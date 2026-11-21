@@ -1,0 +1,17 @@
+{
+  "name": "plain-and-look-ahead-when-interleaved",
+  "from": "conformance-lookahead-bits",
+  "to": "conformance-lookahead-bits",
+  "input": "0756032a",
+  "expect": "0756032a",
+  "model": {
+    "@kind": "c",
+    "probe.c1": "42",
+    "@absent": [
+      "probe.x",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 2: plain `when` lines consume bits in line order and the offset counts from kind start; kind c reads 5 at bit 8, the window 3 at bit 16, 6 at bit 12"
+}

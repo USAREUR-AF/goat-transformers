@@ -1,0 +1,9 @@
+{
+  "name": "to-swap-held-bits-do-not-match",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-swap",
+  "input": "{\"n\":7,\"x\":4660}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 8: a window reads and writes raw stream bits in the pack's bit order; x = 4660 is written 34 12, so the window's raw first byte is 52, not 18; Encode: transform-encode"
+}

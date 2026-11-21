@@ -1,0 +1,14 @@
+{
+  "name": "window-over-a-const",
+  "from": "conformance-lookahead-const",
+  "to": "conformance-lookahead-const",
+  "input": "070a0205",
+  "expect": "070a0105",
+  "model": {
+    "@kind": "a",
+    "probe.x": "10",
+    "probe.y": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 3: a `const` is not checked on decode, and encode writes the `when`'s value over it; the input's 2 selects the kind; the output carries the first value 1, not 2 and not the const 9"
+}

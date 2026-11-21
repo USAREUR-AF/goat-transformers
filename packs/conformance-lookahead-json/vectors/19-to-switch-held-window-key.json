@@ -1,0 +1,9 @@
+{
+  "name": "to-switch-held-window-key",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-switch",
+  "input": "{\"n\":7,\"x\":10,\"y\":2,\"w\":256}",
+  "expect": "070a020100",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode: the windows are settled before any `switch` reads its key back; y = 2 is held and matches, so case 2 writes w"
+}

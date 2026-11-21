@@ -1,0 +1,9 @@
+{
+  "name": "selected-kind-truncated",
+  "from": "conformance-lookahead-end",
+  "to": "conformance-lookahead-end",
+  "input": "07050909",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 6: once a kind is selected it is final: a later line past the end is malformed-wire and no other kind is tried"
+}

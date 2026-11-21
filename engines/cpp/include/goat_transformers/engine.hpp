@@ -433,6 +433,9 @@ struct SeqKind {
     std::vector<DefaultLine> defaults;
     std::vector<SeqNode> lines;
     std::size_t line = 0;
+    // v0.33: when the kind has `when ... at` lines, the number of its first
+    // lines that hold every window (the fixed lines walked); 0 when none.
+    std::size_t window_lines = 0;
 };
 
 // The lines of the message, of a block, or of one item of a group. `defaults`
@@ -522,6 +525,10 @@ struct SeqNode {
     // v0.30. when: `as <model-key>` binds the bits to `field.key`, read and
     // written as a `uint` of `len` bits.
     bool has_as = false;
+    // v0.33. when: `at <offset>`, a look-ahead read at kind start plus `at`
+    // bits; it does not move the cursor.
+    bool has_at = false;
+    std::uint64_t at = 0;
     // v0.20. switch: the key (`field.key`) and the cases, the `else` last.
     std::vector<SeqCase> cases;
     // v0.20. if: the innermost case holding the block; -1 when none.
@@ -602,6 +609,10 @@ struct Pack {
     // above are then empty.
     bool sequential = false;
     bool uper = false;  // v0.19: `encoding uper`
+    // v0.33: the first error of the `at` form, and the first window that is
+    // not fixed in its kind. Both are raised by Engine::add_pack after the
+    // module checks (rulings 10 and 25).
+    std::string at_error, window_error;
     SeqBody seq;
     // v0.10, the `text` wire: `delimiter`, `start` and `checksum`.
     char delimiter = ',';

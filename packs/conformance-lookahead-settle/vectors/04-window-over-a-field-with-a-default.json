@@ -1,0 +1,14 @@
+{
+  "name": "window-over-a-field-with-a-default",
+  "from": "conformance-lookahead-settle",
+  "to": "conformance-lookahead-settle",
+  "input": "070b04",
+  "expect": "070b04",
+  "model": {
+    "@kind": "def",
+    "probe.v3": "11",
+    "probe.w": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): w = 4 is held, so its bits stand"
+}

@@ -455,6 +455,9 @@ class Pack:
     defaults: list = dc_field(default_factory=list)  # common Default lines
     layout: str = "fixed"  # bits: "sequential" from 0.8
     seq: object = None     # a sequential pack: the seqdef.Body of the message
+    # 0.33: the `at` errors, raised by `Engine.add` after the checks against the
+    # modules (rulings 10, 14 and 25): the form errors, then the fixed-window ones
+    late_errors: list = dc_field(default_factory=list)
     tables: dict = dc_field(default_factory=dict)    # value tables: name -> [(native, model)] in line order
     delimiter: str = ","   # text: the field delimiter, None for `delimiter none`
     start: str = None      # text: the start text
@@ -617,9 +620,10 @@ def line_head(raw, source, lineno, seen, directives=PACK_DIRECTIVES, arg_counts=
         # arguments is the line of a model module (ruling 5 of 0.11)
         raise UnknownDirective("unknown directive %r at %s" % (kw, where), format=fmt)
     lo, hi = arg_counts[kw]
-    if kw == "when" and len(args) > 2 and args[2] == "as":
-        # 0.30: `when <len> <values> as <key>`; its syntax, and whether the pack
-        # is `layout sequential`, are checked after the file (ruling 16)
+    if kw == "when" and len(args) > 2 and args[2] in ("as", "at"):
+        # 0.30: `when <len> <values> as <key>`, 0.33: `... at <n> [as <key>]`; their
+        # syntax, and whether the pack is `layout sequential`, are checked after
+        # the file (ruling 16 of 0.30, ruling 10 of 0.33)
         hi = None
     if (len(args) < lo or (hi is not None and len(args) > hi)
             or (kw == "checksum" and len(args) == 2 and args[0] not in CHECKSUMS)):
@@ -1839,6 +1843,7 @@ def parse_pack_text(text, *, source="pack.def"):
     value_checks = []
     via_fields = []
     deferred = []        # (lineno, BadDirective)
+    late_errors = []     # 0.33 ruling 30: `at` on a pack that is not sequential, in line order
     elements = []        # (Element, the Kind holding it or None) (0.18)
     root = None
     current = None       # the Kind being read, None before the first `kind`
@@ -2068,10 +2073,14 @@ def parse_pack_text(text, *, source="pack.def"):
                 (current.lines if current is not None else common).append(el)
                 elements.append((el, current))
             elif kw == "when" or kw == "const":
-                if len(args) > 2:  # 0.30: `as` (let through by `line_head`) needs `layout sequential`
-                    deferred.append((lineno, BadDirective(
-                        "'as' on a 'when' of a pack that is not 'layout sequential', at %s" % where, format=fmt,
-                        locator=args[0])))
+                if len(args) > 2:  # 0.30 `as`, 0.33 `at` (let through by `line_head`) need `layout sequential`
+                    err = BadDirective(
+                        "'%s' on a 'when' of a pack that is not 'layout sequential', at %s"
+                        % ("at" if "at" in args[2:] else "as", where), format=fmt, locator=args[0])
+                    if "at" in args[2:]:  # 0.33 ruling 30: an `at` error, raised by `Engine.add` (rulings 10, 14)
+                        late_errors.append(err)
+                    else:
+                        deferred.append((lineno, err))
                 if kw == "when" and first_when is None:
                     first_when = (lineno, args[0])
                 w = _resolve_when(wire, fmt, args[0], args[1], source, lineno, deferred, directive=kw,
@@ -2213,7 +2222,7 @@ def parse_pack_text(text, *, source="pack.def"):
         distribution=distribution, sources=sources, uses=uses, defaults=defaults, tables=tables,
         delimiter=delimiter, start=text_values.get("start"), checksum=text_values.get("checksum", "none"),
         armor=armor_value,
-        gates=common_gates, value_checks=value_checks,
+        gates=common_gates, value_checks=value_checks, late_errors=late_errors,
     )
     if wire == "tlv":
         pack.tlv_tag = tlv.get("tag", ("ber-oid",))[0]

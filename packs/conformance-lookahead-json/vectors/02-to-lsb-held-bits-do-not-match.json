@@ -1,0 +1,9 @@
+{
+  "name": "to-lsb-held-bits-do-not-match",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-lsb",
+  "input": "{\"n\":7,\"x\":165}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 8: a window reads and writes raw stream bits in the pack's bit order; x = 165 writes a5, whose bits 4 to 7 under lsb are 10, not 5; Encode: transform-encode"
+}

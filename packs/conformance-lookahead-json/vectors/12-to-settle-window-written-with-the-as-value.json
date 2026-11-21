@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-window-written-with-the-as-value",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"v1\":7,\"v2\":3}",
+  "expect": "070307",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode: with no held key in the window it is written with the value of the `as` key (0.30), 7, not the first value 5"
+}

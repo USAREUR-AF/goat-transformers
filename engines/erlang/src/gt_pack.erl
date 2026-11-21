@@ -105,7 +105,7 @@ parse(Bin) ->
              armor => hex, armor_seen => false,
              encoding => none, encoding_seen => false,
              cur => common, late => [], gstack => [], sstack => [], bstack => [],
-             vchecks => [], has_switch => false, switch_n => 0,
+             vchecks => [], has_switch => false, switch_n => 0, at_errs => [],
              headers => #{}, listed_seen => false},
     P0 = lists:foldl(fun(L, P) ->
                              case tokens(L) of
@@ -255,7 +255,14 @@ parse(Bin) ->
                          typemap := lists:reverse(maps:get(typemap, P1)),
                          sources := lists:reverse(maps:get(sources, P1)),
                          uses := lists:reverse(maps:get(uses, P1)),
-                         tables := Tables}),
+                         tables := Tables,
+                         %% the `at` errors (0.33): the form, in file order,
+                         %% then the windows that are not fixed (ruling 10)
+                         at_errs := lists:reverse(maps:get(at_errs, P1)) ++
+                             case Layout of
+                                 sequential -> window_errors(maps:get(common, P3), maps:get(kinds, P3));
+                                 fixed -> []
+                             end}),
     require_marking(["pack ", name_str(P)], P),
     P.
 
@@ -379,7 +386,7 @@ named_scope(Lines, Defaults) ->
            {sfield, Keys, _, Tr, _, _, _, _, With} ->
                [{K, {field, Tr, Via}} || {K, Via} <- Keys] ++ with_named(With);
            %% the key of `when ... as` (0.30), declared int
-           {swhen, _, _, K} when K =/= none -> [{K, as}];
+           {swhen, _, _, K, _} when K =/= none -> [{K, as}];
            {sgroup, List, _, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
                [{List, list} | named_scope(Ls, Ds)] ++
                    lists:append([named_scope(maps:get(lines, K), maps:get(defaults, K))
@@ -437,7 +444,7 @@ key_names(Lines, Prefix) ->
            {gate, _, _, _, #{lines := Ls}, _} -> key_names(Ls, Prefix);
            {sfield, Keys, _, _, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
            %% a `when ... as` key, at its line (ruling 5 of 0.30)
-           {swhen, _, _, K} when K =/= none -> [<<Prefix/binary, K/binary>>];
+           {swhen, _, _, K, _} when K =/= none -> [<<Prefix/binary, K/binary>>];
            {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls ++ lists:append([maps:get(lines, K) || K <- Ks]),
@@ -473,10 +480,13 @@ line(Tokens, P0) ->
         catch error:{line_error, K, M} -> erlang:error({load_error, K, M})
         end,
     Tokens1 = case Tokens of
-                  [<<"when">>, L, V, <<"as">> | _] = [_ | Args] ->
-                      case when_as(<<"when">>, Args, P) of
-                          {ok, _} -> Tokens;
-                          _ -> [<<"when">>, L, V]       % refused after the file
+                  [<<"when">>, L, V, _ | _] = [_ | Args] ->
+                      case when_form(Args, P) of
+                          {as, {ok, _}} -> Tokens;
+                          %% `when <len> <values> at <offset> [as <key>]` (0.33)
+                          {at, Off, Key} -> [<<"when">>, L, V, {at, Off, Key}];
+                          %% refused after the file, or after the module checks
+                          _ -> [<<"when">>, L, V]
                       end;
                   _ -> Tokens
               end,
@@ -576,6 +586,10 @@ pre_line([Dir | Args], P0) ->
                   %% `when <len> <values> as <key>` (0.30): the syntax of
                   %% `as` is checked after the file (ruling 16)
                   {<<"when">>, [_, _, <<"as">> | _]} -> true;
+                  %% and `at <offset>` (0.33): its form is checked after
+                  %% the module checks (ruling 10); any other third token
+                  %% stays this check (ruling 29)
+                  {<<"when">>, [_, _, <<"at">> | _]} -> true;
                   _ -> arg_count_ok(Dir, length(Args))
               end,
     case CountOk of
@@ -618,9 +632,59 @@ pre_line([Dir | Args], P0) ->
              true -> P2#{listed_seen := true};
              false -> P2
          end,
-    case when_as(Dir, Args, P3) of
-        {bad, Fmt, FArgs} -> late({bad, Fmt, FArgs}, P3);
+    case Dir of
+        <<"when">> ->
+            case when_form(Args, P3) of
+                {as, {bad, Fmt, FArgs}} -> late({bad, Fmt, FArgs}, P3);
+                {at_bad, Fmt, FArgs} -> at_error(Fmt, FArgs, P3);
+                {at, bad, _} -> at_error("when ... at ~s: the offset is not plain digits within 64 bits",
+                                         [at_offset_text(Args)], P3);
+                _ -> P3
+            end;
         _ -> P3
+    end.
+
+%% An error of `at` (0.33), raised after the module checks (rulings 10, 14
+%% and 25), in file order.
+at_error(Fmt, Args, #{at_errs := Es} = P) -> P#{at_errs := [{Fmt, Args} | Es]}.
+
+at_offset_text([_, _, <<"at">>, N | _]) -> N;
+at_offset_text(_) -> <<>>.
+
+%% The arguments of a `when` line after its values (0.30, 0.33) ->
+%%   plain                 none
+%%   {as, AsResult}        `as` without `at`: 0.30's checks (when_as/3)
+%%   {at, Off, Key}        `at <n> [as <k>]` in that order on a sequential
+%%                         pack; Off = integer() | bad (the key is read)
+%%   {at_bad, Fmt, Args}   any other line holding `at`: the `at` form error,
+%%                         its key not read (rulings 27 and 28)
+when_form([_, _], _P) -> plain;
+when_form([_, _ | Rest] = Args, P) ->
+    Seq = maps:get(layout, P) =:= sequential andalso maps:get(wire, P) =:= bits,
+    HasAt = lists:member(<<"at">>, Rest),
+    case Rest of
+        _ when HasAt, not Seq ->
+            {at_bad, "when ... at: at on a pack that is not layout sequential", []};
+        [<<"at">>] -> {at_bad, "when ... at gives no offset", []};
+        [<<"at">>, _, <<"at">> | _] -> {at_bad, "when ... at: at twice on one line", []};
+        [<<"at">>, N] -> {at, at_offset(N), none};
+        [<<"at">>, N, <<"as">>, K] when K =/= <<"as">>, K =/= <<"at">> -> {at, at_offset(N), K};
+        _ when HasAt ->
+            {at_bad, "when ... at: the tokens are not when <len> <values> [at <n>] [as <k>]", []};
+        [<<"as">> | _] -> {as, when_as(<<"when">>, Args, P)};
+        _ -> plain
+    end;
+when_form(_, _P) -> plain.
+
+%% An offset of `at`: plain digits (leading zeros allowed) within 64 bits.
+at_offset(S) ->
+    case S =/= <<>> andalso all_digits(S) of
+        true ->
+            case binary_to_integer(S) of
+                N when N < 1 bsl 64 -> N;
+                _ -> bad
+            end;
+        false -> bad
     end.
 
 %% `as <key>` after the values of a `when` (0.30) -> none (no `as`) |
@@ -1757,12 +1821,12 @@ when_match(_V, _Val) -> false.
 %% The implicit `requires` term of each `when ... as <key>` line of a kind
 %% (0.30): the entity holds the key and the `when` matches its value. The
 %% `when` lines are the first lines of a kind.
-as_holds([{swhen, _, Val, Key} | Rest], Model) when Key =/= none ->
+as_holds([{swhen, _, Val, Key, _} | Rest], Model) when Key =/= none ->
     case maps:find(Key, Model) of
         {ok, V} -> as_match(V, Val) =/= false andalso as_holds(Rest, Model);
         error -> false
     end;
-as_holds([{swhen, _, _, none} | Rest], Model) -> as_holds(Rest, Model);
+as_holds([{swhen, _, _, none, _} | Rest], Model) -> as_holds(Rest, Model);
 as_holds(_, _Model) -> true.
 
 %% Does a `when` match an entity's value? The value is read as an unsigned
@@ -2140,7 +2204,9 @@ scan_bare(Bin, 0) ->
 %%     candidates when the line is suppressed
 %%        the first key is the `field` line's, the others those of the `also`
 %%        lines after it
-%%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value, As}
+%%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value, As, At}
+%%     At (0.33) = none | Offset: a look-ahead `when ... at <offset>`, read
+%%     at the kind start plus Offset without moving the cursor
 %%     As (0.30) = none | Key: the key `as <key>` binds the bits to
 %%   {presence, Id, Size :: pos_integer() | fx}
 %%   {ifb, [{Id, Bit, Negated}], Body} | {opt, Body}
@@ -2227,8 +2293,11 @@ seq_apply([<<"const">>, LenS, ValS], P) ->
     seq_add({sconst, Len, seq_value(ValS, Len)}, P);
 seq_apply([<<"pad">>, LenS], P) -> seq_add({pad, seq_len(LenS, 0, infinity)}, P);
 seq_apply([<<"align">>, NS], P) -> seq_add({align, seq_len(NS, 1, infinity)}, P);
-seq_apply([<<"when">>, LenS, ValS, <<"as">>, Key], P) -> seq_when(LenS, ValS, Key, P);
-seq_apply([<<"when">>, LenS, ValS], P) -> seq_when(LenS, ValS, none, P);
+seq_apply([<<"when">>, LenS, ValS, <<"as">>, Key], P) -> seq_when(LenS, ValS, Key, none, P);
+seq_apply([<<"when">>, LenS, ValS, {at, Off, Key}], P) ->
+    %% a bad offset is reported after the module checks (when_form/2)
+    seq_when(LenS, ValS, Key, case Off of bad -> 0; _ -> Off end, P);
+seq_apply([<<"when">>, LenS, ValS], P) -> seq_when(LenS, ValS, none, none, P);
 seq_apply([<<"presence">>, Name, SizeS], P) ->
     Size = case SizeS of
                <<"fx">> -> fx;
@@ -2426,8 +2495,18 @@ seq_apply([Dir | Args], _P) ->
 
 %% A `when` line of a sequential pack; As is the key of `as <key>` (0.30)
 %% or none.
-seq_when(LenS, ValS, As, #{sstack := Stack} = P) ->
+seq_when(LenS, ValS, As, At, #{sstack := Stack} = P0) ->
     Len = seq_loc(LenS, 64),
+    %% `at` stands on a `when` of a kind, not on a common `when` (0.33)
+    Common = case Stack of
+                 [] -> maps:get(cur, P0) =:= common;
+                 [#{type := group, cur := none} | _] -> true;
+                 _ -> false
+             end,
+    P = case At =/= none andalso Common of
+            true -> at_error("when ~s ~s at: at on a common when", [LenS, ValS], P0);
+            false -> P0
+        end,
     %% a `when` stands among the common lines, or first in its kind
     First = fun(Ls) -> lists:all(fun(L) -> element(1, L) =:= swhen end, Ls) end,
     Ok = case Stack of
@@ -2437,7 +2516,7 @@ seq_when(LenS, ValS, As, #{sstack := Stack} = P) ->
              _ -> false
          end,
     case Ok of
-        true -> seq_add({swhen, Len, seq_when_value(ValS, Len), As}, P);
+        true -> seq_add({swhen, Len, seq_when_value(ValS, Len), As, At}, P);
         false -> load_error('bad-directive',
                             "when ~s ~s stands after another line of its kind or inside a block",
                             [LenS, ValS])
@@ -2646,7 +2725,7 @@ scope_keys(#{sstack := Stack} = P) ->
                           end || #{lines := Ls} = F <- Inner]).
 
 %% The keys the `when ... as` lines among Lines bind (0.30), in line order.
-as_keys(Lines) -> [K || {swhen, _, _, K} <- Lines, K =/= none].
+as_keys(Lines) -> [K || {swhen, _, _, K, _} <- Lines, K =/= none].
 
 deep_keys(Lines) ->
     lists:append([case L of
@@ -2659,6 +2738,35 @@ deep_keys(Lines) ->
 seq_parts([], Cur, Acc) -> lists:reverse([lists:reverse(Cur) | Acc]);
 seq_parts([fx | Rest], Cur, Acc) -> seq_parts(Rest, [], [lists:reverse(Cur) | Acc]);
 seq_parts([L | Rest], Cur, Acc) -> seq_parts(Rest, [L | Cur], Acc).
+
+%% ---- look-ahead windows fixed in their kind (0.33) ----
+%% The window of a `when ... at <offset>` of Len bits ends at Offset + Len
+%% from the kind start. Walking the kind's lines from its first, skipping
+%% `when ... at` lines (`also`, `requires` and `default` are no lines here),
+%% every line up to the one where the sum of lengths reaches the window's
+%% end must be a plain `when`, `const`, `pad` or a `field` of a bit length.
+%% -> [{Fmt, Args}], message kinds first, then the item kinds of every group.
+window_errors(Common, Kinds) ->
+    [{"when ... at ~p: the look-ahead window of ~p bits is not fixed in kind ~s",
+      [Off, Len, maps:get(name, K)]}
+     || #{lines := Ls} = K <- Kinds, {swhen, Len, _, _, Off} <- Ls, Off =/= none,
+        not window_fixed(Ls, Off + Len, 0)]
+        ++ lists:append(
+             [window_errors(GLs, GKs)
+              || {sgroup, _, _, #{lines := GLs, kinds := GKs}}
+                     <- seq_group_lines(lists:append([Common | [maps:get(lines, K) || K <- Kinds]]))]).
+
+window_fixed(_Lines, End, Sum) when Sum >= End -> true;
+window_fixed([], _End, _Sum) -> false;
+window_fixed([{swhen, _, _, _, Off} | Rest], End, Sum) when Off =/= none -> window_fixed(Rest, End, Sum);
+window_fixed([L | Rest], End, Sum) ->
+    case L of
+        {swhen, Len, _, _, none} -> window_fixed(Rest, End, Sum + Len);
+        {sconst, Len, _} -> window_fixed(Rest, End, Sum + Len);
+        {pad, Len} -> window_fixed(Rest, End, Sum + Len);
+        {sfield, _, Len, _, _, _, _, _, _} when is_integer(Len) -> window_fixed(Rest, End, Sum + Len);
+        _ -> false
+    end.
 
 %% ---- the bans on a `when ... as` key (0.30, rulings 9, 21 and 33) ----
 %% In one reading path (the common lines with one kind's, of the message or

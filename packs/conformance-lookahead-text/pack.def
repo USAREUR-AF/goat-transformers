@@ -1,0 +1,15 @@
+# Conformance probe pack for `at` as a value on a text wire (spec 0.33
+# ruling 15). Public. The member t names the kind: the text "at" for a,
+# "other" for b.
+format     conformance-lookahead-text
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+kind    a
+when    t  at
+field   probe.x  x  int
+kind    b
+when    t  other
+field   probe.y  y  int

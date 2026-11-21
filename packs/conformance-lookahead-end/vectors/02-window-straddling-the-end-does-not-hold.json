@@ -1,0 +1,17 @@
+{
+  "name": "window-straddling-the-end-does-not-hold",
+  "from": "conformance-lookahead-end",
+  "to": "conformance-lookahead-end",
+  "input": "070509",
+  "expect": "0705",
+  "model": {
+    "@kind": "short",
+    "probe.c1": "5",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 6: a window some of whose bits lie beyond the input does not hold and the next kind is tried"
+}

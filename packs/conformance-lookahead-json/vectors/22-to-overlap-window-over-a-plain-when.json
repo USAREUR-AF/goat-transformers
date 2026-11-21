@@ -1,0 +1,9 @@
+{
+  "name": "to-overlap-window-over-a-plain-when",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-overlap",
+  "input": "{\"n\":7,\"w\":42}",
+  "expect": "07372a",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 5: windows are settled in line order with no check between them; a window may cover a plain `when` of its kind with another value: 0x37 is written over the plain `when`'s 9"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "window-beyond-the-whole-length",
+  "from": "conformance-lookahead-whole",
+  "to": "conformance-lookahead-whole",
+  "input": "020507",
+  "expect": "0205",
+  "model": {
+    "@kind": "short",
+    "probe.z": "5",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 6: a window beyond `length ... whole` does not hold, though the input holds 07 there; the next kind is tried"
+}

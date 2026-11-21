@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-two-fields-do-not-match",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"c1\":21,\"c2\":183}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): c1 = 0x15 and c2 = 0xb7 put 0x5b in the window, not 0x5a"
+}

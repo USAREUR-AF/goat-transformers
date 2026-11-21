@@ -1,0 +1,14 @@
+{
+  "name": "partial-cover-over-a-pad-roundtrip",
+  "from": "conformance-lookahead-held",
+  "to": "conformance-lookahead-held",
+  "input": "0715a3",
+  "expect": "0715a3",
+  "model": {
+    "@kind": "part",
+    "probe.x": "21",
+    "probe.y": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 12 and 13: the window's value 0x5a is chosen first; only the bits x wrote are compared with it, and the pad's bits are written over"
+}

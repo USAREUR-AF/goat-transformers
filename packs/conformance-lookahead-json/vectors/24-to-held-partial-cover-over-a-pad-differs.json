@@ -1,0 +1,9 @@
+{
+  "name": "to-held-partial-cover-over-a-pad-differs",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-held",
+  "input": "{\"n\":7,\"x\":22,\"y\":3}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 12 and 13: x = 0x16 wrote 0110 where the window's value 0x5a has 0101: transform-encode"
+}

@@ -1,0 +1,21 @@
+# Conformance probe pack for a look-ahead window in the pack's bit order
+# (spec 0.33 ruling 8), least significant bit first. Public.
+#
+#   byte 0      n
+#   byte 1      x in kind a, y in kind b; its bits 4 to 7 (the high nibble
+#               under lsb) are the kind code: 5 for a, 10 for b
+format     conformance-lookahead-lsb
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  lsb
+field   probe.n  8  uint
+kind    a
+when    4  5  at 4
+field   probe.x  8  uint
+kind    b
+when    4  10  at 4
+field   probe.y  8  uint

@@ -1,0 +1,14 @@
+{
+  "name": "window-inside-the-whole-length",
+  "from": "conformance-lookahead-whole",
+  "to": "conformance-lookahead-whole",
+  "input": "030507",
+  "expect": "030507",
+  "model": {
+    "@kind": "long",
+    "probe.x": "5",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 6: the window lies inside the stated whole length"
+}

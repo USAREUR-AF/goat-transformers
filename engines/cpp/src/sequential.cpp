@@ -409,6 +409,62 @@ void as_mapped(const std::vector<SeqNode>& lines, std::map<std::string, std::siz
     }
 }
 
+// v0.33: is each window of a kind's `when ... at` lines fixed in the kind?
+// Walk the kind's lines from its first, skipping the look-ahead `when` lines,
+// summing the widths of `when` (plain), `const`, `pad` and bit-length `field`
+// lines until the sum reaches the window's end. Any other line walked, or
+// running out of lines first, makes the window not fixed. On success the kind
+// keeps the number of lines the farthest window walked (for encode).
+void settle_windows_of(Pack& p, SeqKind& k, const std::string& source) {
+    std::size_t walked = 0;
+    for (const auto& w : k.lines) {
+        if (w.type != Type::When) break;
+        if (!w.has_at) continue;
+        const std::uint64_t end = w.at + w.len;
+        bool fixed = w.at <= ~std::uint64_t{0} - w.len;
+        std::uint64_t sum = 0;
+        std::size_t i = 0;
+        for (; fixed && i < k.lines.size() && sum < end; ++i) {
+            const SeqNode& n = k.lines[i];
+            if (n.type == Type::When && n.has_at) continue;
+            const bool plain = n.type == Type::When || n.type == Type::Const || n.type == Type::Pad ||
+                               (n.type == Type::Field && n.uper == SeqNode::Uper::None && !n.field.until);
+            if (!plain) fixed = false;
+            else sum += n.len;
+        }
+        if (fixed && sum < end) fixed = false;
+        if (!fixed) {
+            if (p.window_error.empty())
+                p.window_error = source + ":" + std::to_string(w.line) + ": the window of 'when " +
+                                 std::to_string(w.len) + " ... at " + std::to_string(w.at) +
+                                 "' is not fixed in the kind '" + k.name + "'";
+            return;
+        }
+        walked = std::max(walked, i);
+    }
+    k.window_lines = walked;
+}
+
+void check_windows(Pack& p, SeqBody& body, const std::string& source);
+
+void check_windows_lines(Pack& p, std::vector<SeqNode>& lines, const std::string& source) {
+    for (auto& n : lines) {
+        if (n.type == Type::Group) check_windows(p, n.inner, source);
+        else {
+            check_windows_lines(p, n.inner.lines, source);
+            for (auto& c : n.cases) check_windows_lines(p, c.body.lines, source);
+        }
+    }
+}
+
+void check_windows(Pack& p, SeqBody& body, const std::string& source) {
+    check_windows_lines(p, body.lines, source);
+    for (auto& k : body.kinds) {
+        settle_windows_of(p, k, source);
+        check_windows_lines(p, k.lines, source);
+    }
+}
+
 void check_as_bans(const Pack& p, const SeqBody& body, const std::string& source) {
     auto refuse = [&](std::size_t line, const std::string& why) {
         throw Error(ErrorKind::BadDirective, p.format, "", source + ":" + std::to_string(line) + ": " + why);
@@ -739,19 +795,45 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             // the first `kind` is a common one (0.8 ruling 10).
             Frame& f = stack.back();
             if (!f.is_body) throw bad("'when' inside " + f.what);
-            // v0.30: `as <model-key>` after the values. Its syntax errors are
-            // found after the file (ruling 16); any other third token is
-            // bad-directive here (0.20 ruling 23, amended by ruling 15).
+            // v0.30: `as <model-key>` after the values, and v0.33: `at <n>`
+            // before it. Their errors are found after the file (0.30 ruling
+            // 16; 0.33 ruling 10: the `at` form after the module checks); any
+            // other third token is bad-directive here (0.20 ruling 23).
             std::string as_key;
+            bool has_at = false;
+            std::uint64_t at_off = 0;
+            auto at_form = [&](const std::string& why) {
+                if (p.at_error.empty()) p.at_error = where + ": " + why;
+            };
             if (t.size() > 3) {
-                if (t[3] != "as") throw bad("'when' takes a bit length and one value list; a list has no spaces");
-                std::string why;
-                if (t.size() == 4) why = "'as' takes a model key";
-                for (std::size_t k = 4; k < t.size() && why.empty(); ++k)
-                    if (t[k] == "as") why = "'as' twice on one 'when' line";  // ruling 31
-                if (why.empty() && t.size() > 5) why = "a token after the key of 'as': '" + t[5] + "'";
-                if (why.empty()) as_key = t[4];
-                else if (as_error.empty()) as_error = where + ": " + why;
+                if (t[3] != "as" && t[3] != "at")
+                    throw bad("'when' takes a bit length and one value list; a list has no spaces");
+                bool at_token = false;
+                for (std::size_t k = 3; k < t.size(); ++k) at_token = at_token || t[k] == "at";
+                if (at_token) {
+                    // v0.33: exactly `at <n> [as <k>]`. Any other order is an `at`
+                    // form error and its key is not read (rulings 27 and 28).
+                    const bool ordered = t[3] == "at" && t.size() >= 5 && t[4] != "at" && t[4] != "as" &&
+                                         (t.size() == 5 || (t.size() == 7 && t[5] == "as" && t[6] != "as" && t[6] != "at"));
+                    if (!ordered) {
+                        at_form("the tokens of a 'when' line with 'at' are not 'when <len> <values> at <n> [as <key>]'");
+                    } else {
+                        has_at = true;
+                        if (!parse_u64(t[4], at_off))
+                            at_form("'at " + t[4] + "' is not plain decimal digits that fit 64 bits");
+                        if (f.body->kinds.empty()) at_form("'when ... at' on a common 'when'");
+                        if (t.size() == 7) as_key = t[6];  // read and checked even when the offset is bad
+                    }
+                } else {
+                    // v0.30: `as <model-key>`.
+                    std::string why;
+                    if (t.size() == 4) why = "'as' takes a model key";
+                    for (std::size_t k = 4; k < t.size() && why.empty(); ++k)
+                        if (t[k] == "as") why = "'as' twice on one 'when' line";  // 0.30 ruling 31
+                    if (why.empty() && t.size() > 5) why = "a token after the key of 'as': '" + t[5] + "'";
+                    if (why.empty()) as_key = t[4];
+                    else if (as_error.empty()) as_error = where + ": " + why;
+                }
             } else {
                 arity(2);
             }
@@ -765,6 +847,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             std::string why;
             if (!parse_when_numbers(t[2], n.len, n.ranges, why)) throw bad("'when' " + why);
             n.number = n.ranges.front().first;
+            n.has_at = has_at;
+            n.at = at_off;
             if (!as_key.empty()) {
                 n.has_as = true;
                 n.field.key = as_key;
@@ -1328,6 +1412,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     // v0.30 ruling 16: the syntax of `as`, then the bans that need only key names.
     if (!as_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", as_error);
     check_as_bans(p, p.seq, source);
+    check_windows(p, p.seq, source);  // v0.33: raised by Engine::add_pack (ruling 10)
     if (stack.size() > 1) {
         const Frame& f = stack.back().is_case ? stack[stack.size() - 2] : stack.back();
         throw Error(ErrorKind::BadDirective, p.format, "",
@@ -2162,25 +2247,34 @@ void decode_body(SeqIn& in, const SeqBody& body, Item& out) {
         std::size_t whens = 0;
         const std::uint64_t end = in.ext != kNoExtent ? std::min(in.ext, in.have) : in.have;
         for (const auto& k : body.kinds) {
+            // v0.33: kind start is where the common lines ended; a `when ... at`
+            // reads at kind start plus its offset and does not move the cursor.
+            const std::uint64_t kind_start = in.cur;
             std::uint64_t at = in.cur;
             std::size_t i = 0;
             bool holds = true;
+            std::vector<std::uint64_t> where;  // the position each `when` read
             for (; i < k.lines.size() && k.lines[i].type == Type::When && holds; ++i) {
                 const SeqNode& w = k.lines[i];
-                // A `when` any of whose bits lies beyond the input does not hold.
-                if (at > end || w.len > end - at || !w.holds(read_bits(in.data, at, w.len, in.msb))) holds = false;
-                else at += w.len;
+                const bool ahead = w.has_at;
+                const std::uint64_t pos = ahead ? kind_start + w.at : at;
+                const bool wrapped = ahead && w.at > ~std::uint64_t{0} - kind_start;
+                // A `when` any of whose bits lies beyond the input or the
+                // extent does not hold (0.33 rulings 6 and 7).
+                if (wrapped || pos > end || w.len > end - pos || !w.holds(read_bits(in.data, pos, w.len, in.msb))) {
+                    holds = false;
+                } else {
+                    where.push_back(pos);
+                    if (!ahead) at += w.len;
+                }
             }
             if (!holds) continue;
             selected = &k;
             whens = i;
             // v0.30: the `when ... as` lines of the selected kind set their
             // keys; a kind tested and not selected sets nothing (ruling 12).
-            std::uint64_t w_at = in.cur;
-            for (std::size_t j = 0; j < i; ++j) {
-                if (k.lines[j].has_as) read_field(in.data, w_at, k.lines[j], in.msb, d);
-                w_at += k.lines[j].len;
-            }
+            for (std::size_t j = 0; j < i; ++j)
+                if (k.lines[j].has_as) read_field(in.data, where[j], k.lines[j], in.msb, d);
             in.cur = at;
             break;
         }
@@ -2425,6 +2519,10 @@ struct SeqOut {
     };
     std::vector<Extent> extents{Extent{0, true, {}}};
     bool rest_ran = false;  // a `rest` group of the current extent was written
+    // v0.33: while the fixed lines of a kind with windows are written, the
+    // bits each `field` line wrote for a key the item holds (ruling 12).
+    bool track_held = false;
+    std::vector<std::pair<std::uint64_t, std::uint64_t>> held{};
 
     void reach(std::uint64_t bits) {
         const std::size_t bytes = static_cast<std::size_t>((bits + 7) / 8);
@@ -2853,7 +2951,17 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
         case Type::Field: {
             // The bits written are read back as decode reads them (0.20).
             const std::uint64_t start = out.cur;
+            bool held = false;
+            if (out.track_held) {
+                try {
+                    Value mv;
+                    const FieldLine* line = field_value(n, s, mv);
+                    held = line && s.item.fields.count(line->key);
+                } catch (const Error&) {
+                }
+            }
             encode_field(out, n, s);
+            if (held) out.held.emplace_back(start, out.cur);
             read_back(p, out.data, start, out.cur, n, out.msb, s.shadow_d);
             return;
         }
@@ -2876,6 +2984,7 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
         }
         case Type::Const: out.put(n.number, n.len); return;
         case Type::When: {
+            if (n.has_at) return;  // v0.33: a window, settled after the kind's fixed lines
             if (!n.has_as) {
                 out.put(n.number, n.len);
                 return;
@@ -3043,10 +3152,95 @@ int predicted_case(const SeqNode& n, const Scope& s) {
     return index;
 }
 
+// v0.33: settle each window of the kind, in line order, over the bits its
+// fixed lines wrote from kind start (Encode, rulings 1, 12, 13 and 26).
+void settle_windows(SeqOut& out, const Scope& s, const SeqKind& k, std::uint64_t kind_start) {
+    const Pack& p = out.p;
+    for (const auto& w : k.lines) {
+        if (w.type != Type::When) break;
+        if (!w.has_at) continue;
+        const std::uint64_t pos = kind_start + w.at;
+        const std::uint64_t end = pos + w.len;
+        const std::uint64_t bits = read_bits(out.data, pos, w.len, out.msb);
+        bool held_as = false;
+        std::uint64_t u = 0;
+        if (w.has_as) {
+            auto it = s.item.fields.find(w.field.key);
+            if (it != s.item.fields.end()) {
+                if (!as_pattern(it->second, u) || !w.holds(u))
+                    throw Error(ErrorKind::TransformEncode, p.format, w.field.locator,
+                                w.field.key + ": the value is not one the 'when' on line " + std::to_string(w.line) +
+                                    " holds for");
+                held_as = true;
+            }
+        }
+        if (w.holds(bits) && (!held_as || bits == u)) continue;  // the bits stand
+        const std::uint64_t value = held_as ? u : w.number;
+        // Only the bits a held key wrote are compared with the window's value.
+        std::string written = out.data;
+        write_bits(written, pos, w.len, value, out.msb);
+        for (const auto& h : out.held) {
+            const std::uint64_t lo = std::max(h.first, pos), hi = std::min(h.second, end);
+            for (std::uint64_t b = lo; b < hi; ++b)
+                if (read_bits(written, b, 1, out.msb) != read_bits(out.data, b, 1, out.msb))
+                    throw Error(ErrorKind::TransformEncode, p.format, "",
+                                "the window of 'when " + std::to_string(w.len) + " ... at " + std::to_string(w.at) +
+                                    "' (line " + std::to_string(w.line) +
+                                    ") would change bits a key the entity holds wrote; the output would decode "
+                                    "another value");
+        }
+        out.data.swap(written);
+        // Ruling 26: the window's bits are now bits of an earlier window.
+        std::vector<std::pair<std::uint64_t, std::uint64_t>> rest;
+        for (const auto& h : out.held) {
+            if (h.first < pos) rest.emplace_back(h.first, std::min(h.second, pos));
+            if (h.second > end) rest.emplace_back(std::max(h.first, end), h.second);
+        }
+        out.held.swap(rest);
+    }
+}
+
 void encode_body(SeqOut& out, const SeqBody& body, const Item& item) {
     const Scope s(out.p, item, body, select_kind(out.p, body, item), out.sw);
     encode_lines(out, body.lines, s, s.kind ? &s.kind->lines : nullptr);
-    if (s.kind) encode_lines(out, s.kind->lines, s, nullptr);
+    if (!s.kind) return;
+    const SeqKind& k = *s.kind;
+    if (k.window_lines == 0) {
+        encode_lines(out, k.lines, s, nullptr);
+        return;
+    }
+    // v0.33: the fixed lines that hold the windows, then the windows, then
+    // the rest; a switch reads its key from the bits as settled.
+    const std::uint64_t kind_start = out.cur;
+    out.held.clear();
+    out.track_held = true;
+    std::vector<std::uint64_t> starts;
+    for (std::size_t i = 0; i < k.window_lines; ++i) {
+        starts.push_back(out.cur);
+        encode_node(out, k.lines, i, s, nullptr);
+    }
+    starts.push_back(out.cur);
+    out.track_held = false;
+    settle_windows(out, s, k, kind_start);
+    out.held.clear();
+    // The keys of those lines read back again from the settled bits.
+    for (std::size_t i = 0; i < k.window_lines; ++i) {
+        const SeqNode& n = k.lines[i];
+        if (n.type == Type::Field) {
+            s.shadow.fields.erase(n.field.key);
+            for (const auto& a : n.also) s.shadow.fields.erase(a.key);
+        } else if (n.type == Type::When && n.has_as) {
+            s.shadow.fields.erase(n.field.key);
+        }
+    }
+    for (std::size_t i = 0; i < k.window_lines; ++i) {
+        const SeqNode& n = k.lines[i];
+        if (n.type == Type::Field || (n.type == Type::When && n.has_as && !n.has_at))
+            read_back(out.p, out.data, starts[i], starts[i + 1], n, out.msb, s.shadow_d);
+        else if (n.type == Type::When && n.has_as)
+            read_back(out.p, out.data, kind_start + n.at, kind_start + n.at + n.len, n, out.msb, s.shadow_d);
+    }
+    for (std::size_t i = k.window_lines; i < k.lines.size(); ++i) encode_node(out, k.lines, i, s, nullptr);
 }
 
 }  // namespace

@@ -1,0 +1,15 @@
+{
+  "name": "long-roundtrip",
+  "from": "conformance-lookahead-end",
+  "to": "conformance-lookahead-end",
+  "input": "070509090b",
+  "expect": "070509090b",
+  "model": {
+    "@kind": "long",
+    "probe.x": "5",
+    "probe.y": "2313",
+    "probe.z": "11"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 6: the window holds and the kind reads to its end"
+}

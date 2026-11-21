@@ -1,0 +1,9 @@
+{
+  "name": "to-switch-window-value-chooses-the-case",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-switch",
+  "input": "{\"n\":7,\"x\":10,\"w\":256}",
+  "expect": "070a0100",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode: the windows are settled before any `switch` reads its key back; the window writes 1, so the switch selects case 1 although the entity holds w; z is absent and writes zero bits"
+}

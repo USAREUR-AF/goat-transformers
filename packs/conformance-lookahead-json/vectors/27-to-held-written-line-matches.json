@@ -1,0 +1,9 @@
+{
+  "name": "to-held-written-line-matches",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-held",
+  "input": "{\"n\":7,\"y\":7,\"z\":1}",
+  "expect": "070701",
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 12 and 13: with z held the line writes y = 7, which matches: the bits stand"
+}

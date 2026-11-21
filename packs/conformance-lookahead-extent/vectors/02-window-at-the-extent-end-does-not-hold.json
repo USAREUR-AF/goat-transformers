@@ -1,0 +1,9 @@
+{
+  "name": "window-at-the-extent-end-does-not-hold",
+  "from": "conformance-lookahead-extent",
+  "to": "conformance-lookahead-extent",
+  "input": "09020503012a",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 7: the enclosing extent is the innermost `length` block around kind start; a window that starts at its end does not hold, though the input goes on with 01; the item is no-kind, which fails the decode"
+}

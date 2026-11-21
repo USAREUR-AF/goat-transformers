@@ -1,0 +1,24 @@
+# Conformance probe pack for a look-ahead window over a swapped field (spec
+# 0.33 ruling 8), most significant bit first. Public.
+#
+#   byte 0      n
+#   bytes 1-2   x in kind a, y in kind b, each a little-endian 16-bit field
+#               (`swap`); the first byte on the wire, raw, is the kind code:
+#               18 (0x12) for a, 52 (0x34) for b
+format     conformance-lookahead-swap
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+kind    a
+requires probe.x
+when    8  18  at 0
+field   probe.x  16  uint  swap
+kind    b
+requires probe.y
+when    8  52  at 0
+field   probe.y  16  uint  swap

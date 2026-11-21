@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-held-bits-agree-with-the-as-key",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"v1\":6,\"v2\":1,\"v4\":6}",
+  "expect": "070106",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): v4 = 6 matches 5..7 and equals v1 = 6: the bits stand"
+}

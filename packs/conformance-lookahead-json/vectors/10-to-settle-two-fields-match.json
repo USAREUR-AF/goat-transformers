@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-two-fields-match",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"c1\":21,\"c2\":167}",
+  "expect": "0715a7",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): c1 = 0x15 and c2 = 0xa7 put 0x5a in the window: the bits stand"
+}

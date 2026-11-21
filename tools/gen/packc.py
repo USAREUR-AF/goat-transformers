@@ -362,6 +362,10 @@ class Pack:
                                                                      and t[3].startswith("@")))):
                 refuse("unsupported-feature", "%s: `group … rest`, `group … last`, `count` lines and "
                        "`group … count @<name>` (spec 0.21) are not in the device profile" % self.format)
+        for t in rows:      # spec 0.30 and 0.33: a `when` bound to a key or looking ahead is not in the device profile
+            if t[0] == "when" and len(t) > 3 and t[3] in ("as", "at"):
+                refuse("unsupported-feature", "%s: `when … as <key>` (spec 0.30) and `when … at <offset>` "
+                       "(spec 0.33) are not in the device profile" % self.format)
         for t in rows:      # spec 0.20: kind selection beyond one value is not in the device profile
             if (t[0] in ("switch", "case", "else")
                     or (t[0] == "when" and len(t) > 2 and ("," in t[2] or ".." in t[2]))

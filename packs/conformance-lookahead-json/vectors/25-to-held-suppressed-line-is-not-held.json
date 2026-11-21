@@ -1,0 +1,9 @@
+{
+  "name": "to-held-suppressed-line-is-not-held",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-held",
+  "input": "{\"n\":7,\"y\":9}",
+  "expect": "070700",
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 12 and 13: a line that `with` suppressed is not bits a held key wrote: the window 7 is written over its zero bits, though the entity holds y = 9"
+}

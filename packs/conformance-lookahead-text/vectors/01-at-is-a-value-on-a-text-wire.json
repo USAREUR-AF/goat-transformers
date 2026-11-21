@@ -1,0 +1,13 @@
+{
+  "name": "at-is-a-value-on-a-text-wire",
+  "from": "conformance-lookahead-text",
+  "to": "conformance-lookahead-text",
+  "input": "{\"t\":\"at\",\"x\":1}",
+  "expect": "{\"t\":\"at\",\"x\":1}",
+  "model": {
+    "@kind": "a",
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 15: `at` is a keyword only in a `when` of a sequential pack; on json `when t at` matches the text at"
+}

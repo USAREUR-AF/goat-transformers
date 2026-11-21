@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-a-default-does-not-count",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"v3\":11}",
+  "expect": "070b04",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode: a `default` does not count as a held key (ruling 29 of 0.20); w's default 9 is overwritten by the window's first value 4"
+}

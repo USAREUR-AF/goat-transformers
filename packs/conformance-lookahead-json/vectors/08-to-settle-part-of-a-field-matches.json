@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-part-of-a-field-matches",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"z\":35}",
+  "expect": "0723",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): the low nibble of 0x23 is 3: the bits stand"
+}

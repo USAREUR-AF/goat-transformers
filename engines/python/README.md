@@ -232,16 +232,16 @@ compares `model_keys` of every loaded format and the capability report of
 every converted pair with the full build. It prints the sizes and exits 1 on
 any failure. `--wires <set>` checks another set the same way.
 
-One run on 2026-11-21: 1711 packs loaded; 8372 of the 23545 conversion
-vectors run, 8372 passed; 391 load vectors run, 391 passed; the six
+One run on 2026-11-21: 1713 packs loaded; 8374 of the 23610 conversion
+vectors run, 8374 passed; 394 load vectors run, 394 passed; the six
 `unknown-wire` loads and the load of `wire morse` as specified; `model_keys`
-of 1711 formats and the capability report of 192 pairs the same in both
+of 1713 formats and the capability report of 192 pairs the same in both
 builds. Sizes:
 
 | Build | Wheel | Package source |
 |---|---|---|
-| all eight wires | 163390 bytes | 577697 bytes, 25 modules |
-| `xml`, `json`, `geojson` | 89535 bytes (55%) | 309791 bytes, 16 modules |
+| all eight wires | 166235 bytes | 588298 bytes, 25 modules |
+| `xml`, `json`, `geojson` | 89815 bytes (54%) | 310616 bytes, 16 modules |
 
 ## Parse once, and the benchmark
 
@@ -280,14 +280,15 @@ PYTHONPATH=src python -m unittest discover -s tests
 ```
 
 It loads every pack and model module. One run on 2026-11-21 gave
-`Ran 283 tests … OK`.
+`Ran 288 tests … OK`.
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (23545, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1351, all passed); every capability vector (18, all passed) |
-| `test_malformed.py` | the input of every conversion vector cut and changed (139154 damaged inputs from 23542 vectors over 4514 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
+| `test_vectors.py` | every conversion vector of every pack (23610, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1402, all passed); every capability vector (18, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (139556 damaged inputs from 23607 vectors over 4528 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool; the `iso8601_s` transform of Version 0.26 (whole seconds written, milliseconds dropped; valid on `xml`, `geojson`, `json` and `text` only, no parameter, an `int` key only) |
 | `test_whenas30.py` | Version 0.30, what `convert` cannot reach: a kind or item kind recorded on the entity skips the implicit term, writes the held value or the first listed value, and is `transform-encode` for a held value its `when` does not match (ruling 25); a 64-bit label with the top bit set decodes negative and encodes back (ruling 7); `when 8 1 as as` is `bad-directive` (ruling 31) |
+| `test_lookahead33.py` | Version 0.33, what the vectors do not reach: overlapping windows, a written window overwritten without a check and a standing one leaving held bits (ruling 26); a switch on an `as` key a window binds (ruling 22) and on a field a window wrote; a partial window in the `msb`, `lsb` and `msb-lsb` bit orders |
 | `test_licences.py` | Version 0.29: `Engine.from_dir` with each profile on the fixture trees of `packs/conformance/tool-fixtures/licences-*`, a profile not one of the three, and the line forms of ruling 1 (`REUSE.toml`, `.def.license`, `licences.toml`) and the profiles of ruling 2 on temporary trees |
 | `test_parse_once.py` | Version 0.25, ruling 1: the cases of `bench/set.json` (each input whole, cut and changed, `expect` converted back, decodes) give a new engine's result on an engine that converted the others, and from eight threads at once on one new engine; a load opens each file once |
 | `reduced-build-check.py`, run from the repository root as `python3 -I engines/python/reduced-build-check.py` | a build with `xml`, `json` and `geojson` only (Version 0.24; "Builds with fewer wires" above) |

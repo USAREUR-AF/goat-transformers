@@ -537,6 +537,16 @@ V011_ORDER |= {"3050", "3051", "3052", "3053"}
 # `count` stays `bad-locator` at its own line (3128, 3131, as ruling 44 of 0.21).
 # gtcheck names neither kind and gives `bad-directive`.
 V011_ORDER |= {"3128", "3131", "3132", "3133", "3134", "3135", "3136", "3137", "3138"}
+# Rulings 10 and 16 of 0.33: every `at` error, the fixed window included, is
+# checked after the file, so a later `bogus` line gives `unknown-directive`
+# (3337, 3338). Ruling 14 of 0.33 puts `missing-version` before an `at` error
+# (3343); gtcheck does not check a pack's `version` line (0.11, as load vector
+# 378, which the 0.11 range above skips).
+V011_ORDER |= {"3337", "3338", "3343"}
+# 3349: on a fixed layout `when 0:8 1 at 0` is `bad-locator` (0.11 5b step 8, a
+# line check before any `at` error); gtcheck refuses the locator as the line is
+# read but names it `bad-directive`, as for 3128 and 3131.
+V011_ORDER |= {"3349"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 

@@ -1,0 +1,37 @@
+# Conformance probe pack for a kind decided by a field after other fields
+# (spec 0.33, `when <len> <values> at <offset>`), most significant bit first.
+# Public. One common byte, then a body whose second byte is the kind code;
+# the first body byte means a different key in each kind.
+#
+#   byte 0      n
+#   kind a      x (8), the kind code 1 (8, a `pad`), y (8)
+#   kind b      z (8, two's complement), the kind code 2 (8, a `pad`), w (16)
+#   kind c      the code 5 (4), the code 6 (4), the kind code 3 (8, a `pad`), c1 (8)
+#
+# Kind c interleaves plain `when` lines with a look-ahead one (ruling 2): its
+# offset 8 counts from kind start, not from the cursor after the first nibble.
+format     conformance-lookahead-bits
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+kind    a
+when    8  1  at 8
+field   probe.x  8  uint
+pad     8
+field   probe.y  8  uint
+kind    b
+when    8  2  at 8
+field   probe.z  8  twos
+pad     8
+field   probe.w  16  uint
+kind    c
+when    4  5
+when    8  3  at 8
+when    4  6
+pad     8
+field   probe.c1  8  uint

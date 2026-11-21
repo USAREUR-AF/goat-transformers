@@ -1,0 +1,17 @@
+{
+  "name": "switch-on-the-window-key-roundtrip",
+  "from": "conformance-lookahead-switch",
+  "to": "conformance-lookahead-switch",
+  "input": "070a012a",
+  "expect": "070a012a",
+  "model": {
+    "@kind": "a",
+    "probe.y": "1",
+    "probe.z": "42",
+    "@absent": [
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 and 0.20 `switch`: y reads the window's bits, 1, and selects case 1"
+}

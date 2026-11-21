@@ -35,8 +35,11 @@ Version 0.22), writes a time to the whole second (`iso8601_s`, spec Version
 0.28), binds the label a sequential kind is told apart by to a key (`when
 <len> <values> as <key>`, spec Version 0.30: decode sets the key, encode
 chooses the kind by it), counts one list from two places that must agree
-(`group <list> count @<a> @<b>`, spec Version 0.31), and converts between
-formats via the shared model.
+(`group <list> count @<a> @<b>`, spec Version 0.31), decides a sequential
+kind by a field that comes after other fields (`when <len> <values> at
+<offset> [as <key>]`, spec Version 0.33: decode looks ahead without moving the
+cursor, encode settles the window once the kind's lines are written), and
+converts between formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -167,13 +170,13 @@ Linux, `ReleaseSmall`):
 
 | Binary | All eight wires | `xml`, `json`, `geojson` | Reduced / full |
 |---|---|---|---|
-| `gt-engine-zig` (harness) | 799 384 bytes | 438 936 bytes | 54 % |
-| `goat-xf` (command-line tool) | 791 192 bytes | 438 936 bytes | 55 % |
+| `gt-engine-zig` (harness) | 807 576 bytes | 443 032 bytes | 54 % |
+| `goat-xf` (command-line tool) | 803 480 bytes | 443 032 bytes | 55 % |
 
-The reduced harness loaded 1711 packs and left out 2803; it ran 8375
-conversion vectors (8375 passed), 391 load vectors (391 passed) and 16
-capability vectors (16 passed), and did not run 689 vectors that name a pack
-it left out nor 960 load vectors with such a pack.
+The reduced harness loaded 1713 packs and left out 2815; it ran 8377
+conversion vectors (8377 passed), 394 load vectors (394 passed) and 16
+capability vectors (16 passed), and did not run 718 vectors that name a pack
+it left out nor 1008 load vectors with such a pack.
 
 `goat-xf` of a reduced build loads a whole packs directory as Version 0.23
 says, so a directory holding a pack on a wire the build lacks fails with that

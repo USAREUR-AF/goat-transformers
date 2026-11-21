@@ -1,0 +1,9 @@
+{
+  "name": "to-switch-held-window-key-does-not-match",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-switch",
+  "input": "{\"n\":7,\"x\":10,\"y\":3,\"z\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): y = 3 does not match 1,2"
+}

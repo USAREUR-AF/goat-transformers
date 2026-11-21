@@ -1,0 +1,44 @@
+# Conformance probe pack for settling a look-ahead window on encode (spec
+# 0.33, Encode, rulings 1 and 29 of 0.20, `as` of 0.30), most significant
+# bit first. Public.
+#
+#   byte 0      n
+#   kind full     x (8), y (8); the window is all of y: 1 or 2
+#   kind part     z (8); the window is the low nibble of z: 3
+#   kind several  c1 (8), c2 (8); the window is the low nibble of c1 and
+#                 the high nibble of c2: 0x5a (90)
+#   kind def      v3 (8), w (8, default 9); the window is all of w: 4
+#   kind as       v2 (8), v4 (8); the window is all of v4: 5 to 7, bound to v1
+format     conformance-lookahead-settle
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+kind    full
+requires probe.y
+when    8  1,2  at 8
+field   probe.x  8  uint
+field   probe.y  8  uint
+kind    part
+requires probe.z
+when    4  3  at 4
+field   probe.z  8  uint
+kind    several
+requires probe.c1 probe.c2
+when    8  90  at 4
+field   probe.c1  8  uint
+field   probe.c2  8  uint
+kind    def
+requires probe.v3
+when    8  4  at 8
+default probe.w  9
+field   probe.v3  8  uint
+field   probe.w  8  uint
+kind    as
+when    8  5..7  at 8  as probe.v1
+field   probe.v2  8  uint
+field   probe.v4  8  uint

@@ -1,0 +1,9 @@
+{
+  "name": "item-with-no-kind",
+  "from": "conformance-lookahead-items",
+  "to": "conformance-lookahead-items",
+  "input": "0701052203",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 4 and 6: no kind of the item holds (tx's window is past the input); an item that is no-kind fails the decode (ruling 11 of 0.20)"
+}

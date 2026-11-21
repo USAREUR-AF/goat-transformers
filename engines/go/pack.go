@@ -411,6 +411,10 @@ func reqHolds(terms []*reqTerm, rec *Item) bool {
 
 // Pack is one parsed pack.def.
 type Pack struct {
+	// The `at` errors of 0.33, reported last among the load checks
+	// (rulings 10 and 25): the form, then the fixed window.
+	atErr, winErr error
+
 	Format    string
 	Version   string
 	Wire      string
@@ -782,7 +786,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		// passes the argument count; its syntax, and `as` outside a
 		// sequential pack, are checked after the file (ruling 16).
 		whenAs := kw == "when" && len(args) >= 3 && args[2] == "as"
-		if w >= 0 && len(args) != w && !whenAs {
+		// `when … at <n>` (0.33): the same, its errors reported after the
+		// key and value checks (ruling 10).
+		whenAt := kw == "when" && len(args) >= 3 && args[2] == "at"
+		if w >= 0 && len(args) != w && !whenAs && !whenAt {
 			return nil, perr(ErrBadDirective, n, "", "%s takes %d argument(s), got %d", kw, w, len(args))
 		}
 		if needsWire[kw] {
@@ -1058,7 +1065,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			p.addWithRef(f)
 			addLine(line{f: f})
 		case "when", "const":
-			if whenAs {
+			if whenAt {
+				p.atLater(perr(ErrBadDirective, n, "", "when … at is valid only in a pack with `layout sequential`"))
+				args = args[:2]
+			} else if whenAs {
 				if late == nil {
 					late = perr(ErrBadDirective, n, "", "when … as is valid only in a pack with `layout sequential`")
 				}
@@ -1567,6 +1577,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		g.body = p.newLayout(nil, g.lines, g.defaults)
 	}
 	if p.seq {
+		// The fixed-window check of 0.33 needs the field widths, resolved
+		// above; its error is reported by AddPack (ruling 10).
+		p.winErr = sp.atWindows()
 		sp.bind()
 		return p, nil
 	}

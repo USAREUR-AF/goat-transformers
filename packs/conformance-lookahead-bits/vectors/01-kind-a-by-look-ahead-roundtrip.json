@@ -1,0 +1,20 @@
+{
+  "name": "kind-a-by-look-ahead-roundtrip",
+  "from": "conformance-lookahead-bits",
+  "to": "conformance-lookahead-bits",
+  "input": "07050109",
+  "expect": "07050109",
+  "model": {
+    "@kind": "a",
+    "probe.n": "7",
+    "probe.x": "5",
+    "probe.y": "9",
+    "@absent": [
+      "probe.z",
+      "probe.w",
+      "probe.c1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33, Decode: the window at kind start + 8 reads 1 and does not move the cursor, so x reads the first body byte; Encode: a window over a `pad` is written with the first listed value"
+}

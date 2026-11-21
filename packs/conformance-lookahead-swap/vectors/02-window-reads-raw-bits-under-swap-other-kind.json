@@ -1,0 +1,16 @@
+{
+  "name": "window-reads-raw-bits-under-swap-other-kind",
+  "from": "conformance-lookahead-swap",
+  "to": "conformance-lookahead-swap",
+  "input": "073412",
+  "expect": "073412",
+  "model": {
+    "@kind": "b",
+    "probe.y": "4660",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 8: a window reads and writes raw stream bits in the pack's bit order; the first byte on the wire is 0x34 = 52"
+}

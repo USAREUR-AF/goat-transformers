@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-held-bits-match",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"x\":10,\"y\":2}",
+  "expect": "070a02",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): y = 2 is held and matches 1,2: its bits stand, not the first value"
+}

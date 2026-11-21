@@ -690,7 +690,7 @@ class Node:
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
                  "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper",
-                 "values", "ranges", "until", "stop", "as_key", "names")
+                 "values", "ranges", "until", "stop", "as_key", "names", "at")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
@@ -701,6 +701,7 @@ class Node:
         self.values = self.ranges = None
         self.until = self.stop = None
         self.as_key = None          # spec 0.30: the key of `when ... as <key>`
+        self.at = None              # spec 0.33: the offset of `when ... at <offset>`
         self.names = None           # spec 0.31: the count names of `group <list> count @<a> [@<b>]`
 
     def __repr__(self):
@@ -776,6 +777,16 @@ def walk(lines, directive=None):
                 yield from walk(kind.lines, directive)
 
 
+def _as_of(node):
+    """The key of `when ... [at <n>] as <key>` (spec 0.30, 0.33), or None."""
+    a = node.args
+    if len(a) == 4 and a[2] == "as" and a[3] != "as":
+        return a[3]
+    if len(a) == 6 and a[2] == "at" and a[4] == "as" and a[5] != "as":
+        return a[5]
+    return None
+
+
 def keys_of(node):
     """The model keys a `field` node binds: its own and those of its `also` lines."""
     return [node.key] + [key for key, _ in (node.also or ())]
@@ -795,6 +806,10 @@ class _Loader:
         self._header_lines = {}
         self.switches = []          # spec 0.20: `switch` nodes, for the checks of their values
         self.counts = []            # spec 0.21: count lines
+        # spec 0.33: `at` errors are checks after the file, after the key
+        # passes (rulings 10, 14 and 16); (line, message) of the `at` form,
+        # then of the fixed window
+        self.at_form, self.at_window = [], []
 
     def fail(self, kind, message, line=None):
         raise CheckError(kind, message, line, self.pack.label)
@@ -1195,8 +1210,8 @@ class _Loader:
         for kind in kinds or ():       # a kind continues the block its common lines began
             # spec 0.30 ruling 2: a kind's `as` key counts as mapped from the
             # start of its kind
-            self._mapped = set(after_common) | {n.as_key for n in kind.lines
-                                                 if n.d == "when" and len(n.args) == 4 and n.args[2] == "as"}
+            self._mapped = set(after_common) | {k for k in (_as_of(n) for n in kind.lines if n.d == "when")
+                                                 if k is not None}
             self._block(kind.lines, group, visible[:-1] + [dict(frame)], set(declared), in_kind=True, top=top)
         self._mapped = outer
         self._body_base = outer_base
@@ -1713,8 +1728,15 @@ class _Loader:
         """`when <locator> <value>[,<value>...] [as <key>]` (0.5, lists and
         ranges 0.20, `as` 0.30 on a sequential pack only, ruling 15)."""
         a = node.args
-        if len(a) == 4 and a[2] == "as" and a[3] != "as" and self.pack.wire == "bits" \
-                and self.pack.sequential:
+        sequential = self.pack.wire == "bits" and self.pack.sequential
+        if sequential and "at" in a[2:]:
+            self._when_at(node)
+        elif len(a) > 2 and a[2] == "at":
+            # spec 0.33 ruling 30: `at` on a pack that is not sequential is an
+            # `at` error with the late timing of rulings 10 and 14 (a third
+            # token that is neither `at` nor `as` stays the line check, 29)
+            self.at_form.append((node.line, "`at` on a `when` of a pack that is not `layout sequential`"))
+        elif len(a) == 4 and a[2] == "as" and a[3] != "as" and sequential:
             node.as_key = a[3]
             self.key_uses.append((node, a[3], "as"))
         elif len(a) != 2:
@@ -2202,6 +2224,63 @@ class _Loader:
         if first is not None:
             pack.cbor_top = first[0]
 
+    def _when_at(self, node):
+        """Spec 0.33: `when <len> <values> at <offset> [as <key>]` on a
+        sequential pack, the only order (ruling 11). `at` is a keyword there
+        only (ruling 15). Its errors are recorded and raised after the key
+        passes (ruling 10): `at` not right after the values, with no value,
+        twice, with a value that is not plain digits or does not fit in 64
+        bits, and any token that is not a following `as <key>`."""
+        rest = node.args[2:]
+        # the `as` key is registered whatever the offset, since the 0.30 `as`
+        # checks come before the `at` form (ruling 10)
+        if len(rest) == 4 and rest[0] == "at" and rest[2] == "as" and rest[3] != "as":
+            node.as_key = rest[3]
+            self.key_uses.append((node, rest[3], "as"))
+        if rest[0] != "at":
+            self.at_form.append((node.line, "`at` must follow the values (`when <len> <values> [at <n>] [as <k>]`)"))
+        elif len(rest) < 2 or not _UINT.match(rest[1]) or int(rest[1]) >> 64:
+            self.at_form.append((node.line, "`at` takes an unsigned decimal offset below 2^64"))
+        elif len(rest) not in (2, 4) or (len(rest) == 4 and node.as_key is None):
+            self.at_form.append((node.line, "after `at <n>` only `as <key>` may follow"))
+        else:
+            node.at = int(rest[1])
+
+    def _look_ahead(self):
+        """Spec 0.33 after the file: `at` on a common `when` (of the message
+        or of a group body) is an `at` form error; each window must be fixed
+        in its kind. Walk the kind's lines from its first, skipping `when ...
+        at`, `default` and `also` (`requires` is not a line of `kind.lines`),
+        summing the others' bits until the sum reaches the window's end; each
+        line walked must be a plain `when`, `const`, `pad` or a `field` with a
+        bit length."""
+        pack = self.pack
+        bodies = [(pack.common, pack.kinds)] + [(n.body or [], n.kinds or []) for n in walk(pack.common, "group")]
+        for common, kinds in bodies:
+            for node in common:
+                if node.d == "when" and node.at is not None:
+                    self.at_form.append((node.line, "`at` on a common `when`"))
+            for kind in kinds:
+                for w in kind.lines:
+                    if w.d != "when" or w.at is None:
+                        continue
+                    stop, total, fixed = w.at + int(w.args[0]), 0, False
+                    for node in kind.lines:
+                        if node.d in ("default", "also") or (node.d == "when" and node.at is not None):
+                            continue
+                        if node.d in ("when", "const", "pad") and _UINT.match(node.args[0]):
+                            total += int(node.args[0])
+                        elif node.d == "field" and len(node.args) > 1 and _UINT.match(node.args[1]):
+                            total += int(node.args[1])
+                        else:
+                            break
+                        if total >= stop:
+                            fixed = True
+                            break
+                    if not fixed:
+                        self.at_window.append((w.line, "the window of `when ... at %d` is not fixed in kind `%s`"
+                                               % (w.at, kind.name)))
+
     def _as_keys(self, lines):
         """Spec 0.30 load errors and ruling 9, over one reading path (common
         lines plus one kind; a group body's common lines plus one item kind):
@@ -2364,6 +2443,13 @@ class _Loader:
                                          self._case_values(node, arm, key_type, seen)))
         for _, check in sorted(value_checks, key=lambda c: c[0]):
             check()
+        # spec 0.33 ruling 10: the `at` form, then the fixed window
+        if pack.wire == "bits" and pack.sequential:
+            self._look_ahead()
+        for errors in (self.at_form, self.at_window):
+            if errors:
+                line, message = min(errors)
+                self.bad(line, message)
         return pack
 
     def _case_values(self, node, arm, key_type, seen):

@@ -2415,6 +2415,10 @@ pub struct Pack {
     pub elements: Vec<(String, usize)>,
     /// bits only, `layout sequential`: `encoding uper` (engine-spec v0.19)
     pub uper: bool,
+    /// `at` on a `when` of a pack that is not `layout sequential`: raised
+    /// with the other `at` errors, after the key passes (rulings 10 and 14
+    /// of 0.33)
+    pub at_err: Option<Error>,
 }
 
 fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
@@ -2434,6 +2438,8 @@ impl Pack {
             return seq::parse(text);
         }
         let mut layout_line: Option<usize> = None;
+        // engine-spec v0.33: the first `when … at`, an `at` error raised late
+        let mut at_err: Option<Error> = None;
         let mut format = None;
         let mut version = None;
         let mut wire = None;
@@ -2770,6 +2776,17 @@ impl Pack {
                     if toks.len() > 3 && toks[3] == "as" {
                         return bad(ln, "`as` on a `when` is valid only in a `layout sequential` pack");
                     }
+                    // engine-spec v0.33: so is `at`
+                    let toks = if toks.len() > 3 && toks[3] == "at" {
+                        if at_err.is_none() {
+                            at_err = Some(Error {
+                                msg: format!("bad-directive: line {}: `at` on a `when` is valid only in a `layout sequential` pack", ln),
+                            });
+                        }
+                        &toks[..3]
+                    } else {
+                        &toks[..]
+                    };
                     if toks.len() != 3 {
                         return bad(ln, "when needs <locator> <value>");
                     }
@@ -3116,6 +3133,7 @@ impl Pack {
             gates,
             elements,
             uper: false,
+            at_err,
         })
     }
 
@@ -4392,6 +4410,11 @@ impl Engine {
                     seen[i].1.push(c);
                 }
             }
+        }
+        // engine-spec v0.33: the `at` form, then the fixed windows, after the
+        // key passes (rulings 10 and 14)
+        if let Some(e) = p.at_err.clone().or_else(|| p.seq.as_ref().and_then(|b| b.at_err.clone())) {
+            return Err(e);
         }
         Ok(())
     }
@@ -8563,7 +8586,8 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
         let most = if name == "checksum" && toks[1] != "sum16" && toks[1] != "crc32" { 1 } else { most };
         // engine-spec v0.30: `when <len> <values> as <key>`; every syntax error
         // of `as`, on any pack, is checked after the file (ruling 16)
-        let most = if name == "when" && toks.len() > 3 && toks[3] == "as" { usize::MAX } else { most };
+        // engine-spec v0.33: `when <len> <values> at <n> [as <key>]`, likewise
+        let most = if name == "when" && toks.len() > 3 && (toks[3] == "as" || toks[3] == "at") { usize::MAX } else { most };
         if n < least || n > most {
             let takes = match (least, most) {
                 (l, m) if l == m => l.to_string(),

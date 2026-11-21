@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-part-of-a-field-does-not-match",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"z\":36}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): a partial cover is judged on the window's bits as written: the low nibble of 0x24 is 4, not 3"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "item-windows-inside-an-extent",
+  "from": "conformance-lookahead-extent",
+  "to": "conformance-lookahead-extent",
+  "input": "09060507010600252a",
+  "expect": "09060507010600252a",
+  "model": {
+    "probe.recs.#": "2",
+    "probe.recs[0].@kind": "a",
+    "probe.recs[0].probe.y": "7",
+    "probe.recs[1].@kind": "b",
+    "probe.recs[1].probe.z": "37",
+    "probe.w": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 7: the enclosing extent is the innermost `length` block around kind start; both items' windows lie inside it"
+}

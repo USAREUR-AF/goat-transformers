@@ -597,6 +597,8 @@ public final class Engine {
         for (Pack.Scope body : p.bodies) readDefaults(body, p.format);
         // The requires = and case values, in line order: type, then duplicates (rulings 1, 17, 18 and 19 of 0.20).
         for (Pack.ValueList vl : p.valueLists) readValueList(vl, p.format);
+        // engine-spec 0.33: the `at` checks run last among the module checks (rulings 10 and 25)
+        if (p.lateAt != null) throw p.lateAt;
         for (Pack.Field f : p.fields) f.bind(keyType(f.key), f.via == null ? null : p.tables.get(f.via));
     }
 

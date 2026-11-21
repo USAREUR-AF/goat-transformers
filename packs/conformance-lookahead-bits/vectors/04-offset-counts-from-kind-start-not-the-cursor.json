@@ -1,0 +1,9 @@
+{
+  "name": "offset-counts-from-kind-start-not-the-cursor",
+  "from": "conformance-lookahead-bits",
+  "to": "conformance-lookahead-bits",
+  "input": "07560030",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 2: offsets count from kind start, not from the cursor; bits 16 to 23 are 00, so kind c does not hold (bits 20 to 27 would read 03)"
+}

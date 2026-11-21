@@ -1,0 +1,13 @@
+{
+  "name": "window-over-part-of-a-field",
+  "from": "conformance-lookahead-settle",
+  "to": "conformance-lookahead-settle",
+  "input": "0713",
+  "expect": "0713",
+  "model": {
+    "@kind": "part",
+    "probe.z": "19"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): the window is the low nibble of z; full's window lies past the input and does not hold (ruling 6)"
+}

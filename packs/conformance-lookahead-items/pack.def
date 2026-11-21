@@ -1,0 +1,32 @@
+# Conformance probe pack for look-ahead windows in item kinds (spec 0.33
+# ruling 4), most significant bit first. Public.
+#
+#   byte 0      n
+#   byte 1      the number of recs
+#   each rec    x (8), then by kind
+#     pt        y (8), the kind code 1 (8, a `pad`)
+#     tx        a two-character label (16), the kind code 2 (8, a `pad`)
+#
+# Each item's kind start is after its own x.
+format     conformance-lookahead-items
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+group   probe.recs count 8
+  field  probe.x  8  uint
+  kind   pt
+  when   8  1  at 8
+  requires probe.y
+  field  probe.y  8  uint
+  pad    8
+  kind   tx
+  when   8  2  at 16
+  requires probe.label
+  field  probe.label  16  ascii
+  pad    8
+end
