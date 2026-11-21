@@ -1,0 +1,5 @@
+Packs dmr-data-header; module dmr
+  MMDVMHost, https://github.com/g4klx/MMDVMHost at commit
+  9589fc39fc34ebf9ded7da72a124f427457ca2ea, DMRDataHeader.cpp and DMRDefines.h.
+  Copyright (C) 2012 Ian Wraith, 2015-2025 Jonathan Naylor G4KLX, 2026 Adrian
+  Musceac YO8RZZ; GPL-2.0. Layouts restated; no text copied.

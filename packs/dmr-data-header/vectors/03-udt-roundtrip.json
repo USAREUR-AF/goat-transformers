@@ -1,0 +1,12 @@
+{
+  "name": "udt-roundtrip",
+  "from": "dmr-data-header",
+  "to": "dmr-data-header",
+  "input": "800000000928000102001234",
+  "expect": "800000000928000102001234",
+  "model": {
+    "dmr.dpf": "0",
+    "dmr.udt_blocks_less_one": "2"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from MMDVMHost DMRDataHeader.cpp and DMRDefines.h; a unified data transport header, three blocks; expect derived there, no engine run"
+}

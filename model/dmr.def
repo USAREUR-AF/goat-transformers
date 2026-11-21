@@ -1,0 +1,24 @@
+# The dmr module: DMR data header fields. Written by tools/gen/hamdig-pack.py.
+module        dmr
+version       0.1.0
+distribution  public
+source        "MMDVMHost, https://github.com/g4klx/MMDVMHost at commit 9589fc39fc34ebf9ded7da72a124f427457ca2ea, DMRDataHeader.cpp and DMRDefines.h (GPL-2.0, Copyright (C) 2012 Ian Wraith, 2015-2025 Jonathan Naylor G4KLX, 2026 Adrian Musceac YO8RZZ); layout restated, no code copied; ETSI TS 102 361 not used"
+key   group                int     -  "octet 0 bit 7: group (not individual) destination"
+key   response_requested   int     -  "octet 0 bit 6: response requested"
+key   octet0_bits54        int     -  "octet 0 bits 5-4 (in raw and defined short data, added to octet1_low for the block count, as the source does)"
+key   dpf                  int     -  "data packet format: 0 UDT, 1 response, 2 unconfirmed data, 3 confirmed data, 13 defined short, 14 raw or status/precoded short, 15 proprietary"
+key   octet1_high          int     -  "octet 1, high nibble"
+key   octet1_low           int     -  "octet 1, low nibble (raw and defined short: the low block count)"
+key   destination_id       int     -  "destination ID (24 bits; not meaningful for proprietary headers)"
+key   source_id            int     -  "source ID (24 bits; not meaningful for proprietary headers)"
+key   full_message         int     -  "unconfirmed and confirmed: octet 8 bit 7, full message; raw and defined short: octet 8 bit 0"
+key   blocks               int     -  "unconfirmed, confirmed, response: blocks to follow"
+key   octet9               int     -  "octet 9"
+key   resync               int     -  "confirmed: octet 9 bit 7; raw and defined short: octet 8 bit 1"
+key   send_sequence        int     -  "confirmed: octet 9 bits 6-4, send sequence number"
+key   octet9_low           int     -  "confirmed: octet 9 bits 3-0"
+key   octet8_high          int     -  "response: octet 8 bit 7"
+key   octet8_high6         int     -  "raw, defined short, UDT: octet 8 bits 7-2"
+key   udt_blocks_less_one  int     -  "UDT: octet 8 bits 1-0, blocks to follow minus one"
+key   octets8_9            string  -  "proprietary or other formats: octets 8 and 9, as hexadecimal digits"
+key   crc                  string  -  "the CCITT CRC (with the data header mask applied), as sent (not computed)"

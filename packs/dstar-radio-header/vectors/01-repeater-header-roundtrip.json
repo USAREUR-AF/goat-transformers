@@ -1,0 +1,18 @@
+{
+  "name": "repeater-header-roundtrip",
+  "from": "dstar-radio-header",
+  "to": "dstar-radio-header",
+  "input": "40000044423058595a204744423058595a20424351435143512020444c314142432020494435318a3f",
+  "expect": "40000044423058595a204744423058595a20424351435143512020444c314142432020494435318a3f",
+  "model": {
+    "dstar.repeater": "1",
+    "dstar.data": "0",
+    "dstar.rpt2_call": "DB0XYZ G",
+    "dstar.rpt1_call": "DB0XYZ B",
+    "dstar.your_call": "CQCQCQ  ",
+    "dstar.my_call": "DL1ABC  ",
+    "dstar.my_call_suffix": "ID51",
+    "dstar.checksum": "8a3f"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from ircDDBGateway HeaderData.cpp and DStarDefines.h; a call through a repeater to CQCQCQ, with an arbitrary checksum; expect derived there, no engine run"
+}

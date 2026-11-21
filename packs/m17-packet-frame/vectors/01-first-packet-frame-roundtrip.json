@@ -1,0 +1,12 @@
+{
+  "name": "first-packet-frame-roundtrip",
+  "from": "m17-packet-frame",
+  "to": "m17-packet-frame",
+  "input": "000102030405060708090a0b0c0d0e0f10111213141516171800",
+  "expect": "000102030405060708090a0b0c0d0e0f10111213141516171800",
+  "model": {
+    "m17.end_of_frame": "0",
+    "m17.packet_counter": "0"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; frame 0 of several; expect derived there, no engine run"
+}

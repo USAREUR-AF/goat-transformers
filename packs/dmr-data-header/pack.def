@@ -1,0 +1,47 @@
+# DMR data header (12 octets after BPTC decoding): group and response bits, data packet format, addresses,
+# the format's octets 8 and 9, CRC. Written by tools/gen/hamdig-pack.py; do not edit by hand.
+format        dmr-data-header
+version       0.1.0
+distribution  public
+source        "MMDVMHost, https://github.com/g4klx/MMDVMHost at commit 9589fc39fc34ebf9ded7da72a124f427457ca2ea, DMRDataHeader.cpp and DMRDefines.h (GPL-2.0, Copyright (C) 2012 Ian Wraith, 2015-2025 Jonathan Naylor G4KLX, 2026 Adrian Musceac YO8RZZ); layout restated, no code copied; ETSI TS 102 361 not used"
+uses          dmr
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  dmr.group  1  uint
+field  dmr.response_requested  1  uint
+field  dmr.octet0_bits54  2  uint
+field  dmr.dpf  4  uint
+field  dmr.octet1_high  4  uint
+field  dmr.octet1_low  4  uint
+field  dmr.destination_id  24  uint
+field  dmr.source_id  24  uint
+switch  dmr.dpf
+  case  2
+    field  dmr.full_message  1  uint
+    field  dmr.blocks  7  uint
+    field  dmr.octet9  8  uint
+  case  3
+    field  dmr.full_message  1  uint
+    field  dmr.blocks  7  uint
+    field  dmr.resync  1  uint
+    field  dmr.send_sequence  3  uint
+    field  dmr.octet9_low  4  uint
+  case  1
+    field  dmr.octet8_high  1  uint
+    field  dmr.blocks  7  uint
+    field  dmr.octet9  8  uint
+  case  13,14
+    field  dmr.octet8_high6  6  uint
+    field  dmr.resync  1  uint
+    field  dmr.full_message  1  uint
+    field  dmr.octet9  8  uint
+  case  0
+    field  dmr.octet8_high6  6  uint
+    field  dmr.udt_blocks_less_one  2  uint
+    field  dmr.octet9  8  uint
+  else
+    field  dmr.octets8_9  16  hex
+end
+field  dmr.crc  16  hex

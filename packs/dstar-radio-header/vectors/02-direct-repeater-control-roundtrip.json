@@ -1,0 +1,13 @@
+{
+  "name": "direct-repeater-control-roundtrip",
+  "from": "dstar-radio-header",
+  "to": "dstar-radio-header",
+  "input": "07000044495245435420204449524543542020444c324445462020444c314142432020202020200000",
+  "expect": "07000044495245435420204449524543542020444c324445462020444c314142432020202020200000",
+  "model": {
+    "dstar.repeater": "0",
+    "dstar.repeater_control": "7",
+    "dstar.your_call": "DL2DEF  "
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from ircDDBGateway HeaderData.cpp and DStarDefines.h; a direct (simplex) header with the repeater-control value 7; expect derived there, no engine run"
+}

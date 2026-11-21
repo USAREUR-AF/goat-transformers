@@ -1,0 +1,8 @@
+{
+  "name": "cut-lsf-is-malformed",
+  "from": "m17-lsf",
+  "to": "m17-lsf",
+  "input": "000000004ce100004b13d10600051148454c4c4f204d313720202020dd",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; 29 of the 30 octets; expect derived there, no engine run"
+}

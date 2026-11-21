@@ -1,0 +1,8 @@
+{
+  "name": "cut-header-is-malformed",
+  "from": "dmr-data-header",
+  "to": "dmr-data-header",
+  "input": "82000000092800018300ab",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from MMDVMHost DMRDataHeader.cpp and DMRDefines.h; expect derived there, no engine run"
+}

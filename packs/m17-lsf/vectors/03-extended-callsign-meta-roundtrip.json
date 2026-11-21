@@ -1,0 +1,13 @@
+{
+  "name": "extended-callsign-meta-roundtrip",
+  "from": "m17-lsf",
+  "to": "m17-lsf",
+  "input": "0000001680b70000001bd79200450000001680b7001779aa7aed0000d95f",
+  "expect": "0000001680b70000001bd79200450000001680b7001779aa7aed0000d95f",
+  "model": {
+    "m17.encryption_subtype": "2",
+    "m17.extended_callsign_1": "0000001680b7",
+    "m17.extended_callsign_2": "001779aa7aed"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; extended callsign META from a repeater; expect derived there, no engine run"
+}

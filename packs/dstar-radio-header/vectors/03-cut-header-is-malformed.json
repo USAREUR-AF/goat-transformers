@@ -1,0 +1,8 @@
+{
+  "name": "cut-header-is-malformed",
+  "from": "dstar-radio-header",
+  "to": "dstar-radio-header",
+  "input": "40000044423058595a204744423058595a20424351435143512020444c314142432020494435318a",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from ircDDBGateway HeaderData.cpp and DStarDefines.h; 40 of the 41 octets; expect derived there, no engine run"
+}

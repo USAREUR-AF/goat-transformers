@@ -1,0 +1,25 @@
+# D-STAR radio header: three flag octets, the repeater, your and my callsigns, checksum. Written by
+# tools/gen/hamdig-pack.py; do not edit by hand.
+format        dstar-radio-header
+version       0.1.0
+distribution  public
+source        "ircDDBGateway, https://github.com/g4klx/ircDDBGateway at commit f5ab9f7c93c6f28147b84a8f9667f6cc4c027eaa, Common/HeaderData.cpp and Common/DStarDefines.h (GPL-2.0, Copyright (C) 2010-2014 Jonathan Naylor G4KLX); layout restated, no code copied; the JARL D-STAR specification not used"
+uses          dstar
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  dstar.data  1  uint
+field  dstar.repeater  1  uint
+field  dstar.interrupted  1  uint
+field  dstar.control_signal  1  uint
+field  dstar.urgent  1  uint
+field  dstar.repeater_control  3  uint
+field  dstar.flag2  8  uint
+field  dstar.flag3  8  uint
+field  dstar.rpt2_call  64  chars:ascii8
+field  dstar.rpt1_call  64  chars:ascii8
+field  dstar.your_call  64  chars:ascii8
+field  dstar.my_call  64  chars:ascii8
+field  dstar.my_call_suffix  32  chars:ascii8
+field  dstar.checksum  16  hex

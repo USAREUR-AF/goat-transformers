@@ -1,0 +1,19 @@
+{
+  "name": "stream-voice-text-meta-roundtrip",
+  "from": "m17-lsf",
+  "to": "m17-lsf",
+  "input": "000000004ce100004b13d10600051148454c4c4f204d313720202020dd99",
+  "expect": "000000004ce100004b13d10600051148454c4c4f204d313720202020dd99",
+  "model": {
+    "m17.destination": "000000004ce1",
+    "m17.source": "00004b13d106",
+    "m17.packet_stream": "1",
+    "m17.data_type": "2",
+    "m17.encryption_type": "0",
+    "m17.encryption_subtype": "0",
+    "m17.text_control": "17",
+    "m17.text_block": "48454c4c4f204d313720202020",
+    "m17.crc": "dd99"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; a voice stream LSF with a one-block text META; the CRC computed over the first 28 octets; expect derived there, no engine run"
+}

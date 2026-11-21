@@ -1,0 +1,11 @@
+{
+  "name": "Amateur digital voice and data (M17, D-STAR, DMR)",
+  "domain": "networks",
+  "exact": [
+    "m17-lsf",
+    "m17-stream-frame",
+    "m17-packet-frame",
+    "dstar-radio-header",
+    "dmr-data-header"
+  ]
+}

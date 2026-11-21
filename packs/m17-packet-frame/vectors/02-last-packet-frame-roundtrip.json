@@ -1,0 +1,13 @@
+{
+  "name": "last-packet-frame-roundtrip",
+  "from": "m17-packet-frame",
+  "to": "m17-packet-frame",
+  "input": "0568690012340000000000000000000000000000000000000098",
+  "expect": "0568690012340000000000000000000000000000000000000098",
+  "model": {
+    "m17.end_of_frame": "1",
+    "m17.packet_counter": "6",
+    "m17.packet_chunk": "05686900123400000000000000000000000000000000000000"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; the last frame with 6 valid octets, padded with zeros; expect derived there, no engine run"
+}

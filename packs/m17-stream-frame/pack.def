@@ -1,0 +1,17 @@
+# M17 Stream Frame contents (Type 1 bits): LICH chunk and counter, frame number, stream data. Written by
+# tools/gen/hamdig-pack.py; do not edit by hand.
+format        m17-stream-frame
+version       0.1.0
+distribution  public
+source        "M17 Protocol Specification, https://github.com/M17-Project/M17_spec at commit 9ae2874d8bd44e2d32fae85f7650a23f6bcee5d3, M17_spec.tex, chapters Data Link Layer (Link Setup, CRC, Stream Frames, Packet Frames) and Application Layer (LSF TYPE and META) (GNU FDL 1.3 or later, Copyright 2023-2026 M17 Project); layouts restated, no text copied"
+uses          m17
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  m17.lich_chunk  40  hex
+field  m17.lich_counter  3  uint
+field  m17.lich_reserved  5  uint
+field  m17.end_of_stream  1  uint
+field  m17.frame_number  15  uint
+field  m17.stream_data  128  hex
