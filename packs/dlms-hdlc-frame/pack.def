@@ -1,0 +1,63 @@
+# DLMS/COSEM HDLC frame: flags, frame format and length, addresses, control, header check, information and
+# frame check. Written by tools/gen/meter2-pack.py; do not edit by hand.
+format        dlms-hdlc-frame
+version       0.1.0
+distribution  public
+source        "Gurux GuruxDLMS.c, https://github.com/Gurux/GuruxDLMS.c at commit e9d77f926f3d3b8d1aa1a8f3374c7259d1c39b71, development/src/dlms.c (GPL-2.0, Copyright (c) Gurux Ltd); layout restated, no code copied; IEC 62056-46 not used"
+uses          dlmshdlc
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  hdlc
+when  8  126
+field  dlmshdlc.frame_type  4  uint
+field  dlmshdlc.segmentation  1  uint
+length  11  bytes  plus  2
+  field  dlmshdlc.destination_part1  7  uint
+  field  dlmshdlc.destination_last1  1  uint
+  switch  dlmshdlc.destination_last1
+    case  0
+      field  dlmshdlc.destination_part2  7  uint
+      field  dlmshdlc.destination_last2  1  uint
+      switch  dlmshdlc.destination_last2
+        case  0
+          field  dlmshdlc.destination_part3  7  uint
+          field  dlmshdlc.destination_last3  1  uint
+          switch  dlmshdlc.destination_last3
+            case  0
+              field  dlmshdlc.destination_part4  7  uint
+              field  dlmshdlc.destination_last4  1  uint
+            else
+          end
+        else
+      end
+    else
+  end
+  field  dlmshdlc.source_part1  7  uint
+  field  dlmshdlc.source_last1  1  uint
+  switch  dlmshdlc.source_last1
+    case  0
+      field  dlmshdlc.source_part2  7  uint
+      field  dlmshdlc.source_last2  1  uint
+      switch  dlmshdlc.source_last2
+        case  0
+          field  dlmshdlc.source_part3  7  uint
+          field  dlmshdlc.source_last3  1  uint
+          switch  dlmshdlc.source_last3
+            case  0
+              field  dlmshdlc.source_part4  7  uint
+              field  dlmshdlc.source_last4  1  uint
+            else
+          end
+        else
+      end
+    else
+  end
+  field  dlmshdlc.control  8  uint
+  field  dlmshdlc.header_check  16  hex
+  group  dlmshdlc.information_and_fcs  rest
+    field  dlmshdlc.octet  8  uint
+  end
+end
+const  8  126

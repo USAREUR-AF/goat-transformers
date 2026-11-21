@@ -1,0 +1,16 @@
+{
+  "name": "segmented-two-octet-address-roundtrip",
+  "from": "dlms-hdlc-frame",
+  "to": "dlms-hdlc-frame",
+  "input": "7ea814022341329abc00010203040506070809def07e",
+  "expect": "7ea814022341329abc00010203040506070809def07e",
+  "model": {
+    "dlmshdlc.segmentation": "1",
+    "dlmshdlc.destination_part1": "1",
+    "dlmshdlc.destination_last1": "0",
+    "dlmshdlc.destination_part2": "17",
+    "dlmshdlc.destination_last2": "1",
+    "dlmshdlc.source_part1": "32"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from Gurux GuruxDLMS.c dlms.c; a segment (segmentation bit set) to a two-octet server address; expect derived there, no engine run"
+}

@@ -1,0 +1,5 @@
+Packs wmbus-frame; module wmbus
+  wmbusmeters, https://github.com/wmbusmeters/wmbusmeters at commit
+  86c46f145077f66e988c25ee04c06f89230c12e3, src/wmbus.cc. Copyright (C)
+  2017-2024 Fredrik Öhrström; GPL-3.0-or-later. Layouts restated; no text
+  copied.

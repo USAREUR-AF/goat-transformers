@@ -1,0 +1,17 @@
+{
+  "name": "short-req-ud2-roundtrip",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "105b056016",
+  "expect": "105b056016",
+  "model": {
+    "@kind": "short",
+    "mbus.control_prm": "1",
+    "mbus.control_fcb_acd": "0",
+    "mbus.control_fcv_dfc": "1",
+    "mbus.control_function": "11",
+    "mbus.address": "5",
+    "mbus.checksum": "96"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; REQ_UD2 (0x5B) to primary address 5; expect derived there, no engine run"
+}

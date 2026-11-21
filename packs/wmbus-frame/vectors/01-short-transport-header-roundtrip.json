@@ -1,0 +1,19 @@
+{
+  "name": "short-transport-header-roundtrip",
+  "from": "wmbus-frame",
+  "to": "wmbus-frame",
+  "input": "14442d2c785634121b167a200000000413e1100000",
+  "expect": "14442d2c785634121b167a200000000413e1100000",
+  "model": {
+    "wmbus.control": "68",
+    "wmbus.manufacturer": "11309",
+    "wmbus.identification": "78563412",
+    "wmbus.version": "27",
+    "wmbus.device_type": "22",
+    "wmbus.ci": "122",
+    "wmbus.access_number": "32",
+    "wmbus.configuration": "0",
+    "wmbus.application_data.#": "6"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from wmbusmeters wmbus.cc; SND_NR with a short transport header, no encryption, one record as application data; expect derived there, no engine run"
+}

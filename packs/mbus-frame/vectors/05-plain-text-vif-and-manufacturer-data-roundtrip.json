@@ -1,0 +1,15 @@
+{
+  "name": "plain-text-vif-and-manufacturer-data-roundtrip",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "681d1d680805720100000024400107560000000d7c036c697404616263640fdead3f16",
+  "expect": "681d1d680805720100000024400107560000000d7c036c697404616263640fdead3f16",
+  "model": {
+    "mbus.records.#": "2",
+    "mbus.records[0].mbus.vif": "124",
+    "mbus.records[0].mbus.vif_text.#": "3",
+    "mbus.records[0].mbus.value_lvar.#": "4",
+    "mbus.records[1].mbus.manufacturer_data.#": "2"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; a plain-text VIF with a variable-length value, then DIF 0x0F manufacturer data; expect derived there, no engine run"
+}

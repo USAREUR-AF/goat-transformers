@@ -1,0 +1,17 @@
+{
+  "name": "i-frame-four-octet-server-address-roundtrip",
+  "from": "dlms-hdlc-frame",
+  "to": "dlms-hdlc-frame",
+  "input": "7ea0110002002321101234e6e600601d56787e",
+  "expect": "7ea0110002002321101234e6e600601d56787e",
+  "model": {
+    "dlmshdlc.destination_part1": "0",
+    "dlmshdlc.destination_last1": "0",
+    "dlmshdlc.destination_part2": "1",
+    "dlmshdlc.destination_part4": "17",
+    "dlmshdlc.destination_last4": "1",
+    "dlmshdlc.control": "16",
+    "dlmshdlc.information_and_fcs.#": "7"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from Gurux GuruxDLMS.c dlms.c; an I frame to a four-octet server address (upper 1, lower 17) with an information field and the frame check; expect derived there, no engine run"
+}

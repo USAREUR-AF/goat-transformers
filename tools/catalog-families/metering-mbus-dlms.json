@@ -1,0 +1,9 @@
+{
+  "name": "Metering (M-Bus, wireless M-Bus, DLMS HDLC)",
+  "domain": "iot",
+  "exact": [
+    "mbus-frame",
+    "wmbus-frame",
+    "dlms-hdlc-frame"
+  ]
+}

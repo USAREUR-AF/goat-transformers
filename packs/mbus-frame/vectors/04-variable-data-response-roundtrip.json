@@ -1,0 +1,29 @@
+{
+  "name": "variable-data-response-roundtrip",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "682c2c6808057278563412244001075500000004133930000082401394260c7878563412052b0000c03f01fd17002f2f9d16",
+  "expect": "682c2c6808057278563412244001075500000004133930000082401394260c7878563412052b0000c03f01fd17002f2f9d16",
+  "model": {
+    "mbus.ci": "114",
+    "mbus.identification": "78563412",
+    "mbus.manufacturer": "16420",
+    "mbus.medium": "7",
+    "mbus.access_number": "85",
+    "mbus.records.#": "7",
+    "mbus.records[0].mbus.data_field": "4",
+    "mbus.records[0].mbus.vif": "19",
+    "mbus.records[0].mbus.value": "12345",
+    "mbus.records[1].mbus.dif_extension": "1",
+    "mbus.records[1].mbus.difes.#": "1",
+    "mbus.records[1].mbus.difes[0].mbus.dife_unit": "1",
+    "mbus.records[1].mbus.value": "9876",
+    "mbus.records[2].mbus.value_bcd": "78563412",
+    "mbus.records[3].mbus.value_real": "1.5",
+    "mbus.records[4].mbus.vif_extension": "1",
+    "mbus.records[4].mbus.vifes[0].mbus.vife": "23",
+    "mbus.records[5].mbus.function_field": "2",
+    "mbus.records[5].mbus.data_field": "15"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; RSP_UD with the variable data header and five records (integer, integer with a DIFE, BCD, real, VIF with a VIFE), then two idle fillers; expect derived there, no engine run"
+}

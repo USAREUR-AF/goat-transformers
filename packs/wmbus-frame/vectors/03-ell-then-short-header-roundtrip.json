@@ -1,0 +1,15 @@
+{
+  "name": "ell-then-short-header-roundtrip",
+  "from": "wmbus-frame",
+  "to": "wmbus-frame",
+  "input": "17442d2c785634121b168c20217a210000000413e1100000",
+  "expect": "17442d2c785634121b168c20217a210000000413e1100000",
+  "model": {
+    "wmbus.ci": "140",
+    "wmbus.ell_cc": "32",
+    "wmbus.ell_acc": "33",
+    "wmbus.ell_next_ci": "122",
+    "wmbus.access_number": "33"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from wmbusmeters wmbus.cc; an extended link layer I followed by a short transport header; expect derived there, no engine run"
+}

@@ -1,0 +1,137 @@
+# Wired M-Bus frame: ACK, short, control and long frames, with the variable-data header and its records or the
+# fixed-data block. Written by tools/gen/meter2-pack.py; do not edit by hand.
+format        mbus-frame
+version       0.1.0
+distribution  public
+source        "libmbus, https://github.com/rscada/libmbus at commit 94352715928182d9e1761959f887c6a66e70de93, mbus/mbus-protocol.h and mbus/mbus-protocol.c (Copyright (C) 2010-2012 Raditex AB and contributors; free to use with credit to rSCADA and Raditex Control); layouts restated, no code copied; EN 13757 not used"
+uses          mbus
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  ack
+when  8  229
+
+kind  short
+when  8  16
+field  mbus.control_reserved  1  uint
+field  mbus.control_prm  1  uint
+field  mbus.control_fcb_acd  1  uint
+field  mbus.control_fcv_dfc  1  uint
+field  mbus.control_function  4  uint
+field  mbus.address  8  uint
+field  mbus.checksum  8  uint
+const  8  22
+
+kind  long
+when  8  104
+length  8  bytes  plus  -2
+  field  mbus.length_repeat  8  uint
+  const  8  104
+  field  mbus.control_reserved  1  uint
+  field  mbus.control_prm  1  uint
+  field  mbus.control_fcb_acd  1  uint
+  field  mbus.control_fcv_dfc  1  uint
+  field  mbus.control_function  4  uint
+  field  mbus.address  8  uint
+  field  mbus.ci  8  uint
+  switch  mbus.ci
+    case  114,118
+      field  mbus.identification  32  hex
+      field  mbus.manufacturer  16  uint  swap
+      field  mbus.version  8  uint
+      field  mbus.medium  8  uint
+      field  mbus.access_number  8  uint
+      field  mbus.status  8  uint
+      field  mbus.signature  16  uint  swap
+      group  mbus.records  rest
+        field  mbus.dif_extension  1  uint
+        field  mbus.storage_lsb  1  uint
+        field  mbus.function_field  2  uint
+        field  mbus.data_field  4  uint
+        switch  mbus.dif_extension
+          case  1
+            group  mbus.difes  more
+              field  mbus.dife_unit  1  uint
+              field  mbus.dife_tariff  2  uint
+              field  mbus.dife_storage  4  uint
+            end
+          else
+        end
+        switch  mbus.data_field
+          case  15
+            switch  mbus.function_field
+              case  2
+              else
+                group  mbus.manufacturer_data  rest
+                  field  mbus.octet  8  uint
+                end
+            end
+          else
+            field  mbus.vif_extension  1  uint
+            field  mbus.vif  7  uint
+            switch  mbus.vif_extension
+              case  1
+                group  mbus.vifes  more
+                  field  mbus.vife  7  uint
+                end
+              else
+            end
+            switch  mbus.vif
+              case  124
+                count  vif_text_length  8
+                group  mbus.vif_text  count  @vif_text_length
+                  field  mbus.octet  8  uint
+                end
+              else
+            end
+            switch  mbus.data_field
+              case  1
+                field  mbus.value  8  uint
+              case  2
+                field  mbus.value  16  uint  swap
+              case  3
+                field  mbus.value  24  uint  swap
+              case  4
+                field  mbus.value  32  uint  swap
+              case  5
+                field  mbus.value_real  32  f32  swap
+              case  6
+                field  mbus.value  48  uint  swap
+              case  7
+                field  mbus.value  64  uint  swap
+              case  9
+                field  mbus.value_bcd  8  hex
+              case  10
+                field  mbus.value_bcd  16  hex
+              case  11
+                field  mbus.value_bcd  24  hex
+              case  12
+                field  mbus.value_bcd  32  hex
+              case  14
+                field  mbus.value_bcd  48  hex
+              case  13
+                count  lvar  8
+                group  mbus.value_lvar  count  @lvar
+                  field  mbus.octet  8  uint
+                end
+              else
+            end
+        end
+      end
+    case  115,119
+      field  mbus.identification  32  hex
+      field  mbus.access_number  8  uint
+      field  mbus.status  8  uint
+      field  mbus.counter1_type  8  uint
+      field  mbus.counter2_type  8  uint
+      field  mbus.counter1  32  hex
+      field  mbus.counter2  32  hex
+    else
+      group  mbus.data  rest
+        field  mbus.octet  8  uint
+      end
+  end
+end
+field  mbus.checksum  8  uint
+const  8  22

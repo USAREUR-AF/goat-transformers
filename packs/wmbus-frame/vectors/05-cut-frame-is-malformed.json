@@ -1,0 +1,8 @@
+{
+  "name": "cut-frame-is-malformed",
+  "from": "wmbus-frame",
+  "to": "wmbus-frame",
+  "input": "14442d2c785634121b167a200000000413e11000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from wmbusmeters wmbus.cc; the length states one octet more than the input holds; expect derived there, no engine run"
+}
