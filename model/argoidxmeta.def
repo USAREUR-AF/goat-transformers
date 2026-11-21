@@ -1,0 +1,9 @@
+# The argoidxmeta module: the columns of a line of the Argo GDAC metadata directory file.
+module        argoidxmeta
+version       0.1.0
+distribution  public
+source        "Argo Global Data Assembly Center directory files ar_index_global_prof.txt and ar_index_global_meta.txt (https://data-argo.ifremer.fr/), format version 2.0, their column header lines; Argo data are freely available without restriction (International Argo Program)"
+key   file           string -  "path of the metadata file under the GDAC dac/ directory"
+key   profiler_type  int    -  "float type code of the Argo reference table"
+key   institution    string -  "institution code of the Argo reference table"
+key   date_update    string -  "date and time of the last update of the file, YYYYMMDDHHMMSS, as written"

@@ -1,0 +1,7 @@
+{
+  "name": "NDBC realtime2 buoy data",
+  "domain": "sea",
+  "exact": [
+    "ndbc-realtime2-stdmet"
+  ]
+}

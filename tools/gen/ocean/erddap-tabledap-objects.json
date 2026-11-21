@@ -1,0 +1,61 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:goat-transformers:erddap-tabledap-objects",
+ "title": "ERDDAP tabledap response rows, restated by goat-transformers",
+ "description": "The members of an ERDDAP tabledap response this project's packs read, restated from ERDDAP's documentation of its output formats (.geoJson, .jsonlKVP) and its rules for the variables longitude, latitude, altitude, depth and time. A dataset adds variables of its own, which these schemas leave open.",
+ "$defs": {
+  "GeoJsonFeature": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "type": "string",
+     "enum": [
+      "Feature"
+     ]
+    },
+    "geometry": {
+     "type": "object"
+    },
+    "properties": {
+     "type": "object",
+     "properties": {
+      "time": {
+       "type": "string",
+       "format": "date-time"
+      }
+     },
+     "required": [],
+     "additionalProperties": true
+    }
+   },
+   "required": [
+    "type",
+    "geometry",
+    "properties"
+   ]
+  },
+  "JsonlKvpRow": {
+   "type": "object",
+   "properties": {
+    "time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "latitude": {
+     "type": "number"
+    },
+    "longitude": {
+     "type": "number"
+    },
+    "altitude": {
+     "type": "number"
+    },
+    "depth": {
+     "type": "number"
+    }
+   },
+   "required": [],
+   "additionalProperties": true
+  }
+ }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Argo floats (GDAC index, metadata JSON)",
+  "domain": "sea",
+  "prefixes": [
+    "argo-"
+  ]
+}

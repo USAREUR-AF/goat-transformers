@@ -1,0 +1,78 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:goat-transformers:glider-dac-erddap-objects",
+ "title": "IOOS glider DAC ERDDAP tabledap rows, restated by goat-transformers",
+ "description": "One row of an IOOS National Glider Data Assembly Center dataset as its ERDDAP server (gliders.ioos.us/erddap) writes it in .jsonlKVP: the data variables the NGDAC NetCDF template (version 3) defines, as the server names them (latitude and longitude for the template's lat and lon), with time written as ISO 8601 UTC. Quality-control and QARTOD flag variables are left open.",
+ "$defs": {
+  "GliderRow": {
+   "type": "object",
+   "properties": {
+    "trajectory": {
+     "type": "string"
+    },
+    "wmo_id": {
+     "type": "string"
+    },
+    "profile_id": {
+     "type": "integer"
+    },
+    "time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "latitude": {
+     "type": "number"
+    },
+    "longitude": {
+     "type": "number"
+    },
+    "depth": {
+     "type": "number"
+    },
+    "pressure": {
+     "type": "number"
+    },
+    "temperature": {
+     "type": "number"
+    },
+    "conductivity": {
+     "type": "number"
+    },
+    "salinity": {
+     "type": "number"
+    },
+    "density": {
+     "type": "number"
+    },
+    "precise_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "precise_lat": {
+     "type": "number"
+    },
+    "precise_lon": {
+     "type": "number"
+    },
+    "time_uv": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "lat_uv": {
+     "type": "number"
+    },
+    "lon_uv": {
+     "type": "number"
+    },
+    "u": {
+     "type": "number"
+    },
+    "v": {
+     "type": "number"
+    }
+   },
+   "required": [],
+   "additionalProperties": true
+  }
+ }
+}

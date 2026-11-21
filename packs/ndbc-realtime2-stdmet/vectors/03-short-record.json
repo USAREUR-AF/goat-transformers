@@ -1,0 +1,18 @@
+{
+  "name": "short-record",
+  "from": "ndbc-realtime2-stdmet",
+  "to": "ndbc-realtime2-stdmet",
+  "input": "2026 01 02 03 04  10  0.5",
+  "expect": "2026 01 02 03 04  10  0.5",
+  "model": {
+    "ndbcstdmet.year": "2026",
+    "ndbcstdmet.month": "1",
+    "ndbcstdmet.day": "2",
+    "ndbcstdmet.hour": "3",
+    "ndbcstdmet.minute": "4",
+    "ndbcstdmet.wdir": "  10",
+    "ndbcstdmet.wspd": "  0.5"
+  },
+  "source": "derived by tools/gen/ocean-text-vectors.py from the record layouts and spec/engine-spec.md (text wire); no engine run",
+  "reference": "a record that ends after the wind speed: the missing columns are absent"
+}

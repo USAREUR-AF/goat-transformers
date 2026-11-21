@@ -1,0 +1,13 @@
+# The argoidxprof module: the columns of a line of the Argo GDAC profile directory file.
+module        argoidxprof
+version       0.1.0
+distribution  public
+source        "Argo Global Data Assembly Center directory files ar_index_global_prof.txt and ar_index_global_meta.txt (https://data-argo.ifremer.fr/), format version 2.0, their column header lines; Argo data are freely available without restriction (International Argo Program)"
+key   file           string -  "path of the profile file under the GDAC dac/ directory"
+key   date           string -  "date and time of the profile, YYYYMMDDHHMMSS, as written"
+key   latitude       float  -  "latitude of the profile, degrees north (no datum is stated)"
+key   longitude      float  -  "longitude of the profile, degrees east (no datum is stated)"
+key   ocean          string -  "ocean code: A Atlantic, I Indian, P Pacific"
+key   profiler_type  int    -  "float type code of the Argo reference table"
+key   institution    string -  "institution code of the Argo reference table"
+key   date_update    string -  "date and time of the last update of the file, YYYYMMDDHHMMSS, as written"

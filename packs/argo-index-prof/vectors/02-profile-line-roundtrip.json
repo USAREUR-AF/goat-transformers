@@ -1,0 +1,19 @@
+{
+  "name": "02-profile-line-roundtrip",
+  "from": "argo-index-prof",
+  "to": "argo-index-prof",
+  "input": "aoml/13857/profiles/D13857_002.nc,19970809192112,0.072,-17.659,A,845,AO,20260220143529",
+  "expect": "aoml/13857/profiles/D13857_002.nc,19970809192112,0.072,-17.659,A,845,AO,20260220143529",
+  "model": {
+    "argoidxprof.file": "aoml/13857/profiles/D13857_002.nc",
+    "argoidxprof.date": "19970809192112",
+    "argoidxprof.latitude": "0.072",
+    "argoidxprof.longitude": "-17.659",
+    "argoidxprof.ocean": "A",
+    "argoidxprof.profiler_type": "845",
+    "argoidxprof.institution": "AO",
+    "argoidxprof.date_update": "20260220143529"
+  },
+  "source": "derived by tools/gen/ocean-text-vectors.py from the record layouts and spec/engine-spec.md (text wire); no engine run",
+  "reference": "Argo GDAC ar_index_global_prof.txt, format version 2.0"
+}
