@@ -1,0 +1,1104 @@
+# One line of a RINEX 3.05 or 4.01 GNSS observation file: a header line by its label, an epoch line, or an
+# observation line. Every value is its column text. Written by tools/gen/rinex-pack.py; do not edit by hand.
+format        rinex-obs-line
+version       0.1.0
+distribution  public
+source        "IGS/RTCM RINEX WG, RINEX The Receiver Independent Exchange Format Version 4.01, 10 July 2023, https://files.igs.org/pub/data/format/rinex_4.01.pdf (sha256 5e917eb6d2224021c5f05adb333b5311b6cde0f58c3ca4e0ae5871ccd15ce0c8), Tables A2, A3, A7, A9 and A30-A34; and Version 3.05, https://files.igs.org/pub/data/format/rinex305.pdf (sha256 05de6c898e1cf4102d6d0ef8b2710a98a16a5105c49a6d972757d647c7593918); no licence stated (IGS terms of use: open use with attribution); layouts restated"
+uses          rinexobs
+wire          text
+delimiter     none
+
+kind  version-type
+when  0:60:20  "RINEX VERSION / TYPE"
+field  rinexobs.format_version  0:0:9  string
+field  rinexobs.file_type  0:20:1  string
+field  rinexobs.file_type_text  0:21:19  string
+field  rinexobs.satellite_system  0:40:1  string
+field  rinexobs.satellite_system_text  0:41:19  string
+
+kind  program
+when  0:60:20  "PGM / RUN BY / DATE"
+field  rinexobs.program  0:0:20  string
+field  rinexobs.run_by  0:20:20  string
+field  rinexobs.created  0:40:20  string
+
+kind  comment
+when  0:60:20  "COMMENT"
+field  rinexobs.comment  0:0:60  string
+
+kind  marker-name
+when  0:60:20  "MARKER NAME"
+field  rinexobs.marker_name  0:0:60  string
+
+kind  marker-number
+when  0:60:20  "MARKER NUMBER"
+field  rinexobs.marker_number  0:0:20  string
+
+kind  marker-type
+when  0:60:20  "MARKER TYPE"
+field  rinexobs.marker_type  0:0:20  string
+
+kind  observer-agency
+when  0:60:20  "OBSERVER / AGENCY"
+field  rinexobs.observer  0:0:20  string
+field  rinexobs.agency  0:20:40  string
+
+kind  receiver
+when  0:60:20  "REC # / TYPE / VERS"
+field  rinexobs.receiver_number  0:0:20  string
+field  rinexobs.receiver_type  0:20:20  string
+field  rinexobs.receiver_version  0:40:20  string
+
+kind  antenna
+when  0:60:20  "ANT # / TYPE"
+field  rinexobs.antenna_number  0:0:20  string
+field  rinexobs.antenna_type  0:20:20  string
+
+kind  approx-position
+when  0:60:20  "APPROX POSITION XYZ"
+field  rinexobs.approx_x  0:0:14  string
+field  rinexobs.approx_y  0:14:14  string
+field  rinexobs.approx_z  0:28:14  string
+
+kind  antenna-delta-hen
+when  0:60:20  "ANTENNA: DELTA H/E/N"
+field  rinexobs.delta_h  0:0:14  string
+field  rinexobs.delta_e  0:14:14  string
+field  rinexobs.delta_n  0:28:14  string
+
+kind  antenna-delta-xyz
+when  0:60:20  "ANTENNA: DELTA X/Y/Z"
+field  rinexobs.delta_x  0:0:14  string
+field  rinexobs.delta_y  0:14:14  string
+field  rinexobs.delta_z  0:28:14  string
+
+kind  antenna-phasecenter
+when  0:60:20  "ANTENNA: PHASECENTER"
+field  rinexobs.pc_system  0:0:1  string
+field  rinexobs.pc_code  0:2:3  string
+field  rinexobs.pc_1  0:5:9  string
+field  rinexobs.pc_2  0:14:14  string
+field  rinexobs.pc_3  0:28:14  string
+
+kind  antenna-bsight
+when  0:60:20  "ANTENNA: B.SIGHT XYZ"
+field  rinexobs.bsight_x  0:0:14  string
+field  rinexobs.bsight_y  0:14:14  string
+field  rinexobs.bsight_z  0:28:14  string
+
+kind  antenna-zerodir-azi
+when  0:60:20  "ANTENNA: ZERODIR AZI"
+field  rinexobs.zerodir_azi  0:0:14  string
+
+kind  antenna-zerodir-xyz
+when  0:60:20  "ANTENNA: ZERODIR XYZ"
+field  rinexobs.zerodir_x  0:0:14  string
+field  rinexobs.zerodir_y  0:14:14  string
+field  rinexobs.zerodir_z  0:28:14  string
+
+kind  center-of-mass
+when  0:60:20  "CENTER OF MASS: XYZ"
+field  rinexobs.com_x  0:0:14  string
+field  rinexobs.com_y  0:14:14  string
+field  rinexobs.com_z  0:28:14  string
+
+kind  doi
+when  0:60:20  "DOI"
+field  rinexobs.doi  0:0:60  string
+
+kind  license
+when  0:60:20  "LICENSE OF USE"
+field  rinexobs.license  0:0:60  string
+
+kind  station-information
+when  0:60:20  "STATION INFORMATION"
+field  rinexobs.station_information  0:0:60  string
+
+kind  obs-types
+when  0:60:20  "SYS / # / OBS TYPES"
+field  rinexobs.obs_system  0:0:1  string
+field  rinexobs.obs_type_count  0:3:3  string
+field  rinexobs.obs_type_1  0:7:3  string
+field  rinexobs.obs_type_2  0:11:3  string
+field  rinexobs.obs_type_3  0:15:3  string
+field  rinexobs.obs_type_4  0:19:3  string
+field  rinexobs.obs_type_5  0:23:3  string
+field  rinexobs.obs_type_6  0:27:3  string
+field  rinexobs.obs_type_7  0:31:3  string
+field  rinexobs.obs_type_8  0:35:3  string
+field  rinexobs.obs_type_9  0:39:3  string
+field  rinexobs.obs_type_10  0:43:3  string
+field  rinexobs.obs_type_11  0:47:3  string
+field  rinexobs.obs_type_12  0:51:3  string
+field  rinexobs.obs_type_13  0:55:3  string
+
+kind  signal-strength-unit
+when  0:60:20  "SIGNAL STRENGTH UNIT"
+field  rinexobs.signal_strength_unit  0:0:20  string
+
+kind  interval
+when  0:60:20  "INTERVAL"
+field  rinexobs.interval  0:0:10  string
+
+kind  time-of-first-obs
+when  0:60:20  "TIME OF FIRST OBS"
+field  rinexobs.first_year  0:0:6  string
+field  rinexobs.first_month  0:6:6  string
+field  rinexobs.first_day  0:12:6  string
+field  rinexobs.first_hour  0:18:6  string
+field  rinexobs.first_minute  0:24:6  string
+field  rinexobs.first_second  0:30:13  string
+field  rinexobs.first_time_system  0:48:3  string
+
+kind  time-of-last-obs
+when  0:60:20  "TIME OF LAST OBS"
+field  rinexobs.last_year  0:0:6  string
+field  rinexobs.last_month  0:6:6  string
+field  rinexobs.last_day  0:12:6  string
+field  rinexobs.last_hour  0:18:6  string
+field  rinexobs.last_minute  0:24:6  string
+field  rinexobs.last_second  0:30:13  string
+field  rinexobs.last_time_system  0:48:3  string
+
+kind  rcv-clock-offs-appl
+when  0:60:20  "RCV CLOCK OFFS APPL"
+field  rinexobs.clock_offset_applied  0:0:6  string
+
+kind  dcbs-applied
+when  0:60:20  "SYS / DCBS APPLIED"
+field  rinexobs.corr_system  0:0:1  string
+field  rinexobs.corr_program  0:2:17  string
+field  rinexobs.corr_source  0:20:40  string
+
+kind  pcvs-applied
+when  0:60:20  "SYS / PCVS APPLIED"
+field  rinexobs.corr_system  0:0:1  string
+field  rinexobs.corr_program  0:2:17  string
+field  rinexobs.corr_source  0:20:40  string
+
+kind  scale-factor
+when  0:60:20  "SYS / SCALE FACTOR"
+field  rinexobs.content  0:0:60  string
+
+kind  phase-shift
+when  0:60:20  "SYS / PHASE SHIFT"
+field  rinexobs.content  0:0:60  string
+
+kind  glonass-slot-frq
+when  0:60:20  "GLONASS SLOT / FRQ #"
+field  rinexobs.content  0:0:60  string
+
+kind  glonass-cod-phs-bis
+when  0:60:20  "GLONASS COD/PHS/BIS"
+field  rinexobs.content  0:0:60  string
+
+kind  leap-seconds
+when  0:60:20  "LEAP SECONDS"
+field  rinexobs.leap_seconds  0:0:6  string
+field  rinexobs.leap_seconds_future  0:6:6  string
+field  rinexobs.leap_week  0:12:6  string
+field  rinexobs.leap_day  0:18:6  string
+field  rinexobs.leap_time_system  0:24:3  string
+
+kind  number-of-satellites
+when  0:60:20  "# OF SATELLITES"
+field  rinexobs.satellite_count  0:0:6  string
+
+kind  prn-number-of-obs
+when  0:60:20  "PRN / # OF OBS"
+field  rinexobs.content  0:0:60  string
+
+kind  end-of-header
+when  0:60:20  "END OF HEADER"
+
+kind  epoch
+when  0:0:1  >
+field  rinexobs.year  0:2:4  string
+field  rinexobs.month  0:7:2  string
+field  rinexobs.day  0:10:2  string
+field  rinexobs.hour  0:13:2  string
+field  rinexobs.minute  0:16:2  string
+field  rinexobs.second  0:18:11  string
+field  rinexobs.epoch_flag  0:31:1  string
+field  rinexobs.satellite_count_epoch  0:32:3  string
+field  rinexobs.clock_offset  0:41:15  string
+
+kind  observation-gps
+when  0:0:1  G
+field  rinexobs.satellite_system  0:0:1  string
+field  rinexobs.satellite_number  0:1:2  string
+field  rinexobs.obs_1  0:3:14  string
+field  rinexobs.lli_1  0:17:1  string
+field  rinexobs.ssi_1  0:18:1  string
+field  rinexobs.obs_2  0:19:14  string
+field  rinexobs.lli_2  0:33:1  string
+field  rinexobs.ssi_2  0:34:1  string
+field  rinexobs.obs_3  0:35:14  string
+field  rinexobs.lli_3  0:49:1  string
+field  rinexobs.ssi_3  0:50:1  string
+field  rinexobs.obs_4  0:51:14  string
+field  rinexobs.lli_4  0:65:1  string
+field  rinexobs.ssi_4  0:66:1  string
+field  rinexobs.obs_5  0:67:14  string
+field  rinexobs.lli_5  0:81:1  string
+field  rinexobs.ssi_5  0:82:1  string
+field  rinexobs.obs_6  0:83:14  string
+field  rinexobs.lli_6  0:97:1  string
+field  rinexobs.ssi_6  0:98:1  string
+field  rinexobs.obs_7  0:99:14  string
+field  rinexobs.lli_7  0:113:1  string
+field  rinexobs.ssi_7  0:114:1  string
+field  rinexobs.obs_8  0:115:14  string
+field  rinexobs.lli_8  0:129:1  string
+field  rinexobs.ssi_8  0:130:1  string
+field  rinexobs.obs_9  0:131:14  string
+field  rinexobs.lli_9  0:145:1  string
+field  rinexobs.ssi_9  0:146:1  string
+field  rinexobs.obs_10  0:147:14  string
+field  rinexobs.lli_10  0:161:1  string
+field  rinexobs.ssi_10  0:162:1  string
+field  rinexobs.obs_11  0:163:14  string
+field  rinexobs.lli_11  0:177:1  string
+field  rinexobs.ssi_11  0:178:1  string
+field  rinexobs.obs_12  0:179:14  string
+field  rinexobs.lli_12  0:193:1  string
+field  rinexobs.ssi_12  0:194:1  string
+field  rinexobs.obs_13  0:195:14  string
+field  rinexobs.lli_13  0:209:1  string
+field  rinexobs.ssi_13  0:210:1  string
+field  rinexobs.obs_14  0:211:14  string
+field  rinexobs.lli_14  0:225:1  string
+field  rinexobs.ssi_14  0:226:1  string
+field  rinexobs.obs_15  0:227:14  string
+field  rinexobs.lli_15  0:241:1  string
+field  rinexobs.ssi_15  0:242:1  string
+field  rinexobs.obs_16  0:243:14  string
+field  rinexobs.lli_16  0:257:1  string
+field  rinexobs.ssi_16  0:258:1  string
+field  rinexobs.obs_17  0:259:14  string
+field  rinexobs.lli_17  0:273:1  string
+field  rinexobs.ssi_17  0:274:1  string
+field  rinexobs.obs_18  0:275:14  string
+field  rinexobs.lli_18  0:289:1  string
+field  rinexobs.ssi_18  0:290:1  string
+field  rinexobs.obs_19  0:291:14  string
+field  rinexobs.lli_19  0:305:1  string
+field  rinexobs.ssi_19  0:306:1  string
+field  rinexobs.obs_20  0:307:14  string
+field  rinexobs.lli_20  0:321:1  string
+field  rinexobs.ssi_20  0:322:1  string
+field  rinexobs.obs_21  0:323:14  string
+field  rinexobs.lli_21  0:337:1  string
+field  rinexobs.ssi_21  0:338:1  string
+field  rinexobs.obs_22  0:339:14  string
+field  rinexobs.lli_22  0:353:1  string
+field  rinexobs.ssi_22  0:354:1  string
+field  rinexobs.obs_23  0:355:14  string
+field  rinexobs.lli_23  0:369:1  string
+field  rinexobs.ssi_23  0:370:1  string
+field  rinexobs.obs_24  0:371:14  string
+field  rinexobs.lli_24  0:385:1  string
+field  rinexobs.ssi_24  0:386:1  string
+field  rinexobs.obs_25  0:387:14  string
+field  rinexobs.lli_25  0:401:1  string
+field  rinexobs.ssi_25  0:402:1  string
+field  rinexobs.obs_26  0:403:14  string
+field  rinexobs.lli_26  0:417:1  string
+field  rinexobs.ssi_26  0:418:1  string
+field  rinexobs.obs_27  0:419:14  string
+field  rinexobs.lli_27  0:433:1  string
+field  rinexobs.ssi_27  0:434:1  string
+field  rinexobs.obs_28  0:435:14  string
+field  rinexobs.lli_28  0:449:1  string
+field  rinexobs.ssi_28  0:450:1  string
+field  rinexobs.obs_29  0:451:14  string
+field  rinexobs.lli_29  0:465:1  string
+field  rinexobs.ssi_29  0:466:1  string
+field  rinexobs.obs_30  0:467:14  string
+field  rinexobs.lli_30  0:481:1  string
+field  rinexobs.ssi_30  0:482:1  string
+field  rinexobs.obs_31  0:483:14  string
+field  rinexobs.lli_31  0:497:1  string
+field  rinexobs.ssi_31  0:498:1  string
+field  rinexobs.obs_32  0:499:14  string
+field  rinexobs.lli_32  0:513:1  string
+field  rinexobs.ssi_32  0:514:1  string
+field  rinexobs.obs_33  0:515:14  string
+field  rinexobs.lli_33  0:529:1  string
+field  rinexobs.ssi_33  0:530:1  string
+field  rinexobs.obs_34  0:531:14  string
+field  rinexobs.lli_34  0:545:1  string
+field  rinexobs.ssi_34  0:546:1  string
+field  rinexobs.obs_35  0:547:14  string
+field  rinexobs.lli_35  0:561:1  string
+field  rinexobs.ssi_35  0:562:1  string
+field  rinexobs.obs_36  0:563:14  string
+field  rinexobs.lli_36  0:577:1  string
+field  rinexobs.ssi_36  0:578:1  string
+field  rinexobs.obs_37  0:579:14  string
+field  rinexobs.lli_37  0:593:1  string
+field  rinexobs.ssi_37  0:594:1  string
+field  rinexobs.obs_38  0:595:14  string
+field  rinexobs.lli_38  0:609:1  string
+field  rinexobs.ssi_38  0:610:1  string
+field  rinexobs.obs_39  0:611:14  string
+field  rinexobs.lli_39  0:625:1  string
+field  rinexobs.ssi_39  0:626:1  string
+field  rinexobs.obs_40  0:627:14  string
+field  rinexobs.lli_40  0:641:1  string
+field  rinexobs.ssi_40  0:642:1  string
+
+kind  observation-glonass
+when  0:0:1  R
+field  rinexobs.satellite_system  0:0:1  string
+field  rinexobs.satellite_number  0:1:2  string
+field  rinexobs.obs_1  0:3:14  string
+field  rinexobs.lli_1  0:17:1  string
+field  rinexobs.ssi_1  0:18:1  string
+field  rinexobs.obs_2  0:19:14  string
+field  rinexobs.lli_2  0:33:1  string
+field  rinexobs.ssi_2  0:34:1  string
+field  rinexobs.obs_3  0:35:14  string
+field  rinexobs.lli_3  0:49:1  string
+field  rinexobs.ssi_3  0:50:1  string
+field  rinexobs.obs_4  0:51:14  string
+field  rinexobs.lli_4  0:65:1  string
+field  rinexobs.ssi_4  0:66:1  string
+field  rinexobs.obs_5  0:67:14  string
+field  rinexobs.lli_5  0:81:1  string
+field  rinexobs.ssi_5  0:82:1  string
+field  rinexobs.obs_6  0:83:14  string
+field  rinexobs.lli_6  0:97:1  string
+field  rinexobs.ssi_6  0:98:1  string
+field  rinexobs.obs_7  0:99:14  string
+field  rinexobs.lli_7  0:113:1  string
+field  rinexobs.ssi_7  0:114:1  string
+field  rinexobs.obs_8  0:115:14  string
+field  rinexobs.lli_8  0:129:1  string
+field  rinexobs.ssi_8  0:130:1  string
+field  rinexobs.obs_9  0:131:14  string
+field  rinexobs.lli_9  0:145:1  string
+field  rinexobs.ssi_9  0:146:1  string
+field  rinexobs.obs_10  0:147:14  string
+field  rinexobs.lli_10  0:161:1  string
+field  rinexobs.ssi_10  0:162:1  string
+field  rinexobs.obs_11  0:163:14  string
+field  rinexobs.lli_11  0:177:1  string
+field  rinexobs.ssi_11  0:178:1  string
+field  rinexobs.obs_12  0:179:14  string
+field  rinexobs.lli_12  0:193:1  string
+field  rinexobs.ssi_12  0:194:1  string
+field  rinexobs.obs_13  0:195:14  string
+field  rinexobs.lli_13  0:209:1  string
+field  rinexobs.ssi_13  0:210:1  string
+field  rinexobs.obs_14  0:211:14  string
+field  rinexobs.lli_14  0:225:1  string
+field  rinexobs.ssi_14  0:226:1  string
+field  rinexobs.obs_15  0:227:14  string
+field  rinexobs.lli_15  0:241:1  string
+field  rinexobs.ssi_15  0:242:1  string
+field  rinexobs.obs_16  0:243:14  string
+field  rinexobs.lli_16  0:257:1  string
+field  rinexobs.ssi_16  0:258:1  string
+field  rinexobs.obs_17  0:259:14  string
+field  rinexobs.lli_17  0:273:1  string
+field  rinexobs.ssi_17  0:274:1  string
+field  rinexobs.obs_18  0:275:14  string
+field  rinexobs.lli_18  0:289:1  string
+field  rinexobs.ssi_18  0:290:1  string
+field  rinexobs.obs_19  0:291:14  string
+field  rinexobs.lli_19  0:305:1  string
+field  rinexobs.ssi_19  0:306:1  string
+field  rinexobs.obs_20  0:307:14  string
+field  rinexobs.lli_20  0:321:1  string
+field  rinexobs.ssi_20  0:322:1  string
+field  rinexobs.obs_21  0:323:14  string
+field  rinexobs.lli_21  0:337:1  string
+field  rinexobs.ssi_21  0:338:1  string
+field  rinexobs.obs_22  0:339:14  string
+field  rinexobs.lli_22  0:353:1  string
+field  rinexobs.ssi_22  0:354:1  string
+field  rinexobs.obs_23  0:355:14  string
+field  rinexobs.lli_23  0:369:1  string
+field  rinexobs.ssi_23  0:370:1  string
+field  rinexobs.obs_24  0:371:14  string
+field  rinexobs.lli_24  0:385:1  string
+field  rinexobs.ssi_24  0:386:1  string
+field  rinexobs.obs_25  0:387:14  string
+field  rinexobs.lli_25  0:401:1  string
+field  rinexobs.ssi_25  0:402:1  string
+field  rinexobs.obs_26  0:403:14  string
+field  rinexobs.lli_26  0:417:1  string
+field  rinexobs.ssi_26  0:418:1  string
+field  rinexobs.obs_27  0:419:14  string
+field  rinexobs.lli_27  0:433:1  string
+field  rinexobs.ssi_27  0:434:1  string
+field  rinexobs.obs_28  0:435:14  string
+field  rinexobs.lli_28  0:449:1  string
+field  rinexobs.ssi_28  0:450:1  string
+field  rinexobs.obs_29  0:451:14  string
+field  rinexobs.lli_29  0:465:1  string
+field  rinexobs.ssi_29  0:466:1  string
+field  rinexobs.obs_30  0:467:14  string
+field  rinexobs.lli_30  0:481:1  string
+field  rinexobs.ssi_30  0:482:1  string
+field  rinexobs.obs_31  0:483:14  string
+field  rinexobs.lli_31  0:497:1  string
+field  rinexobs.ssi_31  0:498:1  string
+field  rinexobs.obs_32  0:499:14  string
+field  rinexobs.lli_32  0:513:1  string
+field  rinexobs.ssi_32  0:514:1  string
+field  rinexobs.obs_33  0:515:14  string
+field  rinexobs.lli_33  0:529:1  string
+field  rinexobs.ssi_33  0:530:1  string
+field  rinexobs.obs_34  0:531:14  string
+field  rinexobs.lli_34  0:545:1  string
+field  rinexobs.ssi_34  0:546:1  string
+field  rinexobs.obs_35  0:547:14  string
+field  rinexobs.lli_35  0:561:1  string
+field  rinexobs.ssi_35  0:562:1  string
+field  rinexobs.obs_36  0:563:14  string
+field  rinexobs.lli_36  0:577:1  string
+field  rinexobs.ssi_36  0:578:1  string
+field  rinexobs.obs_37  0:579:14  string
+field  rinexobs.lli_37  0:593:1  string
+field  rinexobs.ssi_37  0:594:1  string
+field  rinexobs.obs_38  0:595:14  string
+field  rinexobs.lli_38  0:609:1  string
+field  rinexobs.ssi_38  0:610:1  string
+field  rinexobs.obs_39  0:611:14  string
+field  rinexobs.lli_39  0:625:1  string
+field  rinexobs.ssi_39  0:626:1  string
+field  rinexobs.obs_40  0:627:14  string
+field  rinexobs.lli_40  0:641:1  string
+field  rinexobs.ssi_40  0:642:1  string
+
+kind  observation-galileo
+when  0:0:1  E
+field  rinexobs.satellite_system  0:0:1  string
+field  rinexobs.satellite_number  0:1:2  string
+field  rinexobs.obs_1  0:3:14  string
+field  rinexobs.lli_1  0:17:1  string
+field  rinexobs.ssi_1  0:18:1  string
+field  rinexobs.obs_2  0:19:14  string
+field  rinexobs.lli_2  0:33:1  string
+field  rinexobs.ssi_2  0:34:1  string
+field  rinexobs.obs_3  0:35:14  string
+field  rinexobs.lli_3  0:49:1  string
+field  rinexobs.ssi_3  0:50:1  string
+field  rinexobs.obs_4  0:51:14  string
+field  rinexobs.lli_4  0:65:1  string
+field  rinexobs.ssi_4  0:66:1  string
+field  rinexobs.obs_5  0:67:14  string
+field  rinexobs.lli_5  0:81:1  string
+field  rinexobs.ssi_5  0:82:1  string
+field  rinexobs.obs_6  0:83:14  string
+field  rinexobs.lli_6  0:97:1  string
+field  rinexobs.ssi_6  0:98:1  string
+field  rinexobs.obs_7  0:99:14  string
+field  rinexobs.lli_7  0:113:1  string
+field  rinexobs.ssi_7  0:114:1  string
+field  rinexobs.obs_8  0:115:14  string
+field  rinexobs.lli_8  0:129:1  string
+field  rinexobs.ssi_8  0:130:1  string
+field  rinexobs.obs_9  0:131:14  string
+field  rinexobs.lli_9  0:145:1  string
+field  rinexobs.ssi_9  0:146:1  string
+field  rinexobs.obs_10  0:147:14  string
+field  rinexobs.lli_10  0:161:1  string
+field  rinexobs.ssi_10  0:162:1  string
+field  rinexobs.obs_11  0:163:14  string
+field  rinexobs.lli_11  0:177:1  string
+field  rinexobs.ssi_11  0:178:1  string
+field  rinexobs.obs_12  0:179:14  string
+field  rinexobs.lli_12  0:193:1  string
+field  rinexobs.ssi_12  0:194:1  string
+field  rinexobs.obs_13  0:195:14  string
+field  rinexobs.lli_13  0:209:1  string
+field  rinexobs.ssi_13  0:210:1  string
+field  rinexobs.obs_14  0:211:14  string
+field  rinexobs.lli_14  0:225:1  string
+field  rinexobs.ssi_14  0:226:1  string
+field  rinexobs.obs_15  0:227:14  string
+field  rinexobs.lli_15  0:241:1  string
+field  rinexobs.ssi_15  0:242:1  string
+field  rinexobs.obs_16  0:243:14  string
+field  rinexobs.lli_16  0:257:1  string
+field  rinexobs.ssi_16  0:258:1  string
+field  rinexobs.obs_17  0:259:14  string
+field  rinexobs.lli_17  0:273:1  string
+field  rinexobs.ssi_17  0:274:1  string
+field  rinexobs.obs_18  0:275:14  string
+field  rinexobs.lli_18  0:289:1  string
+field  rinexobs.ssi_18  0:290:1  string
+field  rinexobs.obs_19  0:291:14  string
+field  rinexobs.lli_19  0:305:1  string
+field  rinexobs.ssi_19  0:306:1  string
+field  rinexobs.obs_20  0:307:14  string
+field  rinexobs.lli_20  0:321:1  string
+field  rinexobs.ssi_20  0:322:1  string
+field  rinexobs.obs_21  0:323:14  string
+field  rinexobs.lli_21  0:337:1  string
+field  rinexobs.ssi_21  0:338:1  string
+field  rinexobs.obs_22  0:339:14  string
+field  rinexobs.lli_22  0:353:1  string
+field  rinexobs.ssi_22  0:354:1  string
+field  rinexobs.obs_23  0:355:14  string
+field  rinexobs.lli_23  0:369:1  string
+field  rinexobs.ssi_23  0:370:1  string
+field  rinexobs.obs_24  0:371:14  string
+field  rinexobs.lli_24  0:385:1  string
+field  rinexobs.ssi_24  0:386:1  string
+field  rinexobs.obs_25  0:387:14  string
+field  rinexobs.lli_25  0:401:1  string
+field  rinexobs.ssi_25  0:402:1  string
+field  rinexobs.obs_26  0:403:14  string
+field  rinexobs.lli_26  0:417:1  string
+field  rinexobs.ssi_26  0:418:1  string
+field  rinexobs.obs_27  0:419:14  string
+field  rinexobs.lli_27  0:433:1  string
+field  rinexobs.ssi_27  0:434:1  string
+field  rinexobs.obs_28  0:435:14  string
+field  rinexobs.lli_28  0:449:1  string
+field  rinexobs.ssi_28  0:450:1  string
+field  rinexobs.obs_29  0:451:14  string
+field  rinexobs.lli_29  0:465:1  string
+field  rinexobs.ssi_29  0:466:1  string
+field  rinexobs.obs_30  0:467:14  string
+field  rinexobs.lli_30  0:481:1  string
+field  rinexobs.ssi_30  0:482:1  string
+field  rinexobs.obs_31  0:483:14  string
+field  rinexobs.lli_31  0:497:1  string
+field  rinexobs.ssi_31  0:498:1  string
+field  rinexobs.obs_32  0:499:14  string
+field  rinexobs.lli_32  0:513:1  string
+field  rinexobs.ssi_32  0:514:1  string
+field  rinexobs.obs_33  0:515:14  string
+field  rinexobs.lli_33  0:529:1  string
+field  rinexobs.ssi_33  0:530:1  string
+field  rinexobs.obs_34  0:531:14  string
+field  rinexobs.lli_34  0:545:1  string
+field  rinexobs.ssi_34  0:546:1  string
+field  rinexobs.obs_35  0:547:14  string
+field  rinexobs.lli_35  0:561:1  string
+field  rinexobs.ssi_35  0:562:1  string
+field  rinexobs.obs_36  0:563:14  string
+field  rinexobs.lli_36  0:577:1  string
+field  rinexobs.ssi_36  0:578:1  string
+field  rinexobs.obs_37  0:579:14  string
+field  rinexobs.lli_37  0:593:1  string
+field  rinexobs.ssi_37  0:594:1  string
+field  rinexobs.obs_38  0:595:14  string
+field  rinexobs.lli_38  0:609:1  string
+field  rinexobs.ssi_38  0:610:1  string
+field  rinexobs.obs_39  0:611:14  string
+field  rinexobs.lli_39  0:625:1  string
+field  rinexobs.ssi_39  0:626:1  string
+field  rinexobs.obs_40  0:627:14  string
+field  rinexobs.lli_40  0:641:1  string
+field  rinexobs.ssi_40  0:642:1  string
+
+kind  observation-beidou
+when  0:0:1  C
+field  rinexobs.satellite_system  0:0:1  string
+field  rinexobs.satellite_number  0:1:2  string
+field  rinexobs.obs_1  0:3:14  string
+field  rinexobs.lli_1  0:17:1  string
+field  rinexobs.ssi_1  0:18:1  string
+field  rinexobs.obs_2  0:19:14  string
+field  rinexobs.lli_2  0:33:1  string
+field  rinexobs.ssi_2  0:34:1  string
+field  rinexobs.obs_3  0:35:14  string
+field  rinexobs.lli_3  0:49:1  string
+field  rinexobs.ssi_3  0:50:1  string
+field  rinexobs.obs_4  0:51:14  string
+field  rinexobs.lli_4  0:65:1  string
+field  rinexobs.ssi_4  0:66:1  string
+field  rinexobs.obs_5  0:67:14  string
+field  rinexobs.lli_5  0:81:1  string
+field  rinexobs.ssi_5  0:82:1  string
+field  rinexobs.obs_6  0:83:14  string
+field  rinexobs.lli_6  0:97:1  string
+field  rinexobs.ssi_6  0:98:1  string
+field  rinexobs.obs_7  0:99:14  string
+field  rinexobs.lli_7  0:113:1  string
+field  rinexobs.ssi_7  0:114:1  string
+field  rinexobs.obs_8  0:115:14  string
+field  rinexobs.lli_8  0:129:1  string
+field  rinexobs.ssi_8  0:130:1  string
+field  rinexobs.obs_9  0:131:14  string
+field  rinexobs.lli_9  0:145:1  string
+field  rinexobs.ssi_9  0:146:1  string
+field  rinexobs.obs_10  0:147:14  string
+field  rinexobs.lli_10  0:161:1  string
+field  rinexobs.ssi_10  0:162:1  string
+field  rinexobs.obs_11  0:163:14  string
+field  rinexobs.lli_11  0:177:1  string
+field  rinexobs.ssi_11  0:178:1  string
+field  rinexobs.obs_12  0:179:14  string
+field  rinexobs.lli_12  0:193:1  string
+field  rinexobs.ssi_12  0:194:1  string
+field  rinexobs.obs_13  0:195:14  string
+field  rinexobs.lli_13  0:209:1  string
+field  rinexobs.ssi_13  0:210:1  string
+field  rinexobs.obs_14  0:211:14  string
+field  rinexobs.lli_14  0:225:1  string
+field  rinexobs.ssi_14  0:226:1  string
+field  rinexobs.obs_15  0:227:14  string
+field  rinexobs.lli_15  0:241:1  string
+field  rinexobs.ssi_15  0:242:1  string
+field  rinexobs.obs_16  0:243:14  string
+field  rinexobs.lli_16  0:257:1  string
+field  rinexobs.ssi_16  0:258:1  string
+field  rinexobs.obs_17  0:259:14  string
+field  rinexobs.lli_17  0:273:1  string
+field  rinexobs.ssi_17  0:274:1  string
+field  rinexobs.obs_18  0:275:14  string
+field  rinexobs.lli_18  0:289:1  string
+field  rinexobs.ssi_18  0:290:1  string
+field  rinexobs.obs_19  0:291:14  string
+field  rinexobs.lli_19  0:305:1  string
+field  rinexobs.ssi_19  0:306:1  string
+field  rinexobs.obs_20  0:307:14  string
+field  rinexobs.lli_20  0:321:1  string
+field  rinexobs.ssi_20  0:322:1  string
+field  rinexobs.obs_21  0:323:14  string
+field  rinexobs.lli_21  0:337:1  string
+field  rinexobs.ssi_21  0:338:1  string
+field  rinexobs.obs_22  0:339:14  string
+field  rinexobs.lli_22  0:353:1  string
+field  rinexobs.ssi_22  0:354:1  string
+field  rinexobs.obs_23  0:355:14  string
+field  rinexobs.lli_23  0:369:1  string
+field  rinexobs.ssi_23  0:370:1  string
+field  rinexobs.obs_24  0:371:14  string
+field  rinexobs.lli_24  0:385:1  string
+field  rinexobs.ssi_24  0:386:1  string
+field  rinexobs.obs_25  0:387:14  string
+field  rinexobs.lli_25  0:401:1  string
+field  rinexobs.ssi_25  0:402:1  string
+field  rinexobs.obs_26  0:403:14  string
+field  rinexobs.lli_26  0:417:1  string
+field  rinexobs.ssi_26  0:418:1  string
+field  rinexobs.obs_27  0:419:14  string
+field  rinexobs.lli_27  0:433:1  string
+field  rinexobs.ssi_27  0:434:1  string
+field  rinexobs.obs_28  0:435:14  string
+field  rinexobs.lli_28  0:449:1  string
+field  rinexobs.ssi_28  0:450:1  string
+field  rinexobs.obs_29  0:451:14  string
+field  rinexobs.lli_29  0:465:1  string
+field  rinexobs.ssi_29  0:466:1  string
+field  rinexobs.obs_30  0:467:14  string
+field  rinexobs.lli_30  0:481:1  string
+field  rinexobs.ssi_30  0:482:1  string
+field  rinexobs.obs_31  0:483:14  string
+field  rinexobs.lli_31  0:497:1  string
+field  rinexobs.ssi_31  0:498:1  string
+field  rinexobs.obs_32  0:499:14  string
+field  rinexobs.lli_32  0:513:1  string
+field  rinexobs.ssi_32  0:514:1  string
+field  rinexobs.obs_33  0:515:14  string
+field  rinexobs.lli_33  0:529:1  string
+field  rinexobs.ssi_33  0:530:1  string
+field  rinexobs.obs_34  0:531:14  string
+field  rinexobs.lli_34  0:545:1  string
+field  rinexobs.ssi_34  0:546:1  string
+field  rinexobs.obs_35  0:547:14  string
+field  rinexobs.lli_35  0:561:1  string
+field  rinexobs.ssi_35  0:562:1  string
+field  rinexobs.obs_36  0:563:14  string
+field  rinexobs.lli_36  0:577:1  string
+field  rinexobs.ssi_36  0:578:1  string
+field  rinexobs.obs_37  0:579:14  string
+field  rinexobs.lli_37  0:593:1  string
+field  rinexobs.ssi_37  0:594:1  string
+field  rinexobs.obs_38  0:595:14  string
+field  rinexobs.lli_38  0:609:1  string
+field  rinexobs.ssi_38  0:610:1  string
+field  rinexobs.obs_39  0:611:14  string
+field  rinexobs.lli_39  0:625:1  string
+field  rinexobs.ssi_39  0:626:1  string
+field  rinexobs.obs_40  0:627:14  string
+field  rinexobs.lli_40  0:641:1  string
+field  rinexobs.ssi_40  0:642:1  string
+
+kind  observation-qzss
+when  0:0:1  J
+field  rinexobs.satellite_system  0:0:1  string
+field  rinexobs.satellite_number  0:1:2  string
+field  rinexobs.obs_1  0:3:14  string
+field  rinexobs.lli_1  0:17:1  string
+field  rinexobs.ssi_1  0:18:1  string
+field  rinexobs.obs_2  0:19:14  string
+field  rinexobs.lli_2  0:33:1  string
+field  rinexobs.ssi_2  0:34:1  string
+field  rinexobs.obs_3  0:35:14  string
+field  rinexobs.lli_3  0:49:1  string
+field  rinexobs.ssi_3  0:50:1  string
+field  rinexobs.obs_4  0:51:14  string
+field  rinexobs.lli_4  0:65:1  string
+field  rinexobs.ssi_4  0:66:1  string
+field  rinexobs.obs_5  0:67:14  string
+field  rinexobs.lli_5  0:81:1  string
+field  rinexobs.ssi_5  0:82:1  string
+field  rinexobs.obs_6  0:83:14  string
+field  rinexobs.lli_6  0:97:1  string
+field  rinexobs.ssi_6  0:98:1  string
+field  rinexobs.obs_7  0:99:14  string
+field  rinexobs.lli_7  0:113:1  string
+field  rinexobs.ssi_7  0:114:1  string
+field  rinexobs.obs_8  0:115:14  string
+field  rinexobs.lli_8  0:129:1  string
+field  rinexobs.ssi_8  0:130:1  string
+field  rinexobs.obs_9  0:131:14  string
+field  rinexobs.lli_9  0:145:1  string
+field  rinexobs.ssi_9  0:146:1  string
+field  rinexobs.obs_10  0:147:14  string
+field  rinexobs.lli_10  0:161:1  string
+field  rinexobs.ssi_10  0:162:1  string
+field  rinexobs.obs_11  0:163:14  string
+field  rinexobs.lli_11  0:177:1  string
+field  rinexobs.ssi_11  0:178:1  string
+field  rinexobs.obs_12  0:179:14  string
+field  rinexobs.lli_12  0:193:1  string
+field  rinexobs.ssi_12  0:194:1  string
+field  rinexobs.obs_13  0:195:14  string
+field  rinexobs.lli_13  0:209:1  string
+field  rinexobs.ssi_13  0:210:1  string
+field  rinexobs.obs_14  0:211:14  string
+field  rinexobs.lli_14  0:225:1  string
+field  rinexobs.ssi_14  0:226:1  string
+field  rinexobs.obs_15  0:227:14  string
+field  rinexobs.lli_15  0:241:1  string
+field  rinexobs.ssi_15  0:242:1  string
+field  rinexobs.obs_16  0:243:14  string
+field  rinexobs.lli_16  0:257:1  string
+field  rinexobs.ssi_16  0:258:1  string
+field  rinexobs.obs_17  0:259:14  string
+field  rinexobs.lli_17  0:273:1  string
+field  rinexobs.ssi_17  0:274:1  string
+field  rinexobs.obs_18  0:275:14  string
+field  rinexobs.lli_18  0:289:1  string
+field  rinexobs.ssi_18  0:290:1  string
+field  rinexobs.obs_19  0:291:14  string
+field  rinexobs.lli_19  0:305:1  string
+field  rinexobs.ssi_19  0:306:1  string
+field  rinexobs.obs_20  0:307:14  string
+field  rinexobs.lli_20  0:321:1  string
+field  rinexobs.ssi_20  0:322:1  string
+field  rinexobs.obs_21  0:323:14  string
+field  rinexobs.lli_21  0:337:1  string
+field  rinexobs.ssi_21  0:338:1  string
+field  rinexobs.obs_22  0:339:14  string
+field  rinexobs.lli_22  0:353:1  string
+field  rinexobs.ssi_22  0:354:1  string
+field  rinexobs.obs_23  0:355:14  string
+field  rinexobs.lli_23  0:369:1  string
+field  rinexobs.ssi_23  0:370:1  string
+field  rinexobs.obs_24  0:371:14  string
+field  rinexobs.lli_24  0:385:1  string
+field  rinexobs.ssi_24  0:386:1  string
+field  rinexobs.obs_25  0:387:14  string
+field  rinexobs.lli_25  0:401:1  string
+field  rinexobs.ssi_25  0:402:1  string
+field  rinexobs.obs_26  0:403:14  string
+field  rinexobs.lli_26  0:417:1  string
+field  rinexobs.ssi_26  0:418:1  string
+field  rinexobs.obs_27  0:419:14  string
+field  rinexobs.lli_27  0:433:1  string
+field  rinexobs.ssi_27  0:434:1  string
+field  rinexobs.obs_28  0:435:14  string
+field  rinexobs.lli_28  0:449:1  string
+field  rinexobs.ssi_28  0:450:1  string
+field  rinexobs.obs_29  0:451:14  string
+field  rinexobs.lli_29  0:465:1  string
+field  rinexobs.ssi_29  0:466:1  string
+field  rinexobs.obs_30  0:467:14  string
+field  rinexobs.lli_30  0:481:1  string
+field  rinexobs.ssi_30  0:482:1  string
+field  rinexobs.obs_31  0:483:14  string
+field  rinexobs.lli_31  0:497:1  string
+field  rinexobs.ssi_31  0:498:1  string
+field  rinexobs.obs_32  0:499:14  string
+field  rinexobs.lli_32  0:513:1  string
+field  rinexobs.ssi_32  0:514:1  string
+field  rinexobs.obs_33  0:515:14  string
+field  rinexobs.lli_33  0:529:1  string
+field  rinexobs.ssi_33  0:530:1  string
+field  rinexobs.obs_34  0:531:14  string
+field  rinexobs.lli_34  0:545:1  string
+field  rinexobs.ssi_34  0:546:1  string
+field  rinexobs.obs_35  0:547:14  string
+field  rinexobs.lli_35  0:561:1  string
+field  rinexobs.ssi_35  0:562:1  string
+field  rinexobs.obs_36  0:563:14  string
+field  rinexobs.lli_36  0:577:1  string
+field  rinexobs.ssi_36  0:578:1  string
+field  rinexobs.obs_37  0:579:14  string
+field  rinexobs.lli_37  0:593:1  string
+field  rinexobs.ssi_37  0:594:1  string
+field  rinexobs.obs_38  0:595:14  string
+field  rinexobs.lli_38  0:609:1  string
+field  rinexobs.ssi_38  0:610:1  string
+field  rinexobs.obs_39  0:611:14  string
+field  rinexobs.lli_39  0:625:1  string
+field  rinexobs.ssi_39  0:626:1  string
+field  rinexobs.obs_40  0:627:14  string
+field  rinexobs.lli_40  0:641:1  string
+field  rinexobs.ssi_40  0:642:1  string
+
+kind  observation-navic
+when  0:0:1  I
+field  rinexobs.satellite_system  0:0:1  string
+field  rinexobs.satellite_number  0:1:2  string
+field  rinexobs.obs_1  0:3:14  string
+field  rinexobs.lli_1  0:17:1  string
+field  rinexobs.ssi_1  0:18:1  string
+field  rinexobs.obs_2  0:19:14  string
+field  rinexobs.lli_2  0:33:1  string
+field  rinexobs.ssi_2  0:34:1  string
+field  rinexobs.obs_3  0:35:14  string
+field  rinexobs.lli_3  0:49:1  string
+field  rinexobs.ssi_3  0:50:1  string
+field  rinexobs.obs_4  0:51:14  string
+field  rinexobs.lli_4  0:65:1  string
+field  rinexobs.ssi_4  0:66:1  string
+field  rinexobs.obs_5  0:67:14  string
+field  rinexobs.lli_5  0:81:1  string
+field  rinexobs.ssi_5  0:82:1  string
+field  rinexobs.obs_6  0:83:14  string
+field  rinexobs.lli_6  0:97:1  string
+field  rinexobs.ssi_6  0:98:1  string
+field  rinexobs.obs_7  0:99:14  string
+field  rinexobs.lli_7  0:113:1  string
+field  rinexobs.ssi_7  0:114:1  string
+field  rinexobs.obs_8  0:115:14  string
+field  rinexobs.lli_8  0:129:1  string
+field  rinexobs.ssi_8  0:130:1  string
+field  rinexobs.obs_9  0:131:14  string
+field  rinexobs.lli_9  0:145:1  string
+field  rinexobs.ssi_9  0:146:1  string
+field  rinexobs.obs_10  0:147:14  string
+field  rinexobs.lli_10  0:161:1  string
+field  rinexobs.ssi_10  0:162:1  string
+field  rinexobs.obs_11  0:163:14  string
+field  rinexobs.lli_11  0:177:1  string
+field  rinexobs.ssi_11  0:178:1  string
+field  rinexobs.obs_12  0:179:14  string
+field  rinexobs.lli_12  0:193:1  string
+field  rinexobs.ssi_12  0:194:1  string
+field  rinexobs.obs_13  0:195:14  string
+field  rinexobs.lli_13  0:209:1  string
+field  rinexobs.ssi_13  0:210:1  string
+field  rinexobs.obs_14  0:211:14  string
+field  rinexobs.lli_14  0:225:1  string
+field  rinexobs.ssi_14  0:226:1  string
+field  rinexobs.obs_15  0:227:14  string
+field  rinexobs.lli_15  0:241:1  string
+field  rinexobs.ssi_15  0:242:1  string
+field  rinexobs.obs_16  0:243:14  string
+field  rinexobs.lli_16  0:257:1  string
+field  rinexobs.ssi_16  0:258:1  string
+field  rinexobs.obs_17  0:259:14  string
+field  rinexobs.lli_17  0:273:1  string
+field  rinexobs.ssi_17  0:274:1  string
+field  rinexobs.obs_18  0:275:14  string
+field  rinexobs.lli_18  0:289:1  string
+field  rinexobs.ssi_18  0:290:1  string
+field  rinexobs.obs_19  0:291:14  string
+field  rinexobs.lli_19  0:305:1  string
+field  rinexobs.ssi_19  0:306:1  string
+field  rinexobs.obs_20  0:307:14  string
+field  rinexobs.lli_20  0:321:1  string
+field  rinexobs.ssi_20  0:322:1  string
+field  rinexobs.obs_21  0:323:14  string
+field  rinexobs.lli_21  0:337:1  string
+field  rinexobs.ssi_21  0:338:1  string
+field  rinexobs.obs_22  0:339:14  string
+field  rinexobs.lli_22  0:353:1  string
+field  rinexobs.ssi_22  0:354:1  string
+field  rinexobs.obs_23  0:355:14  string
+field  rinexobs.lli_23  0:369:1  string
+field  rinexobs.ssi_23  0:370:1  string
+field  rinexobs.obs_24  0:371:14  string
+field  rinexobs.lli_24  0:385:1  string
+field  rinexobs.ssi_24  0:386:1  string
+field  rinexobs.obs_25  0:387:14  string
+field  rinexobs.lli_25  0:401:1  string
+field  rinexobs.ssi_25  0:402:1  string
+field  rinexobs.obs_26  0:403:14  string
+field  rinexobs.lli_26  0:417:1  string
+field  rinexobs.ssi_26  0:418:1  string
+field  rinexobs.obs_27  0:419:14  string
+field  rinexobs.lli_27  0:433:1  string
+field  rinexobs.ssi_27  0:434:1  string
+field  rinexobs.obs_28  0:435:14  string
+field  rinexobs.lli_28  0:449:1  string
+field  rinexobs.ssi_28  0:450:1  string
+field  rinexobs.obs_29  0:451:14  string
+field  rinexobs.lli_29  0:465:1  string
+field  rinexobs.ssi_29  0:466:1  string
+field  rinexobs.obs_30  0:467:14  string
+field  rinexobs.lli_30  0:481:1  string
+field  rinexobs.ssi_30  0:482:1  string
+field  rinexobs.obs_31  0:483:14  string
+field  rinexobs.lli_31  0:497:1  string
+field  rinexobs.ssi_31  0:498:1  string
+field  rinexobs.obs_32  0:499:14  string
+field  rinexobs.lli_32  0:513:1  string
+field  rinexobs.ssi_32  0:514:1  string
+field  rinexobs.obs_33  0:515:14  string
+field  rinexobs.lli_33  0:529:1  string
+field  rinexobs.ssi_33  0:530:1  string
+field  rinexobs.obs_34  0:531:14  string
+field  rinexobs.lli_34  0:545:1  string
+field  rinexobs.ssi_34  0:546:1  string
+field  rinexobs.obs_35  0:547:14  string
+field  rinexobs.lli_35  0:561:1  string
+field  rinexobs.ssi_35  0:562:1  string
+field  rinexobs.obs_36  0:563:14  string
+field  rinexobs.lli_36  0:577:1  string
+field  rinexobs.ssi_36  0:578:1  string
+field  rinexobs.obs_37  0:579:14  string
+field  rinexobs.lli_37  0:593:1  string
+field  rinexobs.ssi_37  0:594:1  string
+field  rinexobs.obs_38  0:595:14  string
+field  rinexobs.lli_38  0:609:1  string
+field  rinexobs.ssi_38  0:610:1  string
+field  rinexobs.obs_39  0:611:14  string
+field  rinexobs.lli_39  0:625:1  string
+field  rinexobs.ssi_39  0:626:1  string
+field  rinexobs.obs_40  0:627:14  string
+field  rinexobs.lli_40  0:641:1  string
+field  rinexobs.ssi_40  0:642:1  string
+
+kind  observation-sbas
+when  0:0:1  S
+field  rinexobs.satellite_system  0:0:1  string
+field  rinexobs.satellite_number  0:1:2  string
+field  rinexobs.obs_1  0:3:14  string
+field  rinexobs.lli_1  0:17:1  string
+field  rinexobs.ssi_1  0:18:1  string
+field  rinexobs.obs_2  0:19:14  string
+field  rinexobs.lli_2  0:33:1  string
+field  rinexobs.ssi_2  0:34:1  string
+field  rinexobs.obs_3  0:35:14  string
+field  rinexobs.lli_3  0:49:1  string
+field  rinexobs.ssi_3  0:50:1  string
+field  rinexobs.obs_4  0:51:14  string
+field  rinexobs.lli_4  0:65:1  string
+field  rinexobs.ssi_4  0:66:1  string
+field  rinexobs.obs_5  0:67:14  string
+field  rinexobs.lli_5  0:81:1  string
+field  rinexobs.ssi_5  0:82:1  string
+field  rinexobs.obs_6  0:83:14  string
+field  rinexobs.lli_6  0:97:1  string
+field  rinexobs.ssi_6  0:98:1  string
+field  rinexobs.obs_7  0:99:14  string
+field  rinexobs.lli_7  0:113:1  string
+field  rinexobs.ssi_7  0:114:1  string
+field  rinexobs.obs_8  0:115:14  string
+field  rinexobs.lli_8  0:129:1  string
+field  rinexobs.ssi_8  0:130:1  string
+field  rinexobs.obs_9  0:131:14  string
+field  rinexobs.lli_9  0:145:1  string
+field  rinexobs.ssi_9  0:146:1  string
+field  rinexobs.obs_10  0:147:14  string
+field  rinexobs.lli_10  0:161:1  string
+field  rinexobs.ssi_10  0:162:1  string
+field  rinexobs.obs_11  0:163:14  string
+field  rinexobs.lli_11  0:177:1  string
+field  rinexobs.ssi_11  0:178:1  string
+field  rinexobs.obs_12  0:179:14  string
+field  rinexobs.lli_12  0:193:1  string
+field  rinexobs.ssi_12  0:194:1  string
+field  rinexobs.obs_13  0:195:14  string
+field  rinexobs.lli_13  0:209:1  string
+field  rinexobs.ssi_13  0:210:1  string
+field  rinexobs.obs_14  0:211:14  string
+field  rinexobs.lli_14  0:225:1  string
+field  rinexobs.ssi_14  0:226:1  string
+field  rinexobs.obs_15  0:227:14  string
+field  rinexobs.lli_15  0:241:1  string
+field  rinexobs.ssi_15  0:242:1  string
+field  rinexobs.obs_16  0:243:14  string
+field  rinexobs.lli_16  0:257:1  string
+field  rinexobs.ssi_16  0:258:1  string
+field  rinexobs.obs_17  0:259:14  string
+field  rinexobs.lli_17  0:273:1  string
+field  rinexobs.ssi_17  0:274:1  string
+field  rinexobs.obs_18  0:275:14  string
+field  rinexobs.lli_18  0:289:1  string
+field  rinexobs.ssi_18  0:290:1  string
+field  rinexobs.obs_19  0:291:14  string
+field  rinexobs.lli_19  0:305:1  string
+field  rinexobs.ssi_19  0:306:1  string
+field  rinexobs.obs_20  0:307:14  string
+field  rinexobs.lli_20  0:321:1  string
+field  rinexobs.ssi_20  0:322:1  string
+field  rinexobs.obs_21  0:323:14  string
+field  rinexobs.lli_21  0:337:1  string
+field  rinexobs.ssi_21  0:338:1  string
+field  rinexobs.obs_22  0:339:14  string
+field  rinexobs.lli_22  0:353:1  string
+field  rinexobs.ssi_22  0:354:1  string
+field  rinexobs.obs_23  0:355:14  string
+field  rinexobs.lli_23  0:369:1  string
+field  rinexobs.ssi_23  0:370:1  string
+field  rinexobs.obs_24  0:371:14  string
+field  rinexobs.lli_24  0:385:1  string
+field  rinexobs.ssi_24  0:386:1  string
+field  rinexobs.obs_25  0:387:14  string
+field  rinexobs.lli_25  0:401:1  string
+field  rinexobs.ssi_25  0:402:1  string
+field  rinexobs.obs_26  0:403:14  string
+field  rinexobs.lli_26  0:417:1  string
+field  rinexobs.ssi_26  0:418:1  string
+field  rinexobs.obs_27  0:419:14  string
+field  rinexobs.lli_27  0:433:1  string
+field  rinexobs.ssi_27  0:434:1  string
+field  rinexobs.obs_28  0:435:14  string
+field  rinexobs.lli_28  0:449:1  string
+field  rinexobs.ssi_28  0:450:1  string
+field  rinexobs.obs_29  0:451:14  string
+field  rinexobs.lli_29  0:465:1  string
+field  rinexobs.ssi_29  0:466:1  string
+field  rinexobs.obs_30  0:467:14  string
+field  rinexobs.lli_30  0:481:1  string
+field  rinexobs.ssi_30  0:482:1  string
+field  rinexobs.obs_31  0:483:14  string
+field  rinexobs.lli_31  0:497:1  string
+field  rinexobs.ssi_31  0:498:1  string
+field  rinexobs.obs_32  0:499:14  string
+field  rinexobs.lli_32  0:513:1  string
+field  rinexobs.ssi_32  0:514:1  string
+field  rinexobs.obs_33  0:515:14  string
+field  rinexobs.lli_33  0:529:1  string
+field  rinexobs.ssi_33  0:530:1  string
+field  rinexobs.obs_34  0:531:14  string
+field  rinexobs.lli_34  0:545:1  string
+field  rinexobs.ssi_34  0:546:1  string
+field  rinexobs.obs_35  0:547:14  string
+field  rinexobs.lli_35  0:561:1  string
+field  rinexobs.ssi_35  0:562:1  string
+field  rinexobs.obs_36  0:563:14  string
+field  rinexobs.lli_36  0:577:1  string
+field  rinexobs.ssi_36  0:578:1  string
+field  rinexobs.obs_37  0:579:14  string
+field  rinexobs.lli_37  0:593:1  string
+field  rinexobs.ssi_37  0:594:1  string
+field  rinexobs.obs_38  0:595:14  string
+field  rinexobs.lli_38  0:609:1  string
+field  rinexobs.ssi_38  0:610:1  string
+field  rinexobs.obs_39  0:611:14  string
+field  rinexobs.lli_39  0:625:1  string
+field  rinexobs.ssi_39  0:626:1  string
+field  rinexobs.obs_40  0:627:14  string
+field  rinexobs.lli_40  0:641:1  string
+field  rinexobs.ssi_40  0:642:1  string
+
+kind  header-other
+when  0:60:20  present
+field  rinexobs.content  0:0:60  string
+field  rinexobs.label  0:60:20  string

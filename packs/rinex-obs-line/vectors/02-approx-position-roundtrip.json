@@ -1,0 +1,13 @@
+{
+  "name": "approx-position-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "  4027881.3280   306998.7120  4919499.0010                  APPROX POSITION XYZ ",
+  "expect": "  4027881.3280   306998.7120  4919499.0010                  APPROX POSITION XYZ ",
+  "model": {
+    "rinexobs.approx_x": "  4027881.3280",
+    "rinexobs.approx_y": "   306998.7120",
+    "rinexobs.approx_z": "  4919499.0010"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; the approximate position, geocentric metres (ECEF), kept as written; expect derived there, no engine run"
+}

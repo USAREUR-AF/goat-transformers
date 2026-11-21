@@ -1,0 +1,13 @@
+{
+  "name": "time-of-first-obs-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "  2026     3    14     0     0    0.0000000     GAL         TIME OF FIRST OBS   ",
+  "expect": "  2026     3    14     0     0    0.0000000     GAL         TIME OF FIRST OBS   ",
+  "model": {
+    "rinexobs.first_year": "  2026",
+    "rinexobs.first_second": "    0.0000000",
+    "rinexobs.first_time_system": "GAL"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; the first observation epoch, in the time system named GAL, kept raw; expect derived there, no engine run"
+}

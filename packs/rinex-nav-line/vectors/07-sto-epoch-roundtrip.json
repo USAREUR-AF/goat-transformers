@@ -1,0 +1,12 @@
+{
+  "name": "sto-epoch-roundtrip",
+  "from": "rinex-nav-line",
+  "to": "rinex-nav-line",
+  "input": "    2026 03 14 00 00 00 GPUT              ",
+  "expect": "    2026 03 14 00 00 00 GPUT              ",
+  "model": {
+    "rinexnav.year": "2026",
+    "rinexnav.value_1": " GPUT"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A7, A9 and A30-A32; the epoch line of a system time offset record (GPS-UTC), its identifier kept with the column; expect derived there, no engine run"
+}

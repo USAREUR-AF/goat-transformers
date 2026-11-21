@@ -1,0 +1,15 @@
+{
+  "name": "version-line-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "     4.01           OBSERVATION DATA    M: MIXED            RINEX VERSION / TYPE",
+  "expect": "     4.01           OBSERVATION DATA    M: MIXED            RINEX VERSION / TYPE",
+  "model": {
+    "rinexobs.format_version": "     4.01",
+    "rinexobs.file_type": "O",
+    "rinexobs.file_type_text": "BSERVATION DATA",
+    "rinexobs.satellite_system": "M",
+    "rinexobs.satellite_system_text": ": MIXED"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; the version and type line of a mixed observation file; expect derived there, no engine run"
+}

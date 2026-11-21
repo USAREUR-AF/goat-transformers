@@ -1,0 +1,13 @@
+{
+  "name": "leap-seconds-roundtrip",
+  "from": "rinex-nav-line",
+  "to": "rinex-nav-line",
+  "input": "    18    18  1929     7                                    LEAP SECONDS        ",
+  "expect": "    18    18  1929     7                                    LEAP SECONDS        ",
+  "model": {
+    "rinexnav.leap_seconds": "    18",
+    "rinexnav.leap_week": "  1929",
+    "rinexnav.leap_day": "     7"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A7, A9 and A30-A32; the leap seconds line; expect derived there, no engine run"
+}

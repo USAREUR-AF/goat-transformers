@@ -1,0 +1,16 @@
+{
+  "name": "satellite-epoch-roundtrip",
+  "from": "rinex-nav-line",
+  "to": "rinex-nav-line",
+  "input": "G05 2026 03 14 02 00 00-1.234567890123E-04-2.273736754432E-12 0.000000000000E+00",
+  "expect": "G05 2026 03 14 02 00 00-1.234567890123E-04-2.273736754432E-12 0.000000000000E+00",
+  "model": {
+    "rinexnav.satellite_system": "G",
+    "rinexnav.satellite_number": "05",
+    "rinexnav.year": "2026",
+    "rinexnav.hour": "02",
+    "rinexnav.value_1": "-1.234567890123E-04",
+    "rinexnav.value_3": " 0.000000000000E+00"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A7, A9 and A30-A32; the first line of a GPS LNAV record: Toc and the clock bias, drift and drift rate; expect derived there, no engine run"
+}
