@@ -11,6 +11,9 @@
 # A pull request that touches adapters/ or this file runs the same build,
 # package and smoke test without releasing, so a tag is never the first build.
 #
+# The binary is built with Zenoh's TCP, UDP and TLS links; a smoke test sends
+# messages from one copy to another over tls/127.0.0.1 on every build.
+#
 # The package, goat-xf-pipe-zenoh_<version>_linux_arm64.tar.gz, holds the
 # binary, packs/ and model/ of the tag without the conformance vectors, LICENSE,
 # NOTICE, the licence files and LICENSES/ (tools/goat-pkg archive writes those),
@@ -84,6 +87,12 @@ jobs:
             echo "::error::the binary needs glibc $need; Jetson Orin (JetPack 6) has $MAX_GLIBC"
             exit 1
           fi
+      # The goat routers accept only TLS (xf-pipe-v0.1.0 had no TLS link and
+      # failed "Unable to connect to any of [tls/...]"). Two copies of the built
+      # binary, a listener and a talker, exchange messages over
+      # tls/127.0.0.1 with a CA and certificate made here, and nothing else.
+      - name: The binary speaks Zenoh over TLS
+        run: bash adapters/zenoh/tests/tls-smoke.sh "adapters/zenoh/target/$TARGET/release/goat-xf-pipe-zenoh" packs
       - name: Package
         run: |
           stage="goat-xf-pipe-zenoh_${VERSION}_linux_arm64"
