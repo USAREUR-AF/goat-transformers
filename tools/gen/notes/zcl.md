@@ -1,0 +1,36 @@
+## Message convention
+
+A message is one ZCL frame: the payload of an APS data frame on a Zigbee network, as a
+coordinator (zigbee2mqtt through zigbee-herdsman, ZHA through zigpy) hands it over. The APS frame
+holds the cluster id, the profile and the endpoints, so the caller names the pack by the cluster.
+Bytes are little-endian.
+
+## How the frame is stated
+
+The frame control byte is read bit by bit from its least significant bit: the frame type (2
+bits), the manufacturer-specific bit (a `presence` bit that gates the 16-bit manufacturer code),
+the direction, the disable-default-response bit and three reserved bits. Then the transaction
+sequence number and the command id. A `switch` on the frame type and the command id (and, for a
+cluster command, on the direction) chooses the payload.
+
+Lists of records with no count (read attributes, the responses, write and report attributes)
+are `group … rest`: records until the end of the frame (engine-spec 0.21). An attribute value is
+read by a `switch` on its data type byte; a character or octet string is a list of bytes counted
+by its one-byte (or, for the long forms, two-byte) length.
+
+## Not mapped
+
+- Values of the ZCL types array, structure, set and bag: they nest typed elements; a frame that
+  holds one is `no-kind`. The half-precision float is carried as its raw 16 bits: no transform
+  reads a half float.
+- A string length of 0xFF (the invalid string) reads as 255 bytes and is `malformed-wire` when
+  the frame is shorter.
+- Configure reporting, read reporting configuration, the structured and the command discovery
+  commands of the global set; a frame with one of them is `no-kind`.
+- Text: strings are their bytes. Missing: a transform that reads a length-prefixed string as
+  text on the `bits` wire.
+- Attribute values are items of a list (one per record), so none binds a shared key, and
+  manufacturer-specific attributes with the same id as a cluster attribute are read under the
+  cluster attribute's name.
+- A cluster with no command of a direction has no `switch` there: a frame of that direction's
+  command decodes with its payload dropped.

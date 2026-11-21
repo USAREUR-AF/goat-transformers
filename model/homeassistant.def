@@ -1,0 +1,24 @@
+# The homeassistant module: members of a Home Assistant state object and of the
+# websocket state_changed event that the homeassistant-* packs map to no shared key.
+# Times are the text Python's isoformat() writes (microseconds, +00:00).
+module        homeassistant
+version       0.1.0
+distribution  public
+source        "Home Assistant core (https://github.com/home-assistant/core, Apache License 2.0) tag 2026.11.2 (commit ff5d56b825a0fb66b03d01bc297d49e206cdaba3): homeassistant/core.py (State._as_dict, Event._as_dict, Context._as_dict), homeassistant/components/websocket_api/messages.py (event_message), homeassistant/const.py (ATTR_LATITUDE, ATTR_LONGITUDE, ATTR_GPS_ACCURACY, ATTR_FRIENDLY_NAME), homeassistant/util/location.py (WGS 84 ellipsoid); member names restated"
+key  state              string  -  "the entity's state, as text"
+key  gps_accuracy       float   m  "attributes.gps_accuracy: accuracy of the GPS position, metres"
+key  radius             float   m  "attributes.radius: radius of a zone, metres"
+key  last_changed       string  -  "last_changed: when the state text last changed, isoformat text"
+key  last_reported      string  -  "last_reported: when the state was last reported, isoformat text"
+key  context_id         string  -  "context.id of the state"
+key  context_parent_id  string  -  "context.parent_id of the state"
+key  context_user_id    string  -  "context.user_id of the state"
+key  message_id         int     -  "id of the websocket message: the id of the subscription it answers"
+key  event_entity_id    string  -  "event.data.entity_id"
+key  old_state          string  -  "event.data.old_state.state: the state before the change"
+key  old_last_updated   string  -  "event.data.old_state.last_updated, isoformat text"
+key  origin             string  -  "event.origin: LOCAL or REMOTE"
+key  time_fired         string  -  "event.time_fired, isoformat text"
+key  event_context_id   string  -  "event.context.id"
+key  event_context_parent_id string - "event.context.parent_id"
+key  event_context_user_id string -  "event.context.user_id"

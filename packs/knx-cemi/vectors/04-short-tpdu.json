@@ -1,0 +1,9 @@
+{
+  "name": "knx-cemi-npdu-too-long",
+  "from": "knx-cemi",
+  "to": "knx-cemi",
+  "input": "2900bce011050a030300800c",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "calimero-core 68c99bff (cEMI and KNXnet/IP layouts); bytes worked by hand in tools/gen/knx-vectors.py; the NPDU length says four TPDU bytes; three follow"
+}

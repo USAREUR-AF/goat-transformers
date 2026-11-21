@@ -1,0 +1,24 @@
+{
+  "name": "zcl-relative-humidity-gen-02-read-attributes-response",
+  "from": "zcl-relative-humidity",
+  "to": "zcl-relative-humidity",
+  "input": "182201000000212600341286",
+  "expect": "182201000000212600341286",
+  "model": {
+    "zcl.frame_type": "0",
+    "zcl.direction": "1",
+    "zcl.disable_default_response": "1",
+    "zcl.frame_control_reserved": "0",
+    "zcl.transaction_sequence": "34",
+    "zcl.command_id": "1",
+    "zcl.read_rsp_records.#": "2",
+    "zcl.read_rsp_records[0].zcl.read_rsp_attribute_id": "0",
+    "zcl.read_rsp_records[0].zcl.read_rsp_status": "0",
+    "zcl.read_rsp_records[0].zcl.read_rsp_data_type": "33",
+    "zcl.read_rsp_records[0].zclmsrelativehumidity.measured_value": "38",
+    "zcl.read_rsp_records[1].zcl.read_rsp_attribute_id": "4660",
+    "zcl.read_rsp_records[1].zcl.read_rsp_status": "134"
+  },
+  "source": "constructed",
+  "reference": "tools/gen/zcl2pack.py: frame bytes by its ZCL frame writer; a success record and a status-only record"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "KNX",
+  "domain": "iot",
+  "prefixes": [
+    "knx-"
+  ]
+}

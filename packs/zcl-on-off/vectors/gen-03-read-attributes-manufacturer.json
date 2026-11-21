@@ -1,0 +1,21 @@
+{
+  "name": "zcl-on-off-gen-03-read-attributes-manufacturer",
+  "from": "zcl-on-off",
+  "to": "zcl-on-off",
+  "input": "045f11230000000500",
+  "expect": "045f11230000000500",
+  "model": {
+    "zcl.frame_type": "0",
+    "zcl.direction": "0",
+    "zcl.disable_default_response": "0",
+    "zcl.frame_control_reserved": "0",
+    "zcl.transaction_sequence": "35",
+    "zcl.command_id": "0",
+    "zcl.manufacturer_code": "4447",
+    "zcl.read_attributes.#": "2",
+    "zcl.read_attributes[0].zcl.read_attribute_id": "0",
+    "zcl.read_attributes[1].zcl.read_attribute_id": "5"
+  },
+  "source": "constructed",
+  "reference": "tools/gen/zcl2pack.py: frame bytes by its ZCL frame writer; manufacturer-specific frame with a manufacturer code"
+}

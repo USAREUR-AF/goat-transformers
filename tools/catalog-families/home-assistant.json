@@ -1,0 +1,7 @@
+{
+  "name": "Home Assistant",
+  "domain": "iot",
+  "prefixes": [
+    "homeassistant-"
+  ]
+}

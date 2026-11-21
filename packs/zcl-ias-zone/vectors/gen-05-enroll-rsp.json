@@ -1,0 +1,19 @@
+{
+  "name": "zcl-ias-zone-gen-05-enroll-rsp",
+  "from": "zcl-ias-zone",
+  "to": "zcl-ias-zone",
+  "input": "1130004950",
+  "expect": "1130004950",
+  "model": {
+    "zcl.frame_type": "1",
+    "zcl.direction": "0",
+    "zcl.disable_default_response": "1",
+    "zcl.frame_control_reserved": "0",
+    "zcl.transaction_sequence": "48",
+    "zcl.command_id": "0",
+    "zclssiaszone.enroll_rsp_enrollrspcode": "73",
+    "zclssiaszone.enroll_rsp_zoneid": "80"
+  },
+  "source": "constructed",
+  "reference": "tools/gen/zcl2pack.py: frame bytes by its ZCL frame writer; cluster command enrollRsp (client to server)"
+}
