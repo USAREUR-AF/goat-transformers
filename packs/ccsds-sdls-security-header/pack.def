@@ -1,0 +1,16 @@
+# CCSDS SDLS security header (355.0-B-2 section 4.1.1): the SPI, then the rest of the
+# protected frame data field (initialization vector, sequence number, pad length, frame data,
+# security trailer) as octets. Written by tools/gen/space-more-pack.py; do not edit by hand.
+format        ccsds-sdls-security-header
+version       0.1.0
+distribution  public
+source        "CCSDS 355.0-B-2 Space Data Link Security Protocol, Blue Book, July 2022, https://ccsds.org/Pubs/355x0b2.pdf (sha256 86717aedd33886013333054355b92d2d32ffaf84a4a3eb63b7b6ffc6f17d5818), section 4.1; reuse with attribution under the CCSDS reproduction permission statement"
+uses          ccsdssdls
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ccsdssdls.spi  16  uint
+group  ccsdssdls.protected_octets  rest
+  field  ccsdssdls.octet  8  uint
+end

@@ -1,0 +1,8 @@
+{
+  "name": "cut-header-is-malformed",
+  "from": "csp-v2-packet",
+  "to": "csp-v2-packet",
+  "input": "7fff3e80a2",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/space-more-vectors.py from values chosen there; layout restated from libcsp csp_id.c (CSP 2.x: priority at bit 46, destination 32, source 18, ports 12 and 6, flags 0, sent as the high 48 bits of a big-endian 64-bit word); five octets of the header; expect derived there, no engine run"
+}

@@ -1,0 +1,20 @@
+# The csp module: the fields of the CubeSat Space Protocol header, versions 1.x and 2.x. Written by tools/gen/space-more-pack.py.
+module        csp
+version       0.1.0
+distribution  public
+source        "libcsp (MIT); restated by goat-transformers"
+key   priority          int     -  "priority: 0 critical, 1 high, 2 normal, 3 low"
+key   source            int     -  "source address (5 bits in CSP 1.x, 14 bits in CSP 2.x)"
+key   destination       int     -  "destination address (5 bits in CSP 1.x, 14 bits in CSP 2.x); all ones is broadcast"
+key   destination_port  int     -  "destination port, 0-63"
+key   source_port       int     -  "source port, 0-63"
+key   flag_reserved1    int     -  "CSP 1.x flag 0x80, reserved"
+key   flag_reserved2    int     -  "CSP 1.x flag 0x40, reserved"
+key   flag_reserved3    int     -  "flag 0x20, reserved"
+key   flag_frag         int     -  "flag 0x10: fragmentation"
+key   flag_hmac         int     -  "flag 0x08: HMAC verification (a trailer in the data)"
+key   flag_bit2         int     -  "flag 0x04: XTEA encryption in CSP 1.x; not defined in libcsp 2.1"
+key   flag_rdp          int     -  "flag 0x02: the reliable datagram protocol (an RDP header in the data)"
+key   flag_crc32        int     -  "flag 0x01: a CRC32 checksum at the end of the data"
+list  data              "the data after the header (with any RDP header, HMAC or CRC32 it carries), as octets"
+key   octet             int     -  "one octet"

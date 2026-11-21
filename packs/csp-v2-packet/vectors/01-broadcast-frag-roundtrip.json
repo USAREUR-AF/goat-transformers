@@ -1,0 +1,17 @@
+{
+  "name": "broadcast-frag-roundtrip",
+  "from": "csp-v2-packet",
+  "to": "csp-v2-packet",
+  "input": "7fff3e80a2d068656c6c6f",
+  "expect": "7fff3e80a2d068656c6c6f",
+  "model": {
+    "csp.priority": "1",
+    "csp.destination": "16383",
+    "csp.source": "4000",
+    "csp.destination_port": "10",
+    "csp.source_port": "11",
+    "csp.flag_frag": "1",
+    "csp.data.#": "5"
+  },
+  "source": "built by tools/gen/space-more-vectors.py from values chosen there; layout restated from libcsp csp_id.c (CSP 2.x: priority at bit 46, destination 32, source 18, ports 12 and 6, flags 0, sent as the high 48 bits of a big-endian 64-bit word); to the broadcast address 16383 from 4000, the fragmentation flag; expect derived there, no engine run"
+}

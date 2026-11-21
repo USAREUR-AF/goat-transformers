@@ -1,0 +1,4 @@
+Pack ccsds-sdls-security-header
+  From CCSDS 355.0-B-2, Space Data Link Security Protocol (July 2022),
+  https://ccsds.org/Pubs/355x0b2.pdf. Reused with attribution under the CCSDS
+  reproduction permission statement; no text, table or figure reprinted.

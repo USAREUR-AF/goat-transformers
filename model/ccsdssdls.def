@@ -1,0 +1,8 @@
+# The ccsdssdls module: the CCSDS SDLS security header (355.0-B-2). Written by tools/gen/space-more-pack.py.
+module        ccsdssdls
+version       0.1.0
+distribution  public
+source        "CCSDS 355.0-B-2 Space Data Link Security Protocol, Blue Book, July 2022, https://ccsds.org/Pubs/355x0b2.pdf (sha256 86717aedd33886013333054355b92d2d32ffaf84a4a3eb63b7b6ffc6f17d5818), section 4.1; reuse with attribution under the CCSDS reproduction permission statement"
+key   spi               int     -  "security parameter index, naming the security association (0 and 65535 reserved)"
+list  protected_octets  "what follows the SPI: the initialization vector, sequence number and pad length (sizes managed by the security association), the frame data and the security trailer (MAC), as octets"
+key   octet             int     -  "one octet"
