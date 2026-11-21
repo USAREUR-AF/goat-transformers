@@ -1535,15 +1535,47 @@ encode(#{wire := bits, layout := sequential} = Pack, Entity) ->
     ?BITS(gt_seq:encode(Pack, Lines, Defaults, Entity));
 encode(#{wire := bits} = Pack, Entity) ->
     {Lines, Defaults, _Root} = select_encode(Pack, Entity),
+    range_scope(Pack, Lines, maps:get(model, Entity), maps:get(lists, Entity, #{})),
     ?BITS(encode_bits(Pack, Lines, {maps:get(model, Entity), maps:get(lists, Entity, #{}), Defaults}));
 encode(#{wire := Wire} = Pack, Entity) ->
     {Lines, Defaults, Root} = select_encode(Pack, Entity),
+    range_scope(Pack, Lines, maps:get(model, Entity), maps:get(lists, Entity, #{})),
     Residue = case maps:get(src, Entity, undefined) =:= maps:get(name, Pack) of
                   true -> maps:get(residue, Entity, []);
                   false -> []
               end,
     Src = source(maps:get(model, Entity), maps:get(lists, Entity, #{}), Defaults),
     iolist_to_binary(encode_wire(Wire, Pack#{root := Root}, Lines, Src, Residue)).
+
+%% Ruling 9 of 0.56: every line whose key the scope holds is checked
+%% against its `range`, also a line whose value ruling 16 of 0.5 does not
+%% write. A line that `with` suppresses is not checked (ruling 6). The items
+%% of groups are scopes of their own.
+range_scope(Pack, Lines, Model, Lists) ->
+    lists:foreach(
+      fun({field, Key, _, _, LocT, Opts}) ->
+              With = element(6, Opts),
+              case maps:find(Key, Model) of
+                  {ok, V} ->
+                      case With =:= none orelse holds(With, Model, Lists) of
+                          true ->
+                              guard_encode(Pack, Key, LocT,
+                                           fun() -> range_value(range_of(Opts, Key, Pack), V, Pack, Key) end);
+                          false -> ok
+                      end;
+                  _ -> ok
+              end;
+         ({gate, _, _, _, #{lines := Ls}, _}) -> range_scope(Pack, Ls, Model, Lists);
+         ({group, List, _, _, #{lines := Ls}, _}) ->
+              case maps:find(List, Lists) of
+                  {ok, Items} when is_list(Items) ->
+                      [range_scope(Pack, Ls, maps:get(model, I, #{}), maps:get(lists, I, #{}))
+                       || I <- Items, is_map(I)],
+                      ok;
+                  _ -> ok
+              end;
+         (_) -> ok
+      end, Lines).
 
 %% What the lines of a scope are encoded from -> {Value, Lists, Held}.
 %% Held(Key) tells whether the scope holds Key (`with`, 0.18). Value(Key)
