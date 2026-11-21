@@ -1,0 +1,8 @@
+{
+  "name": "cut-stream-frame-is-malformed",
+  "from": "m17-stream-frame",
+  "to": "m17-stream-frame",
+  "input": "e100004b1320002a000102030405060708090a0b",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; expect derived there, no engine run"
+}

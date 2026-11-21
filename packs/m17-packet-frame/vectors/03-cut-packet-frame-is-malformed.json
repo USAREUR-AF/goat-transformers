@@ -1,0 +1,8 @@
+{
+  "name": "cut-packet-frame-is-malformed",
+  "from": "m17-packet-frame",
+  "to": "m17-packet-frame",
+  "input": "000102030405060708090a0b0c0d0e0f101112131415161718",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; expect derived there, no engine run"
+}

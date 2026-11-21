@@ -1,0 +1,12 @@
+{
+  "name": "aes-meta-as-hex-roundtrip",
+  "from": "m17-lsf",
+  "to": "m17-lsf",
+  "input": "000000004ce100004b13d1060015000102030405060708090a0b0c0d9892",
+  "expect": "000000004ce100004b13d1060015000102030405060708090a0b0c0d9892",
+  "model": {
+    "m17.encryption_type": "2",
+    "m17.meta": "000102030405060708090a0b0c0d"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; AES-128: the META (nonce) as hex; expect derived there, no engine run"
+}

@@ -1,0 +1,5 @@
+Packs m17-lsf, m17-stream-frame, m17-packet-frame; module m17
+  M17 Protocol Specification, https://github.com/M17-Project/M17_spec at commit
+  9ae2874d8bd44e2d32fae85f7650a23f6bcee5d3, M17_spec.tex. Copyright (C)
+  2023-2026 M17 Project; GNU FDL 1.3 or later. Layouts restated; no text
+  copied.

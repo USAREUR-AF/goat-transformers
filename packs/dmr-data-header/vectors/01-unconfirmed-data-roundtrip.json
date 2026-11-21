@@ -1,0 +1,17 @@
+{
+  "name": "unconfirmed-data-roundtrip",
+  "from": "dmr-data-header",
+  "to": "dmr-data-header",
+  "input": "82000000092800018300abcd",
+  "expect": "82000000092800018300abcd",
+  "model": {
+    "dmr.group": "1",
+    "dmr.dpf": "2",
+    "dmr.destination_id": "9",
+    "dmr.source_id": "2621441",
+    "dmr.full_message": "1",
+    "dmr.blocks": "3",
+    "dmr.crc": "abcd"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from MMDVMHost DMRDataHeader.cpp and DMRDefines.h; unconfirmed data to talkgroup 9, three blocks; expect derived there, no engine run"
+}

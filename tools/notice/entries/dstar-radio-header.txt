@@ -1,0 +1,5 @@
+Packs dstar-radio-header; module dstar
+  ircDDBGateway, https://github.com/g4klx/ircDDBGateway at commit
+  f5ab9f7c93c6f28147b84a8f9667f6cc4c027eaa, Common/HeaderData.cpp and
+  Common/DStarDefines.h. Copyright (C) 2010-2014 Jonathan Naylor G4KLX;
+  GPL-2.0. Layouts restated; no text copied.

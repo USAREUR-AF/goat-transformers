@@ -1,0 +1,18 @@
+{
+  "name": "stream-gnss-meta-roundtrip",
+  "from": "m17-lsf",
+  "to": "m17-lsf",
+  "input": "00004b13d10600001f245d5102a712e05a400000e00000044c0640004b88",
+  "expect": "00004b13d10600001f245d5102a712e05a400000e00000044c0640004b88",
+  "model": {
+    "m17.channel_access_number": "5",
+    "m17.encryption_subtype": "1",
+    "m17.gnss_data_source": "1",
+    "m17.gnss_station_type": "2",
+    "m17.gnss_validity": "14",
+    "m17.gnss_bearing": "90",
+    "m17.gnss_altitude": "50",
+    "m17.gnss_speed": "50"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; a voice and data stream with GNSS META: OpenRTX handheld, bearing 90, altitude 50 m, 50 km/h; expect derived there, no engine run"
+}

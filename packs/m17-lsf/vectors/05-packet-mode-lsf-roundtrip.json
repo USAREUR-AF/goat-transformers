@@ -1,0 +1,11 @@
+{
+  "name": "packet-mode-lsf-roundtrip",
+  "from": "m17-lsf",
+  "to": "m17-lsf",
+  "input": "00004b13d10600001f245d51000011504b5420544553542020202020e5da",
+  "expect": "00004b13d10600001f245d51000011504b5420544553542020202020e5da",
+  "model": {
+    "m17.packet_stream": "0"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; a packet mode LSF; expect derived there, no engine run"
+}

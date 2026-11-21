@@ -1,0 +1,13 @@
+{
+  "name": "last-stream-frame-roundtrip",
+  "from": "m17-stream-frame",
+  "to": "m17-stream-frame",
+  "input": "202020dd99a0802b00000000000000000000000000000000",
+  "expect": "202020dd99a0802b00000000000000000000000000000000",
+  "model": {
+    "m17.lich_counter": "5",
+    "m17.end_of_stream": "1",
+    "m17.frame_number": "43"
+  },
+  "source": "built by tools/gen/hamdig-vectors.py from values chosen there; layout restated from the M17 Protocol Specification; the last frame, chunk 5; expect derived there, no engine run"
+}
