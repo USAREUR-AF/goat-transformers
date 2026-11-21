@@ -44,6 +44,12 @@ Pack adsb; module adsb
   pyModeS, https://github.com/junzis/pyModeS  GNU General Public License,
   Version 3. Published test messages and their decoded values; no code.
 
+Pack ais-binary-apps; module aisapp
+  gpsd, "AIVDM/AIVDO protocol decoding", file www/AIVDM.adoc of
+  https://gitlab.com/gpsd/gpsd at commit c59fc6de. Compilation copyright is
+  held by the GPSD project. BSD-2-Clause (gpsd COPYING). Layouts restated; no
+  text, table or example message.
+
 Packs ais, ais-binary; modules ais, aisbin
   gpsd, "AIVDM/AIVDO protocol decoding", v1.58, Eric S. Raymond, file
   www/AIVDM.adoc of https://gitlab.com/gpsd/gpsd at commit
@@ -295,6 +301,12 @@ Packs gnmi-*; modules gnmi*
   License, Version 2.0, Copyright Google Inc. Field numbers, names and types
   only.
 
+Packs goat-processors-report, goat-processors-system-track
+  goat-processors, https://github.com/USAREUR-AF/goat-processors (files
+  spec/correlate.md at commit 5e63cee0 and runner/README.md at commit
+  072001ee). Apache License, Version 2.0. Member names and types restated;
+  no text copied.
+
 Packs gofs-*; modules gofs*
   General On-demand Feed Specification (GOFS) JSON Schemas,
   https://github.com/MobilityData/gofs, commit ab9151ed. Apache License,
@@ -330,6 +342,12 @@ Packs gz-msgs-*; modules gzmsgs*
   https://github.com/gazebosim/gz-msgs. Apache License, Version 2.0, Copyright
   Open Source Robotics Foundation and others. Field numbers, names and types
   only.
+
+Packs http2-frame, http3-frame, tls-record, websocket-frame; modules h2, h3, tls13, ws
+  IETF RFC 9113 (HTTP/2), RFC 9114 and RFC 9000 (HTTP/3), RFC 8446 and
+  RFC 6066 (TLS 1.3) and RFC 6455 (WebSocket), https://www.rfc-editor.org/
+  (IETF Trust and the persons identified as the document authors, BCP 78).
+  Layouts restated; no text copied.
 
 Packs ipfix-*, netflow9-*; modules ipfixmsg, netflow9
   IETF RFC 7011 (IPFIX protocol), RFC 7012 (IPFIX information model) and
@@ -424,6 +442,15 @@ Pack misb-st0601; module misb0601
   distribution statement and no license text. Item tags, types, sizes,
   ranges and scale factors only; no text, table, figure or example.
 
+Pack misb-st0806; module misb0806
+  MISB ST 0806.4, Remote Video Terminal Metadata Set, Motion Imagery
+  Standards Board. NSG Registry public document store (the file
+  ST0806.4.pdf; its registry page number was not found). The registry states
+  that materials in its public portions are in the public domain, released
+  for public use, or fair use of copyright material; the document carries no
+  distribution statement and no license text. Item tags, types and sizes and
+  the CRC parameters only; no text, table, figure, example or code.
+
 Pack misb-st0903; module misb0903
   MISB ST 0903.6, Video Moving Target Indicator Metadata, Motion Imagery
   Standards Board. NSG Registry public document store, doc/view?i=5310. The
@@ -495,6 +522,17 @@ Packs nmea2000, nmea2000-seq; module n2k
   (C) 2009-2026, Kees Verruijt, Harlingen, The Netherlands. Apache License,
   Version 2.0.
 
+Packs ntp-packet, nts-ke-records; modules ntpext, ntske
+  IETF RFC 5905, RFC 7822 and RFC 8915, https://www.rfc-editor.org/ (IETF
+  Trust and the persons identified as the document authors, BCP 78). Layouts
+  restated; no text copied.
+
+Pack ntrip-sourcetable-line; module ntrip
+  Networked Transport of RTCM via Internet Protocol (Ntrip) Version 1.0,
+  published by BKG (Bundesamt für Kartographie und Geodäsie). No copyright
+  notice or licence stated (LicenseRef-unstated). Record layouts restated; no
+  text copied.
+
 Pack nvg
   NATO Vector Graphics 1.5 XML schema, NATO Allied Command Transformation.
 
@@ -559,12 +597,23 @@ Packs overture-*; modules overture*
   International (CC BY 4.0). The packs are derived from the schema, restating
   its structure, and are not endorsed by the Overture Maps Foundation.
 
+Pack ptp-message; module ptp
+  linuxptp, files msg.h, ddt.h and tlv.h of
+  https://github.com/richardcochran/linuxptp at tag v4.4 (commit 01886673).
+  Copyright (C) 2011 Richard Cochran and the linuxptp contributors.
+  GPL-2.0-or-later. Message layouts restated; no code or comment copied.
+
 Packs px4-ulog-*; module px4ulog
   PX4 uORB message definitions, https://github.com/PX4/PX4-Autopilot tag
   v1.17.0. BSD 3-Clause License, Copyright (c) 2012-2023 PX4 Development Team.
   Field names, types and array lengths only. The layout rule follows PX4's
   Tools/msg uORB generator (BSD) and the ULog file format document (CC BY
   4.0), restated.
+
+Packs quic-frames, quic-long-header, quic-transport-parameters; modules quicfr, quiclh, quictp
+  IETF RFC 9000 and RFC 9369 (QUIC), https://www.rfc-editor.org/ (IETF Trust
+  and the persons identified as the document authors, BCP 78). Layouts
+  restated; no text copied.
 
 Packs readsb-aircraft, readsb-aircraft-json; module readsb
   The JSON output format documented in readsb README-json.md
