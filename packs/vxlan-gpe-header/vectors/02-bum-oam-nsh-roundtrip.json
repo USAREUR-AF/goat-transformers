@@ -1,0 +1,14 @@
+{
+  "name": "bum-oam-nsh-roundtrip",
+  "from": "vxlan-gpe-header",
+  "to": "vxlan-gpe-header",
+  "input": "0f00000400000100",
+  "expect": "0f00000400000100",
+  "model": {
+    "vxlangpe.b_flag": "1",
+    "vxlangpe.o_flag": "1",
+    "vxlangpe.next_protocol": "4",
+    "inet.vxlan_vni": "1"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from draft-ietf-nvo3-vxlan-gpe-13 section 3.1; I, P, B and O set, next protocol 4 (NSH); expect derived there, no engine run"
+}

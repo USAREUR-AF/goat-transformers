@@ -1,0 +1,20 @@
+# IKEv2 Certificate and Certificate Request payloads (types 37 and 38, sections 3.6 and 3.7). The message is one payload, its generic header included, as
+# ikev2-message holds it. Public. Written by tools/gen/tunnels-pack.py; do not edit by hand.
+format        ikev2-cert
+version       0.1.0
+distribution  public
+source        "IETF RFC 7296, Internet Key Exchange Protocol Version 2 (IKEv2), October 2014, section 3, https://www.rfc-editor.org/rfc/rfc7296.txt (sha256 b6c1bf3921e85dd3674f427ffcaded0209e1f9718e8d601e2f918371f46329a1); layout restated"
+uses          ikev2
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ikev2.next_payload  8  uint
+field  ikev2.critical  1  uint
+field  ikev2.payload_reserved  7  uint
+length  16  bytes  plus  4
+  field  ikev2.cert_encoding  8  uint
+  group  ikev2.cert_data  rest
+    field  ikev2.octet  8  uint
+  end
+end

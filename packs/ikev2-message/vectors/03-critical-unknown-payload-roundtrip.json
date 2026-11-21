@@ -1,0 +1,13 @@
+{
+  "name": "critical-unknown-payload-roundtrip",
+  "from": "ikev2-message",
+  "to": "ikev2-message",
+  "input": "0102030405060708a1a2a3a4a5a6a7a8312023080000000100000022008000060001",
+  "expect": "0102030405060708a1a2a3a4a5a6a7a8312023080000000100000022008000060001",
+  "model": {
+    "ikev2.first_payload": "49",
+    "ikev2.payloads[0].ikev2.critical": "1",
+    "ikev2.payloads[0].ikev2.body.#": "2"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3; a payload of an unassigned type with the critical bit set, kept as octets; expect derived there, no engine run"
+}

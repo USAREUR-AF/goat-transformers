@@ -1,0 +1,12 @@
+{
+  "name": "other-type-roundtrip",
+  "from": "ikev2-ts",
+  "to": "ikev2-ts",
+  "input": "00000014010000000d00000c0000000001020304",
+  "expect": "00000014010000000d00000c0000000001020304",
+  "model": {
+    "ikev2.selectors[0].ikev2.ts_type": "13",
+    "ikev2.selectors[0].ikev2.selector_octets.#": "8"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.13; a selector of another type (13), its content after the length kept as octets; expect derived there, no engine run"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "three-entries-roundtrip",
+  "from": "mpls-label-stack",
+  "to": "mpls-label-stack",
+  "input": "03e8004004268a3f05dc11ff",
+  "expect": "03e8004004268a3f05dc11ff",
+  "model": {
+    "inet.mpls_label": "16000",
+    "inet.mpls_bottom_of_stack": "0",
+    "mpls.entries.#": "2",
+    "mpls.entries[0].mpls.label": "17000",
+    "mpls.entries[0].mpls.tc": "5",
+    "mpls.entries[1].mpls.label": "24001",
+    "mpls.entries[1].mpls.bottom_of_stack": "1",
+    "mpls.entries[1].mpls.ttl": "255"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 3032 section 2.1; a stack of three entries; expect derived there, no engine run"
+}

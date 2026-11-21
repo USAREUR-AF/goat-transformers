@@ -1,0 +1,8 @@
+{
+  "name": "to-vxlan-gpe-header-i-flag-and-vni",
+  "from": "vxlan-header",
+  "to": "vxlan-gpe-header",
+  "input": "0800000000138800",
+  "expect": "0800000000138800",
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7348 section 5 and draft-ietf-nvo3-vxlan-gpe-13 section 3.1; a VXLAN header read as VXLAN-GPE: the I bit and VNI, P and the next protocol 0; expect derived there, no engine run"
+}

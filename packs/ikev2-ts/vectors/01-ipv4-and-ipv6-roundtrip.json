@@ -1,0 +1,19 @@
+{
+  "name": "ipv4-and-ipv6-roundtrip",
+  "from": "ikev2-ts",
+  "to": "ikev2-ts",
+  "input": "2d00004002000000070000100000ffffc0000200c00002ff0806002801bb01bb20010db800000000000000000000000020010db800000000000000000000ffff",
+  "expect": "2d00004002000000070000100000ffffc0000200c00002ff0806002801bb01bb20010db800000000000000000000000020010db800000000000000000000ffff",
+  "model": {
+    "ikev2.selectors.#": "2",
+    "ikev2.selectors[0].ikev2.ts_type": "7",
+    "ikev2.selectors[0].ikev2.end_port": "65535",
+    "ikev2.selectors[0].ikev2.start_ipv4": "3221225984",
+    "ikev2.selectors[0].ikev2.end_ipv4": "3221226239",
+    "ikev2.selectors[1].ikev2.ip_protocol": "6",
+    "ikev2.selectors[1].ikev2.start_port": "443",
+    "ikev2.selectors[1].ikev2.start_ipv6": "20010db8000000000000000000000000",
+    "ikev2.selectors[1].ikev2.end_ipv6": "20010db800000000000000000000ffff"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.13; an IPv4 range of any protocol and port, and an IPv6 range for TCP port 443; expect derived there, no engine run"
+}

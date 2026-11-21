@@ -1,0 +1,12 @@
+{
+  "name": "ipv4-roundtrip",
+  "from": "ikev2-id",
+  "to": "ikev2-id",
+  "input": "2700000c01000000c000020a",
+  "expect": "2700000c01000000c000020a",
+  "model": {
+    "ikev2.id_type": "1",
+    "ikev2.id_ipv4": "3221225994"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.5; an IPv4 address identity; expect derived there, no engine run"
+}

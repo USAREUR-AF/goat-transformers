@@ -1,0 +1,13 @@
+{
+  "name": "identity-response-roundtrip",
+  "from": "ikev2-eap",
+  "to": "ikev2-eap",
+  "input": "0000000e0207000a017573657231",
+  "expect": "0000000e0207000a017573657231",
+  "model": {
+    "ikev2.eap_code": "2",
+    "ikev2.eap_type": "1",
+    "ikev2.eap_data.#": "5"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.16; an EAP identity response with 5 octets of type data; expect derived there, no engine run"
+}

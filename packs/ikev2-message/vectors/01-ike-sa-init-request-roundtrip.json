@@ -1,0 +1,24 @@
+{
+  "name": "ike-sa-init-request-roundtrip",
+  "from": "ikev2-message",
+  "to": "ikev2-message",
+  "input": "010203040506070800000000000000002120220800000000000000a02200002800000024010100030300000c01000014800e0100030000080200000500000008040000132800004800130000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f000000146465666768696a6b6c6d6e6f70717273",
+  "expect": "010203040506070800000000000000002120220800000000000000a02200002800000024010100030300000c01000014800e0100030000080200000500000008040000132800004800130000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f000000146465666768696a6b6c6d6e6f70717273",
+  "model": {
+    "ikev2.spi_i": "0102030405060708",
+    "ikev2.spi_r": "0000000000000000",
+    "ikev2.first_payload": "33",
+    "ikev2.major_version": "2",
+    "ikev2.exchange_type": "34",
+    "ikev2.initiator": "1",
+    "ikev2.response": "0",
+    "ikev2.payloads.#": "3",
+    "ikev2.payloads[0].ikev2.next_payload": "34",
+    "ikev2.payloads[0].ikev2.body.#": "36",
+    "ikev2.payloads[1].ikev2.next_payload": "40",
+    "ikev2.payloads[1].ikev2.body.#": "68",
+    "ikev2.payloads[2].ikev2.next_payload": "0",
+    "ikev2.payloads[2].ikev2.body.#": "16"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3; an IKE_SA_INIT request: SA, KE and Nonce payloads; expect derived there, no engine run"
+}

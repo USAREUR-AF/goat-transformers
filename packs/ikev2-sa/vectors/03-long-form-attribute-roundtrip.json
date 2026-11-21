@@ -1,0 +1,13 @@
+{
+  "name": "long-form-attribute-roundtrip",
+  "from": "ikev2-sa",
+  "to": "ikev2-sa",
+  "input": "0000001b00000017010100010000000f0100001400110003010203",
+  "expect": "0000001b00000017010100010000000f0100001400110003010203",
+  "model": {
+    "ikev2.proposals[0].ikev2.transforms[0].ikev2.attributes[0].ikev2.af": "0",
+    "ikev2.proposals[0].ikev2.transforms[0].ikev2.attributes[0].ikev2.attr_type": "17",
+    "ikev2.proposals[0].ikev2.transforms[0].ikev2.attributes[0].ikev2.attr_octets.#": "3"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.3.5; an attribute in the type, length and value form, with 3 octets; expect derived there, no engine run"
+}

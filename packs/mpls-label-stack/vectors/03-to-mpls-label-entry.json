@@ -1,0 +1,8 @@
+{
+  "name": "to-mpls-label-entry",
+  "from": "mpls-label-stack",
+  "to": "mpls-label-entry",
+  "input": "03e8004004268a3f05dc11ff",
+  "expect": "03e80040",
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 3032 section 2.1; the top entry carries over, the entries below it are dropped; expect derived there, no engine run"
+}

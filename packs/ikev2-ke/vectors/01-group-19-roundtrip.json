@@ -1,0 +1,13 @@
+{
+  "name": "group-19-roundtrip",
+  "from": "ikev2-ke",
+  "to": "ikev2-ke",
+  "input": "2800004800130000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+  "expect": "2800004800130000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+  "model": {
+    "ikev2.next_payload": "40",
+    "ikev2.dh_group": "19",
+    "ikev2.ke_data.#": "64"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.4; group 19 with 64 octets of key exchange data; expect derived there, no engine run"
+}

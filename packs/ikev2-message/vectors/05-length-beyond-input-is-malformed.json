@@ -1,0 +1,8 @@
+{
+  "name": "length-beyond-input-is-malformed",
+  "from": "ikev2-message",
+  "to": "ikev2-message",
+  "input": "0102030405060708a1a2a3a4a5a6a7a8002025080000000200000064",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3; a header whose length is longer than the input; expect derived there, no engine run"
+}

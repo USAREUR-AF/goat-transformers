@@ -1,0 +1,20 @@
+{
+  "name": "two-options-roundtrip",
+  "from": "geneve-options",
+  "to": "geneve-options",
+  "input": "03406558abcdef0001028001deadbeefffff0100",
+  "expect": "03406558abcdef0001028001deadbeefffff0100",
+  "model": {
+    "geneve.opt_len": "3",
+    "inet.geneve_critical": "1",
+    "inet.geneve_vni": "11259375",
+    "geneve.options.#": "2",
+    "geneve.options[0].geneve.option_class": "258",
+    "geneve.options[0].geneve.option_type": "128",
+    "geneve.options[0].geneve.length": "1",
+    "geneve.options[0].geneve.data": "deadbeef",
+    "geneve.options[1].geneve.option_class": "65535",
+    "geneve.options[1].geneve.length": "0"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 8926 sections 3.4 and 3.5; a critical option with 4 octets of data and an option with no data; expect derived there, no engine run"
+}

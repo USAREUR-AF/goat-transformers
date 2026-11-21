@@ -1,0 +1,35 @@
+# IKEv2 Delete payload (type 42, section 3.11). The message is one payload, its generic header included, as
+# ikev2-message holds it. Public. Written by tools/gen/tunnels-pack.py; do not edit by hand.
+format        ikev2-delete
+version       0.1.0
+distribution  public
+source        "IETF RFC 7296, Internet Key Exchange Protocol Version 2 (IKEv2), October 2014, section 3, https://www.rfc-editor.org/rfc/rfc7296.txt (sha256 b6c1bf3921e85dd3674f427ffcaded0209e1f9718e8d601e2f918371f46329a1); layout restated"
+uses          ikev2
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ikev2.next_payload  8  uint
+field  ikev2.critical  1  uint
+field  ikev2.payload_reserved  7  uint
+length  16  bytes  plus  4
+  field  ikev2.protocol_id  8  uint
+  field  ikev2.spi_size_field  8  uint
+  switch  ikev2.spi_size_field
+    case  4
+      count  num_spis  16
+      group  ikev2.spis  count  @num_spis
+        field  ikev2.spi  32  hex
+      end
+    case  8
+      count  num_spis  16
+      group  ikev2.spis  count  @num_spis
+        field  ikev2.spi  64  hex
+      end
+    else
+      field  ikev2.num_spis_field  16  uint
+      group  ikev2.spi_octets  rest
+        field  ikev2.octet  8  uint
+      end
+  end
+end

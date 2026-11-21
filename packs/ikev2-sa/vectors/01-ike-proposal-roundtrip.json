@@ -1,0 +1,23 @@
+{
+  "name": "ike-proposal-roundtrip",
+  "from": "ikev2-sa",
+  "to": "ikev2-sa",
+  "input": "2200002800000024010100030300000c01000014800e010003000008020000050000000804000013",
+  "expect": "2200002800000024010100030300000c01000014800e010003000008020000050000000804000013",
+  "model": {
+    "ikev2.next_payload": "34",
+    "ikev2.proposals.#": "1",
+    "ikev2.proposals[0].ikev2.proposal_num": "1",
+    "ikev2.proposals[0].ikev2.protocol_id": "1",
+    "ikev2.proposals[0].ikev2.proposal_spi.#": "0",
+    "ikev2.proposals[0].ikev2.transforms.#": "3",
+    "ikev2.proposals[0].ikev2.transforms[0].ikev2.transform_type": "1",
+    "ikev2.proposals[0].ikev2.transforms[0].ikev2.transform_id": "20",
+    "ikev2.proposals[0].ikev2.transforms[0].ikev2.attributes[0].ikev2.af": "1",
+    "ikev2.proposals[0].ikev2.transforms[0].ikev2.attributes[0].ikev2.attr_type": "14",
+    "ikev2.proposals[0].ikev2.transforms[0].ikev2.attributes[0].ikev2.attr_value": "256",
+    "ikev2.proposals[0].ikev2.transforms[2].ikev2.last_substruc": "0",
+    "ikev2.proposals[0].ikev2.transforms[2].ikev2.transform_id": "19"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.3; one IKE proposal: AES-GCM with a 256-bit key length attribute, PRF HMAC-SHA-256, group 19; expect derived there, no engine run"
+}

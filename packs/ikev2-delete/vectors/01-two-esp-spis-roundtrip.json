@@ -1,0 +1,15 @@
+{
+  "name": "two-esp-spis-roundtrip",
+  "from": "ikev2-delete",
+  "to": "ikev2-delete",
+  "input": "000000100304000201020304a0b0c0d0",
+  "expect": "000000100304000201020304a0b0c0d0",
+  "model": {
+    "ikev2.protocol_id": "3",
+    "ikev2.spi_size_field": "4",
+    "ikev2.spis.#": "2",
+    "ikev2.spis[0].ikev2.spi": "01020304",
+    "ikev2.spis[1].ikev2.spi": "a0b0c0d0"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.11; two ESP SPIs of 4 octets; expect derived there, no engine run"
+}
