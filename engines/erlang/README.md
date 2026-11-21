@@ -18,7 +18,7 @@ An independent, clean-room implementation of the gt engine, written from
 | malformed inputs | same run | 129534/129534 |
 | concurrent conversions (Version 0.25) | same run | 437/437 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 15 vectors, 15 packs (below) |
-| tool vectors (Version 0.23) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 95/95 |
+| tool vectors (Version 0.23) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 97/97 |
 | reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 7883/7883 vectors; every bits, protobuf, text and tlv pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
