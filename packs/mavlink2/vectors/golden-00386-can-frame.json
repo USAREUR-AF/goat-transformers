@@ -1,0 +1,25 @@
+{
+ "name": "golden-00386-can-frame",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd1000002a0709820100112233442233445566778899aabbccdd",
+ "expect": "fd1000002a0709820100112233442233445566778899aabbccdd",
+ "model": {
+  "@kind": "can_frame",
+  "mavlink.id": "1144201745",
+  "mavlink.target_system": "34",
+  "mavlink.target_component": "51",
+  "mavlink.bus": "68",
+  "mavlink.len": "85",
+  "mavlink.data_0": "102",
+  "mavlink.data_1": "119",
+  "mavlink.data_2": "136",
+  "mavlink.data_3": "153",
+  "mavlink.data_4": "170",
+  "mavlink.data_5": "187",
+  "mavlink.data_6": "204",
+  "mavlink.data_7": "221"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: CAN_FRAME(target_system, target_component, bus, len, id, data) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 16 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

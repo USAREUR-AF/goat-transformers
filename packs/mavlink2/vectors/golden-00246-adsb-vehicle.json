@@ -1,0 +1,25 @@
+{
+ "name": "golden-00246-adsb-vehicle",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2600002a0709f6000011223344223344553344556644556677556666777788889999aaaa4b4c4d4e4f50515253ccdd",
+ "expect": "fd2600002a0709f6000011223344223344553344556644556677556666777788889999aaaa4b4c4d4e4f50515253ccdd",
+ "model": {
+  "@kind": "adsb_vehicle",
+  "mavlink.icao_address": "1144201745",
+  "lat": "143.0532898",
+  "lon": "171.6864051",
+  "mavlink.altitude_mm": "2003195204",
+  "mavlink.heading_cdeg": "26197",
+  "mavlink.hor_velocity_cm_per_s": "30566",
+  "mavlink.ver_velocity_cm_per_s": "-30601",
+  "mavlink.adsb_vehicle_flags": "39304",
+  "mavlink.squawk": "43673",
+  "mavlink.altitude_type": "170",
+  "mavlink.callsign": "KLMNOPQRS",
+  "mavlink.emitter_type": "204",
+  "mavlink.tslc_s": "221"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: ADSB_VEHICLE(ICAO_address, lat, lon, altitude_type, altitude, heading, hor_velocity, ver_velocity, callsign, emitter_type, tslc, flags, squawk) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 38 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

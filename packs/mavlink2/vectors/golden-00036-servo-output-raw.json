@@ -1,0 +1,30 @@
+{
+ "name": "golden-00036-servo-output-raw",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2500002a070924000011223344223333444455556666777788889999aaaabbccccddddeeeeffff11112222333344",
+ "expect": "fd2500002a070924000011223344223333444455556666777788889999aaaabbccccddddeeeeffff11112222333344",
+ "model": {
+  "@kind": "servo_output_raw",
+  "mavlink.time_usec_us": "1144201745",
+  "mavlink.servo1_raw_us": "13090",
+  "mavlink.servo2_raw_us": "17459",
+  "mavlink.servo3_raw_us": "21828",
+  "mavlink.servo4_raw_us": "26197",
+  "mavlink.servo5_raw_us": "30566",
+  "mavlink.servo6_raw_us": "34935",
+  "mavlink.servo7_raw_us": "39304",
+  "mavlink.servo8_raw_us": "43673",
+  "mavlink.port": "170",
+  "mavlink.servo9_raw_us": "52411",
+  "mavlink.servo10_raw_us": "56780",
+  "mavlink.servo11_raw_us": "61149",
+  "mavlink.servo12_raw_us": "65518",
+  "mavlink.servo13_raw_us": "4607",
+  "mavlink.servo14_raw_us": "8721",
+  "mavlink.servo15_raw_us": "13090",
+  "mavlink.servo16_raw_us": "17459"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: SERVO_OUTPUT_RAW(time_usec, port, servo1_raw, servo2_raw, servo3_raw, servo4_raw, servo5_raw, servo6_raw, servo7_raw, servo8_raw, servo9_raw, servo10_raw, servo11_raw, servo12_raw, servo13_raw, servo14_raw, servo15_raw, servo16_raw) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 37 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

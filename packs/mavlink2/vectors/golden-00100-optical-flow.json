@@ -1,0 +1,22 @@
+{
+ "name": "golden-00100-optical-flow",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2200002a070964000011223344556677090000e13f00800040008010405566667777880080604000807040",
+ "expect": "fd2200002a070964000011223344556677090000e13f00800040008010405566667777880080604000807040",
+ "model": {
+  "@kind": "optical_flow",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.flow_comp_m_x_m_per_s": "1.7578125",
+  "mavlink.flow_comp_m_y_m_per_s": "2.0078125",
+  "mavlink.ground_distance_m": "2.2578125",
+  "mavlink.flow_x_dpix": "26197",
+  "mavlink.flow_y_dpix": "30566",
+  "mavlink.sensor_id": "119",
+  "mavlink.quality": "136",
+  "mavlink.flow_rate_x_rad_per_s": "3.5078125",
+  "mavlink.flow_rate_y_rad_per_s": "3.7578125"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: OPTICAL_FLOW(time_usec, sensor_id, flow_x, flow_y, flow_comp_m_x, flow_comp_m_y, quality, ground_distance, flow_rate_x, flow_rate_y) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 34 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

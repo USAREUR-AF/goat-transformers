@@ -1,0 +1,28 @@
+{
+ "name": "golden-00001-sys-status",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2b00002a07090100001122334422334455334455664455556666777788889999aaaabbbbccccddddeeff1122ff11223311223344",
+ "expect": "fd2b00002a07090100001122334422334455334455664455556666777788889999aaaabbbbccccddddeeff1122ff11223311223344",
+ "model": {
+  "@kind": "sys_status",
+  "mavlink.onboard_control_sensors_present": "1144201745",
+  "mavlink.onboard_control_sensors_enabled": "1430532898",
+  "mavlink.onboard_control_sensors_health": "1716864051",
+  "mavlink.load_dpct": "21828",
+  "mavlink.voltage_battery_mv": "26197",
+  "mavlink.current_battery_ca": "30566",
+  "mavlink.drop_rate_comm_cpct": "34935",
+  "mavlink.errors_comm": "39304",
+  "mavlink.errors_count1": "43673",
+  "mavlink.errors_count2": "48042",
+  "mavlink.errors_count3": "52411",
+  "mavlink.errors_count4": "56780",
+  "mavlink.battery_remaining_pct": "-35",
+  "mavlink.onboard_control_sensors_present_extended": "571604974",
+  "mavlink.onboard_control_sensors_enabled_extended": "857870847",
+  "mavlink.onboard_control_sensors_health_extended": "1144201745"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: SYS_STATUS(onboard_control_sensors_present, onboard_control_sensors_enabled, onboard_control_sensors_health, load, voltage_battery, current_battery, battery_remaining, drop_rate_comm, errors_comm, errors_count1, errors_count2, errors_count3, errors_count4, onboard_control_sensors_present_extended, onboard_control_sensors_enabled_extended, onboard_control_sensors_health_extended) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 43 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

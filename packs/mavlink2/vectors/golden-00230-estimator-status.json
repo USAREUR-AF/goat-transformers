@@ -1,0 +1,22 @@
+{
+ "name": "golden-00230-estimator-status",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2a00002a0709e6000011223344556677090000e13f00800040008010400080204000803040008040400080504000806040aabb",
+ "expect": "fd2a00002a0709e6000011223344556677090000e13f00800040008010400080204000803040008040400080504000806040aabb",
+ "model": {
+  "@kind": "estimator_status",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.vel_ratio": "1.7578125",
+  "mavlink.pos_horiz_ratio": "2.0078125",
+  "mavlink.pos_vert_ratio": "2.2578125",
+  "mavlink.mag_ratio": "2.5078125",
+  "mavlink.hagl_ratio": "2.7578125",
+  "mavlink.tas_ratio": "3.0078125",
+  "mavlink.pos_horiz_accuracy_m": "3.2578125",
+  "mavlink.pos_vert_accuracy_m": "3.5078125",
+  "mavlink.estimator_status_flags": "48042"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: ESTIMATOR_STATUS(time_usec, flags, vel_ratio, pos_horiz_ratio, pos_vert_ratio, mag_ratio, hagl_ratio, tas_ratio, pos_horiz_accuracy, pos_vert_accuracy) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 42 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

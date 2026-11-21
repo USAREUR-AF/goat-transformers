@@ -1,0 +1,17 @@
+{
+ "name": "golden-00323-param-ext-set",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd9300002a07094301001122434445464748494a4b4c4d4e4f5051524445464748494a4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a4155",
+ "expect": "fd9300002a07094301001122434445464748494a4b4c4d4e4f5051524445464748494a4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a4155",
+ "model": {
+  "@kind": "param_ext_set",
+  "mavlink.target_system": "17",
+  "mavlink.target_component": "34",
+  "mavlink.param_id": "CDEFGHIJKLMNOPQR",
+  "mavlink.param_ext_set_param_value": "DEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZA",
+  "mavlink.param_ext_set_param_type": "85"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: PARAM_EXT_SET(target_system, target_component, param_id, param_value, param_type) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 147 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

@@ -1,0 +1,21 @@
+{
+ "name": "golden-00280-gimbal-manager-information",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2100002a0709180100112233442233445500800040008010400080204000803040008040400080504099",
+ "expect": "fd2100002a0709180100112233442233445500800040008010400080204000803040008040400080504099",
+ "model": {
+  "@kind": "gimbal_manager_information",
+  "mavlink.time_boot_ms": "1144201745",
+  "mavlink.gimbal_manager_information_cap_flags": "1430532898",
+  "mavlink.roll_min_rad": "2.0078125",
+  "mavlink.roll_max_rad": "2.2578125",
+  "mavlink.pitch_min_rad": "2.5078125",
+  "mavlink.pitch_max_rad": "2.7578125",
+  "mavlink.yaw_min_rad": "3.0078125",
+  "mavlink.yaw_max_rad": "3.2578125",
+  "mavlink.gimbal_device_id": "153"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: GIMBAL_MANAGER_INFORMATION(time_boot_ms, cap_flags, gimbal_device_id, roll_min, roll_max, pitch_min, pitch_max, yaw_min, yaw_max) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 33 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

@@ -1,0 +1,17 @@
+{
+ "name": "golden-12919-open-drone-id-system-update",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd1200002a0709773200112233442233445500800040445566775566",
+ "expect": "fd1200002a0709773200112233442233445500800040445566775566",
+ "model": {
+  "@kind": "open_drone_id_system_update",
+  "mavlink.operator_latitude_dege7": "1144201745",
+  "mavlink.operator_longitude_dege7": "1430532898",
+  "mavlink.operator_altitude_geo_m": "2.0078125",
+  "mavlink.target_system": "85",
+  "mavlink.target_component": "102"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: OPEN_DRONE_ID_SYSTEM_UPDATE(target_system, target_component, operator_latitude, operator_longitude, operator_altitude_geo, timestamp) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 18 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

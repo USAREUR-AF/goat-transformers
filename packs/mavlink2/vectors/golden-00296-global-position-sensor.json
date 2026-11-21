@@ -1,0 +1,25 @@
+{
+ "name": "golden-00296-global-position-sensor",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2900002a070928010011223344556677092233445533445566445566770080204000803040008040400080504099aabbccdd",
+ "expect": "fd2900002a070928010011223344556677092233445533445566445566770080204000803040008040400080504099aabbccdd",
+ "model": {
+  "@kind": "global_position_sensor",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.processing_time_us": "1430532898",
+  "lat": "171.6864051",
+  "lon": "200.3195204",
+  "mavlink.alt_ellipsoid_m": "2.5078125",
+  "mavlink.alt_m": "2.7578125",
+  "mavlink.eph_m": "3.0078125",
+  "mavlink.epv_m": "3.2578125",
+  "mavlink.target_system": "153",
+  "mavlink.target_component": "170",
+  "mavlink.id": "187",
+  "mavlink.source": "204",
+  "mavlink.global_position_sensor_flags": "221"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: GLOBAL_POSITION_SENSOR(target_system, target_component, id, time_usec, processing_time, source, flags, lat, lon, alt_ellipsoid, alt, eph, epv) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 41 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

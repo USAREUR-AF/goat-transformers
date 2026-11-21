@@ -1,0 +1,24 @@
+{
+ "name": "golden-00261-storage-information",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd3d00002a0709050100112233440000e13f00800040008010400080204000803040778899aa4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f50cc",
+ "expect": "fd3d00002a0709050100112233440000e13f00800040008010400080204000803040778899aa4b4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f50cc",
+ "model": {
+  "@kind": "storage_information",
+  "mavlink.time_boot_ms": "1144201745",
+  "mavlink.total_capacity_mib": "1.7578125",
+  "mavlink.used_capacity_mib": "2.0078125",
+  "mavlink.available_capacity_mib": "2.2578125",
+  "mavlink.read_speed_mib_per_s": "2.5078125",
+  "mavlink.write_speed_mib_per_s": "2.7578125",
+  "mavlink.storage_id": "119",
+  "mavlink.storage_count": "136",
+  "mavlink.storage_information_status": "153",
+  "mavlink.storage_information_type": "170",
+  "mavlink.name": "KLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP",
+  "mavlink.storage_usage": "204"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: STORAGE_INFORMATION(time_boot_ms, storage_id, storage_count, status, total_capacity, used_capacity, available_capacity, read_speed, write_speed, type, name, storage_usage) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 61 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

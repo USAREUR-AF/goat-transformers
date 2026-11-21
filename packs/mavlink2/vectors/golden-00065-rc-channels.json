@@ -1,0 +1,33 @@
+{
+ "name": "golden-00065-rc-channels",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2a00002a070941000011223344223333444455556666777788889999aaaabbbbccccddddeeeeffff1111222233334444555566",
+ "expect": "fd2a00002a070941000011223344223333444455556666777788889999aaaabbbbccccddddeeeeffff1111222233334444555566",
+ "model": {
+  "@kind": "rc_channels",
+  "mavlink.time_boot_ms": "1144201745",
+  "mavlink.chan1_raw_us": "13090",
+  "mavlink.chan2_raw_us": "17459",
+  "mavlink.chan3_raw_us": "21828",
+  "mavlink.chan4_raw_us": "26197",
+  "mavlink.chan5_raw_us": "30566",
+  "mavlink.chan6_raw_us": "34935",
+  "mavlink.chan7_raw_us": "39304",
+  "mavlink.chan8_raw_us": "43673",
+  "mavlink.chan9_raw_us": "48042",
+  "mavlink.chan10_raw_us": "52411",
+  "mavlink.chan11_raw_us": "56780",
+  "mavlink.chan12_raw_us": "61149",
+  "mavlink.chan13_raw_us": "65518",
+  "mavlink.chan14_raw_us": "4607",
+  "mavlink.chan15_raw_us": "8721",
+  "mavlink.chan16_raw_us": "13090",
+  "mavlink.chan17_raw_us": "17459",
+  "mavlink.chan18_raw_us": "21828",
+  "mavlink.chancount": "85",
+  "mavlink.rssi": "102"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: RC_CHANNELS(time_boot_ms, chancount, chan1_raw, chan2_raw, chan3_raw, chan4_raw, chan5_raw, chan6_raw, chan7_raw, chan8_raw, chan9_raw, chan10_raw, chan11_raw, chan12_raw, chan13_raw, chan14_raw, chan15_raw, chan16_raw, chan17_raw, chan18_raw, rssi) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 42 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

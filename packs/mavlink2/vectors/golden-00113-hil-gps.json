@@ -1,0 +1,27 @@
+{
+ "name": "golden-00113-hil-gps",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2700002a07097100001122334455667709223344553344556644556677556666777788889999aaaabbbbccccddeeff11",
+ "expect": "fd2700002a07097100001122334455667709223344553344556644556677556666777788889999aaaabbbbccccddeeff11",
+ "model": {
+  "@kind": "hil_gps",
+  "mavlink.time_usec_us": "682126384972374545",
+  "lat": "143.0532898",
+  "lon": "171.6864051",
+  "mavlink.alt_mm": "2003195204",
+  "mavlink.eph": "26197",
+  "mavlink.epv": "30566",
+  "mavlink.vel_cm_per_s": "34935",
+  "mavlink.vn_cm_per_s": "-26232",
+  "mavlink.ve_cm_per_s": "-21863",
+  "mavlink.vd_cm_per_s": "-17494",
+  "mavlink.cog_cdeg": "52411",
+  "mavlink.hil_gps_fix_type": "204",
+  "mavlink.satellites_visible": "221",
+  "mavlink.id": "238",
+  "mavlink.yaw_cdeg": "4607"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: HIL_GPS(time_usec, fix_type, lat, lon, alt, eph, epv, vel, vn, ve, vd, cog, satellites_visible, id, yaw) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 39 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

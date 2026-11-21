@@ -1,0 +1,19 @@
+{
+ "name": "golden-00141-altitude",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2000002a07098d000011223344556677090000e13f0080004000801040008020400080304000804040",
+ "expect": "fd2000002a07098d000011223344556677090000e13f0080004000801040008020400080304000804040",
+ "model": {
+  "@kind": "altitude",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.altitude_monotonic_m": "1.7578125",
+  "mavlink.altitude_altitude_amsl_m": "2.0078125",
+  "mavlink.altitude_local_m": "2.2578125",
+  "mavlink.altitude_relative_m": "2.5078125",
+  "mavlink.altitude_terrain_m": "2.7578125",
+  "mavlink.bottom_clearance_m": "3.0078125"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: ALTITUDE(time_usec, altitude_monotonic, altitude_amsl, altitude_local, altitude_relative, altitude_terrain, bottom_clearance) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 32 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

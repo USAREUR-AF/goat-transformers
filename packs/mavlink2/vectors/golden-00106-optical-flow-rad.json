@@ -1,0 +1,24 @@
+{
+ "name": "golden-00106-optical-flow-rad",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2c00002a07096a000011223344556677092233445500800040008010400080204000803040008040408899aabb00806040aabbbbcc",
+ "expect": "fd2c00002a07096a000011223344556677092233445500800040008010400080204000803040008040408899aabb00806040aabbbbcc",
+ "model": {
+  "@kind": "optical_flow_rad",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.integration_time_us": "1430532898",
+  "mavlink.integrated_x_rad": "2.0078125",
+  "mavlink.integrated_y_rad": "2.2578125",
+  "mavlink.integrated_xgyro_rad": "2.5078125",
+  "mavlink.integrated_ygyro_rad": "2.7578125",
+  "mavlink.integrated_zgyro_rad": "3.0078125",
+  "mavlink.time_delta_distance_us": "3148519816",
+  "mavlink.distance_m": "3.5078125",
+  "mavlink.temperature_cdegc": "-17494",
+  "mavlink.sensor_id": "187",
+  "mavlink.quality": "204"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: OPTICAL_FLOW_RAD(time_usec, sensor_id, integration_time_us, integrated_x, integrated_y, integrated_xgyro, integrated_ygyro, integrated_zgyro, temperature, quality, time_delta_distance_us, distance) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 44 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

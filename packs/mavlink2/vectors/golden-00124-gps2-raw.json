@@ -1,0 +1,30 @@
+{
+ "name": "golden-00124-gps2-raw",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd3900002a07097c000011223344556677092233445533445566445566775566778866777788889999aaaabbccddeeeeff1122ff112233112233442233445533445566",
+ "expect": "fd3900002a07097c000011223344556677092233445533445566445566775566778866777788889999aaaabbccddeeeeff1122ff112233112233442233445533445566",
+ "model": {
+  "@kind": "gps2_raw",
+  "mavlink.time_usec_us": "682126384972374545",
+  "lat": "143.0532898",
+  "lon": "171.6864051",
+  "mavlink.alt_mm": "2003195204",
+  "mavlink.dgps_age_ms": "2289526357",
+  "mavlink.eph": "30566",
+  "mavlink.epv": "34935",
+  "mavlink.vel_cm_per_s": "39304",
+  "mavlink.cog_cdeg": "43673",
+  "mavlink.gps2_raw_fix_type": "170",
+  "mavlink.satellites_visible": "187",
+  "mavlink.dgps_numch": "204",
+  "mavlink.yaw_cdeg": "61149",
+  "mavlink.alt_ellipsoid_mm": "571604974",
+  "mavlink.h_acc_mm": "857870847",
+  "mavlink.v_acc_mm": "1144201745",
+  "mavlink.vel_acc_mm_per_s": "1430532898",
+  "mavlink.hdg_acc_dege5": "1716864051"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: GPS2_RAW(time_usec, fix_type, lat, lon, alt, eph, epv, vel, cog, satellites_visible, dgps_numch, dgps_age, yaw, alt_ellipsoid, h_acc, v_acc, vel_acc, hdg_acc) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 57 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

@@ -1,0 +1,24 @@
+{
+ "name": "golden-00031-attitude-quaternion",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd3000002a07091f0000112233440000e13f00800040008010400080204000803040008040400080504000806040008070400040804000408840",
+ "expect": "fd3000002a07091f0000112233440000e13f00800040008010400080204000803040008040400080504000806040008070400040804000408840",
+ "model": {
+  "@kind": "attitude_quaternion",
+  "mavlink.time_boot_ms": "1144201745",
+  "mavlink.q1": "1.7578125",
+  "mavlink.q2": "2.0078125",
+  "mavlink.q3": "2.2578125",
+  "mavlink.q4": "2.5078125",
+  "mavlink.rollspeed_rad_per_s": "2.7578125",
+  "mavlink.pitchspeed_rad_per_s": "3.0078125",
+  "mavlink.yawspeed_rad_per_s": "3.2578125",
+  "mavlink.repr_offset_q_0": "3.5078125",
+  "mavlink.repr_offset_q_1": "3.7578125",
+  "mavlink.repr_offset_q_2": "4.0078125",
+  "mavlink.repr_offset_q_3": "4.2578125"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: ATTITUDE_QUATERNION(time_boot_ms, q1, q2, q3, q4, rollspeed, pitchspeed, yawspeed, repr_offset_q) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 48 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}
