@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -255,15 +256,44 @@ public:
     std::uint64_t held = 0;  // items the entity holds so far
     bool has_failure_ = false;
     std::string fail_format, fail_locator, fail_detail;
+    // v0.34: lists of one message a layered decode discards (step 4 of Decode):
+    // a list of `discard` filled at the top level of `discard_root` is read
+    // and not counted (7g), and its counts are still compared with what the
+    // limit allows (ruling 7). `discard_claim`: the next message a codec
+    // begins to decode becomes `discard_root` (the inner message).
+    const Item* discard_root = nullptr;
+    std::set<std::string> discard;
+    bool discard_claim = false;
+    int discarding = 0;  // groups of a discarded list being read
 
 private:
     DecodeScope* outer_ = nullptr;
 };
 // `n` more items of the list `list`: malformed-wire when the decode would hold
-// more than the limit (7a). No-op outside a decode.
-void take_items(const Pack& p, const std::string& list, std::uint64_t n);
+// more than the limit (7a). No-op outside a decode. `count`: `n` is a count
+// read before the items (7d); inside a discarded list (v0.34) it is still
+// compared with what the limit allows, and nothing else is counted.
+void take_items(const Pack& p, const std::string& list, std::uint64_t n, bool count = false);
 // Items a later group of one list replaced are no longer held (7g).
 void give_back_items(std::uint64_t n);
+// v0.34: the current decode is the current scope's; null outside a decode.
+DecodeScope* current_decode();
+// v0.34: a codec begins a message at `root`: it becomes the scope's
+// `discard_root` when one is claimed.
+void begin_message(const Item& root);
+// v0.34: while one lives, the group of `list` filling `out` is a discarded list
+// when `out` is the scope's `discard_root` and `list` is one of `discard`.
+class DiscardGuard {
+public:
+    DiscardGuard(const Item& out, const std::string& list);
+    ~DiscardGuard();
+    DiscardGuard(const DiscardGuard&) = delete;
+    DiscardGuard& operator=(const DiscardGuard&) = delete;
+    bool active() const { return scope_ != nullptr; }
+
+private:
+    DecodeScope* scope_ = nullptr;
+};
 // The items of a list, those of the lists inside its items included.
 std::uint64_t count_items(const std::vector<Item>& items);
 

@@ -1,0 +1,13 @@
+{
+  "name": "kind-p-round-trip",
+  "from": "conformance-inner-twokinds",
+  "to": "conformance-inner-twokinds",
+  "input": "0105",
+  "expect": "0105",
+  "model": {
+    "@kind": "p",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "kind byte 01 selects p, x in 8 bits = 5"
+}

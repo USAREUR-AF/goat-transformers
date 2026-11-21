@@ -58,6 +58,11 @@ error. `goatxf.DistPublic` refuses every module and pack marked `controlled`.
 `Engine.Capability(from, to)` gives the capability report of a pair of
 formats: its grade and the carried and dropped keys (spec 0.11, rulings 6
 and 7).
+A decoded `*Entity` records the kind the decode selected in `Kind` and, when
+the message carries a message of another pack at an `inner` line (spec 0.34),
+that message's kind in `InnerKind` (format and kind name; the zero value
+means none). `WithInnerPacks(packs, names)` adds to a list of pack names the
+packs their `inner` lines name, transitively, for `LoadPacksOnly`.
 
 `LoadToolProfile(models, packs, maxDistribution, only, profile)` loads as the
 command-line tool does, keeping only the modules and packs of one licence

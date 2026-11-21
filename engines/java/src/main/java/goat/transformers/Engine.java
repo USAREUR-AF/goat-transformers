@@ -225,6 +225,17 @@ public final class Engine {
      * and only the modules it holds are loaded. Null is no profile.
      */
     public static Engine loadOnly(Path packsDir, Path modelsDir, Distribution limit, Collection<String> names, String profile) {
+        return loadOnly(packsDir, modelsDir, limit, names, profile, false);
+    }
+
+    /**
+     * As {@link #loadOnly(Path, Path, Distribution, Collection, String)}; with {@code withInner}, a pack named by an
+     * {@code inner} line of a pack loaded is loaded too, from {@code <packsDir>/<format>}, and so on for the packs
+     * loaded that way (engine-spec 0.34, Vectors). A format with no such directory is skipped: its use is then
+     * {@code unknown-format} when decode or encode reaches the line.
+     */
+    public static Engine loadOnly(Path packsDir, Path modelsDir, Distribution limit, Collection<String> names, String profile,
+                                  boolean withInner) {
         int rank = profileRank(profile);
         Licences.Profiles prof = rank < 0 ? null : readProfiles(licencesFile(packsDir), modelsDir);
         List<PackLicence> held = new ArrayList<>();
@@ -233,7 +244,9 @@ public final class Engine {
         java.util.Set<String> seen = new java.util.HashSet<>();
         java.util.LinkedHashSet<String> needed = new java.util.LinkedHashSet<>();
         needed.add(ModelModule.CORE);
-        for (String name : names) {
+        List<String> queue = new ArrayList<>(names);
+        for (int q = 0; q < queue.size(); q++) {
+            String name = queue.get(q);
             Path def = name.isEmpty() || name.indexOf('/') >= 0 || name.indexOf('\\') >= 0 || name.startsWith(".")
                     ? null : packsDir.resolve(name).resolve("pack.def");
             String text = null;
@@ -268,6 +281,12 @@ public final class Engine {
                 Pack p = Pack.parse(text, def.toString());
                 needed.addAll(p.uses);
                 parsed = p;
+                if (withInner) {
+                    for (String f : p.innerFormats) {
+                        if (f.isEmpty() || f.indexOf('/') >= 0 || f.indexOf('\\') >= 0 || f.startsWith(".")) continue;
+                        if (Files.isRegularFile(packsDir.resolve(f).resolve("pack.def"))) queue.add(f);
+                    }
+                }
             } catch (RuntimeException ex) {
                 needed.addAll(headValues(text, def.toString(), "uses"));
                 parsed = ex;
@@ -744,6 +763,7 @@ public final class Engine {
         }
         // the codec of the pack's wire: the build has it, or Pack.parse refused the pack (ruling 1c of 0.24)
         Codec<?> codec = Wires.codec(p);
+        codec.engine = this;
         packs.put(p.format, p);
         codecs.put(p.format, codec);
     }
@@ -762,7 +782,43 @@ public final class Engine {
      */
     public List<String> modelKeys(String format) {
         codec(format);
-        return packs.get(format).modelKeys();
+        Pack p = packs.get(format);
+        if (p.innerFormats.isEmpty()) return p.modelKeys();
+        // computed when asked for: an inner line whose pack fails checks 1 to 4 adds nothing (engine-spec 0.34)
+        return p.modelKeys(f -> {
+            try {
+                return innerCodec(p, f).pack.modelKeys();
+            } catch (GtException ex) {
+                return null;
+            }
+        });
+    }
+
+    /**
+     * The codec of the pack an {@code inner} line of {@code outer} names, when decode or encode reaches the line
+     * (engine-spec 0.34), after checks 1 to 4 in their order: the format is loaded ({@code unknown-format}); its
+     * wire is bits with neither armor sixbit nor encoding uper ({@code bad-directive}); it has no inner line and is
+     * not {@code outer} ({@code bad-directive}); a public outer pack's inner pack is public
+     * ({@code distribution-violation}). Nothing is kept: a pack loaded later is found at the next use.
+     */
+    Codec<?> innerCodec(Pack outer, String format) {
+        Codec<?> c = codecs.get(format);
+        String at = "the inner line of " + outer.format + " names " + format;
+        if (c == null) throw new GtException(GtException.Code.UNKNOWN_FORMAT, outer.format, null, at + ", and no pack of that format is loaded");
+        Pack p = c.pack;
+        if (p.wire != Pack.Wire.BITS || p.armorSixbit || p.uper) {
+            throw new GtException(GtException.Code.BAD_DIRECTIVE, outer.format, null,
+                    at + ", whose pack is not a bits pack without armor sixbit and encoding uper");
+        }
+        if (p == outer || !p.innerFormats.isEmpty()) {
+            throw new GtException(GtException.Code.BAD_DIRECTIVE, outer.format, null,
+                    at + (p == outer ? ", the outer pack itself" : ", a pack with an inner line of its own") + ": one layer only");
+        }
+        if (outer.distribution == Distribution.PUBLIC && p.distribution != Distribution.PUBLIC) {
+            throw new GtException(GtException.Code.DISTRIBUTION_VIOLATION, outer.format, null,
+                    at + ": a public pack's inner pack is " + p.distribution.token());
+        }
+        return c;
     }
 
     public Entity decode(String format, String text) { return codec(format).decode(text, maxItems); }
@@ -817,9 +873,23 @@ public final class Engine {
         codec(from);   // from, then to, before the input is read (ruling 5 of 0.11)
         Codec<?> target = codec(to);
         Entity e = decode(from, text);
-        if (!from.equals(to)) e.clearKind();
+        keepKinds(from, to, e);
         if (context != null || !from.equals(to)) complete(e, context);
         return target.encode(e);
+    }
+
+    /**
+     * The kind records {@code convert(from, to, …)} keeps before encode, the others cleared: {@code Entity.kind} when
+     * {@code from == to} or an {@code inner} line of {@code to} names its format; {@code Entity.inner_kind} when
+     * {@code from == to}, when it names {@code to}, or when an {@code inner} line of {@code to} names its format
+     * (engine-spec 0.34, Conversion). {@code to} must be loaded.
+     */
+    public void keepKinds(String from, String to, Entity e) {
+        if (from.equals(to)) return;
+        List<String> inner = packs.get(to).innerFormats;
+        if (e.kindFormat() == null || !inner.contains(e.kindFormat())) e.clearKind();
+        String ik = e.innerKindFormat();
+        if (ik != null && !ik.equals(to) && !inner.contains(ik)) e.clearInnerKind();
     }
 
     public Entity decode(String format, byte[] bytes) { return decode(format, new String(bytes, StandardCharsets.UTF_8)); }

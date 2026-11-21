@@ -1,0 +1,9 @@
+{
+  "name": "bits-extent-not-on-a-whole-byte",
+  "from": "conformance-inner-bitlen",
+  "to": "conformance-inner-bitlen",
+  "input": "0c3507",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 2: a length of 12 bits ends inside a byte"
+}

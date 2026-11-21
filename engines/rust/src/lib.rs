@@ -63,6 +63,10 @@ pub struct Entity {
     pub residue: Vec<(String, String, String)>,
     /// (format, kind name) selected by the last decode of a pack with kinds.
     pub kind: Option<(String, String)>,
+    /// (format, kind name) of the kind the pack of an `inner` line selected
+    /// (engine-spec v0.34); absent when no `inner` line was read or its pack
+    /// has no kinds. Set by decode only.
+    pub inner_kind: Option<(String, String)>,
 }
 
 // ---------------------------------------------------------------------------
@@ -2434,6 +2438,8 @@ impl Pack {
             return seq::parse(text);
         }
         let mut layout_line: Option<usize> = None;
+        // engine-spec v0.34: the first `inner` line, refused after the file is read
+        let mut inner_line: Option<usize> = None;
         let mut format = None;
         let mut version = None;
         let mut wire = None;
@@ -2852,6 +2858,10 @@ impl Pack {
                     layout_line = Some(ln);
                 }
                 // engine-spec v0.8: a sequential line in a fixed-layout pack
+                // engine-spec v0.34: `inner` outside a sequential layout, checked after the file
+                "inner" => {
+                    inner_line.get_or_insert(ln);
+                }
                 "pad" | "align" | "presence" | "opt" | "chain" | "fx" | "also" | "count" => {
                     return bad(ln, format!("`{}` is a line of a `layout sequential` pack", toks[0]));
                 }
@@ -2880,6 +2890,9 @@ impl Pack {
             return err("missing-version: the pack has no `version` line");
         }
         let wire = wire.ok_or(Error { msg: "missing-wire: the pack has no `wire` line".into() })?;
+        if let Some(ln) = inner_line {
+            return bad(ln, "`inner` is a line of a `layout sequential` `bits` pack");
+        }
         // ruling 8 of 0.13: on tlv a transform that does not parse is
         // `bad-directive`, checked after the file is read
         if let Some((ln, e)) = bad_transform {
@@ -3309,6 +3322,15 @@ impl Pack {
         out
     }
 
+    /// The formats the `inner` lines of the pack name, in line order
+    /// (engine-spec v0.34).
+    pub fn inner_formats(&self) -> Vec<&str> {
+        match &self.seq {
+            Some(body) => seq::inner_lines(body).into_iter().map(|(f, _)| f).collect(),
+            None => Vec::new(),
+        }
+    }
+
     /// Every `group` line of the pack: (line, list name).
     fn group_lists(&self) -> Vec<(usize, &str)> {
         let mut out: Vec<(usize, &str)> = self.every_group().into_iter().map(|g| (g.line, g.list.as_str())).collect();
@@ -3470,9 +3492,88 @@ pub(crate) mod limit {
         begin(super::DEFAULT_MAX_ITEMS)
     }
 
+    thread_local! {
+        /// engine-spec v0.34: the lists of an inner message that the outer
+        /// entity already holds, whose items are discarded and not counted
+        static UNCOUNTED: std::cell::RefCell<Vec<String>> = const { std::cell::RefCell::new(Vec::new()) };
+        /// how many items are being read around the cursor
+        static ITEMS: Cell<u32> = const { Cell::new(0) };
+        /// how many groups whose items are not counted are being read
+        static SUSPEND: Cell<u32> = const { Cell::new(0) };
+    }
+
+    /// Restores what a guard changed when dropped, on success and on error.
+    #[cfg(feature = "bits")]
+    pub struct Restore(Option<Box<dyn FnOnce()>>);
+    #[cfg(feature = "bits")]
+    impl Drop for Restore {
+        fn drop(&mut self) {
+            if let Some(f) = self.0.take() {
+                f();
+            }
+        }
+    }
+
+    /// An inner decode (engine-spec v0.34) whose lists of these names are
+    /// discarded by the outer entity: their items are not counted (7g).
+    #[cfg(feature = "bits")]
+    pub fn inner(discarded: Vec<String>) -> Restore {
+        let items = ITEMS.with(|c| c.replace(0));
+        let old = UNCOUNTED.with(|u| u.replace(discarded));
+        Restore(Some(Box::new(move || {
+            UNCOUNTED.with(|u| *u.borrow_mut() = old);
+            ITEMS.with(|c| c.set(items));
+        })))
+    }
+
+    /// One item of a list is being read.
+    #[cfg(feature = "bits")]
+    pub fn item() -> Restore {
+        ITEMS.with(|c| c.set(c.get() + 1));
+        Restore(Some(Box::new(|| ITEMS.with(|c| c.set(c.get() - 1)))))
+    }
+
+    /// Is this list, read outside every item, one whose items are not counted?
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    pub fn uncounted(list: &str) -> bool {
+        ITEMS.with(|c| c.get()) == 0 && UNCOUNTED.with(|u| u.borrow().iter().any(|l| l == list))
+    }
+
+    /// The items of this group, and of the lists inside them, are not
+    /// counted when it is a list `uncounted` names.
+    #[cfg(feature = "bits")]
+    pub fn group(list: &str) -> Restore {
+        if !uncounted(list) {
+            return Restore(None);
+        }
+        SUSPEND.with(|c| c.set(c.get() + 1));
+        Restore(Some(Box::new(|| SUSPEND.with(|c| c.set(c.get() - 1)))))
+    }
+
+    /// A count read from the wire (7d): held as `take` holds it; in a group
+    /// whose items are not counted (engine-spec v0.34, ruling 7) it is still
+    /// compared with what the limit allows, and not held.
+    #[cfg(feature = "bits")]
+    pub fn take_count(format: &str, list: &str, n: u64) -> Result<(), Error> {
+        if SUSPEND.with(|c| c.get()) == 0 {
+            return take(format, list, n);
+        }
+        SUSPEND.with(|c| c.set(c.get() - 1));
+        let res = take(format, list, n);
+        SUSPEND.with(|c| c.set(c.get() + 1));
+        if res.is_ok() {
+            release(n);
+        }
+        res
+    }
+
     /// Hold `n` more items: past the limit is `malformed-wire` (7a, 7f).
+    /// Inside a group whose items are not counted (engine-spec v0.34) nothing is held.
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     pub fn take(format: &str, list: &str, n: u64) -> Result<(), Error> {
+        if SUSPEND.with(|c| c.get()) > 0 {
+            return Ok(());
+        }
         STATE.with(|s| match s.get() {
             None => Ok(()),
             Some((held, max)) => {
@@ -3530,6 +3631,10 @@ impl Decoded {
     /// will replace are no longer held (ruling 7g of 0.11).
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     fn replacing(&self, list: &str) {
+        // items that were not counted are not released (engine-spec v0.34)
+        if limit::uncounted(list) {
+            return;
+        }
         if let Some(old) = self.ent.lists.get(list) {
             limit::release(old.len() as u64 + old.iter().map(|i| limit::items_of(&i.lists)).sum::<u64>());
         }
@@ -4570,7 +4675,7 @@ impl Engine {
             #[cfg(feature = "geojson")]
             Wire::GeoJson => geojson::decode(p, bytes),
             #[cfg(feature = "bits")]
-            Wire::Bits => bits::decode_in(p, lay, bytes),
+            Wire::Bits => bits::decode_host(p, lay, bytes, Some(self)),
             #[cfg(feature = "protobuf")]
             Wire::Protobuf => protobuf::decode_in(p, lay, bytes),
             #[cfg(feature = "json")]
@@ -4590,6 +4695,22 @@ impl Engine {
     }
     pub fn encode(&self, format: &str, ent: &Entity) -> Result<String, Error> {
         let p = self.pack(format)?;
+        // at the top level the kind is chosen by `Entity.kind` when it names the
+        // format, then by `Entity.inner_kind` when it does (engine-spec v0.34)
+        let names = |k: &Option<(String, String)>| k.as_ref().is_some_and(|(f, _)| f == format);
+        let chosen: Entity;
+        let ent = if !names(&ent.kind) && names(&ent.inner_kind) {
+            chosen = Entity { kind: ent.inner_kind.clone(), ..ent.clone() };
+            &chosen
+        } else {
+            ent
+        };
+        self.encode_chosen(p, ent)
+    }
+
+    /// `encode` once the kind record the pack reads is in `Entity.kind`.
+    fn encode_chosen(&self, p: &Pack, ent: &Entity) -> Result<String, Error> {
+        let format = p.format.as_str();
         #[allow(unused_variables)]
         let lay = self.layout(format);
         match p.wire {
@@ -4598,7 +4719,7 @@ impl Engine {
             #[cfg(feature = "geojson")]
             Wire::GeoJson => geojson::encode(p, ent),
             #[cfg(feature = "bits")]
-            Wire::Bits => bits::encode_in(p, lay, ent),
+            Wire::Bits => bits::encode_host(p, lay, ent, Some(self)),
             #[cfg(feature = "protobuf")]
             Wire::Protobuf => protobuf::encode_in(p, lay, ent),
             #[cfg(feature = "json")]
@@ -4636,14 +4757,30 @@ impl Engine {
         self.pack(from)?;
         self.pack(to)?;
         let mut ent = self.decode(from, bytes)?;
-        if from != to {
-            ent.kind = None;
-        }
+        self.keep_kinds(from, to, &mut ent);
         if from != to || context.is_some() {
             self.fill(&mut ent, context.unwrap_or(&[]))?;
             self.complete(&mut ent);
         }
         self.encode(to, &ent)
+    }
+
+    /// Engine-spec 0.5 and 0.34, "Conversion": `Entity.kind` is kept when
+    /// `from == to` or when an `inner` line of `to` names its format;
+    /// `Entity.inner_kind` when `from == to`, when it names `to`, or when an
+    /// `inner` line of `to` names its format. Otherwise each is cleared.
+    fn keep_kinds(&self, from: &str, to: &str, ent: &mut Entity) {
+        if from == to {
+            return;
+        }
+        let inners: Vec<&str> = self.packs.get(to).map(|p| p.inner_formats()).unwrap_or_default();
+        let inner_of_to = |k: &Option<(String, String)>| k.as_ref().is_some_and(|(f, _)| inners.contains(&f.as_str()));
+        if !inner_of_to(&ent.kind) {
+            ent.kind = None;
+        }
+        if !inner_of_to(&ent.inner_kind) && !ent.inner_kind.as_ref().is_some_and(|(f, _)| f == to) {
+            ent.inner_kind = None;
+        }
     }
 
     /// `convert` with the context given as text (the CLI's `--set`, a vector's
@@ -4671,9 +4808,7 @@ impl Engine {
         self.pack(from)?;
         self.pack(to)?;
         let mut ent = self.decode_limited(from, bytes, max_items)?;
-        if from != to {
-            ent.kind = None;
-        }
+        self.keep_kinds(from, to, &mut ent);
         if from != to || context.is_some() {
             let context = self.context_from_text(context.unwrap_or(&[]))?;
             self.fill(&mut ent, &context)?;
@@ -4812,7 +4947,29 @@ impl Engine {
     /// The shared-model keys a format maps: field order, and for a pack with
     /// kinds the union over common and all kinds in first appearance order.
     pub fn model_keys(&self, format: &str) -> Vec<String> {
-        self.packs.get(format).map(|p| p.model_keys()).unwrap_or_default()
+        self.packs.get(format).map(|p| self.pack_model_keys(p)).unwrap_or_default()
+    }
+
+    /// `model_keys` of a loaded pack (6a of 0.11), computed when asked for:
+    /// an `inner` line whose pack passes the checks of engine-spec 0.34 adds,
+    /// at its place, the entries of the inner pack not yet listed; one that
+    /// does not adds nothing.
+    fn pack_model_keys(&self, p: &Pack) -> Vec<String> {
+        #[cfg(feature = "bits")]
+        if let Some(body) = p.seq.as_ref().filter(|b| !seq::inner_lines(b).is_empty()) {
+            let mut out = Vec::new();
+            body.model_keys_with("", &mut out, &|format, out| {
+                if seq::InnerHost::inner_check(self, p, format).is_ok() {
+                    for k in self.packs.get(format).map(|ip| ip.model_keys()).unwrap_or_default() {
+                        if !out.contains(&k) {
+                            out.push(k);
+                        }
+                    }
+                }
+            });
+            return out;
+        }
+        p.model_keys()
     }
 
     /// Capability of one ordered conversion A -> B, computed from the field maps:
@@ -4821,7 +4978,7 @@ impl Engine {
     /// other, or clearly noted why not" without running a single conversion.
     /// `model_keys` of a loaded format; `unknown-format` otherwise.
     pub fn try_model_keys(&self, format: &str) -> Result<Vec<String>, Error> {
-        self.pack(format).map(|p| p.model_keys())
+        self.pack(format).map(|p| self.pack_model_keys(p))
     }
 
     /// `capability` (ruling 6 of 0.11); `unknown-format` when `from`, then
@@ -4859,6 +5016,62 @@ impl Engine {
             }
         }
         out
+    }
+}
+
+/// Engine-spec v0.34: the engine finds the pack of an `inner` line when
+/// decode or encode reaches it, never when the outer pack loads.
+#[cfg(feature = "bits")]
+impl seq::InnerHost for Engine {
+    fn inner_check(&self, outer: &Pack, format: &str) -> Result<(), Error> {
+        // 1. loaded (a pack refused at load is not)
+        let ip = self.pack(format)?;
+        // 2. on `bits`, with neither `armor sixbit` nor `encoding uper` (`armor hex` is the default)
+        if ip.wire != Wire::Bits || ip.armor != armor::Armor::Hex || ip.uper {
+            return err(format!(
+                "bad-directive: format `{}`: the `inner` pack `{}` is not a `bits` pack without `armor sixbit` and `encoding uper`",
+                outer.format, format
+            ));
+        }
+        // 3. one layer only
+        if ip.format == outer.format || !ip.inner_formats().is_empty() {
+            return err(format!(
+                "bad-directive: format `{}`: the `inner` pack `{}` is the outer pack or has an `inner` line of its own",
+                outer.format, format
+            ));
+        }
+        // 4. a public outer pack takes a public inner pack only
+        if outer.distribution == Distribution::Public && ip.distribution != Distribution::Public {
+            return err(format!(
+                "distribution-violation: public pack `{}` names {} pack `{}` in an `inner` line",
+                outer.format,
+                ip.distribution.name(),
+                format
+            ));
+        }
+        Ok(())
+    }
+
+    fn inner_decode(&self, format: &str, bytes: &[u8], held: Vec<String>) -> Result<Entity, Error> {
+        let p = self.pack(format)?;
+        let _discarded = limit::inner(held);
+        bits::decode_host(p, self.layout(format), &bits::to_hex(bytes), Some(self))
+    }
+
+    fn inner_encode(&self, format: &str, ent: &Entity) -> Result<Vec<u8>, Error> {
+        let p = self.pack(format)?;
+        // as a layer: `Entity.inner_kind`, then `Entity.kind`, then `requires`
+        let names = |k: &Option<(String, String)>| k.as_ref().filter(|(f, _)| f == format).cloned();
+        let kind = names(&ent.inner_kind).or_else(|| names(&ent.kind));
+        let chosen: Entity;
+        let ent = if kind == ent.kind {
+            ent
+        } else {
+            chosen = Entity { kind, ..ent.clone() };
+            &chosen
+        };
+        let hex = bits::encode_host(p, self.layout(format), ent, Some(self))?;
+        bits::from_hex(&hex)
     }
 }
 
@@ -7464,7 +7677,8 @@ pub mod bits {
             };
             // the count against what the limit still allows, before any item is read (7d)
             d.replacing(&g.list);
-            limit::take(&p.format, &g.list, n)?;
+            let _uncounted = limit::group(&g.list);
+            limit::take_count(&p.format, &g.list, n)?;
             let (off, item_bits) = group_span(p, lay, g)?;
             let start = base + off;
             let end = n.checked_mul(item_bits).and_then(|b| b.checked_add(start)).filter(|e| *e <= total).ok_or_else(|| {
@@ -7483,6 +7697,7 @@ pub mod bits {
                 let mut di = Decoded::new();
                 // the gate blocks of the item, evaluated per item (ruling 2 of 0.17)
                 let item = only_held(&body, &held_on(p, lay, &g.gates, raw, total, at));
+                let _item = limit::item();
                 let nested_end = decode_scope(p, lay, &item, raw, total, at, &mut di, reach)?;
                 at = (at + item_bits).max(nested_end);
                 items.push(di);
@@ -7502,6 +7717,13 @@ pub mod bits {
     /// `decode` with the layout the engine keeps for the pack (engine-spec 0.25).
     #[cfg(feature = "bits")]
     pub(crate) fn decode_in(p: &Pack, lay: &Layout, hex: &str) -> Result<Entity, Error> {
+        decode_host(p, lay, hex, None)
+    }
+
+    /// `decode_in` with the engine that finds the pack of an `inner` line
+    /// (engine-spec v0.34).
+    #[cfg(feature = "bits")]
+    pub(crate) fn decode_host(p: &Pack, lay: &Layout, hex: &str, host: Option<&dyn seq::InnerHost>) -> Result<Entity, Error> {
         let _scope = limit::scope();
         // the message and its length in bits: hex, or six-bit armor (engine-spec v0.14)
         let sixbit = p.armor == armor::Armor::Sixbit;
@@ -7513,7 +7735,7 @@ pub mod bits {
             (raw, total)
         };
         if let Some(body) = &p.seq {
-            return super::seq::decode(p, body, &raw, total);
+            return super::seq::decode_host(p, body, &raw, total, host);
         }
         // a `when` whose bits lie beyond the input does not hold
         let sel = p.select_decode(None, |w| match span(p, lay, &w.locator) {
@@ -7745,10 +7967,17 @@ pub mod bits {
     /// `encode` with the layout the engine keeps for the pack (engine-spec 0.25).
     #[cfg(feature = "bits")]
     pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, Error> {
+        encode_host(p, lay, ent, None)
+    }
+
+    /// `encode_in` with the engine that finds the pack of an `inner` line
+    /// (engine-spec v0.34).
+    #[cfg(feature = "bits")]
+    pub(crate) fn encode_host(p: &Pack, lay: &Layout, ent: &Entity, host: Option<&dyn seq::InnerHost>) -> Result<String, Error> {
         let sixbit = p.armor == armor::Armor::Sixbit;
         if let Some(body) = &p.seq {
             // six-bit armor: the cursor after the last line, not rounded (engine-spec v0.14)
-            let (b, cursor) = super::seq::encode_bits(p, body, ent)?;
+            let (b, cursor) = super::seq::encode_host(p, body, ent, host)?;
             return Ok(if sixbit { armor::write(&b, cursor) } else { to_hex(&b) });
         }
         let sel = p.select_encode(ent)?;
@@ -8517,12 +8746,15 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     // engine-spec v0.21: `count <name> <len> [plus <n>]`; its form is checked
     // with the rest of the sequential layout, after the file is read
     ("count", 2, usize::MAX),
+    // engine-spec v0.34: `inner <format>`, a line the `wire` line and
+    // `layout sequential` stand before; where it stands is checked after the file
+    ("inner", 1, 1),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).
 const AFTER_WIRE: &[&str] = &[
     "root", "field", "when", "const", "group", "end", "word_bytes", "bit_order", "layout", "also", "pad", "align",
-    "presence", "if", "opt", "chain", "fx", "length",
+    "presence", "if", "opt", "chain", "fx", "length", "inner",
 ];
 
 /// The checks of ruling 5 of 0.11 that each line of a pack owes as it is

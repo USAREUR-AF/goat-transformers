@@ -1,0 +1,13 @@
+{
+  "name": "ruling-03-whole-length-ends-the-inner-input",
+  "from": "conformance-inner-whole",
+  "to": "conformance-inner-whole",
+  "input": "0409010507",
+  "expect": "04090105",
+  "model": {
+    "probe.x": "5",
+    "@inner_kind": "p"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 3: inner input 0105 (kind p, x=5); 07 beyond the whole length is ignored; encode writes the whole length 4"
+}

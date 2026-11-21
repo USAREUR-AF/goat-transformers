@@ -34,7 +34,14 @@ Version 0.22), writes a time to the whole second (`iso8601_s`, spec Version
 0.26), reads and writes one CBOR data item (the `cbor` wire, spec Version
 0.28), binds the label a sequential kind is told apart by to a key (`when
 <len> <values> as <key>`, spec Version 0.30: decode sets the key, encode
-chooses the kind by it), and converts between formats via the shared model.
+chooses the kind by it), hands the rest of a sequential message, or of a
+`length` block, to
+another loaded `bits` pack (`inner <format>`, spec Version 0.34: the inner
+pack decodes into the same entity and encodes from it; the kind it selected
+is `Entity.inner_kind_fmt` and `Entity.inner_kind_name`, beside
+`Entity.kind_fmt` and `Entity.kind_name`; `loadPacksOnly` also loads, from
+the packs directory, the packs `inner` lines name, transitively), and
+converts between formats via the shared model.
 
 ## Build and run the conformance harness
 

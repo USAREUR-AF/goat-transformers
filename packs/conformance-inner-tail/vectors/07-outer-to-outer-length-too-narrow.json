@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-outer-length-too-narrow",
+  "from": "conformance-inner-tail",
+  "to": "conformance-inner-narrow",
+  "input": "0901020304",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: the inner message is 4 bytes; a length that does not fit its 2-bit field is transform-encode"
+}

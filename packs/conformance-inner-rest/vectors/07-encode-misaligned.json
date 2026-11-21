@@ -1,0 +1,9 @@
+{
+  "name": "encode-misaligned",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-misaligned",
+  "input": "093507",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: n takes 4 bits, so the cursor stands on bit 4 when the encoder reaches inner: transform-encode, before the inner pack encodes"
+}

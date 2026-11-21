@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-inner",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-seq",
+  "input": "0705010203",
+  "expect": "010203",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion: Entity.kind is cleared (the target has no inner line naming conformance-inner-kinds); Entity.inner_kind names the target and is kept"
+}

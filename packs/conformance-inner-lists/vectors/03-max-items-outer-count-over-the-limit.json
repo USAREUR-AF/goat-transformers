@@ -1,0 +1,10 @@
+{
+  "name": "max-items-outer-count-over-the-limit",
+  "from": "conformance-inner-lists",
+  "to": "conformance-inner-lists",
+  "input": "020a0b0c0d0e",
+  "max_items": 1,
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "7d of 0.11: the outer count 2 is above the limit 1 before any item is read"
+}

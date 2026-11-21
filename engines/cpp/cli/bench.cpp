@@ -6,8 +6,9 @@
 // Paths in the set, and the defaults (bench/set.json, packs), are read
 // relative to the current directory: run it from the repository root. It
 // loads, into one engine, the packs the set's vectors name (each vector's
-// `from` and `to`, a format name being its pack's directory) and the modules
-// they use, and times the load. Then, for each vector in order, it converts
+// `from` and `to`, a format name being its pack's directory, and the packs
+// their `inner` lines name, transitively, a name with no directory under the
+// packs skipped: Version 0.34) and the modules they use, and times the load. Then, for each vector in order, it converts
 // the input once and checks the output against `expect` (a vector that
 // differs, or fails, ends the run with exit status 1), then converts it
 // `iterations` times and times that. Standard output holds one line per
@@ -25,6 +26,7 @@
 
 #include "goat_transformers/engine.hpp"
 #include "json.hpp"
+#include "sequential.hpp"
 
 namespace gt = goat_transformers;
 namespace json = goat_transformers::json;
@@ -161,6 +163,24 @@ int main(int argc, char** argv) {
         }
     } catch (const json::ParseError& e) {
         return fail(std::string("JSON: ") + e.what());
+    }
+    // v0.34: the packs the `inner` lines of the loaded packs name, and theirs.
+    for (std::size_t k = 0; k < pack_names.size(); ++k) {
+        std::string text;
+        if (!read_file(packs_dir + "/" + pack_names[k] + "/pack.def", text)) continue;
+        std::istringstream lines(text);
+        std::string line, err;
+        while (std::getline(lines, line)) {
+            std::vector<std::string> t;
+            if (!goat_transformers::detail::tokenize_line(line, t, err) || t.size() != 2 || t[0] != "inner") continue;
+            std::string probe;
+            if (t[1].find('/') != std::string::npos || t[1] == "." || t[1] == ".." ||
+                !read_file(packs_dir + "/" + t[1] + "/pack.def", probe))
+                continue;  // no pack directory of that name: its use is unknown-format
+            bool listed = false;
+            for (const auto& n : pack_names) listed = listed || n == t[1];
+            if (!listed) pack_names.push_back(t[1]);
+        }
     }
 
     using clock = std::chrono::steady_clock;

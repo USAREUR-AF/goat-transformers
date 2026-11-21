@@ -1,0 +1,24 @@
+# Conformance probe pack used as an inner pack (spec 0.34, Conversion and the
+# order of inner kind selection): two kinds that both qualify by requires, so
+# requires alone always picks p, and only a kept kind gives q. Most
+# significant bit first. Public.
+#
+#   byte 0      the kind: 1 = p, 2 = q
+#   kind p      x in 8 bits
+#   kind q      x in 16 bits
+format     conformance-inner-twokinds
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind p
+when     8  1
+requires probe.x
+field    probe.x  8  uint
+kind q
+when     8  2
+requires probe.x
+field    probe.x  16  uint

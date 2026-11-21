@@ -49,16 +49,17 @@ PACK_DIRECTIVES = frozenset((
     "encoding", "ext", "choice", "alt",
     "switch", "case", "else",  # sequential layouts (0.20)
     "count",  # sequential layouts (0.21)
+    "inner",  # sequential layouts (0.34): a message of another pack
 ))
 # The lines that stand after the `wire` line (5b): before it, `missing-wire`.
 NEEDS_WIRE = frozenset((
     "root", "field", "when", "const", "group", "end", "word_bytes", "bit_order", "layout", "also", "pad", "align",
-    "presence", "if", "opt", "chain", "fx", "length",
+    "presence", "if", "opt", "chain", "fx", "length", "inner",
 ))
 # The number of arguments of each directive: (at least, at most or None). 5e
 # names the directives of exactly one argument.
 _ONE_ARG = ("format", "version", "distribution", "source", "uses", "wire", "root", "kind", "word_bytes",
-            "bit_order", "layout", "pad", "align", "delimiter", "start")
+            "bit_order", "layout", "pad", "align", "delimiter", "start", "inner")
 ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     "when": (2, 2), "const": (2, 2), "default": (2, 2), "map": (3, 3), "typemap": (2, 2), "presence": (2, 2),
     "end": (0, 0), "opt": (0, 0), "chain": (0, 0), "fx": (0, 0),
@@ -88,7 +89,8 @@ LAYOUTS = ("fixed", "sequential")
 # Lines of a sequential pack (0.8): each is `bad-directive` in a fixed-layout pack.
 _SEQ_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also",
              "switch", "case", "else",  # 0.20: `switch` is a block of a sequential layout
-             "count")  # 0.21: `count <name> <len> [plus <n>]`
+             "count",  # 0.21: `count <name> <len> [plus <n>]`
+             "inner")  # 0.34: on another wire or a fixed layout, `bad-directive` after the file
 _GROUP_LINES = ("field", "const", "default", "group", "if", "end")
 # The lines of a gate block (0.17).
 _GATE_LINES = ("field", "const", "default", "if", "end")
@@ -455,6 +457,7 @@ class Pack:
     defaults: list = dc_field(default_factory=list)  # common Default lines
     layout: str = "fixed"  # bits: "sequential" from 0.8
     seq: object = None     # a sequential pack: the seqdef.Body of the message
+    inners: tuple = ()     # 0.34: the format named by each `inner` line, in line order
     tables: dict = dc_field(default_factory=dict)    # value tables: name -> [(native, model)] in line order
     delimiter: str = ","   # text: the field delimiter, None for `delimiter none`
     start: str = None      # text: the start text

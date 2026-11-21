@@ -1,0 +1,17 @@
+# Conformance probe pack for a failed check at an inner line reached after a
+# transform-decode (spec 0.34, Reaching the inner line): an ascii field that
+# can fail, then an inner line naming a format no pack declares. Most
+# significant bit first. Public. No kinds.
+#
+#   byte 0      s1, one ascii character
+#   the rest    a conformance-inner-not-a-format message (unknown-format)
+format     conformance-inner-asciimissing
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.s1  8  ascii
+inner   conformance-inner-not-a-format

@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer-with-kinds-no-outer-kind",
+  "from": "conformance-inner-seq",
+  "to": "conformance-inner-kinds",
+  "input": "010203",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion keeps Entity.kind (conformance-inner-seq, a), but it does not name conformance-inner-kinds, so the outer kind is chosen by requires (0.5 Encode step 2): carry requires n, plain requires w, the entity holds neither"
+}

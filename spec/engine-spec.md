@@ -5538,3 +5538,222 @@ sentinel):
 `tools/tests/test_time_quality_guard.py` covers each refused form, bare and
 `core.`-prefixed, an `optional` and a gated `bits` field that pass, and the whole
 repository.
+
+---
+
+# Version 0.34: a message of another pack inside a field
+
+Status: Written. Some binary formats are transports: their own fields are a
+header, and the rest of the message is a whole message of another format,
+which the transport frames but does not describe. Before 0.34 a pack for the
+transport could only copy the other format's field lines into its own kinds,
+or leave the payload unread. Version 0.34 lets a `layout sequential` pack
+hand a run of its bytes to another loaded pack, which decodes them into the
+same entity and encodes them back from it.
+
+```
+wire    bits
+layout  sequential
+…
+length 8 bytes
+  inner  <format>       # the bytes to the end of the extent are one <format> message
+end
+```
+
+## The `inner` line
+
+`inner <format>` is a line of a `layout sequential` `bits` pack (Version
+0.8). It names the **inner pack**; the pack holding the line is the **outer
+pack**. The **inner input** is every byte from the cursor to the end of the
+line's enclosing extent (Version 0.21: the innermost `length` block around
+the line, or else the message, which a `length … whole` ends at its stated
+length, ruling 14 of 0.21).
+
+Where it may stand:
+
+- in the common lines, in a kind, and inside `length` blocks, at any depth
+  of `length` blocks;
+- nowhere else: under a `group`, `if`, `opt`, `chain`, `switch`, `case`,
+  `ext`, `alt` or `choice` block, at any depth, it is `bad-directive`;
+- it is the last wire line of its extent, as a `rest` group is: rulings 11,
+  26 and 32 of 0.21 apply to `inner` as written for `rest`;
+- at most one `inner` line lies on any reading path (ruling 33 of 0.21): an
+  `inner` in the common lines and another in a kind, or two in one body, is
+  `bad-directive`; one in each of two kinds loads;
+- in a pack with `armor sixbit` (0.14) or `encoding uper` (0.19) it is
+  `bad-directive`; `armor hex`, the default, is not armor in this sense.
+
+Load order (5b and 5e of 0.11): `inner` takes exactly one argument, a
+format name; it is a line that the `wire` line and `layout sequential` must
+stand before (5b), with the same errors as the other lines of that list.
+The block, path, last-line, armor and `encoding` checks, and `inner` in a
+pack whose wire is not `bits` or whose layout is fixed (no `layout
+sequential` line), run after the file is read, with the checks of ruling 25
+of 0.5. Nothing about the inner pack
+is checked at load: packs load in any order, and each loads alone.
+
+## Reaching the `inner` line
+
+The inner pack is looked up when decode or encode reaches the `inner` line,
+not when the outer pack loads. A line that is not reached (in a kind not
+selected, or after a failure of the wire that stops the decode) checks
+nothing. A `transform-decode` does not stop a decode (ruling 9 of 0.1.1), so
+an `inner` line after it is reached, and a failed check there is reported
+ahead of that `transform-decode`. When it is reached,
+these are checked in this order:
+
+1. the inner format is loaded: otherwise `unknown-format` (a pack refused at
+   load, by a build without its wire (0.24), a distribution limit or a
+   licence profile (0.29), is not loaded);
+2. the inner pack's wire is `bits` and it has neither `armor sixbit` nor
+   `encoding uper`: otherwise `bad-directive`;
+3. the inner pack has no `inner` line of its own and is not the outer pack
+   (one layer only): otherwise `bad-directive`;
+4. when the outer pack's `distribution` is `public`, so is the inner pack's:
+   otherwise `distribution-violation`.
+
+An engine that keeps parsed packs (0.25) may keep a lookup that succeeded;
+one that failed is made again at the next use, so a pack loaded later is
+found (ruling 1b of 0.25).
+
+## Decode
+
+When the cursor reaches `inner`, after the checks above:
+
+1. The cursor must stand on a whole byte from the start of the message;
+   otherwise `malformed-wire`.
+2. An enclosing extent that ends beyond the input, or a `length … bits`
+   extent that does not end on a whole byte, is `malformed-wire`.
+3. The inner input is decoded as `decode(<format>, bytes)` by the inner
+   pack's own rules: its `bit_order`, its layout, its kinds and its length
+   rules. The inner pack is called also when the inner input is empty
+   (ruling 7 of 0.8, a line at the end of its extent reading as absent, does
+   not apply to `inner`); bytes of the inner input that the inner message
+   does not read are ignored, as input beyond the last line is (ruling 9 of
+   0.8).
+4. The keys of the inner entity join the outer entity under the rule of 0.6
+   for one key at several locators: in one decode, the first value read in
+   reading order, outer or inner, is kept, and no later line, outer or inner,
+   replaces it. A list is one key: an outer list read first is kept whole,
+   and the inner list of the same name is discarded.
+5. `Entity.inner_kind` records the pair `(<format>, kind name)` of the kind
+   the inner pack selected, next to the outer pack's `Entity.kind` (0.5). An
+   inner pack with no `kind` line records nothing: `Entity.inner_kind` is
+   absent.
+
+An error raised in the inner decode keeps its kind and names the inner
+format. An error that stops the decode (`malformed-wire`, `no-kind`, and a
+failed check at the `inner` line), in either pack, is reported ahead of any
+`transform-decode` read before it, as a later `no-kind` already is within
+one pack; among `transform-decode` errors the earliest in reading order is
+reported.
+
+`max_items` (7a-7g of 0.11): the inner decode starts with the budget the
+outer lines read so far have left, and its counts are checked against it
+(7d). Items of an inner list discarded by step 4 are not counted (7g).
+
+## Encode
+
+When the encoder reaches `inner`, after the checks above, the cursor must
+stand on a whole byte, otherwise `transform-encode`; this is checked before
+the inner pack encodes. It then computes `encode(<format>, entity)` on the
+same entity and writes the bytes at the cursor. An inner encode error keeps
+its kind and stands at the `inner` line for the order of errors (ruling 12
+of 0.20). The extent's length, where one is written, counts the inner
+bytes; a length that does not fit its field is `transform-encode`.
+
+The inner kind is selected by the first of these that holds:
+
+1. `Entity.inner_kind` names the inner format;
+2. `Entity.kind` names the inner format;
+3. the inner pack's `requires` lines (0.5, 0.20).
+
+`encode(<format>, entity)` at the top level (not as a layer) selects by
+`Entity.kind` when it names the format, then by `Entity.inner_kind` when it
+names the format, then by `requires`. The two orders differ on purpose: each
+looks first at the record made for the place being written. A named kind the
+pack does not have is `no-kind` (ruling 24 of 0.5), in both places.
+
+A key mapped by both packs is written by both from the one value the entity
+holds. Encode writes the inner message whenever the line is reached, also
+when the entity holds none of the inner pack's keys: the inner pack then
+selects a kind and writes its absent keys as it does at the top level.
+
+## Conversion
+
+`convert(from, to, …)` keeps `Entity.kind` when `from == to` (0.5), and also
+when `to` has an `inner` line (any of its `inner` lines) naming the format
+of `Entity.kind`. It keeps `Entity.inner_kind` when `from == to`, when it
+names `to`, or when it names the format of any `inner` line of `to`.
+Otherwise each is cleared before encode. So a message converted from an
+inner format to an outer one and back, or from the outer to the inner and
+back, keeps the inner message's kind. The inner bytes then come back as they
+were when the inner pack maps every bit it reads and no key mapped by both
+packs held different values in the two places (decode step 4 keeps one).
+
+## Capability
+
+`model_keys(<outer>)` (6a of 0.11) is computed when it is asked for, not at
+load. Each `inner` line is taken on its own: a line whose pack passes
+checks 1 to 4 above adds, at its place in reading order, the
+entries of `model_keys(<format>)` not yet listed by the lines before it, in
+their order; later outer lines add only entries not yet listed. List
+entries of the two packs with one name are joined as 6b joins them. An
+`inner` line whose pack does not pass the checks adds nothing, and
+`model_keys` and the capability report do not fail because of it: the
+failure is reported by decode and encode. An inner format and its outer
+pack therefore carry every key of the inner format between them and drop
+only the outer pack's own keys.
+
+## Vectors
+
+- A conversion vector's `model` may hold `"@inner_kind"`, the kind name
+  `Entity.inner_kind` must hold after decode, and `"@absent"` may list
+  `"@inner_kind"`.
+- `expect_error` of a conversion vector may be `bad-directive` or
+  `distribution-violation` for the checks made when the `inner` line is
+  reached.
+- Wherever packs are loaded for vectors (conversion, capability, the 0.25
+  benchmark), a pack named by an `inner` line of a loaded pack is loaded too,
+  from `packs/`, and so on for the packs loaded that way; a name with no
+  directory under `packs/` is skipped (its use is then `unknown-format`).
+
+## Rulings for 0.34
+
+1. **Reduced builds (0.24).** An outer pack is on `bits`, so a build without
+   `bits` refuses it. Ruling 1b of 0.24 (the same result in every build that
+   loads the pack) does not extend to the checks made at the `inner` line:
+   whether the inner pack is loaded may differ between builds. The
+   reduced-build check runs no vector of an outer pack.
+2. **Empty inner input.** The inner pack's result for no bytes: an error
+   when it needs bits, or an entity (a `rest` list of no items, present and
+   empty) when it reads none.
+3. **A whole length.** A `length … whole` before the `inner` line ends the
+   message extent; bytes of the input beyond it are not part of the inner
+   input.
+4. **No residue.** A `bits` inner message has no residue (the `bits` wire
+   keeps none), so a layered decode adds none.
+5. **One record.** `Entity.inner_kind` holds one pair. It is set by decode
+   only, and a decode that reads no `inner` line leaves it absent.
+6. **An empty input and kinds.** For an inner pack whose kinds have `when`
+   lines, an empty inner input selects no kind: `no-kind`, by ruling 21 of
+   0.5 (a `when` whose bits lie beyond the input does not hold), before any
+   line is read.
+7. **Counts of a discarded list.** An inner `count` is checked against the
+   remaining budget when it is read (7d), whether or not step 4 later
+   discards the list; "not counted" (7g) is about the items the decoded
+   entity holds.
+8. **`as` keys (Version 0.30) and an inner pack.** Packs are checked alone,
+   so an outer `when … as <k>` whose key the inner pack also maps loads (the
+   0.30 ban on a key named by `as` and mapped by a `field` in one reading path
+   does not reach into the inner pack). Decode keeps the first value read
+   (step 4); encode writes both from the one value.
+9. **A `when … as` of the inner pack on encode.** When the entity's value of
+   the key does not match the inner pack's `when`, the inner encode fails as
+   0.30 states, and the error stands at the `inner` line (Encode). A layered
+   encode can therefore fail where the inner pack's own round trip does not,
+   when an outer line read first gave the key another value.
+10. **A recorded inner kind and `as`.** A kind chosen by `Entity.inner_kind`
+    or `Entity.kind` (Encode, steps 1 and 2) is chosen by the kind recorded on
+    the entity in the sense of 0.30, so the implicit `as` term is not checked
+    for choosing it.

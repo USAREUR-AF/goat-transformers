@@ -80,6 +80,9 @@ pub enum SeqLine {
     /// `count <name> <len> [plus <n>]`: a count a later `group … count @<name>`
     /// uses (engine-spec v0.21)
     Count { id: usize, len: u32, plus: i64, line: usize },
+    /// `inner <format>` (engine-spec v0.34): the bytes to the end of the
+    /// enclosing extent are one message of another loaded pack
+    Inner { format: String, line: usize },
 }
 
 /// One `when` line of a sequential pack. `values`: every listed value and
@@ -317,7 +320,13 @@ impl SeqBody {
     /// The model keys the body maps, in first appearance order: a list is
     /// `<list>[]`, an item key `<list>[].<key>`.
     pub fn model_keys(&self, prefix: &str, out: &mut Vec<String>) {
-        fn lines(prefix: &str, ls: &[SeqLine], out: &mut Vec<String>) {
+        self.model_keys_with(prefix, out, &|_, _| {})
+    }
+
+    /// `model_keys`, with `inner` adding the entries of an `inner` line at
+    /// its place (engine-spec v0.34): it is given the format and the list so far.
+    pub fn model_keys_with(&self, prefix: &str, out: &mut Vec<String>, inner: &dyn Fn(&str, &mut Vec<String>)) {
+        fn lines(prefix: &str, ls: &[SeqLine], out: &mut Vec<String>, inner: &dyn Fn(&str, &mut Vec<String>)) {
             for l in ls {
                 match l {
                     SeqLine::Field { f, also, .. } => {
@@ -329,19 +338,19 @@ impl SeqBody {
                         }
                     }
                     SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
-                        lines(prefix, body, out)
+                        lines(prefix, body, out, inner)
                     }
-                    SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| lines(prefix, p, out)),
-                    SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| lines(prefix, p, out)),
+                    SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| lines(prefix, p, out, inner)),
+                    SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| lines(prefix, p, out, inner)),
                     SeqLine::Group(g) => {
                         let name = format!("{}{}[]", prefix, g.list);
                         if !out.contains(&name) {
                             out.push(name.clone());
                         }
-                        g.body.model_keys(&format!("{}.", name), out);
+                        g.body.model_keys_with(&format!("{}.", name), out, inner);
                     }
                     // keys mapped only inside a case are listed too (ruling 13 of 0.20)
-                    SeqLine::Switch(sw) => sw.bodies().for_each(|c| lines(prefix, &c.lines, out)),
+                    SeqLine::Switch(sw) => sw.bodies().for_each(|c| lines(prefix, &c.lines, out, inner)),
                     // a key bound by `as`, at its `when` line (ruling 5 of 0.30)
                     SeqLine::When(SeqWhen { key: Some(k), .. }) => {
                         let name = format!("{}{}", prefix, k);
@@ -349,11 +358,12 @@ impl SeqBody {
                             out.push(name);
                         }
                     }
+                    SeqLine::Inner { format, .. } => inner(format, out),
                     _ => {}
                 }
             }
         }
-        lines(prefix, &self.common, out);
+        lines(prefix, &self.common, out, inner);
         for k in &self.kinds {
             for w in &k.whens {
                 if let Some(key) = &w.key {
@@ -363,7 +373,7 @@ impl SeqBody {
                     }
                 }
             }
-            lines(prefix, &k.lines, out);
+            lines(prefix, &k.lines, out, inner);
         }
     }
 }
@@ -1247,6 +1257,13 @@ impl<'a> Parser<'a> {
                 self.names.push((name.clone(), id, Named::Count(self.body_depth)));
                 SeqLine::Count { id, len, plus, line: ln }
             }
+            // engine-spec v0.34: where it may stand is checked after the file is read
+            "inner" => {
+                if toks.len() != 2 {
+                    return bad(ln, "inner needs <format>");
+                }
+                SeqLine::Inner { format: toks[1].clone(), line: ln }
+            }
             "case" | "else" => return bad(ln, format!("`{}` outside a `switch`", toks[0])),
             "fx" => return bad(ln, "`fx` outside a `chain`"),
             "also" => return bad(ln, "`also` stands directly after a `field` line"),
@@ -1454,6 +1471,10 @@ fn check_rest_lines(lines: &[SeqLine], after: bool, allow: bool) -> Result<(), E
     for (i, l) in lines.iter().enumerate() {
         let after = after || lines[i + 1..].iter().any(wire_line);
         match l {
+            // engine-spec v0.34: `inner` is the last wire line of its extent, as a `rest` group is
+            SeqLine::Inner { format, line } if after => {
+                return bad(*line, format!("`inner {}` is not the last line of its extent", format));
+            }
             SeqLine::Group(g) => {
                 if g.rep == Rep::Rest {
                     if !allow {
@@ -1565,6 +1586,78 @@ fn check_as(body: &SeqBody) -> Result<(), Error> {
     Ok(())
 }
 
+/// Engine-spec v0.34: where an `inner` line may stand. In the common lines,
+/// in a kind and inside `length` blocks at any depth; anywhere else
+/// `bad-directive`. At most one on any reading path (ruling 33 of 0.21).
+/// The last-line rule is checked with `rest` (`check_rest_lines`).
+fn check_inner(body: &SeqBody) -> Result<(), Error> {
+    /// every `inner` line under a block it may not stand in
+    fn misplaced(lines: &[SeqLine], allowed: bool) -> Option<usize> {
+        lines.iter().find_map(|l| match l {
+            SeqLine::Inner { line, .. } if !allowed => Some(*line),
+            SeqLine::Length { body, .. } => misplaced(body, allowed),
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Ext { body } => misplaced(body, false),
+            SeqLine::Chain { parts, .. } => parts.iter().find_map(|p| misplaced(p, false)),
+            SeqLine::Choice { alts, .. } => alts.iter().find_map(|(_, p)| misplaced(p, false)),
+            SeqLine::Switch(sw) => sw.bodies().find_map(|c| misplaced(&c.lines, false)),
+            SeqLine::Group(g) => {
+                misplaced(&g.body.common, false).or_else(|| g.body.kinds.iter().find_map(|k| misplaced(&k.lines, false)))
+            }
+            _ => None,
+        })
+    }
+    if let Some(ln) = misplaced(&body.common, true).or_else(|| body.kinds.iter().find_map(|k| misplaced(&k.lines, true))) {
+        return bad(ln, "`inner` stands only in the common lines, in a kind or inside `length` blocks");
+    }
+    /// the `inner` lines of these lines, `length` blocks entered, in line order
+    fn found(lines: &[SeqLine], out: &mut Vec<usize>) {
+        for l in lines {
+            match l {
+                SeqLine::Inner { line, .. } => out.push(*line),
+                SeqLine::Length { body, .. } => found(body, out),
+                _ => {}
+            }
+        }
+    }
+    let mut common = Vec::new();
+    found(&body.common, &mut common);
+    if common.len() > 1 {
+        return bad(common[1], "a second `inner` line on one reading path");
+    }
+    for k in &body.kinds {
+        let mut path = common.clone();
+        found(&k.lines, &mut path);
+        if path.len() > 1 {
+            return bad(path[1], format!("a second `inner` line on one reading path (kind `{}`)", k.name));
+        }
+    }
+    Ok(())
+}
+
+/// Every `inner` line of a body: (format, line), in line order.
+pub(crate) fn inner_lines(body: &SeqBody) -> Vec<(&str, usize)> {
+    fn walk<'a>(lines: &'a [SeqLine], out: &mut Vec<(&'a str, usize)>) {
+        for l in lines {
+            match l {
+                SeqLine::Inner { format, line } => out.push((format, *line)),
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => walk(body, out),
+                SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| walk(p, out)),
+                SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| walk(p, out)),
+                SeqLine::Switch(sw) => sw.bodies().for_each(|c| walk(&c.lines, out)),
+                SeqLine::Group(g) => {
+                    walk(&g.body.common, out);
+                    g.body.kinds.iter().for_each(|k| walk(&k.lines, out));
+                }
+                _ => {}
+            }
+        }
+    }
+    let mut out = Vec::new();
+    walk(&body.common, &mut out);
+    body.kinds.iter().for_each(|k| walk(&k.lines, &mut out));
+    out
+}
+
 /// Parse a `layout sequential` pack.
 pub fn parse(text: &str) -> Result<Pack, Error> {
     let mut lines: Vec<(usize, Vec<String>)> = Vec::new();
@@ -1635,6 +1728,8 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         return err("missing-version: the pack has no `version` line");
     }
     check_counts(&body)?;
+    // engine-spec v0.34: the block and path checks of `inner`, then its last-line check
+    check_inner(&body)?;
     check_rest_body(&body, false, true)?;
     match p.wire.as_deref() {
         Some("bits") => {}
@@ -1655,6 +1750,10 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
     }
     if armor == crate::armor::Armor::Sixbit {
         crate::armor::check_no_whole(&body)?;
+    }
+    // engine-spec v0.34: no `inner` line in a pack with `armor sixbit` or `encoding uper` (`armor hex` is the default)
+    if let Some((format, ln)) = inner_lines(&body).first().filter(|_| armor == crate::armor::Armor::Sixbit || uper) {
+        return bad(*ln, format!("`inner {}` in a pack with `armor sixbit` or `encoding uper`", format));
     }
     for (table, ln) in &p.vias {
         if !p.maps.iter().any(|(name, _)| name == table) {
@@ -1730,6 +1829,41 @@ pub(crate) struct Reader<'a> {
     /// per `count` line id: the number of items it states, None when the
     /// line lay at or past the end of a `length` extent (engine-spec v0.21)
     counts: HashMap<usize, Option<u64>>,
+    /// the engine that finds the pack of an `inner` line (engine-spec v0.34);
+    /// None: a codec called without an engine, where no format is loaded
+    host: Option<&'a dyn InnerHost>,
+    /// the lists an inner message gave the entity: no later group replaces them
+    inner_lists: Vec<String>,
+}
+
+/// What a sequential layout needs of the engine for an `inner` line
+/// (engine-spec v0.34).
+#[cfg(feature = "bits")]
+pub(crate) trait InnerHost {
+    /// Checks 1 to 4 of "Reaching the `inner` line", in order.
+    fn inner_check(&self, outer: &Pack, format: &str) -> Result<(), Error>;
+    /// `decode(<format>, bytes)` of a pack that passed the checks. `held`:
+    /// the lists the outer entity holds, which keep their items: the items
+    /// of the inner lists of those names are not counted (7g of 0.11).
+    fn inner_decode(&self, format: &str, bytes: &[u8], held: Vec<String>) -> Result<Entity, Error>;
+    /// `encode(<format>, entity)` as a layer: the inner kind chosen by
+    /// `Entity.inner_kind`, then `Entity.kind`, then `requires`.
+    fn inner_encode(&self, format: &str, ent: &Entity) -> Result<Vec<u8>, Error>;
+}
+
+/// The checks made when decode or encode reaches an `inner` line: with no
+/// engine, no format is loaded.
+#[cfg(feature = "bits")]
+fn inner_host<'h>(host: Option<&'h dyn InnerHost>, outer: &Pack, format: &str) -> Result<&'h dyn InnerHost, Error> {
+    let h = host.ok_or_else(|| Error { msg: format!("unknown-format: no pack loaded for format `{}`", format) })?;
+    h.inner_check(outer, format)?;
+    Ok(h)
+}
+
+/// An error of an inner message keeps its kind and names both formats.
+#[cfg(feature = "bits")]
+fn inner_error(outer: &Pack, e: Error) -> Error {
+    Error { msg: format!("{} (the `inner` message of format `{}`)", e.msg, outer.format) }
 }
 
 #[cfg(feature = "bits")]
@@ -1834,7 +1968,12 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
         // switch there still selects, and its lines read as absent (ruling 14 of 0.20)
         // an `if` or a chain there is read the same way, so that a `rest` group
         // in it is present and empty (ruling 3 of 0.21)
-        if r.depth > 0 && r.pos >= r.end && !matches!(line, SeqLine::Switch(_) | SeqLine::If { .. } | SeqLine::Chain { .. }) {
+        // an `inner` line there is still read: its pack is called for no bytes
+        // (engine-spec v0.34, Decode step 3)
+        if r.depth > 0
+            && r.pos >= r.end
+            && !matches!(line, SeqLine::Switch(_) | SeqLine::If { .. } | SeqLine::Chain { .. } | SeqLine::Inner { .. })
+        {
             match line {
                 SeqLine::Presence { id, .. } => {
                     r.presence.insert(*id, Vec::new());
@@ -2009,7 +2148,13 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
             SeqLine::Group(g) => {
                 let mut items: Vec<Decoded> = Vec::new();
                 let format = r.p.format.clone();
-                d.replacing(&g.list);
+                // a list an inner message gave the entity is kept (engine-spec v0.34)
+                let kept_inner = r.inner_lists.contains(&g.list);
+                if !kept_inner {
+                    d.replacing(&g.list);
+                }
+                // an inner list the outer entity discards is not counted (engine-spec v0.34)
+                let _uncounted = limit::group(&g.list);
                 // a counted group takes its items at once (7d)
                 let counted = matches!(g.rep, Rep::Count(_));
                 let item = |r: &mut Reader, items: &mut Vec<Decoded>| -> Result<(), Error> {
@@ -2017,6 +2162,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                         limit::take(&format, &g.list, 1)?;
                     }
                     let mut di = Decoded::new();
+                    let _item = limit::item();
                     let kind = decode_body(&g.body, r, &mut di)?;
                     di.ent.kind = kind.map(|k| (format.clone(), k.name.clone()));
                     items.push(di);
@@ -2025,7 +2171,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 match &g.rep {
                     Rep::Count(len) => {
                         let n = r.read(*len, "the count of a group")?;
-                        limit::take(&format, &g.list, n)?;
+                        limit::take_count(&format, &g.list, n)?;
                         if n > r.end.saturating_sub(r.pos) {
                             return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
                         }
@@ -2094,7 +2240,11 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                         }
                     },
                 }
-                d.put_list(&g.list, items);
+                if kept_inner {
+                    limit::release(items.len() as u64 + items.iter().map(|i| limit::items_of(&i.ent.lists)).sum::<u64>());
+                } else {
+                    d.put_list(&g.list, items);
+                }
             }
             SeqLine::Switch(sw) => {
                 // the key's value so far, as canonical text (engine-spec v0.20)
@@ -2121,6 +2271,45 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 }
                 decode_lines(&case.lines, r, d)?;
             }
+            SeqLine::Inner { format, .. } => {
+                let h = inner_host(r.host, r.p, format)?;
+                // Decode steps 1 and 2: whole bytes from the start of the message
+                if r.pos % 8 != 0 {
+                    return Err(r.short(format!("the `inner {}` message starts at bit {}, inside a byte", format, r.pos)));
+                }
+                if r.end > r.raw.len() as u64 * 8 || r.end % 8 != 0 {
+                    return Err(r.short(format!("the extent of the `inner {}` message ends at bit {}, not on a whole byte of the input", format, r.end)));
+                }
+                let start = r.pos.min(r.end);
+                let bytes = &r.raw[(start / 8) as usize..(r.end / 8) as usize];
+                r.pos = r.end.max(r.pos);
+                match h.inner_decode(format, bytes, d.ent.lists.keys().cloned().collect()) {
+                    Ok(inner) => {
+                        // step 4: the first value read in reading order is kept
+                        for (k, v) in inner.fields {
+                            if !d.ent.fields.contains_key(&k) && !d.hard_keys.contains(&k) {
+                                d.ent.fields.insert(k, v);
+                            }
+                        }
+                        for (list, items) in inner.lists {
+                            // the outer list read first is kept whole: the inner items
+                            // were not counted (7g)
+                            if !d.ent.lists.contains_key(&list) {
+                                r.inner_lists.push(list.clone());
+                                d.ent.lists.insert(list, items);
+                            }
+                        }
+                        // step 5
+                        d.ent.inner_kind = inner.kind;
+                    }
+                    // a failed field of the inner message fails the decode as an outer one
+                    // would; a failure of the wire read later still comes first (7f)
+                    Err(e) if e.msg.starts_with("transform-decode:") => d.hard.push(inner_error(r.p, e).msg),
+                    // an error that stops the decode (`malformed-wire`, `no-kind`, a
+                    // failed check) is reported ahead of any `transform-decode` before it
+                    Err(e) => return Err(inner_error(r.p, e)),
+                }
+            }
             SeqLine::Count { id, len, plus, .. } => {
                 let v = r.read(*len, "a `count`")?;
                 // `value − n` without overflow; below `n` is checked here (ruling 7 of 0.21)
@@ -2139,7 +2328,15 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
 /// `total`: the bits of the input (8 a byte of hex, 6 a character of armor).
 #[cfg(feature = "bits")]
 pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8], total: u64) -> Result<Entity, Error> {
+    decode_host(p, body, raw, total, None)
+}
+
+/// `decode` with the engine that finds the pack of an `inner` line.
+#[cfg(feature = "bits")]
+pub(crate) fn decode_host(p: &Pack, body: &SeqBody, raw: &[u8], total: u64, host: Option<&dyn InnerHost>) -> Result<Entity, Error> {
     let mut r = Reader {
+        host,
+        inner_lists: Vec::new(),
         p,
         raw,
         pos: 0,
@@ -2312,6 +2509,8 @@ impl<'a> Defaults<'a> {
 #[cfg(feature = "bits")]
 struct Look<'p> {
     p: &'p Pack,
+    /// the engine that finds the pack of an `inner` line (engine-spec v0.34)
+    host: Option<&'p dyn InnerHost>,
     /// (entity, switch line) -> case
     picks: std::cell::RefCell<HashMap<(usize, usize), Pick>>,
     changed: std::cell::Cell<bool>,
@@ -2633,6 +2832,8 @@ fn write_uper_line(
 fn read_back_uper(p: &Pack, f: &FieldDef, loc: &crate::uper::Loc, also: &[FieldDef], buf: &[u8], at: u64, back: &mut Decoded) {
     let end = buf.len() as u64 * 8;
     let mut r = Reader {
+        host: None,
+        inner_lists: Vec::new(),
         p,
         raw: buf,
         pos: at,
@@ -3018,6 +3219,17 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
             // the field holds `n` until its group is laid out: a group not
             // reached leaves it so (ruling 6 of 0.21)
             // (checked in `encode` once every group is written)
+            // engine-spec v0.34: the checks, a whole byte, then the inner message
+            SeqLine::Inner { format, .. } => {
+                let h = inner_host(w.look.host, p, format)?;
+                if w.pos % 8 != 0 {
+                    return Err(w.fail(format!("the `inner {}` message would start at bit {}, inside a byte", format, w.pos)));
+                }
+                let bytes = h.inner_encode(format, ent).map_err(|e| inner_error(p, e))?;
+                let at = (w.pos / 8) as usize;
+                w.zeros(bytes.len() as u64 * 8);
+                w.buf[at..at + bytes.len()].copy_from_slice(&bytes);
+            }
             SeqLine::Count { id, len, plus, .. } => {
                 w.counts.insert(*id, w.count_fields.len());
                 w.count_fields.push((w.pos, *len, *plus, false));
@@ -3036,7 +3248,13 @@ pub fn encode(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<Vec<u8>, Error> 
 /// The message as whole bytes, and the cursor after the last line.
 #[cfg(feature = "bits")]
 pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u64), Error> {
-    let look = Look { p, picks: Default::default(), changed: Default::default() };
+    encode_host(p, body, ent, None)
+}
+
+/// `encode_bits` with the engine that finds the pack of an `inner` line.
+#[cfg(feature = "bits")]
+pub(crate) fn encode_host(p: &Pack, body: &SeqBody, ent: &Entity, host: Option<&dyn InnerHost>) -> Result<(Vec<u8>, u64), Error> {
+    let look = Look { p, host, picks: Default::default(), changed: Default::default() };
     // a pass whose switches select other cases than were looked up runs again
     let mut pass = 0;
     let mut w = loop {

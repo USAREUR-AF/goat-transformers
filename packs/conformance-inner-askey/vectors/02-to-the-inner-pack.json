@@ -1,0 +1,9 @@
+{
+  "name": "to-the-inner-pack",
+  "from": "conformance-inner-askey",
+  "to": "conformance-inner-fixed",
+  "input": "052307",
+  "expect": "2507",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 8: the entity holds x 5, y 2, z 7; conformance-inner-fixed writes x 5 in the low nibble and y 2 in the high nibble (0x25), then z (0x07)"
+}

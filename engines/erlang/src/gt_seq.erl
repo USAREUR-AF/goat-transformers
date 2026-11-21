@@ -21,14 +21,24 @@
 %% unit    how the innermost extent is counted: bytes (the message, `length
 %%         ... bytes`) or bits (`length ... bits`), for a `rest` group (0.21)
 %% counts  #{CountId => Items | absent}: the counts read (0.21)
+%% 0.34 (a message of another pack inside a field):
+%% top     the scope is the message, not an item
+%% taken   #{List => _}: lists of the message read first by the other pack of
+%%         a layer (the outer pack's before an inner message, the inner
+%%         message's after it); a group of the message for one of them is
+%%         read and its items discarded and not counted
+%% uncounted  reading such a group: its items are not counted
+%% inner_kind  the kind the inner pack selected
 -record(d, {msg, hard, pos = 0, model = #{}, lists = #{}, failed = [], env = #{},
-            pack, named, static = #{}, pending = [], unit = bytes, counts = #{}}).
+            pack, named, static = #{}, pending = [], unit = bytes, counts = #{},
+            top = true, taken = #{}, uncounted = false, inner_kind}).
 
 decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} = Pack, Bytes) ->
     Msg = gt_bits:open(gt_engine:unwire(Pack, Bytes), maps:get(bit_order, Pack)),
     D0 = #d{msg = Msg, hard = gt_bits:bit_size(Msg), pack = Pack,
             named = maps:get(presence_named, Pack),
-            static = maps:get(presence_static, Pack, #{})},
+            static = maps:get(presence_static, Pack, #{}),
+            taken = maps:get(shadow, Pack, #{})},
     D1 = lines(Common, none, D0),
     {Kind, D2} = case HasKinds of
                      false -> {undefined, D1};
@@ -41,7 +51,8 @@ decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} 
         [] -> ok;
         [{_, B} | _] -> malformed(D2, "presence bit ~p is 1 and no if block of the lines read names it", [B])
     end,
-    #{model => D2#d.model, lists => D2#d.lists, residue => [], src => Name, kind => Kind}.
+    #{model => D2#d.model, lists => D2#d.lists, residue => [], src => Name, kind => Kind,
+      inner_kind => D2#d.inner_kind}.
 
 %% A key whose every line failed its transform fails the decode.
 check_failed(#d{failed = Failed, model = Model, pack = Pack}) ->
@@ -299,6 +310,58 @@ line({scount, Id, Len, Plus}, Ext, #d{pos = Pos, counts = Cs} = D) ->
                 false -> D#d{pos = Pos + Len, counts = Cs#{Id => V - Plus}}
             end
     end;
+%% 0.34: a list of the message the other pack of a layer read first keeps
+%% its items; this group is read, its count checked against the limit
+%% (ruling 7 of 0.34), and its items are discarded and not counted
+line({sgroup, List, Mode, Body}, Ext, #d{top = true, taken = Taken} = D)
+  when is_map_key(List, Taken) ->
+    Saved = gt_engine:items_get(),
+    case group(Mode, Body, Ext, D#d{uncounted = true}, fun() -> ok end) of
+        absent -> D;
+        {_Items, D1} ->
+            gt_engine:items_put(Saved),
+            D1#d{uncounted = D#d.uncounted}
+    end;
+%% `inner <format>` (0.34): the bytes from the cursor to the end of the
+%% extent are one message of the inner pack, decoded into this entity
+line({inner, Format}, Ext, #d{pos = Pos, pack = Pack} = D) ->
+    Inner = try gt_engine:inner_pack(Pack, Format)
+            catch error:{convert_error, _, _} = Err -> gt_engine:pass(Err)
+            end,
+    case Pos rem 8 of
+        0 -> ok;
+        _ -> malformed(D, "the inner message would start at bit ~p, inside a byte", [Pos])
+    end,
+    End = max(Pos, limit(Ext, D)),
+    case End rem 8 of
+        0 -> ok;
+        _ -> malformed(D, "the extent of the inner message ends at bit ~p, inside a byte", [End])
+    end,
+    case End =< gt_bits:bit_size(D#d.msg) of
+        true -> ok;
+        false -> malformed(D, "the extent of the inner message ends beyond the input", [])
+    end,
+    Hex = gt_hex:bytes_to_hex(gt_bits:slice(D#d.msg, Pos, End)),
+    IE = try gt_engine:decode_inner(Inner#{shadow => D#d.lists}, Hex)
+         catch error:{convert_error, Kind, _} = Err2:St ->
+             %% among transform-decode errors the earliest in reading order:
+             %% a field of the outer lines read so far that failed; an
+             %% error that stops the decode is reported ahead of it
+             case Kind of
+                 'transform-decode' -> check_failed(D);
+                 _ -> ok
+             end,
+             erlang:raise(error, Err2, St)
+         end,
+    %% the first value read is kept: the outer keys read so far win
+    Lists = D#d.lists,
+    {Kept, Dropped} = lists:partition(fun({L, _}) -> not maps:is_key(L, Lists) end,
+                                      maps:to_list(maps:get(lists, IE, #{}))),
+    [gt_engine:items_release(gt_engine:items_held(Is)) || {_, Is} <- Dropped],
+    KeptMap = maps:from_list(Kept),
+    D#d{pos = End, model = maps:merge(maps:get(model, IE), D#d.model),
+        lists = maps:merge(Lists, KeptMap), taken = maps:merge(D#d.taken, KeptMap),
+        inner_kind = maps:get(kind, IE, undefined)};
 line({sgroup, List, Mode, Body}, Ext, D) ->
     %% a later group of a list replaces the items of an earlier one; those
     %% are no longer counted against the limit (ruling 7g of 0.11)
@@ -570,12 +633,13 @@ fx_items(Body, Ext, D, Acc) ->
 
 %% One item at the cursor: the lines common to every item, then the kind
 %% its `when` lines select.
+item(Body, Ext, #d{uncounted = true} = D) -> item_lines(Body, Ext, D);
 item(Body, Ext, D) ->
     gt_engine:items_reserve(1, D#d.pack),
     item_lines(Body, Ext, D).
 
-item_lines(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, failed = F} = D) ->
-    D1 = lines(Common, Ext, D#d{model = #{}, lists = #{}, failed = []}),
+item_lines(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, failed = F, top = Top} = D) ->
+    D1 = lines(Common, Ext, D#d{model = #{}, lists = #{}, failed = [], top = false}),
     {Item, D2} =
         case Kinds of
             [] -> {#{model => D1#d.model, lists => D1#d.lists}, D1};
@@ -585,7 +649,7 @@ item_lines(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, fa
                    kind => {maps:get(name, D#d.pack), K}}, Dk}
         end,
     check_failed(D2),
-    {Item, D2#d{model = M, lists = Ls, failed = F}}.
+    {Item, D2#d{model = M, lists = Ls, failed = F, top = Top}}.
 
 %% ---- ASN.1 unaligned PER (0.19) ----
 -define(I64MIN, -9223372036854775808).
@@ -791,7 +855,7 @@ uscale(V, {frac, Num, Den}, O) -> float(V) * Num / Den + O.
 
 encode(Pack, Lines, Defaults, Entity) ->
     Src = #{model => maps:get(model, Entity), lists => maps:get(lists, Entity, #{}),
-            defaults => Defaults},
+            defaults => Defaults, entity => Entity},
     #e{pos = End, segs = Segs, cvals = CVals, starts = Starts} =
         case maps:get(has_switch, Pack, false) of
             false -> elines(Lines, Src, #e{pack = Pack});
@@ -965,6 +1029,19 @@ eline({sfield, _, Len, _, _, _, _, _, _} = L, _Rest, Src, #e{pack = Pack, wrote 
         true -> E1#e{wrote = read_back(L, Raw, W, Pack)};
         false -> E1
     end;
+%% `inner <format>` (0.34): encode(<format>, entity) written at the cursor,
+%% which stands on a whole byte
+eline({inner, Format}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) ->
+    Inner = gt_engine:inner_pack(Pack, Format),
+    case Pos rem 8 of
+        0 -> ok;
+        _ -> gt_engine:conv_error('transform-encode', Pack,
+                                  "the inner message would start at bit ~p, inside a byte", [Pos])
+    end,
+    Bytes = gt_engine:encode_inner(Inner, maps:get(entity, Src)),
+    Order = maps:get(bit_order, Pack),
+    lists:foldl(fun(B, Acc) -> emit(8, gt_bits:byte_value(B, Order), Acc) end, E,
+                binary_to_list(Bytes));
 eline({sconst, Len, Val}, _Rest, _Src, E) -> emit(Len, Val, E);
 eline({swhen, Len, Val, none}, _Rest, _Src, E) -> emit(Len, gt_pack:when_first(Val), E);
 eline({swhen, Len, _, Key} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->

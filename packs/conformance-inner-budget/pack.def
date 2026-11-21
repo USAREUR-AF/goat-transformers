@@ -1,0 +1,17 @@
+# Conformance probe pack for the item limit shared by the outer and the inner
+# lines (spec 0.34, max_items), most significant bit first. Public. No kinds.
+#
+#   deltas      an 8-bit count, then that many items, val in 8 bits each, signed
+#   the rest    one conformance-inner-restonly message
+format     conformance-inner-budget
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.deltas count 8
+  field  probe.val  8  twos
+end
+inner   conformance-inner-restonly

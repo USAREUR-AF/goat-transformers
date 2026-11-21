@@ -31,7 +31,7 @@ Everything is in `src/lib.rs`. The types a caller uses:
 | Type | Holds |
 |---|---|
 | `Engine` | the loaded model modules and packs |
-| `Entity` | one decoded message: `fields` (model key to `Value`), `lists`, `residue` (what the model does not hold, kept for a round trip) and `kind` |
+| `Entity` | one decoded message: `fields` (model key to `Value`), `lists`, `residue` (what the model does not hold, kept for a round trip), `kind` and `inner_kind` (the kind the pack of an `inner` line selected, spec 0.34) |
 | `Value` | `Str(String)`, `F64(f64)` or `I64(i64)` |
 | `Error` | `msg`; a conversion error starts with its kind and a colon, e.g. `undeclared-key: ...` |
 | `Distribution` | `Public` or `Controlled` |
@@ -182,9 +182,9 @@ zz-first-by-format	lic-aa	Apache-2.0	open
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 23349 conversion vectors, 1312 load vectors, 18 capability vectors, 0 failed |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 23621 conversion vectors, 1350 load vectors, 24 capability vectors, 0 failed |
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 6633645 inputs over 4481 packs and 23346 vectors |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 6713283 inputs over 4536 packs and 23618 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
 | `tests/cbor.rs` | spec 0.28: the `cbor` wire on byte strings built by hand from RFC 8949: heads of every length, the core deterministic encoding (key order, shortest floats), the depth limit, equal keys, UTF-8 across chunks, tags, residue and the `tag` directive | 17 tests |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
@@ -206,7 +206,7 @@ cargo run --release --manifest-path engines/rust/Cargo.toml --example bench -- b
 ```
 
 `examples/bench.rs` loads only the packs the set's vectors name (`packs/<format>/pack.def`
-for each `from` and `to`) and the model modules they use (`model/<module>.def`,
+for each `from` and `to`), the packs their `inner` lines name (spec 0.34), and the model modules they use (`model/<module>.def`,
 `core` first, each module after those it uses) into one `Engine`, and times
 that. Then, for each vector in order, it converts the input once and checks the
 output against `expect`, then converts it `iterations` times and times that.
@@ -225,6 +225,20 @@ the tag tree of each kind, and the entity-independent line order of each
 `xml` scope. A `layout sequential` pack is resolved at load already. A conversion
 reads it and never writes it, so one `Engine` converts on several threads at
 once (`tests/parse_once.rs`).
+
+## A message of another pack inside a field
+
+Spec 0.34. An `inner <format>` line of a `layout sequential` `bits` pack hands
+the bytes to the end of its extent to another loaded pack, which decodes them
+into the same entity and encodes them back from it. The inner pack is looked
+up when decode or encode reaches the line (`src/seq.rs`, the `InnerHost`
+the `Engine` implements), never at load, so packs load in any order; a codec
+called without an engine (`bits::decode`) finds no inner format. The kind the
+inner pack selected is `Entity.inner_kind`. `model_keys` and `capability` of
+an outer pack add the inner pack's keys at the line's place when the inner
+pack passes the checks. `tests/vectors.rs` loads every pack, so the packs
+`inner` lines name are loaded too; `examples/bench.rs` loads them with the
+packs the set names.
 
 ## Builds with fewer wires
 
@@ -274,9 +288,9 @@ another set. Measured on 2026-11-21 with rustc 1.99.1 on x86_64 Linux:
 
 | Reduced build (`xml,json,geojson`) | Measured |
 |---|---|
-| conversion vectors | 8357 run, 0 failed (14992 on other wires left out) |
-| load vectors | 389 run, 0 failed (923 left out) |
-| capability vectors | 16 run, 0 failed (2 left out) |
+| conversion vectors | 8375 run, 0 failed (15246 on other wires left out) |
+| load vectors | 391 run, 0 failed (959 left out) |
+| capability vectors | 16 run, 0 failed (8 left out) |
 | `unknown-wire` loads | 5 of 5: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv), `conformance-cbor` (cbor) |
 
 | Release artifact | All eight wires | `xml,json,geojson` |

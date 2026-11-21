@@ -147,11 +147,11 @@ cd build && ctest --output-on-failure
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
 
-Measured on 2026-11-21 (Release, all eight wires, through Version 0.30,
-`when … as`, after 0.28's `cbor` wire): all seven ctest entries pass;
-`vectors` ran 23349 of 23349 conversion vectors, 1312 of 1312 load vectors
-and 18 of 18 capability vectors; `unit` made 2144 checks, none failed. `tool_vectors` passed
-135 of 135.
+Measured on 2026-11-21 (Release, all eight wires, through Version 0.34,
+with 0.30's `when … as`): all seven ctest entries pass;
+`vectors` ran 23621 of 23621 conversion vectors, 1350 of 1350 load vectors
+and 24 of 24 capability vectors; `unit` made 2154 checks, none failed;
+`tool_vectors` passed 135 of 135.
 
 ## What an instance keeps
 
@@ -176,6 +176,17 @@ setters (`set_max_items`, `set_max_distribution`) and the loading functions
 change the instance and are not to be called while another thread converts.
 Packs are shared by copies of an `Engine`. Loading reads each file once (1d).
 
+## A message of another pack inside a field
+
+An `inner <format>` line of a `layout sequential` pack (`spec/engine-spec.md`,
+Version 0.34) hands the bytes from the cursor to the end of its extent to the
+pack of that format. The inner pack is looked up when decode or encode reaches
+the line (`detail::InnerHost`, `src/sequential.hpp`, served by the `Engine`),
+not when the outer pack loads, so packs load in any order. The kind the inner
+pack selected is `Entity::inner_kind`, a `(format, kind name)` pair beside
+`Entity::kind`; both are empty when nothing was selected. `Pack::inner_formats`
+lists the formats of a pack's `inner` lines.
+
 ## Benchmark
 
 `goat-bench` runs the benchmark set `bench/set.json` (engine-spec.md 0.25,
@@ -189,7 +200,8 @@ engines/cpp/build-release/goat-bench bench/set.json
 
 It loads into one instance the packs the set's vectors name (each vector's
 `from` and `to`, a format's pack being the directory of that name in
-`packs`) with the modules they use (`Engine::load_packs`), and times the
+`packs`, and the packs their `inner` lines name, transitively, a name with no
+directory there skipped: Version 0.34) with the modules they use (`Engine::load_packs`), and times the
 load. For each vector in order it converts the input once and compares the
 output with `expect`, then converts it `iterations` times and times that.
 Standard output holds one line per vector,

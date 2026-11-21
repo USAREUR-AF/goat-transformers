@@ -1,0 +1,14 @@
+{
+  "name": "round-trip-inner-kind-p",
+  "from": "conformance-inner-pick",
+  "to": "conformance-inner-pick",
+  "input": "090105",
+  "expect": "090105",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@inner_kind": "p"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 5 and Encode step 1"
+}

@@ -583,6 +583,11 @@ public final class Pack {
     boolean armorSixbit;
     /** bits wire: {@code encoding uper}, ASN.1 unaligned PER (engine-spec 0.19). */
     boolean uper;
+    /**
+     * The formats the {@code inner} lines name (engine-spec 0.34), in file order; empty for a pack with none. Nothing
+     * about them is checked at load.
+     */
+    public List<String> innerFormats = List.of();
     /** tlv wire: bytes of a fixed tag, 0 for {@code ber-oid}. */
     int tlvTagSize;
     /** tlv wire: bytes of a fixed length, 0 for {@code ber}. */
@@ -674,10 +679,16 @@ public final class Pack {
      * The union of model keys over the common lines and every kind, in first appearance order. A list is named
      * {@code <list>[]} and each key of its items {@code <list>[].<key>}, nested lists likewise.
      */
-    public List<String> modelKeys() {
+    public List<String> modelKeys() { return modelKeys(f -> null); }
+
+    /**
+     * As {@link #modelKeys()}; each {@code inner} line adds, at its place, the entries {@code inner} gives for its
+     * format, or nothing when it gives null (engine-spec 0.34, Capability).
+     */
+    List<String> modelKeys(java.util.function.Function<String, List<String>> inner) {
         LinkedHashSet<String> out = new LinkedHashSet<>();
         if (seq != null) {
-            Seq.modelKeys(seq, "", out);
+            Seq.modelKeys(seq, "", out, inner);
             return new ArrayList<>(out);
         }
         Set<Line> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
@@ -725,7 +736,8 @@ public final class Pack {
             "element",    // engine-spec 0.18
             "encoding", "ext", "choice", "alt",   // 0.19: directives on every wire (ruling 21)
             "switch", "case", "else",   // engine-spec 0.20
-            "count");   // engine-spec 0.21
+            "count",    // engine-spec 0.21
+            "inner");   // engine-spec 0.34
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
@@ -733,11 +745,13 @@ public final class Pack {
             "armor",    // armor: ruling 13 of 0.14
             "tag",      // tag: exactly one argument, checked as the line is read (engine-spec 0.28)
             "element",  // element (0.18): its count does not depend on the layout (step 3 of 5b of 0.11)
-            "encoding", "alt");   // 0.19, ruling 23: counted at step 3 of 5b, as armor is
+            "encoding", "alt",   // 0.19, ruling 23: counted at step 3 of 5b, as armor is
+            "inner");   // 0.34: one format name
 
     /** The lines that stand after the {@code wire} line (ruling 5b of 0.11); one before it is {@code missing-wire}. */
     private static final Set<String> AFTER_WIRE = Set.of("root", "field", "when", "const", "group", "end", "word_bytes",
-            "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length");
+            "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
+            "inner");   // engine-spec 0.34
 
     /** Every transform of the specification, by the text before its first {@code :}. */
     private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "iso8601_short", "iso8601_s", "bool", "uint", "twos",
@@ -1115,6 +1129,7 @@ public final class Pack {
         // a later line's own line check wins over it. The lines after it are still read, their failures dropped.
         RuntimeException deferred = null;
         int firstGate = 0;   // the line of the first gate block, 0 when there is none
+        int fixedInnerLine = 0;   // the first inner line of a pack without layout sequential (engine-spec 0.34)
         int firstElement = 0;   // the line of the first element line, 0 when there is none
         for (int i = 0; i < lines.length; i++) {
             int ln = i + 1;
@@ -1174,6 +1189,11 @@ public final class Pack {
                 }
             }
             if (kw.equals("kind") && firstKindLine == 0) firstKindLine = ln;
+            if (seq == null && kw.equals("inner")) {
+                // engine-spec 0.34: a line of a layout sequential bits pack; elsewhere refused after the file is read
+                if (fixedInnerLine == 0) fixedInnerLine = ln;
+                continue;
+            }
             if (seq != null && kw.equals("length") && args.contains("whole") && wholeLine == 0) wholeLine = ln;
             if (seq != null) {
                 if (Seq.LINES.contains(kw)) {
@@ -1455,6 +1475,9 @@ public final class Pack {
         if (fixedUperLine != 0) {
             throw badDirective(format, null, source + ":" + fixedUperLine + ": ext, choice and alt are lines of a pack with encoding uper (wire bits, layout sequential)");
         }
+        if (fixedInnerLine != 0) {
+            throw badDirective(format, null, source + ":" + fixedInnerLine + ": inner is a line of a pack with wire bits and layout sequential");
+        }
         Seq.Body seqRoot = null;
         if (seq != null) {
             if (wire != null && wire != Wire.BITS) {
@@ -1521,6 +1544,9 @@ public final class Pack {
                     + ": UPER locators, ext, choice, alt and group ... size are lines of a pack with encoding uper");
         }
         if (seq != null && seq.uperWhy != null) throw badDirective(format, null, seq.uperWhy);
+        if (seq != null && !seq.inners.isEmpty() && (armorSixbit || uper)) {
+            throw badDirective(format, null, source + ": inner is not a line of a pack with armor sixbit or encoding uper (engine-spec 0.34)");
+        }
         // Checks that need the wire run after the file is read, wherever the wire line stands (ruling 10 of 0.10).
         if (wire != null && wire != Wire.TEXT) {
             for (String[] d : new String[][]{delimiterDir, startDir, checksumDir}) {
@@ -1641,6 +1667,7 @@ public final class Pack {
         pack.bitOrder = "msb".equals(bitOrder) ? BitsLayout.MSB : "msb-lsb".equals(bitOrder) ? BitsLayout.MSB_LSB : BitsLayout.LSB;
         pack.uper = uper;
         pack.valueLists = valueLists;
+        if (seq != null && !seq.inners.isEmpty()) pack.innerFormats = List.copyOf(seq.inners);
         if (wire == Wire.TEXT) {
             String d = delimiterDir == null ? "," : delimiterDir[0];
             pack.textNoDelimiter = d.equals("none");

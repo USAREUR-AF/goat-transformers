@@ -19,8 +19,8 @@ is the pack that owns the input. Fields:
 | `to` | yes | target format name; equal to `from` for a round-trip |
 | `input` | yes | source message as a UTF-8 string; for a `bits` or `protobuf` format, hex text |
 | `expect` | unless `expect_error` | expected canonical target message as a UTF-8 string; for a `bits` or `protobuf` format, lowercase hex text |
-| `expect_error` | in place of `expect` | the error kind `convert(from, to, input)` must fail with (`no-kind`, `missing-root`, `malformed-wire`, `transform-decode`, `transform-encode`, `unknown-format`, and with `context` `undeclared-key`, `key-type-mismatch`) |
-| `model` | optional | map of shared-model key to expected value in string form, checked against `decode(from, input)`; the key `"@kind"` holds the kind name the decode must select; `"@complete": true` moves the checks to the completed entity (below); `"<list>.#"` and `"<list>[<i>].<key>"` check a list, and `"<list>[<i>].@kind"` the kind of an item (Lists in `model`, below); `"@absent"` holds an array of keys the entity must not have (Version 0.9) |
+| `expect_error` | in place of `expect` | the error kind `convert(from, to, input)` must fail with (`no-kind`, `missing-root`, `malformed-wire`, `transform-decode`, `transform-encode`, `unknown-format`, and with `context` `undeclared-key`, `key-type-mismatch`; Version 0.34: `bad-directive` and `distribution-violation` raised where decode or encode reaches an `inner` line) |
+| `model` | optional | map of shared-model key to expected value in string form, checked against `decode(from, input)`; the key `"@kind"` holds the kind name the decode must select; `"@complete": true` moves the checks to the completed entity (below); `"<list>.#"` and `"<list>[<i>].<key>"` check a list, and `"<list>[<i>].@kind"` the kind of an item (Lists in `model`, below); `"@absent"` holds an array of keys the entity must not have (Version 0.9); `"@inner_kind"` holds the kind name `Entity.inner_kind` must hold, and `"@absent"` may list `"@inner_kind"` (Version 0.34) |
 | `context` | optional | map of shared-model key to value in string form: the caller-supplied keys of `convert(from, to, input, context)` (`spec/engine-spec.md`, Version 0.6). Each value is read as its key's declared type. A `context` member that is present is a context given, also when it is `{}` (ruling 10 of 0.6) |
 | `max_items` | optional | Version 0.11: an integer of 0 or more, the limit on list items the engine is set to for this vector (`spec/engine-spec.md`, ruling 7 of 0.11). Absent: the default, 100,000 |
 | `source` | optional | text for people: where the input and the expected output come from (a published message, a generator and what it reads, `synthetic`). No engine reads it |
@@ -275,7 +275,8 @@ JSON object per file under `packs/conformance/capability-vectors/*.json`:
 | `carried` | yes | array of entries, in the order of `model_keys(from)` |
 | `dropped` | yes | array of entries, in the order of `model_keys(from)` |
 
-The engine loads the model modules and the two packs, calls
+The engine loads the model modules and the two packs (and, Version 0.34, the
+packs their `inner` lines name), calls
 `capability(from, to)`, and passes when the grade and both arrays are equal to
 the vector's, entry for entry and in order. The packs `conformance-cap-*` are
 the formats these vectors name; they have no conversion vectors.

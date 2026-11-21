@@ -30,6 +30,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 PACKS = os.path.join(ROOT, "packs")
 OWNED = os.path.join("packs", "conformance", "tool-vectors")
 P = ["--packs", "{packs}"]
+CAP_011_LAST = 18     # the last capability vector of 0.11
 
 
 def read_json(rel):
@@ -134,7 +135,13 @@ def build():
     # --- capability: one line per pinned capability vector
     cap_dir = os.path.join("packs", "conformance", "capability-vectors")
     pinned = {}
+    # The capability vectors of 0.11 (01 to 18) only: those of 0.34 (19 on)
+    # load the pack an `inner` line names as well, which `--packs-only` of
+    # the two formats does not, and adding them would renumber every vector
+    # of 0.23 after these.
     for f in sorted(os.listdir(os.path.join(ROOT, cap_dir))):
+        if int(f.split("-")[0]) > CAP_011_LAST:
+            continue
         cv = read_json(os.path.join(cap_dir, f))
         pinned[(cv["from"], cv["to"])] = (cv["grade"], cv["carried"], cv["dropped"])
         add("capability-" + cv["name"], ["capability", "--from", cv["from"], "--to", cv["to"]] + P + only(cv["from"], cv["to"]),

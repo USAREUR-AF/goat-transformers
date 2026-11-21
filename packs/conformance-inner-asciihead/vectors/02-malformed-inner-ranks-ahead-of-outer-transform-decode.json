@@ -1,0 +1,9 @@
+{
+  "name": "malformed-inner-ranks-ahead-of-outer-transform-decode",
+  "from": "conformance-inner-asciihead",
+  "to": "conformance-inner-asciihead",
+  "input": "01",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: s1 byte 01 is a transform-decode (0.5, ascii below 0x20); the empty inner input is malformed-wire for the fixed inner pack; when decode fails in both packs malformed-wire is reported ahead of transform-decode"
+}

@@ -380,7 +380,9 @@ that is present and empty is `[]`; an absent list has no entry. `model_keys`
 names a list `<list>[]` and an item key `<list>[].<key>`. A failed conversion
 raises `error:{convert_error, Kind, Message}` with `Kind` one of `'no-kind'`,
 `'missing-root'`, `'malformed-wire'`, `'transform-decode'`, `'transform-encode'`,
-`'undeclared-key'`, `'key-type-mismatch'` (the last two for a context key) and
+`'undeclared-key'`, `'key-type-mismatch'` (the last two for a context key),
+`'unknown-format'`, and (at an `inner` line, 0.34) `'bad-directive'` and
+`'distribution-violation'`, and
 `Message` beginning with the kind and a colon. Wires: `xml` (a root per kind),
 `geojson`, `json`, `bits` (`bit_order lsb | msb`, fields past their word,
 `swap`, `trim`, `optional`), `protobuf`, `text` (Version 0.10: `delimiter`,
@@ -392,6 +394,23 @@ Version 0.9 is `bad-directive` on it, ruling 16 of 0.10), `tlv` (Version 0.13: `
 one RFC 8949 data item, `tag <n>`, integer, text and `[i]` path steps, groups
 over arrays; hex text in and out; residue is `{Path, Bytes}`, each unmapped
 item as it stood, written back with the core deterministic encoding).
+
+A message of another pack inside a field (engine-spec Version 0.34): an
+`inner <format>` line of a `layout sequential` bits pack hands the bytes from
+the cursor to the end of its extent to the inner pack, looked up in the engine
+when decode or encode reaches the line (`gt_engine:inner_pack/2`: loaded,
+else `'unknown-format'`; on bits without armor or `encoding uper`, without an
+`inner` line of its own and not the outer pack, else `'bad-directive'`; public
+when the outer pack is, else `'distribution-violation'`). The decoded entity
+then also holds `inner_kind`, `undefined` or `{InnerFormatName, KindName}`,
+the kind the inner pack selected, next to `kind`; an entity without the key
+has none. `convert` keeps `kind` when `To` has an `inner` line naming its
+format, and `inner_kind` when it names `To` or the format of an `inner` line
+of `To`. `gt_engine:model_keys(E, Format)` and `capability` add the keys of
+each inner pack that passes those checks; `gt_engine:model_keys(Pack)` lists
+the pack's own keys. `gt_engine:inner_names(PacksDir, Names)` gives the names
+and, transitively, the packs their `inner` lines name that have a directory:
+the conformance runner and the benchmark load those.
 
 Malformed input (engine-spec "Malformed input (0.8)", rulings 35 to 40): no
 input makes `decode` or `convert` raise anything but `convert_error`. The

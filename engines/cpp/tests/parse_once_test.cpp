@@ -33,6 +33,7 @@
 
 #include "goat_transformers/engine.hpp"
 #include "json.hpp"
+#include "sequential.hpp"
 
 #ifndef GT_PACKS_DIR
 #error "GT_PACKS_DIR must be defined by the build"
@@ -52,6 +53,24 @@ std::string read_file(const fs::path& p) {
     std::ostringstream ss;
     ss << in.rdbuf();
     return ss.str();
+}
+
+// The packs named and, transitively, the packs their `inner` lines name, a
+// name with no pack directory skipped (engine-spec.md 0.34, Vectors).
+std::vector<std::string> with_inner(const fs::path& packs, std::vector<std::string> names) {
+    for (std::size_t k = 0; k < names.size(); ++k) {
+        const fs::path def = packs / names[k] / "pack.def";
+        if (!fs::is_regular_file(def)) continue;
+        std::istringstream lines(read_file(def));
+        std::string line, err;
+        while (std::getline(lines, line)) {
+            std::vector<std::string> t;
+            if (!goat_transformers::detail::tokenize_line(line, t, err) || t.size() != 2 || t[0] != "inner") continue;
+            if (t[1].find('/') != std::string::npos || !fs::is_regular_file(packs / t[1] / "pack.def")) continue;
+            if (std::find(names.begin(), names.end(), t[1]) == names.end()) names.push_back(t[1]);
+        }
+    }
+    return names;
 }
 
 bool base64_decode(const std::string& in, std::string& out) {
@@ -250,7 +269,7 @@ int main() {
                 fail("fresh: " + entry.text + " is not a vector of the packs");
                 continue;
             }
-            const gt::Engine one = gt::Engine::load_packs(packs.string(), {vecs[k].from, vecs[k].to});
+            const gt::Engine one = gt::Engine::load_packs(packs.string(), with_inner(packs, {vecs[k].from, vecs[k].to}));
             if (result(one, vecs[k]) != first[k]) fail("fresh: " + vecs[k].label + " differs on a new instance");
             ++fresh;
         }

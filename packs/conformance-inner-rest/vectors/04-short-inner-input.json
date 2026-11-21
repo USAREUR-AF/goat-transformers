@@ -1,0 +1,9 @@
+{
+  "name": "short-inner-input",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-rest",
+  "input": "0935",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3: the inner input 35 is shorter than the 2-byte fixed message"
+}

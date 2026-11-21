@@ -35,14 +35,36 @@ struct SeqVisitor {
 void seq_visit(SeqBody& body, const SeqVisitor& v);
 
 // The model keys of a body, first appearance order: a list is `<list>[]` and
-// an item key `<list>[].<key>`.
+// an item key `<list>[].<key>`. `inner`, when given, is called with the format
+// of each `inner` line at its place in that order (v0.34).
 void seq_model_keys(const SeqBody& body, const std::string& prefix,
-                    const std::function<void(const std::string&)>& add);
+                    const std::function<void(const std::string&)>& add,
+                    const std::function<void(const std::string&)>* inner = nullptr);
+
+// v0.34: what decode and encode of a sequential pack ask of the engine when
+// they reach an `inner` line.
+class InnerHost {
+public:
+    virtual ~InnerHost() = default;
+    // The inner pack, after the checks made where the line is reached, in
+    // their order: unknown-format, bad-directive (its wire, armor, encoding;
+    // an `inner` line of its own, or the outer pack itself), and
+    // distribution-violation.
+    virtual const Pack& reach(const Pack& outer, const std::string& format) const = 0;
+    // decode(<format>, hex) by the inner pack's rules, within the decode that
+    // is running (its limit on list items and its failed fields).
+    virtual Entity decode(const Pack& inner, const std::string& hex) const = 0;
+    // encode(<format>, entity) as a layer: the inner kind selected by
+    // Entity.inner_kind, then Entity.kind, then `requires`. Hex text.
+    virtual std::string encode(const Pack& inner, const Entity& entity) const = 0;
+};
 
 // Every `case` and `else` of the pack by id (0.20), for encode; the plan keeps it (0.25).
 std::vector<const SeqCase*> seq_cases_by_id(const Pack& p);
 
-Entity decode_seq(const Pack& p, const std::string& bytes);
-std::string encode_seq(const Pack& p, const Entity& e);
+// `host` serves the `inner` lines (v0.34); without one, reaching an `inner`
+// line is unknown-format.
+Entity decode_seq(const Pack& p, const std::string& bytes, const InnerHost* host = nullptr);
+std::string encode_seq(const Pack& p, const Entity& e, const InnerHost* host = nullptr);
 
 }  // namespace goat_transformers::detail

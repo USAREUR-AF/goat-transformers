@@ -1,0 +1,17 @@
+{
+  "name": "plain-inner-not-reached",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-kinds",
+  "input": "0809",
+  "expect": "0809",
+  "model": {
+    "@kind": "plain",
+    "probe.w": "9",
+    "@absent": [
+      "@inner_kind",
+      "probe.n"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 5: kind plain reads no inner line, so Entity.inner_kind is absent; encode of plain does not reach the inner line"
+}

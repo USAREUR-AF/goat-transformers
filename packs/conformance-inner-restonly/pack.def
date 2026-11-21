@@ -1,0 +1,16 @@
+# Conformance probe pack used as an inner pack (spec 0.34, ruling 2): its only
+# line is a rest group, so it reads no bits from an empty input and gives a
+# present, empty list. Most significant bit first. Public. No kinds.
+#
+#   nums        items to the end of the message, val in 8 bits each
+format     conformance-inner-restonly
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.nums rest
+  field  probe.val  8  uint
+end

@@ -10,7 +10,8 @@ and `switch` blocks, and the sequential extents and counts of 0.21: `group
 <list> rest`, `group <list> last`, `count <name> <len> [plus <n>]` with
 `group <list> count @<name>`, and the long and terminated fields of 0.22:
 the `hex` transform, the set `ascii8`, the locator `until:<code>`, the field
-option `stop <code>` and `bit_order msb-lsb`) and imports no engine, so a generator
+option `stop <code>` and `bit_order msb-lsb`, and the load rules of the
+`inner <format>` line of 0.34) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -116,7 +117,9 @@ DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
     # spec 0.18: an xml element written when empty
     "element", "alt",
     # spec 0.20: a switch on a decoded value
-    "switch", "case", "else")
+    "switch", "case", "else",
+    # spec 0.34: a message of another pack inside a field
+    "inner")
 
 _INT = re.compile(r"-?[0-9]+\Z")
 _UINT = re.compile(r"[0-9]+\Z")
@@ -666,6 +669,7 @@ class Node:
       presence name, bits (a count, or the text `fx`)
       pad, align          bits
       switch   key, body (its `case` and `else` nodes, in file order)
+      inner    name (the inner format, 0.34)
       case     values (the texts of the list), body; `else`: body
 
     `when` also has `values`: the texts of its list (0.20), and on bits and
@@ -882,6 +886,9 @@ class _Loader:
                 last = None
                 continue
             node = Node(d, no, a)
+            if d == "inner" and len(a) != 1:
+                # 0.34: one argument, a format name; a line check (step 3 of 5b)
+                self.bad(no, "`inner` takes one format name, has %d arguments" % len(a))
             if d == "also":
                 node.name = last          # the field this line extends, or None
             if d in ("requires", "root"):
@@ -1075,6 +1082,7 @@ class _Loader:
         self._scope(pack.common, pack.kinds, group=None, visible=[{}], top=True)
         if pack.wire == "bits" and pack.sequential:
             self._count_paths(pack.common, pack.kinds)
+            self._inner_places(pack.common, pack.kinds)
             self._rest_extents(pack.common, pack.kinds, None)
 
         if pack.wire == "cbor":
@@ -1230,6 +1238,8 @@ class _Loader:
                 self.bad(node, "`%s` inside a gate block" % d)
             if d in UPER_ONLY and not self.pack.uper:
                 self.bad(node, "`%s` in a pack without `encoding uper` (ruling 9 of 0.19)" % d)
+            if d == "inner":
+                self._inner(node)
             if d == "when":
                 if sequential and (not top or (in_kind and lines_seen)):
                     self.bad(node, "`when` after another line of its kind, or inside a block")
@@ -1310,6 +1320,50 @@ class _Loader:
                 lines_seen = True
 
     # each reader below fills the node's slots or refuses the line
+
+    def _inner(self, node):
+        """0.34 "The `inner` line": a line of a `layout sequential` `bits`
+        pack without `armor sixbit` or `encoding uper`, checked after the file
+        is read. The inner pack itself is not looked at: it is looked up when
+        decode or encode reaches the line, so packs load in any order."""
+        pack = self.pack
+        if pack.wire != "bits" or not pack.sequential:
+            self.bad(node, "`inner` in a pack that is not a `layout sequential` `bits` pack")
+        if pack.armor == "sixbit":
+            self.bad(node, "`inner` in a pack with `armor sixbit` (0.34)")
+        if pack.uper:
+            self.bad(node, "`inner` in a pack with `encoding uper` (0.34)")
+        node.name = node.args[0]
+
+    def _inner_places(self, common, kinds):
+        """0.34: `inner` stands in the common lines, in a kind, or inside
+        `length` blocks only (at any depth of `length` blocks); under any other
+        block, at any depth, it is refused. At most one `inner` line lies on a
+        reading path (ruling 33 of 0.21): one in the common lines and one in a
+        kind, or two in one body, are refused; one in each of two kinds loads.
+        That it is the last wire line of its extent is checked with the `rest`
+        groups (`_rest_extents`)."""
+        def place(nodes, allowed):
+            for node in nodes:
+                if node.d == "inner" and not allowed:
+                    self.bad(node, "`inner` under a block other than `length` (0.34)")
+                if node.d == "group":
+                    place(node.body or (), False)
+                    for k in node.kinds or ():
+                        place(k.lines, False)
+                elif node.d in ("switch", "choice"):
+                    for arm in node.body:
+                        place(arm.body, False)
+                elif node.body:
+                    place(node.body, allowed and node.d == "length")
+
+        place(common, True)
+        for kind in kinds:
+            place(kind.lines, True)
+        for _, lines in self.pack.scopes():
+            found = list(walk(lines, "inner"))
+            if len(found) > 1:
+                self.bad(found[1], "a second `inner` line on one reading path (0.34; ruling 33 of 0.21)")
 
     def _choice(self, node):
         """0.19 "CHOICE" and ruling 15: `choice <n> [ext]` with n from 1 to
@@ -2054,7 +2108,8 @@ class _Loader:
         its extent (the innermost `length` block, or the message) in reading
         order, whatever arm of a switch is read; `default` is not a wire line.
         Inside an item it stands within a `length` block of the item's body,
-        or in the body of an item of an outer `rest` group."""
+        or in the body of an item of an outer `rest` group. Spec 0.34: an
+        `inner` line is the last wire line of its extent in the same way."""
         def wire(node):
             if node.d == "default":
                 return False
@@ -2080,6 +2135,10 @@ class _Loader:
                             self.bad(node, "`rest` inside an item and not within a `length` block of the item "
                                            "(0.21 ruling 10)")
                     bodies(node.body, node.kinds, node)
+                elif node.d == "inner":
+                    later = next((x for seq in following for x in seq if wire(x)), None)
+                    if later is not None:
+                        self.bad(later, "`%s` after the `inner` line in its extent (0.34; 0.21 ruling 11)" % later.d)
                 elif node.d == "length":
                     if node.body is not None:
                         visit(node.body, [], None)

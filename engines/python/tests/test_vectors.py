@@ -82,6 +82,10 @@ def _check_absent(ent, model, listed):
         if key in model:
             out.append("invalid vector: %r is in @absent and is also a member of model" % key)
             continue
+        if key == "@inner_kind":  # 0.34: Entity.inner_kind is absent
+            if getattr(ent, "inner_kind", None) is not None:
+                out.append("@absent: Entity.inner_kind is %r, expected absent" % (ent.inner_kind,))
+            continue
         scope = ent
         rest = key
         problem = None
@@ -161,6 +165,13 @@ def _check_model(engine, rel, vec, data):
                 out.append("Entity.kind names format %r, not %r" % (ent.kind[0], vec["from"]))
             if have != want:
                 out.append("@kind: decode selected %r, expected %r" % (have, want))
+            continue
+        if key == "@inner_kind":  # 0.34: the kind name Entity.inner_kind must hold
+            ik = getattr(ent, "inner_kind", None)
+            if ik is None:
+                out.append("@inner_kind: Entity.inner_kind is absent, expected %r" % (want,))
+            elif ik[1] != want:
+                out.append("@inner_kind: decode recorded %r, expected %r" % (ik[1], want))
             continue
         if key.endswith(".#"):  # a count is an unsigned decimal integer or `absent`
             if want != "absent":
@@ -377,7 +388,8 @@ class TestCapabilityVectors(unittest.TestCase):
         for rel, vec in self.vectors:
             problems = []
             try:
-                eng = Engine.from_dir(PACKS, packs_only=sorted({vec["from"], vec["to"]}))
+                # 0.34: the packs named by `inner` lines too, transitively
+                eng = Engine.from_dir(PACKS, packs_only=sorted({vec["from"], vec["to"]}), with_inner=True)
                 got = eng.capability(vec["from"], vec["to"])
             except Exception as e:
                 problems.append("unexpected %s: %s" % (type(e).__name__, e))

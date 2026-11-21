@@ -6,7 +6,7 @@ import os
 
 from ._build import WIRES as BUILD_WIRES
 from .errors import (
-    BadDirective, DistributionRefused, DistributionViolation, DuplicateFormat, DuplicateModule, KeyTypeMismatch,
+    GTError, BadDirective, DistributionRefused, DistributionViolation, DuplicateFormat, DuplicateModule, KeyTypeMismatch,
     MalformedWire,
     ModuleNotUsed, NoKind, TransformDecodeFailure, TransformEncodeFailure, UndeclaredKey, UnknownFormat,
     UnknownModule,
@@ -147,6 +147,15 @@ def _check_unread_numbers(doc, read, fmt):
             stack.extend(node)
         elif isinstance(node, _Num) and id(node) not in read and math.isinf(float(node)):
             raise MalformedWire("number %s is outside the double range" % (node[:40],), format=fmt)
+
+
+def _ref_for(pack, first, second):
+    """The first of two recorded kinds that names `pack`'s format, or None (0.34, Encode)."""
+    if first is not None and first[0] == pack.name:
+        return first
+    if second is not None and second[0] == pack.name:
+        return second
+    return None
 
 
 class Engine:
@@ -376,7 +385,8 @@ class Engine:
         self.packs[pack.name] = pack
 
     @classmethod
-    def from_dir(cls, packs_dir, models_dir=None, max_distribution="controlled", packs_only=None, profile=None):
+    def from_dir(cls, packs_dir, models_dir=None, max_distribution="controlled", packs_only=None, profile=None,
+                 with_inner=False):
         """Load every `<models_dir>/*.def` in byte order of file name, then every
         `<packs_dir>/<format>/pack.def`. `models_dir` defaults to the `model`
         directory beside `packs_dir`.
@@ -384,7 +394,10 @@ class Engine:
         With `packs_only`, the names of pack directories under `packs_dir`:
         load those packs only, and of the modules only `core`, the modules the
         packs name in `uses` lines and the modules those use. A name with no
-        `<packs_dir>/<name>/pack.def` is `unknown-format`.
+        `<packs_dir>/<name>/pack.def` is `unknown-format`. With `with_inner`
+        (spec 0.34, Vectors), also the packs the `inner` lines of those packs
+        name, and so on for the packs loaded that way; a name with no
+        directory under `packs_dir` is skipped (its use is `unknown-format`).
 
         With `profile`, one of `open`, `open+copyleft` and `everything`
         (spec 0.29): before anything is loaded, `<packs_dir>/../licences.toml`
@@ -431,15 +444,27 @@ class Engine:
             if isinstance(packs_only, str):
                 packs_only = [packs_only]
             packs = []
-            for name in sorted(set(packs_only)):
+            wanted = sorted(set(packs_only))
+            for name in wanted:
                 d = os.path.join(packs_dir, name)
                 if not name or name in (os.curdir, os.pardir) or os.path.basename(name) != name or (
                     not os.path.isfile(os.path.join(d, "pack.def"))
                 ):
                     raise UnknownFormat("no pack named %r in the packs directory" % name, format=name)
-                pack = reach(name)
-                if pack is not None:
+            named = set(wanted)
+            while wanted:
+                more = []
+                for name in wanted:
+                    pack = reach(name)
+                    if pack is None:
+                        continue
                     packs.append(pack)
+                    for inner in pack.inners if with_inner else ():
+                        if inner not in named and os.path.basename(inner) == inner and inner not in (
+                                os.curdir, os.pardir) and os.path.isfile(os.path.join(packs_dir, inner, "pack.def")):
+                            named.add(inner)
+                            more.append(inner)
+                wanted = sorted(more)
             only = {CORE}
             for pack in packs:
                 only.update(pack.uses)
@@ -462,8 +487,74 @@ class Engine:
 
     def model_keys(self, fmt):
         """The union of mapped keys over common and all kinds, in first
-        appearance order; a list as `<list>[]`, an item key as `<list>[].<key>`."""
-        return self.pack(fmt).model_keys()
+        appearance order; a list as `<list>[]`, an item key as `<list>[].<key>`.
+        An `inner` line (0.34) whose pack passes the checks of the line adds,
+        at its place, the entries of that pack; computed when asked for."""
+        pack = self.pack(fmt)
+        if not pack.inners:
+            return pack.model_keys()
+        out = []
+        seen = set()
+
+        def add(name):
+            if name not in seen:
+                seen.add(name)
+                out.append(name)
+
+        pack.seq.model_keys(add, inner=lambda name: self._inner_keys(pack, name))
+        return out
+
+    # --- inner lines (0.34) ------------------------------------------------
+
+    def _inner_pack(self, outer, name):
+        """The checks made when decode or encode reaches an `inner` line, in
+        their order (0.34, "Reaching the inner line"). -> the inner pack."""
+        inner = self.packs.get(name)
+        if inner is None:
+            raise UnknownFormat("pack %s names inner format %r, which is not loaded" % (outer.name, name),
+                                format=name)
+        if inner.wire != "bits" or inner.armor == "sixbit" or inner.uper:
+            raise BadDirective(
+                "inner pack %s is %s; an inner pack is on the bits wire, with neither 'armor sixbit' nor 'encoding uper'"
+                % (name, "on the %s wire" % inner.wire if inner.wire != "bits" else
+                       "under 'armor sixbit'" if inner.armor == "sixbit" else "a UPER pack"),
+                format=name, locator=name,
+            )
+        if inner is outer or inner.inners:
+            raise BadDirective(
+                "inner pack %s %s; one layer only" % (
+                    name, "is the outer pack" if inner is outer else "has an 'inner' line of its own"),
+                format=name, locator=name,
+            )
+        if outer.distribution == "public" and inner.distribution != "public":
+            raise DistributionViolation(
+                "public pack %s names %s inner pack %s" % (outer.name, inner.distribution, name),
+                format=outer.name, locator=name,
+            )
+        return inner
+
+    def _inner_keys(self, outer, name):
+        """The entries an `inner` line adds to `model_keys` (0.34, Capability):
+        none when its pack does not pass the checks of the line."""
+        try:
+            inner = self._inner_pack(outer, name)
+        except GTError:
+            return ()
+        return inner.model_keys()
+
+    def _decode_layer(self, pack, data, left, discard):
+        """The inner message of an `inner` line: `data` (bytes) decoded by the
+        inner pack, with the item budget `left` the outer lines left (None:
+        no limit). `discard` names the lists the outer entity holds already:
+        their counts are checked, their items not counted (ruling 7 of 0.34)."""
+        return self._decode_pack(pack, data.hex(), (1 << 62) if left is None else left, discard)
+
+    def _encode_layer(self, pack, entity):
+        """The inner message of an `inner` line, as bytes. The kind is the one
+        `Entity.inner_kind` names, else `Entity.kind`, else by `requires`."""
+        ref = _ref_for(pack, entity.inner_kind, entity.kind)
+        out = self._encode_pack(pack, entity, ref)
+        return bytes.fromhex(out.decode("ascii"))
 
     # --- capability --------------------------------------------------------
 
@@ -545,6 +636,10 @@ class Engine:
         call (ruling 7 of 0.11); by default the engine's (`set_max_items`)."""
         pack = self.pack(fmt)
         limit = self.max_items if max_items is None else max_items
+        return self._decode_pack(pack, data, limit)
+
+    def _decode_pack(self, pack, data, limit, discard=()):
+        fmt = pack.name
         if isinstance(data, (bytes, bytearray)):
             try:
                 data = bytes(data).decode("utf-8")
@@ -556,7 +651,7 @@ class Engine:
             except UnicodeEncodeError:  # a str holding a lone surrogate
                 raise MalformedWire("input is not UTF-8 text: it holds a lone surrogate", format=fmt)
         if pack.seq is not None:
-            return wire_seq.decode(pack, data, limit)
+            return wire_seq.decode(pack, data, limit, self, discard)
         wire = pack.wire
         codec = _CODECS[wire]
         if wire == "geojson":
@@ -586,7 +681,7 @@ class Engine:
         budget = [limit]  # the items this decode may still hold (ruling 7 of 0.11)
         read = set() if wire == "json" else None
         keep_in_residue = self._decode_scope(
-            pack, wire, codec, plan, msg, ent.fields, ent.lists, failures, "", budget, read
+            pack, wire, codec, plan, msg, ent.fields, ent.lists, failures, "", budget, read, discard
         )
         if read is not None:
             _check_unread_numbers(msg, read, fmt)
@@ -625,7 +720,8 @@ class Engine:
             )
         return ent
 
-    def _decode_scope(self, pack, wire, codec, plan, ctx, fields, lists, failures, prefix, budget, read=None):
+    def _decode_scope(self, pack, wire, codec, plan, ctx, fields, lists, failures, prefix, budget, read=None,
+                      discard=()):
         """Decode one scope (the message, or one item of a group) from its wire
         context into `fields` and `lists`; the fields that could not be decoded
         are added to `failures`. -> the locators of `type` fields whose native
@@ -706,9 +802,12 @@ class Engine:
             contexts = codec.items(pack, ctx, g)
             if contexts is None:
                 continue  # the list is absent
-            if len(contexts) > budget[0]:
-                raise self._over_limit(pack, g, len(contexts), budget)
-            budget[0] -= len(contexts)
+            free = discard and g.list in discard  # 0.34: the outer entity holds the list; not counted
+            before = budget[0]
+            if not free:
+                if len(contexts) > budget[0]:
+                    raise self._over_limit(pack, g, len(contexts), budget)
+                budget[0] -= len(contexts)
             item_plan = g.plan
             out = []
             for n, item_ctx in enumerate(contexts):
@@ -718,6 +817,8 @@ class Engine:
                     "%s%s[%d]." % (prefix, g.list, n), budget, read,
                 )
                 out.append(item)
+            if free:
+                budget[0] = before
             lists[g.list] = out
         return keep_in_residue
 
@@ -817,12 +918,13 @@ class Engine:
 
     # --- encode ------------------------------------------------------------
 
-    def _select_encode_kind(self, pack, entity):
-        """spec 0.5, "Encode", steps 1 and 2."""
-        if entity.kind is not None and entity.kind[0] == pack.name:
-            kind = pack.kind(entity.kind[1])
+    def _select_encode_kind(self, pack, entity, ref):
+        """spec 0.5, "Encode", steps 1 and 2. `ref` is the recorded kind that
+        names this format (0.34: `Entity.kind` or `Entity.inner_kind`), or None."""
+        if ref is not None:
+            kind = pack.kind(ref[1])
             if kind is None:
-                raise NoKind("the format has no kind %r" % (entity.kind[1],), format=pack.name)
+                raise NoKind("the format has no kind %r" % (ref[1],), format=pack.name)
             return kind
         have = entity.fields
         lists = entity.lists
@@ -832,12 +934,18 @@ class Engine:
         raise NoKind("the entity has the required keys of no kind of the format", format=pack.name)
 
     def encode(self, fmt, entity):
+        """Entity to message. The kind is the one `Entity.kind` names when it
+        names the format, else the one `Entity.inner_kind` names (0.34), else
+        the first whose `requires` hold."""
         pack = self.pack(fmt)
+        return self._encode_pack(pack, entity, _ref_for(pack, entity.kind, getattr(entity, "inner_kind", None)))
+
+    def _encode_pack(self, pack, entity, ref):
         if pack.seq is not None:
-            return wire_seq.encode(pack, entity).encode("utf-8")
+            return wire_seq.encode(pack, entity, ref, self).encode("utf-8")
         wire = pack.wire
         codec = _CODECS[wire]
-        kind = self._select_encode_kind(pack, entity) if pack.kinds else None
+        kind = self._select_encode_kind(pack, entity, ref) if pack.kinds else None
         plan = pack.plan(kind)
         enc = self._encode_scope(pack, plan, entity.fields, entity.lists)
         if wire == "bits":
@@ -922,10 +1030,16 @@ class Engine:
         encode. When `from == to` and no context is given the middle steps are
         skipped, so a same-format round trip stays byte-exact."""
         self.pack(from_fmt)  # ruling 5 of 0.11: `from`, then `to`, before the input is read
-        self.pack(to_fmt)
+        to = self.pack(to_fmt)
         entity = self.decode(from_fmt, data, max_items)
         if from_fmt != to_fmt:
-            entity.kind = None  # a cross-format conversion chooses the target kind by `requires`
+            # a cross-format conversion chooses the target kind by `requires`,
+            # unless `to` has an `inner` line naming the format of the kind (0.34)
+            if entity.kind is not None and entity.kind[0] not in to.inners:
+                entity.kind = None
+            ik = entity.inner_kind
+            if ik is not None and ik[0] != to_fmt and ik[0] not in to.inners:
+                entity.inner_kind = None
         if from_fmt != to_fmt or context is not None:
             self.complete(entity, context)
         return self.encode(to_fmt, entity)

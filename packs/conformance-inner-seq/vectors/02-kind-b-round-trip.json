@@ -1,0 +1,16 @@
+{
+  "name": "kind-b-round-trip",
+  "from": "conformance-inner-seq",
+  "to": "conformance-inner-seq",
+  "input": "020102",
+  "expect": "020102",
+  "model": {
+    "@kind": "b",
+    "probe.z": "258",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 5; kind byte 02 selects b, z=0x0102=258"
+}

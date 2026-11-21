@@ -1,0 +1,9 @@
+{
+  "name": "ruling-02-empty-inner-input-needs-bits",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-rest",
+  "input": "09",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3 and ruling 2: the inner pack is called on no bytes; conformance-inner-fixed needs 2 bytes: input shorter than the message is malformed-wire (0.5)"
+}

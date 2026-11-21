@@ -1,0 +1,14 @@
+{
+  "name": "21-outer-list-then-inner-list-in-reading-order",
+  "from": "conformance-inner-budget",
+  "to": "conformance-inner-lists",
+  "grade": "partial",
+  "carried": [
+    "probe.nums[]",
+    "probe.nums[].probe.val"
+  ],
+  "dropped": [
+    "probe.deltas[]",
+    "probe.deltas[].probe.val"
+  ]
+}

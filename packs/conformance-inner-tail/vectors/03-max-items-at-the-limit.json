@@ -1,0 +1,13 @@
+{
+  "name": "max-items-at-the-limit",
+  "from": "conformance-inner-tail",
+  "to": "conformance-inner-tail",
+  "input": "09010203",
+  "max_items": 3,
+  "expect": "09010203",
+  "model": {
+    "probe.nums.#": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 max_items: the outer lines read no item, the inner decode starts with the whole budget of 3"
+}

@@ -48,7 +48,10 @@ const std::set<std::string>& pack_directives() {
                                          "switch", "case", "else",
                                          // v0.21, sequential layouts: `count <name> <len> [plus <n>]`,
                                          // checked as the pack is read.
-                                         "count"};
+                                         "count",
+                                         // v0.34, `inner <format>`: where it stands and the
+                                         // pack that holds it are checked after the file is read.
+                                         "inner"};
     return s;
 }
 
@@ -56,7 +59,9 @@ const std::set<std::string>& pack_directives() {
 const std::set<std::string>& after_wire() {
     static const std::set<std::string> s{"root", "field", "when",  "const", "group", "end",   "word_bytes",
                                          "bit_order", "layout", "also", "pad", "align", "presence", "if",
-                                         "opt",  "chain", "fx",    "length"};
+                                         "opt",  "chain", "fx",    "length",
+                                         // v0.34
+                                         "inner"};
     return s;
 }
 
@@ -75,7 +80,9 @@ const std::set<std::string>& one_argument() {
                                          // v0.20 ruling 39
                                          "switch", "case",
                                          // v0.28: `tag <n>` on cbor, and the `tag` of tlv (0.13)
-                                         "tag"};
+                                         "tag",
+                                         // v0.34
+                                         "inner"};
     return s;
 }
 

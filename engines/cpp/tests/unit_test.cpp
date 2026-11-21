@@ -1524,6 +1524,46 @@ int main() {
         fs::remove_all(dir, ec);
     }
 
+    // v0.34: checks made where an `inner` line is reached that no vector pins,
+    // and the two orders of kind selection.
+    try {
+        const std::string model =
+            "module core\nversion 0.1.0\ndistribution public\nsource \"unit test\"\nkey a int -\nkey b int -\n";
+        const std::string seq = "wire bits\nlayout sequential\nbit_order msb\n";
+        auto pack = [](const std::string& format, const std::string& dist, const std::string& body) {
+            return "format " + format + "\nversion 0.1.0\ndistribution " + dist + "\nsource \"unit test\"\n" + body;
+        };
+        gt::Engine eng;
+        eng.load_model(model);
+        eng.add_pack(gt::parse_pack(pack("in-k", "public", seq + "kind p\nwhen 8 1\nrequires b\nfield b 8 uint\n"
+                                                                 "kind q\nwhen 8 2\nrequires b\nfield b 16 uint\n")));
+        eng.add_pack(gt::parse_pack(pack("in-c", "controlled", seq + "field b 8 uint\n")));
+        eng.add_pack(gt::parse_pack(pack("out-pub", "public", seq + "field a 8 uint\ninner in-c\n")));
+        eng.add_pack(gt::parse_pack(pack("out-ctl", "controlled", seq + "field a 8 uint\ninner in-c\n")));
+        eng.add_pack(gt::parse_pack(pack("out-k", "public", seq + "field a 8 uint\ninner in-k\n")));
+        expect_error(gt::ErrorKind::DistributionViolation, [&] { (void)eng.decode("out-pub", "0102"); },
+                     "0.34: a public outer pack whose inner pack is controlled, on decode");
+        expect_error(gt::ErrorKind::DistributionViolation, [&] { (void)eng.convert("out-ctl", "out-pub", "0102"); },
+                     "0.34: a public outer pack whose inner pack is controlled, on encode");
+        eq(eng.convert("out-ctl", "out-ctl", "0102"), "0102", "0.34: a controlled outer pack, a controlled inner pack");
+        check(eng.model_keys("out-pub") == std::vector<std::string>{"a"},
+              "0.34: an inner line that fails its checks adds no keys");
+        gt::Entity e = eng.decode("out-k", "09020005");
+        check(e.inner_kind == std::make_pair(std::string("in-k"), std::string("q")) && e.kind.second.empty(),
+              "0.34: Entity.inner_kind after decode");
+        eq(eng.encode("in-k", e), "020005", "0.34: a top-level encode selects by Entity.inner_kind naming the format");
+        e.kind = {"in-k", "p"};
+        eq(eng.encode("in-k", e), "0105", "0.34: a top-level encode selects by Entity.kind first");
+        eq(eng.encode("out-k", e), "09020005", "0.34: an inner line selects by Entity.inner_kind first");
+        e.inner_kind = {};
+        eq(eng.encode("out-k", e), "090105", "0.34: an inner line selects by Entity.kind next");
+        e.kind = {"in-k", "r"};
+        expect_error(gt::ErrorKind::NoKind, [&] { (void)eng.encode("out-k", e); },
+                     "0.34: a named kind the inner pack does not have");
+    } catch (const std::exception& ex) {
+        check(false, std::string("0.34 inner lines threw: ") + ex.what());
+    }
+
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";
     return failures == 0 ? 0 : 1;
 }

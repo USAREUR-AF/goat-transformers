@@ -1,0 +1,18 @@
+# Conformance probe pack whose length field is too narrow for some inner
+# messages (spec 0.34, Encode), most significant bit first. Public. No kinds.
+#
+#   bits 0-5    padding
+#   block       a 2-bit length in bytes (at most 3), then one
+#               conformance-inner-restonly message to the end of the block
+format     conformance-inner-narrow
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+pad     6
+length 2
+  inner  conformance-inner-restonly
+end

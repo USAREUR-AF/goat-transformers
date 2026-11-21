@@ -1,0 +1,12 @@
+# Conformance probe pack naming an inner format that no pack declares
+# (spec 0.34: unknown-format when used).
+format     conformance-inner-missing
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+inner   conformance-inner-not-a-format

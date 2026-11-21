@@ -292,6 +292,12 @@ check_model(Engine, From, Input, Context, Complete, AbsentKeys, Pairs) ->
                       {_Format, Expected} -> false;
                       Other -> {true, {'@kind', Expected, Other}}
                   end;
+             %% Version 0.34: the kind the inner pack selected
+             ({<<"@inner_kind">>, Expected}) ->
+                  case maps:get(inner_kind, Entity, undefined) of
+                      {_Format, Expected} -> false;
+                      Other -> {true, {'@inner_kind', Expected, Other}}
+                  end;
              ({Key, Expected}) ->
                   case lookup(Key, Entity) of
                       {count, Expected} -> false;
@@ -313,6 +319,7 @@ check_model(Engine, From, Input, Context, Complete, AbsentKeys, Pairs) ->
 %% Is a "@absent" entry absent from an entity or an item? "<list>[<i>].<key>"
 %% needs the item and its lack of the key; a key or a list name needs that
 %% the scope has neither.
+absent_in(<<"@inner_kind">>, Entity) -> maps:get(inner_kind, Entity, undefined) =:= undefined;
 absent_in(Key, #{model := Model, lists := Lists}) ->
     case binary:match(Key, <<"[">>) of
         {Pos, 1} ->
@@ -509,8 +516,10 @@ run_named_load(PacksDir, ModelsDir) ->
         [] -> 0;
         [{_, Pack} | _] ->
             try
-                E = gt_engine:load_packs(gt_engine:new(), PacksDir, [Pack], ModelsDir),
-                1 = maps:size(gt_engine:packs(E)),
+                %% with the packs its `inner` lines name (0.34)
+                Loaded = gt_engine:inner_names(PacksDir, [Pack]),
+                E = gt_engine:load_packs(gt_engine:new(), PacksDir, Loaded, ModelsDir),
+                true = maps:size(gt_engine:packs(E)) =:= length(Loaded),
                 [] = [{Name, Why} || {P, File} <- Files, P =:= Pack,
                                      {error, Name, Why} <- [run_vector_file(E, File)]],
                 io:format("named load: pack ~s alone, ~p module(s)~n",
@@ -557,9 +566,12 @@ run_concurrent(PacksDir, ModelsDir) ->
                   F <- lists:sublist(lists:sort(maps:get(P, ByPack)), ?CONC_PER_PACK),
                   Conv <- [concurrent_case(F)], Conv =/= skip]),
     N = tuple_size(Cases),
-    Names = lists:usort([Name || {_, _, {_, From, To, _, _}} <- tuple_to_list(Cases),
-                                 Name <- [From, To],
-                                 filelib:is_regular(filename:join([PacksDir, Name, "pack.def"]))]),
+    %% with the packs their `inner` lines name (0.34)
+    Names = gt_engine:inner_names(
+              PacksDir,
+              lists:usort([Name || {_, _, {_, From, To, _, _}} <- tuple_to_list(Cases),
+                                   Name <- [From, To],
+                                   filelib:is_regular(filename:join([PacksDir, Name, "pack.def"]))])),
     %% one load (the model directory is read once); only when a pack does not
     %% load, one load per pack
     Engine = try gt_engine:load_packs(gt_engine:new(), PacksDir, Names, ModelsDir)
@@ -698,7 +710,9 @@ self_contained(Pack, PackFiles) ->
 -define(MUTANTS, "\"\\<>{}[],:&/='0189afz+-.e \0\377\n").
 -define(PER_PACK, 5).
 -define(KINDS, ['no-kind', 'missing-root', 'malformed-wire', 'transform-decode',
-                'transform-encode', 'undeclared-key', 'key-type-mismatch']).
+                'transform-encode', 'undeclared-key', 'key-type-mismatch',
+                %% raised where decode or encode reaches an `inner` line (0.34)
+                'unknown-format', 'bad-directive', 'distribution-violation']).
 
 run_malformed(Engine, PacksDir) ->
     {P, F, _, _} =

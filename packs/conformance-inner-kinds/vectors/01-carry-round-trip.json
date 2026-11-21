@@ -1,0 +1,16 @@
+{
+  "name": "carry-round-trip",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-kinds",
+  "input": "0705010203",
+  "expect": "0705010203",
+  "model": {
+    "@kind": "carry",
+    "@inner_kind": "a",
+    "probe.n": "5",
+    "probe.x": "2",
+    "probe.y": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 5: Entity.kind (conformance-inner-kinds, carry) and Entity.inner_kind (conformance-inner-seq, a); Encode step 1"
+}

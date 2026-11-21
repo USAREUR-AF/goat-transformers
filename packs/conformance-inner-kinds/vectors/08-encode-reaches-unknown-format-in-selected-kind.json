@@ -1,0 +1,9 @@
+{
+  "name": "encode-reaches-unknown-format-in-selected-kind",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-unreached",
+  "input": "0809",
+  "expect_error": "unknown-format",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line on encode: w present selects kind gone by requires, whose inner line names a format that is not loaded"
+}

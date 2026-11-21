@@ -1,0 +1,10 @@
+{
+  "name": "23-inner-line-naming-a-pack-with-an-inner-line-adds-nothing",
+  "from": "conformance-inner-twolayer",
+  "to": "conformance-inner-length",
+  "grade": "full",
+  "carried": [
+    "probe.w"
+  ],
+  "dropped": []
+}

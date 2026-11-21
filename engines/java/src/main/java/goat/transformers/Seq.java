@@ -17,7 +17,8 @@ import java.util.Set;
 final class Seq {
     private Seq() {}
 
-    enum Op { FIELD, CONST, WHEN, PAD, ALIGN, PRESENCE, IF, OPT, CHAIN, LENGTH, WHOLE, GROUP, EXT, CHOICE, SWITCH, COUNT }
+    /** {@code INNER}: engine-spec 0.34, the rest of the extent is a message of another pack. */
+    enum Op { FIELD, CONST, WHEN, PAD, ALIGN, PRESENCE, IF, OPT, CHAIN, LENGTH, WHOLE, GROUP, EXT, CHOICE, SWITCH, COUNT, INNER }
 
     /** {@code SIZE}: engine-spec 0.19; {@code REF}: {@code count @<name>}; {@code REST} and {@code LAST}: engine-spec 0.21. */
     enum Repeat { COUNT, WHILE, MORE, FX, SIZE, REST, LAST, REF }
@@ -63,7 +64,10 @@ final class Seq {
         List<Pack.Field> keys;
         /** {@code when ... as <key>} (engine-spec 0.30): the key its bits are bound to, read as {@code uint}; else null. */
         Pack.Field as;
-        /** {@code presence}: its name, whether it is {@code fx}, its slot in the state of one decode or encode. */
+        /**
+         * {@code presence}: its name, whether it is {@code fx}, its slot in the state of one decode or encode;
+         * {@code count}: its name; {@code inner}: the format of the inner pack (engine-spec 0.34).
+         */
         String name;
         boolean fx;
         int id;
@@ -180,7 +184,8 @@ final class Seq {
     /** Directives that are lines of the layout: in a sequential pack the parser below reads them. */
     static final Set<String> LINES = Set.of("field", "also", "const", "when", "pad", "align", "presence", "if", "opt",
             "chain", "fx", "length", "group", "end", "kind", "requires", "default", "ext", "choice", "alt",
-            "switch", "case", "else", "count");
+            "switch", "case", "else", "count",
+            "inner");   // engine-spec 0.34
 
     /** The lines that exist only in a UPER pack (engine-spec 0.19, ruling 9). */
     static final Set<String> UPER_ONLY = Set.of("ext", "choice", "alt");
@@ -325,6 +330,10 @@ final class Seq {
         /** The first UPER construct (0.19): its line, and the first reason one is refused, both checked after the file is read. */
         int uperLine;
         String uperWhy;
+        /** The formats of the {@code inner} lines (engine-spec 0.34), in file order. */
+        final List<String> inners = new ArrayList<>();
+        /** The first {@code inner} line under a block that may not hold one: refused after the file is read. */
+        String innerWhy;
 
         Parser(String source, List<String[]> keyRefs, boolean uperHint, List<Pack.ValueList> valueLists) {
             this.source = source;
@@ -981,6 +990,26 @@ final class Seq {
                     keyRefs.add(new String[]{args.get(0), null});
                     break;
                 }
+                case "inner": {
+                    // engine-spec 0.34: in the common lines, a kind, or length blocks at any depth; under any other
+                    // block it is bad-directive, checked after the file is read
+                    inners.add(args.get(0));
+                    Frame under = null;
+                    for (Frame x : stack) {
+                        if (x.type != 'M' && x.type != 'L') { under = x; break; }
+                    }
+                    if (under != null) {
+                        if (innerWhy == null) {
+                            innerWhy = where + ": inner stands under the " + under.what + " of line " + under.line
+                                    + "; it is a line of the common lines, a kind or a length block only";
+                        }
+                        break;
+                    }
+                    Node n = new Node(Op.INNER, ln);
+                    n.name = args.get(0);
+                    f.lines.add(n);
+                    break;
+                }
                 case "switch": {
                     if (args.size() != 1) throw bad(format, null, where + ": switch takes one model key, got " + args.size());
                     String key = args.get(0);
@@ -1294,12 +1323,15 @@ final class Seq {
         private boolean restIn(List<Node> lines, boolean sealed, String format) {
             for (Node n : lines) {
                 if (sealed && isWire(n)) {
-                    throw bad(format, null, source + ":" + n.line + ": a line after a rest group in its extent (ruling 11 of 0.21)");
+                    throw bad(format, null, source + ":" + n.line + ": a line after a rest group or an inner line in its extent (ruling 11 of 0.21, engine-spec 0.34)");
                 }
                 switch (n.op) {
                     case GROUP:
                         checkRest(n.items, format);
                         if (n.repeat == Repeat.REST) sealed = true;
+                        break;
+                    case INNER:
+                        sealed = true;   // inner is the last wire line of its extent, as rest is (engine-spec 0.34)
                         break;
                     case IF:
                     case OPT:
@@ -1343,6 +1375,30 @@ final class Seq {
             return sealed;
         }
 
+        // ---- at most one inner line on a reading path (engine-spec 0.34, ruling 33 of 0.21) ----
+
+        /** The inner lines of {@code lines}, in length blocks at any depth, in reading order. */
+        private static void innersIn(List<Node> lines, List<Node> out) {
+            for (Node n : lines) {
+                if (n.op == Op.INNER) out.add(n);
+                else if (n.op == Op.LENGTH) innersIn(n.body, out);
+            }
+        }
+
+        /** A reading path is the common lines and one kind: it holds at most one inner line. */
+        private void checkInnerPaths(Body b, String format) {
+            List<Node> common = new ArrayList<>();
+            innersIn(b.common, common);
+            for (Kind k : b.kinds) {
+                List<Node> path = new ArrayList<>(common);
+                innersIn(k.lines, path);
+                if (path.size() > 1) {
+                    throw bad(format, null, source + ":" + path.get(1).line + ": a second inner line on one reading path (the first at line "
+                            + path.get(0).line + ")");
+                }
+            }
+        }
+
         /**
          * The checks that need the whole file: every block is ended, each field's transform is a transform of the
          * bits wire and allows its length (ruling 25 of 0.5), and every table a line names has a map line.
@@ -1366,8 +1422,10 @@ final class Seq {
                 // the absent option of a field above 64 bits, which the line check leaves (ruling 4d of 0.11)
                 if (a[4] != null && len > 64) Sentinels.integers((String) a[4], len, format, fl.locator, where);
             }
+            if (innerWhy != null) throw bad(format, null, innerWhy);
             finishBody(root, format, source);
             checkCounts(root, format);
+            checkInnerPaths(root, format);
             checkRest(root, format);
             for (String[] v : vias) {
                 if (!tables.containsKey(v[0])) throw bad(format, v[1], v[2] + ": via names table " + v[0] + ", which has no map line");
@@ -1379,12 +1437,19 @@ final class Seq {
     }
 
     /** The model keys the lines map, in first appearance order: a list as {@code <list>[]}, its item keys under it. */
-    static void modelKeys(Body body, String prefix, Set<String> out) {
+    static void modelKeys(Body body, String prefix, Set<String> out) { modelKeys(body, prefix, out, f -> null); }
+
+    /**
+     * As {@link #modelKeys(Body, String, Set)}; an {@code inner} line adds, at its place, the entries {@code inner}
+     * gives for its format (engine-spec 0.34), or nothing when it gives null.
+     */
+    static void modelKeys(Body body, String prefix, Set<String> out, java.util.function.Function<String, List<String>> inner) {
         Set<Node> seen = Collections.newSetFromMap(new java.util.IdentityHashMap<>());
-        for (Kind k : body.kinds) modelKeys(k.all, prefix, out, seen);
+        for (Kind k : body.kinds) modelKeys(k.all, prefix, out, seen, inner);
     }
 
-    private static void modelKeys(List<Node> nodes, String prefix, Set<String> out, Set<Node> seen) {
+    private static void modelKeys(List<Node> nodes, String prefix, Set<String> out, Set<Node> seen,
+                                  java.util.function.Function<String, List<String>> inner) {
         for (Node n : nodes) {
             if (!seen.add(n)) continue;
             switch (n.op) {
@@ -1398,22 +1463,28 @@ final class Seq {
                 case OPT:
                 case LENGTH:
                 case EXT:
-                    modelKeys(n.body, prefix, out, seen);
+                    modelKeys(n.body, prefix, out, seen, inner);
                     break;
                 case CHAIN:
-                    for (List<Node> part : n.parts) modelKeys(part, prefix, out, seen);
+                    for (List<Node> part : n.parts) modelKeys(part, prefix, out, seen, inner);
                     break;
                 case CHOICE:
-                    for (List<Node> part : n.altLines) modelKeys(part, prefix, out, seen);
+                    for (List<Node> part : n.altLines) modelKeys(part, prefix, out, seen, inner);
                     break;
                 case GROUP:
                     out.add(prefix + n.list + "[]");
                     modelKeys(n.items, prefix + n.list + "[].", out);
                     break;
+                case INNER: {
+                    // the inner pack's entries not yet listed, at this place (engine-spec 0.34, Capability)
+                    List<String> keys = inner.apply(n.name);
+                    if (keys != null) for (String k : keys) out.add(prefix + k);
+                    break;
+                }
                 case SWITCH:
                     // keys mapped only inside a case are listed as every other mapped key (ruling 13 of 0.20)
-                    for (Case c : n.cases) modelKeys(c.body, prefix, out, seen);
-                    if (n.elseCase != null) modelKeys(n.elseCase.body, prefix, out, seen);
+                    for (Case c : n.cases) modelKeys(c.body, prefix, out, seen, inner);
+                    if (n.elseCase != null) modelKeys(n.elseCase.body, prefix, out, seen, inner);
                     break;
                 default:
                     break;

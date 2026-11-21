@@ -1,0 +1,12 @@
+{
+  "name": "inner-bytes-not-read-are-ignored",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-rest",
+  "input": "093507ff",
+  "expect": "093507",
+  "model": {
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3: the fixed inner message is 2 bytes; ff of the inner input is ignored"
+}

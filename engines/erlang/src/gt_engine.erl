@@ -10,7 +10,10 @@
 %%                                             % geojson: {prop | top, Name},
 %%                                             % the value as JSON text
 %%            src => FormatName :: binary(),
-%%            kind => undefined | {FormatName, KindName}}
+%%            kind => undefined | {FormatName, KindName},
+%%            inner_kind => undefined | {FormatName, KindName}}
+%% `inner_kind` (Version 0.34) is the kind the inner pack of an `inner` line
+%% selected, set by decode only; an entity without the key has none.
 %%
 %% Engine = #{max_distribution => public | controlled,
 %%            modules => #{NameBin => Module}, packs => #{NameBin => Pack},
@@ -27,13 +30,16 @@
 %% Message begins with the kind and a colon. Conversion kinds: 'no-kind',
 %% 'missing-root' (xml, a pack without kinds), 'malformed-wire',
 %% 'transform-decode', 'transform-encode', and for a caller-supplied key
-%% 'undeclared-key', 'key-type-mismatch'.
+%% 'undeclared-key', 'key-type-mismatch'; 'unknown-format'; and where decode
+%% or encode reaches an `inner` line (0.34) 'bad-directive',
+%% 'distribution-violation'.
 -module(gt_engine).
 -include("gt_wires.hrl").
 -export([new/0, set_max_distribution/2, load_model/2, load_pack/2, load_dir/2,
          load_dir/3, load_dir/4, load_packs/3, load_packs/4, load_packs/5,
          model_files/1, model_texts/1, model_read/1, model_order/1, licence_start/3, packs/1, modules/1,
-         model_keys/1, pack/2, set_max_items/2, capability/3]).
+         model_keys/1, model_keys/2, pack/2, set_max_items/2, capability/3,
+         inner_names/2]).
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
 %% for the readers and writers of gt_seq, gt_text and gt_tlv
@@ -41,7 +47,8 @@
          items_reserve/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4,
-         holds/3, line_value/3, req_holds/3]).
+         holds/3, line_value/3, req_holds/3,
+         inner_pack/2, decode_inner/2, encode_inner/2, pass/1, items_get/0, items_put/1]).
 %% the transforms of the bits wire, which the tlv wire uses too
 -if(?W_BITS orelse ?W_TLV).
 -export([bits_decode/4, bits_encode/4]).
@@ -63,6 +70,11 @@
 -define(ITEMS, {gt_engine, items}).
 -define(OVER, {gt_engine, over}).
 -define(FAILED, {gt_engine, failed}).
+%% Version 0.34: an error raised at an `inner` line that no earlier field
+%% failure replaces (a failed check, malformed-wire of the inner decode),
+%% and whether the field failure held came from an inner decode
+-define(PASS, {gt_engine, pass}).
+-define(INNER_FAILED, {gt_engine, inner_failed}).
 
 %% Marks the message of a failure that no reader or writer names.
 -define(UNCLASSIFIED, "[unclassified:").
@@ -86,8 +98,8 @@ set_max_items(Engine, N) when is_integer(N), N >= 0 -> Engine#{max_items => N}.
 %% The capability report of an ordered pair of formats (ruling 6 of 0.11),
 %% from the two packs alone -> {Grade, Carried, Dropped}.
 capability(Engine, From, To) ->
-    FromKeys = model_keys(pack(Engine, From)),
-    ToKeys = maps:from_list([{K, true} || K <- model_keys(pack(Engine, To))]),
+    FromKeys = model_keys(Engine, From),
+    ToKeys = maps:from_list([{K, true} || K <- model_keys(Engine, To)]),
     {Carried, Dropped} = lists:partition(fun(K) -> maps:is_key(K, ToKeys) end, FromKeys),
     Grade = if Carried =:= [] -> none;
                Dropped =:= [] -> full;
@@ -99,13 +111,155 @@ modules(#{modules := Modules}) -> Modules.
 %% A loaded pack by format name.
 pack(#{packs := Packs} = Engine, Name) ->
     case maps:find(Name, Packs) of
-        {ok, P} -> P#{max_items => maps:get(max_items, Engine, ?DEFAULT_MAX_ITEMS)};
+        {ok, P} -> P#{max_items => maps:get(max_items, Engine, ?DEFAULT_MAX_ITEMS),
+                      all_packs => Packs};
         error -> conv_error('unknown-format', "format ~s is not loaded", [Name])
     end.
+
+%% ===================================================================
+%% a message of another pack inside a field (Version 0.34)
+%% ===================================================================
+%% The inner pack of an `inner <format>` line of Outer, checked when decode
+%% or encode reaches the line, in this order: loaded (unknown-format); on
+%% bits without armor or encoding uper (bad-directive); without an `inner`
+%% line of its own and not Outer (bad-directive); public when Outer is
+%% (distribution-violation). Nothing is kept: a pack loaded later is found.
+inner_pack(#{name := OuterName} = Outer, Format) ->
+    All = maps:get(all_packs, Outer, #{}),
+    Inner = case maps:find(Format, All) of
+                {ok, I} -> I;
+                error -> conv_error('unknown-format', Outer,
+                                    "the inner line names format ~s, which is not loaded", [Format])
+            end,
+    case {maps:get(wire, Inner), maps:get(armor, Inner, hex), maps:get(encoding, Inner, none)} of
+        {bits, hex, Enc} when Enc =/= uper -> ok;
+        {W, A, Enc} ->
+            conv_error('bad-directive', Outer,
+                       "the inner pack ~s is not a bits pack without armor or encoding uper (wire ~s, armor ~s, encoding ~s)",
+                       [Format, W, A, Enc])
+    end,
+    case Format =:= OuterName of
+        true -> conv_error('bad-directive', Outer, "the inner line names the pack itself", []);
+        false -> ok
+    end,
+    case maps:get(inner_formats, Inner, []) of
+        [] -> ok;
+        _ -> conv_error('bad-directive', Outer,
+                        "the inner pack ~s has an inner line of its own (one layer only)", [Format])
+    end,
+    case {maps:get(distribution, Outer), maps:get(distribution, Inner)} of
+        {public, controlled} ->
+            conv_error('distribution-violation', Outer,
+                       "the public pack names the controlled pack ~s in an inner line", [Format]);
+        _ -> ok
+    end,
+    Inner#{max_items => maps:get(max_items, Outer, ?DEFAULT_MAX_ITEMS), all_packs => All}.
+
+%% Raise a conversion error that an earlier field failure of the outer
+%% decode does not replace.
+pass({convert_error, _, _} = Err) ->
+    put(?PASS, true),
+    erlang:error(Err).
+
+%% The item limit of the decode in progress, read and put back: the items
+%% of a list that decode discards are not counted (7g of 0.11).
+items_get() -> get(?ITEMS).
+items_put(V) -> put(?ITEMS, V).
+
+%% decode(<format>, hex) of an inner message inside the decode in progress
+%% (Version 0.34, Decode): with the item budget the outer lines have left,
+%% its own field failures, and its own order of errors. A field failure of
+%% the inner message is held as the outer decode's (the first is kept); an
+%% error that stops the decode is raised with its kind, ahead of an outer
+%% field failure; an inner transform-decode yields to an earlier one.
+decode_inner(Inner, Hex) ->
+    Saved = erase(?FAILED),
+    Result = try decode_wire(Inner, Hex) of
+                 E -> {ok, E, get(?FAILED)}
+             catch
+                 error:{convert_error, K, M} ->
+                     case {get(?OVER), get(?FAILED)} of
+                         {true, _} -> {error, K, M};
+                         {_, undefined} -> {error, K, M};
+                         {_, Msg} -> {error, 'transform-decode', Msg}
+                     end;
+                 Class:Reason:Stack ->
+                     case {get(?OVER), get(?FAILED)} of
+                         {undefined, Msg} when Msg =/= undefined -> {error, 'transform-decode', Msg};
+                         _ ->
+                             try decode_failure(Inner, Class, Reason, Stack)
+                             catch error:{convert_error, K2, M2} -> {error, K2, M2}
+                             end
+                     end
+             end,
+    case Saved of
+        undefined -> erase(?FAILED);
+        _ -> put(?FAILED, Saved)
+    end,
+    case Result of
+        {ok, Entity, undefined} -> Entity;
+        {ok, Entity, InnerMsg} ->
+            record_failure_msg(InnerMsg),
+            put(?INNER_FAILED, true),
+            Entity;
+        {error, 'transform-decode', M3} -> erlang:error({convert_error, 'transform-decode', M3});
+        {error, K3, M3} -> pass({convert_error, K3, M3})
+    end.
+
+%% encode(<format>, entity) of an inner message, as bytes (Version 0.34,
+%% Encode). The inner kind is the entity's `inner_kind` when it names the
+%% format, else its `kind`, else by `requires`: the top-level order with
+%% the two records exchanged.
+encode_inner(Inner, Entity) ->
+    Swapped = Entity#{kind => maps:get(inner_kind, Entity, undefined),
+                      inner_kind => maps:get(kind, Entity, undefined)},
+    gt_hex:hex_to_bytes(encode(Inner, Swapped)).
 
 %% Union of the keys a pack maps, common lines and all kinds, in first
 %% appearance order; a list as `<list>[]`, an item key as `<list>[].<key>`.
 model_keys(Pack) -> gt_pack:model_keys(Pack).
+
+%% model_keys of a loaded format (6a of 0.11, Version 0.34): computed when
+%% asked. Each `inner` line whose pack passes the checks made when it is
+%% reached adds, at its place, the inner pack's keys not yet listed; one
+%% that does not pass adds nothing.
+model_keys(Engine, Format) ->
+    Pack = pack(Engine, Format),
+    Names = lists:flatmap(
+              fun({inner, F}) ->
+                      try inner_pack(Pack, F) of
+                          Inner -> gt_pack:model_keys(Inner)
+                      catch error:{convert_error, _, _} -> []
+                      end;
+                 (K) -> [K]
+              end, gt_pack:key_names_marked(Pack)),
+    {Keys, _} = lists:foldl(fun(K, {Acc, Seen}) ->
+                                    case maps:is_key(K, Seen) of
+                                        true -> {Acc, Seen};
+                                        false -> {[K | Acc], Seen#{K => true}}
+                                    end
+                            end, {[], #{}}, Names),
+    lists:reverse(Keys).
+
+%% The pack directory names to load for vectors (Version 0.34): Names, then
+%% the packs named by their `inner` lines, and so on, each once; a name with
+%% no pack.def under PacksDir is skipped.
+inner_names(PacksDir, Names) -> inner_names(PacksDir, Names, [], #{}).
+
+inner_names(_PacksDir, [], Acc, _Seen) -> lists:reverse(Acc);
+inner_names(PacksDir, [N0 | Rest], Acc, Seen) ->
+    N = iolist_to_binary([N0]),
+    case maps:is_key(N, Seen) of
+        true -> inner_names(PacksDir, Rest, Acc, Seen);
+        false ->
+            case file:read_file(filename:join([PacksDir, N, "pack.def"])) of
+                {ok, Text} ->
+                    Inner = [F || L <- binary:split(Text, <<"\n">>, [global]),
+                                  [<<"inner">>, F] <- [gt_pack:tokens_lax(L)]],
+                    inner_names(PacksDir, Rest ++ Inner, [N | Acc], Seen#{N => true});
+                {error, _} -> inner_names(PacksDir, Rest, Acc, Seen#{N => true})
+            end
+    end.
 
 %% Load one model module text -> Engine. The checks run in this order
 %% (ruling 29 of 0.8): missing-distribution, missing-source,
@@ -698,7 +852,7 @@ convert(Engine, From, To, Bytes, Context) ->
     Same = From =:= To,
     Entity1 = case Same of
                   true -> Entity;
-                  false -> Entity#{kind := undefined}
+                  false -> kept_kinds(Entity, To, ToPack)
               end,
     %% What a decoded message cannot be written as is a named error too: a
     %% failure no encoder names is `transform-encode`, marked ?UNCLASSIFIED.
@@ -714,6 +868,27 @@ convert(Engine, From, To, Bytes, Context) ->
             conv_error('transform-encode', ToPack, "the entity cannot be written ~s ~0P]",
                        [?UNCLASSIFIED, {Class, Reason}, 8])
     end.
+
+%% Version 0.34: `kind` is kept also when `To` has an `inner` line naming its
+%% format; `inner_kind` when it names `To` or the format of an `inner` line
+%% of `To`. Otherwise each is cleared.
+kept_kinds(Entity, To, ToPack) ->
+    Inner = maps:get(inner_formats, ToPack, []),
+    Kind = case maps:get(kind, Entity, undefined) of
+               {F, _} = K1 -> case lists:member(F, Inner) of
+                                  true -> K1;
+                                  false -> undefined
+                              end;
+               _ -> undefined
+           end,
+    InnerKind = case maps:get(inner_kind, Entity, undefined) of
+                    {F2, _} = K2 -> case F2 =:= To orelse lists:member(F2, Inner) of
+                                        true -> K2;
+                                        false -> undefined
+                                    end;
+                    _ -> undefined
+                end,
+    Entity#{kind => Kind, inner_kind => InnerKind}.
 
 %% The step between decode and encode on its own: absent keys filled from
 %% the context, then the derivations.
@@ -802,11 +977,18 @@ select_encode(#{name := Name, kinds := Kinds, root := PackRoot} = Pack, Entity) 
     Model = maps:get(model, Entity),
     Lists = maps:get(lists, Entity, #{}),
     Has = fun(T) -> req_holds(T, Model, Lists) end,
+    %% the recorded kind, else (0.34) the recorded inner kind, when it
+    %% names this format
+    Named = case {maps:get(kind, Entity, undefined), maps:get(inner_kind, Entity, undefined)} of
+                {{Name, K1}, _} -> {ok, K1};
+                {_, {Name, K2}} -> {ok, K2};
+                _ -> none
+            end,
     Chosen =
-        case maps:get(kind, Entity, undefined) of
-            {Name, KindName} ->
+        case Named of
+            {ok, KindName} ->
                 maps:get(KindName, maps:get(kind_index, Pack), none);
-            _ ->
+            none ->
                 %% with the implicit term of each `when ... as` (0.30)
                 first_kind(Kinds, fun(#{requires := Req, lines := Ls}) ->
                                           lists:all(Has, Req) andalso gt_pack:as_holds(Ls, Model)
@@ -858,11 +1040,15 @@ decode(Pack, Bytes) when is_binary(Bytes) ->
     put(?ITEMS, {maps:get(max_items, Pack, ?DEFAULT_MAX_ITEMS), 0}),
     erase(?OVER),
     erase(?FAILED),
+    erase(?PASS),
+    erase(?INNER_FAILED),
     try decode_checked(Pack, Bytes)
     after
         erase(?ITEMS),
         erase(?OVER),
-        erase(?FAILED)
+        erase(?FAILED),
+        erase(?PASS),
+        erase(?INNER_FAILED)
     end.
 
 decode_checked(Pack, Bytes) ->
@@ -873,10 +1059,17 @@ decode_checked(Pack, Bytes) ->
                 Msg -> erlang:error({convert_error, 'transform-decode', Msg})
             end
     catch
-        error:{convert_error, _, _} = Named:Stack ->
+        error:{convert_error, Kind, _} = Named:Stack ->
+            %% 0.34: an error that stops the decode (a failed check at an
+            %% `inner` line, an error of the inner decode, an error after
+            %% an inner field failure) wins over a field failure read
+            %% before it
+            Passes = get(?PASS) =:= true orelse
+                (Kind =/= 'transform-decode' andalso get(?INNER_FAILED) =:= true),
             case {get(?OVER), get(?FAILED)} of
                 {true, _} -> erlang:raise(error, Named, Stack);
                 {_, undefined} -> erlang:raise(error, Named, Stack);
+                _ when Passes -> erlang:raise(error, Named, Stack);
                 {_, Msg} -> erlang:error({convert_error, 'transform-decode', Msg})
             end;
         Class:Reason:Stack ->

@@ -1,0 +1,9 @@
+{
+  "name": "inner-on-another-wire-when-reached",
+  "from": "conformance-inner-badwire",
+  "to": "conformance-inner-badwire",
+  "input": "05",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line, check 2: conformance-absent-json is on the json wire"
+}

@@ -9,6 +9,8 @@ import java.util.List;
  */
 abstract class Codec<W> {
     final Pack pack;
+    /** The engine the codec's pack is loaded in: it finds the pack an {@code inner} line names (engine-spec 0.34). */
+    Engine engine;
     Codec(Pack pack) { this.pack = pack; }
 
     /** Parse the wire text. Throws {@code malformed-wire}. */
@@ -30,6 +32,8 @@ abstract class Codec<W> {
     private static final class Budget {
         final long max;
         long left;
+        /** The lists the outer entity holds while an inner message is decoded (engine-spec 0.34); null otherwise. */
+        java.util.Set<String> outerHeld;
         Budget(long max) { this.max = max; this.left = max; }
     }
 
@@ -72,6 +76,44 @@ abstract class Codec<W> {
         b.left -= n;
     }
 
+    /**
+     * Check {@code n} items (an unsigned count) against the decode's limit without taking them: the count of a list
+     * that decode discards (ruling 7 of engine-spec 0.34).
+     */
+    void checkItems(long n) {
+        Budget b = BUDGET.get();
+        if (b != null && Long.compareUnsigned(n, b.left) > 0) {
+            throw malformed("the message holds more than " + b.max + " list items (the limit on list items)");
+        }
+    }
+
+    /** The items the decode may still hold, or -1 outside a decode. */
+    static long itemsLeft() {
+        Budget b = BUDGET.get();
+        return b == null ? -1 : b.left;
+    }
+
+    /** Set the items the decode may still hold (engine-spec 0.34: after an inner message is merged). */
+    static void setItemsLeft(long left) {
+        Budget b = BUDGET.get();
+        if (b != null && left >= 0) b.left = left;
+    }
+
+    /** True when an inner message is being decoded and the outer entity already holds {@code list}. */
+    static boolean heldByOuter(String list) {
+        Budget b = BUDGET.get();
+        return b != null && b.outerHeld != null && b.outerHeld.contains(list);
+    }
+
+    /** Set the lists the outer entity holds for an inner decode; returns the previous set. */
+    static java.util.Set<String> setOuterHeld(java.util.Set<String> held) {
+        Budget b = BUDGET.get();
+        if (b == null) return null;
+        java.util.Set<String> was = b.outerHeld;
+        b.outerHeld = held;
+        return was;
+    }
+
     /** Give back the items of a list that a later group of the same list replaces (ruling 7g of 0.11). */
     void giveBackItems(List<Entity> items) {
         Budget b = BUDGET.get();
@@ -86,8 +128,26 @@ abstract class Codec<W> {
         return n;
     }
 
-    String encode(Entity e) {
-        return encodeKind(e, selectForEncode(e));
+    String encode(Entity e) { return encode(e, false); }
+
+    /**
+     * Encode; {@code layer} is true when the message is written as the inner message of another pack's
+     * {@code inner} line (engine-spec 0.34), which changes the order in which the kind records are consulted.
+     */
+    String encode(Entity e, boolean layer) {
+        return encodeKind(e, selectForEncode(e, layer));
+    }
+
+    /**
+     * The kind name the entity records for this format, or null when no record names it (engine-spec 0.34): at the
+     * top level {@code Entity.kind} then {@code Entity.inner_kind}; as a layer {@code Entity.inner_kind} then
+     * {@code Entity.kind}. A record that names the format with no kind name gives the empty text.
+     */
+    final String recordedKind(Entity e, boolean layer) {
+        boolean byKind = pack.format.equals(e.kindFormat()), byInner = pack.format.equals(e.innerKindFormat());
+        String kind = !byKind ? null : e.kindName() == null ? "" : e.kindName();
+        String inner = !byInner ? null : e.innerKindName() == null ? "" : e.innerKindName();
+        return layer ? (inner != null ? inner : kind) : (kind != null ? kind : inner);
     }
 
     private Pack.Kind selectForDecode(W wire) {
@@ -111,13 +171,14 @@ abstract class Codec<W> {
     /** The kinds decode considers for this message, in pack order. The xml wire narrows them by root element. */
     List<Pack.Kind> candidates(W wire) { return pack.kinds; }
 
-    private Pack.Kind selectForEncode(Entity e) {
+    private Pack.Kind selectForEncode(Entity e, boolean layer) {
         if (!pack.hasKinds) return pack.kinds.get(0);
-        if (pack.format.equals(e.kindFormat())) {
-            Pack.Kind k = e.kindName() == null ? null : pack.kind(e.kindName());
+        String named = recordedKind(e, layer);
+        if (named != null) {
+            Pack.Kind k = pack.kind(named);
             if (k == null) {
                 throw new GtException(GtException.Code.NO_KIND, pack.format, null,
-                        "the entity names kind " + e.kindName() + ", which this format does not have");
+                        "the entity names kind " + named + ", which this format does not have");
             }
             return k;
         }

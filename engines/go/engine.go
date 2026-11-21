@@ -367,6 +367,47 @@ func LoadPacksOnly(modelsDir, packsDir, maxDistribution string, names []string) 
 	return e, nil
 }
 
+// WithInnerPacks returns names followed by the packs their `inner` lines
+// name, and so on for the packs added that way, each once (spec 0.34,
+// Vectors): the set of packs to load for vectors, capability reports and
+// the benchmark. A name with no <name>/pack.def under packsDir is not
+// added; a pack that does not parse adds nothing, and its load reports it.
+func WithInnerPacks(packsDir string, names []string) []string {
+	out := []string{}
+	seen := map[string]bool{}
+	var visit func(name string, given bool)
+	visit = func(name string, given bool) {
+		if seen[name] {
+			return
+		}
+		path := filepath.Join(packsDir, name, "pack.def")
+		ok := name != "" && name == filepath.Base(name) && name != "." && name != ".."
+		if ok {
+			_, err := os.Stat(path)
+			ok = err == nil
+		}
+		if !ok && !given {
+			return
+		}
+		seen[name] = true
+		out = append(out, name)
+		if !ok {
+			return
+		}
+		p, err := ParsePackFile(path)
+		if err != nil {
+			return
+		}
+		for _, f := range p.innerFormats {
+			visit(f, false)
+		}
+	}
+	for _, n := range names {
+		visit(n, true)
+	}
+	return out
+}
+
 // Modules returns the loaded modules sorted by name.
 func (e *Engine) Modules() []*Module {
 	out := make([]*Module, 0, len(e.modules))
@@ -397,13 +438,63 @@ func (e *Engine) Pack(format string) (*Pack, error) {
 }
 
 // ModelKeys is the union of the model keys a format maps, over its common
-// lines and all its kinds, in first appearance order.
+// lines and all its kinds, in first appearance order. An `inner` line whose
+// pack passes the checks made where the line is reached adds, at its place,
+// the keys of the inner format (spec 0.34, Capability).
 func (e *Engine) ModelKeys(format string) ([]string, error) {
 	p, err := e.Pack(format)
 	if err != nil {
 		return nil, err
 	}
-	return p.ModelKeys(), nil
+	return e.modelKeys(p), nil
+}
+
+// modelKeys is model_keys of a loaded pack (6a of 0.11), computed when it is
+// asked for: each `inner` line is taken on its own, and one whose pack does
+// not pass the checks adds nothing (spec 0.34).
+func (e *Engine) modelKeys(p *Pack) []string {
+	if len(p.innerFormats) == 0 {
+		return p.ModelKeys()
+	}
+	seen := map[string]bool{}
+	out := []string{}
+	add := func(k string) {
+		if !seen[k] {
+			seen[k] = true
+			out = append(out, k)
+		}
+	}
+	p.sbody.modelKeys(add, "", func(format string) {
+		in, err := e.innerPack(p, format)
+		if err != nil {
+			return
+		}
+		for _, k := range in.ModelKeys() {
+			add(k)
+		}
+	})
+	return out
+}
+
+// innerPack makes the checks of an `inner` line naming format in pack outer,
+// in the order of spec 0.34 ("Reaching the inner line"), and returns the
+// inner pack. The lookup is made at each use, so a pack loaded later is
+// found.
+func (e *Engine) innerPack(outer *Pack, format string) (*Pack, error) {
+	in, ok := e.packs[format]
+	if !ok {
+		return nil, &Error{Kind: ErrUnknownFormat, Format: format, Detail: fmt.Sprintf("the inner line of pack %s names format %s, which is not loaded", outer.Format, format)}
+	}
+	if in.Wire != WireBits || in.sixbitArmor || in.uper {
+		return nil, &Error{Kind: ErrBadDirective, Format: format, Detail: fmt.Sprintf("the inner line of pack %s names format %s, which is not on wire bits without armor sixbit and encoding uper", outer.Format, format)}
+	}
+	if in == outer || len(in.innerFormats) > 0 {
+		return nil, &Error{Kind: ErrBadDirective, Format: format, Detail: fmt.Sprintf("the inner line of pack %s names format %s, which is the outer pack or has an inner line of its own: one layer only", outer.Format, format)}
+	}
+	if outer.Distribution == DistPublic && in.Distribution != DistPublic {
+		return nil, &Error{Kind: ErrDistributionViolation, Format: format, Detail: fmt.Sprintf("public pack %s names %s pack %s in an inner line", outer.Format, in.Distribution, format)}
+	}
+	return in, nil
 }
 
 // Capability is the capability report of one ordered pair of formats
@@ -428,11 +519,11 @@ func (e *Engine) Capability(from, to string) (*Capability, error) {
 		return nil, err
 	}
 	target := map[string]bool{}
-	for _, k := range dst.ModelKeys() {
+	for _, k := range e.modelKeys(dst) {
 		target[k] = true
 	}
 	c := &Capability{Carried: []string{}, Dropped: []string{}}
-	for _, k := range src.ModelKeys() {
+	for _, k := range e.modelKeys(src) {
 		if target[k] {
 			c.Carried = append(c.Carried, k)
 		} else {
@@ -459,8 +550,9 @@ func (e *Engine) Decode(format string, b []byte) (*Entity, error) {
 	if err != nil {
 		return nil, err
 	}
-	d := &decodeState{pack: p, ent: NewEntity(), limit: e.maxItems}
+	d := &decodeState{pack: p, ent: NewEntity(), limit: e.maxItems, eng: e}
 	d.rec = d.ent.item()
+	d.top = d.rec
 	c, err := builtCodec(p)
 	if err != nil {
 		return nil, err
@@ -488,19 +580,50 @@ func (e *Engine) Decode(format string, b []byte) (*Entity, error) {
 }
 
 // Encode writes the shared model in a format's canonical form. In a pack with
-// kinds it writes the kind the entity records for this format, else the first
-// kind whose `requires` keys the entity all has.
+// kinds it writes the kind the entity records for this format (Kind, then
+// InnerKind, spec 0.34), else the first kind whose `requires` keys the entity
+// all has.
 func (e *Engine) Encode(format string, ent *Entity) ([]byte, error) {
 	p, err := e.Pack(format)
 	if err != nil {
 		return nil, err
 	}
+	if ent.Kind.Format != format && ent.InnerKind.Format == format {
+		c := *ent
+		c.Kind = ent.InnerKind
+		ent = &c
+	}
+	return e.encodeWith(p, ent)
+}
+
+// encodeLayer is encode(<format>, entity) for an `inner` line: the inner
+// kind is the one InnerKind names, else the one Kind names, else the one
+// `requires` selects (spec 0.34, Encode). It returns the message's bytes.
+func (e *Engine) encodeLayer(in *Pack, ent *Entity) ([]byte, error) {
+	c := *ent
+	switch {
+	case ent.InnerKind.Format == in.Format:
+		c.Kind = ent.InnerKind
+	case ent.Kind.Format == in.Format:
+	default:
+		c.Kind = EntityKind{}
+	}
+	out, err := e.encodeWith(in, &c)
+	if err != nil {
+		return nil, err
+	}
+	return parseHexInput(in.Format, out)
+}
+
+// encodeWith writes an entity in a pack's canonical form, the kind selected
+// by ent.Kind.
+func (e *Engine) encodeWith(p *Pack, ent *Entity) ([]byte, error) {
 	c, err := builtCodec(p)
 	if err != nil {
 		return nil, err
 	}
 	if p.seq {
-		return c.encodeWhole(p, ent)
+		return c.encodeWhole(e, p, ent)
 	}
 	lay, err := chooseEncode(p, ent)
 	if err != nil {
@@ -570,8 +693,15 @@ func (e *Engine) ConvertOrdered(from, to string, b []byte, ctx []KeyValue) ([]by
 	if err != nil {
 		return nil, err
 	}
+	// The kinds kept for the encode (0.5; spec 0.34, Conversion).
 	if from != to {
-		ent.Kind = EntityKind{}
+		dst := e.packs[to]
+		if !dst.hasInnerFor(ent.Kind.Format) {
+			ent.Kind = EntityKind{}
+		}
+		if ent.InnerKind.Format != to && !dst.hasInnerFor(ent.InnerKind.Format) {
+			ent.InnerKind = EntityKind{}
+		}
 	}
 	if from != to || context != nil {
 		if err := e.fillInOrder(ent, keys, context); err != nil {
@@ -587,12 +717,20 @@ type decodeState struct {
 	ent        *Entity
 	rec        *Item // what the lines being read fill: the entity's own keys and lists, or one item
 	failed     []*Error
-	failedKey  []string // the model key of each entry of failed
-	failedIn   []*Item  // the entity or item each entry of failed was read for
-	failedHard []bool   // the entry is an error whatever another line of its key gives
-	limit      int64    // the limit on list items (ruling 7 of 0.11)
-	held       int64    // the list items the entity holds so far
-	nbits      int      // bits wire: the length of the message in bits
+	failedKey  []string        // the model key of each entry of failed
+	failedIn   []*Item         // the entity or item each entry of failed was read for
+	failedHard []bool          // the entry is an error whatever another line of its key gives
+	eng        *Engine         // the engine the decode runs in: an `inner` line finds its pack there (0.34)
+	top        *Item           // the record of the entity's own keys and lists
+	innerLists map[string]bool // the lists of the entity an inner decode gave: no later line replaces them (0.34)
+	// An inner decode: the lists the outer entity held when it started,
+	// which the join discards, so their items are not counted (7g); free
+	// is set while the items of such a list are read (0.34).
+	discard map[string]bool
+	free    int
+	limit   int64 // the limit on list items (ruling 7 of 0.11)
+	held    int64 // the list items the entity holds so far
+	nbits   int   // bits wire: the length of the message in bits
 }
 
 // overLimit is the failure of a decode that would hold more list items than
@@ -622,6 +760,72 @@ func (d *decodeState) replacing(list string) {
 	}
 }
 
+// freeList reports whether the items of a list a group of the record being
+// read gives are not counted: in an inner decode, a list of the entity that
+// the outer entity already holds (spec 0.34, ruling 7). A count is still
+// checked against the budget (7d).
+func (d *decodeState) freeList(list string) bool {
+	return d.free > 0 || (d.rec == d.top && d.discard[list])
+}
+
+// joinInner joins the entity an inner decode gave to the entity being
+// decoded (spec 0.34, Decode steps 4 and 5): a key keeps the first value
+// read, outer or inner; a list is one key, and an inner list whose name the
+// entity already holds is discarded, its items not counted (7g). The inner
+// decode's failures join the outer ones, except those of a discarded list.
+func (d *decodeState) joinInner(sub *decodeState) {
+	rec := d.top
+	for k, v := range sub.top.Fields {
+		if _, has := rec.Fields[k]; !has {
+			rec.Fields[k] = v
+		}
+	}
+	dropped := map[*Item]bool{}
+	var drop func(items []*Item)
+	drop = func(items []*Item) {
+		for _, it := range items {
+			dropped[it] = true
+			for _, l := range it.Lists {
+				drop(l)
+			}
+		}
+	}
+	names := make([]string, 0, len(sub.top.Lists))
+	for name := range sub.top.Lists {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		items := sub.top.Lists[name]
+		if _, has := rec.Lists[name]; has {
+			drop(items)
+			continue
+		}
+		rec.SetList(name, items)
+		d.held += deepItems(items)
+		if d.innerLists == nil {
+			d.innerLists = map[string]bool{}
+		}
+		d.innerLists[name] = true
+	}
+	for i, f := range sub.failed {
+		in := sub.failedIn[i]
+		if dropped[in] {
+			continue
+		}
+		if in == sub.top {
+			in = rec
+		}
+		d.failed = append(d.failed, f)
+		d.failedKey = append(d.failedKey, sub.failedKey[i])
+		d.failedIn = append(d.failedIn, in)
+		d.failedHard = append(d.failedHard, sub.failedHard[i])
+	}
+	if sub.ent.Kind.Name != "" {
+		d.ent.InnerKind = sub.ent.Kind
+	}
+}
+
 // deepItems counts the items of a list and of every list inside them.
 func deepItems(items []*Item) int64 {
 	n := int64(len(items))
@@ -637,10 +841,12 @@ func deepItems(items []*Item) int64 {
 // The item counts against the limit on list items before it is read (ruling
 // 7 of 0.11).
 func (d *decodeState) item(read func() error) (*Item, error) {
-	if d.held >= d.limit {
-		return nil, d.overLimit("", 1)
+	if d.free == 0 {
+		if d.held >= d.limit {
+			return nil, d.overLimit("", 1)
+		}
+		d.held++
 	}
-	d.held++
 	saved := d.rec
 	it := NewItem()
 	d.rec = it

@@ -24,7 +24,7 @@ from .entity import Entity, Item, _via_decode, _via_encode
 from .errors import GTError, MalformedWire, NoKind, TransformDecodeFailure, TransformEncodeFailure
 from .seqdef import (
     T_ALIGN, T_CHAIN, T_CHOICE, T_CONST, T_COUNT, T_EXT, T_FIELD, T_GROUP, T_IF, T_LENGTH, T_OPT, T_PAD,
-    T_PRESENCE, T_SWITCH, T_WHEN, T_WHOLE, children, when_matches, when_value,
+    T_INNER, T_PRESENCE, T_SWITCH, T_WHEN, T_WHOLE, children, when_matches, when_value,
 )
 from .transforms import value_canon
 from .uper import INT64_MAX, twos_octets, uint_octets
@@ -123,13 +123,25 @@ def _held(items):
 
 
 class _Reader:
-    def __init__(self, pack, data, limit=None):
+    def __init__(self, pack, data, limit=None, layer=None, discard=()):
         self.left = limit  # the items the entity may still hold, None for no limit (ruling 7 of 0.11)
+        # 0.34: the lists of the message the outer entity already holds, which
+        # this (inner) decode reads but does not keep: their items are not
+        # counted (7g), their counts are checked (ruling 7); `free` > 0 inside them
+        self.discard = discard
+        self.free = 0
+        self.inner_lists = None  # 0.34: the lists of the message that the inner message gave
         self.pack = pack
+        self.layer = layer  # 0.34: what looks up, decodes and encodes the pack of an `inner` line (the engine)
+        self.buf = None
         if pack.armor == "sixbit":
             self.msg = armored_message(pack, data)
         else:
-            self.msg = Message(pack, _hex_to_bytes(data, pack.name))
+            self.buf = _hex_to_bytes(data, pack.name)
+            self.msg = Message(pack, self.buf)
+        self.inner_kind = None     # 0.34: the kind the inner pack selected
+        self.inner_failures = None # 0.34: (format, [(key, locator, reason)]) of a transform-decode of the inner pack
+        self.inner_first = False   # 0.34: no outer line had failed when the inner pack failed
         self.pos = 0
         self.hard = self.msg.nbits
         self.soft = []      # the ends of the open `length` blocks, outermost first
@@ -184,7 +196,9 @@ class _Reader:
                 if raw is None:
                     raise NoKind("a common 'when' does not hold (%d bits, %d)" % (nd.length, nd.value),
                                  format=self.pack.name)
-                if nd.as_key is not None:  # 0.30: set whenever the message (or item) decodes
+                if nd.as_key is not None and nd.as_key not in sc.fields:
+                    # 0.30: set whenever the message (or item) decodes; a value an
+                    # earlier `inner` line read is kept (0.34, Decode step 4)
                     sc.fields[nd.as_key] = when_value(nd, raw)
             elif t == T_PRESENCE:
                 self.presence(nd)
@@ -211,6 +225,8 @@ class _Reader:
                 self.ext(nd, sc)
             elif t == T_CHOICE:
                 self.choice(nd, sc)
+            elif t == T_INNER:
+                self.inner(nd, sc)
             elif t == T_SWITCH:
                 key = nd.key
                 if key not in sc.fields and sc.failed:  # ruling 35 of 0.20
@@ -229,6 +245,51 @@ class _Reader:
                 self.run(case.nodes, sc)
             else:
                 self.whole(nd)
+
+    def inner(self, nd, sc):
+        """0.34, Decode: the bytes from the cursor to the end of the extent are
+        one message of the inner pack, decoded into the same entity; the first
+        value read of a key, outer or inner, is kept."""
+        layer = self.layer
+        if layer is None:
+            from .errors import UnknownFormat
+            raise UnknownFormat("no pack is loaded for the inner format %r" % nd.name, format=nd.name)
+        ipack = layer._inner_pack(self.pack, nd.name)  # checks 1 to 4 of "Reaching the inner line"
+        pos = self.pos
+        if pos % 8:
+            raise MalformedWire("the inner message %s would start inside a byte (bit %d)" % (nd.name, pos),
+                                format=self.pack.name)
+        end = self.limit()
+        if end > self.hard or end > self.msg.nbits:
+            raise self.short("the inner message %s" % nd.name)
+        if end % 8:
+            raise MalformedWire("the extent of the inner message %s does not end on a whole byte" % nd.name,
+                                format=self.pack.name)
+        data = self.buf[pos // 8:end // 8] if end > pos else b""
+        try:
+            ient = layer._decode_layer(ipack, data, self.left, frozenset(sc.lists))
+        except TransformDecodeFailure as e:
+            if e.entity is None:
+                raise
+            ient = e.entity
+            self.inner_failures = (ipack.name, list(e.absent or ()))
+            self.inner_first = not sc.failed
+        fields = sc.fields
+        for k, v in ient.fields.items():
+            if k not in fields:
+                fields[k] = v
+        kept = 0
+        for name, items in ient.lists.items():
+            if name not in sc.lists:  # an outer list read first is kept whole (step 4)
+                sc.lists[name] = items
+                kept += _held(items)
+                if self.inner_lists is None:
+                    self.inner_lists = set()
+                self.inner_lists.add(name)
+        if self.left is not None:
+            self.left -= kept  # the discarded items are not counted (7g)
+        self.inner_kind = ient.kind
+        self.pos = end
 
     def when_read(self, nd):
         """-> the bits of a `when` read as an unsigned integer when it holds,
@@ -579,7 +640,7 @@ class _Reader:
         """The group is on the wire: the items of an earlier group of its list,
         which it replaces (ruling 33 of 0.8), are no longer held (ruling 7g of 0.11)."""
         old = sc.lists.get(nd.list)
-        if old and self.left is not None:
+        if old and self.left is not None and not self.free:
             self.left += _held(old)
 
     def count(self, nd):
@@ -595,6 +656,27 @@ class _Reader:
         self.counts[nd] = v - nd.plus
 
     def group(self, nd, sc):
+        if self.discard and not sc.prefix and nd.list in self.discard:
+            self.free += 1  # 0.34: a list the outer entity holds; its items are not counted
+            try:
+                self.group_items(nd, sc)
+            finally:
+                self.free -= 1
+            return
+        if self.inner_lists and not sc.prefix and nd.list in self.inner_lists:
+            # 0.34, Decode step 4: an outer group after the inner message whose list the
+            # inner message gave is read and discarded; the list read first is kept
+            kept = sc.lists[nd.list]
+            self.free += 1
+            try:
+                self.group_items(nd, sc)
+            finally:
+                self.free -= 1
+                sc.lists[nd.list] = kept
+            return
+        self.group_items(nd, sc)
+
+    def group_items(self, nd, sc):
         mode = nd.mode
         msg = self.msg
         items = []
@@ -688,7 +770,7 @@ class _Reader:
         sc.lists[nd.list] = items
 
     def item(self, nd, sc, i):
-        if self.left is not None:
+        if self.left is not None and not self.free:
             if self.left < 1:
                 raise self.over(nd, i + 1)
             self.left -= 1
@@ -718,7 +800,7 @@ class _Reader:
                 else:
                     selected = kind
                     for key, v in got:  # 0.30 ruling 12: set only once the kind is selected
-                        sc.fields[key] = v
+                        sc.fields.setdefault(key, v)  # an earlier inner value is kept (0.34 step 4)
                     break
                 self.pos = mark
             else:
@@ -728,18 +810,29 @@ class _Reader:
         return selected
 
 
-def decode(pack, data, limit=None):
+def decode(pack, data, limit=None, layer=None, discard=()):
     """-> Entity. Input beyond the last line is ignored (ruling 9 of 0.8).
-    `limit` is the limit on list items (ruling 7 of 0.11)."""
-    rd = _Reader(pack, data, limit)
+    `limit` is the limit on list items (ruling 7 of 0.11). `layer`, the
+    engine, looks up and decodes the pack of an `inner` line (0.34)."""
+    rd = _Reader(pack, data, limit, layer, discard)
     ent = Entity()
     kind = rd.body(pack.seq, _Scope(ent.fields, ent.lists, ""))
     rd.check_named()
     if kind is not None:
         ent.kind = (pack.name, kind.name)
-    if rd.failures:
+    ent.inner_kind = rd.inner_kind
+    failures = rd.failures
+    fmt = pack.name
+    if rd.inner_failures is not None:  # 0.34: the earliest of the two in reading order names its format
+        ifmt, ifailed = rd.inner_failures
+        if rd.inner_first or not failures:
+            fmt = ifmt
+            failures = ifailed + failures
+        else:
+            failures = failures + ifailed
+    if failures:
         raise TransformDecodeFailure(
-            "%d field(s) could not be decoded" % len(rd.failures), format=pack.name, entity=ent, absent=rd.failures
+            "%d field(s) could not be decoded" % len(failures), format=fmt, entity=ent, absent=failures
         )
     return ent
 
@@ -806,8 +899,10 @@ def _live(bindings, ctx):
 
 
 class _Writer:
-    def __init__(self, pack, known=None):
+    def __init__(self, pack, known=None, layer=None, entity=None):
         self.pack = pack
+        self.layer = layer    # 0.34: the engine, which encodes the pack of an `inner` line
+        self.entity = entity  # 0.34: the entity an inner pack encodes
         self.ops = []     # (start, length, value)
         self.pos = 0
         self.env = {}     # presence node -> the set of its bits that are 1
@@ -1043,6 +1138,8 @@ class _Writer:
                     self.pos += 1
                 self.put_constrained(0, nd.n - 1, alt.value)
                 self.emit(alt.body, ctx)
+            elif t == T_INNER:
+                self.inner(nd)
             elif t == T_SWITCH:
                 rb = ctx.readback
                 if rb.get(nd.key, _MISSING) is _FAILED:  # ruling 31 of 0.20
@@ -1058,6 +1155,24 @@ class _Writer:
             else:  # whole: written when the message is complete
                 self.wholes.append((self.pos, nd))
                 self.pos += nd.length
+
+    def inner(self, nd):
+        """0.34, Encode: the checks of the line, the cursor on a whole byte,
+        then the inner pack's message of the same entity at the cursor."""
+        layer = self.layer
+        if layer is None:
+            from .errors import UnknownFormat
+            raise UnknownFormat("no pack is loaded for the inner format %r" % nd.name, format=nd.name)
+        ipack = layer._inner_pack(self.pack, nd.name)
+        if self.pos % 8:
+            raise self.fail("the inner message %s would start inside a byte (bit %d)" % (nd.name, self.pos), nd)
+        data = layer._encode_layer(ipack, self.entity)
+        start = self.pos
+        rev = self.pack.bit_order == "msb-lsb"  # the bytes are written as they are
+        for k, b in enumerate(data):
+            if b:
+                self.ops.append((start + 8 * k, 8, reverse_bits(b, 8) if rev else b))
+        self.pos = start + 8 * len(data)
 
     # -- UPER (0.19) --
 
@@ -1399,14 +1514,17 @@ class _Writer:
         return acc.to_bytes(nbytes, "big" if msb else "little").hex()
 
 
-def encode(pack, entity):
-    """-> lowercase hex, or armored text under `armor sixbit`."""
+def encode(pack, entity, kind_ref=None, layer=None):
+    """-> lowercase hex, or armored text under `armor sixbit`. `kind_ref` is
+    the recorded kind that selects (0.34: the caller chooses between
+    `Entity.kind` and `Entity.inner_kind`); `layer`, the engine, encodes the
+    pack of an `inner` line."""
     body = pack.seq
-    kind = select_kind(pack, body, entity.kind, entity.fields, entity.lists)
+    kind = select_kind(pack, body, kind_ref, entity.fields, entity.lists)
     known = {}
     tries = 8
     for attempt in range(tries):
-        wr = _Writer(pack, known)
+        wr = _Writer(pack, known, layer, entity)
         last = attempt == tries - 1
         try:
             wr.emit(kind.block if kind is not None else body.common,

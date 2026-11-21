@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer-shared",
+  "from": "conformance-inner-fixed",
+  "to": "conformance-inner-shared",
+  "input": "3507",
+  "expect": "053507",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: a key mapped by both packs is written by both from the one value: outer x 05, inner 3507"
+}

@@ -5,8 +5,9 @@
 
 The set defaults to `bench/set.json`; the vector paths in it, `packs/` and
 `model/` are read relative to the current directory. The run loads, into one
-engine, only the packs the set's vectors name (each vector's `from` and `to`)
-and the model modules those packs use, and times that. Then, for each vector
+engine, only the packs the set's vectors name (each vector's `from` and `to`,
+and, Version 0.34, the packs their `inner` lines name, transitively) and the
+model modules those packs use, and times that. Then, for each vector
 in order, it converts the input once and compares the output with `expect`;
 a difference, or an error, stops the run with exit status 1 and a message on
 standard error. Then it converts the input `iterations` times and times that.
@@ -56,7 +57,7 @@ def run(set_path, out, err):
                 names.append(fmt)
 
     t0 = time.perf_counter_ns()
-    engine = Engine.from_dir("packs", packs_only=names)
+    engine = Engine.from_dir("packs", packs_only=names, with_inner=True)  # 0.34: and the inner packs
     load_ns = time.perf_counter_ns() - t0
 
     for rel, vec in vectors:

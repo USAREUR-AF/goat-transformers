@@ -1519,13 +1519,14 @@ impl<'a, 's> Session<'a, 's> {
                         second
                     } else {
                         let at = base.checked_add(second).ok_or(Error::BadPlan)?;
-                        *reach = (*reach).max(at + o.len as u64);
+                        let end = at.checked_add(o.len as u64).ok_or(Error::BadPlan)?;
+                        *reach = (*reach).max(end);
                         self.bits(at, o.len as u32).ok_or(Error::MalformedWire)?
                     };
                     // the count against what the limit still allows (7d)
                     self.replacing(scope, o.key);
                     self.take_items(n)?;
-                    let first = base + o.a as u64;
+                    let first = base.checked_add(o.a as u64).ok_or(Error::BadPlan)?;
                     let all = n.checked_mul(item_bits).and_then(|b| b.checked_add(first));
                     match all {
                         Some(e) if e <= total => *reach = (*reach).max(e),

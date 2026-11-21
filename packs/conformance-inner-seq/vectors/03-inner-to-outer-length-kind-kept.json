@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer-length-kind-kept",
+  "from": "conformance-inner-seq",
+  "to": "conformance-inner-length",
+  "input": "020102",
+  "expect": "000302010200",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion: Entity.kind (conformance-inner-seq, b) is kept because the target has an inner line naming its format; Encode step 2 selects b; n and w absent write zero bits (0.8); the length counts the 3 inner bytes: 00 03 020102 00"
+}

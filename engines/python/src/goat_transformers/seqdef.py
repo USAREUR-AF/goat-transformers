@@ -17,7 +17,7 @@ from .transforms import (
 from . import uper
 
 (T_FIELD, T_CONST, T_PAD, T_ALIGN, T_WHEN, T_PRESENCE, T_IF, T_OPT, T_GROUP, T_CHAIN, T_LENGTH,
- T_WHOLE, T_EXT, T_CHOICE, T_ALT, T_SWITCH, T_COUNT) = range(17)
+ T_WHOLE, T_EXT, T_CHOICE, T_ALT, T_SWITCH, T_COUNT, T_INNER) = range(18)
 
 # 0.19 adds `size`; 0.21 adds `rest`, `last` and `count @<name>` (the count of a `count` line)
 GROUP_MODES = ("count", "while", "more", "fx", "size", "rest", "last")
@@ -39,6 +39,7 @@ class Node:
               `count @<name>` (0.21) `count_node`, the `count` line; `tail_rest`: this `rest`
               group is the last line of an item of an outer `rest` group (ruling 10 of 0.21)
     count     `name`, `length`, `plus` (0.21)
+    inner     `name`: the format of the inner pack (0.34)
     chain     `parts`: the lines between `fx` lines; `ends_fx`: the last line is `fx`
     length    `length`, `unit` ("bytes" | "bits"), `plus`, `body`
     whole     `length`, `plus`
@@ -244,11 +245,17 @@ class Body:
             for b in walk(k.nodes):
                 yield b
 
-    def model_keys(self, add, prefix=""):
+    def model_keys(self, add, prefix="", inner=None):
+        """`inner`, when given, maps the format of an `inner` line to the
+        entries it adds at its place (0.34, Capability)."""
         def walk(nodes):
             for nd in nodes:
                 t = nd.t
-                if t == T_FIELD:
+                if t == T_INNER:
+                    if inner is not None:
+                        for name in inner(nd.name):
+                            add(prefix + name)
+                elif t == T_FIELD:
                     for f in nd.bindings:
                         add(prefix + f.key)
                 elif t == T_WHEN:  # 0.30 ruling 5: a `when ... as` key at its line
@@ -416,6 +423,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
         return _LineBad("%s, at %s:%d" % (msg_text, source, lineno), format=seen.get("format"), locator=locator)
     rest_groups = []   # 0.21: (group node, the levels around it up to its extent, what ends the levels)
     count_lines = []   # 0.21: (count node, where it stands: ("list", lines) | ("chain", node) | ("body", body, kind))
+    inner_lines = []   # 0.34: (node, the blocks it stands in, its levels to its extent, its kind or None)
 
     def bad(msg_text, lineno, locator=None):
         return BadDirective("%s, at %s:%d" % (msg_text, source, lineno), format=seen.get("format"), locator=locator)
@@ -800,6 +808,39 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                     % (nd.name, "no" if 0 in got else "more than one", nd.name), nd.lineno, nd.locator)))
                 return
 
+    def check_inners():
+        """0.34, "Where it may stand": inside `length` blocks only, the last
+        wire line of its extent (rulings 11, 26 and 32 of 0.21, as for
+        `rest`), at most one on a reading path. Appends to `deferred`."""
+        common = []
+        per_kind = {}
+        for nd, whats, found, kind in inner_lines:
+            lineno = nd.lineno
+            blocks = [w for w in whats if w != "length"]
+            if blocks:
+                deferred.append((lineno, bad("'inner' under a '%s' block; it stands only in the common lines, in a "
+                                             "kind, or in 'length' blocks" % blocks[-1], lineno, nd.name)))
+                continue
+            levels, _ = found
+            late = None
+            for level, child in levels:
+                for ln in after(level, child):
+                    if is_wire(ln):
+                        late = ln
+                        break
+                if late is not None:
+                    break
+            if late is not None:
+                deferred.append((lineno, bad("'inner' is not the last line of its extent (line %d is read after it)"
+                                             % late.lineno, lineno, nd.name)))
+                continue
+            mine = per_kind.setdefault(id(kind), []) if kind is not None else common
+            if common or mine:
+                deferred.append((lineno, bad("a second 'inner' line on one reading path (ruling 33 of 0.21)",
+                                             lineno, nd.name)))
+                continue
+            mine.append(nd)
+
     def close_body(body, lineno):
         if body.first_when is not None and not body.kinds:
             deferred.append((body.first_when, bad("'when' in a body with no 'kind' line", body.first_when)))
@@ -1044,6 +1085,12 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 declare(name, nd, body, lineno, "count")
                 count_lines.append((nd, home_of(body)))
                 target(body).append(nd)
+            elif kw == "inner":  # 0.34: the rest of the extent is a message of another pack
+                nd = Node(T_INNER, lineno, name=args[0], locator=args[0])
+                target(body).append(nd)
+                inner_lines.append((nd, tuple(fr.what for fr in stack),
+                                    rest_levels(nd, body) if not any(fr.what == "group" for fr in stack) else None,
+                                    body.cur if body is msg else None))
             elif kw == "if":
                 # 0.8's `if` (presence names); a 0.17 gate locator here is
                 # `bad-directive` after the file. A failing `if` still opens its
@@ -1251,6 +1298,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             check_rest(nd, levels, lineno)
         for nd, home in count_lines:
             check_count(nd, home)
+        check_inners()
     version = seen.get("version")
     if not name:
         raise MissingFormat("the pack has no 'format' line in %s" % source)
@@ -1272,6 +1320,10 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                              name) == "uper"
     if not is_uper:  # ruling 9 of 0.19
         deferred.extend(uper_lines)
+    if armor_value == "sixbit" or is_uper:  # 0.34: not in a pack with `armor sixbit` or `encoding uper`
+        for nd, _, _, _ in inner_lines:
+            deferred.append((nd.lineno, bad("'inner' in a pack with %s" % (
+                "'armor sixbit'" if armor_value == "sixbit" else "'encoding uper'"), nd.lineno, nd.name)))
     if armor_value == "sixbit":
         for nd in wholes:
             deferred.append((nd.lineno, bad("'length ... whole' under 'armor sixbit': the armored text has no "
@@ -1292,6 +1344,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
         name=name, version=version, wire="bits", bit_order=once.get("bit_order", "lsb"), kinds=msg.kinds,
         key_refs=key_refs, distribution=distribution, sources=sources, uses=uses, tables=tables,
         armor=armor_value, value_checks=value_checks,
+        inners=tuple(nd.name for nd, _, _, _ in inner_lines),
     )
     pack.layout = "sequential"
     pack.seq = msg

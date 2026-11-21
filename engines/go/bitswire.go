@@ -155,6 +155,14 @@ func decodeBits(d *decodeState, b []byte) error {
 	if err != nil {
 		return err
 	}
+	return decodeBitsData(d, data, bits)
+}
+
+// decodeBitsData decodes a message of a bits pack from its bytes: bits is
+// the number of bits the input carries. An `inner` line hands its bytes to
+// the inner pack here (spec 0.34).
+func decodeBitsData(d *decodeState, data []byte, bits int) error {
+	p := d.pack
 	d.nbits = bits
 	if p.seq {
 		return decodeSeq(d, data, bits)
@@ -289,9 +297,16 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 			if err := d.room(g.List, count); err != nil {
 				return 0, err
 			}
+			free := d.freeList(g.List)
+			if free {
+				d.free++
+			}
 			items := []*Item{}
 			for i := uint64(0); i < count; i++ {
 				if pos+g.itemBits > bits {
+					if free {
+						d.free--
+					}
 					return 0, bad(fmt.Sprintf("does not reach item %d of %d", i, count))
 				}
 				itemEnd := 0
@@ -301,6 +316,9 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 					return err
 				})
 				if err != nil {
+					if free {
+						d.free--
+					}
 					return 0, err
 				}
 				items = append(items, it)
@@ -308,6 +326,9 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 				if itemEnd > pos {
 					pos = itemEnd
 				}
+			}
+			if free {
+				d.free--
 			}
 			d.rec.SetList(g.List, items)
 			if pos > end {

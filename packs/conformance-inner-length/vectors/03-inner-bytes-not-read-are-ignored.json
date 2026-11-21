@@ -1,0 +1,15 @@
+{
+  "name": "inner-bytes-not-read-are-ignored",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-length",
+  "input": "0904010203ff0a",
+  "expect": "09030102030a",
+  "model": {
+    "probe.x": "2",
+    "probe.y": "3",
+    "probe.w": "10",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3: the inner message reads 010203 of its 4-byte input, ff is ignored; the outer w after the block is 0a; Encode: the length counts the 3 inner bytes written"
+}

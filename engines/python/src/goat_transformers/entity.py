@@ -82,12 +82,15 @@ class Entity:
     as hex) pairs, since every occurrence of a tag is kept); it never crosses formats. `kind`
     is the pair `(format, kind name)` a decode selected, or None. `lists` maps
     a list name to its items, in order (0.7); a list that is present and empty
-    is distinct from an absent one."""
+    is distinct from an absent one. `inner_kind` (0.34) is the pair
+    `(format, kind name)` of the kind the pack of an `inner` line selected when
+    a decode read that line, or None."""
 
     fields: dict = dc_field(default_factory=dict)
     residue: dict = dc_field(default_factory=dict)
     kind: tuple = None
     lists: dict = dc_field(default_factory=dict)
+    inner_kind: tuple = None
 
     def __getitem__(self, key):
         return self.fields[key]

@@ -29,7 +29,7 @@ type wireCodec struct {
 	encode func(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 	// encodeWhole writes a message of a pack with `layout sequential`; nil on
 	// a wire that has no sequential layout.
-	encodeWhole func(p *Pack, ent *Entity) ([]byte, error)
+	encodeWhole func(e *Engine, p *Pack, ent *Entity) ([]byte, error)
 }
 
 // codecs holds the codec of every wire of this build.

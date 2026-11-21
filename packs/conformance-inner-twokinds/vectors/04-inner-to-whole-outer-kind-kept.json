@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-whole-outer-kind-kept",
+  "from": "conformance-inner-twokinds",
+  "to": "conformance-inner-whole",
+  "input": "020005",
+  "expect": "0500020005",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion and Encode step 2: kind q kept; whole length 5 = 1 + 1 + 3 bytes (0.8 Lengths); n absent 00"
+}

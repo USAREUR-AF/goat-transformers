@@ -1,0 +1,15 @@
+# Conformance probe pack whose inner message would start inside a byte
+# (spec 0.34, Decode step 1 and Encode), most significant bit first. Public.
+#
+#   bits 0-3    n
+#   the rest    one conformance-inner-fixed message, from bit 4: never aligned
+format     conformance-inner-misaligned
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  4  uint
+inner   conformance-inner-fixed

@@ -85,7 +85,7 @@ public final class Bench {
         }
 
         long t0 = System.nanoTime();
-        Engine engine = Engine.loadOnly(root.resolve("packs"), root.resolve("model"), Distribution.CONTROLLED, formats);
+        Engine engine = Engine.loadOnly(root.resolve("packs"), root.resolve("model"), Distribution.CONTROLLED, formats, null, true);   // with inner packs (0.34)
         long loadNs = System.nanoTime() - t0;
         long defaultMax = engine.maxItems();
 

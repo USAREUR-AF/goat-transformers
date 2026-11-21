@@ -1,0 +1,16 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-restonly",
+  "to": "conformance-inner-restonly",
+  "input": "010203",
+  "expect": "010203",
+  "model": {
+    "probe.nums.#": "3",
+    "probe.nums[2].probe.val": "3",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, a list to the end of the message"
+}

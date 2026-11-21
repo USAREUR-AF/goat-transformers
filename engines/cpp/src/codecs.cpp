@@ -516,18 +516,40 @@ void DecodeScope::raise_failure() const {
     if (has_failure_) throw Error(ErrorKind::TransformDecode, fail_format, fail_locator, fail_detail);
 }
 
-void take_items(const Pack& p, const std::string& list, std::uint64_t n) {
+void take_items(const Pack& p, const std::string& list, std::uint64_t n, bool count) {
     DecodeScope* s = current_scope;
     if (!s) return;
+    if (s->discarding > 0 && !count) return;  // v0.34: a discarded list is not counted
     if (n > s->limit || s->held > s->limit - n)
         throw Error(ErrorKind::MalformedWire, p.format, "",
                     "the list '" + list + "' takes the items of the message beyond the limit of " +
                         std::to_string(s->limit));
-    s->held += n;
+    if (s->discarding == 0) s->held += n;
 }
 
 void give_back_items(std::uint64_t n) {
-    if (DecodeScope* s = current_scope) s->held = n > s->held ? 0 : s->held - n;
+    if (DecodeScope* s = current_scope)
+        if (s->discarding == 0) s->held = n > s->held ? 0 : s->held - n;
+}
+
+DecodeScope* current_decode() { return current_scope; }
+
+void begin_message(const Item& root) {
+    DecodeScope* s = current_scope;
+    if (!s || !s->discard_claim) return;
+    s->discard_claim = false;
+    s->discard_root = &root;
+}
+
+DiscardGuard::DiscardGuard(const Item& out, const std::string& list) {
+    DecodeScope* s = current_scope;
+    if (!s || s->discard_root != &out || !s->discard.count(list)) return;
+    scope_ = s;
+    ++s->discarding;
+}
+
+DiscardGuard::~DiscardGuard() {
+    if (scope_) --scope_->discarding;
 }
 
 std::uint64_t count_items(const std::vector<Item>& items) {
@@ -1955,11 +1977,12 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, c
         const GroupLine& g = *line.group;
         const std::uint64_t count =
             g.count_fixed ? g.count_n : read_bits(in.data, base + g.count_start, g.count_len, in.msb);
+        const DiscardGuard discarded(out, g.list);  // v0.34: a list a layered decode discards
         std::vector<Item>& items = out.lists[g.list];
         give_back_items(count_items(items));
         items.clear();
         // 0.11 ruling 7d: the count is compared with the limit before any item is read.
-        take_items(p, g.list, count);
+        take_items(p, g.list, count, true);
         std::vector<LineRef> body_tmp;
         const std::vector<LineRef>& body = body_lines(p, g, body_tmp);
         const std::string item_what = "an item of the group '" + g.list + "'";
@@ -2315,6 +2338,7 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
     // bytes ignored; shorter is malformed.
     const std::string what = "the message" + (kind ? " of kind '" + kind->name + "'" : std::string());
     Entity e;
+    begin_message(e);  // v0.34: the inner message of a layered decode
     std::vector<LineRef> lines_tmp;
     std::vector<int> gates_tmp;
     const std::uint64_t end =

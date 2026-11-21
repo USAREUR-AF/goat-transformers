@@ -534,6 +534,12 @@ V011_ORDER = {"580", "667", "668", "1003", "1004", "1077", "1078", "1079"}  # ru
 V011_ORDER |= {"3050", "3051", "3052", "3053"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
+# And the 0.34 vectors that pin how the `inner` line meets the 0.11 line
+# checks: `missing-wire` and `layout sequential` standing before it (03, 04),
+# `unterminated-quote` (36), and its after-file checks coming after a later
+# `unknown-directive` (07, 31 to 34, 37). gtcheck reads neither order.
+V011_TLV |= {"wire-inner-03", "wire-inner-04", "wire-inner-07", "wire-inner-31", "wire-inner-32",
+             "wire-inner-33", "wire-inner-34", "wire-inner-36", "wire-inner-37"}
 
 class TlvWireTest(Refusals):
     TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"

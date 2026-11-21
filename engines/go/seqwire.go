@@ -366,6 +366,8 @@ func (r *seqReader) node(n *seqNode) error {
 		}
 		r.read[c] = true
 		return r.nodes(c.body)
+	case seqInner:
+		return r.inner(n)
 	}
 	return nil
 }
@@ -421,6 +423,47 @@ func asHolds(whens []*seqNode, rec *Item) bool {
 		}
 	}
 	return true
+}
+
+// inner reads an `inner` line (spec 0.34): the checks made where the line is
+// reached, then the bytes from the cursor to the end of the enclosing extent
+// decoded by the inner pack, whose keys join the entity, each key keeping
+// the first value read.
+func (r *seqReader) inner(n *seqNode) error {
+	d := r.d
+	if d.eng == nil {
+		return &Error{Kind: ErrUnknownFormat, Format: n.inner, Detail: "no engine to find the inner pack in"}
+	}
+	in, err := d.eng.innerPack(r.p, n.inner)
+	if err != nil {
+		return err
+	}
+	if r.pos%8 != 0 {
+		return r.malformed("the inner line on line %d stands at bit %d, not on a whole byte", n.line, r.pos)
+	}
+	if r.limit%8 != 0 {
+		return r.malformed("the extent of the inner line on line %d ends at bit %d, not on a whole byte", n.line, r.limit)
+	}
+	if r.limit > len(r.data)*8 {
+		return r.malformed("the extent of the inner line on line %d ends beyond the input", n.line)
+	}
+	start := r.pos
+	if start > r.limit {
+		start = r.limit
+	}
+	bytes := r.data[start/8 : r.limit/8]
+	r.pos = r.limit
+	sub := &decodeState{pack: in, ent: NewEntity(), limit: d.limit - d.held, eng: d.eng, discard: map[string]bool{}}
+	for name := range d.top.Lists {
+		sub.discard[name] = true
+	}
+	sub.rec = sub.ent.item()
+	sub.top = sub.rec
+	if err := decodeBitsData(sub, bytes, len(bytes)*8); err != nil {
+		return err
+	}
+	d.joinInner(sub)
+	return nil
 }
 
 // seqFieldDecode reads the bits of a field line at a bit of data as a decode
@@ -511,7 +554,16 @@ func (r *seqReader) group(g *Group) error {
 	if r.beyond() && g.seqMode != seqRest {
 		return nil
 	}
-	d.replacing(g.List)
+	// A list an inner decode gave is kept; this group's items are read and
+	// discarded (spec 0.34, Decode step 4).
+	kept := d.rec == d.top && d.innerLists[g.List]
+	if !kept {
+		d.replacing(g.List)
+	}
+	if d.freeList(g.List) {
+		d.free++
+		defer func() { d.free-- }()
+	}
 	items := []*Item{}
 	item := func() error {
 		it, err := d.item(func() error {
@@ -654,6 +706,10 @@ func (r *seqReader) group(g *Group) error {
 			}
 		}
 	}
+	if kept {
+		d.held -= deepItems(items)
+		return nil
+	}
 	d.rec.SetList(g.List, items)
 	return nil
 }
@@ -776,6 +832,8 @@ func (w *seqWriter) fieldBits(f *Field, sc seqScope) []byte {
 // seqWriter writes a sequential message at a cursor.
 type seqWriter struct {
 	p      *Pack
+	eng    *Engine // the engine of the encode: an `inner` line finds its pack there (0.34)
+	ent    *Entity // the entity being written, which an `inner` line encodes again
 	buf    *bitBuf
 	pos    int
 	pres   map[*seqPresenceDef][]bool
@@ -906,7 +964,7 @@ func (w *seqWriter) fail(format string, a ...any) error {
 // seqMaxPasses bounds the passes of a settling encode (0.20 ruling 33).
 const seqMaxPasses = 16
 
-func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
+func encodeSeq(e *Engine, p *Pack, ent *Entity) ([]byte, error) {
 	rec := ent.item()
 	nodes, defs, err := seqSelect(p, p.sbody, ent.Kind, rec, "the entity")
 	if err != nil {
@@ -914,7 +972,7 @@ func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
 	}
 	forced := map[seqSwitchAt]*seqCase{}
 	for pass := 1; ; pass++ {
-		w := &seqWriter{p: p, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}, forced: forced, actual: map[seqSwitchAt]*seqCase{}}
+		w := &seqWriter{p: p, eng: e, ent: ent, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}, forced: forced, actual: map[seqSwitchAt]*seqCase{}}
 		out, err := w.encodePass(nodes, newScope(p, rec, defs))
 		// Errors of a pass whose prediction does not hold are not reported
 		// (ruling 34): the next pass predicts the cases this one selected.
@@ -1431,8 +1489,35 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			if err := w.emit(c.body, sc.inCase(c), false); err != nil {
 				return err
 			}
+		case seqInner:
+			if err := w.inner(n); err != nil {
+				return err
+			}
 		}
 	}
+	return nil
+}
+
+// inner writes an `inner` line (spec 0.34): after the checks made where the
+// line is reached, on a whole byte, the inner pack's encoding of the same
+// entity.
+func (w *seqWriter) inner(n *seqNode) error {
+	if w.eng == nil {
+		return &Error{Kind: ErrUnknownFormat, Format: n.inner, Detail: "no engine to find the inner pack in"}
+	}
+	in, err := w.eng.innerPack(w.p, n.inner)
+	if err != nil {
+		return err
+	}
+	if w.pos%8 != 0 {
+		return w.fail("the inner line on line %d stands at bit %d, not on a whole byte", n.line, w.pos)
+	}
+	out, err := w.eng.encodeLayer(in, w.ent)
+	if err != nil {
+		return err
+	}
+	at := w.alloc(len(out) * 8)
+	copy(w.buf.data[at/8:], out)
 	return nil
 }
 

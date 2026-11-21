@@ -1,0 +1,17 @@
+{
+  "name": "round-trip-inner-kind-b",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-length",
+  "input": "09030201020a",
+  "expect": "09030201020a",
+  "model": {
+    "probe.z": "258",
+    "@inner_kind": "b",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 5 and Encode step 1: inner kind b, z=0x0102"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer-rest",
+  "from": "conformance-inner-fixed",
+  "to": "conformance-inner-rest",
+  "input": "3507",
+  "expect": "003507",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: n absent writes 8 zero bits; the inner line writes encode(conformance-inner-fixed) = 3507 at the cursor"
+}

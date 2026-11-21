@@ -1,0 +1,17 @@
+{
+  "name": "first-read-wins",
+  "from": "conformance-inner-shared",
+  "to": "conformance-inner-shared",
+  "input": "0a3507",
+  "expect": "0a3a07",
+  "model": {
+    "probe.x": "10",
+    "probe.y": "3",
+    "probe.z": "7",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 4: the outer x 0a is read first and kept; the inner x 5 is discarded. Encode writes x=10 in both places: inner byte 0 = y 3 high, x 0xa low = 0x3a"
+}

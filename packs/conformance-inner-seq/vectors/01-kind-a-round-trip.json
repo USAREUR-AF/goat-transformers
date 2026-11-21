@@ -1,0 +1,18 @@
+{
+  "name": "kind-a-round-trip",
+  "from": "conformance-inner-seq",
+  "to": "conformance-inner-seq",
+  "input": "010203",
+  "expect": "010203",
+  "model": {
+    "@kind": "a",
+    "probe.x": "2",
+    "probe.y": "3",
+    "@absent": [
+      "@inner_kind",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 5: a decode that reads no inner line leaves Entity.inner_kind absent; kind byte 01 selects a, x=02, y=03"
+}

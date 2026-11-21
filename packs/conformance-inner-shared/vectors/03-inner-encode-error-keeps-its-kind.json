@@ -1,0 +1,9 @@
+{
+  "name": "inner-encode-error-keeps-its-kind",
+  "from": "conformance-inner-shared",
+  "to": "conformance-inner-shared",
+  "input": "1f3507",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: x=31 fits the outer 8 bits but not the inner 4-bit uint (ruling 4b of 0.11); the inner encode error keeps its kind"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "round-trip-agreeing-values",
+  "from": "conformance-inner-shared",
+  "to": "conformance-inner-shared",
+  "input": "053507",
+  "expect": "053507",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "3",
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 4 and Encode: outer x 05 and inner x 5 agree; both are written from the one value"
+}
