@@ -1,0 +1,25 @@
+{
+  "name": "route-with-schedule-roundtrip",
+  "from": "rtz-route",
+  "to": "rtz-route",
+  "input": "<route xmlns=\"http://www.cirm.org/RTZ/1/2\" version=\"1.2\"><routeInfo routeName=\"Harbour approach\" routeAuthor=\"Planner A\" routeStatus=\"planned\" validityPeriodStart=\"2026-03-01T06:00:00Z\" vesselName=\"TEST VESSEL\" vesselMMSI=\"123456789\" vesselIMO=\"9000001\" vesselSpeedMax=\"18.5\"/><waypoints><defaultWaypoint radius=\"0.5\"><leg starboardXTD=\"0.1\" portsideXTD=\"0.1\"/></defaultWaypoint><waypoint id=\"1\" revision=\"0\" name=\"Start\"><position lat=\"53.5\" lon=\"8.125\"/></waypoint><waypoint id=\"2\" revision=\"1\" name=\"Turn\" radius=\"0.3\"><position lat=\"53.75\" lon=\"8.25\"/><leg starboardXTD=\"0.2\" portsideXTD=\"0.15\" geometryType=\"Loxodrome\" speedMax=\"12\"/></waypoint><waypoint id=\"3\" revision=\"0\" name=\"End\"><position lat=\"54\" lon=\"8.5\"/></waypoint></waypoints><schedules><schedule id=\"1\" name=\"Base\"><manual><scheduleElement waypointId=\"1\" etd=\"2026-03-01T06:00:00Z\"/><scheduleElement waypointId=\"3\" eta=\"2026-03-01T09:30:00Z\" speed=\"11.5\"/></manual></schedule></schedules></route>",
+  "expect": "<route xmlns=\"http://www.cirm.org/RTZ/1/2\" version=\"1.2\"><routeInfo routeName=\"Harbour approach\" routeAuthor=\"Planner A\" routeStatus=\"planned\" validityPeriodStart=\"2026-03-01T06:00:00Z\" vesselName=\"TEST VESSEL\" vesselMMSI=\"123456789\" vesselIMO=\"9000001\" vesselSpeedMax=\"18.5\"/><waypoints><defaultWaypoint radius=\"0.5\"><leg starboardXTD=\"0.1\" portsideXTD=\"0.1\"/></defaultWaypoint><waypoint id=\"1\" revision=\"0\" name=\"Start\"><position lat=\"53.5\" lon=\"8.125\"/></waypoint><waypoint id=\"2\" revision=\"1\" name=\"Turn\" radius=\"0.3\"><position lat=\"53.75\" lon=\"8.25\"/><leg starboardXTD=\"0.2\" portsideXTD=\"0.15\" geometryType=\"Loxodrome\" speedMax=\"12\"/></waypoint><waypoint id=\"3\" revision=\"0\" name=\"End\"><position lat=\"54\" lon=\"8.5\"/></waypoint></waypoints><schedules><schedule id=\"1\" name=\"Base\"><manual><scheduleElement waypointId=\"1\" etd=\"2026-03-01T06:00:00Z\"/><scheduleElement waypointId=\"3\" eta=\"2026-03-01T09:30:00Z\" speed=\"11.5\"/></manual></schedule></schedules></route>",
+  "model": {
+    "rtz.route_name": "Harbour approach",
+    "rtz.vessel_mmsi": "123456789",
+    "rtz.vessel_speed_max": "18.5",
+    "rtz.default_radius": "0.5",
+    "rtz.default_starboard_xtd": "0.1",
+    "rtz.waypoints.#": "3",
+    "rtz.waypoints[1].rtz.id": "2",
+    "rtz.waypoints[1].rtz.lat": "53.75",
+    "rtz.waypoints[1].rtz.radius": "0.3",
+    "rtz.waypoints[1].rtz.geometry_type": "Loxodrome",
+    "rtz.waypoints[1].rtz.speed_max": "12",
+    "rtz.schedule_id": "1",
+    "rtz.manual_elements.#": "2",
+    "rtz.manual_elements[1].rtz.eta": "2026-03-01T09:30:00Z",
+    "rtz.manual_elements[1].rtz.speed": "11.5"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from the CIRM RTZ 1.2 schema; route information, a default waypoint, three waypoints with a leg, and a manual schedule; expect derived there, no engine run"
+}

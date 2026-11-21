@@ -1,0 +1,12 @@
+{
+  "name": "source-line-count-roundtrip",
+  "from": "nmea-tag-block",
+  "to": "nmea-tag-block",
+  "input": "s:r1,n:42*74",
+  "expect": "s:r1,n:42*74",
+  "model": {
+    "nmeatag.parameters.#": "2",
+    "nmeatag.parameters[1].nmeatag.parameter": "n:42"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, NMEA Tag Blocks; source and line count; expect derived there, no engine run"
+}

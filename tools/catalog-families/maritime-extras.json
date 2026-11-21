@@ -1,0 +1,10 @@
+{
+  "name": "Maritime routes and NMEA extras (RTZ, TAG block, PUBX, AIS area notice)",
+  "domain": "sea",
+  "exact": [
+    "rtz-route",
+    "nmea-tag-block",
+    "nmea0183-pubx",
+    "ais-area-notice"
+  ]
+}

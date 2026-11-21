@@ -1,0 +1,14 @@
+{
+  "name": "minimal-route-roundtrip",
+  "from": "rtz-route",
+  "to": "rtz-route",
+  "input": "<route xmlns=\"http://www.cirm.org/RTZ/1/2\" version=\"1.2\"><routeInfo routeName=\"Minimal\"/><waypoints><waypoint id=\"10\" revision=\"2\"><position lat=\"-33.875\" lon=\"151.25\"/></waypoint><waypoint id=\"11\" revision=\"2\"><position lat=\"-34\" lon=\"151.5\"/></waypoint></waypoints></route>",
+  "expect": "<route xmlns=\"http://www.cirm.org/RTZ/1/2\" version=\"1.2\"><routeInfo routeName=\"Minimal\"/><waypoints><waypoint id=\"10\" revision=\"2\"><position lat=\"-33.875\" lon=\"151.25\"/></waypoint><waypoint id=\"11\" revision=\"2\"><position lat=\"-34\" lon=\"151.5\"/></waypoint></waypoints></route>",
+  "model": {
+    "rtz.route_name": "Minimal",
+    "rtz.waypoints.#": "2",
+    "rtz.waypoints[0].rtz.lat": "-33.875",
+    "rtz.waypoints[1].rtz.lon": "151.5"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from the CIRM RTZ 1.2 schema; the least a route holds: its name and two waypoints; expect derived there, no engine run"
+}

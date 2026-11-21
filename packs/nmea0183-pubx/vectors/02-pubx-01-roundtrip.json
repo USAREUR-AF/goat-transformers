@@ -1,0 +1,13 @@
+{
+  "name": "pubx-01-roundtrip",
+  "from": "nmea0183-pubx",
+  "to": "nmea0183-pubx",
+  "input": "$PUBX,01,101010.00,467125.245,E,5236949.763,N,498.2,D3,1.9,2.0,0.0,0.0,0.0,,0.8,0.9,0.5,10,0,0*5F",
+  "expect": "$PUBX,01,101010.00,467125.245,E,5236949.763,N,498.2,D3,1.9,2.0,0.0,0.0,0.0,,0.8,0.9,0.5,10,0,0*5F",
+  "model": {
+    "pubx.easting": "467125.245",
+    "pubx.northing_ns": "N",
+    "pubx.nav_status": "D3"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd NMEA.adoc, PUBX 00, 01, 03 and 04; a UTM position; expect derived there, no engine run"
+}

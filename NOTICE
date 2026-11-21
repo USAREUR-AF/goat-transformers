@@ -815,3 +815,15 @@ Packs vxlan-gpe-header, geneve-options, mpls-label-stack, ikev2-*
   document authors (RFC 3032: The Internet Society); BCP 78 and the IETF
   Trust's Legal Provisions Relating to IETF Documents. Layouts restated, no
   text copied.
+
+Packs nmea-tag-block, nmea0183-pubx, ais-area-notice
+  From gpsd, AIVDM/AIVDO protocol decoding (www/AIVDM.adoc) and NMEA Revealed
+  (www/NMEA.adoc), https://gitlab.com/gpsd/gpsd commit c59fc6de. Compilation
+  copyright held by the GPSD project. BSD 2-Clause License. Layouts restated,
+  no text copied.
+
+Pack rtz-route
+  From the Route Exchange Format (RTZ) XML schema, revision 1.2, published by
+  CIRM at https://cirm.org/rtz-xml-schemas (the schema of IEC PAS
+  61174-1:2021). No copyright notice or licence stated; labelled
+  LicenseRef-unstated. Structure restated, schema not redistributed.

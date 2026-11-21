@@ -1,0 +1,8 @@
+{
+  "name": "rtz-1-1-is-no-kind",
+  "from": "rtz-route",
+  "to": "rtz-route",
+  "input": "<route xmlns=\"http://www.cirm.org/RTZ/1/1\" version=\"1.1\"><routeInfo routeName=\"Old\"/><waypoints><waypoint id=\"1\" revision=\"0\"><position lat=\"1\" lon=\"2\"/></waypoint><waypoint id=\"2\" revision=\"0\"><position lat=\"3\" lon=\"4\"/></waypoint></waypoints></route>",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from the CIRM RTZ 1.2 schema; a document in the RTZ 1.1 namespace; expect derived there, no engine run"
+}

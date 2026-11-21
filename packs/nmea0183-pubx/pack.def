@@ -1,0 +1,83 @@
+# u-blox PUBX proprietary NMEA 0183 sentences (00, 01, 03, 04) as gpsd's NMEA Revealed lists them.
+# Written by tools/gen/maritime-pack.py; do not edit by hand.
+format        nmea0183-pubx
+version       0.1.0
+distribution  public
+source        "gpsd, NMEA Revealed, sections PUBX 00, 01, 03 and 04, www/NMEA.adoc (sha256 83192561db3198d46ef249233c689de2c9735af162c840155d11e6157574d29e) at https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b, BSD-2-Clause (gpsd COPYING); field order restated"
+uses          pubx
+wire          text
+start         "$"
+checksum      nmea
+
+kind      pubx-00
+when      0       PUBX
+when      1       00
+requires  lat lon
+field     pubx.time_s        2      hms:2
+field     lat                3+4    dm:2:6:NS
+field     lon                5+6    dm:3:6:EW
+field     pubx.alt              7      string
+field     pubx.nav_status       8      string
+field     pubx.hacc             9      string
+field     pubx.vacc             10     string
+field     pubx.sog              11     string
+field     pubx.cog              12     string
+field     pubx.vvel             13     string
+field     pubx.age_c            14     string
+field     pubx.hdop             15     string
+field     pubx.vdop             16     string
+field     pubx.tdop             17     string
+field     pubx.gps_used         18     string
+field     pubx.glonass_used     19     string
+field     pubx.dr_used          20     string
+
+kind      pubx-01
+when      0       PUBX
+when      1       01
+requires  pubx.easting
+field     pubx.time_s        2      hms:2
+field     pubx.easting       3      string
+field     pubx.easting_ew    4      string
+field     pubx.northing      5      string
+field     pubx.northing_ns   6      string
+field     pubx.alt              7      string
+field     pubx.nav_status       8      string
+field     pubx.hacc             9      string
+field     pubx.vacc             10     string
+field     pubx.sog              11     string
+field     pubx.cog              12     string
+field     pubx.vvel             13     string
+field     pubx.age_c            14     string
+field     pubx.hdop             15     string
+field     pubx.vdop             16     string
+field     pubx.tdop             17     string
+field     pubx.gps_used         18     string
+field     pubx.glonass_used     19     string
+field     pubx.dr_used          20     string
+
+kind      pubx-03
+when      0       PUBX
+when      1       03
+requires  pubx.sat_count
+field     pubx.sat_count     2      int
+group     pubx.satellites    3      item 6
+  field   pubx.sv_id         0      int
+  field   pubx.sv_status     1      string
+  field   pubx.azimuth       2      int
+  field   pubx.elevation     3      int
+  field   pubx.cno           4      int
+  field   pubx.lock_time     5      int
+end
+
+kind      pubx-04
+when      0       PUBX
+when      1       04
+requires  pubx.date
+field     pubx.time_s        2      hms:2
+field     pubx.date          3      string
+field     pubx.utc_tow       4      string
+field     pubx.week          5      int
+field     pubx.reserved      6      string
+field     pubx.clock_bias    7      string
+field     pubx.clock_drift   8      string
+field     pubx.pulse_granularity 9  string

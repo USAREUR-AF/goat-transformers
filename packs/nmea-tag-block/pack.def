@@ -1,0 +1,13 @@
+# NMEA 4.x TAG block (as gpsd's AIVDM document describes it): the text between the two backslashes
+# that precede a sentence, its parameters and checksum. Written by tools/gen/maritime-pack.py.
+format        nmea-tag-block
+version       0.1.0
+distribution  public
+source        "gpsd, AIVDM/AIVDO protocol decoding, section NMEA Tag Blocks, www/AIVDM.adoc (sha256 a55511139751f5b9385166143443c0353f64fc77155b4ef4026f4ab03e3dffbd) at https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b, BSD-2-Clause (gpsd COPYING); restated"
+uses          nmeatag
+wire          text
+checksum      nmea
+
+group  nmeatag.parameters  0  item 1
+  field  nmeatag.parameter  0  string
+end

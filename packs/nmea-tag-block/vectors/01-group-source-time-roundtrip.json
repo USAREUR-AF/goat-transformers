@@ -1,0 +1,13 @@
+{
+  "name": "group-source-time-roundtrip",
+  "from": "nmea-tag-block",
+  "to": "nmea-tag-block",
+  "input": "g:1-2-4401,s:station7,c:1767225600*06",
+  "expect": "g:1-2-4401,s:station7,c:1767225600*06",
+  "model": {
+    "nmeatag.parameters.#": "3",
+    "nmeatag.parameters[0].nmeatag.parameter": "g:1-2-4401",
+    "nmeatag.parameters[2].nmeatag.parameter": "c:1767225600"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, NMEA Tag Blocks; sentence group, source and UNIX time parameters; expect derived there, no engine run"
+}

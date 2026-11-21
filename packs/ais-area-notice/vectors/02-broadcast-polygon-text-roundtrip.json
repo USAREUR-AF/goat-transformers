@@ -1,0 +1,18 @@
+{
+  "name": "broadcast-polygon-text-roundtrip",
+  "from": "ais-area-notice",
+  "to": "ais-area-notice",
+  "input": "81mg=5@0EPAAVq;h2l0?wv37wt6200000T;@7U`1r70OJ005;55@P3<51B0000",
+  "expect": "81mg=5@0EPAAVq;h2l0?wv37wt6200000T;@7U`1r70OJ005;55@P3<51B0000",
+  "model": {
+    "aisarea.subareas.#": "3",
+    "aisarea.subareas[0].aisarea.lon": "-1000",
+    "aisarea.subareas[0].aisarea.lat": "-2000",
+    "aisarea.subareas[1].aisarea.shape": "4",
+    "aisarea.subareas[1].aisarea.bearing_2": "180",
+    "aisarea.subareas[1].aisarea.bearing_4": "720",
+    "aisarea.subareas[2].aisarea.shape": "5",
+    "aisarea.subareas[2].aisarea.text": "KEEP CLEAR"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Area Notice and its sub-area tables; a point, a polygon of three vertices from it (the fourth not available), and associated text; expect derived there, no engine run"
+}

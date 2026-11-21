@@ -1,0 +1,8 @@
+{
+  "name": "bad-checksum-is-malformed",
+  "from": "nmea-tag-block",
+  "to": "nmea-tag-block",
+  "input": "s:r1,n:42*00",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, NMEA Tag Blocks; a checksum that does not match; expect derived there, no engine run"
+}

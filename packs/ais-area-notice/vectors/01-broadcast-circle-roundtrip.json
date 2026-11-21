@@ -1,0 +1,27 @@
+{
+  "name": "broadcast-circle-roundtrip",
+  "from": "ais-area-notice",
+  "to": "ais-area-notice",
+  "input": "81mg=5@0EPAAVq;h2l0@?0t1RT=43r000",
+  "expect": "81mg=5@0EPAAVq;h2l0@?0t1RT=43r000",
+  "model": {
+    "ais.msg_type": "8",
+    "ais.mmsi": "123456789",
+    "aisbin.dac": "1",
+    "aisbin.fid": "22",
+    "aisarea.linkage": "17",
+    "aisarea.notice": "35",
+    "aisarea.month": "3",
+    "aisarea.day": "14",
+    "aisarea.hour": "9",
+    "aisarea.minute": "30",
+    "aisarea.duration": "1440",
+    "aisarea.subareas.#": "1",
+    "aisarea.subareas[0].aisarea.shape": "0",
+    "aisarea.subareas[0].aisarea.scale": "1",
+    "aisarea.subareas[0].aisarea.lon": "492000",
+    "aisarea.subareas[0].aisarea.lat": "3229800",
+    "aisarea.subareas[0].aisarea.radius": "250"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Area Notice and its sub-area tables; a broadcast notice (entry prohibited, 24 hours) of one circle of 2500 m; expect derived there, no engine run"
+}

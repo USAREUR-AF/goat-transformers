@@ -1,0 +1,8 @@
+{
+  "name": "cut-header-is-malformed",
+  "from": "ais-area-notice",
+  "to": "ais-area-notice",
+  "input": "81mg=5@0EPAA",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Area Notice and its sub-area tables; the payload of vector 01 cut inside the notice header; expect derived there, no engine run"
+}

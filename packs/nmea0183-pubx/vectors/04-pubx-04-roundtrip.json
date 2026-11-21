@@ -1,0 +1,14 @@
+{
+  "name": "pubx-04-roundtrip",
+  "from": "nmea0183-pubx",
+  "to": "nmea0183-pubx",
+  "input": "$PUBX,04,073731.00,091226,113851.00,2400,113851.00,1930035,-2660.664,43*1F",
+  "expect": "$PUBX,04,073731.00,091226,113851.00,2400,113851.00,1930035,-2660.664,43*1F",
+  "model": {
+    "pubx.time_s": "27451",
+    "pubx.date": "091226",
+    "pubx.week": "2400",
+    "pubx.clock_drift": "-2660.664"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd NMEA.adoc, PUBX 00, 01, 03 and 04; time of day and clock information; expect derived there, no engine run"
+}

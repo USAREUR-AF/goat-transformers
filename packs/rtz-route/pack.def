@@ -1,0 +1,127 @@
+# RTZ route exchange file, schema revision 1.2 (CIRM; IEC PAS 61174-1:2021): the route information, the
+# default waypoint, the waypoints with their legs, and the first schedule's manual and calculated elements.
+# Written by tools/gen/maritime-pack.py; do not edit by hand.
+format  rtz-route
+version 0.1.0
+distribution public
+source        "CIRM, Route Exchange Format (RTZ) XML schema, revision 1.2 (IEC PAS 61174-1:2021), https://cirm.org/storage/documents/October2022/bWjrTyyfNGseK9ch3TKf.xsd from https://cirm.org/rtz-xml-schemas (sha256 ba5695107e2b559ea0594eb80f7407b7e4f1c10da8cf09b447b4b920f681ceff), no licence stated; structure restated"
+uses    rtz
+wire    xml
+root    route
+when    @xmlns    http://www.cirm.org/RTZ/1/2
+when    @version  1.2
+
+kind    route
+field   rtz.route_name  routeInfo/@routeName  string
+field   rtz.route_author  routeInfo/@routeAuthor  string
+field   rtz.route_status  routeInfo/@routeStatus  string
+field   rtz.validity_start  routeInfo/@validityPeriodStart  string
+field   rtz.validity_stop  routeInfo/@validityPeriodStop  string
+field   rtz.vessel_name  routeInfo/@vesselName  string
+field   rtz.vessel_mmsi  routeInfo/@vesselMMSI  int
+field   rtz.vessel_imo  routeInfo/@vesselIMO  int
+field   rtz.vessel_voyage  routeInfo/@vesselVoyage  string
+field   rtz.vessel_displacement  routeInfo/@vesselDisplacement  int
+field   rtz.vessel_cargo  routeInfo/@vesselCargo  int
+field   rtz.vessel_gm  routeInfo/@vesselGM  float
+field   rtz.optimization_method  routeInfo/@optimizationMethod  string
+field   rtz.vessel_max_roll  routeInfo/@vesselMaxRoll  int
+field   rtz.vessel_max_wave  routeInfo/@vesselMaxWave  float
+field   rtz.vessel_max_wind  routeInfo/@vesselMaxWind  float
+field   rtz.vessel_speed_max  routeInfo/@vesselSpeedMax  float
+field   rtz.vessel_service_min  routeInfo/@vesselServiceMin  float
+field   rtz.vessel_service_max  routeInfo/@vesselServiceMax  float
+field   rtz.route_changes_history  routeInfo/@routeChangesHistory  string
+field   rtz.default_radius  waypoints/defaultWaypoint/@radius  float
+field   rtz.default_starboard_xtd  waypoints/defaultWaypoint/leg/@starboardXTD  float
+field   rtz.default_portside_xtd  waypoints/defaultWaypoint/leg/@portsideXTD  float
+field   rtz.default_safety_contour  waypoints/defaultWaypoint/leg/@safetyContour  float
+field   rtz.default_safety_depth  waypoints/defaultWaypoint/leg/@safetyDepth  float
+field   rtz.default_geometry_type  waypoints/defaultWaypoint/leg/@geometryType  string
+field   rtz.default_speed_min  waypoints/defaultWaypoint/leg/@speedMin  float
+field   rtz.default_speed_max  waypoints/defaultWaypoint/leg/@speedMax  float
+field   rtz.default_draught_forward  waypoints/defaultWaypoint/leg/@draughtForward  float
+field   rtz.default_draught_aft  waypoints/defaultWaypoint/leg/@draughtAft  float
+field   rtz.default_static_ukc  waypoints/defaultWaypoint/leg/@staticUKC  float
+field   rtz.default_dynamic_ukc  waypoints/defaultWaypoint/leg/@dynamicUKC  float
+field   rtz.default_masthead  waypoints/defaultWaypoint/leg/@masthead  float
+field   rtz.default_leg_report  waypoints/defaultWaypoint/leg/@legReport  string
+field   rtz.default_leg_info  waypoints/defaultWaypoint/leg/@legInfo  string
+field   rtz.default_leg_note1  waypoints/defaultWaypoint/leg/@legNote1  string
+field   rtz.default_leg_note2  waypoints/defaultWaypoint/leg/@legNote2  string
+group   rtz.waypoints  waypoints/waypoint
+  field  rtz.id  @id  int
+  field  rtz.revision  @revision  int
+  field  rtz.name  @name  string
+  field  rtz.radius  @radius  float
+  field  rtz.lat  position/@lat  float
+  field  rtz.lon  position/@lon  float
+  field  rtz.starboard_xtd  leg/@starboardXTD  float
+  field  rtz.portside_xtd  leg/@portsideXTD  float
+  field  rtz.safety_contour  leg/@safetyContour  float
+  field  rtz.safety_depth  leg/@safetyDepth  float
+  field  rtz.geometry_type  leg/@geometryType  string
+  field  rtz.speed_min  leg/@speedMin  float
+  field  rtz.speed_max  leg/@speedMax  float
+  field  rtz.draught_forward  leg/@draughtForward  float
+  field  rtz.draught_aft  leg/@draughtAft  float
+  field  rtz.static_ukc  leg/@staticUKC  float
+  field  rtz.dynamic_ukc  leg/@dynamicUKC  float
+  field  rtz.masthead  leg/@masthead  float
+  field  rtz.leg_report  leg/@legReport  string
+  field  rtz.leg_info  leg/@legInfo  string
+  field  rtz.leg_note1  leg/@legNote1  string
+  field  rtz.leg_note2  leg/@legNote2  string
+end
+field   rtz.schedule_id  schedules/schedule/@id  int
+field   rtz.schedule_name  schedules/schedule/@name  string
+group   rtz.manual_elements  schedules/schedule/manual/scheduleElement
+  field  rtz.waypoint_id  @waypointId  int
+  field  rtz.etd  @etd  string
+  field  rtz.etd_window_before  @etdWindowBefore  string
+  field  rtz.etd_window_after  @etdWindowAfter  string
+  field  rtz.eta  @eta  string
+  field  rtz.eta_window_before  @etaWindowBefore  string
+  field  rtz.eta_window_after  @etaWindowAfter  string
+  field  rtz.stay  @stay  string
+  field  rtz.speed  @speed  float
+  field  rtz.speed_window  @speedWindow  float
+  field  rtz.wind_speed  @windSpeed  float
+  field  rtz.wind_direction  @windDirection  float
+  field  rtz.current_speed  @currentSpeed  float
+  field  rtz.current_direction  @currentDirection  float
+  field  rtz.wind_loss  @windLoss  float
+  field  rtz.wave_loss  @waveLoss  float
+  field  rtz.total_loss  @totalLoss  float
+  field  rtz.rpm  @rpm  int
+  field  rtz.pitch  @pitch  int
+  field  rtz.fuel  @fuel  float
+  field  rtz.rel_fuel_save  @relFuelSave  float
+  field  rtz.abs_fuel_save  @absFuelSave  float
+  field  rtz.note  @Note  string
+end
+group   rtz.calculated_elements  schedules/schedule/calculated/scheduleElement
+  field  rtz.waypoint_id  @waypointId  int
+  field  rtz.etd  @etd  string
+  field  rtz.etd_window_before  @etdWindowBefore  string
+  field  rtz.etd_window_after  @etdWindowAfter  string
+  field  rtz.eta  @eta  string
+  field  rtz.eta_window_before  @etaWindowBefore  string
+  field  rtz.eta_window_after  @etaWindowAfter  string
+  field  rtz.stay  @stay  string
+  field  rtz.speed  @speed  float
+  field  rtz.speed_window  @speedWindow  float
+  field  rtz.wind_speed  @windSpeed  float
+  field  rtz.wind_direction  @windDirection  float
+  field  rtz.current_speed  @currentSpeed  float
+  field  rtz.current_direction  @currentDirection  float
+  field  rtz.wind_loss  @windLoss  float
+  field  rtz.wave_loss  @waveLoss  float
+  field  rtz.total_loss  @totalLoss  float
+  field  rtz.rpm  @rpm  int
+  field  rtz.pitch  @pitch  int
+  field  rtz.fuel  @fuel  float
+  field  rtz.rel_fuel_save  @relFuelSave  float
+  field  rtz.abs_fuel_save  @absFuelSave  float
+  field  rtz.note  @Note  string
+end

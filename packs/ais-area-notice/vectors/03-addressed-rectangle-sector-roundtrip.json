@@ -1,0 +1,21 @@
+{
+  "name": "addressed-rectangle-sector-roundtrip",
+  "from": "ais-area-notice",
+  "to": "ais-area-notice",
+  "input": "639>JhDjCVd805L1A00iqwwvD3h?0Ha3A1@:5`50N1p358J60:7Sh",
+  "expect": "639>JhDjCVd805L1A00iqwwvD3h?0Ha3A1@:5`50N1p358J60:7Sh",
+  "model": {
+    "ais.msg_type": "6",
+    "aisbin.seqno": "1",
+    "ais.dest_mmsi": "211000002",
+    "aisbin.fid": "23",
+    "aisarea.notice": "8",
+    "aisarea.hour": "24",
+    "aisarea.duration": "262143",
+    "aisarea.subareas[0].aisarea.east": "20",
+    "aisarea.subareas[0].aisarea.orientation": "45",
+    "aisarea.subareas[1].aisarea.left": "30",
+    "aisarea.subareas[1].aisarea.right": "120"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Area Notice and its sub-area tables; an addressed notice (traffic congestion, no start time or duration) of a rectangle and a sector; expect derived there, no engine run"
+}

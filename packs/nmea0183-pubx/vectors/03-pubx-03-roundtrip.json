@@ -1,0 +1,16 @@
+{
+  "name": "pubx-03-roundtrip",
+  "from": "nmea0183-pubx",
+  "to": "nmea0183-pubx",
+  "input": "$PUBX,03,2,5,U,120,45,40,30,12,-,,,22,0*65",
+  "expect": "$PUBX,03,2,5,U,120,45,40,30,12,-,,,22,0*65",
+  "model": {
+    "pubx.sat_count": "2",
+    "pubx.satellites.#": "2",
+    "pubx.satellites[0].pubx.sv_id": "5",
+    "pubx.satellites[0].pubx.azimuth": "120",
+    "pubx.satellites[1].pubx.sv_status": "-",
+    "pubx.satellites[1].pubx.cno": "22"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd NMEA.adoc, PUBX 00, 01, 03 and 04; satellite status for two satellites, the second without azimuth or elevation; expect derived there, no engine run"
+}

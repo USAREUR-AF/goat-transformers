@@ -1,0 +1,8 @@
+{
+  "name": "pubx-02-is-no-kind",
+  "from": "nmea0183-pubx",
+  "to": "nmea0183-pubx",
+  "input": "$PUBX,02,1*2C",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd NMEA.adoc, PUBX 00, 01, 03 and 04; there is no PUBX 02; expect derived there, no engine run"
+}
