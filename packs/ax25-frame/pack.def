@@ -1,0 +1,324 @@
+# AX.25 v2.2 frame (TAPR, sections 3 and 4): the address field (destination, source, up to eight
+# repeaters), the control field (modulo 8), the PID and the information field. The message is the frame
+# between the flags, without the frame-check sequence. Written by tools/gen/radio-pack.py.
+format        ax25-frame
+version       0.1.0
+distribution  public
+source        "TAPR, AX.25 Link Access Protocol for Amateur Packet Radio, Version 2.2, Revision July 1998, sections 3 and 4, http://www.tapr.org/pdf/AX25.2.2.pdf as archived 2025-02-23 (sha256 af2070954468ef6498143ababf9beaf5d72b683ef82491dd7eb8e3670b29475c), Copyright TAPR and ARRL, no licence stated; layout restated"
+uses          ax25
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ax25.dest_call_1  7  chars:ascii7
+pad  1
+field  ax25.dest_call_2  7  chars:ascii7
+pad  1
+field  ax25.dest_call_3  7  chars:ascii7
+pad  1
+field  ax25.dest_call_4  7  chars:ascii7
+pad  1
+field  ax25.dest_call_5  7  chars:ascii7
+pad  1
+field  ax25.dest_call_6  7  chars:ascii7
+pad  1
+field  ax25.dest_c  1  uint
+field  ax25.dest_reserved  2  uint
+field  ax25.dest_ssid  4  uint
+field  ax25.dest_ext  1  uint
+field  ax25.src_call_1  7  chars:ascii7
+pad  1
+field  ax25.src_call_2  7  chars:ascii7
+pad  1
+field  ax25.src_call_3  7  chars:ascii7
+pad  1
+field  ax25.src_call_4  7  chars:ascii7
+pad  1
+field  ax25.src_call_5  7  chars:ascii7
+pad  1
+field  ax25.src_call_6  7  chars:ascii7
+pad  1
+field  ax25.src_c  1  uint
+field  ax25.src_reserved  2  uint
+field  ax25.src_ssid  4  uint
+field  ax25.src_ext  1  uint
+switch  ax25.src_ext
+  case  0
+    field  ax25.rpt1_call_1  7  chars:ascii7
+    pad  1
+    field  ax25.rpt1_call_2  7  chars:ascii7
+    pad  1
+    field  ax25.rpt1_call_3  7  chars:ascii7
+    pad  1
+    field  ax25.rpt1_call_4  7  chars:ascii7
+    pad  1
+    field  ax25.rpt1_call_5  7  chars:ascii7
+    pad  1
+    field  ax25.rpt1_call_6  7  chars:ascii7
+    pad  1
+    field  ax25.rpt1_h  1  uint
+    field  ax25.rpt1_reserved  2  uint
+    field  ax25.rpt1_ssid  4  uint
+    field  ax25.rpt1_ext  1  uint
+    switch  ax25.rpt1_ext
+      case  0
+        field  ax25.rpt2_call_1  7  chars:ascii7
+        pad  1
+        field  ax25.rpt2_call_2  7  chars:ascii7
+        pad  1
+        field  ax25.rpt2_call_3  7  chars:ascii7
+        pad  1
+        field  ax25.rpt2_call_4  7  chars:ascii7
+        pad  1
+        field  ax25.rpt2_call_5  7  chars:ascii7
+        pad  1
+        field  ax25.rpt2_call_6  7  chars:ascii7
+        pad  1
+        field  ax25.rpt2_h  1  uint
+        field  ax25.rpt2_reserved  2  uint
+        field  ax25.rpt2_ssid  4  uint
+        field  ax25.rpt2_ext  1  uint
+        switch  ax25.rpt2_ext
+          case  0
+            field  ax25.rpt3_call_1  7  chars:ascii7
+            pad  1
+            field  ax25.rpt3_call_2  7  chars:ascii7
+            pad  1
+            field  ax25.rpt3_call_3  7  chars:ascii7
+            pad  1
+            field  ax25.rpt3_call_4  7  chars:ascii7
+            pad  1
+            field  ax25.rpt3_call_5  7  chars:ascii7
+            pad  1
+            field  ax25.rpt3_call_6  7  chars:ascii7
+            pad  1
+            field  ax25.rpt3_h  1  uint
+            field  ax25.rpt3_reserved  2  uint
+            field  ax25.rpt3_ssid  4  uint
+            field  ax25.rpt3_ext  1  uint
+            switch  ax25.rpt3_ext
+              case  0
+                field  ax25.rpt4_call_1  7  chars:ascii7
+                pad  1
+                field  ax25.rpt4_call_2  7  chars:ascii7
+                pad  1
+                field  ax25.rpt4_call_3  7  chars:ascii7
+                pad  1
+                field  ax25.rpt4_call_4  7  chars:ascii7
+                pad  1
+                field  ax25.rpt4_call_5  7  chars:ascii7
+                pad  1
+                field  ax25.rpt4_call_6  7  chars:ascii7
+                pad  1
+                field  ax25.rpt4_h  1  uint
+                field  ax25.rpt4_reserved  2  uint
+                field  ax25.rpt4_ssid  4  uint
+                field  ax25.rpt4_ext  1  uint
+                switch  ax25.rpt4_ext
+                  case  0
+                    field  ax25.rpt5_call_1  7  chars:ascii7
+                    pad  1
+                    field  ax25.rpt5_call_2  7  chars:ascii7
+                    pad  1
+                    field  ax25.rpt5_call_3  7  chars:ascii7
+                    pad  1
+                    field  ax25.rpt5_call_4  7  chars:ascii7
+                    pad  1
+                    field  ax25.rpt5_call_5  7  chars:ascii7
+                    pad  1
+                    field  ax25.rpt5_call_6  7  chars:ascii7
+                    pad  1
+                    field  ax25.rpt5_h  1  uint
+                    field  ax25.rpt5_reserved  2  uint
+                    field  ax25.rpt5_ssid  4  uint
+                    field  ax25.rpt5_ext  1  uint
+                    switch  ax25.rpt5_ext
+                      case  0
+                        field  ax25.rpt6_call_1  7  chars:ascii7
+                        pad  1
+                        field  ax25.rpt6_call_2  7  chars:ascii7
+                        pad  1
+                        field  ax25.rpt6_call_3  7  chars:ascii7
+                        pad  1
+                        field  ax25.rpt6_call_4  7  chars:ascii7
+                        pad  1
+                        field  ax25.rpt6_call_5  7  chars:ascii7
+                        pad  1
+                        field  ax25.rpt6_call_6  7  chars:ascii7
+                        pad  1
+                        field  ax25.rpt6_h  1  uint
+                        field  ax25.rpt6_reserved  2  uint
+                        field  ax25.rpt6_ssid  4  uint
+                        field  ax25.rpt6_ext  1  uint
+                        switch  ax25.rpt6_ext
+                          case  0
+                            field  ax25.rpt7_call_1  7  chars:ascii7
+                            pad  1
+                            field  ax25.rpt7_call_2  7  chars:ascii7
+                            pad  1
+                            field  ax25.rpt7_call_3  7  chars:ascii7
+                            pad  1
+                            field  ax25.rpt7_call_4  7  chars:ascii7
+                            pad  1
+                            field  ax25.rpt7_call_5  7  chars:ascii7
+                            pad  1
+                            field  ax25.rpt7_call_6  7  chars:ascii7
+                            pad  1
+                            field  ax25.rpt7_h  1  uint
+                            field  ax25.rpt7_reserved  2  uint
+                            field  ax25.rpt7_ssid  4  uint
+                            field  ax25.rpt7_ext  1  uint
+                            switch  ax25.rpt7_ext
+                              case  0
+                                field  ax25.rpt8_call_1  7  chars:ascii7
+                                pad  1
+                                field  ax25.rpt8_call_2  7  chars:ascii7
+                                pad  1
+                                field  ax25.rpt8_call_3  7  chars:ascii7
+                                pad  1
+                                field  ax25.rpt8_call_4  7  chars:ascii7
+                                pad  1
+                                field  ax25.rpt8_call_5  7  chars:ascii7
+                                pad  1
+                                field  ax25.rpt8_call_6  7  chars:ascii7
+                                pad  1
+                                field  ax25.rpt8_h  1  uint
+                                field  ax25.rpt8_reserved  2  uint
+                                field  ax25.rpt8_ssid  4  uint
+                                field  ax25.rpt8_ext  1  uint
+                                switch  ax25.rpt8_ext
+                                  case  1
+                                    field  ax25.control  8  uint
+                                    switch  ax25.control
+                                      case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+                                        field  ax25.pid  8  uint
+                                        group  ax25.info  rest
+                                          field  ax25.octet  8  uint
+                                        end
+                                      case  175,191,227,243,135,151
+                                        group  ax25.info  rest
+                                          field  ax25.octet  8  uint
+                                        end
+                                      else
+                                    end
+                                end
+                              else
+                                field  ax25.control  8  uint
+                                switch  ax25.control
+                                  case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+                                    field  ax25.pid  8  uint
+                                    group  ax25.info  rest
+                                      field  ax25.octet  8  uint
+                                    end
+                                  case  175,191,227,243,135,151
+                                    group  ax25.info  rest
+                                      field  ax25.octet  8  uint
+                                    end
+                                  else
+                                end
+                            end
+                          else
+                            field  ax25.control  8  uint
+                            switch  ax25.control
+                              case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+                                field  ax25.pid  8  uint
+                                group  ax25.info  rest
+                                  field  ax25.octet  8  uint
+                                end
+                              case  175,191,227,243,135,151
+                                group  ax25.info  rest
+                                  field  ax25.octet  8  uint
+                                end
+                              else
+                            end
+                        end
+                      else
+                        field  ax25.control  8  uint
+                        switch  ax25.control
+                          case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+                            field  ax25.pid  8  uint
+                            group  ax25.info  rest
+                              field  ax25.octet  8  uint
+                            end
+                          case  175,191,227,243,135,151
+                            group  ax25.info  rest
+                              field  ax25.octet  8  uint
+                            end
+                          else
+                        end
+                    end
+                  else
+                    field  ax25.control  8  uint
+                    switch  ax25.control
+                      case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+                        field  ax25.pid  8  uint
+                        group  ax25.info  rest
+                          field  ax25.octet  8  uint
+                        end
+                      case  175,191,227,243,135,151
+                        group  ax25.info  rest
+                          field  ax25.octet  8  uint
+                        end
+                      else
+                    end
+                end
+              else
+                field  ax25.control  8  uint
+                switch  ax25.control
+                  case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+                    field  ax25.pid  8  uint
+                    group  ax25.info  rest
+                      field  ax25.octet  8  uint
+                    end
+                  case  175,191,227,243,135,151
+                    group  ax25.info  rest
+                      field  ax25.octet  8  uint
+                    end
+                  else
+                end
+            end
+          else
+            field  ax25.control  8  uint
+            switch  ax25.control
+              case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+                field  ax25.pid  8  uint
+                group  ax25.info  rest
+                  field  ax25.octet  8  uint
+                end
+              case  175,191,227,243,135,151
+                group  ax25.info  rest
+                  field  ax25.octet  8  uint
+                end
+              else
+            end
+        end
+      else
+        field  ax25.control  8  uint
+        switch  ax25.control
+          case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+            field  ax25.pid  8  uint
+            group  ax25.info  rest
+              field  ax25.octet  8  uint
+            end
+          case  175,191,227,243,135,151
+            group  ax25.info  rest
+              field  ax25.octet  8  uint
+            end
+          else
+        end
+    end
+  else
+    field  ax25.control  8  uint
+    switch  ax25.control
+      case  0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,3,19
+        field  ax25.pid  8  uint
+        group  ax25.info  rest
+          field  ax25.octet  8  uint
+        end
+      case  175,191,227,243,135,151
+        group  ax25.info  rest
+          field  ax25.octet  8  uint
+        end
+      else
+    end
+end

@@ -1,0 +1,12 @@
+{
+  "name": "return-roundtrip",
+  "from": "kiss-frame",
+  "to": "kiss-frame",
+  "input": "ff",
+  "expect": "ff",
+  "model": {
+    "kiss.port": "15",
+    "kiss.command": "15"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from the KISS TNC note (1987) section 4; the Return command (type 0xFF); expect derived there, no engine run"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Amateur and paging radio (AX.25, KISS, POCSAG)",
+  "domain": "networks",
+  "exact": [
+    "ax25-frame",
+    "kiss-frame",
+    "pocsag-batch"
+  ]
+}

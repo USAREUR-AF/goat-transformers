@@ -1,0 +1,8 @@
+{
+  "name": "cut-address-is-malformed",
+  "from": "ax25-frame",
+  "to": "ax25-frame",
+  "input": "82a0a4a64040e09c6086",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from AX.25 v2.2 (TAPR 1998) sections 3.12 and 4.2 to 4.3; the frame of vector 01 cut inside its destination address; expect derived there, no engine run"
+}

@@ -1,0 +1,26 @@
+# POCSAG batch (Rec. ITU-R M.584-2 Annex 1, radio-paging code No. 1): the synchronization codeword
+# and the codewords that follow it (16 in a batch), each an address or a message codeword. Written
+# by tools/gen/radio-pack.py.
+format        pocsag-batch
+version       0.1.0
+distribution  public
+source        "Recommendation ITU-R M.584-2 (11/1997), Codes and formats for radio paging, Annex 1 (radio-paging code No. 1, POCSAG), https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.584-2-199711-I!!PDF-E.pdf (sha256 3f9fb2fd0324ec9ecb37a4645ee24fc75d7d61424dbd6a8826df415bad955301), ITU, no licence stated; layout restated"
+uses          pocsag
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    batch
+when    32  2094142936                # the synchronization codeword 0x7CD215D8
+group  pocsag.codewords  rest
+  field  pocsag.flag  1  uint
+  switch  pocsag.flag
+    case  0
+      field  pocsag.address  18  uint
+      field  pocsag.function  2  uint
+    case  1
+      field  pocsag.message_bits  20  hex
+  end
+  field  pocsag.bch  10  uint
+  field  pocsag.parity  1  uint
+end

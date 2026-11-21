@@ -1,0 +1,8 @@
+{
+  "name": "no-sync-is-no-kind",
+  "from": "pocsag-batch",
+  "to": "pocsag-batch",
+  "input": "7a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c197",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from Rec. ITU-R M.584-2 Annex 1 sections 1.2 to 1.4; a batch whose first codeword is not the synchronization codeword; expect derived there, no engine run"
+}

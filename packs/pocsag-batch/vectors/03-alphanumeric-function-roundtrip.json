@@ -1,0 +1,14 @@
+{
+  "name": "alphanumeric-function-roundtrip",
+  "from": "pocsag-batch",
+  "to": "pocsag-batch",
+  "input": "7cd215d87a89c1977a89c197007d1b6f891a2bfad5e6f1b37a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c197",
+  "expect": "7cd215d87a89c1977a89c197007d1b6f891a2bfad5e6f1b37a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c197",
+  "model": {
+    "pocsag.codewords[2].pocsag.address": "1000",
+    "pocsag.codewords[2].pocsag.function": "3",
+    "pocsag.codewords[3].pocsag.message_bits": "12345",
+    "pocsag.codewords[4].pocsag.message_bits": "abcde"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from Rec. ITU-R M.584-2 Annex 1 sections 1.2 to 1.4; an address codeword in frame 1 with function bits 3 and two message codewords whose bits are kept as hex; expect derived there, no engine run"
+}

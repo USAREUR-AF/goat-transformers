@@ -1,0 +1,8 @@
+{
+  "name": "cut-codeword-is-malformed",
+  "from": "pocsag-batch",
+  "to": "pocsag-batch",
+  "input": "7cd215d87a89",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from Rec. ITU-R M.584-2 Annex 1 sections 1.2 to 1.4; the synchronization codeword and half a codeword; expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "set-hardware-roundtrip",
+  "from": "kiss-frame",
+  "to": "kiss-frame",
+  "input": "061234",
+  "expect": "061234",
+  "model": {
+    "kiss.command": "6",
+    "kiss.data.#": "2"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from the KISS TNC note (1987) section 4; SetHardware with two octets; expect derived there, no engine run"
+}

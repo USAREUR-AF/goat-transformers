@@ -1,0 +1,13 @@
+{
+  "name": "data-frame-roundtrip",
+  "from": "kiss-frame",
+  "to": "kiss-frame",
+  "input": "0082a0a4a64040e09c60868298986f03f021343930332e35304e2f30373230312e3735572d54657374",
+  "expect": "0082a0a4a64040e09c60868298986f03f021343930332e35304e2f30373230312e3735572d54657374",
+  "model": {
+    "kiss.port": "0",
+    "kiss.command": "0",
+    "kiss.data.#": "40"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from the KISS TNC note (1987) section 4; a data frame on port 0 carrying the AX.25 frame of ax25-frame vector 01; expect derived there, no engine run"
+}

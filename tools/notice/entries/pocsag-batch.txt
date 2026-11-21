@@ -1,0 +1,4 @@
+Pack pocsag-batch
+  From Recommendation ITU-R M.584-2, Codes and formats for radio paging,
+  Annex 1, International Telecommunication Union. No licence stated; labelled
+  LicenseRef-unstated. Layouts restated, no text copied.

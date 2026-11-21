@@ -1,0 +1,4 @@
+Pack kiss-frame
+  From M. Chepponis and P. Karn, The KISS TNC: A simple Host-to-TNC
+  communications protocol (1987), http://www.ka9q.net/papers/kiss.html. No
+  copyright notice or licence stated; labelled LicenseRef-unstated.

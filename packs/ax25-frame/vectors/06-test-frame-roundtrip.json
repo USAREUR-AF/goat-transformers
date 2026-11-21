@@ -1,0 +1,12 @@
+{
+  "name": "test-frame-roundtrip",
+  "from": "ax25-frame",
+  "to": "ax25-frame",
+  "input": "9c6282848640e09c608682989863f370696e67",
+  "expect": "9c6282848640e09c608682989863f370696e67",
+  "model": {
+    "ax25.control": "243",
+    "ax25.info.#": "4"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from AX.25 v2.2 (TAPR 1998) sections 3.12 and 4.2 to 4.3; a TEST command with P set and an information field, no PID; expect derived there, no engine run"
+}

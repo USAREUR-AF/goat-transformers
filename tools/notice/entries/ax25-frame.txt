@@ -1,0 +1,6 @@
+Pack ax25-frame
+  From AX.25 Link Access Protocol for Amateur Packet Radio, Version 2.2
+  (1998). Copyright (c) 1997 by Tucson Amateur Packet Radio Corporation;
+  portions Copyright (c) 1984, 1993 by The American Radio Relay League, Inc.
+  No licence stated; labelled LicenseRef-unstated. Layouts restated, no text
+  copied.
