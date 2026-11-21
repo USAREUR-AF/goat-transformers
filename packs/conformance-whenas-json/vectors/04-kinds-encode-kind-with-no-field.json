@@ -1,0 +1,9 @@
+{
+  "name": "kinds-encode-kind-with-no-field",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-kinds",
+  "input": "{\"n\":7,\"x\":200}",
+  "expect": "07c8",
+  "source": "constructed",
+  "reference": "spec 0.30 Encode, Choosing the kind: a kind with `when ... as <k>` qualifies only when the entity holds <k> and its value matches the `when`; x = 200 lies in big's 200..255; c8 is 200"
+}

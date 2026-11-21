@@ -1,0 +1,9 @@
+{
+  "name": "group-common-ruling-11-item-value-not-matching-is-transform-encode",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-group-common",
+  "input": "{\"recs\":[{\"x\":7,\"y\":5}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 11: the common `when` of a group body may carry `as`; the key is set on every item that decodes, and the encode rules for a common `when` apply per item; the item holds x = 7, outside 1..3"
+}

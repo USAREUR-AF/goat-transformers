@@ -1,0 +1,9 @@
+{
+  "name": "items-to-json",
+  "from": "conformance-whenas-items",
+  "to": "conformance-whenas-json",
+  "input": "0220ab27",
+  "expect": "{\"recs\":[{\"x\":2,\"y\":171},{\"x\":2,\"y\":7}]}",
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: each item's x holds its label"
+}

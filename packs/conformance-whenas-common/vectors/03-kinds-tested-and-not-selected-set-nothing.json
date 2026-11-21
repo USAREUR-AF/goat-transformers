@@ -1,0 +1,17 @@
+{
+  "name": "kinds-tested-and-not-selected-set-nothing",
+  "from": "conformance-whenas-common",
+  "to": "conformance-whenas-common",
+  "input": "070663",
+  "expect": "070663",
+  "model": {
+    "@kind": "c",
+    "probe.w": "6",
+    "probe.z": "99",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: the `when` lines of a kind that is tested and not selected set nothing; 99 fails a and b, c has no `when` (0.8): x stays absent"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "group-common-ruling-11-per-item-held-value-and-first-value",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-group-common",
+  "input": "{\"recs\":[{\"x\":3},{\"y\":5}]}",
+  "expect": "02301105",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 11: the common `when` of a group body may carry `as`; the key is set on every item that decodes, and the encode rules for a common `when` apply per item; item 0 holds x = 3: written; item 1 does not hold x: the first value, 1"
+}

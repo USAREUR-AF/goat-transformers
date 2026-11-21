@@ -1,0 +1,9 @@
+{
+  "name": "wide-ruling-07-most-negative-key",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-wide",
+  "input": "{\"x\":-9223372036854775808}",
+  "expect": "8000000000000000",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 7: decode reads the bits as `uint` does (ruling 2 of 0.5); matching reads the entity's value as an unsigned 64-bit pattern; -2^63 is the pattern 2^63, the lo end of high's range"
+}

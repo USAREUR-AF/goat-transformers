@@ -1,0 +1,9 @@
+{
+  "name": "requires-ruling-13-implicit-term-holds-requires-does-not",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-requires",
+  "input": "{\"x\":3,\"y\":7}",
+  "expect": "03",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 13: `requires <k>` and `requires <k>=<values>` on a kind with `when ... as <k>` load; every term must hold; x = 3 lies in five's 1..9 but is not 5; never needs 20; any: x is held and lies in 0..255"
+}

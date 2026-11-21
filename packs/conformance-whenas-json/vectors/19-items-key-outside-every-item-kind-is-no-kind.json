@@ -1,0 +1,9 @@
+{
+  "name": "items-key-outside-every-item-kind-is-no-kind",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-items",
+  "input": "{\"recs\":[{\"x\":9,\"y\":7}]}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 4 (ruling 26 of 0.8): an item that records a kind the group has uses it; otherwise the item's kind is chosen by `requires`, with the implicit term; x = 9 matches neither p nor q (ruling 11 of 0.20: the whole convert fails)"
+}

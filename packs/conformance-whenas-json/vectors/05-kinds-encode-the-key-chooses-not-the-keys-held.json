@@ -1,0 +1,9 @@
+{
+  "name": "kinds-encode-the-key-chooses-not-the-keys-held",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-kinds",
+  "input": "{\"n\":7,\"x\":3,\"y\":42}",
+  "expect": "07030000",
+  "source": "constructed",
+  "reference": "spec 0.30 Encode, Choosing the kind: a kind with `when ... as <k>` qualifies only when the entity holds <k> and its value matches the `when`; one's term fails for x = 3; span qualifies; its z is absent and writes zero bits (0.8 Lines)"
+}

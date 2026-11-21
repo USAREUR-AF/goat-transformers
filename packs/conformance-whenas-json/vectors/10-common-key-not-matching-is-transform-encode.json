@@ -1,0 +1,9 @@
+{
+  "name": "common-key-not-matching-is-transform-encode",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-common",
+  "input": "{\"n\":7,\"w\":9,\"x\":2,\"y\":42}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.30 The bits written: the entity holds w = 9 and 5,6 does not match it: transform-encode, the output would decode a different value"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "wide-ruling-07-short-label",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-wide",
+  "input": "{\"y\":255}",
+  "expect": "ff",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 7: decode reads the bits as `uint` does (ruling 2 of 0.5); matching reads the entity's value as an unsigned 64-bit pattern; high and low need x; y = 255 matches short's 0..255"
+}

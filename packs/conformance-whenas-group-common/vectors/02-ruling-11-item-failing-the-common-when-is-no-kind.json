@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-item-failing-the-common-when-is-no-kind",
+  "from": "conformance-whenas-group-common",
+  "to": "conformance-whenas-group-common",
+  "input": "0140",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 11: the common `when` of a group body may carry `as`; the key is set on every item that decodes, and the encode rules for a common `when` apply per item; 4 is outside 1..3: the item is no-kind (ruling 27 of 0.8, ruling 11 of 0.20)"
+}

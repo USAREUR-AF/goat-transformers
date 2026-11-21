@@ -1,0 +1,15 @@
+{
+  "name": "decode-sets-the-key-of-the-selected-kind",
+  "from": "conformance-whenas-kinds",
+  "to": "conformance-whenas-kinds",
+  "input": "07012a",
+  "expect": "07012a",
+  "model": {
+    "@kind": "one",
+    "probe.n": "7",
+    "probe.x": "1",
+    "probe.y": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: when the kind is selected, the key holds the bits read as an unsigned integer; label 1 selects one: x = 1"
+}

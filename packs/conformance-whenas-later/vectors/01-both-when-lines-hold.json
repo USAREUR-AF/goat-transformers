@@ -1,0 +1,14 @@
+{
+  "name": "both-when-lines-hold",
+  "from": "conformance-whenas-later",
+  "to": "conformance-whenas-later",
+  "input": "02002a",
+  "expect": "02002a",
+  "model": {
+    "@kind": "pair",
+    "probe.x": "2",
+    "probe.y": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 12: when an `as` line holds and a later `when` line of the same kind does not, the key is not set, and the next kind is tried; 02 then 00: pair, x = 2, y = 42"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "ruling-11-key-set-on-every-item",
+  "from": "conformance-whenas-group-common",
+  "to": "conformance-whenas-group-common",
+  "input": "0210212a",
+  "expect": "0210212a",
+  "model": {
+    "probe.recs.#": "2",
+    "probe.recs[0].@kind": "short",
+    "probe.recs[0].probe.x": "1",
+    "probe.recs[1].@kind": "long",
+    "probe.recs[1].probe.x": "2",
+    "probe.recs[1].probe.y": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 11: the common `when` of a group body may carry `as`; the key is set on every item that decodes, and the encode rules for a common `when` apply per item; item 0: 1 then 0, short; item 1: 2 then 1, long, y = 42"
+}

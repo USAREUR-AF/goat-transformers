@@ -1,0 +1,9 @@
+{
+  "name": "common-key-held-and-matching-is-written",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-common",
+  "input": "{\"n\":7,\"w\":6,\"x\":2,\"y\":42}",
+  "expect": "0706022a",
+  "source": "constructed",
+  "reference": "spec 0.30 The bits written: w = 6 matches 5,6 and is written"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "kinds-encode-chooses-the-kind-by-a-listed-value",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-kinds",
+  "input": "{\"n\":7,\"x\":9,\"z\":1}",
+  "expect": "07090001",
+  "source": "constructed",
+  "reference": "spec 0.30 Encode, Choosing the kind: a kind with `when ... as <k>` qualifies only when the entity holds <k> and its value matches the `when`; x = 9 is listed in span's `when`"
+}

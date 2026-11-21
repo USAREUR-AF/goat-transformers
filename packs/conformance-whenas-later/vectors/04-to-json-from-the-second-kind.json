@@ -1,0 +1,9 @@
+{
+  "name": "to-json-from-the-second-kind",
+  "from": "conformance-whenas-later",
+  "to": "conformance-whenas-json",
+  "input": "0207",
+  "expect": "{\"x\":2,\"z\":7}",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 12: when an `as` line holds and a later `when` line of the same kind does not, the key is not set, and the next kind is tried; single's x and z"
+}

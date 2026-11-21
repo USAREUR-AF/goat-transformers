@@ -1,0 +1,9 @@
+{
+  "name": "wide-ruling-07-negative-key-matches-as-its-unsigned-pattern",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-wide",
+  "input": "{\"x\":-1}",
+  "expect": "ffffffffffffffff",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 7: decode reads the bits as `uint` does (ruling 2 of 0.5); matching reads the entity's value as an unsigned 64-bit pattern; -1 is the pattern 2^64-1, in high's range; its 64 bits are written"
+}

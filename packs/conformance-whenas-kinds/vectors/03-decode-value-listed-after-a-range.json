@@ -1,0 +1,14 @@
+{
+  "name": "decode-value-listed-after-a-range",
+  "from": "conformance-whenas-kinds",
+  "to": "conformance-whenas-kinds",
+  "input": "07090001",
+  "expect": "07090001",
+  "model": {
+    "@kind": "span",
+    "probe.x": "9",
+    "probe.z": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: when the kind is selected, the key holds the bits read as an unsigned integer; 9 is listed after the range 2..4"
+}

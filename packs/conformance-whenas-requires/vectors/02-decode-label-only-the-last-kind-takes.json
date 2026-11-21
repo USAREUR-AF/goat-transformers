@@ -1,0 +1,13 @@
+{
+  "name": "decode-label-only-the-last-kind-takes",
+  "from": "conformance-whenas-requires",
+  "to": "conformance-whenas-requires",
+  "input": "1407",
+  "expect": "14",
+  "model": {
+    "@kind": "any",
+    "probe.x": "20"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: 20 is outside 1..9 twice and inside any's 0..255; the byte after the last line is ignored (ruling 9 of 0.8) and not written"
+}

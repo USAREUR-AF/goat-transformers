@@ -1,0 +1,9 @@
+{
+  "name": "3063-whenas-ruling-17-list-key-with-equals-before-an-as-list-key",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey w int -\nkey x int -\nkey y int -\nkey z int -\nkey a float -\nkey label string -\nlist recs \"a list\"\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.30.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 8 1 as probe.recs\nrequires probe.items=1\n",
+  "expect_error": "bad-directive"
+}

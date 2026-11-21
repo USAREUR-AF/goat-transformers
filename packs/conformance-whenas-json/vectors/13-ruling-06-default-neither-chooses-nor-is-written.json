@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-default-neither-chooses-nor-is-written",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-common",
+  "input": "{\"n\":7,\"z\":99}",
+  "expect": "070563",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 6: holds means the entity holds the key. x is absent, so a (default x 2) and b do not qualify; c requires z: c. w is absent: its first value 5, not its default 6"
+}

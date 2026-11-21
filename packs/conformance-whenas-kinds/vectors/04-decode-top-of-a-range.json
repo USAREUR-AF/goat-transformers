@@ -1,0 +1,13 @@
+{
+  "name": "decode-top-of-a-range",
+  "from": "conformance-whenas-kinds",
+  "to": "conformance-whenas-kinds",
+  "input": "07ff",
+  "expect": "07ff",
+  "model": {
+    "@kind": "big",
+    "probe.x": "255"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: when the kind is selected, the key holds the bits read as an unsigned integer; 255 is the hi end of 200..255"
+}

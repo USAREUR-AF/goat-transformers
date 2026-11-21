@@ -5366,9 +5366,38 @@ the pack does not `uses` is `module-not-used`; an undeclared key is
 18. **`as` lines are `when` lines** for ruling 10 of 0.8 (first lines of their
     kind) and for every rule that counts wire lines.
 
+19. **A switch on an `as` key, on encode.** The `when … as` line is "the
+    key's line" of 0.20's switch encode: when a common `as` key is absent,
+    the first listed value it writes selects the case.
+20. **A common `when … as` may follow other common lines.** Ruling 10 of 0.8
+    places a kind's `when` lines first in their kind; common `when` lines
+    keep 0.5's placement.
+21. **Scopes for the bans of ruling 9.** An item key bound by `as` and a
+    message-level `field` are in different scopes and load, as two `field`
+    lines in those scopes do.
+22. **The keyword is exact.** `as` is matched as written; `AS` is another
+    token and is `bad-directive` in a sequential `when`.
+23. **Two passes** in ruling 17: `module-not-used` over every line, then
+    `undeclared-key` over every line, as Version 0.4 orders them.
+24. **Ruling 6c of 0.11 is amended:** a place named by `when` is not a mapped
+    key, except a `when … as` line, whose key is mapped (ruling 5).
+
 ### Stated, not yet pinned by a vector
 
-(filled in after the vectors are derived)
+25. A kind or item kind recorded on the entity: "the term is not checked for
+    choosing", and `transform-encode` for a held value that does not match.
+    Neither can be reached through `convert`, since a same-format decode sets
+    the key to a matching value.
+26. Ruling 1's comparison with ruling 3 of 0.20 on a fixed layout; only the
+    `bad-directive` of `as` there is pinned.
+27. Ruling 5: the capability vector is computed by the generator
+    (`conformance-whenas-cap`) but not written.
+28. Ruling 8, pinned only through the `transform-encode` of a common
+    `when … as`.
+29. Ruling 16: the `as` syntax checks run after `missing-format`,
+    `missing-version` and `missing-wire`. The two bans of ruling 9 run after
+    the syntax checks and before the other checks that need the whole file.
+30. Ruling 18 for rules other than ruling 10 of 0.8 and ruling 32 of 0.21.
 
 ## Not in this version
 

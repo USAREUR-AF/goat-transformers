@@ -1,0 +1,9 @@
+{
+  "name": "later-encode-kind-with-no-when",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-later",
+  "input": "{\"w\":1}",
+  "expect": "0001",
+  "source": "constructed",
+  "reference": "spec 0.5 Encode step 2: pair and single need x; plain has no `when` and no `requires`"
+}

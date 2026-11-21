@@ -1,0 +1,16 @@
+{
+  "name": "common-when-sets-its-key",
+  "from": "conformance-whenas-common",
+  "to": "conformance-whenas-common",
+  "input": "0706022a",
+  "expect": "0706022a",
+  "model": {
+    "@kind": "a",
+    "probe.n": "7",
+    "probe.w": "6",
+    "probe.x": "2",
+    "probe.y": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: a common `when ... as` sets its key whenever the message decodes; w = 6; kind a with x = 2"
+}

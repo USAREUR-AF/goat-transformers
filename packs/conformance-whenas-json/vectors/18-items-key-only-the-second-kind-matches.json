@@ -1,0 +1,9 @@
+{
+  "name": "items-key-only-the-second-kind-matches",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-items",
+  "input": "{\"recs\":[{\"x\":4,\"y\":7}]}",
+  "expect": "0147",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 4 (ruling 26 of 0.8): an item that records a kind the group has uses it; otherwise the item's kind is chosen by `requires`, with the implicit term; x = 4 is outside p's 1..3 and inside q's 1..5: 4 then y = 7 in 4 bits"
+}

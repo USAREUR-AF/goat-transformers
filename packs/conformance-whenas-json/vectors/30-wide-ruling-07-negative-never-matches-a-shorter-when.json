@@ -1,0 +1,9 @@
+{
+  "name": "wide-ruling-07-negative-never-matches-a-shorter-when",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-wide",
+  "input": "{\"y\":-1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 7: decode reads the bits as `uint` does (ruling 2 of 0.5); matching reads the entity's value as an unsigned 64-bit pattern; a negative value never matches a `when` shorter than 64 bits: -1 is 2^64-1, outside 0..255"
+}

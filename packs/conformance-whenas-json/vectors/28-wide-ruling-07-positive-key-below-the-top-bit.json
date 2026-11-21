@@ -1,0 +1,9 @@
+{
+  "name": "wide-ruling-07-positive-key-below-the-top-bit",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-wide",
+  "input": "{\"x\":9223372036854775807}",
+  "expect": "7fffffffffffffff",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 7: decode reads the bits as `uint` does (ruling 2 of 0.5); matching reads the entity's value as an unsigned 64-bit pattern; 2^63-1 is outside high's range and inside low's"
+}

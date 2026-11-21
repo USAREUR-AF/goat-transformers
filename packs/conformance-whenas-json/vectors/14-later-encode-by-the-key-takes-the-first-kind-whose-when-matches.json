@@ -1,0 +1,9 @@
+{
+  "name": "later-encode-by-the-key-takes-the-first-kind-whose-when-matches",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-later",
+  "input": "{\"x\":2,\"z\":7}",
+  "expect": "020000",
+  "source": "constructed",
+  "reference": "spec 0.30 Choosing the kind and 0.5 Encode step 2: pair is the first kind whose term holds for x = 2; it writes 02, its plain `when` writes 00, y is absent (zero bits); z is not a line of pair"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "switch-ruling-02-common-label-absent-selects-by-its-first-value",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-switch",
+  "input": "{\"n\":7,\"z\":5,\"x\":1,\"y\":42}",
+  "expect": "070105012a",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 2: a kind's `as` key counts as mapped from the start of its kind for a `switch`, a common one from its own line on; w is absent: its `when` writes the first value 1 (0.30 The bits written), and the switch selects by what that line wrote (0.20 Encode): case 1, z = 5"
+}
