@@ -5022,6 +5022,10 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    <min>) / (<max> − <min>))` exactly: −181 in `range -180 180 wrap` is 179.
 8. **`range` and `also` keys** (Version 0.8): `range` applies to the field
    line's own key only, never to its `also` keys.
+9. **`range` and the lines of one locator.** Every line whose key is held is
+   checked against its `range`, including a later line on the same locator
+   whose value ruling 16 of 0.5 does not write: a held value outside its range
+   refuses the encode (`transform-encode`), in the strict direction of 0.11.
 
 Stated, not yet pinned by a vector: a submessage holding only fields that
 `implicit` leaves out, without a `when … present`; a wrapped `float` still

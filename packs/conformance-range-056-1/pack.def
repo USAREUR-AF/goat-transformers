@@ -1,0 +1,11 @@
+# Conformance probe pack for ruling 9 of 0.56: two keys on one member, the second
+# with a range. Every held line is checked, so a held probe.y outside 0..10 refuses
+# the encode even though probe.x is the value written. Public. No kinds.
+format  conformance-range-056-1
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.x  v  int
+field   probe.y  v  int  range 0 10
