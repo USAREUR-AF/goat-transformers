@@ -1,0 +1,12 @@
+{
+  "name": "write-data-by-identifier-request-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "2e01011234",
+  "expect": "2e01011234",
+  "model": {
+    "uds.data_identifier": "257",
+    "uds.data_record.#": "2"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; expect derived there, no engine run"
+}

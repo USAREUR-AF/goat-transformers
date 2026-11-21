@@ -1,0 +1,85 @@
+# DoIP (ISO 13400-2) message: the generic header with the payload length, and the payload by type. Written
+# by tools/gen/vehnet-pack.py; do not edit by hand.
+format        doip-message
+version       0.1.0
+distribution  public
+source        "Wireshark, https://github.com/wireshark/wireshark at commit de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-doip.c (GPL-2.0-or-later); layouts restated, no code copied; ISO 13400-2 not used"
+uses          doip
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  doip.version  8  uint
+field  doip.inverse_version  8  uint
+field  doip.payload_type  16  uint
+length  32  bytes
+  switch  doip.payload_type
+    case  0
+      field  doip.nack_code  8  uint
+    case  1,7,16385,16387
+    case  2
+      field  doip.eid  48  hex
+    case  3
+      field  doip.vin  136  chars:ascii8
+    case  4
+      field  doip.vin  136  chars:ascii8
+      field  doip.logical_address  16  uint
+      field  doip.eid  48  hex
+      field  doip.gid  48  hex
+      field  doip.further_action  8  uint
+      field  doip.sync_status  8  uint
+    case  5
+      field  doip.source_address  16  uint
+      switch  doip.version
+        case  1
+          field  doip.activation_type  16  uint
+        else
+          field  doip.activation_type  8  uint
+      end
+      field  doip.reserved_iso  32  uint
+      group  doip.reserved_oem  rest
+        field  doip.octet  8  uint
+      end
+    case  6
+      field  doip.tester_address  16  uint
+      field  doip.source_address  16  uint
+      field  doip.response_code  8  uint
+      field  doip.reserved_iso  32  uint
+      group  doip.reserved_oem  rest
+        field  doip.octet  8  uint
+      end
+    case  8
+      field  doip.source_address  16  uint
+    case  16386
+      field  doip.node_type  8  uint
+      field  doip.max_sockets  8  uint
+      field  doip.current_sockets  8  uint
+      field  doip.max_data_size  32  uint
+    case  16388
+      field  doip.power_mode  8  uint
+    case  32769
+      field  doip.source_address  16  uint
+      field  doip.target_address  16  uint
+      group  doip.user_data  rest
+        field  doip.octet  8  uint
+      end
+    case  32770
+      field  doip.source_address  16  uint
+      field  doip.target_address  16  uint
+      field  doip.ack_code  8  uint
+      group  doip.previous_message  rest
+        field  doip.octet  8  uint
+      end
+    case  32771
+      field  doip.source_address  16  uint
+      field  doip.target_address  16  uint
+      field  doip.nack_code  8  uint
+      group  doip.previous_message  rest
+        field  doip.octet  8  uint
+      end
+    else
+      group  doip.payload  rest
+        field  doip.octet  8  uint
+      end
+  end
+end

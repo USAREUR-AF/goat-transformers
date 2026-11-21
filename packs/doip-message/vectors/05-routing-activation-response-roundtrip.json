@@ -1,0 +1,13 @@
+{
+  "name": "routing-activation-response-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "02fd0006000000090e8010011000000000",
+  "expect": "02fd0006000000090e8010011000000000",
+  "model": {
+    "doip.tester_address": "3712",
+    "doip.source_address": "4097",
+    "doip.response_code": "16"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; routing activated; expect derived there, no engine run"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "single-frame-escape-roundtrip",
+  "from": "isotp-frame",
+  "to": "isotp-frame",
+  "input": "00140102030405060708090a0b0c0d0e0f1011121314aaaa",
+  "expect": "00140102030405060708090a0b0c0d0e0f1011121314aaaa",
+  "model": {
+    "@kind": "single-frame-escape",
+    "isotp.data.#": "20",
+    "isotp.padding.#": "2"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-can-isotp isotp/protocol.py; a CAN FD single frame with the escape length (20 octets) in a 24-octet frame; expect derived there, no engine run"
+}

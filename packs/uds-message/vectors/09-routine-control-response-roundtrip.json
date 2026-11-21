@@ -1,0 +1,13 @@
+{
+  "name": "routine-control-response-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "7101ff0000",
+  "expect": "7101ff0000",
+  "model": {
+    "uds.control_type_echo": "1",
+    "uds.routine_id": "65280",
+    "uds.routine_status.#": "1"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; expect derived there, no engine run"
+}

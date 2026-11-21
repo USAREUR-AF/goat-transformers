@@ -1,0 +1,13 @@
+{
+  "name": "negative-response-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "7f2735",
+  "expect": "7f2735",
+  "model": {
+    "uds.sid": "127",
+    "uds.rejected_sid": "39",
+    "uds.nrc": "53"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; security access rejected: invalid key; expect derived there, no engine run"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "announcement-without-sync-gains-zero",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "01fe00040000002057304c3030303035315432313233343536100100005e0053af00005e0053af00",
+  "expect": "01fe00040000002157304c3030303035315432313233343536100100005e0053af00005e0053af0000",
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; version 1 has no sync status: the absent field is written as one zero octet and the length grows by one (ruling 7 of 0.8); expect derived there, no engine run"
+}

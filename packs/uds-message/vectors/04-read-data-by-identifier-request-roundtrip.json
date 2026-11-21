@@ -1,0 +1,13 @@
+{
+  "name": "read-data-by-identifier-request-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "22f190f18c",
+  "expect": "22f190f18c",
+  "model": {
+    "uds.dids.#": "2",
+    "uds.dids[0].uds.did": "61840",
+    "uds.dids[1].uds.did": "61836"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; two identifiers, the VIN and the serial number; expect derived there, no engine run"
+}

@@ -1,0 +1,79 @@
+# UDS (ISO 14229-1) message: the service identifier and the fields of the common services, their positive
+# responses and the negative response. Written by tools/gen/vehnet-pack.py; do not edit by hand.
+format        uds-message
+version       0.1.0
+distribution  public
+source        "python-udsoncan, https://github.com/pylessard/python-udsoncan at commit 07d7be1fcfd17e41af9a30f1c5573774e45bcdbd, udsoncan/Request.py, Response.py and services/DiagnosticSessionControl.py, ECUReset.py, ReadDataByIdentifier.py, WriteDataByIdentifier.py, SecurityAccess.py, RoutineControl.py, TesterPresent.py, MIT License, Copyright (c) 2017 Pier-Yves Lessard; layouts restated, no code copied; ISO 14229-1 not used"
+uses          uds
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  uds.sid  8  uint
+switch  uds.sid
+  case  16,17,62
+    field  uds.suppress_positive_response  1  uint
+    field  uds.subfunction  7  uint
+    group  uds.data  rest
+      field  uds.octet  8  uint
+    end
+  case  39
+    field  uds.suppress_positive_response  1  uint
+    field  uds.subfunction  7  uint
+    group  uds.security_data  rest
+      field  uds.octet  8  uint
+    end
+  case  49
+    field  uds.suppress_positive_response  1  uint
+    field  uds.subfunction  7  uint
+    field  uds.routine_id  16  uint
+    group  uds.routine_option  rest
+      field  uds.octet  8  uint
+    end
+  case  34
+    group  uds.dids  rest
+      field  uds.did  16  uint
+    end
+  case  46
+    field  uds.data_identifier  16  uint
+    group  uds.data_record  rest
+      field  uds.octet  8  uint
+    end
+  case  80
+    field  uds.session_echo  8  uint
+    group  uds.session_parameter_record  rest
+      field  uds.octet  8  uint
+    end
+  case  81
+    field  uds.reset_type_echo  8  uint
+    group  uds.data  rest
+      field  uds.octet  8  uint
+    end
+  case  98
+    field  uds.data_identifier  16  uint
+    group  uds.data_record  rest
+      field  uds.octet  8  uint
+    end
+  case  103
+    field  uds.security_level_echo  8  uint
+    group  uds.security_data  rest
+      field  uds.octet  8  uint
+    end
+  case  110
+    field  uds.data_identifier  16  uint
+  case  113
+    field  uds.control_type_echo  8  uint
+    field  uds.routine_id  16  uint
+    group  uds.routine_status  rest
+      field  uds.octet  8  uint
+    end
+  case  126
+    field  uds.subfunction_echo  8  uint
+  case  127
+    field  uds.rejected_sid  8  uint
+    field  uds.nrc  8  uint
+  else
+    group  uds.data  rest
+      field  uds.octet  8  uint
+    end
+end

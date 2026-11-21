@@ -1,0 +1,9 @@
+{
+  "name": "Vehicle diagnostics (ISO-TP, UDS, DoIP)",
+  "domain": "land",
+  "exact": [
+    "isotp-frame",
+    "uds-message",
+    "doip-message"
+  ]
+}

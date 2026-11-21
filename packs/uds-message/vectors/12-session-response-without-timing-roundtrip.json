@@ -1,0 +1,12 @@
+{
+  "name": "session-response-without-timing-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "5001",
+  "expect": "5001",
+  "model": {
+    "uds.session_echo": "1",
+    "uds.session_parameter_record.#": "0"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; a response in the form before the 2013 edition, with no session parameter record; expect derived there, no engine run"
+}

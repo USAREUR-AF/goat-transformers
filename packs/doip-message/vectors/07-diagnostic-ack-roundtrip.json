@@ -1,0 +1,12 @@
+{
+  "name": "diagnostic-ack-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "02fd80020000000710010e800022f1",
+  "expect": "02fd80020000000710010e800022f1",
+  "model": {
+    "doip.ack_code": "0",
+    "doip.previous_message.#": "2"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; a positive ACK repeating part of the request; expect derived there, no engine run"
+}

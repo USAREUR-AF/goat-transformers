@@ -1,0 +1,15 @@
+{
+  "name": "routing-activation-request-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "02fd0005000000070e800000000000",
+  "expect": "02fd0005000000070e800000000000",
+  "model": {
+    "doip.payload_type": "5",
+    "doip.source_address": "3712",
+    "doip.activation_type": "0",
+    "doip.reserved_iso": "0",
+    "doip.reserved_oem.#": "0"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; routing activation, version 2, default activation, no OEM field; expect derived there, no engine run"
+}

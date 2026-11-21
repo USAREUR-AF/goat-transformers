@@ -1,0 +1,13 @@
+{
+  "name": "first-frame-roundtrip",
+  "from": "isotp-frame",
+  "to": "isotp-frame",
+  "input": "101462f19057304c",
+  "expect": "101462f19057304c",
+  "model": {
+    "@kind": "first-frame",
+    "isotp.message_length": "20",
+    "isotp.data.#": "6"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-can-isotp isotp/protocol.py; a first frame announcing a 20-octet message; expect derived there, no engine run"
+}

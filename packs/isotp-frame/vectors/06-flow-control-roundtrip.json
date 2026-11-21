@@ -1,0 +1,15 @@
+{
+  "name": "flow-control-roundtrip",
+  "from": "isotp-frame",
+  "to": "isotp-frame",
+  "input": "3008f35555555555",
+  "expect": "3008f35555555555",
+  "model": {
+    "@kind": "flow-control",
+    "isotp.flow_status": "0",
+    "isotp.block_size": "8",
+    "isotp.st_min": "243",
+    "isotp.padding.#": "5"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-can-isotp isotp/protocol.py; continue to send, block size 8, STmin 300 microseconds; expect derived there, no engine run"
+}

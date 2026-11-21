@@ -1,0 +1,13 @@
+{
+  "name": "consecutive-frame-roundtrip",
+  "from": "isotp-frame",
+  "to": "isotp-frame",
+  "input": "2130303030303031",
+  "expect": "2130303030303031",
+  "model": {
+    "@kind": "consecutive-frame",
+    "isotp.sequence_number": "1",
+    "isotp.data.#": "7"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-can-isotp isotp/protocol.py; consecutive frame number 1; expect derived there, no engine run"
+}

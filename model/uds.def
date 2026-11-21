@@ -1,0 +1,26 @@
+# The uds module: UDS message fields. Written by tools/gen/vehnet-pack.py.
+module        uds
+version       0.1.0
+distribution  public
+source        "python-udsoncan, https://github.com/pylessard/python-udsoncan at commit 07d7be1fcfd17e41af9a30f1c5573774e45bcdbd, udsoncan/Request.py, Response.py and services/DiagnosticSessionControl.py, ECUReset.py, ReadDataByIdentifier.py, WriteDataByIdentifier.py, SecurityAccess.py, RoutineControl.py, TesterPresent.py, MIT License, Copyright (c) 2017 Pier-Yves Lessard; layouts restated, no code copied; ISO 14229-1 not used"
+key   sid                         int     -  "service identifier: requests 0x10 session control, 0x11 ECU reset, 0x22 read data by identifier, 0x27 security access, 0x2E write data by identifier, 0x31 routine control, 0x3E tester present; positive responses are the request's value plus 0x40; 0x7F a negative response"
+key   suppress_positive_response  int     -  "request with a subfunction: bit 7 of the subfunction octet, the server sends no positive response"
+key   subfunction                 int     -  "request with a subfunction: the subfunction (session type, reset type, security level, routine control type, 0 for tester present)"
+list  data                        "the remaining octets (session and reset requests normally have none; other services), as octets"
+list  security_data               "security access: the key (send key, even levels) or the seed (positive response to request seed), as octets"
+key   routine_id                  int     -  "routine control: the routine identifier"
+list  routine_option              "routine control request: the routine control option record, as octets"
+list  routine_status              "routine control response: the routine status record, as octets"
+list  dids                        "read data by identifier request: the data identifiers"
+key   did                         int     -  "a data identifier"
+key   data_identifier             int     -  "write data by identifier request and response, read data by identifier response: the (first) data identifier"
+list  data_record                 "the data record after the identifier (in a read response: the first identifier's value and any further identifiers and values), as octets"
+key   session_echo                int     -  "session control response: the session type echoed"
+list  session_parameter_record    "session control response: the session parameter record, as octets (from the 2013 edition, P2 server maximum in milliseconds then P2* in 10-millisecond units, two octets each)"
+key   reset_type_echo             int     -  "ECU reset response: the reset type echoed"
+key   security_level_echo         int     -  "security access response: the level echoed"
+key   control_type_echo           int     -  "routine control response: the control type echoed"
+key   subfunction_echo            int     -  "tester present response: the subfunction echoed (0)"
+key   rejected_sid                int     -  "negative response: the service identifier of the rejected request"
+key   nrc                         int     -  "negative response: the negative response code (0x11 service not supported, 0x12 subfunction not supported, 0x13 incorrect length, 0x22 conditions not correct, 0x31 request out of range, 0x33 security access denied, 0x35 invalid key, 0x78 response pending ...)"
+key   octet                       int     -  "one octet"

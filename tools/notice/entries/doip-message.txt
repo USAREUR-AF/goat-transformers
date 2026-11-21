@@ -1,0 +1,5 @@
+Packs doip-message; module doip
+  Wireshark, https://github.com/wireshark/wireshark at commit
+  de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-doip.c.
+  Copyright 1998 Gerald Combs and contributors; GPL-2.0-or-later. Layouts
+  restated; no text copied.

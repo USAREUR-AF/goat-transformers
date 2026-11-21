@@ -1,0 +1,12 @@
+{
+  "name": "security-access-seed-response-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "6701deadbeef",
+  "expect": "6701deadbeef",
+  "model": {
+    "uds.security_level_echo": "1",
+    "uds.security_data.#": "4"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; a 4-octet seed for level 1; expect derived there, no engine run"
+}
