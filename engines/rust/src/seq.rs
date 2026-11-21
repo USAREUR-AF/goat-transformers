@@ -56,9 +56,8 @@ pub enum SeqLine {
     Const { len: u32, value: u64 },
     Pad { len: u64 },
     Align { n: u64 },
-    /// a `when` among common lines: it must hold for any message. `values`:
-    /// every listed value and range (engine-spec v0.20); `value` is written
-    When { len: u32, value: u64, values: Vec<(u64, u64)> },
+    /// a `when` among common lines: it must hold for any message
+    When(SeqWhen),
     /// `bits`: the number of presence bits; None: `fx` octets
     /// `named`: the bits some `if` block outside every `case` names; any other
     /// bit set on the wire is `malformed-wire`, unless an `if` of a case that
@@ -83,6 +82,27 @@ pub enum SeqLine {
     Count { id: usize, len: u32, plus: i64, line: usize },
 }
 
+/// One `when` line of a sequential pack. `values`: every listed value and
+/// range (engine-spec v0.20); `value`: the first, written when no key says
+/// otherwise; `key`: the key of `as <key>` (engine-spec v0.30).
+#[derive(Clone, Debug)]
+pub struct SeqWhen {
+    pub len: u32,
+    pub value: u64,
+    pub values: Vec<(u64, u64)>,
+    pub key: Option<String>,
+    pub line: usize,
+}
+
+/// The first line of a scope that maps a key a `switch` names: a `field` or
+/// `also` line (field, bit length, `also` keys, UPER locator), or a `when …
+/// as` line (engine-spec v0.30, ruling 2).
+#[derive(Clone, Debug)]
+pub enum First {
+    Field(FieldDef, u32, Vec<FieldDef>, Option<crate::uper::Loc>),
+    When(SeqWhen),
+}
+
 /// One `case` or `else` body of a `switch`.
 #[derive(Clone, Debug)]
 pub struct Case {
@@ -104,10 +124,9 @@ pub struct Case {
 pub struct Switch {
     pub key: String,
     pub line: usize,
-    /// the first line of the scope that maps the key: (field, bit length,
-    /// `also` keys, UPER locator); the first prediction of encode (ruling 37
-    /// of 0.20)
-    pub first: (FieldDef, u32, Vec<FieldDef>, Option<crate::uper::Loc>),
+    /// the first line of the scope that maps the key; the first prediction
+    /// of encode (ruling 37 of 0.20)
+    pub first: First,
     pub cases: Vec<Case>,
     pub other: Option<Case>,
 }
@@ -145,8 +164,8 @@ impl Switch {
 #[derive(Clone, Debug)]
 pub struct SeqKind {
     pub name: String,
-    /// (bit length, value written, every value and range): the first lines of the kind
-    pub whens: Vec<(u32, u64, Vec<(u64, u64)>)>,
+    /// the `when` lines: the first lines of the kind
+    pub whens: Vec<SeqWhen>,
     pub requires: Vec<ReqDef>,
     pub lines: Vec<SeqLine>,
     pub defaults: Vec<DefaultDef>,
@@ -169,6 +188,8 @@ pub enum Visit<'a> {
     Requires(&'a ReqDef),
     /// a `switch` block (engine-spec v0.20)
     Switch(&'a Switch),
+    /// a `when … as <key>` line (engine-spec v0.30): (key, line)
+    As(&'a str, usize),
 }
 
 fn visit_lines<'a>(lines: &'a [SeqLine], f: &mut dyn FnMut(Visit<'a>)) {
@@ -194,6 +215,7 @@ fn visit_lines<'a>(lines: &'a [SeqLine], f: &mut dyn FnMut(Visit<'a>)) {
                     c.defaults.iter().for_each(|d| f(Visit::Default(d)));
                 }
             }
+            SeqLine::When(SeqWhen { key: Some(k), line, .. }) => f(Visit::As(k, *line)),
             _ => {}
         }
     }
@@ -213,8 +235,10 @@ fn visit_lines_mut(lines: &mut [SeqLine], ff: &mut dyn FnMut(&mut FieldDef), fd:
             SeqLine::Choice { alts, .. } => alts.iter_mut().for_each(|(_, p)| visit_lines_mut(p, ff, fd)),
             SeqLine::Group(g) => g.body.visit_mut(ff, fd),
             SeqLine::Switch(sw) => {
-                ff(&mut sw.first.0);
-                sw.first.2.iter_mut().for_each(|a| ff(a));
+                if let First::Field(f, _, also, _) = &mut sw.first {
+                    ff(f);
+                    also.iter_mut().for_each(|a| ff(a));
+                }
                 for c in sw.bodies_mut() {
                     visit_lines_mut(&mut c.lines, ff, fd);
                     c.defaults.iter_mut().for_each(|d| fd(d));
@@ -257,6 +281,11 @@ impl SeqBody {
         visit_lines(&self.common, f);
         self.defaults.iter().for_each(|d| f(Visit::Default(d)));
         for k in &self.kinds {
+            for w in &k.whens {
+                if let Some(key) = &w.key {
+                    f(Visit::As(key, w.line));
+                }
+            }
             k.requires.iter().for_each(|r| f(Visit::Requires(r)));
             visit_lines(&k.lines, f);
             k.defaults.iter().for_each(|d| f(Visit::Default(d)));
@@ -313,12 +342,27 @@ impl SeqBody {
                     }
                     // keys mapped only inside a case are listed too (ruling 13 of 0.20)
                     SeqLine::Switch(sw) => sw.bodies().for_each(|c| lines(prefix, &c.lines, out)),
+                    // a key bound by `as`, at its `when` line (ruling 5 of 0.30)
+                    SeqLine::When(SeqWhen { key: Some(k), .. }) => {
+                        let name = format!("{}{}", prefix, k);
+                        if !out.contains(&name) {
+                            out.push(name);
+                        }
+                    }
                     _ => {}
                 }
             }
         }
         lines(prefix, &self.common, out);
         for k in &self.kinds {
+            for w in &k.whens {
+                if let Some(key) = &w.key {
+                    let name = format!("{}{}", prefix, key);
+                    if !out.contains(&name) {
+                        out.push(name);
+                    }
+                }
+            }
             lines(prefix, &k.lines, out);
         }
     }
@@ -349,9 +393,11 @@ struct Parser<'a> {
     case_depth: Vec<usize>,
     /// the keys mapped so far in the scope being read (common lines and the
     /// current kind, or one group body): a `switch` names one of them
-    mapped: Vec<(String, (FieldDef, u32, Vec<FieldDef>, Option<crate::uper::Loc>))>,
+    mapped: Vec<(String, First)>,
     /// the `default` lines of the scope being read
     defaults: Vec<DefaultDef>,
+    /// the first syntax error of an `as` (engine-spec v0.30)
+    as_err: Option<Error>,
     /// every `via` table a field names: (table, line)
     vias: Vec<(String, usize)>,
     // header
@@ -568,9 +614,24 @@ impl<'a> Parser<'a> {
                     self.i += 1;
                 }
                 "when" => {
-                    if toks.len() != 3 {
-                        return bad(ln, "when needs <len> <value>");
-                    }
+                    // `as <model-key>` after the values (engine-spec v0.30)
+                    // its syntax errors are reported after `missing-wire` (rulings 16, 29)
+                    let as_err = |p: &mut Self, why: &str| {
+                        if p.as_err.is_none() {
+                            p.as_err = Some(Error { msg: format!("bad-directive: line {}: {}", ln, why) });
+                        }
+                        None
+                    };
+                    let key = match toks.len() {
+                        3 => None,
+                        4 if toks[3] == "as" => as_err(self, "`as` needs a <model-key>"),
+                        5 if toks[3] == "as" && toks[4] != "as" => Some(toks[4].clone()),
+                        n if n >= 5 && toks[3] == "as" && toks[4..].iter().any(|t| t == "as") => {
+                            as_err(self, "`as` given twice on one `when` line")
+                        }
+                        n if n >= 5 && toks[3] == "as" => as_err(self, "a token after the key of `as`"),
+                        _ => return bad(ln, "when needs <len> <value> [as <model-key>]"),
+                    };
                     let len = value_len(&toks[1], ln)?;
                     // a list of values and ranges (engine-spec v0.20)
                     if toks[2].split(',').any(|v| v == "present") {
@@ -579,12 +640,17 @@ impl<'a> Parser<'a> {
                     let values = num_list(&toks[2], Some(len), ln)?;
                     let value = values[0].0;
                     when_line.get_or_insert(ln);
+                    let w = SeqWhen { len, value, values, key, line: ln };
+                    // a `switch` may name the key from here on (ruling 2 of 0.30)
+                    if let Some(k) = &w.key {
+                        self.mapped.push((k.clone(), First::When(w.clone())));
+                    }
                     match out.kinds.last_mut() {
                         Some(_) if kind_has_lines => {
                             return bad(ln, "the `when` lines of a kind are its first lines");
                         }
-                        Some(k) => k.whens.push((len, value, values)),
-                        None => out.common.push(SeqLine::When { len, value, values }),
+                        Some(k) => k.whens.push(w),
+                        None => out.common.push(SeqLine::When(w)),
                     }
                     self.i += 1;
                 }
@@ -872,7 +938,7 @@ impl<'a> Parser<'a> {
                     also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, with: None, ..f.clone() });
                     self.i += 1;
                 }
-                let line = (f.clone(), len as u32, also.clone(), uper.clone());
+                let line = First::Field(f.clone(), len as u32, also.clone(), uper.clone());
                 self.mapped.push((f.model_key.clone(), line.clone()));
                 self.mapped.extend(also.iter().map(|a| (a.model_key.clone(), line.clone())));
                 SeqLine::Field { f, len: len as u32, also, uper }
@@ -1436,6 +1502,69 @@ fn check_rest_body(body: &SeqBody, after: bool, allow: bool) -> Result<(), Error
     Ok(())
 }
 
+/// Engine-spec v0.30 (load errors, ruling 9): in one reading path (the
+/// common lines plus one kind, one case of each switch) no two `when … as`
+/// lines name one key, and no `field` or `also` line maps a key an `as` names.
+/// Each group body is checked as a scope of its own.
+fn check_as(body: &SeqBody) -> Result<(), Error> {
+    /// the keys `field` and `also` lines of `lines` map, outside nested
+    /// groups (any case of a switch: each lies on some reading path), and the
+    /// `as` lines; nested group bodies are checked on the way
+    fn walk<'a>(lines: &'a [SeqLine], fields: &mut Vec<&'a str>, ases: &mut Vec<(&'a str, usize)>) -> Result<(), Error> {
+        for l in lines {
+            match l {
+                SeqLine::Field { f, also, .. } => {
+                    fields.push(&f.model_key);
+                    fields.extend(also.iter().map(|a| a.model_key.as_str()));
+                }
+                SeqLine::When(SeqWhen { key: Some(k), line, .. }) => ases.push((k, *line)),
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                    walk(body, fields, ases)?
+                }
+                SeqLine::Chain { parts, .. } => {
+                    for part in parts {
+                        walk(part, fields, ases)?;
+                    }
+                }
+                SeqLine::Choice { alts, .. } => {
+                    for (_, part) in alts {
+                        walk(part, fields, ases)?;
+                    }
+                }
+                SeqLine::Switch(sw) => {
+                    for c in sw.bodies() {
+                        walk(&c.lines, fields, ases)?;
+                    }
+                }
+                SeqLine::Group(g) => check_as(&g.body)?,
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+    fn path(fields: &[&str], ases: &[(&str, usize)]) -> Result<(), Error> {
+        for (i, (k, line)) in ases.iter().enumerate() {
+            if let Some((_, first)) = ases[..i].iter().find(|(o, _)| o == k) {
+                return bad(*line, format!("`as {}`: the key is named by the `as` of line {} in the same reading path", k, first));
+            }
+            if fields.contains(k) {
+                return bad(*line, format!("`as {}`: the key is also mapped by a `field` or `also` line in the same reading path", k));
+            }
+        }
+        Ok(())
+    }
+    let (mut fields, mut ases) = (Vec::new(), Vec::new());
+    walk(&body.common, &mut fields, &mut ases)?;
+    path(&fields, &ases)?;
+    for k in &body.kinds {
+        let (mut kf, mut ka) = (fields.clone(), ases.clone());
+        ka.extend(k.whens.iter().filter_map(|w| w.key.as_deref().map(|key| (key, w.line))));
+        walk(&k.lines, &mut kf, &mut ka)?;
+        path(&kf, &ka)?;
+    }
+    Ok(())
+}
+
 /// Parse a `layout sequential` pack.
 pub fn parse(text: &str) -> Result<Pack, Error> {
     let mut lines: Vec<(usize, Vec<String>)> = Vec::new();
@@ -1458,6 +1587,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         case_depth: Vec::new(),
         mapped: Vec::new(),
         defaults: Vec::new(),
+        as_err: None,
         vias: Vec::new(),
         format: None,
         version: None,
@@ -1511,6 +1641,11 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         Some(_) => return err("bad-directive: `layout` is valid only on a bits wire"),
         None => return err("missing-wire: the pack has no `wire` line"),
     }
+    // engine-spec v0.30: the syntax of `as`, then the bans of ruling 9 (ruling 29)
+    if let Some(e) = p.as_err.take() {
+        return Err(e);
+    }
+    check_as(&body)?;
     // `armor sixbit` and `encoding uper` need `bit_order msb` (0.14, 0.19); `msb-lsb` is not `msb`
     let armor = p.armor.check(true, p.order == BitOrder::Msb)?;
     // engine-spec v0.19: `encoding uper`, and the lines only it allows (ruling 9)
@@ -1653,20 +1788,37 @@ fn decode_kind<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
     let start = r.pos;
     for k in &body.kinds {
         let mut at = start;
-        let holds = k.whens.iter().all(|(len, _, values)| {
+        // the keys of `as` lines, set only once the kind is selected (ruling 12 of 0.30)
+        let mut bound: Vec<(&str, u64)> = Vec::new();
+        let holds = k.whens.iter().all(|w| {
             // a `when` any of whose bits lies beyond the input does not hold
-            let ok = r.end.saturating_sub(at) >= *len as u64
-                && get_bits(r.raw, at, *len, r.p.order).map_or(false, |v| in_list(values, v));
-            at += *len as u64;
-            ok
+            let v = (r.end.saturating_sub(at) >= w.len as u64)
+                .then(|| get_bits(r.raw, at, w.len, r.p.order))
+                .flatten()
+                .filter(|v| in_list(&w.values, *v));
+            at += w.len as u64;
+            if let (Some(v), Some(key)) = (v, &w.key) {
+                bound.push((key, v));
+            }
+            v.is_some()
         });
         if holds {
             r.pos = at;
+            for (key, v) in bound {
+                set_as(d, key, v);
+            }
             decode_lines(&k.lines, r, d)?;
             return Ok(Some(k));
         }
     }
     err(format!("no-kind: format `{}`: the bits at {} match no kind", r.p.format, start))
+}
+
+/// A key bound by `as` holds the bits read as an unsigned integer; 64 bits of
+/// 2^63 or more are the negative integer with the same bits (ruling 7 of 0.30).
+#[cfg(feature = "bits")]
+fn set_as(d: &mut Decoded, key: &str, v: u64) {
+    d.ent.fields.entry(key.to_string()).or_insert(Value::I64(v as i64));
 }
 
 /// Does a value lie in a list of values and ranges?
@@ -1738,9 +1890,15 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 let skip = (n - r.pos % n) % n;
                 r.pos = (r.pos + skip).min(r.end.max(r.pos));
             }
-            SeqLine::When { len, value, values } => {
-                if r.end.saturating_sub(r.pos) < *len as u64 || !in_list(values, r.read(*len, "a `when`")?) {
-                    return err(format!("no-kind: format `{}`: common `when {} {}` does not hold", r.p.format, len, value));
+            SeqLine::When(w) => {
+                let v = if r.end.saturating_sub(r.pos) < w.len as u64 { None } else { Some(r.read(w.len, "a `when`")?) };
+                match v {
+                    Some(v) if in_list(&w.values, v) => {
+                        if let Some(key) = &w.key {
+                            set_as(d, key, v);
+                        }
+                    }
+                    _ => return err(format!("no-kind: format `{}`: common `when {} {}` does not hold", r.p.format, w.len, w.value)),
                 }
             }
             SeqLine::Presence { id, bits, named, in_cases } => {
@@ -2035,10 +2193,67 @@ fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity, item: bool) -> Result<O
             }
         }
     }
-    match body.kinds.iter().find(|k| k.requires.iter().all(|r| r.holds(ent))) {
+    // a `when … as <k>` line is an implicit `requires` term (engine-spec v0.30)
+    let qualifies = |k: &SeqKind| k.requires.iter().all(|r| r.holds(ent)) && k.whens.iter().all(|w| w.key.is_none() || when_matches(w, ent));
+    match body.kinds.iter().find(|k| qualifies(k)) {
         Some(k) => Ok(Some(k)),
         None => err(format!("no-kind: format `{}`: the entity has the required keys of no kind", p.format)),
     }
+}
+
+/// Does the entity hold the key of a `when … as` line with a value the line
+/// matches? The value is read as an unsigned 64-bit pattern (ruling 7 of
+/// 0.30); a `default` does not count (ruling 6).
+#[cfg(feature = "bits")]
+fn when_matches(w: &SeqWhen, ent: &Entity) -> bool {
+    w.key.as_ref().and_then(|k| ent.fields.get(k)).and_then(as_bits).map_or(false, |v| in_list(&w.values, v))
+}
+
+/// An entity value of an `int` key as the unsigned bits a `when` compares.
+#[cfg(feature = "bits")]
+fn as_bits(v: &Value) -> Option<u64> {
+    match v {
+        Value::I64(n) => Some(*n as u64),
+        Value::F64(x) if x.fract() == 0.0 && *x >= -9.223372036854775808e18 && *x < 9.223372036854775808e18 => Some(*x as i64 as u64),
+        _ => None,
+    }
+}
+
+/// The bits a `when` line writes: the value of its `as` key when the entity
+/// holds it and the line matches it; the first listed value when the entity
+/// does not hold it; `transform-encode` when it holds a value the line does
+/// not match (engine-spec v0.30, Encode).
+#[cfg(feature = "bits")]
+fn when_bits(p: &Pack, w: &SeqWhen, ent: &Entity) -> Result<u64, Error> {
+    let key = match &w.key {
+        Some(k) => k,
+        None => return Ok(w.value),
+    };
+    match ent.fields.get(key) {
+        None => Ok(w.value),
+        Some(v) => match as_bits(v).filter(|b| in_list(&w.values, *b)) {
+            Some(b) => Ok(b),
+            None => err(format!(
+                "transform-encode: format `{}`: `{}` = {} does not match `when {}` of line {}: the output would decode a different value",
+                p.format,
+                key,
+                v.as_display(),
+                w.len,
+                w.line
+            )),
+        },
+    }
+}
+
+/// Write one `when` line, and what decode reads back from it.
+#[cfg(feature = "bits")]
+fn write_when(w: &mut Writer, line: &SeqWhen, ent: &Entity) -> Result<(), Error> {
+    let v = when_bits(w.p, line, ent)?;
+    w.put(line.len, v);
+    if let Some(key) = &line.key {
+        set_as(w.back.last_mut().expect("a scope"), key, v);
+    }
+    Ok(())
 }
 
 /// The defaults in force: those of the cases the lines are in, innermost
@@ -2117,8 +2332,20 @@ impl<'p> Look<'p> {
         }
         // the first prediction: what the first line mapping the key would
         // write, read back (ruling 37 of 0.20)
-        let (f, len, also, uper) = &sw.first;
         let mut back = Decoded::new();
+        let (f, len, also, uper) = match &sw.first {
+            First::Field(f, len, also, uper) => (f, len, also, uper),
+            // a `when … as` line (engine-spec v0.30): the value it would write
+            First::When(line) => {
+                if let Ok(v) = when_bits(self.p, line, ent) {
+                    set_as(&mut back, line.key.as_deref().unwrap_or_default(), v);
+                }
+                let v = key_state(&back, &sw.key).ok().flatten();
+                let pick = sw.pick(v.as_deref());
+                self.picks.borrow_mut().insert(at, pick);
+                return pick;
+            }
+        };
         match uper {
             // a UPER locator (engine-spec v0.19): its bits follow from the value
             Some(loc) => {
@@ -2503,8 +2730,8 @@ fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Resu
     // a presence among the common lines is visible in the kind's lines
     encode_lines(&body.common, kind_lines, ent, defs, w)?;
     if let Some(k) = kind {
-        for (len, value, _) in &k.whens {
-            w.put(*len, *value);
+        for line in &k.whens {
+            write_when(w, line, ent)?;
         }
         encode_lines(kind_lines, &[], ent, defs, w)?;
     }
@@ -2553,7 +2780,8 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 // what decode reads back from these bits (engine-spec v0.20)
                 read_back(p, f, *len, also, &w.buf, at, w.back.last_mut().expect("a scope"));
             }
-            SeqLine::Const { len, value } | SeqLine::When { len, value, .. } => w.put(*len, *value),
+            SeqLine::Const { len, value } => w.put(*len, *value),
+            SeqLine::When(line) => write_when(w, line, ent)?,
             SeqLine::Pad { len } => w.zeros(*len),
             SeqLine::Align { n } => w.zeros((n - w.pos % n) % n),
             SeqLine::Presence { id, bits, .. } => {

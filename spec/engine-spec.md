@@ -5398,6 +5398,15 @@ the pack does not `uses` is `module-not-used`; an undeclared key is
     `missing-version` and `missing-wire`. The two bans of ruling 9 run after
     the syntax checks and before the other checks that need the whole file.
 30. Ruling 18 for rules other than ruling 10 of 0.8 and ruling 32 of 0.21.
+31. "`as` twice" (load errors) is any second `as` token after the first:
+    `when 8 1 as as` is `bad-directive`, not a key named `as`.
+32. Ruling 10 applies per body: a group item's kind is chosen when that item
+    is written, so a common `as` of the message that does not match, written
+    before the group, is reported before an item's `no-kind`.
+33. The reading path of ruling 9 covers every block of the same scope: a
+    `field` or `also` line in any `case`, `if`, `opt`, `chain`, `length`,
+    `ext` or `choice` body of that scope conflicts with an `as` key; a group
+    body is a separate scope (ruling 21).
 
 ## Not in this version
 

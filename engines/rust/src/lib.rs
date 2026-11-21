@@ -2766,6 +2766,10 @@ impl Pack {
                     });
                 }
                 "when" => {
+                    // engine-spec v0.30: `as` is valid only in a `layout sequential` pack
+                    if toks.len() > 3 && toks[3] == "as" {
+                        return bad(ln, "`as` on a `when` is valid only in a `layout sequential` pack");
+                    }
                     if toks.len() != 3 {
                         return bad(ln, "when needs <locator> <value>");
                     }
@@ -3312,6 +3316,19 @@ impl Pack {
             body.visit(&mut |v| {
                 if let seq::Visit::Group(line, list) = v {
                     out.push((line, list));
+                }
+            });
+        }
+        out
+    }
+
+    /// Every `when … as` key of the pack: (line, key) (engine-spec v0.30).
+    fn as_keys(&self) -> Vec<(usize, &str)> {
+        let mut out = Vec::new();
+        if let Some(body) = &self.seq {
+            body.visit(&mut |v| {
+                if let seq::Visit::As(key, line) = v {
+                    out.push((line, key));
                 }
             });
         }
@@ -4191,6 +4208,11 @@ impl Engine {
         for (line, list) in p.group_lists() {
             keys.push((line, list, None));
         }
+        // a `when … as` key (ruling 17 of 0.30)
+        let as_keys = p.as_keys();
+        for (line, key) in &as_keys {
+            keys.push((*line, key, None));
+        }
         keys.sort_by_key(|k| k.0);
         // each check runs over every line before the next starts
         for (_, key, _) in &keys {
@@ -4227,11 +4249,31 @@ impl Engine {
             .into_iter()
             .map(|f| (f.line, Some(f), None))
             .chain(p.group_lists().into_iter().map(|(line, list)| (line, None, Some(list))))
+            .chain(as_keys.iter().map(|(line, _)| (*line, None, None)))
             .collect();
         lines.sort_by_key(|l| l.0);
         // the type of each table's model side, worked out once per table
         let mut table_types: HashMap<&str, KeyType> = HashMap::new();
-        for (_, f, g) in lines {
+        for (line, f, g) in lines {
+            // a `when … as` key is a scalar `int` key (engine-spec v0.30)
+            if let (None, None) = (f, g) {
+                for (_, key) in as_keys.iter().filter(|(l, _)| *l == line) {
+                    if self.is_list(key) {
+                        return err(format!("key-type-mismatch: pack `{}`: line {}: `as {}` names a list, not a key", p.format, line, key));
+                    }
+                    let ty = self.key_def(key).expect("declared").ty;
+                    if ty != KeyType::Int {
+                        return err(format!(
+                            "key-type-mismatch: pack `{}`: line {}: `as {}` is {}; a key bound by `as` is int",
+                            p.format,
+                            line,
+                            key,
+                            ty.name()
+                        ));
+                    }
+                }
+                continue;
+            }
             if let Some(list) = g {
                 if !self.is_list(list) {
                     return err(format!(
@@ -8519,6 +8561,9 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
         // 5e: `checksum` takes one argument; `checksum sum16 <tag>` (0.13) and
         // `checksum crc32 <tag>` (0.27) two
         let most = if name == "checksum" && toks[1] != "sum16" && toks[1] != "crc32" { 1 } else { most };
+        // engine-spec v0.30: `when <len> <values> as <key>`; every syntax error
+        // of `as`, on any pack, is checked after the file (ruling 16)
+        let most = if name == "when" && toks.len() > 3 && toks[3] == "as" { usize::MAX } else { most };
         if n < least || n > most {
             let takes = match (least, most) {
                 (l, m) if l == m => l.to_string(),
