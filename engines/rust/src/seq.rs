@@ -1857,6 +1857,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         gates: Vec::new(),
         elements: Vec::new(),
         uper,
+        at_err: None,
     })
 }
 
