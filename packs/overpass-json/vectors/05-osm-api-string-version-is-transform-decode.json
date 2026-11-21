@@ -1,0 +1,8 @@
+{
+  "name": "osm-api-string-version-is-transform-decode",
+  "from": "overpass-json",
+  "to": "overpass-json",
+  "input": "{\"version\":\"0.6\",\"generator\":\"CGImap 0.9.3\",\"copyright\":\"OpenStreetMap and contributors\",\"elements\":[{\"type\":\"node\",\"id\":900001,\"lat\":50.2106234,\"lon\":8.5856189}]}",
+  "expect_error": "transform-decode",
+  "source": "built by tools/gen/geo-open-vectors.py from values chosen there; layout restated from the OpenStreetMap Wiki page OSM JSON and the Overpass API output formats page; expect derived there, no engine run; an OSM API JSON response, whose version is a string where Overpass writes a number"
+}
