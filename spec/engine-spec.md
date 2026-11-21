@@ -5696,6 +5696,10 @@ kind's last line is not fixed either.
     later window writes over them without a check. A window whose bits stand
     leaves them a held key's bits, so a later window that would change them
     is `transform-encode`.
+27. **A line holding `at` with its tokens out of order** (`when 8 1 as k at 0`,
+    `at 0 as k y`, `at 0 as`) is an `at` form error, with the timing of
+    rulings 10 and 14, even where the misplaced token is `as`. A line with
+    `as` and no `at` keeps 0.30's checks.
 
 ## Not in this version
 
