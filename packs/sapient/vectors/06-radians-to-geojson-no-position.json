@@ -1,0 +1,22 @@
+{
+  "name": "radians-to-geojson-no-position",
+  "from": "sapient",
+  "to": "geojson",
+  "input": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09000000000000f8bf11000000000000e03f19000000000000294038024001",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"}",
+  "model": {
+    "@kind": "detection_report_other_system",
+    "@complete": true,
+    "uid": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+    "sapient.location_x": "-1.5",
+    "sapient.location_y": "0.5",
+    "sapient.location_coordinate_system": "2",
+    "@absent": [
+      "lat",
+      "lon",
+      "hae"
+    ]
+  },
+  "source": "synthetic: built by hand from the field numbers in packs/sapient/pack.def (7 DetectionReport, 7.2 object_id, 7.6 Location: 1 x, 2 y, 3 z as doubles, 7 coordinate_system, 8 datum as varints); object_id is the example ULID of the ULID specification; doubles are little-endian IEEE-754 of the decimal text; x -1.5, y 0.5, z 12.5, coordinate_system 2 (latitude and longitude in radians), datum 1",
+  "reference": "7.6.7 = 2 is not 1, so the decode selects detection_report_other_system (0.5 Decode step 2) and the radian values stay in raw keys; with no lat or lon the geometry is null (ruling 5 of 0.1.1). id is the object id through the uid derive (model/sapient.def, 0.6)."
+}

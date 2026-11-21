@@ -1,0 +1,20 @@
+{
+  "name": "degrees-object-id-to-geojson",
+  "from": "sapient",
+  "to": "geojson",
+  "input": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038014001",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.95,30.009,12.5]},\"properties\":{},\"id\":\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"}",
+  "model": {
+    "@kind": "detection_report",
+    "@complete": true,
+    "sapient.detection_report_object_id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+    "lon": "-85.95",
+    "lat": "30.009",
+    "hae": "12.5",
+    "sapient.location_coordinate_system": "1",
+    "sapient.location_datum": "1",
+    "uid": "01ARZ3NDEKTSV4RRFFQ69G5FAV"
+  },
+  "source": "synthetic: built by hand from the field numbers in packs/sapient/pack.def (7 DetectionReport, 7.2 object_id, 7.6 Location: 1 x, 2 y, 3 z as doubles, 7 coordinate_system, 8 datum as varints); object_id is the example ULID of the ULID specification; doubles are little-endian IEEE-754 of the decimal text; x -85.95, y 30.009, z 12.5, coordinate_system 1 (degrees), datum 1 (WGS84 ellipsoid)",
+  "reference": "7.6.7 = 1 holds the when line of kind detection_report, the first kind that matches (engine-spec 0.5 Decode), so lon, lat, hae take x, y, z. convert derives uid from sapient.detection_report_object_id (model/sapient.def, engine-spec 0.6 Derived keys; uid is absent after decode). The geojson pack writes uid at id and lon, lat, hae at the coordinates; member order type, geometry, properties, id (ruling 4 of 0.1.1); no properties key is present, so properties is {}."
+}

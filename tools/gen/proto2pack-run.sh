@@ -130,6 +130,16 @@ DETECTION=(
 # DetectionReport.state (7.4) is track.status_text, the flags as tokens (model/track.def),
 # and the classification's confidence (7.11.2) is track.confidence, written only
 # beside a class (engine-spec 0.18 `with`), as the translator writes both.
+# A decoded detection's object id (7.2, a ULID the node allocates for the object) is
+# also its uid, by a derivation: it fills uid only when the entity has none, so a
+# message whose source states a uid keeps it, and a CoT uid is never written back
+# into object_id, where the schema requires a ULID.
+# Location.x, y and z (7.6.1 to 7.6.3) are longitude, latitude and height only when
+# Location.coordinate_system (7.6.7) is 1, latitude and longitude in degrees. The
+# detection_report kind therefore holds only those messages (`when 7.6.7 1`, which
+# also writes 1 on encode), and the kind detection_report_other_system, last, takes a
+# detection in radians, UTM metres or no stated system with the same lines but no
+# lat, lon, hae or track.sigma_up_m: its numbers stay in the raw location keys.
 python3 -I "$GEN/proto2pack.py" \
   --proto "$SRC"/sapient/bsi_flex_335_v2_0/*.proto "$SRC/sapient/proto_options.proto" \
   --envelope SapientMessage --format sapient --module sapient --out "$ROOT" \
@@ -142,6 +152,8 @@ python3 -I "$GEN/proto2pack.py" \
   --derive "sapient.timestamp_nanos nsec_of time_ms" \
   --derive "sapient.location_x_error deg_lon_of track.sigma_east_m lat" \
   --derive "sapient.location_y_error deg_lat_of track.sigma_north_m lat" \
+  --derive "uid copy sapient.detection_report_object_id" \
+  --split-kind "detection_report:7.6.7=1:detection_report_other_system:lat,lon,hae,track.sigma_up_m" \
   --map 7.4=track.status_text \
   --bind detection_report:7.11.2=track.confidence:pfloat \
   --with detection_report:7.11.2=track.class \

@@ -1,0 +1,22 @@
+{
+  "name": "to-sapient-writes-degrees-not-object-id",
+  "from": "cot-xml",
+  "to": "sapient",
+  "input": "<event uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
+  "expect": "0a0808c0c9ea810610003a21321f09df20b5e44c7d55c01161133e004e023e4019cdcccccccc4c45c038014001",
+  "model": {
+    "@complete": true,
+    "uid": "J-01334",
+    "lat": "30.0090027",
+    "lon": "-85.9578182",
+    "hae": "-42.6",
+    "sapient.timestamp_seconds": "1614456000",
+    "sapient.timestamp_nanos": "0",
+    "@absent": [
+      "sapient.detection_report_object_id",
+      "sapient.location_coordinate_system"
+    ]
+  },
+  "source": "input: packs/cot-xml/vectors/02-cot-roundtrip.json; expected bytes encoded by hand from the field numbers in packs/sapient/pack.def",
+  "reference": "Encode selects the first sapient kind whose requires keys are present (engine-spec 0.5 Encode step 2): only detection_report (requires lat lon) qualifies. Common 1 Timestamp: seconds 1614456000 and nanos 0 from time_ms 1614456000000 by sec_of and nsec_of (model/sapient.def, 0.16), both present so both written (08 c0c9ea8106, 10 00). 7.6: x -85.9578182, y 30.0090027, z -42.6 as fixed64 doubles from lon, lat, hae; the when value 7.6.7 = 1 is written (0.5 Encode step 4) and the const 7.6.8 = 1 (0.6 Constants); fields in ascending field-number order (0.3). No object_id (7.2): the derive line copies object_id into uid only, never uid into object_id. No other key the kind maps is present or derived (sigma_east_m and sigma_north_m, which the x_error and y_error derives need, are absent; CoT ce and le are not mapped by sapient)."
+}
