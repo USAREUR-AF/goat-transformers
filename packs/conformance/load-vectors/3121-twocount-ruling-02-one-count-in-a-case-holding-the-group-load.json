@@ -1,0 +1,8 @@
+{
+  "name": "3121-twocount-ruling-02-one-count-in-a-case-holding-the-group-load",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nkey qty int -\nlist nums \"a list\"\nlist recs \"a list\"\nlist items \"a list\"\nlist subs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.31.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.x 8 uint\ncount a 8\nswitch probe.x\n  case 1\n    count b 8\n    group probe.nums count @a @b\n      field probe.val 8 uint\n    end\n  case 2\n    group probe.recs count @a\n      field probe.x 8 uint\n    end\nend\n"
+}

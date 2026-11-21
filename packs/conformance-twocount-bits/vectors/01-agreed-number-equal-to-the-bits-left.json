@@ -1,0 +1,14 @@
+{
+  "name": "agreed-number-equal-to-the-bits-left",
+  "from": "conformance-twocount-bits",
+  "to": "conformance-twocount-bits",
+  "input": "89ff",
+  "expect": "89ff",
+  "model": {
+    "probe.nums.#": "8",
+    "probe.nums[0].probe.val": "1",
+    "probe.nums[7].probe.val": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 4: at the group line equality is checked first, then the bits left for the agreed number; 8 and 8 items, 8 bits left"
+}

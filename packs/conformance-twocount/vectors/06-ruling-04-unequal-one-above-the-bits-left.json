@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-unequal-one-above-the-bits-left",
+  "from": "conformance-twocount",
+  "to": "conformance-twocount",
+  "input": "f70205",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 4: a gives 14 (above the 8 bits left) and b gives 3; equality is checked first: malformed-wire, no item read"
+}

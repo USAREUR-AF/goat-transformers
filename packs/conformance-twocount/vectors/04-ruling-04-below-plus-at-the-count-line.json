@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-below-plus-at-the-count-line",
+  "from": "conformance-twocount",
+  "to": "conformance-twocount",
+  "input": "0701050609",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 4 and Decode: a value 0 below its plus 1 stays malformed-wire at its own count line"
+}

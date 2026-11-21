@@ -2272,6 +2272,13 @@ seq_apply([<<"group">>, List | ModeToks], P) ->
                [<<"count">>, <<"@", Name/binary>>] when Name =/= <<>> -> {countref, Name};
                [<<"count">>, <<"@">>] ->
                    load_error('bad-directive', "group ~s: count @ names no count", [List]);
+               %% 0.31: one list counted by two count lines, which must agree
+               [<<"count">>, <<"@", A/binary>>, <<"@", B/binary>>] when A =/= <<>>, B =/= <<>> ->
+                   case A =:= B of
+                       true -> load_error('bad-directive', "group ~s: count @~s @~s names one count twice",
+                                          [List, A, B]);
+                       false -> {countref2, A, B}
+                   end;
                [<<"count">>, LenS] -> {count, seq_len(LenS, 1, 64)};
                [<<"while">>] -> while;
                [<<"more">>] -> more;
@@ -2773,6 +2780,21 @@ seq_res_scope(Common, Kinds, Env, St0) ->
           end, St1, Kinds),
     {Common1, Kinds1, St2}.
 
+%% The id of the count a `count @<name>` of a group names, visible at the
+%% group line (rulings 9 and 12 of 0.21).
+count_id(List, Name, Env) ->
+    case maps:find(Name, Env) of
+        {ok, {count, Id}} -> Id;
+        {ok, outside} ->
+            load_error('bad-directive',
+                       "group ~s: count ~s stands outside the group body (ruling 9 of 0.21)",
+                       [List, Name]);
+        {ok, _} -> load_error('bad-directive', "group ~s: ~s is a presence, not a count",
+                              [List, Name]);
+        error -> load_error('bad-directive', "group ~s: no count ~s is visible here",
+                            [List, Name])
+    end.
+
 %% seq_res(Lines, Visible, DeclaredInThisBlock, {NextId, Named}, Acc)
 seq_res([], Env, Decl, St, Acc) -> {lists:reverse(Acc), Env, Decl, St};
 %% St = {NextId, Named, Static, CaseAcc}: Named the bits every `if` names,
@@ -2856,18 +2878,9 @@ seq_res([{chain, First, Parts, EndsFx} | Rest], Env, Decl, St, Acc) ->
     seq_res(Rest, Env, Decl, St1, [{chain, First1, Parts1, EndsFx} | Acc]);
 seq_res([{sgroup, List, Mode0, #{lines := Ls, kinds := Ks} = Body} | Rest], Env, Decl, St, Acc) ->
     Mode = case Mode0 of
-               {countref, Name} ->
-                   case maps:find(Name, Env) of
-                       {ok, {count, Id}} -> {countref, Id};
-                       {ok, outside} ->
-                           load_error('bad-directive',
-                                      "group ~s: count ~s stands outside the group body (ruling 9 of 0.21)",
-                                      [List, Name]);
-                       {ok, _} -> load_error('bad-directive', "group ~s: ~s is a presence, not a count",
-                                             [List, Name]);
-                       error -> load_error('bad-directive', "group ~s: no count ~s is visible here",
-                                           [List, Name])
-                   end;
+               {countref, Name} -> {countref, count_id(List, Name, Env)};
+               %% 0.31: both names resolve as 0.21's one name does
+               {countref2, A, B} -> {countref2, count_id(List, A, Env), count_id(List, B, Env)};
                _ -> Mode0
            end,
     %% a count reference stays in the group body of its count (ruling 9)
@@ -3404,6 +3417,7 @@ count_lines([L | Rest], Kinds) ->
 count_refs(Id, Lines) -> lists:foldl(fun(L, S) -> count_add(S, count_refs1(Id, L)) end, [0], Lines).
 
 count_refs1(Id, {sgroup, _, {countref, Id}, _}) -> [1];
+count_refs1(Id, {sgroup, _, {countref2, A, B}, _}) when Id =:= A; Id =:= B -> [1];
 count_refs1(_Id, {sgroup, _, _, _}) -> [0];
 count_refs1(Id, {switch, _, _, Cases, Else}) ->
     lists:usort(lists:append([count_refs(Id, maps:get(lines, C)) || C <- switch_bodies(Cases, Else)]));

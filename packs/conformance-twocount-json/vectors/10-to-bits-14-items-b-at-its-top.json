@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-14-items-b-at-its-top",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount-bits",
+  "input": "{\"nums\":[1,0,1,0,1,0,1,0,1,0,1,0,1,0]}",
+  "expect": "efaaa8",
+  "source": "constructed",
+  "reference": "spec 0.31, Encode: 14 items: a = 14, b = 15 = 2^4 - 1; bits 10101010 101010 then 00"
+}

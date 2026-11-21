@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-twocount",
+  "to": "conformance-twocount-json",
+  "input": "3701050609",
+  "expect": "{\"x\":7,\"y\":9,\"nums\":[5,6]}",
+  "source": "constructed",
+  "reference": "spec 0.31, Decode then the json pack: members in line order"
+}

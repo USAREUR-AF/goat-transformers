@@ -1,0 +1,9 @@
+{
+  "name": "to-unreached-absent-list-writes-each-plus",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount-unreached",
+  "input": "{}",
+  "expect": "010000",
+  "source": "constructed",
+  "reference": "spec 0.31, Encode: an absent list writes each count's plus: a = 1, b = 0; the opt is not written"
+}

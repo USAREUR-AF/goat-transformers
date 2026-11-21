@@ -1,0 +1,9 @@
+{
+  "name": "group-reached-counts-disagree",
+  "from": "conformance-twocount-unreached",
+  "to": "conformance-twocount-unreached",
+  "input": "03038005060700",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, Decode: the opt bit is 1: a gives 2, b gives 3: malformed-wire"
+}

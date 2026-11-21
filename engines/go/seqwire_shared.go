@@ -926,6 +926,14 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			g.seqMode = seqRest
 		case len(args) == 2 && args[1] == "last":
 			g.seqMode = seqLast
+		case twoCountForm(args):
+			// count @<a> @<b> (0.31): every error is a check after the
+			// file (ruling 7); the block is still opened, so that its end
+			// closes it.
+			g.seqMode = seqCountRef
+			if err := sp.twoCounts(g, args[2:]); err != nil {
+				sp.lateErr(sp.bad(n, g.Locator, "%v", err))
+			}
 		case len(args) == 3 && args[1] == "count" && strings.HasPrefix(args[2], "@"):
 			cd, err := sp.lookupCount(args[2][1:])
 			if err != nil {
@@ -1119,6 +1127,48 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 	return nil
 }
 
+// twoCountForm reports whether group arguments take the form of 0.31:
+// `count` then two or more tokens, one of them starting with '@'. A group
+// `count` with one token keeps the forms of 0.8 and 0.21.
+func twoCountForm(args []string) bool {
+	if len(args) < 4 || args[1] != "count" {
+		return false
+	}
+	for _, a := range args[2:] {
+		if strings.HasPrefix(a, "@") {
+			return true
+		}
+	}
+	return false
+}
+
+// twoCounts resolves the names of `count @<a> @<b>` (0.31): exactly two
+// tokens, each `@<name>`, two different names, each a count visible at the
+// group line as 0.21 states.
+func (sp *seqParser) twoCounts(g *Group, toks []string) error {
+	if len(toks) != 2 {
+		return fmt.Errorf("group count takes one or two @<name> references, got %d tokens", len(toks))
+	}
+	for _, t := range toks {
+		if len(t) < 2 || t[0] != '@' {
+			return fmt.Errorf("group count @<a> @<b>: %q is not @<name>", t)
+		}
+	}
+	if toks[0] == toks[1] {
+		return fmt.Errorf("group count names %s twice", toks[0])
+	}
+	a, err := sp.lookupCount(toks[0][1:])
+	if err != nil {
+		return err
+	}
+	b, err := sp.lookupCount(toks[1][1:])
+	if err != nil {
+		return err
+	}
+	g.cnt, g.cnt2 = a, b
+	return nil
+}
+
 // hasToken reports whether toks holds t.
 func hasToken(toks []string, t string) bool {
 	for _, x := range toks {
@@ -1260,7 +1310,7 @@ func countRefs(nodes []*seqNode, cd *seqCountDef) (lo, hi int) {
 	for _, n := range nodes {
 		switch n.op {
 		case seqGroup:
-			if n.g.cnt == cd {
+			if n.g.cnt == cd || n.g.cnt2 == cd {
 				lo++
 				hi++
 			}

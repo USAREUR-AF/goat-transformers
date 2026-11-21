@@ -1,0 +1,9 @@
+{
+  "name": "3123-twocount-ruling-03-a-name-with-no-reference-in-one-kind",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nkey qty int -\nlist nums \"a list\"\nlist recs \"a list\"\nlist items \"a list\"\nlist subs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.31.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ncount a 8\ncount b 8 plus 1\nkind k1\nwhen 8 1\ngroup probe.nums count @a @b\n  field probe.val 8 uint\nend\nkind k2\nwhen 8 2\ngroup probe.nums count @a\n  field probe.val 8 uint\nend\n",
+  "expect_error": "bad-directive"
+}

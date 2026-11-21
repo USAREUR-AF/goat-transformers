@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-no-wrapping",
+  "from": "conformance-twocount-wide-min",
+  "to": "conformance-twocount-wide-min",
+  "input": "8000000000000002020506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 5: the numbers are compared as exact integers, value_a - plus_a = value_b - plus_b, no wrapping; a gives 2^64 + 2 and b gives 2; equal only modulo 2^64: malformed-wire"
+}

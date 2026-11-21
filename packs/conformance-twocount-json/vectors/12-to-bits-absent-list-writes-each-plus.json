@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-absent-list-writes-each-plus",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount-bits",
+  "input": "{}",
+  "expect": "01",
+  "source": "constructed",
+  "reference": "spec 0.31, Encode: an absent list writes each count's plus: a = 0, b = 1"
+}

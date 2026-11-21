@@ -598,10 +598,15 @@ class _Reader:
         mode = nd.mode
         msg = self.msg
         items = []
-        if mode == "count" and nd.count_node is not None:  # 0.21: the count read earlier
-            n = self.counts.get(nd.count_node)
-            if n is None or (self.soft and self.pos >= self.soft[-1]):
+        if mode == "count" and nd.count_node is not None:  # 0.21: the count read earlier; 0.31: two
+            ns = [self.counts.get(c) for c in nd.count_nodes]
+            if None in ns or (self.soft and self.pos >= self.soft[-1]):
                 return  # ruling 6: the count was not read, or the group is past the extent's end
+            n = ns[0]
+            if len(ns) > 1 and ns[1] != n:  # 0.31: exact integers, checked before anything else (ruling 4)
+                raise MalformedWire("the counts %s and %s of group %s give %d and %d item(s)"
+                                    % (nd.count_nodes[0].name, nd.count_nodes[1].name, nd.list, n, ns[1]),
+                                    format=self.pack.name)
             self.replaces(nd, sc)
             if self.left is not None and n > self.left:  # before any item is read (ruling 7d of 0.11)
                 raise self.over(nd, n)
@@ -1321,9 +1326,10 @@ class _Writer:
                 self.emit(lines, ictx)
             return
         if mode == "count" and nd.count_node is not None:  # 0.21: the count line holds items + `plus`
-            rec = self.count_cur.get(nd.count_node)
-            if rec is not None:
-                rec[2] = n + nd.count_node.plus
+            for c in nd.count_nodes:  # 0.31: each count holds the items plus its own `plus`
+                rec = self.count_cur.get(c)
+                if rec is not None:
+                    rec[2] = n + c.plus
             for item in items:
                 ictx, lines = self.item_block(nd, item)
                 self.emit(lines, ictx)

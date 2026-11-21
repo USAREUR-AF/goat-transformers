@@ -1,0 +1,9 @@
+{
+  "name": "ruling-02-count-in-the-if-disagree",
+  "from": "conformance-twocount-if",
+  "to": "conformance-twocount-if",
+  "input": "02800205060709",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 2: one count in the common lines, the other in the if block that holds the group: a gives 2, b gives 3"
+}

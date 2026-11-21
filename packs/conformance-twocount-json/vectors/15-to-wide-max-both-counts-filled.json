@@ -1,0 +1,9 @@
+{
+  "name": "to-wide-max-both-counts-filled",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount-wide-max",
+  "input": "{\"nums\":[5,6]}",
+  "expect": "8000000000000001020506",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 5: the numbers are compared as exact integers, value_a - plus_a = value_b - plus_b, no wrapping; encode: a = 2 + 2^63 - 1 = 2^63 + 1 = 0x8000000000000001, b = 2"
+}

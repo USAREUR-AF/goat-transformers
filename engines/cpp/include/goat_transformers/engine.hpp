@@ -531,6 +531,8 @@ struct SeqNode {
     // Pack::seq_count_lines.
     std::string count_name;
     int count_id = -1;
+    // v0.31: a group with `count @<a> @<b>`: the second count line's index; -1 when none.
+    int count_id2 = -1;
     bool holds(std::uint64_t v) const {
         if (ranges.empty()) return v == number;
         for (const auto& r : ranges)

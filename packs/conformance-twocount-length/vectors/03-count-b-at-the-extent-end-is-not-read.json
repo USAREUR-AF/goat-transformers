@@ -1,0 +1,13 @@
+{
+  "name": "count-b-at-the-extent-end-is-not-read",
+  "from": "conformance-twocount-length",
+  "to": "conformance-twocount-length",
+  "input": "010509",
+  "expect": "02000109",
+  "model": {
+    "probe.nums.#": "absent",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, Decode: a group at or past the end of a length extent is not reached (0.21 ruling 6); b lies at the extent end and is not read, so it has no below-plus check (only a count that was read has one)"
+}

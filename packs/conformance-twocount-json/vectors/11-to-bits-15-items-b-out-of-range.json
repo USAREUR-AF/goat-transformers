@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-15-items-b-out-of-range",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount-bits",
+  "input": "{\"nums\":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.31, Encode and ruling 8: each count is range-checked: a = 15 fits, b = 16 is outside 0 ... 15"
+}

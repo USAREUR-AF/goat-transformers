@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-unequal-within-the-bits-left",
+  "from": "conformance-twocount-bits",
+  "to": "conformance-twocount-bits",
+  "input": "88ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 4: at the group line equality is checked first, then the bits left for the agreed number; 8 and 7 items, both within the 8 bits left: equality fails"
+}

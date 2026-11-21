@@ -1,0 +1,9 @@
+{
+  "name": "to-swapped-ruling-01-15-items",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount-swapped",
+  "input": "{\"x\":7,\"y\":9,\"nums\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 1: count @b @a reads and writes the bits of count @a @b (conformance-twocount); a = 16 out of range"
+}

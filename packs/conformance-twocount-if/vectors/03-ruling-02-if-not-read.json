@@ -1,0 +1,13 @@
+{
+  "name": "ruling-02-if-not-read",
+  "from": "conformance-twocount-if",
+  "to": "conformance-twocount-if",
+  "input": "050009",
+  "expect": "000009",
+  "model": {
+    "probe.nums.#": "absent",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 2: one count in the common lines, the other in the if block; p.1 = 0: the group is not reached, a = 5 is not compared; encode writes a = 0"
+}

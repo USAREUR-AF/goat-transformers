@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-three-items",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount-bits",
+  "input": "{\"nums\":[1,0,1]}",
+  "expect": "34a0",
+  "source": "constructed",
+  "reference": "spec 0.31, Encode: a = 3 + 0, b = 3 + 1; the items 1, 0, 1 then zero padding to the byte"
+}

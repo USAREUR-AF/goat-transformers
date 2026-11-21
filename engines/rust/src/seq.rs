@@ -34,8 +34,9 @@ pub enum Rep {
     Size(crate::uper::Size),
     /// items until the end of the enclosing extent (engine-spec v0.21)
     Rest,
-    /// as many items as the `count` line of this id states (engine-spec v0.21)
-    Named(usize),
+    /// as many items as the `count` line of this id states (engine-spec
+    /// v0.21); two ids: two counts that must agree (engine-spec v0.31)
+    Named(Vec<usize>),
     /// each item is preceded by one bit: 1 = this is the last item (engine-spec v0.21)
     Last,
 }
@@ -1124,16 +1125,31 @@ impl<'a> Parser<'a> {
             "group" => {
                 let rep = match (toks.get(2).map(|s| s.as_str()), toks.len()) {
                     // `count @<name>`: the count of an earlier `count` line (engine-spec v0.21)
-                    (Some("count"), 4) if toks[3].starts_with('@') => {
-                        let name = &toks[3][1..];
-                        match self.names.iter().rev().find(|(n, _, _)| n == name) {
-                            Some((_, id, Named::Count(depth))) if *depth == self.body_depth => Rep::Named(*id),
-                            Some((_, _, Named::Count(_))) => {
-                                return bad(ln, format!("`count {}` names a count of another group body (ruling 9 of 0.21)", toks[3]));
-                            }
-                            Some((_, _, Named::Presence(_))) => return bad(ln, format!("`count {}` names a presence, not a count", toks[3])),
-                            None => return bad(ln, format!("`count {}` names a count that is not visible here", toks[3])),
+                    // `count @<a> @<b>`: two counts of one list (engine-spec v0.31)
+                    (Some("count"), n) if n >= 4 && toks[3..].iter().any(|t| t.starts_with('@')) => {
+                        let refs = &toks[3..];
+                        if refs.len() > 2 {
+                            return bad(ln, "`count @<name>` takes at most two names");
                         }
+                        let mut ids = Vec::new();
+                        for t in refs {
+                            let name = match t.strip_prefix('@') {
+                                Some(n) if !n.is_empty() => n,
+                                _ => return bad(ln, format!("`{}` after `count` is not `@<name>`", t)),
+                            };
+                            if refs.iter().filter(|o| *o == t).count() > 1 {
+                                return bad(ln, format!("`{}` is named twice on one group", t));
+                            }
+                            match self.names.iter().rev().find(|(n, _, _)| n == name) {
+                                Some((_, id, Named::Count(depth))) if *depth == self.body_depth => ids.push(*id),
+                                Some((_, _, Named::Count(_))) => {
+                                    return bad(ln, format!("`count {}` names a count of another group body (ruling 9 of 0.21)", t));
+                                }
+                                Some((_, _, Named::Presence(_))) => return bad(ln, format!("`count {}` names a presence, not a count", t)),
+                                None => return bad(ln, format!("`count {}` names a count that is not visible here", t)),
+                            }
+                        }
+                        Rep::Named(ids)
                     }
                     (Some("count"), 4) => Rep::Count(value_len(&toks[3], ln)?),
                     // engine-spec v0.19: SEQUENCE OF
@@ -1349,7 +1365,7 @@ fn count_refs(lines: &[SeqLine], id: usize) -> (usize, usize) {
     };
     for l in lines {
         match l {
-            SeqLine::Group(g) if g.rep == Rep::Named(id) => add(&mut at, (1, 1)),
+            SeqLine::Group(g) if matches!(&g.rep, Rep::Named(ids) if ids.contains(&id)) => add(&mut at, (1, 1)),
             SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
                 add(&mut at, count_refs(body, id))
             }
@@ -2070,9 +2086,14 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                             }
                         }
                     }
-                    Rep::Named(id) => {
-                        let n = match r.counts.get(id).copied().flatten() {
-                            Some(n) => n,
+                    Rep::Named(ids) => {
+                        let ns: Option<Vec<u64>> = ids.iter().map(|id| r.counts.get(id).copied().flatten()).collect();
+                        let n = match ns {
+                            // two counts agree, as exact integers (rulings 4 and 5 of 0.31)
+                            Some(ns) if ns.iter().any(|m| *m != ns[0]) => {
+                                return Err(r.short(format!("list `{}`: its two counts give {} and {} items", g.list, ns[0], ns[1])));
+                            }
+                            Some(ns) => ns[0],
                             // the count line lay past the end of its extent: the list is absent
                             None => continue,
                         };
@@ -2948,19 +2969,21 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                             )));
                         }
                     }
-                    Rep::Named(id) => {
+                    Rep::Named(ids) => {
                         for item in items {
                             encode_body(&g.body, item, true, w)?;
                         }
-                        // the count is written at its own place now the group is laid out
-                        let k = *w.counts.get(id).expect("the count line is written before its group");
-                        w.count_fields[k].3 = true;
-                        let (at, len, plus, _) = w.count_fields[k];
-                        let v = n as i128 + plus as i128;
-                        if v < 0 || (len < 64 && v >> len != 0) || v > u64::MAX as i128 {
-                            return Err(w.fail(format!("list `{}`: a count of {} does not fit its {} bits", g.list, v, len)));
+                        // each count is written at its own place now the group is laid out
+                        for id in ids {
+                            let k = *w.counts.get(id).expect("the count line is written before its group");
+                            w.count_fields[k].3 = true;
+                            let (at, len, plus, _) = w.count_fields[k];
+                            let v = n as i128 + plus as i128;
+                            if v < 0 || (len < 64 && v >> len != 0) || v > u64::MAX as i128 {
+                                return Err(w.fail(format!("list `{}`: a count of {} does not fit its {} bits", g.list, v, len)));
+                            }
+                            set_bits(&mut w.buf, at, len, v as u64, p.order);
                         }
-                        set_bits(&mut w.buf, at, len, v as u64, p.order);
                     }
                     Rep::Last => {
                         if n == 0 {

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-01-below-plus",
+  "from": "conformance-twocount-swapped",
+  "to": "conformance-twocount-swapped",
+  "input": "0701050609",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 1: count @b @a reads and writes the bits of count @a @b (conformance-twocount); a = 0 below plus 1"
+}

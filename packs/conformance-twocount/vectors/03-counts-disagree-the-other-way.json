@@ -1,0 +1,9 @@
+{
+  "name": "counts-disagree-the-other-way",
+  "from": "conformance-twocount",
+  "to": "conformance-twocount",
+  "input": "4701050609",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, Decode: a gives 3 items and b gives 2: malformed-wire"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-02-count-in-the-kind",
+  "from": "conformance-twocount-kind",
+  "to": "conformance-twocount-kind",
+  "input": "0201030506",
+  "expect": "0201030506",
+  "model": {
+    "@kind": "k",
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 2: one count in the common lines, the other in the kind that holds the group: 2 and 2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-below-plus-on-the-second-count",
+  "from": "conformance-twocount-bits",
+  "to": "conformance-twocount-bits",
+  "input": "80ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 4: at the group line equality is checked first, then the bits left for the agreed number; b = 0 below its plus 1, at b's count line"
+}

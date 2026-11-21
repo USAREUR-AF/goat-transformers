@@ -1,0 +1,12 @@
+{
+  "name": "ruling-05-exact-above-signed-64-bits",
+  "from": "conformance-twocount-wide-max",
+  "to": "conformance-twocount-wide-max",
+  "input": "8000000000000001020506",
+  "expect": "8000000000000001020506",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 5: the numbers are compared as exact integers, value_a - plus_a = value_b - plus_b, no wrapping; a = 2^63 + 1 (above signed 64 bits) gives 2^63 + 1 - (2^63 - 1) = 2, b gives 2"
+}

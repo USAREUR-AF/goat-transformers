@@ -1,0 +1,13 @@
+{
+  "name": "group-reached-counts-agree",
+  "from": "conformance-twocount-unreached",
+  "to": "conformance-twocount-unreached",
+  "input": "0302800506",
+  "expect": "0302800506",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, Decode: the opt bit is 1, the group is reached: a gives 3 - 1 = 2, b gives 2"
+}

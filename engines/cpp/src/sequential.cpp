@@ -235,7 +235,7 @@ std::set<int> add_paths(const std::set<int>& a, const std::set<int>& b) {
 
 std::set<int> node_refs(const SeqNode& n, int id) {
     switch (n.type) {
-        case Type::Group: return {n.repeat == Repeat::CountRef && n.count_id == id ? 1 : 0};
+        case Type::Group: return {n.repeat == Repeat::CountRef && (n.count_id == id || n.count_id2 == id) ? 1 : 0};
         case Type::Switch: {
             std::set<int> out;
             for (const auto& c : n.cases) {
@@ -1124,30 +1124,43 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             SeqNode n;
             n.type = Type::Group;
             if (t.size() >= 2) n.list = t[1];
-            if (t.size() == 4 && t[2] == "count" && !t[3].empty() && t[3][0] == '@') {
+            if (t.size() >= 4 && t[2] == "count" && ((!t[3].empty() && t[3][0] == '@') || t.size() > 4)) {
                 // v0.21: `count @<name>`, a count line visible here in the same
-                // group body (rulings 9, 12, 15 and 24).
-                const std::string name = t[3].substr(1);
-                if (name.empty()) throw bad("'count @' names no count");
+                // group body (rulings 9, 12, 15 and 24). v0.31: `count @<a> @<b>`,
+                // two such count lines, which must agree.
+                if (t.size() > 5) throw bad("'count' on a group takes one or two '@<name>', not " +
+                                            std::to_string(t.size() - 3) + " tokens");
                 n.repeat = Repeat::CountRef;
-                for (std::size_t d = stack.size(); d-- > 0 && n.count_id < 0;) {
-                    const Frame& f = stack[d];
-                    auto it = f.kind_counts.find(name);
-                    if (it != f.kind_counts.end()) {
-                        n.count_id = it->second;
-                        break;
+                std::vector<std::string> names;
+                for (std::size_t k = 3; k < t.size(); ++k) {
+                    if (t[k].empty() || t[k][0] != '@')
+                        throw bad("a token after 'count' on a group is '@<name>', not '" + t[k] + "'");
+                    const std::string name = t[k].substr(1);
+                    if (name.empty()) throw bad("'count @' names no count");
+                    if (std::find(names.begin(), names.end(), name) != names.end())
+                        throw bad("'count @" + name + " @" + name + "' names one count twice");
+                    names.push_back(name);
+                    int id = -1;
+                    for (std::size_t d = stack.size(); d-- > 0 && id < 0;) {
+                        const Frame& f = stack[d];
+                        auto it = f.kind_counts.find(name);
+                        if (it != f.kind_counts.end()) {
+                            id = it->second;
+                            break;
+                        }
+                        it = f.counts.find(name);
+                        if (it != f.counts.end()) {
+                            id = it->second;
+                            break;
+                        }
+                        if (f.kind_names.count(name) || f.names.count(name))
+                            throw bad("'count @" + name + "' names a presence, not a count");
+                        if (f.is_body) break;  // a reference stays in its group body
                     }
-                    it = f.counts.find(name);
-                    if (it != f.counts.end()) {
-                        n.count_id = it->second;
-                        break;
-                    }
-                    if (f.kind_names.count(name) || f.names.count(name))
-                        throw bad("'count @" + name + "' names a presence, not a count");
-                    if (f.is_body) break;  // a reference stays in its group body
+                    if (id < 0)
+                        throw bad("'count @" + name + "' names no count line visible here in the same group body");
+                    (k == 3 ? n.count_id : n.count_id2) = id;
                 }
-                if (n.count_id < 0)
-                    throw bad("'count @" + name + "' names no count line visible here in the same group body");
             } else if (t.size() == 4 && t[2] == "count") {
                 n.repeat = Repeat::Count;
                 n.len = small_len(t[3], "a count");
@@ -1851,6 +1864,15 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             const std::size_t id = static_cast<std::size_t>(n.count_id);
             if (!in.count_set[id]) return;
             const std::uint64_t count = in.counts[id];
+            // v0.31: the second count must give the same number of items,
+            // checked before the bits left (ruling 4).
+            if (n.count_id2 >= 0) {
+                const std::size_t id2 = static_cast<std::size_t>(n.count_id2);
+                if (!in.count_set[id2]) return;
+                if (in.counts[id2] != count)
+                    in.malformed("the two counts of the group '" + n.list + "' disagree: " + std::to_string(count) +
+                                 " and " + std::to_string(in.counts[id2]) + " items");
+            }
             // Ruling 20: compared with the bits left at the group.
             const std::uint64_t end = in.ext != kNoExtent ? in.ext : in.have;
             if (in.cur > end || count > end - in.cur)
@@ -2764,6 +2786,14 @@ void encode_group(SeqOut& out, const SeqNode& n, const Scope& s) {
                 throw Error(ErrorKind::TransformEncode, p.format, "",
                             "the count of the list '" + n.list + "' was not written before it");
             out.count_fields[at->second].items = count;
+            // v0.31: the second count holds the same number of items, each with its own `plus`.
+            if (n.count_id2 >= 0) {
+                auto at2 = out.at_count.find(n.count_id2);
+                if (at2 == out.at_count.end())
+                    throw Error(ErrorKind::TransformEncode, p.format, "",
+                                "the second count of the list '" + n.list + "' was not written before it");
+                out.count_fields[at2->second].items = count;
+            }
             for (const Item& item : items) encode_body(out, n.inner, item);
             return;
         }
