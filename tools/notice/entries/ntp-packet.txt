@@ -1,0 +1,4 @@
+Packs ntp-packet, nts-ke-records; modules ntpext, ntske
+  IETF RFC 5905, RFC 7822 and RFC 8915, https://www.rfc-editor.org/ (IETF
+  Trust and the persons identified as the document authors, BCP 78). Layouts
+  restated; no text copied.
