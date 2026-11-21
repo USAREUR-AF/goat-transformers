@@ -1,0 +1,8 @@
+{
+  "name": "field-without-soh-is-malformed",
+  "from": "fix-message",
+  "to": "fix-message",
+  "input": "383d4649582e342e3401393d36370133353d410134393d434c49454e540135363d42524f4b45520133343d310135323d32303235303131352d31323a33303a30302e3030300139383d30013130383d33300131303d313039",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from simplefix parser.py and message.py; the CheckSum field is not ended by SOH; expect derived there, no engine run"
+}

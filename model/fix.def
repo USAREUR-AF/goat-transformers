@@ -1,0 +1,11 @@
+# The fix module: FIX tag=value message fields. Written by tools/gen/finance-pack.py.
+module        fix
+version       0.1.0
+distribution  public
+source        "simplefix, https://github.com/da4089/simplefix at commit 007e3d7ffe904bcb2cfbfcb7ee8a4c13c5f3ea0a, simplefix/parser.py, message.py and constants.py (MIT License); layout restated, no code copied; the FIX Trading Community specification not used"
+key   begin_string  string  -  "tag 8, BeginString: the protocol version (FIX.4.2, FIX.4.4, FIXT.1.1 ...)"
+key   body_length   string  -  "tag 9, BodyLength: the octets from after this field to before the CheckSum, as the digits sent (not computed)"
+key   msg_type      string  -  "tag 35, MsgType (0 heartbeat, A logon, D new order single, 8 execution report ...)"
+list  fields        "every field after MsgType, in order, the CheckSum (tag 10) last"
+key   tag           string  -  "a field's tag number, as the digits sent"
+key   value         string  -  "a field's value, as sent"

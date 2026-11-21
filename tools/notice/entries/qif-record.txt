@@ -1,0 +1,5 @@
+Packs qif-record; module qif
+  quiffen, https://github.com/isaacharrisholt/quiffen at commit
+  29658502eb3823f2a50a3365e95bf809a4841bb4, quiffen/core/transaction.py and qif.py.
+  MIT License, Copyright (c) 2023 Isaac Harris-Holt. Layouts restated; no
+  text copied.

@@ -1,0 +1,9 @@
+{
+  "name": "Finance messages (FIX tag=value, QIF, OFX transactions)",
+  "domain": "networks",
+  "exact": [
+    "fix-message",
+    "qif-record",
+    "ofx-stmttrn"
+  ]
+}

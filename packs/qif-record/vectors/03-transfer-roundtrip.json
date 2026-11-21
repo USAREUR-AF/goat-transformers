@@ -1,0 +1,11 @@
+{
+  "name": "transfer-roundtrip",
+  "from": "qif-record",
+  "to": "qif-record",
+  "input": "4430332f30312f323032350a543530302e30300a4c5b536176696e67735d0a5e0a",
+  "expect": "4430332f30312f323032350a543530302e30300a4c5b536176696e67735d0a5e0a",
+  "model": {
+    "qif.lines[2].qif.category": "[Savings]"
+  },
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from quiffen core/transaction.py and qif.py; a transfer to another account; expect derived there, no engine run"
+}

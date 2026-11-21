@@ -1,0 +1,8 @@
+{
+  "name": "line-without-lf-is-malformed",
+  "from": "qif-record",
+  "to": "qif-record",
+  "input": "4430312f33312f323032350a542d312e3030",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from quiffen core/transaction.py and qif.py; the last line has no LF; expect derived there, no engine run"
+}

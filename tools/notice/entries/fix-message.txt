@@ -1,0 +1,5 @@
+Packs fix-message; module fix
+  simplefix, https://github.com/da4089/simplefix at commit
+  007e3d7ffe904bcb2cfbfcb7ee8a4c13c5f3ea0a, simplefix/parser.py, message.py
+  and constants.py. MIT License, Copyright (C) 2016-2026 David Arnold.
+  Layouts restated; no text copied.

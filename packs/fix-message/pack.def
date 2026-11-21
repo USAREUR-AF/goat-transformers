@@ -1,0 +1,22 @@
+# FIX tag=value message: BeginString, BodyLength, MsgType, then every field as tag and value, SOH-separated.
+# Written by tools/gen/finance-pack.py; do not edit by hand.
+format        fix-message
+version       0.1.0
+distribution  public
+source        "simplefix, https://github.com/da4089/simplefix at commit 007e3d7ffe904bcb2cfbfcb7ee8a4c13c5f3ea0a, simplefix/parser.py, message.py and constants.py (MIT License); layout restated, no code copied; the FIX Trading Community specification not used"
+uses          fix
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  fix
+when  16  14397
+field  fix.begin_string  until:1  chars:ascii8
+const  16  14653
+field  fix.body_length  until:1  chars:ascii8
+const  24  3355965
+field  fix.msg_type  until:1  chars:ascii8
+group  fix.fields  rest
+  field  fix.tag  until:61  chars:ascii8
+  field  fix.value  until:1  chars:ascii8
+end
