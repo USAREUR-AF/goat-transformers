@@ -1,0 +1,59 @@
+# ASTM F3411 broadcast Remote ID over Bluetooth: one advertising payload, its AD structures, and
+# the Service Data of UUID 0xFFFA (application code 0x0D, a message counter, then the 25-octet
+# message or the message pack, which the remote-id pack reads). Public. Written by
+# tools/gen/beacons-pack.py from opendroneid/transmitter-linux (Apache-2.0). See pack.md.
+format     remote-id-ble
+version    0.1.0
+distribution public
+source     "opendroneid/transmitter-linux, https://github.com/opendroneid/transmitter-linux commit 6852afd0d4bed0d139b9dac3cd3a45eb595e30f0, bluetooth.c (Apache-2.0): the Bluetooth 4 and 5 advertising data of ASTM F3411 broadcast Remote ID"
+uses       ble
+uses       ridble
+wire       bits
+layout     sequential
+bit_order  msb
+
+group  ble.ad_structures  rest
+  length 8 bytes                       # the length counts the AD type and the data
+    field  ble.ad_type  8  uint
+    switch ble.ad_type
+      case 1                               # Flags
+        field  ble.flags  8  uint
+      case 2,3                             # Incomplete and complete list of 16-bit service UUIDs
+        group  ble.service_uuids16  rest
+          field  ble.service_uuid16  16  uint  swap
+        end
+      case 10                              # Tx Power Level
+        field  ble.tx_power_level  8  twos
+      case 22                              # Service Data, 16-bit UUID
+        field  ble.service_data_uuid16  16  uint  swap
+        switch ble.service_data_uuid16
+          case 65530                           # 0xFFFA, ASTM Remote ID
+            field  ridble.application_code  8  uint
+            switch ridble.application_code
+              case 13                              # Open Drone ID
+                field  ridble.message_counter  8  uint
+                group  ridble.message  rest
+                  field  ridble.message_octet  8  uint
+                end
+              else
+                group  ble.service_data  rest
+                  field  ble.service_data_octet  8  uint
+                end
+            end
+          else
+            group  ble.service_data  rest
+              field  ble.service_data_octet  8  uint
+            end
+        end
+      case 255                             # Manufacturer Specific Data
+        field  ble.company_id  16  uint  swap
+        group  ble.manufacturer_data  rest
+          field  ble.manufacturer_data_octet  8  uint
+        end
+      else
+        group  ble.ad_data  rest
+          field  ble.ad_data_octet  8  uint
+        end
+    end
+  end
+end

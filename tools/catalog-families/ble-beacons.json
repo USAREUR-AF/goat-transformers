@@ -1,0 +1,9 @@
+{
+  "name": "BLE beacons",
+  "domain": "iot",
+  "exact": [
+    "eddystone",
+    "altbeacon"
+  ],
+  "detail": "Eddystone (UID, URL, TLM, EID) and AltBeacon advertising payloads"
+}

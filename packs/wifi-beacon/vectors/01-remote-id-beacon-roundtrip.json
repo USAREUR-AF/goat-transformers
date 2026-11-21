@@ -1,0 +1,22 @@
+{
+  "name": "remote-id-beacon-roundtrip",
+  "from": "wifi-beacon",
+  "to": "wifi-beacon",
+  "input": "89674523010000006400210400055541532d3101018c030106dd21fa0bbc0d07f2190102123135383146344142434431323334353637383930000000",
+  "expect": "89674523010000006400210400055541532d3101018c030106dd21fa0bbc0d07f2190102123135383146344142434431323334353637383930000000",
+  "model": {
+    "wifi.timestamp": "4886718345",
+    "wifi.beacon_interval": "100",
+    "wifi.capability": "1057",
+    "wifi.elements.#": "4",
+    "wifi.elements[0].wifi.ssid.#": "5",
+    "wifi.elements[1].wifi.rates[0].wifi.rate": "140",
+    "wifi.elements[2].wifi.channel": "6",
+    "wifi.elements[3].wifi.oui": "16387004",
+    "wifi.elements[3].wifi.oui_type": "13",
+    "wifi.elements[3].wifi.rid_message_counter": "7",
+    "wifi.elements[3].wifi.rid_message_pack.#": "28"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/gopacket layers/dot11.go (beacon body, information element); opendroneid-core-c wifi.c (Remote ID vendor element); a Remote ID beacon body: SSID, one rate, the channel, and the ASTM vendor element holding a message counter and a message pack of one Basic ID message"
+}

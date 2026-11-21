@@ -1,0 +1,8 @@
+{
+  "name": "Wi-Fi beacon frame",
+  "domain": "networks",
+  "exact": [
+    "wifi-beacon"
+  ],
+  "detail": "beacon body: fixed fields and information elements"
+}

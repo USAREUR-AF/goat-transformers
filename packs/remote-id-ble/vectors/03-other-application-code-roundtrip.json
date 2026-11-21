@@ -1,0 +1,13 @@
+{
+  "name": "other-application-code-roundtrip",
+  "from": "remote-id-ble",
+  "to": "remote-id-ble",
+  "input": "0201060616faff0e0102",
+  "expect": "0201060616faff0e0102",
+  "model": {
+    "ble.ad_structures[1].ridble.application_code": "14",
+    "ble.ad_structures[1].ble.service_data.#": "2"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "opendroneid/transmitter-linux bluetooth.c: the ASTM Remote ID service data of Bluetooth 4 and 5 advertising; an application code other than 0x0D: the rest of the service data is kept as octets"
+}

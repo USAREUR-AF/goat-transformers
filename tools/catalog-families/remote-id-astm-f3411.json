@@ -2,6 +2,7 @@
   "name": "Remote ID (ASTM F3411)",
   "domain": "uncrewed",
   "exact": [
-    "remote-id"
+    "remote-id",
+    "remote-id-ble"
   ]
 }

@@ -1,0 +1,11 @@
+# The altbeacon module: the AltBeacon advertisement. Written by tools/gen/beacons-pack.py.
+module        altbeacon
+version       0.1.0
+distribution  public
+source        "AltBeacon Protocol Specification v1.0, https://github.com/altbeacon/spec commit d5c7f6da1192313d28222f9da2e0251074153252, README.md; altbeacon.org states CC BY-SA 4.0; restated by goat-transformers"
+key   beacon_code     int     -     "AltBeacon code, 0xBEAC (big-endian on the wire), after the company identifier"
+key   beacon_id_1     int     -     "beacon identifier, octets 1 to 8 of 20"
+key   beacon_id_2     int     -     "beacon identifier, octets 9 to 16"
+key   beacon_id_3     int     -     "beacon identifier, octets 17 to 20"
+key   reference_rssi  int     dBm   "average received signal strength at 1 m"
+key   mfg_reserved    int     -     "octet reserved for the manufacturer"

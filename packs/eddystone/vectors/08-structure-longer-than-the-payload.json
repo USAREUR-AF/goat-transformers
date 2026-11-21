@@ -1,0 +1,9 @@
+{
+  "name": "structure-longer-than-the-payload",
+  "from": "eddystone",
+  "to": "eddystone",
+  "input": "0201060916aafe00ec",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/eddystone protocol-specification.md and the frame documents (UID, URL, TLM, EID); the last structure states 9 octets and 4 follow"
+}

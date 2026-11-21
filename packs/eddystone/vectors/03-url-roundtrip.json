@@ -1,0 +1,16 @@
+{
+  "name": "url-roundtrip",
+  "from": "eddystone",
+  "to": "eddystone",
+  "input": "0201060303aafe0e16aafe10ee036578616d706c6507",
+  "expect": "0201060303aafe0e16aafe10ee036578616d706c6507",
+  "model": {
+    "ble.ad_structures[2].eddystone.frame_type": "16",
+    "ble.ad_structures[2].eddystone.tx_power_0m": "-18",
+    "ble.ad_structures[2].eddystone.url_scheme": "3",
+    "ble.ad_structures[2].eddystone.url_octets.#": "8",
+    "ble.ad_structures[2].eddystone.url_octets[7].eddystone.url_octet": "7"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/eddystone protocol-specification.md and the frame documents (UID, URL, TLM, EID); https:// then example and the code 0x07 (.com): the encoded URL is kept as its octets"
+}

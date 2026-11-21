@@ -1,0 +1,20 @@
+{
+  "name": "altbeacon-roundtrip",
+  "from": "altbeacon",
+  "to": "altbeacon",
+  "input": "0201061bff1801beac2f234454cf6d4a0fadf2f4911ba9ffa600010002c500",
+  "expect": "0201061bff1801beac2f234454cf6d4a0fadf2f4911ba9ffa600010002c500",
+  "model": {
+    "ble.ad_structures.#": "2",
+    "ble.ad_structures[1].ble.ad_type": "255",
+    "ble.ad_structures[1].ble.company_id": "280",
+    "ble.ad_structures[1].altbeacon.beacon_code": "48812",
+    "ble.ad_structures[1].altbeacon.beacon_id_1": "3396633675015473679",
+    "ble.ad_structures[1].altbeacon.beacon_id_2": "-5912394456712478810",
+    "ble.ad_structures[1].altbeacon.beacon_id_3": "65538",
+    "ble.ad_structures[1].altbeacon.reference_rssi": "-59",
+    "ble.ad_structures[1].altbeacon.mfg_reserved": "0"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "AltBeacon Protocol Specification v1.0 (altbeacon/spec); Flags and the AltBeacon advertisement: company 0x0118 (little-endian), 0xBEAC, a 20-octet beacon ID, -59 dBm at 1 m"
+}

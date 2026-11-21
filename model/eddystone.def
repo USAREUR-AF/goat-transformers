@@ -1,0 +1,28 @@
+# The eddystone module: the Eddystone frames. Written by tools/gen/beacons-pack.py.
+module        eddystone
+version       0.1.0
+distribution  public
+source        "google/eddystone, https://github.com/google/eddystone commit bb8738d7ddac0ddd3dfa70e594d011a0475e763d: protocol-specification.md, eddystone-uid, eddystone-url, eddystone-tlm (tlm-plain, tlm-encrypted), eddystone-eid (Apache-2.0); restated by goat-transformers"
+key   frame_type       int     -     "Eddystone frame type: 0x00 UID, 0x10 URL, 0x20 TLM, 0x30 EID"
+key   tx_power_0m      int     dBm   "calibrated transmit power as received at 0 m"
+key   namespace_high   int     -     "first 2 octets of the 10-octet UID namespace"
+key   namespace_low    int     -     "last 8 octets of the UID namespace (as uint reads 64 bits: negative when the top bit is set)"
+key   instance         int     -     "6-octet UID instance"
+key   uid_rfu          int     -     "the two reserved octets at the end of a UID frame; absent when the frame omits them"
+key   url_scheme       int     -     "URL frame: the code of the scheme prefix (0 http://www., 1 https://www., 2 http://, 3 https://)"
+list  url_octets       "URL frame: the encoded URL, as octets (an octet below 0x0E stands for a domain suffix)"
+key   url_octet        int     -     "one octet of the encoded URL"
+key   tlm_version      int     -     "TLM frame version: 0 plain, 1 encrypted"
+key   battery_voltage  int     mV    "TLM: battery voltage"
+key   temperature      float   degC  "TLM: beacon temperature, signed 8.8 fixed point; absent when not supported (0x8000)"
+key   adv_count        int     -     "TLM: advertising PDUs sent since power-on or reboot"
+key   sec_count        int     ds    "TLM: time since power-on or reboot, in tenths of a second"
+key   etlm_high        int     -     "encrypted TLM: first 8 of the 12 octets of encrypted data"
+key   etlm_low         int     -     "encrypted TLM: last 4 octets of encrypted data"
+key   salt             int     -     "encrypted TLM: salt"
+key   mic              int     -     "encrypted TLM: message integrity check"
+list  tlm_octets       "TLM frame of another version, as octets"
+key   tlm_octet        int     -     "one octet of that frame"
+key   eid              int     -     "EID frame: the 8-octet ephemeral identifier"
+list  frame_octets     "Eddystone frame of another type, as octets"
+key   frame_octet      int     -     "one octet of that frame"
