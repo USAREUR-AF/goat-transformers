@@ -1,0 +1,8 @@
+{
+  "name": "end-of-header-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "                                                            END OF HEADER       ",
+  "expect": "                                                            END OF HEADER       ",
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; the last header line; expect derived there, no engine run"
+}

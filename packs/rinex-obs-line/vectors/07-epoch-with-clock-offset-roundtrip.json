@@ -1,0 +1,11 @@
+{
+  "name": "epoch-with-clock-offset-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "> 2026 03 14 00 00 30.0000000  0  2      -0.000123456789",
+  "expect": "> 2026 03 14 00 00 30.0000000  0  2      -0.000123456789",
+  "model": {
+    "rinexobs.clock_offset": "-0.000123456789"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; an epoch line with the receiver clock offset; expect derived there, no engine run"
+}

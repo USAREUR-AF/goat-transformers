@@ -1,0 +1,11 @@
+{
+  "name": "glonass-slot-frq-content-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "  2 R01  1 R02 -4                                           GLONASS SLOT / FRQ #",
+  "expect": "  2 R01  1 R02 -4                                           GLONASS SLOT / FRQ #",
+  "model": {
+    "rinexobs.content": "  2 R01  1 R02 -4"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; a header line the pack keeps as its 60 columns; expect derived there, no engine run"
+}

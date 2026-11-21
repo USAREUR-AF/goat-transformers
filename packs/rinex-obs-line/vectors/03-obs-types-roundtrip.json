@@ -1,0 +1,14 @@
+{
+  "name": "obs-types-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "G    4 C1C L1C D1C S1C                                      SYS / # / OBS TYPES ",
+  "expect": "G    4 C1C L1C D1C S1C                                      SYS / # / OBS TYPES ",
+  "model": {
+    "rinexobs.obs_system": "G",
+    "rinexobs.obs_type_count": "  4",
+    "rinexobs.obs_type_1": "C1C",
+    "rinexobs.obs_type_4": "S1C"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; four GPS observation types; expect derived there, no engine run"
+}

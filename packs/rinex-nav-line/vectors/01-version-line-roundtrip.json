@@ -1,0 +1,12 @@
+{
+  "name": "version-line-roundtrip",
+  "from": "rinex-nav-line",
+  "to": "rinex-nav-line",
+  "input": "     4.01           N: GNSS NAV DATA    M: MIXED            RINEX VERSION / TYPE",
+  "expect": "     4.01           N: GNSS NAV DATA    M: MIXED            RINEX VERSION / TYPE",
+  "model": {
+    "rinexnav.file_type": "N",
+    "rinexnav.satellite_system": "M"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A7, A9 and A30-A32; the version line of a mixed navigation file; expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "unknown-label-is-header-other-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "anything                                                    FUTURE LABEL        ",
+  "expect": "anything                                                    FUTURE LABEL        ",
+  "model": {
+    "rinexobs.content": "anything",
+    "rinexobs.label": "FUTURE LABEL"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; a header label the pack does not know; expect derived there, no engine run"
+}

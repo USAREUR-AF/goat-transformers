@@ -1,0 +1,14 @@
+{
+  "name": "glonass-missing-observation-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "R12  21000000.125                         110.500",
+  "expect": "R12  21000000.125                         110.500",
+  "model": {
+    "rinexobs.satellite_system": "R",
+    "rinexobs.satellite_number": "12",
+    "rinexobs.obs_1": "  21000000.125",
+    "rinexobs.obs_3": "       110.500"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; a GLONASS line whose second observation is blank; expect derived there, no engine run"
+}

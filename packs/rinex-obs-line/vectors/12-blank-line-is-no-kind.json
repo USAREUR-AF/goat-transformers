@@ -1,0 +1,8 @@
+{
+  "name": "blank-line-is-no-kind",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "x",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; a line that is no header, epoch or observation line; expect derived there, no engine run"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "record-line-roundtrip",
+  "from": "rinex-nav-line",
+  "to": "rinex-nav-line",
+  "input": "> EPH G05 LNAV",
+  "expect": "> EPH G05 LNAV",
+  "model": {
+    "rinexnav.record_type": "EPH",
+    "rinexnav.satellite_system": "G",
+    "rinexnav.satellite_number": "05",
+    "rinexnav.message_type": "LNAV"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A7, A9 and A30-A32; a version 4 record line for a GPS LNAV ephemeris; expect derived there, no engine run"
+}

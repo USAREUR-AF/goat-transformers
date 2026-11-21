@@ -1,0 +1,196 @@
+# One line of a RINEX 3.05 or 4.01 navigation file: a header line by its label, a record line (version 4),
+# the first line of a record (satellite and epoch, or epoch alone), or a line of four values. Every value is
+# its column text. Written by tools/gen/rinex-pack.py; do not edit by hand.
+format        rinex-nav-line
+version       0.1.0
+distribution  public
+source        "IGS/RTCM RINEX WG, RINEX The Receiver Independent Exchange Format Version 4.01, 10 July 2023, https://files.igs.org/pub/data/format/rinex_4.01.pdf (sha256 5e917eb6d2224021c5f05adb333b5311b6cde0f58c3ca4e0ae5871ccd15ce0c8), Tables A2, A3, A7, A9 and A30-A34; and Version 3.05, https://files.igs.org/pub/data/format/rinex305.pdf (sha256 05de6c898e1cf4102d6d0ef8b2710a98a16a5105c49a6d972757d647c7593918); no licence stated (IGS terms of use: open use with attribution); layouts restated"
+uses          rinexnav
+wire          text
+delimiter     none
+
+kind  version-type
+when  0:60:20  "RINEX VERSION / TYPE"
+field  rinexnav.format_version  0:0:9  string
+field  rinexnav.file_type  0:20:1  string
+field  rinexnav.file_type_text  0:21:19  string
+field  rinexnav.satellite_system  0:40:1  string
+field  rinexnav.satellite_system_text  0:41:19  string
+
+kind  program
+when  0:60:20  "PGM / RUN BY / DATE"
+field  rinexnav.program  0:0:20  string
+field  rinexnav.run_by  0:20:20  string
+field  rinexnav.created  0:40:20  string
+
+kind  receiver
+when  0:60:20  "REC # / TYPE / VERS"
+field  rinexnav.receiver_number  0:0:20  string
+field  rinexnav.receiver_type  0:20:20  string
+field  rinexnav.receiver_version  0:40:20  string
+
+kind  comment
+when  0:60:20  "COMMENT"
+field  rinexnav.comment  0:0:60  string
+
+kind  merged-file
+when  0:60:20  "MERGED FILE"
+field  rinexnav.merged_files  0:0:9  string
+
+kind  doi
+when  0:60:20  "DOI"
+field  rinexnav.doi  0:0:60  string
+
+kind  license
+when  0:60:20  "LICENSE OF USE"
+field  rinexnav.license  0:0:60  string
+
+kind  station-information
+when  0:60:20  "STATION INFORMATION"
+field  rinexnav.station_information  0:0:60  string
+
+kind  leap-seconds
+when  0:60:20  "LEAP SECONDS"
+field  rinexnav.leap_seconds  0:0:6  string
+field  rinexnav.leap_seconds_future  0:6:6  string
+field  rinexnav.leap_week  0:12:6  string
+field  rinexnav.leap_day  0:18:6  string
+field  rinexnav.leap_time_system  0:24:3  string
+
+kind  end-of-header
+when  0:60:20  "END OF HEADER"
+
+kind  record
+when  0:0:1  >
+field  rinexnav.record_type  0:2:3  string
+field  rinexnav.satellite_system  0:6:1  string
+field  rinexnav.satellite_number  0:7:2  string
+field  rinexnav.message_type  0:10:4  string
+
+kind  satellite-epoch-gps
+when  0:0:1  G
+field  rinexnav.satellite_system  0:0:1  string
+field  rinexnav.satellite_number  0:1:2  string
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  satellite-epoch-glonass
+when  0:0:1  R
+field  rinexnav.satellite_system  0:0:1  string
+field  rinexnav.satellite_number  0:1:2  string
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  satellite-epoch-galileo
+when  0:0:1  E
+field  rinexnav.satellite_system  0:0:1  string
+field  rinexnav.satellite_number  0:1:2  string
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  satellite-epoch-beidou
+when  0:0:1  C
+field  rinexnav.satellite_system  0:0:1  string
+field  rinexnav.satellite_number  0:1:2  string
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  satellite-epoch-qzss
+when  0:0:1  J
+field  rinexnav.satellite_system  0:0:1  string
+field  rinexnav.satellite_number  0:1:2  string
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  satellite-epoch-navic
+when  0:0:1  I
+field  rinexnav.satellite_system  0:0:1  string
+field  rinexnav.satellite_number  0:1:2  string
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  satellite-epoch-sbas
+when  0:0:1  S
+field  rinexnav.satellite_system  0:0:1  string
+field  rinexnav.satellite_number  0:1:2  string
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  epoch-19xx
+when  0:4:2  19
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  epoch-20xx
+when  0:4:2  20
+field  rinexnav.year  0:4:4  string
+field  rinexnav.month  0:9:2  string
+field  rinexnav.day  0:12:2  string
+field  rinexnav.hour  0:15:2  string
+field  rinexnav.minute  0:18:2  string
+field  rinexnav.second  0:21:2  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string
+
+kind  values
+field  rinexnav.value_0  0:4:19  string
+field  rinexnav.value_1  0:23:19  string
+field  rinexnav.value_2  0:42:19  string
+field  rinexnav.value_3  0:61:19  string

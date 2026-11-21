@@ -1,0 +1,15 @@
+{
+  "name": "epoch-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "> 2026 03 14 00 00 30.0000000  0  2",
+  "expect": "> 2026 03 14 00 00 30.0000000  0  2",
+  "model": {
+    "rinexobs.year": "2026",
+    "rinexobs.month": "03",
+    "rinexobs.second": " 30.0000000",
+    "rinexobs.epoch_flag": "0",
+    "rinexobs.satellite_count_epoch": "  2"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; an epoch line with flag 0, two satellites, no clock offset; expect derived there, no engine run"
+}

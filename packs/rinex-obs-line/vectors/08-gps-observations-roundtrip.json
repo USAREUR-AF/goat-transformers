@@ -1,0 +1,18 @@
+{
+  "name": "gps-observations-roundtrip",
+  "from": "rinex-obs-line",
+  "to": "rinex-obs-line",
+  "input": "G05  23619095.450 7 124121316.32807     -1234.567          44.250",
+  "expect": "G05  23619095.450 7 124121316.32807     -1234.567          44.250",
+  "model": {
+    "rinexobs.satellite_system": "G",
+    "rinexobs.satellite_number": "05",
+    "rinexobs.obs_1": "  23619095.450",
+    "rinexobs.ssi_1": "7",
+    "rinexobs.obs_2": " 124121316.328",
+    "rinexobs.lli_2": "0",
+    "rinexobs.obs_3": "     -1234.567",
+    "rinexobs.obs_4": "        44.250"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A2 and A3; a GPS satellite's four observations with LLI and SSI digits where given; expect derived there, no engine run"
+}

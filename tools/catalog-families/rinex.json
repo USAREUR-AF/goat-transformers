@@ -1,0 +1,8 @@
+{
+  "name": "RINEX (GNSS observation and navigation files)",
+  "domain": "space",
+  "exact": [
+    "rinex-obs-line",
+    "rinex-nav-line"
+  ]
+}

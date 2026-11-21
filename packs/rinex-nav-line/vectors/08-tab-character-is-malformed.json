@@ -1,0 +1,8 @@
+{
+  "name": "tab-character-is-malformed",
+  "from": "rinex-nav-line",
+  "to": "rinex-nav-line",
+  "input": "G05\t2026",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A7, A9 and A30-A32; a line holding a tab, which RINEX lines do not (only characters 0x20-0x7E); expect derived there, no engine run"
+}

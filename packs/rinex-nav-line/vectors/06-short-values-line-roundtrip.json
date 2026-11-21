@@ -1,0 +1,12 @@
+{
+  "name": "short-values-line-roundtrip",
+  "from": "rinex-nav-line",
+  "to": "rinex-nav-line",
+  "input": "     3.456000000000E+05 4.000000000000E+00",
+  "expect": "     3.456000000000E+05 4.000000000000E+00",
+  "model": {
+    "rinexnav.value_0": " 3.456000000000E+05",
+    "rinexnav.value_1": " 4.000000000000E+00"
+  },
+  "source": "built by tools/gen/rinex-vectors.py from values chosen there; columns restated from RINEX 4.01 Tables A7, A9 and A30-A32; a last orbit line of two values (the others blank); expect derived there, no engine run"
+}
