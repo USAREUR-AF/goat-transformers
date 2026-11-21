@@ -1241,7 +1241,7 @@ final class SeqCodec extends BitsWire<byte[]> {
         }
         // No key has a value: the field's first sentinel, else zero bits. A sentinel is never content (ruling 4 of 0.9).
         Pack.Field first = n.keys.get(0);
-        if (first.absent != null && !first.suppressed(e)) {
+        if (first.writesSentinel() && !first.suppressed(e)) {
             long raw = first.absent.firstNum();
             w.put(n.len, first.swap ? BitsCodec.swapBytes(raw, n.len) : raw);
             return;

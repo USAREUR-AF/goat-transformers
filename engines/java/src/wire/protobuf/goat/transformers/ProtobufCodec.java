@@ -3,9 +3,11 @@ package goat.transformers;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -358,22 +360,43 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
     private void encodeScope(TreeMap<Integer, Node> root, Pack.Scope scope, Entity e) {
         // Values first, then the sentinels of absent keys where no value was written (ruling 16 of 0.9).
         List<Pack.Field> sentinels = new ArrayList<>();
+        // The paths a line with `implicit` left out (engine-spec 0.56): the line still holds the place.
+        Set<String> holes = new HashSet<>();
         for (Pack.Line l : scope.lines) {
             if (!(l instanceof Pack.Field)) continue;
             Pack.Field f = (Pack.Field) l;
             if (((int[]) f.loc).length == 0) continue;            // `.`: written by encodeItems
             Object v = valueToEncode(f, e, scope);
-            if (v != null) writeField(root, f, encodeValue(f, v));
-            else if (f.absent != null && !f.suppressed(e)) sentinels.add(f);          // absent key and no default: protobuf omits it
+            if (v != null) writeField(root, f, encodeValue(f, v), holes);
+            else if (f.writesSentinel() && !f.suppressed(e)) sentinels.add(f);          // absent key and no default: protobuf omits it
         }
-        for (Pack.Field f : sentinels) writeField(root, f, sentinelPayload(f));
+        for (Pack.Field f : sentinels) writeField(root, f, sentinelPayload(f), holes);
         encodeRest(root, scope, e);
     }
 
-    /** Write one field's payload at its locator, unless an earlier write holds the place. */
-    private void writeField(TreeMap<Integer, Node> root, Pack.Field f, byte[] payload) {
+    /**
+     * True when {@code payload} is the proto3 default of the field's wire type: the varint 0, +0.0 (eight or four
+     * zero bytes; -0.0 has its sign bit set) or the empty text.
+     */
+    private static boolean isProto3Default(byte[] payload) {
+        for (byte b : payload) if (b != 0) return false;
+        return true;
+    }
+
+    /**
+     * Write one field's payload at its locator, unless an earlier write holds the place. A field with
+     * {@code implicit} whose payload is the proto3 default is left out, and holds the place (engine-spec 0.56).
+     */
+    private void writeField(TreeMap<Integer, Node> root, Pack.Field f, byte[] payload, Set<String> holes) {
         {
             int[] path = (int[]) f.loc;
+            String place = Arrays.toString(path);
+            if (holes.contains(place)) return;
+            if (f.out.implicit && isProto3Default(payload)) {
+                // left out: nothing under the path counts as written (ruling 14 of 0.5), so no parent is made
+                if (!placeTaken(root, path)) holes.add(place);
+                return;
+            }
             TreeMap<Integer, Node> cur = parent(root, path, f);
             int last = path[path.length - 1];
             Node have = cur.get(last);
@@ -389,6 +412,18 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             leaf.payload = payload;
             cur.put(last, leaf);
         }
+    }
+
+    /** True when an earlier write already holds the field at {@code path}. */
+    private static boolean placeTaken(TreeMap<Integer, Node> root, int[] path) {
+        TreeMap<Integer, Node> cur = root;
+        for (int i = 0; i < path.length - 1; i++) {
+            Node n = cur.get(path[i]);
+            if (n == null) return false;
+            if (n.sub == null) return true;
+            cur = n.sub;
+        }
+        return cur.containsKey(path[path.length - 1]);
     }
 
     /**
@@ -459,7 +494,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             for (Entity item : items) {
                 Object v = valueToEncode(body.itself, item, g.body);
                 if (v != null) writeBytes(packed, encodeValue(body.itself, v));
-                else if (body.itself.absent != null) writeBytes(packed, sentinelPayload(body.itself));   // ruling 5 of 0.9
+                else if (body.itself.writesSentinel()) writeBytes(packed, sentinelPayload(body.itself));   // ruling 5 of 0.9
             }
             if (packed.size() == 0) return null;
             out.wt = 2;
@@ -476,7 +511,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                 Object v = body.itself == null ? null : valueToEncode(body.itself, item, g.body);
                 n.wt = 2;
                 n.payload = v != null ? encodeValue(body.itself, v)
-                        : body.itself != null && body.itself.absent != null && !body.itself.suppressed(item) ? sentinelPayload(body.itself) : new byte[0];
+                        : body.itself != null && body.itself.writesSentinel() && !body.itself.suppressed(item) ? sentinelPayload(body.itself) : new byte[0];
             }
             out.items.add(n);
         }

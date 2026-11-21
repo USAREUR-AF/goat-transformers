@@ -252,7 +252,7 @@ final class XmlCodec extends Codec<Xml.Element> {
             Pack.Field f = (Pack.Field) l;
             String s = encodeField(f, e, scope);
             if (s == null) {
-                if (f.absent == null || f.suppressed(e) || written.contains(l.locator)) continue;
+                if (!f.writesSentinel() || f.suppressed(e) || written.contains(l.locator)) continue;
                 put(root, loc, f.absent.firstText());
                 written.add(l.locator);
                 sentinel.add(l.locator);

@@ -337,6 +337,13 @@ public final class Engine {
                         + " is declared " + declared + " but transform " + f.transformName() + " yields " + f.yields());
             }
         }
+        // engine-spec 0.56: the bounds of range read as the key's type (int text for an int key, <min> < <max>)
+        for (Pack.Field f : p.fields) {
+            if (f.out.min == null) continue;
+            String declared = keyType(f.key);
+            f.range = OutputOptions.Range.of(f.out.min, f.out.max, f.out.wrap, declared == null ? "list" : declared,
+                    p.format, f.locator, "line " + f.line);
+        }
         // Every check has passed: read each default as its key's type, then bind fields to key types and tables.
         for (Pack.Kind k : p.kinds) readDefaults(k.scope, p.format);
         for (Pack.Scope body : p.bodies) readDefaults(body, p.format);

@@ -195,6 +195,14 @@ abstract class Codec<W> {
         Object v = e.get(f.key);
         if (v == null) v = defaults.get(f.key);
         if (v == null) return null;
+        if (f.range != null) {
+            // engine-spec 0.56: the model value (a default's too) is checked, or wrapped, before via and the transform
+            try {
+                v = f.range.apply(v);
+            } catch (IllegalArgumentException ex) {
+                throw encodeFailure(f, ex);
+            }
+        }
         if (f.key.equals("type") && v instanceof String && !pack.cotToNative.isEmpty()) {
             String nat = pack.cotToNative.get(v);
             if (nat != null) v = nat;

@@ -183,7 +183,7 @@ abstract class JsonTree<W> extends Codec<W> {
         Map<String, Object> cur = top;
         for (int i = 0; i < path.length - 1; i++) {
             Object v = cur.get(path[i]);
-            if (v == null || v == RESERVED) {
+            if (v == null || v == RESERVED || v == NULLED) {
                 v = new LinkedHashMap<String, Object>();
                 cur.put(path[i], v);
             } else if (!(v instanceof Map)) {
@@ -209,6 +209,12 @@ abstract class JsonTree<W> extends Codec<W> {
     static final Object RESERVED = new Object();
 
     /**
+     * A member a line with {@code null} (engine-spec 0.56) writes as {@code null} because no line on it wrote a
+     * value: a later line's value or sentinel writes over it. {@link #unplace} turns it into {@code null}.
+     */
+    static final Object NULLED = new Object();
+
+    /**
      * Replace every {@link Placed} in the object, and in the objects nested in it, by the value it holds, and
      * remove every {@link #RESERVED} place.
      */
@@ -219,6 +225,7 @@ abstract class JsonTree<W> extends Codec<W> {
             Map.Entry<String, Object> m = it.next();
             Object v = m.getValue();
             if (v == RESERVED) it.remove();
+            else if (v == NULLED) m.setValue(Json.NULL);
             else if (v instanceof Placed) m.setValue(((Placed) v).v);
             else if (v instanceof Map) unplace((Map<String, Object>) v);
         }
@@ -237,7 +244,7 @@ abstract class JsonTree<W> extends Codec<W> {
                 if (itself != null && !(itself instanceof Placed)) continue;
                 Object jv = encodeOne(f, e, scope);
                 if (jv != null) itself = jv;
-                else if (itself == null && f.absent != null && !f.suppressed(e)) itself = new Placed(f.absent.firstJson());
+                else if (itself == null && f.writesSentinel() && !f.suppressed(e)) itself = new Placed(f.absent.firstJson());
                 continue;
             }
             Map<String, Object> obj = parent(top, path);
@@ -262,10 +269,12 @@ abstract class JsonTree<W> extends Codec<W> {
             if (obj == null) continue;
             Object have = obj.get(last);
             boolean over = have instanceof Placed;
-            if (have != null && have != RESERVED && !isEmptyObject(have) && !over) continue; // an earlier line on this locator already wrote it
+            if (have != null && have != RESERVED && have != NULLED && !isEmptyObject(have) && !over) continue; // an earlier line on this locator already wrote it
             Object jv = encodeOne(f, e, scope);
             if (jv != null) obj.put(last, jv);
-            else if (f.absent != null && !over && !f.suppressed(e)) obj.put(last, new Placed(f.absent.firstJson()));
+            else if (f.writesSentinel() && !over && !f.suppressed(e)) obj.put(last, new Placed(f.absent.firstJson()));
+            // null (engine-spec 0.56): only when no line on the member wrote a value, a default or a sentinel
+            else if (f.out.nul && !f.suppressed(e) && (have == null || have == RESERVED)) obj.put(last, NULLED);
             else if (have == null) obj.put(last, RESERVED);   // the member's place, should a later line write it
         }
         return itself instanceof Placed ? ((Placed) itself).v : itself;
