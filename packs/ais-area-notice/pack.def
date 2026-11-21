@@ -1,0 +1,145 @@
+# AIS IMO289 area notice (DAC 1: FI 22 broadcast in message type 8, FI 23 addressed in type 6) as gpsd's
+# AIVDM document describes it: the header, then 1 to 10 sub-areas of 87 bits, each by its shape. The input is
+# the armored payload of the AIVDM sentence(s). Written by tools/gen/maritime-pack.py; do not edit by hand.
+format        ais-area-notice
+version       0.1.0
+distribution  public
+source        "gpsd, AIVDM/AIVDO protocol decoding, sections IMO289 Area Notice (addressed and broadcast), Area Notice Description, Subarea Types and Subarea Payloads, www/AIVDM.adoc (sha256 a55511139751f5b9385166143443c0353f64fc77155b4ef4026f4ab03e3dffbd) at https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b, BSD-2-Clause (gpsd COPYING); layout restated"
+uses          ais
+uses          aisbin
+uses          aisarea
+wire          bits
+layout        sequential
+bit_order     msb
+armor         sixbit
+
+field  ais.msg_type  6  uint
+field  ais.repeat  2  uint
+field  ais.mmsi  30  uint
+switch  ais.msg_type
+  case  6
+    field  aisbin.seqno  2  uint
+    field  ais.dest_mmsi  30  uint
+    field  aisbin.retransmit  1  uint
+    field  ais.spare  1  uint
+    field  aisbin.dac  10  uint
+    field  aisbin.fid  6  uint
+    switch  aisbin.dac
+      case  1
+        switch  aisbin.fid
+          case  23
+            field  aisarea.linkage  10  uint
+            field  aisarea.notice  7  uint
+            field  aisarea.month  4  uint
+            field  aisarea.day  5  uint
+            field  aisarea.hour  5  uint
+            field  aisarea.minute  6  uint
+            field  aisarea.duration  18  uint
+            group  aisarea.subareas  rest
+              field  aisarea.shape  3  uint
+              switch  aisarea.shape
+                case  0
+                  field  aisarea.scale  2  uint
+                  field  aisarea.lon  25  twos
+                  field  aisarea.lat  24  twos
+                  field  aisarea.precision  3  uint
+                  field  aisarea.radius  12  uint
+                  field  aisarea.circle_spare  18  uint
+                case  1
+                  field  aisarea.scale  2  uint
+                  field  aisarea.lon  25  twos
+                  field  aisarea.lat  24  twos
+                  field  aisarea.precision  3  uint
+                  field  aisarea.east  8  uint
+                  field  aisarea.north  8  uint
+                  field  aisarea.orientation  9  uint
+                  field  aisarea.rect_spare  5  uint
+                case  2
+                  field  aisarea.scale  2  uint
+                  field  aisarea.lon  25  twos
+                  field  aisarea.lat  24  twos
+                  field  aisarea.precision  3  uint
+                  field  aisarea.radius  12  uint
+                  field  aisarea.left  9  uint
+                  field  aisarea.right  9  uint
+                case  3,4
+                  field  aisarea.scale  2  uint
+                  field  aisarea.bearing_1  10  uint
+                  field  aisarea.distance_1  10  uint
+                  field  aisarea.bearing_2  10  uint
+                  field  aisarea.distance_2  10  uint
+                  field  aisarea.bearing_3  10  uint
+                  field  aisarea.distance_3  10  uint
+                  field  aisarea.bearing_4  10  uint
+                  field  aisarea.distance_4  10  uint
+                  field  aisarea.poly_spare  2  uint
+                case  5
+                  field  aisarea.text  84  sixbit
+                else
+                  field  aisarea.reserved_payload  84  hex
+              end
+            end
+        end
+    end
+  case  8
+    field  ais.spare  2  uint
+    field  aisbin.dac  10  uint
+    field  aisbin.fid  6  uint
+    switch  aisbin.dac
+      case  1
+        switch  aisbin.fid
+          case  22
+            field  aisarea.linkage  10  uint
+            field  aisarea.notice  7  uint
+            field  aisarea.month  4  uint
+            field  aisarea.day  5  uint
+            field  aisarea.hour  5  uint
+            field  aisarea.minute  6  uint
+            field  aisarea.duration  18  uint
+            group  aisarea.subareas  rest
+              field  aisarea.shape  3  uint
+              switch  aisarea.shape
+                case  0
+                  field  aisarea.scale  2  uint
+                  field  aisarea.lon  25  twos
+                  field  aisarea.lat  24  twos
+                  field  aisarea.precision  3  uint
+                  field  aisarea.radius  12  uint
+                  field  aisarea.circle_spare  18  uint
+                case  1
+                  field  aisarea.scale  2  uint
+                  field  aisarea.lon  25  twos
+                  field  aisarea.lat  24  twos
+                  field  aisarea.precision  3  uint
+                  field  aisarea.east  8  uint
+                  field  aisarea.north  8  uint
+                  field  aisarea.orientation  9  uint
+                  field  aisarea.rect_spare  5  uint
+                case  2
+                  field  aisarea.scale  2  uint
+                  field  aisarea.lon  25  twos
+                  field  aisarea.lat  24  twos
+                  field  aisarea.precision  3  uint
+                  field  aisarea.radius  12  uint
+                  field  aisarea.left  9  uint
+                  field  aisarea.right  9  uint
+                case  3,4
+                  field  aisarea.scale  2  uint
+                  field  aisarea.bearing_1  10  uint
+                  field  aisarea.distance_1  10  uint
+                  field  aisarea.bearing_2  10  uint
+                  field  aisarea.distance_2  10  uint
+                  field  aisarea.bearing_3  10  uint
+                  field  aisarea.distance_3  10  uint
+                  field  aisarea.bearing_4  10  uint
+                  field  aisarea.distance_4  10  uint
+                  field  aisarea.poly_spare  2  uint
+                case  5
+                  field  aisarea.text  84  sixbit
+                else
+                  field  aisarea.reserved_payload  84  hex
+              end
+            end
+        end
+    end
+end

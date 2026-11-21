@@ -1,0 +1,18 @@
+{
+  "name": "pubx-00-roundtrip",
+  "from": "nmea0183-pubx",
+  "to": "nmea0183-pubx",
+  "input": "$PUBX,00,123519.00,4807.038000,N,01131.000000,E,512.3,G3,2.1,3.4,0.5,77.5,-0.1,,0.9,1.2,0.8,8,0,0*78",
+  "expect": "$PUBX,00,123519.00,4807.038000,N,01131.000000,E,512.3,G3,2.1,3.4,0.5,77.5,-0.1,,0.9,1.2,0.8,8,0,0*78",
+  "model": {
+    "pubx.time_s": "45319",
+    "lat": "48.1173",
+    "lon": "11.516666666666667",
+    "pubx.alt": "512.3",
+    "pubx.nav_status": "G3",
+    "pubx.sog": "0.5",
+    "pubx.vvel": "-0.1",
+    "pubx.gps_used": "8"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from gpsd NMEA.adoc, PUBX 00, 01, 03 and 04; a 3D position (latitude and longitude in the NMEA ddmm form); expect derived there, no engine run"
+}

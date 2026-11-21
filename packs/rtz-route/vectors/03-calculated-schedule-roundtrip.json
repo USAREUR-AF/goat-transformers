@@ -1,0 +1,16 @@
+{
+  "name": "calculated-schedule-roundtrip",
+  "from": "rtz-route",
+  "to": "rtz-route",
+  "input": "<route xmlns=\"http://www.cirm.org/RTZ/1/2\" version=\"1.2\"><routeInfo routeName=\"Optimized\" optimizationMethod=\"fuel\"/><waypoints><waypoint id=\"1\" revision=\"0\"><position lat=\"10\" lon=\"20\"/></waypoint><waypoint id=\"2\" revision=\"0\"><position lat=\"10.5\" lon=\"20.5\"/></waypoint></waypoints><schedules><schedule id=\"7\"><calculated><scheduleElement waypointId=\"2\" eta=\"2026-04-02T12:00:00Z\" speed=\"14.25\" windSpeed=\"22\" windDirection=\"270\" rpm=\"95\" relFuelSave=\"3.5\"/></calculated></schedule></schedules></route>",
+  "expect": "<route xmlns=\"http://www.cirm.org/RTZ/1/2\" version=\"1.2\"><routeInfo routeName=\"Optimized\" optimizationMethod=\"fuel\"/><waypoints><waypoint id=\"1\" revision=\"0\"><position lat=\"10\" lon=\"20\"/></waypoint><waypoint id=\"2\" revision=\"0\"><position lat=\"10.5\" lon=\"20.5\"/></waypoint></waypoints><schedules><schedule id=\"7\"><calculated><scheduleElement waypointId=\"2\" eta=\"2026-04-02T12:00:00Z\" speed=\"14.25\" windSpeed=\"22\" windDirection=\"270\" rpm=\"95\" relFuelSave=\"3.5\"/></calculated></schedule></schedules></route>",
+  "model": {
+    "rtz.optimization_method": "fuel",
+    "rtz.schedule_id": "7",
+    "rtz.calculated_elements.#": "1",
+    "rtz.calculated_elements[0].rtz.wind_direction": "270",
+    "rtz.calculated_elements[0].rtz.rpm": "95",
+    "rtz.calculated_elements[0].rtz.rel_fuel_save": "3.5"
+  },
+  "source": "built by tools/gen/maritime-vectors.py from values chosen there; layout restated from the CIRM RTZ 1.2 schema; an optimized route with a calculated schedule element; expect derived there, no engine run"
+}
