@@ -1,0 +1,29 @@
+{
+  "name": "message-roundtrip",
+  "from": "bufr4",
+  "to": "bufr4",
+  "input": "4255465200003404000016000062000000000002ff260007ea0b140c000000000b00000180c7500c65000007005aa50f37373737",
+  "expect": "4255465200003404000016000062000000000002ff260007ea0b140c000000000b00000180c7500c65000007005aa50f37373737",
+  "model": {
+    "@kind": "bufr4",
+    "bufr4.centre": "98",
+    "bufr4.optional_section": "0",
+    "bufr4.data_category": "0",
+    "bufr4.international_sub_category": "2",
+    "bufr4.master_table_version": "38",
+    "bufr4.year": "2026",
+    "bufr4.hour": "12",
+    "bufr4.section1_local.#": "0",
+    "bufr4.number_of_subsets": "1",
+    "bufr4.observed_data": "1",
+    "bufr4.compressed_data": "0",
+    "bufr4.descriptors.#": "2",
+    "bufr4.descriptors[0].bufr4.descriptor_f": "3",
+    "bufr4.descriptors[0].bufr4.descriptor_x": "7",
+    "bufr4.descriptors[0].bufr4.descriptor_y": "80",
+    "bufr4.descriptors[1].bufr4.descriptor_y": "101",
+    "bufr4.data.#": "3"
+  },
+  "source": "derived by tools/gen/wmo-vectors.py from messages written for it and spec/engine-spec.md; no engine run",
+  "reference": "ecCodes BUFR edition 4 section layouts; WMO BUFR edition 4 tables (wmo-im/BUFR4); a message without section 2: two descriptors (a sequence 3 07 080 and an element 0 12 101) and three octets of data, which the pack does not expand"
+}

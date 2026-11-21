@@ -1,0 +1,9 @@
+{
+  "name": "edition-3-is-no-kind",
+  "from": "bufr4",
+  "to": "bufr4",
+  "input": "4255465200003003000016000062000000000002ff260007ea0b140c0000000009000001800101000005000037373737",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/wmo-vectors.py from messages written for it and spec/engine-spec.md; no engine run",
+  "reference": "ecCodes BUFR edition 4 section layouts; WMO BUFR edition 4 tables (wmo-im/BUFR4); edition 3 lays out section 1 differently; the common when on the edition does not hold"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "other-templates-as-octets-roundtrip",
+  "from": "grib2",
+  "to": "grib2",
+  "input": "47524942ffff0002000000000000007100000015010062000021000107ea0b1406000000010000000702aabb000000180300000000040000001e0102030405060708090a0000000f04000000081415161718190000000d050000000400280707000000070600f000000006070137373737",
+  "expect": "47524942ffff0002000000000000007100000015010062000021000107ea0b1406000000010000000702aabb000000180300000000040000001e0102030405060708090a0000000f04000000081415161718190000000d050000000400280707000000070600f000000006070137373737",
+  "model": {
+    "grib2.sections[1].grib2.section_number": "2",
+    "grib2.sections[1].grib2.section_octets.#": "2",
+    "grib2.sections[2].grib2.grid_template": "30",
+    "grib2.sections[2].grib2.section_octets.#": "10",
+    "grib2.sections[3].grib2.product_template": "8",
+    "grib2.sections[3].grib2.section_octets.#": "6",
+    "grib2.sections[4].grib2.data_template": "40",
+    "grib2.sections[4].grib2.section_octets.#": "2",
+    "grib2.sections[5].grib2.bitmap_indicator": "0",
+    "grib2.sections[5].grib2.section_octets.#": "1"
+  },
+  "source": "derived by tools/gen/wmo-vectors.py from messages written for it and spec/engine-spec.md; no engine run",
+  "reference": "WMO GRIB2 templates 3.0, 4.0, 5.0 (wmo-im/GRIB2) and the ecCodes GRIB2 section layouts; a local use section, and grid template 30, product template 8 and data template 40, which the pack keeps as octets, and a bitmap"
+}

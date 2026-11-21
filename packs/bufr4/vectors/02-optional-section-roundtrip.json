@@ -1,0 +1,17 @@
+{
+  "name": "optional-section-roundtrip",
+  "from": "bufr4",
+  "to": "bufr4",
+  "input": "4255465200003a04000018000062000000800002ff260007ea0b140c00000909000008000102030400000900000240010100000500ff37373737",
+  "expect": "4255465200003a04000018000062000000800002ff260007ea0b140c00000909000008000102030400000900000240010100000500ff37373737",
+  "model": {
+    "bufr4.optional_section": "1",
+    "bufr4.section1_local.#": "2",
+    "bufr4.section2_data.#": "4",
+    "bufr4.section2_data[3].bufr4.section2_octet": "4",
+    "bufr4.number_of_subsets": "2",
+    "bufr4.compressed_data": "1"
+  },
+  "source": "derived by tools/gen/wmo-vectors.py from messages written for it and spec/engine-spec.md; no engine run",
+  "reference": "ecCodes BUFR edition 4 section layouts; WMO BUFR edition 4 tables (wmo-im/BUFR4); the flag of section 1 set and section 2 present; two local octets at the end of section 1; compressed data of two subsets"
+}
