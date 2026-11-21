@@ -5420,6 +5420,100 @@ the pack does not `uses` is `module-not-used`; an undeclared key is
 - A transform or table on an `as` key: the key holds the unsigned value.
 - `as` on a `when` of the fixed layout and of other wires (ruling 1).
 
+# Version 0.31: one list counted from two places
+
+Status: Written. A message carried inside a transport often states the length
+of one list twice: the transport header counts the words that follow, and the
+carried message has its own count field. Version 0.21 lets one count name
+one list. This version lets one list name two counts, which must agree.
+
+```
+count <a> <len> [plus <n>]
+…
+count <b> <len> [plus <n>]
+…
+group <list> count @<a> @<b>
+  …
+end
+```
+
+Valid where `group <list> count @<name>` is valid (Version 0.21): a
+`layout sequential` pack on `bits`. Each of `<a>` and `<b>` is a `count` line
+of Version 0.21, with its own `len` and its own `plus`, and each must be
+visible at the group line as 0.21 states. The group references both.
+
+## Decode
+
+When the group is reached, the number of items each count gives is its value
+minus its own `plus`. When the two numbers are equal, that many items are
+read. When they differ, the message is `malformed-wire`, raised at the group
+line. A count value below its `plus` stays `malformed-wire` at its own count
+line, as in 0.21.
+
+When the group is not reached (0.21 ruling 6: it lies in a block or case
+not read, or at or past the end of a `length` extent), the list is absent;
+each count that was read passes its own below-`plus` check, and the two
+values are not compared.
+
+## Encode
+
+Each count field holds the number of items plus its own `plus`, written at
+its own place after the group is laid out, as in 0.21. A value outside
+`0 … 2^len − 1` for either count is `transform-encode`. An absent list writes
+each count's `plus`.
+
+## Load errors
+
+`bad-directive`: a token after `count` on a group line that is not
+`@<name>` (`count @a 8`, `count 8 @a`, a bare `@`); more than two tokens; the
+same name twice on one group (`count @a @a`); either name not visible at the
+group line, or not a `count` name. On a layout or wire where 0.21 refuses
+`count @<name>`, the two-name form gets the same error kind at the same step
+(`bad-locator` on `protobuf`, ruling 44 of 0.21; `bad-directive` on `json`).
+
+## Rulings for 0.31
+
+1. **Order of the two names** has no meaning: `count @a @b` and
+   `count @b @a` read and write the same bits.
+2. **Where the counts sit.** Visibility is exactly as in 0.21 (rulings 9 and
+   12): a count inside a `length`, `if`, `opt` or `case` block is not visible
+   after the block's `end`. One count may be in the common lines and the
+   other inside a kind, or a `length`, `if`, `opt` or `case` block that also
+   holds the group.
+3. **One reference per name per path.** In each reading path each of the two
+   names is referenced by exactly one group (0.21 ruling 2): a path in which
+   either name has no reference, or two, is `bad-directive`. One name may be
+   referenced by a two-name group in one path and by a one-name group in
+   another, provided every path meets the rule.
+4. **Order of the decode checks.** The below-`plus` check runs at each count
+   line. At the group line, equality is checked first, then the bits left
+   (ruling 14 of 0.8, ruling 20 of 0.21) for the agreed number. All three are
+   `malformed-wire`. No item is read before them.
+5. **Exact integers.** The two numbers are compared as exact integers
+   (0.21 ruling 7): equal only when value_a − plus_a = value_b − plus_b, with
+   no wrapping.
+6. **A failed field before the group.** When a field between the counts and
+   the group failed its transform and the counts then disagree, the decode is
+   `malformed-wire`: a structural error wins, as in ruling 5 of 0.22.
+7. **When the checks run.** Every 0.31 load error is a check after the file,
+   as a group's options are (0.11 ruling 5b), except the error kind that 0.21
+   gives on `protobuf`, which stays at its own step.
+8. **Encode.** The two fills are written at their own places after the group
+   is laid out; their order cannot be seen. Each is range-checked as in 0.21
+   (ruling 30 of 0.21); an absent list with a negative `plus` on one count is
+   `transform-encode`.
+
+### Stated, not yet pinned by a vector
+
+(filled in after the vectors are derived)
+
+## Not in this version
+
+- More than two counts on one list.
+- A count that follows its items (claimed separately).
+- Two counts in different packs (a transport pack and the pack it carries):
+  that is the wire inside a binary field (Version 0.34).
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in
