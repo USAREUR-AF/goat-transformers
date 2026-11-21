@@ -1,0 +1,18 @@
+{
+  "name": "weather-station-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohAKP@5NPR121I000oH7d569L1f8kQWU?Ms1pP0",
+  "expect": "8030ohAKP@5NPR121I000oH7d569L1f8kQWU?Ms1pP0",
+  "model": {
+    "aisbin.dac": "366",
+    "aisregion.message_id": "1",
+    "aisregion.reports.#": "1",
+    "aisregion.reports[0].aisregion.pressure": "10132",
+    "aisregion.reports[0].aisregion.air_temp": "-35",
+    "aisregion.reports[0].aisregion.dew_point": "-80",
+    "aisregion.reports[0].aisregion.visibility": "120",
+    "aisregion.reports[0].aisregion.water_temp": "-512"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 4; one weather station report below freezing, water temperature not available; expect derived there, no engine run"
+}

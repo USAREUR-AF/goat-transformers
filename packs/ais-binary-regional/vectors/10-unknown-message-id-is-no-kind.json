@@ -1,0 +1,8 @@
+{
+  "name": "unknown-message-id-is-no-kind",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohAKP@T00000000000000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 1.1; FI 1 message ID 9, not assigned; expect derived there, no engine run"
+}

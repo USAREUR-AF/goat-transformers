@@ -1,0 +1,14 @@
+{
+  "name": "version-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohA?80440@0",
+  "expect": "8030ohA?80440@0",
+  "model": {
+    "aisbin.fid": "32",
+    "aisregion.message_id": "1",
+    "aisregion.major_version": "4",
+    "aisregion.minor_version": "1"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 9; version 4.1; expect derived there, no engine run"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "pawss-salinity-temperature-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohAKP@ENPR@1GChj0oH7d569L9Sv800",
+  "expect": "8030ohAKP@ENPR@1GChj0oH7d569L9Sv800",
+  "model": {
+    "aisregion.message_id": "5",
+    "aisregion.reports[0].aisregion.salinity": "305",
+    "aisregion.reports[0].aisregion.water_temp": "-15"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, Appendix A, Hydro/Salinity Temp; one report; expect derived there, no engine run"
+}

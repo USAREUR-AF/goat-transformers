@@ -1,0 +1,16 @@
+{
+  "name": "water-level-roundtrip",
+  "from": "ais-binary-regional",
+  "to": "ais-binary-regional",
+  "input": "8030ohA?0@=NPR9B?AE?9oH7d569L1l1@01NPRC>5<<00oGwp561`800D00",
+  "expect": "8030ohA?0@=NPR9B?AE?9oH7d569L1l1@01NPRC>5<<00oGwp561`800D00",
+  "model": {
+    "aisregion.message_id": "3",
+    "aisregion.reports.#": "2",
+    "aisregion.reports[0].aisregion.level": "7425",
+    "aisregion.reports[0].aisregion.level_datum": "1",
+    "aisregion.reports[1].aisregion.level": "-32768",
+    "aisregion.reports[1].aisregion.reading_type": "1"
+  },
+  "source": "built by tools/gen/ais-regional-vectors.py from values chosen there; layout restated from the St. Lawrence Seaway AIS specification R4.1, section 5; two water level reports on IGLD-85, the second estimated and not available; expect derived there, no engine run"
+}

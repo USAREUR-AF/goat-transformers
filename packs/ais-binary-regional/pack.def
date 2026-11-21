@@ -1,0 +1,332 @@
+# St. Lawrence Seaway and USCG PAWSS AIS binary messages (DAC 316 and 366): FI 1 meteorological and
+# hydrological reports (weather, wind, water level, current, salinity and temperature, water flow), FI 2 lock
+# scheduling (lockage order, estimated lock times), FI 32 version. The input is the armored payload of a type 6
+# or type 8 message. Written by tools/gen/ais-regional-pack.py; do not edit by hand.
+format        ais-binary-regional
+version       0.1.0
+distribution  public
+source        "St. Lawrence Seaway AIS Data Messaging Formats and Specifications, Harmonized with U.S. Coast Guard PAWSS AIS Messages, Revision 4.1, April 9, 2010 (U.S. DOT Volpe Center for the SLSDC and SLSMC), https://greatlakes-seaway.com/wp-content/uploads/2020/05/Seaway-AIS-message-specifications-R41.pdf (sha256 79da3b8f29acf7543ff440903769a702c98bd7dc4dba438720c75150262b917d), no licence stated; layout restated"
+uses          ais
+uses          aisbin
+uses          aisregion
+wire          bits
+layout        sequential
+bit_order     msb
+armor         sixbit
+
+field  ais.msg_type  6  uint
+field  ais.repeat  2  uint
+field  ais.mmsi  30  uint
+switch  ais.msg_type
+  case  6
+    field  aisbin.seqno  2  uint
+    field  ais.dest_mmsi  30  uint
+    field  aisbin.retransmit  1  uint
+    field  ais.spare  1  uint
+    field  aisbin.dac  10  uint
+    field  aisbin.fid  6  uint
+    switch  aisbin.dac
+      case  316,366
+        switch  aisbin.fid
+          case  1
+            field  aisregion.reserved  2  uint
+            field  aisregion.message_id  6  uint
+            switch  aisregion.message_id
+              case  1
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.wind_speed  10  uint
+                  field  aisregion.wind_gust  10  uint
+                  field  aisregion.wind_dir  9  uint
+                  field  aisregion.pressure  14  uint
+                  field  aisregion.air_temp  10  twos
+                  field  aisregion.dew_point  10  twos
+                  field  aisregion.visibility  8  uint
+                  field  aisregion.water_temp  10  twos
+                end
+              case  2
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.wind_speed  10  uint
+                  field  aisregion.wind_gust  10  uint
+                  field  aisregion.wind_dir  9  uint
+                  field  aisregion.report_spare  4  uint
+                end
+              case  3
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.level_type  1  uint
+                  field  aisregion.level  16  twos
+                  field  aisregion.level_datum  2  uint
+                  field  aisregion.reading_type  2  uint
+                  field  aisregion.report_spare  12  uint
+                end
+              case  4
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.current_speed  8  uint
+                  field  aisregion.current_dir  9  uint
+                  field  aisregion.report_spare  16  uint
+                end
+              case  5
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.salinity  10  uint
+                  field  aisregion.water_temp  10  twos
+                  field  aisregion.report_spare  13  uint
+                end
+              case  6
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.water_flow  14  uint
+                  field  aisregion.report_spare  19  uint
+                end
+            end
+          case  2
+            field  aisregion.reserved  2  uint
+            field  aisregion.message_id  6  uint
+            switch  aisregion.message_id
+              case  1
+                field  aisregion.month  4  uint
+                field  aisregion.day  5  uint
+                field  aisregion.hour  5  uint
+                field  aisregion.minute  6  uint
+                field  aisregion.lock_id  42  sixbit
+                field  aisregion.lon  25  twos
+                field  aisregion.lat  24  twos
+                field  aisregion.lock_spare  9  uint
+                group  aisregion.schedule  rest
+                  field  aisregion.vessel_name  90  sixbit
+                  field  aisregion.upbound  1  uint
+                  field  aisregion.eta_month  4  uint
+                  field  aisregion.eta_day  5  uint
+                  field  aisregion.eta_hour  5  uint
+                  field  aisregion.eta_minute  6  uint
+                  field  aisregion.schedule_spare  9  uint
+                end
+              case  2
+                field  aisregion.month  4  uint
+                field  aisregion.day  5  uint
+                field  aisregion.hour  5  uint
+                field  aisregion.minute  6  uint
+                field  aisregion.vessel_name  90  sixbit
+                field  aisregion.last_location  42  sixbit
+                field  aisregion.ata_month  4  uint
+                field  aisregion.ata_day  5  uint
+                field  aisregion.ata_hour  5  uint
+                field  aisregion.ata_minute  6  uint
+                field  aisregion.first_lock  42  sixbit
+                field  aisregion.first_eta_month  4  uint
+                field  aisregion.first_eta_day  5  uint
+                field  aisregion.first_eta_hour  5  uint
+                field  aisregion.first_eta_minute  6  uint
+                field  aisregion.second_lock  42  sixbit
+                field  aisregion.second_eta_month  4  uint
+                field  aisregion.second_eta_day  5  uint
+                field  aisregion.second_eta_hour  5  uint
+                field  aisregion.second_eta_minute  6  uint
+                field  aisregion.delay_lock  42  sixbit
+                field  aisregion.locktimes_spare  4  uint
+            end
+          case  32
+            field  aisregion.reserved  2  uint
+            field  aisregion.message_id  6  uint
+            switch  aisregion.message_id
+              case  1
+                field  aisregion.major_version  8  uint
+                field  aisregion.minor_version  8  uint
+                field  aisregion.version_spare  8  uint
+            end
+        end
+    end
+  case  8
+    field  ais.spare  2  uint
+    field  aisbin.dac  10  uint
+    field  aisbin.fid  6  uint
+    switch  aisbin.dac
+      case  316,366
+        switch  aisbin.fid
+          case  1
+            field  aisregion.reserved  2  uint
+            field  aisregion.message_id  6  uint
+            switch  aisregion.message_id
+              case  1
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.wind_speed  10  uint
+                  field  aisregion.wind_gust  10  uint
+                  field  aisregion.wind_dir  9  uint
+                  field  aisregion.pressure  14  uint
+                  field  aisregion.air_temp  10  twos
+                  field  aisregion.dew_point  10  twos
+                  field  aisregion.visibility  8  uint
+                  field  aisregion.water_temp  10  twos
+                end
+              case  2
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.wind_speed  10  uint
+                  field  aisregion.wind_gust  10  uint
+                  field  aisregion.wind_dir  9  uint
+                  field  aisregion.report_spare  4  uint
+                end
+              case  3
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.level_type  1  uint
+                  field  aisregion.level  16  twos
+                  field  aisregion.level_datum  2  uint
+                  field  aisregion.reading_type  2  uint
+                  field  aisregion.report_spare  12  uint
+                end
+              case  4
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.current_speed  8  uint
+                  field  aisregion.current_dir  9  uint
+                  field  aisregion.report_spare  16  uint
+                end
+              case  5
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.salinity  10  uint
+                  field  aisregion.water_temp  10  twos
+                  field  aisregion.report_spare  13  uint
+                end
+              case  6
+                group  aisregion.reports  rest
+                  field  aisregion.month  4  uint
+                  field  aisregion.day  5  uint
+                  field  aisregion.hour  5  uint
+                  field  aisregion.minute  6  uint
+                  field  aisregion.station_id  42  sixbit
+                  field  aisregion.lon  25  twos
+                  field  aisregion.lat  24  twos
+                  field  aisregion.water_flow  14  uint
+                  field  aisregion.report_spare  19  uint
+                end
+            end
+          case  2
+            field  aisregion.reserved  2  uint
+            field  aisregion.message_id  6  uint
+            switch  aisregion.message_id
+              case  1
+                field  aisregion.month  4  uint
+                field  aisregion.day  5  uint
+                field  aisregion.hour  5  uint
+                field  aisregion.minute  6  uint
+                field  aisregion.lock_id  42  sixbit
+                field  aisregion.lon  25  twos
+                field  aisregion.lat  24  twos
+                field  aisregion.lock_spare  9  uint
+                group  aisregion.schedule  rest
+                  field  aisregion.vessel_name  90  sixbit
+                  field  aisregion.upbound  1  uint
+                  field  aisregion.eta_month  4  uint
+                  field  aisregion.eta_day  5  uint
+                  field  aisregion.eta_hour  5  uint
+                  field  aisregion.eta_minute  6  uint
+                  field  aisregion.schedule_spare  9  uint
+                end
+              case  2
+                field  aisregion.month  4  uint
+                field  aisregion.day  5  uint
+                field  aisregion.hour  5  uint
+                field  aisregion.minute  6  uint
+                field  aisregion.vessel_name  90  sixbit
+                field  aisregion.last_location  42  sixbit
+                field  aisregion.ata_month  4  uint
+                field  aisregion.ata_day  5  uint
+                field  aisregion.ata_hour  5  uint
+                field  aisregion.ata_minute  6  uint
+                field  aisregion.first_lock  42  sixbit
+                field  aisregion.first_eta_month  4  uint
+                field  aisregion.first_eta_day  5  uint
+                field  aisregion.first_eta_hour  5  uint
+                field  aisregion.first_eta_minute  6  uint
+                field  aisregion.second_lock  42  sixbit
+                field  aisregion.second_eta_month  4  uint
+                field  aisregion.second_eta_day  5  uint
+                field  aisregion.second_eta_hour  5  uint
+                field  aisregion.second_eta_minute  6  uint
+                field  aisregion.delay_lock  42  sixbit
+                field  aisregion.locktimes_spare  4  uint
+            end
+          case  32
+            field  aisregion.reserved  2  uint
+            field  aisregion.message_id  6  uint
+            switch  aisregion.message_id
+              case  1
+                field  aisregion.major_version  8  uint
+                field  aisregion.minor_version  8  uint
+                field  aisregion.version_spare  8  uint
+            end
+        end
+    end
+end
