@@ -348,10 +348,12 @@ func (f *moduleFile) load(e *Engine) error {
 	return e.LoadModel(f.text, f.path)
 }
 
-// defFiles lists the files directly in dir whose names end in .def, a
-// symbolic link to a file included, not recursing into subdirectories. A dir
-// that does not exist, is not a directory or cannot be read holds none
-// (ruling 4 of 0.4).
+// defFiles lists the files directly in dir whose names end in .def and that
+// are regular files or symbolic links to one (spec 0.23, Loading, 1), not
+// recursing into subdirectories: a directory, a link to one, a link that
+// leads nowhere and any other kind of entry are not module files. A dir that
+// does not exist, is not a directory or cannot be read holds none (ruling 4
+// of 0.4). os.ReadDir gives the names in byte order.
 func defFiles(dir string) []string {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -363,7 +365,7 @@ func defFiles(dir string) []string {
 			continue
 		}
 		path := filepath.Join(dir, ent.Name())
-		if st, err := os.Stat(path); err == nil && st.IsDir() {
+		if st, err := os.Stat(path); err != nil || !st.Mode().IsRegular() {
 			continue
 		}
 		out = append(out, path)
@@ -390,6 +392,13 @@ func moduleFiles(dir string) ([]string, error) {
 // byte order of file name. A cycle of `uses` lines is bad-directive. A used
 // module no file declares is left to the load, which reports unknown-module.
 func readModuleFiles(dir string) ([]*moduleFile, error) {
+	return orderModuleFiles(listModuleFiles(dir))
+}
+
+// listModuleFiles reads every module file of dir once, in the order of spec
+// 0.23, Loading, 1: core.def first, then the others in byte order of file
+// name. A file that does not read keeps its place, with its error.
+func listModuleFiles(dir string) []*moduleFile {
 	matches := defFiles(dir)
 	isCore := func(path string) bool { return filepath.Base(path) == CoreModule+".def" }
 	sort.SliceStable(matches, func(i, j int) bool {
@@ -401,7 +410,6 @@ func readModuleFiles(dir string) ([]*moduleFile, error) {
 	// Read each file and its `module` and `uses` lines; a file that does not
 	// read keeps its place and fails when it is loaded.
 	files := make([]*moduleFile, len(matches))
-	fileOf := map[string]int{}
 	for i, path := range matches {
 		f := &moduleFile{path: path}
 		f.text, f.err = os.ReadFile(path)
@@ -409,6 +417,16 @@ func readModuleFiles(dir string) ([]*moduleFile, error) {
 			f.name, f.uses = moduleHeader(f.text)
 		}
 		files[i] = f
+	}
+	return files
+}
+
+// orderModuleFiles puts files, given in the order of listModuleFiles, in
+// loading order: each module after the modules it uses, ties kept in the
+// order given. A cycle of `uses` lines is bad-directive.
+func orderModuleFiles(files []*moduleFile) ([]*moduleFile, error) {
+	fileOf := map[string]int{}
+	for i, f := range files {
 		if f.name != "" {
 			if _, dup := fileOf[f.name]; !dup {
 				fileOf[f.name] = i

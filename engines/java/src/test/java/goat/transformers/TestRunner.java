@@ -126,6 +126,7 @@ public final class TestRunner {
         int before = failures;
         UnitTests.run(engine);
         UnitTests.packsOnly(packsDir);
+        LicenceTests.run(packsDir);
         UnitTests.malformedSweep(engine, files);
         ParseOnceTests.run(engine, packsDir, files);
         System.out.println("unit checks: " + (unitChecks - (failures - before)) + "/" + unitChecks + " passed");

@@ -18,7 +18,7 @@ An independent, clean-room implementation of the gt engine, written from
 | malformed inputs | same run | 138781/138781 |
 | concurrent conversions (Version 0.25) | same run | 445/445 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 15 vectors, 15 packs (below) |
-| tool vectors (Version 0.23) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 97/97 |
+| tool vectors (Versions 0.23, 0.29) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 135/135 |
 | reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8164/8164 vectors; every bits, protobuf, text and tlv pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
@@ -243,6 +243,7 @@ engines/erlang/goat-xf.sh convert --from <format> --to <format> [--set <key>=<va
 engines/erlang/goat-xf.sh list-formats <options>
 engines/erlang/goat-xf.sh capability --from <format> --to <format> <options>
 engines/erlang/goat-xf.sh matrix <options>
+engines/erlang/goat-xf.sh licences [--json] <options>
 engines/erlang/goat-xf.sh help
 ```
 
@@ -250,7 +251,9 @@ engines/erlang/goat-xf.sh help
 `packs`, relative to the current directory), `--models <dir>` (default the
 `--packs` text followed by `/../model`), `--packs-only <name>[,<name>...]`,
 `--max-items <n>` (default 100000), `--max-distribution public|controlled`
-(default `controlled`). The tool has no options of its own (`--x-...`).
+(default `controlled`), `--profile open|open+copyleft|everything` (default
+none; Version 0.29, below). `licences` also takes `--json`, the one option
+without a value. The tool has no options of its own (`--x-...`).
 
 Exit status 0 on success; 1 on a load or call failure, standard error's first
 line being the failure's message, which begins with the kind and a colon; 2 on
@@ -265,6 +268,28 @@ All modules of `--models` are loaded (core first, each after those it uses),
 then the packs: the `--packs-only` names in the order given, or every
 directory of `--packs` not beginning with `.` whose `pack.def` is a regular
 file, in byte order of name.
+
+## Licence profiles (engine-spec Version 0.29)
+
+`src/gt_licence.erl` reads, by the exact line forms of ruling 1 and with no
+TOML library, `licences.toml` (the `--packs` text followed by
+`/../licences.toml`), each module's `<models>/<file>.def.license` and each
+pack's `<packs>/<dir>/REUSE.toml`, and computes the profile of every licence,
+module and pack (ruling 2). A missing file is `Apache-2.0` (or the one-row
+default table); any other failure is a load failure of kind `bad-licence`.
+
+With `--profile`, the table and every module file's licence, `module` and
+`uses` lines are read before any module is loaded (core.def first, then byte
+order of file name); a module or pack the profile does not hold is skipped as
+if it were not there. A pack's licence and `uses` lines are read when it is
+reached, after the `--packs-only` name checks, so a skipped pack is never
+parsed. Without `--profile` no licence file is read and loading is unchanged,
+except for `licences`, which always reads them.
+
+`licences` writes one line per loaded pack in byte order of directory name:
+directory, format, licence and the pack's own profile (`none` for a pack in
+no profile), tab-separated; with `--json`, `{"packs":[...]}` on one line.
+A `--profile` value other than the three names is usage error 11 (exit 2).
 
 ## As a dependency
 
@@ -286,7 +311,17 @@ E  = gt_engine:load_dir(gt_engine:new(), "packs"),  % model/*.def (core first, e
                                                     % module after those it uses), then packs
 E  = gt_engine:load_packs(gt_engine:new(), "packs", % only the packs named, and only the
                           [<<"cot-xml">>, <<"geojson">>]),   % modules they need
+E  = gt_engine:load_dir(gt_engine:new(), "packs", "model", open),   % with a profile
+E  = gt_engine:load_packs(gt_engine:new(), "packs", Names, "model", <<"open+copyleft">>),
 ```
+
+`load_dir/4` and `load_packs/5` take a licence profile as a last argument
+(Version 0.29): `none` loads as `load_dir/3` and `load_packs/4` do and reads
+no licence file; `open`, `open+copyleft` or `everything` (atom, string or
+binary) loads only the modules and packs that profile holds, the table read
+from `PacksDir ++ "/../licences.toml"`. Any other value raises
+`'bad-licence'` before anything is read, as does a licence file that cannot
+be read by the forms of ruling 1.
 
 `load_packs(Engine, PacksDir, Names)` reads `PacksDir/<name>/pack.def` for each
 name (a binary or a string), in the order given, and loads before them `core`,
@@ -412,5 +447,6 @@ implemented as the specification states them.
   encode / complete / convert on every wire, groups and lists, residue,
   typemap, value tables, transforms.
 - `src/gt_test.erl`  — conformance runner and the malformed-input check.
-- `src/gt_cli.erl`   — the command-line tool (Version 0.23), started by `goat-xf.sh`.
+- `src/gt_licence.erl` — licence files, profiles and the skipping of modules and packs (Version 0.29).
+- `src/gt_cli.erl`   — the command-line tool (Version 0.23, `--profile` and `licences` of 0.29), started by `goat-xf.sh`.
 - `src/gt_bench.erl` — the benchmark (Version 0.25), started by `bench.sh`.

@@ -33,6 +33,8 @@
 
 const std = @import("std");
 const build_options = @import("build_options");
+const licence = @import("licence.zig");
+pub const Profile = licence.Profile;
 
 // ---------------------------------------------------------------------------
 // Version 0.24: the wires of the build (`zig build -Dwires=<w>,<w>…`)
@@ -227,6 +229,9 @@ const EngineError = error{
     @"transform-decode",
     @"malformed-wire",
     @"bad-directive",
+    // Version 0.29: a licence file that cannot be read as ruling 1 says, or
+    // a profile name that is not one of the three
+    @"bad-licence",
 };
 const E = EngineError;
 
@@ -3550,11 +3555,12 @@ pub const Engine = struct {
         return p;
     }
 
-    // Read every `*.def` in `models_dir`: the file names in byte order with
-    // `core.def` first, whatever its name sorts as (ruling 9 of 0.6: a
-    // `derive` line of another module may name a key of `core`), each file's
-    // text, module name and `uses` lines. null: there is no such directory.
-    fn scanModelDir(self: *Engine, models_dir: []const u8) !?ModelFiles {
+    // The module files of `models_dir` (Version 0.23, Loading, 1): the names
+    // ending in `.def` of regular files or symbolic links to one, not
+    // recursing, in byte order of name with `core.def` first, whatever its
+    // name sorts as (ruling 9 of 0.6: a `derive` line of another module may
+    // name a key of `core`). null: there is no such directory.
+    fn listModelFiles(self: *Engine, models_dir: []const u8) !?[]const []const u8 {
         var dir = std.fs.cwd().openDir(models_dir, .{ .iterate = true }) catch |err| switch (err) {
             error.FileNotFound, error.NotDir => return null, // ruling 4 of 0.4: no modules
             else => return err,
@@ -3563,8 +3569,15 @@ pub const Engine = struct {
         var names = std.ArrayList([]const u8).init(self.alloc);
         var it = dir.iterate();
         while (try it.next()) |entry| {
-            if (entry.kind != .file) continue;
             if (!std.mem.endsWith(u8, entry.name, ".def")) continue;
+            switch (entry.kind) {
+                .file => {},
+                .sym_link, .unknown => {
+                    const st = dir.statFile(entry.name) catch continue; // follows the link
+                    if (st.kind != .file) continue;
+                },
+                else => continue,
+            }
             try names.append(try self.alloc.dupe(u8, entry.name));
         }
         std.mem.sort([]const u8, names.items, {}, strLess);
@@ -3574,10 +3587,21 @@ pub const Engine = struct {
             names.items[0] = name;
             break;
         }
-        const n = names.items.len;
+        return names.items;
+    }
+
+    // Read every module file of `models_dir`: each file's text, module name
+    // and `uses` lines. null: there is no such directory.
+    fn scanModelDir(self: *Engine, models_dir: []const u8) !?ModelFiles {
+        const names = (try self.listModelFiles(models_dir)) orelse return null;
+        return try self.readModelFiles(models_dir, names);
+    }
+
+    fn readModelFiles(self: *Engine, models_dir: []const u8, names: []const []const u8) !ModelFiles {
+        const n = names.len;
         const mf = ModelFiles{
             .dir = models_dir,
-            .names = names.items,
+            .names = names,
             .texts = try self.alloc.alloc([]const u8, n),
             .mod_names = try self.alloc.alloc([]const u8, n),
             .mod_uses = try self.alloc.alloc([]const []const u8, n),
@@ -3585,7 +3609,7 @@ pub const Engine = struct {
         };
         @memset(mf.state, 0);
         var tokbuf = std.ArrayList([]const u8).init(self.alloc);
-        for (names.items, 0..) |name, i| {
+        for (names, 0..) |name, i| {
             const path = try std.fmt.allocPrint(self.alloc, "{s}/{s}", .{ models_dir, name });
             mf.texts[i] = try std.fs.cwd().readFileAlloc(self.alloc, path, max_file);
             mf.mod_names[i] = "";
@@ -3686,6 +3710,186 @@ pub const Engine = struct {
             };
         }
         return .{ .modules = self.modules.count(), .packs = names.items };
+    }
+
+    /// What `loadTree` is asked to load (Version 0.23, Loading; Version 0.29).
+    pub const TreeOptions = struct {
+        /// the directory whose subdirectories are packs
+        packs_dir: []const u8,
+        /// the model modules; null: `<packs_dir>/../model`
+        models_dir: ?[]const u8 = null,
+        /// load only these subdirectories, in this order; null: every one
+        packs_only: ?[]const []const u8 = null,
+        /// `open`, `open+copyleft` or `everything`: load only what it holds.
+        /// null: no profile, no licence file is read, nothing is skipped.
+        profile: ?[]const u8 = null,
+        /// read every licence file (ruling 1) even with no profile, as the
+        /// `licences` subcommand does
+        read_licences: bool = false,
+    };
+
+    /// A pack `loadTree` loaded: its directory name and format, and, when the
+    /// licence files were read, its licence and its own profile (2c).
+    pub const TreePack = struct {
+        dir: []const u8,
+        format: []const u8,
+        licence: ?[]const u8 = null,
+        profile: Profile = .none,
+    };
+
+    pub const TreeLoaded = struct { modules: usize, packs: []const TreePack };
+
+    fn failLicence(self: *Engine, msg: []const u8) anyerror {
+        self.last_error = try std.fmt.allocPrint(self.alloc, "bad-licence: {s}", .{msg});
+        return E.@"bad-licence";
+    }
+
+    /// Load a tree as the command-line contract does (Version 0.23, Loading):
+    /// every module of the model directory, then the packs, stopping at the
+    /// first failure. With a profile (Version 0.29, ruling 3), the licence
+    /// files are read first and a module or pack the profile does not hold is
+    /// not loaded. A packs directory that cannot be listed (no `packs_only`)
+    /// is `error.PacksUnreadable`, a failure with no kind; every other failure
+    /// is a kind, and `last_error` holds `<kind>: <detail>`.
+    pub fn loadTree(self: *Engine, opts: TreeOptions) !TreeLoaded {
+        const alloc = self.alloc;
+        self.last_error = "";
+        // 3a: a name not one of the three is refused before anything is read
+        const profile: ?Profile = if (opts.profile) |name|
+            (Profile.parse(name) orelse return self.failLicence(try std.fmt.allocPrint(alloc, "{s} is not a profile (open, open+copyleft, everything)", .{name})))
+        else
+            null;
+        const reading = profile != null or opts.read_licences;
+        const packs_dir = opts.packs_dir;
+        const models_dir = opts.models_dir orelse try std.fmt.allocPrint(alloc, "{s}/../model", .{packs_dir});
+        var msg: []const u8 = "";
+
+        // 3b: the table, then each module file's licence and lines
+        var table: licence.Table = undefined;
+        if (reading) {
+            const path = try std.fmt.allocPrint(alloc, "{s}/../licences.toml", .{packs_dir});
+            table = licence.readTable(alloc, path, &msg) catch |err| switch (err) {
+                error.OutOfMemory => return err,
+                else => return self.failLicence(msg),
+            };
+        }
+        const all_names = (self.listModelFiles(models_dir) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            self.last_error = try std.fmt.allocPrint(alloc, "error: cannot read the model directory {s}: {s}", .{ models_dir, @errorName(err) });
+            return err;
+        }) orelse &[_][]const u8{};
+        var mod_lines: []licence.DefLines = &.{};
+        var mod_prof: []Profile = &.{};
+        if (reading) {
+            mod_lines = try alloc.alloc(licence.DefLines, all_names.len);
+            const lic = try alloc.alloc(Profile, all_names.len);
+            for (all_names, 0..) |name, i| {
+                const lpath = try std.fmt.allocPrint(alloc, "{s}/{s}.license", .{ models_dir, name });
+                const id = licence.moduleLicence(alloc, lpath, &msg) catch |err| switch (err) {
+                    error.OutOfMemory => return err,
+                    else => return self.failLicence(msg),
+                };
+                lic[i] = licence.licenceProfile(&table, id);
+                mod_lines[i] = try licence.defFileLines(alloc, try std.fmt.allocPrint(alloc, "{s}/{s}", .{ models_dir, name }));
+            }
+            mod_prof = try licence.moduleProfiles(alloc, mod_lines, lic);
+        }
+
+        // 3c: the modules the profile holds, in the same order
+        var names = all_names;
+        if (profile) |pr| {
+            var held = std.ArrayList([]const u8).init(alloc);
+            for (all_names, 0..) |name, i| {
+                if (pr.holds(mod_prof[i])) try held.append(name);
+            }
+            names = held.items;
+        }
+        const mf = self.readModelFiles(models_dir, names) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            self.last_error = try std.fmt.allocPrint(alloc, "error: cannot read the model directory {s}: {s}", .{ models_dir, @errorName(err) });
+            return err;
+        };
+        for (0..mf.names.len) |i| try self.loadModelOrdered(mf, i);
+
+        // 3d: the packs, each reached as Version 0.23, Loading, 2 says
+        var loaded = std.ArrayList(TreePack).init(alloc);
+        if (opts.packs_only) |only| {
+            var dir_opt: ?std.fs.Dir = std.fs.cwd().openDir(packs_dir, .{}) catch null;
+            defer if (dir_opt) |*d| d.close();
+            for (only) |name| {
+                const one_component = !(std.mem.eql(u8, name, ".") or std.mem.eql(u8, name, "..") or
+                    name.len == 0 or std.mem.indexOfAny(u8, name, "/\\") != null);
+                const text: ?[]const u8 = if (!one_component) null else if (dir_opt) |d| readPackDefIn(alloc, d, name) else null;
+                const t = text orelse {
+                    self.fail(E.@"unknown-format", "{s} is not a subdirectory of {s} holding pack.def", .{ name, packs_dir });
+                    return E.@"unknown-format";
+                };
+                try self.treePack(&loaded, packs_dir, name, t, reading, profile, &table, mod_lines, mod_prof);
+            }
+        } else {
+            var dir = std.fs.cwd().openDir(packs_dir, .{ .iterate = true }) catch |err| {
+                self.last_error = try std.fmt.allocPrint(alloc, "error: cannot read the packs directory {s}: {s}", .{ packs_dir, @errorName(err) });
+                return error.PacksUnreadable;
+            };
+            defer dir.close();
+            var dirs = std.ArrayList([]const u8).init(alloc);
+            var it = dir.iterate();
+            while (true) {
+                const entry = (it.next() catch |err| {
+                    self.last_error = try std.fmt.allocPrint(alloc, "error: cannot read the packs directory {s}: {s}", .{ packs_dir, @errorName(err) });
+                    return error.PacksUnreadable;
+                }) orelse break;
+                if (entry.name.len == 0 or entry.name[0] == '.') continue;
+                switch (entry.kind) {
+                    .directory => {},
+                    .sym_link, .unknown => {
+                        const st = dir.statFile(entry.name) catch continue; // follows the link
+                        if (st.kind != .directory) continue;
+                    },
+                    else => continue,
+                }
+                try dirs.append(try alloc.dupe(u8, entry.name));
+            }
+            std.mem.sort([]const u8, dirs.items, {}, strLess);
+            for (dirs.items) |name| {
+                const t = readPackDefIn(alloc, dir, name) orelse continue;
+                try self.treePack(&loaded, packs_dir, name, t, reading, profile, &table, mod_lines, mod_prof);
+            }
+        }
+        return .{ .modules = self.modules.count(), .packs = loaded.items };
+    }
+
+    // One pack reached by `loadTree`: its licence and `uses` lines when the
+    // licence files are read, skipped when the profile does not hold it,
+    // else loaded.
+    fn treePack(self: *Engine, loaded: *std.ArrayList(TreePack), packs_dir: []const u8, name: []const u8, text: []const u8, reading: bool, profile: ?Profile, table: *const licence.Table, mod_lines: []const licence.DefLines, mod_prof: []const Profile) !void {
+        const alloc = self.alloc;
+        var entry = TreePack{ .dir = name, .format = "" };
+        if (reading) {
+            var msg: []const u8 = "";
+            const path = try std.fmt.allocPrint(alloc, "{s}/{s}/REUSE.toml", .{ packs_dir, name });
+            const id = licence.packLicence(alloc, path, &msg) catch |err| switch (err) {
+                error.OutOfMemory => return err,
+                else => return self.failLicence(msg),
+            };
+            const dl = try licence.defLines(alloc, text);
+            // 2c: its licence, the module `core`, and the modules it uses
+            var p = licence.licenceProfile(table, id);
+            p = licence.usesProfile(mod_lines, mod_prof, p, &.{"core"});
+            p = licence.usesProfile(mod_lines, mod_prof, p, dl.uses);
+            if (profile) |pr| {
+                if (!pr.holds(p)) return; // 3e: as if it were not there
+            }
+            entry.licence = id;
+            entry.profile = p;
+        }
+        const pk = self.loadPack(text) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            self.last_error = try std.fmt.allocPrint(alloc, "{s} ({s}/{s}/pack.def)", .{ self.last_error, packs_dir, name });
+            return err;
+        };
+        entry.format = pk.format;
+        try loaded.append(entry);
     }
 
     // The declared type of a model key, null when no loaded module declares it.
@@ -12178,6 +12382,16 @@ fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *
 // ---------------------------------------------------------------------------
 // Harness
 // ---------------------------------------------------------------------------
+
+// The text of `<dir>/<name>/pack.def`, when `name` is a directory holding a
+// readable file `pack.def`; null otherwise.
+fn readPackDefIn(alloc: std.mem.Allocator, dir: std.fs.Dir, name: []const u8) ?[]const u8 {
+    var sub = dir.openDir(name, .{}) catch return null;
+    defer sub.close();
+    const st = sub.statFile("pack.def") catch return null;
+    if (st.kind == .directory) return null;
+    return sub.readFileAlloc(alloc, "pack.def", max_file) catch null;
+}
 
 fn strLess(_: void, a: []const u8, b: []const u8) bool {
     return std.mem.lessThan(u8, a, b);

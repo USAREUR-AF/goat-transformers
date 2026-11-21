@@ -15,6 +15,7 @@
 "  goat-xf.sh list-formats <options>\n"
 "  goat-xf.sh capability --from <format> --to <format> <options>\n"
 "  goat-xf.sh matrix <options>\n"
+"  goat-xf.sh licences [--json] <options>\n"
 "  goat-xf.sh help\n"
 "options, in any order, each at most once:\n"
 "  --packs <dir>             the directory whose subdirectories are packs (default: packs)\n"
@@ -22,6 +23,8 @@
 "  --packs-only <a>[,<b>...] load only these packs, in this order\n"
 "  --max-items <n>           list items one decode holds (default 100000)\n"
 "  --max-distribution <public|controlled>   the distribution limit (default controlled)\n"
+"  --profile <open|open+copyleft|everything> load only the packs and modules of this licence profile\n"
+"licences writes each loaded pack: directory, format, licence, profile (--json: as JSON).\n"
 "convert reads standard input to its end and writes the result with nothing added.\n").
 
 %% -s gt_cli main: the arguments after -extra.
@@ -66,7 +69,7 @@ run(Args) ->
 %% arguments (Invocation: Arguments, Usage errors)
 %% ===================================================================
 -define(COMMON, [<<"--packs">>, <<"--models">>, <<"--packs-only">>, <<"--max-items">>,
-                 <<"--max-distribution">>]).
+                 <<"--max-distribution">>, <<"--profile">>]).
 
 parse([]) -> {usage, "no subcommand"};
 parse([H | _]) when H =:= <<"help">>; H =:= <<"-h">>; H =:= <<"--help">> -> help;
@@ -76,6 +79,7 @@ parse([Sub | Rest]) ->
                 <<"capability">> -> [<<"--from">>, <<"--to">> | ?COMMON];
                 <<"list-formats">> -> ?COMMON;
                 <<"matrix">> -> ?COMMON;
+                <<"licences">> -> [<<"--json">> | ?COMMON];
                 _ -> undefined
             end,
     case Names of
@@ -92,6 +96,12 @@ pairs([], _Names, Opts, Sets) -> {ok, Opts, Sets};
 pairs([Name | Rest], Names, Opts, Sets) ->
     case lists:member(Name, Names) of
         false -> {usage, io_lib:format("~s is not an option of this subcommand", [Name])};
+        true when Name =:= <<"--json">> ->
+            %% the one option without a value (ruling 4b of 0.29)
+            case maps:is_key(Name, Opts) of
+                true -> {usage, "--json is given twice"};
+                false -> pairs(Rest, Names, Opts#{Name => true}, Sets)
+            end;
         true ->
             case Rest of
                 [] -> {usage, io_lib:format("~s has no value", [Name])};
@@ -108,7 +118,7 @@ pairs([Name | Rest], Names, Opts, Sets) ->
 %% The checks of the values -> {ok, Sub, Opts} with typed values.
 check(Sub, Opts) ->
     Steps = [fun from_to/2, fun sets/2, fun max_items/2, fun max_distribution/2,
-             fun packs_only/2],
+             fun packs_only/2, fun profile/2],
     lists:foldl(fun(_, {usage, _} = U) -> U;
                    (F, {ok, S, O}) -> F(S, O)
                 end, {ok, Sub, Opts}, Steps).
@@ -161,27 +171,57 @@ packs_only(Sub, #{<<"--packs-only">> := V} = Opts) ->
     end;
 packs_only(Sub, Opts) -> {ok, Sub, Opts}.
 
+%% usage error 11 (ruling 4d of 0.29)
+profile(Sub, #{<<"--profile">> := V} = Opts) ->
+    case gt_licence:profile(V) of
+        {ok, Rank} -> {ok, Sub, Opts#{<<"--profile">> := Rank}};
+        error -> {usage, "--profile takes open, open+copyleft or everything"}
+    end;
+profile(Sub, Opts) -> {ok, Sub, Opts}.
+
 %% ===================================================================
 %% loading (Version 0.23, Loading)
 %% ===================================================================
-load(Opts) ->
+%% -> {Engine, [{Dir, Format, Licence, Rank}]}: the packs loaded, listed
+%% only when licence files are read.
+%% With a profile, or for `licences`, the licence files are read first
+%% (Version 0.29, ruling 3b), and a module or pack the profile does not hold
+%% is skipped (3c, 3d); `licences` without a profile holds everything.
+load(Sub, Opts) ->
     Packs = maps:get(<<"--packs">>, Opts, <<"packs">>),
     Models = maps:get(<<"--models">>, Opts, <<Packs/binary, "/../model">>),
     E0 = gt_engine:set_max_distribution(gt_engine:new(),
                                         maps:get(<<"--max-distribution">>, Opts, controlled)),
+    Rank = case {maps:find(<<"--profile">>, Opts), Sub} of
+               {{ok, R}, _} -> R;
+               {error, <<"licences">>} -> 4;
+               {error, _} -> off
+           end,
     %% each module file read once (ruling 1d of 0.25)
-    E1 = lists:foldl(fun({_F, Text}, E) -> gt_engine:load_model(E, Text) end,
-                     E0, gt_engine:model_texts(Models)),
-    E2 = case maps:find(<<"--packs-only">>, Opts) of
-             {ok, Names} -> lists:foldl(fun(N, E) -> load_named(E, Packs, N) end, E1, Names);
-             error -> load_every(E1, Packs)
+    Read = gt_engine:model_read(Models),
+    {Ctx, Held} = case Rank of
+                      off -> {off, Read};
+                      _ ->
+                          C = gt_licence:start(<<Packs/binary, "/../licences.toml">>, Models,
+                                               Rank, Read),
+                          Files = maps:get(files, C),
+                          {C, [FR || {F, _} = FR <- Read, gt_licence:held(C, maps:get(F, Files))]}
+                  end,
+    E1 = lists:foldl(fun({_F, _, Text}, E) -> gt_engine:load_model(E, Text) end,
+                     E0, gt_engine:model_order(Held)),
+    {E2, Listed} =
+        case maps:find(<<"--packs-only">>, Opts) of
+            {ok, Names} -> lists:foldl(fun(N, Acc) -> load_named(Acc, Ctx, Packs, N) end,
+                                       {E1, []}, Names);
+            error -> load_every({E1, []}, Ctx, Packs)
+        end,
+    E3 = case maps:find(<<"--max-items">>, Opts) of
+             {ok, N} -> gt_engine:set_max_items(E2, N);
+             error -> E2
          end,
-    case maps:find(<<"--max-items">>, Opts) of
-        {ok, N} -> gt_engine:set_max_items(E2, N);
-        error -> E2
-    end.
+    {E3, Listed}.
 
-load_named(E, Packs, Name) ->
+load_named(Acc, Ctx, Packs, Name) ->
     Component = Name =/= <<".">> andalso Name =/= <<"..">>
         andalso binary:match(Name, [<<"/">>, <<"\\">>]) =:= nomatch,
     Text = case Component of
@@ -197,10 +237,10 @@ load_named(E, Packs, Name) ->
             erlang:error({load_error, 'unknown-format',
                           iolist_to_binary(["unknown-format: ", Name,
                                             " is not a pack directory of --packs"])});
-        _ -> gt_engine:load_pack(E, Text)
+        _ -> load_one(Acc, Ctx, Name, filename:join(Packs, Name), {ok, Text})
     end.
 
-load_every(E, Packs) ->
+load_every(Acc0, Ctx, Packs) ->
     Entries = case file:list_dir_all(Packs) of
                   {ok, Es} -> lists:sort([arg_bin(X) || X <- Es]);
                   {error, Why} ->
@@ -215,10 +255,30 @@ load_every(E, Packs) ->
               Dir = filename:join(Packs, Entry),
               Def = filename:join(Dir, <<"pack.def">>),
               case filelib:is_dir(Dir) andalso filelib:is_regular(Def) of
-                  true -> gt_engine:load_pack(Acc, read(Def));
+                  true when Ctx =:= off -> load_one(Acc, Ctx, Entry, Dir, {ok, read(Def)});
+                  true -> load_one(Acc, Ctx, Entry, Dir, file:read_file(Def));
                   false -> Acc
               end
-      end, E, Entries).
+      end, Acc0, Entries).
+
+%% One pack reached: with licence files read, its licence and `uses` lines
+%% first, and skipped when the profile does not hold it (ruling 3d).
+load_one({E, Listed}, off, _Entry, _Dir, {ok, Text}) ->
+    {gt_engine:load_pack(E, Text), Listed};
+load_one({E, Listed}, Ctx, Entry, Dir, Text) ->
+    {Lic, Rank} = gt_licence:pack(Ctx, Dir, Text),
+    case gt_licence:held(Ctx, Rank) of
+        false -> {E, Listed};
+        true ->
+            Bin = case Text of
+                      {ok, B} -> B;
+                      _ -> read(filename:join(Dir, <<"pack.def">>))
+                  end,
+            Before = gt_engine:packs(E),
+            E1 = gt_engine:load_pack(E, Bin),
+            [Format | _] = [F || F <- maps:keys(gt_engine:packs(E1)), not maps:is_key(F, Before)],
+            {E1, [{Entry, Format, Lic, Rank} | Listed]}
+    end.
 
 read(Path) ->
     case file:read_file(Path) of
@@ -232,7 +292,7 @@ read(Path) ->
 %% the subcommands
 %% ===================================================================
 execute(Sub, Opts) ->
-    E = load(Opts),
+    {E, Listed} = load(Sub, Opts),
     Formats = lists:sort(maps:keys(gt_engine:packs(E))),
     case Sub of
         <<"list-formats">> ->
@@ -242,6 +302,22 @@ execute(Sub, Opts) ->
         <<"matrix">> ->
             out([<<"from\tto\tgrade\tcarried\tdropped\n">>
                  | [line(E, F, T) || F <- Formats, T <- Formats]]),
+            0;
+        <<"licences">> ->
+            Rows = lists:sort(Listed),
+            case maps:is_key(<<"--json">>, Opts) of
+                false ->
+                    out([[D, $\t, F, $\t, L, $\t, gt_licence:rank_name(R), $\n]
+                         || {D, F, L, R} <- Rows]);
+                true ->
+                    Obj = fun({D, F, L, R}) ->
+                                  [<<"{\"pack\":\"">>, esc(D), <<"\",\"format\":\"">>, esc(F),
+                                   <<"\",\"licence\":\"">>, esc(L), <<"\",\"profile\":\"">>,
+                                   gt_licence:rank_name(R), <<"\"}">>]
+                          end,
+                    out([<<"{\"packs\":[">>, lists:join($,, [Obj(Row) || Row <- Rows]),
+                         <<"]}\n">>])
+            end,
             0;
         <<"capability">> ->
             {From, To} = from_to_loaded(E, Opts),
@@ -286,6 +362,14 @@ line(E, From, To) ->
     [From, $\t, To, $\t, atom_to_binary(Grade), $\t, join(Carried), $\t, join(Dropped), $\n].
 
 join(Keys) -> lists:join($\s, Keys).
+
+%% A JSON string value of `licences --json` (ruling 4c of 0.29): `"` and
+%% `\` escaped, each byte below 0x20 as \u00xx, every other byte itself.
+esc(Bin) -> [esc_byte(C) || <<C>> <= Bin].
+esc_byte($") -> <<"\\\"">>;
+esc_byte($\\) -> <<"\\\\">>;
+esc_byte(C) when C < 16#20 -> io_lib:format("\\u~4.16.0b", [C]);
+esc_byte(C) -> C.
 
 value(V) when is_atom(V) -> atom_to_binary(V);
 value(V) when is_binary(V) -> V;

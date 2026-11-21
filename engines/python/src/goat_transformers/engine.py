@@ -11,6 +11,7 @@ from .errors import (
     ModuleNotUsed, NoKind, TransformDecodeFailure, TransformEncodeFailure, UndeclaredKey, UnknownFormat,
     UnknownModule,
 )
+from .licence import Licences, check_profile, rank_name
 from .modeldef import parse_model_text, scan_uses
 from .packdef import CORE, DISTRIBUTIONS, load_pack, parse_pack_text, split_key
 from .entity import Entity, Item, _build_via, _via_decode, _via_encode
@@ -32,7 +33,7 @@ else:
         """No value is a JSON number in a build without `json` and `geojson`."""
 
 
-def _model_files(models_dir, only=None):
+def _model_files(models_dir, only=None, skip=None):
     """The module files of a directory in loading order: `core.def` first,
     whatever its name sorts as (0.6 ruling 9), then the others in byte order
     of file name, each after the modules its `uses` lines name (0.8). A cycle
@@ -41,11 +42,14 @@ def _model_files(models_dir, only=None):
     files of those modules and of the modules they use, and no other.
 
     -> [(path, text)]: each file is read once, here, and its text is what the
-    load parses (spec 0.25, ruling 1d)."""
+    load parses (spec 0.25, ruling 1d). With `skip`, a set of file names:
+    those files are as if they were not there (spec 0.29, ruling 3e)."""
     names = sorted(
         (n for n in os.listdir(models_dir) if n.endswith(".def") and os.path.isfile(os.path.join(models_dir, n))),
         key=lambda n: (n != CORE + ".def", os.fsencode(n)),
     )
+    if skip:
+        names = [n for n in names if n not in skip]
     uses = {}
     texts = {}
     by_module = {}
@@ -149,6 +153,7 @@ class Engine:
     def __init__(self, packs=(), models=(), max_distribution="controlled", max_items=MAX_ITEMS):
         self.packs = {}
         self.models = {}
+        self.licences = {}  # format -> (directory, licence, profile), filled by from_dir with a profile
         self._derives = None
         self.set_max_distribution(max_distribution)
         self.set_max_items(max_items)
@@ -359,7 +364,7 @@ class Engine:
         self.packs[pack.name] = pack
 
     @classmethod
-    def from_dir(cls, packs_dir, models_dir=None, max_distribution="controlled", packs_only=None):
+    def from_dir(cls, packs_dir, models_dir=None, max_distribution="controlled", packs_only=None, profile=None):
         """Load every `<models_dir>/*.def` in byte order of file name, then every
         `<packs_dir>/<format>/pack.def`. `models_dir` defaults to the `model`
         directory beside `packs_dir`.
@@ -367,15 +372,48 @@ class Engine:
         With `packs_only`, the names of pack directories under `packs_dir`:
         load those packs only, and of the modules only `core`, the modules the
         packs name in `uses` lines and the modules those use. A name with no
-        `<packs_dir>/<name>/pack.def` is `unknown-format`."""
+        `<packs_dir>/<name>/pack.def` is `unknown-format`.
+
+        With `profile`, one of `open`, `open+copyleft` and `everything`
+        (spec 0.29): before anything is loaded, `<packs_dir>/../licences.toml`
+        and the licence of every module file are read, and a module or pack
+        whose profile the profile does not hold is not loaded, as if it were
+        not there (a pack is skipped before it is parsed). A licence file that
+        cannot be read, or a profile not one of the three, is `bad-licence`.
+        Without `profile` no licence file is read. `licences` maps each loaded
+        format to its pack's `(directory, licence, profile)` when a profile
+        was given."""
+        lic = None
+        if profile is not None:
+            limit = check_profile(profile)  # before anything is read (3a)
         if models_dir is None:
             models_dir = os.path.join(packs_dir, os.pardir, "model")
         eng = cls(max_distribution=max_distribution)
+        skip = None
+        if profile is not None:
+            lic = Licences(packs_dir, models_dir).read()
+            skip = lic.skipped_modules(limit)
+        held = {}
+
+        def reach(name):
+            """The pack in directory `name`, or None when the profile skips it (3d)."""
+            d = os.path.join(packs_dir, name)
+            if lic is not None:
+                licence, rank = lic.pack(d)
+                if rank > limit:
+                    return None
+            pack = load_pack(d)
+            if lic is not None:
+                held[pack.name] = (name, licence, rank_name(rank))
+            return pack
+
         if packs_only is None:
             only = None
             packs = [
-                load_pack(d) for d in (os.path.join(packs_dir, name) for name in sorted(os.listdir(packs_dir)))
-                if os.path.isfile(os.path.join(d, "pack.def"))
+                p for p in (
+                    reach(name) for name in sorted(os.listdir(packs_dir))
+                    if os.path.isfile(os.path.join(packs_dir, name, "pack.def"))
+                ) if p is not None
             ]
         else:
             if isinstance(packs_only, str):
@@ -387,15 +425,18 @@ class Engine:
                     not os.path.isfile(os.path.join(d, "pack.def"))
                 ):
                     raise UnknownFormat("no pack named %r in the packs directory" % name, format=name)
-                packs.append(load_pack(d))
+                pack = reach(name)
+                if pack is not None:
+                    packs.append(pack)
             only = {CORE}
             for pack in packs:
                 only.update(pack.uses)
         if os.path.isdir(models_dir):
-            for path, text in _model_files(models_dir, only):
+            for path, text in _model_files(models_dir, only, skip):
                 eng.add_model(_model_from_text(text, path, eng.models, max_distribution))
         for pack in packs:
             eng.add(pack)
+        eng.licences = held
         return eng
 
     def formats(self):

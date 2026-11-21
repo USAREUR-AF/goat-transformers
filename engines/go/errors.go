@@ -45,6 +45,10 @@ const (
 	ErrNoKind         ErrorKind = "no-kind"
 	ErrDuplicateKind  ErrorKind = "duplicate-kind"
 	ErrDuplicateField ErrorKind = "duplicate-field" // withdrawn in 0.6: no longer raised
+
+	// Version 0.29: a licence file that cannot be read as ruling 1 says, or
+	// a profile name that is not one of the three (library).
+	ErrBadLicence ErrorKind = "bad-licence"
 )
 
 // Error is every failure the engine returns: a kind, the format and the

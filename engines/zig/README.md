@@ -190,6 +190,7 @@ goat-xf convert --from <format> --to <format> [--set <key>=<value>]... <options>
 goat-xf list-formats <options>
 goat-xf capability --from <format> --to <format> <options>
 goat-xf matrix <options>
+goat-xf licences [--json] <options>
 goat-xf help
 ```
 
@@ -197,8 +198,9 @@ goat-xf help
 directory, so the repository root's packs when started there), `--models
 <dir>` (default the `--packs` text followed by `/../model`), `--packs-only
 <a>,<b>...`, `--max-items <n>` (default 100000) and `--max-distribution
-public|controlled` (default `controlled`). The tool has no `--x-` options of
-its own.
+public|controlled` (default `controlled`) and `--profile
+open|open+copyleft|everything` (default no profile; Version 0.29, below). The
+tool has no `--x-` options of its own.
 
 Every argument is checked before anything is loaded; a usage error exits 2
 with a message and the usage on standard error. The tool then loads every
@@ -222,6 +224,39 @@ per pack, `capability` one line `<from>\t<to>\t<grade>\t<carried>\t<dropped>`,
 and `matrix` the header `from\tto\tgrade\tcarried\tdropped` and one such line
 per ordered pair, formats in byte order of name; each line ends in a line
 feed.
+
+## Licence profiles (spec Version 0.29)
+
+The loader takes an optional profile, `open`, `open+copyleft` or
+`everything`. In the library it is `Engine.loadTree(.{ .packs_dir = ...,
+.profile = "open" })` (`.models_dir`, `.packs_only` and `.read_licences` are
+the other options; `src/main.zig`), which loads a tree as `goat-xf` does; on
+the command line it is `--profile`. With no profile no licence file is read
+and loading is as before. With one, before any module is loaded, the engine
+reads `<packs>/../licences.toml`, then for each module file (in the order of
+Version 0.23, Loading, 1) its `<models>/<m>.def.license` and its `module` and
+`uses` lines, and computes each module's profile; a module the profile does
+not hold is not loaded. Each pack reached (after the `--packs-only` name
+checks) has its `REUSE.toml` and `uses` lines read, and a pack the profile
+does not hold is skipped without being read further. A licence file that
+cannot be read by the line forms of ruling 1 is `bad-licence`, as is, in the
+library, a profile name that is not one of the three (a usage error, 11, on
+the command line). The files are read line by line in `src/licence.zig`; no
+TOML library is used.
+
+`goat-xf licences [--json] <options>` always reads the licence files and
+writes one line per loaded pack in byte order of directory name:
+`<dir>\t<format>\t<licence>\t<profile>`, the profile being the pack's own
+(`none` for a pack in no profile, which is listed when no profile is given).
+`--json` (no value, at most once) writes `{"packs":[{"pack":...,"format":...,
+"licence":...,"profile":...},...]}` instead. `zig build module-test` includes
+a test of `loadTree` with each profile against
+`packs/conformance/tool-fixtures/licences-*`.
+
+The module listing of `loadTree`, `loadModelDir` and `loadPacksOnly` takes the
+files whose names end in `.def` that are regular files or symbolic links to
+one, as Version 0.23, Loading, 1 says; a directory or a link to a directory is
+not a module.
 
 ## Malformed input (spec Version 0.8, rulings 35 to 40)
 
@@ -282,8 +317,11 @@ prints on standard error the most bytes the decode held.
 
 `src/root.zig` is the module `goat_transformers` for another program: `Engine`,
 `Entity`, `Value`, `KV` and `Distribution`; `Engine.loadPacksOnly` loads the
-named packs of a directory and the model modules they use. `zig build
-module-test` loads two packs through the module and converts a message. The package manifest that `zig fetch`
+named packs of a directory and the model modules they use;
+`Engine.loadTree` loads a whole tree as `goat-xf` does, with an optional
+licence profile (Version 0.29, above). `zig build module-test` loads two packs
+through the module and converts a message, and loads the licence fixtures
+with each profile. The package manifest that `zig fetch`
 reads is `build.zig.zon` at the repository root; `docs/using.md` has the
 dependency line. `Entity.fields` and `Entity.lists` are arrays in insertion
 order with `get(name)` and `contains(name)`; `Entity.put` and

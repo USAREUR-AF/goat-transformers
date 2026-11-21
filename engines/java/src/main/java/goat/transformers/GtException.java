@@ -35,7 +35,9 @@ public final class GtException extends RuntimeException {
         MISSING_VERSION,
         MISSING_WIRE,
         MISSING_MODULE,
-        DUPLICATE_FORMAT;
+        DUPLICATE_FORMAT,
+        // Version 0.29, ruling 3f: a licence file that cannot be read as ruling 1 says, or an unknown profile name.
+        BAD_LICENCE;
 
         private final String specKind;
 

@@ -1,5 +1,6 @@
 """The command-line tool of spec version 0.23, the command-line contract:
-`convert`, `list-formats`, `capability`, `matrix` and `help`.
+`convert`, `list-formats`, `capability`, `matrix`, `licences` (Version 0.29)
+and `help`.
 
 Exit status 0 on success; 1 on a load or call failure, standard error's
 first line being the failure's message, which begins with its kind and a
@@ -11,6 +12,7 @@ import sys
 
 from .engine import Engine, _model_files, _model_from_text
 from .errors import GTError, UnknownFormat
+from .licence import NONE, PROFILES, Licences, json_text, rank_name
 from .packdef import load_pack
 
 PROG = "goat-xf-py"
@@ -21,6 +23,7 @@ USAGE = """usage:
   {p} list-formats <options>
   {p} capability --from <format> --to <format> <options>
   {p} matrix <options>
+  {p} licences [--json] <options>
   {p} help
 
 <options>, in any order, each at most once:
@@ -31,18 +34,26 @@ USAGE = """usage:
   --max-items <n>            the limit on list items one decode holds (default 100000)
   --max-distribution <public|controlled>
                              the distribution limit (default controlled)
+  --profile <open|open+copyleft|everything>
+                             load only the modules and packs of this licence
+                             profile (default: no profile, everything loads)
+
+licences writes one line per loaded pack: directory, format, licence and the
+pack's profile, separated by tabs; with --json (which takes no value) one JSON
+object instead.
 
 convert reads the message on standard input and writes the result on standard
 output with nothing added. Exit status: 0 success, 1 a load or call failure
 (standard error begins with the error kind and a colon), 2 a usage error.
 """.format(p=PROG)
 
-COMMON = ("--packs", "--models", "--packs-only", "--max-items", "--max-distribution")
+COMMON = ("--packs", "--models", "--packs-only", "--max-items", "--max-distribution", "--profile")
 TAKES = {
     "convert": COMMON + ("--from", "--to", "--set"),
     "list-formats": COMMON,
     "capability": COMMON + ("--from", "--to"),
     "matrix": COMMON,
+    "licences": COMMON + ("--json",),
 }
 
 
@@ -64,6 +75,12 @@ def parse_args(argv):
         name = argv[i]
         if name not in names:
             raise Usage("%s does not take %r" % (cmd, name))
+        if name == "--json":  # the one option that takes no value (0.29, ruling 4b)
+            if name in opts:
+                raise Usage("--json given twice")
+            opts[name] = True
+            i += 1
+            continue
         if i + 1 >= len(argv):
             raise Usage("%s has no value" % name)
         value = argv[i + 1]
@@ -82,6 +99,9 @@ def parse_args(argv):
         elif name == "--max-distribution":
             if value not in ("public", "controlled"):
                 raise Usage("--max-distribution takes public or controlled, got %r" % value)
+        elif name == "--profile":
+            if value not in PROFILES:
+                raise Usage("--profile takes %s, got %r" % (", ".join(PROFILES), value))
         elif name == "--packs-only":
             if any(n == "" for n in value.split(",")):
                 raise Usage("--packs-only takes names separated by commas, none empty, got %r" % value)
@@ -97,12 +117,18 @@ def _is_pack_dir(d):
     return os.path.isdir(d) and os.path.isfile(os.path.join(d, "pack.def"))
 
 
-def load(opts):
+def load(opts, read_licences=False):
     """Loading, as Version 0.23 states it: every module of --models (a
     regular file, or a symbolic link to one, named `*.def`), then the packs.
     With --packs-only each name is looked up in --packs, which is not
     listed. Raises GTError on a load failure, OSError on an unreadable
-    --packs listed without --packs-only."""
+    --packs listed without --packs-only.
+
+    With --profile, or with `read_licences` (the `licences` subcommand), the
+    licence files are read first (Version 0.29, ruling 3b), and a module or
+    pack the profile does not hold is skipped. -> (engine, held), held being
+    [(directory, format, licence, profile)] of the loaded packs when the
+    licence files were read."""
     packs_dir = opts.get("--packs")
     if packs_dir is None:
         packs_dir = os.environ.get("GT_PACKS") or "packs"
@@ -113,23 +139,39 @@ def load(opts):
     eng = Engine(max_distribution=limit)
     if "--max-items" in opts:
         eng.set_max_items(int(opts["--max-items"]))
+    lic, skip, held = None, None, []
+    rank_limit = PROFILES.index(opts["--profile"]) if "--profile" in opts else NONE
+    if "--profile" in opts or read_licences:
+        lic = Licences(packs_dir, models_dir).read()  # before any module is loaded (3b)
+        skip = lic.skipped_modules(rank_limit)
+
+    def reach(name, d):
+        if lic is not None:
+            licence, rank = lic.pack(d)
+            if rank > rank_limit:
+                return  # skipped: not otherwise read or checked (3d)
+        pack = load_pack(d)
+        eng.add(pack)
+        if lic is not None:
+            held.append((name, pack.name, licence, rank_name(rank)))
+
     # the modules first, before --packs is read at all (Loading, 1)
     if os.path.isdir(models_dir):
-        for path, text in _model_files(models_dir):
+        for path, text in _model_files(models_dir, skip=skip):
             eng.add_model(_model_from_text(text, path, eng.models, limit))
     if "--packs-only" in opts:
         for name in opts["--packs-only"].split(","):
             d = os.path.join(packs_dir, name)
             if name in (".", "..") or "/" in name or "\\" in name or not _is_pack_dir(d):
                 raise UnknownFormat("no pack directory named %r in %s" % (name, packs_dir), format=name)
-            eng.add(load_pack(d))
+            reach(name, d)
     else:
         # only without --packs-only is --packs listed; unreadable, it exits 1 with no kind
         for name in sorted(os.listdir(packs_dir), key=os.fsencode):
             d = os.path.join(packs_dir, name)
             if not name.startswith(".") and _is_pack_dir(d):
-                eng.add(load_pack(d))
-    return eng
+                reach(name, d)
+    return eng, held
 
 
 def _line(report):
@@ -139,7 +181,16 @@ def _line(report):
 
 
 def run(cmd, opts, sets, stdin):
-    eng = load(opts)
+    eng, held = load(opts, read_licences=(cmd == "licences"))
+    if cmd == "licences":
+        held.sort(key=lambda h: os.fsencode(h[0]))
+        if "--json" in opts:
+            objs = ",".join(
+                '{"pack":"%s","format":"%s","licence":"%s","profile":"%s"}' % tuple(json_text(v) for v in h)
+                for h in held
+            )
+            return ('{"packs":[%s]}\n' % objs).encode("utf-8", "surrogateescape")
+        return "".join("%s\t%s\t%s\t%s\n" % h for h in held).encode("utf-8", "surrogateescape")
     if cmd == "list-formats":
         out = "".join(
             "%s\t%s\t%s\n" % (f, eng.packs[f].version, eng.packs[f].wire)

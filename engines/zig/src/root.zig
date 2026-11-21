@@ -6,6 +6,16 @@
 //!     const out = try engine.convert("cot-xml", "geojson", input, null);
 //!
 //! `loadPacksOnly` loads the named packs and the model modules they need.
+//!
+//! `loadTree` loads a tree as the command-line tool does (spec Version 0.23,
+//! Loading), and takes an optional licence profile (Version 0.29): with
+//! `.profile = "open"` (or `"open+copyleft"`, `"everything"`) it reads
+//! `licences.toml` beside the packs directory, each pack's `REUSE.toml` and
+//! each module's `.def.license`, and loads only what the profile holds; a
+//! file it cannot read, or another profile name, is `error.@"bad-licence"`.
+//! With no profile it reads no licence file.
+//!
+//!     const loaded = try engine.loadTree(.{ .packs_dir = "vendor/goat/packs", .profile = "open" });
 //! The engine keeps what it loads for its whole life and frees nothing on its
 //! own: give it an arena. A failure is a Zig error named as the specification
 //! names it, and `engine.last_error` holds `<kind>: <detail>`.
@@ -42,6 +52,66 @@ test "the module loads two packs and converts" {
     const loaded = try engine.loadPacksOnly("../../packs", "../../model", &.{ "cot-xml", "geojson" });
     try std.testing.expectEqual(@as(usize, 2), loaded.packs.len);
     try std.testing.expectEqualStrings(geojson_feature, try engine.convert("cot-xml", "geojson", cot_event, null));
+}
+
+test {
+    _ = @import("licence.zig");
+}
+
+// Version 0.29, ruling 3: the library loader with a profile.
+const lic_fixtures = "../../packs/conformance/tool-fixtures/";
+
+fn treeFormats(alloc: std.mem.Allocator, loaded: Engine.TreeLoaded) ![]const u8 {
+    var out = std.ArrayList(u8).init(alloc);
+    for (loaded.packs) |p| try out.writer().print("{s}:{s}:{s}:{s} ", .{ p.dir, p.format, p.licence orelse "-", p.profile.name() });
+    return out.items;
+}
+
+test "the loader with a profile loads what the profile holds" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const a = arena.allocator();
+    const packs = lic_fixtures ++ "licences-a/packs";
+
+    var e1 = Engine.init(a);
+    const open = try e1.loadTree(.{ .packs_dir = packs, .profile = "open" });
+    try std.testing.expectEqualStrings("plain:lic-plain:Apache-2.0:open zz-first-by-format:lic-aa:Apache-2.0:open ", try treeFormats(a, open));
+    // `book` (CC-BY-NC-SA) and `derived`, which uses it, and `sa` are not loaded
+    try std.testing.expectEqual(@as(usize, 1), open.modules);
+    try std.testing.expect(e1.findPack("lic-nc") == null);
+
+    var e2 = Engine.init(a);
+    const cl = try e2.loadTree(.{ .packs_dir = packs, .profile = "open+copyleft", .packs_only = &.{ "nc", "uses-sa", "nc" } });
+    try std.testing.expectEqualStrings("uses-sa:lic-uses-sa:Apache-2.0:open+copyleft ", try treeFormats(a, cl));
+
+    // no profile: every pack, and no licence file read
+    var e3 = Engine.init(a);
+    const all = try e3.loadTree(.{ .packs_dir = packs });
+    try std.testing.expectEqual(@as(usize, 11), all.packs.len);
+    try std.testing.expect(all.packs[0].licence == null);
+
+    // no profile but the licences read: a pack in none is loaded, profile none
+    var e4 = Engine.init(a);
+    const closed = try e4.loadTree(.{ .packs_dir = packs, .packs_only = &.{"closed"}, .read_licences = true });
+    try std.testing.expectEqualStrings("closed:lic-closed:OGL-UK-3.0:none ", try treeFormats(a, closed));
+
+    // a name not one of the three is refused before anything is read
+    var e5 = Engine.init(a);
+    try std.testing.expectError(error.@"bad-licence", e5.loadTree(.{ .packs_dir = "no/such/dir", .profile = "Open" }));
+    try std.testing.expect(std.mem.startsWith(u8, e5.last_error, "bad-licence: "));
+
+    // a table that cannot be read: bad-licence with a profile, nothing loaded
+    var e6 = Engine.init(a);
+    try std.testing.expectError(error.@"bad-licence", e6.loadTree(.{ .packs_dir = lic_fixtures ++ "licences-bad-table/packs", .profile = "everything" }));
+    try std.testing.expectEqual(@as(u32, 0), e6.modules.count());
+    var e7 = Engine.init(a);
+    _ = try e7.loadTree(.{ .packs_dir = lic_fixtures ++ "licences-bad-table/packs" });
+    try std.testing.expect(e7.findPack("lic-plain") != null);
+
+    // a module licence file with two licence lines, read before any module loads
+    var e8 = Engine.init(a);
+    try std.testing.expectError(error.@"bad-licence", e8.loadTree(.{ .packs_dir = lic_fixtures ++ "licences-bad-module/packs", .profile = "open", .packs_only = &.{"plain"} }));
+    try std.testing.expectEqual(@as(u32, 0), e8.modules.count());
 }
 
 // Version 0.25, ruling 1c: one instance used from several threads at once

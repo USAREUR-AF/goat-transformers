@@ -78,6 +78,7 @@ set(GT_SOURCES
   src/derive.cpp
   src/engine.cpp
   src/exact.cpp
+  src/licences.cpp
   src/linecheck.cpp
   src/pack.cpp
   src/sequential.cpp

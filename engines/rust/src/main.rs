@@ -6,17 +6,19 @@
 //! goat-xf list-formats <options>
 //! goat-xf capability --from <format> --to <format> <options>
 //! goat-xf matrix <options>
+//! goat-xf licences [--json] <options>
 //! goat-xf help
 //! ```
 //!
 //! `<options>`: `--packs <dir>` (default `../../packs`), `--models <dir>`
 //! (default `<packs>/../model`), `--packs-only <name>[,<name>...]`,
-//! `--max-items <n>`, `--max-distribution <public|controlled>`.
+//! `--max-items <n>`, `--max-distribution <public|controlled>`,
+//! `--profile <open|open+copyleft|everything>` (spec 0.29).
 //!
 //! Exit status 0 on success, 1 on a load or call failure (standard error's
 //! first line begins with the kind and a colon), 2 on a usage error.
 
-use goat_transformers::{Capability, Distribution, Engine, Grade};
+use goat_transformers::{profile_name, Capability, Distribution, Engine, Grade, LoadOptions, Profile};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
@@ -27,6 +29,7 @@ usage: goat-xf <subcommand> [options]
   goat-xf list-formats <options>
   goat-xf capability --from <format> --to <format> <options>
   goat-xf matrix <options>
+  goat-xf licences [--json] <options>
   goat-xf help
 
 options:
@@ -35,6 +38,11 @@ options:
   --packs-only <name>[,<name>...]      load only these packs of --packs, in this order
   --max-items <n>                      the limit on list items one decode holds (default 100000)
   --max-distribution <public|controlled>  refuse controlled modules and packs with `public`
+  --profile <open|open+copyleft|everything>  load only the modules and packs whose licences
+                                       this profile holds (licences.toml beside --packs)
+
+`licences` writes, per loaded pack: directory, format, licence, the pack's own profile;
+with --json, one JSON object instead.
 
 Exit status: 0 success, 1 load or conversion error (stderr begins with its kind), 2 usage error.
 ";
@@ -45,6 +53,7 @@ enum Sub {
     ListFormats,
     Capability,
     Matrix,
+    Licences,
 }
 
 #[derive(Default)]
@@ -57,6 +66,8 @@ struct Args {
     packs_only: Option<Vec<String>>,
     max_items: Option<usize>,
     max_distribution: Option<Distribution>,
+    profile: Option<String>,
+    json: bool,
 }
 
 fn usage_error(why: &str) -> ! {
@@ -88,7 +99,7 @@ fn max_items(text: &str) -> Option<usize> {
     Some(usize::try_from(n).unwrap_or(usize::MAX))
 }
 
-/// Check every argument before anything is loaded (the usage errors 1 to 10).
+/// Check every argument before anything is loaded (the usage errors 1 to 11).
 fn parse(argv: &[String]) -> (Sub, Args) {
     let first = match argv.first() {
         Some(a) => a.as_str(),
@@ -103,6 +114,7 @@ fn parse(argv: &[String]) -> (Sub, Args) {
         "list-formats" => Sub::ListFormats,
         "capability" => Sub::Capability,
         "matrix" => Sub::Matrix,
+        "licences" => Sub::Licences,
         other => usage_error(&format!("unknown subcommand `{}`", other)),
     };
     let takes_pair = matches!(sub, Sub::Convert | Sub::Capability);
@@ -112,13 +124,23 @@ fn parse(argv: &[String]) -> (Sub, Args) {
     while i < argv.len() {
         let name = argv[i].as_str();
         let known = match name {
-            "--packs" | "--models" | "--packs-only" | "--max-items" | "--max-distribution" => true,
+            "--packs" | "--models" | "--packs-only" | "--max-items" | "--max-distribution" | "--profile" => true,
             "--from" | "--to" => takes_pair,
             "--set" => sub == Sub::Convert,
+            "--json" => sub == Sub::Licences,
             _ => false,
         };
         if !known {
             usage_error(&format!("`{}` is not an option of this subcommand", name));
+        }
+        // the one option that takes no value (spec 0.29, ruling 4b)
+        if name == "--json" {
+            if a.json {
+                usage_error("--json is given twice");
+            }
+            a.json = true;
+            i += 1;
+            continue;
         }
         let value = match argv.get(i + 1) {
             Some(v) => v.clone(),
@@ -154,6 +176,10 @@ fn parse(argv: &[String]) -> (Sub, Args) {
                 "public" | "controlled" => a.max_distribution = Distribution::parse(&value),
                 _ => usage_error("--max-distribution is `public` or `controlled`"),
             },
+            "--profile" => match Profile::from_name(&value) {
+                Some(_) => a.profile = Some(value),
+                None => usage_error("--profile is `open`, `open+copyleft` or `everything`"),
+            },
             _ => unreachable!(),
         }
         i += 2;
@@ -162,58 +188,6 @@ fn parse(argv: &[String]) -> (Sub, Args) {
         usage_error("--from and --to are required");
     }
     (sub, a)
-}
-
-/// A `--packs-only` name: one path component, not `.` or `..`.
-fn plain_name(name: &str) -> bool {
-    !(name.is_empty() || name == "." || name == ".." || name.contains('/') || name.contains('\\'))
-}
-
-fn load_pack_file(engine: &mut Engine, def: &Path) -> Result<(), String> {
-    let text = std::fs::read(def).map_err(|e| format!("cannot read {}: {}", def.display(), e))?;
-    let text = String::from_utf8(text).map_err(|_| format!("cannot read {}: not UTF-8", def.display()))?;
-    engine.load_def(&text).map_err(|e| format!("{} (in {})", e, def.display()))
-}
-
-/// Loading, step 2: the packs, in the order the contract states.
-fn load_packs(engine: &mut Engine, packs: &Path, only: Option<&[String]>) -> Result<(), String> {
-    match only {
-        Some(names) => {
-            for name in names {
-                let def = packs.join(name).join("pack.def");
-                if !plain_name(name) || !def.is_file() {
-                    return Err(format!(
-                        "unknown-format: `{}` is not a pack directory of {}",
-                        name,
-                        packs.display()
-                    ));
-                }
-                load_pack_file(engine, &def)?;
-            }
-        }
-        None => {
-            let rd = std::fs::read_dir(packs).map_err(|e| format!("cannot read {}: {}", packs.display(), e))?;
-            let mut names: Vec<Vec<u8>> = Vec::new();
-            for entry in rd {
-                let entry = entry.map_err(|e| format!("cannot read {}: {}", packs.display(), e))?;
-                let name = entry.file_name().into_string().map_err(|n| {
-                    format!("cannot read {}: a name that is not UTF-8 ({:?})", packs.display(), n)
-                })?;
-                if !name.starts_with('.') {
-                    names.push(name.into_bytes());
-                }
-            }
-            names.sort();
-            for name in names {
-                let name = String::from_utf8(name).expect("checked above");
-                let def = packs.join(&name).join("pack.def");
-                if def.is_file() {
-                    load_pack_file(engine, &def)?;
-                }
-            }
-        }
-    }
-    Ok(())
 }
 
 fn grade(g: Grade) -> &'static str {
@@ -233,6 +207,23 @@ fn formats(engine: &Engine) -> Vec<String> {
     let mut f = engine.formats();
     f.sort_by(|a, b| a.as_bytes().cmp(b.as_bytes()));
     f
+}
+
+/// A JSON string as ruling 4c of 0.29 writes it: `"` and `\` escaped, each
+/// character below U+0020 as `\u` and four lower-case hex digits, every
+/// other character itself.
+fn json_text(s: &str) -> String {
+    let mut out = String::from("\"");
+    for c in s.chars() {
+        match c {
+            '"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            c if (c as u32) < 0x20 => out.push_str(&format!("\\u{:04x}", c as u32)),
+            c => out.push(c),
+        }
+    }
+    out.push('"');
+    out
 }
 
 fn write_out(bytes: &[u8]) {
@@ -257,17 +248,51 @@ fn main() {
     if let Some(n) = a.max_items {
         engine.set_max_items(n);
     }
-    let models_dir = PathBuf::from(&models);
-    if models_dir.is_dir() {
-        if let Err(e) = engine.load_model_dir(&models_dir) {
-            fail(&e.to_string());
-        }
-    }
-    if let Err(e) = load_packs(&mut engine, Path::new(&packs), a.packs_only.as_deref()) {
-        fail(&e);
-    }
+    let opts = LoadOptions {
+        models: Some(PathBuf::from(&models)),
+        packs_only: a.packs_only.clone(),
+        profile: a.profile.clone(),
+        read_licences: sub == Sub::Licences,
+    };
+    let mut loaded = match engine.load_tree(Path::new(&packs), &opts) {
+        Ok(l) => l,
+        Err(e) => fail(&e.to_string()),
+    };
+
 
     match sub {
+        Sub::Licences => {
+            loaded.sort_by(|x, y| x.dir.as_bytes().cmp(y.dir.as_bytes()));
+            let rows: Vec<[String; 4]> = loaded
+                .into_iter()
+                .map(|p| {
+                    let l = p.licence.expect("licences are read for `licences`");
+                    [p.dir, p.format, l.licence, profile_name(l.profile).to_string()]
+                })
+                .collect();
+            let mut out = String::new();
+            if a.json {
+                out.push_str("{\"packs\":[");
+                for (n, r) in rows.iter().enumerate() {
+                    if n > 0 {
+                        out.push(',');
+                    }
+                    out.push_str(&format!(
+                        "{{\"pack\":{},\"format\":{},\"licence\":{},\"profile\":{}}}",
+                        json_text(&r[0]),
+                        json_text(&r[1]),
+                        json_text(&r[2]),
+                        json_text(&r[3])
+                    ));
+                }
+                out.push_str("]}\n");
+            } else {
+                for r in &rows {
+                    out.push_str(&format!("{}\t{}\t{}\t{}\n", r[0], r[1], r[2], r[3]));
+                }
+            }
+            write_out(out.as_bytes());
+        }
         Sub::ListFormats => {
             let mut out = String::new();
             for f in formats(&engine) {

@@ -47,6 +47,7 @@ const char* error_kind_name(ErrorKind kind) {
         case ErrorKind::DuplicateKind: return "duplicate-kind";
         case ErrorKind::DuplicateField: return "duplicate-field";
         case ErrorKind::BadDirective: return "bad-directive";
+        case ErrorKind::BadLicence: return "bad-licence";
     }
     return "unknown";
 }

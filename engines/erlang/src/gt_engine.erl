@@ -31,7 +31,8 @@
 -module(gt_engine).
 -include("gt_wires.hrl").
 -export([new/0, set_max_distribution/2, load_model/2, load_pack/2, load_dir/2,
-         load_dir/3, load_packs/3, load_packs/4, model_files/1, model_texts/1, packs/1, modules/1,
+         load_dir/3, load_dir/4, load_packs/3, load_packs/4, load_packs/5,
+         model_files/1, model_texts/1, model_read/1, model_order/1, licence_start/3, packs/1, modules/1,
          model_keys/1, pack/2, set_max_items/2, capability/3]).
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
@@ -466,6 +467,89 @@ load_packs(#{modules := Loaded} = Engine, PacksDir, Names, ModelsDir) ->
            end, Engine, Heads),
     lists:foldl(fun(T, E) -> load_pack(E, T) end, E1, Texts).
 
+%% Loaders with a licence profile (Version 0.29): Profile is `none` (load
+%% as load_dir/3 and load_packs/4, reading no licence file), or one of
+%% open, open+copyleft, everything (an atom, a string or a binary). Any
+%% other value is bad-licence before anything is read. The licence table
+%% is the PacksDir text followed by /../licences.toml.
+load_dir(Engine, PacksDir, ModelsDir, none) -> load_dir(Engine, PacksDir, ModelsDir);
+load_dir(Engine, PacksDir, ModelsDir, Profile) ->
+    {Ctx, Files} = licence_start(PacksDir, ModelsDir, Profile),
+    E1 = lists:foldl(fun({_F, _, Bin}, E) -> load_model(E, Bin) end, Engine, model_order(Files)),
+    {ok, Entries} = file:list_dir(PacksDir),
+    lists:foldl(
+      fun(Entry, E) ->
+              Dir = filename:join(PacksDir, Entry),
+              Def = filename:join(Dir, "pack.def"),
+              case filelib:is_file(Def) of
+                  true ->
+                      Text = file:read_file(Def),
+                      {_Lic, Rank} = gt_licence:pack(Ctx, Dir, Text),
+                      case gt_licence:held(Ctx, Rank) of
+                          true -> {ok, Bin} = Text, load_pack(E, Bin);
+                          false -> E
+                      end;
+                  false -> E
+              end
+      end, E1, lists:sort(Entries)).
+
+load_packs(Engine, PacksDir, Names, ModelsDir, none) ->
+    load_packs(Engine, PacksDir, Names, ModelsDir);
+load_packs(#{modules := Loaded} = Engine, PacksDir, Names, ModelsDir, Profile) ->
+    {Ctx, Files} = licence_start(PacksDir, ModelsDir, Profile),
+    Texts = lists:append(
+              [begin
+                   Dir = filename:join(PacksDir, N),
+                   case file:read_file(filename:join(Dir, "pack.def")) of
+                       {ok, Bin} ->
+                           {_Lic, Rank} = gt_licence:pack(Ctx, Dir, {ok, Bin}),
+                           case gt_licence:held(Ctx, Rank) of
+                               true -> [Bin];
+                               false -> []
+                           end;
+                       {error, _} ->
+                           gt_pack:load_error('unknown-format',
+                                              "no pack.def for ~s in the packs directory", [N])
+                   end
+               end || N <- Names]),
+    Wanted = case Texts of
+                 [] -> [];
+                 _ -> [<<"core">> | [U || T <- Texts, U <- uses_lines(T)]]
+             end,
+    Heads = model_order(Files),
+    ByName = maps:from_list([{Name, Us} || {_, {Name, Us}, _} <- Heads]),
+    Needed = needed_modules(Wanted, ByName, Loaded, #{}),
+    E1 = lists:foldl(
+           fun({_F, {Name, _}, Bin}, E) ->
+                   case maps:is_key(Name, Needed) of
+                       true -> load_model(E, Bin);
+                       false -> E
+                   end
+           end, Engine, Heads),
+    lists:foldl(fun(T, E) -> load_pack(E, T) end, E1, Texts).
+
+%% The profile checked, the licence table and every module file's licence
+%% read (ruling 3b) -> {Ctx, the module files the profile holds}.
+licence_start(PacksDir, ModelsDir, Profile) ->
+    Rank = case gt_licence:profile(Profile) of
+               {ok, R} -> R;
+               error -> gt_pack:load_error('bad-licence',
+                                           "~p is not a profile (open, open+copyleft, everything)",
+                                           [Profile])
+           end,
+    Read = model_read(ModelsDir),
+    Ctx = gt_licence:start(licences_path(PacksDir), ModelsDir, Rank, Read),
+    {Ctx, held_files(Ctx, Read)}.
+
+%% The --packs text as given, followed by /../licences.toml.
+licences_path(PacksDir) when is_binary(PacksDir) -> <<PacksDir/binary, "/../licences.toml">>;
+licences_path(PacksDir) -> PacksDir ++ "/../licences.toml".
+
+%% The module files whose profile the asked profile holds (ruling 3c).
+held_files(Ctx, Read) ->
+    Files = maps:get(files, Ctx),
+    [FR || {F, _} = FR <- Read, gt_licence:held(Ctx, maps:get(F, Files))].
+
 uses_lines(Text) ->
     [U || L <- binary:split(Text, <<"\n">>, [global]),
           [<<"uses">>, U] <- [gt_pack:tokens_lax(L)]].
@@ -496,24 +580,37 @@ model_files(ModelsDir) -> [F || {F, _, _} <- model_entries(ModelsDir)].
 model_texts(ModelsDir) -> [{F, Bin} || {F, _, Bin} <- model_entries(ModelsDir)].
 
 %% -> [{File, {ModuleName, [UsesName]}, Text}] in the order of model_files/1.
-model_entries(ModelsDir) ->
+model_entries(ModelsDir) -> model_order(model_read(ModelsDir)).
+
+%% The module files of a directory, each read once, before any is ordered by
+%% its `uses`: `core.def` first, then the other names ending in `.def` in
+%% byte order, each a regular file or a symbolic link to one (Version 0.23,
+%% Loading, 1) -> [{File, {ok, Text} | {error, Reason}}]. A directory that
+%% cannot be listed holds no module.
+model_read(ModelsDir) ->
     case file:list_dir(ModelsDir) of
         {ok, Files} ->
-            Defs = [F || F <- lists:sort(Files), lists:suffix(".def", F)],
+            Defs = [F || F <- lists:sort(Files), lists:suffix(".def", F),
+                         filelib:is_regular(filename:join(ModelsDir, F))],
             Ordered = [F || F <- Defs, F =:= "core.def"] ++ [F || F <- Defs, F =/= "core.def"],
-            Read = [begin
-                        {ok, Bin} = file:read_file(filename:join(ModelsDir, F)),
-                        {F, module_head(Bin), Bin}
-                    end || F <- Ordered],
-            ByName = maps:from_list([{Name, F} || {F, {Name, _}, _} <- Read]),
-            Uses = maps:from_list([{F, [maps:get(U, ByName) || U <- Us, maps:is_key(U, ByName)]}
-                                   || {F, {_, Us}, _} <- Read]),
-            {Out, _} = lists:foldl(fun(F, Acc) -> place_module(F, Uses, [], Acc) end,
-                                   {[], #{}}, Ordered),
-            ByFile = maps:from_list([{F, E} || {F, _, _} = E <- Read]),
-            [maps:get(F, ByFile) || F <- lists:reverse(Out)];
+            [{F, file:read_file(filename:join(ModelsDir, F))} || F <- Ordered];
         {error, _} -> []
     end.
+
+%% The files of model_read/1, each placed after the modules it uses.
+model_order(Files) ->
+    Ordered = [F || {F, _} <- Files],
+    Read = [begin
+                {ok, Bin} = R,
+                {F, module_head(Bin), Bin}
+            end || {F, R} <- Files],
+    ByName = maps:from_list([{Name, F} || {F, {Name, _}, _} <- Read]),
+    Uses = maps:from_list([{F, [maps:get(U, ByName) || U <- Us, maps:is_key(U, ByName)]}
+                           || {F, {_, Us}, _} <- Read]),
+    {Out, _} = lists:foldl(fun(F, Acc) -> place_module(F, Uses, [], Acc) end,
+                           {[], #{}}, Ordered),
+    ByFile = maps:from_list([{F, E} || {F, _, _} = E <- Read]),
+    [maps:get(F, ByFile) || F <- lists:reverse(Out)].
 
 %% The module name and the `uses` names of a module text. Only a line that
 %% holds `module` or `uses` can tokenise to either, so only those lines are
