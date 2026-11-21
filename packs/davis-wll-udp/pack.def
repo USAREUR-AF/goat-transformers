@@ -1,0 +1,73 @@
+# A WeatherLink Live real-time UDP broadcast packet (port 22222). Public.
+format        davis-wll-udp
+version       0.1.0
+distribution  public
+source        "WeatherLink Live Local API (Davis Instruments), github.com/weatherlink/weatherlink-live-local-api commit 4383b984b1dcf1ab374fb2c2527aea86cfa523a8, API.md; no licence stated; member names and units restated"
+uses          davis
+wire          json
+field  uid  did  string
+field  time_ms  ts  iscale:1000
+group  davis.conditions  conditions
+  field  davis.cond_lsid  lsid  int
+  field  davis.cond_data_structure_type  data_structure_type  int
+  field  davis.cond_txid  txid  int
+  field  davis.cond_temp  temp  float
+  field  davis.cond_hum  hum  float
+  field  davis.cond_dew_point  dew_point  float
+  field  davis.cond_wet_bulb  wet_bulb  float
+  field  davis.cond_heat_index  heat_index  float
+  field  davis.cond_wind_chill  wind_chill  float
+  field  davis.cond_thw_index  thw_index  float
+  field  davis.cond_thsw_index  thsw_index  float
+  field  davis.cond_wind_speed_last  wind_speed_last  float
+  field  davis.cond_wind_dir_last  wind_dir_last  float
+  field  davis.cond_wind_speed_avg_last_1_min  wind_speed_avg_last_1_min  float
+  field  davis.cond_wind_dir_scalar_avg_last_1_min  wind_dir_scalar_avg_last_1_min  float
+  field  davis.cond_wind_speed_avg_last_2_min  wind_speed_avg_last_2_min  float
+  field  davis.cond_wind_dir_scalar_avg_last_2_min  wind_dir_scalar_avg_last_2_min  float
+  field  davis.cond_wind_speed_hi_last_2_min  wind_speed_hi_last_2_min  float
+  field  davis.cond_wind_dir_at_hi_speed_last_2_min  wind_dir_at_hi_speed_last_2_min  float
+  field  davis.cond_wind_speed_avg_last_10_min  wind_speed_avg_last_10_min  float
+  field  davis.cond_wind_dir_scalar_avg_last_10_min  wind_dir_scalar_avg_last_10_min  float
+  field  davis.cond_wind_speed_hi_last_10_min  wind_speed_hi_last_10_min  float
+  field  davis.cond_wind_dir_at_hi_speed_last_10_min  wind_dir_at_hi_speed_last_10_min  float
+  field  davis.cond_rain_size  rain_size  int
+  field  davis.cond_rain_rate_last  rain_rate_last  float
+  field  davis.cond_rain_rate_hi  rain_rate_hi  float
+  field  davis.cond_rainfall_last_15_min  rainfall_last_15_min  float
+  field  davis.cond_rain_rate_hi_last_15_min  rain_rate_hi_last_15_min  float
+  field  davis.cond_rainfall_last_60_min  rainfall_last_60_min  float
+  field  davis.cond_rainfall_last_24_hr  rainfall_last_24_hr  float
+  field  davis.cond_rain_15_min  rain_15_min  float
+  field  davis.cond_rain_60_min  rain_60_min  float
+  field  davis.cond_rain_24_hr  rain_24_hr  float
+  field  davis.cond_rain_storm  rain_storm  float
+  field  davis.cond_rain_storm_start_at  rain_storm_start_at  int
+  field  davis.cond_solar_rad  solar_rad  float
+  field  davis.cond_uv_index  uv_index  float
+  field  davis.cond_rx_state  rx_state  int
+  field  davis.cond_trans_battery_flag  trans_battery_flag  int
+  field  davis.cond_rainfall_daily  rainfall_daily  float
+  field  davis.cond_rainfall_monthly  rainfall_monthly  float
+  field  davis.cond_rainfall_year  rainfall_year  float
+  field  davis.cond_rain_storm_last  rain_storm_last  float
+  field  davis.cond_rain_storm_last_start_at  rain_storm_last_start_at  int
+  field  davis.cond_rain_storm_last_end_at  rain_storm_last_end_at  int
+  field  davis.cond_temp_1  temp_1  float
+  field  davis.cond_temp_2  temp_2  float
+  field  davis.cond_temp_3  temp_3  float
+  field  davis.cond_temp_4  temp_4  float
+  field  davis.cond_moist_soil_1  moist_soil_1  float
+  field  davis.cond_moist_soil_2  moist_soil_2  float
+  field  davis.cond_moist_soil_3  moist_soil_3  float
+  field  davis.cond_moist_soil_4  moist_soil_4  float
+  field  davis.cond_wet_leaf_1  wet_leaf_1  float
+  field  davis.cond_wet_leaf_2  wet_leaf_2  float
+  field  davis.cond_temp_in  temp_in  float
+  field  davis.cond_hum_in  hum_in  float
+  field  davis.cond_dew_point_in  dew_point_in  float
+  field  davis.cond_heat_index_in  heat_index_in  float
+  field  davis.cond_bar_sea_level  bar_sea_level  float
+  field  davis.cond_bar_trend  bar_trend  float
+  field  davis.cond_bar_absolute  bar_absolute  float
+end

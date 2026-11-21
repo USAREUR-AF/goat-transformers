@@ -1,0 +1,13 @@
+{
+  "name": "davis-wll-http-real-time-response",
+  "from": "davis-wll-http",
+  "to": "davis-wll-http",
+  "input": "{\"data\":{\"broadcast_port\":22222,\"duration\":600},\"error\":null}",
+  "expect": "{\"data\":{\"broadcast_port\":22222,\"duration\":600}}",
+  "model": {
+    "davis.broadcast_port": "22222",
+    "davis.duration_s": "600"
+  },
+  "source": "constructed",
+  "reference": "WeatherLink Live local API (API.md, 4383b984); documents by tools/gen/davis-vectors.py"
+}

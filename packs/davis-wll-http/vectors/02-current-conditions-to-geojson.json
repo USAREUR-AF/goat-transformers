@@ -1,0 +1,9 @@
+{
+  "name": "davis-wll-http-current-conditions-to-geojson",
+  "from": "davis-wll-http",
+  "to": "geojson",
+  "input": "{\"data\":{\"did\":\"001D0AF10203\",\"ts\":1795252800,\"conditions\":[{\"lsid\":51001,\"data_structure_type\":1,\"txid\":1,\"temp\":61.3,\"hum\":72.5,\"dew_point\":52.1,\"wind_speed_last\":3,\"wind_dir_last\":245,\"rain_size\":2,\"rain_rate_last\":0,\"solar_rad\":412,\"uv_index\":2.5,\"rx_state\":0,\"trans_battery_flag\":0,\"rainfall_daily\":14,\"wet_bulb\":null},{\"lsid\":51002,\"data_structure_type\":3,\"bar_sea_level\":30.112,\"bar_trend\":-0.015,\"bar_absolute\":29.874}]},\"error\":null}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1795252800000},\"id\":\"001D0AF10203\"}",
+  "source": "constructed",
+  "reference": "WeatherLink Live local API (API.md, 4383b984); documents by tools/gen/davis-vectors.py; no position in the message; the device id is the feature id"
+}
