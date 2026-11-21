@@ -149,24 +149,43 @@ func (r *seqReader) body(b *seqBody) (*seqKind, error) {
 	if len(b.kinds) == 0 {
 		return nil, nil
 	}
+	// Kind start: where the common lines ended (0.33). A `when … at` reads
+	// its window there plus its offset and does not move the cursor; a plain
+	// `when` reads at the cursor and moves it. A `when` any of whose bits lie
+	// beyond the input or the enclosing extent does not hold (rulings 6, 7
+	// and 17).
+	start := r.pos
+	at := make([]int, 0, 4)
 	for _, k := range b.kinds {
-		pos, holds := r.pos, true
+		pos, holds := start, true
+		at = at[:0]
 		for _, w := range k.whens {
-			if pos+w.n > r.limit || !inRanges(w.rng, getBits(r.data, pos, w.n, r.p.msb)) {
+			from := pos
+			if w.at {
+				if w.off > uint64(r.limit-start) {
+					holds = false
+					break
+				}
+				from = start + int(w.off)
+			}
+			if from+w.n > r.limit || !inRanges(w.rng, getBits(r.data, from, w.n, r.p.msb)) {
 				holds = false
 				break
 			}
-			pos += w.n
+			at = append(at, from)
+			if !w.at {
+				pos += w.n
+			}
 		}
 		if holds {
 			// The selected kind's `when … as` lines set their keys; a kind
 			// tested and not selected sets nothing (0.30 ruling 12).
-			for _, w := range k.whens {
+			for i, w := range k.whens {
 				if w.key != "" {
-					r.setAs(w.key, getBits(r.data, r.pos, w.n, r.p.msb))
+					r.setAs(w.key, getBits(r.data, at[i], w.n, r.p.msb))
 				}
-				r.pos += w.n
 			}
+			r.pos = pos
 			return k, r.nodes(k.nodes)
 		}
 	}
@@ -421,6 +440,122 @@ func asHolds(whens []*seqNode, rec *Item) bool {
 		}
 	}
 	return true
+}
+
+// seqKindWrite is a kind being written whose `when … at` windows are not yet
+// settled (0.33): where the kind starts, where its last window ends relative
+// to that, and the field lines written over the windows.
+type seqKindWrite struct {
+	k      *seqKind
+	start  int
+	end    int
+	fields []seqFieldAt
+	done   bool
+}
+
+// seqFieldAt is one field line written in a kind before its windows are
+// settled; fresh is set when the line gave its key its decoded value.
+type seqFieldAt struct {
+	f     *Field
+	at    int
+	fresh bool
+}
+
+// newKindWrite returns the pending windows of a kind that starts at bit
+// start, nil when the kind has no `when … at`.
+func newKindWrite(k *seqKind, start int) *seqKindWrite {
+	end := -1
+	for _, w := range k.whens {
+		if w.at && int(w.off)+w.n > end {
+			end = int(w.off) + w.n
+		}
+	}
+	if end < 0 {
+		return nil
+	}
+	return &seqKindWrite{k: k, start: start, end: end}
+}
+
+// keyOrNil returns the key of a field line, "" for none.
+func (f *Field) keyOrNil() string {
+	if f == nil {
+		return ""
+	}
+	return f.Key
+}
+
+// markHeld records bits a held key wrote (0.33 ruling 12).
+func (w *seqWriter) markHeld(at, n int) {
+	if w.held == nil {
+		w.held = map[int]bool{}
+	}
+	for i := 0; i < n; i++ {
+		w.held[at+i] = true
+	}
+}
+
+// settle writes the windows of a kind in line order (0.33, Encode): bits as
+// written that match the `when`, and agree with a held `as` key, stand;
+// otherwise the window takes the held `as` value or the first listed value,
+// and a bit a held key wrote that this changes is transform-encode. The
+// field lines over the windows are then read back as decode would read them,
+// for a switch that follows.
+func (w *seqWriter) settle(ks *seqKindWrite, sc seqScope) error {
+	ks.done = true
+	w.buf.need(ks.start + ks.end)
+	data, msb := w.buf.data, w.p.msb
+	for _, wn := range ks.k.whens {
+		if !wn.at {
+			continue
+		}
+		start := ks.start + int(wn.off)
+		cur := getBits(data, start, wn.n, msb)
+		var hv uint64
+		held := false
+		if wn.key != "" {
+			if v, ok := sc.rec.Fields[wn.key]; ok {
+				u, m := asMatch(wn, v)
+				if !m {
+					return w.fail("when … as %s on line %d: the entity holds %s, which the when does not match; the output would decode another value", wn.key, wn.line, v.String())
+				}
+				hv, held = u, true
+			}
+		}
+		val := cur
+		if !inRanges(wn.rng, cur) || held && hv != cur {
+			val = wn.num
+			if held {
+				val = hv
+			}
+			tmp := append([]byte(nil), data...)
+			putBits(tmp, start, wn.n, val, msb)
+			for i := 0; i < wn.n; i++ {
+				b := start + i
+				if w.held[b] && bitAt(tmp, b, msb) != bitAt(data, b, msb) {
+					return w.fail("the window of the when on line %d would change a bit of a key the entity holds; the output would decode a different value", wn.line)
+				}
+			}
+			putBits(data, start, wn.n, val, msb)
+			// The bits are now an earlier window's (ruling 26).
+			for i := 0; i < wn.n; i++ {
+				delete(w.held, start+i)
+			}
+		}
+		if wn.key != "" {
+			sc.vals[wn.key] = Value{Kind: KindInt, I: int64(val)}
+		}
+	}
+	for _, fa := range ks.fields {
+		if !fa.fresh {
+			continue
+		}
+		for _, f := range append([]*Field{fa.f}, fa.f.also...) {
+			delete(sc.vals, f.Key)
+			delete(sc.bad, f.Key)
+		}
+		readBack(w.p, fa.f, sc, data, fa.at)
+	}
+	return nil
 }
 
 // seqFieldDecode reads the bits of a field line at a bit of data as a decode
@@ -806,6 +941,8 @@ type seqWriter struct {
 	// exts holds the extents open at the cursor: the message, then each
 	// length block (0.21).
 	exts []*seqExtent
+	// held holds the bits a held key wrote, for the windows of 0.33.
+	held map[int]bool
 }
 
 // seqCountAt is one count field written: where it is and the number of items
@@ -1265,8 +1402,20 @@ func seqFieldValue(p *Pack, f *Field, sc seqScope) (Value, *Field, bool, error) 
 // where an `fx` line is one bit.
 func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 	p := w.p
+	// ks is the kind whose look-ahead windows are still to be settled
+	// (0.33): they are settled once the cursor has passed the end of every
+	// window, before any later line, and so before any switch, reads a key
+	// back.
+	var ks *seqKindWrite
 	for i, n := range nodes {
+		if ks != nil && !ks.done && w.pos-ks.start >= ks.end {
+			if err := w.settle(ks, sc); err != nil {
+				return err
+			}
+		}
 		switch n.op {
+		case seqKindStart:
+			ks = newKindWrite(n.kind, w.pos)
 		case seqField:
 			f := n.f
 			if f.uper != nil {
@@ -1295,11 +1444,25 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			} else if err := putBitsField(p, from, v, w.buf.data, at); err != nil {
 				return err
 			}
+			if ks != nil && !ks.done {
+				// Bits a held key wrote (0.33 ruling 12): the line wrote the
+				// value of a key the entity holds, not a default.
+				if _, held := sc.rec.Fields[from.keyOrNil()]; ok && held {
+					w.markHeld(at, f.loc.blen)
+				}
+				_, done := sc.vals[f.Key]
+				ks.fields = append(ks.fields, seqFieldAt{f: f, at: at, fresh: !done})
+			}
 			// What a decode would read back from the bits (0.20).
 			readBack(p, f, sc, w.buf.data, at)
 		case seqConst:
 			w.put(w.alloc(n.n), n.n, n.num)
 		case seqWhen:
+			if n.at {
+				// A look-ahead occupies no bits of its own: its window is
+				// settled once the kind's lines over it are written.
+				continue
+			}
 			v := n.num
 			if n.key != "" {
 				u, ok := asValue(n, sc.rec)
@@ -1443,6 +1606,9 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 				return err
 			}
 		}
+	}
+	if ks != nil && !ks.done {
+		return w.settle(ks, sc)
 	}
 	return nil
 }

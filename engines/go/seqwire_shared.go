@@ -172,7 +172,15 @@ type seqNode struct {
 	sw    *seqSwitch   // switch
 	cnt   *seqCountDef // count
 	key   string       // when: the key `as` binds the bits to, "" for none (0.30)
+	at    bool         // when: a look-ahead `when … at <off>` (0.33)
+	off   uint64       // when … at: the offset in bits from kind start
+	kind  *seqKind     // seqKindStart: the kind whose lines follow
 }
+
+// seqKindStart marks, in the lines an encode writes for a kind, where the
+// common lines end and the kind's own lines begin (0.33): its windows are
+// settled from there. It is not a line of the pack.
+const seqKindStart = 100
 
 // seqKind is one kind of a body: of the message, or of the items of a group.
 type seqKind struct {
@@ -696,10 +704,34 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			rs = []numRange{{}}
 		}
 		node := &seqNode{op: seqWhen, n: ln, num: rs[0].lo, rng: rs, line: n}
-		// `as <model-key>` after the values (0.30). Its syntax is checked
-		// after the file (ruling 16); ParsePack lets a line through the
-		// argument count only when its third token is `as`.
-		if len(args) > 2 {
+		if hasToken(args[2:], "at") {
+			// `when <len> <values> at <n> [as <k>]` (0.33): every `at`
+			// error is a check after the file, reported after the key and
+			// value checks (rulings 10 and 25).
+			rest := args[2:]
+			form := rest[0] == "at" && (len(rest) == 2 || len(rest) == 4 && rest[2] == "as" && rest[3] != "as" && rest[3] != "at")
+			switch {
+			case !form:
+				p.atLater(sp.bad(n, "", "a when line is `when <len> <values> [at <n>] [as <model-key>]`, in that order"))
+			case top.kind == nil:
+				p.atLater(sp.bad(n, "", "at stands on a common when; a look-ahead is valid only on a when of a kind"))
+			default:
+				off, ok := parsePlainUint64(rest[1])
+				if !ok {
+					p.atLater(sp.bad(n, "", "at takes plain digits that fit in 64 bits, got %q", rest[1]))
+				}
+				node.at, node.off = true, off
+				if len(rest) == 4 {
+					node.key = rest[3]
+					p.keyRefs = append(p.keyRefs, keyRef{key: node.key, line: n, as: true})
+					mark(node.key)
+				}
+			}
+		} else if len(args) > 2 {
+			// `as <model-key>` after the values (0.30). Its syntax is
+			// checked after the file (ruling 16); ParsePack lets a line
+			// through the argument count only when its third token is `as`
+			// or `at`.
 			switch {
 			case len(args) == 3:
 				sp.lateErr(sp.bad(n, "", "when … as needs a model key after as"))
@@ -1127,6 +1159,69 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 	return nil
 }
 
+// parsePlainUint64 reads plain decimal digits, leading zeros allowed, that
+// fit in 64 bits.
+func parsePlainUint64(s string) (uint64, bool) {
+	if !isDigits(s) {
+		return 0, false
+	}
+	v, err := strconv.ParseUint(s, 10, 64)
+	return v, err == nil
+}
+
+// atLater records an `at` error (0.33), reported after the key and value
+// checks of the load (rulings 10 and 25); the first one stays.
+func (p *Pack) atLater(err error) {
+	if p.atErr == nil {
+		p.atErr = err
+	}
+}
+
+// atWindows checks that the window of each `when … at` is fixed in its kind
+// (0.33, Load errors): walking the kind's lines from its first line, the
+// lines that occupy bits before the window's end are each a `when` without
+// `at`, a `const`, a `pad`, or a `field` whose locator is a bit length; and
+// they reach the window's end. `requires`, `default` and `also` are not
+// lines of the walk here: they occupy no bits.
+func (sp *seqParser) atWindows() error {
+	for _, b := range sp.bodies {
+		for _, k := range b.kinds {
+			lines := append(append([]*seqNode(nil), k.whens...), k.nodes...)
+			for _, w := range k.whens {
+				if !w.at {
+					continue
+				}
+				end := w.off + uint64(w.n)
+				if end < w.off {
+					return sp.bad(w.line, "", "the window of the when on line %d is not fixed in kind %s: it ends past the kind's last line", w.line, k.name)
+				}
+				var sum uint64
+				for _, n := range lines {
+					if sum >= end {
+						break
+					}
+					var width int
+					switch {
+					case n.op == seqWhen && n.at:
+						continue
+					case n.op == seqWhen, n.op == seqConst, n.op == seqPad:
+						width = n.n
+					case n.op == seqField && !n.f.until && n.f.uper == nil:
+						width = n.f.loc.blen
+					default:
+						return sp.bad(w.line, "", "the window of the when on line %d is not fixed in kind %s: line %d, which it reaches, has no fixed width", w.line, k.name, n.line)
+					}
+					sum += uint64(width)
+				}
+				if sum < end {
+					return sp.bad(w.line, "", "the window of the when on line %d is not fixed in kind %s: it ends past the kind's last line", w.line, k.name)
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // twoCountForm reports whether group arguments take the form of 0.31:
 // `count` then two or more tokens, one of them starting with '@'. A group
 // `count` with one token keeps the forms of 0.8 and 0.21.
@@ -1368,7 +1463,7 @@ func (sp *seqParser) bind() {
 			for _, d := range k.defaults {
 				k.defs[d.Key] = d
 			}
-			k.all = append(append(append([]*seqNode(nil), b.common...), k.whens...), k.nodes...)
+			k.all = append(append(append(append([]*seqNode(nil), b.common...), &seqNode{op: seqKindStart, kind: k}), k.whens...), k.nodes...)
 		}
 	}
 }

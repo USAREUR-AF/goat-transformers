@@ -238,6 +238,14 @@ func (e *Engine) AddPack(p *Pack) error {
 			return err
 		}
 	}
+	// The `at` checks of 0.33 run last among the module checks: the form,
+	// then the fixed window (rulings 10, 24 and 25).
+	if p.atErr != nil {
+		return p.atErr
+	}
+	if p.winErr != nil {
+		return p.winErr
+	}
 	if prev, dup := e.packs[p.Format]; dup {
 		return &Error{Kind: ErrDuplicateFormat, Format: p.Format, Source: p.Source, Detail: "already loaded from " + prev.Source}
 	}
