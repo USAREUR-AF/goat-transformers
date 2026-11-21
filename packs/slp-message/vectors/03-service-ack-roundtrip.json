@@ -1,0 +1,12 @@
+{
+  "name": "service-ack-roundtrip",
+  "from": "slp-message",
+  "to": "slp-message",
+  "input": "0205000015000000000002020005656e2d47420000",
+  "expect": "0205000015000000000002020005656e2d47420000",
+  "model": {
+    "slp.function_id": "5",
+    "slp.error_code": "0"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 2608 section 8.4; a SrvAck with no error; expect derived there, no engine run"
+}

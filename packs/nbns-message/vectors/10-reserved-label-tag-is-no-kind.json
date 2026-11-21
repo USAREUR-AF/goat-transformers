@@ -1,0 +1,8 @@
+{
+  "name": "reserved-label-tag-is-no-kind",
+  "from": "nbns-message",
+  "to": "nbns-message",
+  "input": "0001000000010000000000006000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.2.1; a name whose first octet has the reserved high bits 01; expect derived there, no engine run"
+}

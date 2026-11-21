@@ -1,0 +1,5 @@
+Packs nbns-message, nbdgm-message; modules nbns, nbdgm
+  IETF RFC 1002, Protocol Standard for a NetBIOS Service on a TCP/UDP
+  Transport: Detailed Specifications (March 1987), sections 4.1, 4.2 and
+  4.4, https://www.rfc-editor.org/rfc/rfc1002.txt. No copyright line;
+  distribution unlimited; BCP 78. Layouts restated; no text copied.

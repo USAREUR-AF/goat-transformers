@@ -1,0 +1,16 @@
+{
+  "name": "broadcast-fragment-roundtrip",
+  "from": "nbdgm-message",
+  "to": "nbdgm-message",
+  "input": "12054322c0000215008a00c80040204544454d454a4546454f46454442434143414341434143414341434143414141076578616d706c6503636f6d0020464845504643454c45484643455046464641434143414341434143414341424f076578616d706c6503636f6d000001020304050607",
+  "expect": "12054322c0000215008a00c80040204544454d454a4546454f46454442434143414341434143414341434143414141076578616d706c6503636f6d0020464845504643454c45484643455046464641434143414341434143414341424f076578616d706c6503636f6d000001020304050607",
+  "model": {
+    "nbdgm.msg_type": "18",
+    "nbdgm.source_node_type": "1",
+    "nbdgm.first": "0",
+    "nbdgm.more": "1",
+    "nbdgm.packet_offset": "64",
+    "nbdgm.destination_name_label2": "example"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.4; a broadcast datagram fragment from a P node, not the first, more to follow, names with a scope; expect derived there, no engine run"
+}

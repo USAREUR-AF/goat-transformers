@@ -1,0 +1,12 @@
+{
+  "name": "every-bit-edge-roundtrip",
+  "from": "llmnr-header",
+  "to": "llmnr-header",
+  "input": "ffffffffffffffffffffffff",
+  "expect": "ffffffffffffffffffffffff",
+  "model": {
+    "llmnr.z": "15",
+    "inet.dns_rcode": "15"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 4795 section 2.1.1; every bit set, the reserved Z bits included; expect derived there, no engine run"
+}

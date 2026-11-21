@@ -1,0 +1,8 @@
+{
+  "name": "cut-record-is-malformed",
+  "from": "nbns-message",
+  "to": "nbns-message",
+  "input": "8a0185000000000100000000204547454a454d45464644464346474341434143414341434143414341434143410000200001000493e0000c4000c000020a4000c6",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.2; the RDLENGTH states 12 octets and 9 follow; expect derived there, no engine run"
+}

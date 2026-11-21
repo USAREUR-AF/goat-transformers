@@ -1,0 +1,88 @@
+# SLPv2 message (RFC 2608 section 8): the header with the whole-message length and the language tag, then
+# the Service Request strings, the Service Reply URL entries or the acknowledgement's error code; other
+# functions as octets. Written by tools/gen/dirnaming-pack.py; do not edit by hand.
+format        slp-message
+version       0.1.0
+distribution  public
+source        "IETF RFC 2608, Service Location Protocol, Version 2, June 1999, sections 4.3, 8, 8.1, 8.2, 8.4 and 9.2, https://www.rfc-editor.org/rfc/rfc2608.txt; layouts restated"
+uses          slp
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  slpv2
+when  8  2
+field  slp.function_id  8  uint
+length  24  whole
+field  slp.overflow  1  uint
+field  slp.fresh  1  uint
+field  slp.request_mcast  1  uint
+field  slp.reserved  13  uint
+field  slp.next_extension_offset  24  uint
+field  slp.xid  16  uint
+length  16  bytes
+  group  slp.language_tag  rest
+    field  slp.octet  8  uint
+  end
+end
+switch  slp.function_id
+  case  1
+    length  16  bytes
+      group  slp.pr_list  rest
+        field  slp.octet  8  uint
+      end
+    end
+    length  16  bytes
+      group  slp.service_type  rest
+        field  slp.octet  8  uint
+      end
+    end
+    length  16  bytes
+      group  slp.scope_list  rest
+        field  slp.octet  8  uint
+      end
+    end
+    length  16  bytes
+      group  slp.predicate  rest
+        field  slp.octet  8  uint
+      end
+    end
+    length  16  bytes
+      group  slp.spi  rest
+        field  slp.octet  8  uint
+      end
+    end
+  case  2
+    field  slp.error_code  16  uint
+    count  url_count  16
+    group  slp.url_entries  count  @url_count
+      field  slp.url_reserved  8  uint
+      field  slp.url_lifetime  16  uint
+      length  16  bytes
+        group  slp.url  rest
+          field  slp.octet  8  uint
+        end
+      end
+      count  url_auth_count  8
+      group  slp.url_auths  count  @url_auth_count
+        field  slp.auth_bsd  16  uint
+        length  16  bytes  plus  4
+          field  slp.auth_timestamp  32  uint
+          length  16  bytes
+            group  slp.auth_spi  rest
+              field  slp.octet  8  uint
+            end
+          end
+          group  slp.auth_data  rest
+            field  slp.octet  8  uint
+          end
+        end
+      end
+    end
+  case  5
+    field  slp.error_code  16  uint
+  else
+    group  slp.body  rest
+      field  slp.octet  8  uint
+    end
+end

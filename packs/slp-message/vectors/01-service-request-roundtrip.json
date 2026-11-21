@@ -1,0 +1,16 @@
+{
+  "name": "service-request-roundtrip",
+  "from": "slp-message",
+  "to": "slp-message",
+  "input": "020100004a200000000001010002656e00093139322e302e322e39000f736572766963653a7072696e746572000744454641554c540011286c6f636174696f6e3d666c6f6f7232290000",
+  "expect": "020100004a200000000001010002656e00093139322e302e322e39000f736572766963653a7072696e746572000744454641554c540011286c6f636174696f6e3d666c6f6f7232290000",
+  "model": {
+    "slp.function_id": "1",
+    "slp.request_mcast": "1",
+    "slp.xid": "257",
+    "slp.language_tag.#": "2",
+    "slp.service_type.#": "15",
+    "slp.spi.#": "0"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 2608 section 8.1; a multicast SrvRqst with a previous responder, type, scope and predicate, no SPI; expect derived there, no engine run"
+}

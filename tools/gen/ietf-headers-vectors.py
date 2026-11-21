@@ -36,6 +36,7 @@ differs.
 import calendar
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -570,7 +571,9 @@ def build_files(out):
             out.write(d + "/" + name, json.dumps(v, indent=2, ensure_ascii=False) + "\n")
             keep.add(name)
         for old in out.listdir(d):
-            if old.endswith(".json") and old not in keep:
+            # only the numbered files this generator writes; a cross vector
+            # another pack keeps here (to-<target>-<name>.json) is not ours
+            if re.match(r"\d{2}-.*\.json$", old) and old not in keep:
                 out.remove(d + "/" + old)
         written[pack_name] = len(vecs)
     for holder, prefix, fn in CROSS:

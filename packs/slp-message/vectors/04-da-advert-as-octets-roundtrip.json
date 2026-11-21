@@ -1,0 +1,11 @@
+{
+  "name": "da-advert-as-octets-roundtrip",
+  "from": "slp-message",
+  "to": "slp-message",
+  "input": "0208000049000000000000000002656e00005f0000000023736572766963653a6469726563746f72792d6167656e743a2f2f3139322e302e322e31000744454641554c540000000000",
+  "expect": "0208000049000000000000000002656e00005f0000000023736572766963653a6469726563746f72792d6167656e743a2f2f3139322e302e322e31000744454641554c540000000000",
+  "model": {
+    "slp.function_id": "8"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 2608 section 8; an unsolicited DAAdvert (XID 0), its body kept as octets; expect derived there, no engine run"
+}

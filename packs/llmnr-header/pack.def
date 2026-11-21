@@ -1,0 +1,24 @@
+# LLMNR header (RFC 4795 section 2.1.1): the 12-octet DNS header with the conflict and tentative bits.
+# Written by tools/gen/dirnaming-pack.py; do not edit by hand.
+format        llmnr-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 4795, Link-Local Multicast Name Resolution (LLMNR), January 2007, section 2.1.1, https://www.rfc-editor.org/rfc/rfc4795.txt; with RFC 1035 section 4.1.1 for the shared header fields; layout restated"
+uses          inet
+uses          llmnr
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.dns_id           0:0:16  uint
+field  inet.dns_qr           0:16:1  uint
+field  inet.dns_opcode       0:17:4  uint
+field  llmnr.conflict        0:21:1  uint
+field  inet.dns_tc           0:22:1  uint
+field  llmnr.tentative       0:23:1  uint
+field  llmnr.z               0:24:4  uint
+field  inet.dns_rcode        0:28:4  uint
+field  inet.dns_qdcount      0:32:16  uint
+field  inet.dns_ancount      0:48:16  uint
+field  inet.dns_nscount      0:64:16  uint
+field  inet.dns_arcount      0:80:16  uint

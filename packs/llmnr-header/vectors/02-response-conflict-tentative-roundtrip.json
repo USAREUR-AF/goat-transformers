@@ -1,0 +1,14 @@
+{
+  "name": "response-conflict-tentative-roundtrip",
+  "from": "llmnr-header",
+  "to": "llmnr-header",
+  "input": "123485000001000100000000",
+  "expect": "123485000001000100000000",
+  "model": {
+    "inet.dns_qr": "1",
+    "llmnr.conflict": "1",
+    "llmnr.tentative": "1",
+    "inet.dns_ancount": "1"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 4795 section 2.1.1; a response with C and T set; expect derived there, no engine run"
+}
