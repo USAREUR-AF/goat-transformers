@@ -137,10 +137,10 @@ x86_64, 36 top-level tests and examples, none failing:
 
 | Test | Covers | Measured |
 |---|---|---|
-| `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 22962 run, 22962 passed (4433 packs loaded; 2026-11-21) |
-| `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 1249 run, 1249 passed |
-| `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 97137 inputs fed, 0 failed |
-| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 22932 vectors (1323 failing conversions), 0 outcomes differ |
+| `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 23349 run, 23349 passed (4481 packs loaded; 2026-11-21) |
+| `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 1312 run, 1312 passed |
+| `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 98685 inputs fed, 0 failed |
+| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 23319 vectors (1434 failing conversions), 0 outcomes differ |
 | `TestMalformedRulings` | the malformed-input rulings of the specification, such as nesting depth and bytes that are not UTF-8 | pass |
 | tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 135 run, 135 passed (2026-11-21) |
 | `TestLoadToolProfile`, `TestLoadToolLicences`, `TestLicenceFiles`, `TestLicenceTable`, `TestProfileHeader`, `TestDefFilesRegularOnly` | spec 0.29: the library loader with each profile and none, the fixture trees of `packs/conformance/tool-fixtures/licences-*`, the line forms of `REUSE.toml`, `.def.license` and `licences.toml`, the `module` and `uses` lines the profiles read, and the module files of 0.23 Loading 1 (regular files or links to one) | pass |
@@ -262,11 +262,11 @@ Measured with Go 1.26.8 on Linux x86_64:
 
 | | Measured |
 |---|---|
-| packs loaded in the reduced build | 1646 |
-| conversion vectors on `xml`, `json` and `geojson` | 8208 run, 8208 passed |
-| packs refused with `unknown-wire` | `bits` 1705, `protobuf` 876, `text` 77, `tlv` 9, `cbor` 7 |
-| `goat-xf`, all eight wires | 5227776 bytes |
-| `goat-xf`, `xml`, `json` and `geojson` | 4689345 bytes (538431 bytes less) |
+| packs loaded in the reduced build | 1706 |
+| conversion vectors on `xml`, `json` and `geojson` | 8354 run, 8354 passed |
+| packs refused with `unknown-wire` | `bits` 1796, `protobuf` 876, `text` 85, `tlv` 11, `cbor` 7 |
+| `goat-xf`, all eight wires | 5301510 bytes |
+| `goat-xf`, `xml`, `json` and `geojson` | 4748928 bytes (552582 bytes less) |
 
 ## Read next
 
