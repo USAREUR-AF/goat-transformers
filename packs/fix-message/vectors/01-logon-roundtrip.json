@@ -1,0 +1,17 @@
+{
+  "name": "logon-roundtrip",
+  "from": "fix-message",
+  "to": "fix-message",
+  "input": "383d4649582e342e3401393d36370133353d410134393d434c49454e540135363d42524f4b45520133343d310135323d32303235303131352d31323a33303a30302e3030300139383d30013130383d33300131303d31303901",
+  "expect": "383d4649582e342e3401393d36370133353d410134393d434c49454e540135363d42524f4b45520133343d310135323d32303235303131352d31323a33303a30302e3030300139383d30013130383d33300131303d31303901",
+  "model": {
+    "@kind": "fix",
+    "fix.begin_string": "FIX.4.4",
+    "fix.msg_type": "A",
+    "fix.fields.#": "7",
+    "fix.fields[0].fix.tag": "49",
+    "fix.fields[0].fix.value": "CLIENT",
+    "fix.fields[6].fix.tag": "10"
+  },
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from simplefix parser.py and message.py; a logon with heartbeat interval 30; body length and checksum computed; expect derived there, no engine run"
+}

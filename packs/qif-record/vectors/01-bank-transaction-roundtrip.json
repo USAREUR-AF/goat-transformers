@@ -1,0 +1,18 @@
+{
+  "name": "bank-transaction-roundtrip",
+  "from": "qif-record",
+  "to": "qif-record",
+  "input": "4430312f33312f323032350a542d34352e36370a43580a4e313034320a50436f726e65722047726f636572790a4d5765656b6c792073686f700a4c466f6f643a47726f6365726965730a5e0a",
+  "expect": "4430312f33312f323032350a542d34352e36370a43580a4e313034320a50436f726e65722047726f636572790a4d5765656b6c792073686f700a4c466f6f643a47726f6365726965730a5e0a",
+  "model": {
+    "qif.lines.#": "8",
+    "qif.lines[0].qif.code": "68",
+    "qif.lines[0].qif.date": "01/31/2025",
+    "qif.lines[1].qif.amount": "-45.67",
+    "qif.lines[2].qif.cleared": "X",
+    "qif.lines[4].qif.payee": "Corner Grocery",
+    "qif.lines[6].qif.category": "Food:Groceries",
+    "qif.lines[7].qif.code": "94"
+  },
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from quiffen core/transaction.py and qif.py; a cleared bank transaction with a category; expect derived there, no engine run"
+}

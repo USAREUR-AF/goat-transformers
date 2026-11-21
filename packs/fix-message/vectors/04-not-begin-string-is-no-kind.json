@@ -1,0 +1,8 @@
+{
+  "name": "not-begin-string-is-no-kind",
+  "from": "fix-message",
+  "to": "fix-message",
+  "input": "393d350133353d3001",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from simplefix parser.py and message.py; the message does not begin with tag 8; expect derived there, no engine run"
+}

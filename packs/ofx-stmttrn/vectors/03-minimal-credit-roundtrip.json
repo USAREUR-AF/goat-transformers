@@ -1,0 +1,11 @@
+{
+  "name": "minimal-credit-roundtrip",
+  "from": "ofx-stmttrn",
+  "to": "ofx-stmttrn",
+  "input": "<STMTTRN><TRNTYPE>CREDIT</TRNTYPE><DTPOSTED>20250131</DTPOSTED><TRNAMT>0.01</TRNAMT><FITID>0000489</FITID></STMTTRN>",
+  "expect": "<STMTTRN><TRNTYPE>CREDIT</TRNTYPE><DTPOSTED>20250131</DTPOSTED><TRNAMT>0.01</TRNAMT><FITID>0000489</FITID></STMTTRN>",
+  "model": {
+    "ofx.trnamt": "0.01"
+  },
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from ofxparse ofxparse.py and its test fixtures; the required elements only; expect derived there, no engine run"
+}

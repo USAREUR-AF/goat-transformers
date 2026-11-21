@@ -1,0 +1,14 @@
+{
+  "name": "header-and-splits-roundtrip",
+  "from": "qif-record",
+  "to": "qif-record",
+  "input": "21547970653a42616e6b0a4430322f30312f323032350a542d3130302e30300a505574696c69747920436f0a53486f757365686f6c643a456c6563747269630a242d36302e30300a45506f7765720a53486f757365686f6c643a4761730a242d34302e30300a5e0a",
+  "expect": "21547970653a42616e6b0a4430322f30312f323032350a542d3130302e30300a505574696c69747920436f0a53486f757365686f6c643a456c6563747269630a242d36302e30300a45506f7765720a53486f757365686f6c643a4761730a242d34302e30300a5e0a",
+  "model": {
+    "qif.lines[0].qif.header": "Type:Bank",
+    "qif.lines[4].qif.split_category": "Household:Electric",
+    "qif.lines[5].qif.split_amount": "-60.00",
+    "qif.lines[6].qif.split_memo": "Power"
+  },
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from quiffen core/transaction.py and qif.py; a header line, then a transaction split in two; expect derived there, no engine run"
+}

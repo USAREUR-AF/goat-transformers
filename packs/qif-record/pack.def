@@ -1,0 +1,66 @@
+# QIF record: its lines, each a code character and the value up to LF, ended by the '^' line. Written by
+# tools/gen/finance-pack.py; do not edit by hand.
+format        qif-record
+version       0.1.0
+distribution  public
+source        "quiffen, https://github.com/isaacharrisholt/quiffen at commit 29658502eb3823f2a50a3365e95bf809a4841bb4, quiffen/core/transaction.py and qif.py (MIT License, Copyright (c) 2023 Isaac Harris-Holt); codes restated, no code copied"
+uses          qif
+wire          bits
+layout        sequential
+bit_order     msb
+
+group  qif.lines  rest
+  field  qif.code  8  uint
+  switch  qif.code
+    case  68
+      field  qif.date  until:10  chars:ascii8
+    case  84
+      field  qif.amount  until:10  chars:ascii8
+    case  85
+      field  qif.amount_u  until:10  chars:ascii8
+    case  77
+      field  qif.memo  until:10  chars:ascii8
+    case  67
+      field  qif.cleared  until:10  chars:ascii8
+    case  80
+      field  qif.payee  until:10  chars:ascii8
+    case  65
+      field  qif.payee_address  until:10  chars:ascii8
+    case  76
+      field  qif.category  until:10  chars:ascii8
+    case  78
+      field  qif.number  until:10  chars:ascii8
+    case  83
+      field  qif.split_category  until:10  chars:ascii8
+    case  69
+      field  qif.split_memo  until:10  chars:ascii8
+    case  36
+      field  qif.split_amount  until:10  chars:ascii8
+    case  37
+      field  qif.split_percent  until:10  chars:ascii8
+    case  70
+      field  qif.reimbursable  until:10  chars:ascii8
+    case  49
+      field  qif.first_payment_date  until:10  chars:ascii8
+    case  50
+      field  qif.loan_length  until:10  chars:ascii8
+    case  51
+      field  qif.num_payments  until:10  chars:ascii8
+    case  52
+      field  qif.periods_per_annum  until:10  chars:ascii8
+    case  53
+      field  qif.interest_rate  until:10  chars:ascii8
+    case  54
+      field  qif.current_loan_balance  until:10  chars:ascii8
+    case  55
+      field  qif.original_loan_amount  until:10  chars:ascii8
+    case  88
+      field  qif.invoice  until:10  chars:ascii8
+    case  33
+      field  qif.header  until:10  chars:ascii8
+    case  94
+      field  qif.end  until:10  chars:ascii8
+    else
+      field  qif.other  until:10  chars:ascii8
+  end
+end

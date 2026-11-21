@@ -1,0 +1,5 @@
+Packs ofx-stmttrn; module ofx
+  ofxparse, https://github.com/jseutter/ofxparse at commit
+  25aa80072be71da9f4ea0924ae1d1aaea2d5820c, ofxparse/ofxparse.py and the
+  order of elements in its test fixtures. MIT License, Copyright (c) 2009
+  Jerry Seutter. Layouts restated; no text copied.

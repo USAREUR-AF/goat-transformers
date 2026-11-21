@@ -1,0 +1,12 @@
+{
+  "name": "heartbeat-fix42-roundtrip",
+  "from": "fix-message",
+  "to": "fix-message",
+  "input": "383d4649582e342e3201393d34310133353d300134393d410135363d420133343d330135323d32303235303131352d31323a33313a30300131303d31323501",
+  "expect": "383d4649582e342e3201393d34310133353d300134393d410135363d420133343d330135323d32303235303131352d31323a33313a30300131303d31323501",
+  "model": {
+    "fix.begin_string": "FIX.4.2",
+    "fix.msg_type": "0"
+  },
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from simplefix parser.py and message.py; a FIX 4.2 heartbeat; expect derived there, no engine run"
+}
