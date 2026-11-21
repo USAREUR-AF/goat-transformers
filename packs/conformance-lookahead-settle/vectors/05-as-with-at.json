@@ -1,0 +1,15 @@
+{
+  "name": "as-with-at",
+  "from": "conformance-lookahead-settle",
+  "to": "conformance-lookahead-settle",
+  "input": "070a06",
+  "expect": "070a06",
+  "model": {
+    "@kind": "as",
+    "probe.v1": "6",
+    "probe.v2": "10",
+    "probe.v4": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 with 0.30: the window's bits bind v1 when the kind is selected; v4 reads the same bits"
+}

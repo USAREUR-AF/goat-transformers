@@ -1,0 +1,16 @@
+{
+  "name": "window-in-lsb-order",
+  "from": "conformance-lookahead-lsb",
+  "to": "conformance-lookahead-lsb",
+  "input": "075a",
+  "expect": "075a",
+  "model": {
+    "@kind": "a",
+    "probe.x": "90",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 8: a window reads and writes raw stream bits in the pack's bit order; under lsb bits 4 to 7 of 5a are its high nibble, 5"
+}

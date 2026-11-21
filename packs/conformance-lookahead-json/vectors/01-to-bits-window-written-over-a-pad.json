@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-window-written-over-a-pad",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-bits",
+  "input": "{\"n\":7,\"x\":5,\"y\":9}",
+  "expect": "07050109",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode: a window no held key wrote is written with the first listed value, here over a `pad`"
+}

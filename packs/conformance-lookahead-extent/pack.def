@@ -1,0 +1,32 @@
+# Conformance probe pack for look-ahead windows of item kinds inside a
+# `length` extent (spec 0.33 rulings 6 and 7), most significant bit first.
+# Public.
+#
+#   byte 0      n
+#   byte 1      the length of the recs that follow, in bytes
+#   each rec    x (8), then by kind, to the end of the length
+#     a         y (8), the kind code 1 (8, a `pad`)
+#     b         z (16); the window is bits 4 to 11 of z: 2
+#   then        w (8)
+format     conformance-lookahead-extent
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+length  8
+  group  probe.recs rest
+    field  probe.x  8  uint
+    kind   a
+    when   8  1  at 8
+    field  probe.y  8  uint
+    pad    8
+    kind   b
+    when   8  2  at 4
+    field  probe.z  16  uint
+  end
+end
+field   probe.w  8  uint

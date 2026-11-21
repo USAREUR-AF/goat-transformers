@@ -1,0 +1,8 @@
+{
+  "name": "3333-lookahead-window-over-fields-with-width-keeping-options-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey w int -\nkey a float -\nkey s string -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.33.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 8 1 at 48\nfield probe.x 16 uint swap\nfield probe.label 16 ascii trim\nfield probe.y 8 uint absent 255\nfield probe.z 8 uint with probe.x\nfield probe.s 8 hex\n"
+}

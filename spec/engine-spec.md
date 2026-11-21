@@ -5570,13 +5570,13 @@ The kind is chosen as before (the kind recorded on the entity or item, or
 lines are written. Then each `when … at` of the selected kind settles its
 window, in line order (ruling 1):
 
-- when a key the entity holds wrote bits in the window, and the window's
-  bits as written match the `when`, those bits stand;
-- when such a key's bits in the window do not match the `when`, or disagree
-  with the value of a held `as` key, encode is `transform-encode`: the output
-  would decode a different value;
-- otherwise the window is written with the value of the `as` key (Version
-  0.30), or else the first listed value.
+- when the window's bits as written match the `when`, and agree with the
+  value of a held `as` key, they stand;
+- otherwise the window's value is the value of the `as` key (Version 0.30)
+  when the entity holds it, or else the first listed value. When a bit of that
+  value differs from a bit that a key the entity holds wrote in the window,
+  encode is `transform-encode`: the output would decode a different value.
+  Otherwise the window is written with that value.
 
 A `default` does not count as a held key (ruling 29 of 0.20). The windows are
 settled before any `switch` reads its key back and before the prediction of
@@ -5597,7 +5597,7 @@ Also `bad-directive`: the look-ahead window is not **fixed in the kind**.
 The window of a `when … at` is the bits from kind start plus `<offset>` to
 kind start plus `<offset>` plus `len`. To test it, walk the kind's lines in
 reading order from its first line, skipping lines that occupy no bits (`when
-… at`, `requires`, `default`) and summing the lengths of the others, until
+… at`, `requires`, `default`, `also`) and summing the lengths of the others, until
 the sum reaches or passes the window's end. Every line walked, the last one
 included, must be one of: a `when` without `at`; `const`; `pad`; `also`; a
 `field` whose locator is a bit length. That list is exhaustive. Field options
@@ -5614,7 +5614,7 @@ kind's last line is not fixed either.
 1. **Settling a window** (Encode) follows ruling 3 of 0.20 for bits a held
    key wrote that match, and 0.30's rule against a silent change for bits that
    do not. The window may cover a whole `field`, part of one, or several;
-   a partial cover is judged on the window's bits as written.
+   a partial cover is settled as ruling 13 states.
 2. **Plain and look-ahead `when` lines in one kind** may be interleaved among
    the kind's first lines (ruling 10 of 0.8). Offsets count from kind start,
    not from the cursor; plain `when` lines consume bits in their line order.
@@ -5649,9 +5649,45 @@ kind's last line is not fixed either.
     `when <len> <values> [at <n>] [as <k>]` is the only form with more than
     two arguments, on `layout sequential`.
 
+12. **Bits a held key wrote** are the bits of a `field` (or `also`) line
+    whose key the entity holds and whose line wrote its value. Bits of a
+    `pad`, a `const`, a plain `when`, an earlier window, an absent key's zero
+    bits or sentinel (`absent`), and a line that `with` suppressed are not;
+    the window is written over them without a check.
+13. **A partial cover** (ruling 1) is settled by the Encode rule above: the
+    window's value is chosen first, and only the bits a held key wrote are
+    compared with it.
+14. **Error order against the header checks.** The `at` checks run after the
+    key passes of ruling 10, which Version 0.4 orders after
+    `missing-distribution` and `missing-source`; so those come before any
+    `at` error. `missing-format`, `missing-version` and `missing-wire` come
+    before them too (0.11 ruling 5b).
+15. **The keyword.** `at` is a keyword only in a `when` of a sequential pack,
+    in the position the token order of ruling 11 gives it; on a text wire
+    `when @t at` matches the text `at`.
+16. **The fixed-window check is a check after the file,** like every other
+    `at` error: a line `bogus` after a pack whose window is not fixed gives
+    `unknown-directive`.
+17. **Ruling 6 amends Version 0.8** ("Reading past the end of the input … is
+    `malformed-wire`") for `when` lines only: a `when` past the end does not
+    hold.
+18. **The extent of a message kind** is the message, or `length … whole`; the
+    innermost `length` block of ruling 7 concerns item kinds.
+
 ### Stated, not yet pinned by a vector
 
-(filled in after the vectors are derived)
+19. Ruling 9 for conversion (load vectors only).
+20. Presence and `fx` bits not interacting with a window, and windows settled
+    before the prediction of ruling 33 of 0.20: packs with `opt` or
+    `presence` after a window load but are never encoded.
+21. Ruling 5 with held keys in both overlapping windows.
+22. `as` with `at` in item kinds (ruling 4 of 0.30, the implicit term per
+    item), and a switch on an `as` key that a window binds.
+23. A window of an item kind inside a group-body block, and an item kind's
+    window ending past its last line (the load side is pinned at message
+    level only).
+24. The order of the `at` form check and the fixed-window check, both
+    `bad-directive`.
 
 ## Not in this version
 

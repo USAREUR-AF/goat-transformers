@@ -1,0 +1,9 @@
+{
+  "name": "3304-lookahead-at-on-a-group-body-common-when",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey w int -\nkey a float -\nkey s string -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.33.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ngroup probe.recs count 8\n  when 8 1 at 0\n  field probe.x 8 uint\n  kind a\n  field probe.y 8 uint\nend\n",
+  "expect_error": "bad-directive"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-switch-window-settled-before-the-switch",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-switch",
+  "input": "{\"n\":7,\"x\":10,\"z\":42}",
+  "expect": "070a012a",
+  "source": "constructed",
+  "reference": "spec 0.33, Encode: the windows are settled before any `switch` reads its key back; y is absent, the window writes 1, and the switch reads 1: case 1 writes z"
+}

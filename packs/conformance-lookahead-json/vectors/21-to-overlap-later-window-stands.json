@@ -1,0 +1,9 @@
+{
+  "name": "to-overlap-later-window-stands",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-overlap",
+  "input": "{\"n\":7,\"x\":10}",
+  "expect": "070a15",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 5: windows are settled in line order with no check between them; 0x12 then 5 over the low nibble: 0x15"
+}

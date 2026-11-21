@@ -22,6 +22,7 @@ SCRIPTS = (
     "conformance-groups-vectors.py",
     "conformance-kinds-vectors.py",
     "conformance-long-vectors.py",
+    "conformance-lookahead-vectors.py",
     "conformance-malformed-vectors.py",
     "conformance-rulings07-vectors.py",
     "conformance-rulings011-vectors.py",

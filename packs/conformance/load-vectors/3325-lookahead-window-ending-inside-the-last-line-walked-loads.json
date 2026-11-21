@@ -1,0 +1,8 @@
+{
+  "name": "3325-lookahead-window-ending-inside-the-last-line-walked-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey w int -\nkey a float -\nkey s string -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.33.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 4 1 at 6\nfield probe.x 8 uint\nfield probe.y 8 uint\nopt\n  field probe.z 8 uint\nend\n"
+}

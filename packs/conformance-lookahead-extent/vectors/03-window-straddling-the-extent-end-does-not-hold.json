@@ -1,0 +1,9 @@
+{
+  "name": "window-straddling-the-extent-end-does-not-hold",
+  "from": "conformance-lookahead-extent",
+  "to": "conformance-lookahead-extent",
+  "input": "09020500202a",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 7: the enclosing extent is the innermost `length` block around kind start; a window some of whose bits lie beyond the extent does not hold (ruling 6); bits 12 to 19 would read 2 with the input beyond the extent"
+}

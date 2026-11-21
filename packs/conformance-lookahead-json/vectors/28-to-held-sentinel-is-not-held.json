@@ -1,0 +1,9 @@
+{
+  "name": "to-held-sentinel-is-not-held",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-held",
+  "input": "{\"n\":7,\"c1\":3}",
+  "expect": "070403",
+  "source": "constructed",
+  "reference": "spec 0.33 rulings 12 and 13: an absent key's sentinel (`absent 255`) is not bits a held key wrote: the window 4 is written over it"
+}

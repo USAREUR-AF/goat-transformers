@@ -1,0 +1,9 @@
+{
+  "name": "no-body-is-no-kind",
+  "from": "conformance-lookahead-end",
+  "to": "conformance-lookahead-end",
+  "input": "07",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 6: no `when` of any kind lies within the input: no kind holds"
+}

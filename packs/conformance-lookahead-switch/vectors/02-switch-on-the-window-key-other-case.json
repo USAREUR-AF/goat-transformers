@@ -1,0 +1,17 @@
+{
+  "name": "switch-on-the-window-key-other-case",
+  "from": "conformance-lookahead-switch",
+  "to": "conformance-lookahead-switch",
+  "input": "070a020100",
+  "expect": "070a020100",
+  "model": {
+    "@kind": "a",
+    "probe.y": "2",
+    "probe.w": "256",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 and 0.20 `switch`: y = 2 selects case 2"
+}

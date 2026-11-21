@@ -1,0 +1,31 @@
+# Conformance probe pack for two look-ahead windows that overlap, and a
+# window over a plain `when` of the same kind with another value (spec 0.33
+# ruling 5), most significant bit first. Public.
+#
+#   byte 0      n
+#   kind a      x (8), a `pad 8` that two windows cover: the whole byte
+#               18 or 21, then its low nibble 5 or 6
+#   kind b      the code 9 (4, a plain `when`), a `pad 4`, w (8); a window
+#               over the first byte has the value 55 (0x37), whose high
+#               nibble is not 9
+format     conformance-lookahead-overlap
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+kind    a
+requires probe.x
+when    8  18,21  at 8
+when    4  5,6  at 12
+field   probe.x  8  uint
+pad     8
+kind    b
+requires probe.w
+when    4  9
+when    8  55  at 0
+pad     4
+field   probe.w  8  uint

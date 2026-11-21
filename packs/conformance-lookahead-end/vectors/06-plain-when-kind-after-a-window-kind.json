@@ -1,0 +1,13 @@
+{
+  "name": "plain-when-kind-after-a-window-kind",
+  "from": "conformance-lookahead-end",
+  "to": "conformance-lookahead-end",
+  "input": "07ffff2a",
+  "expect": "07ffff2a",
+  "model": {
+    "@kind": "wide",
+    "probe.w": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 6: the window kind does not hold; the plain `when` kind does"
+}

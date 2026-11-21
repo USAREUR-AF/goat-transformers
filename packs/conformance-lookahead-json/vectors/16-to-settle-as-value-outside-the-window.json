@@ -1,0 +1,9 @@
+{
+  "name": "to-settle-as-value-outside-the-window",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-settle",
+  "input": "{\"n\":7,\"v1\":4,\"v2\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30, Encode: the implicit term of `when ... at 8 as probe.v1` needs v1 in 5..7; no kind qualifies"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "kind-b-reads-the-same-byte-under-another-key",
+  "from": "conformance-lookahead-bits",
+  "to": "conformance-lookahead-bits",
+  "input": "07fe020100",
+  "expect": "07fe020100",
+  "model": {
+    "@kind": "b",
+    "probe.z": "-2",
+    "probe.w": "256",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33, Decode: the first body byte is z in kind b and x in kind a: the kind's own field lines read the bits under the kind's own key names"
+}

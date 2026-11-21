@@ -1,0 +1,21 @@
+# Conformance probe pack for a look-ahead window beyond `length ... whole`
+# (spec 0.33 ruling 6), most significant bit first. Public.
+#
+#   byte 0      the length of the whole message in bytes
+#   kind long   x (8), y (8); the window is all of y: 7
+#   kind short  z (8); no `when`, so it always holds
+format     conformance-lookahead-whole
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length  8  whole
+kind    long
+when    8  7  at 8
+field   probe.x  8  uint
+field   probe.y  8  uint
+kind    short
+field   probe.z  8  uint

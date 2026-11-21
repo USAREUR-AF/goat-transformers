@@ -1,0 +1,8 @@
+{
+  "name": "3334-lookahead-ruling-5-overlapping-windows-over-a-plain-when-load",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey w int -\nkey a float -\nkey s string -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.33.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 4 1\nwhen 8 52 at 0\nwhen 4 2 at 4\nfield probe.x 4 uint\nfield probe.y 8 uint\n"
+}

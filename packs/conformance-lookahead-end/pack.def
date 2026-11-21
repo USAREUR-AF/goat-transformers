@@ -1,0 +1,28 @@
+# Conformance probe pack for look-ahead windows past the end of the input
+# (spec 0.33 ruling 6), most significant bit first. Public.
+#
+#   byte 0      n
+#   kind long   x (8), y (16), z (8); the window is all of y: 2313 (0x0909)
+#   kind wide   two plain `when` bytes 255, w (8)
+#   kind short  c1 (8); the window is the high nibble of c1: 0 to 15
+format     conformance-lookahead-end
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+kind    long
+when    16  2313  at 8
+field   probe.x  8  uint
+field   probe.y  16  uint
+field   probe.z  8  uint
+kind    wide
+when    8  255
+when    8  255
+field   probe.w  8  uint
+kind    short
+when    4  0..15  at 0
+field   probe.c1  8  uint

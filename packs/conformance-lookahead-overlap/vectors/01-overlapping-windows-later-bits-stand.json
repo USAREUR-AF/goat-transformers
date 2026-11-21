@@ -1,0 +1,13 @@
+{
+  "name": "overlapping-windows-later-bits-stand",
+  "from": "conformance-lookahead-overlap",
+  "to": "conformance-lookahead-overlap",
+  "input": "070a15",
+  "expect": "070a15",
+  "model": {
+    "@kind": "a",
+    "probe.x": "10"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 5: windows are settled in line order with no check between them; the first window writes 0x12, the second writes 5 over its low nibble: 0x15"
+}

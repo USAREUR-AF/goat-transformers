@@ -1,0 +1,14 @@
+{
+  "name": "window-over-two-fields",
+  "from": "conformance-lookahead-settle",
+  "to": "conformance-lookahead-settle",
+  "input": "0715a7",
+  "expect": "0715a7",
+  "model": {
+    "@kind": "several",
+    "probe.c1": "21",
+    "probe.c2": "167"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): the window covers the low nibble of c1 and the high nibble of c2"
+}

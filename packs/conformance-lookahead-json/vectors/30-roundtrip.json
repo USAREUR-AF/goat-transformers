@@ -1,0 +1,14 @@
+{
+  "name": "roundtrip",
+  "from": "conformance-lookahead-json",
+  "to": "conformance-lookahead-json",
+  "input": "{\"n\":7,\"x\":10,\"v1\":6}",
+  "expect": "{\"n\":7,\"x\":10,\"v1\":6}",
+  "model": {
+    "probe.n": "7",
+    "probe.x": "10",
+    "probe.v1": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.5 json canonical output: members in line order"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "window-value-of-no-kind",
+  "from": "conformance-lookahead-bits",
+  "to": "conformance-lookahead-bits",
+  "input": "07050409",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.33, Decode: no kind holds: the message is no-kind (Version 0.5)"
+}

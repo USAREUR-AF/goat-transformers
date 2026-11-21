@@ -1,0 +1,16 @@
+{
+  "name": "plain-when-past-the-end-does-not-hold",
+  "from": "conformance-lookahead-end",
+  "to": "conformance-lookahead-end",
+  "input": "07ff",
+  "expect": "07ff",
+  "model": {
+    "@kind": "short",
+    "probe.c1": "255",
+    "@absent": [
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 6: a `when` without `at` in a sequential pack whose bits lie beyond the input does not hold; the next kind is tried"
+}

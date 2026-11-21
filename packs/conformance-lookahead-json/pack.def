@@ -1,0 +1,21 @@
+# Conformance probe pack: a flat JSON object of the integer keys of the
+# `conformance-lookahead-*` bits packs (spec 0.33). Public. It is the source
+# of the vectors that encode into those packs from another format, where
+# the kind is chosen by `requires` and nothing on the entity records it.
+format     conformance-lookahead-json
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+field   probe.n   n   int
+field   probe.x   x   int
+field   probe.y   y   int
+field   probe.z   z   int
+field   probe.w   w   int
+field   probe.c1  c1  int
+field   probe.c2  c2  int
+field   probe.v1  v1  int
+field   probe.v2  v2  int
+field   probe.v3  v3  int
+field   probe.v4  v4  int

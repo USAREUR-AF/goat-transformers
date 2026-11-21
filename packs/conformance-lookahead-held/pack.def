@@ -1,0 +1,34 @@
+# Conformance probe pack for the bits a held key wrote in a look-ahead
+# window (spec 0.33 rulings 12 and 13), most significant bit first. Public.
+#
+#   byte 0           n
+#   kind part        x (8), a `pad 4`, y (4); the window is the low nibble
+#                    of x and the pad: 0x5a (90)
+#   kind suppressed  y (8, written only with z), z (8); the window is all
+#                    of y: 7
+#   kind sentinel    w (8, absent 255), c1 (8); the window is all of w: 4
+format     conformance-lookahead-held
+version    0.33.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+kind    part
+requires probe.x
+when    8  90  at 4
+field   probe.x  8  uint
+pad     4
+field   probe.y  4  uint
+kind    suppressed
+requires probe.y
+when    8  7  at 0
+field   probe.y  8  uint  with probe.z
+field   probe.z  8  uint
+kind    sentinel
+requires probe.c1
+when    8  4  at 0
+field   probe.w  8  uint  absent 255
+field   probe.c1  8  uint

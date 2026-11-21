@@ -1,0 +1,14 @@
+{
+  "name": "held-bits-that-match-stand",
+  "from": "conformance-lookahead-settle",
+  "to": "conformance-lookahead-settle",
+  "input": "070a02",
+  "expect": "070a02",
+  "model": {
+    "@kind": "full",
+    "probe.x": "10",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33, Encode (ruling 1): y = 2 wrote the window's bits and they match 1,2, so they stand; the first value 1 is not written"
+}

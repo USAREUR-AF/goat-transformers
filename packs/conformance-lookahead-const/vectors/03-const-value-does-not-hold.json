@@ -1,0 +1,9 @@
+{
+  "name": "const-value-does-not-hold",
+  "from": "conformance-lookahead-const",
+  "to": "conformance-lookahead-const",
+  "input": "070a0905",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.33 ruling 3: a `const` is not checked on decode, and encode writes the `when`'s value over it; the bits 9 equal the const but not the window: no kind holds"
+}
