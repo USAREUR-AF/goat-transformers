@@ -1,0 +1,8 @@
+{
+  "name": "Low-power mesh (6LoWPAN, RPL)",
+  "domain": "iot",
+  "exact": [
+    "lowpan-frame",
+    "rpl-control"
+  ]
+}

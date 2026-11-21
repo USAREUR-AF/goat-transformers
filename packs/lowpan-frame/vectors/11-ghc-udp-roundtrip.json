@@ -1,0 +1,17 @@
+{
+  "name": "ghc-udp-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "7f33d0022302220f0f0102",
+  "expect": "7f33d0022302220f0f0102",
+  "model": {
+    "lowpan.nhc_d": "0",
+    "lowpan.ghc_udp_c": "0",
+    "lowpan.ghc_udp_p": "0",
+    "lowpan.udp_src_port": "547",
+    "lowpan.udp_dst_port": "546",
+    "lowpan.udp_checksum": "3855",
+    "lowpan.ghc_payload.#": "2"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6282 section 4 and RFC 7400 section 3; the UDP GHC NHC byte with inline ports and checksum, the compressed payload as octets; expect derived there, no engine run"
+}

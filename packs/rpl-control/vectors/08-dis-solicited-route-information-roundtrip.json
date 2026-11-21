@@ -1,0 +1,17 @@
+{
+  "name": "dis-solicited-route-information-roundtrip",
+  "from": "rpl-control",
+  "to": "rpl-control",
+  "input": "9b001a2b000007131ee020010db8000000000000000000000001f0030e400800000e1020010db800000000",
+  "expect": "9b001a2b000007131ee020010db8000000000000000000000001f0030e400800000e1020010db800000000",
+  "model": {
+    "rpl.options[0].rpl.solicited_instance": "30",
+    "rpl.options[0].rpl.solicited_v": "1",
+    "rpl.options[0].rpl.solicited_dodagid": "20010db8000000000000000000000001",
+    "rpl.options[0].rpl.solicited_version": "240",
+    "rpl.options[1].rpl.route_preference": "1",
+    "rpl.options[1].rpl.route_lifetime": "3600",
+    "rpl.options[1].rpl.prefix_octets.#": "8"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6550 section 6.2 and 6.7; a DIS with solicited information and a route information option of a /64; expect derived there, no engine run"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "mesh-frag1-iphc-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "b500010002c07800ab7b223a0001000200010203",
+  "expect": "b500010002c07800ab7b223a0001000200010203",
+  "model": {
+    "lowpan.s0_a": "2",
+    "lowpan.mesh_v": "1",
+    "lowpan.mesh_f": "1",
+    "lowpan.hops_left": "5",
+    "lowpan.originator": "0001",
+    "lowpan.final": "0002",
+    "lowpan.s1_a": "3",
+    "lowpan.s1_d": "0",
+    "lowpan.datagram_size": "120",
+    "lowpan.datagram_tag": "171",
+    "lowpan.s3_a": "1",
+    "lowpan.s3_b": "1",
+    "lowpan.src_inline": "0001",
+    "lowpan.dst_inline": "0002",
+    "lowpan.ipv6_payload.#": "4"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 4944 sections 5.1 to 5.3 and 11.1, RFC 6282 sections 3 and 4; a mesh header with short addresses, a first fragment header, and IPHC with 16-bit addresses; expect derived there, no engine run"
+}

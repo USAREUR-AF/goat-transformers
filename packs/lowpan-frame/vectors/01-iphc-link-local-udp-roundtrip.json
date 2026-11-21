@@ -1,0 +1,25 @@
+{
+  "name": "iphc-link-local-udp-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "7e33f312123468656c6c6f",
+  "expect": "7e33f312123468656c6c6f",
+  "model": {
+    "lowpan.s0_a": "1",
+    "lowpan.s0_b": "1",
+    "lowpan.tf": "3",
+    "lowpan.nh": "1",
+    "lowpan.hlim": "2",
+    "lowpan.sam": "3",
+    "lowpan.dam": "3",
+    "lowpan.nhc_a": "15",
+    "lowpan.nhc_b": "0",
+    "lowpan.udp_c": "0",
+    "lowpan.udp_p": "3",
+    "lowpan.udp_src_port_low4": "1",
+    "lowpan.udp_dst_port_low4": "2",
+    "lowpan.udp_checksum": "4660",
+    "lowpan.udp_payload.#": "5"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 4944 sections 5.1 to 5.3 and 11.1, RFC 6282 sections 3 and 4; IPHC with every address bit elided, hop limit 64, UDP NHC with 4-bit ports and the checksum; expect derived there, no engine run"
+}

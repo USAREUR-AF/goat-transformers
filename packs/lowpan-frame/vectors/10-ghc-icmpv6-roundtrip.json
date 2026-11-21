@@ -1,0 +1,14 @@
+{
+  "name": "ghc-icmpv6-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "7f33df87001234",
+  "expect": "7f33df87001234",
+  "model": {
+    "lowpan.nhc_a": "13",
+    "lowpan.nhc_d": "1",
+    "lowpan.nhc_e": "7",
+    "lowpan.ghc_payload.#": "4"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6282 section 4 and RFC 7400 section 3; the ICMPv6 GHC NHC byte and a compressed payload, kept as octets; expect derived there, no engine run"
+}

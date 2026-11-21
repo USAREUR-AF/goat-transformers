@@ -1,0 +1,22 @@
+{
+  "name": "iphc-inline-fields-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "608b234a0123453a1120010db80000000000000000000000011a0001020304050607",
+  "expect": "608b234a0123453a1120010db80000000000000000000000011a0001020304050607",
+  "model": {
+    "lowpan.cid": "1",
+    "lowpan.sci": "2",
+    "lowpan.dci": "3",
+    "lowpan.ecn": "1",
+    "lowpan.dscp": "10",
+    "lowpan.flow_label": "74565",
+    "lowpan.next_header": "58",
+    "lowpan.hop_limit": "17",
+    "lowpan.src_inline": "20010db8000000000000000000000001",
+    "lowpan.m": "1",
+    "lowpan.dst_inline": "1a",
+    "lowpan.ipv6_payload.#": "8"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 4944 sections 5.1 to 5.3 and 11.1, RFC 6282 sections 3 and 4; IPHC with the context octet, traffic class and flow label inline, next header and hop limit inline, a full source address and an 8-bit multicast destination; expect derived there, no engine run"
+}

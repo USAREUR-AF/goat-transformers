@@ -1,0 +1,15 @@
+{
+  "name": "fragn-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "e07800ab0c00010203040506070809",
+  "expect": "e07800ab0c00010203040506070809",
+  "model": {
+    "lowpan.s0_a": "3",
+    "lowpan.s0_d": "4",
+    "lowpan.datagram_size": "120",
+    "lowpan.datagram_offset": "12",
+    "lowpan.fragment_octets.#": "10"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 4944 sections 5.1 to 5.3 and 11.1, RFC 6282 sections 3 and 4; a subsequent fragment header and its octets; expect derived there, no engine run"
+}

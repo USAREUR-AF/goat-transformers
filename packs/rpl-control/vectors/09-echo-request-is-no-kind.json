@@ -1,0 +1,8 @@
+{
+  "name": "echo-request-is-no-kind",
+  "from": "rpl-control",
+  "to": "rpl-control",
+  "input": "8000000000010001",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6550 section 6; an ICMPv6 message of type 128, not RPL; expect derived there, no engine run"
+}
