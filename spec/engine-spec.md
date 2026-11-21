@@ -5700,6 +5700,13 @@ kind's last line is not fixed either.
     `at 0 as k y`, `at 0 as`) is an `at` form error, with the timing of
     rulings 10 and 14, even where the misplaced token is `as`. A line with
     `as` and no `at` keeps 0.30's checks.
+28. **The key on a line whose token order is broken** (ruling 27) is not
+    read as a key: `when 8 1 as probe.nosuch at 0` is the late `at` form
+    error, not `undeclared-key`. On a line in the right order whose offset
+    alone is bad (`at +8 as k`), the key is read and checked first
+    (ruling 10, load vector 3341).
+29. **A third token that is neither `at` nor `as`** (`when 8 1 x at 0`) stays
+    the argument-count line check of ruling 23 of 0.20.
 
 ## Not in this version
 
