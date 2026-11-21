@@ -1,0 +1,25 @@
+# An OpenMQTTGateway BTtoMQTT payload (one BLE advertisement, raw and decoded). Public.
+format        omg-bt
+version       0.1.0
+distribution  public
+source        "OpenMQTTGateway (https://github.com/1technophile/OpenMQTTGateway, GPL-3.0) release v1.9.1, commit 1b28de93a4853020e4ad39c4a25562c23218d818: main/gatewayBT.cpp and main/gatewayRF.cpp (the JSON members of BTtoMQTT and RFtoMQTT); member names restated, no code copied"
+uses          omg
+wire          json
+field  omg.bt_id  id  string
+field  omg.bt_mac_type  mac_type  int
+field  omg.bt_adv_type  adv_type  int
+field  omg.bt_name  name  string
+field  omg.bt_manufacturerdata  manufacturerdata  string
+field  omg.bt_servicedata  servicedata  string
+field  omg.bt_servicedatauuid  servicedatauuid  string
+field  omg.bt_rssi  rssi  int
+field  omg.bt_txpower  txpower  int
+field  omg.bt_brand  brand  string
+field  omg.bt_model  model  string
+field  omg.bt_model_id  model_id  string
+field  omg.bt_type  type  string
+field  omg.bt_tempc  tempc  float
+field  omg.bt_tempf  tempf  float
+field  omg.bt_hum  hum  float
+field  omg.bt_batt  batt  float
+field  omg.bt_volt  volt  float

@@ -1,0 +1,16 @@
+{
+  "name": "omg-bt-raw",
+  "from": "omg-bt",
+  "to": "omg-bt",
+  "input": "{\"id\":\"C8:47:8C:01:02:03\",\"rssi\":-88,\"servicedatauuid\":\"0x181a\",\"servicedata\":\"0302018c47c8e100a00f4c0b\",\"manufacturerdata\":\"4c0002150102\",\"name\":null,\"txpower\":-12}",
+  "expect": "{\"id\":\"C8:47:8C:01:02:03\",\"manufacturerdata\":\"4c0002150102\",\"servicedata\":\"0302018c47c8e100a00f4c0b\",\"servicedatauuid\":\"0x181a\",\"rssi\":-88,\"txpower\":-12}",
+  "model": {
+    "omg.bt_txpower": "-12",
+    "@absent": [
+      "omg.bt_name",
+      "omg.bt_tempc"
+    ]
+  },
+  "source": "constructed",
+  "reference": "OpenMQTTGateway v1.9.1 BTtoMQTT and RFtoMQTT payload shapes; text by tools/gen/omg-vectors.py; a null name is absent; members come back in line order"
+}

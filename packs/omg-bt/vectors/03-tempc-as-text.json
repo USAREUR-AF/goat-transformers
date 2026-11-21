@@ -1,0 +1,9 @@
+{
+  "name": "omg-bt-tempc-text",
+  "from": "omg-bt",
+  "to": "omg-bt",
+  "input": "{\"id\":\"A4:C1:38:5E:21:9B\",\"tempc\":\"21.4\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "OpenMQTTGateway v1.9.1 BTtoMQTT and RFtoMQTT payload shapes; text by tools/gen/omg-vectors.py; a decoded reading must be a number"
+}
