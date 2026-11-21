@@ -1,0 +1,16 @@
+{
+  "name": "tasmota-sensor-energy",
+  "from": "tasmota-sensor",
+  "to": "tasmota-sensor",
+  "input": "{\"Time\":\"2026-11-21T10:15:30\",\"ENERGY\":{\"TotalStartTime\":\"2026-01-02T03:04:05\",\"Total\":12.345,\"Yesterday\":0.512,\"Today\":0.208,\"Period\":3,\"Power\":45.0,\"ApparentPower\":52,\"ReactivePower\":26,\"Factor\":0.87,\"Voltage\":231,\"Current\":0.226}}",
+  "expect": "{\"Time\":\"2026-11-21T10:15:30\",\"ENERGY\":{\"TotalStartTime\":\"2026-01-02T03:04:05\",\"Total\":12.345,\"Yesterday\":0.512,\"Today\":0.208,\"Period\":3,\"Power\":45,\"ApparentPower\":52,\"ReactivePower\":26,\"Factor\":0.87,\"Voltage\":231,\"Current\":0.226}}",
+  "model": {
+    "tasmota.energy_total": "12.345",
+    "tasmota.energy_power": "45",
+    "tasmota.energy_factor": "0.87",
+    "tasmota.energy_voltage": "231",
+    "tasmota.energy_current": "0.226"
+  },
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; 45.0 is written 45"
+}

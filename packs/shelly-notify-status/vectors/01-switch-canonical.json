@@ -1,0 +1,19 @@
+{
+  "name": "shelly-notify-status-switch",
+  "from": "shelly-notify-status",
+  "to": "shelly-notify-status",
+  "input": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"method\":\"NotifyStatus\",\"params\":{\"ts\":1795256162.53,\"switch:0\":{\"id\":0,\"source\":\"WS_in\",\"output\":true,\"apower\":12.5,\"voltage\":229.8,\"current\":0.071,\"aenergy\":{\"total\":1234.567,\"by_minute\":[205.1,210.4,0],\"minute_ts\":1795256160},\"temperature\":{\"tC\":41.2,\"tF\":106.2}}}}",
+  "expect": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"method\":\"NotifyStatus\",\"params\":{\"ts\":1795256162.53,\"switch:0\":{\"id\":0,\"source\":\"WS_in\",\"output\":true,\"apower\":12.5,\"voltage\":229.8,\"current\":0.071,\"aenergy\":{\"total\":1234.567,\"minute_ts\":1795256160},\"temperature\":{\"tC\":41.2,\"tF\":106.2}}}}",
+  "model": {
+    "@kind": "notify_status",
+    "time_ms": "1795256162530",
+    "shelly.src": "shellypro4pm-0c8b95f1e2d4",
+    "shelly.switch0_output": "1",
+    "shelly.switch0_apower": "12.5",
+    "shelly.switch0_aenergy_total": "1234.567",
+    "shelly.switch0_aenergy_minute_ts": "1795256160",
+    "shelly.switch0_temperature_tc": "41.2"
+  },
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; the by_minute array is not carried; ts .53 is 530 ms"
+}

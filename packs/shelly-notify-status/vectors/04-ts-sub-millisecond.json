@@ -1,0 +1,13 @@
+{
+  "name": "shelly-notify-status-ts-round",
+  "from": "shelly-notify-status",
+  "to": "shelly-notify-status",
+  "input": "{\"method\":\"NotifyStatus\",\"params\":{\"ts\":1795256162.5235,\"sys\":{\"cfg_rev\":13}}}",
+  "expect": "{\"method\":\"NotifyStatus\",\"params\":{\"ts\":1795256162.524,\"sys\":{\"cfg_rev\":13}}}",
+  "model": {
+    "time_ms": "1795256162524",
+    "shelly.sys_cfg_rev": "13"
+  },
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; 523.5 ms rounds half away from zero to 524"
+}

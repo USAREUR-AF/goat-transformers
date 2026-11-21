@@ -1,0 +1,15 @@
+# An OpenMQTTGateway RFtoMQTT payload (one 433/315 MHz code received by RCSwitch). Public.
+format        omg-rf
+version       0.1.0
+distribution  public
+source        "OpenMQTTGateway (https://github.com/1technophile/OpenMQTTGateway, GPL-3.0) release v1.9.1, commit 1b28de93a4853020e4ad39c4a25562c23218d818: main/gatewayBT.cpp and main/gatewayRF.cpp (the JSON members of BTtoMQTT and RFtoMQTT); member names restated, no code copied"
+uses          omg
+wire          json
+field  omg.rf_value  value  int
+field  omg.rf_protocol  protocol  int
+field  omg.rf_length  length  int
+field  omg.rf_delay  delay  int
+field  omg.rf_tre_state  tre_state  string
+field  omg.rf_binary  binary  string
+field  omg.rf_raw  raw  string
+field  omg.rf_frequency  frequency  float

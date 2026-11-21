@@ -1,0 +1,12 @@
+{
+  "name": "tasmota-result-power",
+  "from": "tasmota-result",
+  "to": "tasmota-result",
+  "input": "{\"POWER\":\"OFF\"}",
+  "expect": "{\"POWER\":\"OFF\"}",
+  "model": {
+    "tasmota.power": "OFF"
+  },
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "omg-rf-value-fraction",
+  "from": "omg-rf",
+  "to": "omg-rf",
+  "input": "{\"value\":1381717.5,\"protocol\":1}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "OpenMQTTGateway v1.9.1 BTtoMQTT and RFtoMQTT payload shapes; text by tools/gen/omg-vectors.py; a code value is an integer"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "tasmota-state-single-relay",
+  "from": "tasmota-state",
+  "to": "tasmota-state",
+  "input": "{\n  \"Time\": \"2026-11-21T10:15:30\",\n  \"Uptime\": \"3T04:05:06\",\n  \"UptimeSec\": 273906,\n  \"Heap\": 25,\n  \"SleepMode\": \"Dynamic\",\n  \"Sleep\": 50,\n  \"LoadAvg\": 19,\n  \"MqttCount\": 3,\n  \"Berry\": {\n    \"HeapUsed\": 4,\n    \"Objects\": 44\n  },\n  \"POWER\": \"ON\",\n  \"Wifi\": {\n    \"AP\": 1,\n    \"SSId\": \"garden-net\",\n    \"BSSId\": \"3C:A6:2F:10:20:30\",\n    \"Channel\": 6,\n    \"Mode\": \"11n\",\n    \"RSSI\": 72,\n    \"Signal\": -64,\n    \"LinkCount\": 2,\n    \"Downtime\": \"0T00:00:07\"\n  }\n}",
+  "expect": "{\"Time\":\"2026-11-21T10:15:30\",\"Uptime\":\"3T04:05:06\",\"UptimeSec\":273906,\"Heap\":25,\"SleepMode\":\"Dynamic\",\"Sleep\":50,\"LoadAvg\":19,\"MqttCount\":3,\"POWER\":\"ON\",\"Wifi\":{\"AP\":1,\"SSId\":\"garden-net\",\"BSSId\":\"3C:A6:2F:10:20:30\",\"Channel\":6,\"Mode\":\"11n\",\"RSSI\":72,\"Signal\":-64,\"LinkCount\":2,\"Downtime\":\"0T00:00:07\"},\"Berry\":{\"HeapUsed\":4,\"Objects\":44}}",
+  "model": {
+    "tasmota.time_local": "2026-11-21T10:15:30",
+    "tasmota.uptime_s": "273906",
+    "tasmota.power": "ON",
+    "tasmota.wifi_ssid": "garden-net",
+    "tasmota.wifi_signal": "-64",
+    "tasmota.wifi_downtime": "0T00:00:07"
+  },
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; the unmapped Berry object is residue and comes after the mapped members"
+}

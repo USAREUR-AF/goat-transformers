@@ -1,0 +1,9 @@
+{
+  "name": "tasmota-state-uptime-text",
+  "from": "tasmota-state",
+  "to": "tasmota-state",
+  "input": "{\"Time\":\"2026-11-21T10:15:30\",\"UptimeSec\":\"273906\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; UptimeSec must be a number"
+}

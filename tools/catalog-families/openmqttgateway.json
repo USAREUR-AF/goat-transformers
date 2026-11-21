@@ -1,0 +1,7 @@
+{
+  "name": "OpenMQTTGateway",
+  "domain": "iot",
+  "prefixes": [
+    "omg-"
+  ]
+}

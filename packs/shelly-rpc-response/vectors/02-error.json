@@ -1,0 +1,13 @@
+{
+  "name": "shelly-rpc-response-error",
+  "from": "shelly-rpc-response",
+  "to": "shelly-rpc-response",
+  "input": "{\"id\":\"q-8\",\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"error\":{\"code\":-105,\"message\":\"no such component\"}}",
+  "expect": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"error\":{\"code\":-105,\"message\":\"no such component\"},\"id\":\"q-8\"}",
+  "model": {
+    "shelly.error_code": "-105",
+    "shelly.error_message": "no such component"
+  },
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; a text id stays text"
+}

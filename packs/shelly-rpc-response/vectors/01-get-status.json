@@ -1,0 +1,14 @@
+{
+  "name": "shelly-rpc-response-result",
+  "from": "shelly-rpc-response",
+  "to": "shelly-rpc-response",
+  "input": "{\"id\":7,\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"result\":{\"sys\":{\"mac\":\"0C8B95F1E2D4\",\"uptime\":90061,\"available_updates\":{\"stable\":{\"version\":\"1.7.2\"}}},\"switch:3\":{\"id\":3,\"output\":false,\"source\":\"timer\",\"timer_started_at\":1795256162.25,\"timer_duration\":60}}}",
+  "expect": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"result\":{\"switch:3\":{\"id\":3,\"source\":\"timer\",\"output\":false,\"timer_started_at\":1795256162.25,\"timer_duration\":60},\"sys\":{\"mac\":\"0C8B95F1E2D4\",\"uptime\":90061,\"available_updates\":{\"stable\":{\"version\":\"1.7.2\"}}}},\"id\":7}",
+  "model": {
+    "shelly.switch3_output": "0",
+    "shelly.switch3_timer_started_at": "1795256162.25",
+    "shelly.sys_available_updates_stable_version": "1.7.2"
+  },
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; the request id is residue and comes last"
+}

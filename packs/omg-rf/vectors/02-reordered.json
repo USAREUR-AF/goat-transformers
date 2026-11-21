@@ -1,0 +1,9 @@
+{
+  "name": "omg-rf-reordered",
+  "from": "omg-rf",
+  "to": "omg-rf",
+  "input": "{\"protocol\":2,\"value\":5393,\"delay\":650,\"length\":24}",
+  "expect": "{\"value\":5393,\"protocol\":2,\"length\":24,\"delay\":650}",
+  "source": "constructed",
+  "reference": "OpenMQTTGateway v1.9.1 BTtoMQTT and RFtoMQTT payload shapes; text by tools/gen/omg-vectors.py; members come back in line order"
+}

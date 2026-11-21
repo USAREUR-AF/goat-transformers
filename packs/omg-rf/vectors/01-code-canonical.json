@@ -1,0 +1,18 @@
+{
+  "name": "omg-rf-code",
+  "from": "omg-rf",
+  "to": "omg-rf",
+  "input": "{\"value\":1381717,\"protocol\":1,\"length\":24,\"delay\":317,\"tre_state\":\"0FFF0FFFFFFF\",\"binary\":\"000101010001010101010101\",\"raw\":\"9868,312,940,312,940\",\"frequency\":433.92,\"origin\":\"home/omg1/433toMQTT\"}",
+  "expect": "{\"value\":1381717,\"protocol\":1,\"length\":24,\"delay\":317,\"tre_state\":\"0FFF0FFFFFFF\",\"binary\":\"000101010001010101010101\",\"raw\":\"9868,312,940,312,940\",\"frequency\":433.92,\"origin\":\"home/omg1/433toMQTT\"}",
+  "model": {
+    "omg.rf_value": "1381717",
+    "omg.rf_protocol": "1",
+    "omg.rf_length": "24",
+    "omg.rf_delay": "317",
+    "omg.rf_tre_state": "0FFF0FFFFFFF",
+    "omg.rf_binary": "000101010001010101010101",
+    "omg.rf_frequency": "433.92"
+  },
+  "source": "constructed",
+  "reference": "OpenMQTTGateway v1.9.1 BTtoMQTT and RFtoMQTT payload shapes; text by tools/gen/omg-vectors.py; already canonical; origin is residue and stays last"
+}

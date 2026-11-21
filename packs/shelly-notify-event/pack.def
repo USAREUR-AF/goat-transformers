@@ -1,0 +1,18 @@
+# A Shelly Gen2+ NotifyEvent notification frame (JSON-RPC). Public.
+format        shelly-notify-event
+version       0.1.0
+distribution  public
+source        "Shelly Gen2+ device API documentation (Allterco Robotics), https://shelly-api-docs.shelly.cloud/gen2/ pages General/RPCProtocol, General/Notifications and ComponentsAndServices Switch, Cover, Input, Temperature and Sys, read 2026-11-21; Copyright (c) 2026 Allterco Robotics, no licence stated; member names restated"
+uses          shelly
+wire          json
+field  shelly.src  src  string
+field  shelly.dst  dst  string
+kind  notify_event
+when  method  NotifyEvent
+field  time_ms  params.ts  iscale:1000
+group  shelly.events  params.events
+  field  shelly.event_component  component  string
+  field  shelly.event_id  id  int
+  field  shelly.event_name  event  string
+  field  shelly.event_time_ms  ts  iscale:1000
+end

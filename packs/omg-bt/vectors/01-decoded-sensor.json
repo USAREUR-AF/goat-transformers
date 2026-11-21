@@ -1,0 +1,17 @@
+{
+  "name": "omg-bt-decoded",
+  "from": "omg-bt",
+  "to": "omg-bt",
+  "input": "{\"id\":\"A4:C1:38:5E:21:9B\",\"mac_type\":0,\"adv_type\":0,\"name\":\"ATC_5E219B\",\"rssi\":-71,\"brand\":\"Xiaomi\",\"model\":\"LYWSD03MMC\",\"model_id\":\"LYWSD03MMC_ATC\",\"type\":\"THB\",\"cidc\":false,\"tempc\":21.4,\"tempf\":70.52,\"hum\":47,\"batt\":89,\"volt\":2.954}",
+  "expect": "{\"id\":\"A4:C1:38:5E:21:9B\",\"mac_type\":0,\"adv_type\":0,\"name\":\"ATC_5E219B\",\"rssi\":-71,\"brand\":\"Xiaomi\",\"model\":\"LYWSD03MMC\",\"model_id\":\"LYWSD03MMC_ATC\",\"type\":\"THB\",\"tempc\":21.4,\"tempf\":70.52,\"hum\":47,\"batt\":89,\"volt\":2.954,\"cidc\":false}",
+  "model": {
+    "omg.bt_id": "A4:C1:38:5E:21:9B",
+    "omg.bt_rssi": "-71",
+    "omg.bt_model_id": "LYWSD03MMC_ATC",
+    "omg.bt_tempc": "21.4",
+    "omg.bt_hum": "47",
+    "omg.bt_volt": "2.954"
+  },
+  "source": "constructed",
+  "reference": "OpenMQTTGateway v1.9.1 BTtoMQTT and RFtoMQTT payload shapes; text by tools/gen/omg-vectors.py; cidc is residue and comes after the mapped members"
+}

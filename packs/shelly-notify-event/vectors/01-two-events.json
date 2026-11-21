@@ -1,0 +1,19 @@
+{
+  "name": "shelly-notify-event-two",
+  "from": "shelly-notify-event",
+  "to": "shelly-notify-event",
+  "input": "{\"src\":\"shellyplusi4-a8032ab0c0d0\",\"dst\":\"user_1\",\"method\":\"NotifyEvent\",\"params\":{\"ts\":1795256162.48,\"events\":[{\"component\":\"input:2\",\"id\":2,\"event\":\"double_push\",\"ts\":1795256162.47},{\"component\":\"sys\",\"event\":\"scheduled_restart\",\"time_ms\":1000,\"ts\":1795256162.48}]}}",
+  "expect": "{\"src\":\"shellyplusi4-a8032ab0c0d0\",\"dst\":\"user_1\",\"method\":\"NotifyEvent\",\"params\":{\"ts\":1795256162.48,\"events\":[{\"component\":\"input:2\",\"id\":2,\"event\":\"double_push\",\"ts\":1795256162.47},{\"component\":\"sys\",\"event\":\"scheduled_restart\",\"ts\":1795256162.48}]}}",
+  "model": {
+    "@kind": "notify_event",
+    "time_ms": "1795256162480",
+    "shelly.events.#": "2",
+    "shelly.events[0].shelly.event_component": "input:2",
+    "shelly.events[0].shelly.event_id": "2",
+    "shelly.events[0].shelly.event_name": "double_push",
+    "shelly.events[0].shelly.event_time_ms": "1795256162470",
+    "shelly.events[1].shelly.event_name": "scheduled_restart"
+  },
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; the second event has no id; its unmapped time_ms member is dropped, as items carry no residue"
+}

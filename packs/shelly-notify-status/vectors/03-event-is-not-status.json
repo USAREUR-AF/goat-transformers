@@ -1,0 +1,9 @@
+{
+  "name": "shelly-notify-status-wrong-method",
+  "from": "shelly-notify-status",
+  "to": "shelly-notify-status",
+  "input": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"method\":\"NotifyEvent\",\"params\":{\"ts\":1795256162.1,\"events\":[]}}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; only NotifyStatus and NotifyFullStatus are kinds of this pack"
+}

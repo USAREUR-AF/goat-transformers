@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-shelly-notify-status",
+  "from": "geojson",
+  "to": "shelly-notify-status",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.68,50.11]},\"properties\":{\"time_ms\":1795256162250}}",
+  "expect": "{\"method\":\"NotifyStatus\",\"params\":{\"ts\":1795256162.25}}",
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; only time_ms is shared; the position has no place in a Shelly frame"
+}

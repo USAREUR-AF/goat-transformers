@@ -1,0 +1,9 @@
+{
+  "name": "shelly-notify-status-to-rpc-response",
+  "from": "shelly-notify-status",
+  "to": "shelly-rpc-response",
+  "input": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"method\":\"NotifyStatus\",\"params\":{\"ts\":1795256162.53,\"switch:0\":{\"id\":0,\"source\":\"WS_in\",\"output\":true,\"apower\":12.5,\"voltage\":229.8,\"current\":0.071,\"aenergy\":{\"total\":1234.567,\"by_minute\":[205.1,210.4,0],\"minute_ts\":1795256160},\"temperature\":{\"tC\":41.2,\"tF\":106.2}}}}",
+  "expect": "{\"src\":\"shellypro4pm-0c8b95f1e2d4\",\"dst\":\"user_1\",\"result\":{\"switch:0\":{\"id\":0,\"source\":\"WS_in\",\"output\":true,\"apower\":12.5,\"voltage\":229.8,\"current\":0.071,\"aenergy\":{\"total\":1234.567,\"minute_ts\":1795256160},\"temperature\":{\"tC\":41.2,\"tF\":106.2}}}}",
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; the status objects carry over; ts has no place in a response"
+}

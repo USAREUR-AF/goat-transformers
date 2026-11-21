@@ -1,0 +1,9 @@
+{
+  "name": "shelly-notify-status-output-text",
+  "from": "shelly-notify-status",
+  "to": "shelly-notify-status",
+  "input": "{\"method\":\"NotifyStatus\",\"params\":{\"ts\":1795256162,\"switch:1\":{\"id\":1,\"output\":\"true\"}}}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; output must be a JSON boolean"
+}

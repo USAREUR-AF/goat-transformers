@@ -1,0 +1,9 @@
+{
+  "name": "shelly-rpc-request-param-id-fraction",
+  "from": "shelly-rpc-request",
+  "to": "shelly-rpc-request",
+  "input": "{\"id\":4,\"src\":\"user_1\",\"method\":\"Switch.Set\",\"params\":{\"id\":0.5,\"on\":false}}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "Shelly Gen2+ API frame shapes (RPCProtocol, Notifications, component Status objects); text by tools/gen/shelly-vectors.py; a component id is an integer"
+}

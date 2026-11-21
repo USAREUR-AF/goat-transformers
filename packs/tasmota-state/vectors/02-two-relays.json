@@ -1,0 +1,16 @@
+{
+  "name": "tasmota-state-two-relays",
+  "from": "tasmota-state",
+  "to": "tasmota-state",
+  "input": "{\"Time\":\"2026-11-21T10:15:30\",\"Uptime\":\"0T00:12:00\",\"UptimeSec\":720,\"POWER2\":\"OFF\",\"POWER1\":\"ON\",\"Dimmer\":40}",
+  "expect": "{\"Time\":\"2026-11-21T10:15:30\",\"Uptime\":\"0T00:12:00\",\"UptimeSec\":720,\"POWER1\":\"ON\",\"POWER2\":\"OFF\",\"Dimmer\":40}",
+  "model": {
+    "tasmota.power1": "ON",
+    "tasmota.power2": "OFF",
+    "@absent": [
+      "tasmota.power"
+    ]
+  },
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; POWER1 and POWER2 in line order; Dimmer residue"
+}
