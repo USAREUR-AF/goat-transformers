@@ -54,6 +54,7 @@ run(PacksDir, ModelsDir) ->
     NFail = run_named_load(PacksDir, ModelsDir),
     {MPass0, MFail0} = run_malformed(Engine, PacksDir),
     {RPass, RFail} = run_ruling_cases(Engine),
+    {UPass, UFail} = run_unit_checks(),
     {MPass, MFail} = {MPass0 + RPass, MFail0 + RFail},
     {KPass, KFail} = run_concurrent(PacksDir, ModelsDir),
     io:format("vectors: ~p/~p passed~n", [Pass, Pass + Fail]),
@@ -61,8 +62,9 @@ run(PacksDir, ModelsDir) ->
     io:format("capability vectors: ~p/~p passed~n", [CPass, CPass + CFail]),
     io:format("malformed inputs: ~p/~p passed~n", [MPass, MPass + MFail]),
     io:format("concurrent conversions: ~p/~p passed~n", [KPass, KPass + KFail]),
+    io:format("unit checks: ~p/~p passed~n", [UPass, UPass + UFail]),
     io:format("elapsed: ~.1f s~n", [(erlang:monotonic_time(millisecond) - T0) / 1000]),
-    case Fail + LFail + CFail + NFail + MFail + KFail of
+    case Fail + LFail + CFail + NFail + MFail + KFail + UFail of
         0 -> halt(0);
         N ->
             io:format("FAILED: ~p vector(s)~n", [N]),
@@ -869,6 +871,20 @@ ruling_cases() ->
      {S, refused, <<"9D24 6">>},
      {S, refused, <<"9D246\n">>},
      {S, refused, <<>>}].
+
+%% The check values of the CRC-32 of 0.27 ("The CRC").
+run_unit_checks() ->
+    lists:foldl(
+      fun({Name, Got, Want}, {P, F}) ->
+              case Got =:= Want of
+                  true -> {P + 1, F};
+                  false ->
+                      io:format("FAIL unit ~s: expected ~.16b, got ~0p~n", [Name, Want, Got]),
+                      {P, F + 1}
+              end
+      end, {0, 0},
+      [{"crc32 of 123456789", gt_tlv:crc32(<<"123456789">>), 16#0376E6E7},
+       {"crc32 of no bytes", gt_tlv:crc32(<<>>), 16#FFFFFFFF}]).
 
 run_ruling_cases(Engine) ->
     Packs = gt_engine:packs(Engine),

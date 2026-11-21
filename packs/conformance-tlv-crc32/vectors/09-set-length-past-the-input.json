@@ -1,0 +1,9 @@
+{
+  "name": "set-length-past-the-input",
+  "from": "conformance-tlv-crc32",
+  "to": "conformance-tlv-crc32",
+  "input": "060e2b34020b01010e0103010200000011020800000177e5138e000104fe14ad80",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.27 (a CRC-32 checksum on the tlv wire) with Version 0.13 (the tlv wire): The set length 0x11 states one byte more than follow the length (16); the CRC fe14ad80 is computed over the bytes as written: a set that runs past the input is malformed-wire. CRC-32 of ISO/IEC 13818-1 (poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR) over the key through the checksum item's tag and length (ruling 1 of 0.27). Derived without an engine by a standalone reference program, checked against the check values 123456789 -> 0376e6e7 and empty -> ffffffff."
+}

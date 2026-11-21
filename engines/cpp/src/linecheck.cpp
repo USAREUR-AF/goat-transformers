@@ -249,8 +249,9 @@ void check_pack_lines(const std::string& text, const std::string& source) {
                 c.fail(ErrorKind::BadDirective,
                        "'" + kw + "' takes " + what + ", got " + std::to_string(nargs) + " argument(s)");
         };
-        if (kw == "checksum" && nargs == 2 && t[1] == "sum16") {
-            // v0.13: `checksum sum16 <tag>`; whether the wire is tlv is checked after the file.
+        if (kw == "checksum" && nargs == 2 && (t[1] == "sum16" || t[1] == "crc32")) {
+            // v0.13: `checksum sum16 <tag>`, v0.27 (ruling 2): `checksum crc32 <tag>`;
+            // whether the wire is tlv is checked after the file.
         } else if (one_argument().count(kw)) count(nargs == 1, "exactly one argument");
         else if (kw == "field") count(nargs >= 3, "a key, a locator and a transform");
         else if (kw == "when" || kw == "const" || kw == "default") count(nargs == 2, "two arguments");

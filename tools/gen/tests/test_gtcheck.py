@@ -517,6 +517,8 @@ V011_FIRST, V011_LAST = 339, 499
 V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tlv-74"}
 # Likewise rulings 13 and 14 of 0.14 and the second-armor vector.
 V011_TLV |= {"wire-armor-18", "wire-armor-19"}
+# And the 0.27 vectors that pin the 0.11 order of a checksum line.
+V011_TLV |= {"wire-crc32-03", "wire-crc32-05"}
 # Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
 V011_ORDER = {"580", "667", "668", "1003", "1004", "1077", "1078", "1079"}  # ruling 13 of 0.17, ruling 44 of 0.21 (bad-locator), ruling 28 of 0.22
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.

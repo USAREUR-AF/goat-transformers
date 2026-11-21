@@ -1,7 +1,7 @@
 """The `tlv` wire (spec/engine-spec.md, Version 0.13): a set of items, each a
 tag, a length and a value, a value possibly a set itself; an optional fixed
-key and length before the set and an optional `sum16` checksum item at its
-end. Input and output are hex text.
+key and length before the set and an optional `sum16` (0.13) or `crc32`
+(0.27) checksum item at its end. Input and output are hex text.
 
 Decode reads the top set whole (`parse`), checks the checksum, and leaves the
 nested sets unread: a `when` reads into them leniently while the kind is
@@ -21,6 +21,8 @@ from .octets import HexT, TlvTransform, Utf8T, hex_to_bytes as _hex_to_bytes  # 
 
 MAX_TAG = (1 << 28) - 1
 DIRECTIVES = ("tag", "length", "key", "checksum")
+CHECKSUMS = ("sum16", "crc32")  # `checksum <name> <tag>`: 0.13 and 0.27
+CHECKSUM_SIZES = {"sum16": 2, "crc32": 4}
 TAG_FORMS = ("ber-oid", "1", "2", "4")
 LENGTH_FORMS = ("ber", "1", "2", "4")
 TRANSFORM_NAMES = ("uint", "twos", "f32", "f64", "utf8", "hex")  # with `uscale:` and `sscale:`
@@ -399,17 +401,20 @@ def parse(pack, data):
         raise MalformedWire(str(e), format=fmt)
     t = pack.tlv_checksum
     if t is not None:
-        if not items or items[-1][0] != t or items[-1][2] - items[-1][1] != 2:
-            raise MalformedWire("the last item of the set is not a checksum item of tag %d and two bytes" % t,
-                                format=fmt)
+        alg = pack.tlv_checksum_alg
+        size = CHECKSUM_SIZES[alg]
+        if not items or items[-1][0] != t or items[-1][2] - items[-1][1] != size:
+            raise MalformedWire("the last item of the set is not a %s checksum item of tag %d and %d bytes"
+                                % (alg, t, size), format=fmt)
         for it in items[:-1]:
             if it[0] == t:
                 raise MalformedWire("an item of the checksum tag %d before the last" % t, format=fmt)
         start = items[-1][1]
-        want = sum16(buf, start)
-        have = int.from_bytes(buf[start:start + 2], "big")
+        want = checksum(alg, buf, start)
+        have = int.from_bytes(buf[start:start + size], "big")
         if have != want:
-            raise MalformedWire("the checksum is %04x; the bytes sum to %04x" % (have, want), format=fmt)
+            raise MalformedWire("the %s checksum is %0*x; the bytes give %0*x"
+                                % (alg, 2 * size, have, 2 * size, want), format=fmt)
         items = items[:-1]
     return Message(TSet(buf, items))
 
@@ -417,6 +422,31 @@ def parse(pack, data):
 def sum16(buf, end):
     """Bytes 0 to end-1: a byte at an even offset counts b * 256, at an odd offset b; modulo 65536."""
     return (sum(buf[0:end:2]) * 256 + sum(buf[1:end:2])) & 0xFFFF
+
+
+CRC32_POLY = 0x04C11DB7
+
+
+def crc32(data):
+    """The CRC-32 of ISO/IEC 13818-1 (0.27, "The CRC"): polynomial 0x04C11DB7,
+    register from 0xFFFFFFFF, most significant bit first, no reflection, no
+    final XOR. Not the reflected CRC-32 of zlib."""
+    reg = 0xFFFFFFFF
+    for b in data:
+        reg ^= b << 24
+        for _ in range(8):
+            if reg & 0x80000000:
+                reg = ((reg << 1) ^ CRC32_POLY) & 0xFFFFFFFF
+            else:
+                reg = (reg << 1) & 0xFFFFFFFF
+    return reg
+
+
+def checksum(alg, buf, end):
+    """The checksum `alg` of bytes 0 to end-1 of `buf`."""
+    if alg == "crc32":
+        return crc32(bytes(buf[:end]))
+    return sum16(buf, end)
 
 
 def when_holds(pack, msg, when):
@@ -655,11 +685,12 @@ def write(pack, enc, residue):
     body = serialize(root)
     t = pack.tlv_checksum
     if t is not None:
-        body += _encode_tag(pack, t) + _encode_length(pack, 2) + b"\x00\x00"
+        size = CHECKSUM_SIZES[pack.tlv_checksum_alg]
+        body += _encode_tag(pack, t) + _encode_length(pack, size) + bytes(size)
     out = bytearray()
     if pack.tlv_key is not None:
         out += pack.tlv_key + _encode_length(pack, len(body))
     out += body
     if t is not None:
-        out[-2:] = sum16(out, len(out) - 2).to_bytes(2, "big")
+        out[-size:] = checksum(pack.tlv_checksum_alg, out, len(out) - size).to_bytes(size, "big")
     return out.hex()

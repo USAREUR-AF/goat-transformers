@@ -97,13 +97,17 @@ final class TlvCodec extends Codec<TlvCodec.Msg> {
             if (top.items.isEmpty()) throw malformed("the set has no checksum item");
             Item last = top.items.get(top.items.size() - 1);
             if (last.tag != t) throw malformed("the last item has tag " + last.tag + ", not the checksum tag " + t);
-            if (last.to - last.from != 2) throw malformed("the checksum item has a value of " + (last.to - last.from) + " bytes, not 2");
+            int size = pack.tlvCrc32 ? 4 : 2;
+            if (last.to - last.from != size) throw malformed("the checksum item has a value of " + (last.to - last.from) + " bytes, not " + size);
             for (int i = 0; i < top.items.size() - 1; i++) {
                 if (top.items.get(i).tag == t) throw malformed("an item of the checksum tag " + t + " stands before the last");
             }
-            int want = sum16(b, last.from);
-            int have = (int) TlvTransform.unsigned(b, last.from, last.to);
-            if (want != have) throw malformed(String.format("checksum is %04x, the bytes sum to %04x", have, want));
+            long want = pack.tlvCrc32 ? crc32(b, last.from) & 0xffffffffL : sum16(b, last.from);
+            long have = TlvTransform.unsigned(b, last.from, last.to);
+            if (want != have) {
+                throw malformed(pack.tlvCrc32 ? String.format("checksum is %08x, the CRC of the bytes is %08x", have, want)
+                        : String.format("checksum is %04x, the bytes sum to %04x", have, want));
+            }
         }
         return new Msg(top);
     }
@@ -113,6 +117,19 @@ final class TlvCodec extends Codec<TlvCodec.Msg> {
         long sum = 0;
         for (int i = 0; i < to; i++) sum += (i % 2 == 0) ? (b[i] & 0xff) << 8 : (b[i] & 0xff);
         return (int) (sum & 0xffff);
+    }
+
+    /**
+     * CRC-32 of ISO/IEC 13818-1 (0.27) of bytes 0 to {@code to - 1}: polynomial 0x04C11DB7, register from 0xFFFFFFFF,
+     * most significant bit first, no reflection, no final XOR. Not java.util.zip.CRC32, which is the reflected CRC.
+     */
+    static int crc32(byte[] b, int to) {
+        int reg = 0xffffffff;
+        for (int i = 0; i < to; i++) {
+            reg ^= (b[i] & 0xff) << 24;
+            for (int k = 0; k < 8; k++) reg = reg < 0 ? (reg << 1) ^ 0x04c11db7 : reg << 1;
+        }
+        return reg;
     }
 
     /** The items of bytes {@code from} to {@code to}, read whole. */
@@ -347,20 +364,28 @@ final class TlvCodec extends Codec<TlvCodec.Msg> {
         writeSet(body, top);
         if (pack.tlvChecksum) {
             writeTag(body, pack.tlvChecksumTag);
-            writeLength(body, 2);
+            writeLength(body, pack.tlvCrc32 ? 4 : 2);
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         if (pack.tlvKey != null) {
             out.write(pack.tlvKey, 0, pack.tlvKey.length);
-            writeLength(out, body.size() + (pack.tlvChecksum ? 2 : 0));
+            writeLength(out, body.size() + (pack.tlvChecksum ? (pack.tlvCrc32 ? 4 : 2) : 0));
         }
         byte[] set = body.toByteArray();
         out.write(set, 0, set.length);
         if (pack.tlvChecksum) {
             byte[] sofar = out.toByteArray();
-            int sum = sum16(sofar, sofar.length);
-            out.write(sum >>> 8);
-            out.write(sum & 0xff);
+            if (pack.tlvCrc32) {
+                int crc = crc32(sofar, sofar.length);
+                out.write(crc >>> 24);
+                out.write((crc >>> 16) & 0xff);
+                out.write((crc >>> 8) & 0xff);
+                out.write(crc & 0xff);
+            } else {
+                int sum = sum16(sofar, sofar.length);
+                out.write(sum >>> 8);
+                out.write(sum & 0xff);
+            }
         }
         return toHex(out.toByteArray());
     }

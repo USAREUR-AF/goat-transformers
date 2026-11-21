@@ -378,7 +378,7 @@ raises `error:{convert_error, Kind, Message}` with `Kind` one of `'no-kind'`,
 `start`, `checksum none | nmea`; input and output are the record's text, never
 trimmed; residue is keyed by field index; the `absent` field option of
 Version 0.9 is `bad-directive` on it, ruling 16 of 0.10), `tlv` (Version 0.13: `tag`,
-`length`, `key`, `checksum sum16`; hex text in and out; residue is
+`length`, `key`, `checksum sum16` and `checksum crc32` (0.27); hex text in and out; residue is
 `{[Tag], Hex}`, every occurrence of an unnamed tag).
 
 Malformed input (engine-spec "Malformed input (0.8)", rulings 35 to 40): no
@@ -439,7 +439,7 @@ implemented as the specification states them.
   index, groups of `item <n>` fields, and writing a record (padding, trailing
   `optional` fields, checksum).
 - `src/gt_tlv.erl`   — the `tlv` wire (Version 0.13): the key and the set's length,
-  BER-OID or fixed tags, BER or fixed lengths, the `sum16` checksum, kinds on
+  BER-OID or fixed tags, BER or fixed lengths, the `sum16` and `crc32` (0.27) checksums, kinds on
   the top set, nested sets read when a line walks into them, the integer, scale,
   float, `utf8` and `hex` transforms, residue, and writing each set in line
   order with its residue after.

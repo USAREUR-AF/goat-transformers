@@ -1,0 +1,17 @@
+{
+  "name": "misb0806-01-geojson-to-misb-st0806",
+  "from": "geojson",
+  "to": "misb-st0806",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11,48,300]},\"properties\":{\"callsign\":\"RVT1\",\"speed_ms\":5,\"note\":\"x\"},\"id\":\"R-1\"}",
+  "expect": "060e2b34020b01010e010301020000000601040d729aa7",
+  "model": {
+    "uid": "R-1",
+    "lat": "48",
+    "lon": "11",
+    "hae": "300",
+    "callsign": "RVT1",
+    "speed_ms": "5"
+  },
+  "source": "constructed: values chosen for this vector; message chosen; output built from the item layouts of packs/misb-st0806/pack.def; no ST 0806 example or example value used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire) with Version 0.27 (crc32: poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR, over key through the checksum item's tag and length, ruling 1); derived without an engine by a standalone program (Python standard library), CRC routine checked against 123456789 -> 0376e6e7 and empty -> ffffffff; no line of misb-st0806 names a core key and no derivation targets a misb0806 key, so the output is the key, the set length 06 and the checksum item 01 04 with the CRC of the key through 01 04; the geojson residue member note is not written into another format"
+}

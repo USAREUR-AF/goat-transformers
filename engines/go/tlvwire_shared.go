@@ -20,7 +20,8 @@ type tlvConf struct {
 	lenN    int // 0: ber; else 1, 2 or 4 bytes
 	key     []byte
 	hasKey  bool
-	sum     bool   // `checksum sum16 <tag>`
+	sum     bool   // `checksum sum16 <tag>` or `checksum crc32 <tag>`
+	crc     bool   // the checksum is crc32 (0.27), else sum16
 	sumText string // the tag of the checksum, as written
 	sumTag  uint64
 
@@ -29,7 +30,7 @@ type tlvConf struct {
 }
 
 // tlvDirective reads one `tag`, `length` (one argument, outside a sequential
-// pack), `key` or `checksum sum16 …` line. Its failures are bad-directive and
+// pack), `key` or `checksum sum16|crc32 …` line. Its failures are bad-directive and
 // are reported after the file is read, before missing-distribution (0.13,
 // and ruling 2 of 0.10).
 func (p *Pack) tlvDirective(kw string, args []string, line int) {
@@ -85,10 +86,10 @@ func (p *Pack) tlvDirective(kw string, args []string, line int) {
 		c.hasKey = true
 	case "checksum":
 		if len(args) != 2 {
-			fail("checksum sum16 takes a tag: `checksum sum16 <tag>`")
+			fail("checksum %s takes a tag: `checksum %s <tag>`", args[0], args[0])
 			return
 		}
-		c.sum, c.sumText = true, args[1]
+		c.sum, c.crc, c.sumText = true, args[0] == "crc32", args[1]
 	}
 }
 

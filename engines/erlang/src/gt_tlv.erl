@@ -4,13 +4,14 @@
 %% A message is a set of items, each a tag, a length and a value; a value may
 %% itself be a set. The pack gives the encodings (tag_enc ber_oid | 1 | 2 | 4,
 %% len_enc ber | 1 | 2 | 4), an optional key before the set's length and an
-%% optional sum16 checksum item at the end of the top set.
+%% optional sum16 (0.13) or crc32 (0.27) checksum item at the end of the top
+%% set.
 %%
 %% A read set is a list of {Tag, Value} in input order. A path is a list of
 %% tags; [] is the top set. Residue is [{Path, HexText}], every occurrence of
 %% an unnamed tag, in input order within its set.
 -module(gt_tlv).
--export([decode/2, encode/4, plan/1]).
+-export([decode/2, encode/4, plan/1, crc32/1]).
 
 %% ===================================================================
 %% decode
@@ -61,22 +62,45 @@ top_set(#{key := Key, sum16 := Sum} = Pack, Bytes) ->
             end,
     case Sum of
         none -> [{T, V} || {T, _, V} <- Items];
-        {sum16, CT} ->
+        {Alg, CT} ->
+            W = check_size(Alg),
             case lists:reverse(Items) of
-                [{CT, At, <<Want:16>>} | RevRest] ->
+                [{CT, At, <<Want:W/unit:8>>} | RevRest] ->
                     case [T || {T, _, _} <- RevRest, T =:= CT] of
                         [] -> ok;
                         _ -> malformed(Pack, "an item of the checksum tag ~p before the last", [CT])
                     end,
-                    Got = sum16(binary:part(Bytes, 0, At), 0, 0),
+                    Got = check_value(Alg, binary:part(Bytes, 0, At)),
                     case Got =:= Want of
                         true -> [{T, V} || {T, _, V} <- lists:reverse(RevRest)];
-                        false -> malformed(Pack, "checksum ~4.16.0b where the bytes sum to ~4.16.0b",
-                                           [Want, Got])
+                        false -> malformed(Pack, "~s checksum ~.16b where the bytes give ~.16b",
+                                           [Alg, Want, Got])
                     end;
-                _ -> malformed(Pack, "the last item is not a checksum item of tag ~p with two bytes", [CT])
+                _ -> malformed(Pack, "the last item is not a ~s checksum item of tag ~p with ~p bytes",
+                               [Alg, CT, W])
             end
     end.
+
+%% The size of a checksum item's value in bytes, and its value over the bytes
+%% from the first of the input to the checksum item's length.
+check_size(sum16) -> 2;
+check_size(crc32) -> 4.
+
+check_value(sum16, Bin) -> sum16(Bin, 0, 0);
+check_value(crc32, Bin) -> crc32(Bin).
+
+%% The CRC-32 of ISO/IEC 13818-1 (0.27, "The CRC"): polynomial 0x04C11DB7, the
+%% register starting at 0xFFFFFFFF, most significant bit first, no reflection
+%% and no final XOR. (Not erlang:crc32/1, which is the reflected CRC-32.)
+crc32(Bin) -> crc32(Bin, 16#FFFFFFFF).
+
+crc32(<<B, R/binary>>, C) -> crc32(R, crc32_bits((C bxor (B bsl 24)) band 16#FFFFFFFF, 8));
+crc32(<<>>, C) -> C.
+
+crc32_bits(C, 0) -> C;
+crc32_bits(C, N) when C band 16#80000000 =/= 0 ->
+    crc32_bits(((C bsl 1) band 16#FFFFFFFF) bxor 16#04C11DB7, N - 1);
+crc32_bits(C, N) -> crc32_bits((C bsl 1) band 16#FFFFFFFF, N - 1).
 
 %% Every byte at an even offset counts b * 256, at an odd offset b; modulo
 %% 65536.
@@ -347,12 +371,13 @@ top(#{key := Key, sum16 := Sum} = Pack, Items) ->
     case Sum of
         none ->
             iolist_to_binary([key_part(Pack, Key, byte_size(Set0)), Set0]);
-        {sum16, CT} ->
-            Head = iolist_to_binary([tag_bytes(Pack, CT), len_bytes(Pack, 2)]),
-            SetLen = byte_size(Set0) + byte_size(Head) + 2,
+        {Alg, CT} ->
+            W = check_size(Alg),
+            Head = iolist_to_binary([tag_bytes(Pack, CT), len_bytes(Pack, W)]),
+            SetLen = byte_size(Set0) + byte_size(Head) + W,
             Before = iolist_to_binary([key_part(Pack, Key, SetLen), Set0, Head]),
-            S = sum16(Before, 0, 0),
-            <<Before/binary, S:16>>
+            S = check_value(Alg, Before),
+            <<Before/binary, S:W/unit:8>>
     end.
 
 key_part(_Pack, none, _Len) -> [];

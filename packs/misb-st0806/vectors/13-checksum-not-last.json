@@ -1,0 +1,9 @@
+{
+  "name": "checksum-not-last",
+  "from": "misb-st0806",
+  "to": "misb-st0806",
+  "input": "060e2b34020b01010e010301020000001a020800065772b2ee72400a05482e3236340104af460d55080104",
+  "expect_error": "malformed-wire",
+  "source": "constructed: values chosen for this vector; packet built from the item layouts of packs/misb-st0806/pack.def; no ST 0806 example or example value used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire) with Version 0.27 (crc32: poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR, over key through the checksum item's tag and length, ruling 1); derived without an engine by a standalone program (Python standard library), CRC routine checked against 123456789 -> 0376e6e7 and empty -> ffffffff; item 1 (its CRC computed over the key through its own length) stands before item 8, the last item: an item of the checksum tag before the last, and a last item that is not tag 1 (0.27 Reading and writing)"
+}

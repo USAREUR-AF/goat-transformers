@@ -1,0 +1,18 @@
+{
+  "name": "true-airspeed-70000-from-context",
+  "from": "misb-st0806",
+  "to": "misb-st0806",
+  "input": "060e2b34020b01010e0103010200000010020800065772b2ee72400104961e1dae",
+  "expect_error": "transform-encode",
+  "model": {
+    "misb0806.precision_time_us": "1785000000123456",
+    "@absent": [
+      "misb0806.platform_true_airspeed"
+    ]
+  },
+  "context": {
+    "misb0806.platform_true_airspeed": "70000"
+  },
+  "source": "constructed: values chosen for this vector; packet built from the item layouts of packs/misb-st0806/pack.def; no ST 0806 example or example value used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire) with Version 0.27 (crc32: poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR, over key through the checksum item's tag and length, ruling 1); derived without an engine by a standalone program (Python standard library), CRC routine checked against 123456789 -> 0376e6e7 and empty -> ffffffff; the input has no item 3; the context sets misb0806.platform_true_airspeed to 70000 (0.6 Order inside convert, step 2), and uint into 2 bytes refuses a value at or above 65536 (ruling 3 of 0.13)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "invalid-utf8-item-10",
+  "from": "misb-st0806",
+  "to": "misb-st0806",
+  "input": "060e2b34020b01010e0103010200000015020800065772b2ee72400a0348c3280104e0f33811",
+  "expect_error": "transform-decode",
+  "source": "constructed: values chosen for this vector; packet built from the item layouts of packs/misb-st0806/pack.def; no ST 0806 example or example value used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire) with Version 0.27 (crc32: poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR, over key through the checksum item's tag and length, ruling 1); derived without an engine by a standalone program (Python standard library), CRC routine checked against 123456789 -> 0376e6e7 and empty -> ffffffff; item 10 holds 48 c3 28: c3 opens a two-byte sequence and 28 is not a continuation byte, so the value is not UTF-8 (0.13 Transforms, utf8); the CRC is correct, so the wire checks of step 4 pass first"
+}

@@ -27,6 +27,10 @@ if "tlv" in BUILD_WIRES:
     from . import wire_tlv
 
 WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")  # the wires of the specification
+# The checksum names of `checksum <name> <tag>` (0.13 and 0.27). The line
+# check reads them on every wire (ruling 2 of 0.27), so they live here and not
+# only in `wire_tlv`, which a build without the tlv wire leaves out (0.24).
+CHECKSUMS = ("sum16", "crc32")
 BIT_ORDERS = ("lsb", "msb", "msb-lsb")  # `msb-lsb`: 0.22
 DISTRIBUTIONS = ("public", "controlled")  # public is below controlled
 CORE = "core"
@@ -58,7 +62,8 @@ ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     "end": (0, 0), "opt": (0, 0), "chain": (0, 0), "fx": (0, 0),
     "field": (3, None), "requires": (1, None), "group": (2, None), "also": (1, None), "if": (1, None),
     "length": (1, None),
-    # 0.13 adds `checksum sum16 <tag>` (two arguments) to the one of 5e, and
+    # 0.13 adds `checksum sum16 <tag>` (two arguments) to the one of 5e (0.27
+    # adds `checksum crc32 <tag>`), and
     # the `tlv` lines `tag` and `key`, whose form is checked after the file.
     "checksum": (1, 2), "tag": (1, None), "key": (1, None),
     # 0.14: `armor <hex | sixbit>`, exactly one argument, checked as the line
@@ -454,7 +459,8 @@ class Pack:
     tlv_tag: str = "ber-oid"   # tlv: `ber-oid`, `1`, `2` or `4`
     tlv_length: str = "ber"    # tlv: `ber`, `1`, `2` or `4`
     tlv_key: bytes = None      # tlv: the bytes the message begins with
-    tlv_checksum: int = None   # tlv: the tag of the `sum16` checksum item
+    tlv_checksum: int = None   # tlv: the tag of the checksum item
+    tlv_checksum_alg: str = None  # tlv: `sum16` (0.13) or `crc32` (0.27)
     armor: str = "hex"         # bits: `hex` or `sixbit` (0.14)
     gates: list = dc_field(default_factory=list)     # the common gate blocks, at any depth, in line order (0.17)
     uper: bool = False         # bits, sequential: `encoding uper` (0.19)
@@ -607,7 +613,8 @@ def line_head(raw, source, lineno, seen, directives=PACK_DIRECTIVES, arg_counts=
         raise UnknownDirective("unknown directive %r at %s" % (kw, where), format=fmt)
     lo, hi = arg_counts[kw]
     if (len(args) < lo or (hi is not None and len(args) > hi)
-            or (kw == "checksum" and len(args) == 2 and args[0] != "sum16")):  # ruling 12 of 0.13
+            or (kw == "checksum" and len(args) == 2 and args[0] not in CHECKSUMS)):
+        # ruling 12 of 0.13, ruling 2 of 0.27
         want = "%d" % lo if lo == hi else "%d or more" % lo if hi is None else "%d to %d" % (lo, hi)
         raise BadDirective(
             "directive %r takes %s argument(s), got %d at %s" % (kw, want, len(args), where), format=fmt
@@ -1517,7 +1524,7 @@ def _text_directive(kw, value, seen, current, fmt, lineno, where):
 
 
 def _check_tlv_lines(lines, wire, deferred, source, fmt):
-    """`tag`, `length`, `key` and `checksum sum16 <tag>` (0.13), checked after
+    """`tag`, `length`, `key` and `checksum sum16|crc32 <tag>` (0.13, 0.27), checked after
     the file is read: on `tlv` each at most once, before the first `kind`, with
     a value of its form; on another wire `bad-directive`. `lines` holds
     (directive, arguments, line number, after a `kind`, inside a group).
@@ -1545,8 +1552,9 @@ def _check_tlv_lines(lines, wire, deferred, source, fmt):
             continue
         value = None
         if kw == "checksum":
-            if len(args) == 2 and args[0] == "sum16":
-                value = wire_tlv.read_tag(args[1])
+            if len(args) == 2 and args[0] in wire_tlv.CHECKSUMS:
+                tag = wire_tlv.read_tag(args[1])
+                value = None if tag is None else (args[0], tag)
         elif len(args) == 1:
             a = args[0]
             if kw == "tag":
@@ -2079,7 +2087,7 @@ def parse_pack_text(text, *, source="pack.def"):
     tlv = _check_tlv_lines(tlv_lines, wire, deferred, source, name)
     if wire == "tlv":
         wire_tlv.check_pack(
-            tlv.get("tag", ("ber-oid",))[0], tlv.get("checksum", (None,))[0], tlv.get("checksum", (None, 0))[1],
+            tlv.get("tag", ("ber-oid",))[0], tlv.get("checksum", ((None, None),))[0][1], tlv.get("checksum", (None, 0))[1],
             common, kinds, deferred, source, name,
         )
     for el, k in elements:  # 0.18: `element` is xml only; ruling 12
@@ -2138,7 +2146,7 @@ def parse_pack_text(text, *, source="pack.def"):
         pack.tlv_tag = tlv.get("tag", ("ber-oid",))[0]
         pack.tlv_length = tlv.get("length", ("ber",))[0]
         pack.tlv_key = tlv.get("key", (None,))[0]
-        pack.tlv_checksum = tlv.get("checksum", (None,))[0]
+        pack.tlv_checksum_alg, pack.tlv_checksum = tlv.get("checksum", ((None, None),))[0]
     for lineno, (native, cot) in typemap:
         if native in pack.native_to_cot or cot in pack.cot_to_native:
             raise BadDirective(

@@ -1,0 +1,9 @@
+{
+  "name": "reflected-crc32-refused",
+  "from": "conformance-tlv-crc32",
+  "to": "conformance-tlv-crc32",
+  "input": "060e2b34020b01010e0103010200000010020800000177e5138e0001049dd7ed43",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.27 (a CRC-32 checksum on the tlv wire) with Version 0.13 (the tlv wire): The checksum value 9dd7ed43 is the reflected CRC-32 of zlib and Python binascii.crc32 over the covered bytes; the CRC of 0.27 of those bytes is 16b0fb85, so the value differs and the input is malformed-wire. CRC-32 of ISO/IEC 13818-1 (poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR) over the key through the checksum item's tag and length (ruling 1 of 0.27). Derived without an engine by a standalone reference program, checked against the check values 123456789 -> 0376e6e7 and empty -> ffffffff."
+}

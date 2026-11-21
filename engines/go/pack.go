@@ -854,12 +854,15 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			// `length` with one argument outside a sequential pack (0.13).
 			p.tlvDirective(kw, args, n)
 		case "checksum":
-			if args[0] == "sum16" {
+			// One argument, or two whose first is sum16 or crc32, passes
+			// as the line is read; any other count is refused here (ruling
+			// 12 of 0.13, ruling 2 of 0.27).
+			if len(args) > 2 || len(args) == 2 && args[0] != "sum16" && args[0] != "crc32" {
+				return nil, perr(ErrBadDirective, n, "", "checksum takes one argument (none, nmea) or `sum16 <tag>` or `crc32 <tag>`, got %d", len(args))
+			}
+			if args[0] == "sum16" || args[0] == "crc32" {
 				p.tlvDirective(kw, args, n)
 				continue
-			}
-			if len(args) != 1 {
-				return nil, perr(ErrBadDirective, n, "", "checksum takes one argument (none, nmea) or `sum16 <tag>`, got %d", len(args))
 			}
 			if err := p.textDirective(kw, args[0], n); err != nil {
 				return nil, perr(ErrBadDirective, n, "", "%v", err)

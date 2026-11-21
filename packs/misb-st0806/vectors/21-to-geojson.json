@@ -1,0 +1,21 @@
+{
+  "name": "to-geojson",
+  "from": "misb-st0806",
+  "to": "geojson",
+  "input": "060e2b34020b01010e0103010200000043020800065772b2ee7240030200b40a05482e3236340e01200f03555142100300c82211030156660c140102000102042aaaaaaa030415555555090250310104073a053a",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "misb0806.precision_time_us": "1785000000123456",
+    "misb0806.platform_true_airspeed": "180",
+    "misb0806.mgrs_zone": "32",
+    "@absent": [
+      "lat",
+      "lon",
+      "uid",
+      "time_ms",
+      "speed_ms"
+    ]
+  },
+  "source": "constructed: values chosen for this vector; packet built from the item layouts of packs/misb-st0806/pack.def; no ST 0806 example or example value used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire) with Version 0.27 (crc32: poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR, over key through the checksum item's tag and length, ruling 1); derived without an engine by a standalone program (Python standard library), CRC routine checked against 123456789 -> 0376e6e7 and empty -> ffffffff; the pack binds no core key, so the entity has only misb0806 keys, which the geojson pack has no line for, and residue item 12 is written back only into misb-st0806 (0.13 Residue); lat and lon absent so geometry is null (ruling 5 of 0.1.1), properties empty, no id"
+}

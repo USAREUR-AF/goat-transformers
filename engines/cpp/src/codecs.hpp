@@ -389,6 +389,9 @@ std::string encode_text(const Pack& p, const Entity& e);
 
 // A tag as a pack writes it: a decimal integer from 0 to 2^28-1 with no leading zero.
 bool parse_tlv_tag(const std::string& text, std::uint32_t& out);
+// v0.27: the CRC-32 of ISO/IEC 13818-1 (Annex A) of the first `end` bytes of `d`:
+// polynomial 0x04C11DB7, register from 0xFFFFFFFF, MSB first, no reflection, no final XOR.
+std::uint32_t crc32_mpeg2(const std::string& d, std::size_t end);
 // Parse the path and size of every `field`, `when` and `const` line of a tlv
 // pack, and check them against the transforms, the directives and one another
 // (bad-directive). Run after the file is read.

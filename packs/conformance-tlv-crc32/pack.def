@@ -1,0 +1,18 @@
+# Conformance probe pack for the CRC-32 checksum of the `tlv` wire (spec
+# 0.27). Public. A local set in the shape MISB ST 0806 uses: a 16-byte key, a
+# BER length, BER-OID tags, BER lengths and a crc32 checksum item of tag 1 at
+# the end, with a nested set and residue.
+format        conformance-tlv-crc32
+version       0.27.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          tlv
+key           060e2b34020b01010e01030102000000
+checksum      crc32 1
+
+field    time_ms      2:8      uint
+field    uid          3        utf8
+field    probe.n      4:2      twos
+field    lat          13:4     sscale:90/2147483647
+field    probe.x      48.2:1   uint

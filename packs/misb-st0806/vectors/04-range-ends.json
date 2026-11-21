@@ -1,0 +1,21 @@
+{
+  "name": "range-ends",
+  "from": "misb-st0806",
+  "to": "misb-st0806",
+  "input": "060e2b34020b01010e010301020000003802087fffffffffffffff0302ffff040200000501ff0602ffff0704ffffffff0801000904ffffffff1003ffffff11030000000104ce07e3e9",
+  "expect": "060e2b34020b01010e010301020000003802087fffffffffffffff0302ffff040200000501ff0602ffff0704ffffffff0801000904ffffffff1003ffffff11030000000104ce07e3e9",
+  "model": {
+    "misb0806.precision_time_us": "9223372036854775807",
+    "misb0806.platform_true_airspeed": "65535",
+    "misb0806.platform_indicated_airspeed": "0",
+    "misb0806.telemetry_accuracy_indicator": "255",
+    "misb0806.frag_circle_radius": "65535",
+    "misb0806.frame_code": "4294967295",
+    "misb0806.ls_version": "0",
+    "misb0806.video_data_rate": "4294967295",
+    "misb0806.mgrs_easting": "16777215",
+    "misb0806.mgrs_northing": "0"
+  },
+  "source": "constructed: values chosen for this vector; packet built from the item layouts of packs/misb-st0806/pack.def; no ST 0806 example or example value used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire) with Version 0.27 (crc32: poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR, over key through the checksum item's tag and length, ruling 1); derived without an engine by a standalone program (Python standard library), CRC routine checked against 123456789 -> 0376e6e7 and empty -> ffffffff; largest and smallest values of each size: 2^63-1 in 8 bytes (top bit clear, so ruling 2 of 0.5 does not change it), 65535 in 2, 255 in 1, 4294967295 in 4, 16777215 in 3, and 0; the zone and easting ranges are not checked (pack.md)"
+}

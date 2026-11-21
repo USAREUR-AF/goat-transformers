@@ -47,7 +47,7 @@
 %%   for none) and checksum (none | nmea).
 %%   A bits pack has armor (hex | sixbit, 0.14); every pack carries the key.
 %%   A tlv pack also has tag_enc (ber_oid | 1 | 2 | 4), len_enc (ber | 1 | 2 |
-%%   4), key (none | binary()) and sum16 (none | {sum16, Tag}).
+%%   4), key (none | binary()) and sum16 (none | {sum16 | crc32, Tag}, 0.27).
 %%   Inside a group a geojson pack uses the json locators.
 %%   `when` Value: bits -> integer(); protobuf -> present | integer();
 %%                 text wires -> present | {text, binary(), Forced :: boolean()}
@@ -517,6 +517,8 @@ pre_line([Dir | Args], P0) ->
     %% `checksum sum16 <tag>` of the tlv wire takes two (ruling 12 of 0.13)
     CountOk = case {Dir, Args} of
                   {<<"checksum">>, [<<"sum16">>, _]} -> true;
+                  %% and `checksum crc32 <tag>` (ruling 2 of 0.27)
+                  {<<"checksum">>, [<<"crc32">>, _]} -> true;
                   _ -> arg_count_ok(Dir, length(Args))
               end,
     case CountOk of
@@ -610,6 +612,8 @@ apply_line([<<"length">> | Args], #{wire := tlv} = P) -> tlv_directive(length, A
 apply_line([<<"tag">> | Args], P) -> tlv_directive(tag, Args, P);
 apply_line([<<"key">> | Args], P) -> tlv_directive(key, Args, P);
 apply_line([<<"checksum">>, <<"sum16">>, _] = Args, P) ->
+    tlv_directive(checksum, tl(Args), P);
+apply_line([<<"checksum">>, <<"crc32">>, _] = Args, P) ->
     tlv_directive(checksum, tl(Args), P);
 apply_line([<<"armor">>, V], P) -> armor_directive(V, P);
 apply_line([<<"encoding">>, V], P) -> encoding_directive(V, P);
@@ -3015,7 +3019,7 @@ text_scopes(#{common := Common, kinds := Kinds}) ->
 %% the `tlv` wire (engine-spec Version 0.13)
 %% ===================================================================
 %% A tlv pack also has tag_enc (ber_oid | 1 | 2 | 4), len_enc (ber | 1 | 2 |
-%% 4), key (none | binary()) and sum16 (none | {sum16, Tag}). Its locators are
+%% 4), key (none | binary()) and sum16 (none | {sum16 | crc32, Tag}, 0.27). Its locators are
 %% {[Tag], Size :: none | 1..8}; a `when` value is present | {uint, V}, a
 %% `const` value {uint, V}.
 %%
@@ -3053,9 +3057,9 @@ tlv_value(key, [H]) when byte_size(H) >= 2, byte_size(H) =< 128, byte_size(H) re
         true -> {ok, key, ?TLV(gt_hex:hex_to_bytes(H))};
         false -> error
     end;
-tlv_value(checksum, [<<"sum16">>, T]) ->
+tlv_value(checksum, [Alg, T]) when Alg =:= <<"sum16">>; Alg =:= <<"crc32">> ->
     case tag_text(T) of
-        {ok, N} -> {ok, sum16, {sum16, N}};
+        {ok, N} -> {ok, sum16, {binary_to_atom(Alg), N}};
         error -> error
     end;
 tlv_value(_, _) -> error.
@@ -3114,7 +3118,7 @@ tlv_checks(#{tag_enc := TagEnc, sum16 := Sum, common := Common, kinds := Kinds})
                 N -> 1 bsl (8 * N)
             end,
     case Sum of
-        {sum16, T} when T >= Limit ->
+        {_, T} when T >= Limit ->
             load_error('bad-directive', "checksum tag ~p does not fit tag ~p", [T, TagEnc]);
         _ -> ok
     end,
@@ -3133,7 +3137,7 @@ tlv_checks(#{tag_enc := TagEnc, sum16 := Sum, common := Common, kinds := Kinds})
                 end, binary:split(PathS, <<".">>, [global])),
               {[First | _], _} = line_loc_of(L),
               case Sum of
-                  {sum16, First} ->
+                  {_, First} ->
                       load_error('bad-directive', "~s begins with the checksum tag ~p", [LocS, First]);
                   _ -> ok
               end

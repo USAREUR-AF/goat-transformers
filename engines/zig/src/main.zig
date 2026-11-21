@@ -866,6 +866,9 @@ const Pack = struct {
     tlv_len: u8 = 0,
     tlv_key: []const u8 = "",
     tlv_sum: ?u32 = null,
+    // Version 0.27: the checksum item is a four-byte CRC-32 (`checksum crc32
+    // <tag>`, its tag in `tlv_sum`), else the two-byte sum of 0.13
+    tlv_crc: bool = false,
     tag_raw: ?[]const u8 = null,
     len_raw: ?[]const u8 = null,
     key_raw: ?[]const u8 = null,
@@ -2706,8 +2709,9 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         // Version 0.21: `count <name> <len> [plus <n>]`; its options are
         // checked by the sequential parser
         .count => n >= 2,
-        // `checksum sum16 <tag>` of the `tlv` wire has two (ruling 12 of 0.13)
-        .checksum => n == 1 or (n == 2 and std.mem.eql(u8, toks[1], "sum16")),
+        // `checksum sum16 <tag>` and `checksum crc32 <tag>` of the `tlv` wire
+        // have two (ruling 12 of 0.13, ruling 2 of 0.27)
+        .checksum => n == 1 or (n == 2 and (std.mem.eql(u8, toks[1], "sum16") or std.mem.eql(u8, toks[1], "crc32"))),
         .field => n >= 3,
         .when, .@"const", .default, .typemap => n == 2,
         .map => n == 3,
@@ -8904,10 +8908,12 @@ fn tlvDirectives(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void 
         p.tlv_key = try hexDecode(alloc, k);
     }
     if (p.cksum_raw) |c| {
-        if (!std.mem.eql(u8, c, "sum16")) return bad(diag, alloc, bd, "checksum {s} on the tlv wire; it takes sum16 <tag>", .{c});
-        const a = p.cksum_arg orelse return bad(diag, alloc, bd, "checksum sum16 takes a tag", .{});
+        const crc = std.mem.eql(u8, c, "crc32");
+        if (!crc and !std.mem.eql(u8, c, "sum16")) return bad(diag, alloc, bd, "checksum {s} on the tlv wire; it takes sum16 <tag> or crc32 <tag>", .{c});
+        const a = p.cksum_arg orelse return bad(diag, alloc, bd, "checksum {s} takes a tag", .{c});
         p.tlv_sum = tlvTagNum(p, a) orelse
-            return bad(diag, alloc, bd, "checksum sum16 {s}: not a tag from 0 to 2^28-1 with no leading zero that fits the tag size", .{a});
+            return bad(diag, alloc, bd, "checksum {s} {s}: not a tag from 0 to 2^28-1 with no leading zero that fits the tag size", .{ c, a });
+        p.tlv_crc = crc;
     }
 }
 
@@ -9051,6 +9057,34 @@ fn sum16(b: []const u8) u16 {
     return s;
 }
 
+// The CRC-32 of ISO/IEC 13818-1 (Version 0.27, "The CRC"): polynomial
+// 0x04C11DB7, register from 0xFFFFFFFF, most significant bit first, no
+// reflection, no final XOR. (Not std.hash.Crc32, which is reflected.)
+fn crc32Mpeg(b: []const u8) u32 {
+    var r: u32 = 0xFFFFFFFF;
+    for (b) |c| {
+        r ^= @as(u32, c) << 24;
+        var i: usize = 0;
+        while (i < 8) : (i += 1) {
+            r = if (r & 0x80000000 != 0) (r << 1) ^ 0x04C11DB7 else r << 1;
+        }
+    }
+    return r;
+}
+
+test "crc32Mpeg check values of 0.27" {
+    try std.testing.expectEqual(@as(u32, 0x0376E6E7), crc32Mpeg("123456789"));
+    try std.testing.expectEqual(@as(u32, 0xFFFFFFFF), crc32Mpeg(""));
+}
+
+// The checksum of the bytes it covers, and its width in bytes.
+fn tlvCheck(p: *const Pack, b: []const u8) u32 {
+    return if (p.tlv_crc) crc32Mpeg(b) else sum16(b);
+}
+fn tlvCheckLen(p: *const Pack) usize {
+    return if (p.tlv_crc) 4 else 2;
+}
+
 // Steps 1, 2, 4 and the top set of step 3 of "Reading a message". The
 // checksum item is left out of the items.
 fn tlvParse(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror![]TlvItem {
@@ -9071,14 +9105,15 @@ fn tlvParse(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *
     if (p.tlv_sum) |t| {
         if (items.len == 0) return bad(diag, alloc, mw, "no checksum item", .{});
         const last = items[items.len - 1];
-        if (last.tag != t or last.val.len != 2) return bad(diag, alloc, mw, "the last item is not the checksum item: tag {d} with a value of two bytes", .{t});
+        const w = tlvCheckLen(p);
+        if (last.tag != t or last.val.len != w) return bad(diag, alloc, mw, "the last item is not the checksum item: tag {d} with a value of {d} bytes", .{ t, w });
         for (items[0 .. items.len - 1]) |it| {
             if (it.tag == t) return bad(diag, alloc, mw, "an item of the checksum tag {d} before the last", .{t});
         }
         const end = @intFromPtr(last.val.ptr) - @intFromPtr(buf.ptr);
-        const got = sum16(buf[0..end]);
+        const got = tlvCheck(p, buf[0..end]);
         const want = beU64(last.val);
-        if (got != want) return bad(diag, alloc, mw, "the checksum is {x:0>4}, the message sums to {x:0>4}", .{ want, got });
+        if (got != want) return bad(diag, alloc, mw, "the checksum is {x}, the message's is {x}", .{ want, got });
         items = items[0 .. items.len - 1];
     }
     return items;
@@ -9417,8 +9452,8 @@ fn tlvEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *con
     };
     if (p.tlv_sum) |t| {
         try tlvPutTag(p, &set, t);
-        try tlvPutLen(p, &set, 2);
-        try set.appendSlice(&.{ 0, 0 });
+        try tlvPutLen(p, &set, tlvCheckLen(p));
+        try set.appendNTimes(0, tlvCheckLen(p));
     }
     var out = std.ArrayList(u8).init(alloc);
     if (p.tlv_key.len > 0) {
@@ -9431,9 +9466,9 @@ fn tlvEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *con
     try out.appendSlice(set.items);
     if (p.tlv_sum != null) {
         const n = out.items.len;
-        const s = sum16(out.items[0 .. n - 2]);
-        out.items[n - 2] = @truncate(s >> 8);
-        out.items[n - 1] = @truncate(s);
+        const w = tlvCheckLen(p);
+        const s = tlvCheck(p, out.items[0 .. n - w]);
+        for (0..w) |i| out.items[n - 1 - i] = @truncate(s >> @as(u5, @intCast(8 * i)));
     }
     return hexEncode(alloc, out.items);
 }

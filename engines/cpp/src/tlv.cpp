@@ -1,8 +1,8 @@
 // The `tlv` wire (engine-spec.md, "Version 0.13: the `tlv` wire").
 //
 // A message is a set of items, each a tag, a length and a value, optionally
-// after a fixed key and a length, and optionally ending with a sum16 checksum
-// item. A value may itself be a set; it is read as one only when a line of the
+// after a fixed key and a length, and optionally ending with a checksum item:
+// a sum16 (0.13) or a CRC-32 (Version 0.27). A value may itself be a set; it is read as one only when a line of the
 // selected scope walks into it. A locator is a path of tags (`48.2`) with an
 // optional size in bytes (`:<n>`). Residue is every item of a set read whose
 // tag no line names at that place, keyed by its path, holding its value as hex.
@@ -501,8 +501,24 @@ std::uint16_t sum16(const std::string& d, std::size_t end) {
     return static_cast<std::uint16_t>(sum);
 }
 
+// The checksum of the first `end` bytes of `d` under the pack's algorithm,
+// and the size of its value in bytes.
+std::uint32_t checksum_of(const Pack& p, const std::string& d, std::size_t end) {
+    return p.tlv_checksum_crc32 ? crc32_mpeg2(d, end) : sum16(d, end);
+}
+
+std::size_t checksum_size(const Pack& p) { return p.tlv_checksum_crc32 ? 4 : 2; }
+
 }  // namespace
 
+std::uint32_t crc32_mpeg2(const std::string& d, std::size_t end) {
+    std::uint32_t reg = 0xFFFFFFFFu;
+    for (std::size_t i = 0; i < end; ++i) {
+        reg ^= static_cast<std::uint32_t>(static_cast<unsigned char>(d[i])) << 24;
+        for (int k = 0; k < 8; ++k) reg = (reg & 0x80000000u) ? (reg << 1) ^ 0x04C11DB7u : reg << 1;
+    }
+    return reg;
+}
 
 void check_tlv_pack(Pack& p) {
     if (p.tlv_checksum && p.tlv_checksum_tag >= tag_limit(p))
@@ -552,14 +568,16 @@ Entity decode_tlv(const Pack& p, const std::string& text) {
         if (root.items.empty()) malformed(p, "no checksum item");
         const TItem last = root.items.back();
         if (last.tag != t) malformed(p, "the last item is not the checksum item of tag " + std::to_string(t));
-        if (last.len != 2) malformed(p, "the checksum item's value is not two bytes");
+        if (last.len != checksum_size(p))
+            malformed(p, std::string("the checksum item's value is not ") + (p.tlv_checksum_crc32 ? "four" : "two") +
+                             " bytes");
         root.items.pop_back();
         for (const auto& it : root.items)
             if (it.tag == t) malformed(p, "an item of the checksum tag " + std::to_string(t) + " before the last");
-        const std::uint16_t want = sum16(d, last.off);
-        const std::uint16_t got = static_cast<std::uint16_t>(be_value(d, last));
+        const std::uint32_t want = checksum_of(p, d, last.off);
+        const std::uint64_t got = be_value(d, last);
         if (want != got)
-            malformed(p, "the checksum is " + std::to_string(got) + " and the bytes sum to " + std::to_string(want));
+            malformed(p, "the checksum is " + std::to_string(got) + " and the bytes give " + std::to_string(want));
     }
 
     // The kind, before any nested set is read for the scope's lines. A `when`
@@ -742,9 +760,9 @@ std::string encode_tlv(const Pack& p, const Entity& e) {
     std::size_t checksum_at = 0;
     if (p.tlv_checksum) {
         put_tag(p, set, p.tlv_checksum_tag);
-        put_length(p, set, 2, std::to_string(p.tlv_checksum_tag));
+        put_length(p, set, checksum_size(p), std::to_string(p.tlv_checksum_tag));
         checksum_at = set.size();
-        set += std::string(2, '\0');
+        set += std::string(checksum_size(p), '\0');
     }
     std::string out;
     if (p.tlv_has_key) {
@@ -755,9 +773,9 @@ std::string encode_tlv(const Pack& p, const Entity& e) {
     out += set;
     if (p.tlv_checksum) {
         const std::size_t at = set_at + checksum_at;
-        const std::uint16_t sum = sum16(out, at);
-        out[at] = static_cast<char>(sum >> 8);
-        out[at + 1] = static_cast<char>(sum & 0xFF);
+        const std::uint32_t sum = checksum_of(p, out, at);
+        const std::size_t n = checksum_size(p);
+        for (std::size_t k = 0; k < n; ++k) out[at + k] = static_cast<char>((sum >> (8 * (n - 1 - k))) & 0xFF);
     }
     return bytes_to_hex(out);
 }

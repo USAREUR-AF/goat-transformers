@@ -1,0 +1,25 @@
+# The misb0806 module: top-level items of the MISB ST 0806 Remote Video
+# Terminal (RVT) Local Set that the core and track modules have no key for.
+# The aircraft's position in this set is given only as MGRS parts, which no
+# transform turns into latitude and longitude (packs/misb-st0806/pack.md).
+module        misb0806
+version       0.1.0
+distribution  public
+source        "MISB ST 0806.4 Remote Video Terminal Metadata Set (27 February 2014), Motion Imagery Standards Board, NSG Registry public document store"
+key  precision_time_us            int     us   "item 2: microseconds since 1970-01-01T00:00:00, the Precision Time Stamp of MISB ST 0603; the time the metadata of the set was created"
+key  platform_true_airspeed       int     m/s  "item 3: true airspeed of the platform, whole meters per second, 0 to 65535"
+key  platform_indicated_airspeed  int     m/s  "item 4: indicated airspeed of the platform, whole meters per second, 0 to 65535"
+key  telemetry_accuracy_indicator int     -    "item 5: one-byte value the document reserves for future use; no meaning is defined"
+key  frag_circle_radius           int     m    "item 6: radius of the fragmentation circle the aircrew selected, whole meters"
+key  frame_code                   int     -    "item 7: frame counter, unsigned 32-bit, counting at 60 Hz"
+key  ls_version                   int     -    "item 8: version of ST 0806 the set was written to, 0 for pre-release, the first release or test data, 1 to 255 for later revisions"
+key  video_data_rate              int     -    "item 9: video data rate in bits per second for digital video, or the analog FM frequency in hertz"
+key  video_format                 string  -    "item 10: free-text name of the video compression in use (an MPEG or H.26x name, or analog FM), at most 127 characters"
+key  mgrs_zone                    int     -    "item 14: UTM zone of the aircraft's MGRS coordinates, 1 to 60 (the first two MGRS characters)"
+key  mgrs_band_square             string  -    "item 15: latitude band letter and two-letter 100 km grid square of the aircraft's MGRS coordinates (MGRS characters 3 to 5, WGS 84)"
+key  mgrs_easting                 int     m    "item 16: easting within the grid square of the aircraft's MGRS coordinates, 0 to 99999 meters"
+key  mgrs_northing                int     m    "item 17: northing within the grid square of the aircraft's MGRS coordinates, 0 to 99999 meters"
+key  frame_center_mgrs_zone       int     -    "item 18: UTM zone of the frame center's MGRS coordinates, 1 to 60"
+key  frame_center_mgrs_band_square string -    "item 19: latitude band letter and two-letter grid square of the frame center's MGRS coordinates (WGS 84)"
+key  frame_center_mgrs_easting    int     m    "item 20: easting within the grid square of the frame center's MGRS coordinates, 0 to 99999 meters"
+key  frame_center_mgrs_northing   int     m    "item 21: northing within the grid square of the frame center's MGRS coordinates, 0 to 99999 meters"

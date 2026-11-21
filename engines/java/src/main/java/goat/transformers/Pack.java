@@ -583,8 +583,10 @@ public final class Pack {
     int tlvLengthSize;
     /** tlv wire: the {@code key} bytes, or null. */
     byte[] tlvKey;
-    /** tlv wire: {@code checksum sum16 <tag>}. */
+    /** tlv wire: {@code checksum sum16 <tag>} or {@code checksum crc32 <tag>}. */
     boolean tlvChecksum;
+    /** tlv wire: the checksum is {@code crc32} (0.27), else {@code sum16}. */
+    boolean tlvCrc32;
     long tlvChecksumTag = -1;
     /** The {@code requires =} and {@code case} value lists, in line order: read as their keys' types at load. */
     List<ValueList> valueLists = new ArrayList<>();
@@ -755,8 +757,8 @@ public final class Pack {
             case "switch":
             case "case": ok = n == 1; break;
             case "else": ok = n == 0; break;
-            // 0.13 adds `checksum sum16 <tag>`, the tlv form, beside the one-argument form of 5e
-            case "checksum": ok = n == 1 || (n == 2 && args.get(0).equals("sum16")); break;
+            // 0.13 adds `checksum sum16 <tag>`, the tlv form, beside the one-argument form of 5e; 0.27 `checksum crc32 <tag>`
+            case "checksum": ok = n == 1 || (n == 2 && (args.get(0).equals("sum16") || args.get(0).equals("crc32"))); break;
             default: ok = !ONE_ARGUMENT.contains(kw) || n == 1;
         }
         if (!ok) throw bad(format, null, where + ": " + kw + " has the wrong number of arguments (" + n + ")");
@@ -997,6 +999,7 @@ public final class Pack {
         /** tlv wire: bytes of a fixed tag (0 for ber-oid), and the checksum tag (-1 for none). */
         int tlvTagSize;
         long tlvChecksumTag = -1;
+        boolean tlvCrc32;
         Map<String, List<String[]>> tables;
         final List<Field> fields = new ArrayList<>();
         final List<Line> typed = new ArrayList<>();
@@ -1179,7 +1182,7 @@ public final class Pack {
             }
             BodySpec body = open.isEmpty() ? cur : open.peek().body;
             if (kw.equals("tag") || kw.equals("key") || kw.equals("length")
-                    || (kw.equals("checksum") && !args.isEmpty() && args.get(0).equals("sum16"))) {
+                    || (kw.equals("checksum") && !args.isEmpty() && (args.get(0).equals("sum16") || args.get(0).equals("crc32")))) {
                 // `length` here is the tlv directive: a pack with layout sequential reads its length lines above
                 tlvDirs.add(new Object[]{kw, new ArrayList<>(args), ln, cur != common});
                 continue;
@@ -1514,7 +1517,10 @@ public final class Pack {
             ctx.tlvTagSize = tlvSizes[0];
             for (Object[] d : tlvDirs) {
                 @SuppressWarnings("unchecked") List<String> a = (List<String>) d[1];
-                if (d[0].equals("checksum")) ctx.tlvChecksumTag = Long.parseLong(a.get(1));
+                if (d[0].equals("checksum")) {
+                    ctx.tlvChecksumTag = Long.parseLong(a.get(1));
+                    ctx.tlvCrc32 = a.get(0).equals("crc32");
+                }
                 if (d[0].equals("key")) {
                     String h = a.get(0);
                     tlvKey = new byte[h.length() / 2];
@@ -1616,6 +1622,7 @@ public final class Pack {
             pack.tlvKey = tlvKey;
             pack.tlvChecksum = ctx.tlvChecksumTag >= 0;
             pack.tlvChecksumTag = ctx.tlvChecksumTag;
+            pack.tlvCrc32 = ctx.tlvCrc32;
         }
         return pack;
     }
@@ -1628,7 +1635,7 @@ public final class Pack {
     @SuppressWarnings("unchecked")
     private static int[] tlvDirectives(List<Object[]> dirs, Wire wire, String[] checksumDir, String format, String source) {
         if (wire == Wire.TLV && checksumDir != null) {
-            throw badDirective(format, null, source + ":" + checksumDir[1] + ": checksum on the tlv wire is checksum sum16 <tag>");
+            throw badDirective(format, null, source + ":" + checksumDir[1] + ": checksum on the tlv wire is checksum sum16 <tag> or checksum crc32 <tag>");
         }
         int[] sizes = {0, 0};
         Set<String> seen = new HashSet<>();
@@ -1638,7 +1645,7 @@ public final class Pack {
             String kw = (String) d[0];
             List<String> a = (List<String>) d[1];
             String where = source + ":" + d[2];
-            String shown = kw.equals("checksum") ? "checksum sum16" : kw;
+            String shown = kw.equals("checksum") ? "checksum " + a.get(0) : kw;
             if (wire != Wire.TLV) throw badDirective(format, null, where + ": " + shown + " is for the tlv wire only");
             if (!seen.add(kw)) throw badDirective(format, null, where + ": " + kw + " given twice");
             if ((Boolean) d[3]) throw badDirective(format, null, where + ": " + kw + " after the first kind line");
@@ -1661,7 +1668,7 @@ public final class Pack {
                     break;
                 }
                 default:
-                    if (a.size() != 2) throw badDirective(format, null, where + ": checksum takes sum16 <tag>");
+                    if (a.size() != 2) throw badDirective(format, null, where + ": checksum takes " + a.get(0) + " <tag>");
                     checksumTag = a.get(1);
                     checksumLine = (Integer) d[2];
             }
