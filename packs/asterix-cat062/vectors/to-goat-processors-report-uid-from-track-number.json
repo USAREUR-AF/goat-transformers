@@ -1,5 +1,5 @@
 {
- "name": "03-from-asterix-cat062-uid-from-track-number",
+ "name": "to-goat-processors-report-uid-from-track-number",
  "from": "asterix-cat062",
  "to": "goat-processors-report",
  "input": "3e0018990c01075460100000000000000000013781010100",

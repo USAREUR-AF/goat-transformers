@@ -1,5 +1,5 @@
 {
- "name": "02-from-cot-xml",
+ "name": "to-goat-processors-report-cot-event",
  "from": "cot-xml",
  "to": "goat-processors-report",
  "input": "<?xml version=\"1.0\"?><event version=\"2.0\" uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><contact callsign=\"GATOR\"/></detail></event>",

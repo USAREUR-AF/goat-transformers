@@ -10,7 +10,7 @@ CAT062; split the output into lines with newline framing.
 | `uid` | `group` | the system track's identifier when fuse makes the tracks |
 | `cat062.track_number` | `track_number` | a number 1 to 65535 the track keeps while it lives |
 | `time_ms` | `now_ms` | the tick the track describes, epoch ms |
-| `lat`, `lon`, `hae`, `course`, `speed_ms` | same names | the fused estimate |
+| `lat`, `lon`, `hae`, `course`, `speed_ms` | same names | the fused estimate; `hae` is fused from the reports' `hae`, metres above the WGS 84 ellipsoid |
 
 Not mapped: `members` (an array, which the json wire does not carry in
 engine-spec 0.5), and `ce`, `hae_from`, `from`, `attributes`, which are
