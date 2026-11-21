@@ -1,17 +1,19 @@
 # Consumer proofs
 
 Each project below runs the library in its own conversion path, beside its
-own conversion code, chosen by a setting that defaults to the project's own
-code. Each project's tests compare the two paths on that project's own inputs
-field by field and fail when the result moves.
+own conversion code, chosen by a setting. In open-billie (CoT and CAT062),
+goatstuff's goat-map and open-entity-gateway (CoT and CAT062) the setting now
+defaults to the library, and the project's own code stays one setting away.
+Each project's tests compare the two paths on that project's own inputs field
+by field and fail when the result moves.
 
 | Project | Language | Where the library runs | How it is chosen | Library pinned | Status |
 |---|---|---|---|---|---|
-| open-billie | Rust | the translator's CoT, ASTERIX CAT062 and SAPIENT encoders (`runtime/rust/translator`) | cargo feature `goat-transformers`, then `BILLIE_COT_ENCODER`, `BILLIE_CAT062_ENCODER`, `BILLIE_SAPIENT_ENCODER` = `goat-transformers` | Rust crate by git `rev` (`9e951e9`); packs copied with SHA-256 sums | Built, merged (open-billie#28, re-pinned in #30); the compare test runs in its CI |
+| open-billie | Rust | the translator's CoT, ASTERIX CAT062 and SAPIENT encoders (`runtime/rust/translator`) | cargo feature `goat-transformers` (default), then `BILLIE_COT_ENCODER`, `BILLIE_CAT062_ENCODER`, `BILLIE_SAPIENT_ENCODER` = `goat-transformers` or `native`; the library is the default for CoT and CAT062 (open-billie#35), SAPIENT stays native | Rust crate by git `rev` (`9e951e9`); packs copied with SHA-256 sums | Built, merged (open-billie#28, re-pinned in #30); the default for CoT and CAT062 (#35); its own CAT062 and SAPIENT encoders follow the library's MRH and WGS84 e2 (#33); the compare test runs in its CI |
 | first-bite | Rust | `flow`: a transform `xf` beside `cot`; its dictionaries generated into packs by `tools/bite2pack` | cargo feature `goat-transformers` and `subtype: "xf"` in a subpub | Rust crate by git `rev` (`6d99371`); target packs copied, `UPSTREAM` names the commit | Built, merged (first-bite#72, re-pinned in #75); `xf` is in `mind`'s default build; both tests run in its CI |
-| goatstuff | Rust and Python | `ops/zenoh-shims/transform-shim`, a fabric peer that converts by route; goat-map's CoT to GeoTrackV1 on the Python engine | the shim's route table; `GOATMAP_COT_ENGINE=library` | `ops/xf/goat-transformers.ref` (`9e951e9`); bundles checked against a manifest | Built, merged (goatstuff#106, re-pinned in #111); not deployed |
+| goatstuff | Rust and Python | `ops/zenoh-shims/transform-shim`, a fabric peer that converts by route; goat-map's CoT to GeoTrackV1 on the Python engine | the shim's route table; `GOATMAP_COT_ENGINE`, default `library` (goatstuff#118), `builtin` for goat-map's own code | `ops/xf/goat-transformers.ref` (`9e951e9`); bundles checked against a manifest | Built, merged (goatstuff#106, re-pinned in #111); not deployed |
 | octo-pod | Rust | `gateway/translate`, a separate gateway beside the capture arms | a pod's `50-translate.yml`; none means no gateway | Rust crate by git `rev`; packs copied with a manifest | Built, open for review (octo-pod#31) |
-| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination `encoder: native` or `goat-transformers` | engine and packs copied at one commit with SHA-256 sums, checked in CI | Built, merged (open-entity-gateway#18 to #21, #30 to #36); the compare test runs in its CI |
+| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination `encoder: native` or `goat-transformers`; the default is `goat-transformers` for CoT and CAT062 (open-entity-gateway#37) | engine and packs copied at one commit with SHA-256 sums, checked in CI | Built, merged (open-entity-gateway#18 to #21, #30 to #36); the compare test runs in its CI |
 
 ## open-billie: Canonical Track v2 to CoT, CAT062 and SAPIENT
 
@@ -26,22 +28,21 @@ object identifiers.
 (schema examples, the runtime-contract request, the tracks of the translator's
 unit tests, ten tracks from its decoder vectors) through both paths, parses
 both outputs and compares them field by field against a committed baseline.
-Measured in open-billie's CI at library commit `9e951e9` (open-billie#30),
-against `runtime/rust/translator/tests/fixtures/goat-transformers-baseline.json`:
+Measured in open-billie's CI at library commit `9e951e9`, after open-billie#33
+made its own encoders follow the library on the CAT062 MRH bit and the WGS84
+e2, against `runtime/rust/translator/tests/fixtures/goat-transformers-baseline.json`:
 
 | Format | Encoded by both | Refused by both | One path refuses | Byte-identical | Fields equal |
 |---|---|---|---|---|---|
-| ASTERIX CAT062 | 25 | 7 | 1 | 1 of 25 | 373 of 397 |
+| ASTERIX CAT062 | 25 | 7 | 1 | 25 of 25 | 397 of 397 |
 | CoT | 33 | 0 | 0 | 28 of 33 | 588 of 594 |
-| SAPIENT | 33 | 0 | 0 | 0 of 33 | 654 of 719 |
+| SAPIENT | 33 | 0 | 0 | 0 of 33 | 685 of 719 |
 
 At `0be9fc9` the figures were CAT062 397 of 397, CoT 547 of 594 and SAPIENT 579
 of 717. Since then the library maps the SAPIENT position errors (spec 0.16),
 the CoT `opex`, `detail/remarks` and SAPIENT `state` from the status flags, the
 SAPIENT confidence written only with a class, and the empty CoT `detail` (spec
-0.18). It also sets the CAT062 MRH bit when an altitude is sent (spec 0.12),
-where open-billie's own encoder writes 0: that is the 24-field CAT062 row
-below. Earlier measurements outside the project, with the identities not yet
+0.18). Earlier measurements outside the project, with the identities not yet
 supplied as context: CoT 161 of 594 at spec 0.5 and 514 at spec 0.6; SAPIENT
 130 of 717 and 416.
 
@@ -49,8 +50,6 @@ What still differs, and what closes it:
 
 | Format | Field | Inputs | Closed by |
 |---|---|---|---|
-| CAT062 | I062/080 MRH: the library writes 1 when an altitude is sent, open-billie's encoder 0 | 24 | open-billie's encoder following the library (one bit, proposed to its maintainer) |
-| SAPIENT | `location.y_error`: about 1.6e-15 relative, from open-billie's rounded WGS84 e2 | 31 | open-billie's encoder computing e2 = f(2 − f) (proposed to its maintainer) |
 | SAPIENT | `object_info[]` (type and value) from the identifiers of one scheme | 16 | list items selected by a value (spec 0.58, planned) |
 | SAPIENT | `timestamp.nanos` written as 0 at a whole second, where open-billie omits it | 2 | a protobuf scalar left out at its default (spec 0.56, not yet merged) |
 | CoT | `time`, `start`, `stale`: no fraction on a whole second | 2 | `iso8601_si` (spec 0.55, not yet merged) |
@@ -95,8 +94,8 @@ What still differs, and what closes it:
 converts each message with the Rust engine and republishes it under another
 key, by a route table read at start; a route's `set` supplies context from the
 key, the sample and its timestamp. goat-map's CoT to GeoTrackV1 runs on the
-Python engine with `GOATMAP_COT_ENGINE=library`; the default is its own
-`goatmap/cot.py`.
+Python engine; `GOATMAP_COT_ENGINE` defaults to `library` (goatstuff#118), and
+`builtin` selects goat-map's own `goatmap/cot.py`.
 
 Measured by `ops/serve/goat-map/tools/cot_parity.py` over 26 CoT inputs,
 against `tests-public/cot_parity_baseline.json` in goatstuff's CI, at library
