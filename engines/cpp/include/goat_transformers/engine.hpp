@@ -284,6 +284,27 @@ struct FieldLine {
     std::vector<std::uint64_t> absent_num;  // bits and the integer forms of protobuf: the raw integers
     std::vector<std::string> absent_text;   // text wires and pstring: the texts compared (json: canonical)
     std::string absent_json;                // json and geojson: the JSON text the first sentinel is written as
+    // v0.56: range sentinels `>=<n>` and `<=<n>` of the `absent` option. `n` is
+    // the raw unsigned integer (bits, pvarint, psint); `d` the nearest double of
+    // number text (xml, json, geojson, pstring).
+    struct AbsentRange {
+        bool at_least = true;  // `>=`; `<=` otherwise
+        std::uint64_t n = 0;
+        double d = 0.0;
+    };
+    std::vector<AbsentRange> absent_ranges;
+    bool absent_exact = false;  // the option holds an exact sentinel: encode of an absent key writes the first
+    // Does encode of an absent key write a sentinel (0.9, 0.56: never a range)?
+    bool writes_sentinel() const { return has_absent && absent_exact; }
+    // v0.56 output conditions.
+    bool null_member = false;  // `null` (json, geojson): an absent key is written as the JSON value null
+    bool implicit = false;     // `implicit` (protobuf): a value equal to the proto3 default is not written
+    bool has_range = false;    // `range <min> <max> [wrap]`
+    bool range_wrap = false;
+    std::string range_min_text, range_max_text;  // as written
+    double range_min_d = 0.0, range_max_d = 0.0;           // a float key: the nearest doubles (2b)
+    std::int64_t range_min_i = 0, range_max_i = 0;         // an int key: the integers (2a)
+    bool range_ints = false;                               // both bounds are integer text (2a)
     // The key's declared type. Engine::add_pack fills it from the loaded modules.
     KeyType key_type = KeyType::String;
     // v0.17: the innermost gate block holding the line (index in Pack::gates); -1 outside any.

@@ -790,8 +790,17 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                     // value, so 0.9's raw value is not stated for it.
                     if (t[k] == "absent")
                         throw bad("'absent' does not apply to the UPER locator '" + f.locator + "'");
+                    // v0.56: `range` on every wire; `null` and `implicit` are refused below.
+                    {
+                        std::string why;
+                        const int r = parse_output_option(t, k, f, why);
+                        if (r < 0) throw bad(why);
+                        if (r > 0) continue;
+                    }
                     throw bad("'" + t[k] + "' is not a field option of a UPER locator, or is given twice");
                 }
+                if (f.null_member || f.implicit)
+                    throw bad(std::string("option '") + (f.null_member ? "null" : "implicit") + "' does not apply to wire bits");
                 mapped_key(t[1]);  // a `switch` key (0.20)
                 also_target = &add(std::move(n));
                 continue;
@@ -848,11 +857,22 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                     ++k;
                     continue;
                 }
+                // v0.56: `range` is valid on every wire; `null` and `implicit`
+                // are refused below, as wire checks.
+                {
+                    std::string why;
+                    const int r = parse_output_option(t, k, f, why);
+                    if (r < 0) throw bad(why);
+                    if (r > 0) continue;
+                }
                 bool* flag = t[k] == "swap" ? &f.swap : t[k] == "trim" ? &f.trim : nullptr;
                 if (t[k] == "optional") throw bad("the field option 'optional' is not allowed in a sequential pack");
                 if (!flag || *flag) throw bad("'" + t[k] + "' is not a field option, or is given twice");
                 *flag = true;
             }
+            // v0.56: `null` belongs to json and geojson, `implicit` to protobuf.
+            if (f.null_member || f.implicit)
+                throw bad(std::string("option '") + (f.null_member ? "null" : "implicit") + "' does not apply to wire bits");
             // v0.22: `until:` takes `chars:<set>` and a code its width holds, and
             // no `absent`, `swap`, `trim` or `stop`; `stop` takes a `chars` field.
             if (f.until) {
@@ -2175,7 +2195,9 @@ struct Scope {
     bool value(const FieldLine& f, Value& out) const {
         if (!item.fields.count(f.key))
             if (const DefaultLine* d = case_default(f)) {
-                out = typemapped_out(p, f, d->value);
+                Value dv = d->value;
+                if (f.has_range) apply_range(p, f, dv);  // v0.56: a default is checked as any value
+                out = typemapped_out(p, f, dv);
                 if (f.table >= 0) {
                     try {
                         out = table_encode(p, f, out);
@@ -2538,7 +2560,7 @@ void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
     if (!f) {
         // The first sentinel in place of the zero bits (0.9); it is never
         // content for a presence, `opt` or `fx` bit (ruling 4).
-        if (n.field.has_absent && !s.src.suppressed(n.field)) {
+        if (n.field.writes_sentinel() && !s.src.suppressed(n.field)) {
             std::uint64_t raw = n.field.absent_num.front();
             if (n.field.swap) raw = swap_bytes(raw, n.len);
             out.put(raw, n.len);

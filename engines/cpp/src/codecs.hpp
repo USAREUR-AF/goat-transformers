@@ -234,6 +234,21 @@ struct EncodeSource {
     const std::vector<Item>* list(const GroupLine& g) const;
 };
 
+// v0.56 `range <min> <max> [wrap]`: checks the model value `v` of a field
+// with `range` against the interval, by the field's key type, and wraps it in
+// place with `wrap`. Throws transform-encode outside a range without `wrap`.
+void apply_range(const Pack& p, const FieldLine& f, Value& v);
+// v0.56: one field option of the output conditions at t[k] (`null`, `implicit`,
+// `range <min> <max> [wrap]`, a stray `wrap`), with its arguments; `k` is left
+// on its last token. 1 when read, 0 when t[k] is not one of them, -1 with `why`
+// when its syntax is refused (bad-directive; ruling 5b of 0.11, step 9: here
+// <min> and <max> are number text, 2b).
+int parse_output_option(const std::vector<std::string>& t, std::size_t& k, FieldLine& f, std::string& why);
+// v0.56: the checks of `range` that need the key's type (bad-directive): an
+// `int` or `float` key, an int key's integer text (2a), <min> below <max> read
+// as that type. False with `why` when refused.
+bool check_range(const FieldLine& f, KeyType type, std::string& why);
+
 // ---- absent-value sentinels (Version 0.9)
 
 // Checks a field's `absent` argument against the wire and the transform and

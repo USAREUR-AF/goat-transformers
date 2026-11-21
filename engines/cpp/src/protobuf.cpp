@@ -287,6 +287,7 @@ struct Node {
     bool is_raw = false;                       // a group: every occurrence, already serialised with its tag
     std::string raw;
     std::map<std::uint32_t, Node> children;    // submessage: ascending field number
+    bool present = false;                      // a submessage a `when <path> present` names (0.5 ruling 14)
 };
 
 // `sentinel`: the line's key is absent and the leaf is its first sentinel (0.9).
@@ -350,6 +351,9 @@ std::string serialize(const Pack& p, const Node& node) {
         }
         if (!c.is_leaf) {
             const std::string sub = serialize(p, c);
+            // A submessage whose every field `implicit` left out is not written,
+            // unless a `when <path> present` names it (0.56).
+            if (sub.empty() && !c.children.empty() && !c.present) continue;
             write_tag(out, num, 2);
             write_varint(out, sub.size());
             out += sub;
@@ -370,6 +374,11 @@ std::string serialize(const Pack& p, const Node& node) {
             throw Error(ErrorKind::TransformEncode, p.format, c.field ? c.field->locator : std::to_string(num),
                         (c.field ? c.field->key + ": " : std::string()) + ex.what());
         }
+        // v0.56 `implicit`: a value equal to the proto3 default of its wire type,
+        // after `via` and `pfloat` narrowing, is not written; the line still holds
+        // the place (ruling 16 of 0.5). The default's encoding is all zero bits
+        // (0, zig-zag 0, +0.0) or the empty text; a sentinel is compared the same way.
+        if (c.field && c.field->implicit && (wt == 2 ? payload.empty() : scalar == 0)) continue;
         write_tag(out, num, wt);
         switch (wt) {
             case 0: write_varint(out, scalar); break;
@@ -423,7 +432,7 @@ std::string group_bytes(const Pack& p, const GroupLine& g, std::uint32_t num, co
             } catch (const std::invalid_argument& ex) {
                 throw Error(ErrorKind::TransformEncode, p.format, g.locator, f.key + ": " + ex.what());
             }
-        } else if (!sup && f.has_absent) {
+        } else if (!sup && f.writes_sentinel()) {
             sentinel_value(f, scalar, bytes);  // in place of 0.7 ruling 11 (0.9 ruling 5)
         } else if (packed) {
             continue;  // an item with no value adds nothing to the packed form
@@ -474,7 +483,7 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
         if (src.suppressed(f)) continue;  // 0.18 ruling 1
         // Only mapped fields that have a value are written, and the sentinel of an absent key (0.9).
         const bool present = src.value(f, v);
-        if (!present && !f.has_absent) continue;
+        if (!present && !f.writes_sentinel()) continue;
         parse_protobuf_locator(f.locator, loc);  // validated at pack load
         insert_field(p, root, loc.path, 0, f, present ? v : Value(), !present);
     }
@@ -494,6 +503,7 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
             }
             n = &n->children[loc.path[k]];
         }
+        if (!blocked && w->present) n->present = true;
         if (blocked || w->present || n->is_raw) continue;
         // v0.20 ruling 3: a field line with a present key on the same path whose
         // varint matches the `when` keeps its value.

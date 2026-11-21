@@ -439,6 +439,15 @@ void Engine::add_pack(Pack pack) {
         }
         if (!m.field) continue;
         const KeyType want = key->type;
+        // v0.56: the checks of `range` that need the key's type, right after the
+        // key-type-mismatch check of the same line.
+        auto check_range = [&]() {
+            std::string why;
+            if (!detail::check_range(*m.field, want, why))
+                throw Error(ErrorKind::BadDirective, pack.format, *m.locator,
+                            pack.source + ":" + std::to_string(m.field->line) + ": " + why + " (key '" + *m.key +
+                                "' is " + key_type_name(want) + ")");
+        };
         if (m.field->table >= 0) {
             // A field with `via`: the key's type against the type of the table's model side.
             // An all-integer table on a `float` key is accepted (0.6 ruling 4).
@@ -448,6 +457,7 @@ void Engine::add_pack(Pack pack) {
                 throw Error(ErrorKind::KeyTypeMismatch, pack.format, *m.locator,
                             "key '" + *m.key + "' is " + key_type_name(want) + " but the model side of table '" +
                                 table.name + "' is " + key_type_name(got));
+            check_range();
             continue;
         }
         const KeyType got = transform_yields(m.field->transform);
@@ -455,6 +465,7 @@ void Engine::add_pack(Pack pack) {
             throw Error(ErrorKind::KeyTypeMismatch, pack.format, *m.locator,
                         "key '" + *m.key + "' is " + key_type_name(want) + " but transform '" +
                             transform_name(m.field->transform) + "' yields " + key_type_name(got));
+        check_range();
     }
 
     // Settle what the codecs need: each field's declared key type, each default

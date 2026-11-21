@@ -115,6 +115,7 @@ struct OutNode {
     bool is_object = false;
     bool has_value = false;
     bool sentinel = false;       // the text is a field's sentinel: a line whose key is present writes over it
+    bool null = false;           // the text is the `null` of a `null` option (0.56): a sentinel writes over it too
     std::string text;            // JSON text of a scalar member
     std::vector<OutNode> kids;   // members of an object, output order
 };
@@ -197,10 +198,19 @@ void write_field(const Pack& p, const EncodeSource& src, const FieldLine& f, Out
         slot.text = member_text(p, f, v);
         slot.has_value = true;
         slot.sentinel = false;
-    } else if (f.has_absent && !slot.has_value) {
+        slot.null = false;
+    } else if (f.writes_sentinel() && (!slot.has_value || slot.null)) {
         slot.text = f.absent_json;
         slot.has_value = true;
         slot.sentinel = true;
+        slot.null = false;
+    } else if (f.null_member && !slot.has_value) {
+        // v0.56: written null unless a later line on the member writes a value (ruling 1).
+        // A null member is a member: its object is written (out_empty).
+        slot.text = "null";
+        slot.has_value = true;
+        slot.sentinel = true;
+        slot.null = true;
     }
 }
 
@@ -252,6 +262,7 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
             const std::vector<Item>* items = src.list(*line.group);
             if ((slot->has_value && !slot->sentinel) || !items) continue;
             slot->sentinel = false;
+            slot->null = false;
             slot->text = json_encode_items(p, *line.group, *items, geo);
             slot->has_value = true;
             continue;
@@ -259,6 +270,7 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
         if (const WhenLine* w = line.fixed()) {
             slot->has_value = true;
             slot->sentinel = false;
+            slot->null = false;
             slot->text = json_when_text(*w);
             continue;
         }
@@ -444,6 +456,7 @@ std::string encode_json(const Pack& p, const Entity& e) {
             const std::vector<Item>* items = src.list(*line.group);
             if ((slot->has_value && !slot->sentinel) || !items) continue;
             slot->sentinel = false;
+            slot->null = false;
             slot->text = json_encode_items(p, *line.group, *items, false);
             slot->has_value = true;
             continue;
@@ -452,6 +465,7 @@ std::string encode_json(const Pack& p, const Entity& e) {
             if (w->present) continue;
             slot->has_value = true;
             slot->sentinel = false;
+            slot->null = false;
             slot->text = json_when_text(*w);
             continue;
         }
