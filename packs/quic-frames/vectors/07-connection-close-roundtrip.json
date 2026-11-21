@@ -1,0 +1,15 @@
+{
+  "name": "connection-close-roundtrip",
+  "from": "quic-frames",
+  "to": "quic-frames",
+  "input": "1c0a060a6261642063727970746f1d0000",
+  "expect": "1c0a060a6261642063727970746f1d0000",
+  "model": {
+    "quicfr.frames[0].quicfr.error_code": "10",
+    "quicfr.frames[0].quicfr.frame_type_in_error": "6",
+    "quicfr.frames[0].quicfr.reason_phrase.#": "10",
+    "quicfr.frames[1].quicfr.frame_type": "29",
+    "quicfr.frames[1].quicfr.reason_phrase.#": "0"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 19; a transport CONNECTION_CLOSE with a reason and an application one without; expect derived there, no engine run"
+}

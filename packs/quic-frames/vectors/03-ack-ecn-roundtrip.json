@@ -1,0 +1,14 @@
+{
+  "name": "ack-ecn-roundtrip",
+  "from": "quic-frames",
+  "to": "quic-frames",
+  "input": "033200000a070001",
+  "expect": "033200000a070001",
+  "model": {
+    "quicfr.frames[0].quicfr.frame_type": "3",
+    "quicfr.frames[0].quicfr.ack_ranges.#": "0",
+    "quicfr.frames[0].quicfr.ect0_count": "7",
+    "quicfr.frames[0].quicfr.ecn_ce_count": "1"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 19; an ACK with ECN counts and no further ranges; expect derived there, no engine run"
+}

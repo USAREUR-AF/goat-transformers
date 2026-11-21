@@ -1,0 +1,9 @@
+{
+  "name": "QUIC (long-header packets, frames, transport parameters)",
+  "domain": "networks",
+  "exact": [
+    "quic-long-header",
+    "quic-frames",
+    "quic-transport-parameters"
+  ]
+}

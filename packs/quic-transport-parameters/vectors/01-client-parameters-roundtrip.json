@@ -1,0 +1,18 @@
+{
+  "name": "client-parameters-roundtrip",
+  "from": "quic-transport-parameters",
+  "to": "quic-transport-parameters",
+  "input": "0404801000000104800075300f0800010203040506075a2a00",
+  "expect": "0404801000000104800075300f0800010203040506075a2a00",
+  "model": {
+    "quictp.parameters.#": "4",
+    "quictp.parameters[0].quictp.parameter_id": "4",
+    "quictp.parameters[0].quictp.value.#": "4",
+    "quictp.parameters[1].quictp.parameter_id": "1",
+    "quictp.parameters[2].quictp.value.#": "8",
+    "quictp.parameters[3].quictp.parameter_id_size": "1",
+    "quictp.parameters[3].quictp.parameter_id": "6698",
+    "quictp.parameters[3].quictp.value.#": "0"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 18; initial_max_data, max_idle_timeout, initial_source_connection_id and a reserved (greasing) ID; expect derived there, no engine run"
+}

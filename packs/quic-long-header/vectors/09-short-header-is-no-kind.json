@@ -1,0 +1,8 @@
+{
+  "name": "short-header-is-no-kind",
+  "from": "quic-long-header",
+  "to": "quic-long-header",
+  "input": "408394c8f03e51570800000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 17.2 and RFC 9369 section 3.2; a short-header packet; expect derived there, no engine run"
+}

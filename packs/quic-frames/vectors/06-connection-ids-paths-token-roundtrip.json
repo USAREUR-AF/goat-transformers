@@ -1,0 +1,17 @@
+{
+  "name": "connection-ids-paths-token-roundtrip",
+  "from": "quic-frames",
+  "to": "quic-frames",
+  "input": "180100080001020304050607101112131415161718191a1b1c1d1e1f19001a00010203040506071b00010203040506070704746f6b6e1e",
+  "expect": "180100080001020304050607101112131415161718191a1b1c1d1e1f19001a00010203040506071b00010203040506070704746f6b6e1e",
+  "model": {
+    "quicfr.frames.#": "6",
+    "quicfr.frames[0].quicfr.sequence_number": "1",
+    "quicfr.frames[0].quicfr.connection_id.#": "8",
+    "quicfr.frames[0].quicfr.stateless_reset_token": "101112131415161718191a1b1c1d1e1f",
+    "quicfr.frames[2].quicfr.path_data": "0001020304050607",
+    "quicfr.frames[4].quicfr.token.#": "4",
+    "quicfr.frames[5].quicfr.frame_type": "30"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 19; NEW_CONNECTION_ID, RETIRE_CONNECTION_ID, PATH_CHALLENGE, PATH_RESPONSE, NEW_TOKEN and HANDSHAKE_DONE; expect derived there, no engine run"
+}

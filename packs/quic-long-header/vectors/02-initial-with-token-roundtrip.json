@@ -1,0 +1,12 @@
+{
+  "name": "initial-with-token-roundtrip",
+  "from": "quic-long-header",
+  "to": "quic-long-header",
+  "input": "c100000001088394c8f03e51570808f067a5502a4262b5106465666768696a6b6c6d6e6f7071727341f4000102030405060708090a0b0c0d0e0f10111213",
+  "expect": "c100000001088394c8f03e51570808f067a5502a4262b5106465666768696a6b6c6d6e6f7071727341f4000102030405060708090a0b0c0d0e0f10111213",
+  "model": {
+    "quiclh.token.#": "16",
+    "quiclh.length": "500"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 17.2 and RFC 9369 section 3.2; an Initial with a 16-octet token; expect derived there, no engine run"
+}

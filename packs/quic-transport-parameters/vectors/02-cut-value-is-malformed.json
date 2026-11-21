@@ -1,0 +1,8 @@
+{
+  "name": "cut-value-is-malformed",
+  "from": "quic-transport-parameters",
+  "to": "quic-transport-parameters",
+  "input": "04048010",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 18; the parameters of vector 01 cut inside the first value; expect derived there, no engine run"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "version-negotiation-roundtrip",
+  "from": "quic-long-header",
+  "to": "quic-long-header",
+  "input": "aa00000000088394c8f03e51570808f067a5502a4262b5000000016b3343cf0a0a0a0a",
+  "expect": "aa00000000088394c8f03e51570808f067a5502a4262b5000000016b3343cf0a0a0a0a",
+  "model": {
+    "inet.quic_version": "0",
+    "quiclh.supported_versions.#": "3",
+    "quiclh.supported_versions[1].quiclh.supported_version": "1798521807"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 17.2 and RFC 9369 section 3.2; Version Negotiation listing version 1, version 2 and a greasing version; expect derived there, no engine run"
+}

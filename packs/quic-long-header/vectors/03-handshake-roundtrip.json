@@ -1,0 +1,13 @@
+{
+  "name": "handshake-roundtrip",
+  "from": "quic-long-header",
+  "to": "quic-long-header",
+  "input": "e200000001088394c8f03e51570808f067a5502a4262b5412c000102030405060708090a0b0c0d0e0f10111213",
+  "expect": "e200000001088394c8f03e51570808f067a5502a4262b5412c000102030405060708090a0b0c0d0e0f10111213",
+  "model": {
+    "inet.quic_version_specific": "98",
+    "quiclh.length": "300",
+    "quiclh.protected.#": "20"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 17.2 and RFC 9369 section 3.2; a Handshake packet; expect derived there, no engine run"
+}

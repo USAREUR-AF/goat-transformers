@@ -1,0 +1,48 @@
+# QUIC transport parameters (RFC 9000 section 18): the quic_transport_parameters TLS extension's data,
+# each parameter a variable-length ID, a variable-length value length and the value octets. Written
+# by tools/gen/quic-pack.py; do not edit by hand.
+format        quic-transport-parameters
+version       0.1.0
+distribution  public
+source        "IETF RFC 9000 sections 16 and 18, https://www.rfc-editor.org/rfc/rfc9000.txt; layout restated"
+uses          quictp
+wire          bits
+layout        sequential
+bit_order     msb
+
+group  quictp.parameters  rest
+  field  quictp.parameter_id_size  2  uint
+  switch  quictp.parameter_id_size
+    case  0
+      field  quictp.parameter_id  6  uint
+    case  1
+      field  quictp.parameter_id  14  uint
+    case  2
+      field  quictp.parameter_id  30  uint
+    case  3
+      field  quictp.parameter_id  62  uint
+  end
+  field  quictp.value_length_size  2  uint
+  switch  quictp.value_length_size
+    case  0
+      count  value_length  6
+      group  quictp.value  count  @value_length
+        field  quictp.octet  8  uint
+      end
+    case  1
+      count  value_length  14
+      group  quictp.value  count  @value_length
+        field  quictp.octet  8  uint
+      end
+    case  2
+      count  value_length  30
+      group  quictp.value  count  @value_length
+        field  quictp.octet  8  uint
+      end
+    case  3
+      count  value_length  62
+      group  quictp.value  count  @value_length
+        field  quictp.octet  8  uint
+      end
+  end
+end

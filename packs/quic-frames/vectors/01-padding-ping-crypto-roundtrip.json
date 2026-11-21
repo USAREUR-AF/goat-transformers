@@ -1,0 +1,16 @@
+{
+  "name": "padding-ping-crypto-roundtrip",
+  "from": "quic-frames",
+  "to": "quic-frames",
+  "input": "000000010600050100000103",
+  "expect": "000000010600050100000103",
+  "model": {
+    "quicfr.frames.#": "5",
+    "quicfr.frames[0].quicfr.frame_type": "0",
+    "quicfr.frames[3].quicfr.frame_type": "1",
+    "quicfr.frames[4].quicfr.frame_type": "6",
+    "quicfr.frames[4].quicfr.offset": "0",
+    "quicfr.frames[4].quicfr.crypto_data.#": "5"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 19; three PADDING frames, a PING and a CRYPTO frame; expect derived there, no engine run"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "initial-roundtrip",
+  "from": "quic-long-header",
+  "to": "quic-long-header",
+  "input": "c300000001088394c8f03e5157080000448a000102030405060708090a0b0c0d0e0f10111213",
+  "expect": "c300000001088394c8f03e5157080000448a000102030405060708090a0b0c0d0e0f10111213",
+  "model": {
+    "inet.quic_version_specific": "67",
+    "inet.quic_version": "1",
+    "inet.quic_dcid.#": "8",
+    "inet.quic_scid.#": "0",
+    "quiclh.token_length_size": "0",
+    "quiclh.token.#": "0",
+    "quiclh.length_size": "1",
+    "quiclh.length": "1162",
+    "quiclh.protected.#": "20"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 17.2 and RFC 9369 section 3.2; a client Initial with no token (the packet number and payload protected); expect derived there, no engine run"
+}

@@ -1,0 +1,11 @@
+# The quictp module: QUIC transport parameters (RFC 9000 section 18). Written by tools/gen/quic-pack.py.
+module        quictp
+version       0.1.0
+distribution  public
+source        "IETF RFC 9000 sections 16 and 18, https://www.rfc-editor.org/rfc/rfc9000.txt; layout restated"
+list  parameters         "the transport parameters, in order"
+key   parameter_id_size  int     -  "parameter ID (0 original_destination_connection_id, 1 max_idle_timeout, 2 stateless_reset_token, 3 max_udp_payload_size, 4 initial_max_data, 5-7 initial_max_stream_data, 8-9 initial_max_streams, 10 ack_delay_exponent, 11 max_ack_delay, 12 disable_active_migration, 13 preferred_address, 14 active_connection_id_limit, 15 initial_source_connection_id, 16 retry_source_connection_id): the variable-length integer's size code (0 one octet, 1 two, 2 four, 3 eight)"
+key   parameter_id       int     -  "parameter ID (0 original_destination_connection_id, 1 max_idle_timeout, 2 stateless_reset_token, 3 max_udp_payload_size, 4 initial_max_data, 5-7 initial_max_stream_data, 8-9 initial_max_streams, 10 ack_delay_exponent, 11 max_ack_delay, 12 disable_active_migration, 13 preferred_address, 14 active_connection_id_limit, 15 initial_source_connection_id, 16 retry_source_connection_id)"
+key   value_length_size  int     -  "the value length's size code (the length is written from the list)"
+list  value              "the parameter value, as octets (a variable-length integer for most IDs)"
+key   octet              int     -  "one octet"

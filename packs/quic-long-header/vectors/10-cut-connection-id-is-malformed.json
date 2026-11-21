@@ -1,0 +1,8 @@
+{
+  "name": "cut-connection-id-is-malformed",
+  "from": "quic-long-header",
+  "to": "quic-long-header",
+  "input": "c300000001088394c8",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 17.2 and RFC 9369 section 3.2; the Initial of vector 01 cut inside its destination connection ID; expect derived there, no engine run"
+}
