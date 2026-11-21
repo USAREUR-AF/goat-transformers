@@ -1,0 +1,8 @@
+Packs defra-ukair-timeseries, defra-ukair-data; module defraukair
+  UK-AIR Sensor Observation Service REST API (52 North Timeseries API v1),
+  Department for Environment, Food and Rural Affairs (Defra).
+  https://uk-air.defra.gov.uk/data/about_sos, read 2026-11-21. Contains
+  public sector information licensed under the Open Government Licence
+  v3.0. (c) Crown 2026 copyright Defra via uk-air.defra.gov.uk. Member
+  names confirmed against 52North/sensorweb-server-helgoland commit
+  2298d1c7 (GPL-2.0); no code or comments copied.

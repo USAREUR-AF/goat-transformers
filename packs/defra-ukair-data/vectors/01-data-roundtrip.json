@@ -1,0 +1,15 @@
+{
+  "name": "data-roundtrip",
+  "from": "defra-ukair-data",
+  "to": "defra-ukair-data",
+  "input": "{\"values\":[{\"timestamp\":1795226400000,\"value\":18.25},{\"timestamp\":1795230000000,\"value\":16},{\"timestamp\":1795233600000,\"value\":17.5}]}",
+  "expect": "{\"values\":[{\"timestamp\":1795226400000,\"value\":18.25},{\"timestamp\":1795230000000,\"value\":16},{\"timestamp\":1795233600000,\"value\":17.5}]}",
+  "model": {
+    "defraukair.values.#": "3",
+    "defraukair.values[0].defraukair.value_time": "1795226400000",
+    "defraukair.values[0].defraukair.value": "18.25",
+    "defraukair.values[1].defraukair.value": "16"
+  },
+  "source": "derived by tools/gen/airq-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "UK-AIR SOS REST API (uk-air.defra.gov.uk/sos-ukair/api/v1), members as 52North/sensorweb-server-helgoland names them; three hourly values in time order"
+}

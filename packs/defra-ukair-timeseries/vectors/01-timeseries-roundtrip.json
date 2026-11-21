@@ -1,0 +1,18 @@
+{
+  "name": "timeseries-roundtrip",
+  "from": "defra-ukair-timeseries",
+  "to": "defra-ukair-timeseries",
+  "input": "{\"id\":\"9001\",\"label\":\"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5 7001 - Example Town Centre-Particulate matter < 10 µm (aerosol), Example Town Centre-Particulate matter < 10 µm (aerosol)\",\"extras\":[\"license\"],\"uom\":\"ug.m-3\",\"station\":{\"properties\":{\"id\":7001,\"label\":\"Example Town Centre-Particulate matter < 10 µm (aerosol)\"},\"geometry\":{\"coordinates\":[52.5,-1.25,\"NaN\"],\"type\":\"Point\"},\"type\":\"Feature\"},\"referenceValues\":[],\"firstValue\":{\"timestamp\":1704067200000,\"value\":21},\"lastValue\":{\"timestamp\":1795233600000,\"value\":17.5},\"parameters\":{\"service\":{\"id\":\"1\",\"label\":\"Example service\"},\"offering\":{\"id\":\"7001\",\"label\":\"7001 - Example Town Centre\"},\"feature\":{\"id\":\"7001\",\"label\":\"Example Town Centre\"},\"procedure\":{\"id\":\"7001\",\"label\":\"7001 - Example Town Centre\"},\"phenomenon\":{\"id\":\"5\",\"label\":\"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5\"},\"category\":{\"id\":\"5\",\"label\":\"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5\"}}}",
+  "expect": "{\"id\":\"9001\",\"label\":\"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5 7001 - Example Town Centre-Particulate matter < 10 µm (aerosol), Example Town Centre-Particulate matter < 10 µm (aerosol)\",\"uom\":\"ug.m-3\",\"station\":{\"properties\":{\"id\":7001,\"label\":\"Example Town Centre-Particulate matter < 10 µm (aerosol)\"},\"geometry\":{\"type\":\"Point\"},\"type\":\"Feature\"},\"firstValue\":{\"timestamp\":1704067200000,\"value\":21},\"lastValue\":{\"timestamp\":1795233600000,\"value\":17.5},\"parameters\":{\"service\":{\"label\":\"Example service\",\"id\":\"1\"},\"offering\":{\"id\":\"7001\",\"label\":\"7001 - Example Town Centre\"},\"feature\":{\"id\":\"7001\",\"label\":\"Example Town Centre\"},\"procedure\":{\"id\":\"7001\",\"label\":\"7001 - Example Town Centre\"},\"phenomenon\":{\"id\":\"5\",\"label\":\"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5\"},\"category\":{\"id\":\"5\",\"label\":\"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5\"}}}",
+  "model": {
+    "time_ms": "1795233600000",
+    "defraukair.first_time": "1704067200000",
+    "defraukair.first_value": "21",
+    "defraukair.last_value": "17.5",
+    "defraukair.station_id": "7001",
+    "defraukair.uom": "ug.m-3",
+    "defraukair.phenomenon_label": "http://dd.eionet.europa.eu/vocabulary/aq/pollutant/5"
+  },
+  "source": "derived by tools/gen/airq-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "UK-AIR SOS REST API (uk-air.defra.gov.uk/sos-ukair/api/v1), members as 52North/sensorweb-server-helgoland names them; one time series: the mapped members in line order, then the residue (the station's type and its geometry type, the ids and labels of parameters the pack does not name); arrays (extras, the coordinates, referenceValues) are not carried"
+}

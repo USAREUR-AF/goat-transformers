@@ -1,0 +1,28 @@
+# UK-AIR (Defra) Sensor Observation Service REST API: one time series (/timeseries/{id}), its
+# station, its first and latest values and its parameters. Public. Written by hand; pack.md states
+# the evidence for time_ms and why the station's position is not bound.
+format  defra-ukair-timeseries
+version 0.1.0
+distribution public
+source  "UK-AIR Sensor Observation Service, https://uk-air.defra.gov.uk/data/about_sos (read 2026-11-21), REST API https://uk-air.defra.gov.uk/sos-ukair/api/v1; response members as 52North/sensorweb-server-helgoland (GPL-2.0) commit 2298d1c75a0805493cd55214e63e1bdc3b85029d names them, layout restated"
+uses    defraukair
+wire    json
+
+field  defraukair.id                id                          string
+field  defraukair.label             label                       string
+field  defraukair.uom               uom                         string
+field  defraukair.station_id        station.properties.id       int
+field  defraukair.station_label     station.properties.label    string
+field  defraukair.first_time        firstValue.timestamp        int
+field  defraukair.first_value       firstValue.value            float
+field  time_ms                      lastValue.timestamp         int
+field  defraukair.last_value        lastValue.value             float
+field  defraukair.service_label     parameters.service.label    string
+field  defraukair.offering_id       parameters.offering.id      string
+field  defraukair.offering_label    parameters.offering.label   string
+field  defraukair.feature_id        parameters.feature.id       string
+field  defraukair.feature_label     parameters.feature.label    string
+field  defraukair.procedure_id      parameters.procedure.id     string
+field  defraukair.phenomenon_id     parameters.phenomenon.id    string
+field  defraukair.phenomenon_label  parameters.phenomenon.label string
+field  defraukair.category_id       parameters.category.id      string

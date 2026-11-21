@@ -1,0 +1,12 @@
+{
+  "name": "data-empty",
+  "from": "defra-ukair-data",
+  "to": "defra-ukair-data",
+  "input": "{\"values\":[]}",
+  "expect": "{\"values\":[]}",
+  "model": {
+    "defraukair.values.#": "0"
+  },
+  "source": "derived by tools/gen/airq-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "UK-AIR SOS REST API (uk-air.defra.gov.uk/sos-ukair/api/v1), members as 52North/sensorweb-server-helgoland names them; a period with no values: an empty list, written back as []"
+}
