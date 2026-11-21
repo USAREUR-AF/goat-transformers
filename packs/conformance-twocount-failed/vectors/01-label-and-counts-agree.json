@@ -1,0 +1,13 @@
+{
+  "name": "label-and-counts-agree",
+  "from": "conformance-twocount-failed",
+  "to": "conformance-twocount-failed",
+  "input": "0204410506",
+  "expect": "0204410506",
+  "model": {
+    "probe.label": "A",
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 6: the field decodes; a and b give 2 and 2"
+}

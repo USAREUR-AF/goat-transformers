@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-failed-field-counts-agree",
+  "from": "conformance-twocount-failed",
+  "to": "conformance-twocount-failed",
+  "input": "0204ff0506",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 6: label 0xff is not an ascii8 character and the counts agree: transform-decode (0.1.1 ruling 9)"
+}

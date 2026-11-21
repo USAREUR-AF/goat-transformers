@@ -1,0 +1,9 @@
+{
+  "name": "group-not-reached-below-plus-still-checked",
+  "from": "conformance-twocount-unreached",
+  "to": "conformance-twocount-unreached",
+  "input": "000300",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, Decode: when the group is not reached (0.21 ruling 6) the list is absent; each count that was read passes its own below-plus check: a = 0 < 1"
+}

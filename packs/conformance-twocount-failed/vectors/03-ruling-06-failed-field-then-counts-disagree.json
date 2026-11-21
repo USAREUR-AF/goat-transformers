@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-failed-field-then-counts-disagree",
+  "from": "conformance-twocount-failed",
+  "to": "conformance-twocount-failed",
+  "input": "0205ff050607",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 6: label fails, then a gives 2 and b gives 3: a structural error wins (0.22 ruling 5)"
+}

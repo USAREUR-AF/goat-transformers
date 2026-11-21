@@ -1,0 +1,9 @@
+{
+  "name": "ruling-02-count-in-the-kind-disagree",
+  "from": "conformance-twocount-kind",
+  "to": "conformance-twocount-kind",
+  "input": "0201020506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 2: one count in the common lines, the other in the kind that holds the group: a gives 2, b gives 1"
+}

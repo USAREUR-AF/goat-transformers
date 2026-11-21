@@ -5503,9 +5503,25 @@ group line, or not a `count` name. On a layout or wire where 0.21 refuses
    (ruling 30 of 0.21); an absent list with a negative `plus` on one count is
    `transform-encode`.
 
+9. **A count line not read** (at or past the end of a `length` extent, or
+   in a block not read) gets no below-`plus` check
+   (`conformance-twocount-length`).
+10. **The bits-left check** compares the agreed number of items with the
+    number of bits left, as ruling 25 of 0.8 states ("not with count times
+    item size"); `conformance-twocount-bits` reaches that boundary with
+    1-bit items.
+11. **An empty list** is an item count of 0 like any other: a count whose
+    `plus` makes 0 + `plus` fall outside its range is `transform-encode`.
+
 ### Stated, not yet pinned by a vector
 
-(filled in after the vectors are derived)
+12. The order of the three decode checks (ruling 4), "raised at the group
+    line" and "no item is read before them": each gives `malformed-wire`, so
+    no vector can tell the order.
+13. The order of the two fills (ruling 8): it cannot be seen in the output.
+14. On a fixed layout, whether the refusal of `count @` is a line check or a
+    check after the file: 0.21 does not say, and only the kind
+    (`bad-directive`) is pinned.
 
 ## Not in this version
 

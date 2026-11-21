@@ -1,0 +1,12 @@
+{
+  "name": "group-not-reached-counts-not-compared",
+  "from": "conformance-twocount-unreached",
+  "to": "conformance-twocount-unreached",
+  "input": "020300",
+  "expect": "010000",
+  "model": {
+    "probe.nums.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, Decode: when the group is not reached (0.21 ruling 6) the list is absent; a gives 1 and b gives 3, the opt bit is 0: absent, the two are not compared; encode writes each plus (a = 1, b = 0)"
+}

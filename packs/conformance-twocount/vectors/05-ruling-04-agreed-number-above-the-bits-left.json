@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-agreed-number-above-the-bits-left",
+  "from": "conformance-twocount",
+  "to": "conformance-twocount",
+  "input": "f70d09",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 4: equal (14 and 14), then the bits left (8) for the agreed number: malformed-wire (0.8 rulings 14 and 25)"
+}

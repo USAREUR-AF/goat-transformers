@@ -1,0 +1,12 @@
+{
+  "name": "ruling-05-zero-items",
+  "from": "conformance-twocount-wide-max",
+  "to": "conformance-twocount-wide-max",
+  "input": "7fffffffffffffff00",
+  "expect": "7fffffffffffffff00",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 5: the numbers are compared as exact integers, value_a - plus_a = value_b - plus_b, no wrapping; a = 2^63 - 1 gives 0, b gives 0: present and empty"
+}

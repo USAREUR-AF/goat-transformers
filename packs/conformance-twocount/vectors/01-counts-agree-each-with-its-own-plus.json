@@ -1,0 +1,16 @@
+{
+  "name": "counts-agree-each-with-its-own-plus",
+  "from": "conformance-twocount",
+  "to": "conformance-twocount",
+  "input": "3701050609",
+  "expect": "3701050609",
+  "model": {
+    "probe.x": "7",
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "5",
+    "probe.nums[1].probe.val": "6",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, Decode: each count gives its value minus its own plus (a: 3 - 1, b: 1 - (-1)); equal, so 2 items"
+}

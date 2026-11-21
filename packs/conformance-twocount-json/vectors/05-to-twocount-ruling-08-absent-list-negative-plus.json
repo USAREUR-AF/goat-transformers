@@ -1,0 +1,9 @@
+{
+  "name": "to-twocount-ruling-08-absent-list-negative-plus",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount",
+  "input": "{\"x\":7,\"y\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 8 and Encode: an absent list writes each count's plus; b's plus is -1: transform-encode"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-01-to-the-other-order",
+  "from": "conformance-twocount-swapped",
+  "to": "conformance-twocount",
+  "input": "3701050609",
+  "expect": "3701050609",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 1: count @b @a reads and writes the bits of count @a @b (conformance-twocount); decode one, encode the other"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-twocount-empty-list-b-below-zero",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount",
+  "input": "{\"x\":7,\"y\":9,\"nums\":[]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.31, Encode: 0 items: b = 0 + (-1) = -1 is outside 0 ... 255 (0.21: empty lists included)"
+}

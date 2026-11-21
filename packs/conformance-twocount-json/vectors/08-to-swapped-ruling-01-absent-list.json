@@ -1,0 +1,9 @@
+{
+  "name": "to-swapped-ruling-01-absent-list",
+  "from": "conformance-twocount-json",
+  "to": "conformance-twocount-swapped",
+  "input": "{\"x\":7,\"y\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 1: count @b @a reads and writes the bits of count @a @b (conformance-twocount); b writes its plus -1"
+}

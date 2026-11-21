@@ -1,0 +1,14 @@
+{
+  "name": "ruling-01-counts-agree",
+  "from": "conformance-twocount-swapped",
+  "to": "conformance-twocount-swapped",
+  "input": "3701050609",
+  "expect": "3701050609",
+  "model": {
+    "probe.x": "7",
+    "probe.nums.#": "2",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.31, ruling 1: count @b @a reads and writes the bits of count @a @b (conformance-twocount); 2 and 2"
+}
