@@ -1,0 +1,5 @@
+Pack openmeteo-forecast; module omfc
+  Open-Meteo Weather Forecast API, openapi/forecast.yml of
+  https://github.com/open-meteo/open-meteo commit 7cc41ffa. Open-Meteo. The
+  document states CC BY 4.0 (the repository is AGPL-3.0). Names and types
+  only; no code, descriptions or examples copied.

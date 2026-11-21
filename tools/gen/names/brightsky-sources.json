@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "sources|distance|int": "sources_distance",
+  "sources|dwd_station_id|string": "sources_dwd_station_id",
+  "sources|first_record|string": "sources_first_record",
+  "sources|height|float": "sources_height",
+  "sources|id|int": "sources_id",
+  "sources|last_record|string": "sources_last_record",
+  "sources|lat|float": "sources_lat",
+  "sources|lon|float": "sources_lon",
+  "sources|observation_type|string": "sources_observation_type",
+  "sources|station_name|string": "sources_station_name",
+  "sources|wmo_station_id|string": "sources_wmo_station_id"
+ },
+ "lists": {
+  "|sources": "sources"
+ }
+}

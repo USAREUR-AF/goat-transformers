@@ -1,0 +1,7 @@
+{
+  "name": "MET Norway Locationforecast",
+  "domain": "maps",
+  "exact": [
+    "metno-locationforecast"
+  ]
+}

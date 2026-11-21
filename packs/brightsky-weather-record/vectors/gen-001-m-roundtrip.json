@@ -1,0 +1,17 @@
+{
+ "name": "gen-m-roundtrip",
+ "from": "brightsky-weather-record",
+ "to": "brightsky-weather-record",
+ "input": "{\"timestamp\":\"2025-04-17T02:33:03.700Z\",\"source_id\":94817,\"cloud_cover\":12.5,\"condition\":\"fog\",\"dew_point\":42.375,\"icon\":\"cloudy\",\"pressure_msl\":-0.5,\"relative_humidity\":33399,\"temperature\":1.5,\"visibility\":3526,\"precipitation\":0.75,\"solar\":1.5,\"sunshine\":48527,\"wind_direction\":54300,\"wind_speed\":-0.5,\"wind_gust_direction\":89688,\"wind_gust_speed\":12.5,\"precipitation_probability\":95736,\"precipitation_probability_6h\":42937}",
+ "expect": "{\"timestamp\":\"2025-04-17T02:33:03.700Z\",\"source_id\":94817,\"cloud_cover\":12.5,\"condition\":\"fog\",\"dew_point\":42.375,\"icon\":\"cloudy\",\"pressure_msl\":-0.5,\"relative_humidity\":33399,\"temperature\":1.5,\"visibility\":3526,\"precipitation\":0.75,\"solar\":1.5,\"sunshine\":48527,\"wind_direction\":54300,\"wind_speed\":-0.5,\"wind_gust_direction\":89688,\"wind_gust_speed\":12.5,\"precipitation_probability\":95736,\"precipitation_probability_6h\":42937}",
+ "model": {
+  "time_ms": "1744857183700",
+  "bsrecord.timestamp": "2025-04-17T02:33:03.700Z",
+  "bsrecord.source_id": "94817",
+  "bsrecord.cloud_cover": "12.5",
+  "bsrecord.condition": "fog",
+  "bsrecord.dew_point": "42.375",
+  "bsrecord.icon": "cloudy",
+  "bsrecord.pressure_msl": "-0.5"
+ }
+}

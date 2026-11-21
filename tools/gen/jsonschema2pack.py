@@ -641,8 +641,29 @@ class notmapped_inner(list):
         self.outer.append((self.prefix + ("." + loc if loc != "(message)" else ""), why))
 
 
-def walk_geojson(entries, reg, notmapped, top_members=None):
-    """Top-level scalar members and scalar members of `properties`."""
+def strip_booleans(lines, where, notmapped):
+    """Leave out boolean leaves of a group on the geojson wire, where `bool` is not a
+    transform (engine-spec 0.5: valid only on `json`); a group left empty is dropped."""
+    out = []
+    for ln in lines:
+        if isinstance(ln, Leaf):
+            if ln.jtype == "boolean":
+                notmapped.append((where + "." + (".".join(ln.path) or "."),
+                                  "boolean in a list item (no boolean transform on the geojson wire); not carried"))
+                continue
+            out.append(ln)
+        else:
+            ln.lines = strip_booleans(ln.lines, where + "." + ".".join(ln.path) + "[]", notmapped)
+            if ln.lines:
+                out.append(ln)
+            else:
+                notmapped.append((where + "." + ".".join(ln.path), "list whose items hold only booleans; not carried"))
+    return out
+
+
+def walk_geojson(entries, reg, notmapped, top_members=None, groups=False):
+    """Top-level scalar members and scalar members of `properties`; with `groups`, an
+    array member of `properties` is a group (engine-spec 0.7, locator `properties.<name>`)."""
     out = []
     n = merged(entries, reg)
     for name, subs in n.props.items():
@@ -659,6 +680,12 @@ def walk_geojson(entries, reg, notmapped, top_members=None):
                     out.append(Leaf(["properties", pname], pt, pn, pname in sub.required))
                 elif pt == "boolean":
                     notmapped.append((loc, "boolean (no boolean transform on the geojson wire); residue, type on the way back not ruled"))
+                elif pt == "array" and groups:
+                    got = []
+                    walk_json(psubs, reg, ["properties", pname], pname in sub.required, got, notmapped, 1,
+                              frozenset())
+                    got = strip_booleans(got, "properties", notmapped)
+                    out += got
                 elif pt in ("object", "array"):
                     notmapped.append((loc, "%s inside properties; carried as residue" % pt))
                 else:
@@ -1197,6 +1224,21 @@ def decode(pack, text):
     else:
         mapped = set()
         for ln in lines:
+            if ln[0] == "group":
+                g = ln[1]
+                mapped.add(g.path)
+                arr = geo_get(obj, g.path)
+                if arr is None:
+                    continue
+                if not isinstance(arr, list):
+                    raise GenError("self-check: %s is not an array" % g.path)
+                items = []
+                for el in arr:
+                    it = collections.OrderedDict()
+                    decode_lines(el, g.lines, it, False)
+                    items.append(it)
+                ent[g.list] = items
+                continue
             _, key, loc, tr = ln
             mapped.add(loc)
             v = geo_get(obj, loc)
@@ -1246,17 +1288,29 @@ def encode_lines(lines, ent, obj):
         else:
             g = ln[1]
             if g.list in ent:
-                arr = []
-                for it in ent[g.list]:
-                    if len(g.lines) == 1 and g.lines[0][0] == "field" and g.lines[0][2] == ".":
-                        k = g.lines[0][1]
-                        arr.append(enc_value(it[k], g.lines[0][3]) if k in it else None)
-                    else:
-                        o = collections.OrderedDict()
-                        encode_lines(g.lines, it, o)
-                        arr.append(prune(o))
-                put_path(obj, g.path, arr)
+                put_path(obj, g.path, group_array(g, ent))
     return obj
+
+
+def group_array(g, ent):
+    arr = []
+    for it in ent[g.list]:
+        if len(g.lines) == 1 and g.lines[0][0] == "field" and g.lines[0][2] == ".":
+            k = g.lines[0][1]
+            arr.append(enc_value(it[k], g.lines[0][3]) if k in it else None)
+        else:
+            o = collections.OrderedDict()
+            encode_lines(g.lines, it, o)
+            arr.append(prune(o))
+    return arr
+
+
+def line_loc(ln):
+    return ln[1].path if ln[0] == "group" else ln[2]
+
+
+def line_keys(ln):
+    return [ln[1].list] if ln[0] == "group" else [ln[1]]
 
 
 def prune(o):
@@ -1328,18 +1382,23 @@ def encode(pack, kind, ent, residue):
     # ruling 10 of 0.5: mapped members and `when` members are written in line order, common
     # lines first, then the kind's (this generator writes a scope's `when` lines before its
     # field lines); the first line that addresses a member places it
-    for loc, val in pack.common["when"] + [(ln[2], None) for ln in pack.common["lines"]] + \
-            (kind["when"] if kind else []) + [(ln[2], None) for ln in (kind["lines"] if kind else [])]:
+    for loc, val in pack.common["when"] + [(line_loc(ln), None) for ln in pack.common["lines"]] + \
+            (kind["when"] if kind else []) + [(line_loc(ln), None) for ln in (kind["lines"] if kind else [])]:
         if val == "present" or loc.startswith("geometry."):
             continue
         if val is None:
-            key = [ln[1] for ln in lines if ln[2] == loc]
+            key = [k for ln in lines if line_loc(ln) == loc for k in line_keys(ln)]
             if not any(k in ent for k in key):
                 continue
         tgt, name = (props, loc[11:]) if loc.startswith("properties.") else (top, loc)
         tgt.setdefault(name, None)
     lon = lat = alt = None
     for ln in lines:
+        if ln[0] == "group":
+            g = ln[1]
+            if g.list in ent and props.get(g.path[11:]) is None:
+                props[g.path[11:]] = group_array(g, ent)
+            continue
         _, key, loc, tr = ln
         if key not in ent:
             continue
@@ -1536,6 +1595,9 @@ def run(argv=None):
     ap.add_argument("--wire", choices=("json", "geojson"), default="json")
     ap.add_argument("--top-level-members", metavar="NAME,...",
                     help="geojson: the only top-level members to map (others are residue)")
+    ap.add_argument("--geojson-groups", action="store_true",
+                    help="geojson: an array member of `properties` is a group (engine-spec 0.7); its items "
+                         "are read as on json, booleans in them left out")
     ap.add_argument("--format", required=True)
     ap.add_argument("--module", required=True)
     ap.add_argument("--title", required=True)
@@ -1590,7 +1652,8 @@ def run(argv=None):
             walk_json([(schema, ctx)], reg, [], True, lines, notmapped, 0, frozenset())
         else:
             lines = walk_geojson([(schema, ctx)], reg, notmapped,
-                                 a.top_level_members.split(",") if a.top_level_members else None)
+                                 a.top_level_members.split(",") if a.top_level_members else None,
+                                 groups=a.geojson_groups)
         kinds.append({"name": slug(kname), "label": kname, "ref": os.path.relpath(os.path.abspath(f), reg.root) + ("#" + ptr if ptr else ""), "lines": lines,
                       "notmapped": notmapped, "when": [], "maps": []})
     by = {k["label"]: k for k in kinds}
@@ -1774,7 +1837,8 @@ def run(argv=None):
                 # 0.1.1 orders "top-level residue"), so no vector here depends on it
                 if not loc.startswith("properties."):
                     continue
-                if loc.endswith(".*"):
+                if loc.endswith(".*") or "[]" in loc or loc.count(".") > 1:
+                    # inside a list item, or below a member: not a member of `properties`
                     continue
                 if "boolean" in why:
                     # a boolean in geojson residue: no ruling says whether it comes back as a
@@ -2112,6 +2176,11 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds):
         w.append("members and one level of `properties`; so scalar members there are `field` lines and")
         w.append("everything else (nested objects, arrays, booleans) is residue, which the geojson wire")
         w.append("carries back as it was (engine-spec 0.1, ruling 13 of 0.6).\n")
+        if a.geojson_groups:
+            w.append("With `--geojson-groups`, an array member of `properties` is a `group` instead (engine-spec")
+            w.append("0.7: the group locator `properties.<name>`); its items are read as on the json wire, by")
+            w.append("member paths, and carry no residue. Booleans inside an item are left out: `bool` is a")
+            w.append("transform of the json wire only.\n")
     w.append("## Mapped to shared keys\n")
     if bound:
         w.append("| Kind | Path | Key | Schema type | Evidence (%s) |\n|---|---|---|---|---|" % (

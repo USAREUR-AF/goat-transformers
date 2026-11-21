@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "|cloud_cover|float": "cloud_cover",
+  "|condition|string": "condition",
+  "|dew_point|float": "dew_point",
+  "|icon|string": "icon",
+  "|precipitation_probability_6h|int": "precipitation_probability_6h",
+  "|precipitation_probability|int": "precipitation_probability",
+  "|precipitation|float": "precipitation",
+  "|pressure_msl|float": "pressure_msl",
+  "|relative_humidity|int": "relative_humidity",
+  "|solar|float": "solar",
+  "|source_id|int": "source_id",
+  "|sunshine|int": "sunshine",
+  "|temperature|float": "temperature",
+  "|timestamp|string": "timestamp",
+  "|visibility|int": "visibility",
+  "|wind_direction|int": "wind_direction",
+  "|wind_gust_direction|int": "wind_gust_direction",
+  "|wind_gust_speed|float": "wind_gust_speed",
+  "|wind_speed|float": "wind_speed"
+ },
+ "lists": {}
+}

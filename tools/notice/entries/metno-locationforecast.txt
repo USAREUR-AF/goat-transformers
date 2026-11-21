@@ -1,0 +1,5 @@
+Pack metno-locationforecast; module metnolf
+  Locationforecast 2.0 Swagger document, The Norwegian Meteorological
+  Institute (MET Norway), https://api.met.no/weatherapi/locationforecast/2.0/
+  (read 2026-11-21). CC BY 4.0. Based on data from MET Norway. No
+  descriptions copied.

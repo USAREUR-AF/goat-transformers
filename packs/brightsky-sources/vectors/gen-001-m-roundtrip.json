@@ -1,0 +1,10 @@
+{
+ "name": "gen-m-roundtrip",
+ "from": "brightsky-sources",
+ "to": "brightsky-sources",
+ "input": "{\"sources\":[{\"id\":18379,\"dwd_station_id\":\"s96475\",\"wmo_station_id\":\"s95149\",\"station_name\":\"s78548\",\"observation_type\":\"synop\",\"first_record\":\"2025-10-05T23:19:38.848Z\",\"last_record\":\"2026-10-28T11:06:58.428Z\",\"lat\":1.5,\"lon\":42.375,\"height\":-0.5,\"distance\":12022},{\"id\":58631,\"dwd_station_id\":\"s66870\",\"wmo_station_id\":\"s30356\",\"station_name\":\"s74814\",\"observation_type\":\"forecast\",\"first_record\":\"2026-04-04T08:13:50.486Z\",\"last_record\":\"2026-09-08T10:59:00.453Z\",\"lat\":-0.5,\"lon\":101.125,\"height\":101.125,\"distance\":19969}]}",
+ "expect": "{\"sources\":[{\"id\":18379,\"dwd_station_id\":\"s96475\",\"wmo_station_id\":\"s95149\",\"station_name\":\"s78548\",\"observation_type\":\"synop\",\"first_record\":\"2025-10-05T23:19:38.848Z\",\"last_record\":\"2026-10-28T11:06:58.428Z\",\"lat\":1.5,\"lon\":42.375,\"height\":-0.5,\"distance\":12022},{\"id\":58631,\"dwd_station_id\":\"s66870\",\"wmo_station_id\":\"s30356\",\"station_name\":\"s74814\",\"observation_type\":\"forecast\",\"first_record\":\"2026-04-04T08:13:50.486Z\",\"last_record\":\"2026-09-08T10:59:00.453Z\",\"lat\":-0.5,\"lon\":101.125,\"height\":101.125,\"distance\":19969}]}",
+ "model": {
+  "bssources.sources.#": "2"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-m-roundtrip",
+ "from": "brightsky-source",
+ "to": "brightsky-source",
+ "input": "{\"id\":79331,\"dwd_station_id\":\"s25403\",\"wmo_station_id\":\"s90168\",\"station_name\":\"s26051\",\"observation_type\":\"synop\",\"first_record\":\"2024-07-17T02:44:33.406Z\",\"last_record\":\"2027-01-08T03:59:10.084Z\",\"lat\":12.5,\"lon\":0.75,\"height\":101.125,\"distance\":54547}",
+ "expect": "{\"id\":79331,\"dwd_station_id\":\"s25403\",\"wmo_station_id\":\"s90168\",\"station_name\":\"s26051\",\"observation_type\":\"synop\",\"first_record\":\"2024-07-17T02:44:33.406Z\",\"last_record\":\"2027-01-08T03:59:10.084Z\",\"lat\":12.5,\"lon\":0.75,\"height\":101.125,\"distance\":54547}",
+ "model": {
+  "bssource.id": "79331",
+  "bssource.dwd_station_id": "s25403",
+  "bssource.wmo_station_id": "s90168",
+  "bssource.station_name": "s26051",
+  "bssource.observation_type": "synop",
+  "bssource.first_record": "2024-07-17T02:44:33.406Z",
+  "bssource.last_record": "2027-01-08T03:59:10.084Z",
+  "bssource.lat": "12.5"
+ }
+}

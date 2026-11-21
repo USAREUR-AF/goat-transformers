@@ -1,0 +1,33 @@
+{
+ "keys": {
+  "alerts|alert_id|string": "alerts_alert_id",
+  "alerts|category|string": "alerts_category",
+  "alerts|certainty|string": "alerts_certainty",
+  "alerts|description_de|string": "alerts_description_de",
+  "alerts|description_en|string": "alerts_description_en",
+  "alerts|effective|string": "alerts_effective",
+  "alerts|event_code|int": "alerts_event_code",
+  "alerts|event_de|string": "alerts_event_de",
+  "alerts|event_en|string": "alerts_event_en",
+  "alerts|expires|string": "alerts_expires",
+  "alerts|headline_de|string": "alerts_headline_de",
+  "alerts|headline_en|string": "alerts_headline_en",
+  "alerts|id|int": "alerts_id",
+  "alerts|instruction_de|string": "alerts_instruction_de",
+  "alerts|instruction_en|string": "alerts_instruction_en",
+  "alerts|onset|string": "alerts_onset",
+  "alerts|response_type|string": "alerts_response_type",
+  "alerts|severity|string": "alerts_severity",
+  "alerts|status|string": "alerts_status",
+  "alerts|urgency|string": "alerts_urgency",
+  "|location.district|string": "location_district",
+  "|location.name_short|string": "location_name_short",
+  "|location.name|string": "location_name",
+  "|location.state_short|string": "location_state_short",
+  "|location.state|string": "location_state",
+  "|location.warn_cell_id|int": "location_warn_cell_id"
+ },
+ "lists": {
+  "|alerts": "alerts"
+ }
+}
