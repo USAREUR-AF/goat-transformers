@@ -543,6 +543,10 @@ V011_ORDER |= {"3128", "3131", "3132", "3133", "3134", "3135", "3136", "3137", "
 # (3343); gtcheck does not check a pack's `version` line (0.11, as load vector
 # 378, which the 0.11 range above skips).
 V011_ORDER |= {"3337", "3338", "3343"}
+# 3349: on a fixed layout `when 0:8 1 at 0` is `bad-locator` (0.11 5b step 8, a
+# line check before any `at` error); gtcheck refuses the locator as the line is
+# read but names it `bad-directive`, as for 3128 and 3131.
+V011_ORDER |= {"3349"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 

@@ -37,6 +37,7 @@ Usage: python3 -I tools/gen/conformance-lookahead-vectors.py [--out DIR] [--chec
 """
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -1004,6 +1005,12 @@ def at_errors(text, models):
         if t and t[0] not in KNOWN:
             return "unknown-directive"
     hdr, root = parse(text)
+    # 0.11 5b step 8, a line check: the locator form; on a fixed bits layout
+    # `<word>:<pos>:<len>` (5a), whether or not the line holds `at`
+    if hdr.get("wire") == "bits" and hdr.get("layout") != "sequential":
+        for ln in walk_all(root):
+            if ln.d in ("field", "when", "const") and not re.match(r"[0-9]+:[0-9]+:[0-9]+\Z", ln.a[0 if ln.d != "field" else 1]):
+                return "bad-locator"
     for need in ("format", "version", "wire"):
         if need not in hdr:
             return "missing-" + need
@@ -1112,6 +1119,9 @@ def gtcheck_error(text, models):
         # 0.11 (ruling 2) names it `unknown-directive`
         if "is not a directive" in str(e):
             return "unknown-directive"
+        # likewise a locator form, which 0.11 (5a) names `bad-locator`
+        if "is not a `<word>:<pos>:<len>` locator" in str(e):
+            return "bad-locator"
         return e.kind
     return None
 
@@ -1122,7 +1132,7 @@ def expected_load(text, models):
     errors of earlier versions."""
     a = at_errors(text, models)
     g = gtcheck_error(strip_when(text), models)
-    if a in ("unknown-directive", "missing-version", "missing-format", "missing-wire",
+    if a in ("unknown-directive", "bad-locator", "missing-version", "missing-format", "missing-wire",
              "missing-distribution", "missing-source", "module-not-used", "undeclared-key"):
         # an `as` key is gone from the stripped text, so gtcheck may not see
         # it; gtcheck does not check a pack's `version` line (0.11, load
@@ -1744,7 +1754,13 @@ def build(sink):
     # the late timing of rulings 10 and 14 (the fixed locator is written in
     # full, <word>:<pos>:<len>)
     load("ruling-30-at-on-a-fixed-layout-after-missing-distribution", fixed.replace("distribution public\n", "") +
-         "field probe.x 0:0:8 uint\nkind a\nwhen 0:8:8 1 at 0\n", "missing-distribution")
+         "field probe.x 0:0:8 uint\nkind a\nwhen 0:0:8 1 at 0\n", "missing-distribution")
+    # 0.11 5b step 8: the locator form is a line check, before any late `at`
+    # error; `0:8` is not `<word>:<pos>:<len>`
+    load("ruling-30-bad-locator-before-the-at-error", fixed + "field probe.x 0:0:8 uint\nkind a\n"
+         "when 0:8 1 at 0\n", "bad-locator")
+    load("ruling-30-at-on-json-after-missing-distribution", jsn.replace("distribution public\n", "") +
+         "kind a\nwhen t a at 0\nfield probe.x x int\n", "missing-distribution")
     # a vector file of these packs, or a load vector of this range, that this
     # run did not write is from an earlier run: it goes
     for name in PACKS:
