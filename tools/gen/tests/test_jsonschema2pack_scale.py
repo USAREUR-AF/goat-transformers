@@ -100,6 +100,16 @@ class ScaleTest(unittest.TestCase):
         self.assertEqual(j.dec_value(2, "scale:0.5:1", "x"), 2.0)
         self.assertEqual(j.enc_value(2.0, "scale:0.5:1"), 2.0)
 
+    def test_a_track_key_brings_uses_track(self):
+        # a --map to a key of the track module needs `uses track` (engine-spec 0.4, module-not-used)
+        status, _, err = support.run_main(j.main, self.argv("--map", "Doc:level=track.vel_north_ms"))
+        self.assertEqual(status, 0, err)
+        pack = self.read("packs", "sc", "pack.def")
+        self.assertIn("uses          sc\nuses          track\nwire          json\n", pack)
+        status, _, err = support.run_main(j.main, self.argv("--map", "Doc:level=speed_ms"))
+        self.assertEqual(status, 0, err)
+        self.assertNotIn("uses          track", self.read("packs", "sc", "pack.def"))
+
     def test_refusals(self):
         cases = [
             (("--scale", "Doc:updated=iscale:1000"), "no --map binding at that path"),
