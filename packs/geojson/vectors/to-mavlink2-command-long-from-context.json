@@ -21,6 +21,5 @@
   "mavlink.target_component": "207",
   "mavlink.confirmation": "166"
  },
- "expect": "fd210001374d4d4c00000000003f0000104000008040000090c0000030c0000080bf0000403f21d9f8cfa6",
- "note": "A command_long entity that did not come from mavlink2 (its kind is cleared) must select command_long. Encode takes the first kind whose requires keys are present (engine-spec, Encode 2); pack.def writes command_long before param_request_list, command_cancel and the other kinds whose required keys it maps. Expected bytes: MAVLink 2 serialization of message 76 (STX 0xFD, LEN 33, flags 0 and 1, seq 55, sysid 77, compid 77, msgid 76, then param1-7 as f32 LE, command u16 LE, target_system, target_component, confirmation); the pack maps no CRC. The same frame as mavlink2 vector rt-00076, which tools/gen/mavlink2pack.py writes from the XML without an engine."
+ "expect": "fd210001374d4d4c00000000003f0000104000008040000090c0000030c0000080bf0000403f21d9f8cfa6"
 }
