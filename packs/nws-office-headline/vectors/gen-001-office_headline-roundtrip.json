@@ -1,0 +1,17 @@
+{
+ "name": "gen-office_headline-roundtrip",
+ "from": "nws-office-headline",
+ "to": "nws-office-headline",
+ "input": "{\"@id\":\"https://example.org/66\",\"id\":\"s38068\",\"office\":\"https://example.org/529\",\"important\":true,\"issuanceTime\":\"2026-07-30T02:42:30.719Z\",\"link\":\"https://example.org/549\",\"name\":\"s82356\",\"title\":\"s60711\",\"summary\":\"s67936\",\"content\":\"s3270\"}",
+ "expect": "{\"@id\":\"https://example.org/66\",\"id\":\"s38068\",\"office\":\"https://example.org/529\",\"important\":true,\"issuanceTime\":\"2026-07-30T02:42:30.719Z\",\"link\":\"https://example.org/549\",\"name\":\"s82356\",\"title\":\"s60711\",\"summary\":\"s67936\",\"content\":\"s3270\"}",
+ "model": {
+  "nwsofficehl.id": "https://example.org/66",
+  "nwsofficehl.id_2": "s38068",
+  "nwsofficehl.office": "https://example.org/529",
+  "nwsofficehl.important": "1",
+  "nwsofficehl.issuance_time": "2026-07-30T02:42:30.719Z",
+  "nwsofficehl.link": "https://example.org/549",
+  "nwsofficehl.name": "s82356",
+  "nwsofficehl.title": "s60711"
+ }
+}

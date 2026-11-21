@@ -1,0 +1,7 @@
+{
+ "name": "gen-problem_detail-residue",
+ "from": "nws-problem-detail",
+ "to": "nws-problem-detail",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"https://example.org/118\",\"title\":\"s64152\",\"status\":101.125,\"detail\":\"s12619\",\"instance\":\"https://example.org/703\",\"correlationId\":\"s19768\"}",
+ "expect": "{\"type\":\"https://example.org/118\",\"title\":\"s64152\",\"status\":101.125,\"detail\":\"s12619\",\"instance\":\"https://example.org/703\",\"correlationId\":\"s19768\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

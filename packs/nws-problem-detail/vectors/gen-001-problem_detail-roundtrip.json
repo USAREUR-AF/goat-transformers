@@ -1,0 +1,15 @@
+{
+ "name": "gen-problem_detail-roundtrip",
+ "from": "nws-problem-detail",
+ "to": "nws-problem-detail",
+ "input": "{\"type\":\"https://example.org/118\",\"title\":\"s64152\",\"status\":101.125,\"detail\":\"s12619\",\"instance\":\"https://example.org/703\",\"correlationId\":\"s19768\"}",
+ "expect": "{\"type\":\"https://example.org/118\",\"title\":\"s64152\",\"status\":101.125,\"detail\":\"s12619\",\"instance\":\"https://example.org/703\",\"correlationId\":\"s19768\"}",
+ "model": {
+  "nwsproblem.type": "https://example.org/118",
+  "nwsproblem.title": "s64152",
+  "nwsproblem.status": "101.125",
+  "nwsproblem.detail": "s12619",
+  "nwsproblem.instance": "https://example.org/703",
+  "nwsproblem.correlation_id": "s19768"
+ }
+}

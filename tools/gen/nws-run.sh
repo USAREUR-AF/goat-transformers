@@ -13,9 +13,9 @@
 # Responses whose geometry is a Point (point, observation, station, relative location) are
 # GeoJSON Features on the geojson wire. The others are read on the json wire, a Feature
 # being a JSON object there: their geometry is a Polygon or absent, and their members are
-# nested. Collections are json objects with a `features` group. The JSON-LD forms
-# (*JsonLd), the CAP and Atom forms of alerts and the plain JSON objects (offices, text
-# products) are not generated.
+# nested. Collections are json objects with a `features` group. The JSON-LD forms (*JsonLd),
+# offices, text products and problem details are json objects too (at the end of this
+# script). The CAP and Atom forms of alerts are XML and are not generated.
 #
 # Writes model/nws*.def, packs/nws-*/ (pack.def, pack.md, vectors/gen-*),
 # packs/geojson/vectors/gen-geojson-to-nws-*.json and tools/gen/names/nws-*.json.
@@ -90,5 +90,29 @@ nws nws-station-collection nwsstationc ObservationStationCollectionGeoJson json
 nws nws-zone-collection nwszonec ZoneCollectionGeoJson json
 nws nws-cwa-collection nwscwac CenterWeatherAdvisoryCollectionGeoJson json
 nws nws-sigmet-collection nwssigmetc SigmetCollectionGeoJson json
+
+# JSON-LD forms (application/ld+json): flat objects, the geometry as Well-Known Text (a string,
+# not read as a position); the json wire
+nws nws-observation-jsonld nwsobsld ObservationJsonLd json \
+  --map ObservationJsonLd:@id=uid --evidence "ObservationJsonLd:@id=the observation's identifier, a URI of the API (the id of the GeoJSON form)" \
+  --map ObservationJsonLd:timestamp=time_ms --evidence "ObservationJsonLd:timestamp=the time of the observation (the timestamp the GeoJSON form binds)"
+nws nws-station-jsonld nwsstationld ObservationStationJsonLd json \
+  --map ObservationStationJsonLd:@id=uid --evidence "ObservationStationJsonLd:@id=the station's identifier, a URI of the API" \
+  --map ObservationStationJsonLd:name=callsign --evidence "ObservationStationJsonLd:name=the station's name"
+nws nws-point-jsonld nwspointld PointJsonLd json
+nws nws-zone-jsonld nwszoneld ZoneJsonLd json \
+  --map ZoneJsonLd:@id=uid --evidence "ZoneJsonLd:@id=the zone's identifier, a URI of the API"
+nws nws-alert-jsonld nwsalertld AlertJsonLd json
+
+# Office information and text products (application/ld+json objects)
+nws nws-office nwsoffice Office json
+nws nws-office-headline nwsofficehl OfficeHeadline json
+nws nws-office-headline-collection nwsofficehlc OfficeHeadlineCollection json
+nws nws-office-weather-story-collection nwsofficewsc OfficeWeatherStoryCollection json
+nws nws-office-briefing nwsofficebrief OfficeBriefing json
+nws nws-text-product nwstextprod TextProduct json \
+  --map TextProduct:issuanceTime=time_ms --evidence "TextProduct:issuanceTime=the time the office issued the product, a date-time"
+nws nws-text-product-collection nwstextprodc TextProductCollection json
+nws nws-problem-detail nwsproblem ProblemDetail json
 
 exit "$STATUS"

@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "|@id|string": "id",
+  "|content|string": "content",
+  "|id|string": "id_2",
+  "|important|int": "important",
+  "|issuanceTime|string": "issuance_time",
+  "|link|string": "link",
+  "|name|string": "name",
+  "|office|string": "office",
+  "|summary|string": "summary",
+  "|title|string": "title"
+ },
+ "lists": {}
+}

@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "geometry_coordinates|.|float": "geometry_coordinates_value",
+  "|geometry.type|string": "geometry_type",
+  "|id|float": "id",
+  "|properties.due_to|string": "properties_due_to",
+  "|properties.forecastHour|int": "properties_forecast_hour",
+  "|properties.hazard|string": "properties_hazard",
+  "|properties.issueTime|string": "properties_issue_time",
+  "|properties.product|string": "properties_product",
+  "|properties.receiptTime|string": "properties_receipt_time",
+  "|properties.tag|string": "properties_tag",
+  "|properties.validTime|string": "properties_valid_time",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.coordinates": "geometry_coordinates"
+ }
+}

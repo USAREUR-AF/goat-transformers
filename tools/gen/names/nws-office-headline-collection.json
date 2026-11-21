@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "graph|@id|string": "graph_id",
+  "graph|content|string": "graph_content",
+  "graph|id|string": "graph_id_2",
+  "graph|important|int": "graph_important",
+  "graph|issuanceTime|string": "graph_issuance_time",
+  "graph|link|string": "graph_link",
+  "graph|name|string": "graph_name",
+  "graph|office|string": "graph_office",
+  "graph|summary|string": "graph_summary",
+  "graph|title|string": "graph_title"
+ },
+ "lists": {
+  "|@graph": "graph"
+ }
+}

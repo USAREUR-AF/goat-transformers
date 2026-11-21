@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "approved_observation_stations|.|string": "approved_observation_stations_value",
+  "responsible_counties|.|string": "responsible_counties_value",
+  "responsible_fire_zones|.|string": "responsible_fire_zones_value",
+  "responsible_forecast_zones|.|string": "responsible_forecast_zones_value",
+  "|@id|string": "id",
+  "|@type|string": "type",
+  "|address.@type|string": "address_type",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|email|string": "email",
+  "|faxNumber|string": "fax_number",
+  "|id|string": "id_2",
+  "|name|string": "name",
+  "|nwsRegion|string": "nws_region",
+  "|parentOrganization|string": "parent_organization",
+  "|sameAs|string": "same_as",
+  "|telephone|string": "telephone"
+ },
+ "lists": {
+  "|approvedObservationStations": "approved_observation_stations",
+  "|responsibleCounties": "responsible_counties",
+  "|responsibleFireZones": "responsible_fire_zones",
+  "|responsibleForecastZones": "responsible_forecast_zones"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-airsigmet-geojson",
+ "to": "awc-airsigmet-geojson",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"icaoId\":\"s77459\",\"alphaChar\":\"s24819\",\"seriesId\":\"s81823\",\"validTimeFrom\":\"s61379\",\"validTimeTo\":\"s31452\",\"airSigmetType\":\"SIGMET\",\"hazard\":\"s97022\",\"altitudeHi1\":19801,\"altitudeHi2\":41808,\"altitudeLo1\":79134,\"altitudeLo2\":17126,\"movementDir\":46019,\"movementSpd\":64909,\"severity\":48530,\"rawAirSigmet\":\"s98920\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]}}",
+ "expect": "{\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"icaoId\":\"s77459\",\"alphaChar\":\"s24819\",\"seriesId\":\"s81823\",\"validTimeFrom\":\"s61379\",\"validTimeTo\":\"s31452\",\"airSigmetType\":\"SIGMET\",\"hazard\":\"s97022\",\"altitudeHi1\":19801,\"altitudeHi2\":41808,\"altitudeLo1\":79134,\"altitudeLo2\":17126,\"movementDir\":46019,\"movementSpd\":64909,\"severity\":48530,\"rawAirSigmet\":\"s98920\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

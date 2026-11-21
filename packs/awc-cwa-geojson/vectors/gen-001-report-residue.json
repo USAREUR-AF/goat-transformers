@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-cwa-geojson",
+ "to": "awc-cwa-geojson",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"cwsu\":\"s2810\",\"name\":\"s55593\",\"validTimeFrom\":25742,\"validTimeTo\":21613,\"hazard\":\"s97022\",\"seriesId\":35681,\"qualifier\":\"s84570\",\"base\":30502,\"top\":18033,\"cwaText\":\"s22419\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]}}",
+ "expect": "{\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"cwsu\":\"s2810\",\"name\":\"s55593\",\"validTimeFrom\":25742,\"validTimeTo\":21613,\"hazard\":\"s97022\",\"seriesId\":35681,\"qualifier\":\"s84570\",\"base\":30502,\"top\":18033,\"cwaText\":\"s22419\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

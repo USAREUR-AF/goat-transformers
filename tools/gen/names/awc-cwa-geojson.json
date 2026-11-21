@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "geometry_coordinates|.|float": "geometry_coordinates_value",
+  "|geometry.type|string": "geometry_type",
+  "|id|float": "id",
+  "|properties.base|int": "properties_base",
+  "|properties.cwaText|string": "properties_cwa_text",
+  "|properties.cwsu|string": "properties_cwsu",
+  "|properties.hazard|string": "properties_hazard",
+  "|properties.name|string": "properties_name",
+  "|properties.qualifier|string": "properties_qualifier",
+  "|properties.seriesId|int": "properties_series_id",
+  "|properties.top|int": "properties_top",
+  "|properties.validTimeFrom|int": "properties_valid_time_from",
+  "|properties.validTimeTo|int": "properties_valid_time_to",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.coordinates": "geometry_coordinates"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-zone_json_ld-residue",
+ "from": "nws-zone-jsonld",
+ "to": "nws-zone-jsonld",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"geometry\":\"s25553\",\"@id\":\"https://example.org/311\",\"@type\":\"wx:Zone\",\"id\":\"s15639\",\"type\":\"public\",\"name\":\"s3388\",\"effectiveDate\":\"2024-11-24T22:04:44.576Z\",\"expirationDate\":\"2024-03-03T01:35:39.443Z\",\"state\":\"MN\",\"forecastOffice\":\"https://example.org/272\",\"gridIdentifier\":\"s40455\",\"awipsLocationIdentifier\":\"s76475\",\"cwa\":[\"ABR\",\"LWX\"],\"forecastOffices\":[\"https://example.org/150\",\"https://example.org/574\"],\"timeZone\":[\"s79074\",\"s84932\"],\"observationStations\":[\"https://example.org/841\",\"https://example.org/422\"],\"radarStation\":\"s12528\"}",
+ "expect": "{\"geometry\":\"s25553\",\"@id\":\"https://example.org/311\",\"@type\":\"wx:Zone\",\"id\":\"s15639\",\"type\":\"public\",\"name\":\"s3388\",\"effectiveDate\":\"2024-11-24T22:04:44.576Z\",\"expirationDate\":\"2024-03-03T01:35:39.443Z\",\"state\":\"MN\",\"forecastOffice\":\"https://example.org/272\",\"gridIdentifier\":\"s40455\",\"awipsLocationIdentifier\":\"s76475\",\"cwa\":[\"ABR\",\"LWX\"],\"forecastOffices\":[\"https://example.org/150\",\"https://example.org/574\"],\"timeZone\":[\"s79074\",\"s84932\"],\"observationStations\":[\"https://example.org/841\",\"https://example.org/422\"],\"radarStation\":\"s12528\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|correlationId|string": "correlation_id",
+  "|detail|string": "detail",
+  "|instance|string": "instance",
+  "|status|float": "status",
+  "|title|string": "title",
+  "|type|string": "type"
+ },
+ "lists": {}
+}
