@@ -1,0 +1,109 @@
+# Diameter base protocol message (RFC 6733): the header and the AVPs, with the data of the base
+# protocol's AVPs laid out and one level of Grouped AVPs. Public. Written by tools/gen/telecom-pack.py;
+# do not edit by hand. Wire bits, layout sequential, msb; I/O is hex text. pack.md states what is mapped.
+format        diameter
+version       0.1.0
+distribution  public
+source        "IETF RFC 6733, Diameter Base Protocol, October 2012, https://www.rfc-editor.org/rfc/rfc6733.txt (sha256 b0117adedd43f9f44e444f64cd7360709c351aa27ea288d9c664c2800da8fa26); layout restated"
+uses          diameter
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    message
+when    8  1
+length  24  whole
+field  diameter.flag_r  1  uint
+field  diameter.flag_p  1  uint
+field  diameter.flag_e  1  uint
+field  diameter.flag_t  1  uint
+field  diameter.flags_low  4  uint
+field  diameter.command_code  24  uint
+field  diameter.application_id  32  uint
+field  diameter.hop_by_hop_id  32  uint
+field  diameter.end_to_end_id  32  uint
+group  diameter.avps  rest
+  field  diameter.avp_code  32  uint
+  field  diameter.avp_flag_v  1  uint
+  field  diameter.avp_flag_m  1  uint
+  field  diameter.avp_flag_p  1  uint
+  field  diameter.avp_flags_low  5  uint
+  length  24  bytes  plus  8
+    switch  diameter.avp_flag_v
+      case  1
+        field  diameter.vendor_id  32  uint
+        group  diameter.avp_data  rest
+          field  diameter.octet  8  uint
+        end
+      case  0
+        switch  diameter.avp_code
+          case  85,258,259,261,262,265,266,267,268,270,271,272,273,274,276,277,278,285,291,295,298,299,480,483,485,27
+            field  diameter.unsigned32  32  uint
+          case  287
+            field  diameter.unsigned64  64  uint
+          case  55
+            field  diameter.time  32  uint
+          case  257
+            field  diameter.address_family  16  uint
+            switch  diameter.address_family
+              case  1
+                field  diameter.address_ipv4  32  uint
+              case  2
+                field  diameter.address_ipv6  128  hex
+              else
+                group  diameter.avp_data  rest
+                  field  diameter.octet  8  uint
+                end
+            end
+          case  260,279,284,297
+            group  diameter.grouped_avps  rest
+              field  diameter.avp_code  32  uint
+              field  diameter.avp_flag_v  1  uint
+              field  diameter.avp_flag_m  1  uint
+              field  diameter.avp_flag_p  1  uint
+              field  diameter.avp_flags_low  5  uint
+              length  24  bytes  plus  8
+                switch  diameter.avp_flag_v
+                  case  1
+                    field  diameter.vendor_id  32  uint
+                    group  diameter.avp_data  rest
+                      field  diameter.octet  8  uint
+                    end
+                  case  0
+                    switch  diameter.avp_code
+                      case  85,258,259,261,262,265,266,267,268,270,271,272,273,274,276,277,278,285,291,295,298,299,480,483,485,27
+                        field  diameter.unsigned32  32  uint
+                      case  287
+                        field  diameter.unsigned64  64  uint
+                      case  55
+                        field  diameter.time  32  uint
+                      case  257
+                        field  diameter.address_family  16  uint
+                        switch  diameter.address_family
+                          case  1
+                            field  diameter.address_ipv4  32  uint
+                          case  2
+                            field  diameter.address_ipv6  128  hex
+                          else
+                            group  diameter.avp_data  rest
+                              field  diameter.octet  8  uint
+                            end
+                        end
+                      else
+                        group  diameter.avp_data  rest
+                          field  diameter.octet  8  uint
+                        end
+                    end
+                end
+              end
+              align  32
+            end
+          else
+            group  diameter.avp_data  rest
+              field  diameter.octet  8  uint
+            end
+        end
+    end
+  end
+  align  32
+end

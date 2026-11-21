@@ -1,0 +1,16 @@
+{
+  "name": "device-watchdog-vendor-avp-roundtrip",
+  "from": "diameter",
+  "to": "diameter",
+  "input": "0100006090000118000000000000100252000002000001084000001a636c69656e742e6578616d706c652e6f7267000000000128400000136578616d706c652e6f726700000001164000000c69b529dd000003e8c0000010000028af00000007",
+  "expect": "0100006090000118000000000000100252000002000001084000001a636c69656e742e6578616d706c652e6f7267000000000128400000136578616d706c652e6f726700000001164000000c69b529dd000003e8c0000010000028af00000007",
+  "model": {
+    "diameter.command_code": "280",
+    "diameter.flag_t": "1",
+    "diameter.avps[2].diameter.unsigned32": "1773480413",
+    "diameter.avps[3].diameter.avp_flag_v": "1",
+    "diameter.avps[3].diameter.vendor_id": "10415",
+    "diameter.avps[3].diameter.avp_data.#": "4"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 6733 sections 3 and 4; a Device-Watchdog-Request with Origin-State-Id and a vendor-specific AVP (vendor 10415, its data kept as octets); expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "heartbeat-roundtrip",
+  "from": "sctp-packet",
+  "to": "sctp-packet",
+  "input": "13880f1c5566778822222222040000140001000e303132333435363738390000050000140001000e303132333435363738390000",
+  "expect": "13880f1c5566778822222222040000140001000e303132333435363738390000050000140001000e303132333435363738390000",
+  "model": {
+    "sctp.chunks[0].sctp.parameters[0].sctp.param_type": "1",
+    "sctp.chunks[1].sctp.parameters[0].sctp.value.#": "10"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 9260 sections 3.1 to 3.3; a HEARTBEAT and a HEARTBEAT ACK with heartbeat information of 10 octets; expect derived there, no engine run"
+}

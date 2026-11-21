@@ -1,0 +1,15 @@
+{
+  "name": "abort-roundtrip",
+  "from": "sctp-packet",
+  "to": "sctp-packet",
+  "input": "13880f1c55667788333333330601001c0001000800070000000c00076279650000030008004c4b40",
+  "expect": "13880f1c55667788333333330601001c0001000800070000000c00076279650000030008004c4b40",
+  "model": {
+    "sctp.chunks[0].sctp.chunk_flags": "1",
+    "sctp.chunks[0].sctp.causes.#": "3",
+    "sctp.chunks[0].sctp.causes[0].sctp.stream_id": "7",
+    "sctp.chunks[0].sctp.causes[1].sctp.value.#": "3",
+    "sctp.chunks[0].sctp.causes[2].sctp.staleness": "5000000"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 9260 sections 3.1 to 3.3; an ABORT with the T bit and three causes: invalid stream identifier, a user-initiated abort reason, a stale cookie; expect derived there, no engine run"
+}

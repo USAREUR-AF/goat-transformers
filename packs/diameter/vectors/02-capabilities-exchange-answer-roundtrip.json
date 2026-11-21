@@ -1,0 +1,15 @@
+{
+  "name": "capabilities-exchange-answer-roundtrip",
+  "from": "diameter",
+  "to": "diameter",
+  "input": "01000078000001010000000000001001520000010000010c4000000c000007d1000001084000001a7365727665722e6578616d706c652e6f7267000000000128400000136578616d706c652e6f726700000001014000001a000220010db800000000000000000000001000000000010d0000000b73727600",
+  "expect": "01000078000001010000000000001001520000010000010c4000000c000007d1000001084000001a7365727665722e6578616d706c652e6f7267000000000128400000136578616d706c652e6f726700000001014000001a000220010db800000000000000000000001000000000010d0000000b73727600",
+  "model": {
+    "diameter.flag_r": "0",
+    "diameter.avps[0].diameter.unsigned32": "2001",
+    "diameter.avps[3].diameter.address_family": "2",
+    "diameter.avps[3].diameter.address_ipv6": "20010db8000000000000000000000010",
+    "diameter.avps[4].diameter.avp_data.#": "3"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 6733 sections 3 and 4; a Capabilities-Exchange-Answer with Result-Code 2001, an IPv6 Host-IP-Address and a three-octet Product-Name padded to four; expect derived there, no engine run"
+}

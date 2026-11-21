@@ -1,0 +1,20 @@
+{
+  "name": "data-and-sack-roundtrip",
+  "from": "sctp-packet",
+  "to": "sctp-packet",
+  "input": "13880f1c55667788111111110003001500000064000100000000002e68656c6c6f0000000300001c000000630000fde800020001000200030005000500000061",
+  "expect": "13880f1c55667788111111110003001500000064000100000000002e68656c6c6f0000000300001c000000630000fde800020001000200030005000500000061",
+  "model": {
+    "sctp.chunks.#": "2",
+    "sctp.chunks[0].sctp.chunk_flags": "3",
+    "sctp.chunks[0].sctp.tsn": "100",
+    "sctp.chunks[0].sctp.ppid": "46",
+    "sctp.chunks[0].sctp.user_data.#": "5",
+    "sctp.chunks[1].sctp.cum_tsn_ack": "99",
+    "sctp.chunks[1].sctp.gap_blocks.#": "2",
+    "sctp.chunks[1].sctp.gap_blocks[1].sctp.gap_end": "5",
+    "sctp.chunks[1].sctp.duplicate_tsns.#": "1",
+    "sctp.chunks[1].sctp.duplicate_tsns[0].sctp.duplicate_tsn": "97"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 9260 sections 3.1 to 3.3; a packet bundling a DATA chunk (beginning and end, 5 octets of data, padded) and a SACK with two gap blocks and one duplicate TSN; expect derived there, no engine run"
+}

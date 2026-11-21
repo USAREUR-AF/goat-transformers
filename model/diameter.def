@@ -1,0 +1,31 @@
+# The diameter module: the fields of a Diameter base protocol message and its AVPs (RFC 6733).
+# Written by tools/gen/telecom-pack.py; do not edit by hand.
+module        diameter
+version       0.1.0
+distribution  public
+source        "IETF RFC 6733, Diameter Base Protocol; restated by goat-transformers"
+key   flag_r          int     -  "1 for a request, 0 for an answer"
+key   flag_p          int     -  "1 when the message may be proxied, relayed or redirected"
+key   flag_e          int     -  "1 when the answer is a protocol error"
+key   flag_t          int     -  "1 when the request may be a retransmission"
+key   flags_low       int     -  "the four reserved command flag bits"
+key   command_code    int     -  "command code: 257 Capabilities-Exchange, 258 Re-Auth, 271 Accounting, 274 Abort-Session, 275 Session-Termination, 280 Device-Watchdog, 282 Disconnect-Peer"
+key   application_id  int     -  "application the message belongs to: 0 for the base protocol"
+key   hop_by_hop_id   int     -  "hop-by-hop identifier, matching an answer to its request on one connection"
+key   end_to_end_id   int     -  "end-to-end identifier, for detecting duplicate requests"
+list  avps            "the AVPs of the message, in order"
+list  grouped_avps    "the AVPs inside a Grouped AVP (Vendor-Specific-Application-Id, Failed-AVP, Proxy-Info, Experimental-Result), in order"
+key   avp_code        int     -  "AVP code (with vendor ID 0, the codes of RFC 6733 section 4.5)"
+key   avp_flag_v      int     -  "V flag: 1 when a vendor ID follows"
+key   avp_flag_m      int     -  "M flag: 1 when the receiver must understand the AVP"
+key   avp_flag_p      int     -  "P flag: reserved for end-to-end security, 0"
+key   avp_flags_low   int     -  "the five reserved AVP flag bits"
+key   vendor_id       int     -  "IANA enterprise number of the AVP's vendor"
+key   unsigned32      int     -  "an Unsigned32 or Enumerated AVP's value"
+key   unsigned64      int     -  "an Unsigned64 AVP's value (as uint reads 64 bits: negative when the top bit is set)"
+key   time            int     -  "a Time AVP's value: seconds since 1900-01-01 00:00 UTC, the NTP form"
+key   address_family  int     -  "an Address AVP's address family (IANA): 1 IPv4, 2 IPv6"
+key   address_ipv4    int     -  "an Address AVP's IPv4 address, as an unsigned 32-bit integer"
+key   address_ipv6    string  -  "an Address AVP's IPv6 address, 32 hexadecimal digits"
+list  avp_data        "the data of an AVP the pack does not lay out (strings, identities, vendor AVPs), as octets"
+key   octet           int     -  "one octet"

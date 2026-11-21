@@ -1,0 +1,8 @@
+{
+  "name": "to-sctp-packet-common-header",
+  "from": "sctp-common-header",
+  "to": "sctp-packet",
+  "input": "13880f1c5566778811111111",
+  "expect": "13880f1c5566778811111111",
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 9260 sections 3.1 to 3.3; a common header from sctp-common-header to sctp-packet: the header carries, the chunk list is absent and writes nothing; expect derived there, no engine run"
+}

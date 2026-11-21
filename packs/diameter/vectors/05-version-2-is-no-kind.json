@@ -1,0 +1,8 @@
+{
+  "name": "version-2-is-no-kind",
+  "from": "diameter",
+  "to": "diameter",
+  "input": "0200006090000118000000000000100252000002000001084000001a636c69656e742e6578616d706c652e6f7267000000000128400000136578616d706c652e6f726700000001164000000c69b529dd000003e8c0000010000028af00000007",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 6733 sections 3 and 4; the watchdog request with version 2 in place of 1; expect derived there, no engine run"
+}
