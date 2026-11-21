@@ -93,6 +93,9 @@ pub struct SeqWhen {
     pub values: Vec<(u64, u64)>,
     pub key: Option<String>,
     pub line: usize,
+    /// `at <offset>`: read at kind start plus the offset, the cursor kept
+    /// (engine-spec v0.33)
+    pub at: Option<u64>,
 }
 
 /// The first line of a scope that maps a key a `switch` names: a `field` or
@@ -170,6 +173,9 @@ pub struct SeqKind {
     pub requires: Vec<ReqDef>,
     pub lines: Vec<SeqLine>,
     pub defaults: Vec<DefaultDef>,
+    /// how many of `lines` the windows of its `when … at` lines cover, from
+    /// the first (engine-spec v0.33): encode settles the windows after them
+    pub prefix: usize,
 }
 
 /// The lines of a message, or of one item of a group: common lines, then kinds.
@@ -178,6 +184,9 @@ pub struct SeqBody {
     pub common: Vec<SeqLine>,
     pub kinds: Vec<SeqKind>,
     pub defaults: Vec<DefaultDef>,
+    /// of a message body: the first `at` error, raised after the key passes
+    /// (rulings 10 and 14 of 0.33)
+    pub at_err: Option<Error>,
 }
 
 /// What `SeqBody::visit` hands its caller.
@@ -399,6 +408,8 @@ struct Parser<'a> {
     defaults: Vec<DefaultDef>,
     /// the first syntax error of an `as` (engine-spec v0.30)
     as_err: Option<Error>,
+    /// the first error of the form of an `at` (engine-spec v0.33)
+    at_form: Option<Error>,
     /// every `via` table a field names: (table, line)
     vias: Vec<(String, usize)>,
     // header
@@ -610,6 +621,7 @@ impl<'a> Parser<'a> {
                         requires: Vec::new(),
                         lines: Vec::new(),
                         defaults: Vec::new(),
+                        prefix: 0,
                     });
                     kind_has_lines = false;
                     self.i += 1;
@@ -621,18 +633,81 @@ impl<'a> Parser<'a> {
                         if p.as_err.is_none() {
                             p.as_err = Some(Error { msg: format!("bad-directive: line {}: {}", ln, why) });
                         }
-                        None
                     };
-                    let key = match toks.len() {
-                        3 => None,
-                        4 if toks[3] == "as" => as_err(self, "`as` needs a <model-key>"),
-                        5 if toks[3] == "as" && toks[4] != "as" => Some(toks[4].clone()),
-                        n if n >= 5 && toks[3] == "as" && toks[4..].iter().any(|t| t == "as") => {
-                            as_err(self, "`as` given twice on one `when` line")
+                    // `at <offset>` before it (engine-spec v0.33): `when <len> <values>
+                    // [at <n>] [as <k>]`. A line that holds `at` is checked with the
+                    // `at` checks, after the key passes (rulings 10 and 14 of 0.33)
+                    let args = &toks[3..];
+                    let has_at = args.iter().any(|t| t == "at");
+                    let at_err = |p: &mut Self, why: &str| {
+                        if p.at_form.is_none() {
+                            p.at_form = Some(Error { msg: format!("bad-directive: line {}: {}", ln, why) });
                         }
-                        n if n >= 5 && toks[3] == "as" => as_err(self, "a token after the key of `as`"),
-                        _ => return bad(ln, "when needs <len> <value> [as <model-key>]"),
                     };
+                    let mut i = 0;
+                    let mut offset: Option<u64> = None;
+                    let mut key: Option<String> = None;
+                    let mut form: Option<&str> = None;
+                    // a bad offset still lets the key of `as` be read: the key
+                    // passes come before the `at` form (ruling 10 of 0.33)
+                    let mut bad_offset: Option<&str> = None;
+                    if args.first().map(|t| t.as_str()) == Some("at") {
+                        match args.get(1) {
+                            None => form = Some("`at` needs an offset"),
+                            Some(n) if !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()) => match n.parse::<u64>() {
+                                Ok(v) => offset = Some(v),
+                                Err(_) => bad_offset = Some("the offset of `at` does not fit in 64 bits"),
+                            },
+                            Some(_) => bad_offset = Some("the offset of `at` is not plain digits"),
+                        }
+                        i = 2;
+                    }
+                    if form.is_none() && i < args.len() {
+                        if args[i] == "as" {
+                            match args.get(i + 1) {
+                                None => form = Some("`as` needs a <model-key>"),
+                                Some(k) if k == "as" => form = Some("`as` given twice on one `when` line"),
+                                Some(k) if k == "at" && has_at => form = Some("`at` after `as`"),
+                                Some(k) => key = Some(k.clone()),
+                            }
+                            if form.is_none() {
+                                let rest = &args[i + 2..];
+                                if rest.iter().any(|t| t == "as") {
+                                    form = Some("`as` given twice on one `when` line");
+                                } else if rest.iter().any(|t| t == "at") {
+                                    form = Some("`at` after `as`, or twice");
+                                } else if !rest.is_empty() {
+                                    form = Some("a token after the key of `as`");
+                                }
+                            }
+                        } else if args[i] == "at" {
+                            form = Some("`at` given twice on one `when` line");
+                        } else {
+                            form = Some("when needs <len> <values> [at <n>] [as <model-key>]");
+                        }
+                    }
+                    if let (None, Some(why)) = (form, bad_offset) {
+                        at_err(self, why);
+                        offset = None;
+                    }
+                    if let Some(why) = form {
+                        // an extra token with neither keyword is a line check (ruling 23 of 0.20)
+                        if !has_at && args.first().map(|t| t.as_str()) != Some("as") {
+                            return bad(ln, why);
+                        }
+                        if has_at {
+                            at_err(self, why);
+                        } else {
+                            as_err(self, why);
+                        }
+                        key = None;
+                        offset = None;
+                    }
+                    // `at` only on a kind's `when` (engine-spec v0.33)
+                    if offset.is_some() && out.kinds.is_empty() {
+                        at_err(self, "`at` on a common `when`");
+                        offset = None;
+                    }
                     let len = value_len(&toks[1], ln)?;
                     // a list of values and ranges (engine-spec v0.20)
                     if toks[2].split(',').any(|v| v == "present") {
@@ -641,7 +716,7 @@ impl<'a> Parser<'a> {
                     let values = num_list(&toks[2], Some(len), ln)?;
                     let value = values[0].0;
                     when_line.get_or_insert(ln);
-                    let w = SeqWhen { len, value, values, key, line: ln };
+                    let w = SeqWhen { len, value, values, key, line: ln, at: offset };
                     // a `switch` may name the key from here on (ruling 2 of 0.30)
                     if let Some(k) = &w.key {
                         self.mapped.push((k.clone(), First::When(w.clone())));
@@ -1581,6 +1656,73 @@ fn check_as(body: &SeqBody) -> Result<(), Error> {
     Ok(())
 }
 
+/// Engine-spec v0.33: the window of every `when … at` is fixed in its kind.
+/// Walking the kind's lines from its first, the lines that occupy no bits
+/// skipped, every line up to the one that reaches the window's end is a plain
+/// `when`, `const`, `pad`, or a `field` (with its `also` lines) whose locator
+/// is a bit length. Sets each kind's `prefix`: how many of its lines the
+/// windows cover. Group bodies are checked on the way.
+fn check_windows(body: &mut SeqBody) -> Result<(), Error> {
+    fn nested(lines: &mut [SeqLine]) -> Result<(), Error> {
+        for l in lines {
+            match l {
+                SeqLine::Group(g) => check_windows(&mut g.body)?,
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => nested(body)?,
+                SeqLine::Chain { parts, .. } => {
+                    for p in parts {
+                        nested(p)?;
+                    }
+                }
+                SeqLine::Choice { alts, .. } => {
+                    for (_, p) in alts {
+                        nested(p)?;
+                    }
+                }
+                SeqLine::Switch(sw) => {
+                    for c in sw.bodies_mut() {
+                        nested(&mut c.lines)?;
+                    }
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+    nested(&mut body.common)?;
+    for k in &mut body.kinds {
+        let mut prefix = 0;
+        for w in k.whens.iter().filter(|w| w.at.is_some()) {
+            let end = w.at.unwrap_or(0) as u128 + w.len as u128;
+            let mut sum: u128 = 0;
+            let mut walked = 0;
+            // the kind's plain `when` lines are its first lines
+            for p in k.whens.iter().filter(|p| p.at.is_none()) {
+                if sum >= end {
+                    break;
+                }
+                sum += p.len as u128;
+            }
+            while sum < end {
+                let l = match k.lines.get(walked) {
+                    Some(l) => l,
+                    None => return bad(w.line, "the window of `at` ends past the kind's last line, so it is not fixed in the kind"),
+                };
+                sum += match l {
+                    SeqLine::Field { len, uper: None, f, .. } if f.until.is_none() => *len as u128,
+                    SeqLine::Const { len, .. } => *len as u128,
+                    SeqLine::Pad { len } => *len as u128,
+                    _ => return bad(w.line, "the window of `at` is not fixed in the kind: a line of variable width comes before its end"),
+                };
+                walked += 1;
+            }
+            prefix = prefix.max(walked);
+        }
+        k.prefix = prefix;
+        nested(&mut k.lines)?;
+    }
+    Ok(())
+}
+
 /// Parse a `layout sequential` pack.
 pub fn parse(text: &str) -> Result<Pack, Error> {
     let mut lines: Vec<(usize, Vec<String>)> = Vec::new();
@@ -1604,6 +1746,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         mapped: Vec::new(),
         defaults: Vec::new(),
         as_err: None,
+        at_form: None,
         vias: Vec::new(),
         format: None,
         version: None,
@@ -1620,6 +1763,10 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         from_cot: BTreeMap::new(),
     };
     let mut body = p.body(true, 0)?;
+    // engine-spec v0.33: the `at` form, then the fixed windows, both raised
+    // after the key passes (ruling 10)
+    let windows = check_windows(&mut body);
+    body.at_err = p.at_form.take().or(windows.err());
     type Named<'n> = (&'n [Vec<u32>], &'n [Vec<u32>]);
     fn fill(lines: &mut [SeqLine], named: Named) {
         for l in lines {
@@ -1808,11 +1955,18 @@ fn decode_kind<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
         let mut bound: Vec<(&str, u64)> = Vec::new();
         let holds = k.whens.iter().all(|w| {
             // a `when` any of whose bits lies beyond the input does not hold
-            let v = (r.end.saturating_sub(at) >= w.len as u64)
-                .then(|| get_bits(r.raw, at, w.len, r.p.order))
-                .flatten()
+            // `at`: at kind start plus the offset, the cursor kept (engine-spec v0.33)
+            let pos = match w.at {
+                Some(o) => start.checked_add(o),
+                None => Some(at),
+            };
+            let v = pos
+                .filter(|pos| r.end.saturating_sub(*pos) >= w.len as u64)
+                .and_then(|pos| get_bits(r.raw, pos, w.len, r.p.order))
                 .filter(|v| in_list(&w.values, *v));
-            at += w.len as u64;
+            if w.at.is_none() {
+                at += w.len as u64;
+            }
             if let (Some(v), Some(key)) = (v, &w.key) {
                 bound.push((key, v));
             }
@@ -2751,12 +2905,124 @@ fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Resu
     // a presence among the common lines is visible in the kind's lines
     encode_lines(&body.common, kind_lines, ent, defs, w)?;
     if let Some(k) = kind {
-        for line in &k.whens {
+        let start = w.pos;
+        // a `when … at` occupies no bits: its window is settled once the
+        // lines it covers are written (engine-spec v0.33)
+        for line in k.whens.iter().filter(|l| l.at.is_none()) {
             write_when(w, line, ent)?;
         }
-        encode_lines(kind_lines, &[], ent, defs, w)?;
+        if k.whens.iter().any(|l| l.at.is_some()) {
+            encode_lines(&kind_lines[..k.prefix], &[], ent, defs, w)?;
+            settle_windows(k, start, ent, w)?;
+            encode_lines(&kind_lines[k.prefix..], &[], ent, defs, w)?;
+        } else {
+            encode_lines(kind_lines, &[], ent, defs, w)?;
+        }
     }
     w.back.pop();
+    Ok(())
+}
+
+/// Settle the windows of the `when … at` lines of kind `k`, whose kind start
+/// is `start`, in line order (engine-spec v0.33, Encode, rulings 1, 5, 12
+/// and 13). The lines the windows cover are written; what decode reads back
+/// from them is read again from the bits as they stand after.
+#[cfg(feature = "bits")]
+fn settle_windows(k: &SeqKind, start: u64, ent: &Entity, w: &mut Writer) -> Result<(), Error> {
+    let p = w.p;
+    let order = p.order;
+    // the bits a held key wrote (ruling 12), from kind start
+    let span = (w.pos - start) as usize;
+    let mut held = vec![false; span];
+    // (bit, line) of each line the windows may cover
+    let mut fields: Vec<(u64, &SeqLine)> = Vec::new();
+    let mut plain: Vec<(u64, &SeqWhen)> = Vec::new();
+    let mut pos = start;
+    for l in k.whens.iter().filter(|l| l.at.is_none()) {
+        plain.push((pos, l));
+        pos += l.len as u64;
+    }
+    for line in &k.lines[..k.prefix] {
+        match line {
+            SeqLine::Field { f, len, also, .. } => {
+                if std::iter::once(f).chain(also.iter()).any(|x| has_key(ent, x)) {
+                    for q in pos..pos + *len as u64 {
+                        if let Some(b) = held.get_mut((q - start) as usize) {
+                            *b = true;
+                        }
+                    }
+                }
+                fields.push((pos, line));
+                pos += *len as u64;
+            }
+            SeqLine::Const { len, .. } => pos += *len as u64,
+            SeqLine::Pad { len } => pos += *len,
+            _ => {}
+        }
+    }
+    let mut windows: Vec<(u64, u64)> = Vec::new();
+    for line in k.whens.iter().filter(|l| l.at.is_some()) {
+        let at = start + line.at.unwrap_or(0);
+        let len = line.len;
+        windows.push((at, len as u64));
+        let cur = get_bits(&w.buf, at, len, order).unwrap_or(0);
+        let held_as = line.key.as_ref().and_then(|key| ent.fields.get(key));
+        let stands = in_list(&line.values, cur) && held_as.map_or(true, |v| as_bits(v) == Some(cur));
+        let value = if stands {
+            cur
+        } else {
+            let v = when_bits(p, line, ent)?;
+            let mut next = w.buf.clone();
+            set_bits(&mut next, at, len, v, order);
+            for q in at..at + len as u64 {
+                let is_held = held.get((q - start) as usize).copied().unwrap_or(false);
+                if is_held && get_bits(&next, q, 1, order) != get_bits(&w.buf, q, 1, order) {
+                    return Err(w.fail(format!(
+                        "the window of `when {} … at {}` of line {} would change bits a held key wrote: the output would decode a different value",
+                        len,
+                        line.at.unwrap_or(0),
+                        line.line
+                    )));
+                }
+            }
+            w.buf = next;
+            // bits of an earlier window are not bits a held key wrote (ruling 12)
+            for q in at..at + len as u64 {
+                if let Some(b) = held.get_mut((q - start) as usize) {
+                    *b = false;
+                }
+            }
+            v
+        };
+        if let Some(key) = &line.key {
+            let back = w.back.last_mut().expect("a scope");
+            back.ent.fields.remove(key);
+            set_as(back, key, value);
+        }
+    }
+    // what decode reads from the covered lines, from the bits as they stand
+    let overlaps = |at: u64, len: u64| windows.iter().any(|(wa, wl)| at < wa + wl && *wa < at + len);
+    let back = w.back.last_mut().expect("a scope");
+    for (at, line) in fields {
+        if let SeqLine::Field { f, len, also, .. } = line {
+            if overlaps(at, *len as u64) {
+                for x in std::iter::once(f).chain(also.iter()) {
+                    back.ent.fields.remove(&x.model_key);
+                    back.soft.retain(|(key, _)| key != &x.model_key);
+                    back.hard_keys.retain(|key| key != &x.model_key);
+                }
+                read_back(p, f, *len, also, &w.buf, at, back);
+            }
+        }
+    }
+    for (at, line) in plain {
+        if let (Some(key), true) = (&line.key, overlaps(at, line.len as u64)) {
+            if let Some(v) = get_bits(&w.buf, at, line.len, order) {
+                back.ent.fields.remove(key);
+                set_as(back, key, v);
+            }
+        }
+    }
     Ok(())
 }
 

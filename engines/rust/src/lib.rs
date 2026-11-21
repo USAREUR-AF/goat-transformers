@@ -2770,6 +2770,10 @@ impl Pack {
                     if toks.len() > 3 && toks[3] == "as" {
                         return bad(ln, "`as` on a `when` is valid only in a `layout sequential` pack");
                     }
+                    // engine-spec v0.33: so is `at`
+                    if toks.len() > 3 && toks[3] == "at" {
+                        return bad(ln, "`at` on a `when` is valid only in a `layout sequential` pack");
+                    }
                     if toks.len() != 3 {
                         return bad(ln, "when needs <locator> <value>");
                     }
@@ -4392,6 +4396,11 @@ impl Engine {
                     seen[i].1.push(c);
                 }
             }
+        }
+        // engine-spec v0.33: the `at` form, then the fixed windows, after the
+        // key passes (rulings 10 and 14)
+        if let Some(e) = p.seq.as_ref().and_then(|b| b.at_err.clone()) {
+            return Err(e);
         }
         Ok(())
     }
@@ -8563,7 +8572,8 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
         let most = if name == "checksum" && toks[1] != "sum16" && toks[1] != "crc32" { 1 } else { most };
         // engine-spec v0.30: `when <len> <values> as <key>`; every syntax error
         // of `as`, on any pack, is checked after the file (ruling 16)
-        let most = if name == "when" && toks.len() > 3 && toks[3] == "as" { usize::MAX } else { most };
+        // engine-spec v0.33: `when <len> <values> at <n> [as <key>]`, likewise
+        let most = if name == "when" && toks.len() > 3 && (toks[3] == "as" || toks[3] == "at") { usize::MAX } else { most };
         if n < least || n > most {
             let takes = match (least, most) {
                 (l, m) if l == m => l.to_string(),
