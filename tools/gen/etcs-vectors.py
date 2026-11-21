@@ -4,7 +4,8 @@
 Every message is built field by field, most significant bit first, from the variable lengths and
 packet layouts of SUBSET-026 issue 3.6.0: chapter 8 (the 50-bit balise telegram header, the radio
 message header NID_MESSAGE 8, L_MESSAGE 10, T_TRAIN 32, M_ACK 1, NID_LRBG 24, messages 3, 24 and
-33) and chapter 7 (packets 0, 5, 12, 15, 21, 27, 41, 44, 255). L_PACKET is the bit length of the
+33) and chapter 7 (packets 0, 5, 12, 15, 21, 27, 41, 44, 255 and, in the later vectors, more track-to-train
+packets, the train-to-track messages and packets 0, 1, 2, 9, 11). L_PACKET is the bit length of the
 whole packet and L_MESSAGE the byte length of the whole radio message with its padding; both are
 counted here from the bits written. A telegram ends after packet 255, padded with zero bits to a
 whole byte (the pack's message convention). No engine is imported.
@@ -55,6 +56,126 @@ def m(model):
     return {k: str(v) for k, v in model.items()}
 
 
+
+def tpacket(nid, body):
+    """A train-to-track packet: NID_PACKET, L_PACKET (bits of the whole packet), the body; no Q_DIR."""
+    return Bits().put(8, nid).put(13, 21 + len(body.b)).extend(body)
+
+
+def more(files):
+    hdr = [(1, 1), (7, 32), (1, 0), (3, 1), (3, 1), (2, 0), (8, 18), (10, 253), (14, 4321), (1, 0)]
+    hm = {"etcs.q_updown": 1, "etcs.m_version": 32, "etcs.q_media": 0, "etcs.n_pig": 1, "etcs.n_total": 1,
+          "etcs.m_dup": 0, "etcs.m_mcount": 18, "etcs.nid_c": 253, "etcs.nid_bg": 4321, "etcs.q_link": 0}
+    t = Bits()
+    for n, v in hdr:
+        t.put(n, v)
+    # packet 3, national values with Q_NVKINT = 0
+    p3 = Bits().put(2, 1).put(15, 100).put(10, 253).put(5, 0)
+    for n, v in [(7, 6), (7, 8), (7, 6), (7, 20), (7, 16), (7, 8), (15, 2), (1, 1), (1, 0), (1, 1), (1, 0), (1, 0),
+                 (7, 6), (7, 6), (15, 200), (8, 60), (15, 50), (2, 1), (8, 30), (1, 0), (15, 200), (1, 0),
+                 (6, 10), (6, 20), (6, 30), (6, 12), (5, 0), (4, 9), (1, 0)]:
+        p3.put(n, v)
+    t.extend(packet(3, 1, p3))
+    t.extend(packet(6, 1, Bits().put(1, 1).put(6, 4).put(10, 253).put(8, 30)))          # T_VBC after NID_C
+    p68 = Bits().put(2, 1).put(1, 0).put(15, 300).put(15, 40).put(4, 3).put(5, 1).put(15, 700).put(15, 20).put(4, 5)
+    t.extend(packet(68, 1, p68))
+    p70 = Bits().put(2, 1).put(1, 0).put(15, 50).put(2, 2).put(4, 3).put(10, 253).put(5, 1).put(15, 90).put(2, 0).put(8, 7)
+    t.extend(packet(70, 1, p70))
+    p72 = Bits().put(2, 1).put(2, 0).put(1, 0).put(15, 10).put(4, 0).put(3, 1).put(8, 20).put(15, 500).put(10, 60).put(4, 0) \
+        .put(3, 2).put(2, 1).put(1, 1).put(1, 1).put(8, 77).put(10, 253).put(14, 99).put(8, 4)
+    for ch in b"STOP":
+        p72.put(8, ch)
+    t.extend(packet(72, 1, p72))
+    t.extend(packet(88, 1, Bits().put(2, 1).put(8, 5).put(15, 400).put(15, 30).put(1, 1).put(7, 4).put(1, 1).put(15, 25)))
+    t.extend(packet(136, 1, Bits().put(1, 1).put(10, 254).put(14, 77)))
+    t.extend(packet(254, 1, Bits()))
+    t.put(8, 255).pad()
+    P = "etcs.packets[%d]."
+    model = dict(hm, **{"etcs.packets.#": 9,
+                        P % 0 + "@kind": "p3", P % 0 + "etcs.p3_d_validnv": 100, P % 0 + "etcs.p3_areas.#": 0,
+                        P % 0 + "etcs.p3_m_nvebcl": 9, P % 0 + "etcs.p3_q_nvkint": 0,
+                        P % 1 + "@kind": "p6", P % 1 + "etcs.p6_q_vbco": 1, P % 1 + "etcs.p6_t_vbc": 30,
+                        P % 2 + "@kind": "p68", P % 2 + "etcs.p68_q_trackinit": 0, P % 2 + "etcs.p68_d_trackcond": 300,
+                        P % 2 + "etcs.p68_items.#": 1, P % 2 + "etcs.p68_items[0].etcs.p68_items_m_trackcond": 5,
+                        P % 3 + "@kind": "p70", P % 3 + "etcs.p70_q_suitability": 2, P % 3 + "etcs.p70_m_voltage": 3,
+                        P % 3 + "etcs.p70_nid_ctraction": 253, P % 3 + "etcs.p70_items[0].etcs.p70_items_m_linegauge": 7,
+                        P % 4 + "@kind": "p72", P % 4 + "etcs.p72_nid_ntc": 20, P % 4 + "etcs.p72_end_m_leveltextdisplay": 2,
+                        P % 4 + "etcs.p72_nid_textmessage": 77, P % 4 + "etcs.p72_x_text.#": 4,
+                        P % 4 + "etcs.p72_x_text[0].etcs.p72_x_text_byte": 83,
+                        P % 5 + "@kind": "p88", P % 5 + "etcs.p88_v_lx": 4, P % 5 + "etcs.p88_l_stoplx": 25,
+                        P % 6 + "@kind": "p136", P % 6 + "etcs.p136_nid_c": 254, P % 6 + "etcs.p136_nid_bg": 77,
+                        P % 7 + "@kind": "p254", P % 8 + "@kind": "p255"})
+    files.append(("etcs-balise-telegram", "03-national-text-conditions.json", t.hex(), m(model),
+                  "packets 3 (Q_NVKINT 0), 6 (T_VBC after NID_C), 68, 70 (traction system), 72 (text STOP, report), "
+                  "88 (stop at the crossing), 136, 254, 255"))
+
+    def radio(nid, tail):
+        body = Bits().put(32, 123456).put(1, 0).put(10, 253).put(14, 4321).extend(tail)
+        total = (18 + len(body.b) + 7) // 8
+        return Bits().put(8, nid).put(10, total).extend(body).pad()
+    rm = {"etcs.t_train": 123456, "etcs.m_ack": 0, "etcs.lrbg_nid_c": 253, "etcs.lrbg_nid_bg": 4321}
+    msg = radio(15, Bits().put(4, 3).put(2, 1).put(16, -40).put(2, 1).put(15, 600))
+    files.append(("etcs-radio-track-to-train", "05-conditional-emergency-stop.json", msg.hex(),
+                  m(dict(rm, **{"@kind": "conditional_emergency_stop", "etcs.m15_nid_em": 3, "etcs.m15_d_ref": -40,
+                                "etcs.m15_d_emergencystop": 600})), "message 15, D_REF -40"))
+    p12 = Bits().put(2, 1).put(7, 16).put(7, 0).put(10, 1023).put(5, 0).put(15, 900).put(1, 0).put(1, 0).put(1, 0).put(1, 0)
+    msg = radio(37, packet(136, 1, Bits().put(1, 0).put(14, 88)).extend(packet(12, 1, p12)))
+    files.append(("etcs-radio-track-to-train", "06-infill-ma.json", msg.hex(),
+                  m(dict(rm, **{"@kind": "infill_ma", "etcs.optional_packets.#": 2,
+                                "etcs.optional_packets[0].@kind": "p136", "etcs.optional_packets[0].etcs.p136_nid_bg": 88,
+                                "etcs.optional_packets[1].@kind": "p12", "etcs.optional_packets[1].etcs.p12_l_endsection": 900})),
+                  "message 37: packet 136 then packet 12, read as the packet list"))
+    msg = radio(45, Bits().put(1, 1))
+    files.append(("etcs-radio-track-to-train", "07-coordinate-system.json", msg.hex(),
+                  m(dict(rm, **{"@kind": "coordinate_system_assignment", "etcs.m45_q_orientation": 1})), "message 45"))
+
+    def tradio(nid, tail):
+        body = Bits().put(32, 98765).put(24, 0x123456).extend(tail)
+        total = (18 + len(body.b) + 7) // 8
+        return Bits().put(8, nid).put(10, total).extend(body).pad()
+    tm = {"etcs.train_t_train": 98765, "etcs.nid_engine": 0x123456}
+    def pos(two=False, qlen=0):
+        b = Bits().put(2, 1).put(10, 253).put(14, 4321)
+        if two:
+            b.put(10, 253).put(14, 4320)
+        b.put(15, 120).put(2, 1).put(2, 1).put(15, 5).put(15, 6).put(2, qlen)
+        if qlen in (1, 2):
+            b.put(15, 400)
+        return b.put(7, 16).put(2, 1).put(4, 0).put(3, 3)
+    p11 = Bits().put(4, 2).put(15, 1).put(12, 400).put(7, 32).put(8, 1).put(7, 10).put(2, 0).put(10, 24).put(5, 1).put(4, 1).put(10, 253) \
+        .put(5, 1).put(8, 7)
+    msg = tradio(129, tpacket(0, pos()).extend(tpacket(11, p11)))
+    T = "etcs.train_packets[%d]."
+    files.append(("etcs-radio-train-to-track", "01-validated-train-data.json", msg.hex(),
+                  m(dict(tm, **{"@kind": "validated_train_data", "etcs.train_packets.#": 2,
+                                T % 0 + "@kind": "tp0", T % 0 + "etcs.tp0_d_lrbg": 120, T % 0 + "etcs.tp0_v_train": 16,
+                                T % 0 + "etcs.tp0_m_level": 3,
+                                T % 1 + "@kind": "tp11", T % 1 + "etcs.tp11_l_train": 400, T % 1 + "etcs.tp11_n_axle": 24,
+                                T % 1 + "etcs.tp11_tractions.#": 1, T % 1 + "etcs.tp11_tractions[0].etcs.tp11_tractions_nid_ctraction": 253,
+                                T % 1 + "etcs.tp11_ntcs[0].etcs.tp11_ntcs_nid_ntc": 7})),
+                  "message 129: packet 0 and packet 11"))
+    msg = tradio(132, Bits().put(5, 0b00011).extend(tpacket(1, pos(True))).extend(tpacket(9, Bits().put(10, 253).put(14, 500))))
+    files.append(("etcs-radio-train-to-track", "02-ma-request.json", msg.hex(),
+                  m(dict(tm, **{"@kind": "ma_request", "etcs.tm132_q_marqstreason": 3, "etcs.train_packets.#": 2,
+                                T % 0 + "@kind": "tp1", T % 0 + "etcs.tp1_prvlrbg_nid_bg": 4320,
+                                T % 1 + "@kind": "tp9", T % 1 + "etcs.tp9_ltrbg_nid_bg": 500})),
+                  "message 132: Q_MARQSTREASON, packet 1, packet 9"))
+    msg = tradio(136, tpacket(0, pos(qlen=1)))
+    files.append(("etcs-radio-train-to-track", "03-position-report.json", msg.hex(),
+                  m(dict(tm, **{"@kind": "train_position_report", T % 0 + "@kind": "tp0", T % 0 + "etcs.tp0_q_length": 1,
+                                T % 0 + "etcs.tp0_l_trainint": 400})), "message 136, train integrity confirmed with L_TRAININT"))
+    msg = tradio(146, Bits().put(32, 123456))
+    files.append(("etcs-radio-train-to-track", "04-acknowledgement.json", msg.hex(),
+                  m(dict(tm, **{"@kind": "acknowledgement", "etcs.tm146_t_train": 123456, "etcs.train_packets.#": 0})), "message 146"))
+    msg = tradio(155, Bits())
+    files.append(("etcs-radio-train-to-track", "05-session-initiation.json", msg.hex(),
+                  m(dict(tm, **{"@kind": "session_initiation", "etcs.train_packets.#": 0})), "message 155, header only"))
+    msg = tradio(159, tpacket(2, Bits().put(7, 33).put(5, 1).put(7, 32)))
+    files.append(("etcs-radio-train-to-track", "06-session-established.json", msg.hex(),
+                  m(dict(tm, **{"@kind": "session_established", T % 0 + "@kind": "tp2", T % 0 + "etcs.tp2_m_version": 33,
+                                T % 0 + "etcs.tp2_versions[0].etcs.tp2_versions_m_version": 32})), "message 159 with packet 2"))
+
+
 def build(out):
     files = []
     # ---- telegram 1: header, packet 0, packet 5 (one linked group, no iteration), packet 21, packet 255
@@ -83,7 +204,7 @@ def build(out):
                         "etcs.packets[3].@kind": "p255"})
     files.append(("etcs-balise-telegram", "01-linking-gradient.json", t.hex(), m(model),
                   "header, packet 0, packet 5 without further links, packet 21 ending with G_A 255, packet 255"))
-    # ---- telegram 2: packet 12 (one section with a timer), 27, 41 (NTC), 44 (national), an undescribed packet 3
+    # ---- telegram 2: packet 12 (one section with a timer), 27, 41 (NTC), 44 (national), an unassigned packet 200
     t = Bits()
     for n, v in hdr:
         t.put(n, v)
@@ -103,7 +224,7 @@ def build(out):
     t.extend(packet(41, 2, p41))
     p44 = Bits().put(9, 102).put(8, 5).put(5, 0b10110)
     t.extend(packet(44, 1, p44))
-    t.extend(packet(3, 1, Bits().put(6, 0b101101)))
+    t.extend(packet(200, 1, Bits().put(6, 0b101101)))   # NID_PACKET 200 is assigned to no packet
     t.put(8, 255).pad()
     P = "etcs.packets[%d]."
     model = dict(hm, **{"etcs.packets.#": 6,
@@ -123,11 +244,11 @@ def build(out):
                         P % 2 + "etcs.p41_levels.#": 1, P % 2 + "etcs.p41_levels[0].etcs.p41_level_m_leveltr": 2,
                         P % 3 + "@kind": "p44", P % 3 + "etcs.p44_nid_xuser": 102, P % 3 + "etcs.p44_nid_ntc": 5,
                         P % 3 + "etcs.p44_data.#": 5,
-                        P % 4 + "@kind": "other", P % 4 + "etcs.nid_packet": 3, P % 4 + "etcs.other_packet_bits.#": 6,
+                        P % 4 + "@kind": "other", P % 4 + "etcs.nid_packet": 200, P % 4 + "etcs.other_packet_bits.#": 6,
                         P % 5 + "@kind": "p255"})
     files.append(("etcs-balise-telegram", "02-ma-ssp-level-national.json", t.hex(), m(model),
                   "packets 12 (T_EMA 1023), 27 with two category speeds, 41 to an NTC, 44 for NID_XUSER 102, "
-                  "packet 3 kept as bits, 255"))
+                  "packet 200 (not assigned) kept as bits, 255"))
     # ---- radio message 3 with packet 15 and optional packet 21
     def radio(nid, tail, opt):
         body = Bits().put(32, 123456).put(1, 1).put(10, 253).put(14, 4321).extend(tail).extend(opt)
@@ -159,6 +280,7 @@ def build(out):
                   m(dict(rm, **{"@kind": "ma_shifted_location", "etcs.m33_q_scale": 1, "etcs.m33_d_ref": -250,
                                 "etcs.optional_packets.#": 0})),
                   "message 33: D_REF -250 in two's complement, packet 15, no optional packet"))
+    more(files)
     vecs = [(pack, name, {"name": "%s-%s" % (pack, name[:-5]), "from": pack, "to": pack, "input": h, "expect": h,
                           "model": md, "source": "constructed", "reference": REF + "; " + note})
             for pack, name, h, md, note in files]

@@ -24,7 +24,7 @@ The pack is therefore labelled `LicenseRef-unstated` (BRIEF rule 17;
 ## What this repository takes
 
 Variable names, lengths, value meanings and the order of fields in the balise telegram header, the
-radio message header, messages 3, 24 and 33 and packets 0, 5, 12, 15, 21, 27, 41, 44 and 255. No
+radio message headers, the track-to-train messages and packets of chapters 7 and 8 the packs list in pack.md, and the train-to-track messages and packets 0, 1, 2, 4, 5, 9, 11 and 44. No
 table or text is copied; pack.md and the module's meanings are this repository's words. The
 vectors are built by `tools/gen/etcs-vectors.py`.
 

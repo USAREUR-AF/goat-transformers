@@ -1,0 +1,21 @@
+{
+  "name": "etcs-radio-track-to-train-06-infill-ma",
+  "from": "etcs-radio-track-to-train",
+  "to": "etcs-radio-track-to-train",
+  "input": "25060000789007ea1c310809802c0620494800ffc00e1000",
+  "expect": "25060000789007ea1c310809802c0620494800ffc00e1000",
+  "model": {
+    "etcs.t_train": "123456",
+    "etcs.m_ack": "0",
+    "etcs.lrbg_nid_c": "253",
+    "etcs.lrbg_nid_bg": "4321",
+    "@kind": "infill_ma",
+    "etcs.optional_packets.#": "2",
+    "etcs.optional_packets[0].@kind": "p136",
+    "etcs.optional_packets[0].etcs.p136_nid_bg": "88",
+    "etcs.optional_packets[1].@kind": "p12",
+    "etcs.optional_packets[1].etcs.p12_l_endsection": "900"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 37: packet 136 then packet 12, read as the packet list"
+}

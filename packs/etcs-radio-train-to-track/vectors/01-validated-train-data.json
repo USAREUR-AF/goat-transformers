@@ -1,0 +1,25 @@
+{
+  "name": "etcs-radio-train-to-track-01-validated-train-data",
+  "from": "etcs-radio-train-to-track",
+  "to": "etcs-radio-train-to-track",
+  "input": "8109c0006073448d158000e49fa87080785000a001820830b03b10001190400228060227e841c0",
+  "expect": "8109c0006073448d158000e49fa87080785000a001820830b03b10001190400228060227e841c0",
+  "model": {
+    "etcs.train_t_train": "98765",
+    "etcs.nid_engine": "1193046",
+    "@kind": "validated_train_data",
+    "etcs.train_packets.#": "2",
+    "etcs.train_packets[0].@kind": "tp0",
+    "etcs.train_packets[0].etcs.tp0_d_lrbg": "120",
+    "etcs.train_packets[0].etcs.tp0_v_train": "16",
+    "etcs.train_packets[0].etcs.tp0_m_level": "3",
+    "etcs.train_packets[1].@kind": "tp11",
+    "etcs.train_packets[1].etcs.tp11_l_train": "400",
+    "etcs.train_packets[1].etcs.tp11_n_axle": "24",
+    "etcs.train_packets[1].etcs.tp11_tractions.#": "1",
+    "etcs.train_packets[1].etcs.tp11_tractions[0].etcs.tp11_tractions_nid_ctraction": "253",
+    "etcs.train_packets[1].etcs.tp11_ntcs[0].etcs.tp11_ntcs_nid_ntc": "7"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 129: packet 0 and packet 11"
+}
