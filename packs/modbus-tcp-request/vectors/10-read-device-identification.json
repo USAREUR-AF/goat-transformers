@@ -1,0 +1,14 @@
+{
+  "name": "read-device-identification",
+  "from": "modbus-tcp-request",
+  "to": "modbus-tcp-request",
+  "input": "000a00000005012b0e0100",
+  "expect": "000a00000005012b0e0100",
+  "model": {
+    "modbus.function_code": "43",
+    "modbus.mei_type": "14",
+    "modbus.read_device_id_code": "1",
+    "modbus.object_id": "0"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; read the basic device identification"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "unknown-function-is-no-kind",
+  "from": "modbus-rtu-request",
+  "to": "modbus-rtu-request",
+  "input": "01410102d19d",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and MODBUS over Serial Line V1.02 section 2.5 and Appendix B; expect derived there, no engine run; function code 65 (user defined): its length is not known, so the frame cannot be read"
+}

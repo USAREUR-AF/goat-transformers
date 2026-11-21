@@ -1,0 +1,13 @@
+{
+  "name": "write-file-record",
+  "from": "modbus-tcp-request",
+  "to": "modbus-tcp-request",
+  "input": "00060000001001150d0600040007000306af04be100d",
+  "expect": "00060000001001150d0600040007000306af04be100d",
+  "model": {
+    "modbus.file_sub_requests.#": "1",
+    "modbus.file_sub_requests[0].modbus.record_data.#": "3",
+    "modbus.file_sub_requests[0].modbus.record_data[2].modbus.register": "4109"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; write one record of 3 registers; the record length is written from the list"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "read-write-multiple-registers",
+  "from": "modbus-tcp-response",
+  "to": "modbus-tcp-response",
+  "input": "00080000000f01170c00fe0acf00000000000000ff",
+  "expect": "00080000000f01170c00fe0acf00000000000000ff",
+  "model": {
+    "modbus.registers.#": "6"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; six registers read"
+}

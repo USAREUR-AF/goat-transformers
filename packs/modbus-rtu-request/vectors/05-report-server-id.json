@@ -1,0 +1,11 @@
+{
+  "name": "report-server-id",
+  "from": "modbus-rtu-request",
+  "to": "modbus-rtu-request",
+  "input": "0111c02c",
+  "expect": "0111c02c",
+  "model": {
+    "modbus.function_code": "17"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and MODBUS over Serial Line V1.02 section 2.5 and Appendix B; expect derived there, no engine run; report server id"
+}

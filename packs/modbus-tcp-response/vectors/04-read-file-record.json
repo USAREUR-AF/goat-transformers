@@ -1,0 +1,13 @@
+{
+  "name": "read-file-record",
+  "from": "modbus-tcp-response",
+  "to": "modbus-tcp-response",
+  "input": "00040000000f01140c05060dfe0020050633cd0040",
+  "expect": "00040000000f01140c05060dfe0020050633cd0040",
+  "model": {
+    "modbus.file_sub_responses.#": "2",
+    "modbus.file_sub_responses[0].modbus.record_data.#": "2",
+    "modbus.file_sub_responses[1].modbus.record_data[0].modbus.register": "13261"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; two sub-responses"
+}

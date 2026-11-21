@@ -1,0 +1,16 @@
+{
+  "name": "read-device-identification",
+  "from": "modbus-tcp-response",
+  "to": "modbus-tcp-response",
+  "input": "00050000001e012b0e010100000300074578616d706c6501054d422d3031020456312e30",
+  "expect": "00050000001e012b0e010100000300074578616d706c6501054d422d3031020456312e30",
+  "model": {
+    "modbus.mei_type": "14",
+    "modbus.conformity_level": "1",
+    "modbus.more_follows": "0",
+    "modbus.objects.#": "3",
+    "modbus.objects[0].modbus.object_value.#": "7",
+    "modbus.objects[2].modbus.object_id": "2"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; basic device identification with three objects"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "read-fifo-queue",
+  "from": "modbus-tcp-response",
+  "to": "modbus-tcp-response",
+  "input": "00060000000a01180006000201b81284",
+  "expect": "00060000000a01180006000201b81284",
+  "model": {
+    "modbus.fifo_count": "2",
+    "modbus.registers.#": "2"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; a FIFO of two registers"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "read-file-record",
+  "from": "modbus-tcp-request",
+  "to": "modbus-tcp-request",
+  "input": "00050000001101140e0600040001000206000300090002",
+  "expect": "00050000001101140e0600040001000206000300090002",
+  "model": {
+    "modbus.file_sub_requests.#": "2",
+    "modbus.file_sub_requests[1].modbus.file_number": "3",
+    "modbus.file_sub_requests[1].modbus.record_number": "9",
+    "modbus.file_sub_requests[0].modbus.record_length": "2"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; read two file records"
+}

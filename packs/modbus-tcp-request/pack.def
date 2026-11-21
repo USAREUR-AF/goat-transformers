@@ -1,0 +1,110 @@
+# Modbus TCP request: the MBAP header, then the request PDU of every public function code of the Modbus
+# Application Protocol V1.1b3. Public; the source states no licence (pack.md). Written by
+# tools/gen/modbus-pack.py; do not edit by hand. Wire bits, layout sequential, msb; I/O is hex.
+format        modbus-tcp-request
+version       0.1.0
+distribution  public
+source        "Modbus Organization, MODBUS Application Protocol Specification V1.1b3, https://www.modbus.org/file/secure/modbusprotocolspecification.pdf (sha256 f80d0d7132fd035104c3f21b01026470e3310ca3d8d493d9a9737d0d32ad2eb1); layout restated"
+source        "Modbus Organization, MODBUS Messaging on TCP/IP Implementation Guide V1.0b, https://www.modbus.org/file/secure/messagingimplementationguide.pdf (sha256 065d71170475642e82f370c648bf5135263cb20f61ce92c921add975fab6f669); layout restated"
+uses          modbus
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  modbus.transaction_id  16  uint
+field  modbus.protocol_id  16  uint
+length  16  bytes
+  field  modbus.unit_id  8  uint
+  field  modbus.function_code  8  uint
+  switch  modbus.function_code
+    case  1                        # read coils
+      field  modbus.start_address  16  uint
+      field  modbus.quantity  16  uint
+    case  2                        # read discrete inputs
+      field  modbus.start_address  16  uint
+      field  modbus.quantity  16  uint
+    case  3                        # read holding registers
+      field  modbus.start_address  16  uint
+      field  modbus.quantity  16  uint
+    case  4                        # read input registers
+      field  modbus.start_address  16  uint
+      field  modbus.quantity  16  uint
+    case  5                        # write single coil
+      field  modbus.output_address  16  uint
+      field  modbus.output_value  16  uint
+    case  6                        # write single register
+      field  modbus.register_address  16  uint
+      field  modbus.register_value  16  uint
+    case  7                        # read exception status
+    case  8                        # diagnostics
+      field  modbus.sub_function  16  uint
+      field  modbus.diagnostic_data  16  uint
+    case  11                       # get comm event counter
+    case  12                       # get comm event log
+    case  15                       # write multiple coils
+      field  modbus.start_address  16  uint
+      field  modbus.quantity  16  uint
+      length  8  bytes
+        group  modbus.coil_bytes  rest
+          field  modbus.octet  8  uint
+        end
+      end
+    case  16                       # write multiple registers
+      field  modbus.start_address  16  uint
+      field  modbus.quantity  16  uint
+      length  8  bytes
+        group  modbus.registers  rest
+          field  modbus.register  16  uint
+        end
+      end
+    case  17                       # report server id
+    case  20                       # read file record
+      length  8  bytes
+        group  modbus.file_sub_requests  rest
+          field  modbus.reference_type  8  uint
+          field  modbus.file_number  16  uint
+          field  modbus.record_number  16  uint
+          field  modbus.record_length  16  uint
+        end
+      end
+    case  21                       # write file record
+      length  8  bytes
+        group  modbus.file_sub_requests  rest
+          field  modbus.reference_type  8  uint
+          field  modbus.file_number  16  uint
+          field  modbus.record_number  16  uint
+          count  records  16
+          group  modbus.record_data  count  @records
+            field  modbus.register  16  uint
+          end
+        end
+      end
+    case  22                       # mask write register
+      field  modbus.register_address  16  uint
+      field  modbus.and_mask  16  uint
+      field  modbus.or_mask  16  uint
+    case  23                       # read/write multiple registers
+      field  modbus.read_start  16  uint
+      field  modbus.read_quantity  16  uint
+      field  modbus.write_start  16  uint
+      field  modbus.write_quantity  16  uint
+      length  8  bytes
+        group  modbus.write_registers  rest
+          field  modbus.register  16  uint
+        end
+      end
+    case  24                       # read fifo queue
+      field  modbus.fifo_address  16  uint
+    case  43                       # encapsulated interface transport
+      field  modbus.mei_type  8  uint
+      switch  modbus.mei_type
+        case  14
+          field  modbus.read_device_id_code  8  uint
+          field  modbus.object_id  8  uint
+      end
+    else
+      group  modbus.pdu_data  rest
+        field  modbus.octet  8  uint
+      end
+  end
+end

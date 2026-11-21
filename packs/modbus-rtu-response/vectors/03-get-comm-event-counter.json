@@ -1,0 +1,12 @@
+{
+  "name": "get-comm-event-counter",
+  "from": "modbus-rtu-response",
+  "to": "modbus-rtu-response",
+  "input": "010bffff0108a479",
+  "expect": "010bffff0108a479",
+  "model": {
+    "modbus.comm_status": "65535",
+    "modbus.event_count": "264"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and MODBUS over Serial Line V1.02 section 2.5 and Appendix B; expect derived there, no engine run; a busy status and the event count"
+}

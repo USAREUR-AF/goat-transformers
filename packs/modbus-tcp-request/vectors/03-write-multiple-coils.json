@@ -1,0 +1,13 @@
+{
+  "name": "write-multiple-coils",
+  "from": "modbus-tcp-request",
+  "to": "modbus-tcp-request",
+  "input": "000300000009010f0013000a02cd01",
+  "expect": "000300000009010f0013000a02cd01",
+  "model": {
+    "modbus.quantity": "10",
+    "modbus.coil_bytes.#": "2",
+    "modbus.coil_bytes[0].modbus.octet": "205"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; write 10 coils from address 19"
+}

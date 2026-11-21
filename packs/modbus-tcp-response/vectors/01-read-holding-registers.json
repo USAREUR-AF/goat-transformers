@@ -1,0 +1,14 @@
+{
+  "name": "read-holding-registers",
+  "from": "modbus-tcp-response",
+  "to": "modbus-tcp-response",
+  "input": "000100000009010306022b00000064",
+  "expect": "000100000009010306022b00000064",
+  "model": {
+    "modbus.function_code": "3",
+    "modbus.registers.#": "3",
+    "modbus.registers[0].modbus.register": "555",
+    "modbus.registers[2].modbus.register": "100"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; three registers"
+}

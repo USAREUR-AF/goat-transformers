@@ -1,0 +1,11 @@
+{
+  "name": "read-fifo-queue",
+  "from": "modbus-tcp-request",
+  "to": "modbus-tcp-request",
+  "input": "000900000004011804de",
+  "expect": "000900000004011804de",
+  "model": {
+    "modbus.fifo_address": "1246"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; read the FIFO at 1246"
+}
