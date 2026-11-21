@@ -4,14 +4,39 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    // Spec Version 0.24: the wires of the build. `-Dwires=xml,json,geojson`
+    // builds the codecs of those wires only; the codec of every other wire is
+    // left out of the build. No `-Dwires`: all seven.
+    const wire_names = [_][]const u8{ "xml", "geojson", "json", "bits", "protobuf", "text", "tlv" };
+    var have = [_]bool{false} ** wire_names.len;
+    if (b.option([]const u8, "wires", "The wires to build, comma-separated: xml,geojson,json,bits,protobuf,text,tlv (default all seven)")) |list| {
+        var parts = std.mem.splitScalar(u8, list, ',');
+        while (parts.next()) |part| {
+            const name = std.mem.trim(u8, part, " ");
+            if (name.len == 0) continue;
+            for (wire_names, 0..) |w, i| {
+                if (std.mem.eql(u8, w, name)) {
+                    have[i] = true;
+                    break;
+                }
+            } else {
+                std.log.err("-Dwires: {s} is not a wire (xml, geojson, json, bits, protobuf, text, tlv)", .{name});
+                std.process.exit(1);
+            }
+        }
+    } else have = [_]bool{true} ** wire_names.len;
+    const wire_opts = b.addOptions();
+    for (wire_names, have) |w, on| wire_opts.addOption(bool, b.fmt("wire_{s}", .{w}), on);
+
     // The engine as a module for another program:
     //   const gt = b.dependency("goat_transformers", .{ .target = target, .optimize = optimize });
     //   exe.root_module.addImport("goat_transformers", gt.module("goat_transformers"));
-    _ = b.addModule("goat_transformers", .{
+    const module = b.addModule("goat_transformers", .{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
     });
+    module.addOptions("build_options", wire_opts);
 
     const exe = b.addExecutable(.{
         .name = "gt-engine-zig",
@@ -19,6 +44,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+    exe.root_module.addOptions("build_options", wire_opts);
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
@@ -38,6 +64,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = .ReleaseSafe,
     });
+    safe_exe.root_module.addOptions("build_options", wire_opts);
     const fuzz_cmd = b.addRunArtifact(safe_exe);
     fuzz_cmd.addArg("--fuzz");
     if (b.args) |args| fuzz_cmd.addArgs(args);
@@ -60,6 +87,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+    cli_exe.root_module.addOptions("build_options", wire_opts);
     const cli_step = b.step("cli", "Build the command-line tool zig-out/bin/goat-xf (spec Version 0.23)");
     cli_step.dependOn(&b.addInstallArtifact(cli_exe, .{}).step);
 
@@ -69,6 +97,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+    module_tests.root_module.addOptions("build_options", wire_opts);
     const module_step = b.step("module-test", "Run the check of the module another program imports");
     module_step.dependOn(&b.addRunArtifact(module_tests).step);
 }

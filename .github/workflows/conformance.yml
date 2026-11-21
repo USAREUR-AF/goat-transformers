@@ -116,9 +116,13 @@ jobs:
           name: capability-matrix-rust
           path: capability-matrix-rust.tsv
           if-no-files-found: error
+      # Spec 0.24: the engine built with only xml, json and geojson passes every
+      # vector on those wires, refuses a pack on any other wire by name, and is smaller.
+      - name: Reduced build (xml, json, geojson)
+        run: engines/rust/reduced-build-check.sh
   go:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
@@ -139,6 +143,10 @@ jobs:
           name: capability-matrix-go
           path: capability-matrix-go.tsv
           if-no-files-found: error
+      # Spec 0.24: the engine built with only xml, json and geojson passes every
+      # vector on those wires, refuses a pack on any other wire by name, and is smaller.
+      - name: Reduced build (xml, json, geojson)
+        run: sh engines/go/reduced-check.sh
   python:
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -167,6 +175,10 @@ jobs:
           name: capability-matrix-python
           path: capability-matrix-python.tsv
           if-no-files-found: error
+      # Spec 0.24: the engine built with only xml, json and geojson passes every
+      # vector on those wires, refuses a pack on any other wire by name, and is smaller.
+      - name: Reduced build (xml, json, geojson)
+        run: python3 -I engines/python/reduced-build-check.py
   java:
     runs-on: ubuntu-latest
     # The malformed-input sweep grows with every pack; it is bounded per vector
@@ -191,9 +203,13 @@ jobs:
           name: capability-matrix-java
           path: capability-matrix-java.tsv
           if-no-files-found: error
+      # Spec 0.24: the engine built with only xml, json and geojson passes every
+      # vector on those wires, refuses a pack on any other wire by name, and is smaller.
+      - name: Reduced build (xml, json, geojson)
+        run: engines/java/reduced-check.sh
   cpp:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       # -O2 without NDEBUG: the malformed-input test runs optimized, with assertions kept.
@@ -212,11 +228,15 @@ jobs:
           name: capability-matrix-cpp
           path: capability-matrix-cpp.tsv
           if-no-files-found: error
+      # Spec 0.24: the engine built with only xml, json and geojson passes every
+      # vector on those wires, refuses a pack on any other wire by name, and is smaller.
+      - name: Reduced build (xml, json, geojson)
+        run: sh engines/cpp/tests/reduced-build.sh
   erlang:
     runs-on: ubuntu-latest
     # The suite runs every vector of every pack; it took 7 to 9 minutes before
     # the UBX packs and reached the old 10-minute limit with them.
-    timeout-minutes: 40
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
@@ -239,9 +259,13 @@ jobs:
           name: capability-matrix-erlang
           path: capability-matrix-erlang.tsv
           if-no-files-found: error
+      # Spec 0.24: the engine built with only xml, json and geojson passes every
+      # vector on those wires, refuses a pack on any other wire by name, and is smaller.
+      - name: Reduced build (xml, json, geojson)
+        run: engines/erlang/reduced_check.sh
   zig:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29 # v2
@@ -264,6 +288,10 @@ jobs:
           name: capability-matrix-zig
           path: capability-matrix-zig.tsv
           if-no-files-found: error
+      # Spec 0.24: the engine built with only xml, json and geojson passes every
+      # vector on those wires, refuses a pack on any other wire by name, and is smaller.
+      - name: Reduced build (xml, json, geojson)
+        run: engines/zig/reduced-check.sh
   # The capability matrix as a checked artifact (spec 0.23): the seven engines
   # wrote it from the same packs; it must be the same bytes from all seven.
   capability-matrix:

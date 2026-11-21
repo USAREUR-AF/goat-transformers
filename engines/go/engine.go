@@ -453,23 +453,11 @@ func (e *Engine) Decode(format string, b []byte) (*Entity, error) {
 	}
 	d := &decodeState{pack: p, ent: NewEntity(), limit: e.maxItems}
 	d.rec = d.ent.item()
-	switch p.Wire {
-	case WireXML:
-		err = decodeXML(d, b)
-	case WireGeoJSON:
-		err = decodeGeoJSON(d, b)
-	case WireJSON:
-		err = decodeJSONWire(d, b)
-	case WireBits:
-		err = decodeBits(d, b)
-	case WireProtobuf:
-		err = decodeProtobuf(d, b)
-	case WireText:
-		err = decodeText(d, b)
-	case WireTLV:
-		err = decodeTLV(d, b)
-	}
+	c, err := builtCodec(p)
 	if err != nil {
+		return nil, err
+	}
+	if err := c.decode(d, b); err != nil {
 		return nil, err
 	}
 	d.ent.Lists = d.rec.Lists
@@ -499,30 +487,18 @@ func (e *Engine) Encode(format string, ent *Entity) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	c, err := builtCodec(p)
+	if err != nil {
+		return nil, err
+	}
 	if p.seq {
-		return encodeSeq(p, ent)
+		return c.encodeWhole(p, ent)
 	}
 	lay, err := chooseEncode(p, ent)
 	if err != nil {
 		return nil, err
 	}
-	rec := ent.item()
-	switch p.Wire {
-	case WireXML:
-		return encodeXML(p, lay, ent, rec)
-	case WireBits:
-		return encodeBits(p, lay, rec)
-	case WireProtobuf:
-		return encodeProtobuf(p, lay, rec)
-	case WireJSON:
-		return encodeJSONWire(p, lay, ent, rec)
-	case WireText:
-		return encodeText(p, lay, ent, rec)
-	case WireTLV:
-		return encodeTLV(p, lay, ent, rec)
-	default:
-		return encodeGeoJSON(p, lay, ent, rec)
-	}
+	return c.encode(p, lay, ent, ent.item())
 }
 
 // Convert is ConvertWith with no context.

@@ -13,7 +13,7 @@
 %% Residue: [{Index :: integer(), Text :: binary()}].
 -module(gt_text).
 -export([open/2, when_holds/3, raw/3, decode_value/2, items/3, residue/2,
-         encode/4, numeric/1, pair_transform/1, loc_indexes/1]).
+         encode/4, numeric/1]).
 
 -define(EPOCH_DAYS, 719528).           % calendar:date_to_gregorian_days(1970, 1, 1)
 -define(DAY_MS, 86400000).
@@ -160,14 +160,6 @@ numeric({int_w, _}) -> true;
 numeric({dec, _, _}) -> true;
 numeric(_) -> false.
 
-pair_transform({dm, _, _, _, _}) -> true;
-pair_transform({hms_dmy, _}) -> true;
-pair_transform(_) -> false.
-
-loc_indexes({fld, I}) -> [I];
-loc_indexes({col, I, _, _}) -> [I];
-loc_indexes({pair, I, J}) -> [I, J].
-
 %% The items of a group from field Start, N fields each -> absent | [Ctx].
 items({Fields, Base}, Start, N) ->
     First = Base + Start,
@@ -202,7 +194,7 @@ addressed(Lines) ->
 mark(Loc, Opt, M) ->
     lists:foldl(fun(I, Acc) ->
                         maps:put(I, Opt andalso maps:get(I, Acc, true), Acc)
-                end, M, loc_indexes(Loc)).
+                end, M, gt_pack:text_loc_indexes(Loc)).
 
 %% ===================================================================
 %% transforms: decode (any failure raises; the caller names it)

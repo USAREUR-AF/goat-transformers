@@ -14,6 +14,20 @@ categories = ["encoding", "parser-implementations"]
 # modules are data: vendor the ones you need with `tools/goat-pkg bundle`.
 include = ["src/**", "Cargo.toml", "README.md"]
 
+# Engine-spec 0.24: one feature per wire. The default build has all seven;
+# `--no-default-features --features xml,json,geojson` leaves the codecs of the
+# other wires out of the build. `bits` holds the sequential layout, six-bit
+# armor and `encoding uper`; `geojson` needs nothing of `json`.
+[features]
+default = ["xml", "geojson", "json", "bits", "protobuf", "text", "tlv"]
+xml = []
+geojson = []
+json = []
+bits = []
+protobuf = []
+text = []
+tlv = []
+
 [[bin]]
 name = "goat-xf"
 path = "src/main.rs"

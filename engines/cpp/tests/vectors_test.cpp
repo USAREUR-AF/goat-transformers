@@ -6,6 +6,12 @@
 // (spec/vector-format.md). Every failure is reported, with its pack and vector
 // name, before the counts; exit status is non-zero on any mismatch or when
 // either set of vectors is empty.
+//
+// In a build with fewer wires (engine-spec.md 0.24) it is the reduced-build
+// check: it loads only the packs on the build's wires, runs only the vectors
+// whose formats, and whose packs, are all on them, and requires every pack on a
+// wire of the specification the build lacks to be refused with unknown-wire,
+// with a message that names the wire and says this build does not have it.
 #include <algorithm>
 #include <cstdint>
 #include <cmath>
@@ -13,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <set>
 #include <stdexcept>
 #include <sstream>
 #include <string>
@@ -20,6 +27,7 @@
 
 #include "goat_transformers/engine.hpp"
 #include "json.hpp"
+#include "sequential.hpp"
 #include "util.hpp"
 
 #ifndef GT_PACKS_DIR
@@ -308,6 +316,29 @@ std::string run_capability_vector(const Engine& eng, const json::Value& v) {
     return err;
 }
 
+// The first `format` and `wire` values of a pack text, read line by line.
+void header_values(const std::string& text, std::string& format, std::vector<std::string>& wires) {
+    std::istringstream in(text);
+    std::string line, err;
+    while (std::getline(in, line)) {
+        std::vector<std::string> t;
+        if (!detail::tokenize_line(line, t, err) || t.size() < 2) continue;
+        if (t[0] == "format" && format.empty()) format = t[1];
+        if (t[0] == "wire") wires.push_back(t[1]);
+    }
+}
+
+const std::vector<std::string> kSpecWires = {"xml", "geojson", "json", "bits", "protobuf", "text", "tlv"};
+
+// A wire of the specification that this build lacks, or an empty string.
+std::string lacked_wire(const std::vector<std::string>& wires, const std::vector<std::string>& built) {
+    for (const auto& w : wires)
+        if (std::find(kSpecWires.begin(), kSpecWires.end(), w) != kSpecWires.end() &&
+            std::find(built.begin(), built.end(), w) == built.end())
+            return w;
+    return "";
+}
+
 }  // namespace
 
 int main() {
@@ -315,9 +346,79 @@ int main() {
     int ran = 0, failed = 0, error_vectors = 0, kind_checks = 0, context_vectors = 0, complete_checks = 0,
         list_checks = 0, absent_checks = 0, limit_vectors = 0;
 
+    const std::vector<std::string> built = goat_transformers::built_wires();
+    const bool reduced = built.size() != kSpecWires.size();
+    // Reduced build: the formats of the packs on a wire it lacks, whose vectors
+    // are not run, and the refusals of those packs.
+    std::set<std::string> lacked_formats;
+    int skipped = 0, refused = 0, refusal_failed = 0;
+    std::map<std::string, int> refused_by_wire;
+
     Engine eng;
     try {
-        eng = Engine::load(packs.string());
+        if (!reduced) {
+            eng = Engine::load(packs.string());
+        } else {
+            std::string list;
+            for (const auto& w : built) list += (list.empty() ? "" : ",") + w;
+            std::cout << "reduced build: wires " << list << "\n";
+            std::vector<fs::path> dirs;
+            for (const auto& d : fs::directory_iterator(packs))
+                if (d.is_directory() && fs::is_regular_file(d.path() / "pack.def")) dirs.push_back(d.path());
+            std::sort(dirs.begin(), dirs.end());
+            std::vector<std::string> names;
+            for (const auto& d : dirs) {
+                const std::string text = read_file(d / "pack.def");
+                std::string format;
+                std::vector<std::string> wires;
+                header_values(text, format, wires);
+                const std::string wire = lacked_wire(wires, built);
+                if (wire.empty()) {
+                    names.push_back(d.filename().string());
+                    continue;
+                }
+                lacked_formats.insert(format);
+                // 0.24 ruling 1c: unknown-wire, the wire named, and this build's lack said.
+                std::string got;
+                try {
+                    (void)goat_transformers::parse_pack(text, (d / "pack.def").string());
+                    got = "the pack loaded";
+                } catch (const goat_transformers::Error& e) {
+                    const std::string m = e.what();
+                    if (e.kind() != goat_transformers::ErrorKind::UnknownWire || m.compare(0, 13, "unknown-wire:") != 0)
+                        got = "expected unknown-wire, got " + m;
+                    else if (m.find("'" + wire + "'") == std::string::npos ||
+                             m.find("this build does not have") == std::string::npos)
+                        got = "the message does not name the wire and say this build lacks it: " + m;
+                    else if (refused_by_wire[wire] == 0)
+                        std::cout << "unknown-wire load (" << wire << "): " << m << "\n";
+                }
+                if (got.empty()) {
+                    ++refused;
+                    ++refused_by_wire[wire];
+                } else {
+                    ++refusal_failed;
+                    std::cout << "FAIL " << d.filename().string() << "/pack.def\n  " << got << "\n";
+                }
+            }
+            // Every module, as Engine::load, then the packs on the build's wires.
+            eng = Engine::load_tool(packs.string(), (packs / ".." / "model").string(), &names);
+            std::cout << "packs loaded: " << names.size() << "\n";
+            // 0.24 ruling 1e: a format that did not load is unknown-format.
+            for (const auto& f : lacked_formats) {
+                std::string got = "convert returned";
+                try {
+                    (void)eng.convert(f, f, "");
+                } catch (const goat_transformers::Error& e) {
+                    got = e.kind() == goat_transformers::ErrorKind::UnknownFormat ? "" : e.what();
+                }
+                if (!got.empty()) {
+                    ++refusal_failed;
+                    std::cout << "FAIL convert of the refused format " << f << ": expected unknown-format, " << got
+                              << "\n";
+                }
+            }
+        }
     } catch (const std::exception& e) {
         std::cerr << "FAIL loading packs from " << packs << ": " << e.what() << "\n";
         return 1;
@@ -343,6 +444,11 @@ int main() {
             std::string input, expect, want_error;
             if (!from || !to || !from->is(json::Value::Kind::String) || !to->is(json::Value::Kind::String))
                 throw std::runtime_error("vector lacks from/to");
+            if (lacked_formats.count(from->text) || lacked_formats.count(to->text)) {
+                --ran;
+                ++skipped;
+                continue;
+            }
             if (const json::Value* n = v.find("name"))
                 if (n->is(json::Value::Kind::String)) label += " (" + n->text + ")";
             if (!bytes_field(v, "input", "input_b64", input)) throw std::runtime_error("vector lacks input");
@@ -477,13 +583,29 @@ int main() {
             if (f.path().extension() == ".json") load_files.push_back(f.path());
     std::sort(load_files.begin(), load_files.end());
 
-    int load_ran = 0, load_failed = 0;
+    int load_ran = 0, load_failed = 0, load_skipped = 0;
     for (const auto& file : load_files) {
         ++load_ran;
         std::string label = "load-vectors/" + file.filename().string();
         std::string err;
         try {
-            err = run_load_vector(json::parse(read_file(file)));
+            const json::Value v = json::parse(read_file(file));
+            if (reduced) {
+                // A pack text on a wire this build lacks is not this build's case.
+                std::vector<std::string> wires;
+                std::string format;
+                if (const json::Value* one = v.find("pack"))
+                    if (one->is(json::Value::Kind::String)) header_values(one->text, format, wires);
+                if (const json::Value* many = v.find("packs"))
+                    for (const auto& t : many->items)
+                        if (t.is(json::Value::Kind::String)) header_values(t.text, format, wires);
+                if (!lacked_wire(wires, built).empty()) {
+                    --load_ran;
+                    ++load_skipped;
+                    continue;
+                }
+            }
+            err = run_load_vector(v);
         } catch (const std::exception& e) {
             err = std::string("error: ") + e.what();
         }
@@ -500,13 +622,22 @@ int main() {
             if (f.path().extension() == ".json") cap_files.push_back(f.path());
     std::sort(cap_files.begin(), cap_files.end());
 
-    int cap_ran = 0, cap_failed = 0;
+    int cap_ran = 0, cap_failed = 0, cap_skipped = 0;
     for (const auto& file : cap_files) {
         ++cap_ran;
         std::string label = "capability-vectors/" + file.filename().string();
         std::string err;
         try {
-            err = run_capability_vector(eng, json::parse(read_file(file)));
+            const json::Value v = json::parse(read_file(file));
+            const json::Value* from = v.find("from");
+            const json::Value* to = v.find("to");
+            if ((from && from->is(json::Value::Kind::String) && lacked_formats.count(from->text)) ||
+                (to && to->is(json::Value::Kind::String) && lacked_formats.count(to->text))) {
+                --cap_ran;
+                ++cap_skipped;
+                continue;
+            }
+            err = run_capability_vector(eng, v);
         } catch (const std::exception& e) {
             err = std::string("error: ") + e.what();
         }
@@ -524,15 +655,33 @@ int main() {
               << " failed\n";
     std::cout << "capability vectors: " << cap_ran << " run, " << (cap_ran - cap_failed) << " passed, " << cap_failed
               << " failed\n";
+    if (reduced) {
+        std::cout << "skipped, a format or pack on a wire this build lacks: " << skipped << " conversion, "
+                  << load_skipped << " load, " << cap_skipped << " capability vectors\n";
+        std::cout << "packs on a wire this build lacks: " << refused << " refused with unknown-wire (";
+        bool first = true;
+        for (const auto& w : kSpecWires) {
+            if (std::find(built.begin(), built.end(), w) != built.end()) continue;
+            std::cout << (first ? "" : ", ") << w << " " << refused_by_wire[w];
+            first = false;
+        }
+        std::cout << "), each then unknown-format in convert; " << refusal_failed << " failed\n";
+        for (const auto& w : kSpecWires)
+            if (std::find(built.begin(), built.end(), w) == built.end() && refused_by_wire[w] == 0) {
+                std::cout << "FAIL no pack on wire " << w << " was refused: nothing pins ruling 1c for it\n";
+                ++refusal_failed;
+            }
+        if (refusal_failed != 0) return 1;
+    }
     if (ran == 0) {
         std::cout << "no vectors found under " << packs << "\n";
         return 1;
     }
-    if (load_ran == 0) {
+    if (load_ran == 0 && !reduced) {  // a reduced build may have none on its wires
         std::cout << "no load vectors found under " << ldir << "\n";
         return 1;
     }
-    if (cap_ran == 0) {
+    if (cap_ran == 0 && !reduced) {  // a reduced build may have none on its wires
         std::cout << "no capability vectors found under " << cdir << "\n";
         return 1;
     }

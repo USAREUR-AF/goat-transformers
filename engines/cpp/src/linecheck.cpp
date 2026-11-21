@@ -12,6 +12,7 @@
 #include "sequential.hpp"
 #include "transforms.hpp"
 #include "util.hpp"
+#include "wires.hpp"
 
 namespace goat_transformers::detail {
 
@@ -158,10 +159,12 @@ void check_locator(const LineChecker& c, Wire wire, bool sequential, bool in_gro
             // 0.13: a path and its size are checked after the file is read (bad-directive).
             return;
         case Wire::Text: {
+#if GT_WIRE_TEXT
             TextLocator t;
             if (!parse_text_locator(loc, t))
                 c.fail(ErrorKind::BadDirective, "'" + loc + "' is not a locator of wire text", loc);
-            return;
+#endif
+            return;  // without the text wire a text pack stops at its `wire` line (0.24)
         }
     }
 }
@@ -289,14 +292,9 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         } else if (kw == "wire") {
             once(have_wire);
             // 6. the wire value
-            if (t[1] == "xml") wire = Wire::Xml;
-            else if (t[1] == "geojson") wire = Wire::GeoJson;
-            else if (t[1] == "bits") wire = Wire::Bits;
-            else if (t[1] == "protobuf") wire = Wire::Protobuf;
-            else if (t[1] == "json") wire = Wire::Json;
-            else if (t[1] == "text") wire = Wire::Text;
-            else if (t[1] == "tlv") wire = Wire::Tlv;
-            else c.fail(ErrorKind::UnknownWire, "wire '" + t[1] + "'");
+            // 0.24 ruling 1c: a wire this build lacks is refused here too.
+            std::string why;
+            if (!parse_wire_value(t[1], wire, why)) c.fail(ErrorKind::UnknownWire, why);
         }
 
         if (kw == "group") {

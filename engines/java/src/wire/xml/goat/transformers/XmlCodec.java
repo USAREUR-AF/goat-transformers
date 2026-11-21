@@ -64,16 +64,6 @@ final class XmlCodec extends Codec<Xml.Element> {
         return plan;
     }
 
-    /** Null when {@code locator} is a path of element names, as a group needs, else the reason. */
-    static String checkGroupLocator(String locator) {
-        for (String seg : locator.split("/", -1)) {
-            if (seg.isEmpty() || seg.startsWith("@") || seg.startsWith("#")) {
-                return "an xml group locator is a path of element names: " + locator;
-            }
-        }
-        return null;
-    }
-
     @Override
     List<Pack.Kind> candidates(Xml.Element root) {
         List<Pack.Kind> c = byRoot.get(root.name);
@@ -94,21 +84,6 @@ final class XmlCodec extends Codec<Xml.Element> {
         if (last.startsWith("@")) return new Loc(Arrays.asList(parts).subList(0, parts.length - 1), last.substring(1), false);
         if (last.equals("#text")) return new Loc(Arrays.asList(parts).subList(0, parts.length - 1), null, true);
         return new Loc(Arrays.asList(parts), null, false); // bare element path (residue only)
-    }
-
-    /** Null when {@code locator} is a valid xml field locator, else the reason. */
-    static String checkFieldLocator(String locator) {
-        String[] parts = locator.split("/", -1);
-        String last = parts[parts.length - 1];
-        if (!(last.startsWith("@") && last.length() > 1) && !last.equals("#text")) {
-            return "xml locator must end in @name or #text: " + locator;
-        }
-        for (int i = 0; i < parts.length - 1; i++) {
-            if (parts[i].isEmpty() || parts[i].startsWith("@") || parts[i].startsWith("#")) {
-                return "bad element path segment \"" + parts[i] + "\" in " + locator;
-            }
-        }
-        return null;
     }
 
     @Override

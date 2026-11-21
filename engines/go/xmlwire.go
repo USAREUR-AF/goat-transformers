@@ -1,14 +1,11 @@
+//go:build !goat_wires || goat_wire_xml
+
 package goatxf
 
 import (
 	"fmt"
 	"strings"
 )
-
-// maxNesting is the deepest nesting a message may have: elements on xml (the
-// root is level 1), arrays and objects on json and geojson (the outermost is
-// level 1). A deeper message is malformed-wire (0.8 ruling 35).
-const maxNesting = 64
 
 type xattr struct{ name, value string }
 

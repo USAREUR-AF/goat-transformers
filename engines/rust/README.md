@@ -127,14 +127,74 @@ cot-xml	geojson	partial	uid type time_ms how lat lon hae ce le callsign course s
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 3299 conversion vectors, 314 load vectors, 0 failed |
-| `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 12 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 170558 inputs over 96 packs |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 20307 conversion vectors, 1166 load vectors, 18 capability vectors, 0 failed |
+| `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 4591856 inputs over 3477 packs and 20304 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
+| `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
+| `tests/reduced.rs` | spec 0.24: a pack on a wire the build lacks is `unknown-wire`; a value that is no wire keeps its message (run in a reduced build by `reduced-build-check.sh`) | 2 tests |
 | `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23: every tool vector under `packs/conformance/tool-vectors/` | 97 tool vectors, 0 failed |
 
 `GOAT_FUZZ_ITERS=<n>` multiplies the fuzz inputs; `GOAT_FUZZ_SEED=<n>`
 changes the seed.
+
+## Builds with fewer wires
+
+Spec 0.24 (`spec/engine-spec.md`, Version 0.24) lets the engine be built with
+the codecs of only some wires. Each wire is a Cargo feature of the same name:
+`xml`, `geojson`, `json`, `bits`, `protobuf`, `text`, `tlv`. The default
+features are all seven, so a build that names no set has every wire. To name
+a set, turn the defaults off and list the wires:
+
+```
+cargo build --release --no-default-features --features xml,json,geojson
+```
+
+```toml
+[dependencies]
+goat-transformers = { git = "https://github.com/USAREUR-AF/goat-transformers", tag = "v0.8.0", default-features = false, features = ["xml", "json", "geojson"] }
+```
+
+A wire left out of the set is left out of the build: its decoder, its
+encoder, and every helper only they use are compiled out with `#[cfg]`.
+`bits` holds the sequential layout, six-bit armor and `encoding uper`;
+`geojson` builds without `json`. The pack reader stays whole, so a pack on a
+wire the build has loads, converts and fails exactly as in the full build.
+A pack whose `wire` is one the build lacks fails at line check 6 with
+``unknown-wire: line <n>: this build does not have the `<wire>` wire``; a
+`wire` value that is no wire at all is still `` `<value>` is not a wire``.
+`goat_transformers::build_wires()` returns the wires of the build, and
+`Wire::in_build()` says whether one wire is in it.
+
+### The reduced-build check
+
+From the repository root:
+
+```
+engines/rust/reduced-build-check.sh
+```
+
+It builds the engine with `xml`, `json` and `geojson` (into
+`target/reduced`, so the full build is untouched) and runs on it
+`tests/vectors.rs`, which loads every pack on those wires and runs every
+conversion, load and capability vector whose packs are on them, and
+`tests/reduced.rs`, which loads one pack of the repository on each of
+`bits`, `protobuf`, `text` and `tlv` and requires `unknown-wire` with the
+wire named in the message. It then builds `goat-xf` both ways and prints the
+sizes. It exits non-zero on any failure. `GOAT_WIRES=<w>,<w>...` checks
+another set. Measured with rustc 1.99.1 on x86_64 Linux:
+
+| Reduced build (`xml,json,geojson`) | Measured |
+|---|---|
+| conversion vectors | 6852 run, 0 failed (13455 on other wires left out) |
+| load vectors | 378 run, 0 failed (788 left out) |
+| capability vectors | 16 run, 0 failed (2 left out) |
+| `unknown-wire` loads | 4 of 4: `adsb` (bits), `apollo-ch` (protobuf), `conformance-cond-text` (text), `conformance-cond-tlv` (tlv) |
+
+| Release artifact | All seven wires | `xml,json,geojson` |
+|---|---|---|
+| `goat-xf` | 1992936 bytes | 1612888 bytes |
+| `libgoat_transformers.rlib` | 4468372 bytes | 3336570 bytes |
 
 ## Static and WebAssembly builds
 

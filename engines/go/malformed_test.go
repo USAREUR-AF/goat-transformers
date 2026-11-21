@@ -1,3 +1,5 @@
+//go:build !goat_wires || goat_wire_tlv
+
 package goatxf
 
 import (

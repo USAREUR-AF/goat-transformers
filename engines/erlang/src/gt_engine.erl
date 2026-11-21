@@ -29,20 +29,31 @@
 %% 'transform-decode', 'transform-encode', and for a caller-supplied key
 %% 'undeclared-key', 'key-type-mismatch'.
 -module(gt_engine).
+-include("gt_wires.hrl").
 -export([new/0, set_max_distribution/2, load_model/2, load_pack/2, load_dir/2,
          load_dir/3, load_packs/3, load_packs/4, model_files/1, packs/1, modules/1,
          model_keys/1, pack/2, set_max_items/2, capability/3]).
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
-%% for gt_seq (sequential layouts)
-%% for gt_seq: characters ending at a terminator (Version 0.22)
--export([chars_width/1, until_text/2, until_codes/3]).
--export([conv_error/4, item_source/2, bits_decode/4, bits_encode/4, swap_bytes/2, strip_trailing/2,
-         bits_sentinel/3, items_reserve/2, items_release/1, items_held/1, record_failure/3,
+%% for the readers and writers of gt_seq, gt_text and gt_tlv
+-export([conv_error/4, item_source/2,
+         items_reserve/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
-         via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4, unhex/2,
-         unwire/2, trim/2, armor_out/3, holds/3, line_value/3,
-         req_holds/3]).
+         via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4,
+         holds/3, line_value/3, req_holds/3]).
+%% the transforms of the bits wire, which the tlv wire uses too
+-if(?W_BITS orelse ?W_TLV).
+-export([bits_decode/4, bits_encode/4]).
+-endif.
+%% hex text: the input and output of bits, protobuf and tlv
+-if(?W_BITS orelse ?W_PROTOBUF orelse ?W_TLV).
+-export([unhex/2]).
+-endif.
+%% for gt_seq (sequential layouts); characters ending at a terminator (0.22)
+-if(?W_BITS).
+-export([chars_width/1, until_text/2, until_codes/3, swap_bytes/2, bits_sentinel/3,
+         unwire/2, trim/2, armor_out/3]).
+-endif.
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
 
@@ -627,7 +638,7 @@ select_decode(#{common := Common} = Pack, Wire, Ctx) ->
         false -> conv_error('no-kind', Pack, "a common when does not hold", [])
     end,
     Candidates = case Wire of
-                     xml -> maps:get(gt_xml:name(Ctx), maps:get(root_index, Pack), []);
+                     xml -> ?XML(maps:get(gt_xml:name(Ctx), maps:get(root_index, Pack), []));
                      _ -> maps:get(kinds, Pack)
                  end,
     case first_kind(Candidates, fun(#{lines := Ls}) -> Holds(Ls) end) of
@@ -782,8 +793,8 @@ record_failure(Pack, Fmt, Args) ->
         _ -> ok
     end.
 
-decode_wire(#{wire := bits, layout := sequential} = Pack, Bytes) -> gt_seq:decode(Pack, Bytes);
-decode_wire(#{wire := tlv} = Pack, Bytes) -> gt_tlv:decode(Pack, Bytes);
+decode_wire(#{wire := bits, layout := sequential} = Pack, Bytes) -> ?BITS(gt_seq:decode(Pack, Bytes));
+decode_wire(#{wire := tlv} = Pack, Bytes) -> ?TLV(gt_tlv:decode(Pack, Bytes));
 decode_wire(#{wire := Wire} = Pack, Bytes) ->
     Ctx = open(Wire, Pack, Bytes),
     {Kind, Lines0} = select_decode(Pack, Wire, Ctx),
@@ -848,23 +859,42 @@ decode_scope(Wire, Ctx, Lines, Pack) ->
     end,
     {Model, Lists, End}.
 
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON orelse ?W_PROTOBUF orelse ?W_TEXT).
 %% One item of a list, from its place on the wire.
 decode_item(Wire, Ctx, #{lines := Lines}, Pack) ->
     {Model, Lists, _End} = decode_scope(Wire, Ctx, Lines, Pack),
     #{model => Model, lists => Lists}.
+-endif.
 
 %% ---- the items of a group -> {absent | {ok, [Item]}, Cache, End} ----
+decode_group(text, Ctx, Start, Spec, Body, Pack, C) ->
+    ?TEXT(text_group(Ctx, Start, Spec, Body, Pack, C));
+decode_group(xml, Elem, Path, _Spec, Body, Pack, C) ->
+    ?XML(xml_group(Elem, Path, Body, Pack, C));
+decode_group(Wire, Json, Loc, _Spec, Body, Pack, C)
+  when Wire =:= json; Wire =:= geojson; Wire =:= gjitem ->
+    ?JSONTEXT(json_group(Wire, Json, Loc, Body, Pack, C));
+decode_group(Wire, Msg, Path, _Spec, Body, Pack, C)
+  when Wire =:= protobuf; Wire =:= pbitem ->
+    ?PROTOBUF(pb_group_items(Msg, Path, Body, Pack, C));
+decode_group(bits, Ctx, Start, Spec, Body, Pack, C) ->
+    ?BITS(bits_group(Ctx, Start, Spec, Body, Pack, C)).
+
+-if(?W_TEXT).
 %% text: items of N fields from field Start to the end of the record.
-decode_group(text, Ctx, Start, {text_item, N}, Body, Pack, C) ->
+text_group(Ctx, Start, {text_item, N}, Body, Pack, C) ->
     case gt_text:items(Ctx, Start, N) of
         absent -> {absent, C, 0};
         Items ->
             items_reserve(length(Items), Pack),
             {{ok, [decode_item(text, X, Body, Pack) || X <- Items]}, C, 0}
-    end;
+    end.
+-endif.
+
 %% xml: each child element named by the last name, under the first element
 %% matched by the names before it; the list is present when an item occurs.
-decode_group(xml, Elem, Path, _Spec, Body, Pack, C) ->
+-if(?W_XML).
+xml_group(Elem, Path, Body, Pack, C) ->
     Found = case navigate(Elem, lists:droplast(Path)) of
                 absent -> [];
                 {ok, Parent} -> gt_xml:children(Parent, lists:last(Path))
@@ -874,11 +904,13 @@ decode_group(xml, Elem, Path, _Spec, Body, Pack, C) ->
         _ ->
             items_reserve(length(Found), Pack),
             {{ok, [decode_item(xml, E, Body, Pack) || E <- Found]}, C, 0}
-    end;
+    end.
+-endif.
+
 %% json, geojson: the member is an array and each element an item. `null` is
 %% an absent list; another value is malformed-wire.
-decode_group(Wire, Json, Loc, _Spec, Body, Pack, C)
-  when Wire =:= json; Wire =:= geojson; Wire =:= gjitem ->
+-if(?W_JSON orelse ?W_GEOJSON).
+json_group(Wire, Json, Loc, Body, Pack, C) ->
     case member(Wire, Json, Loc) of
         absent -> {absent, C, 0};
         {ok, {array, Els}} ->
@@ -887,12 +919,14 @@ decode_group(Wire, Json, Loc, _Spec, Body, Pack, C)
             {{ok, [decode_item(ItemWire, E, Body, Pack) || E <- Els]}, C, 0};
         {ok, _} ->
             conv_error('malformed-wire', Pack, "the member of a group is not an array", [])
-    end;
+    end.
+-endif.
+
 %% protobuf: each occurrence of the last field number, in wire order. A body
 %% of `.` lines reads scalars, and a numeric transform accepts the packed
 %% form; another body reads each occurrence as a submessage.
-decode_group(Wire, Msg, Path, _Spec, #{lines := Lines} = Body, Pack, C)
-  when Wire =:= protobuf; Wire =:= pbitem ->
+-if(?W_PROTOBUF).
+pb_group_items(Msg, Path, #{lines := Lines} = Body, Pack, C) ->
     N = lists:last(Path),
     {Container, C1} = pb_sub(Msg, lists:droplast(Path), [], C),
     %% a path prefix that is not a submessage is malformed-wire (ruling 13 of 0.7)
@@ -933,11 +967,14 @@ decode_group(Wire, Msg, Path, _Spec, #{lines := Lines} = Body, Pack, C)
         _ ->
             items_reserve(length(Ctxs), Pack),
             {{ok, [decode_item(pbitem, X, Body, Pack) || X <- Ctxs]}, C2, 0}
-    end;
+    end.
+-endif.
+
 %% bits: `count` consecutive items from the group's start; an item is
 %% `item <bits>` long, or longer when a nested group counted by a locator
 %% runs past that, and the next item starts where it ends.
-decode_group(bits, {Msg, Base}, Start, {ItemBits, Count}, #{lines := Lines}, Pack, C) ->
+-if(?W_BITS).
+bits_group({Msg, Base}, Start, {ItemBits, Count}, #{lines := Lines}, Pack, C) ->
     N = case Count of
             {fixed, K} -> K;
             {loc, {CO, CL}} ->
@@ -961,32 +998,40 @@ bits_items(N, Pos, Msg, ItemBits, Lines, Pack, Acc) ->
     {Model, Lists, End} = decode_scope(bits, {Msg, Pos}, held_lines(bits, {Msg, Pos}, Lines), Pack),
     bits_items(N - 1, max(Pos + ItemBits, End), Msg, ItemBits, Lines, Pack,
                [#{model => Model, lists => Lists} | Acc]).
+-endif.
 
 %% Gate blocks (0.17): the lines of a scope with each block that holds
 %% replaced by its lines and each block that does not hold dropped, so that
 %% a line of a block that does not hold is a line whose locator is absent.
 %% A gate is read like a `when`: a gate any of whose bits lies beyond the
 %% input does not hold, and neither does its `!` form.
-held_lines(bits, {Msg, Base} = Ctx, Lines) ->
+held_lines(bits, Ctx, Lines) -> ?BITS(bits_held_lines(Ctx, Lines));
+held_lines(_Wire, _Ctx, Lines) -> Lines.
+
+-if(?W_BITS).
+bits_held_lines({Msg, Base} = Ctx, Lines) ->
     lists:append(
       [case L of
            {gate, {Off, Len}, Neg, Vals, #{lines := Ls}, _} ->
                case gate_holds(gt_bits:read(Msg, Base + Off, Len), Neg, Vals) of
-                   true -> held_lines(bits, Ctx, Ls);
+                   true -> bits_held_lines(Ctx, Ls);
                    false -> []
                end;
            _ -> [L]
-       end || L <- Lines]);
-held_lines(_Wire, _Ctx, Lines) -> Lines.
+       end || L <- Lines]).
 
 gate_holds(beyond, _Neg, _Vals) -> false;
 gate_holds(V, Neg, Vals) -> lists:member(V, Vals) =/= Neg.
+-endif.
 
 %% Inside a geojson item the json locators and `null` rule apply, with the
 %% geojson value types.
+-if(?W_JSON orelse ?W_GEOJSON).
 item_wire(geojson) -> gjitem;
 item_wire(Wire) -> Wire.
+-endif.
 
+-if(?W_PROTOBUF).
 %% A group body made of `.` lines only reads scalar items
 %% -> {true, TransformOfTheFirstLine} | false.
 pb_scalar_body([{field, _, [], Tr, _, _} | Rest]) ->
@@ -1011,9 +1056,20 @@ pb_unpack(pfloat, {2, Bin}) ->
         _ -> erlang:error({protobuf_malformed, packed_fixed32_length})
     end;
 pb_unpack(_Tr, Occ) -> [Occ].
+-endif.
 
 %% ---- open the wire ----
-open(xml, Pack, Bytes) ->
+open(xml, Pack, Bytes) -> ?XML(xml_open(Pack, Bytes));
+open(Wire, Pack, Bytes) when Wire =:= geojson; Wire =:= json ->
+    ?JSONTEXT(json_open(Wire, Pack, Bytes));
+open(text, Pack, Bytes) -> ?TEXT(gt_text:open(Pack, Bytes));
+open(bits, Pack, Bytes) ->
+    ?BITS({gt_bits:open(unwire(Pack, Bytes), maps:get(bit_order, Pack)), 0});
+open(protobuf, Pack, Bytes) ->
+    ?PROTOBUF(gt_protobuf:parse_msg(unhex(Pack, Bytes))).
+
+-if(?W_XML).
+xml_open(Pack, Bytes) ->
     Tree = gt_xml:parse(Bytes),
     case Pack of
         #{has_kinds := false, root := Root} ->
@@ -1024,8 +1080,11 @@ open(xml, Pack, Bytes) ->
                                "the pack's root is ~s and the document root is ~s", [Root, Other])
             end;
         _ -> Tree
-    end;
-open(Wire, Pack, Bytes) when Wire =:= geojson; Wire =:= json ->
+    end.
+-endif.
+
+-if(?W_JSON orelse ?W_GEOJSON).
+json_open(Wire, Pack, Bytes) ->
     Json = gt_json:parse(Bytes),
     case Json of
         {object, _} -> ok;
@@ -1035,13 +1094,10 @@ open(Wire, Pack, Bytes) when Wire =:= geojson; Wire =:= json ->
         true -> conv_error('malformed-wire', Pack,
                            "an object holds the same member name twice", []);
         false -> Json
-    end;
-open(text, Pack, Bytes) -> gt_text:open(Pack, Bytes);
-open(bits, Pack, Bytes) ->
-    {gt_bits:open(unwire(Pack, Bytes), maps:get(bit_order, Pack)), 0};
-open(protobuf, Pack, Bytes) ->
-    gt_protobuf:parse_msg(unhex(Pack, Bytes)).
+    end.
+-endif.
 
+-if(?W_BITS).
 %% The message of a bits pack: hex text, or under `armor sixbit` the six-bit
 %% armored text, every character checked before any line is read (0.14).
 unwire(#{armor := sixbit} = Pack, Text) ->
@@ -1053,22 +1109,38 @@ unwire(Pack, Bytes) -> unhex(Pack, Bytes).
 
 %% The first L bits of a laid-out message as armored text (0.14).
 armor_out(Bits, L, _Pack) -> gt_bits:armor(Bits, L).
+-endif.
 
+-if(?W_BITS orelse ?W_PROTOBUF orelse ?W_TLV).
 %% The bytes of hex text (ruling 36 of 0.8).
 unhex(Pack, Bytes) ->
-    try gt_bits:hex_to_bytes(Bytes)
+    try gt_hex:hex_to_bytes(Bytes)
     catch error:{hex_malformed, Why} ->
         conv_error('malformed-wire', Pack, "the input is not hex text of even length: ~0p", [Why])
     end.
+-endif.
 
 %% ---- does a `when` hold? the value is compared with the raw wire value ----
 when_holds(Wire, Ctx, Loc, {anyof, Items}) when Wire =/= bits, Wire =/= protobuf ->
     lists:any(fun(V) -> when_holds(Wire, Ctx, Loc, V) end, Items);
-%% `when <locator> present` on `#text` holds when the element exists
-when_holds(xml, Tree, {Path, text}, present) -> navigate(Tree, Path) =/= absent;
-when_holds(xml, Tree, Loc, present) -> xml_when(Tree, Loc) =/= absent;
-when_holds(xml, Tree, Loc, {text, T, _}) -> xml_when(Tree, Loc) =:= {ok, T};
+when_holds(xml, Tree, Loc, Val) -> ?XML(xml_when_holds(Tree, Loc, Val));
 when_holds(Wire, Json, Loc, Val) when Wire =:= geojson; Wire =:= json ->
+    ?JSONTEXT(json_when_holds(Wire, Json, Loc, Val));
+when_holds(text, Ctx, Loc, Val) -> ?TEXT(gt_text:when_holds(Ctx, Loc, Val));
+%% a `when` any of whose bits lies beyond the input does not hold
+when_holds(bits, {Msg, Base}, {Off, Len}, Val) ->
+    ?BITS(gt_pack:when_match(gt_bits:read(Msg, Base + Off, Len), Val));
+when_holds(protobuf, Top, Path, Val) -> ?PROTOBUF(pb_when_holds(Top, Path, Val)).
+
+-if(?W_XML).
+%% `when <locator> present` on `#text` holds when the element exists
+xml_when_holds(Tree, {Path, text}, present) -> navigate(Tree, Path) =/= absent;
+xml_when_holds(Tree, Loc, present) -> xml_when(Tree, Loc) =/= absent;
+xml_when_holds(Tree, Loc, {text, T, _}) -> xml_when(Tree, Loc) =:= {ok, T}.
+-endif.
+
+-if(?W_JSON orelse ?W_GEOJSON).
+json_when_holds(Wire, Json, Loc, Val) ->
     case {member(Wire, Json, Loc), Val} of
         {absent, _} -> false;
         {{ok, _}, present} -> true;
@@ -1079,14 +1151,13 @@ when_holds(Wire, Json, Loc, Val) when Wire =:= geojson; Wire =:= json ->
         {{ok, true}, {text, T, _}} -> T =:= <<"true">>;
         {{ok, false}, {text, T, _}} -> T =:= <<"false">>;
         _ -> false
-    end;
-when_holds(text, Ctx, Loc, Val) -> gt_text:when_holds(Ctx, Loc, Val);
-%% a `when` any of whose bits lies beyond the input does not hold
-when_holds(bits, {Msg, Base}, {Off, Len}, Val) ->
-    gt_pack:when_match(gt_bits:read(Msg, Base + Off, Len), Val);
+    end.
+-endif.
+
+-if(?W_PROTOBUF).
 %% A `when` path never fails a decode: a prefix whose bytes do not parse as
 %% a message makes it not hold (ruling 9b of 0.11).
-when_holds(protobuf, Top, Path, Val) ->
+pb_when_holds(Top, Path, Val) ->
     {Found, _} = try pb_get(Top, Path, #{})
                  catch error:{protobuf_malformed, _} -> {absent, #{}}
                  end,
@@ -1096,17 +1167,22 @@ when_holds(protobuf, Top, Path, Val) ->
         {{ok, {0, V}}, _} -> gt_pack:when_match(V, Val);
         _ -> false
     end.
+-endif.
 
 %% ---- the message must hold whole words up to a bit (bits) ----
+fit(bits, Pack, Ctx, EndBit) -> ?BITS(bits_fit(Pack, Ctx, EndBit));
+fit(_, _, _, _) -> ok.
+
+-if(?W_BITS).
 %% Under `armor sixbit` the message must only reach the bit (0.14).
-fit(bits, #{armor := sixbit} = Pack, {Msg, _}, EndBit) ->
+bits_fit(#{armor := sixbit} = Pack, {Msg, _}, EndBit) ->
     case gt_bits:bit_size(Msg) >= EndBit of
         true -> ok;
         false -> conv_error('malformed-wire', Pack,
                             "the message needs ~p bits and the input has ~p",
                             [EndBit, gt_bits:bit_size(Msg)])
     end;
-fit(bits, #{word_bytes := WB} = Pack, {Msg, _}, EndBit) ->
+bits_fit(#{word_bytes := WB} = Pack, {Msg, _}, EndBit) ->
     Need = whole_words(EndBit, WB) * 8,
     case gt_bits:bit_size(Msg) >= Need of
         true -> ok;
@@ -1114,26 +1190,32 @@ fit(bits, #{word_bytes := WB} = Pack, {Msg, _}, EndBit) ->
                             "the message needs ~p bytes and the input has ~p",
                             [Need div 8, gt_bits:bit_size(Msg) div 8])
     end;
-fit(_, _, _, _) -> ok.
+bits_fit(_, _, _) -> ok.
 
 %% Bytes of as many whole words as reach a bit.
 whole_words(EndBit, WB) ->
     WordBits = WB * 8,
     ((EndBit + WordBits - 1) div WordBits) * WB.
+-endif.
 
 %% The furthest bit the lines of a scope reach before any item is read:
 %% every `field` that is not `optional`, every `when` and `const`, and the
 %% count locator of every group.
-static_end(bits, Lines) ->
+static_end(bits, Lines) -> ?BITS(bits_static_end(Lines));
+static_end(_Wire, _Lines) -> 0.
+
+-if(?W_BITS).
+bits_static_end(Lines) ->
     lists:foldl(fun({field, _, _, _, _, {_, _, _, true, _, _}}, Max) -> Max;
                    ({field, _, {Off, Len}, _, _, _}, Max) -> max(Max, Off + Len);
                    ({wh, {Off, Len}, _, _}, Max) -> max(Max, Off + Len);
                    ({const, {Off, Len}, _, _}, Max) -> max(Max, Off + Len);
                    ({group, _, _, {_, {loc, {Off, Len}}}, _, _}, Max) -> max(Max, Off + Len);
                    (_, Max) -> Max
-                end, 0, Lines);
-static_end(_Wire, _Lines) -> 0.
+                end, 0, Lines).
+-endif.
 
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON).
 line_loc({field, _, Loc, _, _, _}) -> Loc;
 line_loc({wh, Loc, _, _}) -> Loc;
 line_loc({const, Loc, _, _}) -> Loc;
@@ -1148,50 +1230,47 @@ mapped_locs(Lines) ->
     lists:foldl(fun({wh, _, present, _}, Acc) -> Acc;
                    (L, Acc) -> Acc#{line_loc(L) => true}
                 end, #{}, Lines).
+-endif.
 
 %% On `text` the transform decides whether a column's leading spaces are
 %% removed.
-raw_tr(text, Ctx, Loc, Tr, _Opts, C) -> {gt_text:raw(Ctx, Loc, Tr), C};
+raw_tr(text, Ctx, Loc, Tr, _Opts, C) -> ?TEXT({gt_text:raw(Ctx, Loc, Tr), C});
 raw_tr(Wire, Ctx, Loc, _Tr, Opts, C) -> raw(Wire, Ctx, Loc, Opts, C).
 
 %% ---- the raw wire value at a field's locator ----
 %% -> {absent | {ok, Raw}, Cache}. The cache holds the protobuf submessages
 %% parsed so far, so each is parsed once however many lines address into it.
-raw(xml, Tree, {Path, Last}, _Opts, C) ->
-    R = case navigate(Tree, Path) of
-            absent -> absent;
-            {ok, Elem} ->
-                case Last of
-                    {attr, A} -> gt_xml:get_attr(Elem, A);
-                    text -> gt_xml:get_text(Elem)
-                end
-        end,
-    {R, C};
+raw(xml, Tree, Loc, _Opts, C) -> ?XML({xml_when(Tree, Loc), C});
 raw(Wire, Json, Loc, _Opts, C) when Wire =:= geojson; Wire =:= json; Wire =:= gjitem ->
-    {member(Wire, Json, Loc), C};
-raw(bits, {Msg, Base}, {Off, Len}, {_, Swap, _, _, _, _}, C) ->
+    ?JSONTEXT({member(Wire, Json, Loc), C});
+raw(bits, Ctx, Loc, Opts, C) -> ?BITS(bits_raw(Ctx, Loc, Opts, C));
+raw(Wire, Msg, Path, _Opts, C) when Wire =:= protobuf; Wire =:= pbitem ->
+    ?PROTOBUF(pb_raw(Msg, Path, C)).
+
+-if(?W_BITS).
+bits_raw({Msg, Base}, {Off, Len}, {_, Swap, _, _, _, _}, C) ->
     case gt_bits:read(Msg, Base + Off, Len) of
         beyond -> {absent, C};             % an `optional` field past the input
         U when Swap -> {{ok, swap_bytes(U, Len)}, C};
         U -> {{ok, U}, C}
-    end;
+    end.
+-endif.
+
+-if(?W_PROTOBUF).
 %% a scalar item is read by `.`; a path reads into an item that is a message
-raw(protobuf, {scalar, Found}, [], _Opts, C) -> {{ok, Found}, C};
-raw(protobuf, {scalar, _}, _Path, _Opts, C) -> {absent, C};
-raw(protobuf, _Msg, [], _Opts, C) -> {absent, C};
+pb_raw({scalar, Found}, [], C) -> {{ok, Found}, C};
+pb_raw({scalar, _}, _Path, C) -> {absent, C};
+pb_raw(_Msg, [], C) -> {absent, C};
 %% a path prefix that is on the wire and is not a submessage is
 %% malformed-wire, inside or outside a group (ruling 13 of 0.7, ruling 30 of
 %% 0.8)
-raw(protobuf, Msg, Path, _Opts, C) ->
+pb_raw(Msg, Path, C) ->
     case pb_get(Msg, Path, C) of
         {absent, C1} = Absent ->
             pb_prefix_check(lists:droplast(Path), C1),
             Absent;
         Found -> Found
-    end;
-raw(pbitem, {scalar, _} = Item, Path, Opts, C) -> raw(protobuf, Item, Path, Opts, C);
-raw(pbitem, _Msg, [], _Opts, C) -> {absent, C};
-raw(pbitem, Msg, Path, Opts, C) -> raw(protobuf, Msg, Path, Opts, C).
+    end.
 
 %% After a path was not found: was a field on the way on the wire and not
 %% a submessage? pb_sub/4 marked it in the cache.
@@ -1235,59 +1314,71 @@ pb_sub({Map, _}, [N | Rest], Rev, C) ->
                 error -> {absent, C#{Rev1 => none}}
             end
     end.
+-endif.
 
+-if(?W_BITS).
 %% The bytes of a field in reverse order.
 swap_bytes(U, Len) ->
     <<V:Len/little>> = <<U:Len/big>>,
     V.
+-endif.
 
-field_decode(xml, Tr, Raw, _Loc, _Opts, _Pack) -> xml_decode(Tr, Raw);
-field_decode(text, Tr, Raw, _Loc, _Opts, _Pack) -> gt_text:decode_value(Tr, Raw);
+field_decode(xml, Tr, Raw, _Loc, _Opts, _Pack) -> ?XML(xml_decode(Tr, Raw));
+field_decode(text, Tr, Raw, _Loc, _Opts, _Pack) -> ?TEXT(gt_text:decode_value(Tr, Raw));
 field_decode(Wire, {iscale, N, D, Off}, Raw, _Loc, _Opts, _Pack)
   when Wire =:= geojson; Wire =:= gjitem; Wire =:= json ->
-    iscale_decode(json_number_text(Raw), N, D, Off);
-field_decode(geojson, Tr, Raw, _Loc, _Opts, _Pack) -> geojson_decode(Tr, Raw);
-field_decode(gjitem, Tr, Raw, _Loc, _Opts, _Pack) -> geojson_decode(Tr, Raw);
-field_decode(json, Tr, Raw, _Loc, _Opts, _Pack) -> json_decode(Tr, Raw);
-field_decode(bits, Tr, U, {_Off, Len}, {_, _, Trim, _, _, _}, Pack) ->
+    ?JSONTEXT(iscale_decode(json_number_text(Raw), N, D, Off));
+field_decode(geojson, Tr, Raw, _Loc, _Opts, _Pack) -> ?GEOJSON(geojson_decode(Tr, Raw));
+field_decode(gjitem, Tr, Raw, _Loc, _Opts, _Pack) -> ?GEOJSON(geojson_decode(Tr, Raw));
+field_decode(json, Tr, Raw, _Loc, _Opts, _Pack) -> ?JSON(json_decode(Tr, Raw));
+field_decode(bits, Tr, U, Loc, Opts, Pack) -> ?BITS(bits_field_decode(Tr, U, Loc, Opts, Pack));
+field_decode(Wire, Tr, {WT, V}, _Loc, _Opts, _Pack) when Wire =:= protobuf; Wire =:= pbitem ->
+    ?PROTOBUF(pb_decode(Tr, WT, V)).
+
+-if(?W_BITS).
+bits_field_decode(Tr, U, {_Off, Len}, {_, _, Trim, _, _, _}, Pack) ->
     V = bits_decode(Tr, U, Len, maps:get(bit_order, Pack)),
     case Trim of
         true -> trim(Tr, V);
         false -> V
-    end;
-field_decode(Wire, Tr, {WT, V}, _Loc, _Opts, _Pack) when Wire =:= protobuf; Wire =:= pbitem ->
-    pb_decode(Tr, WT, V).
+    end.
+-endif.
 
 %% ---- residue: what no selected `field`, `const`, `group` or valued `when` maps ----
-residue(xml, Tree, Lines, _Bytes) ->
+residue(xml, Tree, Lines, _Bytes) -> ?XML(xml_residue(Tree, Lines));
+residue(geojson, _Json, Lines, Bytes) -> ?GEOJSON(geojson_residue(Lines, Bytes));
+residue(json, Json, Lines, _Bytes) -> ?JSON(json_residue(Json, Lines));
+residue(text, Ctx, Lines, _Bytes) -> ?TEXT(gt_text:residue(Ctx, Lines));
+residue(_, _, _, _) -> [].
+
+-if(?W_XML).
+xml_residue(Tree, Lines) ->
     Mapped = mapped_locs(Lines),
     [{<<"@", Name/binary>>, Val}
-     || {Name, Val} <- gt_xml:attrs(Tree), not maps:is_key({[], {attr, Name}}, Mapped)];
+     || {Name, Val} <- gt_xml:attrs(Tree), not maps:is_key({[], {attr, Name}}, Mapped)].
+-endif.
+
+-if(?W_GEOJSON).
 %% geojson: a string as it is; a number as a string holding its text as
 %% written; arrays and objects as they were, numbers in them keeping their
 %% text; `null` dropped. Of two members with one name, the last value is used
 %% at the first position.
-residue(geojson, _Json, Lines, Bytes) ->
+geojson_residue(Lines, Bytes) ->
     Mapped = mapped_locs(Lines),
     {object, Members} = Raw = gt_json:parse_raw(Bytes),
     Props = case gt_json:get(Raw, <<"properties">>) of
                 {ok, {object, PM}} ->
-                    [{{prop, K}, V} || {K, V} <- geojson_residue(PM),
+                    [{{prop, K}, V} || {K, V} <- geojson_members(PM),
                                        not maps:is_key({prop, K}, Mapped)];
                 _ -> []
             end,
-    Top = [{{top, K}, V} || {K, V} <- geojson_residue(Members),
+    Top = [{{top, K}, V} || {K, V} <- geojson_members(Members),
                      not lists:member(K, [<<"type">>, <<"geometry">>, <<"properties">>]),
                      not maps:is_key({top, K}, Mapped)],
-    Props ++ Top;
-residue(json, {object, Members} = Json, Lines, _Bytes) ->
-    json_unread_check(Json, Lines),
-    lists:reverse(json_residue(Members, [], mapped_locs(Lines), []));
-residue(text, Ctx, Lines, _Bytes) -> gt_text:residue(Ctx, Lines);
-residue(_, _, _, _) -> [].
+    Props ++ Top.
 
 %% The members of a geojson object as residue -> [{Name, JsonText}].
-geojson_residue(Members) ->
+geojson_members(Members) ->
     Last = maps:from_list(Members),
     {Out, _} =
         lists:foldl(
@@ -1307,6 +1398,12 @@ geojson_residue(Members) ->
 geojson_residue_text({num, Text}) -> gt_json:encode(Text);
 geojson_residue_text(V) when is_boolean(V) -> gt_json:encode(atom_to_binary(V));
 geojson_residue_text(V) -> gt_json:encode(V).
+-endif.
+
+-if(?W_JSON).
+json_residue({object, Members} = Json, Lines) ->
+    json_unread_check(Json, Lines),
+    lists:reverse(json_residue(Members, [], mapped_locs(Lines), [])).
 
 %% Scalars at any depth of nested objects, in input order, keyed by path.
 %% Arrays, nulls and members whose name contains `.` are not carried.
@@ -1361,6 +1458,7 @@ unread_value(V, Path, Fields, _Groups) ->
                                                path_text(Path)}});
         false -> ok
     end.
+-endif.
 
 %% ===================================================================
 %% encode
@@ -1369,10 +1467,10 @@ encode(Engine, Format, Entity) -> encode(pack(Engine, Format), Entity).
 
 encode(#{wire := bits, layout := sequential} = Pack, Entity) ->
     {Lines, Defaults, _Root} = select_encode(Pack, Entity),
-    gt_seq:encode(Pack, Lines, Defaults, Entity);
+    ?BITS(gt_seq:encode(Pack, Lines, Defaults, Entity));
 encode(#{wire := bits} = Pack, Entity) ->
     {Lines, Defaults, _Root} = select_encode(Pack, Entity),
-    encode_bits(Pack, Lines, {maps:get(model, Entity), maps:get(lists, Entity, #{}), Defaults});
+    ?BITS(encode_bits(Pack, Lines, {maps:get(model, Entity), maps:get(lists, Entity, #{}), Defaults}));
 encode(#{wire := Wire} = Pack, Entity) ->
     {Lines, Defaults, Root} = select_encode(Pack, Entity),
     Residue = case maps:get(src, Entity, undefined) =:= maps:get(name, Pack) of
@@ -1411,6 +1509,7 @@ holds(Key, Model, Lists) ->
 %% key, but still names its locator (0.18, ruling 1). The bodies of gate
 %% blocks belong to the scope; the bodies of groups are items, done per
 %% item.
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON orelse ?W_BITS orelse ?W_PROTOBUF).
 suppress(Lines, Held) ->
     [case L of
          {field, _, Loc, _, LocT, Opts} when element(6, Opts) =/= none ->
@@ -1422,6 +1521,7 @@ suppress(Lines, Held) ->
              {gate, GLoc, Neg, Vals, Body#{lines := suppress(Ls, Held)}, LocT};
          _ -> L
      end || L <- Lines].
+-endif.
 
 %% The value a `field` line writes from, in a scope Src of source/3: the
 %% scope's value of its key (or default), or error when the line is
@@ -1445,7 +1545,16 @@ item_source(Item, #{defaults := Defaults}) ->
 wire_value(Pack, Key, Tr, Opts, Val) ->
     via_encode(Opts, typemap_encode(Key, Val, Pack), Tr, Key, Pack).
 
-encode_wire(xml, Pack, Lines, Src, Residue) ->
+encode_wire(xml, Pack, Lines, Src, Residue) -> ?XML(xml_encode(Pack, Lines, Src, Residue));
+encode_wire(geojson, Pack, Lines, Src, Residue) -> ?GEOJSON(geojson_encode(Pack, Lines, Src, Residue));
+encode_wire(json, Pack, Lines, Src, Residue) -> ?JSON(json_encode(Pack, Lines, Src, Residue));
+encode_wire(text, Pack, Lines, Src, Residue) -> ?TEXT(gt_text:encode(Pack, Lines, Src, Residue));
+encode_wire(tlv, Pack, Lines, Src, Residue) -> ?TLV(gt_tlv:encode(Pack, Lines, Src, Residue));
+encode_wire(protobuf, Pack, Lines, Src, _Residue) ->
+    ?PROTOBUF(gt_hex:bytes_to_hex(gt_protobuf:serialize(pb_tree(Pack, Lines, Src)))).
+
+-if(?W_XML).
+xml_encode(Pack, Lines, Src, Residue) ->
     Root1 = xml_build(gt_xml:new(maps:get(root, Pack)), Lines, Src, Pack),
     Root2 = lists:foldl(
               fun({<<"@", Name/binary>>, Val}, R) ->
@@ -1459,8 +1568,11 @@ encode_wire(xml, Pack, Lines, Src, Residue) ->
     catch error:{xml_unwritable, Text} ->
         conv_error('transform-encode', Pack,
                    "the text ~0p holds a character XML 1.0 cannot hold", [Text])
-    end;
-encode_wire(geojson, Pack, Lines, Src, Residue) ->
+    end.
+-endif.
+
+-if(?W_GEOJSON).
+geojson_encode(Pack, Lines, Src, Residue) ->
     Ops = [{Loc, V} || {Loc, {value, V}} <- json_plan(Lines, Src, Pack)],
     Coord = fun(I) -> proplists:get_value({geom, I}, Ops) end,
     Geometry =
@@ -1479,20 +1591,21 @@ encode_wire(geojson, Pack, Lines, Src, Residue) ->
           [Member(K, V) || {{top, K}, V} <- Residue],
     ["{\"type\":\"Feature\",\"geometry\":", Geometry,
      ",\"properties\":{", lists:join($,, Props), "}",
-     [[$,, T] || T <- Top], "}"];
-encode_wire(json, Pack, Lines, Src, Residue) ->
+     [[$,, T] || T <- Top], "}"].
+-endif.
+
+-if(?W_JSON).
+json_encode(Pack, Lines, Src, Residue) ->
     T1 = json_tree(json_plan(Lines, Src, Pack)),
     T2 = lists:foldl(
            fun({PathText, V}, T) ->
                    jt_set(T, binary:split(PathText, <<".">>, [global]),
                           gt_json:encode(V), residue)
            end, T1, Residue),
-    jt_write(T2);
-encode_wire(text, Pack, Lines, Src, Residue) -> gt_text:encode(Pack, Lines, Src, Residue);
-encode_wire(tlv, Pack, Lines, Src, Residue) -> gt_tlv:encode(Pack, Lines, Src, Residue);
-encode_wire(protobuf, Pack, Lines, Src, _Residue) ->
-    gt_bits:bytes_to_hex(gt_protobuf:serialize(pb_tree(Pack, Lines, Src))).
+    jt_write(T2).
+-endif.
 
+-if(?W_XML).
 %% ---- xml: the lines of a scope written into its element ----
 %% An element is made at its first write, so elements come in line order; a
 %% group writes one element per item at its position, and nothing for an
@@ -1548,7 +1661,10 @@ xml_items({group, _, Path, _, #{lines := Ls} = Body, _}, Items, Pack) ->
     Name = lists:last(Path),
     {items, [xml_build(gt_xml:new(Name), Ls, item_source(I, Body), Pack) || I <- Items]}.
 
+-endif.
+
 %% ---- json, geojson: what each line of a scope writes ----
+-if(?W_JSON orelse ?W_GEOJSON).
 json_plan(Lines, Src, Pack) ->
     text_plan(Lines, Src, Pack, fun json_render/1, fun fixed_json/1,
               fun(Group, Items) -> json_array(Group, Items, Pack) end).
@@ -1577,7 +1693,10 @@ json_item(Item, #{lines := Ls} = Body, Pack) ->
             end
     end.
 
+-endif.
+
 %% ---- bits (fixed layout): what the lines of a scope write ----
+-if(?W_BITS).
 %% Src = {Model, Lists, Defaults}: the scope's keys (the entity's, or the
 %% item's), its lists, and the defaults that reach its lines.
 %%
@@ -1612,7 +1731,7 @@ encode_bits(#{word_bytes := WB} = Pack, Lines, Src) ->
       end, Checks),
     case Armor of
         sixbit -> armor_out(gt_bits:to_bytes(M2), End, Pack);
-        hex -> gt_bits:bytes_to_hex(gt_bits:to_bytes(M2))
+        hex -> gt_hex:bytes_to_hex(gt_bits:to_bytes(M2))
     end.
 
 %% The bits of Writes and Overs (ruling 7 of 0.17), highest first: `const`,
@@ -1957,7 +2076,10 @@ bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
           end || O <- lists:reverse(Os9)],
     {Ws, Os, End9, lists:reverse(Cs9)}.
 
+-endif.
+
 %% ---- protobuf: the lines of a scope as a writer tree ----
+-if(?W_PROTOBUF).
 pb_tree(Pack, Lines0, {Value, Lists, Held}) ->
     Lines = suppress(Lines0, Held),
     %% the earliest line that has a value writes a locator; a group writes
@@ -2087,12 +2209,15 @@ pb_scalar_value(Pack, [{field, Key, _, Tr, LocT, Opts} | Rest], {Value, _, _} = 
                          fun() -> pb_encode(Tr, wire_value(Pack, Key, Tr, Opts, Val)) end)
     end.
 
+-endif.
+
 guard_encode(Pack, Key, LocT, Fun) ->
     try Fun()
     catch _:_ ->
         conv_error('transform-encode', Pack, "field ~s at ~s cannot be encoded", [Key, LocT])
     end.
 
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON).
 %% ---- text wires: what each line writes, in line order ----
 %% -> [{Loc, none | {value, Rendered}}]. A locator is written once. Where a
 %% `const` or a valued `when` names the locator, its value is written, at the
@@ -2190,6 +2315,7 @@ text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGr
                             end
                     end, #{}, lists:zip(Lines, InOrder)),
     Placed.
+-endif.
 
 %% ===================================================================
 %% absent-value sentinels (Version 0.9)
@@ -2210,12 +2336,17 @@ is_sentinel(Wire, Tr, {WT, V}, Sentinels) when Wire =:= protobuf; Wire =:= pbite
         _ -> false
     end;
 is_sentinel(xml, _Tr, Text, Sentinels) -> lists:member(Text, Sentinels);
-is_sentinel(_Json, _Tr, V, Sentinels) ->
+is_sentinel(_Json, _Tr, V, Sentinels) -> ?JSONTEXT(json_is_sentinel(V, Sentinels)).
+
+-if(?W_JSON orelse ?W_GEOJSON).
+json_is_sentinel(V, Sentinels) ->
     case gt_json:canonical_text(V) of
         none -> false;
         Text -> lists:keymember(Text, 2, Sentinels)
     end.
+-endif.
 
+-if(?W_BITS).
 %% The bits of the first sentinel, low `len` bits, then `swap`.
 bits_sentinel([S | _], Len, Swap) ->
     U = S band ((1 bsl Len) - 1),
@@ -2224,18 +2355,25 @@ bits_sentinel([S | _], Len, Swap) ->
         false -> U
     end.
 
+-endif.
+
+-if(?W_PROTOBUF).
 %% The first sentinel as a protobuf leaf: no zig-zag on psint.
 pb_sentinel(pstring, [S | _]) -> {leaf, 2, S};
 pb_sentinel(pdouble, [S | _]) -> {leaf, 1, <<S:64/little>>};
 pb_sentinel(pfloat, [S | _]) -> {leaf, 5, <<S:32/little>>};
 pb_sentinel(_Varint, [S | _]) -> {leaf, 0, gt_protobuf:varint(S)}.
+-endif.
+
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON).
 
 %% A sentinel on a text wire: xml text as it is; on json and geojson a number,
 %% a boolean, or a string.
 text_sentinel(S) when is_binary(S) -> S;
 text_sentinel({num, T}) -> T;
 text_sentinel({bool, T}) -> T;
-text_sentinel({str, T}) -> [$", gt_json:escape(T), $"].
+text_sentinel({str, T}) -> ?JSONTEXT([$", gt_json:escape(T), $"]).
+-endif.
 
 %% ===================================================================
 %% value tables (`via`) and the typemap
@@ -2298,6 +2436,7 @@ typemap_encode(_, V, _) -> V.
 %% ===================================================================
 %% xml: the wire value is text, read by the grammars of ruling 2 of 0.11;
 %% iscale reads it untrimmed as an exact decimal (ruling 24 of 0.15)
+-if(?W_XML orelse ?W_GEOJSON).
 xml_decode({iscale, N, D, Off}, S) -> iscale_decode(S, N, D, Off);
 xml_decode({scale, F, O}, S) -> scale_decode(xml_decode(float, S), F, O);
 xml_decode(string, S) -> S;
@@ -2305,7 +2444,9 @@ xml_decode(float, S) -> {ok, F} = gt_num:num_text(S), F;
 xml_decode(int, S) -> {ok, I} = gt_num:int_text(S), I;
 xml_decode(iso8601_ms, S) -> gt_iso:decode(S);
 xml_decode(iso8601_short, S) -> gt_iso:decode(S).
+-endif.
 
+-if(?W_GEOJSON).
 %% geojson (Version 0.1): the wire value is a JSON value; a string member is
 %% read as xml text is, a number member as ruling 2d of 0.11 states. scale
 %% refuses a string member, as on json (ruling 23 of 0.15).
@@ -2318,7 +2459,9 @@ geojson_decode(string, V) ->
     true = gt_json:is_num(V),
     list_to_binary(gt_json:number_text(V));
 geojson_decode(Tr, V) -> json_decode(Tr, V).
+-endif.
 
+-if(?W_JSON orelse ?W_GEOJSON).
 %% json (Version 0.5): a value of the wrong JSON type is a decode failure
 json_decode({scale, F, O}, V) -> scale_decode(json_decode(float, V), F, O);
 json_decode(string, V) when is_binary(V) -> V;
@@ -2328,7 +2471,9 @@ json_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
 json_decode(iso8601_short, V) when is_binary(V) -> gt_iso:decode(V);
 json_decode(bool, true) -> 1;
 json_decode(bool, false) -> 0.
+-endif.
 
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON).
 %% model value -> a tagged value a text wire renders
 text_encode({scale, F, O}, V) when is_number(V) -> {float, scale_encode(float(V), F, O)};
 text_encode({iscale, N, D, Off}, V) when is_integer(V) -> {num, iscale_encode(V, N, D, Off)};
@@ -2339,12 +2484,16 @@ text_encode(iso8601_ms, V) when is_integer(V) -> {str, gt_iso:encode(V)};
 text_encode(iso8601_short, V) when is_integer(V) -> {str, gt_iso:encode_short(V)};
 text_encode(bool, 1) -> {bool, <<"true">>};
 text_encode(bool, 0) -> {bool, <<"false">>}.
+-endif.
 
+-if(?W_XML).
 xml_render({str, S}) -> S;
 xml_render({num, T}) -> T;
 xml_render({int, I}) -> integer_to_binary(I);
 xml_render({float, F}) -> list_to_binary(gt_num:fmt_float(F)).
+-endif.
 
+-if(?W_JSON orelse ?W_GEOJSON).
 json_render({str, S}) -> [$", gt_json:escape(S), $"];
 json_render({num, T}) -> T;
 json_render({int, I}) -> integer_to_list(I);
@@ -2366,7 +2515,9 @@ fixed_json({text, T, false}) ->
 %% The text of a json number as written: a plain integer is its digits.
 json_number_text(I) when is_integer(I) -> integer_to_binary(I);
 json_number_text({dnum, T}) -> T.
+-endif.
 
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON).
 %% -?digits(.digits)?([eE][+-]?digits)? read exactly, then
 %% round(r * N / D) + Off, which must fit the signed 64-bit range. An
 %% exponent above 400 in absolute value fails.
@@ -2444,6 +2595,7 @@ iscale_encode(X, N, D, Off) ->
                        <<$., (strip_trailing(Ds, $0))/binary>>
                end,
     <<Sign/binary, IntPart/binary, FracPart/binary>>.
+-endif.
 
 %% ===================================================================
 %% transforms (bits wire)
@@ -2451,6 +2603,7 @@ iscale_encode(X, N, D, Off) ->
 %% Under msb-lsb a field's value is read as under lsb, each character and
 %% digit as `uint` reads a field of its width at its place (ruling 3 of
 %% 0.22), so the transforms take it as lsb.
+-if(?W_BITS orelse ?W_TLV).
 bits_decode(Tr, U, L, msblsb) -> bits_decode(Tr, U, L, lsb);
 bits_decode(uint, U, 64, _) -> gt_num:wrap64(U);
 bits_decode(uint, U, _L, _) -> U;
@@ -2519,10 +2672,12 @@ sixbit_shift(lsb, I, _N) -> 6 * I.
 sixbit_value(C) when C >= 16#40, C =< 16#5F -> C - 16#40;
 sixbit_value(C) when C >= 16#20, C =< 16#3F -> C.
 
+-if(?W_BITS).
 %% The field option `trim`: ascii removes trailing spaces, sixbit the whole
 %% trailing run of @ and spaces in any mix (0.14).
 trim(sixbit, V) -> strip_trailing_any(V, [$@, $\s]);
 trim(_Tr, V) -> strip_trailing(V, $\s).
+-endif.
 
 strip_trailing_any(<<>>, _Cs) -> <<>>;
 strip_trailing_any(Bin, Cs) ->
@@ -2534,21 +2689,6 @@ strip_trailing_any(Bin, Cs) ->
 printable(<<>>) -> true;
 printable(<<C, R/binary>>) when C >= 16#20, C =< 16#7E -> printable(R);
 printable(_) -> false.
-
-%% in doubles, in this order: v * factor (or v * num / den), then + offset
-scale_decode(V, {dec, F}, Offset) -> float(V) * F + Offset;
-scale_decode(V, {frac, Num, Den}, Offset) -> float(V) * Num / Den + Offset.
-
-%% (x - offset) / factor (or (x - offset) * den / num)
-scale_encode(X, {dec, F}, Offset) -> (X - Offset) / F;
-scale_encode(X, {frac, Num, Den}, Offset) -> (X - Offset) * Den / Num.
-
-strip_trailing(<<>>, _C) -> <<>>;
-strip_trailing(Bin, C) when is_binary(Bin) ->
-    case binary:last(Bin) of
-        C -> strip_trailing(binary:part(Bin, 0, byte_size(Bin) - 1), C);
-        _ -> Bin
-    end.
 
 %% A value that does not fit the field fails; nothing is wrapped or clamped
 %% (ruling 4b of 0.11). `round` is to the nearest integer, a half away from
@@ -2631,14 +2771,6 @@ bits_encode(octal, V, L, _) when is_binary(V) ->
     true = byte_size(V) =:= L div 3,
     true = lists:all(fun(C) -> C >= $0 andalso C =< $7 end, binary_to_list(V)),
     binary_to_integer(V, 8).
-
-%% round-half-away-from-zero of the exact quotient A / B, B not 0
-round_div(A, B) when B < 0 -> round_div(-A, -B);
-round_div(A, B) when A >= 0 -> (2 * A + B) div (2 * B);
-round_div(A, B) -> -((2 * (-A) + B) div (2 * B)).
-
-%% a result outside the signed 64-bit range fails the decode
-int64(V) when V >= -(1 bsl 63), V < (1 bsl 63) -> V.
 
 %% sign and magnitude: the field's top bit is the sign, 1 negative
 smag_decode(U, L) ->
@@ -2729,12 +2861,6 @@ chars_strip(Set, Text) when Set =:= ascii7; Set =:= ascii8 ->
     T;
 chars_strip(_, Text) -> strip_trailing_any(Text, [$@, $\s]).
 
-%% A double narrowed to a big-endian IEEE-754 single. A value outside single
-%% range narrows to an infinity, which is refused.
-single(V) ->
-    <<_:32/float>> = B = <<(float(V)):32/float>>,
-    B.
-
 to_signed(U, L) ->
     case U >= (1 bsl (L - 1)) of
         true -> U - (1 bsl L);
@@ -2746,9 +2872,48 @@ mask(L) -> (1 bsl L) - 1.
 %% -2^(L-1) .. 2^(L-1) - 1, written as its low L bits
 signed_fit(R, L) when R >= -(1 bsl (L - 1)), R < (1 bsl (L - 1)) -> R band mask(L).
 
+-endif.
+
+%% ===================================================================
+%% arithmetic the transforms of several wires share
+%% ===================================================================
+-if(?W_BITS orelse ?W_TLV orelse ?W_PROTOBUF).
+%% A double narrowed to a big-endian IEEE-754 single. A value outside single
+%% range narrows to an infinity, which is refused.
+single(V) ->
+    <<_:32/float>> = B = <<(float(V)):32/float>>,
+    B.
+-endif.
+
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON orelse ?W_BITS orelse ?W_TLV).
+%% in doubles, in this order: v * factor (or v * num / den), then + offset
+scale_decode(V, {dec, F}, Offset) -> float(V) * F + Offset;
+scale_decode(V, {frac, Num, Den}, Offset) -> float(V) * Num / Den + Offset.
+
+%% (x - offset) / factor (or (x - offset) * den / num)
+scale_encode(X, {dec, F}, Offset) -> (X - Offset) / F;
+scale_encode(X, {frac, Num, Den}, Offset) -> (X - Offset) * Den / Num.
+
+strip_trailing(<<>>, _C) -> <<>>;
+strip_trailing(Bin, C) when is_binary(Bin) ->
+    case binary:last(Bin) of
+        C -> strip_trailing(binary:part(Bin, 0, byte_size(Bin) - 1), C);
+        _ -> Bin
+    end.
+
+%% round-half-away-from-zero of the exact quotient A / B, B not 0
+round_div(A, B) when B < 0 -> round_div(-A, -B);
+round_div(A, B) when A >= 0 -> (2 * A + B) div (2 * B);
+round_div(A, B) -> -((2 * (-A) + B) div (2 * B)).
+
+%% a result outside the signed 64-bit range fails the decode
+int64(V) when V >= -(1 bsl 63), V < (1 bsl 63) -> V.
+-endif.
+
 %% ===================================================================
 %% transforms (protobuf wire): each fixes the field's wire type
 %% ===================================================================
+-if(?W_PROTOBUF).
 pb_decode(pstring, 2, B) ->
     case unicode:characters_to_binary(B, utf8, utf8) of
         B -> B
@@ -2783,9 +2948,12 @@ pb_put(Tree, [N | Rest], Leaf, Mode) ->
         {rep, _} -> Tree
     end.
 
+-endif.
+
 %% ===================================================================
 %% xml locators
 %% ===================================================================
+-if(?W_XML).
 navigate(Elem, []) -> {ok, Elem};
 navigate(Elem, [H | T]) ->
     case gt_xml:find_child(Elem, H) of
@@ -2806,9 +2974,12 @@ xml_when(Tree, {Path, Last}) ->
             end
     end.
 
+-endif.
+
 %% ===================================================================
 %% json and geojson members; a member whose value is null is absent
 %% ===================================================================
+-if(?W_JSON orelse ?W_GEOJSON).
 member(geojson, Json, {geom, I}) ->
     case gt_json:get(Json, <<"geometry">>) of
         {ok, {object, _} = Geom} ->
@@ -2880,10 +3051,13 @@ jt_write({val, V}) -> V.
 
 jt_empty({val, _}) -> false;
 jt_empty({obj, Ms}) -> lists:all(fun({_, Node}) -> jt_empty(Node) end, Ms).
+-endif.
 
 %% ===================================================================
 %% small coercions
 %% ===================================================================
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON orelse ?W_PROTOBUF).
 to_str(V) when is_binary(V) -> V;
 to_str(V) when is_integer(V) -> integer_to_binary(V);
 to_str(V) when is_float(V) -> list_to_binary(gt_num:fmt_float(V)).
+-endif.

@@ -13,6 +13,7 @@
 #include "linecheck.hpp"
 #include "transforms.hpp"
 #include "util.hpp"
+#include "wires.hpp"
 
 namespace goat_transformers::detail {
 
@@ -599,14 +600,9 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         } else if (kw == "wire") {
             arity(1);
             once(have_wire);
-            if (t[1] == "xml") p.wire = Wire::Xml;
-            else if (t[1] == "geojson") p.wire = Wire::GeoJson;
-            else if (t[1] == "bits") p.wire = Wire::Bits;
-            else if (t[1] == "protobuf") p.wire = Wire::Protobuf;
-            else if (t[1] == "json") p.wire = Wire::Json;
-            else if (t[1] == "text") p.wire = Wire::Text;
-            else if (t[1] == "tlv") p.wire = Wire::Tlv;
-            else throw Error(ErrorKind::UnknownWire, p.format, "", where + ": wire '" + t[1] + "'");
+            std::string why;
+            if (!parse_wire_value(t[1], p.wire, why))
+                throw Error(ErrorKind::UnknownWire, p.format, "", where + ": " + why);
         } else if (kw == "layout") {
             arity(1);
             once(have_layout);
@@ -1348,6 +1344,10 @@ void seq_model_keys(const SeqBody& body, const std::string& prefix,
     keys_of_lines(body.lines, prefix, add);
     for (const auto& k : body.kinds) keys_of_lines(k.lines, prefix, add);
 }
+
+// The codec of the sequential layout is part of the bits wire (0.24 ruling 1d);
+// the pack grammar above is read in every build.
+#if GT_WIRE_BITS
 
 // ---------------------------------------------------------------- decode
 
@@ -2953,5 +2953,7 @@ std::string finish_seq(const Pack& p, SeqOut& out) {
     return bytes_to_hex(out.data);
 }
 }  // namespace
+
+#endif  // GT_WIRE_BITS
 
 }  // namespace goat_transformers::detail

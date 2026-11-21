@@ -13,9 +13,20 @@ from .transforms import (
     PROTOBUF_TRANSFORMS, UnknownTransformName, check_transform_text, read_uint_text, transform_valid_on,
     build_v15_text, v15_family, terminator_code,
 )
-from . import uper, wire_text, wire_tlv
+from ._build import WIRES as BUILD_WIRES
 
-WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")
+# The wire-specific parts of the pack language this module calls, each only
+# for a pack on its wire. A build without the wire leaves the module out, and
+# such a pack is `unknown-wire` at line check 6 before any of them is reached
+# (spec 0.24, ruling 1c).
+if "bits" in BUILD_WIRES:
+    from . import uper
+if "text" in BUILD_WIRES:
+    from . import wire_text
+if "tlv" in BUILD_WIRES:
+    from . import wire_tlv
+
+WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")  # the wires of the specification
 BIT_ORDERS = ("lsb", "msb", "msb-lsb")  # `msb-lsb`: 0.22
 DISTRIBUTIONS = ("public", "controlled")  # public is below controlled
 CORE = "core"
@@ -604,6 +615,12 @@ def line_head(raw, source, lineno, seen, directives=PACK_DIRECTIVES, arg_counts=
             raise BadDirective("a second %r line at %s" % (kw, where), format=fmt)
         if kw == "wire" and args[0] not in WIRES:
             raise UnknownWire("unknown wire %r (known: %s) at %s" % (args[0], ", ".join(WIRES), where), format=fmt)
+        if kw == "wire" and args[0] not in BUILD_WIRES:  # spec 0.24, ruling 1c
+            raise UnknownWire(
+                "wire %r is a wire of the specification that this build does not have (this build has: %s) at %s"
+                % (args[0], ", ".join(BUILD_WIRES) or "no wire", where),
+                format=fmt,
+            )
         if kw == "distribution" and args[0] not in DISTRIBUTIONS:
             raise BadDirective(
                 "unknown distribution %r (known: %s) at %s" % (args[0], ", ".join(DISTRIBUTIONS), where),
@@ -848,7 +865,7 @@ def parse_absent(wire, transform, length, text, fmt, locator, where, coord=False
         for t, how in typed:
             if how != "bool":
                 raise bad("value %r on the 'bool' transform is not true or false" % t)
-    from .wire_geojson import dump_string
+    from .jsonio import dump_string
 
     t, how = typed[0]
     out = dump_string(t) if how == "string" else t
@@ -1723,7 +1740,9 @@ def parse_pack_text(text, *, source="pack.def"):
     line order (`bad-directive`), the load-time `missing-root`, the missing
     `word_bytes`; then `missing-distribution`, `missing-source`. The checks
     against the loaded modules and `duplicate-format` are `Engine.add`'s."""
-    if _find_wire(text) == "bits" and _find_wire(text, "layout") == "sequential":
+    # A build without `bits` does not have the sequential parser; the pack is
+    # read below, where its `wire` line is `unknown-wire` (spec 0.24, ruling 1c).
+    if "bits" in BUILD_WIRES and _find_wire(text) == "bits" and _find_wire(text, "layout") == "sequential":
         from .seqdef import parse_seq_pack_text
         return parse_seq_pack_text(text, source=source)
     seen = {}            # the header values: `format`, `version`, `wire`, `distribution`

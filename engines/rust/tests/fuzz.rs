@@ -34,6 +34,8 @@
 //! The inputs come from a xorshift generator with a fixed seed, so a run is
 //! reproducible. `GOAT_FUZZ_ITERS=<n>` multiplies the number of random and
 //! mutated inputs (default 1); `GOAT_FUZZ_SEED=<n>` changes the seed.
+// The packs this test loads need these wires (engine-spec 0.24).
+#![cfg(all(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 
 use goat_transformers::json::Json;
 use goat_transformers::{json, Engine};

@@ -2,6 +2,7 @@
 //! `layout sequential`. The lines of a message are read, and written, in file
 //! order from a cursor; the place of a field depends on what came before it.
 
+#[cfg(feature = "bits")]
 use super::bits::{get_bits, is_sentinel, read_field, set_bits, write_field, write_sentinel};
 use super::*;
 
@@ -113,10 +114,12 @@ pub struct Switch {
 
 /// The case a switch selects: an index into `cases`, `cases.len()` for
 /// `else`; None when none is selected (`no-kind`).
+#[cfg(feature = "bits")]
 type Pick = Option<usize>;
 
 impl Switch {
     /// The case for the key's value as canonical text (None: the key is absent).
+    #[cfg(feature = "bits")]
     fn pick(&self, value: Option<&str>) -> Pick {
         if let Some(v) = value {
             let listed = |c: &Case| if c.canon.is_empty() { c.values.iter().any(|x| x == v) } else { c.canon.iter().any(|x| x == v) };
@@ -126,6 +129,7 @@ impl Switch {
         }
         self.other.as_ref().map(|_| self.cases.len())
     }
+    #[cfg(feature = "bits")]
     fn case(&self, pick: usize) -> &Case {
         self.cases.get(pick).unwrap_or_else(|| self.other.as_ref().expect("an else"))
     }
@@ -1561,6 +1565,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
 // Decode
 // ---------------------------------------------------------------------------
 
+#[cfg(feature = "bits")]
 pub(crate) struct Reader<'a> {
     pub(crate) p: &'a Pack,
     raw: &'a [u8],
@@ -1591,10 +1596,13 @@ pub(crate) struct Reader<'a> {
     counts: HashMap<usize, Option<u64>>,
 }
 
+#[cfg(feature = "bits")]
 impl<'a> Reader<'a> {
+    #[cfg(feature = "bits")]
     pub(crate) fn short(&self, what: impl AsRef<str>) -> Error {
         Error { msg: format!("malformed-wire: format `{}`: {}", self.p.format, what.as_ref()) }
     }
+    #[cfg(feature = "bits")]
     fn need(&self, len: u64, what: &str) -> Result<(), Error> {
         // `pos` may stand past `end` after a `length` block; nothing overflows
         if self.end.saturating_sub(self.pos) < len {
@@ -1604,12 +1612,14 @@ impl<'a> Reader<'a> {
         Ok(())
     }
     /// `len` (1..=64) bits at the cursor as an unsigned value.
+    #[cfg(feature = "bits")]
     pub(crate) fn read(&mut self, len: u32, what: &str) -> Result<u64, Error> {
         self.need(len as u64, what)?;
         let v = get_bits(self.raw, self.pos, len, self.p.order).unwrap_or(0);
         self.pos += len as u64;
         Ok(v)
     }
+    #[cfg(feature = "bits")]
     fn bit(&self, c: &Cond) -> bool {
         let set = self.presence.get(&c.id).and_then(|b| b.get(c.bit as usize - 1)).copied().unwrap_or(false);
         set != c.neg
@@ -1617,6 +1627,7 @@ impl<'a> Reader<'a> {
     /// The indicator bit of a `while`, `more` or `fx` group, or an `fx` bit
     /// of a chain. At or after the end of a `length` extent it reads as 0
     /// (ruling 21 of 0.8); past the end of the input it is `malformed-wire`.
+    #[cfg(feature = "bits")]
     fn indicator(&mut self, what: &str) -> Result<u64, Error> {
         if self.depth > 0 && self.pos >= self.end {
             return Ok(0);
@@ -1627,10 +1638,12 @@ impl<'a> Reader<'a> {
 
 /// The kind of a body the wire selects, after its common lines: the first
 /// whose `when` lines all hold, read from the cursor.
+#[cfg(feature = "bits")]
 fn decode_body<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result<Option<&'a SeqKind>, Error> {
     decode_kind(body, r, d)
 }
 
+#[cfg(feature = "bits")]
 fn decode_kind<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result<Option<&'a SeqKind>, Error> {
     decode_lines(&body.common, r, d)?;
     if body.kinds.is_empty() {
@@ -1656,10 +1669,12 @@ fn decode_kind<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
 }
 
 /// Does a value lie in a list of values and ranges?
+#[cfg(feature = "bits")]
 fn in_list(values: &[(u64, u64)], v: u64) -> bool {
     values.iter().any(|(lo, hi)| *lo <= v && v <= *hi)
 }
 
+#[cfg(feature = "bits")]
 fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<(), Error> {
     for line in lines {
         // inside a `length` block, lines beyond its extent read as absent; a
@@ -1963,6 +1978,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
 }
 
 /// `total`: the bits of the input (8 a byte of hex, 6 a character of armor).
+#[cfg(feature = "bits")]
 pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8], total: u64) -> Result<Entity, Error> {
     let mut r = Reader {
         p,
@@ -2004,6 +2020,7 @@ pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8], total: u64) -> Result<Entity
 /// An item (`item`) whose kind names this format and a kind its group does
 /// not have is selected by `requires` too (ruling 26 of 0.8); for a message
 /// that is `no-kind` (ruling 24 of 0.5).
+#[cfg(feature = "bits")]
 fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity, item: bool) -> Result<Option<&'a SeqKind>, Error> {
     if body.kinds.is_empty() {
         return Ok(None);
@@ -2026,6 +2043,7 @@ fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity, item: bool) -> Result<O
 /// The defaults in force: those of the cases the lines are in, innermost
 /// first (ruling 7 of 0.20), then the selected kind's, then the common ones.
 #[derive(Clone, Copy)]
+#[cfg(feature = "bits")]
 struct Defaults<'a> {
     kind: &'a [DefaultDef],
     common: &'a [DefaultDef],
@@ -2035,7 +2053,9 @@ struct Defaults<'a> {
     up: Option<&'a Defaults<'a>>,
 }
 
+#[cfg(feature = "bits")]
 impl<'a> Defaults<'a> {
+    #[cfg(feature = "bits")]
     fn of(p: &Pack, body: &'a SeqBody, kind: Option<&'a SeqKind>) -> Defaults<'a> {
         Defaults {
             kind: kind.map_or(&[], |k| k.defaults.as_slice()),
@@ -2046,10 +2066,12 @@ impl<'a> Defaults<'a> {
         }
     }
     /// The defaults inside one case of a switch.
+    #[cfg(feature = "bits")]
     fn inside<'b>(&'b self, c: &'b Case) -> Defaults<'b> {
         Defaults { kind: &[], common: &[], uper: self.uper, case: &c.defaults, up: Some(self) }
     }
     /// The `default` of a key, if it has one.
+    #[cfg(feature = "bits")]
     fn default(&self, key: &str) -> Option<&'a Value> {
         if let Some(d) = self.case.iter().find(|d| d.model_key == key) {
             return d.value.as_ref();
@@ -2060,6 +2082,7 @@ impl<'a> Defaults<'a> {
         self.kind.iter().chain(self.common.iter()).find(|d| d.model_key == key).and_then(|d| d.value.as_ref())
     }
     /// The value encode uses for a key: the entity's, else the `default`.
+    #[cfg(feature = "bits")]
     fn value(&self, ent: &'a Entity, key: &str) -> Option<&'a Value> {
         ent.fields.get(key).or_else(|| self.default(key))
     }
@@ -2070,6 +2093,7 @@ impl<'a> Defaults<'a> {
 /// so the case of a switch they cover is looked up here: the case the last
 /// pass selected, else a first estimate from the entity. A pass that selects
 /// another case than the one looked up is run again.
+#[cfg(feature = "bits")]
 struct Look<'p> {
     p: &'p Pack,
     /// (entity, switch line) -> case
@@ -2077,11 +2101,14 @@ struct Look<'p> {
     changed: std::cell::Cell<bool>,
 }
 
+#[cfg(feature = "bits")]
 impl<'p> Look<'p> {
+    #[cfg(feature = "bits")]
     fn at(ent: &Entity, sw: &Switch) -> (usize, usize) {
         (ent as *const Entity as usize, sw.line)
     }
     /// The case taken as selected before the switch is written.
+    #[cfg(feature = "bits")]
     fn get(&self, sw: &Switch, ent: &Entity, defs: Defaults) -> Pick {
         let at = Look::at(ent, sw);
         if let Some(pick) = self.picks.borrow().get(&at) {
@@ -2139,6 +2166,7 @@ impl<'p> Look<'p> {
         pick
     }
     /// The case the switch selected as it was written.
+    #[cfg(feature = "bits")]
     fn set(&self, sw: &Switch, ent: &Entity, pick: Pick) {
         if let Some(old) = self.picks.borrow_mut().insert(Look::at(ent, sw), pick) {
             if old != pick {
@@ -2152,6 +2180,7 @@ impl<'p> Look<'p> {
 /// `default` in scope counts as present (ruling 2 of 0.8), except in a UPER
 /// pack (ruling 2 of 0.19). Of a switch, only the selected case counts
 /// (engine-spec v0.20).
+#[cfg(feature = "bits")]
 fn content(lines: &[SeqLine], ent: &Entity, defs: Defaults, look: &Look) -> bool {
     let present = |key: &str| if defs.uper { ent.fields.contains_key(key) } else { defs.value(ent, key).is_some() };
     lines.iter().any(|l| match l {
@@ -2181,6 +2210,7 @@ fn content(lines: &[SeqLine], ent: &Entity, defs: Defaults, look: &Look) -> bool
 
 /// The bits of presence `id`: bit i is 1 when some `if` block naming it
 /// without `!` would write a present key or a non-empty list.
+#[cfg(feature = "bits")]
 fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, look: &Look, id: usize, bits: &mut Vec<bool>) {
     for l in lines {
         match l {
@@ -2231,6 +2261,7 @@ fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, look
 /// (rulings 13 and 16 of 0.8); else the first sentinel, else zero bits. A
 /// line suppressed by `with` is none of them (engine-spec v0.18).
 #[allow(clippy::too_many_arguments)]
+#[cfg(feature = "bits")]
 fn write_line(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], ent: &Entity, defs: Defaults, at: u64, buf: &mut [u8]) -> Result<(), Error> {
     let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
     let value = keys()
@@ -2251,6 +2282,7 @@ fn write_line(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], ent: &Entity,
 }
 
 /// The set and terminator of an `until:` field.
+#[cfg(feature = "bits")]
 fn until_of(f: &FieldDef) -> (CharSet, u32) {
     match (f.transform, f.until) {
         (Transform::Chars(set), Some(code)) => (set, code),
@@ -2263,6 +2295,7 @@ fn until_of(f: &FieldDef) -> (CharSet, u32) {
 /// the codes alone first; none before `end`, or more than `2040 / w`
 /// characters before it, is the outer error (`malformed-wire`). A code the
 /// set does not define is then the value's error (ruling 5).
+#[cfg(feature = "bits")]
 fn read_until(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, end: u64) -> Result<(u64, Result<Value, Error>), Error> {
     let (set, term) = until_of(f);
     let w = set.width();
@@ -2291,6 +2324,7 @@ fn read_until(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, end: u64) -> Resul
 /// The codes an `until:` field writes, terminator last, and their width: the
 /// earliest key of the line the entity holds, else the earliest default,
 /// else the terminator alone (ruling 10 of 0.22).
+#[cfg(feature = "bits")]
 fn until_codes(p: &Pack, f: &FieldDef, also: &[FieldDef], ent: &Entity, defs: Defaults) -> Result<(Vec<u32>, u32), Error> {
     let (set, term) = until_of(f);
     let w = set.width();
@@ -2328,6 +2362,7 @@ fn until_codes(p: &Pack, f: &FieldDef, also: &[FieldDef], ent: &Entity, defs: De
 
 /// What decode reads from the bits of one `field` line: a sentinel gives no
 /// key a value; otherwise every key of the line takes the value.
+#[cfg(feature = "bits")]
 fn read_back(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], buf: &[u8], at: u64, back: &mut Decoded) {
     if !is_sentinel(p, f, buf, at, len) {
         let v = read_field(p, f, buf, at, len);
@@ -2343,6 +2378,7 @@ fn read_back(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], buf: &[u8], at
 /// of the earliest key that has one (rulings 13 and 16 of 0.8; a line
 /// suppressed by `with` is none of them, engine-spec v0.18); an absent key
 /// writes the values of ruling 1 of 0.19.
+#[cfg(feature = "bits")]
 fn write_uper_line(
     w: &mut Writer,
     f: &FieldDef,
@@ -2365,6 +2401,7 @@ fn write_uper_line(
 
 /// What decode reads from a field with a UPER locator written from bit `at`
 /// of `buf`: every key of the line takes the value (engine-spec v0.19, v0.20).
+#[cfg(feature = "bits")]
 fn read_back_uper(p: &Pack, f: &FieldDef, loc: &crate::uper::Loc, also: &[FieldDef], buf: &[u8], at: u64, back: &mut Decoded) {
     let end = buf.len() as u64 * 8;
     let mut r = Reader {
@@ -2391,6 +2428,7 @@ fn read_back_uper(p: &Pack, f: &FieldDef, loc: &crate::uper::Loc, also: &[FieldD
 
 /// The key of a switch as decode holds it so far: its canonical text, None
 /// when absent, or the failure of its line's transform or table.
+#[cfg(feature = "bits")]
 fn key_state(d: &Decoded, key: &str) -> Result<Option<String>, String> {
     if let Some(v) = d.ent.fields.get(key) {
         return Ok(Some(v.as_display()));
@@ -2404,6 +2442,7 @@ fn key_state(d: &Decoded, key: &str) -> Result<Option<String>, String> {
     Ok(None)
 }
 
+#[cfg(feature = "bits")]
 pub(crate) struct Writer<'a> {
     pub(crate) p: &'a Pack,
     buf: Vec<u8>,
@@ -2426,8 +2465,10 @@ pub(crate) struct Writer<'a> {
     rests: u64,
 }
 
+#[cfg(feature = "bits")]
 impl<'a> Writer<'a> {
     /// `n` zero bits.
+    #[cfg(feature = "bits")]
     fn zeros(&mut self, n: u64) {
         self.pos += n;
         let bytes = ((self.pos + 7) / 8) as usize;
@@ -2435,20 +2476,24 @@ impl<'a> Writer<'a> {
             self.buf.resize(bytes, 0);
         }
     }
+    #[cfg(feature = "bits")]
     pub(crate) fn put(&mut self, len: u32, v: u64) {
         let at = self.pos;
         self.zeros(len as u64);
         set_bits(&mut self.buf, at, len, v, self.p.order);
     }
+    #[cfg(feature = "bits")]
     pub(crate) fn fail(&self, what: impl AsRef<str>) -> Error {
         Error { msg: format!("transform-encode: format `{}`: {}", self.p.format, what.as_ref()) }
     }
+    #[cfg(feature = "bits")]
     fn bit(&self, c: &Cond) -> bool {
         let set = self.presence.get(&c.id).and_then(|b| b.get(c.bit as usize - 1)).copied().unwrap_or(false);
         set != c.neg
     }
 }
 
+#[cfg(feature = "bits")]
 fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Result<(), Error> {
     let kind = select(w.p, body, ent, item)?;
     let defs = Defaults::of(w.p, body, kind);
@@ -2468,6 +2513,7 @@ fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Resu
 
 /// Write `lines`. `tail`: the lines that follow them in the same block, which
 /// may name a presence declared here.
+#[cfg(feature = "bits")]
 fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Defaults, w: &mut Writer) -> Result<(), Error> {
     let p = w.p;
     for (i, line) in lines.iter().enumerate() {
@@ -2753,11 +2799,13 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
     Ok(())
 }
 
+#[cfg(feature = "bits")]
 pub fn encode(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<Vec<u8>, Error> {
     encode_bits(p, body, ent).map(|(b, _)| b)
 }
 
 /// The message as whole bytes, and the cursor after the last line.
+#[cfg(feature = "bits")]
 pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u64), Error> {
     let look = Look { p, picks: Default::default(), changed: Default::default() };
     // a pass whose switches select other cases than were looked up runs again

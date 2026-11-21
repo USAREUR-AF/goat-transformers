@@ -727,7 +727,7 @@ uvalue({ok, V}, twos) when is_integer(V) -> V;
 uvalue({ok, V}, {uscale, F, O}) when is_integer(V) -> uscale(V, F, O);
 uvalue({ok, V}, {sscale, F, O}) when is_integer(V) -> uscale(V, F, O);
 uvalue({ok, B}, ascii) when is_binary(B) -> B;
-uvalue({ok, B}, hex) when is_binary(B) -> gt_bits:bytes_to_hex(B);
+uvalue({ok, B}, hex) when is_binary(B) -> gt_hex:bytes_to_hex(B);
 uvalue({ok, B}, utf8) when is_binary(B) ->
     B = unicode:characters_to_binary(B, utf8, utf8).
 
@@ -805,7 +805,7 @@ encode(Pack, Lines, Defaults, Entity) ->
           end, M0, Segs),
     case maps:get(armor, Pack) of
         sixbit -> gt_engine:armor_out(gt_bits:to_bytes(M), End, Pack);
-        hex -> gt_bits:bytes_to_hex(gt_bits:to_bytes(M))
+        hex -> gt_hex:bytes_to_hex(gt_bits:to_bytes(M))
     end.
 
 %% Ruling 4 of 0.21 on encode: an item of a `rest` group in a byte-counted

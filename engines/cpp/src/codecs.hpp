@@ -45,6 +45,11 @@ bool parse_json_locator(const std::string& loc, std::vector<std::string>& path);
 // `allow_element` permits the element-presence form, which only residue uses.
 bool valid_locator(Wire w, const std::string& loc, bool allow_element = false);
 
+// Version 0.24 ruling 1c: the wire a `wire` value names. False when the value
+// is no wire of the specification, or a wire this build does not have, with
+// `why` saying which (the text of the `unknown-wire` message after its place).
+bool parse_wire_value(const std::string& text, Wire& out, std::string& why);
+
 // ---- message kinds (engine-spec.md, Version 0.5) and mapping rules (Version 0.6)
 
 // One `field`, `when` or `const` line, or one `group` block (0.7).

@@ -12,6 +12,7 @@
 #include "codecs.hpp"
 #include "transforms.hpp"
 #include "util.hpp"
+#include "wires.hpp"
 
 namespace goat_transformers::detail {
 
@@ -324,6 +325,9 @@ std::string json_encode_items(const Pack& p, const GroupLine& g, const std::vect
     return out;
 }
 
+// The json codec itself; geojson uses only the items above (0.24 ruling 1d).
+#if GT_WIRE_JSON
+
 namespace {
 
 // The members the field lines of a scope read, through its groups' items
@@ -466,5 +470,7 @@ std::string encode_json(const Pack& p, const Entity& e) {
     out_write(out, root);
     return out;
 }
+
+#endif  // GT_WIRE_JSON
 
 }  // namespace goat_transformers::detail

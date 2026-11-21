@@ -143,6 +143,66 @@ GOOS=wasip1 GOARCH=wasm go build -o goat-xf.wasm ./cmd/goat-xf             # Web
 under Node 22 `node:wasi` with the repository root preopened, gave the same
 `list-formats` and `convert` output as above.
 
+## Builds with fewer wires
+
+The engine can be built with the codecs of only some wires
+(`spec/engine-spec.md`, Version 0.24). The switch is a Go build tag. A build
+with no tag has all seven wires. A build with the tag `goat_wires` has only
+the wires named by a tag `goat_wire_<wire>`, from `goat_wire_xml`,
+`goat_wire_geojson`, `goat_wire_json`, `goat_wire_bits`,
+`goat_wire_protobuf`, `goat_wire_text` and `goat_wire_tlv`:
+
+```
+go build -tags goat_wires,goat_wire_xml,goat_wire_json,goat_wire_geojson -o goat-xf ./cmd/goat-xf
+```
+
+A program that uses the module as a library passes the same `-tags` to its
+own `go build`. The codec of each wire is in files whose build constraint is
+`!goat_wires || goat_wire_<wire>`, and `wire_<wire>.go` registers it. The
+reader and writer of `json` and `geojson` that both wires use are in the files
+`*_jsonfamily.go`, in a build that has either one, so `geojson` needs nothing
+of `json`. The sequential layout, six-bit armor and `encoding uper` are part
+of `bits`. The pack language, with all its line checks, is in every build
+(the files `*_shared.go` hold the parts of a wire's files that the loader
+uses), so a pack on a wire of the build loads, and fails, as in a full build.
+A pack whose `wire` is a wire the build lacks is `unknown-wire` at its `wire`
+line, and the message says so:
+
+```
+unknown-wire: wire "bits" is a wire of the specification, but this build does not have it (built with the wires geojson, json, xml) [format=adsb at=packs/adsb/pack.def:18]
+```
+
+`goatxf.BuiltWires()` returns the wires of the build.
+
+### The reduced-build check
+
+From the repository root:
+
+```
+sh engines/go/reduced-check.sh
+```
+
+It builds the engine with `xml`, `json` and `geojson` only and runs
+`TestReducedBuild` in that build (`reduced_test.go`, built only with the tag
+`goat_wires`): it loads every pack on those three wires, runs every
+conversion vector whose `from` and `to` are among them, and checks that every
+pack on `bits`, `protobuf`, `text` and `tlv` is `unknown-wire` at its `wire`
+line with the wire named. Then it builds `goat-xf` with all seven wires and
+with the three, loads one pack of each missing wire with the reduced tool
+(each must exit 1 with `unknown-wire` naming the wire), checks with
+`go tool nm` that the reduced tool holds no decoder or encoder of those four
+wires, and prints both sizes. It exits non-zero on any failure.
+
+Measured with Go 1.26.8 on Linux x86_64:
+
+| | Measured |
+|---|---|
+| packs loaded in the reduced build | 1070 |
+| conversion vectors on `xml`, `json` and `geojson` | 6849 run, 6849 passed |
+| packs refused with `unknown-wire` | `bits` 1632, `protobuf` 695, `text` 71, `tlv` 9 |
+| `goat-xf`, all seven wires | 5084858 bytes |
+| `goat-xf`, `xml`, `json` and `geojson` | 4635229 bytes (449629 bytes less) |
+
 ## Read next
 
 - `spec/engine-spec.md`: the pack grammar, the wire types, decode, encode,

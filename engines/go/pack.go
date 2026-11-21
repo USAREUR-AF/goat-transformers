@@ -960,6 +960,11 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				default:
 					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits, protobuf, text or tlv)", args[0])
 				}
+				// A wire of the specification this build lacks is
+				// unknown-wire at the same line check (ruling 1c of 0.24).
+				if codecs[args[0]] == nil {
+					return nil, perr(ErrUnknownWire, n, "", "%s", missingWireDetail(args[0]))
+				}
 				p.Wire = args[0]
 			case "layout":
 				if args[0] != "sequential" && args[0] != "fixed" {

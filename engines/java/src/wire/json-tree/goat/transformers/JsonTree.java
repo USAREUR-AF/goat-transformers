@@ -2,7 +2,6 @@ package goat.transformers;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,18 +9,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The {@code json} wire: the message is one JSON object. A locator is one or more member names separated by
- * {@code .}; each name but the last addresses a nested object. Residue is every unmapped scalar member at any
- * depth of nested objects, keyed by its path, holding its canonical JSON text.
+ * JSON objects read and written through the lines of a scope: the {@code json} wire's message, and the items of a
+ * {@code json} or {@code geojson} group. Both the {@code json} and the {@code geojson} wire carry this class, so a
+ * build with {@code geojson} has what its groups need and nothing of the {@code json} wire (ruling 1d of 0.24).
  */
-final class JsonCodec extends Codec<Map<String, Object>> {
-    JsonCodec(Pack pack) {
-        super(pack);
-        for (Pack.Kind k : pack.kinds) prepare(k.scope);
-    }
+abstract class JsonTree<W> extends Codec<W> {
+    JsonTree(Pack pack) { super(pack); }
 
-    /** For the {@code geojson} codec: the item logic of this wire over that pack's group bodies. */
-    JsonCodec(Pack pack, boolean itemsOnly) { super(pack); }
+    /** One JSON value to the model value of a field: as the {@code json} wire reads it, unless overridden. */
+    Object readValue(Transform t, Object v) { return decodeValue(t, v); }
 
     private static final String[] ITSELF = new String[0];
 
@@ -32,28 +28,6 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             l.loc = l.locator.equals(".") ? ITSELF : l.locator.split("\\.", -1);
             if (l instanceof Pack.Group) prepare(((Pack.Group) l).body);
         }
-    }
-
-    /** Null when {@code locator} is a valid json path, else the reason. */
-    static String checkLocator(String locator) {
-        if (locator.isEmpty()) return "empty json path";
-        for (String seg : locator.split("\\.", -1)) {
-            if (seg.isEmpty()) return "json path has an empty member name: " + locator;
-        }
-        return null;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    Map<String, Object> parse(String text) {
-        Object doc;
-        try {
-            doc = Json.parse(text);
-        } catch (Json.ParseException ex) {
-            throw malformed(ex.getMessage());
-        }
-        if (!(doc instanceof Map)) throw malformed("top level is not a JSON object");
-        return (Map<String, Object>) doc;
     }
 
     /** The value at a path, or null when a member on the way is absent, {@code null} or not an object. */
@@ -70,12 +44,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         return null;
     }
 
-    @Override
-    boolean holds(Map<String, Object> top, Pack.When when) {
-        return Json.holds(member(top, (String[]) when.loc), when);
-    }
-
-    private static String typeName(Object v) {
+    static String typeName(Object v) {
         if (v instanceof String) return "a string";
         if (v instanceof Json.Num) return "a number";
         if (v instanceof Boolean) return "a boolean";
@@ -117,25 +86,13 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         }
     }
 
-    @Override
-    Entity decodeKind(Map<String, Object> top, Pack.Kind kind) {
-        Entity e = new Entity();
-        Failures fails = new Failures();
-        Set<String> mapped = new HashSet<>();
-        decodeScope(top, kind.scope, e, fails, mapped, false);
-        unreadOverflow(top, fails.read);
-        residue(top, "", mapped, e);
-        finishDecode(e, fails);
-        return e;
-    }
-
     /**
      * Decode the lines of one scope from a JSON value into {@code e}: the message object, or one array element of
-     * a group ({@code mapped} is then null: items carry no residue). {@code geo}: the element is an item of a
-     * {@code geojson} pack, whose values are read as that wire reads them (ruling 7 of 0.7).
+     * a group ({@code mapped} is then null: items carry no residue). The items of a {@code geojson} group read
+     * their values as that wire reads them (ruling 7 of 0.7), through {@link #readValue}.
      */
     @SuppressWarnings("unchecked")
-    void decodeScope(Object el, Pack.Scope scope, Entity e, Failures fails, Set<String> mapped, boolean geo) {
+    void decodeScope(Object el, Pack.Scope scope, Entity e, Failures fails, Set<String> mapped) {
         Map<String, Object> obj = el instanceof Map ? (Map<String, Object>) el : null;
         for (Pack.Line l : scope.lines) {
             String[] path = (String[]) l.loc;
@@ -144,7 +101,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                 Pack.Group g = (Pack.Group) l;
                 Object v = obj == null ? null : member(obj, path);
                 if (v == null) continue;                    // absent or null: the list is absent
-                e.putList(g.list, decodeItems(g, v, fails, geo));
+                e.putList(g.list, decodeItems(g, v, fails));
                 continue;
             }
             if (!(l instanceof Pack.Field)) {
@@ -173,7 +130,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                     if (!(v instanceof Json.Num)) throw new IllegalArgumentException(f.scale.wireName() + " needs a JSON number, found " + typeName(v));
                     d = f.scale.decode(((Json.Num) v).text);
                 } else {
-                    d = geo ? GeoJsonCodec.decodeGeo(f.transform, v) : decodeValue(f.transform, v);
+                    d = readValue(f.transform, v);
                 }
             } catch (IllegalArgumentException ex) {
                 fails.add(f, ex.getMessage(), e);
@@ -185,63 +142,21 @@ final class JsonCodec extends Codec<Map<String, Object>> {
 
     /** The items of a group from the value at its locator: one item per array element, in order. */
     @SuppressWarnings("unchecked")
-    List<Entity> decodeItems(Pack.Group g, Object v, Failures fails, boolean geo) {
+    List<Entity> decodeItems(Pack.Group g, Object v, Failures fails) {
         if (!(v instanceof List)) throw malformed("the member at " + g.locator + " is " + typeName(v) + ", not an array");
         List<Object> arr = (List<Object>) v;
         List<Entity> items = new ArrayList<>(arr.size());
         takeItems(arr.size());   // the array is parsed already; its items are counted before any is read
         for (Object el : arr) {
             Entity item = new Entity();
-            decodeScope(el, g.body, item, fails, null, geo);
+            decodeScope(el, g.body, item, fails, null);
             items.add(item);
         }
         return items;
     }
 
-    /**
-     * A number outside the double range that no field reads, anywhere in the document (arrays, members of group
-     * items and when members included), is malformed-wire (ruling 27 of 0.15).
-     */
-    @SuppressWarnings("unchecked")
-    private void unreadOverflow(Object v, java.util.Map<Object, Boolean> read) {
-        if (v instanceof Map) {
-            for (Object c : ((Map<String, Object>) v).values()) unreadOverflow(c, read);
-        } else if (v instanceof List) {
-            for (Object c : (List<Object>) v) unreadOverflow(c, read);
-        } else if (v instanceof Json.Num && !read.containsKey(v)) {
-            String t = ((Json.Num) v).text;
-            if (Double.isInfinite(Double.parseDouble(t))) throw malformed("number out of range: " + t);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void residue(Map<String, Object> obj, String prefix, Set<String> mapped, Entity e) {
-        for (Map.Entry<String, Object> m : obj.entrySet()) {
-            String name = m.getKey();
-            if (name.indexOf('.') >= 0) continue;        // not addressable: dropped
-            String path = prefix.isEmpty() ? name : prefix + "." + name;
-            Object v = m.getValue();
-            if (v instanceof Map) {
-                residue((Map<String, Object>) v, path, mapped, e);
-            } else if (v instanceof String || v instanceof Boolean) {
-                if (!mapped.contains(path)) e.putResidue(pack.format, path, Json.write(v));
-            } else if (v instanceof Json.Num) {
-                if (!mapped.contains(path)) {
-                    String text;
-                    try {
-                        text = Json.canonNumber(((Json.Num) v).text);
-                    } catch (IllegalArgumentException ex) {
-                        throw malformed(ex.getMessage());
-                    }
-                    e.putResidue(pack.format, path, text);
-                }
-            }
-            // arrays and null members are not carried
-        }
-    }
-
     /** A model value to its JSON value. */
-    private static Object encodeValue(Transform t, Object v) {
+    static Object encodeValue(Transform t, Object v) {
         switch (t) {
             case STRING:
             case ISO8601_MS:
@@ -262,7 +177,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
      * the position of the first line that addresses into it. Null when a member on the way already holds a scalar.
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> parent(Map<String, Object> top, String[] path) {
+    static Map<String, Object> parent(Map<String, Object> top, String[] path) {
         Map<String, Object> cur = top;
         for (int i = 0; i < path.length - 1; i++) {
             Object v = cur.get(path[i]);
@@ -277,24 +192,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         return cur;
     }
 
-    private static boolean isEmptyObject(Object v) { return v instanceof Map && ((Map<?, ?>) v).isEmpty(); }
-
-    @Override
-    String encodeKind(Entity e, Pack.Kind kind) {
-        LinkedHashMap<String, Object> top = new LinkedHashMap<>();
-        encodeScope(top, kind.scope, e, false);
-        for (Map.Entry<String, String> r : e.residue(pack.format).entrySet()) {
-            String[] path = r.getKey().split("\\.", -1);
-            Map<String, Object> obj = parent(top, path);
-            if (obj == null) continue;
-            String last = path[path.length - 1];
-            Object have = obj.get(last);
-            if (have == null) obj.put(last, new Json.Raw(r.getValue()));
-        }
-        unplace(top);
-        prune(top);
-        return Json.write(top);
-    }
+    static boolean isEmptyObject(Object v) { return v instanceof Map && ((Map<?, ?>) v).isEmpty(); }
 
     /** A sentinel written for an absent key: a later line whose key is present writes over it (ruling 16 of 0.9). */
     static final class Placed {
@@ -328,14 +226,14 @@ final class JsonCodec extends Codec<Map<String, Object>> {
      * Write the lines of one scope into {@code top} from {@code e}. Returns the scalar a {@code .} field wrote, or
      * null when none did: the caller then writes {@code top}.
      */
-    Object encodeScope(Map<String, Object> top, Pack.Scope scope, Entity e, boolean geo) {
+    Object encodeScope(Map<String, Object> top, Pack.Scope scope, Entity e) {
         Object itself = null;
         for (Pack.Line l : scope.lines) {
             String[] path = (String[]) l.loc;
             if (path.length == 0) {                      // `.`: the item itself as a scalar
                 Pack.Field f = (Pack.Field) l;
                 if (itself != null && !(itself instanceof Placed)) continue;
-                Object jv = encodeOne(f, e, scope, geo);
+                Object jv = encodeOne(f, e, scope);
                 if (jv != null) itself = jv;
                 else if (itself == null && f.absent != null && !f.suppressed(e)) itself = new Placed(f.absent.firstJson());
                 continue;
@@ -348,7 +246,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                 if (items == null || obj == null) continue;   // an absent list writes nothing
                 Object have = obj.get(last);
                 if (have != null && have != RESERVED && !isEmptyObject(have)) continue;
-                obj.put(last, encodeItems(g, items, geo));
+                obj.put(last, encodeItems(g, items));
                 continue;
             }
             // A when or const value is written over any field, at the position of the first line naming the locator.
@@ -363,7 +261,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             Object have = obj.get(last);
             boolean over = have instanceof Placed;
             if (have != null && have != RESERVED && !isEmptyObject(have) && !over) continue; // an earlier line on this locator already wrote it
-            Object jv = encodeOne(f, e, scope, geo);
+            Object jv = encodeOne(f, e, scope);
             if (jv != null) obj.put(last, jv);
             else if (f.absent != null && !over && !f.suppressed(e)) obj.put(last, new Placed(f.absent.firstJson()));
             else if (have == null) obj.put(last, RESERVED);   // the member's place, should a later line write it
@@ -372,11 +270,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
     }
 
     /** The JSON value one field writes, or null when the entity lacks the key and the scope has no default. */
-    private Object encodeOne(Pack.Field f, Entity e, Pack.Scope scope, boolean geo) {
-        if (geo) {
-            String s = encodeField(f, e, scope);
-            return s == null ? null : GeoJsonCodec.jsonValue(f.transform, s);
-        }
+    Object encodeOne(Pack.Field f, Entity e, Pack.Scope scope) {
         Object v = valueToEncode(f, e, scope);
         if (v == null) return null;
         try {
@@ -388,11 +282,11 @@ final class JsonCodec extends Codec<Map<String, Object>> {
     }
 
     /** The array a group writes: one element per item; an item with no members written is {@code {}}. */
-    List<Object> encodeItems(Pack.Group g, List<Entity> items, boolean geo) {
+    List<Object> encodeItems(Pack.Group g, List<Entity> items) {
         List<Object> arr = new ArrayList<>(items.size());
         for (Entity item : items) {
             LinkedHashMap<String, Object> obj = new LinkedHashMap<>();
-            Object itself = encodeScope(obj, g.body, item, geo);
+            Object itself = encodeScope(obj, g.body, item);
             unplace(obj);
             if (itself != null) {
                 arr.add(itself);
@@ -405,14 +299,14 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         return arr;
     }
 
-    private static boolean hasItself(Pack.Scope body) {
+    static boolean hasItself(Pack.Scope body) {
         for (Pack.Line l : body.lines) if (((String[]) l.loc).length == 0) return true;
         return false;
     }
 
     /** Remove every nested object that has no members. */
     @SuppressWarnings("unchecked")
-    private static void prune(Map<String, Object> obj) {
+    static void prune(Map<String, Object> obj) {
         Iterator<Map.Entry<String, Object>> it = obj.entrySet().iterator();
         while (it.hasNext()) {
             Object v = it.next().getValue();

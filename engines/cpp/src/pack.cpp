@@ -11,6 +11,7 @@
 #include "sequential.hpp"
 #include "goat_transformers/engine.hpp"
 #include "transforms.hpp"
+#include "wires.hpp"
 
 namespace goat_transformers {
 
@@ -161,6 +162,44 @@ const char* wire_name(Wire w) {
         case Wire::Tlv: return "tlv";
     }
     return "?";
+}
+
+bool wire_built(Wire w) {
+    switch (w) {
+        case Wire::Xml: return GT_WIRE_XML;
+        case Wire::GeoJson: return GT_WIRE_GEOJSON;
+        case Wire::Json: return GT_WIRE_JSON;
+        case Wire::Bits: return GT_WIRE_BITS;
+        case Wire::Protobuf: return GT_WIRE_PROTOBUF;
+        case Wire::Text: return GT_WIRE_TEXT;
+        case Wire::Tlv: return GT_WIRE_TLV;
+    }
+    return false;
+}
+
+namespace {
+constexpr Wire kAllWires[] = {Wire::Xml, Wire::GeoJson, Wire::Json, Wire::Bits, Wire::Protobuf, Wire::Text, Wire::Tlv};
+}  // namespace
+
+std::vector<std::string> built_wires() {
+    std::vector<std::string> out;
+    for (Wire w : kAllWires)
+        if (wire_built(w)) out.push_back(wire_name(w));
+    return out;
+}
+
+bool detail::parse_wire_value(const std::string& text, Wire& out, std::string& why) {
+    for (Wire w : kAllWires) {
+        if (text != wire_name(w)) continue;
+        if (!wire_built(w)) {
+            why = "wire '" + text + "' is a wire of the specification that this build does not have";
+            return false;
+        }
+        out = w;
+        return true;
+    }
+    why = "wire '" + text + "'";
+    return false;
 }
 
 namespace {
@@ -1103,14 +1142,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         } else if (kw == "wire") {
             arity(1);
             once(have_wire);
-            if (t[1] == "xml") p.wire = Wire::Xml;
-            else if (t[1] == "geojson") p.wire = Wire::GeoJson;
-            else if (t[1] == "bits") p.wire = Wire::Bits;
-            else if (t[1] == "protobuf") p.wire = Wire::Protobuf;
-            else if (t[1] == "json") p.wire = Wire::Json;
-            else if (t[1] == "text") p.wire = Wire::Text;
-            else if (t[1] == "tlv") p.wire = Wire::Tlv;
-            else throw Error(ErrorKind::UnknownWire, p.format, "", where + ": wire '" + t[1] + "'");
+            std::string why;
+            if (!detail::parse_wire_value(t[1], p.wire, why))
+                throw Error(ErrorKind::UnknownWire, p.format, "", where + ": " + why);
         } else if (kw == "root") {
             not_in_group();
             arity(1);
@@ -1577,7 +1611,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     }
     if (have_wire) {
         // v0.10: the text wire's locators, read before the checks that relate them.
+#if GT_WIRE_TEXT
         if (p.wire == Wire::Text) detail::parse_text_locators(p);
+#endif
         if (p.wire != Wire::Text) {
             if (text_directive_line != 0)
                 throw Error(ErrorKind::BadDirective, p.format, "",
@@ -1678,8 +1714,13 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             }
             check_bits_groups(p);
         }
+        // A wire this build lacks never gets here: its `wire` line is unknown-wire (0.24).
+#if GT_WIRE_TEXT
         if (p.wire == Wire::Text) detail::check_text_pack(p);
+#endif
+#if GT_WIRE_TLV
         if (p.wire == Wire::Tlv) detail::check_tlv_pack(p);
+#endif
         check_fields_through_groups(p);
     }
 

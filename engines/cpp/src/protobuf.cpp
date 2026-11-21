@@ -18,30 +18,6 @@
 
 namespace goat_transformers::detail {
 
-bool parse_protobuf_locator(const std::string& loc, ProtobufLocator& out) {
-    if (loc.empty()) return false;
-    ProtobufLocator r;
-    std::uint64_t v = 0;
-    bool have_digit = false;
-    for (std::size_t i = 0; i <= loc.size(); ++i) {
-        const char c = i < loc.size() ? loc[i] : '.';  // a virtual '.' flushes the last segment
-        if (c == '.') {
-            if (!have_digit) return false;                 // empty path segment
-            if (v < 1 || v > 536870911ull) return false;   // field number 1..2^29-1
-            r.path.push_back(static_cast<std::uint32_t>(v));
-            v = 0;
-            have_digit = false;
-            continue;
-        }
-        if (c < '0' || c > '9') return false;
-        v = v * 10 + static_cast<std::uint64_t>(c - '0');
-        if (v > 536870911ull) return false;
-        have_digit = true;
-    }
-    out = std::move(r);
-    return true;
-}
-
 namespace {
 
 std::string locator_str(const std::vector<std::uint32_t>& path) {

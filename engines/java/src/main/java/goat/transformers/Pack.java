@@ -541,7 +541,7 @@ public final class Pack {
     public final int wordBytes;
     /** bits wire: true for {@code bit_order msb}. */
     public final boolean msbFirst;
-    /** bits wire: the bit order as BitsCodec.LSB, MSB or MSB_LSB ({@code bit_order msb-lsb}, engine-spec 0.22). */
+    /** bits wire: the bit order as BitsLayout.LSB, MSB or MSB_LSB ({@code bit_order msb-lsb}, engine-spec 0.22). */
     int bitOrder;
     /** True when the pack has at least one {@code kind} line. */
     public final boolean hasKinds;
@@ -791,20 +791,20 @@ public final class Pack {
     static void lineCheckLocator(Wire wire, String loc, boolean inGroup, String format, String where) {
         String why;
         switch (wire) {
-            case XML: why = XmlCodec.checkFieldLocator(loc); break;
-            case JSON: why = loc.equals(".") ? null : JsonCodec.checkLocator(loc); break;
-            case GEOJSON: why = loc.equals(".") ? null : inGroup ? JsonCodec.checkLocator(loc) : GeoJsonCodec.checkFieldLocator(loc); break;
-            case PROTOBUF: why = loc.equals(".") ? null : ProtobufCodec.checkFieldLocator(loc); break;
+            case XML: why = Locators.xmlField(loc); break;
+            case JSON: why = loc.equals(".") ? null : Locators.json(loc); break;
+            case GEOJSON: why = loc.equals(".") ? null : inGroup ? Locators.json(loc) : Locators.geojsonField(loc); break;
+            case PROTOBUF: why = loc.equals(".") ? null : Locators.protobufField(loc); break;
             case TLV: return;   // 0.13: a tlv path is checked after the file, and its failures are bad-directive
             case BITS:
                 // a bit length as the locator of a fixed-layout pack stays bad-directive (resolved after the file);
                 // so does a UPER locator outside a UPER pack (ruling 9 of 0.19, checked after the file)
                 if (Seq.isUperLocator(loc)) return;
                 if (loc.startsWith("until:")) return;   // a sequential locator (0.22): refused after the file here
-                why = Transform.UNSIGNED.matcher(loc).matches() ? null : BitsCodec.checkLocator(loc);
+                why = Transform.UNSIGNED.matcher(loc).matches() ? null : Locators.bits(loc);
                 break;
             default:
-                if (TextCodec.parseLocator(loc) == null) {
+                if (TextLayout.parseLocator(loc) == null) {
                     throw badDirective(format, loc, where + ": a text locator is <i>, <i>:<from>:<len> (len from 1) or <i>+<j>, got \"" + loc + "\"");
                 }
                 why = null;
@@ -824,11 +824,11 @@ public final class Pack {
             // xml: the forms 5a names (an empty step, an empty attribute name, a step after @name or #text); a group
             // locator that is otherwise not valid for its wire (`@a`) is bad-directive after the file (ruling 37 of 0.21)
             case XML: why = xmlGroupForm(loc); break;
-            case JSON: why = JsonCodec.checkLocator(loc); break;
-            case GEOJSON: why = inGroup ? JsonCodec.checkLocator(loc) : GeoJsonCodec.checkGroupLocator(loc); break;
+            case JSON: why = Locators.json(loc); break;
+            case GEOJSON: why = inGroup ? Locators.json(loc) : Locators.geojsonGroup(loc); break;
             // protobuf: `rest` and `last` are a group locator not valid for the wire, bad-directive after the file
             // (ruling 37 of 0.21), not the bad-locator of 5a
-            case PROTOBUF: why = loc.equals("rest") || loc.equals("last") ? null : ProtobufCodec.checkFieldLocator(loc); break;
+            case PROTOBUF: why = loc.equals("rest") || loc.equals("last") ? null : Locators.protobufField(loc); break;
             // bits: 5a names field, when and const lines only, and a group with a sequential form (`while`) in a
             // fixed-layout pack stays bad-directive; text: its group form is checked after the file
             default: why = null;
@@ -953,7 +953,7 @@ public final class Pack {
         switch (wire) {
             case BITS: {
                 if (!loc.contains(":") || Seq.isUperLocator(loc) || loc.startsWith("until:")) return;   // refused after the file
-                int len = BitsCodec.parseLoc(loc)[2];
+                int len = Locators.bitsParse(loc)[2];
                 if (len > 64) return;                         // ruling 4d: the length check after the file reports it
                 Sentinels.integers(absent, len, format, loc, where);
                 return;
@@ -972,7 +972,7 @@ public final class Pack {
                 return;   // absent does not fit the text wire (ruling 16 of 0.10): checked after the file
             default: {
                 Sentinels sv = Sentinels.json(absent, tname.equals("bool"), format, loc, where);
-                if (wire == Wire.GEOJSON && !inGroup && GeoJsonCodec.coordIndex(loc) >= 0) {
+                if (wire == Wire.GEOJSON && !inGroup && Locators.geojsonCoord(loc) >= 0) {
                     for (Object v : sv.json) {
                         if (!(v instanceof Json.Num)) {
                             throw badDirective(format, loc, where + ": absent: a coordinate takes only number text as a sentinel");
@@ -1113,6 +1113,13 @@ public final class Pack {
             if (HEADERS.contains(kw) && !headers.add(kw)) throw dup(kw, where, format);
             if (kw.equals("wire") && !WIRES.contains(args.get(0))) {
                 throw new GtException(GtException.Code.UNKNOWN_WIRE, format, null, where + ": unknown wire \"" + args.get(0) + "\"");
+            }
+            // ruling 1c of 0.24: a wire of the specification that this build was built without is unknown-wire here
+            // too, and the message says so
+            if (kw.equals("wire") && !Wires.has(args.get(0))) {
+                throw new GtException(GtException.Code.UNKNOWN_WIRE, format, null, where + ": wire \"" + args.get(0)
+                        + "\" is a wire of the specification, but this build does not have it (this build has "
+                        + String.join(", ", Wires.NAMES) + ")");
             }
             if (kw.equals("distribution") && Distribution.byToken(args.get(0)) == null) {
                 throw bad(format, null, where + ": distribution must be public or controlled, got \"" + args.get(0) + "\"");
@@ -1532,7 +1539,7 @@ public final class Pack {
             }
             if (!hasKinds) {
                 notThroughAGroup(commonLines, ctx);
-                if (wire == Wire.TLV) TlvCodec.checkScope(commonLines, format, source);
+                if (wire == Wire.TLV) TlvLayout.checkScope(commonLines, format, source);
                 kinds.add(new Kind(null, new ArrayList<>(), commonLines, new ArrayList<>(), root, common.defaults));
             }
             for (KindSpec ks : kindSpecs) {
@@ -1550,18 +1557,18 @@ public final class Pack {
                     }
                 }
                 notThroughAGroup(all, ctx);
-                if (wire == Wire.TLV) TlvCodec.checkScope(all, format, source);
+                if (wire == Wire.TLV) TlvLayout.checkScope(all, format, source);
                 LinkedHashMap<String, String> defaults = new LinkedHashMap<>(common.defaults);
                 defaults.putAll(ks.defaults);
                 kinds.add(new Kind(ks.name, ks.requires, all, whens, ks.root != null ? ks.root : root, defaults));
             }
             if (wire == Wire.TEXT) {
-                TextCodec.checkPack(kinds, ctx.bodies, delimiterDir == null ? "," : delimiterDir[0],
+                TextLayout.checkPack(kinds, ctx.bodies, delimiterDir == null ? "," : delimiterDir[0],
                         startDir == null ? null : startDir[0], checksumDir != null && checksumDir[0].equals("nmea"), format, source);
             }
             if (wire == Wire.BITS && wordBytes != null) {
                 // The layout of each scope: common plus one kind (group bodies were checked as they were resolved).
-                for (Kind k : kinds) BitsCodec.prepare(k.scope, wb, 0, format, source);
+                for (Kind k : kinds) BitsLayout.prepare(k.scope, wb, 0, format, source);
             }
         }
         if (wire == Wire.XML) {
@@ -1593,7 +1600,7 @@ public final class Pack {
                 commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n,
                 seqRoot, seq == null ? 0 : seq.presences);
         pack.armorSixbit = armorSixbit;
-        pack.bitOrder = "msb".equals(bitOrder) ? BitsCodec.MSB : "msb-lsb".equals(bitOrder) ? BitsCodec.MSB_LSB : BitsCodec.LSB;
+        pack.bitOrder = "msb".equals(bitOrder) ? BitsLayout.MSB : "msb-lsb".equals(bitOrder) ? BitsLayout.MSB_LSB : BitsLayout.LSB;
         pack.uper = uper;
         pack.valueLists = valueLists;
         if (wire == Wire.TEXT) {
@@ -1660,7 +1667,7 @@ public final class Pack {
             }
         }
         if (checksumTag != null) {
-            String why = TlvCodec.checkTag(checksumTag, sizes[0]);
+            String why = TlvLayout.checkTag(checksumTag, sizes[0]);
             if (why != null) throw badDirective(format, null, source + ":" + checksumLine + ": checksum: " + why);
         }
         return sizes;
@@ -1751,7 +1758,7 @@ public final class Pack {
         }
         int len;
         try {
-            int[] wpl = BitsCodec.parseLoc(loc);
+            int[] wpl = Locators.bitsParse(loc);
             len = wpl[2];
         } catch (NumberFormatException ex) {
             throw badDirective(format, loc, where + ": the gate locator is out of range: " + loc);
@@ -1789,7 +1796,7 @@ public final class Pack {
         for (LineSpec b : s.body.lines) lines.add(resolve(b, ctx, inGroup));
         Scope body = new Scope(lines, s.body.defaults);
         ctx.bodies.add(body);   // its own defaults are read as the keys' types with every other scope's
-        return new Gate(s.locator, s.not, values, BitsCodec.parseLoc(s.locator)[2], body, s.line);
+        return new Gate(s.locator, s.not, values, Locators.bitsParse(s.locator)[2], body, s.line);
     }
 
     /** Turn one raw group line and its body into its typed form. {@code inGroup}: the group is nested in another. */
@@ -1800,20 +1807,20 @@ public final class Pack {
         String countLocator = null;
         long countFixed = -1;
         String why;
-        TextCodec.Loc textLoc = null;
+        TextLayout.Loc textLoc = null;
         if (ctx.wire == Wire.TLV) throw badDirective(format, s.locator, where + ": group is not allowed on the tlv wire");
         if (ctx.wire == Wire.TEXT) {
             if (inGroup) throw badDirective(format, s.locator, where + ": a group inside a group is not allowed on the text wire");
             if (s.opts.size() != 2 || !s.opts.get(0).equals("item")) {
                 throw badDirective(format, s.locator, where + ": a text group is group <list> <i> item <n>");
             }
-            TextCodec.Loc at = TextCodec.parseLocator(s.locator);
-            if (at == null || at.type != TextCodec.FIELD) throw badDirective(format, s.locator, where + ": a text group locator is a field index");
-            TextCodec.Loc n = TextCodec.parseLocator(s.opts.get(1));
-            if (n == null || n.type != TextCodec.FIELD || n.i < 1) {
+            TextLayout.Loc at = TextLayout.parseLocator(s.locator);
+            if (at == null || at.type != TextLayout.FIELD) throw badDirective(format, s.locator, where + ": a text group locator is a field index");
+            TextLayout.Loc n = TextLayout.parseLocator(s.opts.get(1));
+            if (n == null || n.type != TextLayout.FIELD || n.i < 1) {
                 throw badDirective(format, s.locator, where + ": item takes a number of fields from 1, got \"" + s.opts.get(1) + "\"");
             }
-            textLoc = new TextCodec.Loc(TextCodec.GROUP, at.i, 0, n.i, 0);
+            textLoc = new TextLayout.Loc(TextLayout.GROUP, at.i, 0, n.i, 0);
         } else if (ctx.wire == Wire.BITS) {
             String item = null, count = null;
             for (int i = 0; i < s.opts.size(); i++) {
@@ -1824,7 +1831,7 @@ public final class Pack {
             }
             if (item == null) throw badDirective(format, s.locator, where + ": a bits group needs item <bits>");
             if (count == null) throw badDirective(format, s.locator, where + ": a bits group needs count <locator | n>");
-            why = BitsCodec.checkGroupLocator(s.locator);
+            why = Locators.bitsGroup(s.locator);
             if (why != null) throw badLocator(format, s.locator, where + ": " + why);   // 5a of 0.11 (ruling 44 of 0.21)
             try {
                 if (!Transform.UNSIGNED.matcher(item).matches()) throw new NumberFormatException();
@@ -1840,9 +1847,9 @@ public final class Pack {
                     throw bad(format, s.locator, where + ": count " + count + " is too large");
                 }
             } else {
-                why = BitsCodec.checkLocator(count);
+                why = Locators.bits(count);
                 if (why != null) throw badLocator(format, s.locator, where + ": count: " + why);
-                if (BitsCodec.parseLoc(count)[2] > 64) {
+                if (Locators.bitsParse(count)[2] > 64) {
                     throw badDirective(format, s.locator, where + ": a count locator reads at most 64 bits");
                 }
                 countLocator = count;
@@ -1853,10 +1860,10 @@ public final class Pack {
                 throw badDirective(format, s.locator, where + ": "
                         + (o.equals("count") || o.equals("item") ? o + " is for the bits wire only" : "unexpected \"" + o + "\" after the group locator"));
             }
-            if (ctx.wire == Wire.XML) why = XmlCodec.checkGroupLocator(s.locator);
-            else if (ctx.wire == Wire.PROTOBUF) why = ProtobufCodec.checkFieldLocator(s.locator);
-            else if (ctx.wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkGroupLocator(s.locator);
-            else why = JsonCodec.checkLocator(s.locator);
+            if (ctx.wire == Wire.XML) why = Locators.xmlGroup(s.locator);
+            else if (ctx.wire == Wire.PROTOBUF) why = Locators.protobufField(s.locator);
+            else if (ctx.wire == Wire.GEOJSON && !inGroup) why = Locators.geojsonGroup(s.locator);
+            else why = Locators.json(s.locator);
             if (why != null) {
                 // ruling 44 of 0.21: protobuf `rest` and `last`, and a well-formed xml locator of the wrong kind (`@a`),
                 // are a group locator not valid for the wire (ruling 37), bad-directive; every other malformed group
@@ -1903,7 +1910,7 @@ public final class Pack {
         Scope body = new Scope(lines, s.body.defaults);
         Group g = new Group(s.key, s.locator, body, itemBits, countLocator, countFixed, s.line);
         g.loc = textLoc;
-        if (ctx.wire == Wire.BITS && ctx.wordBytes > 0) BitsCodec.prepare(body, ctx.wordBytes, itemBits, format, ctx.source);
+        if (ctx.wire == Wire.BITS && ctx.wordBytes > 0) BitsLayout.prepare(body, ctx.wordBytes, itemBits, format, ctx.source);
         ctx.bodies.add(body);
         ctx.typed.add(g);
         return g;
@@ -1999,7 +2006,7 @@ public final class Pack {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire " + wire.name().toLowerCase());
         }
         if (wire == Wire.TLV) {
-            TlvCodec.Loc loc = tlvLocator(s, ctx, where);
+            TlvLayout.Loc loc = tlvLocator(s, ctx, where);
             TlvTransform tt = TlvTransform.parse(s.arg, format, where);
             if (tt == null) throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire tlv");
             String sizeWhy = tt.checkSize(loc.size);
@@ -2022,11 +2029,11 @@ public final class Pack {
                     throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire text");
                 }
             }
-            TextCodec.Loc loc = textLocator(s, ctx, where, inGroup);
-            if (loc.type == TextCodec.PAIR && loc.i == loc.j) {
+            TextLayout.Loc loc = textLocator(s, ctx, where, inGroup);
+            if (loc.type == TextLayout.PAIR && loc.i == loc.j) {
                 throw badDirective(format, s.locator, where + ": a pair names field " + loc.i + " twice");
             }
-            if ((loc.type == TextCodec.PAIR) != tt.pair()) {
+            if ((loc.type == TextLayout.PAIR) != tt.pair()) {
                 throw badDirective(format, s.locator, where + ": " + (tt.pair()
                         ? "transform " + tt.name + " takes a pair <i>+<j>"
                         : "a pair is for the transforms that take two parts (dm, hms_dmy), not " + tt.name));
@@ -2053,12 +2060,12 @@ public final class Pack {
             BitsTransform bt = BitsTransform.parse(s.arg, format, where);
             if (stop != null) bt.stop = stopCode(stop, bt, format, s.locator, where);
             f = new Field(s.key, s.locator, null, bt, null, via, swap, trim, optional, s.line);
-            why = BitsCodec.checkLocator(s.locator);
+            why = Locators.bits(s.locator);
             if (trim && !bt.takesTrim()) throw badDirective(format, s.locator, where + ": trim is for the ascii and sixbit transforms only");
             if (swap && bt.isSixbit()) throw badDirective(format, s.locator, where + ": swap is not an option of sixbit");
             if (swap && bt.refusesSwap()) throw badDirective(format, s.locator, where + ": swap is not allowed with " + s.arg);
             if (why == null) {
-                int len = BitsCodec.parseLoc(s.locator)[2];
+                int len = Locators.bitsParse(s.locator)[2];
                 String lenWhy = bt.checkLen(len);
                 if (lenWhy != null) throw badDirective(format, s.locator, where + ": " + lenWhy);
                 if (swap && len % 8 != 0) {
@@ -2074,15 +2081,15 @@ public final class Pack {
                 throw badDirective(format, s.locator, where + ": " + w);
             }
             f = new Field(s.key, s.locator, null, null, pb, via, false, false, false, s.line);
-            why = dot ? null : ProtobufCodec.checkFieldLocator(s.locator);
+            why = dot ? null : Locators.protobufField(s.locator);
         } else if (TextScale.isName(head)) {
             TextScale ts = TextScale.parse(s.arg, format, s.locator, where);
             f = new Field(s.key, s.locator, ts.isExact() ? Transform.INT : Transform.FLOAT, null, null, via, false, false, false, s.line);
             f.scale = ts;
             if (dot) why = null;
-            else if (wire == Wire.XML) why = XmlCodec.checkFieldLocator(s.locator);
-            else if (wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkFieldLocator(s.locator);
-            else why = JsonCodec.checkLocator(s.locator);
+            else if (wire == Wire.XML) why = Locators.xmlField(s.locator);
+            else if (wire == Wire.GEOJSON && !inGroup) why = Locators.geojsonField(s.locator);
+            else why = Locators.json(s.locator);
         } else {
             Transform t = Transform.byName(s.arg);
             if (t == null || (t == Transform.BOOL && wire != Wire.JSON)) {
@@ -2093,14 +2100,14 @@ public final class Pack {
             }
             f = new Field(s.key, s.locator, t, null, null, via, false, false, false, s.line);
             if (dot) why = null;
-            else if (wire == Wire.XML) why = XmlCodec.checkFieldLocator(s.locator);
-            else if (wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkFieldLocator(s.locator);
-            else why = JsonCodec.checkLocator(s.locator);
+            else if (wire == Wire.XML) why = Locators.xmlField(s.locator);
+            else if (wire == Wire.GEOJSON && !inGroup) why = Locators.geojsonField(s.locator);
+            else why = Locators.json(s.locator);
         }
         if (why != null) throw badLocator(format, s.locator, where + ": " + why);
         if (absent != null) {
             f.absent = sentinels(f, absent, wire, format, where);
-            if (wire == Wire.GEOJSON && !inGroup && GeoJsonCodec.coordIndex(s.locator) >= 0) {
+            if (wire == Wire.GEOJSON && !inGroup && Locators.geojsonCoord(s.locator) >= 0) {
                 // a coordinate takes only number text as a sentinel (ruling 25 of 0.9)
                 for (Object v : f.absent.json) {
                     if (!(v instanceof Json.Num)) {
@@ -2119,7 +2126,7 @@ public final class Pack {
     static Sentinels sentinels(Field f, String arg, Wire wire, String format, String where) {
         switch (wire) {
             case BITS:
-                return Sentinels.integers(arg, BitsCodec.parseLoc(f.locator)[2], format, f.locator, where);
+                return Sentinels.integers(arg, Locators.bitsParse(f.locator)[2], format, f.locator, where);
             case PROTOBUF:
                 if (f.pb.wireType() == 2) return Sentinels.texts(arg, false, format, f.locator, where);
                 return Sentinels.integers(arg, f.pb.wireType() == 5 ? 32 : 64, format, f.locator, where);
@@ -2137,8 +2144,8 @@ public final class Pack {
     }
 
     /** A text locator: its syntax is bad-pack; in a group, an index at or beyond the item's fields is bad-directive. */
-    private static TextCodec.Loc textLocator(LineSpec s, Ctx ctx, String where, boolean inGroup) {
-        TextCodec.Loc loc = TextCodec.parseLocator(s.locator);
+    private static TextLayout.Loc textLocator(LineSpec s, Ctx ctx, String where, boolean inGroup) {
+        TextLayout.Loc loc = TextLayout.parseLocator(s.locator);
         if (loc == null) {
             throw badDirective(ctx.format, s.locator, where + ": a text locator is <i>, <i>:<from>:<len> (len from 1) or <i>+<j>, got \"" + s.locator + "\"");
         }
@@ -2149,10 +2156,10 @@ public final class Pack {
     }
 
     /** A tlv path: its syntax, its tags' range, and a first tag other than the checksum tag; each bad-directive. */
-    private static TlvCodec.Loc tlvLocator(LineSpec s, Ctx ctx, String where) {
-        Object parsed = TlvCodec.parseLocator(s.locator, ctx.tlvTagSize);
-        if (!(parsed instanceof TlvCodec.Loc)) throw badDirective(ctx.format, s.locator, where + ": " + parsed);
-        TlvCodec.Loc loc = (TlvCodec.Loc) parsed;
+    private static TlvLayout.Loc tlvLocator(LineSpec s, Ctx ctx, String where) {
+        Object parsed = TlvLayout.parseLocator(s.locator, ctx.tlvTagSize);
+        if (!(parsed instanceof TlvLayout.Loc)) throw badDirective(ctx.format, s.locator, where + ": " + parsed);
+        TlvLayout.Loc loc = (TlvLayout.Loc) parsed;
         if (loc.tags[0] == ctx.tlvChecksumTag) {
             throw badDirective(ctx.format, s.locator, where + ": path " + s.locator + " begins with the checksum tag " + ctx.tlvChecksumTag);
         }
@@ -2167,7 +2174,7 @@ public final class Pack {
             throw badDirective(format, s.locator, where + ": const takes a value; write =present for the text");
         }
         if (wire == Wire.TLV) {
-            TlvCodec.Loc loc = tlvLocator(s, ctx, where);
+            TlvLayout.Loc loc = tlvLocator(s, ctx, where);
             When w;
             if (v.equals("present")) {
                 if (loc.size != 0) throw badDirective(format, s.locator, where + ": when <path> present takes no size");
@@ -2184,8 +2191,8 @@ public final class Pack {
             return w;
         }
         if (wire == Wire.TEXT) {
-            TextCodec.Loc loc = textLocator(s, ctx, where, inGroup);
-            if (loc.type == TextCodec.PAIR) {
+            TextLayout.Loc loc = textLocator(s, ctx, where, inGroup);
+            if (loc.type == TextLayout.PAIR) {
                 throw badDirective(format, s.locator, where + ": a when or const takes a field or a column, not a pair");
             }
             When w = v.equals("present")
@@ -2198,9 +2205,9 @@ public final class Pack {
             if (Seq.isUperLocator(s.locator)) {
                 throw badDirective(format, s.locator, where + ": a UPER locator is for a field line of a pack with encoding uper");
             }
-            String why = BitsCodec.checkLocator(s.locator);
+            String why = Locators.bits(s.locator);
             if (why != null) throw badLocator(format, s.locator, where + ": " + why);
-            int len = BitsCodec.parseLoc(s.locator)[2];
+            int len = Locators.bitsParse(s.locator)[2];
             if (len > 64) throw badDirective(format, s.locator, where + ": a when line reads at most 64 bits");
             if (!s.isConst) return numericWhen(s, v, len, format, where);
             long n = unsigned(v, format, s.locator, where);
@@ -2210,16 +2217,16 @@ public final class Pack {
             return new When(s.locator, v, false, v, false, n, s.isConst, s.line);
         }
         if (wire == Wire.PROTOBUF) {
-            String why = ProtobufCodec.checkFieldLocator(s.locator);
+            String why = Locators.protobufField(s.locator);
             if (why != null) throw badLocator(format, s.locator, where + ": " + why);
             if (v.equals("present")) return new When(s.locator, v, true, v, false, 0, s.isConst, s.line);
             if (!s.isConst) return numericWhen(s, v, 64, format, where);
             return new When(s.locator, v, false, v, false, unsigned(v, format, s.locator, where), s.isConst, s.line);
         }
         String why;
-        if (wire == Wire.XML) why = XmlCodec.checkFieldLocator(s.locator);
-        else if (wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkFieldLocator(s.locator);
-        else why = JsonCodec.checkLocator(s.locator);
+        if (wire == Wire.XML) why = Locators.xmlField(s.locator);
+        else if (wire == Wire.GEOJSON && !inGroup) why = Locators.geojsonField(s.locator);
+        else why = Locators.json(s.locator);
         if (why != null) throw badLocator(format, s.locator, where + ": " + why);
         if (v.equals("present")) return new When(s.locator, v, true, v, false, 0, s.isConst, s.line);
         if (s.isConst || v.isEmpty()) {

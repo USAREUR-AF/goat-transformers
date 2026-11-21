@@ -4,6 +4,7 @@
 //! transform, a text field whose characters are six-bit codes, which any
 //! `bits` pack may use.
 
+#[cfg(feature = "bits")]
 use super::bits::{get_bits, set_bits, span};
 use super::seq::{SeqBody, SeqLine};
 use super::*;
@@ -109,6 +110,7 @@ pub(crate) fn check_no_whole(body: &SeqBody) -> Result<(), Error> {
 /// Armored text to the message bits, most significant first, and the number
 /// of bits (6 per character). Every character is checked before any line is
 /// read: one outside `0`..`W` and `` ` ``..`w` is `malformed-wire`.
+#[cfg(feature = "bits")]
 pub(crate) fn read(p: &Pack, text: &str) -> Result<(Vec<u8>, u64), Error> {
     let chars = text.as_bytes();
     let total = chars.len() as u64 * 6;
@@ -131,6 +133,7 @@ pub(crate) fn read(p: &Pack, text: &str) -> Result<(Vec<u8>, u64), Error> {
 
 /// The first `l` bits of `msg` (most significant first), then zero bits up
 /// to a multiple of 6, as armored text.
+#[cfg(feature = "bits")]
 pub(crate) fn write(msg: &[u8], l: u64) -> String {
     let n = (l + 5) / 6;
     let mut out = String::with_capacity(n as usize);
@@ -154,6 +157,7 @@ pub(crate) fn write(msg: &[u8], l: u64) -> String {
 /// except an `optional` field whose key is absent and has no `default`. A
 /// field with `absent` whose key is absent writes its first sentinel, so it
 /// counts, optional or not (ruling 12 of 0.14).
+#[cfg(feature = "bits")]
 pub(crate) fn fixed_len(p: &Pack, sel: &Sel, ent: &Entity) -> Result<u64, Error> {
     let mut end = bits::group_reach(p, sel, ent, 0)?;
     for f in &sel.fields {
@@ -186,6 +190,7 @@ pub(crate) fn sixbit_len_ok(len: u64) -> bool {
 /// Decode: each six bits, first to last in the pack's bit order, as one
 /// character (0..31 as `@`..`_`, 32..63 as space..`?`), then the trailing `@`
 /// removed; with `trim`, the whole trailing run of `@` and space.
+#[cfg(feature = "bits")]
 pub(crate) fn read_sixbit(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u32) -> Result<Value, Error> {
     let mut s: Vec<u8> = (0..len as u64 / 6)
         .map(|k| {
@@ -206,6 +211,7 @@ pub(crate) fn read_sixbit(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u
 /// Encode: each character as its six-bit value, padded with `@` (0) to
 /// `len / 6` characters. A character outside 0x20..0x5F, or text longer than
 /// the field, is `transform-encode`.
+#[cfg(feature = "bits")]
 pub(crate) fn write_sixbit(p: &Pack, f: &FieldDef, v: &Value, start: u64, len: u32, msg: &mut [u8]) -> Result<(), Error> {
     let fail = |m: String| transform_encode_err(p, f, Error { msg: m });
     let text = match v {

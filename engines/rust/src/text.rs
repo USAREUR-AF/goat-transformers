@@ -64,6 +64,7 @@ impl Loc {
         }
     }
 
+    #[cfg(feature = "text")]
     fn addresses(&self, i: usize) -> bool {
         let (a, b) = self.fields();
         a == i || b == Some(i)
@@ -99,12 +100,15 @@ fn group_span(g: &GroupDef) -> (usize, usize) {
 // ---------------------------------------------------------------------------
 
 /// `10^f` as the exact double, for `f` from 0 to 9.
+#[cfg(feature = "text")]
 const POW10: [f64; 10] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9];
 /// 2^53: a rounded value this large or larger is refused on encode.
+#[cfg(feature = "text")]
 const TWO_53: f64 = 9_007_199_254_740_992.0;
 
 /// The transforms that are read with a column's leading spaces removed and
 /// padded with `0` on the left: `int`, `int:<w>`, `float`, `dec`.
+#[cfg(feature = "text")]
 pub(crate) fn numeric(t: &Transform) -> bool {
     matches!(t, Transform::Int | Transform::IntW(_) | Transform::Float | Transform::Dec(_, _))
 }
@@ -119,15 +123,18 @@ pub(crate) fn valid_on_text(t: &Transform) -> bool {
     matches!(t, Transform::StringT | Transform::Int | Transform::Float | Transform::Iso8601Ms) || t.is_text_only()
 }
 
+#[cfg(feature = "text")]
 fn digits(s: &str) -> bool {
     !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit())
 }
 
+#[cfg(feature = "text")]
 fn fail<T>(what: &str, s: &str) -> Result<T, Error> {
     err(format!("`{}` is not {}", s, what))
 }
 
 /// An optional `+` or `-` and one or more digits, within 64 bits.
+#[cfg(feature = "text")]
 fn read_int(s: &str) -> Result<i64, Error> {
     let body = s.strip_prefix(['+', '-']).unwrap_or(s);
     if !digits(body) {
@@ -138,6 +145,7 @@ fn read_int(s: &str) -> Result<i64, Error> {
 
 /// An optional sign, then digits with at most one `.`, at least one digit;
 /// no exponent. The double nearest the decimal, which must be finite.
+#[cfg(feature = "text")]
 fn read_float(s: &str) -> Result<f64, Error> {
     let body = s.strip_prefix(['+', '-']).unwrap_or(s);
     let dots = body.bytes().filter(|b| *b == b'.').count();
@@ -154,6 +162,7 @@ fn read_float(s: &str) -> Result<f64, Error> {
 }
 
 /// `hhmmss` then optionally `.` and digits: (h, m, s, the seconds text, the fraction digits).
+#[cfg(feature = "text")]
 fn read_hms(s: &str) -> Result<(i64, i64, i64, &str, &str), Error> {
     let b = s.as_bytes();
     if b.len() < 6 || !b[..6].iter().all(|c| c.is_ascii_digit()) {
@@ -174,6 +183,7 @@ fn read_hms(s: &str) -> Result<(i64, i64, i64, &str, &str), Error> {
     Ok((h, m, sec, &s[4..], frac))
 }
 
+#[cfg(feature = "text")]
 fn days_in_month(y: i64, m: i64) -> i64 {
     match m {
         1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
@@ -184,6 +194,7 @@ fn days_in_month(y: i64, m: i64) -> i64 {
 }
 
 /// wire text -> model value, for a transform of one part
+#[cfg(feature = "text")]
 pub(crate) fn decode_one(t: &Transform, s: &str) -> Result<Value, Error> {
     match t {
         Transform::StringT => Ok(Value::Str(s.to_string())),
@@ -200,6 +211,7 @@ pub(crate) fn decode_one(t: &Transform, s: &str) -> Result<Value, Error> {
 }
 
 /// wire text of the two fields of a pair -> model value
+#[cfg(feature = "text")]
 pub(crate) fn decode_two(t: &Transform, a: &str, b: &str) -> Result<Value, Error> {
     match *t {
         Transform::Dm(d, _, pos, neg) => {
@@ -253,6 +265,7 @@ pub(crate) fn decode_two(t: &Transform, a: &str, b: &str) -> Result<Value, Error
 }
 
 /// `round(x * 10^f)`, refused when it is not finite or its magnitude is 2^53 or more.
+#[cfg(feature = "text")]
 fn scaled(x: f64, f: u32) -> Result<f64, Error> {
     let n = (x * POW10[f as usize]).round();
     if !n.is_finite() || n.abs() >= TWO_53 {
@@ -262,6 +275,7 @@ fn scaled(x: f64, f: u32) -> Result<f64, Error> {
 }
 
 /// `n` as digits with a `.` before the last `f`, zero-padded to at least `f + 1` digits.
+#[cfg(feature = "text")]
 fn fixed_point(n: u64, f: u32) -> String {
     let s = format!("{:0width$}", n, width = f as usize + 1);
     if f == 0 {
@@ -273,6 +287,7 @@ fn fixed_point(n: u64, f: u32) -> String {
 }
 
 /// Zeros after any `-` until the text without its sign is at least `w` characters.
+#[cfg(feature = "text")]
 fn zero_pad(s: String, w: usize) -> String {
     let (sign, body) = match s.strip_prefix('-') {
         Some(b) => ("-", b),
@@ -285,6 +300,7 @@ fn zero_pad(s: String, w: usize) -> String {
 }
 
 /// `hh`, `mm`, `ss` of `secs`, then `.` and the `f` digits of `frac` (none when `f` is 0).
+#[cfg(feature = "text")]
 fn hms_text(secs: u64, frac: u64, f: u32) -> String {
     let base = format!("{:02}{:02}{:02}", secs / 3600, secs / 60 % 60, secs % 60);
     if f == 0 {
@@ -295,6 +311,7 @@ fn hms_text(secs: u64, frac: u64, f: u32) -> String {
 }
 
 /// model value -> wire text, for a transform of one part
+#[cfg(feature = "text")]
 pub(crate) fn encode_one(t: &Transform, v: &Value) -> Result<String, Error> {
     match (t, v) {
         (Transform::StringT, Value::Str(s)) => Ok(s.clone()),
@@ -322,6 +339,7 @@ pub(crate) fn encode_one(t: &Transform, v: &Value) -> Result<String, Error> {
 }
 
 /// model value -> wire text of the two fields of a pair
+#[cfg(feature = "text")]
 pub(crate) fn encode_two(t: &Transform, v: &Value) -> Result<(String, String), Error> {
     match (*t, v) {
         (Transform::Dm(d, f, pos, neg), Value::F64(x)) => {
@@ -532,11 +550,13 @@ pub(crate) fn check_pack(
 // Decode
 // ---------------------------------------------------------------------------
 
+#[cfg(feature = "text")]
 fn malformed(p: &Pack, why: impl AsRef<str>) -> Error {
     Error { msg: format!("malformed-wire: format `{}`: {}", p.format, why.as_ref()) }
 }
 
 /// Steps 1 to 5 of "Reading a record": the fields of the body.
+#[cfg(feature = "text")]
 fn record<'a>(p: &Pack, input: &'a str) -> Result<Vec<&'a str>, Error> {
     let conf = &p.text;
     let mut t = input;
@@ -574,12 +594,14 @@ fn record<'a>(p: &Pack, input: &'a str) -> Result<Vec<&'a str>, Error> {
 }
 
 /// Field `i` when the record has it and it is not empty.
+#[cfg(feature = "text")]
 fn whole<'a>(rec: &[&'a str], i: usize) -> Option<&'a str> {
     rec.get(i).copied().filter(|s| !s.is_empty())
 }
 
 /// A column: the characters field `i` has from `from` on, at most `len`,
 /// trailing spaces removed (and leading ones for the numeric transforms).
+#[cfg(feature = "text")]
 fn column<'a>(rec: &[&'a str], i: usize, from: usize, len: usize, numeric: bool) -> Option<&'a str> {
     let f = rec.get(i)?;
     if from >= f.len() {
@@ -593,6 +615,7 @@ fn column<'a>(rec: &[&'a str], i: usize, from: usize, len: usize, numeric: bool)
     Some(s).filter(|s| !s.is_empty())
 }
 
+#[cfg(feature = "text")]
 fn when_holds(rec: &[&str], w: &WhenDef) -> bool {
     let text = match loc(&w.locator) {
         Some(Loc::Field(i)) => whole(rec, i),
@@ -607,6 +630,7 @@ fn when_holds(rec: &[&str], w: &WhenDef) -> bool {
 }
 
 /// Decode the field lines of one scope, their locators counted from `base`.
+#[cfg(feature = "text")]
 fn decode_fields(p: &Pack, fields: &[&FieldDef], rec: &[&str], base: usize, d: &mut Decoded) {
     for f in fields {
         let l = match loc(&f.locator) {
@@ -634,6 +658,7 @@ fn decode_fields(p: &Pack, fields: &[&FieldDef], rec: &[&str], base: usize, d: &
     }
 }
 
+#[cfg(feature = "text")]
 pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
     let _scope = limit::scope();
     let rec = record(p, input)?;
@@ -695,6 +720,7 @@ pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
 
 /// One field of the record being written.
 #[derive(Clone, Default)]
+#[cfg(feature = "text")]
 struct Buf {
     text: Vec<u8>,
     /// a whole-field line (or a part of a pair) wrote the text
@@ -707,8 +733,10 @@ struct Buf {
     by_fixed: Vec<bool>,
 }
 
+#[cfg(feature = "text")]
 impl Buf {
     /// Spaces up to `end`, so a column can be written there.
+    #[cfg(feature = "text")]
     fn reach(&mut self, end: usize) {
         if self.text.len() < end {
             self.text.resize(end, b' ');
@@ -717,6 +745,7 @@ impl Buf {
         self.by_col.resize(n, false);
         self.by_fixed.resize(n, false);
     }
+    #[cfg(feature = "text")]
     fn put_whole(&mut self, s: &str) {
         // the earlier whole-field line stands; a whole-field line stands over columns (ruling 3)
         if !self.whole {
@@ -724,6 +753,7 @@ impl Buf {
             self.whole = true;
         }
     }
+    #[cfg(feature = "text")]
     fn put_col(&mut self, from: usize, s: &[u8]) {
         if self.whole {
             return;
@@ -736,12 +766,14 @@ impl Buf {
             }
         }
     }
+    #[cfg(feature = "text")]
     fn fix_whole(&mut self, s: &str) {
         if !self.fixed_whole && !self.by_fixed.iter().any(|b| *b) {
             self.text = s.as_bytes().to_vec();
             self.fixed_whole = true;
         }
     }
+    #[cfg(feature = "text")]
     fn fix_col(&mut self, from: usize, s: &[u8]) {
         if self.fixed_whole {
             return;
@@ -756,11 +788,14 @@ impl Buf {
     }
 }
 
+#[cfg(feature = "text")]
 struct Record {
     fields: Vec<Buf>,
 }
 
+#[cfg(feature = "text")]
 impl Record {
+    #[cfg(feature = "text")]
     fn at(&mut self, i: usize) -> &mut Buf {
         if self.fields.len() <= i {
             self.fields.resize(i + 1, Buf::default());
@@ -771,6 +806,7 @@ impl Record {
 
 /// Text a transform wrote: no delimiter, no `*` under `checksum nmea`, only
 /// characters from 0x20 to 0x7E.
+#[cfg(feature = "text")]
 fn check_text(p: &Pack, s: &str) -> Result<(), Error> {
     for c in s.bytes() {
         if !(0x20..=0x7e).contains(&c) {
@@ -788,6 +824,7 @@ fn check_text(p: &Pack, s: &str) -> Result<(), Error> {
 
 /// Text padded to a column of `len`: `0` on the left (after any `-`) for
 /// the numeric transforms, spaces on the right for the others.
+#[cfg(feature = "text")]
 fn pad(s: &str, len: usize, numeric: bool) -> Result<Vec<u8>, String> {
     if s.len() > len {
         return Err(format!("`{}` is longer than its column of {}", s, len));
@@ -804,6 +841,7 @@ fn pad(s: &str, len: usize, numeric: bool) -> Result<Vec<u8>, String> {
 /// Write one scope (the message, or one item from field `base`): its
 /// `field` lines in line order, then its `when` and `const` lines. Returns
 /// one more than the highest field a line wrote (0: none).
+#[cfg(feature = "text")]
 fn write_scope(
     p: &Pack,
     sel: &Sel,
@@ -867,6 +905,7 @@ fn write_scope(
     Ok(reach)
 }
 
+#[cfg(feature = "text")]
 pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
     let sel = p.select_encode(ent)?;
     let mut rec = Record { fields: Vec::new() };

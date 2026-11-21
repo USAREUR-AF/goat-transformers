@@ -17,9 +17,13 @@
 //! type (ruling 2c), and a value that grammar refuses makes the vector
 //! invalid; a load vector may carry `packs`; capability vectors pin
 //! `capability(from, to)` (ruling 6).
+//! Version 0.24: in a build with fewer wires (a Cargo feature per wire), a
+//! pack on a wire the build lacks is not loaded, and a vector that names such
+//! a pack (its `from` or `to`, a pack text of a load vector) is not run; the
+//! count of vectors left out is printed. A build with all seven leaves out none.
 
 use goat_transformers::json::Json;
-use goat_transformers::{json, Distribution, Engine, Entity, Grade, KeyType, Value};
+use goat_transformers::{json, Distribution, Engine, Entity, Grade, KeyType, Value, Wire};
 use std::path::{Path, PathBuf};
 
 fn repo_packs_dir() -> PathBuf {
@@ -30,8 +34,37 @@ fn repo_packs_dir() -> PathBuf {
         .expect("packs dir")
 }
 
+/// Engine-spec 0.24: the wire of the specification a pack text names that
+/// this build does not have, if any (the value of its `wire` line).
+fn unbuilt_wire(text: &str) -> Option<String> {
+    let built = goat_transformers::build_wires();
+    text.lines().find_map(|l| {
+        let t: Vec<&str> = l.split_whitespace().collect();
+        match t.as_slice() {
+            ["wire", w] if Wire::from_name(w).is_some() && !built.contains(w) => Some(w.to_string()),
+            _ => None,
+        }
+    })
+}
+
+/// The formats of the packs under packs/ that are on a wire this build does
+/// not have (engine-spec 0.24); empty in a build with all seven wires.
+fn unbuilt_formats() -> Vec<String> {
+    let mut out = Vec::new();
+    for d in std::fs::read_dir(repo_packs_dir()).unwrap().flatten() {
+        if let Ok(text) = std::fs::read_to_string(d.path().join("pack.def")) {
+            if unbuilt_wire(&text).is_some() {
+                let format = text.lines().find_map(|l| l.trim().strip_prefix("format ").map(|f| f.trim().to_string()));
+                out.extend(format);
+            }
+        }
+    }
+    out
+}
+
 /// Load every model module and every pack. A pack that fails to load is a
-/// failure of the run, named; the other packs still load.
+/// failure of the run, named; the other packs still load. A pack on a wire
+/// this build does not have is left out (engine-spec 0.24).
 fn load_engine() -> (Engine, Vec<(String, String)>) {
     let mut e = Engine::new();
     e.load_model_dir(&repo_packs_dir().join("../model")).unwrap_or_else(|err| panic!("model: {}", err));
@@ -41,6 +74,9 @@ fn load_engine() -> (Engine, Vec<(String, String)>) {
     for d in dirs {
         let def = d.join("pack.def");
         if let Ok(text) = std::fs::read_to_string(&def) {
+            if unbuilt_wire(&text).is_some() {
+                continue;
+            }
             if let Err(err) = e.load_def(&text) {
                 failures.push((format!("{}/pack.def", d.file_name().unwrap().to_string_lossy()), format!("load: {}", err)));
             }
@@ -281,12 +317,17 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
 }
 
 /// Print every failure, then fail once with the count and the names.
-fn report(what: &str, total: usize, failures: &[(String, String)]) {
+/// `skipped`: the vectors left out for a wire this build lacks (engine-spec 0.24).
+fn report(what: &str, total: usize, skipped: usize, failures: &[(String, String)]) {
     use std::io::Write;
     assert!(total > 0, "no {} were run", what);
     // written to stderr directly, so the counts show on a passing run too
     let mut out = std::io::stderr();
     let _ = writeln!(out, "ran {} {}, {} failed", total, what, failures.len());
+    if skipped > 0 {
+        let wires = goat_transformers::build_wires().join(",");
+        let _ = writeln!(out, "left out {} {} on a wire this build ({}) does not have", skipped, what, wires);
+    }
     for (name, why) in failures {
         let _ = writeln!(out, "  FAIL `{}`: {}", name, why);
     }
@@ -299,6 +340,8 @@ fn report(what: &str, total: usize, failures: &[(String, String)]) {
 #[test]
 fn run_all_vectors() {
     let (engine, mut failures) = load_engine();
+    let unbuilt = unbuilt_formats();
+    let mut skipped = 0;
     let packs = repo_packs_dir();
     let mut total = 0;
     let mut dirs: Vec<_> = std::fs::read_dir(&packs).unwrap().flatten().map(|e| e.path()).collect();
@@ -314,23 +357,28 @@ fn run_all_vectors() {
             if vf.extension().and_then(|s| s.to_str()) != Some("json") {
                 continue;
             }
-            total += 1;
             let label = |name: &str| format!("{}/{}", dir.file_name().unwrap().to_string_lossy(), name);
             let text = std::fs::read_to_string(&vf).unwrap();
             let v = match json::parse(&text) {
                 Ok(v) => v,
                 Err(e) => {
+                    total += 1;
                     failures.push((label(&vf.file_name().unwrap().to_string_lossy()), format!("not JSON: {}", e)));
                     continue;
                 }
             };
+            if ["from", "to"].iter().any(|k| jstr(&v, k).is_some_and(|f| unbuilt.iter().any(|u| u == f))) {
+                skipped += 1;
+                continue;
+            }
+            total += 1;
             let name = label(jstr(&v, "name").unwrap_or("?"));
             if let Err(why) = check_vector(&engine, &v) {
                 failures.push((name, why));
             }
         }
     }
-    report("conversion vectors", total, &failures);
+    report("conversion vectors", total, skipped, &failures);
 }
 
 /// Load vectors (spec/vector-format.md, "Load vectors"): a set of model modules
@@ -341,14 +389,24 @@ fn run_load_vectors() {
     let mut files: Vec<_> = std::fs::read_dir(&dir).unwrap().flatten().map(|e| e.path()).collect();
     files.sort();
     let mut total = 0;
+    let mut skipped = 0;
     let mut failures: Vec<(String, String)> = Vec::new();
     for vf in files {
         if vf.extension().and_then(|s| s.to_str()) != Some("json") {
             continue;
         }
-        total += 1;
         let v = json::parse(&std::fs::read_to_string(&vf).unwrap()).unwrap();
         let name = jstr(&v, "name").unwrap_or("?").to_string();
+        let texts: Vec<&str> = match (v.get("pack"), v.get("packs")) {
+            (Some(Json::Str(t)), _) => vec![t.as_str()],
+            (_, Some(Json::Arr(a))) => a.iter().filter_map(|t| if let Json::Str(t) = t { Some(t.as_str()) } else { None }).collect(),
+            _ => vec![],
+        };
+        if texts.iter().any(|t| unbuilt_wire(t).is_some()) {
+            skipped += 1;
+            continue;
+        }
+        total += 1;
         let mut e = Engine::new();
         if let Some(d) = jstr(&v, "max_distribution") {
             e.set_max_distribution(Distribution::parse(d).expect("max_distribution"));
@@ -391,7 +449,7 @@ fn run_load_vectors() {
             failures.push((name, why));
         }
     }
-    report("load vectors", total, &failures);
+    report("load vectors", total, skipped, &failures);
 }
 
 fn str_array(v: &Json, k: &str) -> Option<Vec<String>> {
@@ -413,6 +471,8 @@ fn str_array(v: &Json, k: &str) -> Option<Vec<String>> {
 fn run_capability_vectors() {
     let (engine, load_failures) = load_engine();
     assert!(load_failures.is_empty(), "packs failed to load: {:?}", load_failures);
+    let unbuilt = unbuilt_formats();
+    let mut skipped = 0;
     let dir = repo_packs_dir().join("conformance/capability-vectors");
     let mut files: Vec<_> = std::fs::read_dir(&dir).unwrap().flatten().map(|e| e.path()).collect();
     files.sort();
@@ -422,8 +482,12 @@ fn run_capability_vectors() {
         if vf.extension().and_then(|s| s.to_str()) != Some("json") {
             continue;
         }
-        total += 1;
         let v = json::parse(&std::fs::read_to_string(&vf).unwrap()).unwrap();
+        if ["from", "to"].iter().any(|k| jstr(&v, k).is_some_and(|f| unbuilt.iter().any(|u| u == f))) {
+            skipped += 1;
+            continue;
+        }
+        total += 1;
         let name = jstr(&v, "name").unwrap_or("?").to_string();
         let check = || -> Result<(), String> {
             let from = jstr(&v, "from").ok_or("no `from`")?;
@@ -452,5 +516,5 @@ fn run_capability_vectors() {
             failures.push((name, why));
         }
     }
-    report("capability vectors", total, &failures);
+    report("capability vectors", total, skipped, &failures);
 }

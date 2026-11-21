@@ -176,6 +176,7 @@ impl CharSet {
         }
     }
     /// the code of the padding character
+    #[cfg(feature = "bits")]
     fn pad(&self) -> u32 {
         match self {
             CharSet::Icao6 => 32,
@@ -184,6 +185,7 @@ impl CharSet {
     }
     /// code -> character; None for a code the set does not define. `ascii7`
     /// code 0 is NUL.
+    #[cfg(feature = "bits")]
     fn char_of(&self, c: u32) -> Option<char> {
         match self {
             CharSet::Icao6 => match c {
@@ -202,6 +204,7 @@ impl CharSet {
     }
     /// character -> code; None for a character the set cannot hold (NUL
     /// included, ruling 17 of 0.15)
+    #[cfg(feature = "bits")]
     fn code_of(&self, ch: char) -> Option<u32> {
         let c = ch as u32;
         match self {
@@ -256,6 +259,7 @@ impl Scale {
         Some(Scale { num, den, offset })
     }
     /// `v * factor` (or `v * num / den`), then `+ offset`
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "tlv"))]
     fn decode(&self, v: f64) -> f64 {
         match self.den {
             Some(den) => v * self.num / den + self.offset,
@@ -263,6 +267,7 @@ impl Scale {
         }
     }
     /// `(x - offset) / factor` (or `(x - offset) * den / num`), before rounding
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "tlv"))]
     fn quotient(&self, x: f64) -> f64 {
         match self.den {
             Some(den) => (x - self.offset) * den / self.num,
@@ -509,6 +514,7 @@ impl Transform {
 
     /// bits wire: raw unsigned field value + bit length -> model value
     /// (every bits transform but `ascii`, which the codec reads byte by byte)
+    #[cfg(any(feature = "bits", feature = "tlv"))]
     fn decode_bits(&self, raw: u64, len: u32) -> Result<Value, Error> {
         // the sign extended from the field's highest bit, at every len from 1 to 64 (4c)
         let signed = |raw: u64, len: u32| -> i64 { ((raw << (64 - len)) as i64) >> (64 - len) };
@@ -542,6 +548,7 @@ impl Transform {
     /// bits wire: model value -> raw unsigned field value masked to bit length
     /// Ruling 4b of 0.11: a value outside the field's range is refused, never
     /// wrapped or clamped; the range is compared before any narrowing.
+    #[cfg(any(feature = "bits", feature = "tlv"))]
     fn encode_bits(&self, v: &Value, len: u32) -> Result<u64, Error> {
         let mask = if len >= 64 { u64::MAX } else { (1u64 << len) - 1 };
         // 2^len and 2^(len-1) are exact in f64 for every len in 1..=64
@@ -623,6 +630,7 @@ impl Transform {
         }
     }
     /// wire string -> model value
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json"))]
     fn decode(&self, raw: &str) -> Result<Value, Error> {
         match self {
             Transform::StringT => Ok(Value::Str(raw.to_string())),
@@ -649,6 +657,7 @@ impl Transform {
         }
     }
     /// model value -> wire string
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json"))]
     fn encode(&self, v: &Value) -> Result<String, Error> {
         match (self, v) {
             (Transform::StringT, Value::Str(s)) => Ok(s.clone()),
@@ -664,6 +673,7 @@ impl Transform {
         }
     }
     /// protobuf wire: a leaf field's wire value -> model value
+    #[cfg(feature = "protobuf")]
     fn decode_pb(&self, v: &protobuf::WireVal) -> Result<Value, Error> {
         use protobuf::WireVal::*;
         match (self, v) {
@@ -678,6 +688,7 @@ impl Transform {
         }
     }
     /// protobuf wire: model value -> a leaf field's wire value
+    #[cfg(feature = "protobuf")]
     fn encode_pb(&self, v: &Value) -> Result<protobuf::WireVal, Error> {
         use protobuf::WireVal::*;
         match (self, v) {
@@ -691,6 +702,7 @@ impl Transform {
     }
 
     /// The JSON kind this transform produces, so a JSON wire emits it correctly.
+    #[cfg(feature = "geojson")]
     fn json_kind(&self) -> JsonKind {
         match self {
             Transform::StringT
@@ -795,6 +807,7 @@ pub fn unsigned_text(s: &str) -> Option<u64> {
 
 /// The `smag` value of the low `len` bits of `raw`: the top bit the sign,
 /// 1 negative; sign 1 with magnitude 0 is 0.
+#[cfg(any(feature = "bits", feature = "tlv"))]
 fn smag(raw: u64, len: u32) -> i64 {
     let mag = (raw & ((1u64 << (len - 1)) - 1)) as i64;
     if (raw >> (len - 1)) & 1 == 1 {
@@ -805,6 +818,7 @@ fn smag(raw: u64, len: u32) -> i64 {
 }
 
 /// Sign and magnitude in `len` bits; the magnitude must be below 2^(len-1).
+#[cfg(any(feature = "bits", feature = "tlv"))]
 fn to_smag(neg: bool, mag_f: f64, mag: u64, len: u32) -> Result<u64, Error> {
     let room = 1u64 << (len - 1);
     if mag_f >= room as f64 || mag >= room {
@@ -816,6 +830,7 @@ fn to_smag(neg: bool, mag_f: f64, mag: u64, len: u32) -> Result<u64, Error> {
 
 /// `scale` encode on a text wire: `(x - offset) / factor`, not rounded, and
 /// finite (ruling 14 of 0.15).
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json"))]
 fn text_unscale(sc: &Scale, x: f64) -> Result<f64, Error> {
     let y = sc.quotient(x);
     if y.is_finite() {
@@ -827,6 +842,7 @@ fn text_unscale(sc: &Scale, x: f64) -> Result<f64, Error> {
 
 /// A float read from the wire: not-a-number and infinity are refused
 /// (ruling 23 of 0.5, extended in 0.6).
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 fn finite(x: f64) -> Result<Value, Error> {
     if x.is_finite() {
         Ok(Value::F64(x))
@@ -836,6 +852,7 @@ fn finite(x: f64) -> Result<Value, Error> {
 }
 
 /// A model float narrowed to a single: outside single range is refused.
+#[cfg(any(feature = "bits", feature = "protobuf", feature = "tlv"))]
 fn single(x: f64) -> Result<f32, Error> {
     let y = x as f32;
     if y.is_finite() {
@@ -845,6 +862,7 @@ fn single(x: f64) -> Result<f32, Error> {
     }
 }
 
+#[cfg(feature = "geojson")]
 enum JsonKind {
     StringK,
     NumK,
@@ -1603,6 +1621,40 @@ impl Wire {
             Wire::Tlv => "tlv",
         }
     }
+
+    /// The seven wires of the specification, in the order of ruling 1a of 0.24.
+    pub const ALL: [Wire; 7] = [Wire::Xml, Wire::GeoJson, Wire::Json, Wire::Bits, Wire::Protobuf, Wire::Text, Wire::Tlv];
+
+    /// The wire a `wire` line names, built or not; None: no wire of the specification.
+    pub fn from_name(name: &str) -> Option<Wire> {
+        Wire::ALL.iter().copied().find(|w| w.name() == name)
+    }
+
+    /// Engine-spec 0.24: whether this build has the codecs of the wire (the
+    /// Cargo feature of the same name).
+    pub fn in_build(self) -> bool {
+        match self {
+            Wire::Xml => cfg!(feature = "xml"),
+            Wire::GeoJson => cfg!(feature = "geojson"),
+            Wire::Bits => cfg!(feature = "bits"),
+            Wire::Protobuf => cfg!(feature = "protobuf"),
+            Wire::Json => cfg!(feature = "json"),
+            Wire::Text => cfg!(feature = "text"),
+            Wire::Tlv => cfg!(feature = "tlv"),
+        }
+    }
+}
+
+/// Engine-spec 0.24: the wires this build has, in the order of ruling 1a.
+pub fn build_wires() -> Vec<&'static str> {
+    Wire::ALL.iter().filter(|w| w.in_build()).map(|w| w.name()).collect()
+}
+
+/// The error of a decode or encode on a wire the build lacks. No pack on such
+/// a wire loads (ruling 1c of 0.24), so no conversion reaches it.
+#[allow(dead_code)]
+fn not_built<T>(w: Wire) -> Result<T, Error> {
+    err(format!("unknown-wire: this build does not have the `{}` wire", w.name()))
 }
 
 #[derive(Clone, Debug)]
@@ -1678,14 +1730,17 @@ pub enum SentinelJson {
 
 impl FieldDef {
     /// Is the raw unsigned integer of this field one of its sentinels?
+    #[cfg(any(feature = "bits", feature = "protobuf"))]
     pub(crate) fn absent_num(&self, raw: u64) -> bool {
         self.absent.iter().any(|s| *s == Sentinel::Num(raw))
     }
     /// Is the raw text of this field one of its sentinels?
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "protobuf"))]
     pub(crate) fn absent_text(&self, raw: &str) -> bool {
         self.absent.iter().any(|s| matches!(s, Sentinel::Text(t, _) if t == raw))
     }
     /// The sentinel encode writes for an absent key: the first.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf"))]
     pub(crate) fn sentinel(&self) -> Option<&Sentinel> {
         self.absent.first()
     }
@@ -1883,6 +1938,7 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
 /// The text a sentinel compares a JSON wire value with (ruling 9 of 0.9): a
 /// string as it is, a number's canonical text, `true` or `false`. None for
 /// `null`, arrays and objects.
+#[cfg(any(feature = "geojson", feature = "json"))]
 fn json_absent_text(j: &json::Json) -> Option<String> {
     match j {
         json::Json::Int(n) => Some(fmt_f64(*n as f64)),
@@ -1891,11 +1947,13 @@ fn json_absent_text(j: &json::Json) -> Option<String> {
 }
 
 /// Does a JSON wire value hold one of the field's sentinels?
+#[cfg(any(feature = "geojson", feature = "json"))]
 fn json_absent(f: &FieldDef, j: &json::Json) -> bool {
     !f.absent.is_empty() && json_absent_text(j).map_or(false, |t| f.absent_text(&t))
 }
 
 /// The JSON value of a sentinel (ruling 11 of 0.5, ruling 9 of 0.9).
+#[cfg(any(feature = "geojson", feature = "json"))]
 fn sentinel_json(s: &Sentinel) -> json::Json {
     match s {
         Sentinel::Text(_, SentinelJson::Num(x)) => json::Json::Num(*x),
@@ -1906,6 +1964,7 @@ fn sentinel_json(s: &Sentinel) -> json::Json {
 }
 
 /// The first line that names each locator of a scope (ruling 23 of 0.9).
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json"))]
 fn first_lines<'a>(lines: impl Iterator<Item = (usize, &'a str)>) -> HashMap<&'a str, usize> {
     let mut out: HashMap<&str, usize> = HashMap::new();
     for (n, loc) in lines {
@@ -1918,6 +1977,7 @@ fn first_lines<'a>(lines: impl Iterator<Item = (usize, &'a str)>) -> HashMap<&'a
 /// The sentinel lines of one scope that encode may write: those of an absent
 /// key whose place no line with a value (the entity's or a `default`) writes
 /// (ruling 16 of 0.9). Each with its sentinel.
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "protobuf"))]
 fn sentinel_lines<'a>(sel: &Sel<'a>, ent: &Entity, skip: impl Fn(&FieldDef) -> bool) -> Vec<(&'a FieldDef, &'a Sentinel)> {
     let written: Vec<&str> =
         sel.fields.iter().filter(|f| !skip(f) && sel.value_of(ent, f).is_some()).map(|f| f.locator.as_str()).collect();
@@ -1931,6 +1991,7 @@ fn sentinel_lines<'a>(sel: &Sel<'a>, ent: &Entity, skip: impl Fn(&FieldDef) -> b
 /// Does the entity (inside a group, the item) hold `key`? A scalar when it
 /// is present, whatever its value; a list when it has at least one item
 /// (ruling 2 of 0.18).
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 pub(crate) fn holds(ent: &Entity, key: &str) -> bool {
     ent.fields.contains_key(key) || ent.lists.get(key).map_or(false, |l| !l.is_empty())
 }
@@ -1938,11 +1999,13 @@ pub(crate) fn holds(ent: &Entity, key: &str) -> bool {
 /// Is the line in force on encode? False when its `with` key is not held:
 /// the line is then a line whose key is absent and that has neither a
 /// `default` nor a sentinel (engine-spec v0.18).
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 pub(crate) fn live(ent: &Entity, f: &FieldDef) -> bool {
     f.with.as_ref().map_or(true, |(k, _)| holds(ent, k))
 }
 
 /// Does the entity hold the field's key, on a line that is in force?
+#[cfg(any(feature = "bits", feature = "protobuf"))]
 pub(crate) fn has_key(ent: &Entity, f: &FieldDef) -> bool {
     live(ent, f) && ent.fields.contains_key(&f.model_key)
 }
@@ -1986,6 +2049,7 @@ pub struct WhenDef {
 
 impl WhenDef {
     /// Does an unsigned wire value match the line (any value or range)?
+    #[cfg(any(feature = "bits", feature = "protobuf"))]
     pub(crate) fn holds_num(&self, v: u64) -> bool {
         if self.nums.is_empty() {
             return v == self.num;
@@ -1993,6 +2057,7 @@ impl WhenDef {
         self.nums.iter().any(|(lo, hi)| *lo <= v && v <= *hi)
     }
     /// Does a wire text match the line (any listed text)?
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json"))]
     pub(crate) fn holds_text(&self, t: &str) -> bool {
         if self.texts.is_empty() {
             return t == self.text;
@@ -2000,6 +2065,7 @@ impl WhenDef {
         self.texts.iter().any(|x| x == t)
     }
     /// A list or a range: more than one wire value matches (ruling 3 of 0.20).
+    #[cfg(any(feature = "bits", feature = "protobuf"))]
     pub(crate) fn several(&self) -> bool {
         self.nums.len() > 1 || self.nums.first().map_or(false, |(lo, hi)| lo != hi) || self.texts.len() > 1
     }
@@ -2033,6 +2099,7 @@ pub struct GroupDef {
 
 impl GroupDef {
     /// The lines in force for one item.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     fn body(&self) -> Sel<'_> {
         Sel {
             kind: None,
@@ -2107,6 +2174,7 @@ impl ReqDef {
     }
     /// Does the entity meet the term? A plain key: the key is present, or the
     /// list has an item. With `=`: the value's canonical text is listed.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     pub(crate) fn holds(&self, ent: &Entity) -> bool {
         match &self.values {
             None => ent.fields.contains_key(&self.key) || ent.lists.get(&self.key).map_or(false, |l| !l.is_empty()),
@@ -2208,6 +2276,7 @@ impl<'a> Sel<'a> {
     /// The value encode uses for a field: the entity's, else the `default`.
     /// A default in a gate block applies to the fields of that block and of
     /// the blocks nested in it; the innermost wins (ruling 5 of 0.17).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn value_of(&self, ent: &'a Entity, f: &FieldDef) -> Option<&'a Value> {
         // a line suppressed by `with` has no value, its default included (engine-spec v0.18)
         if !live(ent, f) {
@@ -2224,11 +2293,13 @@ impl<'a> Sel<'a> {
         })
     }
     /// The values written over any field: every `when` that is not `present`, and every `const`.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     fn fixed(&self) -> impl Iterator<Item = &'a WhenDef> + '_ {
         self.whens.iter().copied().filter(|w| !w.present).chain(self.consts.iter().copied())
     }
     /// The locators a decode treats as mapped: every field, every `when` that
     /// is not `present` (ruling 27 of 0.5) and every `const`.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json"))]
     fn mapped(&self) -> Vec<&'a str> {
         self.fields
             .iter()
@@ -2995,6 +3066,7 @@ impl Pack {
     }
 
     /// The lines in force when `kind` is selected (None: a pack without kinds).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn sel<'a>(&'a self, kind: Option<&'a KindDef>) -> Sel<'a> {
         let mut fields: Vec<&FieldDef> = self.fields.iter().collect();
         let mut whens: Vec<&WhenDef> = self.whens.iter().collect();
@@ -3021,6 +3093,7 @@ impl Pack {
     /// Decode-side kind selection: `holds` says whether a `when` matches the
     /// wire. `root` is the document's root element (xml): a kind is considered
     /// only when its root, or the pack's, has that name.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn select_decode<'a>(&'a self, root: Option<&str>, holds: impl Fn(&WhenDef) -> bool) -> Result<Sel<'a>, Error> {
         if self.kinds.is_empty() {
             return Ok(self.sel(None));
@@ -3043,6 +3116,7 @@ impl Pack {
 
     /// Encode-side kind selection: the entity's own kind for this format, else
     /// the first kind whose `requires` keys are all present.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn select_encode<'a>(&'a self, ent: &Entity) -> Result<Sel<'a>, Error> {
         if self.kinds.is_empty() {
             return Ok(self.sel(None));
@@ -3077,6 +3151,7 @@ impl Pack {
     /// Decode: the value a transform yielded, on its way to the model. A
     /// `via` table (engine-spec v0.6), else the pack-wide typemap for `type`
     /// (every wire: ruling 18 of 0.5).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn to_model(&self, f: &FieldDef, v: Value) -> Result<Value, Error> {
         if let Some(t) = &f.via {
             let native_ty = f.transform.value_type();
@@ -3095,6 +3170,7 @@ impl Pack {
     }
 
     /// Decode: the pack-wide typemap, applied to the key `type`.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn typemap_in(&self, f: &FieldDef, v: Value) -> Value {
         if f.model_key == "type" {
             if let Value::Str(code) = &v {
@@ -3107,6 +3183,7 @@ impl Pack {
     }
 
     /// Encode: a model value on its way to the transform (the reverse of `to_model`).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn to_wire(&self, f: &FieldDef, v: &Value) -> Result<Value, Error> {
         // the typemap, then the table (ruling 6 of 0.6)
         let mapped = match v {
@@ -3256,6 +3333,7 @@ impl Pack {
     }
 }
 
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 fn transform_encode_err(p: &Pack, f: &FieldDef, e: Error) -> Error {
     Error {
         msg: format!("transform-encode: format `{}`: `{}` at `{}`: {}", p.format, f.model_key, f.locator, e.msg),
@@ -3273,6 +3351,7 @@ fn read_as(ty: KeyType, text: &str) -> Option<Value> {
 }
 
 /// Table text in the canonical form a value of that type is compared in.
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 fn canon_text(ty: KeyType, text: &str) -> String {
     match ty {
         KeyType::Str => text.to_string(),
@@ -3285,6 +3364,7 @@ fn canon_text(ty: KeyType, text: &str) -> String {
 pub const DEFAULT_MAX_ITEMS: usize = 100_000;
 
 pub(crate) mod limit {
+    #[allow(unused_imports)]
     use super::{err, Entity, Error};
     use std::cell::Cell;
 
@@ -3318,11 +3398,13 @@ pub(crate) mod limit {
     }
 
     /// A decode called without the engine: the default limit.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     pub fn scope() -> Scope {
         begin(super::DEFAULT_MAX_ITEMS)
     }
 
     /// Hold `n` more items: past the limit is `malformed-wire` (7a, 7f).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     pub fn take(format: &str, list: &str, n: u64) -> Result<(), Error> {
         STATE.with(|s| match s.get() {
             None => Ok(()),
@@ -3340,12 +3422,14 @@ pub(crate) mod limit {
     }
 
     /// The items of every list of an entity, at every nesting level.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     pub fn items_of(lists: &std::collections::BTreeMap<String, Vec<Entity>>) -> u64 {
         lists.values().map(|items| items.len() as u64 + items.iter().map(|i| items_of(&i.lists)).sum::<u64>()).sum()
     }
 
     /// The entity no longer holds `n` items: a later group replaces the
     /// list they were in (7g).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     pub fn release(n: u64) {
         STATE.with(|s| {
             if let Some((held, max)) = s.get() {
@@ -3360,6 +3444,7 @@ pub(crate) mod limit {
 /// with a failed line and no value fails the decode (ruling 9 of 0.1.1). A line
 /// whose transform succeeds and whose table refuses the value fails the decode
 /// whatever the other lines of the key do (ruling 4 of 0.6).
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 struct Decoded {
     ent: Entity,
     /// (key, message): a transform failed; an error unless the key gets a value
@@ -3368,21 +3453,26 @@ struct Decoded {
     hard: Vec<String>,
     hard_keys: Vec<String>,
 }
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 impl Decoded {
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn new() -> Decoded {
         Decoded { ent: Entity::default(), soft: Vec::new(), hard: Vec::new(), hard_keys: Vec::new() }
     }
     /// Before the items of a group are read: the items of a list the group
     /// will replace are no longer held (ruling 7g of 0.11).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     fn replacing(&self, list: &str) {
         if let Some(old) = self.ent.lists.get(list) {
             limit::release(old.len() as u64 + old.iter().map(|i| limit::items_of(&i.lists)).sum::<u64>());
         }
     }
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn has(&self, f: &FieldDef) -> bool {
         self.ent.fields.contains_key(&f.model_key)
     }
     /// One line whose locator is present: the transform's result, through the table.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn put(&mut self, p: &Pack, f: &FieldDef, v: Result<Value, Error>) {
         if self.has(f) || self.hard_keys.contains(&f.model_key) {
             return;
@@ -3402,6 +3492,7 @@ impl Decoded {
         }
     }
     /// The entity so far and every failure that stands.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn close(self) -> (Entity, Vec<String>) {
         let ent = self.ent;
         let mut failed: Vec<String> =
@@ -3410,6 +3501,7 @@ impl Decoded {
         (ent, failed)
     }
     /// Take the decoded items of a list: a failed item field fails the decode.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
     fn put_list(&mut self, list: &str, items: Vec<Decoded>) {
         let mut out = Vec::new();
         for (i, item) in items.into_iter().enumerate() {
@@ -3419,6 +3511,7 @@ impl Decoded {
         }
         self.ent.lists.insert(list.to_string(), out);
     }
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
     fn finish(self, p: &Pack, sel: &Sel) -> Result<Entity, Error> {
         let (mut ent, failed) = self.close();
         if !failed.is_empty() {
@@ -4362,25 +4455,49 @@ impl Engine {
         let p = self.pack(format)?;
         let _scope = limit::begin(max_items);
         match p.wire {
+            #[cfg(feature = "xml")]
             Wire::Xml => xml::decode(p, bytes),
+            #[cfg(feature = "geojson")]
             Wire::GeoJson => geojson::decode(p, bytes),
+            #[cfg(feature = "bits")]
             Wire::Bits => bits::decode(p, bytes),
+            #[cfg(feature = "protobuf")]
             Wire::Protobuf => protobuf::decode(p, bytes),
+            #[cfg(feature = "json")]
             Wire::Json => jsonwire::decode(p, bytes),
+            #[cfg(feature = "text")]
             Wire::Text => text::decode(p, bytes),
+            #[cfg(feature = "tlv")]
             Wire::Tlv => tlv::decode(p, bytes),
+            #[allow(unreachable_patterns)]
+            w => {
+                let _ = bytes;
+                not_built(w)
+            }
         }
     }
     pub fn encode(&self, format: &str, ent: &Entity) -> Result<String, Error> {
         let p = self.pack(format)?;
         match p.wire {
+            #[cfg(feature = "xml")]
             Wire::Xml => xml::encode(p, ent),
+            #[cfg(feature = "geojson")]
             Wire::GeoJson => geojson::encode(p, ent),
+            #[cfg(feature = "bits")]
             Wire::Bits => bits::encode(p, ent),
+            #[cfg(feature = "protobuf")]
             Wire::Protobuf => protobuf::encode(p, ent),
+            #[cfg(feature = "json")]
             Wire::Json => jsonwire::encode(p, ent),
+            #[cfg(feature = "text")]
             Wire::Text => text::encode(p, ent),
+            #[cfg(feature = "tlv")]
             Wire::Tlv => tlv::encode(p, ent),
+            #[allow(unreachable_patterns)]
+            w => {
+                let _ = ent;
+                not_built(w)
+            }
         }
     }
     /// `convert` with no context.
@@ -4655,6 +4772,7 @@ pub struct Capability {
 // XML codec (minimal, sufficient for CoT)
 // ---------------------------------------------------------------------------
 
+#[cfg(feature = "xml")]
 pub mod xml {
     use super::*;
 
@@ -5370,6 +5488,7 @@ pub mod json {
     }
 
     impl Json {
+        #[cfg(any(feature = "geojson", feature = "json"))]
         pub fn get<'a>(&'a self, key: &str) -> Option<&'a Json> {
             if let Json::Obj(m) = self {
                 m.iter().find(|(k, _)| k == key).map(|(_, v)| v)
@@ -5393,6 +5512,7 @@ pub mod json {
 
     /// Parse, and also return the text of every number as written, in
     /// document order.
+    #[cfg(any(feature = "geojson", feature = "json"))]
     pub fn parse_raw(input: &str) -> Result<(Json, Vec<String>), Error> {
         let mut p = JsonParser { b: input.as_bytes(), i: 0, raws: Some(Vec::new()), depth: 0 };
         let v = p.document()?;
@@ -5402,21 +5522,26 @@ pub mod json {
     /// The text of each number of a document as written, by the address of
     /// its value in the parsed tree (`raws` from `parse_raw`), and the values
     /// a field has read.
+    #[cfg(any(feature = "geojson", feature = "json"))]
     pub struct NumTexts {
         texts: HashMap<*const Json, String>,
         read: std::cell::RefCell<HashSet<*const Json>>,
     }
 
+    #[cfg(any(feature = "geojson", feature = "json"))]
     impl NumTexts {
+        #[cfg(any(feature = "geojson", feature = "json"))]
         fn get(&self, j: &Json) -> Option<&String> {
             self.texts.get(&(j as *const Json))
         }
         /// A field reads this value.
+        #[cfg(any(feature = "geojson", feature = "json"))]
         pub fn mark(&self, j: &Json) {
             self.read.borrow_mut().insert(j as *const Json);
         }
         /// Is there a number outside the double range that no field read?
         /// (ruling 27 of 0.15: `malformed-wire`)
+        #[cfg(feature = "json")]
         pub fn unread_out_of_range(&self, root: &Json) -> bool {
             let read = self.read.borrow();
             fn walk(j: &Json, read: &HashSet<*const Json>) -> bool {
@@ -5431,6 +5556,7 @@ pub mod json {
         }
     }
 
+    #[cfg(any(feature = "geojson", feature = "json"))]
     pub fn number_texts(root: &Json, raws: &[String]) -> NumTexts {
         fn walk(j: &Json, raws: &[String], at: &mut usize, out: &mut HashMap<*const Json, String>) {
             match j {
@@ -5451,6 +5577,7 @@ pub mod json {
     }
 
     /// The text of a number as written, else as the value prints.
+    #[cfg(any(feature = "geojson", feature = "json"))]
     pub fn number_text(j: &Json, texts: &NumTexts) -> Option<String> {
         match j {
             Json::Int(n) => Some(texts.get(j).cloned().unwrap_or_else(|| n.to_string())),
@@ -5462,6 +5589,7 @@ pub mod json {
     /// `scale` and `iscale` decode on `json` and `geojson` (engine-spec
     /// v0.15): the member must be a number; `iscale` reads its digits as
     /// written. None for another transform.
+    #[cfg(any(feature = "geojson", feature = "json"))]
     pub(crate) fn decode_scale(t: &Transform, j: &Json, texts: &NumTexts) -> Option<Result<Value, Error>> {
         let not_number = || err(format!("JSON value `{}` is not a number", serialize(j)));
         Some(match t {
@@ -5478,6 +5606,7 @@ pub mod json {
     }
 
     /// How many numbers a value holds, in document order.
+    #[cfg(feature = "geojson")]
     pub fn count_numbers(j: &Json) -> usize {
         match j {
             Json::Int(_) | Json::Num(_) => 1,
@@ -5489,6 +5618,7 @@ pub mod json {
 
     /// Serialize with every number as it was written: `raws` from
     /// `parse_raw`, `idx` the index of the value's first number.
+    #[cfg(feature = "geojson")]
     pub fn serialize_raw(j: &Json, raws: &[String], idx: &mut usize) -> String {
         match j {
             Json::Int(_) | Json::Num(_) => {
@@ -5818,11 +5948,13 @@ pub mod json {
         i64::try_from(v).ok()
     }
 
+    #[cfg(any(feature = "geojson", feature = "json"))]
     pub fn serialize(j: &Json) -> String {
         let mut s = String::new();
         write(j, &mut s);
         s
     }
+    #[cfg(any(feature = "geojson", feature = "json"))]
     fn write(j: &Json, out: &mut String) {
         match j {
             Json::Null => out.push_str("null"),
@@ -5860,6 +5992,7 @@ pub mod json {
             }
         }
     }
+    #[cfg(any(feature = "geojson", feature = "json"))]
     fn escape(s: &str) -> String {
         let mut o = String::new();
         for c in s.chars() {
@@ -5881,6 +6014,7 @@ pub mod json {
 
 /// The text a `when` compares a JSON scalar with: a string as-is, a number or
 /// boolean in canonical form. None for null, arrays and objects.
+#[cfg(any(feature = "geojson", feature = "json"))]
 fn json_when_text(j: &json::Json) -> Option<String> {
     use json::Json;
     match j {
@@ -5895,6 +6029,7 @@ fn json_when_text(j: &json::Json) -> Option<String> {
 /// The JSON value a `when` writes (ruling 11 of 0.5): canonical number text as a
 /// number, `true` / `false` as a boolean, anything else, or a value written
 /// with a leading `=`, as a string.
+#[cfg(any(feature = "geojson", feature = "json"))]
 fn json_when_value(w: &WhenDef) -> json::Json {
     use json::Json;
     if !w.forced {
@@ -5920,6 +6055,7 @@ fn json_when_value(w: &WhenDef) -> json::Json {
 }
 
 /// Does a `when` hold for the member found at its locator?
+#[cfg(any(feature = "geojson", feature = "json"))]
 fn json_when_holds(member: Option<&json::Json>, w: &WhenDef) -> bool {
     match member {
         None | Some(json::Json::Null) => false,
@@ -5928,6 +6064,7 @@ fn json_when_holds(member: Option<&json::Json>, w: &WhenDef) -> bool {
     }
 }
 
+#[cfg(feature = "geojson")]
 pub mod geojson {
     use super::json::Json;
     use super::*;
@@ -6183,6 +6320,7 @@ pub mod geojson {
 // json wire (engine-spec v0.5): any JSON object, members addressed by path.
 // ---------------------------------------------------------------------------
 
+#[cfg(any(feature = "json", feature = "geojson"))]
 pub mod jsonwire {
     use super::json::Json;
     use super::*;
@@ -6196,6 +6334,7 @@ pub mod jsonwire {
         Some(cur)
     }
 
+    #[cfg(feature = "json")]
     fn decode_value(t: &Transform, j: &Json, texts: &json::NumTexts) -> Result<Value, Error> {
         if let Some(r) = json::decode_scale(t, j, texts) {
             return r;
@@ -6213,6 +6352,7 @@ pub mod jsonwire {
         }
     }
 
+    #[cfg(feature = "json")]
     fn encode_value(t: &Transform, v: &Value) -> Result<Json, Error> {
         match (t, v) {
             (Transform::StringT, Value::Str(s)) => Ok(Json::Str(s.clone())),
@@ -6307,6 +6447,7 @@ pub mod jsonwire {
         Ok(())
     }
 
+    #[cfg(feature = "json")]
     pub fn decode(p: &Pack, bytes: &str) -> Result<Entity, Error> {
         let _scope = limit::scope();
         let (root, raws) = json::parse_raw(bytes).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
@@ -6505,6 +6646,7 @@ pub mod jsonwire {
         Ok(top)
     }
 
+    #[cfg(feature = "json")]
     pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
         let sel = p.select_encode(ent)?;
         let mut top = build(p, &sel, ent, encode_value)?;
@@ -6568,12 +6710,14 @@ pub mod bits {
 
     /// (first bit of the first item, bits per item) of a group, from the
     /// first bit of its scope.
+    #[cfg(feature = "bits")]
     fn group_span(p: &Pack, g: &GroupDef) -> Result<(u64, u64), Error> {
         let (word, pos) = parse_group_locator(&g.locator)?;
         Ok((word as u64 * p.word_bytes as u64 * 8 + pos as u64, g.item_bits.unwrap_or(1)))
     }
 
     /// (first message bit, bit length) of a locator.
+    #[cfg(feature = "bits")]
     pub(crate) fn span(p: &Pack, loc: &str) -> Result<(u64, u32), Error> {
         let (word, pos, len) = parse_locator(loc)?;
         Ok((word as u64 * p.word_bytes as u64 * 8 + pos as u64, len))
@@ -6584,6 +6728,7 @@ pub mod bits {
     /// bit least significant. msb: bit i is bit `7 - (i mod 8)`, first bit most
     /// significant. msb-lsb: bit i as with msb, first bit least significant
     /// (engine-spec v0.22).
+    #[cfg(feature = "bits")]
     pub(crate) fn get_bits(msg: &[u8], start: u64, len: u32, order: BitOrder) -> Option<u64> {
         match start.checked_add(len as u64) {
             Some(end) if end <= msg.len() as u64 * 8 => {}
@@ -6607,6 +6752,7 @@ pub mod bits {
         Some(v)
     }
 
+    #[cfg(feature = "bits")]
     pub(crate) fn set_bits(msg: &mut [u8], start: u64, len: u32, raw: u64, order: BitOrder) {
         for k in 0..len as u64 {
             let bit = start + k;
@@ -6633,6 +6779,7 @@ pub mod bits {
     /// Message length in bytes: as many whole words as the furthest mapped,
     /// `when` or `const` bit reaches, over the lines in force. `all`: count
     /// `optional` fields too (encode writes them; decode does not need them).
+    #[cfg(feature = "bits")]
     fn message_bytes(p: &Pack, sel: &Sel, all: bool) -> Result<usize, Error> {
         let end = message_end(p, sel, all)?;
         let word_bits = p.word_bytes as u64 * 8;
@@ -6641,6 +6788,7 @@ pub mod bits {
     }
 
     /// The furthest bit the lines in force reach, not rounded to a word.
+    #[cfg(feature = "bits")]
     fn message_end(p: &Pack, sel: &Sel, all: bool) -> Result<u64, Error> {
         let mut end: u64 = 0;
         let locators = sel
@@ -6657,11 +6805,13 @@ pub mod bits {
     }
 
     /// The low `len` bits of `raw` with their bytes in reverse order (`swap`).
+    #[cfg(feature = "bits")]
     fn swap_bytes(raw: u64, len: u32) -> u64 {
         raw.swap_bytes() >> (64 - len)
     }
 
     /// The characters of a list of codes; a code the set does not define is an error.
+    #[cfg(feature = "bits")]
     pub(crate) fn chars_text(set: CharSet, codes: &[u32]) -> Result<String, Error> {
         let mut text = String::with_capacity(codes.len());
         for c in codes {
@@ -6675,6 +6825,7 @@ pub mod bits {
 
     /// The value of a field whose `len` bits start at message bit `start`,
     /// through its transform. The caller has checked the bits are in the input.
+    #[cfg(feature = "bits")]
     pub(crate) fn read_field(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u32) -> Result<Value, Error> {
         if f.transform == Transform::Sixbit {
             return armor::read_sixbit(p, f, raw, start, len);
@@ -6750,6 +6901,7 @@ pub mod bits {
     }
 
     /// Write the wire value `v` of a field into its `len` bits at message bit `start`.
+    #[cfg(feature = "bits")]
     pub(crate) fn write_field(p: &Pack, f: &FieldDef, v: &Value, start: u64, len: u32, msg: &mut [u8]) -> Result<(), Error> {
         if f.transform == Transform::Sixbit {
             return armor::write_sixbit(p, f, v, start, len, msg);
@@ -6844,6 +6996,7 @@ pub mod bits {
     /// Does the field's `len` bits at `start` hold one of its sentinels? The
     /// bits read as `uint` reads them, after `swap` (engine-spec v0.9). The
     /// caller has checked the bits are in the input.
+    #[cfg(feature = "bits")]
     pub(crate) fn is_sentinel(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u32) -> bool {
         if f.absent.is_empty() || len > 64 {
             return false;
@@ -6857,6 +7010,7 @@ pub mod bits {
 
     /// Write the first sentinel of a field into its `len` bits at `start`:
     /// the low `len` bits, then `swap`. False when the field has none.
+    #[cfg(feature = "bits")]
     pub(crate) fn write_sentinel(p: &Pack, f: &FieldDef, start: u64, len: u32, msg: &mut [u8]) -> bool {
         match f.sentinel() {
             Some(Sentinel::Num(n)) if len <= 64 => {
@@ -6875,6 +7029,7 @@ pub mod bits {
     /// Does a gate block hold on `raw`, its locator from bit `base`? A gate
     /// any of whose bits lies beyond `raw` does not, in either form
     /// (engine-spec v0.17).
+    #[cfg(feature = "bits")]
     fn gate_holds(p: &Pack, g: &GateDef, raw: &[u8], total: u64, base: u64) -> bool {
         match span(p, &g.locator) {
             // `total`: the bits of the input, which six-bit armor does not
@@ -6891,6 +7046,7 @@ pub mod bits {
     /// Which gate blocks of a scope hold on `raw`: a nested block only when
     /// the block enclosing it holds. A parent comes before its children in
     /// the table.
+    #[cfg(feature = "bits")]
     fn held_on(p: &Pack, gates: &[GateDef], raw: &[u8], total: u64, base: u64) -> Vec<bool> {
         let mut held = vec![false; gates.len()];
         for (i, g) in gates.iter().enumerate() {
@@ -6901,6 +7057,7 @@ pub mod bits {
 
     /// The lines of a scope outside any gate block and those of the blocks
     /// that hold.
+    #[cfg(feature = "bits")]
     fn only_held<'a>(sel: &Sel<'a>, held: &[bool]) -> Sel<'a> {
         let ok = |g: Option<usize>| g.map_or(true, |i| held[i]);
         Sel {
@@ -6918,6 +7075,7 @@ pub mod bits {
 
     /// The gate blocks encode chooses for one scope (engine-spec v0.17, steps
     /// 1 to 4): which hold, and the gate value step 3 gave each block.
+    #[cfg(feature = "bits")]
     struct GatePlan {
         held: Vec<bool>,
         values: Vec<Option<u64>>,
@@ -6926,6 +7084,7 @@ pub mod bits {
     /// Ruling 3 of 0.20: a `when` with a list or a range leaves the bits of a
     /// field line with a present key that covers exactly its bits, when the
     /// value written there matches it.
+    #[cfg(feature = "bits")]
     fn keeps_field(p: &Pack, sel: &Sel, ent: &Entity, w: &WhenDef, msg: &[u8], base: u64) -> Result<bool, Error> {
         if !w.several() {
             return Ok(false);
@@ -6939,6 +7098,7 @@ pub mod bits {
         Ok(false)
     }
 
+    #[cfg(feature = "bits")]
     fn plan_gates(p: &Pack, sel: &Sel, ent: &Entity) -> Result<GatePlan, Error> {
         let gates = sel.gates;
         if gates.is_empty() {
@@ -7047,6 +7207,7 @@ pub mod bits {
     }
 
     /// The furthest bit of a scope's held gate locators (the length paragraph of 0.17).
+    #[cfg(feature = "bits")]
     fn held_gates_end(p: &Pack, sel: &Sel, held: &[bool]) -> Result<u64, Error> {
         let mut end = 0u64;
         for (g, h) in sel.gates.iter().zip(held) {
@@ -7058,6 +7219,7 @@ pub mod bits {
         Ok(end)
     }
 
+    #[cfg(feature = "bits")]
     fn short(p: &Pack, what: impl AsRef<str>) -> Error {
         Error { msg: format!("malformed-wire: format `{}`: {}", p.format, what.as_ref()) }
     }
@@ -7065,6 +7227,7 @@ pub mod bits {
     /// Decode the fields and groups of one scope: the message (`base` 0), or
     /// one item, whose first bit is `base`. `reach` is the furthest bit the
     /// message must hold; `total` the bits of the input.
+    #[cfg(feature = "bits")]
     fn decode_scope(
         p: &Pack,
         sel: &Sel,
@@ -7140,6 +7303,7 @@ pub mod bits {
         Ok(groups_end)
     }
 
+    #[cfg(feature = "bits")]
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
         let _scope = limit::scope();
         // the message and its length in bits: hex, or six-bit armor (engine-spec v0.14)
@@ -7192,6 +7356,7 @@ pub mod bits {
 
     /// The bits one item takes on encode: `item <bits>`, or up to the end of a
     /// nested group counted by a locator, when that is further.
+    #[cfg(feature = "bits")]
     fn item_len(p: &Pack, g: &GroupDef, item: &Entity) -> Result<u64, Error> {
         let item_bits = g.item_bits.unwrap_or(1);
         Ok(item_bits.max(group_reach(p, &g.body(), item, 0)?))
@@ -7199,6 +7364,7 @@ pub mod bits {
 
     /// The furthest bit the groups of a scope write: each count locator, and
     /// the items of each list the entity has.
+    #[cfg(feature = "bits")]
     pub(crate) fn group_reach(p: &Pack, sel: &Sel, ent: &Entity, base: u64) -> Result<u64, Error> {
         let mut end = 0u64;
         for g in &sel.groups {
@@ -7222,8 +7388,10 @@ pub mod bits {
     /// whose first bit is `base`.
     /// A choice of gate blocks step 6 checks on the final output: the
     /// scope's gate table, its first bit, and the blocks held on encode.
+    #[cfg(feature = "bits")]
     type GateCheck<'p> = (&'p [GateDef], u64, Vec<bool>);
 
+    #[cfg(feature = "bits")]
     fn write_scope<'p>(
         p: &Pack,
         all: &Sel<'p>,
@@ -7352,6 +7520,7 @@ pub mod bits {
 
     /// Step 6 of 0.17 on the final output: every scope and item decodes to
     /// the blocks encode chose.
+    #[cfg(feature = "bits")]
     fn check_gates(p: &Pack, msg: &[u8], total: u64, checks: &[GateCheck]) -> Result<(), Error> {
         for (gates, base, held) in checks {
             let out = held_on(p, gates, msg, total, *base);
@@ -7370,6 +7539,7 @@ pub mod bits {
         Ok(())
     }
 
+    #[cfg(feature = "bits")]
     pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
         let sixbit = p.armor == armor::Armor::Sixbit;
         if let Some(body) = &p.seq {
@@ -7406,6 +7576,7 @@ pub mod bits {
 
     /// Hex text to bytes: whitespace ignored, an even number of hex digits.
     /// Anything else is `malformed-wire`.
+    #[cfg(any(feature = "bits", feature = "protobuf", feature = "tlv"))]
     pub fn from_hex(s: &str) -> Result<Vec<u8>, Error> {
         let nibble = |c: u8| match c {
             b'0'..=b'9' => Some(c - b'0'),
@@ -7437,6 +7608,7 @@ pub mod bits {
         Ok(out)
     }
 
+    #[cfg(any(feature = "bits", feature = "protobuf", feature = "tlv"))]
     pub fn to_hex(b: &[u8]) -> String {
         let mut s = String::with_capacity(b.len() * 2);
         for byte in b {
@@ -7458,16 +7630,20 @@ pub mod uper;
 
 pub mod protobuf {
     use super::*;
+    #[cfg(feature = "protobuf")]
     use std::collections::BTreeMap;
 
     #[derive(Clone, Debug, PartialEq)]
+    #[cfg(feature = "protobuf")]
     pub enum WireVal {
         Varint(u64),
         Fixed64(u64),
         LenDelim(Vec<u8>),
         Fixed32(u32),
     }
+    #[cfg(feature = "protobuf")]
     impl WireVal {
+        #[cfg(feature = "protobuf")]
         fn wire_type(&self) -> u8 {
             match self {
                 WireVal::Varint(_) => 0,
@@ -7476,6 +7652,7 @@ pub mod protobuf {
                 WireVal::Fixed32(_) => 5,
             }
         }
+        #[cfg(feature = "protobuf")]
         fn write(&self, out: &mut Vec<u8>) {
             match self {
                 WireVal::Varint(u) => put_varint(*u, out),
@@ -7489,6 +7666,7 @@ pub mod protobuf {
         }
     }
 
+    #[cfg(feature = "protobuf")]
     fn put_varint(mut v: u64, out: &mut Vec<u8>) {
         loop {
             let b = (v & 0x7f) as u8;
@@ -7502,8 +7680,10 @@ pub mod protobuf {
         }
     }
     /// The largest protobuf field number; the smallest is 1.
+    #[cfg(feature = "protobuf")]
     const MAX_FIELD: u64 = (1 << 29) - 1;
 
+    #[cfg(feature = "protobuf")]
     fn get_varint(b: &[u8], i: &mut usize) -> Result<u64, Error> {
         let mut v: u64 = 0;
         let mut shift = 0;
@@ -7529,6 +7709,7 @@ pub mod protobuf {
     }
 
     /// parse one message into (field number, value) pairs, in wire order.
+    #[cfg(feature = "protobuf")]
     fn parse_msg(b: &[u8]) -> Result<Vec<(u32, WireVal)>, Error> {
         let mut out = Vec::new();
         let mut i = 0;
@@ -7599,18 +7780,22 @@ pub mod protobuf {
     /// One message and the submessages the pack's paths walk into, each
     /// parsed once: the cost of a decode is the size of the input, not the
     /// size of the input times the number of lines in the pack.
+    #[cfg(feature = "protobuf")]
     struct Parsed {
         root: Vec<(u32, WireVal)>,
         /// the submessage at each path walked so far (last occurrence of each step)
         subs: BTreeMap<Vec<u32>, Vec<(u32, WireVal)>>,
     }
+    #[cfg(feature = "protobuf")]
     impl Parsed {
+        #[cfg(feature = "protobuf")]
         fn new(b: &[u8]) -> Result<Parsed, Error> {
             Ok(Parsed { root: parse_msg(b)?, subs: BTreeMap::new() })
         }
         /// The fields of the submessage at `prefix` (the message itself for
         /// an empty prefix); None when a step does not occur. A step that is
         /// not a submessage is `malformed-wire` (ruling 13 of 0.7).
+        #[cfg(feature = "protobuf")]
         fn fields_at(&mut self, prefix: &[u32]) -> Result<Option<&[(u32, WireVal)]>, Error> {
             for k in 0..prefix.len() {
                 if self.subs.contains_key(&prefix[..=k]) {
@@ -7629,6 +7814,7 @@ pub mod protobuf {
             Ok(Some(if prefix.is_empty() { &self.root } else { &self.subs[prefix] }))
         }
         /// The leaf field value at a dot-path (last occurrence wins per field).
+        #[cfg(feature = "protobuf")]
         fn resolve(&mut self, path: &[u32]) -> Result<Option<WireVal>, Error> {
             let (last, before) = match path.split_last() {
                 Some(split) => split,
@@ -7641,6 +7827,7 @@ pub mod protobuf {
     /// Does a leaf value hold one of the field's sentinels? A value whose wire
     /// type is not the one the transform fixes holds none: it is
     /// `transform-decode` (ruling 15 of 0.9).
+    #[cfg(feature = "protobuf")]
     fn is_sentinel(f: &FieldDef, v: &WireVal) -> bool {
         if f.absent.is_empty() {
             return false;
@@ -7656,6 +7843,7 @@ pub mod protobuf {
     }
 
     /// The leaf value a sentinel is written as: no zig-zag on `psint`.
+    #[cfg(feature = "protobuf")]
     fn sentinel_wire(f: &FieldDef, s: &Sentinel) -> Result<WireVal, Error> {
         match (&f.transform, s) {
             (Transform::Pvarint | Transform::Psint, Sentinel::Num(n)) => Ok(WireVal::Varint(*n)),
@@ -7672,6 +7860,7 @@ pub mod protobuf {
 
     /// The values of a packed repeated field: one length-delimited occurrence
     /// holding the values back to back.
+    #[cfg(feature = "protobuf")]
     fn unpack(t: &Transform, b: &[u8]) -> Result<Vec<WireVal>, Error> {
         let mut out = Vec::new();
         match t {
@@ -7708,6 +7897,7 @@ pub mod protobuf {
 
     /// Decode the fields and groups of one scope: the message, or one item
     /// read as a submessage.
+    #[cfg(feature = "protobuf")]
     fn decode_scope(p: &Pack, sel: &Sel, msg: &mut Parsed, d: &mut Decoded) -> Result<(), Error> {
         for f in sel.fields.iter().filter(|f| f.locator != ".") {
             let path = parse_path(&f.locator)?;
@@ -7772,6 +7962,7 @@ pub mod protobuf {
         Ok(())
     }
 
+    #[cfg(feature = "protobuf")]
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
         let _scope = limit::scope();
         let raw = super::bits::from_hex(hex)?;
@@ -7792,14 +7983,17 @@ pub mod protobuf {
 
     // build tree: a node is a leaf value, a submessage of ascending field
     // nodes, or the occurrences of a repeated field
+    #[cfg(feature = "protobuf")]
     enum Node {
         Leaf(WireVal),
         Msg(BTreeMap<u32, Node>),
         Many(Vec<Node>),
     }
+    #[cfg(feature = "protobuf")]
     fn insert(tree: &mut BTreeMap<u32, Node>, path: &[u32], v: WireVal) -> Result<(), Error> {
         insert_node(tree, path, Node::Leaf(v))
     }
+    #[cfg(feature = "protobuf")]
     fn insert_node(tree: &mut BTreeMap<u32, Node>, path: &[u32], node: Node) -> Result<(), Error> {
         if path.len() == 1 {
             tree.insert(path[0], node);
@@ -7811,6 +8005,7 @@ pub mod protobuf {
             _ => err(format!("transform-encode: protobuf: field {} is both a leaf and a submessage", path[0])),
         }
     }
+    #[cfg(feature = "protobuf")]
     fn write_node(field: u32, node: &Node, out: &mut Vec<u8>) {
         match node {
             Node::Leaf(wv) => {
@@ -7830,6 +8025,7 @@ pub mod protobuf {
             }
         }
     }
+    #[cfg(feature = "protobuf")]
     fn serialize(tree: &BTreeMap<u32, Node>) -> Vec<u8> {
         let mut out = Vec::new();
         for (field, node) in tree {
@@ -7839,6 +8035,7 @@ pub mod protobuf {
     }
 
     /// The tree one scope writes: the message, or one submessage item.
+    #[cfg(feature = "protobuf")]
     fn build(p: &Pack, sel: &Sel, ent: &Entity) -> Result<BTreeMap<u32, Node>, Error> {
         let mut tree: BTreeMap<u32, Node> = BTreeMap::new();
         // an absent key whose field has `absent` writes its first sentinel where
@@ -7925,6 +8122,7 @@ pub mod protobuf {
         Ok(tree)
     }
 
+    #[cfg(feature = "protobuf")]
     pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
         let sel = p.select_encode(ent)?;
         let mut tree = build(p, &sel, ent)?;
@@ -8139,15 +8337,13 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
         }
         match name {
             "wire" => {
-                wire = Some(match toks[1].as_str() {
-                    "xml" => Wire::Xml,
-                    "geojson" => Wire::GeoJson,
-                    "bits" => Wire::Bits,
-                    "protobuf" => Wire::Protobuf,
-                    "json" => Wire::Json,
-                    "text" => Wire::Text,
-                    "tlv" => Wire::Tlv,
-                    o => return err(format!("unknown-wire: line {}: `{}` is not a wire", ln, o)),
+                wire = Some(match Wire::from_name(&toks[1]) {
+                    // ruling 1c of 0.24: a wire of the specification this build lacks
+                    Some(w) if !w.in_build() => {
+                        return err(format!("unknown-wire: line {}: this build does not have the `{}` wire", ln, w.name()))
+                    }
+                    Some(w) => w,
+                    None => return err(format!("unknown-wire: line {}: `{}` is not a wire", ln, toks[1])),
                 })
             }
             "distribution" => {

@@ -1,5 +1,7 @@
 //! ASN.1 unaligned PER (engine-spec 0.19): checks derived by hand from the
 //! section, beside the conformance vectors.
+// The packs this test loads need these wires (engine-spec 0.24).
+#![cfg(all(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 
 use goat_transformers::{Engine, Entity, Value};
 use std::path::Path;
