@@ -1,0 +1,14 @@
+{
+ "name": "gen-notification_object-roundtrip",
+ "from": "donki-notification",
+ "to": "donki-notification",
+ "input": "{\"messageType\":\"s92995\",\"messageID\":\"s56692\",\"messageURL\":\"s18463\",\"messageIssueTime\":\"s88073\",\"messageBody\":\"s61227\"}",
+ "expect": "{\"messageType\":\"s92995\",\"messageID\":\"s56692\",\"messageURL\":\"s18463\",\"messageIssueTime\":\"s88073\",\"messageBody\":\"s61227\"}",
+ "model": {
+  "donkinotif.message_type": "s92995",
+  "donkinotif.message_id": "s56692",
+  "donkinotif.message_url": "s18463",
+  "donkinotif.message_issue_time": "s88073",
+  "donkinotif.message_body": "s61227"
+ }
+}

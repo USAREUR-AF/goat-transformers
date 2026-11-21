@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "|associatedCMEID|string": "associated_cmeid",
+  "|associatedCMELink|string": "associated_cmelink",
+  "|associatedCMEstartTime|string": "associated_cmestart_time",
+  "|catalog|string": "catalog",
+  "|dataLevel|string": "data_level",
+  "|featureCode|string": "feature_code",
+  "|halfAngle|float": "half_angle",
+  "|imageType|string": "image_type",
+  "|isMostAccurate|int": "is_most_accurate",
+  "|latitude|float": "latitude",
+  "|link|string": "link",
+  "|longitude|float": "longitude",
+  "|measurementTechnique|string": "measurement_technique",
+  "|minorHalfWidth|float": "minor_half_width",
+  "|note|string": "note",
+  "|speedMeasuredAtHeight|float": "speed_measured_at_height",
+  "|speed|float": "speed",
+  "|submissionTime|string": "submission_time",
+  "|tilt|float": "tilt",
+  "|time21_5|string": "time21_5",
+  "|type|string": "type",
+  "|versionId|int": "version_id"
+ },
+ "lists": {}
+}

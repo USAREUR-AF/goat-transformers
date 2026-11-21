@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|messageBody|string": "message_body",
+  "|messageID|string": "message_id",
+  "|messageIssueTime|string": "message_issue_time",
+  "|messageType|string": "message_type",
+  "|messageURL|string": "message_url"
+ },
+ "lists": {}
+}

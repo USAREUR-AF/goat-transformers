@@ -1,0 +1,9 @@
+{
+  "name": "alpha5-number-refused",
+  "from": "tle",
+  "to": "tle",
+  "input": "1 A0001U 26123A   26123.50000000  .00001234  00000-0  12345-4 0 12346",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "CelesTrak, NORAD Two-Line Element Set Format (tle-fmt.php, read 2026-11-21): the satellite number is five digits; a letter in its first column (a scheme some producers use beyond 99999) is not an int; line written by tools/gen/space-text-vectors.py"
+}

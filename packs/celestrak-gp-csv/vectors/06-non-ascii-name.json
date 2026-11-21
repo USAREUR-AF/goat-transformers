@@ -1,0 +1,9 @@
+{
+  "name": "non-ascii-name",
+  "from": "celestrak-gp-csv",
+  "to": "celestrak-gp-csv",
+  "input": "TESTSAT É,2026-123A,2026-05-03T04:05:06.789012,15.5,.0001234,51.5,120.25,90.125,270.5,0,U,70001,999,1234,.12345E-3,.5E-5,0",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "CelesTrak GP data documentation (gp-data-formats.php, read 2026-11-21): the CSV form uses the OMM keywords; column order of the CSV header of 2026-11-21; the text wire accepts characters 0x20 to 0x7E only (engine-spec 0.10, step 2)"
+}

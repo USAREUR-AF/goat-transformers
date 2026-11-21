@@ -1,0 +1,41 @@
+# NORAD two-line element set: one line of a TLE (line 1 or line 2) or the name line
+# before them (line 0 of the three-line form). Public. Maintained by hand.
+# Columns as CelesTrak's format page numbers them from 1; a locator counts from 0.
+format        tle
+version       0.1.0
+distribution  public
+source        "CelesTrak, NORAD Two-Line Element Set Format (https://celestrak.org/NORAD/documentation/tle-fmt.php, last updated 2022-07-01, read 2026-11-21): the columns of lines 0, 1 and 2"
+uses          tle
+wire          text
+delimiter     none
+
+kind   line1
+when   0:0:2  1
+field  tle.satellite_number   0:2:5    int
+field  tle.classification     0:7:1    string
+field  tle.launch_year        0:9:2    int
+field  tle.launch_number      0:11:3   int
+field  tle.launch_piece       0:14:3   string
+field  tle.epoch_year         0:18:2   int
+field  tle.epoch_day          0:20:12  dec:8:12
+field  tle.mean_motion_dot    0:33:10  string
+field  tle.mean_motion_ddot   0:44:8   string
+field  tle.bstar              0:53:8   string
+field  tle.ephemeris_type     0:62:1   int
+field  tle.element_number     0:64:4   int
+field  tle.checksum           0:68:1   int
+
+kind   line2
+when   0:0:2  2
+field  tle.satellite_number   0:2:5    int
+field  tle.inclination        0:8:8    dec:4:8
+field  tle.ra_of_asc_node     0:17:8   dec:4:8
+field  tle.eccentricity_digits 0:26:7  int
+field  tle.arg_of_perigee     0:34:8   dec:4:8
+field  tle.mean_anomaly       0:43:8   dec:4:8
+field  tle.mean_motion        0:52:11  dec:8:11
+field  tle.rev_number         0:63:5   int
+field  tle.checksum           0:68:1   int
+
+kind   name
+field  tle.name               0:0:24   string

@@ -1,0 +1,20 @@
+{
+  "name": "line2-round-trip",
+  "from": "tle",
+  "to": "tle",
+  "input": "2 70001 101.5000 120.2500 0001234 190.1250 270.5000 14.25000000123456",
+  "expect": "2 70001 101.5000 120.2500 0001234 190.1250 270.5000 14.25000000123456",
+  "model": {
+    "tle.satellite_number": "70001",
+    "tle.inclination": "101.5",
+    "tle.ra_of_asc_node": "120.25",
+    "tle.eccentricity_digits": "1234",
+    "tle.arg_of_perigee": "190.125",
+    "tle.mean_anomaly": "270.5",
+    "tle.mean_motion": "14.25",
+    "tle.rev_number": "12345",
+    "tle.checksum": "6"
+  },
+  "source": "constructed",
+  "reference": "CelesTrak, NORAD Two-Line Element Set Format (tle-fmt.php, read 2026-11-21): line 2, every angle of three integer digits, so the line is written back unchanged; line written by tools/gen/space-text-vectors.py"
+}

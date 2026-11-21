@@ -1,0 +1,7 @@
+{
+ "name": "gen-feed-residue",
+ "from": "neows-feed",
+ "to": "neows-feed",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"links\":{\"self\":\"s11821\",\"next\":\"s47558\",\"prev\":\"s97840\"},\"element_count\":70368}",
+ "expect": "{\"links\":{\"self\":\"s11821\",\"next\":\"s47558\",\"prev\":\"s97840\"},\"element_count\":70368,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

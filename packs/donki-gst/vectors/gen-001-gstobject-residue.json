@@ -1,0 +1,7 @@
+{
+ "name": "gen-gstobject-residue",
+ "from": "donki-gst",
+ "to": "donki-gst",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"gstID\":\"s80033\",\"startTime\":\"s66785\",\"allKpIndex\":[{\"observedTime\":\"s52047\",\"kpIndex\":-0.5,\"source\":\"s54702\"},{\"observedTime\":\"s90124\",\"kpIndex\":42.375,\"source\":\"s38098\"}],\"link\":\"s24748\",\"linkedEvents\":[{\"activityID\":\"s8301\"},{\"activityID\":\"s15284\"}],\"submissionTime\":\"s23804\",\"versionId\":60964,\"sentNotifications\":[{\"messageID\":\"s35341\",\"messageIssueTime\":\"s60553\",\"messageURL\":\"s83728\"},{\"messageID\":\"s6415\",\"messageIssueTime\":\"s7165\",\"messageURL\":\"s99\"}]}",
+ "expect": "{\"gstID\":\"s80033\",\"startTime\":\"s66785\",\"allKpIndex\":[{\"observedTime\":\"s52047\",\"kpIndex\":-0.5,\"source\":\"s54702\"},{\"observedTime\":\"s90124\",\"kpIndex\":42.375,\"source\":\"s38098\"}],\"link\":\"s24748\",\"linkedEvents\":[{\"activityID\":\"s8301\"},{\"activityID\":\"s15284\"}],\"submissionTime\":\"s23804\",\"versionId\":60964,\"sentNotifications\":[{\"messageID\":\"s35341\",\"messageIssueTime\":\"s60553\",\"messageURL\":\"s83728\"},{\"messageID\":\"s6415\",\"messageIssueTime\":\"s7165\",\"messageURL\":\"s99\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

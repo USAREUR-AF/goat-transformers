@@ -1,0 +1,29 @@
+{
+  "name": "row-round-trip",
+  "from": "celestrak-gp-csv",
+  "to": "celestrak-gp-csv",
+  "input": "TESTSAT 1,2026-123A,2026-05-03T04:05:06.789012,15.5,.0001234,51.5,120.25,90.125,270.5,0,U,70001,999,1234,.12345E-3,.5E-5,0",
+  "expect": "TESTSAT 1,2026-123A,2026-05-03T04:05:06.789012,15.5,0.0001234,51.5,120.25,90.125,270.5,0,U,70001,999,1234,.12345E-3,.5E-5,0",
+  "model": {
+    "ckgp.object_name": "TESTSAT 1",
+    "ckgp.object_id": "2026-123A",
+    "uid": "2026-123A",
+    "ckgp.epoch": "2026-05-03T04:05:06.789012",
+    "ckgp.mean_motion": "15.5",
+    "ckgp.eccentricity": "0.0001234",
+    "ckgp.inclination": "51.5",
+    "ckgp.ra_of_asc_node": "120.25",
+    "ckgp.arg_of_pericenter": "90.125",
+    "ckgp.mean_anomaly": "270.5",
+    "ckgp.ephemeris_type": "0",
+    "ckgp.classification_type": "U",
+    "ckgp.norad_cat_id": "70001",
+    "ckgp.element_set_no": "999",
+    "ckgp.rev_at_epoch": "1234",
+    "ckgpcsv.bstar_text": ".12345E-3",
+    "ckgpcsv.mean_motion_dot_text": ".5E-5",
+    "ckgpcsv.mean_motion_ddot_text": "0"
+  },
+  "source": "constructed",
+  "reference": "CelesTrak GP data documentation (gp-data-formats.php, read 2026-11-21): the CSV form uses the OMM keywords; column order of the CSV header of 2026-11-21; a float column is rewritten as `float` writes it (the leading 0 of .0001234 appears); the exponent-notation columns are strings and keep their text"
+}
