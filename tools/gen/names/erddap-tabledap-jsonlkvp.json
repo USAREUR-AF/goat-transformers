@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|altitude|float": "altitude",
+  "|depth|float": "depth",
+  "|latitude|float": "latitude",
+  "|longitude|float": "longitude",
+  "|time|string": "time"
+ },
+ "lists": {}
+}

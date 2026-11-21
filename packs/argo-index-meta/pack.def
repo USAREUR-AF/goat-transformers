@@ -1,0 +1,14 @@
+# Argo GDAC metadata directory file (format version 2.0): one data line. Written by hand from the
+# file's column header line. Wire `text`, delimiter `,`; the comment lines (`#`) and the header
+# line are not records. pack.md says what is mapped and what is not.
+format        argo-index-meta
+version       0.1.0
+distribution  public
+source        "Argo Global Data Assembly Center directory files ar_index_global_prof.txt and ar_index_global_meta.txt (https://data-argo.ifremer.fr/), format version 2.0, their column header lines; Argo data are freely available without restriction (International Argo Program)"
+uses          argoidxmeta
+wire          text
+delimiter     ","
+field  argoidxmeta.file           0  string
+field  argoidxmeta.profiler_type  1  int
+field  argoidxmeta.institution    2  string
+field  argoidxmeta.date_update    3  string

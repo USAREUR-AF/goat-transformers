@@ -1,0 +1,13 @@
+{
+ "name": "gen-feature-roundtrip",
+ "from": "erddap-tabledap-geojson",
+ "to": "erddap-tabledap-geojson",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"time\":\"2024-12-31T14:21:53.772Z\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"time\":\"2024-12-31T14:21:53.772Z\"}}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "time_ms": "1735654913772",
+  "erddapgeo.properties_time": "2024-12-31T14:21:53.772Z"
+ }
+}

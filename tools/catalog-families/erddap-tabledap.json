@@ -1,0 +1,7 @@
+{
+  "name": "ERDDAP tabledap",
+  "domain": "sea",
+  "prefixes": [
+    "erddap-"
+  ]
+}

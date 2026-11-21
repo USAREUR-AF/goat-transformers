@@ -1,0 +1,9 @@
+{
+  "name": "header-line-is-not-a-record",
+  "from": "ndbc-realtime2-stdmet",
+  "to": "ndbc-realtime2-stdmet",
+  "input": "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/ocean-text-vectors.py from the record layouts and spec/engine-spec.md (text wire); no engine run",
+  "reference": "the header line's year column is not a number"
+}

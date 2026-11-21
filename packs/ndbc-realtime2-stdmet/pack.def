@@ -1,0 +1,31 @@
+# NOAA NDBC realtime2 standard meteorological data: one record (one line) of a station's
+# <station>.txt file. Written by hand from the files' header lines and their fixed column
+# layout (every record of the files read has its columns at the same character positions).
+# Wire `text`, one field (no delimiter: the columns are separated by spaces); each value is a
+# column. pack.md says what is mapped and what is not.
+format        ndbc-realtime2-stdmet
+version       0.1.0
+distribution  public
+source        "NOAA National Data Buoy Center, realtime2 standard meteorological data files (https://www.ndbc.noaa.gov/data/realtime2/<station>.txt), their two header lines and the column layout of the records; NDBC measurement descriptions, https://www.ndbc.noaa.gov/faq/measdes.shtml. US Government work, public domain"
+uses          ndbcstdmet
+wire          text
+delimiter     none
+field  ndbcstdmet.year   0:0:4  int
+field  ndbcstdmet.month  0:5:2  int
+field  ndbcstdmet.day    0:8:2  int
+field  ndbcstdmet.hour   0:11:2  int
+field  ndbcstdmet.minute 0:14:2  int
+field  ndbcstdmet.wdir   0:16:4  string
+field  ndbcstdmet.wspd   0:20:5  string
+field  ndbcstdmet.gst    0:25:5  string
+field  ndbcstdmet.wvht   0:30:6  string
+field  ndbcstdmet.dpd    0:36:6  string
+field  ndbcstdmet.apd    0:42:6  string
+field  ndbcstdmet.mwd    0:48:4  string
+field  ndbcstdmet.pres   0:52:7  string
+field  ndbcstdmet.atmp   0:59:6  string
+field  ndbcstdmet.wtmp   0:65:6  string
+field  ndbcstdmet.dewp   0:71:6  string
+field  ndbcstdmet.vis    0:77:5  string
+field  ndbcstdmet.ptdy   0:82:5  string
+field  ndbcstdmet.tide   0:87:6  string

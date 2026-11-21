@@ -1,0 +1,40 @@
+{
+ "keys": {
+  "parameters|PARAMETER_ACCURACY|string": "parameters_parameter_accuracy",
+  "parameters|PARAMETER_RESOLUTION|string": "parameters_parameter_resolution",
+  "parameters|PARAMETER_SENSOR|string": "parameters_parameter_sensor",
+  "parameters|PARAMETER_UNITS|string": "parameters_parameter_units",
+  "parameters|PARAMETER|string": "parameters_parameter",
+  "parameters|PREDEPLOYMENT_CALIB_COMMENT|string": "parameters_predeployment_calib_comment",
+  "parameters|PREDEPLOYMENT_CALIB_DATE|string": "parameters_predeployment_calib_date",
+  "parameters|PREDEPLOYMENT_CALIB_EQUATION|string": "parameters_predeployment_calib_equation",
+  "parameters|parameter_vendorinfo.vendor_schema|string": "parameters_parameter_vendorinfo_vendor_schema",
+  "parameters|parameter_vendorinfo.version|string": "parameters_parameter_vendorinfo_version",
+  "parameters|predeployment_vendorinfo.vendor_schema|string": "parameters_predeployment_vendorinfo_vendor_schema",
+  "parameters|predeployment_vendorinfo.version|string": "parameters_predeployment_vendorinfo_version",
+  "sensors|SENSOR_MAKER|string": "sensors_sensor_maker",
+  "sensors|SENSOR_MODEL_FIRMWARE|string": "sensors_sensor_model_firmware",
+  "sensors|SENSOR_MODEL|string": "sensors_sensor_model",
+  "sensors|SENSOR_SERIAL_NO|string": "sensors_sensor_serial_no",
+  "sensors|SENSOR|string": "sensors_sensor",
+  "sensors|sensor_vendorinfo.vendor_schema|string": "sensors_sensor_vendorinfo_vendor_schema",
+  "sensors|sensor_vendorinfo.version|string": "sensors_sensor_vendorinfo_version",
+  "|@context.SDN:L22::|string": "context_sdn_l22",
+  "|@context.SDN:R03::|string": "context_sdn_r03",
+  "|@context.SDN:R25::|string": "context_sdn_r25",
+  "|@context.SDN:R26::|string": "context_sdn_r26",
+  "|@context.SDN:R27::|string": "context_sdn_r27",
+  "|instrument_vendorinfo.vendor_schema|string": "instrument_vendorinfo_vendor_schema",
+  "|instrument_vendorinfo.version|string": "instrument_vendorinfo_version",
+  "|sensor_info.contents|string": "sensor_info_contents",
+  "|sensor_info.created_by|string": "sensor_info_created_by",
+  "|sensor_info.date_creation|string": "sensor_info_date_creation",
+  "|sensor_info.format_version|string": "sensor_info_format_version",
+  "|sensor_info.link|string": "sensor_info_link",
+  "|sensor_info.sensor_described|string": "sensor_info_sensor_described"
+ },
+ "lists": {
+  "|PARAMETERS": "parameters",
+  "|SENSORS": "sensors"
+ }
+}

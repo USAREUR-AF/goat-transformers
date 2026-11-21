@@ -1,0 +1,17 @@
+{
+  "name": "no-position",
+  "from": "argo-index-prof",
+  "to": "argo-index-prof",
+  "input": "nmdis/2901633/profiles/R2901633_071.nc,20260101120000,,,P,846,NM,20260102080000",
+  "expect": "nmdis/2901633/profiles/R2901633_071.nc,20260101120000,,,P,846,NM,20260102080000",
+  "model": {
+    "argoidxprof.file": "nmdis/2901633/profiles/R2901633_071.nc",
+    "argoidxprof.date": "20260101120000",
+    "argoidxprof.ocean": "P",
+    "argoidxprof.profiler_type": "846",
+    "argoidxprof.institution": "NM",
+    "argoidxprof.date_update": "20260102080000"
+  },
+  "source": "derived by tools/gen/ocean-text-vectors.py from the record layouts and spec/engine-spec.md (text wire); no engine run",
+  "reference": "Argo GDAC ar_index_global_prof.txt, format version 2.0; a profile with no position: the empty fields are absent"
+}

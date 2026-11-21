@@ -1,0 +1,15 @@
+{
+  "name": "metadata-line-roundtrip",
+  "from": "argo-index-meta",
+  "to": "argo-index-meta",
+  "input": "aoml/13857/13857_meta.nc,845,AO,20181011200014",
+  "expect": "aoml/13857/13857_meta.nc,845,AO,20181011200014",
+  "model": {
+    "argoidxmeta.file": "aoml/13857/13857_meta.nc",
+    "argoidxmeta.profiler_type": "845",
+    "argoidxmeta.institution": "AO",
+    "argoidxmeta.date_update": "20181011200014"
+  },
+  "source": "derived by tools/gen/ocean-text-vectors.py from the record layouts and spec/engine-spec.md (text wire); no engine run",
+  "reference": "Argo GDAC ar_index_global_meta.txt, format version 2.0"
+}

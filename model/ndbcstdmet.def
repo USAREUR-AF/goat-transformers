@@ -1,0 +1,25 @@
+# The ndbcstdmet module: the columns of an NDBC realtime2 standard meteorological record, as written.
+# packs/ndbc-realtime2-stdmet/pack.md says why each is or is not bound.
+module        ndbcstdmet
+version       0.1.0
+distribution  public
+source        "NOAA National Data Buoy Center, realtime2 standard meteorological data files (https://www.ndbc.noaa.gov/data/realtime2/<station>.txt), their two header lines and the column layout of the records; NDBC measurement descriptions, https://www.ndbc.noaa.gov/faq/measdes.shtml. US Government work, public domain"
+key   year   int     -  "the year of the observation, UTC"
+key   month  int     -  "the month, UTC"
+key   day    int     -  "the day of the month, UTC"
+key   hour   int     -  "the hour, UTC"
+key   minute int     -  "the minute, UTC"
+key   wdir   string  -  "wind direction, degrees clockwise from true north, as written (MM when missing)"
+key   wspd   string  -  "wind speed, m/s, as written (MM when missing)"
+key   gst    string  -  "peak gust speed, m/s, as written"
+key   wvht   string  -  "significant wave height, m, as written"
+key   dpd    string  -  "dominant wave period, s, as written"
+key   apd    string  -  "average wave period, s, as written"
+key   mwd    string  -  "direction the dominant waves come from, degrees from true north, as written"
+key   pres   string  -  "sea level pressure, hPa, as written"
+key   atmp   string  -  "air temperature, degrees Celsius, as written"
+key   wtmp   string  -  "sea surface temperature, degrees Celsius, as written"
+key   dewp   string  -  "dewpoint temperature, degrees Celsius, as written"
+key   vis    string  -  "station visibility, nautical miles, as written"
+key   ptdy   string  -  "pressure tendency, hPa, as written"
+key   tide   string  -  "water level above or below mean lower low water, ft, as written"

@@ -1,0 +1,7 @@
+{
+  "name": "IOOS glider DAC",
+  "domain": "sea",
+  "exact": [
+    "glider-dac-erddap"
+  ]
+}

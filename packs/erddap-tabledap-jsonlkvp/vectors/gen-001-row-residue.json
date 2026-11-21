@@ -1,0 +1,7 @@
+{
+ "name": "gen-row-residue",
+ "from": "erddap-tabledap-jsonlkvp",
+ "to": "erddap-tabledap-jsonlkvp",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"time\":\"2025-03-12T07:25:26.375Z\",\"latitude\":7.0625,\"longitude\":1.5,\"altitude\":12.5,\"depth\":12.5}",
+ "expect": "{\"time\":\"2025-03-12T07:25:26.375Z\",\"latitude\":7.0625,\"longitude\":1.5,\"altitude\":12.5,\"depth\":12.5,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

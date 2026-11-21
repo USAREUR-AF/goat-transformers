@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "|conductivity|float": "conductivity",
+  "|density|float": "density",
+  "|depth|float": "depth",
+  "|lat_uv|float": "lat_uv",
+  "|latitude|float": "latitude",
+  "|lon_uv|float": "lon_uv",
+  "|longitude|float": "longitude",
+  "|precise_lat|float": "precise_lat",
+  "|precise_lon|float": "precise_lon",
+  "|precise_time|string": "precise_time",
+  "|pressure|float": "pressure",
+  "|profile_id|int": "profile_id",
+  "|salinity|float": "salinity",
+  "|temperature|float": "temperature",
+  "|time_uv|string": "time_uv",
+  "|time|string": "time",
+  "|trajectory|string": "trajectory",
+  "|u|float": "u",
+  "|v|float": "v",
+  "|wmo_id|string": "wmo_id"
+ },
+ "lists": {}
+}

@@ -1,0 +1,30 @@
+{
+  "name": "01-record-roundtrip",
+  "from": "ndbc-realtime2-stdmet",
+  "to": "ndbc-realtime2-stdmet",
+  "input": "2026 11 21 01 20 340  2.0  5.0   2.9    12   8.7 299 1018.5  14.7  20.2   8.9   MM   MM    MM",
+  "expect": "2026 11 21 01 20 340  2.0  5.0   2.9    12   8.7 299 1018.5  14.7  20.2   8.9   MM   MM    MM",
+  "model": {
+    "ndbcstdmet.year": "2026",
+    "ndbcstdmet.month": "11",
+    "ndbcstdmet.day": "21",
+    "ndbcstdmet.hour": "1",
+    "ndbcstdmet.minute": "20",
+    "ndbcstdmet.wdir": " 340",
+    "ndbcstdmet.wspd": "  2.0",
+    "ndbcstdmet.gst": "  5.0",
+    "ndbcstdmet.wvht": "   2.9",
+    "ndbcstdmet.dpd": "    12",
+    "ndbcstdmet.apd": "   8.7",
+    "ndbcstdmet.mwd": " 299",
+    "ndbcstdmet.pres": " 1018.5",
+    "ndbcstdmet.atmp": "  14.7",
+    "ndbcstdmet.wtmp": "  20.2",
+    "ndbcstdmet.dewp": "   8.9",
+    "ndbcstdmet.vis": "   MM",
+    "ndbcstdmet.ptdy": "   MM",
+    "ndbcstdmet.tide": "    MM"
+  },
+  "source": "derived by tools/gen/ocean-text-vectors.py from the record layouts and spec/engine-spec.md (text wire); no engine run",
+  "reference": "NDBC realtime2 standard meteorological file, record as served 2026-11-21; columns at fixed positions; missing values are MM, kept as text"
+}
