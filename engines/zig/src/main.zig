@@ -10899,6 +10899,8 @@ const SNode = struct {
     cs: ?*SCase = null, // case
     // Version 0.21: a count line, or the count a `count @<name>` group names
     cnt: ?*SCount = null,
+    // Version 0.31: the second count of `group <list> count @<a> @<b>`
+    cnt2: ?*SCount = null,
 };
 
 const SKind = struct {
@@ -11006,6 +11008,22 @@ const SParser = struct {
     next_case: u32 = 0,
 
     const bd = E.@"bad-directive";
+
+    // The count a `@<name>` of a group line names: a `count` line visible
+    // here, in the same group body (Version 0.21, rulings 9 and 12).
+    fn countRef(self: *SParser, tok: []const u8) !*SCount {
+        const name = tok[1..];
+        if (name.len == 0) return self.err(bd, "count @ names no count", .{});
+        var ni = self.names.items.len;
+        const nm = while (ni > 0) {
+            ni -= 1;
+            if (std.mem.eql(u8, self.names.items[ni].name, name)) break self.names.items[ni];
+        } else return self.err(bd, "count @{s}: no count of that name is visible here", .{name});
+        const c = nm.cnt orelse return self.err(bd, "count @{s}: {s} names a presence, not a count", .{ name, name });
+        // the reference stays in the count's group body (ruling 9)
+        if (nm.body != self.bodyIndex()) return self.err(bd, "count @{s}: the count is in another group body", .{name});
+        return c;
+    }
 
     // A key a `field` or `also` line maps, in its scope (Version 0.20).
     fn mapKey(self: *SParser, key: []const u8) !void {
@@ -11596,19 +11614,27 @@ const SParser = struct {
             // group <list> count <len> | count @<name> | while | more | fx |
             // rest | last
             var n = SNode{ .tag = .group, .lineno = self.lineno };
+            var pending: ?anyerror = null;
             if (toks.len == 4 and is(toks[2], "count") and toks[3].len > 0 and toks[3][0] == '@') {
                 // a count named earlier in the same group body (Version 0.21)
                 n.mode = .cref;
-                const name = toks[3][1..];
-                if (name.len == 0) return self.err(bd, "count @ names no count", .{});
-                var ni = self.names.items.len;
-                const nm = while (ni > 0) {
-                    ni -= 1;
-                    if (is(self.names.items[ni].name, name)) break self.names.items[ni];
-                } else return self.err(bd, "count @{s}: no count of that name is visible here", .{name});
-                n.cnt = nm.cnt orelse return self.err(bd, "count @{s}: {s} names a presence, not a count", .{ name, name });
-                // the reference stays in the count's group body (ruling 9)
-                if (nm.body != self.bodyIndex()) return self.err(bd, "count @{s}: the count is in another group body", .{name});
+                n.cnt = try self.countRef(toks[3]);
+            } else if (toks.len >= 5 and is(toks[2], "count")) {
+                // Version 0.31: `count @<a> @<b>`, one list counted from two
+                // places. Checked after the file (ruling 7); the group is
+                // opened still, so its lines and `end` match.
+                n.mode = .cref;
+                pending = blk: {
+                    for (toks[3..]) |t| {
+                        if (t.len < 2 or t[0] != '@') break :blk self.err(bd, "group {s}: count {s}: not `@<name>`", .{ toks[1], t });
+                    }
+                    if (toks.len > 5) break :blk self.err(bd, "group {s}: count takes at most two names", .{toks[1]});
+                    if (is(toks[3], toks[4])) break :blk self.err(bd, "group {s}: count names {s} twice", .{ toks[1], toks[3] });
+                    n.cnt = self.countRef(toks[3]) catch |e| break :blk e;
+                    n.cnt2 = self.countRef(toks[4]) catch |e| break :blk e;
+                    break :blk null;
+                };
+                if (pending != null) n.mode = .count;
             } else if (toks.len == 4 and is(toks[2], "count")) {
                 n.mode = .count;
                 n.len = try self.bitLen(toks[3], "group count", 64);
@@ -11646,6 +11672,7 @@ const SParser = struct {
             f.is_group = true;
             f.sbody = sb;
             f.grp = g;
+            if (pending) |e| return e;
         } else if (is(kw, "switch")) {
             // switch <model-key> (Version 0.20): the key is mapped by a
             // `field` or `also` line of the scope before this line
@@ -11917,7 +11944,7 @@ fn seqRefs(list: []const SNode, c: *const SCount) SRefs {
     var r = SRefs{};
     for (list) |*n| {
         switch (n.tag) {
-            .group => if (n.mode == .cref and n.cnt == c) r.add(.{ .min = 1, .max = 1 }),
+            .group => if (n.mode == .cref and (n.cnt == c or n.cnt2 == c)) r.add(.{ .min = 1, .max = 1 }),
             .switch_ => {
                 var alt: ?SRefs = null;
                 for (n.body) |*cn| alt = seqAlt(alt, seqRefs(cn.body, c));
@@ -12151,7 +12178,9 @@ const SDec = struct {
     ext_bits: bool = false,
     // the number of items each count line read; null: the line lay at or
     // past the end of its extent
-    cvals: std.AutoHashMapUnmanaged(*const SCount, ?u64) = .{},
+    // (exact: value minus `plus`, which may pass 2^64 - 1, Version 0.31
+    // ruling 5)
+    cvals: std.AutoHashMapUnmanaged(*const SCount, ?i128) = .{},
     // > 0: in the first pass of a `rest` or `last` group, which only
     // counts its items
     counting: usize = 0,
@@ -12495,10 +12524,8 @@ const SDec = struct {
                 }
                 const v: i128 = self.take(c.len);
                 if (v < c.plus) return bad(self.diag, alloc, mw, "count {s}: the value {d} is below its `plus {d}`", .{ c.name, v, c.plus });
-                // at most 2^64 - 1 - (-2^63) items: clamped, as a count above
-                // the bits left fails anyway
-                const items = v - c.plus;
-                try self.cvals.put(alloc, c, if (items > std.math.maxInt(u64)) std.math.maxInt(u64) else @intCast(items));
+                // kept exact, for the comparison of two counts (0.31 ruling 5)
+                try self.cvals.put(alloc, c, v - c.plus);
             },
             .fx => unreachable, // an `fx` line is a line of a chain
         }
@@ -12700,8 +12727,18 @@ const SDec = struct {
             .cref => {
                 // Version 0.21: the count read at its line; absent when that
                 // line, or this group, lay at or past the end of the extent
-                const cnt = (self.cvals.get(n.cnt.?) orelse null) orelse return;
+                const exact = (self.cvals.get(n.cnt.?) orelse null) orelse return;
+                var exact2: ?i128 = null;
+                if (n.cnt2) |c2| exact2 = (self.cvals.get(c2) orelse null) orelse return;
                 if (self.in_extent and self.pos >= self.soft_end) return;
+                // Version 0.31: the two numbers of items agree, compared as
+                // exact integers, before the bits left (rulings 4 and 5)
+                if (exact2) |x2| if (x2 != exact) {
+                    return bad(self.diag, self.alloc, mw, "group {s}: count {s} gives {d} items, count {s} gives {d}", .{ n.list, n.cnt.?.name, exact, n.cnt2.?.name, x2 });
+                };
+                // at most 2^64 - 1 - (-2^63) items: clamped, as a count above
+                // the bits left fails anyway
+                const cnt: u64 = if (exact > std.math.maxInt(u64)) std.math.maxInt(u64) else @intCast(exact);
                 // the count against the limit, less the items of the list it
                 // replaces (rulings 7d and 7g of 0.11), before any item is read
                 try self.replaceList(se, n.list);
@@ -13570,6 +13607,10 @@ const SEnc = struct {
                         // line, holds their number plus n
                         for (items) |*it| try self.body(b, it, env.*, true);
                         if (self.ccur.get(n.cnt.?)) |ci| self.cpend.items[ci].value = @as(i128, items.len) + n.cnt.?.plus;
+                        // Version 0.31: the second count likewise (ruling 8)
+                        if (n.cnt2) |c2| if (self.ccur.get(c2)) |ci| {
+                            self.cpend.items[ci].value = @as(i128, items.len) + c2.plus;
+                        };
                     },
                     .rest => {
                         // back to back. An item before the last that writes a
