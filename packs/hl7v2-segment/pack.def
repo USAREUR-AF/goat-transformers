@@ -1,0 +1,95 @@
+# One HL7 v2 segment line (MSH, PID or OBX), its fields split at '|'. Written by tools/gen/health-pack.py; do not edit by hand.
+format        hl7v2-segment
+version       0.1.0
+distribution  public
+source        "hl7apy, https://github.com/crs4/hl7apy at commit c57adca03c77e549031867b36a6d5703611af8cd, hl7apy/v2_5/fields.py and segments.py (MIT License, Copyright (c) 2012-2018 CRS4); field numbers and names restated, no code copied; the HL7 v2.5 standard not used"
+uses          hl7v2
+wire          text
+delimiter     "|"
+
+kind  msh
+when  0  MSH
+field  hl7v2.msh_2_encoding_characters  1  string  optional
+field  hl7v2.msh_3_sending_application  2  string  optional
+field  hl7v2.msh_4_sending_facility  3  string  optional
+field  hl7v2.msh_5_receiving_application  4  string  optional
+field  hl7v2.msh_6_receiving_facility  5  string  optional
+field  hl7v2.msh_7_date_time_of_message  6  string  optional
+field  hl7v2.msh_8_security  7  string  optional
+field  hl7v2.msh_9_message_type  8  string  optional
+field  hl7v2.msh_10_message_control_id  9  string  optional
+field  hl7v2.msh_11_processing_id  10  string  optional
+field  hl7v2.msh_12_version_id  11  string  optional
+field  hl7v2.msh_13_sequence_number  12  string  optional
+field  hl7v2.msh_14_continuation_pointer  13  string  optional
+field  hl7v2.msh_15_accept_acknowledgment_type  14  string  optional
+field  hl7v2.msh_16_application_acknowledgment_type  15  string  optional
+field  hl7v2.msh_17_country_code  16  string  optional
+field  hl7v2.msh_18_character_set  17  string  optional
+field  hl7v2.msh_19_principal_language_of_message  18  string  optional
+field  hl7v2.msh_20_alternate_character_set_handling_scheme  19  string  optional
+field  hl7v2.msh_21_message_profile_identifier  20  string  optional
+
+kind  pid
+when  0  PID
+field  hl7v2.pid_1_set_id_pid  1  string  optional
+field  hl7v2.pid_2_patient_id  2  string  optional
+field  hl7v2.pid_3_patient_identifier_list  3  string  optional
+field  hl7v2.pid_4_alternate_patient_id_pid  4  string  optional
+field  hl7v2.pid_5_patient_name  5  string  optional
+field  hl7v2.pid_6_mother_s_maiden_name  6  string  optional
+field  hl7v2.pid_7_date_time_of_birth  7  string  optional
+field  hl7v2.pid_8_administrative_sex  8  string  optional
+field  hl7v2.pid_9_patient_alias  9  string  optional
+field  hl7v2.pid_10_race  10  string  optional
+field  hl7v2.pid_11_patient_address  11  string  optional
+field  hl7v2.pid_12_county_code  12  string  optional
+field  hl7v2.pid_13_phone_number_home  13  string  optional
+field  hl7v2.pid_14_phone_number_business  14  string  optional
+field  hl7v2.pid_15_primary_language  15  string  optional
+field  hl7v2.pid_16_marital_status  16  string  optional
+field  hl7v2.pid_17_religion  17  string  optional
+field  hl7v2.pid_18_patient_account_number  18  string  optional
+field  hl7v2.pid_19_ssn_number_patient  19  string  optional
+field  hl7v2.pid_20_driver_s_license_number_patient  20  string  optional
+field  hl7v2.pid_21_mother_s_identifier  21  string  optional
+field  hl7v2.pid_22_ethnic_group  22  string  optional
+field  hl7v2.pid_23_birth_place  23  string  optional
+field  hl7v2.pid_24_multiple_birth_indicator  24  string  optional
+field  hl7v2.pid_25_birth_order  25  string  optional
+field  hl7v2.pid_26_citizenship  26  string  optional
+field  hl7v2.pid_27_veterans_military_status  27  string  optional
+field  hl7v2.pid_28_nationality  28  string  optional
+field  hl7v2.pid_29_patient_death_date_and_time  29  string  optional
+field  hl7v2.pid_30_patient_death_indicator  30  string  optional
+field  hl7v2.pid_31_identity_unknown_indicator  31  string  optional
+field  hl7v2.pid_32_identity_reliability_code  32  string  optional
+field  hl7v2.pid_33_last_update_date_time  33  string  optional
+field  hl7v2.pid_34_last_update_facility  34  string  optional
+field  hl7v2.pid_35_species_code  35  string  optional
+field  hl7v2.pid_36_breed_code  36  string  optional
+field  hl7v2.pid_37_strain  37  string  optional
+field  hl7v2.pid_38_production_class_code  38  string  optional
+field  hl7v2.pid_39_tribal_citizenship  39  string  optional
+
+kind  obx
+when  0  OBX
+field  hl7v2.obx_1_set_id_obx  1  string  optional
+field  hl7v2.obx_2_value_type  2  string  optional
+field  hl7v2.obx_3_observation_identifier  3  string  optional
+field  hl7v2.obx_4_observation_sub_id  4  string  optional
+field  hl7v2.obx_5_observation_value  5  string  optional
+field  hl7v2.obx_6_units  6  string  optional
+field  hl7v2.obx_7_references_range  7  string  optional
+field  hl7v2.obx_8_abnormal_flags  8  string  optional
+field  hl7v2.obx_9_probability  9  string  optional
+field  hl7v2.obx_10_nature_of_abnormal_test  10  string  optional
+field  hl7v2.obx_11_observation_result_status  11  string  optional
+field  hl7v2.obx_12_effective_date_of_reference_range  12  string  optional
+field  hl7v2.obx_13_user_defined_access_checks  13  string  optional
+field  hl7v2.obx_14_date_time_of_the_observation  14  string  optional
+field  hl7v2.obx_15_producer_s_id  15  string  optional
+field  hl7v2.obx_16_responsible_observer  16  string  optional
+field  hl7v2.obx_17_observation_method  17  string  optional
+field  hl7v2.obx_18_equipment_instance_identifier  18  string  optional
+field  hl7v2.obx_19_date_time_of_the_analysis  19  string  optional

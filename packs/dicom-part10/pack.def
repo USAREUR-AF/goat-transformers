@@ -1,0 +1,34 @@
+# DICOM Part 10 file, explicit VR little endian: preamble, DICM, data elements. Written by tools/gen/health-pack.py;
+# do not edit by hand.
+format        dicom-part10
+version       0.1.0
+distribution  public
+source        "pydicom, https://github.com/pydicom/pydicom at commit 6c8881341bee6b438b4cbd0e1a5391774d7919e6, src/pydicom/filereader.py and valuerep.py (MIT License, Copyright (c) 2008-2020 Darcy Mason and pydicom contributors); layout restated, no code copied; DICOM PS3.5 and PS3.10 not used"
+uses          dicom
+wire          bits
+layout        sequential
+bit_order     lsb
+
+field  dicom.preamble  1024  hex
+kind  part10
+when  32  1296255300
+group  dicom.elements  rest
+  field  dicom.group  16  uint
+  field  dicom.element  16  uint
+  field  dicom.vr  16  chars:ascii8
+  switch  dicom.vr
+    case  AE,AS,AT,CS,DA,DS,DT,FL,FD,IS,LO,LT,PN,SH,SL,SS,ST,TM,UI,UL,US
+      length  16  bytes
+        group  dicom.value  rest
+          field  dicom.octet  8  uint
+        end
+      end
+    else
+      field  dicom.reserved  16  uint
+      length  32  bytes
+        group  dicom.value  rest
+          field  dicom.octet  8  uint
+        end
+      end
+  end
+end

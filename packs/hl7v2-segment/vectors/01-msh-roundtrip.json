@@ -1,0 +1,18 @@
+{
+  "name": "msh-roundtrip",
+  "from": "hl7v2-segment",
+  "to": "hl7v2-segment",
+  "input": "MSH|^~\\&|LAB|HOSP|EHR|HOSP|20250115123000||ORU^R01|MSG00001|P|2.5",
+  "expect": "MSH|^~\\&|LAB|HOSP|EHR|HOSP|20250115123000||ORU^R01|MSG00001|P|2.5",
+  "model": {
+    "@kind": "msh",
+    "hl7v2.msh_2_encoding_characters": "^~\\&",
+    "hl7v2.msh_3_sending_application": "LAB",
+    "hl7v2.msh_7_date_time_of_message": "20250115123000",
+    "hl7v2.msh_9_message_type": "ORU^R01",
+    "hl7v2.msh_10_message_control_id": "MSG00001",
+    "hl7v2.msh_11_processing_id": "P",
+    "hl7v2.msh_12_version_id": "2.5"
+  },
+  "source": "built by tools/gen/health-vectors.py from values chosen there; layout restated from hl7apy v2_5 fields.py and segments.py; an ORU^R01 header; MSH-2 is the first field after the segment ID; expect derived there, no engine run"
+}

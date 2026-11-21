@@ -1,0 +1,12 @@
+{
+  "name": "obx-repetition-roundtrip",
+  "from": "hl7v2-segment",
+  "to": "hl7v2-segment",
+  "input": "OBX|2|ST|NOTE^Comment^L||Patient resting~seated||||||P",
+  "expect": "OBX|2|ST|NOTE^Comment^L||Patient resting~seated||||||P",
+  "model": {
+    "hl7v2.obx_5_observation_value": "Patient resting~seated",
+    "hl7v2.obx_11_observation_result_status": "P"
+  },
+  "source": "built by tools/gen/health-vectors.py from values chosen there; layout restated from hl7apy v2_5 fields.py and segments.py; a string value with a repetition separator kept in the field; expect derived there, no engine run"
+}

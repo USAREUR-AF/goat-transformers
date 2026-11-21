@@ -1,0 +1,8 @@
+{
+  "name": "other-segment-is-no-kind",
+  "from": "hl7v2-segment",
+  "to": "hl7v2-segment",
+  "input": "EVN|R01|20250115123000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/health-vectors.py from values chosen there; layout restated from hl7apy v2_5 fields.py and segments.py; EVN is not one of the three segments; expect derived there, no engine run"
+}

@@ -1,0 +1,5 @@
+Packs hl7v2-segment; module hl7v2
+  hl7apy, https://github.com/crs4/hl7apy at commit
+  c57adca03c77e549031867b36a6d5703611af8cd, hl7apy/v2_5/fields.py and
+  segments.py. MIT License, Copyright (c) 2012-2018 CRS4. Field numbers and
+  names restated; no text copied.

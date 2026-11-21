@@ -1,0 +1,13 @@
+# The dicom module: DICOM Part 10 file fields. Written by tools/gen/health-pack.py.
+module        dicom
+version       0.1.0
+distribution  public
+source        "pydicom, https://github.com/pydicom/pydicom at commit 6c8881341bee6b438b4cbd0e1a5391774d7919e6, src/pydicom/filereader.py and valuerep.py (MIT License, Copyright (c) 2008-2020 Darcy Mason and pydicom contributors); layout restated, no code copied; DICOM PS3.5 and PS3.10 not used"
+key   preamble  string  -  "the 128-octet preamble, as hexadecimal digits (each octet's low digit first under the little-endian bit order)"
+list  elements  "the data elements, in file order"
+key   group     int     -  "data element tag: group number"
+key   element   int     -  "data element tag: element number"
+key   vr        string  -  "value representation, two letters (AE ... UV)"
+key   reserved  int     -  "the two reserved octets before a 32-bit length (OB, OD, OF, OL, OV, OW, SQ, SV, UC, UN, UR, UT, UV)"
+list  value     "the value field, as octets (its length is written from the list)"
+key   octet     int     -  "one octet"
