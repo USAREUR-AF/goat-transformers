@@ -6,6 +6,7 @@
 //! this module holds the locators, the `encoding` directive and the X.691
 //! reading and writing.
 
+#[cfg(feature = "bits")]
 use super::seq::{Reader, Writer};
 use super::*;
 
@@ -178,11 +179,13 @@ impl EncodingLines {
 }
 
 /// The fewest bits that hold `range` (0 for 0).
+#[cfg(feature = "bits")]
 pub(crate) fn bits_for(range: u64) -> u32 {
     64 - range.leading_zeros()
 }
 
 /// `ub - lb` as an unsigned number: it never overflows (ruling 4 of 0.19).
+#[cfg(feature = "bits")]
 fn range(lb: i64, ub: i64) -> u64 {
     (ub as i128 - lb as i128) as u64
 }
@@ -193,6 +196,7 @@ fn range(lb: i64, ub: i64) -> u64 {
 
 /// A length determinant: `0` and 7 bits, or `10` and 14 bits. `11`, a
 /// fragmented length, is `malformed-wire`.
+#[cfg(feature = "bits")]
 fn read_len(r: &mut Reader, what: &str) -> Result<u64, Error> {
     if r.read(1, what)? == 0 {
         return r.read(7, what);
@@ -204,6 +208,7 @@ fn read_len(r: &mut Reader, what: &str) -> Result<u64, Error> {
 }
 
 /// `n` units of `unit` bits must lie in the input, before any is read.
+#[cfg(feature = "bits")]
 fn hold(r: &Reader, n: u64, unit: u64, what: &str) -> Result<(), Error> {
     let left = r.end.saturating_sub(r.pos);
     if n.checked_mul(unit).map_or(true, |b| b > left) {
@@ -214,6 +219,7 @@ fn hold(r: &Reader, n: u64, unit: u64, what: &str) -> Result<(), Error> {
 
 /// A constrained whole number in `0..=range`: a value above it is
 /// `malformed-wire`.
+#[cfg(feature = "bits")]
 fn read_constrained(r: &mut Reader, range: u64, what: &str) -> Result<u64, Error> {
     let at = r.pos;
     let v = r.read(bits_for(range), what)?;
@@ -225,6 +231,7 @@ fn read_constrained(r: &mut Reader, range: u64, what: &str) -> Result<u64, Error
 
 /// `k` octets of an integer, big-endian; None when they are more than 8
 /// (skipped). 0 octets is `malformed-wire` (ruling 5 of 0.19).
+#[cfg(feature = "bits")]
 fn read_int_octets(r: &mut Reader, k: u64, what: &str) -> Result<Option<u64>, Error> {
     if k == 0 {
         return Err(r.short(format!("{}: an integer of 0 octets at bit {}", what, r.pos)));
@@ -238,6 +245,7 @@ fn read_int_octets(r: &mut Reader, k: u64, what: &str) -> Result<Option<u64>, Er
 }
 
 /// The low `k` octets of `u` as a two's-complement number.
+#[cfg(feature = "bits")]
 fn signed(u: u64, k: u64) -> i64 {
     if k >= 8 {
         return u as i64;
@@ -252,6 +260,7 @@ fn signed(u: u64, k: u64) -> i64 {
 
 /// A normally small non-negative whole number; None when it is longer than
 /// 8 octets.
+#[cfg(feature = "bits")]
 fn read_small(r: &mut Reader, what: &str) -> Result<Option<u64>, Error> {
     if r.read(1, what)? == 0 {
         return Ok(Some(r.read(6, what)?));
@@ -261,6 +270,7 @@ fn read_small(r: &mut Reader, what: &str) -> Result<Option<u64>, Error> {
 }
 
 /// An open type, skipped: a length determinant of an octet count, then the octets.
+#[cfg(feature = "bits")]
 fn skip_open(r: &mut Reader, what: &str) -> Result<(), Error> {
     let k = read_len(r, what)?;
     hold(r, k, 8, what)?;
@@ -269,6 +279,7 @@ fn skip_open(r: &mut Reader, what: &str) -> Result<(), Error> {
 }
 
 /// A count in `size`: a constrained whole number, or a length determinant.
+#[cfg(feature = "bits")]
 pub(crate) fn read_count(r: &mut Reader, size: Size, what: &str) -> Result<u64, Error> {
     match size {
         Some((lb, ub)) => Ok(lb as u64 + read_constrained(r, (ub - lb) as u64, what)?),
@@ -279,6 +290,7 @@ pub(crate) fn read_count(r: &mut Reader, size: Size, what: &str) -> Result<u64, 
 /// The extension additions after an `ext` block whose bit is 1: their
 /// number as a normally small length (ruling 16), the presence bits, and an
 /// open type for each bit that is 1. They are skipped.
+#[cfg(feature = "bits")]
 pub(crate) fn skip_additions(r: &mut Reader) -> Result<(), Error> {
     let what = "the extension additions of an `ext`";
     let m = if r.read(1, what)? == 0 { r.read(6, what)? + 1 } else { read_len(r, what)? };
@@ -295,6 +307,7 @@ pub(crate) fn skip_additions(r: &mut Reader) -> Result<(), Error> {
 
 /// The alternative of a `choice` the input selects; None for an extension
 /// alternative, which is skipped.
+#[cfg(feature = "bits")]
 pub(crate) fn read_choice(r: &mut Reader, n: u32, ext: bool) -> Result<Option<u32>, Error> {
     let what = "the index of a `choice`";
     if ext && r.read(1, what)? == 1 {
@@ -307,6 +320,7 @@ pub(crate) fn read_choice(r: &mut Reader, n: u32, ext: bool) -> Result<Option<u3
 
 /// An integer value through the field's transform: `uint` and `twos` give
 /// it, the scales `v * f + o`.
+#[cfg(feature = "bits")]
 fn int_value(f: &FieldDef, v: i64) -> Result<Value, Error> {
     match &f.transform {
         Transform::Uint | Transform::Twos => Ok(Value::I64(v)),
@@ -315,6 +329,7 @@ fn int_value(f: &FieldDef, v: i64) -> Result<Value, Error> {
     }
 }
 
+#[cfg(feature = "bits")]
 fn too_large<T>() -> Result<T, Error> {
     err("the integer does not fit 64 signed bits")
 }
@@ -322,6 +337,7 @@ fn too_large<T>() -> Result<T, Error> {
 /// Read one field at the cursor. The outer error is the wire's
 /// (`malformed-wire`); the inner one the transform's, which fails the
 /// field and not the read.
+#[cfg(feature = "bits")]
 pub(crate) fn read_field(r: &mut Reader, f: &FieldDef, loc: &Loc) -> Result<Result<Value, Error>, Error> {
     let what = format!("`{}`", f.model_key);
     let what = what.as_str();
@@ -392,6 +408,7 @@ pub(crate) fn read_field(r: &mut Reader, f: &FieldDef, loc: &Loc) -> Result<Resu
 
 /// A length determinant of `n`; 16384 or more (a fragmented length) is
 /// `transform-encode`.
+#[cfg(feature = "bits")]
 fn write_len(w: &mut Writer, n: u64, what: &str) -> Result<(), Error> {
     if n < 128 {
         w.put(8, n);
@@ -405,6 +422,7 @@ fn write_len(w: &mut Writer, n: u64, what: &str) -> Result<(), Error> {
 
 /// An unsigned number in the fewest octets (at least one), after a length
 /// determinant of their count.
+#[cfg(feature = "bits")]
 fn write_uint(w: &mut Writer, u: u64, what: &str) -> Result<(), Error> {
     let k = ((bits_for(u) + 7) / 8).max(1);
     write_len(w, k as u64, what)?;
@@ -414,6 +432,7 @@ fn write_uint(w: &mut Writer, u: u64, what: &str) -> Result<(), Error> {
 
 /// A two's-complement number in the fewest octets, after a length
 /// determinant of their count.
+#[cfg(feature = "bits")]
 fn write_twos(w: &mut Writer, x: i64, what: &str) -> Result<(), Error> {
     let k = (1u32..8).find(|k| {
         let half = 1i64 << (k * 8 - 1);
@@ -427,6 +446,7 @@ fn write_twos(w: &mut Writer, x: i64, what: &str) -> Result<(), Error> {
 }
 
 /// A normally small non-negative whole number.
+#[cfg(feature = "bits")]
 fn write_small(w: &mut Writer, n: u64, what: &str) -> Result<(), Error> {
     if n <= 63 {
         w.put(7, n);
@@ -437,6 +457,7 @@ fn write_small(w: &mut Writer, n: u64, what: &str) -> Result<(), Error> {
 }
 
 /// A count in `size`; one outside `lb..ub` is `transform-encode`.
+#[cfg(feature = "bits")]
 pub(crate) fn write_count(w: &mut Writer, size: Size, n: usize, what: &str) -> Result<(), Error> {
     match size {
         Some((lb, ub)) => {
@@ -452,6 +473,7 @@ pub(crate) fn write_count(w: &mut Writer, size: Size, n: usize, what: &str) -> R
 
 /// The integer a model value stands for, through the transform: the value,
 /// or `round((x - o) / f)`.
+#[cfg(feature = "bits")]
 fn int_of(w: &Writer, k: &FieldDef, v: &Value) -> Result<i64, Error> {
     let fail = |m: String| transform_encode_err(w.p, k, Error { msg: m });
     match (&k.transform, v) {
@@ -472,6 +494,7 @@ fn int_of(w: &Writer, k: &FieldDef, v: &Value) -> Result<i64, Error> {
 
 /// Write one field. `v`: the key that is written and its wire value, or
 /// None for an absent key, which writes the values of ruling 1 of 0.19.
+#[cfg(feature = "bits")]
 pub(crate) fn write_field(w: &mut Writer, f: &FieldDef, loc: &Loc, v: Option<(&FieldDef, &Value)>) -> Result<(), Error> {
     let what = format!("`{}`", f.model_key);
     let what = what.as_str();

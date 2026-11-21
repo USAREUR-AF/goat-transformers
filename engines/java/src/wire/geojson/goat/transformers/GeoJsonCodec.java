@@ -14,26 +14,46 @@ import java.util.Set;
  * It is written back as a JSON string; an unmapped coordinate slot is written back as the number it was.
  */
 final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
-    private static final String[] COORD = {"lon", "lat", "alt"};
-    private static final Set<String> RESERVED = Set.of("type", "geometry", "properties");
 
     /** Group items are read and written as the {@code json} wire does, with this wire's value types. */
-    private final JsonCodec items;
+    private final Items items;
+
+    /**
+     * The items of a group: the lines of its body read and written as on the {@code json} wire (through
+     * {@link JsonTree}), each value as this wire reads and writes it (ruling 7 of 0.7).
+     */
+    private static final class Items extends JsonTree<Object> {
+        Items(Pack pack) { super(pack); }
+
+        @Override
+        Object readValue(Transform t, Object v) { return decodeGeo(t, v); }
+
+        @Override
+        Object encodeOne(Pack.Field f, Entity e, Pack.Scope scope) {
+            String s = encodeField(f, e, scope);
+            return s == null ? null : jsonValue(f.transform, s);
+        }
+
+        // An Items codec reads and writes group items only; the message is GeoJsonCodec's.
+        @Override
+        Object parse(String text) { throw new IllegalStateException(); }
+
+        @Override
+        boolean holds(Object wire, Pack.When when) { throw new IllegalStateException(); }
+
+        @Override
+        Entity decodeKind(Object wire, Pack.Kind kind) { throw new IllegalStateException(); }
+
+        @Override
+        String encodeKind(Entity e, Pack.Kind kind) { throw new IllegalStateException(); }
+    }
 
     GeoJsonCodec(Pack pack) {
         super(pack);
-        items = new JsonCodec(pack, true);
+        items = new Items(pack);
         for (Pack.Kind k : pack.kinds) {
-            for (Pack.Group g : k.scope.groups) JsonCodec.prepare(g.body);
+            for (Pack.Group g : k.scope.groups) JsonTree.prepare(g.body);
         }
-    }
-
-    /** Null when {@code locator} names a member a group may map: {@code properties.<name>} or a top-level member. */
-    static String checkGroupLocator(String locator) {
-        if (locator.startsWith("geometry.") || locator.equals("geometry")) {
-            return "a geojson group is a properties.<name> member or a top-level member: " + locator;
-        }
-        return checkFieldLocator(locator);
     }
 
     /** A JSON value as the text this wire's transforms read. Throws IllegalArgumentException when it has none. */
@@ -50,24 +70,8 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
      * reads it (ruling 2d of 0.11); any other value through its text (a JSON string by rulings 2a and 2b).
      */
     static Object decodeGeo(Transform t, Object v) {
-        if (v instanceof Json.Num && (t == Transform.INT || t == Transform.FLOAT)) return JsonCodec.decodeValue(t, v);
+        if (v instanceof Json.Num && (t == Transform.INT || t == Transform.FLOAT)) return JsonTree.decodeValue(t, v);
         return t.decode(rawText(v, t));
-    }
-
-    static int coordIndex(String locator) {
-        for (int i = 0; i < COORD.length; i++) if (locator.equals("geometry." + COORD[i])) return i;
-        return -1;
-    }
-
-    static String checkFieldLocator(String locator) {
-        if (coordIndex(locator) >= 0) return null;
-        if (locator.startsWith("properties.")) {
-            return locator.length() > "properties.".length() ? null : "empty properties member name";
-        }
-        if (locator.startsWith("geometry.")) return "geometry locator must be geometry.lon, geometry.lat or geometry.alt: " + locator;
-        if (locator.isEmpty() || locator.contains(".")) return "bad geojson locator: " + locator;
-        if (RESERVED.contains(locator)) return "top-level member \"" + locator + "\" is reserved by GeoJSON";
-        return null;
     }
 
     /** A parsed Feature: its top-level members, its Point coordinates (or null) and its properties (or null). */
@@ -111,7 +115,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
     /** The JSON value at a locator, or null when the member is absent or {@code null}. */
     private static Object member(Doc d, String locator) {
         Object v;
-        int ci = coordIndex(locator);
+        int ci = Locators.geojsonCoord(locator);
         if (ci >= 0) {
             v = (d.coords != null && ci < d.coords.size()) ? d.coords.get(ci) : null;
         } else if (locator.startsWith("properties.")) {
@@ -138,7 +142,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 Pack.Group g = (Pack.Group) l;
                 Object v = member(d, g.locator);
                 if (v == null) continue;                    // absent or null: the list is absent
-                e.putList(g.list, items.decodeItems(g, v, fails, true));
+                e.putList(g.list, items.decodeItems(g, v, fails));
                 continue;
             }
             if (!(l instanceof Pack.Field)) {
@@ -172,7 +176,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
         List<Object> coords = d.coords;
         if (coords != null) {
             for (int i = 0; i < Math.min(3, coords.size()); i++) {
-                String loc = "geometry." + COORD[i];
+                String loc = "geometry." + Locators.GEOJSON_COORD[i];
                 if (!mapped.contains(loc)) e.putResidue(pack.format, loc, Json.write(coords.get(i)));
             }
         }
@@ -183,7 +187,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             }
         }
         for (Map.Entry<String, Object> m : d.feat.entrySet()) {
-            if (RESERVED.contains(m.getKey()) || mapped.contains(m.getKey())) continue;
+            if (Locators.GEOJSON_RESERVED.contains(m.getKey()) || mapped.contains(m.getKey())) continue;
             residue(e, m.getKey(), m.getValue());
         }
         finishDecode(e, fails);
@@ -209,13 +213,13 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
     /** Write {@code v} unless the member holds a value; a sentinel there is replaced in its place. */
     private static void putOver(Map<String, Object> m, String name, Object v) {
         Object have = m.get(name);
-        if (have == null || have == JsonCodec.RESERVED || have instanceof JsonCodec.Placed) m.put(name, v);
+        if (have == null || have == JsonTree.RESERVED || have instanceof JsonTree.Placed) m.put(name, v);
     }
 
     /** Write {@code v} unless the member holds a value or a sentinel; a reserved place is filled. */
     private static void putFirst(Map<String, Object> m, String name, Object v) {
         Object have = m.get(name);
-        if (have == null || have == JsonCodec.RESERVED) m.put(name, v);
+        if (have == null || have == JsonTree.RESERVED) m.put(name, v);
     }
 
     static Object jsonValue(Transform t, String s) {
@@ -234,7 +238,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
         LinkedHashMap<String, Object> props = new LinkedHashMap<>();
         LinkedHashMap<String, Object> top = new LinkedHashMap<>();
         for (Pack.Line l : kind.lines) {
-            int ci = coordIndex(l.locator);
+            int ci = Locators.geojsonCoord(l.locator);
             // A when or const value is written over any field, at the position of the first line naming the locator.
             Pack.When w = kind.fixed.get(l.locator);
             if (w != null) {
@@ -257,7 +261,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 Pack.Group g = (Pack.Group) l;
                 List<Entity> list = e.list(g.list);
                 if (list == null) continue;              // an absent list writes nothing
-                List<Object> arr = items.encodeItems(g, list, true);
+                List<Object> arr = items.encodeItems(g, list);
                 if (l.locator.startsWith("properties.")) putFirst(props, l.locator.substring("properties.".length()), arr);
                 else putFirst(top, l.locator, arr);
                 continue;
@@ -268,8 +272,8 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 // the first sentinel of an absent key, in place until a line whose key is present writes (ruling 16 of 0.9)
                 if (f.absent == null || f.suppressed(e)) {
                     // the member's place, should a later line on the locator write it (ruling 23 of 0.9, ruling 1 of 0.18)
-                    if (ci < 0 && l.locator.startsWith("properties.")) props.putIfAbsent(l.locator.substring("properties.".length()), JsonCodec.RESERVED);
-                    else if (ci < 0) top.putIfAbsent(l.locator, JsonCodec.RESERVED);
+                    if (ci < 0 && l.locator.startsWith("properties.")) props.putIfAbsent(l.locator.substring("properties.".length()), JsonTree.RESERVED);
+                    else if (ci < 0) top.putIfAbsent(l.locator, JsonTree.RESERVED);
                     continue;
                 }
                 Object jv = f.absent.firstJson();
@@ -279,18 +283,18 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                         throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, l.locator,
                                 "sentinel " + f.absent.firstText() + " is not a number, and a coordinate must be one");
                     }
-                    coord[ci] = new JsonCodec.Placed(jv);   // counts as a value for ruling 5 of 0.1.1 (ruling 10 of 0.9)
+                    coord[ci] = new JsonTree.Placed(jv);   // counts as a value for ruling 5 of 0.1.1 (ruling 10 of 0.9)
                 } else if (l.locator.startsWith("properties.")) {
-                    putFirst(props, l.locator.substring("properties.".length()), new JsonCodec.Placed(jv));
+                    putFirst(props, l.locator.substring("properties.".length()), new JsonTree.Placed(jv));
                 } else {
-                    putFirst(top, l.locator, new JsonCodec.Placed(jv));
+                    putFirst(top, l.locator, new JsonTree.Placed(jv));
                 }
                 continue;
             }
             Object jv = jsonValue(f.transform, s);
             // putIfAbsent: an earlier line on the same locator has precedence, a sentinel does not
             if (ci >= 0) {
-                if (coord[ci] != null && !(coord[ci] instanceof JsonCodec.Placed)) continue;
+                if (coord[ci] != null && !(coord[ci] instanceof JsonTree.Placed)) continue;
                 if (f.transform == Transform.FLOAT || f.transform == Transform.INT) coord[ci] = jv;
                 else {
                     try {
@@ -307,7 +311,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
         }
         for (Map.Entry<String, String> r : e.residue(pack.format).entrySet()) {
             String loc = r.getKey();
-            int ci = coordIndex(loc);
+            int ci = Locators.geojsonCoord(loc);
             if (ci >= 0) {
                 if (coord[ci] == null) coord[ci] = new Json.Raw(r.getValue());
             } else {
@@ -316,9 +320,9 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 else top.putIfAbsent(loc, v);
             }
         }
-        JsonCodec.unplace(props);
-        JsonCodec.unplace(top);
-        for (int i = 0; i < 3; i++) if (coord[i] instanceof JsonCodec.Placed) coord[i] = ((JsonCodec.Placed) coord[i]).v;
+        JsonTree.unplace(props);
+        JsonTree.unplace(top);
+        for (int i = 0; i < 3; i++) if (coord[i] instanceof JsonTree.Placed) coord[i] = ((JsonTree.Placed) coord[i]).v;
         LinkedHashMap<String, Object> out = new LinkedHashMap<>();
         out.put("type", "Feature");
         if (coord[0] != null && coord[1] != null) {

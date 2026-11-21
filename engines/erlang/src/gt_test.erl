@@ -25,7 +25,7 @@
 %% N/M passed" and "malformed inputs: N/M passed". Exits non-zero on any
 %% failure.
 -module(gt_test).
--export([main/1, run/1, run/2]).
+-export([main/1, run/1, run/2, run_reduced/3]).
 
 main(Args) ->
     case Args of
@@ -785,6 +785,152 @@ malformed_case(Engine, From, To, Input, Context) ->
                 false -> {error, {error_without_a_named_kind, Kind, Msg}}
             end;
         Class:Reason -> {error, {exception, Class, Reason}}
+    end.
+
+%% ===================================================================
+%% reduced build (Version 0.24, "What pins it")
+%% ===================================================================
+%% Run on a build with only the wires Wires (names, as `wire` lines write
+%% them). The wire and format of each pack are read from the text of its
+%% pack.def, not from the engine. Then:
+%%   - every pack on a wire of the set loads;
+%%   - every pack on another wire of the specification is `unknown-wire`, its
+%%     message naming the wire and saying this build does not have it, and a
+%%     `wire` value that is no wire stays `unknown-wire` without that text;
+%%   - every conversion vector whose `from` and `to` packs are on wires of
+%%     the set passes, on the engine that loaded those packs.
+%% Prints "reduced vectors: N/M passed" and one "unknown-wire <wire>: N/M"
+%% line per wire left out; halts 1 on any failure.
+run_reduced(PacksDir, ModelsDir, Wires0) ->
+    Wires = [list_to_binary(W) || W <- Wires0],
+    SpecWires = [<<"xml">>, <<"geojson">>, <<"json">>, <<"bits">>, <<"protobuf">>,
+                 <<"text">>, <<"tlv">>],
+    Models = lists:foldl(fun(F, E) ->
+                                 {ok, Bin} = file:read_file(filename:join(ModelsDir, F)),
+                                 gt_engine:load_model(E, Bin)
+                         end, gt_engine:new(), gt_engine:model_files(ModelsDir)),
+    {ok, Entries} = file:list_dir(PacksDir),
+    Packs = [{Dir, Text, pack_head(Text)}
+             || Dir <- lists:sort(Entries),
+                {ok, Text} <- [file:read_file(filename:join([PacksDir, Dir, "pack.def"]))]],
+    FormatWire = maps:from_list([{F, W} || {_, _, {F, W}} <- Packs]),
+    %% the packs on the wires of the set, in one engine
+    {Engine, LoadFail} =
+        lists:foldl(
+          fun({Dir, Text, {_, W}}, {E, N}) ->
+                  case lists:member(W, Wires) of
+                      false -> {E, N};
+                      true ->
+                          try {gt_engine:load_pack(E, Text), N}
+                          catch C:R ->
+                              io:format("FAIL pack ~s (wire ~s) does not load: ~ts~n",
+                                        [Dir, W, why({exception, C, R})]),
+                              {E, N + 1}
+                          end
+                  end
+          end, {Models, 0}, Packs),
+    %% the packs on the other wires of the specification
+    Left = [W || W <- SpecWires, not lists:member(W, Wires)],
+    WireCounts =
+        [{W, lists:foldl(
+               fun({Dir, Text, {_, PW}}, {P, F}) when PW =:= W ->
+                       case refused_as_absent(Models, Text, W) of
+                           ok -> {P + 1, F};
+                           {error, Why} ->
+                               io:format("FAIL pack ~s (wire ~s): ~ts~n", [Dir, W, Why]),
+                               {P, F + 1}
+                       end;
+                  (_, Acc) -> Acc
+               end, {0, 0}, Packs)}
+         || W <- Left],
+    NotAWire = not_a_wire(Models),
+    %% the conversion vectors of the set
+    {VPass, VFail} =
+        lists:foldl(
+          fun({PackDir, File}, {P, F}) ->
+                  case vector_on(File, FormatWire, Wires) of
+                      false -> {P, F};
+                      true ->
+                          case run_vector_file(Engine, File) of
+                              ok -> {P + 1, F};
+                              {error, Name, Why} ->
+                                  io:format("FAIL ~s/~s: ~ts~n", [PackDir, Name, why(Why)]),
+                                  {P, F + 1}
+                          end
+                  end
+          end, {0, 0}, vector_files(PacksDir)),
+    io:format("wires of this build: ~s~n", [lists:join(",", Wires)]),
+    io:format("reduced vectors: ~p/~p passed~n", [VPass, VPass + VFail]),
+    lists:foreach(fun({W, {P, F}}) ->
+                          io:format("unknown-wire ~s: ~p/~p packs refused as not in this build~n",
+                                    [W, P, P + F])
+                  end, WireCounts),
+    io:format("unknown-wire for a value that is no wire: ~s~n",
+              [case NotAWire of ok -> "ok"; _ -> "FAILED" end]),
+    Failed = LoadFail + VFail + lists:sum([F || {_, {_, F}} <- WireCounts])
+        + case NotAWire of ok -> 0; _ -> 1 end
+        + case VPass of 0 -> 1; _ -> 0 end
+        + length([W || {W, {0, _}} <- WireCounts]),
+    case Failed of
+        0 -> halt(0);
+        N ->
+            io:format("FAILED: ~p check(s)~n", [N]),
+            halt(1)
+    end.
+
+%% The `format` and `wire` values of a pack.def text -> {Format, Wire}.
+pack_head(Text) ->
+    Lines = [string:lexemes(L, " \t\r") || L <- binary:split(Text, <<"\n">>, [global])],
+    Get = fun(Key) ->
+                  case [V || [K, V | _] <- Lines, K =:= Key] of
+                      [V | _] -> V;
+                      [] -> undefined
+                  end
+          end,
+    {Get(<<"format">>), Get(<<"wire">>)}.
+
+%% Is the vector's `from` and `to` each a pack on a wire of the set?
+vector_on(File, FormatWire, Wires) ->
+    try
+        {ok, Bin} = file:read_file(File),
+        Obj = gt_json:parse(Bin),
+        {ok, From} = gt_json:get(Obj, <<"from">>),
+        {ok, To} = gt_json:get(Obj, <<"to">>),
+        lists:member(maps:get(From, FormatWire, none), Wires)
+            andalso lists:member(maps:get(To, FormatWire, none), Wires)
+    catch _:_ -> false
+    end.
+
+%% Ruling 1c of 0.24: unknown-wire, the message naming the wire and saying
+%% that this build does not have it.
+refused_as_absent(Models, Text, Wire) ->
+    try gt_engine:load_pack(Models, Text) of
+        _ -> {error, "loaded on a build without its wire"}
+    catch
+        error:{load_error, 'unknown-wire', Msg} ->
+            M = unicode:characters_to_binary(Msg),
+            case binary:match(M, Wire) =/= nomatch
+                andalso binary:match(M, <<"this build does not have">>) =/= nomatch
+                andalso lists:prefix("unknown-wire:", Msg) of
+                true -> ok;
+                false -> {error, io_lib:format("unknown-wire without the wire's name or the reason: ~ts", [Msg])}
+            end;
+        C:R -> {error, why({exception, C, R})}
+    end.
+
+%% A `wire` value that is no wire of the specification is unknown-wire as
+%% before, and its message does not say the build lacks it.
+not_a_wire(Models) ->
+    Text = <<"format not-a-wire\nversion 0.1.0\ndistribution public\nwire nowire\n">>,
+    try gt_engine:load_pack(Models, Text) of
+        _ -> error
+    catch
+        error:{load_error, 'unknown-wire', Msg} ->
+            case string:find(Msg, "this build does not have") of
+                nomatch -> ok;
+                _ -> io:format("FAIL wire nowire: ~ts~n", [Msg]), error
+            end;
+        C:R -> io:format("FAIL wire nowire: ~ts~n", [why({exception, C, R})]), error
     end.
 
 %% ===================================================================

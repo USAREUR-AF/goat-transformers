@@ -741,6 +741,52 @@ TRANSFORM_WIRES = {
 }
 
 
+_TEXT_FAMILIES = ("int", "dec", "dm", "hms", "hms_dmy")
+_PARAM_DIGITS = re.compile(r"[0-9]+\Z")
+
+
+def is_text_only_name(name):
+    """A transform valid only on the `text` wire, well formed or not: `int:…`,
+    `dec`, `dec:…`, `dm`, `dm:…`, `hms`, `hms:…`, `hms_dmy`, `hms_dmy:…`."""
+    head, sep, _ = name.partition(":")
+    if head == "int":
+        return bool(sep)
+    return head in _TEXT_FAMILIES
+
+
+def _text_param(text, lo, hi):
+    if not (text.isascii() and _PARAM_DIGITS.match(text)):
+        raise ValueError
+    n = int(text)
+    if n < lo or n > hi:
+        raise ValueError
+    return n
+
+
+def text_params(name):
+    """The parameters of a text-only transform name (Version 0.10, rule 1):
+    -> (head, parameters). Raises ValueError (`bad-directive`). Here, not in
+    the `text` codec, because step 7 of ruling 5b of 0.11 checks them on every
+    wire, so a build without `text` (0.24) checks them too."""
+    parts = name.split(":")
+    head, args = parts[0], parts[1:]
+    try:
+        if head == "int" and len(args) == 1:
+            return head, (_text_param(args[0], 1, 20),)
+        if head == "dec" and len(args) in (1, 2):
+            return head, (_text_param(args[0], 0, 9), _text_param(args[1], 1, 20) if len(args) == 2 else 0)
+        if head == "dm" and len(args) == 3:
+            letters = args[2]
+            if len(letters) != 2 or letters[0] == letters[1] or not all("A" <= c <= "Z" for c in letters):
+                raise ValueError
+            return head, (_text_param(args[0], 1, 3), _text_param(args[1], 0, 9), letters[0], letters[1])
+        if head in ("hms", "hms_dmy") and len(args) == 1:
+            return head, (_text_param(args[0], 0, 3),)
+    except ValueError:
+        pass
+    raise ValueError("transform %r: bad or missing parameters" % name)
+
+
 class UnknownTransformName(LookupError):
     pass
 
@@ -760,9 +806,7 @@ def check_transform_text(name):
     elif v15_family(name) is not None:
         v15_params(name)
     elif head in ("dec", "dm", "hms", "hms_dmy") or (head == "int" and colon):
-        from .wire_text import build_transform  # the parameters of the `text` transforms (0.10)
-
-        build_transform(name)
+        text_params(name)  # the parameters of the `text` transforms (0.10), on every wire
     elif colon:
         raise ValueError("transform %s takes no parameter" % head)
     return head

@@ -17,8 +17,8 @@ import java.util.Map;
  * unaligned PER forms: constrained, semi-constrained and unconstrained integers, enumerations, character and octet
  * strings, extensible SEQUENCEs ({@code ext}), CHOICE and SEQUENCE OF ({@code group ... size}).
  */
-final class SeqCodec extends Codec<byte[]> {
-    /** The pack's bit order (BitsCodec.LSB, MSB or MSB_LSB). */
+final class SeqCodec extends BitsWire<byte[]> {
+    /** The pack's bit order (BitsLayout.LSB, MSB or MSB_LSB). */
     private final int msb;
     private final Seq.Body root;
 

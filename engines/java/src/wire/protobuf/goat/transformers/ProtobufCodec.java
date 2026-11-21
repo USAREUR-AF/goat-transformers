@@ -51,29 +51,12 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
         }
     }
 
-    /** {@code 4.1} to {@code int[]{4, 1}}. Assumes {@link #checkFieldLocator} has passed. */
+    /** {@code 4.1} to {@code int[]{4, 1}}. Assumes {@link Locators#protobufField} has passed. */
     static int[] parsePath(String locator) {
         String[] p = locator.split("\\.", -1);
         int[] out = new int[p.length];
         for (int i = 0; i < p.length; i++) out[i] = Integer.parseInt(p[i]);
         return out;
-    }
-
-    /** Null when {@code locator} is a valid protobuf dot-path of field numbers, else the reason. */
-    static String checkFieldLocator(String locator) {
-        String[] p = locator.split("\\.", -1);
-        for (String seg : p) {
-            if (seg.isEmpty()) return "protobuf path has an empty field number: " + locator;
-            if (!Transform.UNSIGNED.matcher(seg).matches()) return "protobuf path must be dot-separated field numbers: " + locator;
-            long n;
-            try {
-                n = Long.parseLong(seg);
-            } catch (NumberFormatException ex) {
-                return "protobuf path must be dot-separated field numbers: " + locator;
-            }
-            if (n < 1 || n > 536870911) return "protobuf field number must be 1..536870911: " + locator;
-        }
-        return null;
     }
 
     // ---- decode ----

@@ -175,6 +175,7 @@ impl Loc {
 }
 
 /// The locator of a line already checked at load.
+#[cfg(feature = "tlv")]
 fn loc(p: &Pack, s: &str) -> Option<Loc> {
     Loc::parse(s, p.tlv.tag).ok()
 }
@@ -307,17 +308,20 @@ fn join(tags: &[u32]) -> String {
 
 /// One item of a set: its tag, where it starts, and its value `val..end`.
 #[derive(Clone, Copy, Debug)]
+#[cfg(feature = "tlv")]
 struct Item {
     tag: u32,
     val: usize,
     end: usize,
 }
 
+#[cfg(any(feature = "bits", feature = "tlv"))]
 fn be(b: &[u8]) -> u64 {
     b.iter().fold(0u64, |a, c| (a << 8) | *c as u64)
 }
 
 /// A tag at `at`, within `end`: (tag, the offset after it).
+#[cfg(feature = "tlv")]
 fn read_tag(enc: Enc, b: &[u8], at: usize, end: usize) -> Result<(u32, usize), String> {
     match enc {
         Enc::Fixed(n) => {
@@ -348,6 +352,7 @@ fn read_tag(enc: Enc, b: &[u8], at: usize, end: usize) -> Result<(u32, usize), S
 }
 
 /// A length at `at`, within `end`: (length, the offset after it).
+#[cfg(feature = "tlv")]
 fn read_len(enc: Enc, b: &[u8], at: usize, end: usize) -> Result<(u64, usize), String> {
     let short = || format!("a length at byte {} runs past its set", at);
     match enc {
@@ -379,6 +384,7 @@ fn read_len(enc: Enc, b: &[u8], at: usize, end: usize) -> Result<(u64, usize), S
 }
 
 /// The items of the set `start..end`, read whole.
+#[cfg(feature = "tlv")]
 fn read_set(c: &TlvConf, b: &[u8], start: usize, end: usize) -> Result<Vec<Item>, String> {
     let mut out = Vec::new();
     let mut at = start;
@@ -396,12 +402,14 @@ fn read_set(c: &TlvConf, b: &[u8], start: usize, end: usize) -> Result<Vec<Item>
     Ok(out)
 }
 
+#[cfg(feature = "tlv")]
 fn malformed(p: &Pack, why: impl AsRef<str>) -> Error {
     Error { msg: format!("malformed-wire: format `{}`: {}", p.format, why.as_ref()) }
 }
 
 /// The value `val..end` of the first item at `path`, or None when it is not
 /// in its set. Err: a set on the way is not well formed.
+#[cfg(feature = "tlv")]
 fn find(c: &TlvConf, b: &[u8], top: &[Item], path: &[u32]) -> Result<Option<(usize, usize)>, String> {
     let mut inner: Vec<Item>;
     let mut items: &[Item] = top;
@@ -422,13 +430,16 @@ fn find(c: &TlvConf, b: &[u8], top: &[Item], path: &[u32]) -> Result<Option<(usi
 /// The tags the lines of a scope name, as a tree: a tag a line names or
 /// walks into, and under it the tags named in its value read as a set.
 #[derive(Default)]
+#[cfg(feature = "tlv")]
 struct Names {
     tags: HashMap<u32, Names>,
     /// a line walks into the value as a set
     walked: bool,
 }
 
+#[cfg(feature = "tlv")]
 impl Names {
+    #[cfg(feature = "tlv")]
     fn add(&mut self, tags: &[u32], present: bool) {
         let (last, prefix) = match tags.split_last() {
             Some(x) => x,
@@ -449,6 +460,7 @@ impl Names {
 /// Residue of one set: every item whose tag no line names there, every
 /// occurrence, in input order; the first item of a tag that a line walks
 /// into is read as a set and its residue taken in turn.
+#[cfg(feature = "tlv")]
 fn residue(c: &TlvConf, b: &[u8], items: &[Item], names: &Names, prefix: &str, out: &mut Vec<(String, String)>) -> Result<(), String> {
     let mut seen: HashSet<u32> = HashSet::new();
     for it in items {
@@ -467,6 +479,7 @@ fn residue(c: &TlvConf, b: &[u8], items: &[Item], names: &Names, prefix: &str, o
     Ok(())
 }
 
+#[cfg(feature = "tlv")]
 fn when_holds(p: &Pack, b: &[u8], top: &[Item], w: &WhenDef) -> bool {
     let l = match loc(p, &w.locator) {
         Some(l) => l,
@@ -480,6 +493,7 @@ fn when_holds(p: &Pack, b: &[u8], top: &[Item], w: &WhenDef) -> bool {
 }
 
 /// A value's bytes -> model value.
+#[cfg(any(feature = "bits", feature = "tlv"))]
 pub(crate) fn decode_value(t: &Transform, v: &[u8]) -> Result<Value, Error> {
     match t {
         Transform::Utf8 => match std::str::from_utf8(v) {
@@ -495,6 +509,7 @@ pub(crate) fn decode_value(t: &Transform, v: &[u8]) -> Result<Value, Error> {
     }
 }
 
+#[cfg(feature = "tlv")]
 pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
     let c = &p.tlv;
     let b = bits::from_hex(input).map_err(|e| malformed(p, e.msg.trim_start_matches("malformed-wire: ")))?;
@@ -563,6 +578,7 @@ pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
 
 /// The sum of the bytes, a byte at an even offset counting `b * 256` and
 /// one at an odd offset `b`, modulo 65536.
+#[cfg(feature = "tlv")]
 fn sum16(b: &[u8]) -> u16 {
     b.iter().enumerate().fold(0u16, |a, (i, c)| a.wrapping_add(if i % 2 == 0 { (*c as u16) << 8 } else { *c as u16 }))
 }
@@ -573,6 +589,7 @@ fn sum16(b: &[u8]) -> u16 {
 
 /// A line of the scope as the writer takes it.
 #[derive(Clone, Copy)]
+#[cfg(feature = "tlv")]
 enum Line<'a> {
     Field(&'a FieldDef),
     /// a `when` with a value, or a `const`
@@ -583,6 +600,7 @@ enum Line<'a> {
 /// One item of a set being written, at the position of the first line that
 /// names it or a path under it.
 #[derive(Default)]
+#[cfg(feature = "tlv")]
 struct Slot<'a> {
     tag: u32,
     fields: Vec<&'a FieldDef>,
@@ -595,6 +613,7 @@ struct Slot<'a> {
 
 /// A set being written: the items of the lines, then the residue.
 #[derive(Default)]
+#[cfg(feature = "tlv")]
 struct Node<'a> {
     slots: Vec<Slot<'a>>,
     /// tag -> the slot of the first line that names it
@@ -604,12 +623,15 @@ struct Node<'a> {
     res_sets: HashMap<u32, usize>,
 }
 
+#[cfg(feature = "tlv")]
 enum Res<'a> {
     Item(u32, Vec<u8>),
     Set(u32, Node<'a>),
 }
 
+#[cfg(feature = "tlv")]
 impl<'a> Node<'a> {
+    #[cfg(feature = "tlv")]
     fn add(&mut self, tags: &[u32], line: Line<'a>) {
         let t = tags[0];
         if tags.len() == 1 {
@@ -644,6 +666,7 @@ impl<'a> Node<'a> {
     }
 
     /// A residue entry: written unless a line names its tag at that place.
+    #[cfg(feature = "tlv")]
     fn add_residue(&mut self, tags: &[u32], value: Vec<u8>) {
         let t = tags[0];
         if tags.len() == 1 {
@@ -671,17 +694,20 @@ impl<'a> Node<'a> {
         }
     }
 
+    #[cfg(feature = "tlv")]
     fn has_residue(&self, t: u32) -> bool {
         self.residue.iter().any(|r| matches!(r, Res::Item(x, _) | Res::Set(x, _) if *x == t))
     }
 }
 
 /// `v` as `n` big-endian bytes.
+#[cfg(any(feature = "bits", feature = "tlv"))]
 fn be_bytes(v: u64, n: u8) -> Vec<u8> {
     v.to_be_bytes()[8 - n as usize..].to_vec()
 }
 
 /// A model value -> the value's bytes.
+#[cfg(any(feature = "bits", feature = "tlv"))]
 pub(crate) fn encode_value(t: &Transform, v: &Value, n: Option<u8>) -> Result<Vec<u8>, Error> {
     let n = n.unwrap_or(8);
     let bits = n as u32 * 8;
@@ -714,6 +740,7 @@ pub(crate) fn encode_value(t: &Transform, v: &Value, n: Option<u8>) -> Result<Ve
 }
 
 /// An item: its tag, its length and its value in the pack's encodings.
+#[cfg(feature = "tlv")]
 fn put_item(p: &Pack, tag: u32, value: &[u8], out: &mut Vec<u8>) -> Result<(), Error> {
     let fail = |m: String| Error { msg: format!("transform-encode: format `{}`: {}", p.format, m) };
     match p.tlv.tag {
@@ -738,6 +765,7 @@ fn put_item(p: &Pack, tag: u32, value: &[u8], out: &mut Vec<u8>) -> Result<(), E
     Ok(())
 }
 
+#[cfg(feature = "tlv")]
 fn put_len(p: &Pack, len: u64, out: &mut Vec<u8>) -> Result<(), Error> {
     match p.tlv.length {
         Enc::Fixed(n) => {
@@ -760,6 +788,7 @@ fn put_len(p: &Pack, len: u64, out: &mut Vec<u8>) -> Result<(), Error> {
 }
 
 /// The items of one set: the lines' items in line order, then the residue.
+#[cfg(feature = "tlv")]
 fn write_node(p: &Pack, sel: &Sel, ent: &Entity, node: &Node, out: &mut Vec<u8>) -> Result<(), Error> {
     // the value of each slot that is not `present` (None: no item)
     let mut values: Vec<Option<Vec<u8>>> = Vec::with_capacity(node.slots.len());
@@ -816,6 +845,7 @@ fn write_node(p: &Pack, sel: &Sel, ent: &Entity, node: &Node, out: &mut Vec<u8>)
     Ok(())
 }
 
+#[cfg(feature = "tlv")]
 pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
     let c = &p.tlv;
     let sel = p.select_encode(ent)?;

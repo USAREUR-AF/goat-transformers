@@ -109,6 +109,82 @@ $ echo '{}' | engines/java/goat-xf-java.sh convert --from geojson --to nope --pa
 unknown-format: no pack loaded for format nope [format=nope locator=-]
 ```
 
+## Builds with fewer wires
+
+A build can carry the codecs of only some wires (spec Version 0.24). Name the
+set with `--wires`, a comma-separated subset of `xml`, `geojson`, `json`,
+`bits`, `protobuf`, `text` and `tlv`:
+
+```bash
+./build.sh --wires xml,json,geojson     # no --wires (or --wires all): all seven
+```
+
+The core sources (`src/main/java`: the pack language, the model, the engine,
+the command-line tool) are in every build. Each wire's codec is a directory
+`src/wire/<wire>/`, compiled only when the wire is in the set, and `build.sh`
+generates the class `Wires` that names the set and the codec of each wire in it,
+so the jar holds no class of a wire outside the set. `src/wire/json-tree` (JSON
+objects through the lines of a scope) is compiled with `json` or `geojson`: a
+build with `geojson` needs nothing of the `json` wire. The sequential layout,
+six-bit armor and `encoding uper` are part of `bits`.
+
+In a reduced build a pack whose `wire` is a wire the build lacks does not load:
+`unknown-wire` at the `wire` line, with a message that names the wire and says
+this build does not have it (`wire "bits" is a wire of the specification, but
+this build does not have it (this build has xml, geojson, json)`). A `wire`
+value that is no wire stays `unknown wire "..."`. `Engine.wires()` returns the
+set of the build. A build with fewer than seven wires does not run the test
+suite, whose unit checks need every wire; the reduced-build check is its test.
+`--out DIR` writes the build somewhere other than `build/`; `--no-test` skips
+the test suite of a full build.
+
+### The reduced-build check
+
+One command, from the repository root:
+
+```bash
+engines/java/reduced-check.sh            # optional argument: a packs directory
+```
+
+It builds the full jar and the jar with `xml`, `json` and `geojson` under
+`build/reduced-check/`, checks that the reduced jar holds no class of the
+`bits`, `protobuf`, `text` or `tlv` codecs, and runs
+`goat.transformers.ReducedCheck` (compiled against the reduced build only) on
+the reduced jar:
+
+- every conversion vector whose `from` and `to` packs are on the three wires,
+  with every pack on those wires loaded;
+- the capability vectors between formats on the three wires, and the load
+  vectors none of whose packs is on another wire of the specification;
+- one pack each on `bits`, `protobuf`, `text` and `tlv`: `unknown-wire`, the
+  wire named in the message, and the format then `unknown-format`; and a
+  `wire` value that is no wire, plain `unknown-wire`.
+
+It prints the size of both jars and exits non-zero on any failure. Measured
+with `nice -n 10` on this tree:
+
+```
+reduced jar: no class of the bits, protobuf, text or tlv codecs
+build wires: xml, geojson, json
+conversion vectors: 6849/6849 passed (1070 packs on xml, geojson, json; 13458 vectors on other wires not run)
+capability vectors: 16/16 passed (those between formats on wires of the build)
+load vectors: 378/378 passed (those with no pack on a wire this build lacks)
+unknown-wire: bits (pack adsb): unknown-wire: .../packs/adsb/pack.def:18: wire "bits" is a wire of the specification, but this build does not have it (this build has xml, geojson, json) [format=adsb locator=-]
+unknown-wire: protobuf (pack apollo-ch): ...
+unknown-wire: text (pack conformance-cond-text): ...
+unknown-wire: tlv (pack conformance-cond-tlv): ...
+unknown-wire loads: 4/4 passed
+unknown-wire: nowire (no wire of the specification): unknown-wire: nowire-check:3: unknown wire "nowire" [format=nowire-check locator=-]
+OK
+jar size, all seven wires:       306094 bytes
+jar size, xml, json and geojson: 233325 bytes, 76% of the full jar
+```
+
+The jar shrinks by a quarter, not more, because the pack reader stays whole:
+a pack on `xml` gets the same named errors in every build (ruling 1b), and
+the checks it runs on any pack (the parameters of every transform, a gate
+line, the lines of `layout sequential`) are the pack language, not a codec.
+
 ## Test
 
 CI runs one command, in this directory:
@@ -116,6 +192,9 @@ CI runs one command, in this directory:
 ```bash
 ./build.sh            # optional argument: a packs directory, default ../../packs
 ```
+
+The reduced-build check is a second command, run from the repository root:
+`engines/java/reduced-check.sh` (see [Builds with fewer wires](#builds-with-fewer-wires)).
 
 It compiles the main and test sources with `-Xlint:all -Werror`, then runs
 `goat.transformers.TestRunner`, which loads every model module and every pack

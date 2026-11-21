@@ -134,6 +134,7 @@ class Plan(PkgCase):
                 "engine": "engines/rust",
                 "packs": ["packs/alpha", "packs/beta-dir"],
                 "wires_used": ["json"],
+                "wire_switch": "cargo build --release --no-default-features --features json",
                 "build_command": "cargo build --release --target x86_64-unknown-linux-musl",
                 "profile": "open",
             },
@@ -152,7 +153,8 @@ class Plan(PkgCase):
             "",
             "engine:      engines/go",
             "packs:       alpha, beta-dir   (only these)",
-            "wires used:  json   (a minimal engine build can exclude the rest)",
+            "wires used:  json",
+            "wires only:  go build -tags goat_wires,goat_wire_json ./cmd/goat-xf   (spec 0.24: the other wires' codecs left out)",
             "build:       CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ./cmd/goat-xf",
             "profile:     open   (LICENSING.md)",
             "",
@@ -518,6 +520,18 @@ class Profiles(PkgCase):
             pkg.plan_request("formats=a&profile=closed")
 
 
+class WireSwitch(unittest.TestCase):
+    def test_each_language_names_its_switch(self):
+        got = {lang: pkg.wire_switch(lang, {"xml", "bits"}) for lang in pkg.WIRE_SWITCH}
+        self.assertEqual(got["rust"], "cargo build --release --no-default-features --features xml,bits")
+        self.assertEqual(got["go"], "go build -tags goat_wires,goat_wire_xml,goat_wire_bits ./cmd/goat-xf")
+        self.assertEqual(got["zig"], "zig build cli -Dwires=xml,bits")
+        self.assertIn("-DGT_WIRES=xml,bits", got["cpp"])
+
+    def test_every_wire_needs_no_switch(self):
+        self.assertIsNone(pkg.wire_switch("rust", set(pkg.WIRES)))
+
+
 class CommandLine(PkgCase):
     def test_a_command_is_required(self):
         code, _, err = self.run_pkg()
@@ -528,7 +542,8 @@ class CommandLine(PkgCase):
         code, out, _ = run_main(pkg.main, "plan", "--formats", "remote-id,cot-xml", "--runtime", "wasm")
         self.assertEqual(code, 0)
         self.assertIn("packs:       remote-id, cot-xml   (only these)", out)
-        self.assertIn("wires used:  bits, xml ", out)
+        self.assertIn("wires used:  bits, xml\n", out)
+        self.assertIn("wires only:  cargo build --release --no-default-features --features xml,bits", out)
 
 
 if __name__ == "__main__":

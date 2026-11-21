@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * A {@code bits} pack with {@code layout sequential} (engine-spec 0.8): the message as lines read in order from a
- * cursor. This file holds the parsed form and the parser of the lines; {@link SeqCodec} reads and writes messages.
+ * cursor. This file holds the parsed form and the parser of the lines; {@code SeqCodec}, in the bits wire, reads and writes messages.
  */
 final class Seq {
     private Seq() {}

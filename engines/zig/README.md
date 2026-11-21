@@ -38,8 +38,11 @@ Version 0.22), and converts between formats via the shared model.
 zig build run          # loads ../../packs, runs every vector
 zig build test         # the same, then the malformed-input run below
 zig build fuzz         # the malformed-input run alone
-zig build-exe src/main.zig && ./main ../../packs
 ```
+
+The engine imports the module `build_options` that `build.zig` makes (the
+wires of the build, below), so it is built through `zig build`, not with a
+bare `zig build-exe src/main.zig`.
 
 Prints `vectors: N/N passed` (conversion vectors), `load vectors: N/N passed`
 (`packs/conformance/load-vectors/`) and `capability vectors: N/N passed`
@@ -54,7 +57,66 @@ value its grammar refuses makes the vector fail as invalid. Stdlib only.
 |---|---|---|
 | `zig build test` | conversion, load and capability vectors, then the malformed-input run | `vectors`, `load vectors`, `capability vectors`, `malformed inputs` lines |
 | `zig build module-test` | the module another program imports | passes |
+| `engines/zig/reduced-check.sh` (from the repository root) | the reduced-build check of spec Version 0.24 (below) | `reduced-build check: passed` |
 | `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 95/95 passed` |
+
+## Builds with fewer wires (spec Version 0.24)
+
+`-Dwires=<wire>,<wire>…` names the wires of the build, any of `xml`,
+`geojson`, `json`, `bits`, `protobuf`, `text` and `tlv`. With no `-Dwires`
+the build has all seven. It applies to every step: the harness, `goat-xf`
+(`zig build cli`), the module and its test.
+
+```
+zig build cli -Dwires=xml,json,geojson -Doptimize=ReleaseSmall
+```
+
+`build.zig` turns the set into one compile-time constant per wire (module
+`build_options`). Every place that reads or writes a wire, and the load-time
+steps that only a pack on that wire reaches, is guarded by that constant, so
+the codec of a wire not in the set is never analysed and is not in the
+binary. `bits` takes the sequential layout, six-bit armor and `encoding uper`
+with it (ruling 1d); `geojson` needs nothing of the `json` wire (the JSON
+reader they share is in the build whenever either is). The checks a pack on a
+wire of the build can fail stay whole, so such a pack loads, converts and
+fails exactly as in a build with all seven (ruling 1b).
+
+A pack whose `wire` is a wire the build does not have is `unknown-wire` at
+line check 6, with the message `line <n>: wire <w> is a wire of the
+specification that this build does not have`; a `wire` value that is no wire
+stays `unknown-wire: line <n>: unknown wire <w>` (ruling 1c). The harness of a
+reduced build loads every pack of the directory on its wires, leaves out each
+pack on another wire, and does not run a vector that names such a pack, nor a
+load vector one of whose packs is on such a wire; it prints the wires of the
+build and how many packs and load vectors it left out.
+
+The reduced-build check, from the repository root:
+
+```
+engines/zig/reduced-check.sh
+```
+
+builds the engine with all seven wires and with `xml`, `json` and `geojson`
+(`-Doptimize=ReleaseSmall`; `OPTIMIZE=` chooses another), runs every vector
+of the packs on those three wires through the reduced harness, loads a pack
+on `bits` (fixed and sequential), `protobuf`, `text` and `tlv`, each of which
+must be `unknown-wire` naming its wire, and prints the sizes of both builds.
+It exits non-zero on any failure. Measured (Zig 0.13.0, x86_64 Linux,
+`ReleaseSmall`):
+
+| Binary | All seven wires | `xml`, `json`, `geojson` | Reduced / full |
+|---|---|---|---|
+| `gt-engine-zig` (harness) | 713 368 bytes | 434 840 bytes | 60 % |
+| `goat-xf` (command-line tool) | 676 504 bytes | 397 976 bytes | 58 % |
+
+The reduced harness loaded 1070 packs and left out 2407; it ran 6852
+conversion vectors (6852 passed), 378 load vectors (378 passed) and 16
+capability vectors (16 passed), and did not run 618 vectors that name a pack
+it left out nor 788 load vectors with such a pack.
+
+`goat-xf` of a reduced build loads a whole packs directory as Version 0.23
+says, so a directory holding a pack on a wire the build lacks fails with that
+pack's `unknown-wire`; name the packs with `--packs-only`.
 
 ## Command-line tool (spec Version 0.23)
 
@@ -338,6 +400,16 @@ the end of the record. `--convert` does not trim the input of a `text` format.
 
 ## Readings where the specification leaves a choice
 
+- Version 0.24: the set is named by `-Dwires`, a comma-separated list; a
+  name that is not a wire stops the build. An empty set is allowed and has no
+  codec. The load-time checks every wire's packs share (for example a
+  `delimiter`, an `armor` or a gate block on a wire it does not belong to)
+  stay in every build, so that a pack on a wire of the build fails as in the
+  full build; only steps that a pack on one wire alone reaches are left out
+  with that wire.
+- Version 0.24: the reduced harness does not run a load vector one of whose
+  packs has a `wire` line naming a wire the build lacks, whatever error the
+  vector expects (its first `wire` line with one value decides).
 - `bits`: a `const` counts toward the length a decode needs, as a `field` does.
 - A key with a `default` both in the common lines and in the kind uses the
   kind's.

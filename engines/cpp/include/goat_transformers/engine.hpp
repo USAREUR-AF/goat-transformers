@@ -21,7 +21,7 @@ enum class ErrorKind {
     UnterminatedQuote,  // a value that begins with `"` has no closing `"` on its line (0.11)
     UnknownDirective,   // the first word of a line is not a directive of its file type
     UnknownTransform,   // a transform name this specification does not have
-    UnknownWire,        // a `wire` value that is not one of the six wires
+    UnknownWire,        // a `wire` value that is not a wire, or a wire this build lacks (0.24)
     BadLocator,         // a locator that does not have the form its line takes on the wire (0.11)
     MissingFormat,      // a pack has no `format` line (0.11)
     MissingVersion,     // a pack or a module has no `version` line (0.11)
@@ -225,6 +225,13 @@ enum class BitOrder { Lsb, Msb, MsbLsb };
 const char* transform_name(Transform t);
 KeyType transform_yields(Transform t);  // the model type a transform produces
 const char* wire_name(Wire w);
+
+// Version 0.24: the wires this build has, in the order xml, geojson, json,
+// bits, protobuf, text, tlv. A build that names no set has all seven
+// (README.md, Wires of a build). A pack on a wire the build lacks is refused
+// with `unknown-wire`, and its message says this build does not have it.
+std::vector<std::string> built_wires();
+bool wire_built(Wire w);
 
 struct FieldLine {
     std::string key;      // shared-model key

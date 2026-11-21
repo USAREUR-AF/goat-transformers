@@ -234,18 +234,21 @@ impl Exact {
     }
 
     /// `round(v × factor) + offset`, None outside the signed 64-bit range.
+    #[cfg(any(feature = "bits", feature = "tlv"))]
     pub(crate) fn decode(&self, v: i128) -> Option<i64> {
         let r = div_round(v * self.num as i128, self.den as i128) + self.offset as i128;
         i64::try_from(r).ok()
     }
 
     /// `round((x − offset) / factor)`
+    #[cfg(any(feature = "bits", feature = "tlv"))]
     pub(crate) fn encode(&self, x: i64) -> i128 {
         div_round((x as i128 - self.offset as i128) * self.den as i128, self.num as i128)
     }
 
     /// `(x − offset) / factor` exactly, in plain decimal notation; None when
     /// it does not terminate within 18 fraction digits.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json"))]
     pub(crate) fn encode_decimal(&self, x: i64) -> Option<String> {
         let mut n = (x as i128 - self.offset as i128) * self.den as i128;
         let mut d = self.num as i128;
@@ -282,6 +285,7 @@ impl Exact {
     /// `-?digits(.digits)?([eE][+-]?digits)?`, the exponent at most 400 in
     /// absolute value. None for other text or a result outside the signed
     /// 64-bit range.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json"))]
     pub(crate) fn decode_text(&self, text: &str) -> Option<i64> {
         let (neg, rest) = match text.strip_prefix('-') {
             Some(r) => (true, r),
@@ -439,6 +443,7 @@ fn parse_offset(s: &str) -> Option<i64> {
 }
 
 /// `n / d` rounded half away from zero; `d` is not zero.
+#[cfg(any(feature = "bits", feature = "tlv"))]
 pub(crate) fn div_round(n: i128, d: i128) -> i128 {
     let (n, d) = if d < 0 { (-n, -d) } else { (n, d) };
     let q = n / d;

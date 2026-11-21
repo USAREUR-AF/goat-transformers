@@ -265,7 +265,7 @@ value_of(Found, _Tr) -> Found.
 %% Integers are read at their own length, 1 to 8 bytes.
 decode_value(utf8, B) ->
     B = unicode:characters_to_binary(B, utf8, utf8);
-decode_value(hex, B) -> gt_bits:bytes_to_hex(B);
+decode_value(hex, B) -> gt_hex:bytes_to_hex(B);
 decode_value(f32, <<_:32>> = B) -> <<F:32/float>> = B, float(F);
 decode_value(f64, <<_:64>> = B) -> <<F:64/float>> = B, F;
 decode_value(Tr, B) when byte_size(B) >= 1, byte_size(B) =< 8 ->
@@ -294,7 +294,7 @@ residue(Sets, Lines) ->
                       lists:foldl(fun(P, A) -> A#{P => true} end, Acc, Walked ++ Own)
               end, #{}, Lines),
     Order = lists:sort(fun(A, B) -> {length(A), A} =< {length(B), B} end, maps:keys(Sets)),
-    [{Path, gt_bits:bytes_to_hex(V)}
+    [{Path, gt_hex:bytes_to_hex(V)}
      || Q <- Order, {T, V} <- maps:get(Q, Sets),
         Path <- [Q ++ [T]], not maps:is_key(Path, Named)].
 
@@ -326,7 +326,7 @@ encode(Pack, Lines, Src, Residue) ->
     ResPaths = maps:from_list([{P, true} || {P, _} <- Residue]),
     Env = #{pack => Pack, kids => Kids, lines => ByPath, src => Src,
             residue => Residue, res_paths => ResPaths},
-    gt_bits:bytes_to_hex(top(Pack, set_items(Env, []))).
+    gt_hex:bytes_to_hex(top(Pack, set_items(Env, []))).
 
 %% The key, the length of the set and the set; with a checksum, its item
 %% last, its value the sum of the output to its length.
@@ -414,7 +414,7 @@ residue_items(#{pack := Pack, residue := Residue, kids := Kids} = Env, Q) ->
           end, {[], #{}}, Residue),
     lists:reverse(Items).
 
-unhex(Hex) -> gt_bits:hex_to_bytes(Hex).
+unhex(Hex) -> gt_hex:hex_to_bytes(Hex).
 
 item(Pack, Tag, Value) ->
     [tag_bytes(Pack, Tag), len_bytes(Pack, byte_size(Value)), Value].

@@ -6,17 +6,18 @@ An independent, clean-room implementation of the gt engine, written from
 ## Build and test
 
 ```
-./build.sh        # erlc -o ebin src/*.erl
+./build.sh        # erlc -o ebin src/*.erl (every wire; --wires: below)
 ./run_tests       # loads ../../model and ../../packs, runs every vector
 ```
 
 | Test | Command (repository root) | Measured (2026-11-20) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 17627/17628 (the one failure is `usgs-earthquake/event-to-cot-xml`, a vector already corrected on `main`) |
-| load vectors | same run | 862/862 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 20307/20307 |
+| load vectors | same run | 1166/1166 |
 | capability vectors | same run | 18/18 |
-| malformed inputs | same run | 87935/87935 |
+| malformed inputs | same run | 113331/113331 |
 | tool vectors (Version 0.23) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 95/95 |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 6849/6849 vectors; every bits, protobuf, text and tlv pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
@@ -51,6 +52,77 @@ beginning with the kind and a colon. The cases are a fixed function of the
 vectors, so two runs make the same ones.
 `./run_tests <packs> [<model>]` runs against other directories; the model
 directory defaults to the one beside `<packs>`.
+
+## Builds with fewer wires (engine-spec Version 0.24)
+
+A build names its set of wires with `build.sh --wires`; with no `--wires`
+it has all seven (xml, geojson, json, bits, protobuf, text, tlv) and
+compiles every module of `src/`, as before.
+
+```
+./build.sh                                   # every wire, into ebin/
+./build.sh --wires xml,json,geojson          # only these wires, into ebin/
+./build.sh --wires bits --out <dir>          # into <dir> instead of ebin/
+```
+
+A wire not named is left out twice over: its modules are not compiled, and
+the code of `gt_engine` and `gt_pack` that only it needs is compiled out,
+because `build.sh` passes `-Dno_wire_<wire>` to `erlc` for it
+(`src/gt_wires.hrl` turns those into `-if` blocks). The modules of each wire:
+
+| Wire | Modules | Also in `gt_engine` |
+|---|---|---|
+| xml | `gt_xml` | locators, groups, residue, the element writer |
+| json | `gt_json` (shared with geojson) | members, residue, the object writer |
+| geojson | `gt_json` (shared with json) | Feature reading and writing, and the member and JSON-value reading it shares with json; a geojson build without json compiles out the json object writer, residue and number check |
+| bits | `gt_bits`, `gt_seq`, `gt_hex` | fixed layouts, gate blocks, six-bit armor, the bits transforms; the sequential layout and `encoding uper` are in `gt_seq` |
+| protobuf | `gt_protobuf`, `gt_hex` | paths, packed lists, the writer tree, the protobuf transforms |
+| text | `gt_text` | none (dispatch only) |
+| tlv | `gt_tlv`, `gt_hex` | the bits transforms, which a `tlv` value uses |
+
+`gt_engine`, `gt_pack`, `gt_model`, `gt_num`, `gt_derive`, `gt_iso` and
+`gt_cli` are in every build. `gt_pack` still reads every directive of the
+pack language, but a pack whose `wire` is a wire the build left out stops at
+line check 6 (5b of 0.11) with `unknown-wire: <wire>: this build does not
+have the <wire> wire`; a `wire` value that is no wire stays
+`unknown-wire: <value>`. The conformance runner `gt_test` reads vectors with
+`gt_json`, so it is built, and `./run_tests` runs, only when the set holds
+json or geojson. For a rebar3 build, `{erl_opts, [{d, no_wire_bits}, ...]}`
+compiles the same code out of `gt_engine` and `gt_pack`; rebar3 still
+compiles every module of `src/`.
+
+The reduced-build check, from the repository root:
+
+```
+engines/erlang/reduced_check.sh
+```
+
+It builds the engine with every wire into `engines/erlang/_build/full/ebin`
+and with xml, json and geojson into `engines/erlang/_build/reduced/ebin`
+(`ebin/` is left alone), and on the reduced build: loads every pack on those
+three wires, all must load; runs every conversion vector whose `from` and
+`to` packs are on those wires (the wire and format read from the text of
+each `pack.def`), all must pass; loads every pack on bits, protobuf, text and
+tlv, each must be `unknown-wire` with the wire named and the reason in the
+message; loads a pack whose `wire` is `nowire`, which must be `unknown-wire`
+without that reason. It then prints the size of both builds, the `.beam`
+files `build.sh` writes, and exits non-zero on any failure.
+
+Measured (2026-11-20, one machine, `nice -n 10`):
+
+| Check | Result |
+|---|---|
+| conversion vectors on xml, json and geojson | 6849/6849 passed |
+| packs on bits refused as `unknown-wire` | 1632/1632 |
+| packs on protobuf refused as `unknown-wire` | 695/695 |
+| packs on text refused as `unknown-wire` | 71/71 |
+| packs on tlv refused as `unknown-wire` | 9/9 |
+| `wire nowire` | `unknown-wire`, without the reason |
+| full build, 7 wires | 344048 bytes, 16 `.beam` files |
+| reduced build, xml, json and geojson | 225776 bytes, 10 `.beam` files (65% of full) |
+
+Both sizes count `gt_cli` and the conformance runner `gt_test`, which every
+build with json or geojson holds.
 
 ## Command-line tool (engine-spec Version 0.23)
 
@@ -212,7 +284,9 @@ implemented as the specification states them.
 - `src/gt_iso.erl`   — ISO 8601 <-> epoch ms (`Z`, `z` or an offset in; `Z` out).
 - `src/gt_xml.erl`   — XML reader + canonical writer.
 - `src/gt_json.erl`  — JSON reader (member order preserved) and canonical writer.
-- `src/gt_bits.erl`  — hex text and bit-range access, both bit orders.
+- `src/gt_bits.erl`  — bit-range access, both bit orders, and six-bit armor.
+- `src/gt_hex.erl`   — hex text, the input and output of bits, protobuf and tlv.
+- `src/gt_wires.hrl` — the wires of a build (Version 0.24): `-Dno_wire_<wire>` to `?W_<WIRE>`.
 - `src/gt_protobuf.erl` — protobuf wire reader and canonical writer.
 - `src/gt_seq.erl`   — decode and encode of a `layout sequential` pack.
 - `src/gt_text.erl`  — the `text` wire (Version 0.10): reading a record (terminator,

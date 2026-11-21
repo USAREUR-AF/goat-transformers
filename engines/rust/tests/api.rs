@@ -4,6 +4,8 @@
 //! about the API or about the last bits of a float (rulings 1 and 9), and the
 //! 0.7 list API (`Entity.lists`, `model_keys`, `capability`), and the 0.8 item
 //! kind (`Item.kind`).
+// The packs this test loads need these wires (engine-spec 0.24).
+#![cfg(all(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
 
 use goat_transformers::{Engine, Entity, Grade, Value};
 use std::path::Path;

@@ -32,6 +32,63 @@
 // (`error.@"no-kind"`); `Engine.last_error` holds `<kind>: <detail>`.
 
 const std = @import("std");
+const build_options = @import("build_options");
+
+// ---------------------------------------------------------------------------
+// Version 0.24: the wires of the build (`zig build -Dwires=<w>,<w>…`)
+// ---------------------------------------------------------------------------
+
+// Does this build have the wire's codec? Known at compile time: every branch
+// that reads or writes a wire the build lacks is guarded by `built(w)` or
+// `isW`, so its code is never analysed and is not in the build.
+pub inline fn built(comptime w: Wire) bool {
+    return @field(build_options, "wire_" ++ @tagName(w));
+}
+
+// `wire == w`, false at compile time when the build lacks `w`.
+inline fn isW(wire: Wire, comptime w: Wire) bool {
+    return built(w) and wire == w;
+}
+
+// Does this build have the wire, for a wire known only at run time?
+pub fn wireBuilt(w: Wire) bool {
+    return switch (w) {
+        inline else => |cw| comptime built(cw),
+    };
+}
+
+// Has this build all seven wires?
+pub const all_wires = blk: {
+    for (std.enums.values(Wire)) |w| {
+        if (!built(w)) break :blk false;
+    }
+    break :blk true;
+};
+
+// The `wire` value of a pack text: the second token of its first `wire`
+// line with two tokens; null when there is none.
+pub fn packWireValue(alloc: std.mem.Allocator, def_text: []const u8) !?[]const u8 {
+    var tokbuf = std.ArrayList([]const u8).init(alloc);
+    defer tokbuf.deinit();
+    var lines = std.mem.splitScalar(u8, def_text, '\n');
+    while (lines.next()) |line| {
+        tokenizeInto(&tokbuf, line) catch |err| switch (err) {
+            error.OutOfMemory => return err,
+            else => continue,
+        };
+        const t = tokbuf.items;
+        if (t.len == 2 and std.mem.eql(u8, t[0], "wire")) return t[1];
+    }
+    return null;
+}
+
+// Is the pack text on a wire of the specification that this build lacks?
+pub fn packOnUnbuiltWire(alloc: std.mem.Allocator, def_text: []const u8) !bool {
+    if (all_wires) return false;
+    const v = (try packWireValue(alloc, def_text)) orelse return false;
+    const w = std.meta.stringToEnum(Wire, v) orelse return false;
+    return !wireBuilt(w);
+}
 
 // ---------------------------------------------------------------------------
 // Model
@@ -1815,10 +1872,10 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
     // a UPER locator outside a UPER pack (ruling 9 of 0.19); on another
     // wire such a locator is a path as before (ruling 19)
     // `until:` is a locator of sequential layouts only (Version 0.22)
-    if (p.wire == .bits and ln.isField() and std.mem.startsWith(u8, ln.locator, "until:")) {
+    if (isW(p.wire, .bits) and ln.isField() and std.mem.startsWith(u8, ln.locator, "until:")) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator {s} is for a sequential layout", .{ ln.lineno, ln.locator });
     }
-    if (p.wire == .bits and isUperLocator(ln.locator)) {
+    if (isW(p.wire, .bits) and isUperLocator(ln.locator)) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator {s} is for a pack with `encoding uper`", .{ ln.lineno, ln.locator });
     }
     if (ln.t_err) |err| {
@@ -1896,7 +1953,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             return bad(diag, alloc, E.@"bad-directive", "line {d}: via {s} names a table with no map line", .{ ln.lineno, ln.via_name });
     }
     switch (p.wire) {
-        .bits => {
+        .bits => { if (comptime !built(.bits)) unreachable;
             var it = std.mem.splitScalar(u8, ln.locator, ':');
             const ws = it.next() orelse "";
             const ps = it.next() orelse "";
@@ -1941,7 +1998,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                 }
             }
         },
-        .protobuf => {
+        .protobuf => { if (comptime !built(.protobuf)) unreachable;
             if (!ln.dot) {
                 ln.ppath = parsePbPath(alloc, ln.locator) catch |err| switch (err) {
                     error.OutOfMemory => return err,
@@ -1961,7 +2018,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                 }
             }
         },
-        .xml, .geojson, .json => {
+        .xml, .geojson, .json => { if (comptime !built(.xml) and !built(.geojson) and !built(.json)) unreachable;
             if (ln.isFixed()) {
                 if (std.mem.eql(u8, ln.wraw, "present")) {
                     ln.wpresent = true;
@@ -1983,8 +2040,8 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                 ln.segs = try splitSegs(alloc, ln.locator, '.');
             }
         },
-        .text => try textFinalizeLine(alloc, p, ln, diag),
-        .tlv => try tlvFinalizeLine(alloc, p, ln, diag),
+        .text => if (comptime !built(.text)) unreachable else try textFinalizeLine(alloc, p, ln, diag),
+        .tlv => if (comptime !built(.tlv)) unreachable else try tlvFinalizeLine(alloc, p, ln, diag),
     }
     if (ln.isField() and !ln.abs_checked) try parseAbsent(alloc, p.wire, ln, in_group, diag);
 }
@@ -2186,13 +2243,13 @@ fn finalizeLines(alloc: std.mem.Allocator, p: *Pack, lines: []Line, in_group: bo
 // then the lines of its body.
 fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, diag: *Diag) anyerror!void {
     const bd = E.@"bad-directive";
-    if (p.wire == .text) return textFinalizeGroup(alloc, p, g, nested, diag);
+    if (isW(p.wire, .text)) return textFinalizeGroup(alloc, p, g, nested, diag);
     if (p.wire == .tlv) return bad(diag, alloc, bd, "line {d}: group on the tlv wire", .{g.lineno});
     if (p.wire != .bits and (g.count_txt != null or g.item_txt != null)) {
         return bad(diag, alloc, bd, "line {d}: `item` and `count` are for the bits wire, not {s}", .{ g.lineno, @tagName(p.wire) });
     }
     switch (p.wire) {
-        .xml => {
+        .xml => { if (comptime !built(.xml)) unreachable;
             const names = try splitSegs(alloc, g.locator, '/');
             for (names) |nm| {
                 if (nm.len == 0 or nm[0] == '@' or nm[0] == '#') {
@@ -2202,7 +2259,7 @@ fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, di
             g.xname = names[names.len - 1];
             g.xpath = names[0 .. names.len - 1];
         },
-        .json, .geojson => {
+        .json, .geojson => { if (comptime !built(.json) and !built(.geojson)) unreachable;
             g.segs = try splitSegs(alloc, g.locator, '.');
             for (g.segs) |seg| {
                 if (seg.len == 0) return bad(diag, alloc, bd, "line {d}: group locator {s} is not a member path", .{ g.lineno, g.locator });
@@ -2217,13 +2274,13 @@ fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, di
                 }
             }
         },
-        .protobuf => {
+        .protobuf => { if (comptime !built(.protobuf)) unreachable;
             g.ppath = parsePbPath(alloc, g.locator) catch |err| switch (err) {
                 error.OutOfMemory => return err,
                 else => return bad(diag, alloc, bd, "line {d}: group locator {s} is not field numbers separated by dots", .{ g.lineno, g.locator }),
             };
         },
-        .bits => {
+        .bits => { if (comptime !built(.bits)) unreachable;
             const at = parseColons(g.locator, 2) orelse
                 return bad(diag, alloc, bd, "line {d}: group locator {s} is not <word>:<pos>", .{ g.lineno, g.locator });
             g.gstart = at[0] * p.word_bytes * 8 + at[1];
@@ -2663,8 +2720,14 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         if (sl.*) return lineBad(diag, alloc, bd, "line {d}: a second {s} line", .{ lineno, kw });
         sl.* = true;
     }
-    if (d == .wire and std.meta.stringToEnum(Wire, toks[1]) == null) {
-        return lineBad(diag, alloc, E.@"unknown-wire", "line {d}: unknown wire {s}", .{ lineno, toks[1] });
+    if (d == .wire) {
+        const w = std.meta.stringToEnum(Wire, toks[1]) orelse
+            return lineBad(diag, alloc, E.@"unknown-wire", "line {d}: unknown wire {s}", .{ lineno, toks[1] });
+        // Version 0.24, ruling 1c: a wire of the specification this build
+        // does not have
+        if (!wireBuilt(w)) {
+            return lineBad(diag, alloc, E.@"unknown-wire", "line {d}: wire {s} is a wire of the specification that this build does not have", .{ lineno, toks[1] });
+        }
     }
     if (d == .distribution) _ = parseDist(toks[1]) catch |err|
         return lineBad(diag, alloc, err, "line {d}: distribution {s} is not public or controlled", .{ lineno, toks[1] });
@@ -2893,7 +2956,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         if (is_when) st.any_when = true;
         // a UPER locator on `bits` is `bad-directive` after the file
         // (rulings 24 and 26 of 0.19), not `bad-locator` here
-        if (p.wire == .bits and isUperLocator(toks[1])) {
+        if (isW(p.wire, .bits) and isUperLocator(toks[1])) {
             if (p.uper_line == 0) p.uper_line = lineno;
         } else if (!locatorFormOk(p.wire, false, toks[1], in_group)) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a {s} on the {s} wire", .{ lineno, toks[1], kw, @tagName(p.wire) });
@@ -2959,7 +3022,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         // a UPER locator (`int:`, `enum:`, `chars:`, `octets:`) on a `bits`
         // field outside a UPER pack is `bad-directive`, checked after the
         // file is read (rulings 9 and 19 of 0.19), not `bad-locator` here
-        const uper_loc = p.wire == .bits and isUperLocator(toks[2]);
+        const uper_loc = isW(p.wire, .bits) and isUperLocator(toks[2]);
         if (uper_loc) {
             if (p.uper_line == 0) p.uper_line = lineno;
         } else if (!locatorFormOk(p.wire, false, toks[2], in_group)) {
@@ -3026,7 +3089,9 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
 
 fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Pack {
     // `layout sequential` on the bits wire: lines read in order from a cursor
-    if (try isSequentialPack(alloc, def_text)) return parseSeqPack(alloc, def_text, diag);
+    // (part of `bits`, ruling 1d of 0.24: a build without `bits` reads such
+    // a pack as a fixed one, which stops at its `wire bits` line)
+    if (built(.bits) and try isSequentialPack(alloc, def_text)) return parseSeqPack(alloc, def_text, diag);
     const p = try newPack(alloc);
     // The open groups, innermost last. The body lines of every open group
     // collect in `gtmp`; `gfrom` is where each group's begin, `gline` the
@@ -3125,11 +3190,11 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     for (p.kinds.items) |*k| try checkScope(alloc, p, p.common.items, k.lines.items, p.common_gates.items, k.gates.items, null, false, diag);
     try checkGroupBodies(alloc, p, p.common.items, diag);
     for (p.kinds.items) |*k| try checkGroupBodies(alloc, p, k.lines.items, diag);
-    if (p.wire == .text) {
+    if (isW(p.wire, .text)) {
         if (p.kinds.items.len == 0) try textCheckScope(alloc, p.common.items, &.{}, diag);
         for (p.kinds.items) |*k| try textCheckScope(alloc, p.common.items, k.lines.items, diag);
     }
-    if (p.wire == .tlv) {
+    if (isW(p.wire, .tlv)) {
         if (p.kinds.items.len == 0) try tlvCheckScope(alloc, p.common.items, &.{}, diag);
         for (p.kinds.items) |*k| try tlvCheckScope(alloc, p.common.items, k.lines.items, diag);
     }
@@ -3463,7 +3528,7 @@ pub const Engine = struct {
             for (k.defaults.items) |*d| try self.readDefault(p, d);
         }
         for (p.common_defaults.items) |*d| try self.readDefault(p, d);
-        if (p.seq) |b| try self.resolveSeqBody(p, b);
+        if (built(.bits)) if (p.seq) |b| try self.resolveSeqBody(p, b);
         try self.checkValues(p);
         try finishPack(self.alloc, p);
         // last: a format name already loaded (ruling 5 of 0.11); the first
@@ -6063,11 +6128,11 @@ const Doc = union(enum) {
 
 fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Doc {
     switch (p.wire) {
-        .xml => {
+        .xml => { if (comptime !built(.xml)) unreachable;
             const root = parseXml(alloc, bytes) catch |err| return bad(diag, alloc, err, "the input is not well-formed xml", .{});
             return .{ .xml = root };
         },
-        .geojson => {
+        .geojson => { if (comptime !built(.geojson)) unreachable;
             const obj = parseJsonObject(alloc, bytes, true) catch |err| return bad(diag, alloc, err, "the input is not one JSON object", .{});
             var d = GeoDoc{ .obj = obj, .coords = null, .props = null };
             if (obj.get("geometry")) |g| {
@@ -6082,7 +6147,7 @@ fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *
             }
             return .{ .geojson = d };
         },
-        .json => {
+        .json => { if (comptime !built(.json)) unreachable;
             // numbers as written: `iscale` reads the digits (ruling 7 of 0.15)
             const obj = parseJsonObject(alloc, bytes, true) catch |err| return bad(diag, alloc, err, "the input is not one JSON object", .{});
             jsonCheckNoDuplicates(alloc, bytes) catch |err| return bad(diag, alloc, err, "a member name appears twice in one object", .{});
@@ -6090,19 +6155,19 @@ fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *
             reads.* = .{};
             return .{ .json = .{ .v = .{ .object = obj }, .reads = reads } };
         },
-        .bits => {
+        .bits => { if (comptime !built(.bits)) unreachable;
             const in = bitsInput(alloc, p, bytes) catch |err| return bad(diag, alloc, err, "{s}", .{if (p.armor) "the input is not six-bit armored text" else "the input is not hex of even length"});
             return .{ .bits = .{ .buf = in.buf, .nbits = in.nbits } };
         },
-        .protobuf => {
+        .protobuf => { if (comptime !built(.protobuf)) unreachable;
             const buf = hexDecode(alloc, bytes) catch |err| return bad(diag, alloc, err, "the input is not hex of even length", .{});
             const entries = parsePb(alloc, buf) catch |err| return bad(diag, alloc, err, "the input is not a protobuf message", .{});
             const cache = try alloc.create(PbCache);
             cache.* = PbCache.init(alloc);
             return .{ .protobuf = .{ .entries = entries, .cache = cache } };
         },
-        .text => return .{ .text = try textParse(alloc, p, bytes, diag) },
-        .tlv => return .{ .tlv = try tlvParse(alloc, p, bytes, diag) },
+        .text => if (comptime !built(.text)) unreachable else return .{ .text = try textParse(alloc, p, bytes, diag) },
+        .tlv => if (comptime !built(.tlv)) unreachable else return .{ .tlv = try tlvParse(alloc, p, bytes, diag) },
     }
 }
 
@@ -6118,7 +6183,7 @@ fn jitemLookup(it: JItem, ln: *const Line) ?JValue {
 // the raw wire value, before any transform.
 fn whenHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line) bool {
     switch (doc) {
-        .xml => |root| {
+        .xml => |root| { if (comptime !built(.xml)) unreachable;
             // `present` on `#text`: the element exists (ruling 1m of 0.11)
             if (ln.wpresent and std.mem.endsWith(u8, ln.locator, "#text")) {
                 const t = xmlTarget(root, ln.locator) orelse return false;
@@ -6129,25 +6194,26 @@ fn whenHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             for (ln.walts) |a| if (std.mem.eql(u8, got, a.text)) return true;
             return false;
         },
-        .geojson => |d| return whenJsonHoldsAny(alloc, ln, geoLookup(d, ln.locator)),
-        .json => |it| return whenJsonHoldsAny(alloc, ln, jitemLookup(it, ln)),
-        .bits => |bd| {
+        .geojson => |d| if (comptime !built(.geojson)) unreachable else return whenJsonHoldsAny(alloc, ln, geoLookup(d, ln.locator)),
+        // (also an item of a geojson group)
+        .json => |it| if (comptime !built(.json) and !built(.geojson)) unreachable else return whenJsonHoldsAny(alloc, ln, jitemLookup(it, ln)),
+        .bits => |bd| { if (comptime !built(.bits)) unreachable;
             // a `when` that lies beyond the input does not hold
             if (bd.base + ln.bstart + ln.blen > bd.nbits) return false;
             return inRanges(ln.wranges, getBits(bd.buf, p.msb, bd.base + ln.bstart, ln.blen));
         },
-        .protobuf => |pd| {
+        .protobuf => |pd| { if (comptime !built(.protobuf)) unreachable;
             const leaf = (resolvePb(alloc, pd, ln.ppath) catch return false) orelse return false;
             if (ln.wpresent) return true;
             return leaf.wt == 0 and inRanges(ln.wranges, leaf.uval);
         },
-        .text => |td| {
+        .text => |td| { if (comptime !built(.text)) unreachable;
             // a `when` on a column its field does not reach does not hold
             const got = textRead(td, ln, ln.ti, false) orelse return false;
             if (ln.wpresent) return true;
             return std.mem.eql(u8, got, ln.wtext);
         },
-        .tlv => |items| return tlvWhenHolds(alloc, p, items, ln),
+        .tlv => |items| if (comptime !built(.tlv)) unreachable else return tlvWhenHolds(alloc, p, items, ln),
     }
 }
 
@@ -6387,13 +6453,13 @@ fn jsonIsSentinel(alloc: std.mem.Allocator, ln: *const Line, v: JValue) !bool {
 fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line) anyerror!?MV {
     const t = ln.transform.kind;
     switch (doc) {
-        .xml => |root| {
+        .xml => |root| { if (comptime !built(.xml)) unreachable;
             const raw = xmlGet(root, ln.locator) orelse return null;
             if (ln.abs_set and absentText(ln, raw)) return null; // not trimmed (ruling 14)
             if (t == .tscale or t == .iscale) return try textScaleDecode(alloc, ln.transform, raw);
             return try textToMV(t, raw);
         },
-        .geojson => |d| {
+        .geojson => |d| { if (comptime !built(.geojson)) unreachable;
             // 0.1 behaviour (ruling 28 of 0.5): a scalar is read as its text,
             // whatever its JSON type
             const v = geoLookup(d, ln.locator) orelse return null;
@@ -6403,7 +6469,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             const raw = (try geoText(alloc, v)) orelse return E.@"transform-decode";
             return try textToMV(t, raw);
         },
-        .json => |it| {
+        .json => |it| { if (comptime !built(.json) and !built(.geojson)) unreachable; // also an item of a geojson group
             const v = jitemLookup(it, ln) orelse return null;
             if (it.reads) |r| {
                 if (v == .number_string) try r.put(alloc, @intFromPtr(v.number_string.ptr), {});
@@ -6419,13 +6485,13 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             }
             return try jsonToMV(t, v); // `.` on an object or array fails here
         },
-        .bits => |bd| {
+        .bits => |bd| { if (comptime !built(.bits)) unreachable;
             // an `optional` field any of whose bits lies beyond the input is absent
             if (ln.optional and bd.base + ln.bstart + ln.blen > bd.nbits) return null;
             if (ln.abs_set and absentInt(ln, bitsRaw(p, bd.buf, bd.base, ln))) return null;
             return try bitsDecodeField(alloc, p, bd.buf, bd.base, ln);
         },
-        .protobuf => |pd| {
+        .protobuf => |pd| { if (comptime !built(.protobuf)) unreachable;
             const leaf = if (ln.dot)
                 pd.self orelse return null
             else
@@ -6439,7 +6505,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             }
             return try decodeProtoTransform(t, leaf);
         },
-        .text => |td| {
+        .text => |td| { if (comptime !built(.text)) unreachable;
             if (ln.tloc == .pair) {
                 // absent when either field is absent
                 const a = textRead(td, ln, ln.ti, false) orelse return null;
@@ -6449,7 +6515,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             const raw = textRead(td, ln, ln.ti, textNumeric(t)) orelse return null;
             return try textDecode(ln.transform, raw);
         },
-        .tlv => |items| return try tlvReadField(alloc, p, items, ln),
+        .tlv => |items| if (comptime !built(.tlv)) unreachable else return try tlvReadField(alloc, p, items, ln),
     }
 }
 
@@ -6525,7 +6591,7 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
     // Version 0.17: the gate blocks that hold; a held block's fields and
     // `const` lines that are not `optional` must be in the input
     var held: []bool = &.{};
-    if (sc.gates.len > 0 and doc == .bits) {
+    if (built(.bits) and sc.gates.len > 0 and doc == .bits) {
         const bd = doc.bits;
         held = try alloc.alloc(bool, sc.gates.len);
         evalGates(p, sc.gates, bd.buf, bd.nbits, bd.base, held);
@@ -6667,7 +6733,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
     const body = &g.body;
     const mw = E.@"malformed-wire";
     switch (doc) {
-        .xml => |node| {
+        .xml => |node| { if (comptime !built(.xml)) unreachable;
             // each child element named by the last name, under the first
             // element matched by the names before it
             var cont = node;
@@ -6689,10 +6755,10 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             try e.putList(g.list, items);
             return 0;
         },
-        .geojson, .json => {
+        .geojson, .json => { if (comptime !built(.geojson) and !built(.json)) unreachable;
             const found: ?JValue = switch (doc) {
-                .geojson => |d| geoLookup(d, g.locator),
-                .json => |it| if (it.v == .object) jsonLookup(it.v.object, g.segs) else null,
+                .geojson => |d| if (comptime !built(.geojson)) unreachable else geoLookup(d, g.locator),
+                .json => |it| if (comptime !built(.json) and !built(.geojson)) unreachable else if (it.v == .object) jsonLookup(it.v.object, g.segs) else null,
                 else => unreachable,
             };
             const v = found orelse return 0;
@@ -6703,7 +6769,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             for (v.array.items, 0..) |el, i| {
                 items[i] = Entity.init(alloc);
                 const reads: ?*NumReads = switch (doc) {
-                    .json => |it| it.reads,
+                    .json => |it| if (comptime !built(.json) and !built(.geojson)) unreachable else it.reads,
                     else => null,
                 };
                 _ = try decodeScope(alloc, p, body, .{ .json = .{ .v = el, .geo = p.wire == .geojson, .reads = reads } }, &items[i], diag);
@@ -6711,7 +6777,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             try e.putList(g.list, items);
             return 0;
         },
-        .protobuf => |pd| {
+        .protobuf => |pd| { if (comptime !built(.protobuf)) unreachable;
             const found = pbDescend(alloc, pd, g.ppath[0 .. g.ppath.len - 1]) catch |err| switch (err) {
                 error.OutOfMemory => return err,
                 else => return bad(diag, alloc, mw, "group {s} at {s}: a field on the path is not a submessage", .{ g.list, g.locator }),
@@ -6765,7 +6831,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             try e.putList(g.list, try items.finish());
             return 0;
         },
-        .bits => |bd| {
+        .bits => |bd| { if (comptime !built(.bits)) unreachable;
             const total = bd.nbits;
             // the count locator is inside the bits the scope requires
             const count: u64 = if (g.count_fixed) |n| n else getBits(bd.buf, p.msb, bd.base + g.cstart, g.clen);
@@ -6788,7 +6854,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             try e.putList(g.list, items);
             return if (count == 0) 0 else pos;
         },
-        .text => |td| {
+        .text => |td| { if (comptime !built(.text)) unreachable;
             // items from field `tstart` to the end of the record, the last
             // one possibly cut short; no field there: the list is absent
             const nf = td.fields.len;
@@ -6803,12 +6869,12 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             try e.putList(g.list, items);
             return 0;
         },
-        .tlv => return 0, // no group on `tlv`
+        .tlv => if (comptime !built(.tlv)) unreachable else return 0, // no group on `tlv`
     }
 }
 
 fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Entity {
-    if (p.seq != null) return seqDecode(alloc, p, bytes, diag);
+    if (built(.bits) and p.seq != null) return seqDecode(alloc, p, bytes, diag);
     const doc = try parseDoc(alloc, p, bytes, diag);
 
     // kind selection
@@ -6861,7 +6927,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
     }
 
     // tlv: every set a line of the selected scope walks into is read whole
-    if (doc == .tlv) try tlvWalkScope(alloc, p, doc.tlv, lines, diag);
+    if (built(.tlv) and doc == .tlv) try tlvWalkScope(alloc, p, doc.tlv, lines, diag);
 
     var e = Entity.init(alloc);
     if (kind_idx) |k| {
@@ -6898,7 +6964,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
 
     // residue: what no common or selected-kind `field` or `when` maps
     switch (doc) {
-        .xml => |root| {
+        .xml => |root| { if (comptime !built(.xml)) unreachable;
             // unmapped root attributes, input order
             for (root.attrs.items) |a| {
                 var mapped = false;
@@ -6914,7 +6980,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
                 }
             }
         },
-        .geojson => |d| {
+        .geojson => |d| { if (comptime !built(.geojson)) unreachable;
             // unmapped `properties` members, input order
             if (d.props) |pm| {
                 var it = pm.iterator();
@@ -6934,7 +7000,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
                 }
             }
         },
-        .json => |it| {
+        .json => |it| { if (comptime !built(.json)) unreachable;
             // a number outside the double range that no field read, anywhere
             // in the document (ruling 27 of 0.15)
             if (jsonUnreadOverflow(it.v, it.reads.?)) |num| {
@@ -6945,9 +7011,9 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
                 else => return err,
             };
         },
-        .text => |td| try textResidue(alloc, p, lines, td, &e),
-        .tlv => |items| try tlvResidue(alloc, p, lines, items, &.{}, "", &e),
-        .bits, .protobuf => {},
+        .text => |td| if (comptime !built(.text)) unreachable else try textResidue(alloc, p, lines, td, &e),
+        .tlv => |items| if (comptime !built(.tlv)) unreachable else try tlvResidue(alloc, p, lines, items, &.{}, "", &e),
+        .bits, .protobuf => if (comptime !built(.bits) and !built(.protobuf)) unreachable else {},
     }
     return e;
 }
@@ -7748,13 +7814,13 @@ fn armorLength(p: *const Pack, sc: *const Scope, e: *const Entity, end: usize, h
 }
 
 fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag) anyerror![]u8 {
-    if (p.seq != null) return seqEncode(alloc, p, e, diag);
+    if (built(.bits) and p.seq != null) return seqEncode(alloc, p, e, diag);
     const kind_idx = try selectKindEncode(alloc, p, e, diag);
     const sc = p.scope(kind_idx);
     const lines = sc.lines;
 
     switch (p.wire) {
-        .xml => {
+        .xml => { if (comptime !built(.xml)) unreachable;
             const root = try xmlNewNode(alloc, p.rootName(kind_idx));
             try xmlEncodeScope(alloc, p, sc, root, e, diag);
             // residue (root attributes of this format), input order, after mapped
@@ -7766,7 +7832,7 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             try xmlWrite(&buf, root);
             return buf.toOwnedSlice();
         },
-        .geojson => {
+        .geojson => { if (comptime !built(.geojson)) unreachable;
             var coords = [3]?[]const u8{ null, null, null };
             var coords_weak = [3]bool{ false, false, false };
             var props = std.ArrayList(Member).init(alloc);
@@ -7844,7 +7910,7 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             try buf.append('}');
             return buf.toOwnedSlice();
         },
-        .json => {
+        .json => { if (comptime !built(.json)) unreachable;
             const root = try jnodeNew(alloc, "");
             try jsonEncodeScope(alloc, p, sc, root, e, diag);
             // residue members of each object, input order, after the mapped members
@@ -7860,7 +7926,7 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             try jnodeWrite(&buf, root);
             return buf.toOwnedSlice();
         },
-        .bits => {
+        .bits => { if (comptime !built(.bits)) unreachable;
             // the whole message, `optional` fields included, then the items;
             // padded with zero bits to whole words
             var out = BitsOut{ .buf = std.ArrayList(u8).init(alloc) };
@@ -7890,7 +7956,7 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             if (p.armor) return armorEncode(alloc, out.buf.items, l_armor);
             return hexEncode(alloc, out.buf.items);
         },
-        .protobuf => {
+        .protobuf => { if (comptime !built(.protobuf)) unreachable;
             const root = try alloc.create(PbNode);
             root.* = .{ .number = 0, .children = std.ArrayList(*PbNode).init(alloc) };
             try pbEncodeScope(alloc, p, sc, root, e, diag);
@@ -7898,8 +7964,8 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             try encodeProtoNode(alloc, root, &buf);
             return hexEncode(alloc, buf.items);
         },
-        .text => return textEncode(alloc, p, sc, e, diag),
-        .tlv => return tlvEncode(alloc, p, sc, e, diag),
+        .text => if (comptime !built(.text)) unreachable else return textEncode(alloc, p, sc, e, diag),
+        .tlv => if (comptime !built(.tlv)) unreachable else return tlvEncode(alloc, p, sc, e, diag),
     }
 }
 
@@ -7935,7 +8001,9 @@ fn textDirectives(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void
     if (tlv_dirs and p.wire != .tlv) return bad(diag, alloc, bd, "tag, length and key are directives of the tlv wire, not {s}", .{@tagName(p.wire)});
     if (p.cksum_raw != null and p.wire != .text and p.wire != .tlv) return bad(diag, alloc, bd, "checksum is a directive of the text and tlv wires, not {s}", .{@tagName(p.wire)});
     if (p.tdir_bad != 0) return bad(diag, alloc, bd, "line {d}: a directive of the wire appears at most once, before the first kind", .{p.tdir_bad});
-    if (p.wire == .tlv) return tlvDirectives(alloc, p, diag);
+    if (isW(p.wire, .tlv)) return tlvDirectives(alloc, p, diag);
+    // the wire is `text` from here
+    if (comptime !built(.text)) unreachable;
     if (p.cksum_arg != null) return bad(diag, alloc, bd, "checksum {s} {s} is not none or nmea", .{ p.cksum_raw.?, p.cksum_arg.? });
     if (p.delim_raw) |d| {
         if (std.mem.eql(u8, d, "none")) {
@@ -12079,8 +12147,14 @@ fn sortedNames(alloc: std.mem.Allocator, dir_path: []const u8, want: std.fs.Dir.
     return try names.toOwnedSlice();
 }
 
+// The packs `loadAllPacks` left out: on a wire this build does not have
+// (Version 0.24).
+var packs_left_out: usize = 0;
+
 // Load every pack under `packs_dir` (a directory holding a pack.def), in byte
 // order of directory name. Returns the directory names of the loaded packs.
+// A build with fewer wires (Version 0.24) leaves out each pack on a wire it
+// does not have, and counts it.
 fn loadAllPacks(eng: *Engine, packs_dir: []const u8) ![]const []const u8 {
     const alloc = eng.alloc;
     var dirs = std.ArrayList([]const u8).init(alloc);
@@ -12091,6 +12165,10 @@ fn loadAllPacks(eng: *Engine, packs_dir: []const u8) ![]const []const u8 {
             error.FileNotFound => continue,
             else => return err,
         };
+        if (try packOnUnbuiltWire(alloc, def_text)) {
+            packs_left_out += 1;
+            continue;
+        }
         _ = eng.loadPack(def_text) catch |err| {
             eng.last_error = try std.fmt.allocPrint(alloc, "{s} ({s})", .{ eng.last_error, def_path });
             return err;
@@ -12438,6 +12516,9 @@ fn modelMatch(actual: MV, expected: []const u8, relative: bool) bool {
 
 // Run one load vector on a fresh engine. Returns null on pass, else why it
 // failed.
+// `runLoadVector`'s answer for a vector this build does not run.
+const skip_vector: []const u8 = "skip";
+
 fn runLoadVector(alloc: std.mem.Allocator, text: []const u8) !?[]const u8 {
     const parsed = std.json.parseFromSliceLeaky(JValue, alloc, text, .{}) catch return "not JSON";
     if (parsed != .object) return "not a JSON object";
@@ -12455,6 +12536,11 @@ fn runLoadVector(alloc: std.mem.Allocator, text: []const u8) !?[]const u8 {
             try pack_texts.append(x.string);
         }
     } else return "no pack";
+    // a build with fewer wires (Version 0.24) does not run a load vector
+    // with a pack on a wire it does not have
+    for (pack_texts.items) |pt| {
+        if (try packOnUnbuiltWire(alloc, pt)) return skip_vector;
+    }
     const expect_error = getStr(obj, "expect_error");
 
     var eng = Engine.init(alloc);
@@ -12884,7 +12970,7 @@ pub fn main() !void {
             const vtext = try std.fs.cwd().readFileAlloc(eng.scratch, vpath, max_file);
             // with --packs-only, a vector that names a pack left out is
             // not run, and is counted
-            if (only_opt != null and !vectorFormatsLoaded(&eng, packs_dir, vtext)) {
+            if ((only_opt != null or packs_left_out > 0) and !vectorFormatsLoaded(&eng, packs_dir, vtext)) {
                 skipped += 1;
                 continue;
             }
@@ -12900,6 +12986,7 @@ pub fn main() !void {
     // load vectors: <packs>/conformance/load-vectors/*.json
     var ltotal: usize = 0;
     var lpassed: usize = 0;
+    var lskipped: usize = 0;
     // (with --packs-only, when `conformance` is one of the named packs)
     const ldir_path = try std.fmt.allocPrint(alloc, "{s}/conformance/load-vectors", .{packs_dir});
     var run_load = only_opt == null;
@@ -12915,6 +13002,11 @@ pub fn main() !void {
             const lpath = try std.fmt.allocPrint(la, "{s}/{s}", .{ ldir_path, ln });
             const ltext = try std.fs.cwd().readFileAlloc(la, lpath, max_file);
             if (try runLoadVector(la, ltext)) |detail| {
+                if (detail.ptr == skip_vector.ptr) {
+                    ltotal -= 1;
+                    lskipped += 1;
+                    continue;
+                }
                 try failures.append(try std.fmt.allocPrint(alloc, "load-vectors/{s}: {s}", .{ ln, detail }));
             } else {
                 lpassed += 1;
@@ -12934,7 +13026,7 @@ pub fn main() !void {
             defer eng.scratch = alloc;
             const cpath = try std.fmt.allocPrint(eng.scratch, "{s}/{s}", .{ cdir_path, cn });
             const ctext = try std.fs.cwd().readFileAlloc(eng.scratch, cpath, max_file);
-            if (only_opt != null and !vectorFormatsLoaded(&eng, packs_dir, ctext)) {
+            if ((only_opt != null or packs_left_out > 0) and !vectorFormatsLoaded(&eng, packs_dir, ctext)) {
                 skipped += 1;
                 continue;
             }
@@ -12954,6 +13046,14 @@ pub fn main() !void {
     try stdout.print("load vectors: {d}/{d} passed\n", .{ lpassed, ltotal });
     try stdout.print("capability vectors: {d}/{d} passed\n", .{ cpassed, ctotal });
     if (skipped > 0) try stdout.print("skipped: {d} vectors that name a pack not loaded\n", .{skipped});
+    if (!all_wires) {
+        try stdout.print("wires of this build:", .{});
+        inline for (comptime std.enums.values(Wire)) |w| {
+            if (comptime built(w)) try stdout.print(" {s}", .{@tagName(w)});
+        }
+        try stdout.print("\n", .{});
+        try stdout.print("left out: {d} packs on a wire this build does not have, {d} load vectors with such a pack\n", .{ packs_left_out, lskipped });
+    }
     try bw.flush();
     if (passed != total or lpassed != ltotal or cpassed != ctotal) std.process.exit(1);
 }

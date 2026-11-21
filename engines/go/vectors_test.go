@@ -287,117 +287,7 @@ func runConversionVectors(t *testing.T, packsDir string) {
 		}
 		names[id] = file
 		run++
-		ok := t.Run(id, func(t *testing.T) {
-			// A vector that pins unknown-format names a format no pack
-			// directory holds (spec/vector-format.md, Version 0.11).
-			if _, loaded := eng.packs[v.From]; v.From != pack && loaded {
-				t.Errorf("vector lives in pack %q but from is %q", pack, v.From)
-			}
-			if v.MaxItems != nil {
-				n, err := parseUintText(v.MaxItems.String(), 1<<62)
-				if err != nil {
-					t.Fatalf("max_items %q is not an integer of 0 or more; the vector is invalid", v.MaxItems.String())
-				}
-				eng.SetMaxItems(int64(n))
-				defer eng.SetMaxItems(DefaultMaxItems)
-			}
-			in := bytesOf(t, v.Input, v.InputB64, "input")
-			got, err := eng.ConvertWith(v.From, v.To, in, v.Context)
-			if v.ExpectError != nil {
-				if v.Expect != nil || v.ExpectB64 != nil {
-					t.Fatalf("vector sets both expect and expect_error")
-				}
-				want := *v.ExpectError
-				switch {
-				case err == nil:
-					t.Errorf("convert %s -> %s succeeded with %s, want error %s", v.From, v.To, got, want)
-				case !IsKind(err, ErrorKind(want)):
-					t.Errorf("convert %s -> %s: got %v, want error kind %s", v.From, v.To, err, want)
-				case !strings.HasPrefix(err.Error(), want+":"):
-					t.Errorf("message %q does not begin with %q", err.Error(), want+":")
-				}
-			} else {
-				want := bytesOf(t, v.Expect, v.ExpectB64, "expect")
-				if err != nil {
-					t.Errorf("convert %s -> %s: %v", v.From, v.To, err)
-				} else if !bytes.Equal(got, want) {
-					t.Errorf("convert %s -> %s mismatch\n got: %s\nwant: %s", v.From, v.To, got, want)
-				}
-			}
-			if len(v.Model) == 0 {
-				return
-			}
-			ent, err := eng.Decode(v.From, in)
-			if err != nil {
-				t.Fatalf("decode %s: %v", v.From, err)
-			}
-			complete := false
-			if c, has := v.Model[completeKey]; has {
-				b, isBool := c.(bool)
-				if !isBool {
-					t.Fatalf("model[%s] must be true or false", completeKey)
-				}
-				complete = b
-			}
-			if complete {
-				if err := eng.Fill(ent, v.Context); err != nil {
-					t.Fatalf("complete: %v", err)
-				}
-				eng.Complete(ent)
-			}
-			keys := make([]string, 0, len(v.Model))
-			for k := range v.Model {
-				keys = append(keys, k)
-			}
-			sort.Strings(keys)
-			for _, k := range keys {
-				if k == completeKey {
-					continue
-				}
-				if k == absentKey {
-					list, isList := v.Model[k].([]any)
-					if !isList {
-						t.Errorf("model[%s] must be an array of keys", absentKey)
-						continue
-					}
-					for _, e := range list {
-						key, isString := e.(string)
-						if !isString {
-							t.Errorf("model[%s]: an entry must be a string, got %v", absentKey, e)
-							continue
-						}
-						// A listed key that is also a member of model makes
-						// the vector invalid (0.9 ruling 21).
-						if _, clash := v.Model[key]; clash {
-							t.Errorf("model[%s]: %q is also a member of model; the vector is invalid", absentKey, key)
-							continue
-						}
-						if msg := checkAbsent(ent.item(), key); msg != "" {
-							t.Errorf("model[%s] %s: %s", absentKey, key, msg)
-						}
-					}
-					continue
-				}
-				wantS, isString := v.Model[k].(string)
-				if !isString {
-					t.Errorf("model[%s]: expected value must be in string form", k)
-					continue
-				}
-				if msg := checkModelGrammar(eng, k, wantS); msg != "" {
-					t.Errorf("model[%s]: %s; the vector is invalid", k, msg)
-					continue
-				}
-				if k == kindKey {
-					if ent.Kind.Format != v.From || ent.Kind.Name != wantS {
-						t.Errorf("decode selected kind (%q, %q), want (%q, %q)", ent.Kind.Format, ent.Kind.Name, v.From, wantS)
-					}
-					continue
-				}
-				if msg := checkModelKey(ent.item(), k, wantS, complete); msg != "" {
-					t.Errorf("model[%s]: %s", k, msg)
-				}
-			}
-		})
+		ok := t.Run(id, func(t *testing.T) { checkVector(t, eng, pack, v) })
 		if ok {
 			passed++
 		} else {
@@ -409,5 +299,119 @@ func runConversionVectors(t *testing.T, packsDir string) {
 	t.Log(summary)
 	for _, id := range failed {
 		t.Errorf("FAILED conversion vector: %s", id)
+	}
+}
+
+// checkVector runs one conversion vector of the pack it lives in against an
+// engine (spec/vector-format.md, "What the engine checks per vector").
+func checkVector(t *testing.T, eng *Engine, pack string, v vector) {
+	// A vector that pins unknown-format names a format no pack
+	// directory holds (spec/vector-format.md, Version 0.11).
+	if _, loaded := eng.packs[v.From]; v.From != pack && loaded {
+		t.Errorf("vector lives in pack %q but from is %q", pack, v.From)
+	}
+	if v.MaxItems != nil {
+		n, err := parseUintText(v.MaxItems.String(), 1<<62)
+		if err != nil {
+			t.Fatalf("max_items %q is not an integer of 0 or more; the vector is invalid", v.MaxItems.String())
+		}
+		eng.SetMaxItems(int64(n))
+		defer eng.SetMaxItems(DefaultMaxItems)
+	}
+	in := bytesOf(t, v.Input, v.InputB64, "input")
+	got, err := eng.ConvertWith(v.From, v.To, in, v.Context)
+	if v.ExpectError != nil {
+		if v.Expect != nil || v.ExpectB64 != nil {
+			t.Fatalf("vector sets both expect and expect_error")
+		}
+		want := *v.ExpectError
+		switch {
+		case err == nil:
+			t.Errorf("convert %s -> %s succeeded with %s, want error %s", v.From, v.To, got, want)
+		case !IsKind(err, ErrorKind(want)):
+			t.Errorf("convert %s -> %s: got %v, want error kind %s", v.From, v.To, err, want)
+		case !strings.HasPrefix(err.Error(), want+":"):
+			t.Errorf("message %q does not begin with %q", err.Error(), want+":")
+		}
+	} else {
+		want := bytesOf(t, v.Expect, v.ExpectB64, "expect")
+		if err != nil {
+			t.Errorf("convert %s -> %s: %v", v.From, v.To, err)
+		} else if !bytes.Equal(got, want) {
+			t.Errorf("convert %s -> %s mismatch\n got: %s\nwant: %s", v.From, v.To, got, want)
+		}
+	}
+	if len(v.Model) == 0 {
+		return
+	}
+	ent, err := eng.Decode(v.From, in)
+	if err != nil {
+		t.Fatalf("decode %s: %v", v.From, err)
+	}
+	complete := false
+	if c, has := v.Model[completeKey]; has {
+		b, isBool := c.(bool)
+		if !isBool {
+			t.Fatalf("model[%s] must be true or false", completeKey)
+		}
+		complete = b
+	}
+	if complete {
+		if err := eng.Fill(ent, v.Context); err != nil {
+			t.Fatalf("complete: %v", err)
+		}
+		eng.Complete(ent)
+	}
+	keys := make([]string, 0, len(v.Model))
+	for k := range v.Model {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		if k == completeKey {
+			continue
+		}
+		if k == absentKey {
+			list, isList := v.Model[k].([]any)
+			if !isList {
+				t.Errorf("model[%s] must be an array of keys", absentKey)
+				continue
+			}
+			for _, e := range list {
+				key, isString := e.(string)
+				if !isString {
+					t.Errorf("model[%s]: an entry must be a string, got %v", absentKey, e)
+					continue
+				}
+				// A listed key that is also a member of model makes
+				// the vector invalid (0.9 ruling 21).
+				if _, clash := v.Model[key]; clash {
+					t.Errorf("model[%s]: %q is also a member of model; the vector is invalid", absentKey, key)
+					continue
+				}
+				if msg := checkAbsent(ent.item(), key); msg != "" {
+					t.Errorf("model[%s] %s: %s", absentKey, key, msg)
+				}
+			}
+			continue
+		}
+		wantS, isString := v.Model[k].(string)
+		if !isString {
+			t.Errorf("model[%s]: expected value must be in string form", k)
+			continue
+		}
+		if msg := checkModelGrammar(eng, k, wantS); msg != "" {
+			t.Errorf("model[%s]: %s; the vector is invalid", k, msg)
+			continue
+		}
+		if k == kindKey {
+			if ent.Kind.Format != v.From || ent.Kind.Name != wantS {
+				t.Errorf("decode selected kind (%q, %q), want (%q, %q)", ent.Kind.Format, ent.Kind.Name, v.From, wantS)
+			}
+			continue
+		}
+		if msg := checkModelKey(ent.item(), k, wantS, complete); msg != "" {
+			t.Errorf("model[%s]: %s", k, msg)
+		}
 	}
 }

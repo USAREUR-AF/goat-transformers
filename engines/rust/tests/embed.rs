@@ -1,6 +1,8 @@
 //! Packs compiled into the binary, the pattern of docs/using.md: the texts are
 //! included at build time, so the program reads no file when it runs. Modules
 //! go in before the packs, a module after the modules it uses.
+// The packs this test loads need these wires (engine-spec 0.24).
+#![cfg(all(feature = "xml", feature = "geojson"))]
 
 use goat_transformers::Engine;
 

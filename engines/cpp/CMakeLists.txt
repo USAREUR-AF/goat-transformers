@@ -36,22 +36,72 @@ if(GT_SANITIZE)
   add_link_options(-fsanitize=address,undefined)
 endif()
 
-add_library(goat_transformers STATIC
+# The wires of the build (engine-spec.md, Version 0.24): a list of xml, geojson,
+# json, bits, protobuf, text and tlv, separated by ';' or ','. Empty, the
+# default, names no set: all seven. The codec of a wire not in the set is left
+# out of the library; a pack on that wire is refused with unknown-wire.
+set(GT_ALL_WIRES xml geojson json bits protobuf text tlv)
+set(GT_WIRES "" CACHE STRING "Wires to build, from: xml geojson json bits protobuf text tlv (empty: all seven)")
+string(REPLACE "," ";" GT_WIRE_SET "${GT_WIRES}")
+string(STRIP "${GT_WIRE_SET}" GT_WIRE_SET)
+if(GT_WIRE_SET STREQUAL "")
+  set(GT_WIRE_SET ${GT_ALL_WIRES})
+endif()
+foreach(w IN LISTS GT_WIRE_SET)
+  string(STRIP "${w}" w_stripped)
+  if(NOT w_stripped IN_LIST GT_ALL_WIRES)
+    message(FATAL_ERROR "GT_WIRES: '${w}' is not a wire; the wires are ${GT_ALL_WIRES}")
+  endif()
+endforeach()
+set(GT_WIRE_DEFINITIONS "")
+set(GT_ALL_WIRES_BUILT ON)
+foreach(w IN LISTS GT_ALL_WIRES)
+  string(TOUPPER "${w}" W)
+  set(GT_HAS_${W} OFF)
+  foreach(x IN LISTS GT_WIRE_SET)
+    string(STRIP "${x}" x)
+    if(x STREQUAL w)
+      set(GT_HAS_${W} ON)
+    endif()
+  endforeach()
+  if(GT_HAS_${W})
+    list(APPEND GT_WIRE_DEFINITIONS GT_WIRE_${W}=1)
+  else()
+    list(APPEND GT_WIRE_DEFINITIONS GT_WIRE_${W}=0)
+    set(GT_ALL_WIRES_BUILT OFF)
+  endif()
+endforeach()
+message(STATUS "goat_transformers wires: ${GT_WIRE_DEFINITIONS}")
+
+set(GT_SOURCES
   src/codecs.cpp
   src/derive.cpp
   src/engine.cpp
   src/exact.cpp
-  src/json.cpp
   src/linecheck.cpp
-  src/jsonwire.cpp
   src/pack.cpp
-  src/protobuf.cpp
   src/sequential.cpp
-  src/text.cpp
-  src/tlv.cpp
   src/transforms.cpp
-  src/util.cpp
-  src/xml.cpp)
+  src/util.cpp)
+# The JSON reader and the items of a JSON array serve json and geojson.
+if(GT_HAS_JSON OR GT_HAS_GEOJSON)
+  list(APPEND GT_SOURCES src/json.cpp src/jsonwire.cpp)
+endif()
+if(GT_HAS_XML)
+  list(APPEND GT_SOURCES src/xml.cpp)
+endif()
+if(GT_HAS_PROTOBUF)
+  list(APPEND GT_SOURCES src/protobuf.cpp)
+endif()
+if(GT_HAS_TEXT)
+  list(APPEND GT_SOURCES src/text.cpp)
+endif()
+if(GT_HAS_TLV)
+  list(APPEND GT_SOURCES src/tlv.cpp)
+endif()
+
+add_library(goat_transformers STATIC ${GT_SOURCES})
+target_compile_definitions(goat_transformers PRIVATE ${GT_WIRE_DEFINITIONS})
 add_library(goat_transformers::goat_transformers ALIAS goat_transformers)
 target_include_directories(goat_transformers
   PUBLIC
@@ -92,12 +142,26 @@ endif()
 if(GT_BUILD_TESTS)
   enable_testing()
 
-  add_executable(goat_transformers_vectors tests/vectors_test.cpp)
+  # The test programs read vector files with the library's JSON reader; a
+  # build without json and geojson does not have it in the library.
+  set(GT_TEST_JSON "")
+  if(NOT (GT_HAS_JSON OR GT_HAS_GEOJSON))
+    set(GT_TEST_JSON src/json.cpp)
+  endif()
+
+  # In a build with fewer wires, `vectors` is the reduced-build check (README.md,
+  # Wires of a build): the packs on the build's wires, the vectors among them,
+  # and every pack on another wire refused with unknown-wire.
+  add_executable(goat_transformers_vectors tests/vectors_test.cpp ${GT_TEST_JSON})
   target_link_libraries(goat_transformers_vectors PRIVATE goat_transformers)
   target_include_directories(goat_transformers_vectors PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
   target_compile_definitions(goat_transformers_vectors PRIVATE GT_PACKS_DIR="${GT_PACKS_DIR}")
   target_compile_options(goat_transformers_vectors PRIVATE ${GT_WARNINGS})
   add_test(NAME vectors COMMAND goat_transformers_vectors)
+endif()
+
+# The other tests load every pack of the repository: a build with all seven wires.
+if(GT_BUILD_TESTS AND GT_ALL_WIRES_BUILT)
 
   # Malformed input (engine-spec.md 0.8): every vector input cut short and with
   # single bytes changed. Run it in a build with -DGT_SANITIZE=ON as well.

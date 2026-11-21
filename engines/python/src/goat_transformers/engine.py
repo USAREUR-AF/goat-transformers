@@ -1,9 +1,10 @@
 """decode / encode / convert over loaded packs (spec/engine-spec.md)."""
 
+import importlib
 import math
 import os
 
-from . import wire_bits, wire_geojson, wire_json, wire_protobuf, wire_seq, wire_text, wire_tlv, wire_xml
+from ._build import WIRES as BUILD_WIRES
 from .errors import (
     BadDirective, DistributionRefused, DistributionViolation, DuplicateFormat, DuplicateModule, KeyTypeMismatch,
     MalformedWire,
@@ -18,11 +19,17 @@ from .transforms import canonical_value_text, read_typed, table_side_type, value
 DERIVE_PASSES = 8  # spec 0.6: the pass repeats until it sets nothing, at most 8 times
 MAX_ITEMS = 100000  # ruling 7b of 0.11: the default limit on the list items of one decode
 
-_CODECS = {
-    "xml": wire_xml, "geojson": wire_geojson, "json": wire_json, "bits": wire_bits, "protobuf": wire_protobuf,
-    "text": wire_text, "tlv": wire_tlv,
-}
-_Num = wire_geojson.Num
+# The codec of each wire of this build (spec 0.24, ruling 1): `wire_<name>`.
+# A build leaves out the modules of the wires it does not have; a pack on such
+# a wire is refused at load (`unknown-wire`), so no other code path asks for it.
+_CODECS = {w: importlib.import_module(".wire_" + w, __package__) for w in BUILD_WIRES}
+if "bits" in BUILD_WIRES:
+    from . import wire_seq  # the sequential layout, part of `bits` (ruling 1d)
+if "json" in BUILD_WIRES or "geojson" in BUILD_WIRES:
+    from .jsonio import Num as _Num, RawJSON as _RawJSON, dump_as_written as _dump_as_written
+else:
+    class _Num(str):
+        """No value is a JSON number in a build without `json` and `geojson`."""
 
 
 def _model_order(models_dir, only=None):
@@ -533,7 +540,7 @@ class Engine:
                 elif val is True or val is False:
                     val = "true" if val else "false"
                 elif not isinstance(val, str):
-                    val = wire_geojson.RawJSON(wire_geojson.dump_as_written(val))
+                    val = _RawJSON(_dump_as_written(val))
                 res[loc] = val
         if res:
             ent.residue[pack.name] = res
@@ -769,7 +776,7 @@ class Engine:
             return codec.write(pack, enc, residue).encode("utf-8")
         if wire == "xml":
             return codec.write(pack, enc, residue.items(), plan.root).encode("utf-8")
-        return codec.encode(pack, enc, residue, wire_json.item_text).encode("utf-8")
+        return codec.encode(pack, enc, residue).encode("utf-8")
 
     def _encode_scope(self, pack, plan, have, lists):
         """Encode one scope (the entity, or one item of a list). For each
@@ -782,7 +789,7 @@ class Engine:
         defaults = plan.defaults
         c2n = pack.cot_to_native
         values = enc.values
-        skip = wire_tlv.overridden(plan) if pack.wire == "tlv" else ()
+        skip = _CODECS["tlv"].overridden(plan) if pack.wire == "tlv" else ()
         for i, f in plan.ifields:
             if i in skip:
                 continue  # its item holds a `when` or `const` value (ruling 9 of 0.13)

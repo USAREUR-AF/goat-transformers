@@ -51,6 +51,82 @@ of one minor version is accepted by a request for that minor version only.
 | `GT_BUILD_CLI` | the same | the `goat-xf` tool |
 | `GT_INSTALL` | the same | the install and package rules |
 | `GT_SANITIZE` | `OFF` | the sanitizer build, below |
+| `GT_WIRES` | empty: all seven wires | the wires of the build, below |
+
+## Wires of a build
+
+`-DGT_WIRES=<wire>[,<wire>...]` builds the engine with the codecs of only the
+wires named (`spec/engine-spec.md`, Version 0.24), from `xml`, `geojson`,
+`json`, `bits`, `protobuf`, `text` and `tlv`; `;` separates them as well as
+`,`. A build that does not set it, or sets it empty, has all seven. A name
+that is not a wire stops the configuration.
+
+```sh
+cmake -S . -B build-xml -DCMAKE_BUILD_TYPE=Release -DGT_WIRES=xml,json,geojson
+cmake --build build-xml -j
+```
+
+The set becomes the compile definitions `GT_WIRE_XML` to `GT_WIRE_TLV`, each
+`1` or `0`, on the library alone (`src/wires.hpp`; a compiler run without them
+has every wire). The codec of a wire that is `0` is not compiled: its source
+file is left out (`xml.cpp`; `protobuf.cpp`; `text.cpp`; `tlv.cpp`; the JSON
+reader `json.cpp` and `jsonwire.cpp` when neither `json` nor `geojson` is in
+the set) or its part of a shared file is (`codecs.cpp`: the xml, geojson and
+bits codecs; `jsonwire.cpp`: the json codec; `sequential.cpp`: the decoder
+and encoder of the sequential layout). The sequential layout, six-bit armor
+and `encoding uper` belong to `bits`; `geojson` uses the items of a JSON array
+from `jsonwire.cpp` and nothing of the json codec. The pack reader is the
+same in every build, so a pack on a wire of the set loads, converts and fails
+exactly as with all seven.
+
+A pack whose `wire` is a wire the build lacks is refused at its `wire` line
+(line check 6 of 0.11) with `unknown-wire`, and the message names the wire
+and says the build does not have it:
+
+```
+unknown-wire: format=adsb packs/adsb/pack.def:18: wire 'bits' is a wire of the specification that this build does not have
+```
+
+A `wire` value that is no wire at all stays `unknown-wire: ... wire 'foo'`.
+`goat_transformers::built_wires()` returns the wires of the build, and
+`wire_built(Wire)` tells whether it has one.
+
+In a build with fewer than seven wires, ctest has only `vectors`, and
+`goat_transformers_vectors` is the reduced-build check below; the other
+tests load every pack of the repository and need all seven.
+
+### Reduced-build check
+
+From the repository's root:
+
+```sh
+sh engines/cpp/tests/reduced-build.sh
+```
+
+It builds the engine with `xml`, `json` and `geojson` in
+`engines/cpp/build-wires-reduced` and runs `goat_transformers_vectors`
+there: it loads every model module and the packs on those wires; runs every
+conversion, load and capability vector whose formats, and whose pack texts,
+are all on them (a vector whose format is no pack directory, which pins
+`unknown-format`, runs too); and loads every pack on `bits`, `protobuf`,
+`text` and `tlv`, each of which must be `unknown-wire` with the wire named and
+the build's lack said, at least one per wire. Then it builds the library and
+`goat-xf` with all seven wires in `engines/cpp/build-wires-full` and prints
+the sizes of both. It exits non-zero on any failure. `GT_JOBS` sets the
+parallel jobs (4).
+
+Measured on Linux x86-64 with GCC 15.2, Release, not stripped:
+
+| File | All seven wires | `xml`, `json`, `geojson` |
+|---|---|---|
+| `libgoat_transformers.a` | 2,880,544 bytes | 2,125,504 bytes (74%) |
+| `goat-xf` | 1,604,240 bytes | 1,189,624 bytes (74%) |
+
+The check passed with 6852 of 6852 conversion vectors, 378 of 378 load
+vectors and 16 of 16 capability vectors run (13455, 788 and 2 skipped), and
+2407 packs refused with `unknown-wire` (bits 1632, protobuf 695, text 71,
+tlv 9). What stays in the reduced build is the pack reader and the transforms
+every wire shares.
 
 ## Test
 

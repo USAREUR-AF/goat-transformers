@@ -29,6 +29,13 @@ public final class Engine {
 
     public Engine() {}
 
+    /**
+     * The wires this build has, in the order of the specification: all seven ({@code xml}, {@code geojson},
+     * {@code json}, {@code bits}, {@code protobuf}, {@code text}, {@code tlv}) unless the jar was built with
+     * {@code build.sh --wires} (spec 0.24). A pack on any other wire does not load: {@code unknown-wire}.
+     */
+    public static List<String> wires() { return Wires.NAMES; }
+
     /** The distribution limit: a module or pack marked above it is refused at load. {@code CONTROLLED} by default. */
     public Distribution maxDistribution() { return maxDistribution; }
 
@@ -480,17 +487,8 @@ public final class Engine {
         if (packs.containsKey(p.format)) {
             throw new GtException(GtException.Code.DUPLICATE_FORMAT, p.format, null, "a pack with format " + p.format + " is already loaded");
         }
-        Codec<?> codec;
-        switch (p.wire) {
-            case XML: codec = new XmlCodec(p); break;
-            case GEOJSON: codec = new GeoJsonCodec(p); break;
-            case BITS: codec = p.seq != null ? new SeqCodec(p) : new BitsCodec(p); break;
-            case PROTOBUF: codec = new ProtobufCodec(p); break;
-            case JSON: codec = new JsonCodec(p); break;
-            case TEXT: codec = new TextCodec(p); break;
-            case TLV: codec = new TlvCodec(p); break;
-            default: throw new GtException(GtException.Code.BAD_DIRECTIVE, p.format, null, "no codec for wire " + p.wire);
-        }
+        // the codec of the pack's wire: the build has it, or Pack.parse refused the pack (ruling 1c of 0.24)
+        Codec<?> codec = Wires.codec(p);
         packs.put(p.format, p);
         codecs.put(p.format, codec);
     }

@@ -139,6 +139,80 @@ $ ./goat-xf-py.py convert --from geojson --to cot-xml --packs ../../packs --pack
 <event version="2.0" uid="J-01334" type="a-f-G-U-C" time="2021-02-27T20:00:00.000Z" start="2021-02-27T20:00:00.000Z" stale="2021-02-27T20:03:00.000Z" how="m-g"><point lat="30.0090027" lon="-85.9578182" hae="-42.6" ce="45.3" le="99.5"/><detail><contact callsign="GATOR"/></detail></event>
 ```
 
+## Builds with fewer wires
+
+Status: Built. Version 0.24 of the specification (ruling 1). The switch is
+the build script `build.py`: it copies the package and leaves out the modules
+of every wire not named, so the reduced package does not carry their code.
+From the repository root:
+
+```
+python3 -I engines/python/build.py                            # all seven wires
+python3 -I engines/python/build.py --wires xml,json,geojson   # only these
+python3 -I engines/python/build.py --wires bits --out /tmp/gx # elsewhere
+```
+
+`--wires` takes a comma-separated set from `xml`, `geojson`, `json`, `bits`,
+`protobuf`, `text`, `tlv`; without it the build has all seven, as the source
+tree and `pip install` from the repository have. The build writes
+`<out>/src/goat_transformers/` (put `<out>/src` on the import path) and a
+wheel, `<out>/dist/goat_transformers-<version>-py3-none-any.whl`, for
+`pip install`. `<out>` defaults to `engines/python/build/wires-<set>`. The
+copy's `_build.py` names the set; `goat_transformers._build.WIRES` reads it.
+
+| Wire | Modules left out without it |
+|---|---|
+| `xml` | `wire_xml` |
+| `geojson` | `wire_geojson` |
+| `json` | `wire_json` |
+| `bits` | `wire_bits` (with six-bit armor), `wire_seq` and `seqdef` (the sequential layout), `uper` (`encoding uper`) |
+| `protobuf` | `wire_protobuf` |
+| `text` | `wire_text` |
+| `tlv` | `wire_tlv` |
+| `json` and `geojson` both | `jsonio`, the JSON reader and writer they share; `geojson` needs nothing of `wire_json` |
+| `bits`, `protobuf` and `tlv` all | `octets`, hex input and the `utf8` and `hex` octet transforms |
+
+Everything else (the pack and module parsers, the transforms, the engine, the
+tool) is in every build. A reduced build behaves for a pack on a wire it has
+exactly as the full build. A pack whose `wire` is a wire it does not have is
+`unknown-wire` at line check 6, with the message
+`unknown-wire: wire 'bits' is a wire of the specification that this build does
+not have (this build has: xml, geojson, json) at …`; a `wire` value that is no
+wire is `unknown-wire: unknown wire 'morse' (known: …)` as before. The
+parameters of the `text` transforms (`dec:…`, `dm:…`, `hms:…`) are checked by
+line check 7 on every wire, so that check is in every build.
+
+### The reduced-build check
+
+Status: Measured. From the repository root:
+
+```
+python3 -I engines/python/reduced-build-check.py
+```
+
+It builds the engine with all seven wires and with `xml`, `json` and
+`geojson`, then, in a fresh interpreter on the reduced package: checks that
+the left-out modules are absent and never imported; loads every model module
+and every pack on the three wires; runs every conversion vector whose `from`
+and `to` packs are on them, and every load vector whose packs name no other
+wire of the specification; loads one pack on `bits` (and one sequential
+`bits` pack), `protobuf`, `text` and `tlv`, each of which must be
+`unknown-wire` naming the wire and saying this build does not have it; and
+compares `model_keys` of every loaded format and the capability report of
+every converted pair with the full build. It prints the sizes and exits 1 on
+any failure. `--wires <set>` checks another set the same way.
+
+One run on 2026-11-20: 1070 packs loaded; 6849 of the 20307 conversion
+vectors run, 6849 passed; 378 load vectors run, 378 passed; the five
+`unknown-wire` loads and the load of `wire morse` as specified; `model_keys`
+of 1070 formats and the capability report of 145 pairs the same in both
+builds. Sizes:
+
+| Build | Wheel | Package source |
+|---|---|---|
+| all seven wires | 142760 bytes | 506532 bytes, 23 modules |
+| `xml`, `json`, `geojson` | 82612 bytes (58%) | 286851 bytes, 15 modules |
+
 ## Test
 
 Status: Measured. The `python` job of `.github/workflows/conformance.yml` runs,
@@ -159,6 +233,7 @@ not in the tool.
 | `test_vectors.py` | every conversion vector of every pack (17628 of 2687 packs, 17627 passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (862, all passed); every capability vector (18, all passed) |
 | `test_malformed.py` | the input of every conversion vector cut and changed (103161 damaged inputs, none raised anything but a named error); rulings 35 to 39 |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool |
+| `reduced-build-check.py`, run from the repository root as `python3 -I engines/python/reduced-build-check.py` | a build with `xml`, `json` and `geojson` only (Version 0.24; "Builds with fewer wires" above) |
 | `tools/tool-vectors.py`, run from the repository root as `python3 -I tools/tool-vectors.py -- engines/python/goat-xf-py.py` | every tool vector of `packs/conformance/tool-vectors` (97, all passed): the command-line contract of Version 0.23 |
 
 The same job then installs the package with pip, writes a bundle of `cot-xml`

@@ -57,6 +57,7 @@
 %% gt_engine:load_pack/2 checks the pack against the loaded modules, types the
 %% defaults and adds the lookup indexes (index/1).
 -module(gt_pack).
+-include("gt_wires.hrl").
 -define(UPER_LOC(S), (binary_part(S, 0, min(4, byte_size(S))) =:= <<"int:">> orelse
                       binary_part(S, 0, min(5, byte_size(S))) =:= <<"enum:">> orelse
                       binary_part(S, 0, min(6, byte_size(S))) =:= <<"chars:">> orelse
@@ -64,6 +65,8 @@
 -export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
          require_marking/2, yields/1, model_keys/1, named/1,
          index/1, factor/1, number/1, when_match/2, when_first/1, req_key/1]).
+%% for gt_text
+-export([text_loc_indexes/1]).
 
 %% Parse a pack.def text (binary or string) -> pack map. Line errors are
 %% raised as the file is read; then the checks that need the whole file; then
@@ -802,7 +805,7 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
     Checks = TrChecks ++ StopChecks ++
         [{bad, "~s on ~s: a pair is only for dm and hms_dmy, and they only take a pair",
           [TrS, LocS]}
-         || Wire =:= text, IsPair =/= gt_text:pair_transform(Tr)] ++
+         || Wire =:= text, IsPair =/= text_pair_transform(Tr)] ++
         [{bad, "optional on ~s: not allowed inside a group", [LocS]}
          || Optional, Wire =:= text, in_group(P0)] ++
         [{bad, "~s does not allow the bit length of ~s", [TrS, LocS]}
@@ -894,14 +897,24 @@ close_kind(#{cur := #{lines := Ls, defaults := Ds} = Cur, kinds := Kinds} = P) -
     P#{cur := common,
        kinds := [Cur#{lines := lists:reverse(Ls), defaults := lists:reverse(Ds)} | Kinds]}.
 
-wire_atom(<<"xml">>) -> xml;
-wire_atom(<<"geojson">>) -> geojson;
-wire_atom(<<"json">>) -> json;
-wire_atom(<<"bits">>) -> bits;
-wire_atom(<<"protobuf">>) -> protobuf;
-wire_atom(<<"text">>) -> text;
-wire_atom(<<"tlv">>) -> tlv;
-wire_atom(W) -> line_error('unknown-wire', "~s", [W]).
+%% A wire of the specification that this build leaves out is `unknown-wire`
+%% too, with a message that says so (ruling 1c of 0.24).
+wire_atom(W) ->
+    case spec_wire(W) of
+        none -> line_error('unknown-wire', "~s", [W]);
+        {Wire, true} -> Wire;
+        {_, false} -> line_error('unknown-wire', "~s: this build does not have the ~s wire", [W, W])
+    end.
+
+%% -> {Wire, InThisBuild} | none
+spec_wire(<<"xml">>) -> {xml, ?W_XML};
+spec_wire(<<"geojson">>) -> {geojson, ?W_GEOJSON};
+spec_wire(<<"json">>) -> {json, ?W_JSON};
+spec_wire(<<"bits">>) -> {bits, ?W_BITS};
+spec_wire(<<"protobuf">>) -> {protobuf, ?W_PROTOBUF};
+spec_wire(<<"text">>) -> {text, ?W_TEXT};
+spec_wire(<<"tlv">>) -> {tlv, ?W_TLV};
+spec_wire(_) -> none.
 
 word_bytes(S) ->
     case uint(S) of
@@ -1015,7 +1028,7 @@ absent_json(<<$=, _/binary>> = V) -> {str, absent_text(V)};
 absent_json(<<"null">>) -> absent_bad("absent null: null is not a value", []);
 absent_json(V) when V =:= <<"true">>; V =:= <<"false">> -> {bool, V};
 absent_json(V) ->
-    case gt_json:read_number(V) of
+    case ?JSONTEXT(gt_json:read_number(V)) of
         {ok, Canonical} -> {num, Canonical};
         out_of_range -> absent_bad("absent ~s does not fit a double", [V]);
         not_number -> {str, V}
@@ -1065,6 +1078,16 @@ is_int_text(B) -> gt_num:int_text(B) =/= error.
 
 is_number_text(B) -> gt_num:num_text(B) =/= error.
 
+%% The text transforms that read a pair of fields (Version 0.10).
+text_pair_transform({dm, _, _, _, _}) -> true;
+text_pair_transform({hms_dmy, _}) -> true;
+text_pair_transform(_) -> false.
+
+%% The field indexes a `text` locator reads.
+text_loc_indexes({fld, I}) -> [I];
+text_loc_indexes({col, I, _, _}) -> [I];
+text_loc_indexes({pair, I, J}) -> [I, J].
+
 %% ===================================================================
 %% locators
 %% ===================================================================
@@ -1075,7 +1098,7 @@ parse_loc(text, S, P) ->
     Loc = text_loc(S),
     case maps:get(gstack, P) of
         [#{spec := {text_item, N}} | _] ->
-            case lists:all(fun(K) -> K < N end, gt_text:loc_indexes(Loc)) of
+            case lists:all(fun(K) -> K < N end, text_loc_indexes(Loc)) of
                 true -> ok;
                 false -> line_error('bad-directive', "locator ~s lies beyond an item of ~p fields",
                                     [S, N])
@@ -2918,7 +2941,7 @@ text_checks(#{delimiter := Delim, start := Start, checksum := Sum,
          ({group, _, _, _, _, _}) -> ok;
          (L) ->
               Loc = line_loc_of(L),
-              case Delim =:= none andalso gt_text:loc_indexes(Loc) =/= [0] of
+              case Delim =:= none andalso text_loc_indexes(Loc) =/= [0] of
                   true -> load_error('bad-directive', "a locator of a field other than 0 under delimiter none", []);
                   false -> ok
               end,
@@ -2971,7 +2994,7 @@ text_scopes(#{common := Common, kinds := Kinds}) ->
                         fun({group, _, _, _, _, _}) -> ok;
                            (L) ->
                                 case lists:any(fun(I) -> I >= Start end,
-                                               gt_text:loc_indexes(line_loc_of(L))) of
+                                               text_loc_indexes(line_loc_of(L))) of
                                     true -> load_error('bad-directive',
                                                        "a line of the scope lies at or beyond the index of group ~s",
                                                        [List]);
@@ -3021,7 +3044,7 @@ tlv_value(length, [N]) when N =:= <<"1">>; N =:= <<"2">>; N =:= <<"4">> ->
 tlv_value(key, [H]) when byte_size(H) >= 2, byte_size(H) =< 128, byte_size(H) rem 2 =:= 0 ->
     case lists:all(fun(C) -> (C >= $0 andalso C =< $9) orelse (C >= $a andalso C =< $f) end,
                    binary_to_list(H)) of
-        true -> {ok, key, gt_bits:hex_to_bytes(H)};
+        true -> {ok, key, ?TLV(gt_hex:hex_to_bytes(H))};
         false -> error
     end;
 tlv_value(checksum, [<<"sum16">>, T]) ->

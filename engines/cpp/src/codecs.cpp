@@ -13,6 +13,7 @@
 #include "json.hpp"
 #include "transforms.hpp"
 #include "util.hpp"
+#include "wires.hpp"
 #include "xml.hpp"
 
 namespace goat_transformers::detail {
@@ -129,6 +130,48 @@ bool valid_locator(Wire w, const std::string& loc, bool allow_element) {
     }
     ProtobufLocator pb;
     return parse_protobuf_locator(loc, pb);
+}
+
+// The protobuf locator: its form is a line check (0.11 ruling 5a) of every build.
+bool parse_protobuf_locator(const std::string& loc, ProtobufLocator& out) {
+    if (loc.empty()) return false;
+    ProtobufLocator r;
+    std::uint64_t v = 0;
+    bool have_digit = false;
+    for (std::size_t i = 0; i <= loc.size(); ++i) {
+        const char c = i < loc.size() ? loc[i] : '.';  // a virtual '.' flushes the last segment
+        if (c == '.') {
+            if (!have_digit) return false;                 // empty path segment
+            if (v < 1 || v > 536870911ull) return false;   // field number 1..2^29-1
+            r.path.push_back(static_cast<std::uint32_t>(v));
+            v = 0;
+            have_digit = false;
+            continue;
+        }
+        if (c < '0' || c > '9') return false;
+        v = v * 10 + static_cast<std::uint64_t>(c - '0');
+        if (v > 536870911ull) return false;
+        have_digit = true;
+    }
+    out = std::move(r);
+    return true;
+}
+
+// v0.13: a tlv tag, here because `checksum sum16 <tag>` is read on every wire
+// and refused on another wire after the file (0.24: a build without tlv reads
+// it the same).
+bool parse_tlv_tag(const std::string& text, std::uint32_t& out) {
+    constexpr std::uint64_t kBerOidMax = (1u << 28) - 1;
+    if (text.empty() || text.size() > 9) return false;
+    if (text.size() > 1 && text[0] == '0') return false;
+    std::uint64_t v = 0;
+    for (char c : text) {
+        if (c < '0' || c > '9') return false;
+        v = v * 10 + static_cast<std::uint64_t>(c - '0');
+    }
+    if (v > kBerOidMax) return false;
+    out = static_cast<std::uint32_t>(v);
+    return true;
 }
 
 bool parse_json_locator(const std::string& loc, std::vector<std::string>& path) {
@@ -771,7 +814,9 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
             } else if (!forced && v == "null") {
                 bad("'null' is not a value a transform can hold");
             } else {
+#if GT_WIRE_JSON_READER
                 json_text = json::quote(v);
+#endif
             }
             if (f.transform == Transform::Bool && (forced || (v != "true" && v != "false")))
                 bad("a sentinel on transform bool is true or false");
@@ -793,6 +838,7 @@ bool sentinel_text(const FieldLine& f, const std::string& raw) {
     return false;
 }
 
+#if GT_WIRE_JSON_READER
 bool json_raw_text(const json::Value& v, std::string& out) {
     switch (v.kind) {
         case json::Value::Kind::String: out = v.text; return true;
@@ -832,6 +878,9 @@ std::string json_when_text(const WhenLine& w) {
     return json::quote(w.text);
 }
 
+#endif  // GT_WIRE_JSON_READER
+
+#if GT_WIRE_HEX
 namespace {
 int hex_nibble(char c) {
     if (c >= '0' && c <= '9') return c - '0';
@@ -860,6 +909,9 @@ std::string hex_to_bytes(const Pack& p, const std::string& text) {
     return data;
 }
 
+#endif  // GT_WIRE_HEX
+
+#if GT_WIRE_BITS
 std::string armor_to_bytes(const Pack& p, const std::string& text, std::uint64_t& bits) {
     std::string data((text.size() * 6 + 7) / 8, '\0');
     for (std::size_t k = 0; k < text.size(); ++k) {
@@ -992,6 +1044,9 @@ bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std
     return false;
 }
 
+#endif  // GT_WIRE_BITS
+
+#if GT_WIRE_HEX
 std::string bytes_to_hex(const std::string& data) {
     static const char* kHex = "0123456789abcdef";
     std::string out;
@@ -1003,6 +1058,59 @@ std::string bytes_to_hex(const std::string& data) {
     return out;
 }
 
+#endif  // GT_WIRE_HEX
+
+#if GT_WIRE_BITS || GT_WIRE_TLV
+// UTF-8 and hex text of an item's value: the `utf8` and `hex` transforms of
+// tlv (0.13), and of a UPER `octets` locator of bits (0.19).
+bool utf8_is_valid(const std::string& s) {
+    std::size_t i = 0;
+    while (i < s.size()) {
+        const unsigned char c = static_cast<unsigned char>(s[i]);
+        std::size_t n;
+        std::uint32_t cp;
+        if (c < 0x80) {
+            ++i;
+            continue;
+        } else if (c >= 0xC2 && c <= 0xDF) {
+            n = 1;
+            cp = c & 0x1Fu;
+        } else if (c >= 0xE0 && c <= 0xEF) {
+            n = 2;
+            cp = c & 0x0Fu;
+        } else if (c >= 0xF0 && c <= 0xF4) {
+            n = 3;
+            cp = c & 0x07u;
+        } else {
+            return false;
+        }
+        if (s.size() - i - 1 < n) return false;
+        for (std::size_t k = 1; k <= n; ++k) {
+            const unsigned char cc = static_cast<unsigned char>(s[i + k]);
+            if ((cc & 0xC0) != 0x80) return false;
+            cp = (cp << 6) | (cc & 0x3Fu);
+        }
+        if ((n == 2 && cp < 0x800) || (n == 3 && cp < 0x10000) || cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF))
+            return false;
+        i += n + 1;
+    }
+    return true;
+}
+
+// Hex text, an even number of digits in either case, to bytes.
+bool hex_text_bytes(const std::string& s, std::string& out) {
+    if (s.size() % 2) return false;
+    out.clear();
+    for (std::size_t k = 0; k < s.size(); k += 2) {
+        const int hi = hex_nibble(s[k]), lo = hex_nibble(s[k + 1]);
+        if (hi < 0 || lo < 0) return false;
+        out += static_cast<char>((hi << 4) | lo);
+    }
+    return true;
+}
+#endif  // GT_WIRE_BITS || GT_WIRE_TLV
+
+#if GT_WIRE_XML || GT_WIRE_GEOJSON
 namespace {
 
 // Encode on a text wire: one slot per locator, at the place of the first line
@@ -1033,6 +1141,9 @@ struct TextSlots {
 
 }  // namespace
 
+#endif  // GT_WIRE_XML || GT_WIRE_GEOJSON
+
+#if GT_WIRE_XML
 // ---------------------------------------------------------------- xml
 
 namespace {
@@ -1349,6 +1460,9 @@ std::string encode_xml(const Pack& p, const Entity& e) {
     }
 }
 
+#endif  // GT_WIRE_XML
+
+#if GT_WIRE_GEOJSON
 // ---------------------------------------------------------------- geojson
 
 namespace {
@@ -1590,6 +1704,9 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
     return out;
 }
 
+#endif  // GT_WIRE_GEOJSON
+
+#if GT_WIRE_BITS
 // ---------------------------------------------------------------- bits
 
 namespace {
@@ -2177,5 +2294,7 @@ std::string encode_bits(const Pack& p, const Entity& e) {
     }
     return p.armor_sixbit ? armored : bytes_to_hex(out.data);
 }
+
+#endif  // GT_WIRE_BITS
 
 }  // namespace goat_transformers::detail

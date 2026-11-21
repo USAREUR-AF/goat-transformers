@@ -28,6 +28,10 @@ namespace {
 
 constexpr std::uint32_t kBerOidMax = (1u << 28) - 1;
 
+// UTF-8 and hex text, shared with the UPER `octets` locator of bits (codecs.cpp).
+bool valid_utf8(const std::string& s) { return utf8_is_valid(s); }
+bool hex_text(const std::string& s, std::string& out) { return hex_text_bytes(s, out); }
+
 // ---------------------------------------------------------------- load checks
 
 [[noreturn]] void bad(const Pack& p, const std::string& locator, std::size_t line, const std::string& why) {
@@ -276,39 +280,6 @@ struct DNode {
     std::map<std::uint32_t, std::unique_ptr<DNode>> children;
 };
 
-bool valid_utf8(const std::string& s) {
-    std::size_t i = 0;
-    while (i < s.size()) {
-        const unsigned char c = static_cast<unsigned char>(s[i]);
-        std::size_t n;
-        std::uint32_t cp;
-        if (c < 0x80) {
-            ++i;
-            continue;
-        } else if (c >= 0xC2 && c <= 0xDF) {
-            n = 1;
-            cp = c & 0x1Fu;
-        } else if (c >= 0xE0 && c <= 0xEF) {
-            n = 2;
-            cp = c & 0x0Fu;
-        } else if (c >= 0xF0 && c <= 0xF4) {
-            n = 3;
-            cp = c & 0x07u;
-        } else {
-            return false;
-        }
-        if (s.size() - i - 1 < n) return false;
-        for (std::size_t k = 1; k <= n; ++k) {
-            const unsigned char cc = static_cast<unsigned char>(s[i + k]);
-            if ((cc & 0xC0) != 0x80) return false;
-            cp = (cp << 6) | (cc & 0x3Fu);
-        }
-        if ((n == 2 && cp < 0x800) || (n == 3 && cp < 0x10000) || cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF))
-            return false;
-        i += n + 1;
-    }
-    return true;
-}
 
 // The model value of a field's item. Throws std::invalid_argument (transform-decode).
 Value decode_item(const FieldLine& f, const std::string& value) {
@@ -426,24 +397,7 @@ void put_item(const Pack& p, std::string& out, std::uint32_t tag, const std::str
     out += value;
 }
 
-int hex_digit(char c) {
-    if (c >= '0' && c <= '9') return c - '0';
-    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
-    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
-    return -1;
-}
 
-// Hex text, an even number of digits in either case, to bytes.
-bool hex_text(const std::string& s, std::string& out) {
-    if (s.size() % 2) return false;
-    out.clear();
-    for (std::size_t k = 0; k < s.size(); k += 2) {
-        const int hi = hex_digit(s[k]), lo = hex_digit(s[k + 1]);
-        if (hi < 0 || lo < 0) return false;
-        out += static_cast<char>((hi << 4) | lo);
-    }
-    return true;
-}
 
 // A model value as text, as the `string` transform writes it.
 std::string string_text(const Value& v) {
@@ -549,18 +503,6 @@ std::uint16_t sum16(const std::string& d, std::size_t end) {
 
 }  // namespace
 
-bool parse_tlv_tag(const std::string& text, std::uint32_t& out) {
-    if (text.empty() || text.size() > 9) return false;
-    if (text.size() > 1 && text[0] == '0') return false;
-    std::uint64_t v = 0;
-    for (char c : text) {
-        if (c < '0' || c > '9') return false;
-        v = v * 10 + static_cast<std::uint64_t>(c - '0');
-    }
-    if (v > kBerOidMax) return false;
-    out = static_cast<std::uint32_t>(v);
-    return true;
-}
 
 void check_tlv_pack(Pack& p) {
     if (p.tlv_checksum && p.tlv_checksum_tag >= tag_limit(p))
@@ -818,8 +760,5 @@ std::string encode_tlv(const Pack& p, const Entity& e) {
     return bytes_to_hex(out);
 }
 
-// v0.19: `hex` and `utf8` on a UPER `octets` locator behave as on tlv.
-bool utf8_is_valid(const std::string& s) { return valid_utf8(s); }
-bool hex_text_bytes(const std::string& s, std::string& out) { return hex_text(s, out); }
 
 }  // namespace goat_transformers::detail

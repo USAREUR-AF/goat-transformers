@@ -1,4 +1,5 @@
-%% gt_bits: hex text and bit-range access for the bits wire.
+%% gt_bits: bit-range access and six-bit armor for the bits wire (hex text
+%% is gt_hex).
 %%
 %% A locator is {Off, Len}: Len bits starting at bit Off of the message.
 %% lsb (Version 0.2): bit i of the message is bit (i mod 8) of byte (i div 8);
@@ -8,29 +9,9 @@
 %%   value has its first bit most significant. Read as one big-endian integer
 %%   of N bits, bit i of the message is bit N - 1 - i of the integer.
 -module(gt_bits).
--export([hex_to_bytes/1, bytes_to_hex/1, open/2, bit_size/1, read/3,
+-export([open/2, bit_size/1, read/3,
          new/2, new_bits/2, write/4, overwrite/4, to_bytes/1,
          unarmor/1, armor/2, peek/3, written_any/3, write_within/5]).
-
--define(WS(C), (C =:= $\s orelse C =:= $\t orelse C =:= $\r orelse C =:= $\n)).
-
-%% hex (whitespace ignored, even length) -> binary. An odd number of digits,
-%% or a character that is neither a hex digit nor whitespace (a sign
-%% included), raises error:{hex_malformed, Why} (ruling 36 of 0.8).
-hex_to_bytes(Bin) when is_binary(Bin) -> hex(Bin, []).
-
-hex(<<>>, Acc) -> list_to_binary(lists:reverse(Acc));
-hex(<<C, R/binary>>, Acc) when ?WS(C) -> hex(R, Acc);
-hex(<<H, R/binary>>, Acc) -> hex_low(R, hexval(H), Acc).
-
-hex_low(<<C, R/binary>>, Hi, Acc) when ?WS(C) -> hex_low(R, Hi, Acc);
-hex_low(<<L, R/binary>>, Hi, Acc) -> hex(R, [(Hi bsl 4) bor hexval(L) | Acc]);
-hex_low(<<>>, _Hi, _Acc) -> erlang:error({hex_malformed, odd_number_of_digits}).
-
-hexval(C) when C >= $0, C =< $9 -> C - $0;
-hexval(C) when C >= $a, C =< $f -> C - $a + 10;
-hexval(C) when C >= $A, C =< $F -> C - $A + 10;
-hexval(C) -> erlang:error({hex_malformed, {not_a_hex_digit, C}}).
 
 %% Six-bit armored text (Version 0.14) -> the bitstring of 6 * N bits it
 %% stands for, first character first, each most significant bit first.
@@ -55,13 +36,6 @@ armor(Bits, L) ->
 
 armor_char(V) when V < 40 -> 16#30 + V;
 armor_char(V) -> 16#38 + V.
-
-%% binary -> lowercase hex, no separators
-bytes_to_hex(Bin) ->
-    << <<(hexdig(B bsr 4)), (hexdig(B band 15))>> || <<B>> <= Bin >>.
-
-hexdig(N) when N < 10 -> $0 + N;
-hexdig(N) -> $a + N - 10.
 
 %% ---- reading ----
 

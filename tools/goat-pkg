@@ -257,6 +257,30 @@ def cmd_formats(_args, root):
 # plan
 # --------------------------------------------------------------------------
 
+# How each engine builds with only some wires (spec 0.24; each engine's README).
+# {wires} is the comma-separated set; Go names each wire as a tag.
+WIRES = ["xml", "geojson", "json", "bits", "protobuf", "text", "tlv"]
+WIRE_SWITCH = {
+    "rust": "cargo build --release --no-default-features --features {wires}",
+    "go": "go build -tags goat_wires,{go_tags} ./cmd/goat-xf",
+    "python": "python3 -I engines/python/build.py --wires {wires}",
+    "java": "./build.sh --wires {wires}",
+    "cpp": "cmake -S engines/cpp -B build -DGT_WIRES={wires} && cmake --build build",
+    "erlang": "./build.sh --wires {wires}",
+    "zig": "zig build cli -Dwires={wires}",
+}
+
+
+def wire_switch(language, wires):
+    """The command that builds `language`'s engine with only `wires`, or None
+    when the package uses every wire (the default build has them all)."""
+    if set(wires) >= set(WIRES) or language not in WIRE_SWITCH:
+        return None
+    ordered = [w for w in WIRES if w in wires]
+    return WIRE_SWITCH[language].format(wires=",".join(ordered),
+                                        go_tags=",".join("goat_wire_" + w for w in ordered))
+
+
 def build_command(language, runtime, linkage, os_name, arch):
     """-> (the linkage that applies, the build command); raises Unmet for a
     combination BUILD and TARGETS do not state."""
@@ -300,6 +324,8 @@ def plan(root, args, packs=None):
             "engine": f"engines/{args.language}",
             "packs": [f"packs/{pack_dir(p)}" for p in packs],
             "wires_used": sorted({p.wire for p in packs}),
+            # the engine built with only these wires (spec 0.24); null when all are used
+            "wire_switch": wire_switch(args.language, {p.wire for p in packs}),
             "build_command": command,
             "profile": profile,
         },
@@ -314,7 +340,9 @@ def print_plan(manifest):
     print("#   {language} / {runtime} / linkage={linkage} / {os} / {arch}\n".format(**constraints))
     print(f"engine:      {package['engine']}")
     print(f"packs:       {', '.join(p.split('/', 1)[1] for p in package['packs'])}   (only these)")
-    print(f"wires used:  {', '.join(package['wires_used'])}   (a minimal engine build can exclude the rest)")
+    print(f"wires used:  {', '.join(package['wires_used'])}")
+    if package.get("wire_switch"):
+        print(f"wires only:  {package['wire_switch']}   (spec 0.24: the other wires' codecs left out)")
     print(f"build:       {package['build_command']}")
     print(f"profile:     {package.get('profile', 'open')}   (LICENSING.md)\n")
     print("convertibility among the requested formats:")

@@ -39,27 +39,8 @@ the block holds; encode chooses the held blocks in `_choose` (steps 1 to 4),
 writes them in `_emit` (step 5) and checks the output in `write` (step 6).
 """
 
-import re
-
 from .errors import MalformedWire, TransformEncodeFailure
-
-
-_HEX_WS = {ord(c): None for c in " \t\r\n"}
-_NOT_HEX = re.compile("[^0-9a-fA-F]")
-
-
-def _hex_to_bytes(data, fmt):
-    """Hex text -> bytes (ruling 36 of 0.8). Space, tab, carriage return and
-    line feed are ignored wherever they stand; any other character that is not
-    one of `0-9a-fA-F` (a sign, a digit of another script, any other white
-    space) and an odd number of digits are `malformed-wire`."""
-    cleaned = data.translate(_HEX_WS)
-    bad = _NOT_HEX.search(cleaned)
-    if bad is not None:
-        raise MalformedWire("input is not hexadecimal: character %r" % bad.group(), format=fmt)
-    if len(cleaned) % 2 != 0:
-        raise MalformedWire("hex input has an odd number of digits", format=fmt)
-    return bytes.fromhex(cleaned)
+from .octets import hex_to_bytes as _hex_to_bytes  # shared with `protobuf` and `tlv`; wire_seq imports it here
 
 
 def _armor_values():

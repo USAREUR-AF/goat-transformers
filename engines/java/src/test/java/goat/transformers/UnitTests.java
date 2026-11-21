@@ -181,10 +181,10 @@ final class UnitTests {
         for (char c : new char[]{'/', 'X', '_', '\'', 'x', ' ', '\n', '\r', '\t', '\u00e9'}) {
             errorKind("armor refuses " + (int) c, "malformed-wire", () -> e.decode("m", "0w0000" + c + "0"));
         }
-        eq("armor value of W", 39, Codec.armorValue('W'));
-        eq("armor value of `", 40, Codec.armorValue('`'));
-        eq("toArmor zero-fills beyond L", "w", Codec.toArmor(new byte[]{(byte) 0xff}, 6));
-        eq("toArmor fill bits beyond L are zero", "t", Codec.toArmor(new byte[]{(byte) 0xff}, 4));
+        eq("armor value of W", 39, BitsWire.armorValue('W'));
+        eq("armor value of `", 40, BitsWire.armorValue('`'));
+        eq("toArmor zero-fills beyond L", "w", BitsWire.toArmor(new byte[]{(byte) 0xff}, 6));
+        eq("toArmor fill bits beyond L are zero", "t", BitsWire.toArmor(new byte[]{(byte) 0xff}, 4));
         // sixbit helpers
         eq("sixbit decode trims only @ without trim", "A ", BitsTransform.decodeSixbit(new int[]{1, 32, 0}, false));
         eq("sixbit decode trim removes a mixed run", "A", BitsTransform.decodeSixbit(new int[]{1, 32, 0, 32}, true));
