@@ -232,15 +232,15 @@ compares `model_keys` of every loaded format and the capability report of
 every converted pair with the full build. It prints the sizes and exits 1 on
 any failure. `--wires <set>` checks another set the same way.
 
-One run on 2026-11-21: 1706 packs loaded; 8354 of the 23349 conversion
-vectors run, 8354 passed; 389 load vectors run, 389 passed; the six
+One run on 2026-11-21: 1711 packs loaded; 8372 of the 23545 conversion
+vectors run, 8372 passed; 391 load vectors run, 391 passed; the six
 `unknown-wire` loads and the load of `wire morse` as specified; `model_keys`
-of 1706 formats and the capability report of 192 pairs the same in both
+of 1711 formats and the capability report of 192 pairs the same in both
 builds. Sizes:
 
 | Build | Wheel | Package source |
 |---|---|---|
-| all eight wires | 162934 bytes | 575718 bytes, 25 modules |
+| all eight wires | 163390 bytes | 577697 bytes, 25 modules |
 | `xml`, `json`, `geojson` | 89535 bytes (55%) | 309791 bytes, 16 modules |
 
 ## Parse once, and the benchmark
@@ -284,8 +284,8 @@ It loads every pack and model module. One run on 2026-11-21 gave
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (23349, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1312, all passed); every capability vector (18, all passed) |
-| `test_malformed.py` | the input of every conversion vector cut and changed (137895 damaged inputs from 23346 vectors over 4481 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
+| `test_vectors.py` | every conversion vector of every pack (23545, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1351, all passed); every capability vector (18, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (139154 damaged inputs from 23542 vectors over 4514 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool; the `iso8601_s` transform of Version 0.26 (whole seconds written, milliseconds dropped; valid on `xml`, `geojson`, `json` and `text` only, no parameter, an `int` key only) |
 | `test_whenas30.py` | Version 0.30, what `convert` cannot reach: a kind or item kind recorded on the entity skips the implicit term, writes the held value or the first listed value, and is `transform-encode` for a held value its `when` does not match (ruling 25); a 64-bit label with the top bit set decodes negative and encodes back (ruling 7); `when 8 1 as as` is `bad-directive` (ruling 31) |
 | `test_licences.py` | Version 0.29: `Engine.from_dir` with each profile on the fixture trees of `packs/conformance/tool-fixtures/licences-*`, a profile not one of the three, and the line forms of ruling 1 (`REUSE.toml`, `.def.license`, `licences.toml`) and the profiles of ruling 2 on temporary trees |
