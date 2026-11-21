@@ -1,0 +1,10 @@
+{
+  "name": "list-formats-every-pack",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "lic-aa\t0.29.0\tjson\nlic-closed\t0.29.0\tjson\nlic-copyleft\t0.29.0\tjson\nlic-fou\t0.29.0\tjson\nlic-nc\t0.29.0\tjson\nlic-not-in-table\t0.29.0\tjson\nlic-plain\t0.29.0\tjson\nlic-unstated\t0.29.0\tjson\nlic-uses-book\t0.29.0\tjson\nlic-uses-derived\t0.29.0\tjson\nlic-uses-sa\t0.29.0\tjson\n"
+}

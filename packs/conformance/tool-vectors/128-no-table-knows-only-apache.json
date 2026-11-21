@@ -1,0 +1,12 @@
+{
+  "name": "no-table-knows-only-apache",
+  "args": [
+    "licences",
+    "--profile",
+    "open+copyleft",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-no-table/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "plain\tlic-plain\tApache-2.0\topen\n"
+}

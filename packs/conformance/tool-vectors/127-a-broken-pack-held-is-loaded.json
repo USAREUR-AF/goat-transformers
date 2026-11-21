@@ -1,0 +1,12 @@
+{
+  "name": "a-broken-pack-held-is-loaded",
+  "args": [
+    "list-formats",
+    "--profile",
+    "everything",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-core-copyleft/packs"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-directive"
+}

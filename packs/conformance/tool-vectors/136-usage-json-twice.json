@@ -1,0 +1,11 @@
+{
+  "name": "usage-json-twice",
+  "args": [
+    "licences",
+    "--json",
+    "--json",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs"
+  ],
+  "exit": 2
+}

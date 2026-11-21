@@ -1,0 +1,12 @@
+{
+  "name": "bad-module-without-a-profile",
+  "args": [
+    "list-formats",
+    "--packs-only",
+    "plain",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-bad-module/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "lic-plain\t0.29.0\tjson\n"
+}

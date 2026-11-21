@@ -442,11 +442,6 @@ precedence = "override"
 SPDX-FileCopyrightText = "2026 test"
 SPDX-License-Identifier = "Apache-2.0"
 
-[[annotations]]
-path = "model/shape.def"
-precedence = "override"
-SPDX-FileCopyrightText = "2026 test"
-SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 """
 LICENCES = """[licences."Apache-2.0"]
 commercial = "yes"
@@ -472,6 +467,9 @@ class Profiles(PkgCase):
         super().setUp()
         self.tree.write("REUSE.toml", REUSE)
         self.tree.write("licences.toml", LICENCES)
+        # a module's licence is in its own companion file (spec 0.29, 1b)
+        self.tree.write("model/shape.def.license", "SPDX-FileCopyrightText: 2026 test\n"
+                        "SPDX-License-" + "Identifier: CC-BY-NC-SA-4.0\n")
         self.tree.write("packs/alpha/vectors/to-beta.json", '{"from": "alpha", "to": "beta#2"}\n')
 
     def archive(self, *argv):

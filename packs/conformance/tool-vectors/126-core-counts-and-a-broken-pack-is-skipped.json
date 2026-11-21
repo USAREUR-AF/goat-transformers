@@ -1,0 +1,12 @@
+{
+  "name": "core-counts-and-a-broken-pack-is-skipped",
+  "args": [
+    "list-formats",
+    "--profile",
+    "open+copyleft",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-core-copyleft/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "lic-plain\t0.29.0\tjson\n"
+}

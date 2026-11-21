@@ -1,0 +1,10 @@
+{
+  "name": "usage-json-with-a-value",
+  "args": [
+    "licences",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--json=yes"
+  ],
+  "exit": 2
+}

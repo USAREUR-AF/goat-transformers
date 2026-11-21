@@ -1,0 +1,10 @@
+{
+  "name": "bad-table-without-a-profile",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-bad-table/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "lic-plain\t0.29.0\tjson\n"
+}

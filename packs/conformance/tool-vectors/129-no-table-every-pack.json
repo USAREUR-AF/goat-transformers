@@ -1,0 +1,10 @@
+{
+  "name": "no-table-every-pack",
+  "args": [
+    "licences",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-no-table/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "copyleft\tlic-copyleft\tCC-BY-SA-4.0\teverything\nplain\tlic-plain\tApache-2.0\topen\n"
+}

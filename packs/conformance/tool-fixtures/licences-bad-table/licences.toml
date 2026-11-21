@@ -1,0 +1,9 @@
+# The flags of the fixture's licences (spec 0.29, ruling 1c).
+
+[licences."Apache-2.0"]
+name = "Apache-2.0"
+commercial = "yes"
+share_alike	=  false
+attribution = true
+field_of_use = [ ]
+distribution = "public"

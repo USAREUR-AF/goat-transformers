@@ -1,0 +1,49 @@
+# The flags of the fixture's licences (spec 0.29, ruling 1c).
+
+[licences."Apache-2.0"]
+name = "Apache-2.0"
+commercial = "yes"
+share_alike	=  false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."CC-BY-SA-4.0"]
+name = "CC-BY-SA-4.0"
+commercial = "yes"
+share_alike	=  true
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."CC-BY-NC-SA-4.0"]
+name = "CC-BY-NC-SA-4.0"
+commercial = "no"
+share_alike	=  true
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."CC-BY-4.0"]
+name = "CC-BY-4.0"
+commercial = "yes"
+share_alike	=  false
+attribution = true
+field_of_use = ["weapons that can harm humans"]
+distribution = "public"
+
+[licences."LicenseRef-unstated"]
+name = "LicenseRef-unstated"
+commercial = "unknown"
+share_alike	=  false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."OGL-UK-3.0"]
+name = "OGL-UK-3.0"
+commercial = "yes"
+share_alike	=  false
+attribution = true
+field_of_use = []
+distribution = "controlled"

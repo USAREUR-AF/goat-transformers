@@ -1,0 +1,11 @@
+{
+  "name": "licences-json",
+  "args": [
+    "licences",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--json"
+  ],
+  "exit": 0,
+  "stdout_text": "{\"packs\":[{\"pack\":\"closed\",\"format\":\"lic-closed\",\"licence\":\"OGL-UK-3.0\",\"profile\":\"none\"},{\"pack\":\"copyleft\",\"format\":\"lic-copyleft\",\"licence\":\"CC-BY-SA-4.0\",\"profile\":\"open+copyleft\"},{\"pack\":\"fou\",\"format\":\"lic-fou\",\"licence\":\"CC-BY-4.0\",\"profile\":\"everything\"},{\"pack\":\"nc\",\"format\":\"lic-nc\",\"licence\":\"CC-BY-NC-SA-4.0\",\"profile\":\"everything\"},{\"pack\":\"not-in-table\",\"format\":\"lic-not-in-table\",\"licence\":\"CC0-1.0\",\"profile\":\"everything\"},{\"pack\":\"plain\",\"format\":\"lic-plain\",\"licence\":\"Apache-2.0\",\"profile\":\"open\"},{\"pack\":\"unstated\",\"format\":\"lic-unstated\",\"licence\":\"LicenseRef-unstated\",\"profile\":\"everything\"},{\"pack\":\"uses-book\",\"format\":\"lic-uses-book\",\"licence\":\"Apache-2.0\",\"profile\":\"everything\"},{\"pack\":\"uses-derived\",\"format\":\"lic-uses-derived\",\"licence\":\"Apache-2.0\",\"profile\":\"everything\"},{\"pack\":\"uses-sa\",\"format\":\"lic-uses-sa\",\"licence\":\"Apache-2.0\",\"profile\":\"open+copyleft\"},{\"pack\":\"zz-first-by-format\",\"format\":\"lic-aa\",\"licence\":\"Apache-2.0\",\"profile\":\"open\"}]}\n"
+}

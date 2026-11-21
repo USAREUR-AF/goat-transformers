@@ -1,0 +1,10 @@
+{
+  "name": "bad-table-licences",
+  "args": [
+    "licences",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-bad-table/packs"
+  ],
+  "exit": 1,
+  "error_kind": "bad-licence"
+}

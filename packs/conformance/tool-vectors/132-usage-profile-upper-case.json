@@ -1,0 +1,11 @@
+{
+  "name": "usage-profile-upper-case",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    "Open"
+  ],
+  "exit": 2
+}

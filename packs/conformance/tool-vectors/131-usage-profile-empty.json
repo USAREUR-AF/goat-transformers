@@ -1,0 +1,11 @@
+{
+  "name": "usage-profile-empty",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    ""
+  ],
+  "exit": 2
+}

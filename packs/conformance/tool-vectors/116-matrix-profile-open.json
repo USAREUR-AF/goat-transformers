@@ -1,0 +1,14 @@
+{
+  "name": "matrix-profile-open",
+  "args": [
+    "matrix",
+    "--profile",
+    "open",
+    "--packs-only",
+    "plain,copyleft",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "from\tto\tgrade\tcarried\tdropped\nlic-plain\tlic-plain\tfull\tlat\t\n"
+}
