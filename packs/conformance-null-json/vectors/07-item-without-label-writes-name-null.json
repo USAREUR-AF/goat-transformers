@@ -1,0 +1,20 @@
+{
+  "name": "item-without-label-writes-name-null",
+  "from": "conformance-null-json",
+  "to": "conformance-null-json",
+  "input": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":1,\"code\":\"c\",\"s\":\"v\",\"items\":[{\"q\":2},{\"name\":\"n\",\"q\":4},{}]}",
+  "expect": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":1,\"code\":\"c\",\"s\":\"v\",\"items\":[{\"name\":null,\"q\":2},{\"name\":\"n\",\"q\":4},{\"name\":null}]}",
+  "model": {
+    "probe.items.#": "3",
+    "probe.items[0].probe.qty": "2",
+    "probe.items[1].probe.label": "n",
+    "probe.items[1].probe.qty": "4",
+    "@absent": [
+      "probe.items[0].probe.label",
+      "probe.items[2].probe.label",
+      "probe.items[2].probe.qty"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null` (\"the entity (inside a group, the item) does not hold the key\") and ruling 3 (null inside a group writes the member null in the item). Item members in field-line order name, q; q has no null and an item without it does not write it, so the third item is {\"name\":null}, not {} (0.7). Derived by hand."
+}

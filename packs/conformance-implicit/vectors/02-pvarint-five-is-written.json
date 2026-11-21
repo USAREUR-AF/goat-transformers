@@ -1,0 +1,13 @@
+{
+  "name": "pvarint-five-is-written",
+  "from": "conformance-implicit",
+  "to": "conformance-implicit",
+  "input": "0805",
+  "expect": "0805",
+  "model": {
+    "@kind": "plain",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`; protobuf encoding of 0.3/0.5 (tag = field<<3 | wire type, varint base 128 low group first, fields in ascending number). n 5 is not the default: tag 08, varint 05. Derived by hand."
+}

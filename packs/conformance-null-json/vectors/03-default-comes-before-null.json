@@ -1,0 +1,15 @@
+{
+  "name": "default-comes-before-null",
+  "from": "conformance-null-json",
+  "to": "conformance-null-json",
+  "input": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"code\":\"c\",\"s\":\"v\"}",
+  "expect": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":7,\"code\":\"c\",\"s\":\"v\"}",
+  "model": {
+    "probe.qty": "3",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null`, \"The order for an absent key is: a default (Version 0.6), then the first exact sentinel ..., then null\": probe.x is absent and its default 7 is written at x, not null. Derived by hand."
+}

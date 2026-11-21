@@ -4941,10 +4941,11 @@ field  <model-key> <locator> <transform> [options] absent <=<n>
 ```
 
 A value of an `absent` option (Version 0.9) that begins with `>=` or `<=` is
-a range sentinel. On the wires where 0.9 strips a leading `=`, the prefix is
-looked for after that one `=` is stripped, so `=>=5` is the exact text `>=5`;
-on `pstring`, where nothing is stripped, a value that begins with `>=` or
-`<=` is always a range. A range sentinel: the raw value matches when, read as a number, it is at
+a range sentinel. The prefix is looked for in the value as written, before
+anything is stripped. On the wires where 0.9 strips a leading `=`, that `=`
+marks an exact text, so `=>=5` is the exact text `>=5` and not a range; on
+`pstring`, where nothing is stripped, a value that begins with `>=` or `<=`
+is always a range. A range sentinel: the raw value matches when, read as a number, it is at
 least, or at most, `<n>`. Range and exact sentinels may be mixed in one
 option (`absent 0,>=9999999`).
 

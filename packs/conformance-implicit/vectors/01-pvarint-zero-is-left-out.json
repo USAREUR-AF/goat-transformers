@@ -1,0 +1,13 @@
+{
+  "name": "pvarint-zero-is-left-out",
+  "from": "conformance-implicit",
+  "to": "conformance-implicit",
+  "input": "0800",
+  "expect": "",
+  "model": {
+    "@kind": "plain",
+    "probe.n": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`; protobuf encoding of 0.3/0.5 (tag = field<<3 | wire type, varint base 128 low group first, fields in ascending number). Input 08 00: field 1 varint 0, n = 0; no field 9, kind plain. Encode: n 0 equals the pvarint default 0 and is not written; qty is absent, its default 0 is supplied and is also not written; w is absent. Output is empty. Derived by hand."
+}

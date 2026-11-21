@@ -1,0 +1,12 @@
+{
+  "name": "float-lower-end-is-accepted",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"r\":-1500}",
+  "expect": "{\"r\":-1500}",
+  "model": {
+    "probe.ratio": "-1500"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` without wrap: -1500 is <min>, accepted. Derived by hand."
+}

@@ -1,0 +1,16 @@
+{
+  "name": "default-zero-is-left-out",
+  "from": "conformance-implicit",
+  "to": "conformance-implicit",
+  "input": "3801",
+  "expect": "3801",
+  "model": {
+    "@kind": "plain",
+    "probe.w": "1",
+    "@absent": [
+      "probe.qty"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`; protobuf encoding of 0.3/0.5 (tag = field<<3 | wire type, varint base 128 low group first, fields in ascending number). \"This holds for a value that a default line ... supplies\": qty is absent, default 0 is supplied and equals the default, so field 6 is not written. w 1 (field 7, tag 38) is written. Derived by hand."
+}

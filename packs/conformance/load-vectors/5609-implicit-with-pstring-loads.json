@@ -1,0 +1,8 @@
+{
+  "name": "5609-implicit-with-pstring-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey hae float m\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey a float -\nkey ratio float -\nkey label string -\nkey s1 string -\nkey s2 string -\nkey val int -\nlist nums \"scalar items\"\n"
+  ],
+  "pack": "format probe\nversion 0.56.0\ndistribution public\nsource \"probe\"\nuses probe\nwire protobuf\nfield probe.label 1 pstring implicit\nfield probe.n 2 pvarint implicit\nfield probe.x 3 psint implicit\nfield probe.a 4 pdouble implicit\nfield probe.ratio 5 pfloat implicit\n"
+}

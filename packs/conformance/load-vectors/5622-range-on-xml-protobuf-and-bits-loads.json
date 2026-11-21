@@ -1,0 +1,12 @@
+{
+  "name": "5622-range-on-xml-protobuf-and-bits-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey hae float m\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey a float -\nkey ratio float -\nkey label string -\nkey s1 string -\nkey s2 string -\nkey val int -\nlist nums \"scalar items\"\n"
+  ],
+  "packs": [
+    "format probe\nversion 0.56.0\ndistribution public\nsource \"probe\"\nuses probe\nwire xml\nroot msg\nfield probe.a @a float range -180 180 wrap\nfield probe.n @n int range -0 0007\n",
+    "format probe2\nversion 0.56.0\ndistribution public\nsource \"probe\"\nuses probe\nwire protobuf\nfield probe.x 1 psint range -9223372036854775808 9223372036854775807 wrap\nfield probe.a 2 pdouble range -1e3 1.5E3 implicit\n",
+    "format probe3\nversion 0.56.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nfield probe.n 0:0:16 uint range 0 4095\n"
+  ]
+}

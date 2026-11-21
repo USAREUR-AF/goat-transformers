@@ -1,0 +1,15 @@
+{
+  "name": "absent-key-writes-the-exact-sentinel",
+  "from": "conformance-absent-range-056-1",
+  "to": "conformance-absent-range-056-1",
+  "input": "<msg uid=\"u1\"/>",
+  "expect": "<msg uid=\"u1\" label=\"&gt;=5\"/>",
+  "model": {
+    "uid": "u1",
+    "@absent": [
+      "probe.label"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range: on xml one leading `=` is stripped (0.9 ruling 12) and \"=>=5 is the exact text >=5\", so the sentinel is exact, not a range. label is absent; \"Encode of an absent key writes the first exact sentinel\": >=5, escaped &gt;=5. A range sentinel would write nothing. Derived by hand."
+}

@@ -1,0 +1,23 @@
+{
+  "name": "null-members-decode-as-absent-keys",
+  "from": "conformance-null-json",
+  "to": "conformance-null-json",
+  "input": "{\"id\":null,\"label\":null,\"q\":null,\"x\":null,\"code\":null,\"s\":null,\"items\":[{\"name\":null,\"q\":null}]}",
+  "expect": "{\"label\":null,\"q\":null,\"x\":7,\"code\":\"N/A\",\"s\":null,\"items\":[{\"name\":null}]}",
+  "model": {
+    "probe.items.#": "1",
+    "@absent": [
+      "uid",
+      "probe.label",
+      "probe.qty",
+      "probe.x",
+      "probe.tag",
+      "probe.s1",
+      "probe.s2",
+      "probe.items[0].probe.label",
+      "probe.items[0].probe.qty"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null` Decode (a null member yields no value; on json already 0.5) and 0.5 Residue (null members are not carried). Encode: id has no null option and is not written; label, q, s and the item's name are written null; x writes its default 7, code its sentinel \"N/A\"; the item's q has no null. Derived by hand."
+}

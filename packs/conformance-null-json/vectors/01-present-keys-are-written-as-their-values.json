@@ -1,0 +1,21 @@
+{
+  "name": "present-keys-are-written-as-their-values",
+  "from": "conformance-null-json",
+  "to": "conformance-null-json",
+  "input": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":1,\"code\":\"c\",\"s\":\"v\",\"items\":[{\"name\":\"n\",\"q\":2}]}",
+  "expect": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":1,\"code\":\"c\",\"s\":\"v\",\"items\":[{\"name\":\"n\",\"q\":2}]}",
+  "model": {
+    "uid": "u1",
+    "probe.label": "L",
+    "probe.qty": "3",
+    "probe.x": "1",
+    "probe.tag": "c",
+    "probe.s1": "v",
+    "probe.s2": "v",
+    "probe.items.#": "1",
+    "probe.items[0].probe.label": "n",
+    "probe.items[0].probe.qty": "2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null`: the option acts only for an absent key, so every held key is written as before (0.5 canonical output, members in field-line order: id, label, q, x, code, s, items). `s` is one member on two lines: decode fills probe.s1 and probe.s2 with \"v\" (ruling 16 of 0.5); encode writes the earliest held line once. Derived by hand."
+}

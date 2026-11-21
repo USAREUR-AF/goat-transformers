@@ -1,0 +1,13 @@
+{
+  "name": "empty-submessage-when-implicit-leaves-out-the-only-field",
+  "from": "conformance-implicit",
+  "to": "conformance-implicit",
+  "input": "4a020800",
+  "expect": "4a00",
+  "model": {
+    "@kind": "sub",
+    "probe.y": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`; protobuf encoding of 0.3/0.5 (tag = field<<3 | wire type, varint base 128 low group first, fields in ascending number). Input 4a 02 08 00: field 9 holds 9.1 = 0, kind sub (when 9 present). Encode: y 0 is left out by implicit; \"A field that implicit leaves out counts as not written for ruling 14 of 0.5\", so nothing under 9 is written and the encoder writes an empty field 9: 4a 00. Derived by hand."
+}

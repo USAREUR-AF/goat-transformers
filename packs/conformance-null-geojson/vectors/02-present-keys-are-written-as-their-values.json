@@ -1,0 +1,14 @@
+{
+  "name": "present-keys-are-written-as-their-values",
+  "from": "conformance-null-geojson",
+  "to": "conformance-null-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"label\":\"L\",\"q\":3},\"id\":\"u1\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"label\":\"L\",\"q\":3},\"id\":\"u1\"}",
+  "model": {
+    "uid": "u1",
+    "probe.label": "L",
+    "probe.qty": "3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null` acts only on an absent key. Derived by hand."
+}

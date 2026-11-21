@@ -1,0 +1,13 @@
+{
+  "name": "pstring-empty-is-left-out",
+  "from": "conformance-implicit",
+  "to": "conformance-implicit",
+  "input": "2a00",
+  "expect": "",
+  "model": {
+    "@kind": "plain",
+    "probe.label": ""
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`; protobuf encoding of 0.3/0.5 (tag = field<<3 | wire type, varint base 128 low group first, fields in ascending number). Input 2a 00: field 5, length 0, label is the empty text (present); the pstring default; not written. Derived by hand."
+}

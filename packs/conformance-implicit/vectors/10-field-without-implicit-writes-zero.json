@@ -1,0 +1,13 @@
+{
+  "name": "field-without-implicit-writes-zero",
+  "from": "conformance-implicit",
+  "to": "conformance-implicit",
+  "input": "3800",
+  "expect": "3800",
+  "model": {
+    "@kind": "plain",
+    "probe.w": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`; protobuf encoding of 0.3/0.5 (tag = field<<3 | wire type, varint base 128 low group first, fields in ascending number). w (field 7) has no implicit: 0 is written as tag 38, varint 00. Derived by hand."
+}

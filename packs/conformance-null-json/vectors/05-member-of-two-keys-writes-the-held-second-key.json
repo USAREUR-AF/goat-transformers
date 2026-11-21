@@ -1,0 +1,19 @@
+{
+  "name": "member-of-two-keys-writes-the-held-second-key",
+  "from": "conformance-null-json",
+  "to": "conformance-null-json",
+  "input": "{\"id\":\"u1\"}",
+  "context": {
+    "probe.s2": "Z"
+  },
+  "expect": "{\"id\":\"u1\",\"label\":null,\"q\":null,\"x\":7,\"code\":\"N/A\",\"s\":\"Z\"}",
+  "model": {
+    "@complete": true,
+    "probe.s2": "Z",
+    "@absent": [
+      "probe.s1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 ruling 1: null is written only when no line on the member writes a value. The first line on `s` (probe.s1, with null) is absent; the second (probe.s2) holds Z from the context (0.6 step 2; no derive line targets s1 or s2), so ruling 16 of 0.5 writes \"Z\" at the position of the first line. The other members are as vector 02. Derived by hand."
+}
