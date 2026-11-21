@@ -1,0 +1,15 @@
+{
+  "name": "network-message-with-vendor-roundtrip",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "8109000f01a0ffff00ff8001040005",
+  "expect": "8109000f01a0ffff00ff8001040005",
+  "model": {
+    "bacnetip.network_message": "1",
+    "bacnetip.dnet": "65535",
+    "bacnetip.dadr.#": "0",
+    "bacnetip.network_message_type": "128",
+    "bacnetip.vendor_id": "260"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; a proprietary network message (type 0x80, vendor 260) broadcast to all networks; expect derived there, no engine run"
+}

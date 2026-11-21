@@ -1,0 +1,15 @@
+{
+  "name": "register-session-roundtrip",
+  "from": "enip-encapsulation",
+  "to": "enip-encapsulation",
+  "input": "65000400000000000000000001020304050607080000000001000000",
+  "expect": "65000400000000000000000001020304050607080000000001000000",
+  "model": {
+    "enip.command": "101",
+    "enip.session_handle": "0",
+    "enip.sender_context": "1020304050607080",
+    "enip.protocol_version": "1",
+    "enip.option_flags": "0"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-enip.c; a RegisterSession request; expect derived there, no engine run"
+}

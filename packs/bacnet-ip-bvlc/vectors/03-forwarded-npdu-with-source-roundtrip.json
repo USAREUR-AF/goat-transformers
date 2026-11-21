@@ -1,0 +1,17 @@
+{
+  "name": "forwarded-npdu-with-source-roundtrip",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "81040014c0000228bac0010b00070201021000c4",
+  "expect": "81040014c0000228bac0010b00070201021000c4",
+  "model": {
+    "bacnetip.function": "4",
+    "bacnetip.ip_address": "3221226024",
+    "bacnetip.udp_port": "47808",
+    "bacnetip.source_present": "1",
+    "bacnetip.snet": "7",
+    "bacnetip.sadr.#": "2",
+    "bacnetip.priority": "3"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; a forwarded NPDU from 192.0.2.40:47808 with a source network, life-safety priority; expect derived there, no engine run"
+}

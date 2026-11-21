@@ -1,0 +1,17 @@
+{
+  "name": "original-unicast-routed-roundtrip",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "810a001701240005010afe0005010c0c0000000a19551e",
+  "expect": "810a001701240005010afe0005010c0c0000000a19551e",
+  "model": {
+    "bacnetip.function": "10",
+    "bacnetip.expecting_reply": "1",
+    "bacnetip.destination_present": "1",
+    "bacnetip.dnet": "5",
+    "bacnetip.dadr.#": "1",
+    "bacnetip.hop_count": "254",
+    "bacnetip.payload.#": "12"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; a confirmed request to network 5, MAC address 0x0A, hop count 254; expect derived there, no engine run"
+}

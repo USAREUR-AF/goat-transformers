@@ -1,0 +1,12 @@
+{
+  "name": "sequenced-address-roundtrip",
+  "from": "enip-encapsulation",
+  "to": "enip-encapsulation",
+  "input": "70001e000000000000000000010203040506070800000000000000000000020002800800332211002a000000b1000600000102030405",
+  "expect": "70001e000000000000000000010203040506070800000000000000000000020002800800332211002a000000b1000600000102030405",
+  "model": {
+    "enip.items[0].enip.connection_id": "1122867",
+    "enip.items[0].enip.sequence_number": "42"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-enip.c; a sequenced address item and connected data, as I/O data is framed; expect derived there, no engine run"
+}

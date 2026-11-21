@@ -1,0 +1,8 @@
+{
+  "name": "bvll-type-other-is-no-kind",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "820b000801001008",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; the first octet is not the BACnet/IP type 0x81; expect derived there, no engine run"
+}

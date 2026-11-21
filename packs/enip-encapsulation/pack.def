@@ -1,0 +1,53 @@
+# EtherNet/IP encapsulation message: the 24-octet header (little-endian) and, for RegisterSession, SendRRData
+# and SendUnitData, the command data with the common packet format items. Written by
+# tools/gen/indauto2-pack.py; do not edit by hand.
+format        enip-encapsulation
+version       0.1.0
+distribution  public
+source        "Wireshark, https://github.com/wireshark/wireshark at commit de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-enip.c (GPL-2.0-or-later); layouts restated, no code copied; the ODVA specification not used"
+uses          enip
+wire          bits
+layout        sequential
+bit_order     lsb
+
+field  enip.command  16  uint
+length  16  bytes  plus  -20
+  field  enip.session_handle  32  uint
+  field  enip.status  32  uint
+  field  enip.sender_context  64  hex
+  field  enip.options  32  uint
+  switch  enip.command
+    case  101
+      field  enip.protocol_version  16  uint
+      field  enip.option_flags  16  uint
+    case  111,112
+      field  enip.interface_handle  32  uint
+      field  enip.timeout  16  uint
+      count  item_count  16
+      group  enip.items  count  @item_count
+        field  enip.item_type  16  uint
+        length  16  bytes
+          switch  enip.item_type
+            case  161
+              field  enip.connection_id  32  uint
+            case  32770
+              field  enip.connection_id  32  uint
+              field  enip.sequence_number  32  uint
+            case  32768,32769
+              field  enip.sin_family  16  uint  swap
+              field  enip.sin_port  16  uint  swap
+              field  enip.sin_addr  32  uint  swap
+              field  enip.sin_zero  64  hex
+            else
+              group  enip.item_data  rest
+                field  enip.octet  8  uint
+              end
+          end
+        end
+      end
+    else
+      group  enip.command_data  rest
+        field  enip.octet  8  uint
+      end
+  end
+end

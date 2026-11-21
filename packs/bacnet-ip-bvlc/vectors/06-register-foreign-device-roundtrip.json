@@ -1,0 +1,11 @@
+{
+  "name": "register-foreign-device-roundtrip",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "81050006012c",
+  "expect": "81050006012c",
+  "model": {
+    "bacnetip.ttl": "300"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; expect derived there, no engine run"
+}

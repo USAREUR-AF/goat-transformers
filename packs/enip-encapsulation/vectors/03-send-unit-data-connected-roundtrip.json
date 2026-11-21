@@ -1,0 +1,13 @@
+{
+  "name": "send-unit-data-connected-roundtrip",
+  "from": "enip-encapsulation",
+  "to": "enip-encapsulation",
+  "input": "70001a004d3c2b1a000000000102030405060708000000000000000000000200a100040003020180b10006000700cc000000",
+  "expect": "70001a004d3c2b1a000000000102030405060708000000000000000000000200a100040003020180b10006000700cc000000",
+  "model": {
+    "enip.command": "112",
+    "enip.items[0].enip.connection_id": "2147549699",
+    "enip.items[1].enip.item_data.#": "6"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-enip.c; SendUnitData with a connected address item and connected data; expect derived there, no engine run"
+}

@@ -1,0 +1,60 @@
+# HART-IP message: the 8-octet header with the whole-message length, and the body by message type and ID.
+# Written by tools/gen/indauto2-pack.py; do not edit by hand.
+format        hart-ip-message
+version       0.1.0
+distribution  public
+source        "Wireshark, https://github.com/wireshark/wireshark at commit de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-hartip.c (GPL-2.0-or-later); layouts restated, no code copied; the FieldComm Group specification not used"
+uses          hartip
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  hartip.version  8  uint
+field  hartip.message_type  8  uint
+field  hartip.message_id  8  uint
+field  hartip.status  8  uint
+field  hartip.sequence_number  16  uint
+length  16  whole
+switch  hartip.message_type
+  case  3,15
+    field  hartip.error_code  8  uint
+    group  hartip.body  rest
+      field  hartip.octet  8  uint
+    end
+  else
+    switch  hartip.message_id
+      case  0
+        field  hartip.master_type  8  uint
+        field  hartip.inactivity_close_timer  32  uint
+      case  3
+        field  hartip.address_type  1  uint
+        count  expansion_count  2
+        field  hartip.physical_layer_type  2  uint
+        field  hartip.frame_type  3  uint
+        switch  hartip.address_type
+          case  0
+            field  hartip.short_reserved  2  uint
+            field  hartip.short_address  6  uint
+          case  1
+            field  hartip.long_address  40  hex
+        end
+        group  hartip.expansion  count  @expansion_count
+          field  hartip.octet  8  uint
+        end
+        field  hartip.command  8  uint
+        field  hartip.byte_count  8  uint
+        switch  hartip.frame_type
+          case  1,6
+            field  hartip.response_code  8  uint
+            field  hartip.device_status  8  uint
+          else
+        end
+        group  hartip.data  rest
+          field  hartip.octet  8  uint
+        end
+      else
+        group  hartip.body  rest
+          field  hartip.octet  8  uint
+        end
+    end
+end

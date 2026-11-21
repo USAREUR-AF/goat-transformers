@@ -1,0 +1,12 @@
+{
+  "name": "read-fdt-ack-roundtrip",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "8107000ecb007109bac1012c007d",
+  "expect": "8107000ecb007109bac1012c007d",
+  "model": {
+    "bacnetip.fdt_entries[0].bacnetip.fdt_ttl": "300",
+    "bacnetip.fdt_entries[0].bacnetip.fdt_remaining": "125"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; a read FDT ack with one entry; expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "keep-alive-roundtrip",
+  "from": "hart-ip-message",
+  "to": "hart-ip-message",
+  "input": "0100020000060008",
+  "expect": "0100020000060008",
+  "model": {
+    "hartip.message_id": "2",
+    "hartip.body.#": "0"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-hartip.c; a keep alive with an empty body; expect derived there, no engine run"
+}

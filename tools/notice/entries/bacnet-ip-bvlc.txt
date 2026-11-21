@@ -1,0 +1,5 @@
+Packs bacnet-ip-bvlc; module bacnetip
+  bacnet-stack, https://github.com/bacnet-stack/bacnet-stack at commit
+  229ba806601d4459a2b7889ec1280cb0ed4efcb4, src/bacnet/datalink/bvlc.c,
+  bvlc.h and src/bacnet/npdu.c. Copyright Steve Karg and contributors;
+  GPL-2.0-or-later WITH GCC-exception-2.0. Layouts restated; no text copied.

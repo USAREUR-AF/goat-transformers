@@ -1,0 +1,17 @@
+{
+  "name": "pass-through-short-request-roundtrip",
+  "from": "hart-ip-message",
+  "to": "hart-ip-message",
+  "input": "010003000002000d0200000002",
+  "expect": "010003000002000d0200000002",
+  "model": {
+    "hartip.message_id": "3",
+    "hartip.address_type": "0",
+    "hartip.frame_type": "2",
+    "hartip.short_address": "0",
+    "hartip.command": "0",
+    "hartip.byte_count": "0",
+    "hartip.data.#": "1"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-hartip.c; command 0 to polling address 0, the checksum as the last data octet; expect derived there, no engine run"
+}

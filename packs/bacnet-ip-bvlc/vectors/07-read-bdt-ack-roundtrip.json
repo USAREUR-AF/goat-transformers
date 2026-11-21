@@ -1,0 +1,12 @@
+{
+  "name": "read-bdt-ack-roundtrip",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "81030018c0000201bac0ffffffffc6336401bac0ffffff00",
+  "expect": "81030018c0000201bac0ffffffffc6336401bac0ffffff00",
+  "model": {
+    "bacnetip.bdt_entries.#": "2",
+    "bacnetip.bdt_entries[1].bacnetip.bdt_mask": "4294967040"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; a read BDT ack with two entries; expect derived there, no engine run"
+}
