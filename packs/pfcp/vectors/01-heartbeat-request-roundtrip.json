@@ -1,0 +1,18 @@
+{
+  "name": "heartbeat-request-roundtrip",
+  "from": "pfcp",
+  "to": "pfcp",
+  "input": "2001000c0002010000600004ed5fa85d",
+  "expect": "2001000c0002010000600004ed5fa85d",
+  "model": {
+    "@kind": "message",
+    "pfcp.flag_s": "0",
+    "pfcp.message_type": "1",
+    "pfcp.ies.#": "1",
+    "pfcp.ies[0].pfcp.recovery_time_stamp": "3982469213",
+    "@absent": [
+      "pfcp.header_seid"
+    ]
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.244 clauses 7.2 and 8; a heartbeat request with a Recovery Time Stamp; expect derived there, no engine run"
+}

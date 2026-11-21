@@ -1,0 +1,140 @@
+# GTPv2-C message (3GPP TS 29.274): the header and the IEs, with the common IEs laid out. Public; the source states no licence (pack.md, PROVENANCE.md). Written by
+# tools/gen/gtp-pack.py; do not edit by hand. Wire bits, layout sequential, msb; I/O is hex text.
+format        gtpv2c
+version       0.1.0
+distribution  public
+source        "ETSI TS 129 274 V19.6.0 (2026-03), 3GPP TS 29.274 version 19.6.0 Release 19, Evolved General Packet Radio Service (GPRS) Tunnelling Protocol for Control plane (GTPv2-C), https://www.etsi.org/deliver/etsi_ts/129200_129299/129274/19.06.00_60/ts_129274v190600p.pdf (sha256 b825a7cb0c266f25b3b1343947f01022e97b0330608c796052bb6ce4973b0380); layout restated"
+uses          gtpv2
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    message
+when    3  2
+field  gtpv2.flag_p  1  uint
+field  gtpv2.flag_t  1  uint
+field  gtpv2.flag_mp  1  uint
+field  gtpv2.flags_spare  2  uint
+field  gtpv2.message_type  8  uint
+length  16  bytes
+  switch  gtpv2.flag_t
+    case  1
+      field  gtpv2.teid  32  uint
+    case  0
+  end
+  field  gtpv2.sequence  24  uint
+  switch  gtpv2.flag_mp
+    case  1
+      field  gtpv2.message_priority  4  uint
+      pad  4
+    case  0
+      pad  8
+  end
+  group  gtpv2.ies  rest
+    field  gtpv2.ie_type  8  uint
+    length  16  bytes  plus  -1
+      field  gtpv2.ie_spare  4  uint
+      field  gtpv2.instance  4  uint
+      switch  gtpv2.ie_type
+        case  1
+          group  gtpv2.imsi_digits  rest
+            field  gtpv2.digit_even  4  uint
+            field  gtpv2.digit_odd  4  uint
+          end
+        case  2
+          field  gtpv2.cause  8  uint
+          field  gtpv2.cause_spare  5  uint
+          field  gtpv2.cause_pce  1  uint
+          field  gtpv2.cause_bce  1  uint
+          field  gtpv2.cause_cs  1  uint
+          group  gtpv2.offending_ie  rest
+            field  gtpv2.octet  8  uint
+          end
+        case  3
+          field  gtpv2.restart_counter  8  uint
+        case  73
+          field  gtpv2.ebi_spare  4  uint
+          field  gtpv2.ebi  4  uint
+          group  gtpv2.extra  rest
+            field  gtpv2.octet  8  uint
+          end
+        case  87
+          field  gtpv2.fteid_v4  1  uint
+          field  gtpv2.fteid_v6  1  uint
+          field  gtpv2.interface_type  6  uint
+          field  gtpv2.teid  32  uint
+          switch  gtpv2.fteid_v4
+            case  1
+              field  gtpv2.ipv4  32  uint
+            case  0
+          end
+          switch  gtpv2.fteid_v6
+            case  1
+              field  gtpv2.ipv6  128  hex
+            case  0
+          end
+          group  gtpv2.extra  rest
+            field  gtpv2.octet  8  uint
+          end
+        case  93,109,195
+          group  gtpv2.grouped_ies  rest
+            field  gtpv2.ie_type  8  uint
+            length  16  bytes  plus  -1
+              field  gtpv2.ie_spare  4  uint
+              field  gtpv2.instance  4  uint
+              switch  gtpv2.ie_type
+                case  1
+                  group  gtpv2.imsi_digits  rest
+                    field  gtpv2.digit_even  4  uint
+                    field  gtpv2.digit_odd  4  uint
+                  end
+                case  2
+                  field  gtpv2.cause  8  uint
+                  field  gtpv2.cause_spare  5  uint
+                  field  gtpv2.cause_pce  1  uint
+                  field  gtpv2.cause_bce  1  uint
+                  field  gtpv2.cause_cs  1  uint
+                  group  gtpv2.offending_ie  rest
+                    field  gtpv2.octet  8  uint
+                  end
+                case  3
+                  field  gtpv2.restart_counter  8  uint
+                case  73
+                  field  gtpv2.ebi_spare  4  uint
+                  field  gtpv2.ebi  4  uint
+                  group  gtpv2.extra  rest
+                    field  gtpv2.octet  8  uint
+                  end
+                case  87
+                  field  gtpv2.fteid_v4  1  uint
+                  field  gtpv2.fteid_v6  1  uint
+                  field  gtpv2.interface_type  6  uint
+                  field  gtpv2.teid  32  uint
+                  switch  gtpv2.fteid_v4
+                    case  1
+                      field  gtpv2.ipv4  32  uint
+                    case  0
+                  end
+                  switch  gtpv2.fteid_v6
+                    case  1
+                      field  gtpv2.ipv6  128  hex
+                    case  0
+                  end
+                  group  gtpv2.extra  rest
+                    field  gtpv2.octet  8  uint
+                  end
+                else
+                  group  gtpv2.ie_value  rest
+                    field  gtpv2.octet  8  uint
+                  end
+              end
+            end
+          end
+        else
+          group  gtpv2.ie_value  rest
+            field  gtpv2.octet  8  uint
+          end
+      end
+    end
+  end
+end

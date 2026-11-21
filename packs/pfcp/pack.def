@@ -1,0 +1,182 @@
+# PFCP message (3GPP TS 29.244): the header and the IEs, with common node and session IEs laid out. Public; the source states no licence (pack.md, PROVENANCE.md). Written by
+# tools/gen/gtp-pack.py; do not edit by hand. Wire bits, layout sequential, msb; I/O is hex text.
+format        pfcp
+version       0.1.0
+distribution  public
+source        "ETSI TS 129 244 V19.6.0 (2026-08), 3GPP TS 29.244 version 19.6.0 Release 19, Interface between the Control Plane and the User Plane nodes (PFCP), https://www.etsi.org/deliver/etsi_ts/129200_129299/129244/19.06.00_60/ts_129244v190600p.pdf (sha256 5f5858f6174563cbe7c6cb8eb49a99fe2bb64b39b4d086e6163f42eea540f9ea); layout restated"
+uses          pfcp
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    message
+when    3  1
+field  pfcp.flags_spare  2  uint
+field  pfcp.flag_fo  1  uint
+field  pfcp.flag_mp  1  uint
+field  pfcp.flag_s  1  uint
+field  pfcp.message_type  8  uint
+length  16  bytes
+  switch  pfcp.flag_s
+    case  1
+      field  pfcp.header_seid  64  uint
+    case  0
+  end
+  field  pfcp.sequence  24  uint
+  switch  pfcp.flag_mp
+    case  1
+      field  pfcp.message_priority  4  uint
+      pad  4
+    case  0
+      pad  8
+  end
+  group  pfcp.ies  rest
+    field  pfcp.ie_vendor  1  uint
+    field  pfcp.ie_type  15  uint
+    length  16  bytes
+      switch  pfcp.ie_vendor
+        case  1
+          field  pfcp.enterprise_id  16  uint
+          group  pfcp.ie_value  rest
+            field  pfcp.octet  8  uint
+          end
+        case  0
+          switch  pfcp.ie_type
+            case  19
+              field  pfcp.cause  8  uint
+            case  20,42
+              field  pfcp.interface_spare  4  uint
+              field  pfcp.interface_value  4  uint
+              group  pfcp.extra  rest
+                field  pfcp.octet  8  uint
+              end
+            case  29
+              field  pfcp.precedence  32  uint
+              group  pfcp.extra  rest
+                field  pfcp.octet  8  uint
+              end
+            case  56
+              field  pfcp.rule_id  16  uint
+              group  pfcp.extra  rest
+                field  pfcp.octet  8  uint
+              end
+            case  57
+              field  pfcp.fseid_spare  6  uint
+              field  pfcp.fseid_v4  1  uint
+              field  pfcp.fseid_v6  1  uint
+              field  pfcp.seid  64  uint
+              switch  pfcp.fseid_v4
+                case  1
+                  field  pfcp.ipv4  32  uint
+                case  0
+              end
+              switch  pfcp.fseid_v6
+                case  1
+                  field  pfcp.ipv6  128  hex
+                case  0
+              end
+              group  pfcp.extra  rest
+                field  pfcp.octet  8  uint
+              end
+            case  60
+              field  pfcp.node_id_spare  4  uint
+              field  pfcp.node_id_type  4  uint
+              switch  pfcp.node_id_type
+                case  0
+                  field  pfcp.ipv4  32  uint
+                case  1
+                  field  pfcp.ipv6  128  hex
+                else
+                  group  pfcp.node_id_fqdn  rest
+                    field  pfcp.octet  8  uint
+                  end
+              end
+            case  96
+              field  pfcp.recovery_time_stamp  32  uint
+              group  pfcp.extra  rest
+                field  pfcp.octet  8  uint
+              end
+            case  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,51,54,58,59
+              group  pfcp.grouped_ies  rest
+                field  pfcp.ie_vendor  1  uint
+                field  pfcp.ie_type  15  uint
+                length  16  bytes
+                  switch  pfcp.ie_vendor
+                    case  1
+                      field  pfcp.enterprise_id  16  uint
+                      group  pfcp.ie_value  rest
+                        field  pfcp.octet  8  uint
+                      end
+                    case  0
+                      switch  pfcp.ie_type
+                        case  19
+                          field  pfcp.cause  8  uint
+                        case  20,42
+                          field  pfcp.interface_spare  4  uint
+                          field  pfcp.interface_value  4  uint
+                          group  pfcp.extra  rest
+                            field  pfcp.octet  8  uint
+                          end
+                        case  29
+                          field  pfcp.precedence  32  uint
+                          group  pfcp.extra  rest
+                            field  pfcp.octet  8  uint
+                          end
+                        case  56
+                          field  pfcp.rule_id  16  uint
+                          group  pfcp.extra  rest
+                            field  pfcp.octet  8  uint
+                          end
+                        case  57
+                          field  pfcp.fseid_spare  6  uint
+                          field  pfcp.fseid_v4  1  uint
+                          field  pfcp.fseid_v6  1  uint
+                          field  pfcp.seid  64  uint
+                          switch  pfcp.fseid_v4
+                            case  1
+                              field  pfcp.ipv4  32  uint
+                            case  0
+                          end
+                          switch  pfcp.fseid_v6
+                            case  1
+                              field  pfcp.ipv6  128  hex
+                            case  0
+                          end
+                          group  pfcp.extra  rest
+                            field  pfcp.octet  8  uint
+                          end
+                        case  60
+                          field  pfcp.node_id_spare  4  uint
+                          field  pfcp.node_id_type  4  uint
+                          switch  pfcp.node_id_type
+                            case  0
+                              field  pfcp.ipv4  32  uint
+                            case  1
+                              field  pfcp.ipv6  128  hex
+                            else
+                              group  pfcp.node_id_fqdn  rest
+                                field  pfcp.octet  8  uint
+                              end
+                          end
+                        case  96
+                          field  pfcp.recovery_time_stamp  32  uint
+                          group  pfcp.extra  rest
+                            field  pfcp.octet  8  uint
+                          end
+                        else
+                          group  pfcp.ie_value  rest
+                            field  pfcp.octet  8  uint
+                          end
+                      end
+                  end
+                end
+              end
+            else
+              group  pfcp.ie_value  rest
+                field  pfcp.octet  8  uint
+              end
+          end
+      end
+    end
+  end
+end

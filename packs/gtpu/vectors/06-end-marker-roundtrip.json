@@ -1,0 +1,12 @@
+{
+  "name": "end-marker-roundtrip",
+  "from": "gtpu",
+  "to": "gtpu",
+  "input": "30fe00001234abcd",
+  "expect": "30fe00001234abcd",
+  "model": {
+    "gtpu.message_type": "254",
+    "gtpu.ies.#": "0"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.281 clauses 5 and 8; an end marker, the header alone; expect derived there, no engine run"
+}

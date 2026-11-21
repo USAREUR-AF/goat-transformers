@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "gtpv2c",
+  "to": "gtpv2c",
+  "input": "4820003700000000000102000100080000010121436587f9570009008a0a0b0c0dc00002015d0012004900010005570009008011223344c000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.274 clauses 5 and 8; the Create Session Request without its last 2 octets; expect derived there, no engine run"
+}

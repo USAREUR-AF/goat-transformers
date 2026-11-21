@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "pfcp",
+  "to": "pfcp",
+  "input": "200100140002040000600004ed5fa85d800500047ed9aa",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.244 clauses 7.2 and 8; the vendor IE message without its last octet; expect derived there, no engine run"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "g-pdu-pdu-session-container-roundtrip",
+  "from": "gtpu",
+  "to": "gtpu",
+  "input": "34ff001c1234abcd0000008501000900450000140001000040110000c0000201c0000202",
+  "expect": "34ff001c1234abcd0000008501000900450000140001000040110000c0000201c0000202",
+  "model": {
+    "gtpu.flag_e": "1",
+    "gtpu.next_type": "133",
+    "gtpu.ext1_length": "1",
+    "gtpu.ext1_content": "0009",
+    "gtpu.ext1_next_type": "0",
+    "gtpu.t_pdu.#": "20"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.281 clauses 5 and 8; a G-PDU with one extension header, a PDU session container (type 0x85, QFI 9); expect derived there, no engine run"
+}

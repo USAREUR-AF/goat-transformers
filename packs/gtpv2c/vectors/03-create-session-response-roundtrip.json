@@ -1,0 +1,19 @@
+{
+  "name": "create-session-response-roundtrip",
+  "from": "gtpv2c",
+  "to": "gtpv2c",
+  "input": "4c21003a0a0b0c0d0001023002000200100057001901cb55667788c000020320010db80000000000000000000000035d000b000200020010004900010005",
+  "expect": "4c21003a0a0b0c0d0001023002000200100057001901cb55667788c000020320010db80000000000000000000000035d000b000200020010004900010005",
+  "model": {
+    "gtpv2.flag_mp": "1",
+    "gtpv2.message_priority": "3",
+    "gtpv2.teid": "168496141",
+    "gtpv2.ies[0].gtpv2.cause": "16",
+    "gtpv2.ies[0].gtpv2.offending_ie.#": "0",
+    "gtpv2.ies[1].gtpv2.instance": "1",
+    "gtpv2.ies[1].gtpv2.fteid_v6": "1",
+    "gtpv2.ies[1].gtpv2.ipv6": "20010db8000000000000000000000003",
+    "gtpv2.ies[2].gtpv2.grouped_ies[0].gtpv2.cause": "16"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.274 clauses 5 and 8; a Create Session Response with message priority 3, Cause 16, an F-TEID with IPv4 and IPv6 and a Bearer Context; expect derived there, no engine run"
+}

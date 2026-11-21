@@ -1,0 +1,9 @@
+{
+  "name": "3GPP mobile core (GTP-U, GTPv2-C, PFCP)",
+  "domain": "networks",
+  "exact": [
+    "gtpu",
+    "gtpv2c",
+    "pfcp"
+  ]
+}
