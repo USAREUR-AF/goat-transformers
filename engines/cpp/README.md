@@ -119,12 +119,12 @@ Measured on 2026-11-21 on Linux x86-64 with GCC 15.2, Release, not stripped:
 
 | File | All seven wires | `xml`, `json`, `geojson` |
 |---|---|---|
-| `libgoat_transformers.a` | 2,959,294 bytes | 2,202,914 bytes (74%) |
-| `goat-xf` | 1,646,000 bytes | 1,230,512 bytes (75%) |
+| `libgoat_transformers.a` | 3,070,556 bytes | 2,313,984 bytes (75%) |
+| `goat-xf` | 1,712,968 bytes | 1,297,584 bytes (76%) |
 
 The check passed with 8167 of 8167 conversion vectors, 382 of 382 load
-vectors and 16 of 16 capability vectors run (14085, 790 and 2 skipped), and
-2663 packs refused with `unknown-wire` (bits 1701, protobuf 876, text 77,
+vectors and 16 of 16 capability vectors run (14091, 790 and 2 skipped), and
+2665 packs refused with `unknown-wire` (bits 1703, protobuf 876, text 77,
 tlv 9). What stays in the reduced build is the pack reader and the transforms
 every wire shares.
 
@@ -141,15 +141,16 @@ cd build && ctest --output-on-failure
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
 | `parse_once` | `goat_transformers_parse_once` | what an instance keeps (0.25 ruling 1), below: every vector gives the same output, error and decoded entity on a new instance (the benchmark set's vectors), in reverse order after failing conversions, and from eight threads at once |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
-| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23): 97/97 pass (2026-11-21). The entry exists when CMake finds a Python 3 interpreter |
+| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29): 135/135 pass (2026-11-21). The entry exists when CMake finds a Python 3 interpreter |
 
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
 
-Measured on 2026-11-21 (Release, all seven wires, through Version 0.26 and
-its whole-second time transform `iso8601_s`): all seven ctest entries pass;
-`vectors` ran 22252 of 22252 conversion vectors, 1172 of 1172 load vectors
-and 18 of 18 capability vectors; `unit` made 2116 checks, none failed.
+Measured on 2026-11-21 (Release, all seven wires, through Version 0.29 and
+its licence profiles): all seven ctest entries pass;
+`vectors` ran 22258 of 22258 conversion vectors, 1172 of 1172 load vectors
+and 18 of 18 capability vectors; `unit` made 2141 checks, none failed;
+`tool_vectors` passed 135 of 135.
 
 ## What an instance keeps
 
@@ -255,6 +256,7 @@ goat-xf convert --from <format> --to <format> [--set <key>=<value>]... <options>
 goat-xf list-formats <options>
 goat-xf capability --from <format> --to <format> <options>
 goat-xf matrix <options>
+goat-xf licences [--json] <options>
 goat-xf help
 ```
 
@@ -265,9 +267,11 @@ goat-xf help
 | `--packs-only <name>[,<name>...]` | load only these subdirectories of `--packs`, in the order given | every subdirectory |
 | `--max-items <n>` | the limit on list items one decode holds (ruling 7 of 0.11) | 100000 |
 | `--max-distribution public\|controlled` | the engine's distribution limit | `controlled` |
+| `--profile open\|open+copyleft\|everything` | load only the packs and modules of this licence profile (Version 0.29) | none: every pack and module, and no licence file read |
 
 After the subcommand the arguments are pairs of an option name and its value;
-`--set` may be repeated, every other option is given at most once.
+`--set` may be repeated, every other option is given at most once. `--json`,
+taken by `licences` alone, is the one option without a value.
 
 - `convert` reads standard input to its end and writes the result with
   nothing added (lower-case hex text for the `bits`, `protobuf` and `tlv`
@@ -280,9 +284,44 @@ After the subcommand the arguments are pairs of an option name and its value;
   joined by a space.
 - `matrix` writes that header line, then one such line per ordered pair of
   loaded formats.
+- `licences` writes `dir<TAB>format<TAB>licence<TAB>profile`, one line per
+  loaded pack, in byte order of the pack's directory name: the licence of its
+  `REUSE.toml` (`Apache-2.0` when it has none) and the pack's own profile, or
+  `none`. With `--json` it writes `{"packs":[{"pack":...,"format":...,
+  "licence":...,"profile":...},...]}` and a line feed, with no space. It reads
+  every licence file with or without `--profile`.
 
 Exit status: 0 on success; 1 on a load or call failure, with standard output
 empty and the failure's message on standard error, its first line beginning
 with the kind and a colon (`unknown-format: ...`); 2 on a usage error, which
-is reported before anything is loaded or read. The tool has no option of its
-own (`--x-...`).
+is reported before anything is loaded or read; a `--profile` value that is
+not one of the three is usage error 11. The tool has no option of its own
+(`--x-...`).
+
+## Licence profiles
+
+`spec/engine-spec.md`, Version 0.29. `Engine::load_tool` takes an optional
+profile, `open`, `open+copyleft` or `everything`:
+
+```cpp
+auto eng = goat_transformers::Engine::load_tool(
+    "packs", "model", nullptr, goat_transformers::Distribution::Controlled, "open");
+for (const auto& p : eng.pack_licences())  // dir, format, licence, profile
+    std::cout << p.dir << " " << p.licence << " " << p.profile << "\n";
+```
+
+With a profile it reads `<packs>/../licences.toml`, then each module file's
+`<models>/<file>.def.license` and its `module` and `uses` lines, before any
+module is loaded; a module or pack whose profile the profile does not hold is
+not loaded, nor parsed, so a broken pack outside the profile is not an error.
+Each pack's `REUSE.toml` is read when the pack is reached, after the checks
+of a `--packs-only` name. A text that is not a profile, or a licence file that
+cannot be read by the line forms of ruling 1, is the load failure
+`bad-licence` (`ErrorKind::BadLicence`). With no profile no licence file is
+read and the load is that of 0.23, unless the last argument, `read_licences`,
+is true (the `licences` subcommand): then every licence file is read in the
+same order and nothing is skipped. `pack_licences()` lists the loaded packs
+with their licence and profile when the licences were read, and is empty
+otherwise; `Engine::is_profile(name)` tells a profile name. The reader is
+`src/licences.cpp`, by the exact line forms of ruling 1, with no TOML library.
+The engine has no C interface.

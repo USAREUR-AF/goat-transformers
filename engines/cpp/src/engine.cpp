@@ -3,12 +3,14 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <map>
 #include <sstream>
 #include <unordered_map>
 #include <unordered_set>
 
 #include "codecs.hpp"
 #include "derive.hpp"
+#include "licences.hpp"
 #include "sequential.hpp"
 #include "transforms.hpp"
 #include "util.hpp"
@@ -173,16 +175,35 @@ Engine Engine::load_packs(const std::string& packs_dir, const std::vector<std::s
     return eng;
 }
 
+bool Engine::is_profile(const std::string& name) { return detail::profile_rank(name) >= 0; }
+
 Engine Engine::load_tool(const std::string& packs_dir, const std::string& models_dir,
-                         const std::vector<std::string>* names, Distribution max_distribution) {
+                         const std::vector<std::string>* names, Distribution max_distribution,
+                         const std::optional<std::string>& profile, bool read_licences) {
+    // 0.29 ruling 3a: a profile that is not one of the three is refused before
+    // anything is read.
+    int held = detail::kProfileNone;  // with no profile every module and pack is held
+    if (profile) {
+        held = detail::profile_rank(*profile);
+        if (held < 0)
+            throw Error(ErrorKind::BadLicence, "", "",
+                        "'" + *profile + "' is not a profile: open, open+copyleft or everything");
+    }
+    const bool licences = profile.has_value() || read_licences;
+
     Engine eng;
     eng.set_max_distribution(max_distribution);
     std::error_code ec;
+
+    // 0.29 ruling 3b: the table first, `<packs>/../licences.toml` as given.
+    detail::LicenceTable table;
+    if (licences) table = detail::read_licence_table(packs_dir + "/../licences.toml");
 
     // 1. Modules, before packs_dir is read at all, so a failing module is the
     // error even when packs_dir cannot be read. A file named exactly `.def` ends in `.def` too, so the name is
     // compared as text, not by its extension.
     const fs::path mdir(models_dir);
+    std::map<std::string, int> module_rank;  // 0.29 ruling 2b: a module name's profile, the widest of its files
     if (fs::is_directory(mdir, ec)) {
         std::vector<std::string> files;
         for (fs::directory_iterator it(mdir, ec), end; !ec && it != end; it.increment(ec)) {
@@ -194,12 +215,79 @@ Engine Engine::load_tool(const std::string& packs_dir, const std::string& models
         std::sort(files.begin(), files.end());
         auto core = std::find(files.begin(), files.end(), "core.def");
         if (core != files.end()) std::rotate(files.begin(), core, core + 1);
+
+        // 0.29 ruling 3b: each module file's licence and its `module` and
+        // `uses` lines, in this order, before any module is loaded; then the
+        // profile of every module (2b), its licence's and those of the
+        // modules it uses, directly or through others, to a fixed point.
+        std::vector<int> rank(files.size(), detail::kProfileNone);
+        if (licences) {
+            std::vector<detail::DefLines> lines;
+            lines.reserve(files.size());
+            for (std::size_t i = 0; i < files.size(); ++i) {
+                rank[i] = detail::licence_rank(table, detail::read_module_licence((mdir / (files[i] + ".license")).string()));
+                lines.push_back(detail::read_def_lines((mdir / files[i]).string()));
+            }
+            for (bool changed = true; changed;) {
+                changed = false;
+                for (std::size_t i = 0; i < files.size(); ++i)
+                    if (lines[i].has_module) {
+                        int& r = module_rank.try_emplace(lines[i].module, rank[i]).first->second;
+                        if (rank[i] > r) {
+                            r = rank[i];
+                            changed = true;
+                        }
+                    }
+                for (std::size_t i = 0; i < files.size(); ++i)
+                    for (const auto& u : lines[i].uses) {
+                        const auto it = module_rank.find(u);
+                        if (it != module_rank.end() && it->second > rank[i]) {
+                            rank[i] = it->second;
+                            changed = true;
+                        }
+                    }
+            }
+        }
+
+        // 0.29 ruling 3c: a module the profile does not hold is not loaded,
+        // nor parsed; the others load as before, in the same order.
         std::vector<Module> parsed;
         parsed.reserve(files.size());
-        for (const auto& n : files)
-            parsed.push_back(detail::parse_model_unchecked(read_text(mdir / n), (mdir / n).string()));
+        for (std::size_t i = 0; i < files.size(); ++i)
+            if (rank[i] <= held)
+                parsed.push_back(detail::parse_model_unchecked(read_text(mdir / files[i]), (mdir / files[i]).string()));
         load_modules(eng, parsed, nullptr);
     }
+
+    // 0.29 ruling 3d: a pack reached is held, or skipped unread, by its
+    // licence, `core` and the modules its `uses` lines name (2c).
+    std::vector<PackLicence> found;
+    auto load_pack = [&](const std::string& n, const fs::path& dir) {
+        PackLicence lic;
+        if (licences) {
+            lic.dir = n;
+            lic.licence = detail::read_pack_licence((dir / "REUSE.toml").string());
+            int r = detail::licence_rank(table, lic.licence);
+            const auto core_rank = module_rank.find("core");
+            if (core_rank != module_rank.end()) r = std::max(r, core_rank->second);
+            for (const auto& u : detail::read_def_lines((dir / "pack.def").string()).uses) {
+                const auto it = module_rank.find(u);
+                if (it != module_rank.end()) r = std::max(r, it->second);
+            }
+            if (r > held) return;
+            lic.profile = detail::profile_name(r);
+        }
+        const fs::path def = dir / "pack.def";
+        Pack p = parse_pack(read_text(def), def.string());
+        lic.format = p.format;
+        eng.add_pack(std::move(p));
+        if (licences) found.push_back(std::move(lic));
+    };
+    auto finish = [&]() {
+        std::stable_sort(found.begin(), found.end(),
+                         [](const PackLicence& a, const PackLicence& b) { return a.dir < b.dir; });
+        eng.pack_licences_ = std::move(found);
+    };
 
     // 2. Packs, each parsed and added in turn, so the first failure stops the load.
     if (names) {
@@ -210,9 +298,9 @@ Engine Engine::load_tool(const std::string& packs_dir, const std::string& models
                 n.find('\\') != std::string::npos || !fs::is_directory(dir, pe) ||
                 !fs::is_regular_file(dir / "pack.def", pe))
                 throw Error(ErrorKind::UnknownFormat, "", "", "'" + n + "' is not a pack directory of " + packs_dir);
-            const fs::path def = dir / "pack.def";
-            eng.add_pack(parse_pack(read_text(def), def.string()));
+            load_pack(n, dir);
         }
+        finish();
         return eng;
     }
     // Without names packs_dir is listed; with names each is looked up in it,
@@ -228,10 +316,8 @@ Engine Engine::load_tool(const std::string& packs_dir, const std::string& models
     }
     if (ec) throw Error(ErrorKind::Io, "", "", "cannot list " + packs_dir + ": " + ec.message());
     std::sort(dirs.begin(), dirs.end());
-    for (const auto& n : dirs) {
-        const fs::path def = fs::path(packs_dir) / n / "pack.def";
-        eng.add_pack(parse_pack(read_text(def), def.string()));
-    }
+    for (const auto& n : dirs) load_pack(n, fs::path(packs_dir) / n);
+    finish();
     return eng;
 }
 

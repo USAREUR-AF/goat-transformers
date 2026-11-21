@@ -52,6 +52,29 @@ public class Convert {
 }
 ```
 
+### Licence profiles
+
+Both loaders take an optional profile (spec Version 0.29):
+`Engine.load(packsDir, modelsDir, limit, profile)` and
+`Engine.loadOnly(packsDir, modelsDir, limit, names, profile)`, where
+`profile` is `"open"`, `"open+copyleft"`, `"everything"` or `null`. With
+`null` (and in every form without the argument) no licence file is read and
+loading is as before. With a profile, the loader first reads
+`<packsDir>/../licences.toml` and, for each module file in load order, its
+`<file>.def.license`; then it loads only the modules the profile holds, and
+for each pack reads `<pack>/REUSE.toml` and skips the pack when the profile
+does not hold it (a skipped pack is not parsed). A missing licence file means
+`Apache-2.0`; a missing `licences.toml` is a table of `Apache-2.0` alone. A
+licence file that does not follow the line forms of ruling 1, and a profile
+name that is not one of the three, are a `GtException` of kind
+`bad-licence`. `engine.licences()` lists each pack loaded under a profile
+(directory, format, licence, the pack's own profile).
+
+```java
+Engine open = Engine.load(Path.of("packs"), Path.of("model"), Distribution.CONTROLLED, "open");
+for (Engine.PackLicence l : open.licences()) System.out.println(l.format + " " + l.licence + " " + l.profile);
+```
+
 Measured from a scratch directory outside the repository, with the jar in
 `lib/` and copies of `packs/` and `model/` in `vendor/goat/`:
 
@@ -84,6 +107,7 @@ locale's character set and the contract's command line is UTF-8.
 | `list-formats` | one `<format> TAB <version> TAB <wire>` line per loaded pack, in byte order of format |
 | `capability --from F --to T` | the capability report of the pair as one matrix line |
 | `matrix` | the header `from TAB to TAB grade TAB carried TAB dropped`, then one line per ordered pair of loaded formats |
+| `licences [--json]` | one `<pack dir> TAB <format> TAB <licence> TAB <profile>` line per loaded pack, in byte order of directory (with `--json`, one `{"packs":[...]}` line); always reads the licence files, and with no `--profile` lists every pack, a pack in no profile as `none` |
 | `help`, `-h`, `--help` | the usage on standard output |
 
 | Option | Meaning | Default |
@@ -93,8 +117,10 @@ locale's character set and the contract's command line is UTF-8.
 | `--packs-only NAME[,NAME...]` | load only these subdirectories of `--packs`, in this order | every pack directory |
 | `--max-items N` | the limit on list items of one decode | 100000 |
 | `--max-distribution public\|controlled` | refuse modules and packs marked above the limit | `controlled` |
+| `--profile open\|open+copyleft\|everything` | load only the modules and packs of this licence profile (spec 0.29); any other value is usage error 11 | no profile |
 
-Each option is given at most once, except `--set`. Exit status 0 is success;
+Each option is given at most once, except `--set`. `--json` (only for
+`licences`) takes no value. Exit status 0 is success;
 1 is a load or call failure, and the first line of standard error begins with
 the error kind and a colon (an unreadable `--packs` without `--packs-only` begins with `io:`; with it, the first name is `unknown-format`); 2 is a
 usage error, checked before anything is loaded. With `--packs-only` the tool
@@ -107,6 +133,9 @@ cot-xml	0.6.0	xml
 geojson	0.1.0	geojson
 $ echo '{}' | engines/java/goat-xf-java.sh convert --from geojson --to nope --packs packs --packs-only geojson
 unknown-format: no pack loaded for format nope [format=nope locator=-]
+$ engines/java/goat-xf-java.sh licences --profile open --packs packs/conformance/tool-fixtures/licences-a/packs
+plain	lic-plain	Apache-2.0	open
+zz-first-by-format	lic-aa	Apache-2.0	open
 ```
 
 ## Builds with fewer wires
@@ -166,18 +195,18 @@ with `nice -n 10` on this tree on 2026-11-21:
 ```
 reduced jar: no class of the bits, protobuf, text or tlv codecs
 build wires: xml, geojson, json
-conversion vectors: 8164/8164 passed (1624 packs on xml, geojson, json; 14088 vectors on other wires not run)
+conversion vectors: 8164/8164 passed (1624 packs on xml, geojson, json; 14094 vectors on other wires not run)
 capability vectors: 16/16 passed (those between formats on wires of the build)
 load vectors: 382/382 passed (those with no pack on a wire this build lacks)
 unknown-wire: bits (pack adsb): unknown-wire: .../packs/adsb/pack.def:18: wire "bits" is a wire of the specification, but this build does not have it (this build has xml, geojson, json) [format=adsb locator=-]
 unknown-wire: protobuf (pack apollo-ch): ...
-unknown-wire: text (pack conformance-cond-text): ...
+unknown-wire: text (pack argo-index-meta): ...
 unknown-wire: tlv (pack conformance-cond-tlv): ...
 unknown-wire loads: 4/4 passed
 unknown-wire: nowire (no wire of the specification): unknown-wire: nowire-check:3: unknown wire "nowire" [format=nowire-check locator=-]
 OK
-jar size, all seven wires:       307330 bytes
-jar size, xml, json and geojson: 234561 bytes, 76% of the full jar
+jar size, all seven wires:       318329 bytes
+jar size, xml, json and geojson: 245560 bytes, 77% of the full jar
 ```
 
 The jar shrinks by a quarter, not more, because the pack reader stays whole:
@@ -210,26 +239,29 @@ and runs:
   requires each failure to be a `GtException` with a named kind: never
   another exception;
 - the checks of `ParseOnceTests` (Version 0.25, ruling 1; see
-  [Parse once](#parse-once)).
+  [Parse once](#parse-once));
+- the checks of `LicenceTests` (Version 0.29): `load` and `loadOnly` with
+  each profile on the fixtures under `packs/conformance/tool-fixtures/`, and
+  the line forms of ruling 1 on files of its own in a temporary directory.
 
 It prints each failure and exits non-zero on any. Measured with
-`nice -n 10 ./build.sh` on this tree on 2026-11-21 (22252 vectors, 4287 packs,
-with the `iso8601_s` transform of Version 0.26), on a heavily loaded machine:
+`nice -n 10 ./build.sh` on this tree on 2026-11-21 (22258 vectors, 4289 packs,
+with the licence profiles of Version 0.29), on a loaded machine:
 
 ```
-conversion vectors: 22252/22252 passed (4287 packs, 2949 model modules)
+conversion vectors: 22258/22258 passed (4289 packs, 2950 model modules)
 load vectors: 1172/1172 passed
 capability vectors: 18/18 passed
-packs-only: loadOnly checked for 48 of 4287 packs, 5968 ms (GOAT_SWEEP_FULL=1 for all)
-malformed input sweep: 1465149 inputs over 22252 of 22252 conversion vectors (29 damaged copies each) and 4287 packs of 7 wires, 1094147 named errors, 0 defects, 614614 ms (GOAT_SWEEP_FULL=1 for the full sweep)
+packs-only: loadOnly checked for 48 of 4289 packs, 2793 ms (GOAT_SWEEP_FULL=1 for all)
+malformed input sweep: 1465575 inputs over 22258 of 22258 conversion vectors (29 damaged copies each) and 4289 packs of 7 wires, 1094347 named errors, 0 defects, 165659 ms (GOAT_SWEEP_FULL=1 for the full sweep)
 parse once: 8 threads x 2 rounds x 2420 conversions on one instance, 0 differ
-parse once (0.25): 21489 ms
-unit checks: 889/889 passed
+parse once (0.25): 11733 ms
+unit checks: 931/931 passed
 OK
 ```
 
-`./build.sh` took 22 min 23 s in all on that run, with a load average near 68
-(78 s on an idle machine before Version 0.26).
+`./build.sh` took 6 min 35 s in all on that run (22 min 23 s on an earlier
+run with a load average near 68; 78 s on an idle machine before Version 0.26).
 
 The tool vectors (`packs/conformance/tool-vectors/`, spec Version 0.23) run
 against the tool, after `./build.sh` has written the jar, from the repository
@@ -237,12 +269,12 @@ root:
 
 ```
 $ python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh
-tool vectors: 97/97 passed
+tool vectors: 135/135 passed
 ```
 
 | Test | Command | Measured |
 |---|---|---|
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 97/97 passed on 2026-11-21, 5 min 0 s on a loaded machine (each run starts a JVM and loads every model module) |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 135/135 passed on 2026-11-21 (with the licence vectors 101 to 138 of Version 0.29), on a loaded machine (each run starts a JVM and loads every model module) |
 
 ### The bounded sweep and `GOAT_SWEEP_FULL=1`
 

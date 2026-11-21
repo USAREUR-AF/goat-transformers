@@ -1,0 +1,13 @@
+{
+  "name": "usage-profile-twice",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    "open",
+    "--profile",
+    "open"
+  ],
+  "exit": 2
+}

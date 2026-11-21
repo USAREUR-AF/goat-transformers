@@ -1,0 +1,12 @@
+{
+  "name": "licences-profile-open",
+  "args": [
+    "licences",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    "open"
+  ],
+  "exit": 0,
+  "stdout_text": "plain\tlic-plain\tApache-2.0\topen\nzz-first-by-format\tlic-aa\tApache-2.0\topen\n"
+}

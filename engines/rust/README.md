@@ -36,6 +36,8 @@ Everything is in `src/lib.rs`. The types a caller uses:
 | `Error` | `msg`; a conversion error starts with its kind and a colon, e.g. `undeclared-key: ...` |
 | `Distribution` | `Public` or `Controlled` |
 | `Capability`, `Grade` | what an ordered pair carries: `carried`, `dropped`, and `Full`, `Partial` or `None` |
+| `Profile` | a licence profile: `Open`, `OpenCopyleft` or `Everything` (spec 0.29) |
+| `LoadOptions`, `LoadedPack`, `PackLicence` | what `load_tree` is asked to load, and what it loaded |
 
 The methods of `Engine`:
 
@@ -47,6 +49,7 @@ The methods of `Engine`:
 | `load_model(text)`, `load_model_dir(dir)` | load one model module, or every `*.def` of a directory (`core.def` first, each module after the modules it uses) |
 | `load_def(text)`, `load_pack_dir(dir)` | load one pack, or every `<dir>/<name>/pack.def` |
 | `load_pack_dir_only(dir, &[names])` | load only the named packs of a directory: the `--packs-only` of the tool |
+| `load_tree(packs, &options)` | load a model directory and a packs directory exactly as the tool does, with an optional licence profile (below) |
 | `decode(format, bytes)` | message to `Entity` |
 | `encode(format, &entity)` | `Entity` to message |
 | `convert(from, to, bytes)` | decode, then encode; from one format to another it also applies the derivations |
@@ -76,7 +79,48 @@ let cot = engine.convert_with("geojson", "cot-xml", geojson, Some(&ctx))?;
 let c = engine.capability("cot-xml", "geojson");   // c.grade, c.carried, c.dropped
 ```
 
-Both examples in this file compile against this crate as a path dependency.
+The Rust examples in this file compile against this crate as a path dependency.
+
+### Loading with a licence profile
+
+Each pack has one licence (`packs/<name>/REUSE.toml`; none means
+Apache-2.0), each model module may have one (`model/<file>.def.license`), and
+`licences.toml` beside the packs directory says what each licence allows.
+From these every pack and module is in one of three profiles, or in none
+(spec 0.29):
+
+| Profile | Holds |
+|---|---|
+| `open` | licences that allow commercial use, with no share-alike and no field-of-use limit |
+| `open+copyleft` | `open`, and share-alike licences that allow commercial use |
+| `everything` | every public licence: also non-commercial, unknown, or with a field-of-use limit |
+
+A licence marked `distribution = "controlled"` is in none of them. A pack's
+profile is the widest of its own licence, `core`'s, and those of the modules
+it uses. `load_tree` takes the profile as text, so a wrong name is
+`bad-licence` before anything is read:
+
+```rust
+use goat_transformers::{Engine, LoadOptions};
+use std::path::Path;
+
+let mut engine = Engine::new();
+let options = LoadOptions { profile: Some("open".to_string()), ..LoadOptions::default() };
+let loaded = engine.load_tree(Path::new("vendor/goat/packs"), &options)?;
+for p in &loaded {
+    let l = p.licence.as_ref().unwrap();     // present when a profile was given
+    println!("{} {} {}", p.format, l.licence, goat_transformers::profile_name(l.profile));
+}
+```
+
+A module or pack the profile does not hold is skipped as if it were not
+there: its format is `unknown-format`, and a skipped pack is never parsed.
+The other fields of `LoadOptions` are `models` (default `<packs>/../model`),
+`packs_only` (the tool's `--packs-only`) and `read_licences` (read the
+licences with no profile, so that each loaded pack reports its own). With no
+profile and no `read_licences`, no licence file is read and everything loads
+as before. A licence file that does not follow the forms of the
+specification is `bad-licence`.
 
 ## The command-line tool `goat-xf`
 
@@ -88,6 +132,7 @@ goat-xf convert --from <format> --to <format> [--set <key>=<value>]... <options>
 goat-xf list-formats <options>
 goat-xf capability --from <format> --to <format> <options>
 goat-xf matrix <options>
+goat-xf licences [--json] <options>
 goat-xf help
 ```
 
@@ -98,6 +143,7 @@ goat-xf help
 | `--packs-only <name>[,<name>...]` | load only these packs of `--packs`, in this order |
 | `--max-items <n>` | the limit on list items one decode holds; default 100000, 0 refuses any item |
 | `--max-distribution <public\|controlled>` | `public` refuses controlled modules and packs |
+| `--profile <open\|open+copyleft\|everything>` | load only the modules and packs this licence profile holds (spec 0.29); default: no profile, no licence file read |
 
 `convert` reads the message on standard input and writes the result to
 standard output, with no line feed added; a binary format reads and writes
@@ -107,15 +153,24 @@ wire, separated by tabs. `capability` prints the capability report of one
 pair as a tab-separated line: source, target, grade (`full`, `partial` or
 `none`), the keys that carry and the keys dropped, each list joined by
 spaces. `matrix` prints a header line and that line for every ordered pair
-of loaded formats. The exit status is 0 on success, 1 for a load or
-conversion error (standard error begins with its kind, then a colon) and 2
-for a usage error. Run in `engines/rust` after `cargo build --release`:
+of loaded formats. `licences` reads every licence file, with or without
+`--profile`, and prints one line per loaded pack, sorted by directory name:
+directory, format, licence and the pack's own profile (`none` when it is in
+no profile), separated by tabs; with `--json`, the only option that takes
+no value, it prints one JSON object `{"packs":[{"pack":...,"format":...,"licence":...,"profile":...},...]}`
+instead. The exit status is 0 on success, 1 for a load or
+conversion error (standard error begins with its kind, then a colon; a
+broken licence file is `bad-licence`) and 2 for a usage error, a `--profile`
+value that is not one of the three names included. Run in `engines/rust` after `cargo build --release`:
 
 ```
 $ target/release/goat-xf convert --from cot-xml --to geojson --packs ../../packs --packs-only cot-xml,geojson < event.xml
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-85.9578182,30.0090027,-42.6]},"properties":{"type":"a-f-G-U-C","time_ms":1614456000000,"how":"m-g","ce":45.3,"le":99.5,"callsign":"GATOR"},"id":"J-01334"}
 $ target/release/goat-xf capability --from cot-xml --to geojson --packs ../../packs --packs-only cot-xml,geojson
 cot-xml	geojson	partial	uid type time_ms how lat lon hae ce le callsign course speed_ms	track.scoped_id stale_ms access time_text stale_text display_name
+$ target/release/goat-xf licences --profile open --packs ../../packs/conformance/tool-fixtures/licences-a/packs
+plain	lic-plain	Apache-2.0	open
+zz-first-by-format	lic-aa	Apache-2.0	open
 ```
 
 `event.xml` is the Cursor on Target event of `tests/embed.rs`.
@@ -127,15 +182,16 @@ cot-xml	geojson	partial	uid type time_ms how lat lon hae ce le callsign course s
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 22252 conversion vectors, 1172 load vectors, 18 capability vectors, 0 failed |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 22258 conversion vectors, 1172 load vectors, 18 capability vectors, 0 failed |
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 5530551 inputs over 4287 packs and 22249 vectors |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 5533003 inputs over 4289 packs and 22255 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
 | `tests/parse_once.rs` | spec 0.25, ruling 1: every conversion vector, failing ones included, gives the same output or error on one instance in line order, in reverse order and on four threads at once; the benchmark set and one failing vector of each wire give the same on a new instance; a second load is still a duplicate (the debug build runs the reverse order and the threads on every eighth vector and every failing one, and the new instance for the failing vectors only) | 3 tests |
 | `tests/seconds.rs` | spec 0.26, ruling 1: the transform `iso8601_s` loads on the xml, geojson, json and text wires; it is `bad-directive` on another wire and with a parameter; it gives an integer, so on a key of another type it is `key-type-mismatch`; writing drops the milliseconds and keeps to the years 0001 to 9999 | 5 tests |
+| `tests/licences.rs` | spec 0.29: `load_tree` with a licence profile on the fixture trees of the tool vectors: what each profile loads and skips, the widest profile of a pack and its modules, a skipped broken pack, `bad-licence` for a wrong profile name and for a bad licence file before any module loads, no licence file read without a profile, a non-directory on the path read as an absent file | 6 tests |
 | `tests/reduced.rs` | spec 0.24: a pack on a wire the build lacks is `unknown-wire`; a value that is no wire keeps its message (run in a reduced build by `reduced-build-check.sh`) | 2 tests |
-| `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23: every tool vector under `packs/conformance/tool-vectors/` | 97 tool vectors, 0 failed |
+| `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23 and the licence profiles of spec 0.29: every tool vector under `packs/conformance/tool-vectors/` | 135 tool vectors, 0 failed |
 
 `GOAT_FUZZ_ITERS=<n>` multiplies the fuzz inputs; `GOAT_FUZZ_SEED=<n>`
 changes the seed.
@@ -217,15 +273,15 @@ another set. Measured on 2026-11-21 with rustc 1.99.1 on x86_64 Linux:
 
 | Reduced build (`xml,json,geojson`) | Measured |
 |---|---|
-| conversion vectors | 8167 run, 0 failed (14085 on other wires left out) |
+| conversion vectors | 8167 run, 0 failed (14091 on other wires left out) |
 | load vectors | 382 run, 0 failed (790 left out) |
 | capability vectors | 16 run, 0 failed (2 left out) |
 | `unknown-wire` loads | 4 of 4: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv) |
 
 | Release artifact | All seven wires | `xml,json,geojson` |
 |---|---|---|
-| `goat-xf` | 2074312 bytes | 1633920 bytes |
-| `libgoat_transformers.rlib` | 4744366 bytes | 3437832 bytes |
+| `goat-xf` | 2128744 bytes | 1696856 bytes |
+| `libgoat_transformers.rlib` | 4919904 bytes | 3658416 bytes |
 
 ## Static and WebAssembly builds
 

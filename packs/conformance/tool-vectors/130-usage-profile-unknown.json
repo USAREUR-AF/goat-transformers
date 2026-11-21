@@ -1,0 +1,11 @@
+{
+  "name": "usage-profile-unknown",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    "commercial"
+  ],
+  "exit": 2
+}

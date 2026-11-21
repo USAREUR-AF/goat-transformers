@@ -59,10 +59,24 @@ error. `goatxf.DistPublic` refuses every module and pack marked `controlled`.
 formats: its grade and the carried and dropped keys (spec 0.11, rulings 6
 and 7).
 
+`LoadToolProfile(models, packs, maxDistribution, only, profile)` loads as the
+command-line tool does, keeping only the modules and packs of one licence
+profile (spec 0.29): `"open"`, `"open+copyleft"` or `"everything"`. It first
+reads `licences.toml` (the `packs` text followed by `/../licences.toml`), and
+each module's `<file>.def.license`, and each pack's `REUSE.toml` when the pack
+is reached; a pack the profile does not hold is skipped without being read
+further. A licence file that cannot be read as the specification says, or a
+profile name that is not one of the three, is `bad-licence`
+(`goatxf.ErrBadLicence`). With profile `""` it reads no licence file and
+loads as `LoadTool` does. `LoadToolLicences` takes the same arguments, always
+reads the licence files, and also returns each loaded pack's directory,
+format, licence and own profile (`none` when it is in no profile).
+
 ## Command-line tool
 
 The tool `goat-xf` follows the command-line contract of
-`spec/engine-spec.md`, Version 0.23: the same subcommands, options, output
+`spec/engine-spec.md`, Version 0.23, with the licence profiles of Version
+0.29: the same subcommands, options, output
 bytes and exit status as the tool of every other engine. Build it from the
 repository root, then start it as `engines/go/goat-xf`:
 
@@ -76,6 +90,7 @@ cd engines/go && go build -o goat-xf ./cmd/goat-xf
 | `list-formats` | one line per loaded pack, in byte order of format: format, version, wire, separated by tabs |
 | `capability --from F --to F` | the capability report of the pair (spec 0.11, ruling 6) as one line: from, to, grade, carried, dropped |
 | `matrix` | the header `from to grade carried dropped`, then that line for every ordered pair of loaded formats |
+| `licences [--json]` | one line per loaded pack, in byte order of its directory: directory, format, licence, the pack's own profile (`none` when in no profile), separated by tabs; with `--json`, one object `{"packs":[{"pack":…,"format":…,"licence":…,"profile":…},…]}` and a line feed |
 | `help`, `-h`, `--help` | the usage, on standard output |
 
 | Option | Meaning |
@@ -85,10 +100,12 @@ cd engines/go && go build -o goat-xf ./cmd/goat-xf
 | `--packs-only A,B` | load only these subdirectories of `--packs`, in the order given; every module of `--models` still loads |
 | `--max-items N` | the limit on list items one decode holds (default 100000) |
 | `--max-distribution public\|controlled` | refuse modules and packs above this marking (default `controlled`) |
+| `--profile open\|open+copyleft\|everything` | load only the modules and packs this licence profile holds (default none: no licence file is read, every module and pack loads) |
+| `--json` | `licences` only, and the one option that takes no value |
 | `--set KEY=VALUE` | `convert` only, repeatable: the context, its keys checked in the order given |
 
-Arguments come in pairs after the subcommand, an option name then its value;
-each option but `--set` at most once. Exit status 0 on success; 1 for a load
+Arguments come in pairs after the subcommand, an option name then its value
+(`--json` alone takes none); each option but `--set` at most once. Exit status 0 on success; 1 for a load
 or call failure, with standard output empty and the failure's message on
 standard error, its first line beginning with the named kind and a colon;
 2 for a usage error, which is checked before anything is loaded. The tool has
@@ -103,9 +120,9 @@ cot-xml	0.6.0	xml
 geojson	0.1.0	geojson
 ```
 
-`Engine.ConvertOrdered(from, to, input, []KeyValue)` and
-`LoadTool(models, packs, maxDistribution, only)` are the library calls the
-tool makes.
+`Engine.ConvertOrdered(from, to, input, []KeyValue)`,
+`LoadToolProfile(models, packs, maxDistribution, only, profile)` and
+`LoadToolLicences` (for `licences`) are the library calls the tool makes.
 
 ## Test
 
@@ -125,7 +142,8 @@ x86_64, 36 top-level tests and examples, none failing:
 | `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 13180 inputs fed, 0 failed |
 | `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 22222 vectors (1213 failing conversions), 0 outcomes differ |
 | `TestMalformedRulings` | the malformed-input rulings of the specification, such as nesting depth and bytes that are not UTF-8 | pass |
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 97 run, 97 passed |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 135 run, 135 passed (2026-11-21) |
+| `TestLoadToolProfile`, `TestLoadToolLicences`, `TestLicenceFiles`, `TestLicenceTable`, `TestProfileHeader`, `TestDefFilesRegularOnly` | spec 0.29: the library loader with each profile and none, the fixture trees of `packs/conformance/tool-fixtures/licences-*`, the line forms of `REUSE.toml`, `.def.license` and `licences.toml`, the `module` and `uses` lines the profiles read, and the module files of 0.23 Loading 1 (regular files or links to one) | pass |
 | `TestHeapPerListItem` | the heap a decode takes per item of a long list; runs only with `GOAT_XF_HEAP=1` | skipped in CI |
 | the other tests and `ExampleLoadPacksOnly`, `ExampleEngine_LoadFS` | the tokenizer, float and time formatting, wire errors, kinds, groups, sequential wires, derive functions, the directory and `fs.FS` loaders | pass |
 

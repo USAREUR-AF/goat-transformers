@@ -26,7 +26,8 @@ import java.util.stream.Stream;
 
 /**
  * The command-line tool of spec Version 0.23 (the command-line contract):
- * {@code convert}, {@code list-formats}, {@code capability}, {@code matrix} and {@code help}.
+ * {@code convert}, {@code list-formats}, {@code capability}, {@code matrix} and {@code help}, with the
+ * {@code --profile} option and the {@code licences} subcommand of Version 0.29.
  * Exit status 0 on success, 1 on a load or call failure (standard error's first line begins with the kind and a
  * colon), 2 on a usage error (every argument is checked before anything is loaded).
  * The default of {@code --packs} is {@code packs}, resolved against the working directory.
@@ -36,7 +37,8 @@ public final class Cli {
 
     static final String DEFAULT_PACKS = "packs";
 
-    private static final Set<String> COMMON = Set.of("--packs", "--models", "--packs-only", "--max-items", "--max-distribution");
+    private static final Set<String> COMMON = Set.of("--packs", "--models", "--packs-only", "--max-items", "--max-distribution",
+            "--profile");
     private static final Pattern DIGITS = Pattern.compile("[0-9]+");
     private static final BigInteger LONG_MAX = BigInteger.valueOf(Long.MAX_VALUE);
     private static final Comparator<String> BYTE_ORDER = (a, b) -> Arrays.compareUnsigned(
@@ -98,6 +100,29 @@ public final class Cli {
                     result = sb.toString().getBytes(StandardCharsets.UTF_8);
                     break;
                 }
+                case "licences": {
+                    List<Engine.PackLicence> rows = new ArrayList<>(engine.licences());
+                    rows.sort((p, q) -> BYTE_ORDER.compare(p.dir, q.dir));
+                    StringBuilder sb = new StringBuilder();
+                    if (a.json) {
+                        sb.append("{\"packs\":[");
+                        for (int i = 0; i < rows.size(); i++) {
+                            Engine.PackLicence r = rows.get(i);
+                            if (i > 0) sb.append(',');
+                            sb.append("{\"pack\":").append(jsonString(r.dir)).append(",\"format\":").append(jsonString(r.format))
+                                    .append(",\"licence\":").append(jsonString(r.licence))
+                                    .append(",\"profile\":").append(jsonString(r.profile)).append('}');
+                        }
+                        sb.append("]}\n");
+                    } else {
+                        for (Engine.PackLicence r : rows) {
+                            sb.append(r.dir).append('\t').append(r.format).append('\t').append(r.licence).append('\t')
+                                    .append(r.profile).append('\n');
+                        }
+                    }
+                    result = sb.toString().getBytes(StandardCharsets.UTF_8);
+                    break;
+                }
                 case "convert": {
                     engine.modelKeys(a.from);   // unknown-format, --from first, before standard input is read
                     engine.modelKeys(a.to);
@@ -125,6 +150,19 @@ public final class Cli {
         return from + '\t' + to + '\t' + c.grade + '\t' + String.join(" ", c.carried) + '\t' + String.join(" ", c.dropped) + '\n';
     }
 
+    /** A JSON string of ruling 4c of 0.29: {@code "} and {@code \\} escaped, each character below U+0020 as {@code \\u00xx}. */
+    private static String jsonString(String v) {
+        StringBuilder sb = new StringBuilder("\"");
+        for (int i = 0; i < v.length(); i++) {
+            char c = v.charAt(i);
+            if (c == '"') sb.append("\\\"");
+            else if (c == '\\') sb.append("\\\\");
+            else if (c < 0x20) sb.append(String.format(Locale.ROOT, "\\u%04x", (int) c));
+            else sb.append(c);
+        }
+        return sb.append('"').toString();
+    }
+
     /** Standard input as text; bytes that are not UTF-8 are malformed-wire on every wire. */
     private static String utf8(byte[] bytes, String format) {
         try {
@@ -147,6 +185,8 @@ public final class Cli {
         Long maxItems;
         Distribution limit = Distribution.CONTROLLED;
         LinkedHashMap<String, String> context;
+        String profile;
+        boolean json;
     }
 
     private static Args fail(Args a, String why) {
@@ -167,6 +207,7 @@ public final class Cli {
             case "convert": names.add("--set"); names.add("--from"); names.add("--to"); break;
             case "capability": names.add("--from"); names.add("--to"); break;
             case "list-formats": case "matrix": break;
+            case "licences": names.add("--json"); break;
             default: return fail(a, "unknown subcommand " + cmd);
         }
         a.cmd = cmd;
@@ -174,10 +215,23 @@ public final class Cli {
         for (int i = 1; i < args.length; i += 2) {
             String name = args[i];
             if (!names.contains(name)) return fail(a, cmd + " takes no option " + name);
+            if (name.equals("--json")) {
+                // the one option without a value: the next argument is again an option name
+                if (!seen.add(name)) return fail(a, name + " given twice");
+                a.json = true;
+                i--;
+                continue;
+            }
             if (i + 1 >= args.length) return fail(a, name + " has no value");
             String value = args[i + 1];
             if (!name.equals("--set") && !seen.add(name)) return fail(a, name + " given twice");
             switch (name) {
+                case "--profile":
+                    if (Licences.rankOf(value) < 0) {
+                        return fail(a, "--profile is not open, open+copyleft or everything: " + value);
+                    }
+                    a.profile = value;
+                    break;
                 case "--from": a.from = value; break;
                 case "--to": a.to = value; break;
                 case "--packs": a.packs = value; break;
@@ -226,7 +280,15 @@ public final class Cli {
         e.setMaxDistribution(a.limit);
         if (a.maxItems != null) e.setMaxItems(a.maxItems);
         Path models = path(a.models != null ? a.models : a.packs + "/../model");
-        if (models != null && Files.isDirectory(models)) {
+        // Version 0.29: with a profile, or for licences, the licence files are read before any module is loaded;
+        // licences without a profile holds every module and pack.
+        int rank = a.profile != null ? Licences.rankOf(a.profile) : a.cmd.equals("licences") ? Licences.NONE : -1;
+        Licences.Profiles prof = null;
+        if (rank >= 0) {
+            Path table = path(a.packs + "/../licences.toml");
+            prof = Engine.readProfiles(table, models);
+            e.loadHeldModels(prof, rank);
+        } else if (models != null && Files.isDirectory(models)) {
             for (String[] m : Engine.modelsInLoadOrder(models)) e.loadModel(m[1], m[0]);
         }
         Path packs = path(a.packs);
@@ -239,7 +301,8 @@ public final class Cli {
                     throw new GtException(GtException.Code.UNKNOWN_FORMAT, name, null,
                             "no pack directory " + name + " holding pack.def in " + a.packs);
                 }
-                loadPack(e, def);   // a name given twice is loaded twice: duplicate-format
+                if (prof != null) e.loadPackUnder(def.getParent(), prof, rank);   // skipped when not held
+                else loadPack(e, def);   // a name given twice is loaded twice: duplicate-format
             }
             return e;
         }
@@ -258,7 +321,10 @@ public final class Cli {
             Path dir = packs.resolve(n), def = dir.resolve("pack.def");
             if (Files.isDirectory(dir) && Files.isRegularFile(def)) defs.add(def);
         }
-        for (Path def : defs) loadPack(e, def);
+        for (Path def : defs) {
+            if (prof != null) e.loadPackUnder(def.getParent(), prof, rank);
+            else loadPack(e, def);
+        }
         return e;
     }
 
@@ -296,12 +362,14 @@ public final class Cli {
         s.println("       <tool> list-formats [options]");
         s.println("       <tool> capability --from FORMAT --to FORMAT [options]");
         s.println("       <tool> matrix [options]");
+        s.println("       <tool> licences [--json] [options]");
         s.println("       <tool> help");
         s.println("options: --packs DIR                 the packs directory (default: packs, in the working directory)");
         s.println("         --models DIR                the model modules (default: <packs>/../model)");
         s.println("         --packs-only NAME[,NAME...] load only these subdirectories of --packs, in this order");
         s.println("         --max-items N               the limit on list items of one decode (default 100000)");
         s.println("         --max-distribution public|controlled   the distribution limit (default controlled)");
+        s.println("         --profile open|open+copyleft|everything   load only the packs and modules of this profile (default none)");
         s.println("exit status: 0 success, 1 load or call failure (stderr begins with the kind), 2 usage error");
     }
 }

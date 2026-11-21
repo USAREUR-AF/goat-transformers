@@ -1,0 +1,13 @@
+{
+  "name": "licences-json-between",
+  "args": [
+    "licences",
+    "--profile",
+    "open",
+    "--json",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "{\"packs\":[{\"pack\":\"plain\",\"format\":\"lic-plain\",\"licence\":\"Apache-2.0\",\"profile\":\"open\"},{\"pack\":\"zz-first-by-format\",\"format\":\"lic-aa\",\"licence\":\"Apache-2.0\",\"profile\":\"open\"}]}\n"
+}

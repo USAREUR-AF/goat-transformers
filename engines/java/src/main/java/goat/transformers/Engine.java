@@ -26,8 +26,102 @@ public final class Engine {
     /** The same modules by name, for the lookups of load checks. */
     private final HashMap<String, ModelModule> byName = new HashMap<>();
     private Distribution maxDistribution = Distribution.CONTROLLED;
+    /** The licence of each pack loaded under a profile (spec 0.29), in the order loaded. */
+    private final List<PackLicence> licences = new ArrayList<>();
 
     public Engine() {}
+
+    /** The licence entry of one pack loaded under a profile (spec 0.29, ruling 4c). */
+    public static final class PackLicence {
+        /** The pack's directory name. */
+        public final String dir;
+        /** The pack's format. */
+        public final String format;
+        /** The pack's licence id ({@code Apache-2.0} when the pack has no {@code REUSE.toml}). */
+        public final String licence;
+        /** The pack's own profile: {@code open}, {@code open+copyleft}, {@code everything} or {@code none}. */
+        public final String profile;
+
+        PackLicence(String dir, String format, String licence, String profile) {
+            this.dir = dir;
+            this.format = format;
+            this.licence = licence;
+            this.profile = profile;
+        }
+    }
+
+    /**
+     * The licence of every pack loaded by a loader given a profile, in the order loaded; empty when no profile was
+     * given (then no licence file is read).
+     */
+    public List<PackLicence> licences() { return Collections.unmodifiableList(licences); }
+
+    /** The three profiles of spec 0.29, narrowest first. */
+    public static final List<String> PROFILES = List.of("open", "open+copyleft", "everything");
+
+    /** The rank of a profile name (0 open, 1 open+copyleft, 2 everything), -1 for null; any other name is bad-licence. */
+    static int profileRank(String profile) {
+        if (profile == null) return -1;
+        int r = Licences.rankOf(profile);
+        if (r < 0) {
+            throw new GtException(GtException.Code.BAD_LICENCE, null, null,
+                    "profile \"" + profile + "\" is not open, open+copyleft or everything");
+        }
+        return r;
+    }
+
+    /**
+     * Ruling 3b of 0.29: read {@code licencesToml}, then the licence and the {@code module} and {@code uses} lines
+     * of every module file of {@code modelsDir} (none when it is not a directory), and compute every profile.
+     */
+    static Licences.Profiles readProfiles(Path licencesToml, Path modelsDir) {
+        // licences.toml is read before any module file is listed
+        Map<String, Integer> table = Licences.table(licencesToml);
+        List<Path> files = modelsDir != null && Files.isDirectory(modelsDir) ? moduleFiles(modelsDir) : List.of();
+        return new Licences.Profiles(table, files);
+    }
+
+    /**
+     * Load the module files of {@code prof} that {@code rank} holds, in the order of {@link #modelsInLoadOrder}
+     * (ruling 3c of 0.29). Each file's text was read by {@code prof}.
+     */
+    void loadHeldModels(Licences.Profiles prof, int rank) {
+        for (String[] m : heldModels(prof, rank)) loadModel(m[1], m[0]);
+    }
+
+    private static List<String[]> heldModels(Licences.Profiles prof, int rank) {
+        List<Path> held = new ArrayList<>();
+        for (Path f : prof.files) if (prof.fileRank.get(f) <= rank) held.add(f);
+        return modelsInLoadOrder(held, prof.texts);
+    }
+
+    /**
+     * Ruling 3d of 0.29: read the licence of the pack in {@code dir} and the {@code uses} lines of its
+     * {@code pack.def}, and load it when {@code rank} holds its profile; a pack it does not hold is not otherwise read
+     * or checked. Returns true when the pack was loaded.
+     */
+    boolean loadPackUnder(Path dir, Licences.Profiles prof, int rank) {
+        Path def = dir.resolve("pack.def");
+        String licence = Licences.packLicence(dir);
+        byte[] bytes;
+        IOException failure = null;
+        try {
+            bytes = Files.readAllBytes(def);
+        } catch (IOException ex) {
+            bytes = null;
+            failure = ex;
+        }
+        String text = Licences.textOrNull(bytes);
+        int r = prof.packRank(licence, text);
+        if (r > rank) return false;
+        if (failure != null) throw new UncheckedIOException("cannot read " + def, failure);
+        if (text == null) {
+            throw new UncheckedIOException("cannot read " + def, new java.nio.charset.MalformedInputException(1));
+        }
+        Pack p = loadPack(text, def.toString());
+        licences.add(new PackLicence(dir.getFileName().toString(), p.format, licence, Licences.name(r)));
+        return true;
+    }
 
     /**
      * The wires this build has, in the order of the specification: all seven ({@code xml}, {@code geojson},
@@ -50,6 +144,9 @@ public final class Engine {
         return load(packsDir, defaultModelsDir(packsDir), Distribution.CONTROLLED);
     }
 
+    /** The {@code licences.toml} beside {@code packsDir}: {@code <packsDir>/../licences.toml}, not normalized. */
+    public static Path licencesFile(Path packsDir) { return packsDir.resolve("..").resolve("licences.toml"); }
+
     /** The {@code model} directory beside {@code packsDir}. */
     public static Path defaultModelsDir(Path packsDir) { return packsDir.resolve("..").resolve("model"); }
 
@@ -58,9 +155,27 @@ public final class Engine {
      * under the distribution limit {@code limit}.
      */
     public static Engine load(Path packsDir, Path modelsDir, Distribution limit) {
+        return load(packsDir, modelsDir, limit, null);
+    }
+
+    /**
+     * As {@link #load(Path, Path, Distribution)}, loading only the modules and packs that {@code profile} holds
+     * (spec 0.29): {@code "open"}, {@code "open+copyleft"} or {@code "everything"}; null loads every module and
+     * pack and reads no licence file. Any other name is {@code bad-licence}, before anything is read. With a
+     * profile, {@code <packsDir>/../licences.toml}, each pack's {@code REUSE.toml} and each module's
+     * {@code .def.license} are read; a file that does not follow ruling 1 is {@code bad-licence}.
+     */
+    public static Engine load(Path packsDir, Path modelsDir, Distribution limit, String profile) {
+        int rank = profileRank(profile);
         Engine e = new Engine();
         e.setMaxDistribution(limit);
-        for (String[] m : modelsInLoadOrder(modelsDir)) e.loadModel(m[1], m[0]);
+        Licences.Profiles prof = null;
+        if (rank < 0) {
+            for (String[] m : modelsInLoadOrder(modelsDir)) e.loadModel(m[1], m[0]);
+        } else {
+            prof = readProfiles(licencesFile(packsDir), modelsDir);
+            e.loadHeldModels(prof, rank);
+        }
         List<Path> defs = new ArrayList<>();
         try (Stream<Path> s = Files.list(packsDir)) {
             s.sorted().forEach(d -> {
@@ -71,6 +186,10 @@ public final class Engine {
             throw new UncheckedIOException("cannot list packs in " + packsDir, ex);
         }
         for (Path def : defs) {
+            if (prof != null) {
+                e.loadPackUnder(def.getParent(), prof, rank);
+                continue;
+            }
             try {
                 e.loadPack(Files.readString(def, StandardCharsets.UTF_8), def.toString());
             } catch (IOException ex) {
@@ -97,6 +216,18 @@ public final class Engine {
      * head, every file of {@code modelsDir} is read instead, as a directory loader does.
      */
     public static Engine loadOnly(Path packsDir, Path modelsDir, Distribution limit, Collection<String> names) {
+        return loadOnly(packsDir, modelsDir, limit, names, null);
+    }
+
+    /**
+     * As {@link #loadOnly(Path, Path, Distribution, Collection)}, under a profile as
+     * {@link #load(Path, Path, Distribution, String)} takes one: a named pack the profile does not hold is skipped,
+     * and only the modules it holds are loaded. Null is no profile.
+     */
+    public static Engine loadOnly(Path packsDir, Path modelsDir, Distribution limit, Collection<String> names, String profile) {
+        int rank = profileRank(profile);
+        Licences.Profiles prof = rank < 0 ? null : readProfiles(licencesFile(packsDir), modelsDir);
+        List<PackLicence> held = new ArrayList<>();
         Map<String, String[]> byFormat = null;   // format to {path, text}, for the names that are no directory
         List<Object[]> packs = new ArrayList<>();   // {path, Pack or the exception of its parse}, in the order named, each once
         java.util.Set<String> seen = new java.util.HashSet<>();
@@ -116,6 +247,20 @@ public final class Engine {
                 throw new GtException(GtException.Code.UNKNOWN_FORMAT, name, null, "no pack named " + name + " in " + packsDir);
             }
             if (!seen.add(def.toString())) continue;
+            if (prof != null) {
+                String licence = Licences.packLicence(def.getParent());
+                byte[] bytes = null;
+                try {
+                    bytes = text != null ? null : Files.readAllBytes(def);
+                } catch (IOException ex) {
+                    bytes = null;   // no uses lines; reported below if the pack is held
+                }
+                String heads = text != null ? text : Licences.textOrNull(bytes);
+                int r = prof.packRank(licence, heads);
+                if (r > rank) continue;
+                held.add(new PackLicence(def.getParent().getFileName().toString(), null, licence, Licences.name(r)));
+                if (text == null && heads != null) text = heads;
+            }
             if (text == null) text = read(def);
             // Parsed now, once; a parse failure is raised where the pack is loaded, after the modules, as before.
             Object parsed;
@@ -131,14 +276,40 @@ public final class Engine {
         }
         Engine e = new Engine();
         e.setMaxDistribution(limit);
-        if (Files.isDirectory(modelsDir)) {
+        if (prof != null) {
+            for (String[] m : wanted(heldModels(prof, rank), needed)) e.loadModel(m[1], m[0]);
+        } else if (Files.isDirectory(modelsDir)) {
             for (String[] m : neededModels(modelsDir, needed)) e.loadModel(m[1], m[0]);
         }
-        for (Object[] p : packs) {
+        for (int i = 0; i < packs.size(); i++) {
+            Object[] p = packs.get(i);
             if (p[1] instanceof RuntimeException) throw (RuntimeException) p[1];
             e.add((Pack) p[1]);
+            if (prof != null) {
+                PackLicence h = held.get(i);
+                e.licences.add(new PackLicence(h.dir, ((Pack) p[1]).format, h.licence, h.profile));
+            }
         }
         return e;
+    }
+
+    /** The module files of {@code all} (load order) that declare {@code needed} or a module those use, through others. */
+    private static List<String[]> wanted(List<String[]> all, java.util.Set<String> needed) {
+        Map<String, List<String>> usesOf = new HashMap<>();
+        List<String> moduleOf = new ArrayList<>();
+        for (String[] m : all) {
+            List<String> head = ModelModule.nameAndUses(m[1], m[0]);
+            moduleOf.add(head.get(0));
+            if (head.get(0) != null) usesOf.putIfAbsent(head.get(0), head.subList(1, head.size()));
+        }
+        java.util.LinkedHashSet<String> want = new java.util.LinkedHashSet<>(needed);
+        List<String> q = new ArrayList<>(want);
+        for (int i = 0; i < q.size(); i++) {
+            for (String u : usesOf.getOrDefault(q.get(i), Collections.emptyList())) if (want.add(u)) q.add(u);
+        }
+        List<String[]> out = new ArrayList<>();
+        for (int i = 0; i < all.size(); i++) if (moduleOf.get(i) != null && want.contains(moduleOf.get(i))) out.add(all.get(i));
+        return out;
     }
 
     /**
@@ -179,22 +350,7 @@ public final class Engine {
             for (String u : head.subList(1, head.size())) if (closure.add(u)) queue.add(u);
         }
         if (direct) return inLoadOrder(files, heads);
-        List<String[]> all = modelsInLoadOrder(modelsDir, read);
-        Map<String, List<String>> usesOf = new HashMap<>();
-        List<String> moduleOf = new ArrayList<>();
-        for (String[] m : all) {
-            List<String> head = ModelModule.nameAndUses(m[1], m[0]);
-            moduleOf.add(head.get(0));
-            if (head.get(0) != null) usesOf.putIfAbsent(head.get(0), head.subList(1, head.size()));
-        }
-        java.util.LinkedHashSet<String> want = new java.util.LinkedHashSet<>(needed);
-        List<String> q = new ArrayList<>(want);
-        for (int i = 0; i < q.size(); i++) {
-            for (String u : usesOf.getOrDefault(q.get(i), Collections.emptyList())) if (want.add(u)) q.add(u);
-        }
-        List<String[]> out = new ArrayList<>();
-        for (int i = 0; i < all.size(); i++) if (moduleOf.get(i) != null && want.contains(moduleOf.get(i))) out.add(all.get(i));
-        return out;
+        return wanted(modelsInLoadOrder(modelsDir, read), needed);
     }
 
     private static String read(Path file) {
@@ -253,12 +409,30 @@ public final class Engine {
 
     /** As {@link #modelsInLoadOrder(Path)}; a file whose path {@code read} holds is not read again. */
     private static List<String[]> modelsInLoadOrder(Path modelsDir, Map<String, String> read) {
+        return modelsInLoadOrder(moduleFiles(modelsDir), read);
+    }
+
+    /**
+     * The module files of {@code modelsDir} in the order of Version 0.23, Loading, 1: {@code core.def} first, then
+     * every other name ending in {@code .def} that is a regular file or a link to one, in byte order of file name.
+     */
+    static List<Path> moduleFiles(Path modelsDir) {
         List<Path> files = new ArrayList<>();
         try (Stream<Path> s = Files.list(modelsDir)) {
             s.filter(p -> p.getFileName().toString().endsWith(".def") && Files.isRegularFile(p)).forEach(files::add);
         } catch (IOException ex) {
             throw new UncheckedIOException("cannot list model modules in " + modelsDir, ex);
         }
+        files.sort((a, b) -> Arrays.compareUnsigned(a.getFileName().toString().getBytes(StandardCharsets.UTF_8),
+                b.getFileName().toString().getBytes(StandardCharsets.UTF_8)));
+        for (int i = 1; i < files.size(); i++) {
+            if (files.get(i).getFileName().toString().equals("core.def")) files.add(0, files.remove(i));
+        }
+        return files;
+    }
+
+    /** As {@link #modelsInLoadOrder(Path)} for the module files {@code files}; a file whose path {@code read} holds is not read again. */
+    private static List<String[]> modelsInLoadOrder(List<Path> files, Map<String, String> read) {
         List<String[]> texts = new ArrayList<>();
         List<List<String>> heads = new ArrayList<>();
         for (Path def : files) {

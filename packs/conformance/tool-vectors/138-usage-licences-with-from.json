@@ -1,0 +1,11 @@
+{
+  "name": "usage-licences-with-from",
+  "args": [
+    "licences",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--from",
+    "lic-plain"
+  ],
+  "exit": 2
+}

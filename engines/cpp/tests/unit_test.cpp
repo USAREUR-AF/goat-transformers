@@ -1380,6 +1380,144 @@ int main() {
                  [] { gt::parse_pack(HDR "format a\nwire bits\nlayout sequential\nfield a 1536 sixbit\n"); },
                  "sixbit 1536 bits, sequential");
 
+    // Engine::load_tool with a licence profile (engine-spec.md 0.29).
+    {
+        namespace fs = std::filesystem;
+        const fs::path dir = fs::temp_directory_path() /
+                             ("goat-transformers-unit-licences-" +
+                              std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+        try {
+            auto put = [&](const fs::path& rel, const std::string& text) {
+                fs::create_directories((dir / rel).parent_path());
+                std::ofstream out(dir / rel, std::ios::binary);
+                out << text;
+            };
+            auto row = [](const std::string& id, const std::string& commercial, const std::string& sa,
+                          const std::string& fou, const std::string& dist) {
+                return "[licences.\"" + id + "\"]\r\nname = \"" + id + "\"\r\ncommercial = \"" + commercial +
+                       "\"\r\nshare_alike\t=  " + sa + "\r\nfield_of_use = " + fou + "\r\ndistribution = \"" +
+                       dist + "\"\r\nattribution = true\r\n\r\n";
+            };
+            const std::string table = "# flags\r\n\r\n" + row("Apache-2.0", "yes", "false", "[]", "public") +
+                                      row("SA", "yes", "true", "[]", "public") +
+                                      row("FOU", "yes", "false", "[\"\"]", "public") +
+                                      row("NC", "no", "false", "[]", "public") +
+                                      row("CLOSED", "yes", "false", "[]", "controlled");
+            put("licences.toml", table);
+            const std::string mh = "version 0.1.0\ndistribution public\nsource s\n";
+            put("model/core.def", "module core\n" + mh + "key uid string -\n");
+            // REUSE-IgnoreStart: the quoted licence lines below are data
+            // A `SPDX-License-Identifier =` line is passed over in a module's licence file.
+            put("model/sa.def", "module sa\n" + mh + "key n int -\n");
+            put("model/sa.def.license", "SPDX-License-Identifier = \"NC\"\n  SPDX-License-Identifier:\tSA\r\n");
+            // Through another module: p uses q, which is NC, so p is everything.
+            put("model/p.def", "module p\n" + mh + "uses q\nkey a int -\n");
+            put("model/q.def", "module q\n" + mh + "key b int -\n");
+            put("model/q.def.license", "SPDX-License-Identifier: NC\n");
+            put("packs/plain/pack.def", HDR "format f-plain\nwire json\nfield uid id string\n");
+            put("packs/sa/pack.def", HDR "format f-sa\nuses sa\nwire json\nfield uid id string\nfield sa.n n int\n");
+            put("packs/fou/pack.def", HDR "format f-fou\nwire json\nfield uid id string\n");
+            // A `SPDX-License-Identifier:` line is passed over in a pack's REUSE.toml.
+            put("packs/fou/REUSE.toml", "SPDX-License-Identifier: NC\nSPDX-License-Identifier = \"FOU\"\n");
+            put("packs/closed/pack.def", HDR "format f-closed\nwire json\nfield uid id string\n");
+            put("packs/closed/REUSE.toml", "SPDX-License-Identifier=\"CLOSED\"\n");
+            put("packs/uses-p/pack.def", HDR "format f-uses-p\nuses p\nwire json\nfield uid id string\n");
+            // Broken, and outside `open`: skipped unread with that profile.
+            put("packs/zbroken/pack.def", "this is not a pack\n");
+            put("packs/zbroken/REUSE.toml", "SPDX-License-Identifier = \"NC\"\n");
+            const std::string packs = (dir / "packs").string(), models = (dir / "model").string();
+            auto listing = [](const gt::Engine& e) {
+                std::string out;
+                for (const auto& p : e.pack_licences())
+                    out += p.dir + "\t" + p.format + "\t" + p.licence + "\t" + p.profile + "\n";
+                return out;
+            };
+
+            gt::Engine open = gt::Engine::load_tool(packs, models, nullptr, gt::Distribution::Controlled, "open");
+            check(open.formats() == std::vector<std::string>({"f-plain"}), "profile open: only the open pack");
+            check(open.modules() == std::vector<std::string>({"core"}), "profile open: only the open modules");
+            eq(listing(open), "plain\tf-plain\tApache-2.0\topen\n", "profile open: pack_licences");
+            gt::Engine cl = gt::Engine::load_tool(packs, models, nullptr, gt::Distribution::Controlled, "open+copyleft");
+            check(cl.formats() == std::vector<std::string>({"f-plain", "f-sa"}), "profile open+copyleft: the packs");
+            check(cl.modules() == std::vector<std::string>({"core", "sa"}), "profile open+copyleft: the modules");
+            eq(cl.convert("f-sa", "f-sa", "{\"id\":\"u\",\"n\":3}"), "{\"id\":\"u\",\"n\":3}", "profile: a held pack converts");
+            expect_error(gt::ErrorKind::UnknownFormat, [&] { cl.convert("f-fou", "f-fou", "{}"); },
+                         "profile: a skipped pack is unknown-format");
+            // A named pack outside the profile is skipped, twice; the name checks come first.
+            std::vector<std::string> twice{"zbroken", "plain", "zbroken"};
+            check(gt::Engine::load_tool(packs, models, &twice, gt::Distribution::Controlled, "open").formats() ==
+                      std::vector<std::string>({"f-plain"}),
+                  "profile: --packs-only skips a pack outside it, twice");
+            std::vector<std::string> missing{"nope"};
+            expect_error(gt::ErrorKind::UnknownFormat,
+                         [&] { gt::Engine::load_tool(packs, models, &missing, gt::Distribution::Controlled, "open"); },
+                         "profile: the name checks come first");
+            expect_error(gt::ErrorKind::UnknownDirective,
+                         [&] { gt::Engine::load_tool(packs, models, nullptr, gt::Distribution::Controlled, "everything"); },
+                         "profile everything: the broken pack is held and fails");
+            expect_error(gt::ErrorKind::BadLicence,
+                         [&] { gt::Engine::load_tool(packs + "/none", models + "/none", nullptr, gt::Distribution::Controlled, "Open"); },
+                         "a profile that is no profile is bad-licence before anything is read");
+            check(gt::Engine::is_profile("open+copyleft") && !gt::Engine::is_profile("") && !gt::Engine::is_profile("none"),
+                  "is_profile");
+
+            // No profile: no licence file read, nothing in pack_licences; with
+            // read_licences every pack is held and listed.
+            fs::remove(dir / "packs/zbroken/pack.def");
+            fs::remove(dir / "packs/zbroken/REUSE.toml");
+            fs::remove(dir / "packs/zbroken");
+            gt::Engine none = gt::Engine::load_tool(packs, models, nullptr);
+            check(none.formats().size() == 5 && none.pack_licences().empty(), "no profile: every pack, no licence read");
+            gt::Engine all = gt::Engine::load_tool(packs, models, nullptr, gt::Distribution::Controlled, std::nullopt, true);
+            eq(listing(all),
+               "closed\tf-closed\tCLOSED\tnone\nfou\tf-fou\tFOU\teverything\nplain\tf-plain\tApache-2.0\topen\n"
+               "sa\tf-sa\tApache-2.0\topen+copyleft\nuses-p\tf-uses-p\tApache-2.0\teverything\n",
+               "read_licences: every pack with its licence and profile");
+
+            // Files that cannot be read as ruling 1 says.
+            auto bad_licence = [&](const std::string& what) {
+                expect_error(gt::ErrorKind::BadLicence,
+                             [&] { gt::Engine::load_tool(packs, models, nullptr, gt::Distribution::Controlled, "everything"); },
+                             what);
+            };
+            put("packs/plain/REUSE.toml", "\xEF\xBB\xBFSPDX-License-Identifier = \"Apache-2.0\"\n");
+            bad_licence("a licence line after a byte-order mark is no licence line");
+            put("packs/plain/REUSE.toml", "SPDX-License-Identifier = \"A\"\nSPDX-License-Identifier = \"B\"\n");
+            bad_licence("two licence lines");
+            put("packs/plain/REUSE.toml", "SPDX-License-Identifier = Apache-2.0\n");
+            bad_licence("a licence line without quotes");
+            put("packs/plain/REUSE.toml", "SPDX-License-Identifier = \"Apache-2.0\"\n");
+            put("model/sa.def.license", "SPDX-License-Identifier:SA\n");
+            bad_licence("a module licence line with no space after the colon");
+            put("model/sa.def.license", "SPDX-License-Identifier: \xFF\n");
+            bad_licence("a module licence file that is not UTF-8");
+            put("model/sa.def.license", "SPDX-License-Identifier: SA\n");
+            // REUSE-IgnoreEnd
+            put("licences.toml", table + "[licences.\"X\"]\ncommercial = \"yes\"\nshare_alike = false\n"
+                                         "field_of_use = [ ]\ndistribution = \"public\"\n");
+            bad_licence("field_of_use = [ ]");
+            put("licences.toml", table + row("SA", "yes", "true", "[]", "public"));
+            bad_licence("a second row of one licence");
+            put("licences.toml", table + "[licences.\"X\"]\ncommercial = \"yes\"\nshare_alike = false\nfield_of_use = []\n");
+            bad_licence("a row without distribution");
+            put("licences.toml", table + "[licences.\"X\"]\ncommercial = \"yes\" # c\n");
+            bad_licence("a value followed by a comment");
+            fs::remove(dir / "licences.toml");
+            fs::create_directories(dir / "licences.toml");
+            bad_licence("licences.toml is a directory");
+            fs::remove(dir / "licences.toml");
+            // No table: Apache-2.0 alone is known, so `sa` (licence SA) is everything.
+            eq(listing(gt::Engine::load_tool(packs, models, nullptr, gt::Distribution::Controlled, "everything")),
+               "closed\tf-closed\tCLOSED\teverything\nfou\tf-fou\tFOU\teverything\nplain\tf-plain\tApache-2.0\topen\n"
+               "sa\tf-sa\tApache-2.0\teverything\nuses-p\tf-uses-p\tApache-2.0\teverything\n",
+               "no licences.toml: the table of Apache-2.0 alone");
+        } catch (const std::exception& ex) {
+            check(false, std::string("0.29 licence profiles threw: ") + ex.what());
+        }
+        std::error_code ec;
+        fs::remove_all(dir, ec);
+    }
+
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";
     return failures == 0 ? 0 : 1;
 }

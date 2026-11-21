@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -55,6 +56,8 @@ enum class ErrorKind {
     DuplicateKind,          // a kind name is declared twice in its pack
     DuplicateField,         // withdrawn in 0.6 and never raised: a model key may be mapped by several lines
     BadDirective,           // a directive this specification has, used wrongly
+    // v0.29
+    BadLicence,             // a licence file that cannot be read as ruling 1 says, or a profile that is no profile
 };
 
 const char* error_kind_name(ErrorKind kind);
@@ -612,6 +615,17 @@ Pack parse_pack(const std::string& text, const std::string& source = "pack.def")
 // The capability report of an ordered pair of formats (0.11 ruling 6),
 // computed from the two packs alone. `grade` is "full", "partial" or "none";
 // `carried` and `dropped` are entries of model_keys(from), in its order.
+// The licence of a loaded pack (engine-spec.md 0.29): its directory name, its
+// format, the licence id of `<packs>/<dir>/REUSE.toml` (`Apache-2.0` when
+// there is none) and the pack's own profile (ruling 2c): `open`,
+// `open+copyleft`, `everything` or `none`.
+struct PackLicence {
+    std::string dir;
+    std::string format;
+    std::string licence;
+    std::string profile;
+};
+
 struct Capability {
     std::string grade;
     std::vector<std::string> carried;
@@ -647,9 +661,29 @@ public:
     // symbolic link to one included), holds `pack.def` and does not begin
     // with `.`, in byte order of name; a packs_dir that cannot be read then
     // fails with Io. The modules are loaded before packs_dir is read.
+    //
+    // Licence profiles (engine-spec.md 0.29). `profile` is `open`,
+    // `open+copyleft` or `everything`; any other text is bad-licence before
+    // anything is read. With a profile, `<packs_dir>/../licences.toml` and,
+    // for each module file in the order above, `<models_dir>/<file>.license`
+    // are read before any module is loaded, then each pack's
+    // `<packs_dir>/<dir>/REUSE.toml` when the pack is reached (after the
+    // checks of its name); a module or pack whose profile the profile does
+    // not hold is not loaded, nor otherwise read. A licence file that cannot
+    // be read as ruling 1 says is bad-licence. With no profile no licence file
+    // is read and the load is as above, unless `read_licences` is true: then
+    // every licence file is read in the same order and nothing is skipped
+    // (the `licences` subcommand). pack_licences() holds the result.
     static Engine load_tool(const std::string& packs_dir, const std::string& models_dir,
                             const std::vector<std::string>* names,
-                            Distribution max_distribution = Distribution::Controlled);
+                            Distribution max_distribution = Distribution::Controlled,
+                            const std::optional<std::string>& profile = std::nullopt,
+                            bool read_licences = false);
+    // True for the three profile names.
+    static bool is_profile(const std::string& name);
+    // The licences of the loaded packs in byte order of directory name, when
+    // load_tool read them (a profile, or read_licences); otherwise empty.
+    const std::vector<PackLicence>& pack_licences() const noexcept { return pack_licences_; }
 
     // The distribution limit, Controlled by default. It applies to later loads.
     void set_max_distribution(Distribution limit) { max_distribution_ = limit; }
@@ -750,6 +784,7 @@ private:
                              const TextContext* ordered = nullptr) const;
     Distribution max_distribution_ = Distribution::Controlled;
     std::uint64_t max_items_ = kDefaultMaxItems;
+    std::vector<PackLicence> pack_licences_;
 };
 
 }  // namespace goat_transformers

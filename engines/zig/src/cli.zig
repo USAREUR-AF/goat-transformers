@@ -5,7 +5,11 @@
 //!     goat-xf list-formats <options>
 //!     goat-xf capability --from <format> --to <format> <options>
 //!     goat-xf matrix <options>
+//!     goat-xf licences [--json] <options>
 //!     goat-xf help
+//!
+//! `--profile <open | open+copyleft | everything>` and the `licences`
+//! subcommand are Version 0.29 (licence profiles in the loaders).
 //!
 //! Loading, `convert` and the capability report are the engine's own
 //! (`main.zig`); this file reads the arguments, loads in the contract's order
@@ -23,6 +27,7 @@ const usage_text =
     \\  goat-xf list-formats <options>
     \\  goat-xf capability --from <format> --to <format> <options>
     \\  goat-xf matrix <options>
+    \\  goat-xf licences [--json] <options>
     \\  goat-xf help
     \\
     \\<options>, in any order, each at most once:
@@ -31,13 +36,18 @@ const usage_text =
     \\  --packs-only <name>[,<name>]  load only these subdirectories of --packs, in the order given
     \\  --max-items <n>               the limit on list items one decode holds (default: 100000)
     \\  --max-distribution <public|controlled>   (default: controlled)
+    \\  --profile <open|open+copyleft|everything>  load only the packs and modules
+    \\                                the profile holds (default: no profile)
+    \\
+    \\licences writes one line per loaded pack: directory, format, licence and
+    \\profile, tab-separated; --json (no value) writes them as JSON instead.
     \\
     \\Exit status: 0 success, 1 a load or call failure (standard error begins
     \\with the kind and a colon), 2 a usage error.
     \\
 ;
 
-const Sub = enum { convert, list_formats, capability, matrix };
+const Sub = enum { convert, list_formats, capability, matrix, licences };
 
 const Opts = struct {
     sub: Sub,
@@ -49,6 +59,8 @@ const Opts = struct {
     packs_only: ?[]const u8 = null,
     max_items: ?u64 = null,
     max_distribution: ?gt.Dist = null,
+    profile: ?[]const u8 = null,
+    json: bool = false,
 };
 
 fn usageExit(comptime fmt: []const u8, args: anytype) noreturn {
@@ -96,6 +108,8 @@ fn parseArgs(alloc: std.mem.Allocator, args: []const []const u8) !Opts {
         .capability
     else if (eq(u8, first, "matrix"))
         .matrix
+    else if (eq(u8, first, "licences"))
+        .licences
     else
         usageExit("unknown subcommand {s}", .{first});
 
@@ -104,8 +118,15 @@ fn parseArgs(alloc: std.mem.Allocator, args: []const []const u8) !Opts {
     var i: usize = 1;
     while (i < args.len) : (i += 2) {
         const name = args[i];
+        // `--json` takes no value: the next argument is again an option name
+        if (sub == .licences and eq(u8, name, "--json")) {
+            if (o.json) usageExit("--json given twice", .{});
+            o.json = true;
+            i -= 1;
+            continue;
+        }
         const known = eq(u8, name, "--packs") or eq(u8, name, "--models") or eq(u8, name, "--packs-only") or
-            eq(u8, name, "--max-items") or eq(u8, name, "--max-distribution") or
+            eq(u8, name, "--max-items") or eq(u8, name, "--max-distribution") or eq(u8, name, "--profile") or
             (takes_pair and (eq(u8, name, "--from") or eq(u8, name, "--to"))) or
             (sub == .convert and eq(u8, name, "--set"));
         if (!known) usageExit("{s} is not an option of {s}", .{ name, first });
@@ -130,6 +151,12 @@ fn parseArgs(alloc: std.mem.Allocator, args: []const []const u8) !Opts {
                 .controlled
             else
                 usageExit("--max-distribution takes public or controlled", .{});
+            continue;
+        }
+        if (eq(u8, name, "--profile")) {
+            if (o.profile != null) usageExit("{s} given twice", .{name});
+            if (gt.Profile.parse(value) == null) usageExit("--profile takes open, open+copyleft or everything", .{});
+            o.profile = value;
             continue;
         }
         const slot: *?[]const u8 = if (eq(u8, name, "--from"))
@@ -163,69 +190,45 @@ fn strLess(_: void, a: []const u8, b: []const u8) bool {
     return std.mem.lessThan(u8, a, b);
 }
 
-fn isDirectory(dir: std.fs.Dir, name: []const u8) bool {
-    const st = dir.statFile(name) catch return false; // follows a symbolic link
-    return st.kind == .directory;
-}
-
-fn readPackDef(alloc: std.mem.Allocator, dir: std.fs.Dir, name: []const u8) ?[]const u8 {
-    var sub = dir.openDir(name, .{}) catch return null;
-    defer sub.close();
-    const st = sub.statFile("pack.def") catch return null;
-    if (st.kind == .directory) return null;
-    return sub.readFileAlloc(alloc, "pack.def", 64 << 20) catch null;
-}
-
-fn loadOne(eng: *Engine, alloc: std.mem.Allocator, packs_dir: []const u8, name: []const u8, text: []const u8) void {
-    _ = eng.loadPack(text) catch |err| {
-        if (err == error.OutOfMemory) failExit("out of memory");
-        const msg = std.fmt.allocPrint(alloc, "{s} ({s}/{s}/pack.def)", .{ eng.last_error, packs_dir, name }) catch eng.last_error;
-        failExit(msg);
-    };
-}
-
-// Loading (Version 0.23): every module of --models, then the packs.
-fn load(eng: *Engine, alloc: std.mem.Allocator, o: *const Opts) !void {
-    const packs_dir = o.packs orelse "packs";
-    const models_dir = o.models orelse try std.fmt.allocPrint(alloc, "{s}/../model", .{packs_dir});
-    _ = eng.loadModelDir(models_dir) catch |err| {
+// Loading (Version 0.23): every module of --models, then the packs; with
+// --profile, only what the profile holds (Version 0.29).
+fn load(eng: *Engine, alloc: std.mem.Allocator, o: *const Opts) ![]const Engine.TreePack {
+    var only: ?[]const []const u8 = null;
+    if (o.packs_only) |text| {
+        var names = std.ArrayList([]const u8).init(alloc);
+        var parts = std.mem.splitScalar(u8, text, ',');
+        while (parts.next()) |part| try names.append(part);
+        only = names.items;
+    }
+    const loaded = eng.loadTree(.{
+        .packs_dir = o.packs orelse "packs",
+        .models_dir = o.models,
+        .packs_only = only,
+        .profile = o.profile,
+        .read_licences = o.sub == .licences,
+    }) catch |err| {
         if (err == error.OutOfMemory) return err;
-        if (eng.last_error.len == 0) failExit(try std.fmt.allocPrint(alloc, "error: cannot read the model directory {s}: {s}", .{ models_dir, @errorName(err) }));
-        failExit(eng.last_error);
+        failExit(if (eng.last_error.len > 0) eng.last_error else @errorName(err));
     };
+    return loaded.packs;
+}
 
-    if (o.packs_only) |only| {
-        var dir_opt: ?std.fs.Dir = std.fs.cwd().openDir(packs_dir, .{}) catch null;
-        defer if (dir_opt) |*d| d.close();
-        var parts = std.mem.splitScalar(u8, only, ',');
-        while (parts.next()) |name| {
-            const one_component = !(std.mem.eql(u8, name, ".") or std.mem.eql(u8, name, "..") or
-                std.mem.indexOfAny(u8, name, "/\\") != null);
-            const text: ?[]const u8 = if (!one_component) null else if (dir_opt) |d| readPackDef(alloc, d, name) else null;
-            const t = text orelse failExit(try std.fmt.allocPrint(alloc, "unknown-format: {s} is not a subdirectory of {s} holding pack.def", .{ name, packs_dir }));
-            loadOne(eng, alloc, packs_dir, name, t);
+fn packLess(_: void, a: Engine.TreePack, b: Engine.TreePack) bool {
+    return std.mem.lessThan(u8, a.dir, b.dir);
+}
+
+// A JSON string value of `licences --json` (Version 0.29, ruling 4c).
+fn jsonString(out: *std.ArrayList(u8), s: []const u8) !void {
+    try out.append('"');
+    for (s) |c| {
+        switch (c) {
+            '"' => try out.appendSlice("\\\""),
+            '\\' => try out.appendSlice("\\\\"),
+            0...0x1f => try out.writer().print("\\u{x:0>4}", .{c}),
+            else => try out.append(c),
         }
-        return;
     }
-
-    var dir = std.fs.cwd().openDir(packs_dir, .{ .iterate = true }) catch |err|
-        failExit(try std.fmt.allocPrint(alloc, "error: cannot read the packs directory {s}: {s}", .{ packs_dir, @errorName(err) }));
-    defer dir.close();
-    var names = std.ArrayList([]const u8).init(alloc);
-    var it = dir.iterate();
-    while (true) {
-        const entry = (it.next() catch |err|
-            failExit(try std.fmt.allocPrint(alloc, "error: cannot read the packs directory {s}: {s}", .{ packs_dir, @errorName(err) }))) orelse break;
-        if (entry.name.len == 0 or entry.name[0] == '.') continue;
-        if (entry.kind != .directory and entry.kind != .sym_link and entry.kind != .unknown) continue;
-        if (entry.kind != .directory and !isDirectory(dir, entry.name)) continue;
-        try names.append(try alloc.dupe(u8, entry.name));
-    }
-    std.mem.sort([]const u8, names.items, {}, strLess);
-    for (names.items) |name| {
-        const text = readPackDef(alloc, dir, name) orelse continue;
-        loadOne(eng, alloc, packs_dir, name, text);
-    }
+    try out.append('"');
 }
 
 // The loaded format names in byte order.
@@ -283,7 +286,7 @@ pub fn main() !void {
     var eng = Engine.init(alloc);
     if (o.max_distribution) |d| eng.setMaxDistribution(d);
     if (o.max_items) |n| eng.setMaxItems(@intCast(n));
-    try load(&eng, alloc, &o);
+    const loaded = try load(&eng, alloc, &o);
 
     var out = std.ArrayList(u8).init(alloc);
     switch (o.sub) {
@@ -293,6 +296,29 @@ pub fn main() !void {
                 const p = eng.findPack(f).?;
                 try out.writer().print("{s}\t{s}\t{s}\n", .{ p.format, p.version, @tagName(p.wire) });
             }
+        },
+        .licences => {
+            const packs = try alloc.dupe(Engine.TreePack, loaded);
+            std.mem.sort(Engine.TreePack, packs, {}, packLess);
+            if (o.json) try out.appendSlice("{\"packs\":[");
+            for (packs, 0..) |p, i| {
+                const lic = p.licence.?;
+                if (o.json) {
+                    if (i > 0) try out.append(',');
+                    try out.appendSlice("{\"pack\":");
+                    try jsonString(&out, p.dir);
+                    try out.appendSlice(",\"format\":");
+                    try jsonString(&out, p.format);
+                    try out.appendSlice(",\"licence\":");
+                    try jsonString(&out, lic);
+                    try out.appendSlice(",\"profile\":");
+                    try jsonString(&out, p.profile.name());
+                    try out.append('}');
+                } else {
+                    try out.writer().print("{s}\t{s}\t{s}\t{s}\n", .{ p.dir, p.format, lic, p.profile.name() });
+                }
+            }
+            if (o.json) try out.appendSlice("]}\n");
         },
         .capability => try capabilityLine(&eng, &out, o.from.?, o.to.?),
         .matrix => {

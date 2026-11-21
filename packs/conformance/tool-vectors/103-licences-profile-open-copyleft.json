@@ -1,0 +1,12 @@
+{
+  "name": "licences-profile-open-copyleft",
+  "args": [
+    "licences",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    "open+copyleft"
+  ],
+  "exit": 0,
+  "stdout_text": "copyleft\tlic-copyleft\tCC-BY-SA-4.0\topen+copyleft\nplain\tlic-plain\tApache-2.0\topen\nuses-sa\tlic-uses-sa\tApache-2.0\topen+copyleft\nzz-first-by-format\tlic-aa\tApache-2.0\topen\n"
+}

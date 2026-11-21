@@ -33,7 +33,7 @@ defs=""
 for w in $all; do has "$w" || defs="$defs -Dno_wire_$w"; done
 
 # the engine's core, then the modules of each wire in the set
-mods="gt_engine gt_pack gt_model gt_num gt_derive gt_iso gt_cli"
+mods="gt_engine gt_pack gt_model gt_num gt_derive gt_iso gt_licence gt_cli"
 has xml && mods="$mods gt_xml"
 # gt_json reads JSON text for json and geojson, and the conformance
 # runner gt_test and the benchmark gt_bench read JSON with it

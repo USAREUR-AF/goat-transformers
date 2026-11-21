@@ -1,0 +1,12 @@
+{
+  "name": "bad-pack-when-reached",
+  "args": [
+    "list-formats",
+    "--profile",
+    "everything",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-bad-pack/packs"
+  ],
+  "exit": 1,
+  "error_kind": "bad-licence"
+}

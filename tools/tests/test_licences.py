@@ -146,6 +146,32 @@ class Tree(unittest.TestCase):
         self.assertEqual(lic.excluded(self.root, "open")["packs"], {})
 
 
+    def test_core_counts_for_every_pack(self):
+        label(self.tree, "model/core.def", "CC-BY-SA-4.0")
+        self.assertEqual(self.profiles()["plain"], "open+copyleft")
+
+    def test_a_controlled_licence_is_in_no_profile(self):
+        label(self.tree, "packs/plain", "LicenseRef-secret")
+        self.tree.write("LICENSES/LicenseRef-secret.txt", "text\n")
+        self.assertEqual(self.profiles()["plain"], "none")
+        self.assertIn("plain", lic.excluded(self.root, "everything")["packs"])
+
+    def test_two_modules_of_one_name_take_the_wider(self):
+        self.tree.write("model/book2.def", "module book\n" + HEAD)
+        self.assertEqual(self.profiles()["uses-book"], "everything")
+
+    def test_engine_forms(self):
+        self.assertEqual(lic.engine_forms(self.root), [])
+        self.tree.write("packs/plain/REUSE.toml", (PACK_REUSE % "MIT").replace('"MIT"', '"MIT" # note'))
+        self.tree.write("model/book.def.license", "SPDX-License-" + "Identifier: MIT OR GPL-2.0\n")
+        with open(os.path.join(self.root, "licences.toml"), "a", encoding="utf-8") as fh:
+            fh.write('[licences."X"]\ncommercial = "yes"\nshare_alike = false\nfield_of_use = [ ]\ndistribution = "public"\n')
+        problems = lic.engine_forms(self.root)
+        self.assertTrue(any(p.startswith("packs/plain/REUSE.toml") for p in problems))
+        self.assertTrue(any(p.startswith("model/book.def.license") for p in problems))
+        self.assertTrue(any("licences.toml:" in p for p in problems))
+
+
 class Globs(unittest.TestCase):
     def test_reuse_glob_rules(self):
         cases = [("packs/a/**", "packs/a/vectors/x.json", True), ("packs/a/*", "packs/a/vectors/x.json", False),

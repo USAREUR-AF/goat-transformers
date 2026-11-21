@@ -1,0 +1,14 @@
+{
+  "name": "packs-only-skips-it-twice",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    "open",
+    "--packs-only",
+    "nc,nc,plain"
+  ],
+  "exit": 0,
+  "stdout_text": "lic-plain\t0.29.0\tjson\n"
+}

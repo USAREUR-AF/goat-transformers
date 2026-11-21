@@ -1,0 +1,14 @@
+{
+  "name": "closed-is-in-no-profile",
+  "args": [
+    "list-formats",
+    "--profile",
+    "everything",
+    "--packs-only",
+    "closed",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs"
+  ],
+  "exit": 0,
+  "stdout_text": ""
+}

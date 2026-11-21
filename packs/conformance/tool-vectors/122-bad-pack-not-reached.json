@@ -1,0 +1,14 @@
+{
+  "name": "bad-pack-not-reached",
+  "args": [
+    "list-formats",
+    "--profile",
+    "everything",
+    "--packs-only",
+    "plain",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-bad-pack/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "lic-plain\t0.29.0\tjson\n"
+}

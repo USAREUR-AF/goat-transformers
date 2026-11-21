@@ -1,0 +1,10 @@
+{
+  "name": "usage-json-on-list-formats",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--json"
+  ],
+  "exit": 2
+}

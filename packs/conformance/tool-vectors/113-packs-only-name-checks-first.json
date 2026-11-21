@@ -1,0 +1,14 @@
+{
+  "name": "packs-only-name-checks-first",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    "open",
+    "--packs-only",
+    "no-such-pack"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

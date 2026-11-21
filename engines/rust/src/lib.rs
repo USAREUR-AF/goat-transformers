@@ -12,6 +12,8 @@ mod exact;
 pub use exact::Exact;
 mod layout;
 use layout::Layout;
+mod licence;
+pub use licence::{profile_name, LoadOptions, LoadedPack, PackLicence, Profile};
 
 // ---------------------------------------------------------------------------
 // Shared model
@@ -4355,18 +4357,12 @@ impl Engine {
     /// of file name. A directory that does not exist loads nothing (ruling 4
     /// of 0.4).
     pub fn load_model_dir(&mut self, dir: &std::path::Path) -> Result<(), Error> {
-        let mut files: Vec<std::path::PathBuf> = match std::fs::read_dir(dir) {
-            Ok(rd) => rd
-                .flatten()
-                .map(|e| e.path())
-                .filter(|p| p.extension().and_then(|s| s.to_str()) == Some("def"))
-                .collect(),
-            Err(_) => return Ok(()),
-        };
-        files.sort_by(|a, b| {
-            let core = |p: &std::path::PathBuf| p.file_name().and_then(|s| s.to_str()) != Some("core.def");
-            (core(a), a.file_name()).cmp(&(core(b), b.file_name()))
-        });
+        self.load_model_files(licence::module_files(dir))
+    }
+
+    /// Load these module files, given in the order of `module_files`: each
+    /// after the modules it uses.
+    fn load_model_files(&mut self, files: Vec<std::path::PathBuf>) -> Result<(), Error> {
         // each module after the modules it uses (engine-spec v0.8): of the
         // files not yet loaded, the first in that order whose used modules
         // are all loaded or are in no file of the directory

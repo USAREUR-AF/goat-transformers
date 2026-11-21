@@ -1,0 +1,12 @@
+{
+  "name": "list-formats-profile-open",
+  "args": [
+    "list-formats",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs",
+    "--profile",
+    "open"
+  ],
+  "exit": 0,
+  "stdout_text": "lic-aa\t0.29.0\tjson\nlic-plain\t0.29.0\tjson\n"
+}

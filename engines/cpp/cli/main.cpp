@@ -5,6 +5,7 @@
 //   goat-xf list-formats <options>
 //   goat-xf capability --from <format> --to <format> <options>
 //   goat-xf matrix <options>
+//   goat-xf licences [--json] <options>        (Version 0.29)
 //   goat-xf help
 //
 // Exit status 0 on success, 1 on a load or call failure (standard error's
@@ -16,6 +17,7 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -31,6 +33,7 @@ const char kUsage[] =
     "       goat-xf list-formats <options>\n"
     "       goat-xf capability --from <format> --to <format> <options>\n"
     "       goat-xf matrix <options>\n"
+    "       goat-xf licences [--json] <options>\n"
     "       goat-xf help\n"
     "options, in any order, each at most once:\n"
     "  --packs <dir>                              the directory whose subdirectories are packs (default: packs)\n"
@@ -38,6 +41,9 @@ const char kUsage[] =
     "  --packs-only <name>[,<name>...]            load only these subdirectories of --packs, in that order\n"
     "  --max-items <n>                            the limit on list items one decode holds (default: 100000)\n"
     "  --max-distribution public|controlled       the engine's distribution limit (default: controlled)\n"
+    "  --profile open|open+copyleft|everything    load only the packs and modules of this licence profile\n"
+    "                                             (default: none, every pack and module)\n"
+    "--json, for licences only, takes no value.\n"
     "convert reads the message from standard input and writes the result to standard output.\n";
 
 int usage_error(const std::string& why) {
@@ -114,6 +120,23 @@ int write_out(const std::string& out) {
     return std::fflush(stdout) == 0 ? 0 : 1;
 }
 
+// A value of `licences --json` (0.29 ruling 4c).
+std::string json_string(const std::string& s) {
+    static const char kHex[] = "0123456789abcdef";
+    std::string out = "\"";
+    for (char ch : s) {
+        const unsigned char c = static_cast<unsigned char>(ch);
+        if (c == '"') out += "\\\"";
+        else if (c == '\\') out += "\\\\";
+        else if (c < 0x20) {
+            out += "\\u00";
+            out += kHex[c >> 4];
+            out += kHex[c & 15];
+        } else out += ch;
+    }
+    return out + "\"";
+}
+
 void require_format(const gt::Engine& eng, const std::string& format) {
     if (!eng.has_format(format))
         throw gt::Error(gt::ErrorKind::UnknownFormat, format, "", "no loaded pack defines the format");
@@ -130,11 +153,14 @@ int main(int argc, char** argv) {
         return std::fflush(stdout) == 0 ? 0 : 1;
     }
     const bool is_convert = cmd == "convert", is_capability = cmd == "capability";
-    if (!is_convert && !is_capability && cmd != "list-formats" && cmd != "matrix")
+    const bool is_licences = cmd == "licences";
+    if (!is_convert && !is_capability && !is_licences && cmd != "list-formats" && cmd != "matrix")
         return usage_error("unknown subcommand '" + cmd + "'");
 
     // The names this subcommand takes.
-    std::vector<std::string> names = {"--packs", "--models", "--packs-only", "--max-items", "--max-distribution"};
+    std::vector<std::string> names = {"--packs",      "--models",           "--packs-only",
+                                      "--max-items",  "--max-distribution", "--profile"};
+    if (is_licences) names.push_back("--json");
     if (is_convert || is_capability) {
         names.push_back("--from");
         names.push_back("--to");
@@ -144,11 +170,18 @@ int main(int argc, char** argv) {
     std::map<std::string, std::string> opt;
     gt::Engine::TextContext context;  // the --set options: first place, last value
     bool have_context = false;
+    bool json = false;
     for (std::size_t k = 1; k < args.size(); k += 2) {
         const std::string& name = args[k];
         bool known = false;
         for (const auto& n : names) known = known || n == name;
         if (!known) return usage_error("'" + name + "' is not an option of " + cmd);
+        if (name == "--json") {  // the one option without a value (0.29 ruling 4b)
+            if (json) return usage_error("--json is given twice");
+            json = true;
+            --k;
+            continue;
+        }
         if (k + 1 >= args.size()) return usage_error(name + " needs a value");
         const std::string& value = args[k + 1];
         if (name == "--set") {
@@ -183,6 +216,13 @@ int main(int argc, char** argv) {
         else if (d != "controlled") return usage_error("--max-distribution must be public or controlled, got '" + d + "'");
     }
 
+    std::optional<std::string> profile;
+    if (opt.count("--profile")) {
+        if (!gt::Engine::is_profile(opt["--profile"]))
+            return usage_error("--profile must be open, open+copyleft or everything, got '" + opt["--profile"] + "'");
+        profile = opt["--profile"];
+    }
+
     std::vector<std::string> only;
     if (opt.count("--packs-only")) {
         const std::string& list = opt["--packs-only"];
@@ -199,7 +239,8 @@ int main(int argc, char** argv) {
     const std::string models = opt.count("--models") ? opt["--models"] : packs + "/../model";
 
     try {
-        gt::Engine eng = gt::Engine::load_tool(packs, models, opt.count("--packs-only") ? &only : nullptr, limit);
+        gt::Engine eng = gt::Engine::load_tool(packs, models, opt.count("--packs-only") ? &only : nullptr, limit,
+                                               profile, is_licences);
         eng.set_max_items(max_items);
 
         if (cmd == "list-formats") {
@@ -208,6 +249,22 @@ int main(int argc, char** argv) {
                 const gt::Pack& p = eng.pack(f);
                 out += f + "\t" + p.version + "\t" + gt::wire_name(p.wire) + "\n";
             }
+            return write_out(out);
+        }
+        if (is_licences) {
+            std::string out = json ? "{\"packs\":[" : "";
+            bool first = true;
+            for (const auto& p : eng.pack_licences()) {
+                if (json) {
+                    if (!first) out += ',';
+                    out += "{\"pack\":" + json_string(p.dir) + ",\"format\":" + json_string(p.format) +
+                           ",\"licence\":" + json_string(p.licence) + ",\"profile\":" + json_string(p.profile) + "}";
+                } else {
+                    out += p.dir + "\t" + p.format + "\t" + p.licence + "\t" + p.profile + "\n";
+                }
+                first = false;
+            }
+            if (json) out += "]}\n";
             return write_out(out);
         }
         if (cmd == "matrix") {

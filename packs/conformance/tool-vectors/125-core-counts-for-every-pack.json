@@ -1,0 +1,12 @@
+{
+  "name": "core-counts-for-every-pack",
+  "args": [
+    "list-formats",
+    "--profile",
+    "open",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-core-copyleft/packs"
+  ],
+  "exit": 0,
+  "stdout_text": ""
+}

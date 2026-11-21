@@ -5,12 +5,14 @@
 //	goat-xf list-formats <options>
 //	goat-xf capability --from <format> --to <format> <options>
 //	goat-xf matrix <options>
+//	goat-xf licences [--json] <options>
 //	goat-xf help
 //
 // <options> are --packs <dir> (default packs), --models <dir> (default the
 // --packs text followed by /../model), --packs-only <name>[,<name>...],
 // --max-items <n> (default 100000) and --max-distribution public|controlled
-// (default controlled). Exit status 0 on success, 1 for a load or call
+// (default controlled) and --profile open|open+copyleft|everything (Version
+// 0.29; default none). Exit status 0 on success, 1 for a load or call
 // failure (standard error's first line begins with the kind and a colon), 2
 // for a usage error, checked before anything is loaded.
 package main
@@ -35,6 +37,7 @@ const usageText = `usage:
   goat-xf list-formats <options>
   goat-xf capability --from <format> --to <format> <options>
   goat-xf matrix <options>
+  goat-xf licences [--json] <options>
   goat-xf help
 <options>, in any order, each at most once:
   --packs <dir>                              the directory whose subdirectories are packs (default packs)
@@ -42,6 +45,8 @@ const usageText = `usage:
   --packs-only <name>[,<name>...]            load only these subdirectories of --packs, in the order given
   --max-items <n>                            the limit on list items one decode holds (default 100000)
   --max-distribution <public|controlled>     the distribution limit (default controlled)
+  --profile <open|open+copyleft|everything>  load only the modules and packs of this licence profile (default none)
+--json (licences only, takes no value): write the list as one JSON object
 `
 
 // options are the arguments of one run, after they are checked.
@@ -55,6 +60,8 @@ type options struct {
 	only      []string // nil: every pack
 	maxItems  int64
 	maxDist   string
+	profile   string // "": no profile
+	json      bool
 }
 
 // usageError is a usage error of the contract: exit 2.
@@ -68,13 +75,15 @@ func parse(args []string) (*options, error) {
 		return nil, usageError("no subcommand")
 	}
 	o := &options{cmd: args[0], packs: "packs", maxItems: goatxf.DefaultMaxItems, maxDist: goatxf.DistControlled}
-	takes := map[string]bool{"--packs": true, "--models": true, "--packs-only": true, "--max-items": true, "--max-distribution": true}
+	takes := map[string]bool{"--packs": true, "--models": true, "--packs-only": true, "--max-items": true, "--max-distribution": true, "--profile": true}
 	switch o.cmd {
 	case "convert":
 		takes["--from"], takes["--to"], takes["--set"] = true, true, true
 	case "capability":
 		takes["--from"], takes["--to"] = true, true
 	case "list-formats", "matrix":
+	case "licences":
+		takes["--json"] = true
 	default:
 		return nil, usageError(fmt.Sprintf("unknown subcommand %q", o.cmd))
 	}
@@ -84,6 +93,16 @@ func parse(args []string) (*options, error) {
 		name := rest[i]
 		if !takes[name] {
 			return nil, usageError(fmt.Sprintf("%s takes no option %q", o.cmd, name))
+		}
+		if name == "--json" {
+			// The one option that takes no value: the next argument is
+			// again an option name.
+			if seen[name] {
+				return nil, usageError("--json given twice")
+			}
+			seen[name], o.json = true, true
+			i--
+			continue
 		}
 		if i+1 == len(rest) {
 			return nil, usageError(fmt.Sprintf("%s needs a value", name))
@@ -127,6 +146,11 @@ func parse(args []string) (*options, error) {
 				return nil, usageError(fmt.Sprintf("--max-distribution takes public or controlled, got %q", value))
 			}
 			o.maxDist = value
+		case "--profile":
+			if !goatxf.ValidProfile(value) {
+				return nil, usageError(fmt.Sprintf("--profile takes open, open+copyleft or everything, got %q", value))
+			}
+			o.profile = value
 		}
 	}
 	if o.cmd == "convert" || o.cmd == "capability" {
@@ -170,7 +194,13 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	eng, err := goatxf.LoadTool(o.models, o.packs, o.maxDist, o.only)
+	var eng *goatxf.Engine
+	var listed []goatxf.PackLicence
+	if o.cmd == "licences" {
+		eng, listed, err = goatxf.LoadToolLicences(o.models, o.packs, o.maxDist, o.only, o.profile)
+	} else {
+		eng, err = goatxf.LoadToolProfile(o.models, o.packs, o.maxDist, o.only, o.profile)
+	}
 	if err != nil {
 		return fail(err)
 	}
@@ -220,6 +250,8 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			}
 		}
 		out = []byte(b.String())
+	case "licences":
+		out = []byte(licencesText(listed, o.json))
 	}
 	w := bufio.NewWriter(stdout)
 	w.Write(out)
@@ -234,4 +266,49 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 // dropped, separated by tabs, the entries of a list joined by a space.
 func capabilityLine(from, to string, c *goatxf.Capability) string {
 	return from + "\t" + to + "\t" + c.Grade + "\t" + strings.Join(c.Carried, " ") + "\t" + strings.Join(c.Dropped, " ") + "\n"
+}
+
+// licencesText writes the result of `licences` (spec 0.29, ruling 4c): one
+// line per pack, directory, format, licence and profile separated by tabs,
+// or with asJSON one object {"packs":[...]} and a line feed.
+func licencesText(listed []goatxf.PackLicence, asJSON bool) string {
+	var b strings.Builder
+	if !asJSON {
+		for _, p := range listed {
+			b.WriteString(p.Dir + "\t" + p.Format + "\t" + p.Licence + "\t" + p.Profile + "\n")
+		}
+		return b.String()
+	}
+	b.WriteString(`{"packs":[`)
+	for i, p := range listed {
+		if i > 0 {
+			b.WriteByte(',')
+		}
+		b.WriteString(`{"pack":` + jsonText(p.Dir) + `,"format":` + jsonText(p.Format) +
+			`,"licence":` + jsonText(p.Licence) + `,"profile":` + jsonText(p.Profile) + `}`)
+	}
+	b.WriteString("]}\n")
+	return b.String()
+}
+
+// jsonText writes s as a JSON string as ruling 4c says: " as \", \ as
+// \\, each character below U+0020 as \u and four lower-case hex digits,
+// every other byte as itself.
+func jsonText(s string) string {
+	var b strings.Builder
+	b.WriteByte('"')
+	for i := 0; i < len(s); i++ {
+		switch c := s[i]; {
+		case c == '"':
+			b.WriteString(`\"`)
+		case c == '\\':
+			b.WriteString(`\\`)
+		case c < 0x20:
+			fmt.Fprintf(&b, "\\u%04x", c)
+		default:
+			b.WriteByte(c)
+		}
+	}
+	b.WriteByte('"')
+	return b.String()
 }

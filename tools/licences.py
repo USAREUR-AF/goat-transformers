@@ -49,6 +49,9 @@ import tomllib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROFILES = ["open", "open+copyleft", "everything"]
+# The order of "wider" (spec 0.29): a controlled licence is in no profile,
+# "none", which is wider than every profile.
+RANKS = PROFILES + ["none"]
 PROFILE_TEXT = {
     "open": "commercial use permitted, no share-alike, no field-of-use restriction (the default build)",
     "open+copyleft": "open, and packs whose licence is share-alike",
@@ -131,8 +134,10 @@ def module_label(root, fname):
     path = os.path.join(root, "model", fname + ".license")
     if not os.path.isfile(path):
         return None
-    with open(path, encoding="utf-8") as fh:
-        ids = re.findall(r"^%s:\s*(\S+)\s*$" % LICENCE_TAG, fh.read(), re.M)
+    try:  # read as an engine reads it (spec 0.29, 1b): trimmed lines, CR removed
+        ids = [m.group(1) for m in (_MODULE_LINE.match(l.strip(" \t")) for l in _lines(path)) if m]
+    except UnicodeDecodeError:
+        ids = []
     if len(ids) != 1:
         raise LicenceError("model/%s.license: one %s line naming the module's licence" % (fname, LICENCE_TAG))
     return ids[0]
@@ -190,6 +195,30 @@ def licence_profile(flags):
     return "everything"
 
 
+_NAME_LINE = {w: re.compile(r"^%s[ \t]+([A-Za-z0-9_-]+)$" % w) for w in ("module", "uses")}
+
+
+def _names(path, word):
+    """The names of the `module` or `uses` lines of a file, read as an engine
+    reads them for a profile (spec 0.29, 2b): the whole trimmed line is the
+    word and one name; a file that cannot be read adds none."""
+    try:
+        lines = _lines(path)
+    except (OSError, UnicodeDecodeError):
+        return []
+    out = []
+    for line in lines:
+        m = _NAME_LINE[word].match(line.strip(" \t"))
+        if m:
+            out.append(m.group(1))
+    return out
+
+
+def _is_module_file(model_dir, fname):
+    """A module file as Version 0.23, Loading, 1 selects it."""
+    return fname.endswith(".def") and os.path.isfile(os.path.join(model_dir, fname))
+
+
 def _first_args(path, word):
     found = []
     with open(path, encoding="utf-8") as fh:
@@ -228,33 +257,33 @@ def survey(root, every_file=True):
     modules, by_name = {}, {}
     model_dir = os.path.join(root, "model")
     for fname in sorted(os.listdir(model_dir)) if os.path.isdir(model_dir) else []:
-        if not fname.endswith(".def"):
+        if not _is_module_file(model_dir, fname):
             continue
         path = os.path.join(model_dir, fname)
-        names = _first_args(path, "module")
+        names = _names(path, "module")
         try:
-            lid = module_label(root, fname) or licence_of(rules, "model/" + fname)
+            lid = module_label(root, fname) or DEFAULT  # the root REUSE.toml is Apache-2.0 alone
         except LicenceError as e:
             problems.append(str(e))
             lid = None
         modules[fname] = {"module": names[0] if names else None, "licence": lid,
-                          "uses": _first_args(path, "uses")}
+                          "uses": _names(path, "uses")}
         if names:
-            by_name[names[0]] = fname
+            by_name.setdefault(names[0], []).append(fname)
     packs = {}
     packs_dir = os.path.join(root, "packs")
     for d in sorted(os.listdir(packs_dir)) if os.path.isdir(packs_dir) else []:
         path = os.path.join(packs_dir, d, "pack.def")
-        if not os.path.isfile(path):
+        if d.startswith(".") or not os.path.isfile(path):
             continue
         fmt = _first_args(path, "format")
         try:
-            lid = pack_label(root, d) or licence_of(rules, "packs/%s/pack.def" % d)
+            lid = pack_label(root, d) or DEFAULT
         except LicenceError as e:
             problems.append(str(e))
             lid = None
         packs[d] = {"format": fmt[0] if fmt else None, "licence": lid,
-                    "uses": _first_args(path, "uses"), "sources": len(_first_args(path, "source"))}
+                    "uses": _names(path, "uses"), "sources": len(_first_args(path, "source"))}
 
     def own_profile(kind, key, lid):
         if lid is None:
@@ -266,10 +295,15 @@ def survey(root, every_file=True):
         p = licence_profile(flags[lid])
         if p is None:
             problems.append("%s %s: licence %s is controlled; it cannot be in the public repository" % (kind, key, lid))
-            return "everything"
+            return "none"
         return p
 
-    rank = PROFILES.index
+    rank = RANKS.index
+
+    def widest_module(name):
+        """The module file of that name with the widest profile (spec 0.29, 2b)."""
+        rows = [modules[f] for f in by_name.get(name, [])]
+        return max(rows, key=lambda r: rank(r["profile"])) if rows else None
     for fname, row in modules.items():
         row["profile"] = own_profile("model", fname, row["licence"])
         row["because"] = None
@@ -278,15 +312,15 @@ def survey(root, every_file=True):
         changed = False
         for fname, row in modules.items():
             for u in row["uses"]:
-                dep = modules.get(by_name.get(u))
+                dep = widest_module(u)
                 if dep and rank(dep["profile"]) > rank(row["profile"]):
                     row["profile"], row["because"] = dep["profile"], "uses module %s (%s)" % (u, dep["licence"])
                     changed = True
     for d, row in packs.items():
         row["profile"] = own_profile("pack", d, row["licence"])
         row["because"] = None
-        for u in row["uses"]:
-            dep = modules.get(by_name.get(u))
+        for u in ["core"] + row["uses"]:  # every pack uses core (spec 0.29, 2c)
+            dep = widest_module(u)
             if dep and rank(dep["profile"]) > rank(row["profile"]):
                 row["profile"] = dep["profile"]
                 row["because"] = "uses module %s (%s)" % (u, dep["licence"])
@@ -297,9 +331,92 @@ def survey(root, every_file=True):
     return {"licences": flags, "packs": packs, "modules": modules, "problems": problems}
 
 
+_ID = r"[A-Za-z0-9.+-]+"
+_PACK_LINE = re.compile(r'^SPDX-License-Identifier[ \t]*=[ \t]*"%s"$' % _ID)
+_MODULE_LINE = re.compile(r"^%s:[ \t]+(%s)$" % (LICENCE_TAG, _ID))
+_ROW = re.compile(r'^\[licences\."%s"\]$' % _ID)
+_FLAG_LINES = {
+    "commercial": re.compile(r'^commercial[ \t]*=[ \t]*"(yes|no|unknown)"$'),
+    "share_alike": re.compile(r"^share_alike[ \t]*=[ \t]*(true|false)$"),
+    "field_of_use": re.compile(r'^field_of_use[ \t]*=[ \t]*(\[\]|\[".*"\])$'),
+    "distribution": re.compile(r'^distribution[ \t]*=[ \t]*"(public|controlled)"$'),
+}
+_SKIPPED = ("name", "url", "attribution")
+
+
+def _lines(path):
+    with open(path, "rb") as fh:
+        text = fh.read().decode("utf-8")
+    return [l[:-1] if l.endswith("\r") else l for l in text.split("\n")]
+
+
+def engine_forms(root):
+    """Problems where a licence file is not in the form an engine reads
+    (spec/engine-spec.md Version 0.29, ruling 1), so that this tool and the
+    engines agree on every tree that passes --check."""
+    problems = []
+    packs_dir, model_dir = os.path.join(root, "packs"), os.path.join(root, "model")
+    checks = []
+    for d in sorted(os.listdir(packs_dir)) if os.path.isdir(packs_dir) else []:
+        checks.append(("packs/%s/REUSE.toml" % d, _PACK_LINE, lambda l: re.match(r"^%s[ \t=]" % LICENCE_TAG, l)))
+    for f in sorted(os.listdir(model_dir)) if os.path.isdir(model_dir) else []:
+        if f.endswith(".def"):
+            checks.append(("model/%s.license" % f, _MODULE_LINE, lambda l: l.startswith(LICENCE_TAG + ":")))
+    for rel, good, near in checks:
+        path = os.path.join(root, *rel.split("/"))
+        if not os.path.isfile(path):
+            continue
+        try:
+            lines = [l.strip(" \t") for l in _lines(path)]
+        except UnicodeDecodeError:
+            problems.append("%s is not UTF-8 (spec 0.29, ruling 1)" % rel)
+            continue
+        hits = [l for l in lines if good.match(l)]
+        if len(hits) != 1 or any(near(l) and not good.match(l) for l in lines):
+            problems.append("%s: not exactly one licence line in the form an engine reads (spec 0.29, ruling 1)" % rel)
+    path = os.path.join(root, "licences.toml")
+    if os.path.isfile(path):
+        problems += _table_form(path)
+    return problems
+
+
+def _table_form(path):
+    problems, ids, row = [], set(), None
+
+    def close(r):
+        if r is not None:
+            missing = [k for k in _FLAG_LINES if k not in r[1]]
+            if missing:
+                problems.append("licences.toml: %s has no %s line in the form an engine reads" % (r[0], ", ".join(missing)))
+    try:
+        lines = _lines(path)
+    except UnicodeDecodeError:
+        return ["licences.toml is not UTF-8 (spec 0.29, ruling 1)"]
+    for n, raw in enumerate(lines, 1):
+        line = raw.strip(" \t")
+        if not line or line.startswith("#"):
+            continue
+        if _ROW.match(line):
+            close(row)
+            lid = line[len('[licences."'):-2]
+            if lid in ids:
+                problems.append("licences.toml:%d: a second row of %s" % (n, lid))
+            ids.add(lid)
+            row = (lid, set())
+            continue
+        key = next((k for k, rx in _FLAG_LINES.items() if rx.match(line)), None)
+        skipped = next((k for k in _SKIPPED if re.match(r"^%s[ \t=]" % k, line)), None)
+        if row is None or (key is None and skipped is None) or (key or skipped) in row[1]:
+            problems.append("licences.toml:%d: a line an engine does not read (spec 0.29, ruling 1c)" % n)
+            continue
+        row[1].add(key or skipped)
+    close(row)
+    return problems
+
+
 def in_profile(pack_profile, profile):
     """True when a pack of profile `pack_profile` is in a build of `profile`."""
-    return PROFILES.index(pack_profile) <= PROFILES.index(profile)
+    return RANKS.index(pack_profile) <= PROFILES.index(profile)
 
 
 def pack_profiles(root):
@@ -320,7 +437,7 @@ def excluded(root, profile):
     labelled = (any(os.path.isfile(os.path.join(packs_dir, d, "REUSE.toml")) for d in os.listdir(packs_dir))
                 if os.path.isdir(packs_dir) else False) or (
         any(n.endswith(".def.license") for n in os.listdir(model_dir)) if os.path.isdir(model_dir) else False)
-    if not labelled and all(lid in flags and in_profile(licence_profile(flags[lid]) or "everything", profile)
+    if not labelled and all(lid in flags and in_profile(licence_profile(flags[lid]) or "none", profile)
                             for lid in named):
         return {"packs": {}, "modules": {}, "formats": set()}  # no file of the tree is outside the profile
     s = survey(root, every_file=False)
@@ -434,7 +551,12 @@ def check(root, current=False):
     `current` a problem (the counts pull request)."""
     s, files = outputs(root)
     notes = []
-    problems = list(s["problems"])
+    problems = list(s["problems"]) + engine_forms(root)
+    rules = annotations(root)
+    if rules and rules[0][1] != DEFAULT:
+        problems.append("root REUSE.toml: its one annotation gives %s; it must give %s, the licence of every "
+                        "file not labelled in its own place (an engine never reads the root file, spec 0.29)"
+                        % (rules[0][1], DEFAULT))
     used = {r["licence"] for r in list(s["packs"].values()) + list(s["modules"].values()) if r["licence"]}
     for lid in sorted(used):
         if not os.path.isfile(os.path.join(root, "LICENSES", lid + ".txt")):

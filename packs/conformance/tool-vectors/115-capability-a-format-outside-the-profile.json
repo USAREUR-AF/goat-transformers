@@ -1,0 +1,16 @@
+{
+  "name": "capability-a-format-outside-the-profile",
+  "args": [
+    "capability",
+    "--from",
+    "lic-plain",
+    "--to",
+    "lic-copyleft",
+    "--profile",
+    "open",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

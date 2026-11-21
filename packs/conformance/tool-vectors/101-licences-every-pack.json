@@ -1,0 +1,10 @@
+{
+  "name": "licences-every-pack",
+  "args": [
+    "licences",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-a/packs"
+  ],
+  "exit": 0,
+  "stdout_text": "closed\tlic-closed\tOGL-UK-3.0\tnone\ncopyleft\tlic-copyleft\tCC-BY-SA-4.0\topen+copyleft\nfou\tlic-fou\tCC-BY-4.0\teverything\nnc\tlic-nc\tCC-BY-NC-SA-4.0\teverything\nnot-in-table\tlic-not-in-table\tCC0-1.0\teverything\nplain\tlic-plain\tApache-2.0\topen\nunstated\tlic-unstated\tLicenseRef-unstated\teverything\nuses-book\tlic-uses-book\tApache-2.0\teverything\nuses-derived\tlic-uses-derived\tApache-2.0\teverything\nuses-sa\tlic-uses-sa\tApache-2.0\topen+copyleft\nzz-first-by-format\tlic-aa\tApache-2.0\topen\n"
+}

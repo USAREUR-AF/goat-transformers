@@ -272,9 +272,281 @@ def build():
     for i, v in enumerate(vectors, 1):
         fname = "%03d-%s.json" % (i, v["name"])
         files[fname] = json.dumps(v, indent=2, ensure_ascii=False) + "\n"
-    names = [v["name"] for v in vectors]
+    assert len(vectors) < 100, "the vectors of 0.23 are numbered below 101"
+    lic = licence_vectors()
+    for i, v in enumerate(lic, 101):
+        fname = "%03d-%s.json" % (i, v["name"])
+        files[fname] = json.dumps(v, indent=2, ensure_ascii=False) + "\n"
+    names = [v["name"] for v in vectors + lic]
     assert len(set(names)) == len(names), "a name is used twice"
     return files
+
+
+# --------------------------------------------------------------------------
+# Version 0.29: licence profiles (tool vectors from 101, their fixture trees)
+# --------------------------------------------------------------------------
+
+FIX = os.path.join("packs", "conformance", "tool-fixtures")
+LIC_TAG = "SPDX-License-" + "Identifier"  # split so no tool reads this file as labelled
+SRC = 'source  "goat-transformers spec/engine-spec.md, Version 0.29 (synthetic fixture, no external standard)"'
+
+TABLE_ROWS = [
+    # id, commercial, share_alike, field_of_use, distribution  -> profile (ruling 2a)
+    ("Apache-2.0", "yes", "false", "[]", "public"),                   # open
+    ("CC-BY-SA-4.0", "yes", "true", "[]", "public"),                  # open+copyleft
+    ("CC-BY-NC-SA-4.0", "no", "true", "[]", "public"),                # everything
+    ("CC-BY-4.0", "yes", "false", '["weapons that can harm humans"]', "public"),  # everything (field of use)
+    ("LicenseRef-unstated", "unknown", "false", "[]", "public"),      # everything
+    ("OGL-UK-3.0", "yes", "false", "[]", "controlled"),               # none
+]
+
+
+def table_text(rows, crlf=False, extra=""):
+    out = ["# The flags of the fixture's licences (spec 0.29, ruling 1c).", ""]
+    for lid, com, sa, fou, dist in rows:
+        out += ['[licences."%s"]' % lid, 'name = "%s"' % lid, "commercial = \"%s\"" % com,
+                "share_alike\t=  %s" % sa, "attribution = true", "field_of_use = %s" % fou,
+                'distribution = "%s"' % dist, ""]
+    text = "\n".join(out) + extra
+    return text.replace("\n", "\r\n") if crlf else text
+
+
+def module_text(name, uses=(), keys=()):
+    lines = ["module %s" % name, "version 0.29.0", "distribution public", SRC.replace("source  ", "source ")]
+    lines += ["uses %s" % u for u in uses]
+    lines += ['key %s float - "a fixture key"' % k for k in keys]
+    return "\n".join(lines) + "\n"
+
+
+def pack_text(fmt, uses=(), extra=""):
+    lines = ["format %s" % fmt, "version 0.29.0", "distribution public", SRC]
+    lines += ["uses %s" % u for u in uses]
+    lines += ["wire json", "field lat pos.lat float"]
+    return "\n".join(lines) + "\n" + extra
+
+
+def pack_reuse(*lids):
+    out = ["version = 1"]
+    for lid in lids:
+        out += ["", "[[annotations]]", 'path = "**"', 'precedence = "override"',
+                'SPDX-FileCopyrightText = "2026 goat-transformers fixture"', '%s = "%s"' % (LIC_TAG, lid)]
+    return "\n".join(out) + "\n"
+
+
+def module_licence(*lids, indent="", crlf=False):
+    text = "SPDX-FileCopyrightText: 2026 goat-transformers fixture\n" + "".join(
+        "%s%s:\t%s\n" % (indent, LIC_TAG, lid) for lid in lids)
+    return text.replace("\n", "\r\n") if crlf else text
+
+
+CORE = module_text("core", keys=["lat"])
+
+# Tree a: one pack per profile, through its own licence or a module it uses.
+# dir: (format, uses, pack licence or None, expected profile)
+TREE_A_PACKS = {
+    "plain": ("lic-plain", (), None, "open"),
+    "copyleft": ("lic-copyleft", (), "CC-BY-SA-4.0", "open+copyleft"),
+    "nc": ("lic-nc", (), "CC-BY-NC-SA-4.0", "everything"),
+    "fou": ("lic-fou", (), "CC-BY-4.0", "everything"),
+    "unstated": ("lic-unstated", (), "LicenseRef-unstated", "everything"),
+    "not-in-table": ("lic-not-in-table", (), "CC0-1.0", "everything"),
+    "closed": ("lic-closed", (), "OGL-UK-3.0", "none"),
+    "uses-book": ("lic-uses-book", ("book",), None, "everything"),
+    "uses-derived": ("lic-uses-derived", ("derived",), None, "everything"),
+    "uses-sa": ("lic-uses-sa", ("sa",), None, "open+copyleft"),
+    "zz-first-by-format": ("lic-aa", (), None, "open"),
+}
+TREE_A_MODULES = {
+    "core.def": (CORE, None),
+    "book.def": (module_text("book"), module_licence("CC-BY-NC-SA-4.0")),
+    "derived.def": (module_text("derived", uses=["book"]), None),
+    "sa.def": (module_text("sa"), module_licence("CC-BY-SA-4.0", indent="  ", crlf=True)),
+}
+RANK = ["open", "open+copyleft", "everything", "none"]
+
+
+def licence_trees():
+    """{repository path: bytes} of every fixture tree of 0.29."""
+    files = {}
+
+    def put(rel, text):
+        files[os.path.join(FIX, rel)] = text.encode("utf-8")
+
+    a = "licences-a"
+    put(a + "/licences.toml", table_text(TABLE_ROWS))
+    for f, (text, lic) in TREE_A_MODULES.items():
+        put("%s/model/%s" % (a, f), text)
+        if lic:
+            put("%s/model/%s.license" % (a, f), lic)
+    for d, (fmt, uses, lid, _) in TREE_A_PACKS.items():
+        put("%s/packs/%s/pack.def" % (a, d), pack_text(fmt, uses))
+        if lid:
+            put("%s/packs/%s/REUSE.toml" % (a, d), pack_reuse(lid))
+
+    # bad-table: field_of_use = [ ] is no form of ruling 1c
+    t = "licences-bad-table"
+    put(t + "/licences.toml", table_text(TABLE_ROWS[:1]).replace("field_of_use = []", "field_of_use = [ ]"))
+    put(t + "/model/core.def", CORE)
+    put(t + "/packs/plain/pack.def", pack_text("lic-plain"))
+
+    # bad-pack: two licence lines in one pack's REUSE.toml (valid REUSE, two annotations)
+    t = "licences-bad-pack"
+    put(t + "/licences.toml", table_text(TABLE_ROWS))
+    put(t + "/model/core.def", CORE)
+    put(t + "/packs/plain/pack.def", pack_text("lic-plain"))
+    put(t + "/packs/two/pack.def", pack_text("lic-two"))
+    put(t + "/packs/two/REUSE.toml", pack_reuse("CC-BY-SA-4.0", "CC-BY-NC-SA-4.0"))
+
+    # bad-module: a module nobody uses has two licence lines; read before any module loads (3b)
+    t = "licences-bad-module"
+    put(t + "/licences.toml", table_text(TABLE_ROWS))
+    put(t + "/model/core.def", CORE)
+    put(t + "/model/zz.def", module_text("zz"))
+    put(t + "/model/zz.def.license", module_licence("CC-BY-SA-4.0", "Apache-2.0"))
+    put(t + "/packs/plain/pack.def", pack_text("lic-plain"))
+
+    # core-copyleft: core counts for every pack (2c); a broken pack is skipped unread (3d)
+    t = "licences-core-copyleft"
+    put(t + "/licences.toml", table_text(TABLE_ROWS, crlf=True))
+    put(t + "/model/core.def", CORE)
+    put(t + "/model/core.def.license", module_licence("CC-BY-SA-4.0"))
+    put(t + "/packs/plain/pack.def", pack_text("lic-plain"))
+    put(t + "/packs/broken/pack.def", pack_text("lic-broken", extra="frobnicate everything\n"))
+    put(t + "/packs/broken/REUSE.toml", pack_reuse("CC-BY-NC-SA-4.0"))
+
+    # no-table: without licences.toml only Apache-2.0 is known (1c)
+    t = "licences-no-table"
+    put(t + "/model/core.def", CORE)
+    put(t + "/packs/plain/pack.def", pack_text("lic-plain"))
+    put(t + "/packs/copyleft/pack.def", pack_text("lic-copyleft"))
+    put(t + "/packs/copyleft/REUSE.toml", pack_reuse("CC-BY-SA-4.0"))
+    return files
+
+
+def licence_vectors():
+    vectors = []
+
+    def add(name, args, exit, out=None, kind=None):
+        v = {"name": name, "args": args, "exit": exit}
+        if out is not None:
+            v["stdout_text"] = out
+        if kind is not None:
+            v["error_kind"] = kind
+        vectors.append(v)
+
+    def tree(t):
+        return ["--packs", "%s/%s/packs" % (FIX.replace(os.sep, "/"), t)]
+
+    A = tree("licences-a")
+    rows = sorted(TREE_A_PACKS.items(), key=lambda kv: kv[0].encode())
+
+    def held(prof, p):
+        return RANK.index(prof) <= RANK.index(p)
+
+    def text_list(p=None):
+        return "".join("%s\t%s\t%s\t%s\n" % (d, fmt, lid or "Apache-2.0", prof)
+                       for d, (fmt, _, lid, prof) in rows if p is None or held(prof, p))
+
+    def json_list(p=None):
+        objs = ['{"pack":"%s","format":"%s","licence":"%s","profile":"%s"}' % (d, fmt, lid or "Apache-2.0", prof)
+                for d, (fmt, _, lid, prof) in rows if p is None or held(prof, p)]
+        return '{"packs":[' + ",".join(objs) + "]}\n"
+
+    def formats(p=None):
+        fmts = sorted((fmt for _, (fmt, _, _, prof) in rows if p is None or held(prof, p)), key=lambda s: s.encode())
+        return "".join("%s\t0.29.0\tjson\n" % f for f in fmts)
+
+    add("licences-every-pack", ["licences"] + A, 0, out=text_list())
+    for p in ("open", "open+copyleft", "everything"):
+        add("licences-profile-" + p.replace("+", "-"), ["licences"] + A + ["--profile", p], 0, out=text_list(p))
+    add("licences-json", ["licences"] + A + ["--json"], 0, out=json_list())
+    add("licences-json-first", ["licences", "--json"] + A, 0, out=json_list())
+    add("licences-json-between", ["licences", "--profile", "open", "--json"] + A, 0, out=json_list("open"))
+    add("list-formats-every-pack", ["list-formats"] + A, 0, out=formats())
+    add("list-formats-profile-open", ["list-formats"] + A + ["--profile", "open"], 0, out=formats("open"))
+    add("list-formats-profile-open-copyleft", ["list-formats"] + A + ["--profile", "open+copyleft"], 0,
+        out=formats("open+copyleft"))
+    add("packs-only-skips-a-pack-outside-the-profile",
+        ["list-formats"] + A + ["--profile", "open", "--packs-only", "nc,plain"], 0, out="lic-plain\t0.29.0\tjson\n")
+    add("packs-only-skips-it-twice",
+        ["list-formats"] + A + ["--profile", "open", "--packs-only", "nc,nc,plain"], 0, out="lic-plain\t0.29.0\tjson\n")
+    add("packs-only-name-checks-first",
+        ["list-formats"] + A + ["--profile", "open", "--packs-only", "no-such-pack"], 1, kind="unknown-format")
+    add("convert-a-format-outside-the-profile",
+        ["convert", "--from", "lic-nc", "--to", "lic-plain", "--profile", "open"] + A, 1, kind="unknown-format")
+    add("capability-a-format-outside-the-profile",
+        ["capability", "--from", "lic-plain", "--to", "lic-copyleft", "--profile", "open"] + A, 1, kind="unknown-format")
+    add("matrix-profile-open", ["matrix", "--profile", "open", "--packs-only", "plain,copyleft"] + A, 0,
+        out="from\tto\tgrade\tcarried\tdropped\nlic-plain\tlic-plain\tfull\tlat\t\n")
+    add("closed-is-in-no-profile", ["list-formats", "--profile", "everything", "--packs-only", "closed"] + A, 0, out="")
+
+    add("bad-table-with-a-profile", ["list-formats", "--profile", "everything"] + tree("licences-bad-table"), 1,
+        kind="bad-licence")
+    add("bad-table-without-a-profile", ["list-formats"] + tree("licences-bad-table"), 0, out="lic-plain\t0.29.0\tjson\n")
+    add("bad-table-licences", ["licences"] + tree("licences-bad-table"), 1, kind="bad-licence")
+    add("bad-pack-when-reached", ["list-formats", "--profile", "everything"] + tree("licences-bad-pack"), 1,
+        kind="bad-licence")
+    add("bad-pack-not-reached", ["list-formats", "--profile", "everything", "--packs-only", "plain"]
+        + tree("licences-bad-pack"), 0, out="lic-plain\t0.29.0\tjson\n")
+    add("bad-module-read-before-loading", ["list-formats", "--profile", "open", "--packs-only", "plain"]
+        + tree("licences-bad-module"), 1, kind="bad-licence")
+    add("bad-module-without-a-profile", ["list-formats", "--packs-only", "plain"] + tree("licences-bad-module"), 0,
+        out="lic-plain\t0.29.0\tjson\n")
+    add("core-counts-for-every-pack", ["list-formats", "--profile", "open"] + tree("licences-core-copyleft"), 0, out="")
+    add("core-counts-and-a-broken-pack-is-skipped",
+        ["list-formats", "--profile", "open+copyleft"] + tree("licences-core-copyleft"), 0,
+        out="lic-plain\t0.29.0\tjson\n")
+    add("a-broken-pack-held-is-loaded", ["list-formats", "--profile", "everything"] + tree("licences-core-copyleft"),
+        1, kind="unknown-directive")
+    add("no-table-knows-only-apache", ["licences", "--profile", "open+copyleft"] + tree("licences-no-table"), 0,
+        out="plain\tlic-plain\tApache-2.0\topen\n")
+    add("no-table-every-pack", ["licences"] + tree("licences-no-table"), 0,
+        out="copyleft\tlic-copyleft\tCC-BY-SA-4.0\teverything\nplain\tlic-plain\tApache-2.0\topen\n")
+
+    for name, args in [
+        ("profile-unknown", ["list-formats"] + A + ["--profile", "commercial"]),
+        ("profile-empty", ["list-formats"] + A + ["--profile", ""]),
+        ("profile-upper-case", ["list-formats"] + A + ["--profile", "Open"]),
+        ("profile-without-value", ["list-formats"] + A + ["--profile"]),
+        ("profile-twice", ["list-formats"] + A + ["--profile", "open", "--profile", "open"]),
+        ("json-on-list-formats", ["list-formats"] + A + ["--json"]),
+        ("json-twice", ["licences", "--json", "--json"] + A),
+        ("json-with-a-value", ["licences"] + A + ["--json=yes"]),
+        ("licences-with-from", ["licences"] + A + ["--from", "lic-plain"]),
+    ]:
+        add("usage-" + name, args, 2)
+    return vectors
+
+
+def fixture_problems(write):
+    """Write, or compare, the fixture trees of 0.29 (this script owns
+    packs/conformance/tool-fixtures/licences-*/). -> stale paths."""
+    want = licence_trees()
+    have = set()
+    base = os.path.join(ROOT, FIX)
+    for d in sorted(os.listdir(base)):
+        if d.startswith("licences-"):
+            for folder, _, names in os.walk(os.path.join(base, d)):
+                have |= {os.path.relpath(os.path.join(folder, n), ROOT) for n in names}
+    stale = []
+    for rel in sorted(have - set(want)):
+        stale.append(rel)
+        if write:
+            os.remove(os.path.join(ROOT, rel))
+    for rel, data in sorted(want.items()):
+        path = os.path.join(ROOT, rel)
+        try:
+            with open(path, "rb") as fh:
+                same = fh.read() == data
+        except OSError:
+            same = False
+        if not same:
+            stale.append(rel)
+            if write:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                with open(path, "wb") as fh:
+                    fh.write(data)
+    return stale
 
 
 def main(argv):
@@ -294,7 +566,10 @@ def main(argv):
                         bad.append(name)
         for b in bad:
             print("stale: %s/%s" % (OWNED, b), file=sys.stderr)
-        if bad:
+        fixtures = fixture_problems(write=False) if out == os.path.join(ROOT, OWNED) else []
+        for b in fixtures:
+            print("stale: %s" % b, file=sys.stderr)
+        if bad or fixtures:
             return 1
         print("conformance-tool-vectors.py --check: ok (%d tool vectors)" % len(files), file=sys.stderr)
         return 0
@@ -305,6 +580,8 @@ def main(argv):
     for name, text in files.items():
         with open(os.path.join(out, name), "w", encoding="utf-8") as fh:
             fh.write(text)
+    if out == os.path.join(ROOT, OWNED):
+        fixture_problems(write=True)
     print("wrote %d tool vectors to %s" % (len(files), OWNED))
     return 0
 

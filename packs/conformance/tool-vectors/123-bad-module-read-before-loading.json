@@ -1,0 +1,14 @@
+{
+  "name": "bad-module-read-before-loading",
+  "args": [
+    "list-formats",
+    "--profile",
+    "open",
+    "--packs-only",
+    "plain",
+    "--packs",
+    "packs/conformance/tool-fixtures/licences-bad-module/packs"
+  ],
+  "exit": 1,
+  "error_kind": "bad-licence"
+}

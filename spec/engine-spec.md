@@ -4684,6 +4684,207 @@ field  <key>  <locator>  iso8601_s
    nothing finer. `iso8601_short` (0.18) writes the fraction when it is not
    zero; `iso8601_s` never writes one.
 
+# Version 0.29: licence profiles in the loaders
+
+<!-- REUSE-IgnoreStart: this section quotes licence tags; they label no file -->
+
+Status: Written. Each pack carries one licence (`packs/<name>/REUSE.toml`),
+and each model module may carry one (`model/<file>.def.license`). The flags
+of every licence are in one table, `licences.toml`, beside the packs
+directory (`LICENSING.md`). From these, every pack and module belongs to one
+of three named profiles, or to none, and an engine can be asked to load only
+the packs and modules of one profile. With no profile asked for, an engine
+reads no licence file and loads as before, so every earlier result holds; the
+one exception is the `licences` subcommand (ruling 4), which always reads
+them. `tools/licences.py` computes the same profiles from the same files, and
+`tools/licences.py --check` (CI) holds every file of the repository to the
+forms ruling 1 reads, so the two agree on every tree that passes CI.
+
+## The profiles
+
+| Profile | Holds |
+|---|---|
+| `open` | licences with `commercial = "yes"`, `share_alike = false` and an empty `field_of_use` |
+| `open+copyleft` | `open`, and those with `share_alike = true` (commercial `yes`, no field of use) |
+| `everything` | every public licence: also `commercial = "no"` or `"unknown"`, or a field of use |
+
+The profiles are ordered `open` < `open+copyleft` < `everything` < none.
+"Wider" and "widest" in this section follow that order, so none is wider
+than `everything`. Each of the three profiles holds itself and the profiles
+before it; none is held by none of the three.
+
+## Rulings for 0.29
+
+### Ruling 1: the files an engine reads
+
+**Lines.** Each file of this ruling is read as UTF-8 text cut into lines at
+each line feed (0x0A); one carriage return (0x0D) directly before a line
+feed, or at the end of the file, is removed with it. A line is then trimmed
+of spaces and tabs at both ends. "Matches" means the whole trimmed line
+matches. A file that is not valid UTF-8 is `bad-licence`. A byte-order mark
+is not removed (so a licence line that follows one is not a licence line).
+
+**A licence id** is one or more of the characters `A`-`Z`, `a`-`z`, `0`-`9`,
+`.`, `-` and `+`, compared as exact text (`apache-2.0` is not `Apache-2.0`).
+
+**Where.** `licences.toml` is the file named by the `--packs` text as given
+followed by `/../licences.toml`, resolved by the operating system as the
+default of `--models` is (Version 0.23). The module licence files are in the
+directory the modules are loaded from. A file "does not exist" only when the
+operating system reports that no entry has that name, or that a part of the
+path before the last is not a directory or does not exist; any other failure to read it (a directory, no
+permission) is `bad-licence`. An engine never reads the `REUSE.toml` at the
+root of the tree.
+
+- **1a. The licence of a pack** in directory `d` is read from
+  `<packs>/d/REUSE.toml`. Its licence line matches `SPDX-License-Identifier`,
+  any spaces or tabs, `=`, any spaces or tabs, `"`, a licence id, `"`. Every
+  other line is skipped. The file must hold exactly one licence line; none
+  or more than one, or a line that begins with `SPDX-License-Identifier`
+  followed by a space, a tab or `=` and is not a licence line, is
+  `bad-licence`. When the file does not exist the licence is `Apache-2.0`.
+- **1b. The licence of a module** in file `m.def` is read from
+  `<models>/m.def.license`. Its licence line matches
+  `SPDX-License-Identifier:`, one or more spaces or tabs, a licence id. The
+  rest is as 1a: exactly one, a line that begins with
+  `SPDX-License-Identifier:` and is not a licence line is `bad-licence`, and
+  no file is `Apache-2.0`.
+- **1c. The table.** In `licences.toml` an empty line, or one that begins
+  with `#`, is skipped. A line `[licences."<id>"]`, with a licence id and no
+  space, starts the row of that licence; a second row of the same id is
+  `bad-licence`. Inside a row exactly these four lines must stand, once each,
+  in any order, with any spaces or tabs around `=`:
+
+  | Line | Value, exactly |
+  |---|---|
+  | `commercial = "<v>"` | `yes`, `no` or `unknown` |
+  | `share_alike = <v>` | `true` or `false` |
+  | `field_of_use = <v>` | `[]` (empty), or `["`, then any characters or none, then `"]`, on that line (not empty: `[""]` is a field of use) |
+  | `distribution = "<v>"` | `public` or `controlled` |
+
+  Three more lines are allowed in a row, at most once each, and skipped:
+  one that begins `name`, one that begins `url` and one that begins
+  `attribution`, each followed by a space, a tab or `=`. Any
+  other line (a line before the first row, a value not in the table, any
+  other key, `field_of_use = [ ]`, a value followed by a comment, a
+  `[`-line that is not a row header) is `bad-licence`. A row that lacks one
+  of the four lines is `bad-licence`. When `licences.toml` does not exist,
+  the table has one row, `Apache-2.0`, with `commercial = "yes"`,
+  `share_alike = false`, `field_of_use = []` and `distribution = "public"`.
+
+### Ruling 2: the profile of a licence, a module and a pack
+
+- **2a.** A licence in the table with `distribution = "controlled"` is in no
+  profile. Otherwise it is in `open` when commercial is `yes`, its field of
+  use is empty and share-alike is `false`; in `open+copyleft` when commercial
+  is `yes`, the field of use is empty and share-alike is `true`; in
+  `everything` otherwise. A licence not in the table is in `everything`.
+- **2b. The modules.** Profiles are computed over every module file of the
+  model directory (the files Version 0.23, Loading, 1 loads), whether or not
+  it will be loaded. Two lines of a module file or `pack.def` are read for
+  this, each trimmed as ruling 1 trims: a line that matches `module`, one or
+  more spaces or tabs, and a name; and a line that matches `uses`, one or
+  more spaces or tabs, and a name. A name is one or more of `A`-`Z`, `a`-`z`,
+  `0`-`9`, `_` and `-`. Every other line is passed over here, a `uses` line
+  with a comment or a quoted name included; the file's own load reports
+  whatever is wrong with it if it is loaded. A module's name is that of its
+  first `module` line; a module file with no such line has no name. A
+  module or `pack.def` file that cannot be read, or is not UTF-8, adds no
+  line here and is never `bad-licence`. A module's profile is the widest of
+  its licence's profile and the profiles of the modules it uses, directly or
+  through others. A `uses` name that no module file has adds nothing. When
+  two module files have the same name, a `uses` of that name takes the wider
+  of them.
+- **2c. The packs.** A pack's profile is the widest of its licence's profile,
+  the profile of the module named `core` (every pack uses `core`, ruling 1
+  of 0.4: the module file or files whose `module` line names `core`; none
+  adds nothing), and the profiles of the modules its `uses` lines name, read
+  as in 2b.
+
+### Ruling 3: loading with a profile
+
+- **3a.** An engine's loader takes an optional profile, one of the three
+  names. A name not one of them is refused before anything is read: on the
+  command line a usage error (ruling 4); in a library, `bad-licence`.
+- **3b. Order.** With a profile, before any module is loaded, the engine
+  reads `licences.toml` (1c), then, for each module file in file order
+  (`core.def` first, then byte order of file name, not the order in which
+  modules are loaded after the modules they use), its licence (1b) and its
+  `module` and `uses` lines. The first file that cannot be read as ruling 1 says is the error,
+  `bad-licence`, and nothing is loaded. Then it computes every module's
+  profile (2b).
+- **3c. Modules.** A module whose profile the profile does not hold is not
+  loaded; every other module is loaded as before, in the same order.
+- **3d. Packs.** Each pack is reached as Version 0.23, Loading, 2 says, and
+  the checks of a `--packs-only` name there (one path component, a
+  subdirectory holding `pack.def`, else `unknown-format`) come first. Then
+  the engine reads the pack's licence (1a) and the `uses` lines of its
+  `pack.def` (as 2b), computes its profile (2c), and, when the profile does
+  not hold it, skips the pack: it is not otherwise read or checked, so a
+  pack that would fail to load is skipped without its failure. A pack held
+  by the profile is loaded as before.
+- **3e. Skipped.** A module or pack that is not loaded is as if it were not
+  there: it takes part in no `duplicate-format` or `duplicate-module` check,
+  a `--packs-only` name given twice whose pack is skipped is skipped twice,
+  a later `--from` or `--to` naming its format is `unknown-format`, and
+  `list-formats`, `capability`, `matrix` and `licences` do not show it. (With
+  no profile given nothing is skipped, and a pack in none is loaded.)
+- **3f.** `bad-licence` is a load failure (ruling 4 of 0.11), with its kind
+  and message like every other.
+
+### Ruling 4: the command line
+
+- **4a.** `--profile <open | open+copyleft | everything>` is one more of the
+  `<options>` of Version 0.23, taken by `convert`, `list-formats`,
+  `capability`, `matrix` and `licences`. Its default is no profile.
+- **4b.** `<tool> licences <options>` is a fifth subcommand. Its options are
+  `<options>` and `--json`. `--json` is the one option of the contract that
+  takes no value: where an option name stands, `--json` is the whole option,
+  and the next argument is again at a place where an option name stands. It
+  is given at most once.
+- **4c.** `licences` reads every file of ruling 1 in the order of 3b, with
+  or without a profile, then loads as 3c and 3d say (with no profile, every
+  module and pack is held, but each pack's licence and `uses` are still read
+  as 3d says, before it is loaded). It writes one line per loaded pack, in
+  byte order of the pack's directory name: the directory name, a tab, the
+  format (written as `list-formats` writes it, without quotes), a tab, the
+  licence, a tab, the pack's own profile (2c, whatever profile was asked
+  for), a line feed. With `--json`
+  it writes instead `{"packs":[`, then one object per pack in the same
+  order, separated by `,`, then `]}` and a line feed. An object is
+  `{"pack":"<dir>","format":"<format>","licence":"<licence>","profile":"<profile>"}`
+  with no space anywhere; in each value `"` is written `\"`, `\` is written
+  `\\`, each character below U+0020 is written `\u` and four lower-case hex
+  digits, and every other character is itself, in UTF-8. With no profile, a
+  pack in no profile is listed, and its profile is written `none`.
+- **4d.** The usage errors of Version 0.23 change: in 2, `licences` is a
+  valid first argument; in 3, `--profile` is a name every subcommand but
+  `help` takes, and `--json` a name only `licences` takes; and there is a
+  new one, 11: a `--profile` value that is not `open`, `open+copyleft` or
+  `everything`.
+
+### Ruling 5: what is not ruled
+
+- The licence texts in `LICENSES/`, the `attribution` flag and the `name` and
+  `url` of a row are for people and for `tools/licences.py`; an engine does
+  not read them.
+- Whether a `REUSE.toml` is valid REUSE beyond its licence line is checked by
+  `reuse lint` and `tools/licences.py --check` in CI.
+- A pack directory name that is not valid UTF-8, in the output of
+  `licences`.
+- `tools/licences.py` reads `model/` beside `packs/`; it gives an engine's
+  result only when `--models` is that directory.
+- A format value that holds a tab, in the output of `licences`.
+
+## Vectors
+
+Tool vectors `packs/conformance/tool-vectors/` numbered from 101, written by
+`tools/gen/conformance-tool-vectors.py`, run against the fixture trees under
+`packs/conformance/tool-fixtures/licences-*/`, each with its own
+`licences.toml`, `model/` and `packs/`.
+
+<!-- REUSE-IgnoreEnd -->
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in
