@@ -11,7 +11,7 @@ on this page lists.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="figures/catalog-dark.svg">
-  <img src="figures/catalog-light.svg" width="760" alt="Every public format, grouped into 62 families in 11 domains: air, land vehicles, sea, space, uncrewed systems and robots, C2 and tactical, sensors, transport, IoT, networks, and maps, weather and alerts. Each family is a tile with its number of packs, from ArduPilot DataFlash log, PX4 ULog, Space Data Standards and Cyphal with hundreds each, to single-pack formats such as GDL 90, AIS and CAP. Synthetic conformance and demo packs are not shown.">
+  <img src="figures/catalog-light.svg" width="760" alt="Every public format, grouped into families in 11 domains, every family named (the figure's title gives the number of families and formats): air, land vehicles, sea, space, uncrewed systems and robots, C2 and tactical, sensors, transport, IoT, networks, and maps, weather and alerts. Each family is a tile with its number of packs, from ArduPilot DataFlash log, PX4 ULog, Space Data Standards and Cyphal with hundreds each, to single-pack formats such as GDL 90, AIS and CAP. Synthetic conformance and demo packs are not shown.">
 </picture>
 
 Every family of public formats the library covers, by domain, with its number

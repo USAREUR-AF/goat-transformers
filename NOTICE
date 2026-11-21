@@ -84,6 +84,13 @@ Packs awc-*; modules awc*
   Weather Center) in the public domain; no endorsement by NOAA or the NWS is
   implied.
 
+Pack ax25-frame
+  From AX.25 Link Access Protocol for Amateur Packet Radio, Version 2.2
+  (1998). Copyright (c) 1997 by Tucson Amateur Packet Radio Corporation;
+  portions Copyright (c) 1984, 1993 by The American Radio Relay League, Inc.
+  No licence stated; labelled LicenseRef-unstated. Layouts restated, no text
+  copied.
+
 Pack c2sim; module c2sim
   C2SIM_SMX_LOX.xsd, OpenC2SIM/C2SIMArtifacts, commit 947d8b5. Copyright (c)
   2022 OpenC2SIM Project, MIT License. Schema of SISO-STD-019-2020 (C2SIM).
@@ -129,6 +136,11 @@ Packs ccsds-sdls-ep-pdu, ccsds-mal-spp-packet
   with attribution under the CCSDS reproduction permission statement; no
   text, table or figure reprinted.
 
+Pack ccsds-sdls-security-header
+  From CCSDS 355.0-B-2, Space Data Link Security Protocol (July 2022),
+  https://ccsds.org/Pubs/355x0b2.pdf. Reused with attribution under the CCSDS
+  reproduction permission statement; no text, table or figure reprinted.
+
 Packs ccsds-space-packet, ccsds-tm-frame, ccsds-tc-frame, ccsds-aos-frame,
 ccsds-clcw; modules ccsdssp, ccsdstm, ccsdstc, ccsdsaos, ccsdsclcw
   CCSDS 133.0-B-2 Space Packet Protocol; CCSDS 132.0-B-3 TM Space Data Link
@@ -170,6 +182,12 @@ Pack cot-protobuf; module takproto
 Pack cot-xml; module core
   Cursor on Target event schema, The MITRE Corporation, approved for public
   release.
+
+Packs csp-v1-packet, csp-v2-packet
+  CSP 1.x and 2.x headers restated from libcsp src/csp_id.c and
+  include/csp/csp_types.h, https://github.com/libcsp/libcsp tag v2.1 commit
+  48f7fb0b and tag v1.6 commit 87006959. Copyright (c) 2009-2021 CSP
+  Contributors. MIT License. No code or comments copied.
 
 Packs cyphal-* (250); modules cy<namespace> (77)
   Cyphal public regulated DSDL data types,
@@ -374,6 +392,11 @@ Packs isa, isa-message, isa-ipl1, isa-xml; modules isa, isa1, isaxml
   Distribution is Unlimited. The files carry no license text and no copyright
   line.
 
+Pack kiss-frame
+  From M. Chepponis and P. Karn, The KISS TNC: A simple Host-to-TNC
+  communications protocol (1987), http://www.ka9q.net/papers/kiss.html. No
+  copyright notice or licence stated; labelled LicenseRef-unstated.
+
 Pack kml; module kml
   OGC KML 2.2.0 (OGC 07-147r2) and its schema ogckml22.xsd. Copyright 2007,
   2008 Open Geospatial Consortium, Inc., used under the OGC Document License
@@ -385,6 +408,12 @@ Packs kuksa-val-v1-*, kuksa-val-v2-*; modules kuksaval*
   https://github.com/eclipse-kuksa/kuksa-proto. Apache License 2.0, Copyright
   (c) Contributors to the Eclipse Foundation. Field numbers, names and types
   only.
+
+Packs lowpan-frame, rpl-control
+  From RFC 4944, RFC 6282, RFC 7400 and RFC 6550. Copyright IETF Trust and the
+  persons identified as the document authors; BCP 78 and the IETF Trust's
+  Legal Provisions Relating to IETF Documents. Layouts restated, no text
+  copied.
 
 Packs mavlink2-ardupilotmega, mavlink2-asluav, mavlink2-avssuas,
 mavlink2-csairlink, mavlink2-cubepilot, mavlink2-development, mavlink2-icarous,
@@ -597,6 +626,11 @@ Packs overture-*; modules overture*
   International (CC BY 4.0). The packs are derived from the schema, restating
   its structure, and are not endorsed by the Overture Maps Foundation.
 
+Pack pocsag-batch
+  From Recommendation ITU-R M.584-2, Codes and formats for radio paging,
+  Annex 1, International Telecommunication Union. No licence stated; labelled
+  LicenseRef-unstated. Layouts restated, no text copied.
+
 Pack ptp-message; module ptp
   linuxptp, files msg.h, ddt.h and tlv.h of
   https://github.com/richardcochran/linuxptp at tag v4.4 (commit 01886673).
@@ -760,6 +794,13 @@ Pack sflow5-datagram; module sflow
   LicenseRef-sFlow-License.txt). Datagram layout restated; the pack implements
   part of the specification only (its pack.md lists what).
 
+Pack smb2-message; module smb2
+  Microsoft, [MS-SMB2]: Server Message Block (SMB) Protocol Versions 2 and 3,
+  Open Specifications documentation, revision 88.0 (2026). Copyright
+  Microsoft Corporation; used under the Open Specifications copyright
+  permission for implementations, which grants no patent licence
+  (LicenseRef-MS-OpenSpec). Layouts restated; no text copied.
+
 Pack sparkplug-b; module sparkplug
   Sparkplug B payload definition sparkplug_b.proto, from
   https://github.com/eclipse-tahu/tahu. Copyright (c) 2015, 2018 Cirrus Link
@@ -770,6 +811,12 @@ Packs srt-packet, dcep, rtp-packet, rtp-header-extension
   From draft-sharabayko-srt-01, RFC 8832, RFC 3550 and RFC 8285. Copyright
   IETF Trust and the persons identified as the document authors; BCP 78 and
   the IETF Trust's Legal Provisions Relating to IETF Documents.
+
+Packs ssh-message, ssh-packet; modules sshmsg, sshpkt
+  IETF RFC 4251, RFC 4252, RFC 4253, RFC 4254 and RFC 8308 (SSH),
+  https://www.rfc-editor.org/ (The Internet Society or the IETF Trust and the
+  persons identified as the document authors, BCP 78). Layouts restated; no
+  text copied.
 
 Pack stac-item; module stac
   SpatioTemporal Asset Catalog (STAC) 1.1.0 Item JSON Schema,

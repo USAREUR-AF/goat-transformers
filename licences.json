@@ -80,6 +80,16 @@
       "distribution": "public",
       "profile": "open"
     },
+    "LicenseRef-MS-OpenSpec": {
+      "name": "Microsoft Open Specifications copyright permission (implementations and their documentation; no patent licence granted)",
+      "url": "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/5606ad47-5ee0-437a-817e-70c366052962",
+      "commercial": "unknown",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "everything"
+    },
     "LicenseRef-NGA-MSI": {
       "name": "NGA Maritime Safety Information: no copyright claimed; NGA disclaimer required where NGA is named",
       "url": "https://msi.nga.mil",
@@ -186,6 +196,11 @@
       "licence": "Apache-2.0",
       "profile": "everything",
       "because": "uses module adsb (CC-BY-NC-SA-4.0)"
+    },
+    "ais-binary-regional": {
+      "format": "ais-binary-regional",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "aisstream": {
       "format": "aisstream",
@@ -394,6 +409,11 @@
     },
     "arsdk-proto-vehicle": {
       "format": "arsdk-proto-vehicle",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ax25-frame": {
+      "format": "ax25-frame",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -1777,6 +1797,11 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "kiss-frame": {
+      "format": "kiss-frame",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "kml": {
       "format": "kml",
       "licence": "LicenseRef-OGC-Software",
@@ -2426,6 +2451,11 @@
       "format": "nga-msi-wpi",
       "licence": "LicenseRef-NGA-MSI",
       "profile": "open"
+    },
+    "ntrip-sourcetable-line": {
+      "format": "ntrip-sourcetable-line",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "ocpp16-authorize": {
       "format": "ocpp16-authorize",
@@ -3874,6 +3904,11 @@
     },
     "pfcp": {
       "format": "pfcp",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "pocsag-batch": {
+      "format": "pocsag-batch",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -5382,6 +5417,21 @@
       "licence": "CC-BY-4.0",
       "profile": "open"
     },
+    "rinex-nav-line": {
+      "format": "rinex-nav-line",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "rinex-obs-line": {
+      "format": "rinex-obs-line",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "rtz-route": {
+      "format": "rtz-route",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "sdm-aeronautics-aircraft": {
       "format": "sdm-aeronautics-aircraft",
       "licence": "CC-BY-4.0",
@@ -5852,6 +5902,26 @@
       "licence": "LicenseRef-sFlow-License",
       "profile": "open"
     },
+    "shelly-notify-event": {
+      "format": "shelly-notify-event",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "shelly-notify-status": {
+      "format": "shelly-notify-status",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "shelly-rpc-request": {
+      "format": "shelly-rpc-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "shelly-rpc-response": {
+      "format": "shelly-rpc-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "signalk-delta": {
       "format": "signalk-delta",
       "licence": "CC-BY-SA-2.0",
@@ -5866,6 +5936,11 @@
       "format": "signalk-vessel",
       "licence": "CC-BY-SA-2.0",
       "profile": "open+copyleft"
+    },
+    "smb2-message": {
+      "format": "smb2-message",
+      "licence": "LicenseRef-MS-OpenSpec",
+      "profile": "everything"
     },
     "sml-message": {
       "format": "sml-message",
@@ -5902,6 +5977,11 @@
     "adsb.def": {
       "module": "adsb",
       "licence": "CC-BY-NC-SA-4.0",
+      "profile": "everything"
+    },
+    "aisregion.def": {
+      "module": "aisregion",
+      "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
     "aisstream.def": {
@@ -6111,6 +6191,11 @@
     },
     "arsdkprotovehicle.def": {
       "module": "arsdkprotovehicle",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ax25.def": {
+      "module": "ax25",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -7469,6 +7554,11 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "kiss.def": {
+      "module": "kiss",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "kml.def": {
       "module": "kml",
       "licence": "LicenseRef-OGC-Software",
@@ -8098,6 +8188,11 @@
       "module": "ngawpi",
       "licence": "LicenseRef-NGA-MSI",
       "profile": "open"
+    },
+    "ntrip.def": {
+      "module": "ntrip",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "ocpp16authorize.def": {
       "module": "ocpp16authorize",
@@ -9544,10 +9639,30 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "pocsag.def": {
+      "module": "pocsag",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "px4ulog.def": {
       "module": "px4ulog",
       "licence": "CC-BY-4.0",
       "profile": "open"
+    },
+    "rinexnav.def": {
+      "module": "rinexnav",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "rinexobs.def": {
+      "module": "rinexobs",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "rtz.def": {
+      "module": "rtz",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "sdmaeroallergenobserved.def": {
       "module": "sdmaeroallergenobserved",
@@ -10019,6 +10134,11 @@
       "licence": "LicenseRef-sFlow-License",
       "profile": "open"
     },
+    "shelly.def": {
+      "module": "shelly",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "signalkdelta.def": {
       "module": "signalkdelta",
       "licence": "CC-BY-SA-2.0",
@@ -10033,6 +10153,11 @@
       "module": "signalkvessel",
       "licence": "CC-BY-SA-2.0",
       "profile": "open+copyleft"
+    },
+    "smb2.def": {
+      "module": "smb2",
+      "licence": "LicenseRef-MS-OpenSpec",
+      "profile": "everything"
     },
     "sml.def": {
       "module": "sml",
