@@ -1,0 +1,9 @@
+{
+  "name": "tasmota-sensor-energy-phases",
+  "from": "tasmota-sensor",
+  "to": "tasmota-sensor",
+  "input": "{\"Time\":\"2026-11-21T10:15:30\",\"ENERGY\":{\"Total\":1.5,\"Voltage\":[230,231,229]}}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; a multi-phase meter writes an array where the float transform needs a number"
+}

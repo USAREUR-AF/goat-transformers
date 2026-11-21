@@ -1,0 +1,15 @@
+{
+  "name": "tasmota-sensor-two-ds18b20",
+  "from": "tasmota-sensor",
+  "to": "tasmota-sensor",
+  "input": "{\"Time\":\"2026-11-21T10:15:30\",\"DS18B20-2\":{\"Id\":\"01193A4B5C6D\",\"Temperature\":-5.5},\"DS18B20-1\":{\"Id\":\"0316A27984FF\",\"Temperature\":18.1},\"TempUnit\":\"C\"}",
+  "expect": "{\"Time\":\"2026-11-21T10:15:30\",\"DS18B20-1\":{\"Id\":\"0316A27984FF\",\"Temperature\":18.1},\"DS18B20-2\":{\"Id\":\"01193A4B5C6D\",\"Temperature\":-5.5},\"TempUnit\":\"C\"}",
+  "model": {
+    "tasmota.ds18b20_1_temperature": "18.1",
+    "tasmota.ds18b20_2_temperature": "-5.5",
+    "tasmota.ds18b20_2_id": "01193A4B5C6D",
+    "tasmota.temp_unit": "C"
+  },
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; the numbered sensors in line order; a negative temperature"
+}

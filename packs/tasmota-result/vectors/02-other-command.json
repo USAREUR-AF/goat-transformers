@@ -1,0 +1,14 @@
+{
+  "name": "tasmota-result-other-command",
+  "from": "tasmota-result",
+  "to": "tasmota-result",
+  "input": "{\"Dimmer\":40,\"Fade\":\"OFF\"}",
+  "expect": "{\"Dimmer\":40,\"Fade\":\"OFF\"}",
+  "model": {
+    "@absent": [
+      "tasmota.power"
+    ]
+  },
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; a result with no mapped member is all residue"
+}

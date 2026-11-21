@@ -1,0 +1,9 @@
+{
+  "name": "tasmota-result-to-state",
+  "from": "tasmota-result",
+  "to": "tasmota-state",
+  "input": "{\"POWER1\":\"ON\",\"Dimmer\":40}",
+  "expect": "{\"POWER1\":\"ON\"}",
+  "source": "constructed",
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; the residue of RESULT is not written to STATE"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Tasmota",
+  "domain": "iot",
+  "prefixes": [
+    "tasmota-"
+  ]
+}

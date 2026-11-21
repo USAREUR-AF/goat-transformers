@@ -1,0 +1,43 @@
+# Tasmota's tele/<topic>/SENSOR payload: energy, DS18B20, BME280, BMP280 and AM2301. Public.
+format        tasmota-sensor
+version       0.1.0
+distribution  public
+source        "Tasmota (https://github.com/arendst/Tasmota, GPL-3.0) release v16.0.0, commit 1c2173927cdf1be61759bcc3b064b9511a18e5d7: tasmota_support/support_tasmota.ino (MqttShowState), tasmota_xdrv_driver/xdrv_03_energy.ino, tasmota_xsns_sensor/xsns_05_ds18x20.ino, xsns_09_bmp.ino, xsns_06_dht_v6.ino, include/i18n.h (the JSON member names); member names restated, no code copied"
+uses          tasmota
+wire          json
+field  tasmota.time_local  Time  string
+field  tasmota.energy_totalstarttime  ENERGY.TotalStartTime  string
+field  tasmota.energy_total  ENERGY.Total  float
+field  tasmota.energy_yesterday  ENERGY.Yesterday  float
+field  tasmota.energy_today  ENERGY.Today  float
+field  tasmota.energy_period  ENERGY.Period  float
+field  tasmota.energy_power  ENERGY.Power  float
+field  tasmota.energy_apparentpower  ENERGY.ApparentPower  float
+field  tasmota.energy_reactivepower  ENERGY.ReactivePower  float
+field  tasmota.energy_factor  ENERGY.Factor  float
+field  tasmota.energy_frequency  ENERGY.Frequency  float
+field  tasmota.energy_voltage  ENERGY.Voltage  float
+field  tasmota.energy_current  ENERGY.Current  float
+field  tasmota.ds18b20_id  DS18B20.Id  string
+field  tasmota.ds18b20_temperature  DS18B20.Temperature  float
+field  tasmota.ds18b20_1_id  DS18B20-1.Id  string
+field  tasmota.ds18b20_1_temperature  DS18B20-1.Temperature  float
+field  tasmota.ds18b20_2_id  DS18B20-2.Id  string
+field  tasmota.ds18b20_2_temperature  DS18B20-2.Temperature  float
+field  tasmota.ds18b20_3_id  DS18B20-3.Id  string
+field  tasmota.ds18b20_3_temperature  DS18B20-3.Temperature  float
+field  tasmota.ds18b20_4_id  DS18B20-4.Id  string
+field  tasmota.ds18b20_4_temperature  DS18B20-4.Temperature  float
+field  tasmota.bme280_temperature  BME280.Temperature  float
+field  tasmota.bme280_humidity  BME280.Humidity  float
+field  tasmota.bme280_dewpoint  BME280.DewPoint  float
+field  tasmota.bme280_pressure  BME280.Pressure  float
+field  tasmota.bme280_seapressure  BME280.SeaPressure  float
+field  tasmota.bmp280_temperature  BMP280.Temperature  float
+field  tasmota.bmp280_pressure  BMP280.Pressure  float
+field  tasmota.bmp280_seapressure  BMP280.SeaPressure  float
+field  tasmota.am2301_temperature  AM2301.Temperature  float
+field  tasmota.am2301_humidity  AM2301.Humidity  float
+field  tasmota.am2301_dewpoint  AM2301.DewPoint  float
+field  tasmota.temp_unit  TempUnit  string
+field  tasmota.pressure_unit  PressureUnit  string
