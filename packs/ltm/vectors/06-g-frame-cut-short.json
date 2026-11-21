@@ -1,0 +1,9 @@
+{
+  "name": "g-frame-cut-short",
+  "from": "ltm",
+  "to": "ltm",
+  "input": "245447000000000000",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV src/main/telemetry/ltm.c at 21adf64; a G frame needs 14 payload bytes"
+}

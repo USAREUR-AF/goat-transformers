@@ -1,0 +1,16 @@
+{
+  "name": "analog-roundtrip",
+  "from": "msp",
+  "to": "msp",
+  "input": "244d3e076ea25203f20306ff",
+  "expect": "244d3e076ea25203f20306ff",
+  "model": {
+    "@kind": "analog",
+    "msp.analog_vbat": "162",
+    "msp.analog_mah_drawn": "850",
+    "msp.analog_rssi": "1010",
+    "msp.analog_amperage": "-250"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV msp_messages.json at 21adf64 (MSP v1 reply frame); command 110, payload 7 bytes"
+}

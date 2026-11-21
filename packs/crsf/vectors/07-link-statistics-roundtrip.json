@@ -1,0 +1,16 @@
+{
+  "name": "link-statistics-roundtrip",
+  "from": "crsf",
+  "to": "crsf",
+  "input": "c80c14414664fd010203486207",
+  "expect": "c80c14414664fd010203486207",
+  "model": {
+    "@kind": "link_statistics",
+    "crsf.link_up_rssi_ant1": "65",
+    "crsf.link_up_snr": "-3",
+    "crsf.link_down_snr": "7",
+    "crsf.link_down_quality": "98"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "TBS CRSF specification (CRSFv3), crsf.md at a73f7dc, sections Frame Construction and Broadcast Frame Types"
+}

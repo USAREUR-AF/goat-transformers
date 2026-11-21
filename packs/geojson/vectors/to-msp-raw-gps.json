@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-msp-raw-gps",
+  "from": "geojson",
+  "to": "msp",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.1234567,51.5012345]},\"properties\":{\"course\":270.5,\"speed_ms\":15.5}}",
+  "expect": "244d3e126a0000f976b21e7929edff00000e06910a0000",
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV msp_messages.json at 21adf64 (MSP v1 reply frame); raw_gps is the first kind whose requires (lat, lon) hold; fields with no value are zero"
+}

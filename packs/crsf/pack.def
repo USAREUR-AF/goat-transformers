@@ -1,0 +1,92 @@
+# CRSF (Crossfire / ExpressLRS serial protocol, CRSFv3): broadcast telemetry frames, one kind
+# per frame type. Written by hand from the TBS CRSF specification; pack.md has the layout,
+# the evidence for every shared key and what is not mapped.
+# The message is one frame without its CRC byte: sync, frame length, type, payload.
+# Big-endian. The length byte (type + payload + CRC) and the type are each kind's when.
+format        crsf
+version       0.1.0
+distribution  public
+source        "TBS CRSF protocol specification (CRSFv3), https://github.com/tbs-fpv/tbs-crsf-spec commit a73f7dc5386e5b8744aa4a23b3af5354ee0d4c92, crsf.md (sha256 58293cefb558425729b749f5d9700ba51a83cb578e9867dd1f94224303b6f918); CC BY-SA 4.0, TBS Avionics Co LTD"
+uses          crsf
+uses          track
+wire          bits
+bit_order     msb
+word_bytes    1
+field     crsf.sync 0:0:8 uint
+default   crsf.sync 200
+
+kind      gps
+when      0:8:8 17
+when      0:16:8 2
+requires  lat lon
+field     lat 0:24:32 sscale:1/10000000
+field     lon 0:56:32 sscale:1/10000000
+field     speed_ms 0:88:16 uscale:1/36
+field     crsf.gps_heading 0:104:16 uint
+field     crsf.gps_altitude 0:120:16 uint
+field     crsf.gps_satellites 0:136:8 uint
+
+kind      gps_extended
+when      0:8:8 22
+when      0:16:8 6
+requires  hae
+field     crsf.gpsx_fix_type 0:24:8 uint
+field     track.vel_north_ms 0:32:16 sscale:1/100
+field     track.vel_east_ms 0:48:16 sscale:1/100
+field     track.vel_up_ms 0:64:16 sscale:1/100
+field     crsf.gpsx_h_speed_acc 0:80:16 twos
+field     crsf.gpsx_track_acc 0:96:16 twos
+field     hae 0:112:16 sscale:1
+field     crsf.gpsx_h_acc 0:128:16 twos
+field     crsf.gpsx_v_acc 0:144:16 twos
+field     crsf.gpsx_reserved 0:160:8 uint
+field     crsf.gpsx_hdop 0:168:8 uint
+field     crsf.gpsx_vdop 0:176:8 uint
+
+kind      vario
+when      0:8:8 4
+when      0:16:8 7
+requires  crsf.vario_v_speed
+field     crsf.vario_v_speed 0:24:16 twos
+
+kind      battery
+when      0:8:8 10
+when      0:16:8 8
+requires  crsf.battery_voltage
+field     crsf.battery_voltage 0:24:16 twos
+field     crsf.battery_current 0:40:16 twos
+field     crsf.battery_capacity_used 0:56:24 uint
+field     crsf.battery_remaining 0:80:8 uint
+
+kind      battery_id
+when      0:8:8 11
+when      0:16:8 8
+requires  crsf.battery_voltage crsf.battery_id
+field     crsf.battery_voltage 0:24:16 twos
+field     crsf.battery_current 0:40:16 twos
+field     crsf.battery_capacity_used 0:56:24 uint
+field     crsf.battery_remaining 0:80:8 uint
+field     crsf.battery_id 0:88:8 uint
+
+kind      link_statistics
+when      0:8:8 12
+when      0:16:8 20
+requires  crsf.link_up_quality
+field     crsf.link_up_rssi_ant1 0:24:8 uint
+field     crsf.link_up_rssi_ant2 0:32:8 uint
+field     crsf.link_up_quality 0:40:8 uint
+field     crsf.link_up_snr 0:48:8 twos
+field     crsf.link_active_antenna 0:56:8 uint
+field     crsf.link_rf_profile 0:64:8 uint
+field     crsf.link_up_rf_power 0:72:8 uint
+field     crsf.link_down_rssi 0:80:8 uint
+field     crsf.link_down_quality 0:88:8 uint
+field     crsf.link_down_snr 0:96:8 twos
+
+kind      attitude
+when      0:8:8 8
+when      0:16:8 30
+requires  crsf.attitude_pitch
+field     crsf.attitude_pitch 0:24:16 twos
+field     crsf.attitude_roll 0:40:16 twos
+field     crsf.attitude_yaw 0:56:16 twos

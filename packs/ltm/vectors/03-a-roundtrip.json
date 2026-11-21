@@ -1,0 +1,15 @@
+{
+  "name": "a-roundtrip",
+  "from": "ltm",
+  "to": "ltm",
+  "input": "245441fcff0c000f01",
+  "expect": "245441fcff0c000f01",
+  "model": {
+    "@kind": "a",
+    "ltm.a_pitch": "-4",
+    "ltm.a_roll": "12",
+    "ltm.a_heading": "271"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV src/main/telemetry/ltm.c at 21adf64"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "inav-analog-roundtrip",
+  "from": "msp-v2",
+  "to": "msp-v2",
+  "input": "24583e0002201800415406fa00d20f00005203000054240000460500003df203",
+  "expect": "24583e0002201800415406fa00d20f00005203000054240000460500003df203",
+  "model": {
+    "@kind": "inav_analog",
+    "msp2.inav_analog_battery_flags": "65",
+    "msp2.inav_analog_vbat": "1620",
+    "msp2.inav_analog_power_draw": "4050",
+    "msp2.inav_analog_rssi": "1010"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV msp_messages.json and docs/development/msp at 21adf64 (MSP v2 reply frame); command 0x2002, 24-byte payload"
+}
