@@ -1,0 +1,17 @@
+# The hsrp module: the fields of a Cisco Hot Standby Router Protocol (HSRP) message, version 0
+# (RFC 2281, Informational).
+module        hsrp
+version       0.1.0
+distribution  public
+source        "IETF RFC 2281, Cisco Hot Standby Router Protocol (HSRP), March 1998 (Informational), section 5.1, https://www.rfc-editor.org/rfc/rfc2281.txt; layout restated"
+
+key   version             int     -  "HSRP version, 0 for the protocol RFC 2281 describes"
+key   op_code             int     -  "message type: 0 hello, 1 coup, 2 resign"
+key   state               int     -  "state of the sender: 0 initial, 1 learn, 2 listen, 4 speak, 8 standby, 16 active"
+key   hellotime           int     s  "hello messages: the approximate period between the sender's hellos, seconds"
+key   holdtime            int     s  "hello messages: how long this hello stays valid, seconds"
+key   priority            int     -  "priority in the election of the active and standby routers; higher wins"
+key   group               int     -  "standby group"
+key   reserved            int     -  "reserved octet"
+key   authentication      string  -  "authentication data: a clear-text password of up to 8 characters"
+key   virtual_ip          int     -  "virtual IP address of the group, as an unsigned 32-bit integer"

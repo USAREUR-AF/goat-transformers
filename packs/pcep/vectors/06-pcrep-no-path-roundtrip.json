@@ -1,0 +1,13 @@
+{
+  "name": "pcrep-no-path-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "200400180212000c000000010000004e0310000800800000",
+  "expect": "200400180212000c000000010000004e0310000800800000",
+  "model": {
+    "pcep.objects[1].pcep.nature_of_issue": "0",
+    "pcep.objects[1].pcep.no_path_c": "1",
+    "pcep.objects[1].pcep.tlvs.#": "0"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; a PCRep with NO-PATH; expect derived there, no engine run"
+}

@@ -1,0 +1,23 @@
+# Cisco Hot Standby Router Protocol (HSRP) message, version 0 (RFC 2281 section 5.1): the
+# 20 octets of the UDP payload. Public. Layout restated; see pack.md.
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        hsrp
+version       0.1.0
+distribution  public
+source        "IETF RFC 2281, Cisco Hot Standby Router Protocol (HSRP), March 1998 (Informational), section 5.1, https://www.rfc-editor.org/rfc/rfc2281.txt (sha256 743ee61a3f257fca58d7a20e5546cee2b00e6e5ae9d5978f27dc4be0d2df1dad); layout restated"
+uses          hsrp
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  hsrp.version          0:0:8      uint
+field  hsrp.op_code          0:8:8      uint
+field  hsrp.state            0:16:8     uint
+field  hsrp.hellotime        0:24:8     uint
+field  hsrp.holdtime         0:32:8     uint
+field  hsrp.priority         0:40:8     uint
+field  hsrp.group            0:48:8     uint
+field  hsrp.reserved         0:56:8     uint
+field  hsrp.authentication   0:64:64    ascii
+field  hsrp.virtual_ip       0:128:32   uint

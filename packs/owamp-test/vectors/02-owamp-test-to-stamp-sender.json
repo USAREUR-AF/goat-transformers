@@ -1,0 +1,8 @@
+{
+  "name": "owamp-test-to-stamp-sender",
+  "from": "owamp-test",
+  "to": "stamp-sender",
+  "input": "00000007ed5fa85d400000008401000102030405060708090a0b0c0d",
+  "expect": "00000007ed5fa85d400000008401000000000000000000000000000000000000000000000000000000000000",
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 4656 section 4.1.2 and RFC 8762 sections 4.2 and 4.3 and RFC 8972 sections 3 and 4; the test packet as a STAMP Session-Sender packet; expect derived there, no engine run"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "HSRP",
+  "domain": "networks",
+  "exact": [
+    "hsrp"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "test-packet-roundtrip",
+  "from": "owamp-test",
+  "to": "owamp-test",
+  "input": "00000007ed5fa85d400000008401000102030405060708090a0b0c0d",
+  "expect": "00000007ed5fa85d400000008401000102030405060708090a0b0c0d",
+  "model": {
+    "ippm.sequence": "7",
+    "ippm.ts_sec": "3982469213",
+    "ippm.ts_frac": "1073741824",
+    "ippm.err_s": "1",
+    "ippm.err_scale": "4",
+    "ippm.err_multiplier": "1",
+    "ippm.padding.#": "14"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 4656 section 4.1.2; a test packet with 14 octets of padding; expect derived there, no engine run"
+}

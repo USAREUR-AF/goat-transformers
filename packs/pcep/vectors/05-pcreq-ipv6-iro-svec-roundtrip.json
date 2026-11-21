@@ -1,0 +1,18 @@
+{
+  "name": "pcreq-ipv6-iro-svec-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "2003005c0212000c000000010000004e0422002420010db800000000000000000000000120010db80001000000000000000000090a100018821420010db800020000000000000000000030000b100010000000030000004d0000004e",
+  "expect": "2003005c0212000c000000010000004e0422002420010db800000000000000000000000120010db80001000000000000000000090a100018821420010db800020000000000000000000030000b100010000000030000004d0000004e",
+  "model": {
+    "pcep.objects[1].pcep.object_type": "2",
+    "pcep.objects[1].pcep.source_ipv6_high": "2306139568115548160",
+    "pcep.objects[1].pcep.destination_ipv6_low": "9",
+    "pcep.objects[2].pcep.iro[0].pcep.sub_type": "2",
+    "pcep.objects[2].pcep.iro[0].pcep.sub_prefix_length": "48",
+    "pcep.objects[3].pcep.svec_n": "1",
+    "pcep.objects[3].pcep.svec_l": "1",
+    "pcep.objects[3].pcep.svec_request_ids.#": "2"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; a PCReq with IPv6 END-POINTS, an IRO with a loose IPv6 prefix and an SVEC that asks for node- and link-diverse paths for requests 77 and 78; expect derived there, no engine run"
+}

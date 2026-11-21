@@ -1,0 +1,19 @@
+{
+  "name": "pcrep-ero-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "2004003a0212000c000000050000004d0710001e0108c000020220000108c00002032000a004fbf00306000000000610000c0000010241f00000",
+  "expect": "2004003a0212000c000000050000004d0710001e0108c000020220000108c00002032000a004fbf00306000000000610000c0000010241f00000",
+  "model": {
+    "pcep.message_type": "4",
+    "pcep.objects[1].pcep.ero.#": "4",
+    "pcep.objects[1].pcep.ero[1].pcep.sub_ipv4": "3221225987",
+    "pcep.objects[1].pcep.ero[1].pcep.sub_prefix_length": "32",
+    "pcep.objects[1].pcep.ero[2].pcep.sub_l": "1",
+    "pcep.objects[1].pcep.ero[2].pcep.sub_asn": "64496",
+    "pcep.objects[1].pcep.ero[3].pcep.sub_value.#": "4",
+    "pcep.objects[2].pcep.metric_b": "1",
+    "pcep.objects[2].pcep.metric_value": "30"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; a PCRep: RP, an ERO of two strict IPv4 hops, a loose AS hop and a subobject of type 3 kept as octets, and a METRIC bound of 30; expect derived there, no engine run"
+}

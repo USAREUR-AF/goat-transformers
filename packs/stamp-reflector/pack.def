@@ -1,0 +1,73 @@
+# STAMP Session-Reflector test packet, unauthenticated mode, with the SSID and TLVs of RFC 8972. Public. Written by tools/gen/ippm-pack.py; do not edit by hand.
+# Wire bits, layout sequential, msb; I/O is hex text. pack.md states what is mapped.
+format        stamp-reflector
+version       0.1.0
+distribution  public
+source        "IETF RFC 8762, Simple Two-Way Active Measurement Protocol (STAMP), March 2020, sections 4.2 and 4.3, https://www.rfc-editor.org/rfc/rfc8762.txt (sha256 2362c7a7458fe18cab2f10159f08d881bb3792bf3ac3c7a680025a34e073719a); layout restated"
+source        "IETF RFC 8972, STAMP Optional Extensions, January 2021, sections 3 and 4, https://www.rfc-editor.org/rfc/rfc8972.txt (sha256 8839ae063380394360bf58fe0a972684740cfcb89fbf76470181da633cb282a8); layout restated"
+uses          ippm
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ippm.sequence  32  uint
+field  ippm.ts_sec  32  uint
+field  ippm.ts_frac  32  uint
+field  ippm.err_s  1  uint
+field  ippm.err_z  1  uint
+field  ippm.err_scale  6  uint
+field  ippm.err_multiplier  8  uint
+field  ippm.ssid  16  uint
+field  ippm.rcv_ts_sec  32  uint
+field  ippm.rcv_ts_frac  32  uint
+field  ippm.sender_sequence  32  uint
+field  ippm.sender_ts_sec  32  uint
+field  ippm.sender_ts_frac  32  uint
+field  ippm.sender_err_s  1  uint
+field  ippm.sender_err_z  1  uint
+field  ippm.sender_err_scale  6  uint
+field  ippm.sender_err_multiplier  8  uint
+pad  16
+field  ippm.sender_ttl  8  uint
+pad  24
+group  ippm.tlvs  rest
+  field  ippm.tlv_flag_u  1  uint
+  field  ippm.tlv_flag_m  1  uint
+  field  ippm.tlv_flag_i  1  uint
+  field  ippm.tlv_flags_low  5  uint
+  field  ippm.tlv_type  8  uint
+  length  16  bytes
+    switch  ippm.tlv_type
+      case  3
+        field  ippm.sync_src_in  8  uint
+        field  ippm.timestamp_in  8  uint
+        field  ippm.sync_src_out  8  uint
+        field  ippm.timestamp_out  8  uint
+      case  4
+        field  ippm.cos_dscp1  6  uint
+        field  ippm.cos_dscp2  6  uint
+        field  ippm.cos_ecn  2  uint
+        field  ippm.cos_rp  2  uint
+        field  ippm.cos_reserved  16  uint
+      case  5
+        field  ippm.dm_sender_tx  32  uint
+        field  ippm.dm_reflector_rx  32  uint
+        field  ippm.dm_reflector_tx  32  uint
+      case  6
+        field  ippm.ar_id  4  uint
+        field  ippm.ar_reserved_high  4  uint
+        field  ippm.ar_return_code  8  uint
+        field  ippm.ar_reserved  16  uint
+      case  7
+        field  ippm.fu_sequence  32  uint
+        field  ippm.fu_ts_sec  32  uint
+        field  ippm.fu_ts_frac  32  uint
+        field  ippm.fu_ts_mode  8  uint
+        field  ippm.fu_reserved  24  uint
+      else
+        group  ippm.tlv_value  rest
+          field  ippm.octet  8  uint
+        end
+    end
+  end
+end

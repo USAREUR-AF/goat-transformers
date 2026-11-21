@@ -1,0 +1,14 @@
+{
+  "name": "authenticated-roundtrip",
+  "from": "owamp-test-auth",
+  "to": "owamp-test-auth",
+  "input": "00000008000000000000000000000000ed5fa85d400000008401000000000000101112131415161718191a1b1c1d1e1f",
+  "expect": "00000008000000000000000000000000ed5fa85d400000008401000000000000101112131415161718191a1b1c1d1e1f",
+  "model": {
+    "ippm.sequence": "8",
+    "ippm.ts_frac": "1073741824",
+    "ippm.hmac_high": "1157726452361532951",
+    "ippm.padding.#": "0"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 4656 section 4.1.2; an authenticated-mode test packet without padding; expect derived there, no engine run"
+}

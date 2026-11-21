@@ -1,0 +1,19 @@
+{
+  "name": "hello-active-roundtrip",
+  "from": "hsrp",
+  "to": "hsrp",
+  "input": "000010030a6e0100636973636f000000c00002fe",
+  "expect": "000010030a6e0100636973636f000000c00002fe",
+  "model": {
+    "hsrp.version": "0",
+    "hsrp.op_code": "0",
+    "hsrp.state": "16",
+    "hsrp.hellotime": "3",
+    "hsrp.holdtime": "10",
+    "hsrp.priority": "110",
+    "hsrp.group": "1",
+    "hsrp.authentication": "cisco",
+    "hsrp.virtual_ip": "3221226238"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 2281 section 5.1; a hello from the active router of group 1 with the default authentication data; expect derived there, no engine run"
+}
