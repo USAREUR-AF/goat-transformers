@@ -183,7 +183,7 @@ KEYS = [
     ("key", "sensor_type", "sensor description: 0 no data, 1 raw real time, 2 real time with quality control, 3 predicted, 4 forecast, 5 nowcast, 7 not available"),
     ("key", "fc_wind_speed", "forecast wind speed, as the wire integer"),
     ("key", "fc_wind_gust", "forecast wind gust, as the wire integer"),
-    ("key", "fc_wind_dir", "forecast wind direction, degrees"),
+    ("key", "fc_wind_dir", "direction the forecast wind blows from, degrees"),
     ("key", "fc_day", "forecast valid time: day, UTC"),
     ("key", "fc_hour", "forecast valid time: hour, UTC"),
     ("key", "fc_minute", "forecast valid time: minute, UTC"),
