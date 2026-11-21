@@ -145,6 +145,7 @@ const (
 	ttInt
 	ttFloat
 	ttISO
+	ttISOS
 	ttIntW
 	ttDec
 	ttDM
@@ -202,13 +203,16 @@ func resolveTextTransform(name string) (*textTf, ErrorKind, error) {
 		return &textTf{name: name, kind: ttFloat, numeric: true}, "", nil
 	case "iso8601_ms":
 		return &textTf{name: name, kind: ttISO}, "", nil
+	case "iso8601_s":
+		// 0.26: valid on text, as iso8601_ms is.
+		return &textTf{name: name, kind: ttISOS}, "", nil
 	}
 	// iso8601_short is valid on xml, json and geojson only (0.18).
 	if name == "bool" || name == "iso8601_short" || isBitsTransformName(name) || isPBTransformName(name) || isTLVOnlyTransform(name) || v015Base(name) != "" {
 		return nil, ErrBadDirective, fmt.Errorf("transform %q is not valid on wire text", name)
 	}
 	if !isTextOnlyTransform(name) {
-		return nil, ErrUnknownTransform, fmt.Errorf("unknown transform %q (text: string, int, float, iso8601_ms, int:<w>, dec:<f>[:<w>], dm:<d>:<f>:<PN>, hms:<f>, hms_dmy:<f>)", name)
+		return nil, ErrUnknownTransform, fmt.Errorf("unknown transform %q (text: string, int, float, iso8601_ms, iso8601_s, int:<w>, dec:<f>[:<w>], dm:<d>:<f>:<PN>, hms:<f>, hms_dmy:<f>)", name)
 	}
 	parts := strings.Split(name, ":")
 	params := parts[1:]

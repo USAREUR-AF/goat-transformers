@@ -1518,6 +1518,40 @@ final class UnitTests {
         check("iso rejects no designator", rejects(Transform.ISO8601_MS, "2021-02-27T20:00:00"), "accepted no designator");
         check("iso rejects offset hour 24", rejects(Transform.ISO8601_MS, "2021-02-27T20:00:00+24:00"), "accepted +24:00");
         check("iso rejects Feb 30", rejects(Transform.ISO8601_MS, "2021-02-30T20:00:00Z"), "accepted Feb 30");
+        // 0.26: iso8601_s reads as iso8601_ms and writes the whole second, the milliseconds dropped.
+        eq("iso_s keeps the fraction read", 1709210096789L, Transform.ISO8601_S.decode("2024-02-29T12:34:56.789Z"));
+        eq("iso_s drops the milliseconds", "2024-02-29T12:34:56Z", Transform.ISO8601_S.encode(1709210096789L));
+        eq("iso_s 999 is the epoch second", "1970-01-01T00:00:00Z", Transform.ISO8601_S.encode(999L));
+        eq("iso_s -1 is the second before", "1969-12-31T23:59:59Z", Transform.ISO8601_S.encode(-1L));
+        eq("iso_s first instant", "0001-01-01T00:00:00Z", Transform.ISO8601_S.encode(Transform.ISO_MIN));
+        eq("iso_s last instant", "9999-12-31T23:59:59Z", Transform.ISO8601_S.encode(Transform.ISO_MAX));
+        check("iso_s refuses below the range", refusesEncode(Transform.ISO8601_S, Transform.ISO_MIN - 1), "wrote it");
+        check("iso_s refuses above the range", refusesEncode(Transform.ISO8601_S, Transform.ISO_MAX + 1), "wrote it");
+        check("iso_s refuses Feb 30", rejects(Transform.ISO8601_S, "2021-02-30T20:00:00Z"), "accepted Feb 30");
+        eq("iso_s text wire writes the second", "1970-01-01T00:00:00Z", TextTransform.base(Transform.ISO8601_S).encode(999L));
+        eq("iso_s yields int", "int", Transform.ISO8601_S.yields());
+        Engine e = new Engine();
+        e.loadModel(CORE);
+        String head = "format x\nversion 0.1.0\ndistribution public\nsource t\n";
+        e.add(Pack.parse(head + "wire xml\nroot r\nfield time_ms @t iso8601_s\n", "t"));
+        e.add(Pack.parse("format y\nversion 0.1.0\ndistribution public\nsource t\nwire json\nfield time_ms t iso8601_s\n", "t"));
+        e.add(Pack.parse("format z\nversion 0.1.0\ndistribution public\nsource t\nwire text\nfield time_ms 0 iso8601_s\n", "t"));
+        eq("iso_s loads on xml, json and text", 3, e.packs().size());
+        throwsCode("iso_s on protobuf", GtException.Code.BAD_DIRECTIVE,
+                () -> e.add(Pack.parse(head.replace("format x", "format w") + "wire protobuf\nfield time_ms 1 iso8601_s\n", "t")));
+        throwsCode("iso_s with a parameter", GtException.Code.BAD_DIRECTIVE,
+                () -> e.add(Pack.parse(head.replace("format x", "format v") + "wire xml\nroot r\nfield time_ms @t iso8601_s:3\n", "t")));
+        throwsCode("iso_s on a float key", GtException.Code.KEY_TYPE_MISMATCH,
+                () -> e.add(Pack.parse(head.replace("format x", "format u") + "wire xml\nroot r\nfield lat @t iso8601_s\n", "t")));
+    }
+
+    static boolean refusesEncode(Transform t, long v) {
+        try {
+            t.encode(v);
+            return false;
+        } catch (IllegalArgumentException ex) {
+            return true;
+        }
     }
 
     static boolean rejects(Transform t, String s) {

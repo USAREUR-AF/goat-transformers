@@ -76,6 +76,7 @@ abstract class JsonTree<W> extends Codec<W> {
                 throw new IllegalArgumentException("int needs a JSON number, found " + typeName(v));
             case ISO8601_MS:
             case ISO8601_SHORT:
+            case ISO8601_S:
                 if (v instanceof String) return Transform.parseIso((String) v);
                 throw new IllegalArgumentException(t.wireName() + " needs a JSON string, found " + typeName(v));
             case BOOL:
@@ -161,6 +162,7 @@ abstract class JsonTree<W> extends Codec<W> {
             case STRING:
             case ISO8601_MS:
             case ISO8601_SHORT:
+            case ISO8601_S:
                 return t.encode(v);
             case FLOAT:
             case INT:

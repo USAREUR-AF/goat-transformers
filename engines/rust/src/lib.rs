@@ -93,6 +93,8 @@ pub enum Transform {
     Iso8601Ms,
     /// xml, json, geojson (engine-spec v0.18): `iso8601_ms` without a zero fraction
     Iso8601Short,
+    /// xml, geojson, json, text (engine-spec v0.26): `iso8601_ms` read, written to the whole second
+    Iso8601S,
     // bits-wire transforms (raw integer <-> model value, bit length from the locator)
     Uint,
     Twos,
@@ -283,7 +285,7 @@ impl Transform {
         // ruling 5 of 0.11: the name is the text before the first `:`
         let head = name.split(':').next().unwrap_or("");
         const NAMES: &[&str] = &[
-            "string", "float", "int", "iso8601_ms", "iso8601_short", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
+            "string", "float", "int", "iso8601_ms", "iso8601_short", "iso8601_s", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
             "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "sixbit", "dec", "dm", "hms", "hms_dmy", "utf8", "hex",
             // engine-spec v0.15
             "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale",
@@ -369,6 +371,7 @@ impl Transform {
             "int" => Ok(Transform::Int),
             "iso8601_ms" => Ok(Transform::Iso8601Ms),
             "iso8601_short" => Ok(Transform::Iso8601Short),
+            "iso8601_s" => Ok(Transform::Iso8601S),
             "uint" => Ok(Transform::Uint),
             "twos" => Ok(Transform::Twos),
             "pstring" => Ok(Transform::Pstring),
@@ -446,6 +449,7 @@ impl Transform {
             | Transform::Bool
             | Transform::Iso8601Ms
             | Transform::Iso8601Short
+            | Transform::Iso8601S
             | Transform::Uint
             | Transform::Twos
             | Transform::Pvarint
@@ -643,7 +647,7 @@ impl Transform {
             Transform::Int => int_text(raw)
                 .map(Value::I64)
                 .ok_or(Error { msg: format!("int decode failed: `{}` is not integer text", raw) }),
-            Transform::Iso8601Ms | Transform::Iso8601Short => iso8601_to_ms(raw).map(Value::I64),
+            Transform::Iso8601Ms | Transform::Iso8601Short | Transform::Iso8601S => iso8601_to_ms(raw).map(Value::I64),
             Transform::TextScale(sc) => match Transform::Float.decode(raw)? {
                 Value::F64(v) => finite(sc.decode(v)),
                 other => err(format!("scale decode failed: {:?}", other)),
@@ -667,6 +671,7 @@ impl Transform {
             (Transform::Int, Value::I64(n)) => Ok(n.to_string()),
             (Transform::Iso8601Ms, Value::I64(ms)) => ms_to_iso8601_checked(*ms),
             (Transform::Iso8601Short, Value::I64(ms)) => ms_to_iso8601_short(*ms),
+            (Transform::Iso8601S, Value::I64(ms)) => ms_to_iso8601_s(*ms),
             (Transform::TextScale(sc), Value::F64(x)) => Ok(fmt_f64(text_unscale(sc, *x)?)),
             (Transform::TextIscale(ex), Value::I64(x)) => ex
                 .encode_decimal(*x)
@@ -710,6 +715,7 @@ impl Transform {
             Transform::StringT
             | Transform::Iso8601Ms
             | Transform::Iso8601Short
+            | Transform::Iso8601S
             | Transform::Pstring
             | Transform::Ascii
             | Transform::Sixbit
@@ -3595,6 +3601,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                     | Transform::Int
                     | Transform::Iso8601Ms
                     | Transform::Iso8601Short
+                    | Transform::Iso8601S
                     | Transform::TextScale(_)
                     | Transform::TextIscale(_)
             )
@@ -3622,6 +3629,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                     | Transform::Int
                     | Transform::Iso8601Ms
                     | Transform::Iso8601Short
+                    | Transform::Iso8601S
                     | Transform::Bool
                     | Transform::TextScale(_)
                     | Transform::TextIscale(_)
@@ -6428,7 +6436,7 @@ pub mod jsonwire {
             (Transform::Int, Json::Int(n)) => Ok(Value::I64(*n)),
             // an integer within i64 was read as `Int`; negative zero is 0 (ruling 2d of 0.11)
             (Transform::Int, Json::Num(x)) if *x == 0.0 => Ok(Value::I64(0)),
-            (Transform::Iso8601Ms | Transform::Iso8601Short, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
+            (Transform::Iso8601Ms | Transform::Iso8601Short | Transform::Iso8601S, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
             (Transform::Bool, Json::Bool(b)) => Ok(Value::I64(*b as i64)),
             _ => err(format!("JSON value `{}` has the wrong type for the transform", json::serialize(j))),
         }
@@ -6442,6 +6450,7 @@ pub mod jsonwire {
             (Transform::Int, Value::I64(n)) => Ok(Json::Int(*n)),
             (Transform::Iso8601Ms, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_checked(*ms)?)),
             (Transform::Iso8601Short, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_short(*ms)?)),
+            (Transform::Iso8601S, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_s(*ms)?)),
             (Transform::Bool, Value::I64(1)) => Ok(Json::Bool(true)),
             (Transform::Bool, Value::I64(0)) => Ok(Json::Bool(false)),
             (Transform::Bool, other) => err(format!("bool encodes 1 or 0, got {}", other.as_display())),
@@ -8785,6 +8794,14 @@ pub fn ms_to_iso8601_short(ms: i64) -> Result<String, Error> {
     }
     out.push('Z');
     Ok(out)
+}
+
+/// `iso8601_s` (engine-spec v0.26, ruling 3): the 24 characters
+/// `ms_to_iso8601_checked` writes less `.fff`, so the second that holds the
+/// instant (milliseconds dropped, never rounded), within ruling 3f of 0.11.
+pub fn ms_to_iso8601_s(ms: i64) -> Result<String, Error> {
+    let full = ms_to_iso8601_checked(ms)?;
+    Ok(format!("{}Z", &full[..19]))
 }
 
 pub fn ms_to_iso8601(ms: i64) -> String {

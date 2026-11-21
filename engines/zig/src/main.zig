@@ -5,7 +5,7 @@
 //
 // Wires: xml, geojson, json, bits (lsb and msb bit order), protobuf, text,
 // tlv (spec Version 0.13; on tlv also the transforms utf8 and hex).
-// Transforms: string, float, int, iso8601_ms, bool, uint, twos,
+// Transforms: string, float, int, iso8601_ms, iso8601_s, bool, uint, twos,
 // linscale:<maxpos>:<range>, uscale/sscale:<factor>[:<offset>], f32, f64,
 // ascii, pstring, pvarint, psint, pdouble, pfloat; on text also int:<w>,
 // dec:<f>[:<w>], dm:<d>:<f>:<PN>, hms:<f>, hms_dmy:<f> (spec Version 0.10).
@@ -336,6 +336,8 @@ const TKind = enum {
     iscale,
     // Version 0.18
     iso8601_short,
+    // Version 0.26: read as iso8601_ms, written to the whole second
+    iso8601_s,
 };
 
 // A transform of Version 0.15: on a wire it does not list it is `bad-directive`.
@@ -354,7 +356,7 @@ const KindCat = enum { text, bits, proto, rec, tlv };
 
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
-        .string, .float, .int, .iso8601_ms, .iso8601_short, .bool_, .tscale, .iscale => .text,
+        .string, .float, .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .tscale, .iscale => .text,
         .uint, .twos, .linscale, .uscale, .sscale, .f32_, .f64_, .ascii, .sixbit => .bits,
         .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal => .bits,
         .pstring, .pvarint, .psint, .pdouble, .pfloat => .proto,
@@ -1144,7 +1146,7 @@ fn yields(k: TKind) KeyType {
     return switch (k) {
         .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal => .string,
         .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms, .smscale, .f32scale, .f64scale, .tscale => .float,
-        .int, .iso8601_ms, .iso8601_short, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale => .int,
+        .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale => .int,
     };
 }
 
@@ -1401,7 +1403,7 @@ fn parseExactOffset(s: []const u8) ?i64 {
 fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
     const simple = [_]struct { n: []const u8, k: TKind }{
         .{ .n = "string", .k = .string },   .{ .n = "float", .k = .float },
-        .{ .n = "int", .k = .int },         .{ .n = "iso8601_ms", .k = .iso8601_ms }, .{ .n = "iso8601_short", .k = .iso8601_short },
+        .{ .n = "int", .k = .int },         .{ .n = "iso8601_ms", .k = .iso8601_ms }, .{ .n = "iso8601_short", .k = .iso8601_short }, .{ .n = "iso8601_s", .k = .iso8601_s },
         .{ .n = "bool", .k = .bool_ },      .{ .n = "uint", .k = .uint },
         .{ .n = "twos", .k = .twos },       .{ .n = "f32", .k = .f32_ },
         .{ .n = "f64", .k = .f64_ },        .{ .n = "ascii", .k = .ascii },
@@ -4381,6 +4383,14 @@ fn msToIso(alloc: std.mem.Allocator, ms: i64, short: bool) ![]const u8 {
     });
 }
 
+// `iso8601_s` encode (Version 0.26, ruling 3): the 24 characters of
+// iso8601_ms less `.fff`, so the second that holds the instant, never
+// rounded; the range is that of iso8601_ms (ruling 3f of 0.11).
+fn msToIsoSeconds(alloc: std.mem.Allocator, ms: i64) ![]const u8 {
+    const full = try msToIso(alloc, ms, false);
+    return std.fmt.allocPrint(alloc, "{s}Z", .{full[0..19]});
+}
+
 // ---------------------------------------------------------------------------
 // XML DOM + parser
 // ---------------------------------------------------------------------------
@@ -5053,7 +5063,7 @@ fn jsonToMV(t: TKind, val: JValue) !MV {
             if (!(f >= -9223372036854775808.0 and f < 9223372036854775808.0) or @floor(f) != f) return E.@"transform-decode";
             return MV{ .int = @intFromFloat(f) };
         },
-        .iso8601_ms, .iso8601_short => {
+        .iso8601_ms, .iso8601_short, .iso8601_s => {
             if (val != .string) return E.@"transform-decode";
             return MV{ .int = try isoToMs(val.string) };
         },
@@ -5149,6 +5159,10 @@ fn jsonRaw(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
         .iso8601_ms, .iso8601_short => {
             if (mv != .int) return E.@"transform-encode";
             return jsonStr(alloc, try msToIso(alloc, mv.int, tr.kind == .iso8601_short));
+        },
+        .iso8601_s => {
+            if (mv != .int) return E.@"transform-encode";
+            return jsonStr(alloc, try msToIsoSeconds(alloc, mv.int));
         },
         .bool_ => {
             if (mv != .int) return E.@"transform-encode";
@@ -6442,7 +6456,7 @@ fn textToMV(t: TKind, raw: []const u8) !MV {
         .string => MV{ .str = raw },
         .float => MV{ .float = try parseDecimal(raw) },
         .int => MV{ .int = try parseDecimalInt(raw) },
-        .iso8601_ms, .iso8601_short => MV{ .int = try isoToMs(raw) },
+        .iso8601_ms, .iso8601_short, .iso8601_s => MV{ .int = try isoToMs(raw) },
         else => E.@"transform-decode",
     };
 }
@@ -7113,6 +7127,10 @@ fn xmlText(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
         .iso8601_ms, .iso8601_short => {
             if (mv != .int) return E.@"transform-encode";
             return msToIso(alloc, mv.int, tr.kind == .iso8601_short);
+        },
+        .iso8601_s => {
+            if (mv != .int) return E.@"transform-encode";
+            return msToIsoSeconds(alloc, mv.int);
         },
         else => return E.@"transform-encode",
     }
@@ -8264,7 +8282,7 @@ fn textDecode(t: Transform, raw: []const u8) !MV {
         .string => MV{ .str = raw },
         .int, .int_w => MV{ .int = try parseTextInt(raw) },
         .float, .dec => MV{ .float = try textDecimal(raw) },
-        .iso8601_ms => MV{ .int = try isoToMs(raw) },
+        .iso8601_ms, .iso8601_s => MV{ .int = try isoToMs(raw) },
         .hms => blk: {
             const h = try parseHms(raw);
             const secs = std.fmt.parseFloat(f64, h.secs) catch return E.@"transform-decode";
@@ -8382,7 +8400,7 @@ fn textEncodeValue(alloc: std.mem.Allocator, t: Transform, mv: MV) !TextOut {
     const te = E.@"transform-encode";
     var buf = std.ArrayList(u8).init(alloc);
     switch (t.kind) {
-        .string, .float, .int, .iso8601_ms => return .{ .a = try xmlText(alloc, t, mv) },
+        .string, .float, .int, .iso8601_ms, .iso8601_s => return .{ .a = try xmlText(alloc, t, mv) },
         .int_w => {
             if (mv != .int) return te;
             if (mv.int < 0) try buf.append('-');

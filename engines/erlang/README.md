@@ -12,14 +12,14 @@ An independent, clean-room implementation of the gt engine, written from
 
 | Test | Command (repository root) | Measured (2026-11-21) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 21583/21583 |
-| load vectors | same run | 1166/1166 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 22252/22252 |
+| load vectors | same run | 1172/1172 |
 | capability vectors | same run | 18/18 |
-| malformed inputs | same run | 129534/129534 |
-| concurrent conversions (Version 0.25) | same run | 437/437 |
+| malformed inputs | same run | 138781/138781 |
+| concurrent conversions (Version 0.25) | same run | 445/445 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 15 vectors, 15 packs (below) |
 | tool vectors (Version 0.23) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 97/97 |
-| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 7883/7883 vectors; every bits, protobuf, text and tlv pack `unknown-wire` (below) |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8164/8164 vectors; every bits, protobuf, text and tlv pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
@@ -215,18 +215,18 @@ message; loads a pack whose `wire` is `nowire`, which must be `unknown-wire`
 without that reason. It then prints the size of both builds, the `.beam`
 files `build.sh` writes, and exits non-zero on any failure.
 
-Measured (2026-11-20, one machine, `nice -n 10`):
+Measured (2026-11-21, one machine):
 
 | Check | Result |
 |---|---|
-| conversion vectors on xml, json and geojson | 6849/6849 passed |
-| packs on bits refused as `unknown-wire` | 1632/1632 |
-| packs on protobuf refused as `unknown-wire` | 695/695 |
-| packs on text refused as `unknown-wire` | 71/71 |
+| conversion vectors on xml, json and geojson | 8164/8164 passed |
+| packs on bits refused as `unknown-wire` | 1701/1701 |
+| packs on protobuf refused as `unknown-wire` | 876/876 |
+| packs on text refused as `unknown-wire` | 77/77 |
 | packs on tlv refused as `unknown-wire` | 9/9 |
 | `wire nowire` | `unknown-wire`, without the reason |
-| full build, 7 wires | 344048 bytes, 16 `.beam` files |
-| reduced build, xml, json and geojson | 225776 bytes, 10 `.beam` files (65% of full) |
+| full build, 7 wires | 356096 bytes, 17 `.beam` files |
+| reduced build, xml, json and geojson | 237684 bytes, 11 `.beam` files (66% of full) |
 
 Both sizes count `gt_cli` and the conformance runner `gt_test`, which every
 build with json or geojson holds.
@@ -388,7 +388,9 @@ implemented as the specification states them.
 - `src/gt_model.erl` — model module parser (`model/<module>.def`), `list` and `derive` lines included.
 - `src/gt_derive.erl` — the derivation functions and the derivation pass.
 - `src/gt_num.erl`   — number parsing and canonical float text (ruling 3).
-- `src/gt_iso.erl`   — ISO 8601 <-> epoch ms (`Z`, `z` or an offset in; `Z` out).
+- `src/gt_iso.erl`   — ISO 8601 <-> epoch ms (`Z`, `z` or an offset in; `Z` out), for
+  `iso8601_ms`, `iso8601_short` (0.18) and `iso8601_s` (0.26, whole seconds out, the
+  milliseconds dropped).
 - `src/gt_xml.erl`   — XML reader + canonical writer.
 - `src/gt_json.erl`  — JSON reader (member order preserved) and canonical writer.
 - `src/gt_bits.erl`  — bit-range access, both bit orders, and six-bit armor.

@@ -52,6 +52,7 @@ bool valid_on_text(Transform t) {
         case Transform::Int:
         case Transform::Float:
         case Transform::Iso8601Ms:
+        case Transform::Iso8601S:
         case Transform::IntW:
         case Transform::Dec:
         case Transform::Dm:
@@ -202,7 +203,8 @@ Value text_decode(const FieldLine& f, const std::string& a, const std::string& b
             if (!text_decimal(a, d)) throw std::invalid_argument("not a decimal number: \"" + a + "\"");
             return Value::of_float(d);
         }
-        case Transform::Iso8601Ms: {
+        case Transform::Iso8601Ms:
+        case Transform::Iso8601S: {
             std::int64_t ms;
             if (!parse_iso8601_ms(a, ms)) throw std::invalid_argument("not an ISO 8601 time: \"" + a + "\"");
             return Value::of_int(ms);
@@ -259,7 +261,8 @@ void text_encode(const FieldLine& f, const Value& v, std::string& a, std::string
         case Transform::String:
         case Transform::Int:
         case Transform::Float:
-        case Transform::Iso8601Ms: a = encode_value(f, v); return;
+        case Transform::Iso8601Ms:
+        case Transform::Iso8601S: a = encode_value(f, v); return;
         case Transform::IntW: {
             const std::int64_t n = model_int(v);
             const std::uint64_t mag = n < 0 ? 0 - static_cast<std::uint64_t>(n) : static_cast<std::uint64_t>(n);

@@ -1,7 +1,7 @@
 %% gt_iso: ISO 8601 <-> epoch milliseconds (engine-spec transform
 %% `iso8601_ms`; Version 0.6 replaces ruling 8 of 0.1.1).
 -module(gt_iso).
--export([decode/1, encode/1, encode_short/1]).
+-export([decode/1, encode/1, encode_short/1, encode_seconds/1]).
 
 -define(EPOCH_GREGORIAN_SECONDS, 62167219200).
 %% 0001-01-01T00:00:00.000Z and 9999-12-31T23:59:59.999Z (ruling 3 of 0.11)
@@ -76,6 +76,13 @@ int(B) ->
 
 %% epoch ms -> "YYYY-MM-DDTHH:MM:SS.fffZ"
 encode(Ms) when is_integer(Ms), Ms >= ?MIN_MS, Ms =< ?MAX_MS -> format(Ms).
+
+%% epoch ms -> "YYYY-MM-DDTHH:MM:SSZ" (`iso8601_s`, Version 0.26, ruling 3):
+%% the text encode/1 writes less its ".fff", so the second that holds the
+%% instant (the milliseconds dropped, never rounded), in the range of encode/1.
+encode_seconds(Ms) ->
+    <<Whole:19/binary, $., _:3/binary, "Z">> = encode(Ms),
+    <<Whole/binary, "Z">>.
 
 %% 0000-01-01T00:00:00Z, the first instant `iso8601_short` writes (ruling
 %% 11 of 0.18; iso8601_ms keeps 0001 of ruling 3 of 0.11)

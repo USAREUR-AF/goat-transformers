@@ -127,6 +127,39 @@ int main() {
         eq(detail::format_iso8601_ms(detail::kMinIsoMs), "0001-01-01T00:00:00.000Z", "3f: the first instant");
     }
 
+    // 0.26: iso8601_s writes the second that holds the instant, no fraction.
+    {
+        eq(detail::format_iso8601_s(0), "1970-01-01T00:00:00Z", "0.26: zero");
+        eq(detail::format_iso8601_s(999), "1970-01-01T00:00:00Z", "0.26: 999 dropped, not rounded");
+        eq(detail::format_iso8601_s(-1), "1969-12-31T23:59:59Z", "0.26: -1");
+        eq(detail::format_iso8601_s(1709210096789), "2024-02-29T12:34:56Z", "0.26: a fraction dropped");
+        eq(detail::format_iso8601_s(detail::kMinIsoMs), "0001-01-01T00:00:00Z", "0.26: the first instant");
+        eq(detail::format_iso8601_s(detail::kMaxIsoMs), "9999-12-31T23:59:59Z", "0.26: the last instant");
+        bool threw = false;
+        try { (void)detail::format_iso8601_s(detail::kMinIsoMs - 1); } catch (const std::domain_error&) { threw = true; }
+        check(threw, "0.26: below the range refused");
+        threw = false;
+        try { (void)detail::format_iso8601_s(detail::kMaxIsoMs + 1); } catch (const std::domain_error&) { threw = true; }
+        check(threw, "0.26: above the range refused");
+        // ruling 1: the wires of iso8601_ms, no parameter.
+        for (const char* w : {"wire xml\nroot r\nfield k @k iso8601_s\n", "wire json\nfield k k iso8601_s\n",
+                              "wire geojson\nfield k k iso8601_s\n", "wire text\nfield k 0 iso8601_s\n"})
+            check(gt::parse_pack(std::string(HDR "format a\n") + w).fields.size() == 1,
+                  std::string("0.26: iso8601_s loads on ") + w);
+        expect_error(gt::ErrorKind::BadDirective,
+                     [] { gt::parse_pack(HDR "format a\nwire bits\nword_bytes 1\nfield k 0:0:8 iso8601_s\n"); },
+                     "0.26: iso8601_s on bits");
+        expect_error(gt::ErrorKind::BadDirective,
+                     [] { gt::parse_pack(HDR "format a\nwire protobuf\nfield k 1 iso8601_s\n"); },
+                     "0.26: iso8601_s on protobuf");
+        expect_error(gt::ErrorKind::BadDirective,
+                     [] { gt::parse_pack(HDR "format a\nwire tlv\nfield k 4:1 iso8601_s\n"); },
+                     "0.26: iso8601_s on tlv");
+        expect_error(gt::ErrorKind::BadDirective,
+                     [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k iso8601_s:3\n"); },
+                     "0.26: iso8601_s with a parameter");
+    }
+
     // pack grammar
     expect_error(gt::ErrorKind::UnknownDirective, [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nbogus x\n"); },
                  "unknown directive");
@@ -286,6 +319,13 @@ int main() {
     expect_error(gt::ErrorKind::KeyTypeMismatch,
                  [&] { eng.add_pack(gt::parse_pack(HDR "format u\nwire geojson\nfield lat id string\n")); },
                  "key type mismatch");
+    // v0.26 ruling 1: iso8601_s yields int; on a key of another type it is key-type-mismatch.
+    expect_error(gt::ErrorKind::KeyTypeMismatch,
+                 [&] { eng.add_pack(gt::parse_pack(HDR "format u\nwire geojson\nfield lat t iso8601_s\n")); },
+                 "iso8601_s on a float key");
+    expect_error(gt::ErrorKind::KeyTypeMismatch,
+                 [&] { eng.add_pack(gt::parse_pack(HDR "format u\nwire geojson\nfield uid t iso8601_s\n")); },
+                 "iso8601_s on a string key");
     expect_error(gt::ErrorKind::ModuleNotUsed,
                  [&] { eng.add_pack(gt::parse_pack(HDR "format u\nwire geojson\nfield x.y id string\n")); },
                  "module not used");

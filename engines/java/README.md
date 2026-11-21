@@ -161,14 +161,14 @@ the reduced jar:
   `wire` value that is no wire, plain `unknown-wire`.
 
 It prints the size of both jars and exits non-zero on any failure. Measured
-with `nice -n 10` on this tree:
+with `nice -n 10` on this tree on 2026-11-21:
 
 ```
 reduced jar: no class of the bits, protobuf, text or tlv codecs
 build wires: xml, geojson, json
-conversion vectors: 6849/6849 passed (1070 packs on xml, geojson, json; 13458 vectors on other wires not run)
+conversion vectors: 8164/8164 passed (1624 packs on xml, geojson, json; 14088 vectors on other wires not run)
 capability vectors: 16/16 passed (those between formats on wires of the build)
-load vectors: 378/378 passed (those with no pack on a wire this build lacks)
+load vectors: 382/382 passed (those with no pack on a wire this build lacks)
 unknown-wire: bits (pack adsb): unknown-wire: .../packs/adsb/pack.def:18: wire "bits" is a wire of the specification, but this build does not have it (this build has xml, geojson, json) [format=adsb locator=-]
 unknown-wire: protobuf (pack apollo-ch): ...
 unknown-wire: text (pack conformance-cond-text): ...
@@ -176,8 +176,8 @@ unknown-wire: tlv (pack conformance-cond-tlv): ...
 unknown-wire loads: 4/4 passed
 unknown-wire: nowire (no wire of the specification): unknown-wire: nowire-check:3: unknown wire "nowire" [format=nowire-check locator=-]
 OK
-jar size, all seven wires:       306094 bytes
-jar size, xml, json and geojson: 233325 bytes, 76% of the full jar
+jar size, all seven wires:       307330 bytes
+jar size, xml, json and geojson: 234561 bytes, 76% of the full jar
 ```
 
 The jar shrinks by a quarter, not more, because the pack reader stays whole:
@@ -213,22 +213,23 @@ and runs:
   [Parse once](#parse-once)).
 
 It prints each failure and exits non-zero on any. Measured with
-`nice -n 10 ./build.sh` on this tree (21583 vectors, 3946 packs), on a
-loaded machine:
+`nice -n 10 ./build.sh` on this tree on 2026-11-21 (22252 vectors, 4287 packs,
+with the `iso8601_s` transform of Version 0.26), on a heavily loaded machine:
 
 ```
-conversion vectors: 21583/21583 passed (3946 packs, 2624 model modules)
-load vectors: 1166/1166 passed
+conversion vectors: 22252/22252 passed (4287 packs, 2949 model modules)
+load vectors: 1172/1172 passed
 capability vectors: 18/18 passed
-packs-only: loadOnly checked for 48 of 3946 packs, 411 ms (GOAT_SWEEP_FULL=1 for all)
-malformed input sweep: 1421111 inputs over 21583 of 21583 conversion vectors (30 damaged copies each) and 3946 packs of 7 wires, 1063671 named errors, 0 defects, 40005 ms (GOAT_SWEEP_FULL=1 for the full sweep)
-parse once: 8 threads x 2 rounds x 2387 conversions on one instance, 0 differ
-parse once (0.25): 2489 ms
-unit checks: 874/874 passed
+packs-only: loadOnly checked for 48 of 4287 packs, 5968 ms (GOAT_SWEEP_FULL=1 for all)
+malformed input sweep: 1465149 inputs over 22252 of 22252 conversion vectors (29 damaged copies each) and 4287 packs of 7 wires, 1094147 named errors, 0 defects, 614614 ms (GOAT_SWEEP_FULL=1 for the full sweep)
+parse once: 8 threads x 2 rounds x 2420 conversions on one instance, 0 differ
+parse once (0.25): 21489 ms
+unit checks: 889/889 passed
 OK
 ```
 
-`./build.sh` takes 78 s in all.
+`./build.sh` took 22 min 23 s in all on that run, with a load average near 68
+(78 s on an idle machine before Version 0.26).
 
 The tool vectors (`packs/conformance/tool-vectors/`, spec Version 0.23) run
 against the tool, after `./build.sh` has written the jar, from the repository
@@ -241,7 +242,7 @@ tool vectors: 97/97 passed
 
 | Test | Command | Measured |
 |---|---|---|
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 97/97 passed, 5 min 31 s for 95 vectors on an idle machine (each run starts a JVM and loads every model module) |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 97/97 passed on 2026-11-21, 5 min 0 s on a loaded machine (each run starts a JVM and loads every model module) |
 
 ### The bounded sweep and `GOAT_SWEEP_FULL=1`
 

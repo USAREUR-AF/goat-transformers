@@ -127,3 +127,25 @@ func TestSequentialLateChecks(t *testing.T) {
 		t.Errorf("const 8 +1: got %v, want bad-directive", err)
 	}
 }
+
+// The encode of iso8601_s (0.26 ruling 3): the second that holds the
+// instant, milliseconds dropped, and the range of iso8601_ms.
+func TestISO8601SecondsEncode(t *testing.T) {
+	for in, want := range map[int64]string{
+		0:             "1970-01-01T00:00:00Z",
+		999:           "1970-01-01T00:00:00Z",
+		-1:            "1969-12-31T23:59:59Z",
+		1709210096789: "2024-02-29T12:34:56Z",
+		minISOms:      "0001-01-01T00:00:00Z",
+		maxISOms:      "9999-12-31T23:59:59Z",
+	} {
+		if s, err := encISOSeconds(Value{Kind: KindInt, I: in}); err != nil || s != want {
+			t.Errorf("encISOSeconds(%d) = %q (%v), want %q", in, s, err, want)
+		}
+	}
+	for _, in := range []int64{minISOms - 1, maxISOms + 1} {
+		if _, err := encISOSeconds(Value{Kind: KindInt, I: in}); err == nil {
+			t.Errorf("encISOSeconds(%d) accepted", in)
+		}
+	}
+}

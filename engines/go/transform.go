@@ -27,11 +27,13 @@ var transforms = map[string]*transform{
 	"iso8601_ms": {name: "iso8601_ms", decode: decISO, encode: encISO},
 	// spec 0.18, "A time without a zero fraction".
 	"iso8601_short": {name: "iso8601_short", decode: decISO, encode: encISOShort},
+	// spec 0.26, "whole-second time".
+	"iso8601_s": {name: "iso8601_s", decode: decISO, encode: encISOSeconds},
 }
 
 // TransformNames lists the transforms this engine implements.
 func TransformNames() []string {
-	return []string{"float", "int", "iso8601_ms", "iso8601_short", "string"}
+	return []string{"float", "int", "iso8601_ms", "iso8601_s", "iso8601_short", "string"}
 }
 
 func decString(s string) (Value, error) { return Value{Kind: KindString, S: s}, nil }
@@ -304,6 +306,20 @@ func encISO(v Value) (string, error) {
 		return "", fmt.Errorf("no value")
 	}
 	return formatISO(ms)
+}
+
+// encISOSeconds is the encode of iso8601_s (0.26 ruling 3): the 24
+// characters iso8601_ms writes, less the four of .fff, so the second that
+// holds the instant, with the range and refusals of iso8601_ms.
+func encISOSeconds(v Value) (string, error) {
+	s, err := encISO(v)
+	if err != nil {
+		return "", err
+	}
+	if len(s) != 24 {
+		return "", fmt.Errorf("unexpected iso8601_ms text %q", s)
+	}
+	return s[:19] + "Z", nil
 }
 
 // The instants iso8601_short writes: 0000-01-01T00:00:00Z to
