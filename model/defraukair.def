@@ -1,0 +1,26 @@
+# The defraukair module: the members of the UK-AIR SOS REST API responses (52°North Timeseries
+# API, version 1), as they hold them. packs/defra-ukair-timeseries/pack.md states the evidence for time_ms.
+module        defraukair
+version       0.1.0
+distribution  public
+source        "UK-AIR Sensor Observation Service REST API (52°North Timeseries API v1), https://uk-air.defra.gov.uk/sos-ukair/api/v1; member names as 52North/sensorweb-server-helgoland names them; restated by goat-transformers"
+key   id                 string  -   "identifier of the time series"
+key   label              string  -   "label of the time series: pollutant vocabulary URI, station number and name"
+key   uom                string  -   "the unit the values are in, such as ug.m-3"
+key   station_id         int     -   "identifier of the station (station.properties.id)"
+key   station_label      string  -   "name of the station with its pollutant (station.properties.label)"
+key   first_time         int     ms  "time of the first value of the series, milliseconds since 1970-01-01 UTC (firstValue.timestamp)"
+key   first_value        float   -   "first value of the series, in uom (firstValue.value)"
+key   last_value         float   -   "latest value of the series, in uom (lastValue.value)"
+key   service_label      string  -   "label of the service (parameters.service.label)"
+key   offering_id        string  -   "identifier of the offering (parameters.offering.id)"
+key   offering_label     string  -   "label of the offering (parameters.offering.label)"
+key   feature_id         string  -   "identifier of the feature of interest (parameters.feature.id)"
+key   feature_label      string  -   "label of the feature of interest (parameters.feature.label)"
+key   procedure_id       string  -   "identifier of the procedure (parameters.procedure.id)"
+key   phenomenon_id      string  -   "identifier of the phenomenon (parameters.phenomenon.id)"
+key   phenomenon_label   string  -   "the pollutant, as a URI of the EEA (Eionet) pollutant vocabulary (parameters.phenomenon.label)"
+key   category_id        string  -   "identifier of the category (parameters.category.id)"
+list  values                         "values of a getData response, in time order"
+key   value_time         int     ms  "time of one value, milliseconds since 1970-01-01 UTC (timestamp)"
+key   value              float   -   "one value, in the series' unit (value)"

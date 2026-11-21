@@ -1,0 +1,14 @@
+# UK-AIR (Defra) Sensor Observation Service REST API: the values of one time series
+# (/timeseries/{id}/getData), as a list. Public. Written by hand; pack.md says why no value time
+# is time_ms.
+format  defra-ukair-data
+version 0.1.0
+distribution public
+source  "UK-AIR Sensor Observation Service, https://uk-air.defra.gov.uk/data/about_sos (read 2026-11-21), REST API https://uk-air.defra.gov.uk/sos-ukair/api/v1; response members as 52North/sensorweb-server-helgoland (GPL-2.0) commit 2298d1c75a0805493cd55214e63e1bdc3b85029d names them, layout restated"
+uses    defraukair
+wire    json
+
+group  defraukair.values  values
+  field  defraukair.value_time  timestamp  int
+  field  defraukair.value       value      float
+end

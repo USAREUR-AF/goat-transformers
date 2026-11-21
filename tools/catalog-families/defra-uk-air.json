@@ -1,0 +1,8 @@
+{
+  "name": "Defra UK-AIR",
+  "domain": "maps",
+  "prefixes": [
+    "defra-ukair-"
+  ],
+  "detail": "air quality time series and their values (UK-AIR SOS REST API)"
+}
