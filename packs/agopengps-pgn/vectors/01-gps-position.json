@@ -1,0 +1,26 @@
+{
+  "name": "agopengps-gps-position",
+  "from": "agopengps-pgn",
+  "to": "agopengps-pgn",
+  "input": "80817cd6330000000000c023400000000000404a40008035430080b4420000f0400000a0bf00005a420e000450007800ffff0c00e2ff0500d5",
+  "expect": "80817cd6330000000000c023400000000000404a40008035430080b4420000f0400000a0bf00005a420e000450007800ffff0c00e2ff0500d5",
+  "model": {
+    "@kind": "gps_position",
+    "agopengps.source": "124",
+    "lat": "52.5",
+    "lon": "9.875",
+    "agopengps.p214_heading_dual": "181.5",
+    "agopengps.p214_heading_true": "90.25",
+    "agopengps.p214_speed": "7.5",
+    "agopengps.p214_roll": "-1.25",
+    "agopengps.p214_altitude_m": "54.5",
+    "agopengps.p214_satellites": "14",
+    "agopengps.p214_fix_quality": "4",
+    "agopengps.p214_hdop_x100": "80",
+    "agopengps.p214_imu_heading": "65535",
+    "agopengps.p214_imu_pitch": "-30",
+    "agopengps.checksum": "213"
+  },
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py; 51 data bytes from AgIO, source 0x7C"
+}

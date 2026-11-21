@@ -1,0 +1,15 @@
+{
+  "name": "agopengps-section-dimensions",
+  "from": "agopengps-pgn",
+  "to": "agopengps-pgn",
+  "input": "80817feb212c012d012e012f0130013101320133013401350136013701380139013a013b0106d9",
+  "expect": "80817feb212c012d012e012f0130013101320133013401350136013701380139013a013b0106d9",
+  "model": {
+    "@kind": "section_dimensions",
+    "agopengps.p235_section_width_0": "300",
+    "agopengps.p235_section_width_15": "315",
+    "agopengps.p235_num_sections": "6"
+  },
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py"
+}

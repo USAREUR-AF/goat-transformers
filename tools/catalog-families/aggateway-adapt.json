@@ -1,0 +1,7 @@
+{
+  "name": "AgGateway ADAPT",
+  "domain": "land",
+  "prefixes": [
+    "adapt-"
+  ]
+}

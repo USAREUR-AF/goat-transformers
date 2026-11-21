@@ -1,0 +1,16 @@
+{
+  "name": "agopengps-isobus-heartbeat",
+  "from": "agopengps-pgn",
+  "to": "agopengps-pgn",
+  "input": "808180f004050caa0f3e",
+  "expect": "808180f004050caa0f3e",
+  "model": {
+    "@kind": "isobus_heartbeat",
+    "agopengps.p240_section_control_enabled": "1",
+    "agopengps.p240_clients": "2",
+    "agopengps.p240_num_sections": "12",
+    "agopengps.p240_section_states.#": "2"
+  },
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py"
+}

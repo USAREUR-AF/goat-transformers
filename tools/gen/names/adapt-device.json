@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "context_items_context_items_time_scopes|dateContextCode|string": "context_items_context_items_time_scopes_date_context_code",
+  "context_items_context_items_time_scopes|duration|float": "context_items_context_items_time_scopes_duration",
+  "context_items_context_items_time_scopes|end|string": "context_items_context_items_time_scopes_end",
+  "context_items_context_items_time_scopes|start|string": "context_items_context_items_time_scopes_start",
+  "context_items_context_items|definitionCode|string": "context_items_context_items_definition_code",
+  "context_items_context_items|valueText|string": "context_items_context_items_value_text",
+  "context_items_time_scopes|dateContextCode|string": "context_items_time_scopes_date_context_code",
+  "context_items_time_scopes|duration|float": "context_items_time_scopes_duration",
+  "context_items_time_scopes|end|string": "context_items_time_scopes_end",
+  "context_items_time_scopes|start|string": "context_items_time_scopes_start",
+  "context_items|definitionCode|string": "context_items_definition_code",
+  "context_items|valueText|string": "context_items_value_text",
+  "id_unique_ids|idSourceTypeCode|string": "id_unique_ids_id_source_type_code",
+  "id_unique_ids|idSource|string": "id_unique_ids_id_source",
+  "id_unique_ids|idText|string": "id_unique_ids_id_text",
+  "id_unique_ids|idTypeCode|string": "id_unique_ids_id_type_code",
+  "|description|string": "description",
+  "|deviceModelId|string": "device_model_id",
+  "|id.referenceId|string": "id_reference_id",
+  "|name|string": "name",
+  "|serialNumber|string": "serial_number"
+ },
+ "lists": {
+  "context_items_context_items|timeScopes": "context_items_context_items_time_scopes",
+  "context_items|contextItems": "context_items_context_items",
+  "context_items|timeScopes": "context_items_time_scopes",
+  "|contextItems": "context_items",
+  "|id.uniqueIds": "id_unique_ids"
+ }
+}

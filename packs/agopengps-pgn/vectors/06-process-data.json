@@ -1,0 +1,14 @@
+{
+  "name": "agopengps-process-data",
+  "from": "agopengps-pgn",
+  "to": "agopengps-pgn",
+  "input": "80817ff2068d0124faffff21",
+  "expect": "80817ff2068d0124faffff21",
+  "model": {
+    "@kind": "process_data",
+    "agopengps.p242_identifier": "397",
+    "agopengps.p242_value": "-1500"
+  },
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py"
+}
