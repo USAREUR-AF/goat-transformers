@@ -12,8 +12,14 @@ Read on 2026-11-21. No source file is copied into this tree.
 gpsd is under the BSD 2-Clause License (COPYING: "Compilation copyright is held by the GPSD project.
 All rights reserved." with the BSD-2-Clause terms). The document states it was written from freely
 redistributable sources. Under rule 17 of this project a layout restated from a BSD-licensed document,
-with no text copied, is Apache-2.0: the pack keeps the default label, and the source is named here and
-in `NOTICE`.
+with no text copied, is Apache-2.0: the pack keeps the default label, and the source is named here (Attribution
+below).
 
 The vectors are built by `tools/gen/maritime-vectors.py` from values chosen there; their expected
 output is derived there, without an engine.
+
+## Attribution
+
+From gpsd, AIVDM/AIVDO protocol decoding (www/AIVDM.adoc) and NMEA Revealed (www/NMEA.adoc),
+https://gitlab.com/gpsd/gpsd commit c59fc6de. Compilation copyright held by the GPSD project. BSD
+2-Clause License. Layouts restated, no text copied.

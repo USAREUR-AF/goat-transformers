@@ -25,3 +25,9 @@ it out of the `open` profile; the choice is recorded for the operator, who can o
 
 The vectors are built by `tools/gen/maritime-vectors.py` from values chosen there; their expected
 output is derived there, without an engine.
+
+## Attribution
+
+From the Route Exchange Format (RTZ) XML schema, revision 1.2, published by CIRM at
+https://cirm.org/rtz-xml-schemas (the schema of IEC PAS 61174-1:2021). No copyright notice or licence
+stated; labelled LicenseRef-unstated. Structure restated, schema not redistributed.
