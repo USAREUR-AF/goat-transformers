@@ -1,0 +1,14 @@
+{
+  "name": "control-application-reset-roundtrip",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "6803036853fe50a116",
+  "expect": "6803036853fe50a116",
+  "model": {
+    "@kind": "long",
+    "mbus.ci": "80",
+    "mbus.length_repeat": "3",
+    "mbus.data.#": "0"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; a control frame (no data): SND_UD with CI 0x50 application reset, to the broadcast address 0xFE; expect derived there, no engine run"
+}

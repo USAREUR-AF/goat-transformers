@@ -1,0 +1,4 @@
+Packs dlms-hdlc-frame; module dlmshdlc
+  Gurux GuruxDLMS.c, https://github.com/Gurux/GuruxDLMS.c at commit
+  e9d77f926f3d3b8d1aa1a8f3374c7259d1c39b71, development/src/dlms.c.
+  Copyright (c) Gurux Ltd; GPL-2.0. Layouts restated; no text copied.

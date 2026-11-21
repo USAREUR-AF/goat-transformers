@@ -1,0 +1,8 @@
+{
+  "name": "other-start-is-no-kind",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "69030369",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; 0x69 is not a start character; expect derived there, no engine run"
+}

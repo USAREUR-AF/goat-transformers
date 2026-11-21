@@ -1,0 +1,8 @@
+{
+  "name": "cut-long-frame-is-malformed",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "682c2c6808057278563412244001075500000004",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; the frame stops inside the variable data header; expect derived there, no engine run"
+}

@@ -1,0 +1,27 @@
+# The dlmshdlc module: DLMS/COSEM HDLC frame fields. Written by tools/gen/meter2-pack.py.
+module        dlmshdlc
+version       0.1.0
+distribution  public
+source        "Gurux GuruxDLMS.c, https://github.com/Gurux/GuruxDLMS.c at commit e9d77f926f3d3b8d1aa1a8f3374c7259d1c39b71, development/src/dlms.c (GPL-2.0, Copyright (c) Gurux Ltd); layout restated, no code copied; IEC 62056-46 not used"
+key   frame_type           int     -  "frame format type, 0xA (type 3)"
+key   segmentation         int     -  "segmentation bit: more segments follow"
+key   destination_part1    int     -  "destination address octet 1: its upper 7 bits"
+key   destination_last1    int     -  "destination address octet 1: the low bit, 1 on the last octet (1, 2 or 4 octets)"
+key   destination_part2    int     -  "destination address octet 2: its upper 7 bits"
+key   destination_last2    int     -  "destination address octet 2: the low bit, 1 on the last octet (1, 2 or 4 octets)"
+key   destination_part3    int     -  "destination address octet 3: its upper 7 bits"
+key   destination_last3    int     -  "destination address octet 3: the low bit, 1 on the last octet (1, 2 or 4 octets)"
+key   destination_part4    int     -  "destination address octet 4: its upper 7 bits"
+key   destination_last4    int     -  "destination address octet 4: the low bit, 1 on the last octet (1, 2 or 4 octets)"
+key   source_part1         int     -  "source address octet 1: its upper 7 bits"
+key   source_last1         int     -  "source address octet 1: the low bit, 1 on the last octet (1, 2 or 4 octets)"
+key   source_part2         int     -  "source address octet 2: its upper 7 bits"
+key   source_last2         int     -  "source address octet 2: the low bit, 1 on the last octet (1, 2 or 4 octets)"
+key   source_part3         int     -  "source address octet 3: its upper 7 bits"
+key   source_last3         int     -  "source address octet 3: the low bit, 1 on the last octet (1, 2 or 4 octets)"
+key   source_part4         int     -  "source address octet 4: its upper 7 bits"
+key   source_last4         int     -  "source address octet 4: the low bit, 1 on the last octet (1, 2 or 4 octets)"
+key   control              int     -  "control field (I, S or U frame: send and receive sequence numbers, poll/final bit, frame kind)"
+key   header_check         string  -  "the 16-bit check after the control field, as sent (the header check when an information field follows; in a frame without one, the frame check)"
+list  information_and_fcs  "the information field (the LLC header and the COSEM APDU) and the 16-bit frame check, as octets (empty in a frame without information)"
+key   octet                int     -  "one octet"

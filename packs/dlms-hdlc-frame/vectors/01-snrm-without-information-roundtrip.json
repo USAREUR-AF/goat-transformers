@@ -1,0 +1,19 @@
+{
+  "name": "snrm-without-information-roundtrip",
+  "from": "dlms-hdlc-frame",
+  "to": "dlms-hdlc-frame",
+  "input": "7ea007032193abcd7e",
+  "expect": "7ea007032193abcd7e",
+  "model": {
+    "dlmshdlc.frame_type": "10",
+    "dlmshdlc.segmentation": "0",
+    "dlmshdlc.destination_part1": "1",
+    "dlmshdlc.destination_last1": "1",
+    "dlmshdlc.source_part1": "16",
+    "dlmshdlc.source_last1": "1",
+    "dlmshdlc.control": "147",
+    "dlmshdlc.header_check": "abcd",
+    "dlmshdlc.information_and_fcs.#": "0"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from Gurux GuruxDLMS.c dlms.c; an SNRM from client 16 to server 1 (one-octet addresses), no information: the 16-bit check is the frame check; expect derived there, no engine run"
+}

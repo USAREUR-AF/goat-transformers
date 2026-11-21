@@ -1,0 +1,23 @@
+# The wmbus module: wireless M-Bus link layer and transport header fields. Written by tools/gen/meter2-pack.py.
+module        wmbus
+version       0.1.0
+distribution  public
+source        "wmbusmeters, https://github.com/wmbusmeters/wmbusmeters at commit 86c46f145077f66e988c25ee04c06f89230c12e3, src/wmbus.cc (GPL-3.0-or-later, Copyright (C) 2017-2024 Fredrik Oehrstroem); layouts restated, no code copied; EN 13757-4 not used"
+key   control             int     -  "C field (0x44 SND_NR, 0x46 SND_IR, 0x08 RSP_UD ...)"
+key   manufacturer        int     -  "link-layer manufacturer code (three 5-bit letters)"
+key   identification      string  -  "link-layer identification number: the 4 octets as sent, as hexadecimal digits (BCD, low octet first)"
+key   version             int     -  "link-layer version"
+key   device_type         int     -  "link-layer device type (medium)"
+key   ci                  int     -  "CI field: 0x7A short transport header, 0x72 long transport header, 0x78 no header, 0x8C extended link layer I, others"
+key   ell_cc              int     -  "extended link layer: communication control"
+key   ell_acc             int     -  "extended link layer: access number"
+key   ell_next_ci         int     -  "extended link layer I: the CI field that follows"
+key   tpl_identification  string  -  "long transport header: identification number, the 4 octets as sent, as hexadecimal digits"
+key   tpl_manufacturer    int     -  "long transport header: manufacturer"
+key   tpl_version         int     -  "long transport header: version"
+key   tpl_device_type     int     -  "long transport header: device type"
+key   access_number       int     -  "transport header: access number"
+key   status              int     -  "transport header: status"
+key   configuration       int     -  "transport header: configuration field (bits 12-8 the security mode)"
+list  application_data    "the application data (records, or encrypted blocks, and any configuration extension), as octets"
+key   octet               int     -  "one octet"

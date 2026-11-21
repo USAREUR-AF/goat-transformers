@@ -1,0 +1,71 @@
+# Wireless M-Bus link-layer frame (CRC blocks removed): length, control, manufacturer, address, CI and the
+# ELL and TPL headers. Written by tools/gen/meter2-pack.py; do not edit by hand.
+format        wmbus-frame
+version       0.1.0
+distribution  public
+source        "wmbusmeters, https://github.com/wmbusmeters/wmbusmeters at commit 86c46f145077f66e988c25ee04c06f89230c12e3, src/wmbus.cc (GPL-3.0-or-later, Copyright (C) 2017-2024 Fredrik Oehrstroem); layouts restated, no code copied; EN 13757-4 not used"
+uses          wmbus
+wire          bits
+layout        sequential
+bit_order     msb
+
+length  8  bytes
+  field  wmbus.control  8  uint
+  field  wmbus.manufacturer  16  uint  swap
+  field  wmbus.identification  32  hex
+  field  wmbus.version  8  uint
+  field  wmbus.device_type  8  uint
+  field  wmbus.ci  8  uint
+  switch  wmbus.ci
+    case  122
+      field  wmbus.access_number  8  uint
+      field  wmbus.status  8  uint
+      field  wmbus.configuration  16  uint  swap
+      group  wmbus.application_data  rest
+        field  wmbus.octet  8  uint
+      end
+    case  114
+      field  wmbus.tpl_identification  32  hex
+      field  wmbus.tpl_manufacturer  16  uint  swap
+      field  wmbus.tpl_version  8  uint
+      field  wmbus.tpl_device_type  8  uint
+      field  wmbus.access_number  8  uint
+      field  wmbus.status  8  uint
+      field  wmbus.configuration  16  uint  swap
+      group  wmbus.application_data  rest
+        field  wmbus.octet  8  uint
+      end
+    case  140
+      field  wmbus.ell_cc  8  uint
+      field  wmbus.ell_acc  8  uint
+      field  wmbus.ell_next_ci  8  uint
+      switch  wmbus.ell_next_ci
+        case  122
+          field  wmbus.access_number  8  uint
+          field  wmbus.status  8  uint
+          field  wmbus.configuration  16  uint  swap
+          group  wmbus.application_data  rest
+            field  wmbus.octet  8  uint
+          end
+        case  114
+          field  wmbus.tpl_identification  32  hex
+          field  wmbus.tpl_manufacturer  16  uint  swap
+          field  wmbus.tpl_version  8  uint
+          field  wmbus.tpl_device_type  8  uint
+          field  wmbus.access_number  8  uint
+          field  wmbus.status  8  uint
+          field  wmbus.configuration  16  uint  swap
+          group  wmbus.application_data  rest
+            field  wmbus.octet  8  uint
+          end
+        else
+          group  wmbus.application_data  rest
+            field  wmbus.octet  8  uint
+          end
+      end
+    else
+      group  wmbus.application_data  rest
+        field  wmbus.octet  8  uint
+      end
+  end
+end

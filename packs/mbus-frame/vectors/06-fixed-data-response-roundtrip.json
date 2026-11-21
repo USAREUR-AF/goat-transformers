@@ -1,0 +1,17 @@
+{
+  "name": "fixed-data-response-roundtrip",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "68131368080573785634120a00e97e01000000350100003c16",
+  "expect": "68131368080573785634120a00e97e01000000350100003c16",
+  "model": {
+    "mbus.ci": "115",
+    "mbus.identification": "78563412",
+    "mbus.access_number": "10",
+    "mbus.counter1_type": "233",
+    "mbus.counter2_type": "126",
+    "mbus.counter1": "01000000",
+    "mbus.counter2": "35010000"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; a fixed data response with two counters; expect derived there, no engine run"
+}

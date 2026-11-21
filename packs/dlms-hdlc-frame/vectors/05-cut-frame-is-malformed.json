@@ -1,0 +1,8 @@
+{
+  "name": "cut-frame-is-malformed",
+  "from": "dlms-hdlc-frame",
+  "to": "dlms-hdlc-frame",
+  "input": "7ea0110002002321101234e6e600601d",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from Gurux GuruxDLMS.c dlms.c; the length states more octets than the input holds; expect derived there, no engine run"
+}

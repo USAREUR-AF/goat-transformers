@@ -1,0 +1,15 @@
+{
+  "name": "long-transport-header-encrypted-roundtrip",
+  "from": "wmbus-frame",
+  "to": "wmbus-frame",
+  "input": "26442d2c785634121b167221436587244001072100100500000000000000000000000000000000",
+  "expect": "26442d2c785634121b167221436587244001072100100500000000000000000000000000000000",
+  "model": {
+    "wmbus.ci": "114",
+    "wmbus.tpl_identification": "21436587",
+    "wmbus.tpl_manufacturer": "16420",
+    "wmbus.configuration": "1296",
+    "wmbus.application_data.#": "16"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from wmbusmeters wmbus.cc; a long transport header (a different meter behind the link address), security mode 5, one encrypted block; expect derived there, no engine run"
+}

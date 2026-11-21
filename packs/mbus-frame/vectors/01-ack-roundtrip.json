@@ -1,0 +1,11 @@
+{
+  "name": "ack-roundtrip",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "e5",
+  "expect": "e5",
+  "model": {
+    "@kind": "ack"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; expect derived there, no engine run"
+}

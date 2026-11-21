@@ -1,0 +1,6 @@
+Packs mbus-frame; module mbus
+  libmbus, https://github.com/rscada/libmbus at commit
+  94352715928182d9e1761959f887c6a66e70de93, mbus/mbus-protocol.h and
+  mbus/mbus-protocol.c. Copyright (C) 2010-2012 Raditex AB and contributors;
+  free to use with due credit to rSCADA (http://www.rSCADA.se) and Raditex
+  Control, which this entry gives. Layouts restated; no text copied.
