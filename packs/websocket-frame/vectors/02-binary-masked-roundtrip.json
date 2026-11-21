@@ -1,0 +1,14 @@
+{
+  "name": "binary-masked-roundtrip",
+  "from": "websocket-frame",
+  "to": "websocket-frame",
+  "input": "828637fa213d36f8223932fc",
+  "expect": "828637fa213d36f8223932fc",
+  "model": {
+    "ws.opcode": "2",
+    "ws.mask": "1",
+    "ws.masking_key": "37fa213d",
+    "ws.payload.#": "6"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 6455 section 5.2; a masked binary frame (payload kept masked); expect derived there, no engine run"
+}

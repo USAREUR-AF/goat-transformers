@@ -1,0 +1,13 @@
+{
+  "name": "eight-octet-type-roundtrip",
+  "from": "http3-frame",
+  "to": "http3-frame",
+  "input": "c00000000000000000",
+  "expect": "c00000000000000000",
+  "model": {
+    "h3.frame_type_size": "3",
+    "h3.frame_type": "0",
+    "h3.frame_length": "0"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9114 section 7 and RFC 9000 section 16; a DATA frame type written as an eight-octet integer, which the size code keeps; expect derived there, no engine run"
+}

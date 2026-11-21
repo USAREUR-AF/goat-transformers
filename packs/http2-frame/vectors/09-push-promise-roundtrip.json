@@ -1,0 +1,12 @@
+{
+  "name": "push-promise-roundtrip",
+  "from": "http2-frame",
+  "to": "http2-frame",
+  "input": "000006050400000001000000028287",
+  "expect": "000006050400000001000000028287",
+  "model": {
+    "h2.promised_stream_id": "2",
+    "h2.header_block.#": "2"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9113 sections 4.1 and 6; PUSH_PROMISE; expect derived there, no engine run"
+}

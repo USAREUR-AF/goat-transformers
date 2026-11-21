@@ -1,0 +1,21 @@
+{
+  "name": "client-hello-roundtrip",
+  "from": "tls-record",
+  "to": "tls-record",
+  "input": "160303009a010000960303000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f0004130113020100004900000012001000000d612e6578616d706c652e636f6d002b00050403040303003300260026001d00206465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80818283",
+  "expect": "160303009a010000960303000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f0004130113020100004900000012001000000d612e6578616d706c652e636f6d002b00050403040303003300260026001d00206465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80818283",
+  "model": {
+    "inet.tls_content_type": "22",
+    "inet.tls_legacy_version": "771",
+    "tls13.handshakes.#": "1",
+    "tls13.handshakes[0].tls13.handshake_type": "1",
+    "tls13.handshakes[0].tls13.random": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "tls13.handshakes[0].tls13.legacy_session_id.#": "32",
+    "tls13.handshakes[0].tls13.cipher_suites.#": "2",
+    "tls13.handshakes[0].tls13.client_extensions.#": "3",
+    "tls13.handshakes[0].tls13.client_extensions[0].tls13.server_names[0].tls13.host_name.#": "13",
+    "tls13.handshakes[0].tls13.client_extensions[1].tls13.supported_versions.#": "2",
+    "tls13.handshakes[0].tls13.client_extensions[2].tls13.extension_type": "51"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 8446 sections 4 and 5.1 and RFC 6066 section 3; a ClientHello with server_name, supported_versions and key_share; expect derived there, no engine run"
+}

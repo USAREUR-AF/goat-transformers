@@ -1,0 +1,12 @@
+{
+  "name": "ping-roundtrip",
+  "from": "websocket-frame",
+  "to": "websocket-frame",
+  "input": "8900",
+  "expect": "8900",
+  "model": {
+    "ws.opcode": "9",
+    "ws.payload_len7": "0"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 6455 section 5.2; an empty ping; expect derived there, no engine run"
+}

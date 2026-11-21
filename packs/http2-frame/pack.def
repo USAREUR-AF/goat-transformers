@@ -1,0 +1,93 @@
+# HTTP/2 frame (RFC 9113): the 9-octet header and the payload by frame type. The header block (HPACK) is
+# octets. Written by tools/gen/webframes-pack.py; do not edit by hand.
+format        http2-frame
+version       0.1.0
+distribution  public
+source        "IETF RFC 9113, HTTP/2, June 2022, sections 4.1 and 6, https://www.rfc-editor.org/rfc/rfc9113.txt; layout restated"
+uses          h2
+wire          bits
+layout        sequential
+bit_order     msb
+
+length  24  bytes  plus  -6
+  field  h2.frame_type  8  uint
+  field  h2.flag_0x80  1  uint
+  field  h2.flag_0x40  1  uint
+  field  h2.flag_priority  1  uint
+  field  h2.flag_0x10  1  uint
+  field  h2.flag_padded  1  uint
+  field  h2.flag_end_headers  1  uint
+  field  h2.flag_0x02  1  uint
+  field  h2.flag_end_stream_or_ack  1  uint
+  field  h2.stream_reserved  1  uint
+  field  h2.stream_id  31  uint
+  switch  h2.frame_type
+    case  0
+      switch  h2.flag_padded
+        case  1
+          field  h2.pad_length  8  uint
+        else
+      end
+      group  h2.data  rest
+        field  h2.octet  8  uint
+      end
+    case  1
+      switch  h2.flag_padded
+        case  1
+          field  h2.pad_length  8  uint
+        else
+      end
+      switch  h2.flag_priority
+        case  1
+          field  h2.exclusive  1  uint
+          field  h2.stream_dependency  31  uint
+          field  h2.weight  8  uint
+        else
+      end
+      group  h2.header_block  rest
+        field  h2.octet  8  uint
+      end
+    case  2
+      field  h2.exclusive  1  uint
+      field  h2.stream_dependency  31  uint
+      field  h2.weight  8  uint
+    case  3
+      field  h2.error_code  32  uint
+    case  4
+      group  h2.settings  rest
+        field  h2.setting_id  16  uint
+        field  h2.setting_value  32  uint
+      end
+    case  5
+      switch  h2.flag_padded
+        case  1
+          field  h2.pad_length  8  uint
+        else
+      end
+      field  h2.promised_reserved  1  uint
+      field  h2.promised_stream_id  31  uint
+      group  h2.header_block  rest
+        field  h2.octet  8  uint
+      end
+    case  6
+      field  h2.opaque_data  64  hex
+    case  7
+      field  h2.goaway_reserved  1  uint
+      field  h2.last_stream_id  31  uint
+      field  h2.error_code  32  uint
+      group  h2.debug_data  rest
+        field  h2.octet  8  uint
+      end
+    case  8
+      field  h2.window_reserved  1  uint
+      field  h2.window_size_increment  31  uint
+    case  9
+      group  h2.header_block  rest
+        field  h2.octet  8  uint
+      end
+    else
+      group  h2.payload  rest
+        field  h2.octet  8  uint
+      end
+  end
+end

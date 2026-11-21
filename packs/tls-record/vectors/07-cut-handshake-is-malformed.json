@@ -1,0 +1,8 @@
+{
+  "name": "cut-handshake-is-malformed",
+  "from": "tls-record",
+  "to": "tls-record",
+  "input": "160303009a010000960303000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20202122232425262728292a2b2c2d2e2f",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 8446 sections 4 and 5.1 and RFC 6066 section 3; the ClientHello record of vector 01 cut inside its session ID; expect derived there, no engine run"
+}

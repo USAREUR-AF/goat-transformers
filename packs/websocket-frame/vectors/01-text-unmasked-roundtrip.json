@@ -1,0 +1,15 @@
+{
+  "name": "text-unmasked-roundtrip",
+  "from": "websocket-frame",
+  "to": "websocket-frame",
+  "input": "810548656c6c6f",
+  "expect": "810548656c6c6f",
+  "model": {
+    "ws.fin": "1",
+    "ws.opcode": "1",
+    "ws.mask": "0",
+    "ws.payload_len7": "5",
+    "ws.payload.#": "5"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 6455 section 5.2; an unmasked text frame; expect derived there, no engine run"
+}

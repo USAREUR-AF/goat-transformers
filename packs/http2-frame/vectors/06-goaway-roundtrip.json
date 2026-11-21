@@ -1,0 +1,13 @@
+{
+  "name": "goaway-roundtrip",
+  "from": "http2-frame",
+  "to": "http2-frame",
+  "input": "00000b0700000000000000000700000000627965",
+  "expect": "00000b0700000000000000000700000000627965",
+  "model": {
+    "h2.last_stream_id": "7",
+    "h2.error_code": "0",
+    "h2.debug_data.#": "3"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9113 sections 4.1 and 6; GOAWAY with debug data; expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "unknown-type-roundtrip",
+  "from": "http2-frame",
+  "to": "http2-frame",
+  "input": "0000030a0000000000000178",
+  "expect": "0000030a0000000000000178",
+  "model": {
+    "h2.frame_type": "10",
+    "h2.payload.#": "3"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9113 sections 4.1 and 6; a frame of type 10 (ALTSVC, defined elsewhere), kept as octets; expect derived there, no engine run"
+}

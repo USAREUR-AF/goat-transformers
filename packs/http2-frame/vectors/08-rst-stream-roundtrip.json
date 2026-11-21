@@ -1,0 +1,11 @@
+{
+  "name": "rst-stream-roundtrip",
+  "from": "http2-frame",
+  "to": "http2-frame",
+  "input": "00000403000000000500000008",
+  "expect": "00000403000000000500000008",
+  "model": {
+    "h2.error_code": "8"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9113 sections 4.1 and 6; RST_STREAM with CANCEL; expect derived there, no engine run"
+}

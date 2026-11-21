@@ -1,0 +1,12 @@
+{
+  "name": "alert-roundtrip",
+  "from": "tls-record",
+  "to": "tls-record",
+  "input": "15030300020228",
+  "expect": "15030300020228",
+  "model": {
+    "inet.tls_alert_level": "2",
+    "inet.tls_alert_description": "40"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 8446 sections 4 and 5.1 and RFC 6066 section 3; a fatal handshake_failure alert; expect derived there, no engine run"
+}
