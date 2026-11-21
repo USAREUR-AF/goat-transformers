@@ -5707,6 +5707,10 @@ kind's last line is not fixed either.
     (ruling 10, load vector 3341).
 29. **A third token that is neither `at` nor `as`** (`when 8 1 x at 0`) stays
     the argument-count line check of ruling 23 of 0.20.
+30. **`at` on a pack that is not `layout sequential`** (a fixed `bits`
+    layout, `json`, any other wire) is an `at` error like the others, with
+    the late timing of rulings 10 and 14: a pack with no `distribution` line
+    and `when 0:8 1 at 0` on a fixed layout is `missing-distribution`.
 
 ## Not in this version
 
