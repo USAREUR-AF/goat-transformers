@@ -5026,9 +5026,11 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    checked against its `range`, including a later line on the same locator
    whose value ruling 16 of 0.5 does not write: a held value outside its range
    refuses the encode (`transform-encode`), in the strict direction of 0.11.
+   A key that only a `default` would fill is not held: on a line that is not
+   written, its `default` is not checked.
 
 Stated, not yet pinned by a vector: a submessage holding only fields that
 `implicit` leaves out, without a `when … present`; a wrapped `float` still
 outside `[<min>, <max>)` after the double arithmetic; an `int` range bound
 beyond a signed 64-bit integer; `range` on a sequential field with `also`
-keys.
+keys; the `default` of a line that is not written (ruling 9).
