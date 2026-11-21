@@ -1,0 +1,12 @@
+{
+  "name": "application-command-roundtrip",
+  "from": "zwave-serial-frame",
+  "to": "zwave-serial-frame",
+  "input": "010900040005032503ff2d",
+  "expect": "010900040005032503ff2d",
+  "model": {
+    "zwave.function_id": "4",
+    "zwave.payload.#": "6"
+  },
+  "source": "built by tools/gen/smarthome-vectors.py from values chosen there; layout restated from zwave-js packages/serial/src/message/Message.ts; ApplicationCommand from node 5 carrying a 3-octet command (switch binary report on); expect derived there, no engine run"
+}

@@ -1,0 +1,5 @@
+Packs enocean-esp3; module esp3
+  kipe/enocean, https://github.com/kipe/enocean at commit
+  80a253bcea1e3cb99295f53f04c0558190dca5f3, enocean/protocol/packet.py,
+  constants.py and crc8.py. MIT License, Copyright (c) 2014-2016 Kimmo Huoman.
+  Layouts restated; no text copied.

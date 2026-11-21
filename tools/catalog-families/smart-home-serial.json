@@ -1,0 +1,8 @@
+{
+  "name": "Smart-home serial framing (Z-Wave Serial API, EnOcean ESP3)",
+  "domain": "iot",
+  "exact": [
+    "zwave-serial-frame",
+    "enocean-esp3"
+  ]
+}

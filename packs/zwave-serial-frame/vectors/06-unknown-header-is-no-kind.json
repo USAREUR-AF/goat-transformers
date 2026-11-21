@@ -1,0 +1,8 @@
+{
+  "name": "unknown-header-is-no-kind",
+  "from": "zwave-serial-frame",
+  "to": "zwave-serial-frame",
+  "input": "02030015e9",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/smarthome-vectors.py from values chosen there; layout restated from zwave-js packages/serial/src/message/Message.ts; 0x02 is not SOF, ACK, NAK or CAN; expect derived there, no engine run"
+}

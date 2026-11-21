@@ -1,0 +1,13 @@
+{
+  "name": "response-ok-roundtrip",
+  "from": "enocean-esp3",
+  "to": "enocean-esp3",
+  "input": "5500010002650000",
+  "expect": "5500010002650000",
+  "model": {
+    "esp3.packet_type": "2",
+    "esp3.data.#": "1",
+    "esp3.optional_data.#": "0"
+  },
+  "source": "built by tools/gen/smarthome-vectors.py from values chosen there; layout restated from kipe/enocean protocol/packet.py and crc8.py; a response with return code OK; expect derived there, no engine run"
+}

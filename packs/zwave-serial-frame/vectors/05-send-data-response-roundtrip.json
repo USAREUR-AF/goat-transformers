@@ -1,0 +1,13 @@
+{
+  "name": "send-data-response-roundtrip",
+  "from": "zwave-serial-frame",
+  "to": "zwave-serial-frame",
+  "input": "0104011301e8",
+  "expect": "0104011301e8",
+  "model": {
+    "zwave.message_type": "1",
+    "zwave.function_id": "19",
+    "zwave.payload.#": "1"
+  },
+  "source": "built by tools/gen/smarthome-vectors.py from values chosen there; layout restated from zwave-js packages/serial/src/message/Message.ts; SendData response, accepted; expect derived there, no engine run"
+}

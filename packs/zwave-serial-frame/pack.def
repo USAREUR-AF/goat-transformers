@@ -1,0 +1,30 @@
+# Z-Wave Serial API frame: ACK, NAK, CAN, or SOF, length, type, function, payload and checksum. Written by
+# tools/gen/smarthome-pack.py; do not edit by hand.
+format        zwave-serial-frame
+version       0.1.0
+distribution  public
+source        "zwave-js, https://github.com/zwave-js/zwave-js at commit 03756e4f179a4461f85822d2e5c71b1089667a22, packages/serial/src/message/Message.ts, MessageHeaders.ts and Constants.ts (MIT License, Copyright (c) 2018-2024 AlCalzone); layout restated, no code copied; the Silicon Labs Z-Wave Host API specification not used"
+uses          zwave
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  ack
+when  8  6
+
+kind  nak
+when  8  21
+
+kind  can
+when  8  24
+
+kind  data-frame
+when  8  1
+length  8  bytes  plus  1
+  field  zwave.message_type  8  uint
+  field  zwave.function_id  8  uint
+  group  zwave.payload  rest
+    field  zwave.octet  8  uint
+  end
+end
+field  zwave.checksum  8  uint

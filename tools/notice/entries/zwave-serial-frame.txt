@@ -1,0 +1,5 @@
+Packs zwave-serial-frame; module zwave
+  zwave-js, https://github.com/zwave-js/zwave-js at commit
+  03756e4f179a4461f85822d2e5c71b1089667a22, packages/serial/src/message/ and
+  parsers/SerialAPIParser.ts. MIT License, Copyright (c) 2018-2024 AlCalzone.
+  Layouts restated; no text copied.
