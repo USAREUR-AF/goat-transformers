@@ -557,6 +557,22 @@ const Line = struct {
     abs_ints: []const u64 = &.{}, // bits, and the integer forms of protobuf
     abs_texts: []const []const u8 = &.{}, // text wires and pstring: the text compared
     abs_json: []const u8 = "", // json, geojson: the JSON text the first sentinel is written as
+    // Version 0.56: the range sentinels of the `absent` option, and whether
+    // the option holds an exact sentinel (the first is written for an absent key)
+    abs_ranges: []const AbsRange = &.{},
+    abs_write: bool = false,
+    // Version 0.56: `null` (json, geojson), `implicit` (protobuf), and
+    // `range <min> <max> [wrap]` as written, then read as the key's type
+    null_opt: bool = false,
+    implicit: bool = false,
+    rng_min_raw: ?[]const u8 = null,
+    rng_max_raw: []const u8 = "",
+    wrap: bool = false,
+    rng_set: bool = false,
+    rng_imin: i64 = 0,
+    rng_imax: i64 = 0,
+    rng_fmin: f64 = 0,
+    rng_fmax: f64 = 0,
     kty: KeyType = .string, // the key's declared type, set when the pack loads
 
     key: []const u8 = "",
@@ -625,7 +641,7 @@ const Line = struct {
     // Does the line write its first sentinel for this entity? Its key is
     // absent and it is not suppressed.
     fn sentinelOn(self: *const Line, e: *const Entity) bool {
-        return self.abs_set and !self.suppressed(e);
+        return self.abs_write and !self.suppressed(e);
     }
 };
 
@@ -812,6 +828,9 @@ const KeyUse = struct {
     // the innermost group the line is in: `model_keys` lists a key inside a
     // group as `<list>[].<key>`
     grp: ?*const Group = null,
+    // Version 0.56: a `field` line's `range <min> <max>` as written
+    rmin: ?[]const u8 = null,
+    rmax: []const u8 = "",
 };
 
 const Pack = struct {
@@ -2110,6 +2129,38 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
         }
     }
     const k = ln.transform.kind;
+    // Version 0.56: a value that begins with `>=` or `<=`, as written, is a
+    // range sentinel; the others are exact
+    var ranges = std.ArrayList(AbsRange).init(alloc);
+    var exact = std.ArrayList([]const u8).init(alloc);
+    for (vals.items) |v| {
+        const ge = std.mem.startsWith(u8, v, ">=");
+        if (!ge and !std.mem.startsWith(u8, v, "<=")) {
+            try exact.append(v);
+            continue;
+        }
+        const nt = v[2..];
+        if (k == .pdouble or k == .pfloat or k == .bool_) {
+            return lineBad(diag, alloc, bd, "line {d}: absent {s}: a range sentinel on the {s} transform", .{ no, v, @tagName(k) });
+        }
+        if (wire == .bits or (wire == .protobuf and k != .pstring)) {
+            if (wire == .bits and ln.blen > 64) {
+                return lineBad(diag, alloc, bd, "line {d}: absent on a bits field of {d} bits; at most 64", .{ no, ln.blen });
+            }
+            const width: usize = if (wire == .bits) ln.blen else 64;
+            const x = parseUnsigned(nt) orelse
+                return lineBad(diag, alloc, bd, "line {d}: absent value `{s}`: `{s}` is not an unsigned decimal integer", .{ no, v, nt });
+            if (!fitsBits(x, width)) return lineBad(diag, alloc, bd, "line {d}: absent value {s} does not fit {d} bits", .{ no, v, width });
+            try ranges.append(.{ .ge = ge, .int = x });
+        } else {
+            const f = parseDecimal(nt) catch
+                return lineBad(diag, alloc, bd, "line {d}: absent value `{s}`: `{s}` is not number text", .{ no, v, nt });
+            try ranges.append(.{ .ge = ge, .f = f });
+        }
+    }
+    ln.abs_ranges = ranges.items;
+    ln.abs_write = exact.items.len > 0;
+    vals = exact;
     if (wire == .bits or (wire == .protobuf and k != .pstring)) {
         // the raw value is an unsigned integer of the field's width
         if (wire == .bits and ln.blen > 64) {
@@ -2173,13 +2224,144 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
     ln.abs_set = true;
 }
 
+// Version 0.56: the field options `null`, `implicit`, `range <min> <max>
+// [wrap]` and a stray `wrap`, checked as the line is read (step 9 of ruling
+// 5b of 0.11): `<min>` and `<max>` are number text (2b). `oi` is at the
+// option and is left at its last argument.
+const OutOpt = union(enum) { none, ok: bool, bad: []const u8 };
+
+fn outputOption(toks: []const []const u8, oi: *usize, ln: *Line) OutOpt {
+    const o = toks[oi.*];
+    if (std.mem.eql(u8, o, "null")) {
+        const again = ln.null_opt;
+        ln.null_opt = true;
+        return .{ .ok = again };
+    } else if (std.mem.eql(u8, o, "implicit")) {
+        const again = ln.implicit;
+        ln.implicit = true;
+        return .{ .ok = again };
+    } else if (std.mem.eql(u8, o, "range")) {
+        if (oi.* + 2 >= toks.len) return .{ .bad = "range takes a minimum and a maximum" };
+        const mn = toks[oi.* + 1];
+        const mx = toks[oi.* + 2];
+        _ = parseDecimal(mn) catch return .{ .bad = "the minimum of range is not number text" };
+        _ = parseDecimal(mx) catch return .{ .bad = "the maximum of range is not number text" };
+        oi.* += 2;
+        const again = ln.rng_min_raw != null;
+        ln.rng_min_raw = mn;
+        ln.rng_max_raw = mx;
+        if (oi.* + 1 < toks.len and std.mem.eql(u8, toks[oi.* + 1], "wrap")) {
+            oi.* += 1;
+            if (ln.wrap) return .{ .ok = true };
+            ln.wrap = true;
+        }
+        return .{ .ok = again };
+    } else if (std.mem.eql(u8, o, "wrap")) {
+        if (ln.wrap) return .{ .ok = true };
+        return .{ .bad = "wrap is not directly after range <min> <max>" };
+    }
+    return .none;
+}
+
+// The `range` of a line, read as its key's type once the key checks have
+// passed (they refuse the texts first).
+fn resolveRange(ln: *Line) void {
+    const mn = ln.rng_min_raw orelse return;
+    switch (ln.kty) {
+        .int => {
+            ln.rng_imin = parseDecimalInt(mn) catch return;
+            ln.rng_imax = parseDecimalInt(ln.rng_max_raw) catch return;
+        },
+        .float => {
+            ln.rng_fmin = parseDecimal(mn) catch return;
+            ln.rng_fmax = parseDecimal(ln.rng_max_raw) catch return;
+        },
+        .string => return,
+    }
+    ln.rng_set = true;
+}
+
+// The load check of a `range` against its key's type (Version 0.56): the key
+// is `int` or `float`, an `int` key's ends are integer text (2a), and
+// `<min>` < `<max>` read as that type. null: it holds.
+fn rangeKeyCheck(kty: KeyType, mn: []const u8, mx: []const u8) ?[]const u8 {
+    switch (kty) {
+        .int => {
+            const a = parseDecimalInt(mn) catch return "the minimum of range is not integer text";
+            const b = parseDecimalInt(mx) catch return "the maximum of range is not integer text";
+            if (!(a < b)) return "the minimum of range is not less than its maximum";
+        },
+        .float => {
+            const a = parseDecimal(mn) catch return "the minimum of range is not number text";
+            const b = parseDecimal(mx) catch return "the maximum of range is not number text";
+            if (!(a < b)) return "the minimum of range is not less than its maximum";
+        },
+        .string => return "range on a key that is not int or float",
+    }
+    return null;
+}
+
+// Version 0.56: a held value checked against the line's `range`, or wrapped
+// into it, before `via` and the transform.
+fn applyRange(ln: *const Line, mv: MV) !MV {
+    if (!ln.rng_set) return mv;
+    switch (mv) {
+        .int => |x| {
+            if (ln.kty == .float) return applyRange(ln, MV{ .float = @floatFromInt(x) });
+            const mn = ln.rng_imin;
+            const mx = ln.rng_imax;
+            if (!ln.wrap) {
+                if (x < mn or x > mx) return E.@"transform-encode";
+                return mv;
+            }
+            if (x >= mn and x < mx) return mv;
+            const span: i128 = @as(i128, mx) - @as(i128, mn);
+            const r: i128 = @as(i128, mn) + @mod(@as(i128, x) - @as(i128, mn), span);
+            return MV{ .int = @intCast(r) };
+        },
+        .float => |x| {
+            const mn = ln.rng_fmin;
+            const mx = ln.rng_fmax;
+            if (std.math.isNan(x)) return E.@"transform-encode";
+            if (!ln.wrap) {
+                if (x < mn or x > mx) return E.@"transform-encode";
+                return mv;
+            }
+            if (x >= mn and x < mx) return mv;
+            const span = mx - mn;
+            var r = x - span * @floor((x - mn) / span);
+            if (!std.math.isFinite(r) or r >= mx or r < mn) r = mn;
+            return MV{ .float = r };
+        },
+        .str => return mv,
+    }
+}
+
+// Version 0.56: one range sentinel `>=<n>` or `<=<n>`; `int` on bits and
+// the integer forms of protobuf, `f` (the nearest double) on the text wires.
+const AbsRange = struct { ge: bool, int: u64 = 0, f: f64 = 0 };
+
+// Does a raw text match a range sentinel: number text (2b of 0.11) whose
+// nearest double is at least, or at most, `<n>`?
+fn absentTextRange(ln: *const Line, text: []const u8) bool {
+    if (ln.abs_ranges.len == 0) return false;
+    const x = parseDecimal(text) catch return false;
+    for (ln.abs_ranges) |r| {
+        if (if (r.ge) x >= r.f else x <= r.f) return true;
+    }
+    return false;
+}
+
 fn absentText(ln: *const Line, text: []const u8) bool {
     for (ln.abs_texts) |t| if (std.mem.eql(u8, t, text)) return true;
-    return false;
+    return absentTextRange(ln, text);
 }
 
 fn absentInt(ln: *const Line, v: u64) bool {
     for (ln.abs_ints) |x| if (x == v) return true;
+    for (ln.abs_ranges) |r| {
+        if (if (r.ge) v >= r.int else v <= r.int) return true;
+    }
     return false;
 }
 
@@ -3079,7 +3261,11 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
                 if (oi >= toks.len or toks[oi].len == 0) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: with takes a key", .{lineno});
                 again = ln.with_key != null;
                 ln.with_key = toks[oi];
-            } else return lineBad(diag, alloc, E.@"bad-directive", "line {d}: unknown field option {s}", .{ lineno, o });
+            } else switch (outputOption(toks, &oi, &ln)) {
+                .none => return lineBad(diag, alloc, E.@"bad-directive", "line {d}: unknown field option {s}", .{ lineno, o }),
+                .bad => |m| return lineBad(diag, alloc, E.@"bad-directive", "line {d}: {s}", .{ lineno, m }),
+                .ok => |a| again = a,
+            }
             if (again) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: field option {s} is repeated", .{ lineno, o });
         }
         // the values of the `absent` option are a line check, except on a
@@ -3091,8 +3277,30 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
             try parseAbsent(alloc, p.wire, &ln, in_group, diag);
             ln.abs_checked = true;
         }
+        // Version 0.56: `null` and `implicit` against the wire, the
+        // locator and the group, after the file is read (ruling 10 of 0.10)
+        if (ln.null_opt) {
+            if (p.wire != .json and p.wire != .geojson) {
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: null on wire {s}; it is for json and geojson", .{ lineno, @tagName(p.wire) });
+            }
+            if (p.wire == .geojson and !in_group and std.mem.startsWith(u8, toks[2], geom_prefix)) {
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: null on the geometry locator {s}", .{ lineno, toks[2] });
+            }
+        }
+        if (ln.implicit) {
+            if (p.wire != .protobuf) {
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: implicit on wire {s}; it is for protobuf", .{ lineno, @tagName(p.wire) });
+            }
+            switch (t.kind) {
+                .pvarint, .psint, .pdouble, .pfloat, .pstring => {},
+                else => return bad(diag, alloc, E.@"bad-directive", "line {d}: implicit with transform {s}", .{ lineno, toks[3] }),
+            }
+            if (in_group and is(toks[2], ".")) {
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: implicit on a scalar item", .{lineno});
+            }
+        }
         try curLines(p, in_group, gtmp).append(ln);
-        try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = if (in_group) gstack.items[gstack.items.len - 1] else null });
+        try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = if (in_group) gstack.items[gstack.items.len - 1] else null, .rmin = ln.rng_min_raw, .rmax = ln.rng_max_raw });
         if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
     } else {
         return bad(diag, alloc, E.@"unknown-directive", "line {d}: unknown directive {s}", .{ lineno, kw });
@@ -3530,6 +3738,15 @@ pub const Engine = struct {
                 }
                 return err;
             }
+            // Version 0.56: a `range` against the key's type, right after
+            // the line's key-type-mismatch check
+            if (ku.rmin) |mn| {
+                if (rangeKeyCheck(want, mn, ku.rmax)) |m| {
+                    const err = E.@"bad-directive";
+                    self.fail(err, "pack {s}: key {s}: {s}", .{ p.format, ku.key, m });
+                    return err;
+                }
+            }
         }
         // every key is known now: each line's key type, each default's value
         try self.resolveLines(p, p.common.items);
@@ -3712,7 +3929,10 @@ pub const Engine = struct {
     fn resolveLines(self: *Engine, p: *const Pack, lines: []Line) anyerror!void {
         for (lines) |*ln| {
             switch (ln.tag) {
-                .field => ln.kty = self.keyType(ln.key).?,
+                .field => {
+                    ln.kty = self.keyType(ln.key).?;
+                    resolveRange(ln);
+                },
                 .group => {
                     const g = ln.grp.?;
                     try self.resolveLines(p, g.lines);
@@ -3757,6 +3977,7 @@ pub const Engine = struct {
         for (list) |*n| {
             if (n.tag == .field) {
                 n.ln.kty = self.keyType(n.ln.key).?;
+                resolveRange(&n.ln);
                 for (n.also.items) |*a| a.kty = self.keyType(a.key).?;
             }
             // Version 0.20: the switch key's type, each case's defaults
@@ -6107,6 +6328,34 @@ fn encodeSentinelPayload(buf: *std.ArrayList(u8), ln: *const Line) !void {
     }
 }
 
+// Version 0.56: does a value, after `via`, equal the proto3 default of the
+// wire type (+0.0 only; for `pfloat` after narrowing)?
+fn protoIsDefault(t: TKind, mv: MV) bool {
+    return switch (t) {
+        .pvarint, .psint => mv == .int and mv.int == 0,
+        .pdouble => blk: {
+            const x = mvFloat(mv) catch break :blk false;
+            break :blk x == 0 and !std.math.signbit(x);
+        },
+        .pfloat => blk: {
+            const x = narrowF32(mvFloat(mv) catch break :blk false) catch break :blk false;
+            break :blk x == 0 and !std.math.signbit(x);
+        },
+        .pstring => mv == .str and mv.str.len == 0,
+        else => false,
+    };
+}
+
+// The same for a field's first sentinel: the raw value 0 (a varint before
+// zig-zag, or the bits of +0.0), or the empty text.
+fn sentinelIsDefault(ln: *const Line) bool {
+    return switch (ln.transform.kind) {
+        .pstring => ln.abs_texts[0].len == 0,
+        .pvarint, .psint, .pdouble, .pfloat => ln.abs_ints[0] == 0,
+        else => false,
+    };
+}
+
 // Encode one leaf field (tag + payload) in canonical form.
 fn encodeProtoField(buf: *std.ArrayList(u8), t: TKind, number: usize, mv: MV) !void {
     if (kindCategory(t) != .proto) return E.@"transform-encode";
@@ -7116,6 +7365,8 @@ fn fieldValue(p: *const Pack, sc: *const Scope, e: *const Entity, ln: *const Lin
     // a line suppressed by `with` writes nothing, its default included
     if (ln.suppressed(e)) return null;
     var mv = e.get(ln.key) orelse sc.lineDefault(ln) orelse return null;
+    // Version 0.56: `range`, before the table and the transform
+    mv = try applyRange(ln, mv);
     if (mv == .str and std.mem.eql(u8, ln.key, "type")) {
         if (p.tm_cot2nat.get(mv.str)) |nat| mv = MV{ .str = nat };
     }
@@ -7154,7 +7405,9 @@ fn xmlText(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
 // `reserve`: a line that names the place and writes nothing there; the
 // place is taken at its position (ruling 23 of 0.9, rulings 1 and 13 of
 // 0.18).
-const WMode = enum { field, fixed, sentinel, reserve };
+// `nul`: the JSON `null` of the `null` option (Version 0.56), written only
+// where no other line writes a value, a sentinel included.
+const WMode = enum { field, fixed, sentinel, reserve, nul };
 
 // Write a value at an xml locator. A locator already written keeps its value
 // (the earliest line wins) unless the new value is a `when` value.
@@ -7253,7 +7506,7 @@ fn xmlEscape(buf: *std.ArrayList(u8), s: []const u8, attr: bool) !void {
 }
 
 // Members of one flat JSON object in output order: name and JSON text.
-const Member = struct { name: []const u8, raw: []const u8, weak: bool = false, unset: bool = false };
+const Member = struct { name: []const u8, raw: []const u8, weak: bool = false, unset: bool = false, nul: bool = false };
 
 // Add a member. A name already written keeps its value (the earliest line
 // wins) unless the new value is a `when` value.
@@ -7264,15 +7517,17 @@ fn memberAdd(list: *std.ArrayList(Member), name: []const u8, raw: []const u8, mo
             if (m.unset) {
                 m.raw = raw;
                 m.unset = false;
-                m.weak = mode == .sentinel;
-            } else if (mode == .fixed or (mode == .field and m.weak)) {
+                m.weak = mode == .sentinel or mode == .nul;
+                m.nul = mode == .nul;
+            } else if (mode == .fixed or (mode == .field and m.weak) or (mode == .sentinel and m.nul)) {
                 m.raw = raw;
-                m.weak = false;
+                m.weak = mode == .sentinel;
+                m.nul = false;
             }
             return;
         }
     }
-    try list.append(.{ .name = name, .raw = raw, .weak = mode == .sentinel, .unset = mode == .reserve });
+    try list.append(.{ .name = name, .raw = raw, .weak = mode == .sentinel or mode == .nul, .unset = mode == .reserve, .nul = mode == .nul });
 }
 
 fn membersWrite(buf: *std.ArrayList(u8), list: []const Member, first_in: bool) !void {
@@ -7292,7 +7547,8 @@ fn membersWrite(buf: *std.ArrayList(u8), list: []const Member, first_in: bool) !
 const JNode = struct {
     name: []const u8,
     raw: ?[]const u8 = null,
-    weak: bool = false, // `raw` was written by a sentinel
+    weak: bool = false, // `raw` was written by a sentinel or `null`
+    nul: bool = false, // `raw` is the `null` of the `null` option (0.56)
     reserved: bool = false, // a member a line placed without a value
     children: std.ArrayList(*JNode),
 
@@ -7328,21 +7584,24 @@ fn jnodeInsert(alloc: std.mem.Allocator, root: *JNode, segs: []const []const u8,
         if (c.raw == null and c.reserved) {
             c.raw = r;
             c.reserved = false;
-            c.weak = mode == .sentinel;
+            c.weak = mode == .sentinel or mode == .nul;
+            c.nul = mode == .nul;
             return;
         }
         // `when` and `const` values are written over any field, a field's
-        // value over a sentinel
-        if (c.raw != null and (mode == .fixed or (mode == .field and c.weak))) {
+        // value over a sentinel, a sentinel over `null`
+        if (c.raw != null and (mode == .fixed or (mode == .field and c.weak) or (mode == .sentinel and c.nul))) {
             c.raw = r;
-            c.weak = false;
+            c.weak = mode == .sentinel;
+            c.nul = false;
         }
         return;
     }
     if (raw == null and mode != .reserve) return;
     const c = try jnodeNew(alloc, last);
     c.raw = raw;
-    c.weak = mode == .sentinel;
+    c.weak = mode == .sentinel or mode == .nul;
+    c.nul = mode == .nul;
     c.reserved = raw == null;
     try node.children.append(c);
 }
@@ -7458,6 +7717,10 @@ fn jsonEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, r
                     // an absent key writes its first sentinel (Version 0.9)
                     raw = ln.abs_json;
                     mode = .sentinel;
+                } else if (ln.null_opt and !ln.suppressed(e)) {
+                    // Version 0.56: an absent key writes `null`
+                    raw = "null";
+                    mode = .nul;
                 }
             },
             .group => {
@@ -7472,9 +7735,10 @@ fn jsonEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, r
         if (raw == null and ln.tag == .field) mode = .reserve;
         if (ln.dot) {
             if (raw) |r| {
-                if (root.raw == null or mode == .fixed or (mode == .field and root.weak)) {
+                if (root.raw == null or mode == .fixed or (mode == .field and root.weak) or (mode == .sentinel and root.nul)) {
                     root.raw = r;
-                    root.weak = mode == .sentinel;
+                    root.weak = mode == .sentinel or mode == .nul;
+                    root.nul = mode == .nul;
                 }
             }
         } else try jnodeInsert(alloc, root, ln.segs, raw, mode);
@@ -7589,12 +7853,16 @@ fn pbEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, roo
         {
             encodeProtoField(&fb, ln.transform.kind, number, mv) catch |err|
                 return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
+            // Version 0.56: `implicit` leaves out the proto3 default; the
+            // line still holds the place (ruling 16 of 0.5)
+            if (ln.implicit and protoIsDefault(ln.transform.kind, mv)) fb.clearRetainingCapacity();
         } else if (ln.sentinelOn(e)) {
             // an absent key writes its first sentinel (Version 0.9); it is a
             // written field for `when <path> present` (ruling 16)
             try writeTag(&fb, number, protoWireType(ln.transform.kind));
             try encodeSentinelPayload(&fb, ln);
             sentinel = true;
+            if (ln.implicit and sentinelIsDefault(ln)) fb.clearRetainingCapacity();
         } else continue;
         var node = root;
         for (ln.ppath) |n| node = try node.child(alloc, n);
@@ -7918,6 +8186,10 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
                     // `lat` it counts as a value (ruling 10 of 0.9)
                     raw = ln.abs_json;
                     mode = .sentinel;
+                } else if (ln.isField() and ln.null_opt and !ln.suppressed(e)) {
+                    // Version 0.56: an absent key writes `null`
+                    raw = "null";
+                    mode = .nul;
                 } else if (ln.isField()) {
                     // writes nothing, and takes its member's place (ruling
                     // 23 of 0.9, ruling 1 of 0.18)
@@ -9953,7 +10225,11 @@ const SParser = struct {
                     if (oi >= toks.len or toks[oi].len == 0) return self.lineErr(bd, "with takes a key", .{});
                     again = ln.with_key != null;
                     ln.with_key = toks[oi];
-                } else return self.lineErr(bd, "unknown field option {s}", .{o});
+                } else switch (outputOption(toks, &oi, &ln)) {
+                    .none => return self.lineErr(bd, "unknown field option {s}", .{o}),
+                    .bad => |m| return self.lineErr(bd, "{s}", .{m}),
+                    .ok => |a| again = a,
+                }
                 if (again) return self.lineErr(bd, "field option {s} is repeated", .{o});
             }
             if (pending) |e| return e;
@@ -9964,7 +10240,11 @@ const SParser = struct {
                 try parseAbsent(alloc, .bits, &ln, false, self.diag);
                 ln.abs_checked = true;
             }
-            try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = self.bodyFrame().grp });
+            // Version 0.56: `null` and `implicit` are not for the bits wire,
+            // checked after the file is read (ruling 10 of 0.10)
+            if (ln.null_opt) return self.err(bd, "null on wire bits; it is for json and geojson", .{});
+            if (ln.implicit) return self.err(bd, "implicit on wire bits; it is for protobuf", .{});
+            try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = self.bodyFrame().grp, .rmin = ln.rng_min_raw, .rmax = ln.rng_max_raw });
             if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
             try self.mapKey(toks[1]);
             try self.add(.{ .tag = .field, .lineno = self.lineno, .ln = ln, .uloc = uloc });
@@ -11596,6 +11876,9 @@ const SEnc = struct {
             const key = if (j == 0) ln.key else n.also.items[j - 1].key;
             const via = if (j == 0) ln.via else n.also.items[j - 1].via;
             var mv = (if (i < nkeys) ent.get(key) else ds.get(key)) orelse continue;
+            // Version 0.56: the line's `range` applies to its own key
+            if (j == 0) mv = applyRange(ln, mv) catch |err|
+                return bad(self.diag, self.alloc, err, "field {s}: the value is outside the range of the line", .{key});
             if (mv == .str and std.mem.eql(u8, key, "type")) {
                 if (self.p.tm_cot2nat.get(mv.str)) |nat| mv = MV{ .str = nat };
             }
