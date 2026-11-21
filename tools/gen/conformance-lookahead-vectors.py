@@ -984,6 +984,18 @@ def walk_all(lines):
             yield from walk_all(body)
 
 
+def as_key(a):
+    """The `as` key of a `when` line, read only where the token order of
+    ruling 11 puts it (ruling 28: on a line whose order is broken the key is
+    not read): `when <len> <values> as <k>` or `... at <n> as <k>`."""
+    rest = a[2:]
+    if len(rest) == 2 and rest[0] == "as" and rest[1] != "as":
+        return rest[1]
+    if len(rest) == 4 and rest[0] == "at" and rest[2] == "as" and rest[3] != "as":
+        return rest[3]
+    return None
+
+
 def at_errors(text, models):
     """The error kind this text fails with under the 0.33 rules and their
     order (ruling 10), or None. Only the causes the load vectors here use."""
@@ -1008,10 +1020,8 @@ def at_errors(text, models):
             named.append(ln.a[0])
         elif ln.d == "requires":
             named += [k.split("=")[0] for k in ln.a]
-        elif ln.d == "when" and "as" in ln.a[2:]:
-            i = ln.a.index("as", 2)
-            if i + 1 < len(ln.a):
-                named.append(ln.a[i + 1])
+        elif ln.d == "when" and as_key(ln.a) is not None:
+            named.append(as_key(ln.a))
     for k in named:
         if "." in k and k.split(".")[0] not in uses:
             return "module-not-used"
@@ -1019,10 +1029,8 @@ def at_errors(text, models):
         if k not in keys:
             return "undeclared-key"
     for ln in walk_all(root):        # 0.30: the type of an `as` key
-        if ln.d == "when" and "as" in ln.a[2:]:
-            i = ln.a.index("as", 2)
-            if i + 1 < len(ln.a) and keys.get(ln.a[i + 1]) != "int":
-                return "key-type-mismatch"
+        if ln.d == "when" and as_key(ln.a) is not None and keys.get(as_key(ln.a)) != "int":
+            return "key-type-mismatch"
     sequential = hdr.get("layout") == "sequential" and hdr["wire"] == "bits"
     # the `at` form and the token order: when <len> <values> [at <n>] [as <k>]
     for ln in walk_all(root):
@@ -1723,6 +1731,15 @@ def build(sink):
     load("ruling-14-missing-distribution-before-the-at-form", seq.replace("distribution public\n", "") +
          "kind a\nwhen 8 1 at +8\n" + two, "missing-distribution")
     load("ruling-15-at-as-a-json-value-loads", jsn + "kind a\nwhen t at\nfield probe.x x int\n", None)
+    # ruling 27: a line holding `at` with its tokens out of order is an `at`
+    # form error, with the timing of rulings 10 and 14 (after
+    # missing-distribution), not 0.30's earlier `as` syntax timing
+    load("ruling-27-out-of-order-at-after-missing-distribution", seq.replace("distribution public\n", "") +
+         "kind a\nwhen 8 1 as probe.x at 0\nfield probe.y 8 uint\n", "missing-distribution")
+    # ruling 28: on a line whose token order is broken the `as` key is not
+    # read, so an undeclared key there gives the `at` form error
+    load("ruling-28-undeclared-key-in-a-misplaced-as", seq + "kind a\nwhen 8 1 as probe.nosuch at 0\n"
+         "field probe.y 8 uint\n")
     # a vector file of these packs, or a load vector of this range, that this
     # run did not write is from an earlier run: it goes
     for name in PACKS:
