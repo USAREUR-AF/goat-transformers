@@ -1,0 +1,16 @@
+{
+  "name": "session-establishment-response-roundtrip",
+  "from": "pfcp",
+  "to": "pfcp",
+  "input": "23330043010203040506070800020320003c00110120010db800000000000000000000003000130001010039001901111213141516171820010db8000000000000000000000030",
+  "expect": "23330043010203040506070800020320003c00110120010db800000000000000000000003000130001010039001901111213141516171820010db8000000000000000000000030",
+  "model": {
+    "pfcp.flag_mp": "1",
+    "pfcp.message_priority": "2",
+    "pfcp.header_seid": "72623859790382856",
+    "pfcp.ies[0].pfcp.ipv6": "20010db8000000000000000000000030",
+    "pfcp.ies[1].pfcp.cause": "1",
+    "pfcp.ies[2].pfcp.fseid_v6": "1"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.244 clauses 7.2 and 8; a session establishment response with message priority 2, an IPv6 Node ID, Cause 1 and an IPv6 F-SEID; expect derived there, no engine run"
+}

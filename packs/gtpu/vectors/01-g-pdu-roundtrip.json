@@ -1,0 +1,19 @@
+{
+  "name": "g-pdu-roundtrip",
+  "from": "gtpu",
+  "to": "gtpu",
+  "input": "30ff00141234abcd450000140001000040110000c0000201c0000202",
+  "expect": "30ff00141234abcd450000140001000040110000c0000201c0000202",
+  "model": {
+    "gtpu.version": "1",
+    "gtpu.pt": "1",
+    "gtpu.flag_e": "0",
+    "gtpu.message_type": "255",
+    "gtpu.teid": "305441741",
+    "gtpu.t_pdu.#": "20",
+    "@absent": [
+      "gtpu.sequence"
+    ]
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.281 clauses 5 and 8; a G-PDU without optional fields, carrying a 20-octet IPv4 header; expect derived there, no engine run"
+}

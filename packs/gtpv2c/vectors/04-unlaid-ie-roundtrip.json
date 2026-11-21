@@ -1,0 +1,13 @@
+{
+  "name": "unlaid-ie-roundtrip",
+  "from": "gtpv2c",
+  "to": "gtpv2c",
+  "input": "4824001a55667788000103004700090008696e7465726e65744900010005",
+  "expect": "4824001a55667788000103004700090008696e7465726e65744900010005",
+  "model": {
+    "gtpv2.message_type": "36",
+    "gtpv2.ies[0].gtpv2.ie_type": "71",
+    "gtpv2.ies[0].gtpv2.ie_value.#": "9"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.274 clauses 5 and 8; a Delete Session Request with an APN IE (type 71), kept as octets, and an EBI; expect derived there, no engine run"
+}

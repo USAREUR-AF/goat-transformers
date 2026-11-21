@@ -1,0 +1,15 @@
+{
+  "name": "error-indication-roundtrip",
+  "from": "gtpu",
+  "to": "gtpu",
+  "input": "321a00100000000000030000101234abcd850004c0000214",
+  "expect": "321a00100000000000030000101234abcd850004c0000214",
+  "model": {
+    "gtpu.message_type": "26",
+    "gtpu.ies.#": "2",
+    "gtpu.ies[0].gtpu.teid_data_i": "305441741",
+    "gtpu.ies[1].gtpu.ie_type": "133",
+    "gtpu.ies[1].gtpu.ie_value.#": "4"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.281 clauses 5 and 8; an error indication with TEID Data I and a GTP-U peer address; expect derived there, no engine run"
+}

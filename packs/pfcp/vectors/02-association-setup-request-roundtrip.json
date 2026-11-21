@@ -1,0 +1,13 @@
+{
+  "name": "association-setup-request-roundtrip",
+  "from": "pfcp",
+  "to": "pfcp",
+  "input": "2005001500020200003c000500c000021e00600004ed5fa85d",
+  "expect": "2005001500020200003c000500c000021e00600004ed5fa85d",
+  "model": {
+    "pfcp.message_type": "5",
+    "pfcp.ies[0].pfcp.node_id_type": "0",
+    "pfcp.ies[0].pfcp.ipv4": "3221226014"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.244 clauses 7.2 and 8; an association setup request with an IPv4 Node ID and a Recovery Time Stamp; expect derived there, no engine run"
+}

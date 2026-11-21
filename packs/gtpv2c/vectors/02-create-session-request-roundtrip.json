@@ -1,0 +1,24 @@
+{
+  "name": "create-session-request-roundtrip",
+  "from": "gtpv2c",
+  "to": "gtpv2c",
+  "input": "4820003700000000000102000100080000010121436587f9570009008a0a0b0c0dc00002015d0012004900010005570009008011223344c0000202",
+  "expect": "4820003700000000000102000100080000010121436587f9570009008a0a0b0c0dc00002015d0012004900010005570009008011223344c0000202",
+  "model": {
+    "gtpv2.flag_t": "1",
+    "gtpv2.teid": "0",
+    "gtpv2.message_type": "32",
+    "gtpv2.ies.#": "3",
+    "gtpv2.ies[0].gtpv2.imsi_digits.#": "8",
+    "gtpv2.ies[0].gtpv2.imsi_digits[0].gtpv2.digit_odd": "0",
+    "gtpv2.ies[0].gtpv2.imsi_digits[7].gtpv2.digit_even": "15",
+    "gtpv2.ies[1].gtpv2.fteid_v4": "1",
+    "gtpv2.ies[1].gtpv2.interface_type": "10",
+    "gtpv2.ies[1].gtpv2.teid": "168496141",
+    "gtpv2.ies[1].gtpv2.ipv4": "3221225985",
+    "gtpv2.ies[2].gtpv2.grouped_ies.#": "2",
+    "gtpv2.ies[2].gtpv2.grouped_ies[0].gtpv2.ebi": "5",
+    "gtpv2.ies[2].gtpv2.grouped_ies[1].gtpv2.interface_type": "0"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.274 clauses 5 and 8; a Create Session Request with an IMSI (15 digits and the filler), the sender's F-TEID and a Bearer Context holding an EBI and an F-TEID; expect derived there, no engine run"
+}

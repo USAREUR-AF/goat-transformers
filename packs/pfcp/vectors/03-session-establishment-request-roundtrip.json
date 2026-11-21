@@ -1,0 +1,23 @@
+{
+  "name": "session-establishment-request-roundtrip",
+  "from": "pfcp",
+  "to": "pfcp",
+  "input": "2132005f000000000000000000020300003c00110203736d66076578616d706c65036f72670039000d020102030405060708c000021f00010017003800020001001d0004000000ff0002000500140001000003000e006c000400000001002c00020002",
+  "expect": "2132005f000000000000000000020300003c00110203736d66076578616d706c65036f72670039000d020102030405060708c000021f00010017003800020001001d0004000000ff0002000500140001000003000e006c000400000001002c00020002",
+  "model": {
+    "pfcp.flag_s": "1",
+    "pfcp.header_seid": "0",
+    "pfcp.message_type": "50",
+    "pfcp.ies.#": "4",
+    "pfcp.ies[0].pfcp.node_id_type": "2",
+    "pfcp.ies[0].pfcp.node_id_fqdn.#": "16",
+    "pfcp.ies[1].pfcp.fseid_v4": "1",
+    "pfcp.ies[1].pfcp.seid": "72623859790382856",
+    "pfcp.ies[2].pfcp.grouped_ies.#": "3",
+    "pfcp.ies[2].pfcp.grouped_ies[0].pfcp.rule_id": "1",
+    "pfcp.ies[2].pfcp.grouped_ies[1].pfcp.precedence": "255",
+    "pfcp.ies[2].pfcp.grouped_ies[2].pfcp.ie_value.#": "5",
+    "pfcp.ies[3].pfcp.grouped_ies.#": "2"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.244 clauses 7.2 and 8; a session establishment request with an FQDN Node ID, an IPv4 F-SEID, a Create PDR (PDR ID, Precedence, and a PDI kept as octets, two levels down) and a Create FAR; expect derived there, no engine run"
+}

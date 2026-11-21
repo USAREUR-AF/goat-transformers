@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "gtpu",
+  "to": "gtpu",
+  "input": "30ff001400000001450000140001000040110000c0000201c0",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.281 clauses 5 and 8; a G-PDU shorter than its length field; expect derived there, no engine run"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "vendor-ie-roundtrip",
+  "from": "pfcp",
+  "to": "pfcp",
+  "input": "200100140002040000600004ed5fa85d800500047ed9aabb",
+  "expect": "200100140002040000600004ed5fa85d800500047ed9aabb",
+  "model": {
+    "pfcp.ies[1].pfcp.ie_vendor": "1",
+    "pfcp.ies[1].pfcp.ie_type": "5",
+    "pfcp.ies[1].pfcp.enterprise_id": "32473",
+    "pfcp.ies[1].pfcp.ie_value.#": "2"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.244 clauses 7.2 and 8; a heartbeat request with a vendor-specific IE (enterprise 32473), its value as octets; expect derived there, no engine run"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "echo-response-roundtrip",
+  "from": "gtpu",
+  "to": "gtpu",
+  "input": "3202000600000000000900000e00",
+  "expect": "3202000600000000000900000e00",
+  "model": {
+    "gtpu.message_type": "2",
+    "gtpu.sequence": "9",
+    "gtpu.ies.#": "1",
+    "gtpu.ies[0].gtpu.ie_type": "14",
+    "gtpu.ies[0].gtpu.restart_counter": "0"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.281 clauses 5 and 8; an echo response with its sequence number and a Recovery IE; expect derived there, no engine run"
+}

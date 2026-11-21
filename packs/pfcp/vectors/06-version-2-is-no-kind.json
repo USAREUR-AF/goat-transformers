@@ -1,0 +1,8 @@
+{
+  "name": "version-2-is-no-kind",
+  "from": "pfcp",
+  "to": "pfcp",
+  "input": "4001000c0000010000600004ed5fa85d",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.244 clauses 7.2 and 8; the heartbeat request with version 2 in place of 1; expect derived there, no engine run"
+}

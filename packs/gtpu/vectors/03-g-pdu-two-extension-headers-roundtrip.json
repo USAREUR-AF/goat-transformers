@@ -1,0 +1,16 @@
+{
+  "name": "g-pdu-two-extension-headers-roundtrip",
+  "from": "gtpu",
+  "to": "gtpu",
+  "input": "36ff00200000beef004d00850100094001086800450000140001000040110000c0000201c0000202",
+  "expect": "36ff00200000beef004d00850100094001086800450000140001000040110000c0000201c0000202",
+  "model": {
+    "gtpu.flag_s": "1",
+    "gtpu.sequence": "77",
+    "gtpu.ext1_next_type": "64",
+    "gtpu.ext2_length": "1",
+    "gtpu.ext2_content": "0868",
+    "gtpu.ext2_next_type": "0"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.281 clauses 5 and 8; a G-PDU with a sequence number and two extension headers: a PDU session container, then a UDP port; expect derived there, no engine run"
+}

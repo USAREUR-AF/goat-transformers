@@ -1,0 +1,553 @@
+# GTP-U message (3GPP TS 29.281): the header, its optional fields and extension headers, and the payload. Public; the source states no licence (pack.md, PROVENANCE.md). Written by
+# tools/gen/gtp-pack.py; do not edit by hand. Wire bits, layout sequential, msb; I/O is hex text.
+format        gtpu
+version       0.1.0
+distribution  public
+source        "ETSI TS 129 281 V19.2.0 (2026-01), 3GPP TS 29.281 version 19.2.0 Release 19, General Packet Radio System (GPRS) Tunnelling Protocol User Plane (GTPv1-U), https://www.etsi.org/deliver/etsi_ts/129200_129299/129281/19.02.00_60/ts_129281v190200p.pdf (sha256 30ca7128fd87024d60b7d1ca79cf15c6b16c4725de9a2c6fdc780e212e545639); layout restated"
+uses          gtpu
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  gtpu.version  3  uint
+field  gtpu.pt  1  uint
+field  gtpu.spare  1  uint
+field  gtpu.flag_e  1  uint
+field  gtpu.flag_s  1  uint
+field  gtpu.flag_pn  1  uint
+field  gtpu.message_type  8  uint
+length  16  bytes  plus  -4
+  field  gtpu.teid  32  uint
+  switch  gtpu.flag_e
+    case  1
+      field  gtpu.sequence  16  uint
+      field  gtpu.npdu  8  uint
+      field  gtpu.next_type  8  uint
+      switch  gtpu.next_type
+        case  0
+        else
+          field  gtpu.ext1_length  8  uint
+          switch  gtpu.ext1_length
+            case  1
+              field  gtpu.ext1_content  16  hex
+            case  2
+              field  gtpu.ext1_content  48  hex
+            case  3
+              field  gtpu.ext1_content  80  hex
+            case  4
+              field  gtpu.ext1_content  112  hex
+            case  5
+              field  gtpu.ext1_content  144  hex
+            case  6
+              field  gtpu.ext1_content  176  hex
+            case  7
+              field  gtpu.ext1_content  208  hex
+            case  8
+              field  gtpu.ext1_content  240  hex
+            case  9
+              field  gtpu.ext1_content  272  hex
+            case  10
+              field  gtpu.ext1_content  304  hex
+            case  11
+              field  gtpu.ext1_content  336  hex
+            case  12
+              field  gtpu.ext1_content  368  hex
+            case  13
+              field  gtpu.ext1_content  400  hex
+            case  14
+              field  gtpu.ext1_content  432  hex
+            case  15
+              field  gtpu.ext1_content  464  hex
+            case  16
+              field  gtpu.ext1_content  496  hex
+          end
+          field  gtpu.ext1_next_type  8  uint
+          switch  gtpu.ext1_next_type
+            case  0
+            else
+              field  gtpu.ext2_length  8  uint
+              switch  gtpu.ext2_length
+                case  1
+                  field  gtpu.ext2_content  16  hex
+                case  2
+                  field  gtpu.ext2_content  48  hex
+                case  3
+                  field  gtpu.ext2_content  80  hex
+                case  4
+                  field  gtpu.ext2_content  112  hex
+                case  5
+                  field  gtpu.ext2_content  144  hex
+                case  6
+                  field  gtpu.ext2_content  176  hex
+                case  7
+                  field  gtpu.ext2_content  208  hex
+                case  8
+                  field  gtpu.ext2_content  240  hex
+                case  9
+                  field  gtpu.ext2_content  272  hex
+                case  10
+                  field  gtpu.ext2_content  304  hex
+                case  11
+                  field  gtpu.ext2_content  336  hex
+                case  12
+                  field  gtpu.ext2_content  368  hex
+                case  13
+                  field  gtpu.ext2_content  400  hex
+                case  14
+                  field  gtpu.ext2_content  432  hex
+                case  15
+                  field  gtpu.ext2_content  464  hex
+                case  16
+                  field  gtpu.ext2_content  496  hex
+              end
+              field  gtpu.ext2_next_type  8  uint
+              switch  gtpu.ext2_next_type
+                case  0
+                else
+                  field  gtpu.ext3_length  8  uint
+                  switch  gtpu.ext3_length
+                    case  1
+                      field  gtpu.ext3_content  16  hex
+                    case  2
+                      field  gtpu.ext3_content  48  hex
+                    case  3
+                      field  gtpu.ext3_content  80  hex
+                    case  4
+                      field  gtpu.ext3_content  112  hex
+                    case  5
+                      field  gtpu.ext3_content  144  hex
+                    case  6
+                      field  gtpu.ext3_content  176  hex
+                    case  7
+                      field  gtpu.ext3_content  208  hex
+                    case  8
+                      field  gtpu.ext3_content  240  hex
+                    case  9
+                      field  gtpu.ext3_content  272  hex
+                    case  10
+                      field  gtpu.ext3_content  304  hex
+                    case  11
+                      field  gtpu.ext3_content  336  hex
+                    case  12
+                      field  gtpu.ext3_content  368  hex
+                    case  13
+                      field  gtpu.ext3_content  400  hex
+                    case  14
+                      field  gtpu.ext3_content  432  hex
+                    case  15
+                      field  gtpu.ext3_content  464  hex
+                    case  16
+                      field  gtpu.ext3_content  496  hex
+                  end
+                  field  gtpu.ext3_next_type  8  uint
+                  switch  gtpu.ext3_next_type
+                    case  0
+                    else
+                      field  gtpu.ext4_length  8  uint
+                      switch  gtpu.ext4_length
+                        case  1
+                          field  gtpu.ext4_content  16  hex
+                        case  2
+                          field  gtpu.ext4_content  48  hex
+                        case  3
+                          field  gtpu.ext4_content  80  hex
+                        case  4
+                          field  gtpu.ext4_content  112  hex
+                        case  5
+                          field  gtpu.ext4_content  144  hex
+                        case  6
+                          field  gtpu.ext4_content  176  hex
+                        case  7
+                          field  gtpu.ext4_content  208  hex
+                        case  8
+                          field  gtpu.ext4_content  240  hex
+                        case  9
+                          field  gtpu.ext4_content  272  hex
+                        case  10
+                          field  gtpu.ext4_content  304  hex
+                        case  11
+                          field  gtpu.ext4_content  336  hex
+                        case  12
+                          field  gtpu.ext4_content  368  hex
+                        case  13
+                          field  gtpu.ext4_content  400  hex
+                        case  14
+                          field  gtpu.ext4_content  432  hex
+                        case  15
+                          field  gtpu.ext4_content  464  hex
+                        case  16
+                          field  gtpu.ext4_content  496  hex
+                      end
+                      field  gtpu.ext4_next_type  8  uint
+                      switch  gtpu.ext4_next_type
+                        case  0
+                      end
+                  end
+              end
+          end
+      end
+    case  0
+      switch  gtpu.flag_s
+        case  1
+          field  gtpu.sequence  16  uint
+          field  gtpu.npdu  8  uint
+          field  gtpu.next_type  8  uint
+          switch  gtpu.next_type
+            case  0
+            else
+              field  gtpu.ext1_length  8  uint
+              switch  gtpu.ext1_length
+                case  1
+                  field  gtpu.ext1_content  16  hex
+                case  2
+                  field  gtpu.ext1_content  48  hex
+                case  3
+                  field  gtpu.ext1_content  80  hex
+                case  4
+                  field  gtpu.ext1_content  112  hex
+                case  5
+                  field  gtpu.ext1_content  144  hex
+                case  6
+                  field  gtpu.ext1_content  176  hex
+                case  7
+                  field  gtpu.ext1_content  208  hex
+                case  8
+                  field  gtpu.ext1_content  240  hex
+                case  9
+                  field  gtpu.ext1_content  272  hex
+                case  10
+                  field  gtpu.ext1_content  304  hex
+                case  11
+                  field  gtpu.ext1_content  336  hex
+                case  12
+                  field  gtpu.ext1_content  368  hex
+                case  13
+                  field  gtpu.ext1_content  400  hex
+                case  14
+                  field  gtpu.ext1_content  432  hex
+                case  15
+                  field  gtpu.ext1_content  464  hex
+                case  16
+                  field  gtpu.ext1_content  496  hex
+              end
+              field  gtpu.ext1_next_type  8  uint
+              switch  gtpu.ext1_next_type
+                case  0
+                else
+                  field  gtpu.ext2_length  8  uint
+                  switch  gtpu.ext2_length
+                    case  1
+                      field  gtpu.ext2_content  16  hex
+                    case  2
+                      field  gtpu.ext2_content  48  hex
+                    case  3
+                      field  gtpu.ext2_content  80  hex
+                    case  4
+                      field  gtpu.ext2_content  112  hex
+                    case  5
+                      field  gtpu.ext2_content  144  hex
+                    case  6
+                      field  gtpu.ext2_content  176  hex
+                    case  7
+                      field  gtpu.ext2_content  208  hex
+                    case  8
+                      field  gtpu.ext2_content  240  hex
+                    case  9
+                      field  gtpu.ext2_content  272  hex
+                    case  10
+                      field  gtpu.ext2_content  304  hex
+                    case  11
+                      field  gtpu.ext2_content  336  hex
+                    case  12
+                      field  gtpu.ext2_content  368  hex
+                    case  13
+                      field  gtpu.ext2_content  400  hex
+                    case  14
+                      field  gtpu.ext2_content  432  hex
+                    case  15
+                      field  gtpu.ext2_content  464  hex
+                    case  16
+                      field  gtpu.ext2_content  496  hex
+                  end
+                  field  gtpu.ext2_next_type  8  uint
+                  switch  gtpu.ext2_next_type
+                    case  0
+                    else
+                      field  gtpu.ext3_length  8  uint
+                      switch  gtpu.ext3_length
+                        case  1
+                          field  gtpu.ext3_content  16  hex
+                        case  2
+                          field  gtpu.ext3_content  48  hex
+                        case  3
+                          field  gtpu.ext3_content  80  hex
+                        case  4
+                          field  gtpu.ext3_content  112  hex
+                        case  5
+                          field  gtpu.ext3_content  144  hex
+                        case  6
+                          field  gtpu.ext3_content  176  hex
+                        case  7
+                          field  gtpu.ext3_content  208  hex
+                        case  8
+                          field  gtpu.ext3_content  240  hex
+                        case  9
+                          field  gtpu.ext3_content  272  hex
+                        case  10
+                          field  gtpu.ext3_content  304  hex
+                        case  11
+                          field  gtpu.ext3_content  336  hex
+                        case  12
+                          field  gtpu.ext3_content  368  hex
+                        case  13
+                          field  gtpu.ext3_content  400  hex
+                        case  14
+                          field  gtpu.ext3_content  432  hex
+                        case  15
+                          field  gtpu.ext3_content  464  hex
+                        case  16
+                          field  gtpu.ext3_content  496  hex
+                      end
+                      field  gtpu.ext3_next_type  8  uint
+                      switch  gtpu.ext3_next_type
+                        case  0
+                        else
+                          field  gtpu.ext4_length  8  uint
+                          switch  gtpu.ext4_length
+                            case  1
+                              field  gtpu.ext4_content  16  hex
+                            case  2
+                              field  gtpu.ext4_content  48  hex
+                            case  3
+                              field  gtpu.ext4_content  80  hex
+                            case  4
+                              field  gtpu.ext4_content  112  hex
+                            case  5
+                              field  gtpu.ext4_content  144  hex
+                            case  6
+                              field  gtpu.ext4_content  176  hex
+                            case  7
+                              field  gtpu.ext4_content  208  hex
+                            case  8
+                              field  gtpu.ext4_content  240  hex
+                            case  9
+                              field  gtpu.ext4_content  272  hex
+                            case  10
+                              field  gtpu.ext4_content  304  hex
+                            case  11
+                              field  gtpu.ext4_content  336  hex
+                            case  12
+                              field  gtpu.ext4_content  368  hex
+                            case  13
+                              field  gtpu.ext4_content  400  hex
+                            case  14
+                              field  gtpu.ext4_content  432  hex
+                            case  15
+                              field  gtpu.ext4_content  464  hex
+                            case  16
+                              field  gtpu.ext4_content  496  hex
+                          end
+                          field  gtpu.ext4_next_type  8  uint
+                          switch  gtpu.ext4_next_type
+                            case  0
+                          end
+                      end
+                  end
+              end
+          end
+        case  0
+          switch  gtpu.flag_pn
+            case  1
+              field  gtpu.sequence  16  uint
+              field  gtpu.npdu  8  uint
+              field  gtpu.next_type  8  uint
+              switch  gtpu.next_type
+                case  0
+                else
+                  field  gtpu.ext1_length  8  uint
+                  switch  gtpu.ext1_length
+                    case  1
+                      field  gtpu.ext1_content  16  hex
+                    case  2
+                      field  gtpu.ext1_content  48  hex
+                    case  3
+                      field  gtpu.ext1_content  80  hex
+                    case  4
+                      field  gtpu.ext1_content  112  hex
+                    case  5
+                      field  gtpu.ext1_content  144  hex
+                    case  6
+                      field  gtpu.ext1_content  176  hex
+                    case  7
+                      field  gtpu.ext1_content  208  hex
+                    case  8
+                      field  gtpu.ext1_content  240  hex
+                    case  9
+                      field  gtpu.ext1_content  272  hex
+                    case  10
+                      field  gtpu.ext1_content  304  hex
+                    case  11
+                      field  gtpu.ext1_content  336  hex
+                    case  12
+                      field  gtpu.ext1_content  368  hex
+                    case  13
+                      field  gtpu.ext1_content  400  hex
+                    case  14
+                      field  gtpu.ext1_content  432  hex
+                    case  15
+                      field  gtpu.ext1_content  464  hex
+                    case  16
+                      field  gtpu.ext1_content  496  hex
+                  end
+                  field  gtpu.ext1_next_type  8  uint
+                  switch  gtpu.ext1_next_type
+                    case  0
+                    else
+                      field  gtpu.ext2_length  8  uint
+                      switch  gtpu.ext2_length
+                        case  1
+                          field  gtpu.ext2_content  16  hex
+                        case  2
+                          field  gtpu.ext2_content  48  hex
+                        case  3
+                          field  gtpu.ext2_content  80  hex
+                        case  4
+                          field  gtpu.ext2_content  112  hex
+                        case  5
+                          field  gtpu.ext2_content  144  hex
+                        case  6
+                          field  gtpu.ext2_content  176  hex
+                        case  7
+                          field  gtpu.ext2_content  208  hex
+                        case  8
+                          field  gtpu.ext2_content  240  hex
+                        case  9
+                          field  gtpu.ext2_content  272  hex
+                        case  10
+                          field  gtpu.ext2_content  304  hex
+                        case  11
+                          field  gtpu.ext2_content  336  hex
+                        case  12
+                          field  gtpu.ext2_content  368  hex
+                        case  13
+                          field  gtpu.ext2_content  400  hex
+                        case  14
+                          field  gtpu.ext2_content  432  hex
+                        case  15
+                          field  gtpu.ext2_content  464  hex
+                        case  16
+                          field  gtpu.ext2_content  496  hex
+                      end
+                      field  gtpu.ext2_next_type  8  uint
+                      switch  gtpu.ext2_next_type
+                        case  0
+                        else
+                          field  gtpu.ext3_length  8  uint
+                          switch  gtpu.ext3_length
+                            case  1
+                              field  gtpu.ext3_content  16  hex
+                            case  2
+                              field  gtpu.ext3_content  48  hex
+                            case  3
+                              field  gtpu.ext3_content  80  hex
+                            case  4
+                              field  gtpu.ext3_content  112  hex
+                            case  5
+                              field  gtpu.ext3_content  144  hex
+                            case  6
+                              field  gtpu.ext3_content  176  hex
+                            case  7
+                              field  gtpu.ext3_content  208  hex
+                            case  8
+                              field  gtpu.ext3_content  240  hex
+                            case  9
+                              field  gtpu.ext3_content  272  hex
+                            case  10
+                              field  gtpu.ext3_content  304  hex
+                            case  11
+                              field  gtpu.ext3_content  336  hex
+                            case  12
+                              field  gtpu.ext3_content  368  hex
+                            case  13
+                              field  gtpu.ext3_content  400  hex
+                            case  14
+                              field  gtpu.ext3_content  432  hex
+                            case  15
+                              field  gtpu.ext3_content  464  hex
+                            case  16
+                              field  gtpu.ext3_content  496  hex
+                          end
+                          field  gtpu.ext3_next_type  8  uint
+                          switch  gtpu.ext3_next_type
+                            case  0
+                            else
+                              field  gtpu.ext4_length  8  uint
+                              switch  gtpu.ext4_length
+                                case  1
+                                  field  gtpu.ext4_content  16  hex
+                                case  2
+                                  field  gtpu.ext4_content  48  hex
+                                case  3
+                                  field  gtpu.ext4_content  80  hex
+                                case  4
+                                  field  gtpu.ext4_content  112  hex
+                                case  5
+                                  field  gtpu.ext4_content  144  hex
+                                case  6
+                                  field  gtpu.ext4_content  176  hex
+                                case  7
+                                  field  gtpu.ext4_content  208  hex
+                                case  8
+                                  field  gtpu.ext4_content  240  hex
+                                case  9
+                                  field  gtpu.ext4_content  272  hex
+                                case  10
+                                  field  gtpu.ext4_content  304  hex
+                                case  11
+                                  field  gtpu.ext4_content  336  hex
+                                case  12
+                                  field  gtpu.ext4_content  368  hex
+                                case  13
+                                  field  gtpu.ext4_content  400  hex
+                                case  14
+                                  field  gtpu.ext4_content  432  hex
+                                case  15
+                                  field  gtpu.ext4_content  464  hex
+                                case  16
+                                  field  gtpu.ext4_content  496  hex
+                              end
+                              field  gtpu.ext4_next_type  8  uint
+                              switch  gtpu.ext4_next_type
+                                case  0
+                              end
+                          end
+                      end
+                  end
+              end
+            case  0
+          end
+      end
+  end
+  switch  gtpu.message_type
+    case  255
+      group  gtpu.t_pdu  rest
+        field  gtpu.octet  8  uint
+      end
+    else
+      group  gtpu.ies  rest
+        field  gtpu.ie_type  8  uint
+        switch  gtpu.ie_type
+          case  14
+            field  gtpu.restart_counter  8  uint
+          case  16
+            field  gtpu.teid_data_i  32  uint
+          else
+            length  16  bytes
+              group  gtpu.ie_value  rest
+                field  gtpu.octet  8  uint
+              end
+            end
+        end
+      end
+  end
+end

@@ -1,0 +1,19 @@
+{
+  "name": "echo-request-roundtrip",
+  "from": "gtpv2c",
+  "to": "gtpv2c",
+  "input": "40010009000101000300010007",
+  "expect": "40010009000101000300010007",
+  "model": {
+    "@kind": "message",
+    "gtpv2.flag_t": "0",
+    "gtpv2.message_type": "1",
+    "gtpv2.sequence": "257",
+    "gtpv2.ies.#": "1",
+    "gtpv2.ies[0].gtpv2.restart_counter": "7",
+    "@absent": [
+      "gtpv2.teid"
+    ]
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.274 clauses 5 and 8; an echo request (no TEID) with a Recovery IE; expect derived there, no engine run"
+}
