@@ -4896,7 +4896,9 @@ proto3 default is not supplied.
 
 A line that `implicit` leaves out is still the line that holds the place for
 ruling 16 of 0.5: a later line on the same path does not write its value
-there. A field that `implicit` leaves out counts as not written for ruling 14
+there. A field that `implicit` leaves out writes nothing, so a submessage that
+holds only such fields is not written unless a `when <path> present` asks
+for it; such a field counts as not written for ruling 14
 of 0.5 (a `when <path> present` writes an empty submessage when nothing under
 the path is written). The key still counts as held for `requires` and `with`
 (Version 0.18): only the wire omits it.
@@ -5018,3 +5020,8 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
 6. **`range` and `with`.** A line that `with` suppresses is not checked.
 7. **`wrap` of an `int` key** computes `x − (<max> − <min>) × floor((x −
    <min>) / (<max> − <min>))` exactly: −181 in `range -180 180 wrap` is 179.
+
+Stated, not yet pinned by a vector: a submessage holding only fields that
+`implicit` leaves out, without a `when … present`; a wrapped `float` still
+outside `[<min>, <max>)` after the double arithmetic; an `int` range bound
+beyond a signed 64-bit integer.
