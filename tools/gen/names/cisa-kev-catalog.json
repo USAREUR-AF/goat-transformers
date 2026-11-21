@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "vulnerabilities_cwes|.|string": "vulnerabilities_cwes_value",
+  "vulnerabilities|cveID|string": "vulnerabilities_cve_id",
+  "vulnerabilities|dateAdded|string": "vulnerabilities_date_added",
+  "vulnerabilities|dueDate|string": "vulnerabilities_due_date",
+  "vulnerabilities|forensicTriage|string": "vulnerabilities_forensic_triage",
+  "vulnerabilities|knownRansomwareCampaignUse|string": "vulnerabilities_known_ransomware_campaign_use",
+  "vulnerabilities|notes|string": "vulnerabilities_notes",
+  "vulnerabilities|product|string": "vulnerabilities_product",
+  "vulnerabilities|requiredAction|string": "vulnerabilities_required_action",
+  "vulnerabilities|shortDescription|string": "vulnerabilities_short_description",
+  "vulnerabilities|vendorProject|string": "vulnerabilities_vendor_project",
+  "vulnerabilities|vulnerabilityName|string": "vulnerabilities_vulnerability_name",
+  "|catalogVersion|string": "catalog_version",
+  "|count|int": "count",
+  "|dateReleased|string": "date_released"
+ },
+ "lists": {
+  "vulnerabilities|cwes": "vulnerabilities_cwes",
+  "|vulnerabilities": "vulnerabilities"
+ }
+}

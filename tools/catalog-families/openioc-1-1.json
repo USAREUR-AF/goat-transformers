@@ -1,0 +1,7 @@
+{
+  "name": "OpenIOC 1.1",
+  "domain": "networks",
+  "exact": [
+    "openioc-1-1"
+  ]
+}

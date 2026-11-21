@@ -1,0 +1,8 @@
+{
+  "name": "MISP core format",
+  "domain": "networks",
+  "exact": [
+    "misp-core-event"
+  ],
+  "detail": "event, attributes, objects, tags"
+}
