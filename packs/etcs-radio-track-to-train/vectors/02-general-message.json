@@ -1,0 +1,19 @@
+{
+  "name": "etcs-radio-track-to-train-02-general-message",
+  "from": "etcs-radio-track-to-train",
+  "to": "etcs-radio-track-to-train",
+  "input": "18048000789027ea1c25280fe0258c019000",
+  "expect": "18048000789027ea1c25280fe0258c019000",
+  "model": {
+    "etcs.t_train": "123456",
+    "etcs.m_ack": "1",
+    "etcs.lrbg_nid_c": "253",
+    "etcs.lrbg_nid_bg": "4321",
+    "@kind": "general_message",
+    "etcs.optional_packets.#": "1",
+    "etcs.optional_packets[0].@kind": "p41",
+    "etcs.optional_packets[0].etcs.p41_m_leveltr": "3"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 24 with optional packet 41 (level 2)"
+}
