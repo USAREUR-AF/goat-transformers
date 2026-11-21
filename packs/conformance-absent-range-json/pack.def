@@ -1,0 +1,14 @@
+# Conformance probe pack for range sentinels in `absent` (spec 0.56) on
+# `json`. Public. No kinds.
+#   le     int     absent >=9999999         (goat-map's "not known" altitude)
+#   label  string  absent N/A,>=100         (exact and range mixed; a string member's text is read as a number)
+#   a      float   absent <=-999            (only a range: an absent key writes nothing)
+format  conformance-absent-range-json
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.qty    le     int     absent >=9999999
+field   probe.label  label  string  absent N/A,>=100
+field   probe.a      a      float   absent <=-999

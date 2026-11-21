@@ -1,0 +1,14 @@
+# Conformance probe pack for range sentinels in `absent` (spec 0.56) on
+# `bits`. Most significant bit first, one byte per word. Public. No kinds.
+#   bytes 0-2  probe.n  uint  absent 0,>=9999999   (exact first: an absent key writes 0)
+#   byte  3    probe.x  uint  absent >=250         (only a range: an absent key writes zero bits)
+format     conformance-absent-range-bits
+version    0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.n  0:0:24  uint  absent 0,>=9999999
+field   probe.x  3:0:8   uint  absent >=250

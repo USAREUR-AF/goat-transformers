@@ -4866,8 +4866,14 @@ locator with the JSON value `null`, where without the option it is not
 written. The order for an absent key is: a `default` (Version 0.6), then the
 first exact sentinel of an `absent` option (Version 0.9), then `null`.
 
-Decode: a member whose value is `null` yields no value for the field, on
-`json` (Version 0.5) and on `geojson` alike.
+A `null` member is a member: a nested object that holds only `null` members
+is written (`field x a.b float null` with no value writes `{"a":{"b":null}}`),
+where 0.5 leaves out a nested object with no members.
+
+Decode: a member whose value is `null` yields no value for the field. On
+`json` that is already the rule (Version 0.5); on `geojson` this version
+states it for a field that names `null`, and the other `geojson` fields keep
+the behaviour of ruling 28 of 0.5.
 
 ## `implicit`: a protobuf scalar left out at its default
 
@@ -4876,8 +4882,8 @@ field  <model-key> <path> <transform> [options] implicit
 ```
 
 Valid on `protobuf` only, with `pvarint`, `psint`, `pdouble`, `pfloat` or
-`pstring`, and not on a field inside a packed group (ruling 17 of 0.18), so
-that an item count never changes. On encode, the value the field would write
+`pstring`, and not on a scalar item (a `.` field inside a group, packed or
+not), so that an item count never changes (ruling 11 of 0.7). On encode, the value the field would write
 is compared, after `via` and after `pfloat` narrowing, with the proto3
 default of its wire type: 0 for `pvarint` and `psint`; +0.0 for `pdouble`
 and `pfloat` (−0.0 is not the default and is written); the empty text for
@@ -4888,8 +4894,10 @@ held value.
 Decode is unchanged: a field that is not on the wire yields no value; the
 proto3 default is not supplied.
 
-A field that `implicit` leaves out counts as not written for ruling 14 of
-0.5 (a `when <path> present` writes an empty submessage when nothing under
+A line that `implicit` leaves out is still the line that holds the place for
+ruling 16 of 0.5: a later line on the same path does not write its value
+there. A field that `implicit` leaves out counts as not written for ruling 14
+of 0.5 (a `when <path> present` writes an empty submessage when nothing under
 the path is written). The key still counts as held for `requires` and `with`
 (Version 0.18): only the wire omits it.
 
@@ -4903,15 +4911,17 @@ field  <model-key> <locator> <transform> [options] range <min> <max> wrap
 Valid on every wire, on a field whose key is `int` or `float`. For an `int`
 key `<min>` and `<max>` are decimal integers as 2c of 0.11 states, with an
 optional leading `-`; for a `float` key they are number text as 2b of 0.11
-states. `<min>` is less than `<max>`. On encode, the value that the
-transform receives (after `via`; a value a `default` supplies is checked as
-any value) is checked before the transform runs:
+states. `<min>` is less than `<max>` (so `range -0 0` is refused). On
+encode, the model value is checked before `via` and the transform (a value a
+`default` supplies is checked as any value):
 
 - without `wrap`, the interval is `[<min>, <max>]`, both ends accepted: a
   value below `<min>` or above `<max>` is `transform-encode`;
 - with `wrap`, the interval is `[<min>, <max>)`: a value `x` outside it
   becomes `x − k × (<max> − <min>)` for the one integer `k` that brings it
-  into the interval. For an `int` key this is exact integer arithmetic; for
+  into the interval, and the wrapped value is what `via`, the transform and
+  `implicit` then see. For an `int` key this is exact integer arithmetic,
+  without overflow (`<max> − <min>` may exceed 2^63); for
   a `float` key it is `r = x − (<max> − <min>) × floor((x − <min>) /
   (<max> − <min>))` in doubles, and a result `r` that equals `<max>` (or is
   below `<min>`) after rounding becomes `<min>`. A longitude of 180 in
@@ -4931,18 +4941,25 @@ field  <model-key> <locator> <transform> [options] absent <=<n>
 ```
 
 A value of an `absent` option (Version 0.9) that begins with `>=` or `<=` is
-a range sentinel: the raw value matches when, read as a number, it is at
+a range sentinel. On the wires where 0.9 strips a leading `=`, the prefix is
+looked for after that one `=` is stripped, so `=>=5` is the exact text `>=5`;
+on `pstring`, where nothing is stripped, a value that begins with `>=` or
+`<=` is always a range. A range sentinel: the raw value matches when, read as a number, it is at
 least, or at most, `<n>`. Range and exact sentinels may be mixed in one
 option (`absent 0,>=9999999`).
 
 - On `bits` and on `protobuf` with `pvarint` and `psint`, the raw value is
   the unsigned integer of 0.9's table, and `<n>` is an unsigned decimal
   integer below the same bound as an exact sentinel (`2^len` or `2^64`; 2c of
-  0.11). Range sentinels on `pdouble` and `pfloat` are `bad-directive`: use
-  exact bit patterns there, as 0.9 states.
-- On `xml`, `json`, `geojson`, `text` and `pstring`, `<n>` is number text
-  (2b of 0.11), and the raw text matches when it is number text by the same
-  rule and its value compares. On `json` and `geojson` a string member's text
+  0.11). On `psint` the raw value is the varint before zig-zag, as 0.9
+  states: `absent >=100` matches 50 (raw 100) and not −50 (raw 99). Range
+  sentinels on `pdouble`, `pfloat` and the `json` `bool` transform are
+  `bad-directive`: use exact values there, as 0.9 states.
+- On `xml`, `json`, `geojson` and `pstring`, `<n>` is number text (2b of
+  0.11), and the raw text matches when it is number text by the same rule
+  and its nearest double compares with the nearest double of `<n>`.
+  (`absent` stays `bad-directive` on `text` and `tlv`, Versions 0.10 and
+  0.13.) On `json` and `geojson` a string member's text
   is read the same way (`"10000000"` matches `>=9999999`), and so is a
   number's canonical text.
 
@@ -4968,26 +4985,30 @@ or `>=` or `<=` followed by one.
   follow `range <min> <max>`;
 - `null`, `implicit` or `wrap` given twice on one line;
 - a range sentinel whose `<n>` is not the text its wire takes, or on
-  `pdouble` or `pfloat`.
+  `pdouble`, `pfloat` or `bool`.
 
 The form of each option and its arguments is checked as the line is read
 (ruling 5b of 0.11, step 9, as for the other field options; the values of an
-`absent` option, range sentinels included, at step 10); a check that
-needs the wire, the key's type or the group is made after the file (ruling
-10 of 0.10).
+`absent` option, range sentinels included, at step 10): there `<min>` and
+`<max>` must be number text (2b). A check that needs the wire, the key's
+type or the group (an `int` key's integer text, `<min>` < `<max>` read as
+that type) is made after the file (ruling 10 of 0.10).
 
 ## Rulings for 0.56
 
-1. **`null` and `with`.** A line that `with` (Version 0.18) suppresses
+1. **`null` and the other lines on its member.** `null` is written only
+   when no line on the member writes a value: a `default`, a sentinel or a
+   held key of any line on that locator (ruling 16 of 0.5) comes first.
+2. **`null` and `with`.** A line that `with` (Version 0.18) suppresses
    writes nothing: no `null`.
-2. **`null` inside a group** writes the member `null` in the item, as for a
+3. **`null` inside a group** writes the member `null` in the item, as for a
    top-level field.
-3. **`implicit` and the report of a conversion** (Version 0.30, once it
+4. **`implicit` and the report of a conversion** (Version 0.30, once it
    merges): a field left out by `implicit` carried a held key; it is not a
    loss.
-4. **`range` and `absent`** are independent: `absent` acts on decode and on
+5. **`range` and `absent`** are independent: `absent` acts on decode and on
    the encode of an absent key, `range` on the encode of a held value. A
    sentinel written for an absent key is not checked against `range`.
-5. **`range` and `with`.** A line that `with` suppresses is not checked.
-6. **`wrap` of an `int` key** computes `x − (<max> − <min>) × floor((x −
+6. **`range` and `with`.** A line that `with` suppresses is not checked.
+7. **`wrap` of an `int` key** computes `x − (<max> − <min>) × floor((x −
    <min>) / (<max> − <min>))` exactly: −181 in `range -180 180 wrap` is 179.
