@@ -1,0 +1,17 @@
+{
+ "name": "gen-crop-roundtrip",
+ "from": "adapt-crop",
+ "to": "adapt-crop",
+ "input": "{\"id\":{\"referenceId\":\"s16933\",\"uniqueIds\":[{\"idSource\":\"s60421\",\"idText\":\"s52436\",\"idTypeCode\":\"s4096\",\"idSourceTypeCode\":\"s28979\"},{\"idSource\":\"s11623\",\"idText\":\"s40773\",\"idTypeCode\":\"s94907\",\"idSourceTypeCode\":\"s8695\"}]},\"name\":\"s95684\",\"description\":\"s91838\",\"contextItems\":[{\"definitionCode\":\"s63294\",\"valueText\":\"s21913\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2026-10-13T06:49:51.626Z\",\"end\":\"2025-09-03T18:54:29.679Z\",\"dateContextCode\":\"s25766\"}],\"contextItems\":[{\"definitionCode\":\"s16678\",\"valueText\":\"s60041\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2026-07-04T01:23:21.188Z\",\"end\":\"2026-06-29T00:16:30.281Z\",\"dateContextCode\":\"s3048\"}]}]},{\"definitionCode\":\"s15751\",\"valueText\":\"s98289\",\"timeScopes\":[{\"duration\":42.375,\"start\":\"2026-12-18T10:07:56.461Z\",\"end\":\"2026-04-21T16:19:42.967Z\",\"dateContextCode\":\"s87846\"}],\"contextItems\":[{\"definitionCode\":\"s49360\",\"valueText\":\"s82686\",\"timeScopes\":[{\"duration\":101.125,\"start\":\"2025-04-11T05:01:20.124Z\",\"end\":\"2024-05-02T13:58:42.617Z\",\"dateContextCode\":\"s87812\"}]}]}],\"parentId\":\"s62924\",\"referenceWeight\":{\"numericValue\":1.5,\"unitOfMeasureCode\":\"s84670\"},\"standardPayableMoisture\":{\"numericValue\":7.0625,\"unitOfMeasureCode\":\"s45714\"}}",
+ "expect": "{\"id\":{\"referenceId\":\"s16933\",\"uniqueIds\":[{\"idSource\":\"s60421\",\"idText\":\"s52436\",\"idTypeCode\":\"s4096\",\"idSourceTypeCode\":\"s28979\"},{\"idSource\":\"s11623\",\"idText\":\"s40773\",\"idTypeCode\":\"s94907\",\"idSourceTypeCode\":\"s8695\"}]},\"name\":\"s95684\",\"description\":\"s91838\",\"contextItems\":[{\"definitionCode\":\"s63294\",\"valueText\":\"s21913\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2026-10-13T06:49:51.626Z\",\"end\":\"2025-09-03T18:54:29.679Z\",\"dateContextCode\":\"s25766\"}],\"contextItems\":[{\"definitionCode\":\"s16678\",\"valueText\":\"s60041\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2026-07-04T01:23:21.188Z\",\"end\":\"2026-06-29T00:16:30.281Z\",\"dateContextCode\":\"s3048\"}]}]},{\"definitionCode\":\"s15751\",\"valueText\":\"s98289\",\"timeScopes\":[{\"duration\":42.375,\"start\":\"2026-12-18T10:07:56.461Z\",\"end\":\"2026-04-21T16:19:42.967Z\",\"dateContextCode\":\"s87846\"}],\"contextItems\":[{\"definitionCode\":\"s49360\",\"valueText\":\"s82686\",\"timeScopes\":[{\"duration\":101.125,\"start\":\"2025-04-11T05:01:20.124Z\",\"end\":\"2024-05-02T13:58:42.617Z\",\"dateContextCode\":\"s87812\"}]}]}],\"parentId\":\"s62924\",\"referenceWeight\":{\"numericValue\":1.5,\"unitOfMeasureCode\":\"s84670\"},\"standardPayableMoisture\":{\"numericValue\":7.0625,\"unitOfMeasureCode\":\"s45714\"}}",
+ "model": {
+  "adaptcrop.id_reference_id": "s16933",
+  "adaptcrop.id_unique_ids.#": "2",
+  "adaptcrop.name": "s95684",
+  "adaptcrop.description": "s91838",
+  "adaptcrop.context_items.#": "2",
+  "adaptcrop.parent_id": "s62924",
+  "adaptcrop.reference_weight_numeric_value": "1.5",
+  "adaptcrop.reference_weight_unit_of_measure_code": "s84670"
+ }
+}

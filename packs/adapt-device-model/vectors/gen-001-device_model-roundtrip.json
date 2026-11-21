@@ -1,0 +1,16 @@
+{
+ "name": "gen-device_model-roundtrip",
+ "from": "adapt-device-model",
+ "to": "adapt-device-model",
+ "input": "{\"id\":{\"referenceId\":\"s91333\",\"uniqueIds\":[{\"idSource\":\"s7941\",\"idText\":\"s87991\",\"idTypeCode\":\"s97203\",\"idSourceTypeCode\":\"s29939\"},{\"idSource\":\"s53567\",\"idText\":\"s30947\",\"idTypeCode\":\"s18862\",\"idSourceTypeCode\":\"s50604\"}]},\"name\":\"s66374\",\"description\":\"s89245\",\"contextItems\":[{\"definitionCode\":\"s27793\",\"valueText\":\"s2968\",\"timeScopes\":[{\"duration\":7.0625,\"start\":\"2025-11-26T16:19:46.330Z\",\"end\":\"2026-06-10T11:57:56.247Z\",\"dateContextCode\":\"s12172\"}],\"contextItems\":[{\"definitionCode\":\"s26455\",\"valueText\":\"s27536\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2026-06-03T09:07:17.913Z\",\"end\":\"2024-09-12T06:33:26.251Z\",\"dateContextCode\":\"s62850\"}]}]},{\"definitionCode\":\"s99321\",\"valueText\":\"s56765\",\"timeScopes\":[{\"duration\":101.125,\"start\":\"2025-06-03T15:50:31.473Z\",\"end\":\"2025-12-08T20:06:23.879Z\",\"dateContextCode\":\"s23486\"}],\"contextItems\":[{\"definitionCode\":\"s4594\",\"valueText\":\"s6019\",\"timeScopes\":[{\"duration\":-0.5,\"start\":\"2025-12-26T22:10:47.822Z\",\"end\":\"2025-03-31T13:21:46.550Z\",\"dateContextCode\":\"s46249\"}]}]}],\"brandId\":\"s49702\",\"deviceSeries\":\"s56967\"}",
+ "expect": "{\"id\":{\"referenceId\":\"s91333\",\"uniqueIds\":[{\"idSource\":\"s7941\",\"idText\":\"s87991\",\"idTypeCode\":\"s97203\",\"idSourceTypeCode\":\"s29939\"},{\"idSource\":\"s53567\",\"idText\":\"s30947\",\"idTypeCode\":\"s18862\",\"idSourceTypeCode\":\"s50604\"}]},\"name\":\"s66374\",\"description\":\"s89245\",\"contextItems\":[{\"definitionCode\":\"s27793\",\"valueText\":\"s2968\",\"timeScopes\":[{\"duration\":7.0625,\"start\":\"2025-11-26T16:19:46.330Z\",\"end\":\"2026-06-10T11:57:56.247Z\",\"dateContextCode\":\"s12172\"}],\"contextItems\":[{\"definitionCode\":\"s26455\",\"valueText\":\"s27536\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2026-06-03T09:07:17.913Z\",\"end\":\"2024-09-12T06:33:26.251Z\",\"dateContextCode\":\"s62850\"}]}]},{\"definitionCode\":\"s99321\",\"valueText\":\"s56765\",\"timeScopes\":[{\"duration\":101.125,\"start\":\"2025-06-03T15:50:31.473Z\",\"end\":\"2025-12-08T20:06:23.879Z\",\"dateContextCode\":\"s23486\"}],\"contextItems\":[{\"definitionCode\":\"s4594\",\"valueText\":\"s6019\",\"timeScopes\":[{\"duration\":-0.5,\"start\":\"2025-12-26T22:10:47.822Z\",\"end\":\"2025-03-31T13:21:46.550Z\",\"dateContextCode\":\"s46249\"}]}]}],\"brandId\":\"s49702\",\"deviceSeries\":\"s56967\"}",
+ "model": {
+  "adaptdevicemodel.id_reference_id": "s91333",
+  "adaptdevicemodel.id_unique_ids.#": "2",
+  "adaptdevicemodel.name": "s66374",
+  "adaptdevicemodel.description": "s89245",
+  "adaptdevicemodel.context_items.#": "2",
+  "adaptdevicemodel.brand_id": "s49702",
+  "adaptdevicemodel.device_series": "s56967"
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "name": "gen-farm-roundtrip",
+ "from": "adapt-farm",
+ "to": "adapt-farm",
+ "input": "{\"id\":{\"referenceId\":\"s96694\",\"uniqueIds\":[{\"idSource\":\"s77595\",\"idText\":\"s5928\",\"idTypeCode\":\"s36002\",\"idSourceTypeCode\":\"s77944\"},{\"idSource\":\"s35276\",\"idText\":\"s17180\",\"idTypeCode\":\"s81058\",\"idSourceTypeCode\":\"s63131\"}]},\"name\":\"s95326\",\"description\":\"s19254\",\"contextItems\":[{\"definitionCode\":\"s65493\",\"valueText\":\"s44676\",\"timeScopes\":[{\"duration\":1.5,\"start\":\"2025-09-15T07:35:29.925Z\",\"end\":\"2024-04-18T17:47:56.993Z\",\"dateContextCode\":\"s4057\"}],\"contextItems\":[{\"definitionCode\":\"s50353\",\"valueText\":\"s52054\",\"timeScopes\":[{\"duration\":1.5,\"start\":\"2024-06-08T02:51:15.222Z\",\"end\":\"2026-05-16T08:02:12.717Z\",\"dateContextCode\":\"s47948\"}]}]},{\"definitionCode\":\"s39470\",\"valueText\":\"s47738\",\"timeScopes\":[{\"duration\":-3.25,\"start\":\"2024-09-02T20:22:33.786Z\",\"end\":\"2024-11-04T06:28:58.512Z\",\"dateContextCode\":\"s19105\"}],\"contextItems\":[{\"definitionCode\":\"s44403\",\"valueText\":\"s91705\",\"timeScopes\":[{\"duration\":-3.25,\"start\":\"2025-05-23T05:04:11.140Z\",\"end\":\"2024-03-24T04:37:34.546Z\",\"dateContextCode\":\"s26762\"}]}]}],\"growerId\":\"s40395\",\"partyId\":\"s51976\"}",
+ "expect": "{\"id\":{\"referenceId\":\"s96694\",\"uniqueIds\":[{\"idSource\":\"s77595\",\"idText\":\"s5928\",\"idTypeCode\":\"s36002\",\"idSourceTypeCode\":\"s77944\"},{\"idSource\":\"s35276\",\"idText\":\"s17180\",\"idTypeCode\":\"s81058\",\"idSourceTypeCode\":\"s63131\"}]},\"name\":\"s95326\",\"description\":\"s19254\",\"contextItems\":[{\"definitionCode\":\"s65493\",\"valueText\":\"s44676\",\"timeScopes\":[{\"duration\":1.5,\"start\":\"2025-09-15T07:35:29.925Z\",\"end\":\"2024-04-18T17:47:56.993Z\",\"dateContextCode\":\"s4057\"}],\"contextItems\":[{\"definitionCode\":\"s50353\",\"valueText\":\"s52054\",\"timeScopes\":[{\"duration\":1.5,\"start\":\"2024-06-08T02:51:15.222Z\",\"end\":\"2026-05-16T08:02:12.717Z\",\"dateContextCode\":\"s47948\"}]}]},{\"definitionCode\":\"s39470\",\"valueText\":\"s47738\",\"timeScopes\":[{\"duration\":-3.25,\"start\":\"2024-09-02T20:22:33.786Z\",\"end\":\"2024-11-04T06:28:58.512Z\",\"dateContextCode\":\"s19105\"}],\"contextItems\":[{\"definitionCode\":\"s44403\",\"valueText\":\"s91705\",\"timeScopes\":[{\"duration\":-3.25,\"start\":\"2025-05-23T05:04:11.140Z\",\"end\":\"2024-03-24T04:37:34.546Z\",\"dateContextCode\":\"s26762\"}]}]}],\"growerId\":\"s40395\",\"partyId\":\"s51976\"}",
+ "model": {
+  "adaptfarm.id_reference_id": "s96694",
+  "adaptfarm.id_unique_ids.#": "2",
+  "adaptfarm.name": "s95326",
+  "adaptfarm.description": "s19254",
+  "adaptfarm.context_items.#": "2",
+  "adaptfarm.grower_id": "s40395",
+  "adaptfarm.party_id": "s51976"
+ }
+}

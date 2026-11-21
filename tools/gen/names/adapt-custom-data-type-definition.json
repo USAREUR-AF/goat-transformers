@@ -1,0 +1,36 @@
+{
+ "keys": {
+  "enumerated_data_type_definition_attributes_items|code|string": "enumerated_data_type_definition_attributes_items_code",
+  "enumerated_data_type_definition_attributes_items|description|string": "enumerated_data_type_definition_attributes_items_description",
+  "enumerated_data_type_definition_attributes_items|enumerationItemStatusCode|string": "enumerated_data_type_definition_attributes_items_enumeration_item_status_code",
+  "enumerated_data_type_definition_attributes_items|name|string": "enumerated_data_type_definition_attributes_items_name",
+  "enumerated_data_type_definition_attributes_items|supersededByCode|string": "enumerated_data_type_definition_attributes_items_superseded_by_code",
+  "geo_political_contexts|description|string": "geo_political_contexts_description",
+  "geo_political_contexts|geoNamesId|string": "geo_political_contexts_geo_names_id",
+  "geo_political_contexts|iSO3166-2Code|string": "geo_political_contexts_i_so3166_2_code",
+  "labels|description|string": "labels_description",
+  "labels|languageCode|string": "labels_language_code",
+  "labels|name|string": "labels_name",
+  "scopes|.|string": "scopes_value",
+  "|dataDefinitionBaseTypeCode|string": "data_definition_base_type_code",
+  "|dataDefinitionStatusCode|string": "data_definition_status_code",
+  "|definitionCode|string": "definition_code",
+  "|description|string": "description",
+  "|enumeratedDataTypeDefinitionAttributes.default|float": "enumerated_data_type_definition_attributes_default",
+  "|keywords|string": "keywords",
+  "|name|string": "name",
+  "|numericDataTypeDefinitionAttributes.default|float": "numeric_data_type_definition_attributes_default",
+  "|numericDataTypeDefinitionAttributes.maximum|float": "numeric_data_type_definition_attributes_maximum",
+  "|numericDataTypeDefinitionAttributes.minimum|float": "numeric_data_type_definition_attributes_minimum",
+  "|numericDataTypeDefinitionAttributes.numericDataTypeCode|string": "numeric_data_type_definition_attributes_numeric_data_type_code",
+  "|numericDataTypeDefinitionAttributes.unitOfMeasureCode|string": "numeric_data_type_definition_attributes_unit_of_measure_code",
+  "|supersededByCode|string": "superseded_by_code",
+  "|textDataTypeDefinitionAttributes.validationRegularExpression|string": "text_data_type_definition_attributes_validation_regular_expression"
+ },
+ "lists": {
+  "|enumeratedDataTypeDefinitionAttributes.items": "enumerated_data_type_definition_attributes_items",
+  "|geoPoliticalContexts": "geo_political_contexts",
+  "|labels": "labels",
+  "|scopes": "scopes"
+ }
+}

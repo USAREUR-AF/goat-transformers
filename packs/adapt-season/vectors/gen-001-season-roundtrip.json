@@ -1,0 +1,16 @@
+{
+ "name": "gen-season-roundtrip",
+ "from": "adapt-season",
+ "to": "adapt-season",
+ "input": "{\"id\":{\"referenceId\":\"s13856\",\"uniqueIds\":[{\"idSource\":\"s45420\",\"idText\":\"s93153\",\"idTypeCode\":\"s3828\",\"idSourceTypeCode\":\"s37072\"},{\"idSource\":\"s91219\",\"idText\":\"s86039\",\"idTypeCode\":\"s86586\",\"idSourceTypeCode\":\"s53974\"}]},\"name\":\"s25042\",\"description\":\"s81909\",\"contextItems\":[{\"definitionCode\":\"s39019\",\"valueText\":\"s91770\",\"timeScopes\":[{\"duration\":-0.5,\"start\":\"2026-02-08T11:01:46.848Z\",\"end\":\"2025-04-18T13:07:02.357Z\",\"dateContextCode\":\"s29774\"}],\"contextItems\":[{\"definitionCode\":\"s17301\",\"valueText\":\"s513\",\"timeScopes\":[{\"duration\":-0.5,\"start\":\"2025-11-01T18:37:10.330Z\",\"end\":\"2026-11-21T20:10:52.989Z\",\"dateContextCode\":\"s36945\"}]}]},{\"definitionCode\":\"s7416\",\"valueText\":\"s30037\",\"timeScopes\":[{\"duration\":-3.25,\"start\":\"2024-04-13T18:49:32.886Z\",\"end\":\"2026-04-05T21:46:50.156Z\",\"dateContextCode\":\"s41871\"}],\"contextItems\":[{\"definitionCode\":\"s36957\",\"valueText\":\"s80412\",\"timeScopes\":[{\"duration\":0.75,\"start\":\"2025-08-14T05:20:55.399Z\",\"end\":\"2025-04-05T06:36:34.120Z\",\"dateContextCode\":\"s89726\"}]}]}],\"start\":\"2024-04-30T14:54:17.991Z\",\"end\":\"2025-05-07T02:25:34.633Z\"}",
+ "expect": "{\"id\":{\"referenceId\":\"s13856\",\"uniqueIds\":[{\"idSource\":\"s45420\",\"idText\":\"s93153\",\"idTypeCode\":\"s3828\",\"idSourceTypeCode\":\"s37072\"},{\"idSource\":\"s91219\",\"idText\":\"s86039\",\"idTypeCode\":\"s86586\",\"idSourceTypeCode\":\"s53974\"}]},\"name\":\"s25042\",\"description\":\"s81909\",\"contextItems\":[{\"definitionCode\":\"s39019\",\"valueText\":\"s91770\",\"timeScopes\":[{\"duration\":-0.5,\"start\":\"2026-02-08T11:01:46.848Z\",\"end\":\"2025-04-18T13:07:02.357Z\",\"dateContextCode\":\"s29774\"}],\"contextItems\":[{\"definitionCode\":\"s17301\",\"valueText\":\"s513\",\"timeScopes\":[{\"duration\":-0.5,\"start\":\"2025-11-01T18:37:10.330Z\",\"end\":\"2026-11-21T20:10:52.989Z\",\"dateContextCode\":\"s36945\"}]}]},{\"definitionCode\":\"s7416\",\"valueText\":\"s30037\",\"timeScopes\":[{\"duration\":-3.25,\"start\":\"2024-04-13T18:49:32.886Z\",\"end\":\"2026-04-05T21:46:50.156Z\",\"dateContextCode\":\"s41871\"}],\"contextItems\":[{\"definitionCode\":\"s36957\",\"valueText\":\"s80412\",\"timeScopes\":[{\"duration\":0.75,\"start\":\"2025-08-14T05:20:55.399Z\",\"end\":\"2025-04-05T06:36:34.120Z\",\"dateContextCode\":\"s89726\"}]}]}],\"start\":\"2024-04-30T14:54:17.991Z\",\"end\":\"2025-05-07T02:25:34.633Z\"}",
+ "model": {
+  "adaptseason.id_reference_id": "s13856",
+  "adaptseason.id_unique_ids.#": "2",
+  "adaptseason.name": "s25042",
+  "adaptseason.description": "s81909",
+  "adaptseason.context_items.#": "2",
+  "adaptseason.start": "2024-04-30T14:54:17.991Z",
+  "adaptseason.end": "2025-05-07T02:25:34.633Z"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "name": "gen-brand-roundtrip",
+ "from": "adapt-brand",
+ "to": "adapt-brand",
+ "input": "{\"id\":{\"referenceId\":\"s65682\",\"uniqueIds\":[{\"idSource\":\"s9942\",\"idText\":\"s89342\",\"idTypeCode\":\"s56879\",\"idSourceTypeCode\":\"s41228\"},{\"idSource\":\"s28736\",\"idText\":\"s7748\",\"idTypeCode\":\"s92674\",\"idSourceTypeCode\":\"s74427\"}]},\"name\":\"s69610\",\"description\":\"s17341\",\"contextItems\":[{\"definitionCode\":\"s22353\",\"valueText\":\"s85449\",\"timeScopes\":[{\"duration\":0.75,\"start\":\"2023-11-21T08:18:46.412Z\",\"end\":\"2026-10-18T10:55:44.215Z\",\"dateContextCode\":\"s84800\"}],\"contextItems\":[{\"definitionCode\":\"s86104\",\"valueText\":\"s42536\",\"timeScopes\":[{\"duration\":1.5,\"start\":\"2026-02-05T08:11:39.936Z\",\"end\":\"2026-02-01T02:37:16.244Z\",\"dateContextCode\":\"s38096\"}]}]},{\"definitionCode\":\"s80361\",\"valueText\":\"s58520\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2025-12-04T07:49:10.094Z\",\"end\":\"2026-01-27T02:34:19.324Z\",\"dateContextCode\":\"s70737\"}],\"contextItems\":[{\"definitionCode\":\"s9121\",\"valueText\":\"s84920\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2024-11-03T01:25:58.935Z\",\"end\":\"2025-03-27T06:16:28.224Z\",\"dateContextCode\":\"s89944\"}]}]}],\"manufacturerId\":\"s21183\"}",
+ "expect": "{\"id\":{\"referenceId\":\"s65682\",\"uniqueIds\":[{\"idSource\":\"s9942\",\"idText\":\"s89342\",\"idTypeCode\":\"s56879\",\"idSourceTypeCode\":\"s41228\"},{\"idSource\":\"s28736\",\"idText\":\"s7748\",\"idTypeCode\":\"s92674\",\"idSourceTypeCode\":\"s74427\"}]},\"name\":\"s69610\",\"description\":\"s17341\",\"contextItems\":[{\"definitionCode\":\"s22353\",\"valueText\":\"s85449\",\"timeScopes\":[{\"duration\":0.75,\"start\":\"2023-11-21T08:18:46.412Z\",\"end\":\"2026-10-18T10:55:44.215Z\",\"dateContextCode\":\"s84800\"}],\"contextItems\":[{\"definitionCode\":\"s86104\",\"valueText\":\"s42536\",\"timeScopes\":[{\"duration\":1.5,\"start\":\"2026-02-05T08:11:39.936Z\",\"end\":\"2026-02-01T02:37:16.244Z\",\"dateContextCode\":\"s38096\"}]}]},{\"definitionCode\":\"s80361\",\"valueText\":\"s58520\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2025-12-04T07:49:10.094Z\",\"end\":\"2026-01-27T02:34:19.324Z\",\"dateContextCode\":\"s70737\"}],\"contextItems\":[{\"definitionCode\":\"s9121\",\"valueText\":\"s84920\",\"timeScopes\":[{\"duration\":12.5,\"start\":\"2024-11-03T01:25:58.935Z\",\"end\":\"2025-03-27T06:16:28.224Z\",\"dateContextCode\":\"s89944\"}]}]}],\"manufacturerId\":\"s21183\"}",
+ "model": {
+  "adaptbrand.id_reference_id": "s65682",
+  "adaptbrand.id_unique_ids.#": "2",
+  "adaptbrand.name": "s69610",
+  "adaptbrand.description": "s17341",
+  "adaptbrand.context_items.#": "2",
+  "adaptbrand.manufacturer_id": "s21183"
+ }
+}
