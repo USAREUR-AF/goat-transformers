@@ -5710,7 +5710,7 @@ kind's last line is not fixed either.
 30. **`at` on a pack that is not `layout sequential`** (a fixed `bits`
     layout, `json`, any other wire) is an `at` error like the others, with
     the late timing of rulings 10 and 14: a pack with no `distribution` line
-    and `when 0:8 1 at 0` on a fixed layout is `missing-distribution`.
+    and `when 0:0:8 1 at 0` on a fixed layout is `missing-distribution`.
 
 ## Not in this version
 
