@@ -1,0 +1,16 @@
+LicenseRef-MS-OpenSpec
+
+The source from which this pack's layout was taken is Microsoft Open Specifications documentation. Its
+"Intellectual Property Rights Notice for Open Specifications Documentation" lets anyone make copies of
+the documentation to develop implementations of the technologies it describes, and distribute portions
+of it in those implementations or in their documentation. It states that it grants no licence under
+Microsoft's patents; a document may separately be covered by the Microsoft Open Specifications Promise or
+Community Promise, and other patent licences are available from Microsoft. All other rights are reserved.
+The notice is printed at the front of each document and on its page under
+https://learn.microsoft.com/en-us/openspecs/.
+
+This repository restates the layout in its own words (field names, sizes, codes, notes and vectors); it
+copies no text, table or figure of the documentation. That restatement is offered under the repository's
+licence. Whether a use of the protocol needs a patent licence from Microsoft is not settled by the notice;
+each pack's PROVENANCE.md says whether its document is on the Open Specifications Promise's list. Treat
+commercial use of a pack with this label as unknown until that is decided.

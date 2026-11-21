@@ -1,0 +1,20 @@
+# SSH binary packet (RFC 4253 section 6), unencrypted or after decryption: the packet length, the padding
+# length, the payload and padding, and the MAC. Written by tools/gen/remote-pack.py; do not edit by hand.
+format        ssh-packet
+version       0.1.0
+distribution  public
+source        "IETF RFC 4253, The Secure Shell (SSH) Transport Layer Protocol, January 2006, section 6, https://www.rfc-editor.org/rfc/rfc4253.txt; layout restated"
+uses          sshpkt
+wire          bits
+layout        sequential
+bit_order     msb
+
+length  32  bytes
+  field  sshpkt.padding_length  8  uint
+  group  sshpkt.payload_and_padding  rest
+    field  sshpkt.octet  8  uint
+  end
+end
+group  sshpkt.mac  rest
+  field  sshpkt.octet  8  uint
+end

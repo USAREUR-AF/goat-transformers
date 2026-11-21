@@ -1,0 +1,12 @@
+{
+  "name": "kex-method-message-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "1e000000200000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "1e000000200000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "sshmsg.message_number": "30",
+    "sshmsg.message_data.#": "36"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 12; a key exchange method message (number 30), kept as octets; expect derived there, no engine run"
+}

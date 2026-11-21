@@ -1,0 +1,13 @@
+{
+  "name": "unencrypted-roundtrip",
+  "from": "ssh-packet",
+  "to": "ssh-packet",
+  "input": "0000001c0a050000000c7373682d757365726175746800010203040506070809",
+  "expect": "0000001c0a050000000c7373682d757365726175746800010203040506070809",
+  "model": {
+    "sshpkt.padding_length": "10",
+    "sshpkt.payload_and_padding.#": "27",
+    "sshpkt.mac.#": "0"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 6; a packet carrying SERVICE_REQUEST before keys are exchanged, no MAC; expect derived there, no engine run"
+}

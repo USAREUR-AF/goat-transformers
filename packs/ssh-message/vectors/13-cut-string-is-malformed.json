@@ -1,0 +1,8 @@
+{
+  "name": "cut-string-is-malformed",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "14000102030405060708090a0b0c0d0e0f0000001c637572766532353531",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 7.1; the KEXINIT of vector 01 cut inside its first name-list; expect derived there, no engine run"
+}

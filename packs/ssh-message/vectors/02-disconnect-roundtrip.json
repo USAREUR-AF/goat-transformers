@@ -1,0 +1,13 @@
+{
+  "name": "disconnect-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "010000000b0000000362796500000000",
+  "expect": "010000000b0000000362796500000000",
+  "model": {
+    "sshmsg.reason_code": "11",
+    "sshmsg.description.#": "3",
+    "sshmsg.language_tag.#": "0"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 11.1; DISCONNECT; expect derived there, no engine run"
+}

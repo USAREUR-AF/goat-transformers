@@ -1,0 +1,11 @@
+{
+  "name": "ignore-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "0200000003000102",
+  "expect": "0200000003000102",
+  "model": {
+    "sshmsg.data.#": "3"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 11.2; IGNORE; expect derived there, no engine run"
+}

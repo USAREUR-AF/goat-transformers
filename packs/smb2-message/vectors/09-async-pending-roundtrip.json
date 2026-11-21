@@ -1,0 +1,13 @@
+{
+  "name": "async-pending-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d42400000000301000005000100030000000000000007000000000000003412000000000000000000000000000000000000000000000000000000000000090000000000000000",
+  "expect": "fe534d42400000000301000005000100030000000000000007000000000000003412000000000000000000000000000000000000000000000000000000000000090000000000000000",
+  "model": {
+    "smb2.async": "1",
+    "smb2.async_id": "4660",
+    "smb2.status": "259"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 2.2.1.1 and 2.2.2; an async interim response, STATUS_PENDING; expect derived there, no engine run"
+}

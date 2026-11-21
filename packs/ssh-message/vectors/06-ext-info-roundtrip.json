@@ -1,0 +1,12 @@
+{
+  "name": "ext-info-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "07000000010000000f7365727665722d7369672d616c6773000000187373682d656432353531392c7273612d736861322d323536",
+  "expect": "07000000010000000f7365727665722d7369672d616c6773000000187373682d656432353531392c7273612d736861322d323536",
+  "model": {
+    "sshmsg.extensions.#": "1",
+    "sshmsg.extensions[0].sshmsg.extension_name.#": "15"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 8308 section 2.3; EXT_INFO; expect derived there, no engine run"
+}

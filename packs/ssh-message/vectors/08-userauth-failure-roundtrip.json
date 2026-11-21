@@ -1,0 +1,12 @@
+{
+  "name": "userauth-failure-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "33000000127075626c69636b65792c70617373776f726400",
+  "expect": "33000000127075626c69636b65792c70617373776f726400",
+  "model": {
+    "sshmsg.authentications.#": "18",
+    "sshmsg.partial_success": "0"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4252 section 5.1; USERAUTH_FAILURE; expect derived there, no engine run"
+}

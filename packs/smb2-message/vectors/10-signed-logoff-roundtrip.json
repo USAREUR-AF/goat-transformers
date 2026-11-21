@@ -1,0 +1,14 @@
+{
+  "name": "signed-logoff-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000000000000200010008000000000000000800000000000000fffe0000000000000100000000100000000102030405060708090a0b0c0d0e0f04000000",
+  "expect": "fe534d4240000000000000000200010008000000000000000800000000000000fffe0000000000000100000000100000000102030405060708090a0b0c0d0e0f04000000",
+  "model": {
+    "smb2.command": "2",
+    "smb2.signed": "1",
+    "smb2.signature": "00102030405060708090a0b0c0d0e0f0",
+    "smb2.structure_size": "4"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 2.2.7; a signed LOGOFF request; expect derived there, no engine run"
+}
