@@ -1731,6 +1731,11 @@ class _Loader:
         sequential = self.pack.wire == "bits" and self.pack.sequential
         if sequential and "at" in a[2:]:
             self._when_at(node)
+        elif len(a) > 2 and a[2] == "at":
+            # spec 0.33 ruling 30: `at` on a pack that is not sequential is an
+            # `at` error with the late timing of rulings 10 and 14 (a third
+            # token that is neither `at` nor `as` stays the line check, 29)
+            self.at_form.append((node.line, "`at` on a `when` of a pack that is not `layout sequential`"))
         elif len(a) == 4 and a[2] == "as" and a[3] != "as" and sequential:
             node.as_key = a[3]
             self.key_uses.append((node, a[3], "as"))

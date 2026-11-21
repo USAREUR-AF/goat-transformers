@@ -1740,6 +1740,11 @@ def build(sink):
     # read, so an undeclared key there gives the `at` form error
     load("ruling-28-undeclared-key-in-a-misplaced-as", seq + "kind a\nwhen 8 1 as probe.nosuch at 0\n"
          "field probe.y 8 uint\n")
+    # ruling 30: `at` on a pack that is not sequential is an `at` error with
+    # the late timing of rulings 10 and 14 (the fixed locator is written in
+    # full, <word>:<pos>:<len>)
+    load("ruling-30-at-on-a-fixed-layout-after-missing-distribution", fixed.replace("distribution public\n", "") +
+         "field probe.x 0:0:8 uint\nkind a\nwhen 0:8:8 1 at 0\n", "missing-distribution")
     # a vector file of these packs, or a load vector of this range, that this
     # run did not write is from an earlier run: it goes
     for name in PACKS:
