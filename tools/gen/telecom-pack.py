@@ -177,7 +177,7 @@ SCTP_KEYS = [
     ("list", "chunks", "the chunks of the packet, in order"),
     ("key", "chunk_type", "chunk type: 0 DATA, 1 INIT, 2 INIT ACK, 3 SACK, 4 HEARTBEAT, 5 HEARTBEAT ACK, 6 ABORT, 7 SHUTDOWN, 8 SHUTDOWN ACK, 9 ERROR, 10 COOKIE ECHO, 11 COOKIE ACK, 14 SHUTDOWN COMPLETE"),
     ("key", "chunk_flags", "chunk flags as one octet: for DATA the bits I, U, B, E (the low four); for ABORT and SHUTDOWN COMPLETE the T bit (the lowest)"),
-    ("key", "tsn", "transmission sequence number (DATA; the No User Data cause)"),
+    ("key", "tsn", "sequence number of a DATA chunk (and of the No User Data cause)"),
     ("key", "stream_id", "stream identifier (DATA; the Invalid Stream Identifier cause)"),
     ("key", "stream_seq", "DATA: stream sequence number"),
     ("key", "ppid", "DATA: payload protocol identifier"),
