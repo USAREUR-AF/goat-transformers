@@ -1652,6 +1652,11 @@ def check_vectors(out, vec_dir, fmt, pack, old_pack):
                 if kind != want:
                     fail("selected kind %s, vector says %s" % (kind, want))
                 continue
+            if k == "@absent":
+                for key in want:            # spec/vector-format.md: keys the decode leaves absent
+                    if model_lookup(ent, key) is not None:
+                        fail("model key %s is decoded, vector says absent" % key)
+                continue
             if k == "@complete" or v["model"].get("@complete"):
                 continue        # checked on the derived entity (0.6); this codec does not derive
             got = model_lookup(ent, k)
@@ -2188,16 +2193,34 @@ def derive_uses(opts):
     return sorted(mods)
 
 
+def core_keys(opts):
+    """The keys of model/core.def in the output directory."""
+    if not getattr(opts, "out", None):
+        return set()
+    path = os.path.join(opts.out, "model", "core.def")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return {l.split()[1] for l in fh if l.split()[:1] == ["key"] and len(l.split()) > 1}
+    except OSError:
+        return set()
+
+
 def check_derive(opts, mod_keys):
     """Each --derive is `<target> <function> <arg>...` and its target is a key of
-    this module (engine-spec 0.6: a derive line sets a key of core or of its module)."""
+    this module or of core (engine-spec 0.6: a derive line sets a key of core or of
+    its module)."""
+    core = None
     for d in opts.derive:
         a = d.split()
         if len(a) < 3:
             raise GenError("--derive %r: give a target, a function and at least one argument" % d)
         tgt = a[0]
-        if not tgt.startswith(opts.module + ".") or tgt.split(".", 1)[1] not in mod_keys:
-            raise GenError("--derive %r: the target is not a key of module %s" % (d, opts.module))
+        if tgt.startswith(opts.module + ".") and tgt.split(".", 1)[1] in mod_keys:
+            continue
+        if core is None:
+            core = core_keys(opts)
+        if tgt not in core:
+            raise GenError("--derive %r: the target is not a key of module %s or of core" % (d, opts.module))
 
 
 def group_lines(g, ind=""):
@@ -2209,6 +2232,16 @@ def group_lines(g, ind=""):
     for sg in g.groups:
         out += group_lines(sg, ind + "  ")
     return out + [ind + "end"]
+
+
+def split_kind(opts):
+    """--split-kind as (kind, path, value, new kind, dropped keys), or None."""
+    if not opts.split_kind:
+        return None
+    m = re.fullmatch(r"([a-z0-9_]+):([0-9.]+)=([0-9]+):([a-z0-9_]+):([a-z0-9_.,]+)", opts.split_kind)
+    if not m:
+        raise GenError("--split-kind %r: give KIND:PATH=VALUE:NEWKIND:KEY[,KEY...]" % opts.split_kind)
+    return m.group(1), m.group(2), m.group(3), m.group(4), set(m.group(5).split(","))
 
 
 def emit_pack(plan):
@@ -2242,19 +2275,50 @@ def emit_pack(plan):
                     "%s.%s" % (env.name, f.name) for f in env.fields if f.name in opts.common_member))
         out += ["", what] + [field_line(l) for l in plan.common]
         out += [ln for g in plan.common_groups for ln in group_lines(g)]
-    for kind in plan.kinds:
-        out += ["", "kind      %s" % kind.name]
+    split = split_kind(opts)
+    if split and split[0] not in [k.name for k in plan.kinds]:
+        raise GenError("--split-kind: there is no kind %s" % split[0])
+    plan.split_field_lines = 0
+
+    def kind_lines(kind, name, extra_when, drop, requires):
+        dropped = drop or set()
+        lines = ["", "kind      %s" % name]
         if kind.number is not None:
-            out += ["when      %d present" % kind.number]
-        if kind.requires:
-            out += ["requires  %s" % " ".join(kind.requires)]
-        out += [field_line(l) for l in kind.leaves]
-        out += ["field  %-*s  %-*s  %s%s%s" % (kw, key, pw, p, tr, "  via %s" % table if table else "",
-                                              "  with %s" % plan.withs[(kind.name, p)]
-                                              if (kind.name, p) in plan.withs else "")
-                for key, p, tr, table in plan.binds.get(kind.name, [])]
-        out += ["const  %-*s  %s" % (pw, p, v) for p, v in plan.consts.get(kind.name, [])]
-        out += [ln for g in kind.groups for ln in group_lines(g)]
+            lines += ["when      %d present" % kind.number]
+        if extra_when:
+            lines += ["when      %s %s" % extra_when]
+        if requires:
+            lines += ["requires  %s" % " ".join(requires)]
+        for l in kind.leaves:
+            keys = [k for k in l.cores if k not in dropped] + ([l.key] if l.key else [])
+            lines += ["field  %-*s  %-*s  %s" % (kw, k, pw, l.path, l.transform) for k in keys]
+        lines += ["field  %-*s  %-*s  %s%s%s" % (kw, key, pw, p, tr, "  via %s" % table if table else "",
+                                                "  with %s" % plan.withs[(kind.name, p)]
+                                                if (kind.name, p) in plan.withs else "")
+                  for key, p, tr, table in plan.binds.get(kind.name, []) if key not in dropped]
+        if extra_when:
+            keep = lambda p: p != extra_when[0]                  # the `when` writes PATH on encode
+        elif drop is not None:
+            parent = split[1].rsplit(".", 1)[0] + "."            # nothing of the message PATH is in
+            keep = lambda p: not p.startswith(parent)
+        else:
+            keep = lambda p: True
+        lines += ["const  %-*s  %s" % (pw, p, v) for p, v in plan.consts.get(kind.name, []) if keep(p)]
+        lines += [ln for g in kind.groups for ln in group_lines(g)]
+        return lines
+
+    for kind in plan.kinds:
+        if split and kind.name == split[0]:
+            out += kind_lines(kind, kind.name, (split[1], split[2]), None, kind.requires)
+        else:
+            out += kind_lines(kind, kind.name, None, None, kind.requires)
+    if split:
+        # last, with no `requires`: the messages of the split kind whose PATH holds another value
+        kind = next(k for k in plan.kinds if k.name == split[0])
+        tail = kind_lines(kind, split[3], None, split[4], [])
+        out += ["", "# %s: the %s messages whose %s is not %s; no field of %s" % (
+            split[3], split[0], split[1], split[2], ", ".join(sorted(split[4])))] + tail[1:]
+        plan.split_field_lines = sum(1 for ln in tail if ln.startswith("field "))
     if plan.tables:
         out += ["", "# value tables: <table> <value on the wire> <value of the model key>"]
         tw = max(len(t) for t in plan.tables)
@@ -2421,7 +2485,7 @@ def emit_vectors(plan, vector_budget=VECTOR_BUDGET):
 # self-check: load what the run wrote and prove every vector
 # --------------------------------------------------------------------------
 
-def check_kind_order(pack, default_kind):
+def check_kind_order(pack, default_kind, split=None):
     """Two rules of this generator about the order of kinds, on the loaded
     pack: only the last kind may have no `requires` (encode takes the first
     kind whose `requires` hold, so such a kind hides every kind after it), and
@@ -2431,7 +2495,8 @@ def check_kind_order(pack, default_kind):
             raise GenError("kind %s has no requires and would shadow the kinds after it on encode" % kind.name)
     if default_kind:
         names = [k.name for k in pack.kinds]
-        if any(k.fields or k.groups for k in pack.kinds[names.index(default_kind) + 1:]):
+        after = [k for k in pack.kinds[names.index(default_kind) + 1:] if not (split and k.name == split[3])]
+        if any(k.fields or k.groups for k in after):
             raise GenError("a kind with fields follows the default kind")
 
 
@@ -2463,9 +2528,9 @@ def self_check(out, plan):
     pack_rel = "packs/%s/pack.def" % opts.format
     model = load_model(out)
     pack = load_protobuf_pack(out.read(pack_rel), model, pack_rel)
-    if pack.format != opts.format or len(pack.kinds) != len(plan.kinds):
+    if pack.format != opts.format or len(pack.kinds) != len(plan.kinds) + (1 if split_kind(opts) else 0):
         raise GenError("the pack that loads is not the pack that was planned", pack_rel)
-    check_kind_order(pack, opts.default_kind)
+    check_kind_order(pack, opts.default_kind, split_kind(opts))
     old_pack = None
     if opts.supersedes:
         with open(opts.supersedes, encoding="utf-8") as fh:
@@ -2687,7 +2752,8 @@ def schema_counts(plan):
         "messages_defined": len([m for m in plan.schema.messages.values() if not m.full.startswith("google.")]),
         "enums_defined": len(plan.schema.enums),
         "reachable": len(reachable), "walked": len(walked), "reasons": reasons,
-        "n_fields": sum(1 + len(l.cores) for l in plan.all_leaves) + len(plan.bound_keys) + len(item_leaves),
+        "n_fields": sum(1 + len(l.cores) for l in plan.all_leaves) + len(plan.bound_keys) + len(item_leaves)
+        + getattr(plan, "split_field_lines", 0),
         "scalar_groups": sum(1 for g in plan.all_groups if g.scalar),
     }
 
@@ -2739,7 +2805,7 @@ def md_schema(plan, counts, n_vectors, n_cross):
           "| enums defined | %d |" % counts["enums_defined"],
           "| messages reachable from `%s` (through repeated fields too) | %d |" % (env.name, counts["reachable"]),
           "| message types on the walked paths | %d |" % counts["walked"],
-          "| kinds | %d |" % len(plan.kinds)]
+          "| kinds | %d |" % (len(plan.kinds) + (1 if split_kind(opts) else 0))]
     # rows for the options a run was given; a run without them keeps the rows above and below
     if opts.max_depth != DEFAULT_MAX_DEPTH:
         md.append("| longest path walked (`--max-depth`) | %d |" % opts.max_depth)
@@ -3048,6 +3114,12 @@ def argument_parser():
                     help="one `map` line of a value table (engine-spec 0.6); repeatable, in order")
     ap.add_argument("--const", action="append", default=[], metavar="KIND:PATH=VALUE",
                     help="a `const` line of KIND: the unsigned integer written at PATH on every encode")
+    ap.add_argument("--split-kind", default=None, metavar="KIND:PATH=VALUE:NEWKIND:KEY[,KEY...]",
+                    help="KIND holds only messages whose PATH is VALUE (a `when` line in place of a "
+                         "`const` at PATH); NEWKIND, written last, takes the others with the same lines "
+                         "but no field of the shared KEYs and no `const` in the message that holds PATH, "
+                         "so a value in another unit or frame is never read as one of those keys and "
+                         "nothing the message did not state is written back")
     ap.add_argument("--mandatory-option", default=None,
                     help="name of a custom field option whose `true` marks a mandatory field (proto2 `required` always counts)")
     ap.add_argument("--max-depth", type=int, default=DEFAULT_MAX_DEPTH,

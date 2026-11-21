@@ -1588,6 +1588,28 @@ class DeriveTest(unittest.TestCase):
         with self.assertRaises(p2p.GenError):
             p2p.check_derive(self.opts("depot.a sec_of"), {"a"})
 
+    def test_a_target_may_be_a_key_of_core(self):
+        """engine-spec 0.6: a derive line sets a key of core or of its module."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as out:
+            os.makedirs(os.path.join(out, "model"))
+            with open(os.path.join(out, "model", "core.def"), "w", encoding="utf-8") as fh:
+                fh.write("module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n")
+            opts = type("Opts", (), {"module": "depot", "derive": ["uid copy depot.a"], "out": out})()
+            p2p.check_derive(opts, {"a"})
+            opts.derive = ["callsign copy depot.a"]
+            with self.assertRaises(p2p.GenError):
+                p2p.check_derive(opts, {"a"})
+
+    def test_split_kind_is_parsed_or_refused(self):
+        opts = type("Opts", (), {"split_kind": "detection_report:7.6.7=1:other:lat,lon"})()
+        self.assertEqual(p2p.split_kind(opts), ("detection_report", "7.6.7", "1", "other", {"lat", "lon"}))
+        opts.split_kind = None
+        self.assertIsNone(p2p.split_kind(opts))
+        opts.split_kind = "detection_report:7.6.7=one:other:lat"
+        with self.assertRaises(p2p.GenError):
+            p2p.split_kind(opts)
+
     def test_sec_of_and_nsec_of_floor_toward_negative_infinity(self):
         self.assertEqual(p2p.EXACT_DERIVES["sec_of"](-1), -1)
         self.assertEqual(p2p.EXACT_DERIVES["nsec_of"](-1), 999000000)

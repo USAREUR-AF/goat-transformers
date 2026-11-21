@@ -1,0 +1,20 @@
+{
+  "name": "no-location-object-id-to-geojson",
+  "from": "sapient",
+  "to": "geojson",
+  "input": "3a1c121a303141525a334e44454b54535634525246465136394735464156",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"}",
+  "model": {
+    "@complete": true,
+    "uid": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+    "@absent": [
+      "lat",
+      "lon",
+      "hae",
+      "sapient.location_x",
+      "sapient.location_coordinate_system"
+    ]
+  },
+  "source": "synthetic: a DetectionReport (7) holding only object_id (7.2), the example ULID of the ULID specification; no Location (7.6)",
+  "reference": "The when 7.6.7 1 of kind detection_report does not hold because its prefix 7.6 is absent (ruling 9b of 0.11); detection_report_other_system (when 7 present) is selected. No position: geometry null (ruling 5 of 0.1.1); id is the object id through the uid derive (model/sapient.def, 0.6)."
+}

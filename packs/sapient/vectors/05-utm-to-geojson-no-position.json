@@ -1,0 +1,18 @@
+{
+  "name": "utm-to-geojson-no-position",
+  "from": "sapient",
+  "to": "geojson",
+  "input": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038054001",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"}",
+  "model": {
+    "@complete": true,
+    "uid": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+    "@absent": [
+      "lat",
+      "lon",
+      "hae"
+    ]
+  },
+  "source": "synthetic: built by hand from the field numbers in packs/sapient/pack.def (7 DetectionReport, 7.2 object_id, 7.6 Location: 1 x, 2 y, 3 z as doubles, 7 coordinate_system, 8 datum as varints); object_id is the example ULID of the ULID specification; doubles are little-endian IEEE-754 of the decimal text; the input of 04-utm-roundtrip-other-system",
+  "reference": "Decoded as detection_report_other_system (see 04), so the entity has no lat or lon: the geojson geometry is null (ruling 5 of 0.1.1). uid is derived from the object id (model/sapient.def, 0.6) and written at id (ruling 4 of 0.1.1); properties is {}."
+}

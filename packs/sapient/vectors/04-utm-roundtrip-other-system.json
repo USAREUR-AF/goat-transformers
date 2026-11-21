@@ -1,0 +1,23 @@
+{
+  "name": "utm-roundtrip-other-system",
+  "from": "sapient",
+  "to": "sapient",
+  "input": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038054001",
+  "expect": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038054001",
+  "model": {
+    "@kind": "detection_report_other_system",
+    "sapient.detection_report_object_id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+    "sapient.location_x": "-85.95",
+    "sapient.location_y": "30.009",
+    "sapient.location_z": "12.5",
+    "sapient.location_coordinate_system": "5",
+    "sapient.location_datum": "1",
+    "@absent": [
+      "lat",
+      "lon",
+      "hae"
+    ]
+  },
+  "source": "synthetic: built by hand from the field numbers in packs/sapient/pack.def (7 DetectionReport, 7.2 object_id, 7.6 Location: 1 x, 2 y, 3 z as doubles, 7 coordinate_system, 8 datum as varints); object_id is the example ULID of the ULID specification; doubles are little-endian IEEE-754 of the decimal text; the detection of 03-degrees-object-id-to-geojson with coordinate_system 5 (UTM) in place of 1",
+  "reference": "7.6.7 is the varint 5, so the when 7.6.7 1 of kind detection_report does not hold and detection_report_other_system is selected (engine-spec 0.5 Decode step 2). That kind maps 7.6.1 to 7.6.9 to raw keys only and has no const, so lat, lon and hae are absent and the round trip (kind kept, 0.5 Encode step 1) writes back each decoded field in ascending field-number order (0.3): the input unchanged, coordinate_system still 5."
+}
