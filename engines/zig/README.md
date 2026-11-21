@@ -61,7 +61,7 @@ value its grammar refuses makes the vector fail as invalid. Stdlib only.
 | `zig build module-test` | the module another program imports, and one engine converting on eight threads at once (spec Version 0.25, below) | `2/2 tests passed` |
 | `engines/zig/bench.sh` (from the repository root) | the benchmark of spec Version 0.25 (below) | one JSON line per vector, then the load line |
 | `engines/zig/reduced-check.sh` (from the repository root) | the reduced-build check of spec Version 0.24 (below) | `reduced-build check: passed` |
-| `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 97/97 passed` |
+| `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 135/135 passed` |
 
 ## Parse once, and the benchmark (spec Version 0.25)
 
