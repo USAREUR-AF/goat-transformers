@@ -1,0 +1,8 @@
+{
+  "name": "goat-processors outputs",
+  "domain": "c2",
+  "exact": [
+    "goat-processors-report",
+    "goat-processors-system-track"
+  ]
+}
