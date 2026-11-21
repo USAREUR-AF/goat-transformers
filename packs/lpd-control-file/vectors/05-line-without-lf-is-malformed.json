@@ -1,0 +1,8 @@
+{
+  "name": "line-without-lf-is-malformed",
+  "from": "lpd-control-file",
+  "to": "lpd-control-file",
+  "input": "48680a50616c696365",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 section 7; the last line has no line feed; expect derived there, no engine run"
+}

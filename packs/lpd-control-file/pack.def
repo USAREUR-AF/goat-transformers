@@ -1,0 +1,46 @@
+# An LPD control file (RFC 1179 section 7): its lines in order, each a command character, its operand and LF.
+# Written by tools/gen/printing-pack.py; do not edit by hand.
+format        lpd-control-file
+version       0.1.0
+distribution  public
+source        "IETF RFC 1179, Line Printer Daemon Protocol, August 1990, sections 3.1 and 5-7, https://www.rfc-editor.org/rfc/rfc1179.txt; layout restated"
+uses          lpd
+wire          bits
+layout        sequential
+bit_order     msb
+
+group  lpd.lines  rest
+  field  lpd.command  8  uint
+  switch  lpd.command
+    case  67
+      field  lpd.banner_class  until:10  chars:ascii8
+    case  72
+      field  lpd.host  until:10  chars:ascii8
+    case  73
+      field  lpd.indent  until:10  chars:ascii8
+    case  74
+      field  lpd.job_name  until:10  chars:ascii8
+    case  76
+      field  lpd.banner_user  until:10  chars:ascii8
+    case  77
+      field  lpd.mail_user  until:10  chars:ascii8
+    case  78
+      field  lpd.source_file_name  until:10  chars:ascii8
+    case  80
+      field  lpd.user  until:10  chars:ascii8
+    case  83
+      field  lpd.symlink_data  until:10  chars:ascii8
+    case  84
+      field  lpd.title  until:10  chars:ascii8
+    case  85
+      field  lpd.unlink_file  until:10  chars:ascii8
+    case  87
+      field  lpd.width  until:10  chars:ascii8
+    case  49,50,51,52
+      field  lpd.font_file  until:10  chars:ascii8
+    case  99,100,102,103,108,110,111,112,114,116,118
+      field  lpd.print_file  until:10  chars:ascii8
+    else
+      field  lpd.operand  until:10  chars:ascii8
+  end
+end

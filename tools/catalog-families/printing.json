@@ -1,0 +1,10 @@
+{
+  "name": "Printing (IPP binary encoding, LPD)",
+  "domain": "networks",
+  "exact": [
+    "ipp-message",
+    "lpd-command",
+    "lpd-subcommand",
+    "lpd-control-file"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "empty-operands-roundtrip",
+  "from": "lpd-control-file",
+  "to": "lpd-control-file",
+  "input": "48680a50700a430a4a0a4c0a",
+  "expect": "48680a50700a430a4a0a4c0a",
+  "model": {
+    "lpd.lines.#": "5"
+  },
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 section 7; class, job name and banner user omitted, which section 7 allows; expect derived there, no engine run"
+}

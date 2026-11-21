@@ -1,0 +1,26 @@
+# The lpd module: Line Printer Daemon protocol fields (RFC 1179). Written by tools/gen/printing-pack.py.
+module        lpd
+version       0.1.0
+distribution  public
+source        "IETF RFC 1179, Line Printer Daemon Protocol, August 1990, sections 3.1 and 5-7, https://www.rfc-editor.org/rfc/rfc1179.txt; layout restated"
+key   queue             string  -  "daemon commands 1 and 2: the printer queue name"
+key   operands          string  -  "daemon commands 3, 4 and 5: the queue name and the other operands (agent, user names, job numbers) as sent, separated by white space"
+key   byte_count        string  -  "receive control file or data file: the number of octets of the file, as the decimal digits sent"
+key   file_name         string  -  "receive control file or data file: the file name (cfA or dfA, a three-digit job number, the host name)"
+key   banner_class      string  -  "control line C: class name for the banner page"
+key   host              string  -  "control line H: the host to treat as the source of the job"
+list  lines             "the lines of the control file, in order"
+key   command           int     -  "control line: the command character's code (for example 72 H, 80 P, 102 f)"
+key   operand           string  -  "control line with another command character (k and z are reserved, others are not in RFC 1179): the operand"
+key   indent            string  -  "control line I: indenting count in columns, as the decimal digits sent"
+key   job_name          string  -  "control line J: job name for the banner page"
+key   banner_user       string  -  "control line L: print the banner page, with this user name"
+key   mail_user         string  -  "control line M: the user to mail when printing ends"
+key   source_file_name  string  -  "control line N: the name of the file the data file was made from"
+key   user              string  -  "control line P: the user identification of the requester"
+key   symlink_data      string  -  "control line S: device number and inode number, as sent"
+key   title             string  -  "control line T: title for pr"
+key   unlink_file       string  -  "control line U: a data file no longer needed"
+key   width             string  -  "control line W: width of output in columns, as the decimal digits sent"
+key   font_file         string  -  "control lines 1 to 4: the troff R, I, B or S font file (the kind says which)"
+key   print_file        string  -  "control lines in lower case: the data file to print or plot (the kind says how)"

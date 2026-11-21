@@ -1,0 +1,11 @@
+{
+  "name": "remove-jobs-roundtrip",
+  "from": "lpd-command",
+  "to": "lpd-command",
+  "input": "056c7020726f6f7420333120616c6963650a",
+  "expect": "056c7020726f6f7420333120616c6963650a",
+  "model": {
+    "lpd.operands": "lp root 31 alice"
+  },
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 sections 3.1 and 5; queue, agent, then a job number and a user name; expect derived there, no engine run"
+}

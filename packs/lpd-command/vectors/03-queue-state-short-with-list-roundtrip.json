@@ -1,0 +1,11 @@
+{
+  "name": "queue-state-short-with-list-roundtrip",
+  "from": "lpd-command",
+  "to": "lpd-command",
+  "input": "036c7020616c69636520313220626f620a",
+  "expect": "036c7020616c69636520313220626f620a",
+  "model": {
+    "lpd.operands": "lp alice 12 bob"
+  },
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 sections 3.1 and 5; the queue, then user names and a job number; expect derived there, no engine run"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "empty-groups-roundtrip",
+  "from": "ipp-message",
+  "to": "ipp-message",
+  "input": "0101000000000002010403",
+  "expect": "0101000000000002010403",
+  "model": {
+    "ipp.items.#": "3"
+  },
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 8010 section 3; two groups with no attributes, as section 3.3 allows; expect derived there, no engine run"
+}
