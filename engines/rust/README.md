@@ -182,10 +182,11 @@ zz-first-by-format	lic-aa	Apache-2.0	open
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 22961 conversion vectors, 1249 load vectors, 18 capability vectors, 0 failed |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 23349 conversion vectors, 1312 load vectors, 18 capability vectors, 0 failed |
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 5717281 inputs over 4433 packs and 22958 vectors |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 6633645 inputs over 4481 packs and 23346 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
+| `tests/cbor.rs` | spec 0.28: the `cbor` wire on byte strings built by hand from RFC 8949: heads of every length, the core deterministic encoding (key order, shortest floats), the depth limit, equal keys, UTF-8 across chunks, tags, residue and the `tag` directive | 17 tests |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
 | `tests/parse_once.rs` | spec 0.25, ruling 1: every conversion vector, failing ones included, gives the same output or error on one instance in line order, in reverse order and on four threads at once; the benchmark set and one failing vector of each wire give the same on a new instance; a second load is still a duplicate (the debug build runs the reverse order and the threads on every eighth vector and every failing one, and the new instance for the failing vectors only) | 3 tests |
 | `tests/seconds.rs` | spec 0.26, ruling 1: the transform `iso8601_s` loads on the xml, geojson, json and text wires; it is `bad-directive` on another wire and with a parameter; it gives an integer, so on a key of another type it is `key-type-mismatch`; writing drops the milliseconds and keeps to the years 0001 to 9999 | 5 tests |
@@ -273,15 +274,15 @@ another set. Measured on 2026-11-21 with rustc 1.99.1 on x86_64 Linux:
 
 | Reduced build (`xml,json,geojson`) | Measured |
 |---|---|
-| conversion vectors | 8324 run, 0 failed (14637 on other wires left out) |
-| load vectors | 388 run, 0 failed (861 left out) |
+| conversion vectors | 8357 run, 0 failed (14992 on other wires left out) |
+| load vectors | 389 run, 0 failed (923 left out) |
 | capability vectors | 16 run, 0 failed (2 left out) |
-| `unknown-wire` loads | 4 of 4: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv) |
+| `unknown-wire` loads | 5 of 5: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv), `conformance-cbor` (cbor) |
 
-| Release artifact | All seven wires | `xml,json,geojson` |
+| Release artifact | All eight wires | `xml,json,geojson` |
 |---|---|---|
-| `goat-xf` | 2145456 bytes | 1707208 bytes |
-| `libgoat_transformers.rlib` | 4977634 bytes | 3699700 bytes |
+| `goat-xf` | 2368992 bytes | 1770432 bytes |
+| `libgoat_transformers.rlib` | 5605876 bytes | 4381132 bytes |
 
 ## Static and WebAssembly builds
 
