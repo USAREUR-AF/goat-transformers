@@ -1459,6 +1459,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             // v0.30: `as` belongs to `layout sequential`; refused after the file (ruling 16).
             if (t.size() > 3 && t[3] == "as") {
                 if (as_error.empty()) as_error = where + ": 'when ... as' applies to 'layout sequential' only";
+            } else if (t.size() > 3 && t[3] == "at") {
+                // v0.33: raised with the other `at` errors, after the module checks.
+                if (p.at_error.empty()) p.at_error = where + ": 'when ... at' applies to 'layout sequential' only";
             } else {
                 // A third token (`1, 2`) is not a value list (0.20).
                 if (t.size() > 3)

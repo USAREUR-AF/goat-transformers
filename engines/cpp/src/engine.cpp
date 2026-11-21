@@ -640,6 +640,10 @@ void Engine::add_pack(Pack pack) {
             }
         }
     }
+    // v0.33: the `at` errors, after every module check (rulings 10, 14 and 25):
+    // the form first, then the fixed-window check.
+    if (!pack.at_error.empty()) throw Error(ErrorKind::BadDirective, pack.format, "", pack.at_error);
+    if (!pack.window_error.empty()) throw Error(ErrorKind::BadDirective, pack.format, "", pack.window_error);
     pack.kinds_by_root.clear();
     for (std::size_t k = 0; k < pack.kinds.size(); ++k) {
         settle_fields(pack.kinds[k].fields);
