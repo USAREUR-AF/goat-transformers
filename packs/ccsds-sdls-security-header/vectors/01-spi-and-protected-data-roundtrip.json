@@ -1,0 +1,12 @@
+{
+  "name": "spi-and-protected-data-roundtrip",
+  "from": "ccsds-sdls-security-header",
+  "to": "ccsds-sdls-security-header",
+  "input": "0007000102030405060708090a0b6672616d6520646174616465666768696a6b6c6d6e6f70717273",
+  "expect": "0007000102030405060708090a0b6672616d6520646174616465666768696a6b6c6d6e6f70717273",
+  "model": {
+    "ccsdssdls.spi": "7",
+    "ccsdssdls.protected_octets.#": "38"
+  },
+  "source": "built by tools/gen/space-more-vectors.py from values chosen there; layout restated from CCSDS 355.0-B-2 section 4.1.1; SPI 7, then a 12-octet initialization vector, frame data and a 16-octet MAC as octets; expect derived there, no engine run"
+}

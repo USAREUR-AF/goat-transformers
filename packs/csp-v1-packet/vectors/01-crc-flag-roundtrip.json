@@ -1,0 +1,18 @@
+{
+  "name": "crc-flag-roundtrip",
+  "from": "csp-v1-packet",
+  "to": "csp-v1-packet",
+  "input": "82a1e10170696e6712345678",
+  "expect": "82a1e10170696e6712345678",
+  "model": {
+    "csp.priority": "2",
+    "csp.source": "1",
+    "csp.destination": "10",
+    "csp.destination_port": "7",
+    "csp.source_port": "33",
+    "csp.flag_crc32": "1",
+    "csp.flag_rdp": "0",
+    "csp.data.#": "8"
+  },
+  "source": "built by tools/gen/space-more-vectors.py from values chosen there; layout restated from libcsp csp_id.c (CSP 1.x: priority at bit 30, source 25, destination 20, ports 14 and 8, flags 0); normal priority, port 7 to 33, the CRC32 flag set and four checksum octets in the data; expect derived there, no engine run"
+}

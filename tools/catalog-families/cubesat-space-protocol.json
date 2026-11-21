@@ -1,0 +1,8 @@
+{
+  "name": "CubeSat Space Protocol",
+  "domain": "space",
+  "exact": [
+    "csp-v1-packet",
+    "csp-v2-packet"
+  ]
+}

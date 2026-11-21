@@ -1,0 +1,25 @@
+# CubeSat Space Protocol 2.x packet: the 48-bit header (big-endian) and the data. Written by
+# tools/gen/space-more-pack.py; do not edit by hand.
+format        csp-v2-packet
+version       0.1.0
+distribution  public
+source        "libcsp v2.1 (commit 48f7fb0b57f610bf65bab1aa2d1357c3b9722782), src/csp_id.c (sha256 ad02699c7c39abb69b2fcb119c51b2852ebb35ace94ca34c64ac28241b3233b8) and include/csp/csp_types.h, MIT License, https://github.com/libcsp/libcsp; the CSP 2.x header as csp_id2_prepend writes it; layout restated, no code copied"
+uses          csp
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  csp.priority  2  uint
+field  csp.destination  14  uint
+field  csp.source  14  uint
+field  csp.destination_port  6  uint
+field  csp.source_port  6  uint
+field  csp.flag_reserved3  1  uint
+field  csp.flag_frag  1  uint
+field  csp.flag_hmac  1  uint
+field  csp.flag_bit2  1  uint
+field  csp.flag_rdp  1  uint
+field  csp.flag_crc32  1  uint
+group  csp.data  rest
+  field  csp.octet  8  uint
+end

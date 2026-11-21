@@ -1,0 +1,8 @@
+{
+  "name": "to-csp-v1",
+  "from": "csp-v2-packet",
+  "to": "csp-v1-packet",
+  "input": "801400547201",
+  "expect": "ab41c801",
+  "source": "built by tools/gen/space-more-vectors.py from values chosen there; layout restated from libcsp csp_id.c (CSP 2.x: priority at bit 46, destination 32, source 18, ports 12 and 6, flags 0, sent as the high 48 bits of a big-endian 64-bit word) and libcsp csp_id.c (CSP 1.x: priority at bit 30, source 25, destination 20, ports 14 and 8, flags 0); addresses below 32 fit the 1.x header; expect derived there, no engine run"
+}
