@@ -1,0 +1,13 @@
+{
+  "name": "other-log-as-octets-roundtrip",
+  "from": "novatel-oem-binary",
+  "to": "novatel-oem-binary",
+  "input": "aa44121c2b0000200c00010032b42e0900709914000000000000a941000102030405060708090a0b04030201",
+  "expect": "aa44121c2b0000200c00010032b42e0900709914000000000000a941000102030405060708090a0b04030201",
+  "model": {
+    "novatel.message_id": "43",
+    "novatel.sequence": "1",
+    "novatel.data_and_crc.#": "16"
+  },
+  "source": "built by tools/gen/gnssbin-vectors.py from values chosen there; layout restated from novatel_gps_driver binary_header.h and parsers/bestpos.cpp; another log (ID 43): its data and CRC kept as octets; expect derived there, no engine run"
+}

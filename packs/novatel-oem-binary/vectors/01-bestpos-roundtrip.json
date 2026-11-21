@@ -1,0 +1,26 @@
+{
+  "name": "bestpos-roundtrip",
+  "from": "novatel-oem-binary",
+  "to": "novatel-oem-binary",
+  "input": "aa44121c2a0000204800000032b42e0900709914000000000000a941000000001000000000000000008049400000000000805cc0000000000062904000008ac13d0000000000003f0000003f0000803f3000000000000000000000000e0c0c0a00003300efcdab89",
+  "expect": "aa44121c2a0000204800000032b42e0900709914000000000000a941000000001000000000000000008049400000000000805cc0000000000062904000008ac13d0000000000003f0000003f0000803f3000000000000000000000000e0c0c0a00003300efcdab89",
+  "model": {
+    "novatel.header_length": "28",
+    "novatel.message_id": "42",
+    "novatel.message_length": "72",
+    "novatel.week": "2350",
+    "novatel.gps_milliseconds": "345600000",
+    "novatel.time_status": "180",
+    "novatel.position_type": "16",
+    "novatel.latitude": "51",
+    "novatel.longitude": "-114",
+    "novatel.height": "1048.5",
+    "novatel.undulation": "-17.25",
+    "novatel.datum_id": "61",
+    "novatel.base_station_id": "0",
+    "novatel.satellites_tracked": "14",
+    "novatel.signals_used": "51",
+    "novatel.crc": "2309737967"
+  },
+  "source": "built by tools/gen/gnssbin-vectors.py from values chosen there; layout restated from novatel_gps_driver binary_header.h and parsers/bestpos.cpp; BESTPOS, position type 16, datum 61, with an arbitrary CRC; expect derived there, no engine run"
+}

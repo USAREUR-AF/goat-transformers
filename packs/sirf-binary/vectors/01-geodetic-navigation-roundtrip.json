@@ -1,0 +1,28 @@
+{
+  "name": "geodetic-navigation-roundtrip",
+  "from": "sirf-binary",
+  "to": "sirf-binary",
+  "input": "a0a2005b2900000004092e1499700007e9010f0c1eb1bc000000001caf0e8706e51eb50000ddd50000cb2015007b23280000fffb0000000000fa0000019000000000000a0000000000000000000000000000000000000000000000000005000e42b0b3",
+  "expect": "a0a2005b2900000004092e1499700007e9010f0c1eb1bc000000001caf0e8706e51eb50000ddd50000cb2015007b23280000fffb0000000000fa0000019000000000000a0000000000000000000000000000000000000000000000000005000e42b0b3",
+  "model": {
+    "sirf.message_id": "41",
+    "sirf.nav_type": "4",
+    "sirf.extended_week": "2350",
+    "sirf.time_of_week": "345600000",
+    "sirf.utc_year": "2025",
+    "sirf.utc_second_ms": "45500",
+    "lat": "48.1234567",
+    "lon": "11.5678901",
+    "hae": "567.89",
+    "sirf.altitude_msl": "520",
+    "sirf.map_datum": "21",
+    "sirf.speed": "1.23",
+    "sirf.track": "90",
+    "sirf.climb": "-0.05",
+    "sirf.horizontal_error": "2.5",
+    "sirf.vertical_error": "4",
+    "sirf.speed_error": "0.1",
+    "sirf.hdop": "1"
+  },
+  "source": "built by tools/gen/gnssbin-vectors.py from values chosen there; layout restated from gpsd drivers/driver_sirf.c; MID 41 with a 3-D fix: latitude, longitude and the height above the WGS84 ellipsoid; expect derived there, no engine run"
+}

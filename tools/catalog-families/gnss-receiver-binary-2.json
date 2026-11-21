@@ -1,0 +1,8 @@
+{
+  "name": "GNSS receiver binary (NovAtel OEM, SiRF)",
+  "domain": "sensors",
+  "exact": [
+    "novatel-oem-binary",
+    "sirf-binary"
+  ]
+}

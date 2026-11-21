@@ -1,0 +1,8 @@
+{
+  "name": "cut-bestpos-is-malformed",
+  "from": "novatel-oem-binary",
+  "to": "novatel-oem-binary",
+  "input": "aa44121c2a0000204800000032b42e0900709914000000000000a941000000001000000000000000008049400000000000805cc00000000000629040",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/gnssbin-vectors.py from values chosen there; layout restated from novatel_gps_driver binary_header.h and parsers/bestpos.cpp; the BESTPOS body is cut; expect derived there, no engine run"
+}

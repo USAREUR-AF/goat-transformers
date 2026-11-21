@@ -1,0 +1,53 @@
+# SiRF binary frame: start, length, payload, checksum, end; the Geodetic Navigation Data message (41)
+# laid out. Written by tools/gen/gnssbin-pack.py; do not edit by hand.
+format        sirf-binary
+version       0.1.0
+distribution  public
+source        "gpsd, https://gitlab.com/gpsd/gpsd at commit edd38e78a875062f53add5c1ade745761240fffb, drivers/driver_sirf.c (BSD-2-Clause, compilation copyright the GPSD project); layout restated, no code copied; the SiRF protocol reference not used"
+uses          sirf
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  sirf
+when  16  41122
+length  16  bytes
+  field  sirf.message_id  8  uint
+  switch  sirf.message_id
+    case  41
+      field  sirf.unread_1  16  hex
+      field  sirf.nav_type  16  uint
+      field  sirf.extended_week  16  uint
+      field  sirf.time_of_week  32  uint
+      field  sirf.utc_year  16  uint
+      field  sirf.utc_month  8  uint
+      field  sirf.utc_day  8  uint
+      field  sirf.utc_hour  8  uint
+      field  sirf.utc_minute  8  uint
+      field  sirf.utc_second_ms  16  uint
+      field  sirf.unread_19  32  hex
+      field  lat  32  sscale:1/10000000
+      field  lon  32  sscale:1/10000000
+      field  hae  32  sscale:1/100
+      field  sirf.altitude_msl  32  sscale:1/100
+      field  sirf.map_datum  8  uint
+      field  sirf.speed  16  uscale:1/100
+      field  sirf.track  16  uscale:1/100
+      field  sirf.unread_44  16  hex
+      field  sirf.climb  16  sscale:1/100
+      field  sirf.unread_48  16  hex
+      field  sirf.horizontal_error  32  uscale:1/100
+      field  sirf.vertical_error  32  uscale:1/100
+      field  sirf.unread_58  32  hex
+      field  sirf.speed_error  16  uscale:1/100
+      field  sirf.unread_64  200  hex
+      field  sirf.hdop  8  uscale:1/5
+      field  sirf.unread_90  8  hex
+    else
+      group  sirf.payload  rest
+        field  sirf.octet  8  uint
+      end
+  end
+end
+field  sirf.checksum  16  uint
+const  16  45235
