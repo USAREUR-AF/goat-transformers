@@ -32,7 +32,9 @@ long and terminated fields (`hex` on `bits` up to 2040 bits, `chars:ascii8`,
 `until:<code>`, the field option `stop <code>`, and `bit_order msb-lsb`, spec
 Version 0.22), writes a time to the whole second (`iso8601_s`, spec Version
 0.26), reads and writes one CBOR data item (the `cbor` wire, spec Version
-0.28), and converts between formats via the shared model.
+0.28), binds the label a sequential kind is told apart by to a key (`when
+<len> <values> as <key>`, spec Version 0.30: decode sets the key, encode
+chooses the kind by it), and converts between formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -163,13 +165,13 @@ Linux, `ReleaseSmall`):
 
 | Binary | All eight wires | `xml`, `json`, `geojson` | Reduced / full |
 |---|---|---|---|
-| `gt-engine-zig` (harness) | 783 000 bytes | 438 936 bytes | 56 % |
-| `goat-xf` (command-line tool) | 737 944 bytes | 402 072 bytes | 54 % |
+| `gt-engine-zig` (harness) | 795 288 bytes | 438 936 bytes | 55 % |
+| `goat-xf` (command-line tool) | 787 096 bytes | 438 936 bytes | 55 % |
 
-The reduced harness loaded 1646 packs and left out 2674; it ran 8211
-conversion vectors (8211 passed), 383 load vectors (383 passed) and 16
-capability vectors (16 passed), and did not run 635 vectors that name a pack
-it left out nor 852 load vectors with such a pack.
+The reduced harness loaded 1706 packs and left out 2775; it ran 8357
+conversion vectors (8357 passed), 389 load vectors (389 passed) and 16
+capability vectors (16 passed), and did not run 673 vectors that name a pack
+it left out nor 923 load vectors with such a pack.
 
 `goat-xf` of a reduced build loads a whole packs directory as Version 0.23
 says, so a directory holding a pack on a wire the build lacks fails with that
