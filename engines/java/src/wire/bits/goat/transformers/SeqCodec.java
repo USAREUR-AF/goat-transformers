@@ -220,6 +220,14 @@ final class SeqCodec extends BitsWire<byte[]> {
                 read = new long[k.whens.size()];
                 for (int i = 0; i < read.length; i++) {
                     Seq.Node w = k.whens.get(i);
+                    if (w.hasAt) {
+                        // engine-spec 0.33: len bits at kind start plus the offset; the cursor does not move. A window
+                        // any of whose bits lies beyond the input or the extent does not hold (rulings 6 and 7)
+                        long room = r.limit() - at - w.len;
+                        if (room < 0 || Long.compareUnsigned(w.at, room) > 0
+                                || !matches(w, read[i] = BitsCodec.readBits(r.msg, at + w.at, w.len, msb))) { all = false; break; }
+                        continue;
+                    }
                     // a when any of whose bits lies beyond the input does not hold
                     if (r.pos + w.len > r.limit() || !matches(w, read[i] = r.take(w.len))) { all = false; break; }
                 }
@@ -705,6 +713,8 @@ final class SeqCodec extends BitsWire<byte[]> {
         boolean mismatch;
         /** Per shadow entity: the keys whose bits did not read back through their transform or table. */
         final Map<Entity, java.util.Set<String>> failed = new IdentityHashMap<>();
+        /** engine-spec 0.33: the bit positions a held key wrote (ruling 12). */
+        final java.util.BitSet held = new java.util.BitSet();
 
         Writer(Map<Entity, Map<Seq.Node, Seq.Case>> assumed) {
             this.assumed = assumed;
@@ -846,7 +856,7 @@ final class SeqCodec extends BitsWire<byte[]> {
         for (int pass = 1; ; pass++) {
             Writer w = new Writer(assumed);
             try {
-                encodeLines(kind.all, w, e, kind.scope.defaultValues, new Entity());
+                encodeKind(root, kind, w, e);
             } catch (GtException ex) {
                 // the errors of a pass whose prediction is discarded are not reported (ruling 34)
                 if (!w.mismatch) throw ex;
@@ -1071,20 +1081,119 @@ final class SeqCodec extends BitsWire<byte[]> {
      * entity or item: a switch selects its case from it.
      */
     private void encodeLines(List<Seq.Node> nodes, Writer w, Entity e, Map<String, Object> defs, Entity shadow) {
-        for (int idx = 0; idx < nodes.size(); idx++) {
+        encodeLines(nodes, w, e, defs, shadow, null);
+    }
+
+    /**
+     * The lines of one message or item of kind {@code kind}: its common lines, then its own. A kind with
+     * {@code when ... at} lines (engine-spec 0.33) settles its windows once the lines covering them are written,
+     * before any later line (a switch included) reads its key back.
+     */
+    private void encodeKind(Seq.Body body, Seq.Kind kind, Writer w, Entity e) {
+        Settle st = kind.windows.isEmpty() ? null : new Settle(kind, body.common.size());
+        encodeLines(kind.all, w, e, kind.scope.defaultValues, new Entity(), st);
+    }
+
+    /** The windows of one kind being written: where its own lines start, and the shadow as it stood there. */
+    private static final class Settle {
+        final Seq.Kind kind;
+        final int common;
+        long start;
+        Map<String, Object> shadowAtStart;
+        java.util.Set<String> failedAtStart;
+
+        Settle(Seq.Kind kind, int common) {
+            this.kind = kind;
+            this.common = common;
+        }
+    }
+
+    /** Called before line {@code idx} of the kind's lines (and once after the last): marks kind start, settles windows. */
+    private void settlePoint(Settle st, int idx, Writer w, Entity e, Entity shadow) {
+        if (idx == st.common) {
+            st.start = w.pos;
+            st.shadowAtStart = new HashMap<>(shadow.fields());
+            java.util.Set<String> f = w.failed.get(shadow);
+            st.failedAtStart = f == null ? null : new java.util.HashSet<>(f);
+        }
+        if (idx == st.common + st.kind.prefix) settleWindows(st, w, e, shadow);
+    }
+
+    /**
+     * engine-spec 0.33, Encode: each window of the kind in line order. Bits that match the when, and agree with a
+     * held {@code as} key, stand; otherwise the window takes the {@code as} key's value or the first listed value,
+     * and a bit of it that differs from a bit a held key wrote is transform-encode (rulings 1, 12, 13 and 26). Then
+     * the shadow is read again from the bits as they stand, so a switch reads its key from them.
+     */
+    private void settleWindows(Settle st, Writer w, Entity e, Entity shadow) {
+        Seq.Kind kind = st.kind;
+        for (Seq.Node win : kind.windows) {
+            long pos = st.start + win.at;
+            int len = win.len;
+            long cur = BitsCodec.readBits(w.b, pos, len, msb);
+            long target = win.as == null ? win.value : asWritten(win, e);   // the held as value (transform-encode when it does not match), or the first value
+            boolean heldAs = win.as != null && e.get(win.as.key) != null;
+            if (matches(win, cur) && (!heldAs || cur == target)) continue;   // the bits stand
+            byte[] tmp = w.b.clone();
+            BitsCodec.writeBits(tmp, pos, len, target, msb);
+            for (long p = pos; p < pos + len; p++) {
+                if (w.held.get((int) p) && BitsCodec.readBits(tmp, p, 1, msb) != BitsCodec.readBits(w.b, p, 1, msb)) {
+                    throw encodeError("the window of when " + len + " at " + Long.toUnsignedString(win.at) + " (line " + win.line
+                            + ") would change bit " + (p - st.start) + " of the kind, which a held key wrote: the output would decode a different value");
+                }
+            }
+            BitsCodec.writeBits(w.b, pos, len, target, msb);
+            w.held.clear((int) pos, (int) (pos + len));   // bits of an earlier window (ruling 26)
+        }
+        // the shadow as decode would read the kind's first lines back, windows written
+        shadow.fields().clear();
+        shadow.fields().putAll(st.shadowAtStart);
+        if (st.failedAtStart == null) w.failed.remove(shadow);
+        else w.failed.put(shadow, new java.util.HashSet<>(st.failedAtStart));
+        Failures fails = new Failures();
+        long pos = st.start;
+        List<Seq.Node> own = kind.all.subList(st.common, kind.all.size());
+        for (int i = 0; i < own.size(); i++) {
+            Seq.Node n = own.get(i);
+            if (n.op == Seq.Op.WHEN && n.hasAt) {
+                if (n.as != null) putDecoded(n.as, BitsCodec.readBits(w.b, st.start + n.at, n.len, msb), shadow, fails);
+                continue;
+            }
+            if (i >= kind.prefix) continue;
+            if (n.op == Seq.Op.WHEN && n.as != null) putDecoded(n.as, BitsCodec.readBits(w.b, pos, n.len, msb), shadow, fails);
+            if (n.op == Seq.Op.FIELD) readBack(n, w, pos, shadow);
+            pos += n.len;
+        }
+    }
+
+    private void encodeLines(List<Seq.Node> nodes, Writer w, Entity e, Map<String, Object> defs, Entity shadow, Settle st) {
+        for (int idx = 0; idx <= nodes.size(); idx++) {
+            if (st != null) settlePoint(st, idx, w, e, shadow);
+            if (idx == nodes.size()) break;
             Seq.Node n = nodes.get(idx);
             switch (n.op) {
                 case FIELD: {
                     long at = w.pos;
                     encodeField(n, w, e, defs);
                     readBack(n, w, at, shadow);
+                    // engine-spec 0.33, ruling 12: bits a held key wrote, which a window may not change silently
+                    if (n.u == null && n.until < 0) {
+                        for (Pack.Field k : n.keys) {
+                            if (e.get(k.key) != null && !k.suppressed(e)) {
+                                w.held.set((int) at, (int) w.pos);
+                                break;
+                            }
+                        }
+                    }
                     break;
                 }
                 case CONST:
                     w.put(n.len, n.value);
                     break;
                 case WHEN:
-                    if (n.as == null) {
+                    if (n.hasAt) {
+                        break;   // engine-spec 0.33: a look-ahead occupies no bits; its window is settled later
+                    } else if (n.as == null) {
                         w.put(n.len, n.value);
                     } else {
                         long v = asWritten(n, e);
@@ -1489,6 +1598,6 @@ final class SeqCodec extends BitsWire<byte[]> {
 
     private void encodeItem(Seq.Node g, Writer w, Entity item) {
         Seq.Kind kind = selectForEncode(g.items, item, "an item of " + g.list);
-        encodeLines(kind.all, w, item, kind.scope.defaultValues, new Entity());
+        encodeKind(g.items, kind, w, item);
     }
 }

@@ -567,6 +567,12 @@ public final class Pack {
     public final Map<String, List<String[]>> tables;
     /** xml: true when at least one kind has its own {@code root} line. */
     public final boolean kindRoots;
+    /**
+     * engine-spec 0.33: the first {@code at} error (its form, then a window not fixed in its kind), or null. It is a
+     * check after the file that runs after every module check (rulings 10, 14 and 25), so the engine raises it.
+     */
+    GtException lateAt;
+
     /** bits wire with {@code layout sequential}: the lines of the message; null for every other pack. */
     final Seq.Body seq;
     /** {@code layout sequential}: the number of {@code presence} lines, each with its own slot of decode and encode state. */
@@ -755,7 +761,8 @@ public final class Pack {
         switch (kw) {
             case "field": ok = n >= 3; break;
             // engine-spec 0.30: `when <len> <values> as …` passes here; its syntax is checked after the file (ruling 16)
-            case "when": ok = n == 2 || (n >= 3 && args.get(2).equals("as")); break;
+            // engine-spec 0.33: and `when <len> <values> at …`, whose form is checked after the module checks (ruling 10)
+            case "when": ok = n == 2 || (n >= 3 && (args.get(2).equals("as") || args.get(2).equals("at"))); break;   // ruling 27 of 0.33: the rest after the file
             case "const":
             case "default":
             case "typemap": ok = n == 2; break;
@@ -1114,6 +1121,7 @@ public final class Pack {
         // The first failure that is not a line check (steps 1 to 10 of ruling 5b): it is reported after the file, so
         // a later line's own line check wins over it. The lines after it are still read, their failures dropped.
         RuntimeException deferred = null;
+        GtException lateAt = null;   // engine-spec 0.33: an `at` on a pack that is not sequential
         int firstGate = 0;   // the line of the first gate block, 0 when there is none
         int firstElement = 0;   // the line of the first element line, 0 when there is none
         for (int i = 0; i < lines.length; i++) {
@@ -1379,6 +1387,13 @@ public final class Pack {
                     break;
                 }
                 case "when": {
+                    // `at` on a when of a pack that is not layout sequential (engine-spec 0.33): refused after the
+                    // module checks (ruling 10); the line is read as a when of its first two tokens meanwhile
+                    if (args.size() > 2 && args.subList(2, args.size()).contains("at")) {
+                        if (lateAt == null) lateAt = badDirective(format, null, where + ": at on a when is for a pack with layout sequential only");
+                        body.lines.add(new LineSpec(null, args.get(0), args.get(1), null, false, ln));
+                        break;
+                    }
                     // `as` on a when of a pack that is not layout sequential (engine-spec 0.30, rulings 1 and 16)
                     if (args.size() > 2 && args.get(2).equals("as")) {
                         throw badDirective(format, null, where + ": as on a when is for a pack with layout sequential only");
@@ -1638,6 +1653,8 @@ public final class Pack {
                 commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n,
                 seqRoot, seq == null ? 0 : seq.presences);
         pack.armorSixbit = armorSixbit;
+        // engine-spec 0.33, ruling 10: the `at` form, then the fixed window; raised after the module checks
+        pack.lateAt = lateAt != null ? lateAt : seq == null ? null : seq.atError != null ? seq.atError : seq.windowError;
         pack.bitOrder = "msb".equals(bitOrder) ? BitsLayout.MSB : "msb-lsb".equals(bitOrder) ? BitsLayout.MSB_LSB : BitsLayout.LSB;
         pack.uper = uper;
         pack.valueLists = valueLists;

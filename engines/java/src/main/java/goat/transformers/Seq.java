@@ -63,6 +63,9 @@ final class Seq {
         List<Pack.Field> keys;
         /** {@code when ... as <key>} (engine-spec 0.30): the key its bits are bound to, read as {@code uint}; else null. */
         Pack.Field as;
+        /** {@code when ... at <offset>} (engine-spec 0.33): the offset in bits from kind start, unsigned; -1 for none. */
+        long at = -1;
+        boolean hasAt;
         /** {@code presence}: its name, whether it is {@code fx}, its slot in the state of one decode or encode. */
         String name;
         boolean fx;
@@ -161,6 +164,10 @@ final class Seq {
         List<Node> all;
         /** The defaults in force: the body's common ones, replaced by the kind's own. */
         Pack.Scope scope;
+        /** Its {@code when ... at} lines, in line order (engine-spec 0.33). */
+        final List<Node> windows = new ArrayList<>();
+        /** The number of its own lines ({@code whens} then {@code lines}) that cover every window: encode settles them there. */
+        int prefix;
 
         Kind(String name) { this.name = name; }
     }
@@ -327,6 +334,16 @@ final class Seq {
         /** The first UPER construct (0.19): its line, and the first reason one is refused, both checked after the file is read. */
         int uperLine;
         String uperWhy;
+        /**
+         * engine-spec 0.33: the first error of the form of an {@code at} (ruling 10), and the first window that is not
+         * fixed in its kind. Both are checked after the file, after the module checks: the engine raises them.
+         */
+        GtException atError;
+        GtException windowError;
+
+        private void atBad(String format, String why) {
+            if (atError == null) atError = bad(format, null, why);
+        }
 
         Parser(String source, List<String[]> keyRefs, boolean uperHint, List<Pack.ValueList> valueLists) {
             this.source = source;
@@ -613,18 +630,47 @@ final class Seq {
                 case "const":
                 case "when": {
                     String asKey = null;
+                    long at = -1;
+                    boolean hasAt = false;
                     if (kw.equals("when") && args.size() > 2) {
-                        // engine-spec 0.30: `when <len> <values> as <key>`; `as` is matched exactly (rulings 15 and 22)
-                        if (!args.get(2).equals("as")) {
+                        // `when <len> <values> [at <n>] [as <k>]`, in that order (ruling 11 of 0.33); `at` and `as` are
+                        // matched exactly (ruling 15 of 0.33, rulings 15 and 22 of 0.30)
+                        List<String> rest = args.subList(2, args.size());
+                        int i = 0;
+                        if (rest.contains("at")) {
+                            // engine-spec 0.33: a line holding `at` has the form `at <n> [as <k>]`; any token out of
+                            // that order, `as` included, is an `at` form error checked after the module checks
+                            // (rulings 10, 14 and 27)
+                            hasAt = true;
+                            i = rest.size();   // `as` is read here, not by the checks of 0.30
+                            String v = rest.size() >= 2 ? rest.get(1) : null;
+                            boolean form = rest.get(0).equals("at") && v != null
+                                    && (rest.size() == 2 || (rest.size() == 4 && rest.get(2).equals("as") && !rest.get(3).equals("as")
+                                            && !rest.get(3).equals("at")));
+                            if (!form) {
+                                atBad(format, where + ": a when holding at is when <len> <values> at <n> [as <k>], got \""
+                                        + String.join(" ", rest) + "\"");
+                            } else if (!v.matches("[0-9]+") || new java.math.BigInteger(v).bitLength() > 64) {
+                                atBad(format, where + ": at takes plain decimal digits that fit 64 bits, got \"" + v + "\"");
+                            } else {
+                                at = new java.math.BigInteger(v).longValue();
+                            }
+                            // on a line in the right order the key is read and checked first, even when the offset
+                            // alone is bad (ruling 10); on a line whose order is broken it is not read as a key (ruling 28)
+                            if (form && rest.size() == 4) asKey = rest.get(3);
+                        } else if (!rest.get(0).equals("as")) {
                             throw bad(format, null, where + ": a when value list has no spaces: a third token after the length");
                         }
-                        // the syntax of `as` (ruling 16): no key, `as` twice (ruling 31), a token after the key
-                        if (args.size() == 3) throw bad(format, null, where + ": as names no key");
-                        if (args.get(3).equals("as") || (args.size() > 4 && args.get(4).equals("as"))) {
-                            throw bad(format, null, where + ": as given twice on one when line");
+                        if (i < rest.size()) {
+                            // engine-spec 0.30, ruling 16: no key, `as` twice (ruling 31), a token after the key
+                            List<String> a = rest.subList(i, rest.size());
+                            if (a.size() == 1) throw bad(format, null, where + ": as names no key");
+                            if (a.get(1).equals("as") || (a.size() > 2 && a.get(2).equals("as"))) {
+                                throw bad(format, null, where + ": as given twice on one when line");
+                            }
+                            if (a.size() > 2) throw bad(format, null, where + ": a token after the key of as: \"" + a.get(2) + "\"");
+                            asKey = a.get(1);
                         }
-                        if (args.size() > 4) throw bad(format, null, where + ": a token after the key of as: \"" + args.get(4) + "\"");
-                        asKey = args.get(3);
                     } else {
                         arity(kw, args, 2, where, format);
                     }
@@ -633,6 +679,8 @@ final class Seq {
                     if (isWhen && !f.isBody()) throw bad(format, null, where + ": when inside a block");
                     Node n = new Node(isWhen ? Op.WHEN : Op.CONST, ln);
                     n.len = len;
+                    n.hasAt = hasAt;
+                    if (hasAt) n.at = at < 0 && atError != null ? 0 : at;   // a malformed offset: the pack is refused later
                     if (isWhen) {
                         // engine-spec 0.20: a list of values and ranges; the first value is written
                         long[] ranges = Pack.numericList(args.get(1), len, format, null, where);
@@ -658,10 +706,16 @@ final class Seq {
                     } else if (f.kind == null) {
                         // before the first kind: a common when, which must hold for every message (or item)
                         if (f.body.firstCommonWhen == 0) f.body.firstCommonWhen = ln;
+                        if (hasAt) {
+                            atBad(format, where + ": at is for a when of a kind, not a common when (engine-spec 0.33)");
+                            n.hasAt = false;
+                            n.at = -1;
+                        }
                         f.lines.add(n);
                     } else {
                         if (f.kindLineSeen) throw bad(format, null, where + ": when after another line of its kind");
                         f.kind.whens.add(n);
+                        if (hasAt) f.kind.windows.add(n);
                     }
                     break;
                 }
@@ -1156,6 +1210,46 @@ final class Seq {
                 defaults.putAll(k.defaults);
                 k.scope = new Pack.Scope(new ArrayList<>(), defaults);
                 scopes.add(k.scope);
+                windows(k, format);
+            }
+        }
+
+        /**
+         * engine-spec 0.33: each window of the kind is fixed in it. Walk the kind's own lines from its first, skipping
+         * the {@code when ... at} lines, summing the lengths of the others until the sum reaches the window's end;
+         * every line walked is a plain {@code when}, {@code const}, {@code pad} or a {@code field} of a bit length.
+         * Records the number of lines that cover every window, where encode settles them.
+         */
+        private void windows(Kind k, String format) {
+            List<Node> own = new ArrayList<>(k.whens);
+            own.addAll(k.lines);
+            for (Node w : k.windows) {
+                // the window's end, kind start plus offset plus len; an offset near 2^64 is past every line
+                long end = Long.compareUnsigned(w.at, Long.MAX_VALUE - 128) > 0 ? Long.MAX_VALUE : w.at + w.len;
+                long sum = 0;
+                boolean fixed = false;
+                int i = 0;
+                for (; i < own.size(); i++) {
+                    Node n = own.get(i);
+                    if (n.op == Op.WHEN && n.hasAt) continue;
+                    boolean ok = (n.op == Op.WHEN) || n.op == Op.CONST || n.op == Op.PAD
+                            || (n.op == Op.FIELD && n.u == null && n.until < 0);
+                    if (!ok) break;
+                    sum += n.len;
+                    if (sum >= end) {
+                        fixed = true;
+                        break;
+                    }
+                }
+                if (!fixed) {
+                    if (windowError == null) {
+                        windowError = bad(format, null, source + ":" + w.line + ": the window of when ... at " + Long.toUnsignedString(w.at)
+                                + " is not fixed in its kind: " + (i < own.size() ? "line " + own.get(i).line
+                                + " before its end does not have a fixed width" : "it ends past the kind's last line"));
+                    }
+                    continue;
+                }
+                k.prefix = Math.max(k.prefix, i + 1);
             }
         }
 
