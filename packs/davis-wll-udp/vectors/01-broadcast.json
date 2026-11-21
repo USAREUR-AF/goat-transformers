@@ -1,0 +1,16 @@
+{
+  "name": "davis-wll-udp-broadcast",
+  "from": "davis-wll-udp",
+  "to": "davis-wll-udp",
+  "input": "{\"did\":\"001D0AF10203\",\"ts\":1795252803,\"conditions\":[{\"lsid\":51001,\"data_structure_type\":1,\"txid\":1,\"wind_speed_last\":4.5,\"wind_dir_last\":250,\"rain_size\":2,\"rain_rate_last\":0,\"rain_15_min\":0,\"rain_60_min\":1,\"rain_24_hr\":3,\"rain_storm\":3,\"rain_storm_start_at\":1795240000,\"rainfall_daily\":14,\"rainfall_monthly\":40,\"rainfall_year\":210,\"wind_speed_hi_last_10_min\":null}]}",
+  "expect": "{\"did\":\"001D0AF10203\",\"ts\":1795252803,\"conditions\":[{\"lsid\":51001,\"data_structure_type\":1,\"txid\":1,\"wind_speed_last\":4.5,\"wind_dir_last\":250,\"rain_size\":2,\"rain_rate_last\":0,\"rain_15_min\":0,\"rain_60_min\":1,\"rain_24_hr\":3,\"rain_storm\":3,\"rain_storm_start_at\":1795240000,\"rainfall_daily\":14,\"rainfall_monthly\":40,\"rainfall_year\":210}]}",
+  "model": {
+    "uid": "001D0AF10203",
+    "time_ms": "1795252803000",
+    "davis.conditions.#": "1",
+    "davis.conditions[0].davis.cond_rain_storm_start_at": "1795240000",
+    "davis.conditions[0].davis.cond_wind_speed_last": "4.5"
+  },
+  "source": "constructed",
+  "reference": "WeatherLink Live local API (API.md, 4383b984); documents by tools/gen/davis-vectors.py"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "davis-wll-http-current-conditions",
+  "from": "davis-wll-http",
+  "to": "davis-wll-http",
+  "input": "{\"data\":{\"did\":\"001D0AF10203\",\"ts\":1795252800,\"conditions\":[{\"lsid\":51001,\"data_structure_type\":1,\"txid\":1,\"temp\":61.3,\"hum\":72.5,\"dew_point\":52.1,\"wind_speed_last\":3,\"wind_dir_last\":245,\"rain_size\":2,\"rain_rate_last\":0,\"solar_rad\":412,\"uv_index\":2.5,\"rx_state\":0,\"trans_battery_flag\":0,\"rainfall_daily\":14,\"wet_bulb\":null},{\"lsid\":51002,\"data_structure_type\":3,\"bar_sea_level\":30.112,\"bar_trend\":-0.015,\"bar_absolute\":29.874}]},\"error\":null}",
+  "expect": "{\"data\":{\"did\":\"001D0AF10203\",\"ts\":1795252800,\"conditions\":[{\"lsid\":51001,\"data_structure_type\":1,\"txid\":1,\"temp\":61.3,\"hum\":72.5,\"dew_point\":52.1,\"wind_speed_last\":3,\"wind_dir_last\":245,\"rain_size\":2,\"rain_rate_last\":0,\"solar_rad\":412,\"uv_index\":2.5,\"rx_state\":0,\"trans_battery_flag\":0,\"rainfall_daily\":14},{\"lsid\":51002,\"data_structure_type\":3,\"bar_sea_level\":30.112,\"bar_trend\":-0.015,\"bar_absolute\":29.874}]}}",
+  "model": {
+    "uid": "001D0AF10203",
+    "time_ms": "1795252800000",
+    "davis.conditions.#": "2",
+    "davis.conditions[0].davis.cond_temp": "61.3",
+    "davis.conditions[0].davis.cond_rain_size": "2",
+    "davis.conditions[1].davis.cond_bar_sea_level": "30.112",
+    "davis.conditions[1].davis.cond_bar_trend": "-0.015"
+  },
+  "source": "constructed",
+  "reference": "WeatherLink Live local API (API.md, 4383b984); documents by tools/gen/davis-vectors.py; an ISS and a barometer record; null members and the null error are not written"
+}

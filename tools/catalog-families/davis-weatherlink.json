@@ -1,0 +1,7 @@
+{
+  "name": "Davis WeatherLink Live",
+  "domain": "maps",
+  "prefixes": [
+    "davis-"
+  ]
+}

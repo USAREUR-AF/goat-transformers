@@ -1,0 +1,13 @@
+{
+  "name": "davis-wll-http-error",
+  "from": "davis-wll-http",
+  "to": "davis-wll-http",
+  "input": "{\"data\":null,\"error\":{\"code\":400,\"message\":\"Bad request\"}}",
+  "expect": "{\"error\":{\"code\":400,\"message\":\"Bad request\"}}",
+  "model": {
+    "davis.error_code": "400",
+    "davis.error_message": "Bad request"
+  },
+  "source": "constructed",
+  "reference": "WeatherLink Live local API (API.md, 4383b984); documents by tools/gen/davis-vectors.py"
+}
