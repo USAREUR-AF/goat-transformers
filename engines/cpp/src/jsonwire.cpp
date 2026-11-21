@@ -238,15 +238,16 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
     OutNode root;
     root.is_object = true;
     OutNode scalar;
-    std::vector<std::string> path;
+    std::vector<std::string> path_tmp;
+    const std::vector<std::string>* path = &path_tmp;
     for (const auto& line : lines) {
         if (line.field && line.field->locator == ".") {
             // An item without the value writes the sentinel, not `null` (0.9 ruling 5).
             write_field(p, src, *line.field, scalar);
             continue;
         }
-        parse_json_locator(line.locator(), path);  // validated at pack load
-        OutNode* slot = out_slot(root, path);
+        json_locator(p, line.locator(), path, path_tmp);  // validated at pack load
+        OutNode* slot = out_slot(root, *path);
         if (!slot || slot->is_object) continue;  // the path is also used as an object
         if (line.group) {
             const std::vector<Item>* items = src.list(*line.group);
@@ -282,10 +283,13 @@ std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const jso
     take_items(p, g.list, arr.items.size());  // 0.11 ruling 7a
     std::vector<Item> items;
     items.reserve(arr.items.size());
-    const std::vector<LineRef> lines = group_lines(g);
-    std::vector<std::vector<std::string>> paths(lines.size());  // empty for a `.` field and for a const
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = body_lines(p, g, lines_tmp);
+    static const std::vector<std::string> no_path;
+    std::vector<std::vector<std::string>> paths_tmp(lines.size());
+    std::vector<const std::vector<std::string>*> paths(lines.size(), &no_path);  // empty for a `.` field and for a const
     for (std::size_t k = 0; k < lines.size(); ++k)
-        if (!lines[k].fixed() && lines[k].locator() != ".") parse_json_locator(lines[k].locator(), paths[k]);
+        if (!lines[k].fixed() && lines[k].locator() != ".") json_locator(p, lines[k].locator(), paths[k], paths_tmp[k]);
     for (const json::Value& el : arr.items) {
         items.emplace_back();
         Item& item = items.back();
@@ -294,7 +298,7 @@ std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const jso
             const LineRef& line = lines[k];
             if (line.group) {
                 // A nested list: present when the member exists and is an array.
-                if (const json::Value* v = json_lookup(el, paths[k]))
+                if (const json::Value* v = json_lookup(el, *paths[k]))
                     item.lists[line.group->list] = json_decode_items(p, *line.group, *v, geo);
                 continue;
             }
@@ -307,7 +311,7 @@ std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const jso
                 else if (!el.is(json::Value::Kind::Null)) decode_item_value(d, f, el, geo);
                 continue;
             }
-            if (const json::Value* v = json_lookup(el, paths[k])) decode_item_value(d, f, *v, geo);
+            if (const json::Value* v = json_lookup(el, *paths[k])) decode_item_value(d, f, *v, geo);
         }
         d.finish();
     }
@@ -315,7 +319,8 @@ std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const jso
 }
 
 std::string json_encode_items(const Pack& p, const GroupLine& g, const std::vector<Item>& items, bool geo) {
-    const std::vector<LineRef> lines = group_lines(g);
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = body_lines(p, g, lines_tmp);
     std::string out = "[";
     for (std::size_t k = 0; k < items.size(); ++k) {
         if (k) out += ',';
@@ -332,23 +337,25 @@ namespace {
 
 // The members the field lines of a scope read, through its groups' items
 // (any field line, whether or not decode then wants its key).
-void mark_field_reads(const std::vector<LineRef>& lines, const json::Value& obj,
+void mark_field_reads(const Pack& p, const std::vector<LineRef>& lines, const json::Value& obj,
                       std::unordered_set<const json::Value*>& read) {
-    std::vector<std::string> path;
+    std::vector<std::string> path_tmp;
+    const std::vector<std::string>* path = &path_tmp;
     for (const auto& line : lines) {
         if (line.field) {
             if (line.field->locator == ".") {
                 read.insert(&obj);
                 continue;
             }
-            parse_json_locator(line.field->locator, path);
-            if (const json::Value* v = json_lookup(obj, path)) read.insert(v);
+            json_locator(p, line.field->locator, path, path_tmp);
+            if (const json::Value* v = json_lookup(obj, *path)) read.insert(v);
         } else if (line.group) {
-            parse_json_locator(line.group->locator, path);
-            const json::Value* v = json_lookup(obj, path);
+            json_locator(p, line.group->locator, path, path_tmp);
+            const json::Value* v = json_lookup(obj, *path);
             if (!v || !v->is(json::Value::Kind::Array)) continue;
-            const std::vector<LineRef> body = group_lines(*line.group);
-            for (const auto& el : v->items) mark_field_reads(body, el, read);
+            std::vector<LineRef> body_tmp;
+            const std::vector<LineRef>& body = body_lines(p, *line.group, body_tmp);
+            for (const auto& el : v->items) mark_field_reads(p, body, el, read);
         }
     }
 }
@@ -380,40 +387,44 @@ Entity decode_json(const Pack& p, const std::string& bytes) {
         throw Error(ErrorKind::MalformedWire, p.format, "", "an object holds the same member name twice");
 
     const Kind* kind = select_decode_kind(p, [&](const WhenLine& w) {
-        std::vector<std::string> path;
-        parse_json_locator(w.locator, path);  // validated at pack load
-        const json::Value* v = json_lookup(doc, path);
+        std::vector<std::string> path_tmp;
+        const std::vector<std::string>* path = &path_tmp;
+        json_locator(p, w.locator, path, path_tmp);  // validated at pack load
+        const json::Value* v = json_lookup(doc, *path);
         if (!v) return false;
         return w.present || json_when_matches(w, *v);
     });
 
-    const std::vector<LineRef> lines = active_lines(p, kind);
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
     {
         std::unordered_set<const json::Value*> read;
-        mark_field_reads(lines, doc, read);
+        mark_field_reads(p, lines, doc, read);
         check_unread_overflow(p, doc, read);
     }
 
     Entity e;
     Decoder d(p, e);
-    std::unordered_set<std::string> mapped;
-    std::vector<std::string> path;
+    const PackPlan* plan = plan_of(p);
+    std::unordered_set<std::string> mapped_tmp;
+    std::vector<std::string> path_tmp;
+    const std::vector<std::string>* path = &path_tmp;
     for (const auto& line : lines) {
         // `when <locator> present` does not map the member (0.5 ruling 27).
-        if (line.maps()) mapped.insert(line.locator());
+        if (!plan && line.maps()) mapped_tmp.insert(line.locator());
         if (line.group) {
             // The list is present when the member exists and is an array; `null` is absent.
-            parse_json_locator(line.group->locator, path);
-            if (const json::Value* v = json_lookup(doc, path))
+            json_locator(p, line.group->locator, path, path_tmp);
+            if (const json::Value* v = json_lookup(doc, *path))
                 e.lists[line.group->list] = json_decode_items(p, *line.group, *v, false);
             continue;
         }
         if (!line.field || !d.wants(*line.field)) continue;
-        parse_json_locator(line.field->locator, path);
-        if (const json::Value* v = json_lookup(doc, path)) decode_member(d, *line.field, *v);
+        json_locator(p, line.field->locator, path, path_tmp);
+        if (const json::Value* v = json_lookup(doc, *path)) decode_member(d, *line.field, *v);
     }
     std::unordered_set<std::string> seen;
-    collect_residue(e, p.format, doc, "", mapped, seen);
+    collect_residue(e, p.format, doc, "", plan ? plan->mapped[kind_slot(p, kind)] : mapped_tmp, seen);
     d.finish();
     if (kind) e.kind = {p.format, kind->name};
     return e;
@@ -424,7 +435,8 @@ std::string encode_json(const Pack& p, const Entity& e) {
     const EncodeSource src(p, kind, e);
     OutNode root;
     root.is_object = true;
-    std::unordered_set<std::string> mapped;
+    const PackPlan* plan = plan_of(p);
+    std::unordered_set<std::string> mapped_tmp;
     std::vector<std::string> path;
     Value v;
     // Mapped members, `when` members and `const` members in line order, common
@@ -433,12 +445,14 @@ std::string encode_json(const Pack& p, const Entity& e) {
     // it; a `when` or `const` value is written over any field. A `when ...
     // present` line maps nothing and takes no place. A group writes an array at
     // its member: `[]` for an empty list, nothing for an absent one.
-    for (const auto& line : active_lines(p, kind)) {
+    std::vector<LineRef> lines_tmp;
+    for (const auto& line : scope_lines(p, kind, lines_tmp)) {
         if (!line.maps()) continue;
         const std::string& locator = line.locator();
-        mapped.insert(locator);
-        parse_json_locator(locator, path);  // validated at pack load
-        OutNode* slot = out_slot(root, path);
+        if (!plan) mapped_tmp.insert(locator);
+        const std::vector<std::string>* lpath = &path;
+        json_locator(p, locator, lpath, path);  // validated at pack load
+        OutNode* slot = out_slot(root, *lpath);
         if (!slot || slot->is_object) continue;  // the path is also used as an object
         if (line.group) {
             const std::vector<Item>* items = src.list(*line.group);
@@ -457,6 +471,7 @@ std::string encode_json(const Pack& p, const Entity& e) {
         }
         write_field(p, src, *line.field, *slot);
     }
+    const std::unordered_set<std::string>& mapped = plan ? plan->mapped[kind_slot(p, kind)] : mapped_tmp;
     // Then the residue members of each object, in input order.
     for (const auto& r : e.residue) {
         if (r.format != p.format || mapped.count(r.locator)) continue;

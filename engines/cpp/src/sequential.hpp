@@ -39,6 +39,9 @@ void seq_visit(SeqBody& body, const SeqVisitor& v);
 void seq_model_keys(const SeqBody& body, const std::string& prefix,
                     const std::function<void(const std::string&)>& add);
 
+// Every `case` and `else` of the pack by id (0.20), for encode; the plan keeps it (0.25).
+std::vector<const SeqCase*> seq_cases_by_id(const Pack& p);
+
 Entity decode_seq(const Pack& p, const std::string& bytes);
 std::string encode_seq(const Pack& p, const Entity& e);
 

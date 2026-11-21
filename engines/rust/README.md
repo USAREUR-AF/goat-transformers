@@ -132,11 +132,41 @@ cot-xml	geojson	partial	uid type time_ms how lat lon hae ce le callsign course s
 | `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 4591856 inputs over 3477 packs and 20304 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
+| `tests/parse_once.rs` | spec 0.25, ruling 1: every conversion vector, failing ones included, gives the same output or error on one instance in line order, in reverse order and on four threads at once; the benchmark set and one failing vector of each wire give the same on a new instance; a second load is still a duplicate (the debug build runs the reverse order and the threads on every eighth vector and every failing one, and the new instance for the failing vectors only) | 3 tests |
 | `tests/reduced.rs` | spec 0.24: a pack on a wire the build lacks is `unknown-wire`; a value that is no wire keeps its message (run in a reduced build by `reduced-build-check.sh`) | 2 tests |
 | `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23: every tool vector under `packs/conformance/tool-vectors/` | 97 tool vectors, 0 failed |
 
 `GOAT_FUZZ_ITERS=<n>` multiplies the fuzz inputs; `GOAT_FUZZ_SEED=<n>`
 changes the seed.
+
+## Benchmark
+
+Spec 0.25, ruling 2. From the repository root:
+
+```bash
+cargo run --release --manifest-path engines/rust/Cargo.toml --example bench -- bench/set.json
+```
+
+`examples/bench.rs` loads only the packs the set's vectors name (`packs/<format>/pack.def`
+for each `from` and `to`) and the model modules they use (`model/<module>.def`,
+`core` first, each module after those it uses) into one `Engine`, and times
+that. Then, for each vector in order, it converts the input once and checks the
+output against `expect`, then converts it `iterations` times and times that.
+Standard output holds one line per vector,
+`{"vector": "<path as in the set>", "iterations": <n>, "ns_per_op": <integer>}`,
+then `{"load": <number of packs>, "ns": <integer>}`, and nothing else; Cargo's
+own lines go to standard error. A vector whose output differs, or a file that
+cannot be read, is named on standard error and the exit status is 1. The
+numbers are one machine at one time: no check fails on them.
+
+The engine keeps, for each loaded pack, what its lines compute (spec 0.25,
+ruling 1; `src/layout.rs`): the field-number path of every protobuf locator and
+an index of each scope's lines by first field number, the bit span of every
+fixed-layout `bits` locator, every `text` locator, every `tlv` locator and
+the tag tree of each kind, and the entity-independent line order of each
+`xml` scope. A `layout sequential` pack is resolved at load already. A conversion
+reads it and never writes it, so one `Engine` converts on several threads at
+once (`tests/parse_once.rs`).
 
 ## Builds with fewer wires
 

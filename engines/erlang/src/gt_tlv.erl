@@ -10,7 +10,7 @@
 %% tags; [] is the top set. Residue is [{Path, HexText}], every occurrence of
 %% an unnamed tag, in input order within its set.
 -module(gt_tlv).
--export([decode/2, encode/4]).
+-export([decode/2, encode/4, plan/1]).
 
 %% ===================================================================
 %% decode
@@ -18,12 +18,12 @@
 decode(Pack, Text) ->
     Bytes = gt_engine:unhex(Pack, Text),
     Top = top_set(Pack, Bytes),
-    {Kind, Lines} = select(Pack, Top),
-    Sets = walk(Pack, Top, Lines),
+    {Kind, Lines, Plan} = select(Pack, Top),
+    Sets = walk(Pack, Top, Plan),
     Model = fields(Pack, Sets, Lines),
     #{model => Model,
       lists => #{},
-      residue => residue(Sets, Lines),
+      residue => residue(Sets, Plan),
       src => maps:get(name, Pack),
       kind => case Kind of
                   undefined -> undefined;
@@ -144,8 +144,50 @@ length_of(#{len_enc := N}, Bin) ->
         _ -> {error, "a length runs past its set"}
     end.
 
+%% ---- the plan of a scope (ruling 1a of 0.25) ----
+%% What decode and encode need from the lines of a scope alone, computed
+%% when the pack is loaded and kept with each kind (gt_engine:scope_plan/2):
+%%   prefixes  the nested sets the lines walk into, shortest first (walk/3)
+%%   named     #{Path => true}: the places the lines name (residue/2)
+%%   kids      #{SetPath => [Tag]}: the children of each set, in order of
+%%             the first line naming them (encode/4)
+%%   by_path   #{Path => [Line]}: the lines of each item, in line order
+plan(Lines) ->
+    Prefixes = lists:usort(fun(A, B) -> {length(A), A} =< {length(B), B} end,
+                           [Pre || L <- Lines, Pre <- proper_prefixes(line_path(L))]),
+    Named = lists:foldl(
+              fun(L, Acc) ->
+                      Path = line_path(L),
+                      Walked = proper_prefixes(Path),
+                      Own = case L of
+                                {wh, _, present, _} -> [];
+                                _ -> [Path]
+                            end,
+                      lists:foldl(fun(P, A) -> A#{P => true} end, Acc, Walked ++ Own)
+              end, #{}, Lines),
+    Kids = lists:foldl(
+             fun(L, Acc) ->
+                     Path = line_path(L),
+                     lists:foldl(
+                       fun(N, A) ->
+                               Parent = lists:sublist(Path, N - 1),
+                               Tag = lists:nth(N, Path),
+                               Ks = maps:get(Parent, A, []),
+                               case lists:member(Tag, Ks) of
+                                   true -> A;
+                                   false -> A#{Parent => Ks ++ [Tag]}
+                               end
+                       end, Acc, lists:seq(1, length(Path)))
+             end, #{}, Lines),
+    ByPath = lists:foldl(fun(L, A) ->
+                                 P = line_path(L),
+                                 A#{P => maps:get(P, A, []) ++ [L]}
+                         end, #{}, Lines),
+    #{prefixes => Prefixes, named => Named, kids => Kids, by_path => ByPath}.
+
 %% ---- kinds: selected on the top set, before any nested set is read ----
-select(#{has_kinds := false, common := Common}, _Top) -> {undefined, Common};
+%% -> {KindName | undefined, Lines, Plan}
+select(#{has_kinds := false, common := Common, plan := Plan}, _Top) -> {undefined, Common, Plan};
 select(#{common := Common, kinds := Kinds} = Pack, Top) ->
     Holds = fun(Ls) ->
                     lists:all(fun({wh, {Path, _}, Val, _}) -> when_holds(Pack, Top, Path, Val);
@@ -158,7 +200,7 @@ select(#{common := Common, kinds := Kinds} = Pack, Top) ->
     end,
     case [K || #{lines := Ls} = K <- Kinds, Holds(Ls)] of
         [] -> gt_engine:conv_error('no-kind', Pack, "no kind's when lines hold for this message", []);
-        [#{name := Name, lines := Ls} | _] -> {Name, Common ++ Ls}
+        [#{name := Name, scope := Scope, plan := Plan} | _] -> {Name, Scope, Plan}
     end.
 
 %% A `when` whose item lies in a value that is not a well-formed set does not
@@ -184,9 +226,7 @@ when_holds(Pack, Set, [Tag | Rest], Val) ->
 %% -> #{Path => [{Tag, Value}]}: the top set at [], and each nested set on
 %% the path of a line that is in the message. A walked value that is not a
 %% well-formed set is malformed-wire.
-walk(Pack, Top, Lines) ->
-    Prefixes = lists:usort(fun(A, B) -> {length(A), A} =< {length(B), B} end,
-                           [Pre || L <- Lines, Pre <- proper_prefixes(line_path(L))]),
+walk(Pack, Top, #{prefixes := Prefixes}) ->
     lists:foldl(
       fun(Pre, Sets) ->
               Parent = lists:droplast(Pre),
@@ -282,17 +322,7 @@ decode_value(Tr, B) when byte_size(B) >= 1, byte_size(B) =< 8 ->
 %% Every item of a walked set whose tag no selected line names at that
 %% place, every occurrence; later occurrences of a named tag are dropped.
 %% `when … present` names the sets on its path, not its last tag.
-residue(Sets, Lines) ->
-    Named = lists:foldl(
-              fun(L, Acc) ->
-                      Path = line_path(L),
-                      Walked = proper_prefixes(Path),
-                      Own = case L of
-                                {wh, _, present, _} -> [];
-                                _ -> [Path]
-                            end,
-                      lists:foldl(fun(P, A) -> A#{P => true} end, Acc, Walked ++ Own)
-              end, #{}, Lines),
+residue(Sets, #{named := Named}) ->
     Order = lists:sort(fun(A, B) -> {length(A), A} =< {length(B), B} end, maps:keys(Sets)),
     [{Path, gt_hex:bytes_to_hex(V)}
      || Q <- Order, {T, V} <- maps:get(Q, Sets),
@@ -303,26 +333,8 @@ residue(Sets, Lines) ->
 %% ===================================================================
 %% Lines: the selected scope; Src = {Value, Lists, Held}; Residue: [{Path, Hex}]
 %% when the entity was decoded from this format.
-encode(Pack, Lines, Src, Residue) ->
-    %% the children of each set, in order of the first line naming them
-    Kids = lists:foldl(
-             fun(L, Acc) ->
-                     Path = line_path(L),
-                     lists:foldl(
-                       fun(N, A) ->
-                               Parent = lists:sublist(Path, N - 1),
-                               Tag = lists:nth(N, Path),
-                               Ks = maps:get(Parent, A, []),
-                               case lists:member(Tag, Ks) of
-                                   true -> A;
-                                   false -> A#{Parent => Ks ++ [Tag]}
-                               end
-                       end, Acc, lists:seq(1, length(Path)))
-             end, #{}, Lines),
-    ByPath = lists:foldl(fun(L, A) ->
-                                 P = line_path(L),
-                                 A#{P => maps:get(P, A, []) ++ [L]}
-                         end, #{}, Lines),
+%% The plan of the scope (plan/1) comes with the pack, kept since load.
+encode(#{plan := #{kids := Kids, by_path := ByPath}} = Pack, _Lines, Src, Residue) ->
     ResPaths = maps:from_list([{P, true} || {P, _} <- Residue]),
     Env = #{pack => Pack, kids => Kids, lines => ByPath, src => Src,
             residue => Residue, res_paths => ResPaths},

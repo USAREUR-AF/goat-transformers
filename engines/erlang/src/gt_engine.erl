@@ -31,7 +31,7 @@
 -module(gt_engine).
 -include("gt_wires.hrl").
 -export([new/0, set_max_distribution/2, load_model/2, load_pack/2, load_dir/2,
-         load_dir/3, load_packs/3, load_packs/4, model_files/1, packs/1, modules/1,
+         load_dir/3, load_packs/3, load_packs/4, model_files/1, model_texts/1, packs/1, modules/1,
          model_keys/1, pack/2, set_max_items/2, capability/3]).
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
@@ -248,20 +248,29 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
     %% a kind's default is used for common and kind fields alike; a default
     %% of a group body applies to its items only
     Ctx = {TypeDefaults, KeyTypes},
+    Wire = maps:get(wire, P),
     Kinds = [K#{defaults := maps:merge(CommonDefaults, TypeDefaults(maps:get(defaults, K))),
                 requires := [canon_term(T, KeyTypes) || T <- maps:get(requires, K)],
-                lines := type_groups(maps:get(lines, K), Ctx)}
+                lines := plan_bodies(Wire, type_groups(maps:get(lines, K), Ctx))}
              || K <- maps:get(kinds, P)],
-    Common = type_groups(maps:get(common, P), Ctx),
+    Common = plan_bodies(Wire, type_groups(maps:get(common, P), Ctx)),
     %% the `requires =` and `case` values, in line order: each line's types,
     %% then its duplicates (0.20, ruling 19)
     value_checks(maps:get(vchecks, P, []), KeyTypes, Mismatch),
     %% the typemap by either side; of two entries with one value the first is used
     Typemap = maps:get(typemap, P),
-    P1 = gt_pack:index(P#{defaults := CommonDefaults, kinds := Kinds, key_types => KeyTypes,
+    %% kept for the life of the instance (ruling 1a of 0.25): each kind's
+    %% scope (the common lines, then the kind's) and what the wire computes
+    %% from a scope's lines alone (scope_plan/2), so that no conversion
+    %% computes them again
+    Kinds1 = [begin
+                  Scope = Common ++ Ls,
+                  K#{scope => Scope, plan => scope_plan(Wire, Scope)}
+              end || #{lines := Ls} = K <- Kinds],
+    P1 = gt_pack:index(P#{defaults := CommonDefaults, kinds := Kinds1, key_types => KeyTypes,
                           typemap_dec => maps:from_list(lists:reverse(Typemap)),
                           typemap_enc => maps:from_list([{C, N} || {N, C} <- lists:reverse(Typemap)]),
-                          common := Common}),
+                          common := Common, plan => scope_plan(Wire, Common)}),
     %% last: a format name already loaded, compared byte for byte; the first
     %% pack stays loaded (ruling 5 of 0.11)
     case maps:is_key(Name, Packs) of
@@ -406,11 +415,8 @@ load_dir(Engine, PacksDir) ->
     load_dir(Engine, PacksDir, filename:join([PacksDir, "..", "model"])).
 
 load_dir(Engine, PacksDir, ModelsDir) ->
-    E1 = lists:foldl(
-           fun(F, E) ->
-                   {ok, Bin} = file:read_file(filename:join(ModelsDir, F)),
-                   load_model(E, Bin)
-           end, Engine, model_files(ModelsDir)),
+    E1 = lists:foldl(fun({_F, Bin}, E) -> load_model(E, Bin) end,
+                     Engine, model_texts(ModelsDir)),
     {ok, Entries} = file:list_dir(PacksDir),
     lists:foldl(
       fun(Entry, E) ->
@@ -445,17 +451,16 @@ load_packs(#{modules := Loaded} = Engine, PacksDir, Names, ModelsDir) ->
                  end
              end || N <- Names],
     Wanted = [<<"core">> | [U || T <- Texts, U <- uses_lines(T)]],
-    Files = model_files(ModelsDir),
-    Heads = [{F, module_head(filename:join(ModelsDir, F))} || F <- Files],
-    ByName = maps:from_list([{Name, Us} || {_, {Name, Us}} <- Heads]),
+    %% each module file is read once (ruling 1d of 0.25): its head and its
+    %% text come from that one read
+    Heads = model_entries(ModelsDir),
+    ByName = maps:from_list([{Name, Us} || {_, {Name, Us}, _} <- Heads]),
     Needed = needed_modules(Wanted, ByName, Loaded, #{}),
-    %% model_files/1 already puts every module after those it uses
+    %% model_entries/1 already puts every module after those it uses
     E1 = lists:foldl(
-           fun({F, {Name, _}}, E) ->
+           fun({_F, {Name, _}, Bin}, E) ->
                    case maps:is_key(Name, Needed) of
-                       true ->
-                           {ok, Bin} = file:read_file(filename:join(ModelsDir, F)),
-                           load_model(E, Bin);
+                       true -> load_model(E, Bin);
                        false -> E
                    end
            end, Engine, Heads),
@@ -483,32 +488,68 @@ needed_modules([N | Rest], ByName, Loaded, Acc) ->
 %% The module files of a directory: `core.def` first, whatever its name
 %% sorts as, then the others in byte order of file name, each after the
 %% modules its `uses` lines name. A cycle is bad-directive.
-model_files(ModelsDir) ->
+model_files(ModelsDir) -> [F || {F, _, _} <- model_entries(ModelsDir)].
+
+%% The same files with their texts, in the same order -> [{File, Text}]. Each
+%% file is read once (ruling 1d of 0.25); a loader loads these texts and
+%% does not read the files again.
+model_texts(ModelsDir) -> [{F, Bin} || {F, _, Bin} <- model_entries(ModelsDir)].
+
+%% -> [{File, {ModuleName, [UsesName]}, Text}] in the order of model_files/1.
+model_entries(ModelsDir) ->
     case file:list_dir(ModelsDir) of
         {ok, Files} ->
             Defs = [F || F <- lists:sort(Files), lists:suffix(".def", F)],
             Ordered = [F || F <- Defs, F =:= "core.def"] ++ [F || F <- Defs, F =/= "core.def"],
-            Heads = [{F, module_head(filename:join(ModelsDir, F))} || F <- Ordered],
-            ByName = maps:from_list([{Name, F} || {F, {Name, _}} <- Heads]),
+            Read = [begin
+                        {ok, Bin} = file:read_file(filename:join(ModelsDir, F)),
+                        {F, module_head(Bin), Bin}
+                    end || F <- Ordered],
+            ByName = maps:from_list([{Name, F} || {F, {Name, _}, _} <- Read]),
             Uses = maps:from_list([{F, [maps:get(U, ByName) || U <- Us, maps:is_key(U, ByName)]}
-                                   || {F, {_, Us}} <- Heads]),
+                                   || {F, {_, Us}, _} <- Read]),
             {Out, _} = lists:foldl(fun(F, Acc) -> place_module(F, Uses, [], Acc) end,
                                    {[], #{}}, Ordered),
-            lists:reverse(Out);
+            ByFile = maps:from_list([{F, E} || {F, _, _} = E <- Read]),
+            [maps:get(F, ByFile) || F <- lists:reverse(Out)];
         {error, _} -> []
     end.
 
-%% The module name and the `uses` names of a module file.
-module_head(Path) ->
-    {ok, Bin} = file:read_file(Path),
-    %% only a line that holds `module` or `uses` can tokenise to either
-    Toks = [gt_pack:tokens_lax(L) || L <- binary:split(Bin, <<"\n">>, [global]),
-                                     binary:match(L, [<<"module">>, <<"uses">>]) =/= nomatch],
+%% The module name and the `uses` names of a module text. Only a line that
+%% holds `module` or `uses` can tokenise to either, so only those lines are
+%% cut out of the text (each once, in text order).
+module_head(Bin) ->
+    Starts = line_starts(Bin, [P || {P, _} <- binary:matches(Bin, [<<"module">>, <<"uses">>])],
+                         -1),
+    Toks = [gt_pack:tokens_lax(line_at(Bin, S)) || S <- Starts],
     {case [N || [<<"module">>, N] <- Toks] of
          [N | _] -> N;
          [] -> undefined
      end,
      [U || [<<"uses">>, U] <- Toks]}.
+
+%% The start of the line of each position, ascending, each line once.
+line_starts(_Bin, [], _Last) -> [];
+line_starts(Bin, [P | Rest], Last) ->
+    case line_start(Bin, P) of
+        Last -> line_starts(Bin, Rest, Last);
+        S -> [S | line_starts(Bin, Rest, S)]
+    end.
+
+line_start(_Bin, 0) -> 0;
+line_start(Bin, P) ->
+    case binary:at(Bin, P - 1) of
+        $\n -> P;
+        _ -> line_start(Bin, P - 1)
+    end.
+
+%% The line that starts at S, without its line feed.
+line_at(Bin, S) ->
+    End = case binary:match(Bin, <<"\n">>, [{scope, {S, byte_size(Bin) - S}}]) of
+              {E, _} -> E;
+              nomatch -> byte_size(Bin)
+          end,
+    binary:part(Bin, S, End - S).
 
 place_module(F, Uses, Path, {Out, Done} = Acc) ->
     case maps:is_key(F, Done) of
@@ -625,8 +666,10 @@ context_value(float, Val) when is_float(Val) -> Val.
 %% Decode: every common `when` must hold; then the first kind, in pack
 %% order, whose every `when` holds. On xml a kind is considered only when
 %% the document's root element has the kind's root name.
-%% -> {KindName | undefined, Lines}
-select_decode(#{has_kinds := false, common := Common}, _Wire, _Ctx) -> {undefined, Common};
+%% -> {KindName | undefined, Lines, Plan}: the scope and its plan, both
+%% kept since load (ruling 1a of 0.25)
+select_decode(#{has_kinds := false, common := Common, plan := Plan}, _Wire, _Ctx) ->
+    {undefined, Common, Plan};
 select_decode(#{common := Common} = Pack, Wire, Ctx) ->
     Holds = fun(Ls) ->
                     lists:all(fun({wh, Loc, Val, _}) -> when_holds(Wire, Ctx, Loc, Val);
@@ -643,17 +686,16 @@ select_decode(#{common := Common} = Pack, Wire, Ctx) ->
                  end,
     case first_kind(Candidates, fun(#{lines := Ls}) -> Holds(Ls) end) of
         none -> conv_error('no-kind', Pack, "no kind's root and when lines hold for this message", []);
-        #{name := Name, lines := Ls} -> {Name, Common ++ Ls}
+        #{name := Name, scope := Scope, plan := Plan} -> {Name, Scope, Plan}
     end.
 
 %% Encode: the entity's recorded kind when it names this format, else the
 %% first kind, in pack order, whose every `requires` key the entity has.
-%% -> {Lines, Defaults, Root}
-select_encode(#{has_kinds := false, common := Common, defaults := Defaults, root := Root},
-              _Entity) ->
-    {Common, Defaults, Root};
-select_encode(#{name := Name, common := Common, kinds := Kinds, root := PackRoot} = Pack,
-              Entity) ->
+%% -> {Lines, Defaults, Root, Plan}
+select_encode(#{has_kinds := false, common := Common, defaults := Defaults, root := Root,
+                plan := Plan}, _Entity) ->
+    {Common, Defaults, Root, Plan};
+select_encode(#{name := Name, kinds := Kinds, root := PackRoot} = Pack, Entity) ->
     Model = maps:get(model, Entity),
     Lists = maps:get(lists, Entity, #{}),
     Has = fun(T) -> req_holds(T, Model, Lists) end,
@@ -666,8 +708,8 @@ select_encode(#{name := Name, common := Common, kinds := Kinds, root := PackRoot
         end,
     case Chosen of
         none -> conv_error('no-kind', Pack, "the entity selects no kind of the pack", []);
-        #{lines := Ls, defaults := Defaults, root := Root} ->
-            {Common ++ Ls, Defaults, case Root of undefined -> PackRoot; _ -> Root end}
+        #{scope := Scope, defaults := Defaults, root := Root, plan := Plan} ->
+            {Scope, Defaults, case Root of undefined -> PackRoot; _ -> Root end, Plan}
     end.
 
 %% Does a scope hold a `requires` term? A plain key: the key is present, or
@@ -797,14 +839,14 @@ decode_wire(#{wire := bits, layout := sequential} = Pack, Bytes) -> ?BITS(gt_seq
 decode_wire(#{wire := tlv} = Pack, Bytes) -> ?TLV(gt_tlv:decode(Pack, Bytes));
 decode_wire(#{wire := Wire} = Pack, Bytes) ->
     Ctx = open(Wire, Pack, Bytes),
-    {Kind, Lines0} = select_decode(Pack, Wire, Ctx),
+    {Kind, Lines0, Plan} = select_decode(Pack, Wire, Ctx),
     Lines = held_lines(Wire, Ctx, Lines0),
     fit(Wire, Pack, Ctx, static_end(Wire, Lines)),
     {Model, Lists, End} = decode_scope(Wire, Ctx, Lines, Pack),
     fit(Wire, Pack, Ctx, End),             % the items extend the message
     #{model => Model,
       lists => Lists,
-      residue => residue(Wire, Ctx, Lines, Bytes),
+      residue => residue(Wire, Ctx, Lines, Plan, Bytes),
       src => maps:get(name, Pack),
       kind => case Kind of
                   undefined -> undefined;
@@ -1232,6 +1274,33 @@ mapped_locs(Lines) ->
                 end, #{}, Lines).
 -endif.
 
+%% What a wire computes from the lines of one scope alone (a kind's scope,
+%% or the common lines of a pack without kinds), computed when the pack is
+%% loaded and kept with it (ruling 1a of 0.25): on xml, json and geojson the
+%% locators the lines map (residue); on tlv the sets the lines walk into and
+%% the order of each set's items (gt_tlv:plan/1).
+%% On xml, json and geojson the plan also holds the values the lines fix
+%% (fixed_locs/1), and on xml where `element` lines make elements
+%% (xml_ensure/1): the same plan, without `mapped`, is kept with the body of
+%% every group (plan_bodies/2), whose items are written with it.
+scope_plan(xml, Lines) ->
+    ?XML(#{mapped => mapped_locs(Lines), fixed => fixed_locs(Lines), ensure => xml_ensure(Lines)});
+scope_plan(json, Lines) -> ?JSON(#{mapped => mapped_locs(Lines), fixed => fixed_locs(Lines)});
+scope_plan(geojson, Lines) -> ?GEOJSON(#{mapped => mapped_locs(Lines), fixed => fixed_locs(Lines)});
+scope_plan(tlv, Lines) -> ?TLV(gt_tlv:plan(Lines));
+scope_plan(_Wire, _Lines) -> #{}.
+
+%% The body of every `group` line, at any depth, with its plan.
+plan_bodies(Wire, Lines) when Wire =:= xml; Wire =:= json; Wire =:= geojson ->
+    [case L of
+         {group, List, Loc, Spec, #{lines := Ls} = Body, LocT} ->
+             Ls1 = plan_bodies(Wire, Ls),
+             {group, List, Loc, Spec,
+              Body#{lines := Ls1, plan => maps:remove(mapped, scope_plan(Wire, Ls1))}, LocT};
+         _ -> L
+     end || L <- Lines];
+plan_bodies(_Wire, Lines) -> Lines.
+
 %% On `text` the transform decides whether a column's leading spaces are
 %% removed.
 raw_tr(text, Ctx, Loc, Tr, _Opts, C) -> ?TEXT({gt_text:raw(Ctx, Loc, Tr), C});
@@ -1345,15 +1414,16 @@ bits_field_decode(Tr, U, {_Off, Len}, {_, _, Trim, _, _, _}, Pack) ->
 -endif.
 
 %% ---- residue: what no selected `field`, `const`, `group` or valued `when` maps ----
-residue(xml, Tree, Lines, _Bytes) -> ?XML(xml_residue(Tree, Lines));
-residue(geojson, _Json, Lines, Bytes) -> ?GEOJSON(geojson_residue(Lines, Bytes));
-residue(json, Json, Lines, _Bytes) -> ?JSON(json_residue(Json, Lines));
-residue(text, Ctx, Lines, _Bytes) -> ?TEXT(gt_text:residue(Ctx, Lines));
-residue(_, _, _, _) -> [].
+%% Plan is the scope's plan (scope_plan/2): on xml, json and geojson it holds
+%% the mapped locators.
+residue(xml, Tree, _Lines, Plan, _Bytes) -> ?XML(xml_residue(Tree, Plan));
+residue(geojson, _Json, _Lines, Plan, Bytes) -> ?GEOJSON(geojson_residue(Plan, Bytes));
+residue(json, Json, Lines, Plan, _Bytes) -> ?JSON(json_residue(Json, Lines, Plan));
+residue(text, Ctx, Lines, _Plan, _Bytes) -> ?TEXT(gt_text:residue(Ctx, Lines));
+residue(_, _, _, _, _) -> [].
 
 -if(?W_XML).
-xml_residue(Tree, Lines) ->
-    Mapped = mapped_locs(Lines),
+xml_residue(Tree, #{mapped := Mapped}) ->
     [{<<"@", Name/binary>>, Val}
      || {Name, Val} <- gt_xml:attrs(Tree), not maps:is_key({[], {attr, Name}}, Mapped)].
 -endif.
@@ -1363,8 +1433,7 @@ xml_residue(Tree, Lines) ->
 %% written; arrays and objects as they were, numbers in them keeping their
 %% text; `null` dropped. Of two members with one name, the last value is used
 %% at the first position.
-geojson_residue(Lines, Bytes) ->
-    Mapped = mapped_locs(Lines),
+geojson_residue(#{mapped := Mapped}, Bytes) ->
     {object, Members} = Raw = gt_json:parse_raw(Bytes),
     Props = case gt_json:get(Raw, <<"properties">>) of
                 {ok, {object, PM}} ->
@@ -1401,9 +1470,9 @@ geojson_residue_text(V) -> gt_json:encode(V).
 -endif.
 
 -if(?W_JSON).
-json_residue({object, Members} = Json, Lines) ->
+json_residue({object, Members} = Json, Lines, #{mapped := Mapped}) ->
     json_unread_check(Json, Lines),
-    lists:reverse(json_residue(Members, [], mapped_locs(Lines), [])).
+    lists:reverse(json_residue(Members, [], Mapped, [])).
 
 %% Scalars at any depth of nested objects, in input order, keyed by path.
 %% Arrays, nulls and members whose name contains `.` are not carried.
@@ -1466,19 +1535,19 @@ unread_value(V, Path, Fields, _Groups) ->
 encode(Engine, Format, Entity) -> encode(pack(Engine, Format), Entity).
 
 encode(#{wire := bits, layout := sequential} = Pack, Entity) ->
-    {Lines, Defaults, _Root} = select_encode(Pack, Entity),
+    {Lines, Defaults, _Root, _Plan} = select_encode(Pack, Entity),
     ?BITS(gt_seq:encode(Pack, Lines, Defaults, Entity));
 encode(#{wire := bits} = Pack, Entity) ->
-    {Lines, Defaults, _Root} = select_encode(Pack, Entity),
+    {Lines, Defaults, _Root, _Plan} = select_encode(Pack, Entity),
     ?BITS(encode_bits(Pack, Lines, {maps:get(model, Entity), maps:get(lists, Entity, #{}), Defaults}));
 encode(#{wire := Wire} = Pack, Entity) ->
-    {Lines, Defaults, Root} = select_encode(Pack, Entity),
+    {Lines, Defaults, Root, Plan} = select_encode(Pack, Entity),
     Residue = case maps:get(src, Entity, undefined) =:= maps:get(name, Pack) of
                   true -> maps:get(residue, Entity, []);
                   false -> []
               end,
     Src = source(maps:get(model, Entity), maps:get(lists, Entity, #{}), Defaults),
-    iolist_to_binary(encode_wire(Wire, Pack#{root := Root}, Lines, Src, Residue)).
+    iolist_to_binary(encode_wire(Wire, Pack#{root := Root, plan := Plan}, Lines, Src, Residue)).
 
 %% What the lines of a scope are encoded from -> {Value, Lists, Held}.
 %% Held(Key) tells whether the scope holds Key (`with`, 0.18). Value(Key)
@@ -1555,7 +1624,7 @@ encode_wire(protobuf, Pack, Lines, Src, _Residue) ->
 
 -if(?W_XML).
 xml_encode(Pack, Lines, Src, Residue) ->
-    Root1 = xml_build(gt_xml:new(maps:get(root, Pack)), Lines, Src, Pack),
+    Root1 = xml_build(gt_xml:new(maps:get(root, Pack)), Lines, maps:get(plan, Pack), Src, Pack),
     Root2 = lists:foldl(
               fun({<<"@", Name/binary>>, Val}, R) ->
                       case gt_xml:get_attr(R, Name) of
@@ -1573,7 +1642,7 @@ xml_encode(Pack, Lines, Src, Residue) ->
 
 -if(?W_GEOJSON).
 geojson_encode(Pack, Lines, Src, Residue) ->
-    Ops = [{Loc, V} || {Loc, {value, V}} <- json_plan(Lines, Src, Pack)],
+    Ops = [{Loc, V} || {Loc, {value, V}} <- json_plan(Lines, maps:get(plan, Pack), Src, Pack)],
     Coord = fun(I) -> proplists:get_value({geom, I}, Ops) end,
     Geometry =
         case {Coord(1), Coord(2), Coord(3)} of
@@ -1596,7 +1665,7 @@ geojson_encode(Pack, Lines, Src, Residue) ->
 
 -if(?W_JSON).
 json_encode(Pack, Lines, Src, Residue) ->
-    T1 = json_tree(json_plan(Lines, Src, Pack)),
+    T1 = json_tree(json_plan(Lines, maps:get(plan, Pack), Src, Pack)),
     T2 = lists:foldl(
            fun({PathText, V}, T) ->
                    jt_set(T, binary:split(PathText, <<".">>, [global]),
@@ -1610,10 +1679,11 @@ json_encode(Pack, Lines, Src, Residue) ->
 %% An element is made at its first write, so elements come in line order; a
 %% group writes one element per item at its position, and nothing for an
 %% empty list.
-xml_build(Elem, Lines, Src, Pack) ->
-    Ops = text_plan(Lines, Src, Pack, fun xml_render/1, fun({text, T, _}) -> T end,
+%% The plan of the scope (scope_plan/2) holds its fixed values and where
+%% its `element` lines make elements, both kept since load.
+xml_build(Elem, Lines, #{fixed := Fixed, ensure := Ensure}, Src, Pack) ->
+    Ops = text_plan(Lines, Fixed, Src, Pack, fun xml_render/1, fun({text, T, _}) -> T end,
                     fun(Group, Items) -> xml_items(Group, Items, Pack) end),
-    Ensure = xml_ensure(Lines),
     {R9, _} =
         lists:foldl(
           fun(Op, {R0, I}) ->
@@ -1657,16 +1727,16 @@ xml_addressed({element, Path, _}) -> Path;
 xml_addressed(_) -> none.
 
 xml_items(_Group, [], _Pack) -> none;
-xml_items({group, _, Path, _, #{lines := Ls} = Body, _}, Items, Pack) ->
+xml_items({group, _, Path, _, #{lines := Ls, plan := Plan} = Body, _}, Items, Pack) ->
     Name = lists:last(Path),
-    {items, [xml_build(gt_xml:new(Name), Ls, item_source(I, Body), Pack) || I <- Items]}.
+    {items, [xml_build(gt_xml:new(Name), Ls, Plan, item_source(I, Body), Pack) || I <- Items]}.
 
 -endif.
 
 %% ---- json, geojson: what each line of a scope writes ----
 -if(?W_JSON orelse ?W_GEOJSON).
-json_plan(Lines, Src, Pack) ->
-    text_plan(Lines, Src, Pack, fun json_render/1, fun fixed_json/1,
+json_plan(Lines, #{fixed := Fixed}, Src, Pack) ->
+    text_plan(Lines, Fixed, Src, Pack, fun json_render/1, fun fixed_json/1,
               fun(Group, Items) -> json_array(Group, Items, Pack) end).
 
 json_tree(Ops) ->
@@ -1681,8 +1751,8 @@ json_array({group, _, _, _, Body, _}, Items, Pack) ->
 
 %% An item is the scalar its `.` line writes, else an object; an item with no
 %% members written is `{}`.
-json_item(Item, #{lines := Ls} = Body, Pack) ->
-    Ops = json_plan(Ls, item_source(Item, Body), Pack),
+json_item(Item, #{lines := Ls, plan := Plan} = Body, Pack) ->
+    Ops = json_plan(Ls, Plan, item_source(Item, Body), Pack),
     case [V || {[], {value, V}} <- Ops] of
         [V | _] -> V;
         [] ->
@@ -2226,13 +2296,9 @@ guard_encode(Pack, Key, LocT, Fun) ->
 %% line's position. A `group` whose list the scope has writes what
 %% RenderGroup makes of the items. A line that writes nothing still holds
 %% its place (`none`).
-text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGroup) ->
+%% Fixed is fixed_locs/1 of the scope's lines, kept since load.
+text_plan(Lines0, Fixed, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGroup) ->
     Lines = suppress(Lines0, Held),
-    Consts = maps:from_list([{Loc, V} || {const, Loc, V, _} <- Lines]),
-    %% a `when` with a list writes its first value (ruling 15 of 0.20)
-    Fixed = maps:merge(Consts,
-                       maps:from_list([{Loc, V} || {wh, Loc, {text, _, _} = V, _} <- Lines] ++
-                                      [{Loc, V} || {wh, Loc, {anyof, [{text, _, _} = V | _]}, _} <- Lines])),
     %% a sentinel is written only at a locator no line with a value writes
     %% (ruling 16 of 0.9)
     Valued = maps:from_list([{Loc, true} || {field, K, Loc, _, _, _} <- Lines,
@@ -2315,6 +2381,16 @@ text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGr
                             end
                     end, #{}, lists:zip(Lines, InOrder)),
     Placed.
+
+%% The values a scope's `const` and valued `when` lines write, by locator
+%% (ruling 26 of 0.5); a `when` with a list writes its first value (ruling
+%% 15 of 0.20). `with` (suppress/2) never touches these lines, so the map is
+%% one per scope, computed at load (scope_plan/2).
+fixed_locs(Lines) ->
+    Consts = maps:from_list([{Loc, V} || {const, Loc, V, _} <- Lines]),
+    maps:merge(Consts,
+               maps:from_list([{Loc, V} || {wh, Loc, {text, _, _} = V, _} <- Lines] ++
+                              [{Loc, V} || {wh, Loc, {anyof, [{text, _, _} = V | _]}, _} <- Lines])).
 -endif.
 
 %% ===================================================================

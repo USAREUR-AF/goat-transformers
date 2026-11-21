@@ -124,6 +124,15 @@ jobs:
       # vector on those wires, refuses a pack on any other wire by name, and is smaller.
       - name: Reduced build (xml, json, geojson)
         run: engines/rust/reduced-build-check.sh
+      # Spec 0.25: the benchmark of bench/set.json. A vector whose output differs
+      # from its expect fails the step; the numbers are informative only (ruling 2d).
+      - name: Benchmark (bench/set.json)
+        run: cargo run --release --quiet --manifest-path engines/rust/Cargo.toml --example bench -- bench/set.json > bench-rust.jsonl
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bench-rust
+          path: bench-rust.jsonl
+          if-no-files-found: error
   go:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -151,6 +160,15 @@ jobs:
       # vector on those wires, refuses a pack on any other wire by name, and is smaller.
       - name: Reduced build (xml, json, geojson)
         run: sh engines/go/reduced-check.sh
+      # Spec 0.25: the benchmark of bench/set.json. A vector whose output differs
+      # from its expect fails the step; the numbers are informative only (ruling 2d).
+      - name: Benchmark (bench/set.json)
+        run: go -C engines/go run ./cmd/goat-bench ../../bench/set.json > bench-go.jsonl
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bench-go
+          path: bench-go.jsonl
+          if-no-files-found: error
   python:
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -183,6 +201,15 @@ jobs:
       # vector on those wires, refuses a pack on any other wire by name, and is smaller.
       - name: Reduced build (xml, json, geojson)
         run: python3 -I engines/python/reduced-build-check.py
+      # Spec 0.25: the benchmark of bench/set.json. A vector whose output differs
+      # from its expect fails the step; the numbers are informative only (ruling 2d).
+      - name: Benchmark (bench/set.json)
+        run: python3 -I engines/python/bench.py > bench-python.jsonl
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bench-python
+          path: bench-python.jsonl
+          if-no-files-found: error
   java:
     runs-on: ubuntu-latest
     # The malformed-input sweep grows with every pack; it is bounded per vector
@@ -211,6 +238,15 @@ jobs:
       # vector on those wires, refuses a pack on any other wire by name, and is smaller.
       - name: Reduced build (xml, json, geojson)
         run: engines/java/reduced-check.sh
+      # Spec 0.25: the benchmark of bench/set.json. A vector whose output differs
+      # from its expect fails the step; the numbers are informative only (ruling 2d).
+      - name: Benchmark (bench/set.json)
+        run: engines/java/bench.sh > bench-java.jsonl
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bench-java
+          path: bench-java.jsonl
+          if-no-files-found: error
   cpp:
     runs-on: ubuntu-latest
     timeout-minutes: 40
@@ -236,6 +272,15 @@ jobs:
       # vector on those wires, refuses a pack on any other wire by name, and is smaller.
       - name: Reduced build (xml, json, geojson)
         run: sh engines/cpp/tests/reduced-build.sh
+      # Spec 0.25: the benchmark of bench/set.json. A vector whose output differs
+      # from its expect fails the step; the numbers are informative only (ruling 2d).
+      - name: Benchmark (bench/set.json)
+        run: cmake -S engines/cpp -B engines/cpp/build-release -DCMAKE_BUILD_TYPE=Release >&2 && cmake --build engines/cpp/build-release --target goat-bench -j >&2 && engines/cpp/build-release/goat-bench bench/set.json > bench-cpp.jsonl
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bench-cpp
+          path: bench-cpp.jsonl
+          if-no-files-found: error
   erlang:
     runs-on: ubuntu-latest
     # The suite runs every vector of every pack; it took 7 to 9 minutes before
@@ -267,6 +312,15 @@ jobs:
       # vector on those wires, refuses a pack on any other wire by name, and is smaller.
       - name: Reduced build (xml, json, geojson)
         run: engines/erlang/reduced_check.sh
+      # Spec 0.25: the benchmark of bench/set.json. A vector whose output differs
+      # from its expect fails the step; the numbers are informative only (ruling 2d).
+      - name: Benchmark (bench/set.json)
+        run: engines/erlang/bench.sh > bench-erlang.jsonl
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bench-erlang
+          path: bench-erlang.jsonl
+          if-no-files-found: error
   zig:
     runs-on: ubuntu-latest
     timeout-minutes: 35
@@ -296,6 +350,15 @@ jobs:
       # vector on those wires, refuses a pack on any other wire by name, and is smaller.
       - name: Reduced build (xml, json, geojson)
         run: engines/zig/reduced-check.sh
+      # Spec 0.25: the benchmark of bench/set.json. A vector whose output differs
+      # from its expect fails the step; the numbers are informative only (ruling 2d).
+      - name: Benchmark (bench/set.json)
+        run: engines/zig/bench.sh > bench-zig.jsonl
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bench-zig
+          path: bench-zig.jsonl
+          if-no-files-found: error
   # The capability matrix as a checked artifact (spec 0.23): the seven engines
   # wrote it from the same packs; it must be the same bytes from all seven.
   capability-matrix:

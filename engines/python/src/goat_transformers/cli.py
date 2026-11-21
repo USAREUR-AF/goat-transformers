@@ -9,9 +9,8 @@ loaded."""
 import os
 import sys
 
-from .engine import Engine, _model_order
+from .engine import Engine, _model_files, _model_from_text
 from .errors import GTError, UnknownFormat
-from .modeldef import load_model_file
 from .packdef import load_pack
 
 PROG = "goat-xf-py"
@@ -116,8 +115,8 @@ def load(opts):
         eng.set_max_items(int(opts["--max-items"]))
     # the modules first, before --packs is read at all (Loading, 1)
     if os.path.isdir(models_dir):
-        for path in _model_order(models_dir):
-            eng.add_model(load_model_file(path, models=eng.models, max_distribution=limit))
+        for path, text in _model_files(models_dir):
+            eng.add_model(_model_from_text(text, path, eng.models, limit))
     if "--packs-only" in opts:
         for name in opts["--packs-only"].split(","):
             d = os.path.join(packs_dir, name)

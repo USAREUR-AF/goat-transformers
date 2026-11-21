@@ -11,7 +11,7 @@ from .errors import (
     ModuleNotUsed, NoKind, TransformDecodeFailure, TransformEncodeFailure, UndeclaredKey, UnknownFormat,
     UnknownModule,
 )
-from .modeldef import load_model_file, parse_model_text, scan_uses
+from .modeldef import parse_model_text, scan_uses
 from .packdef import CORE, DISTRIBUTIONS, load_pack, parse_pack_text, split_key
 from .entity import Entity, Item, _build_via, _via_decode, _via_encode
 from .transforms import canonical_value_text, read_typed, table_side_type, value_canon
@@ -32,22 +32,27 @@ else:
         """No value is a JSON number in a build without `json` and `geojson`."""
 
 
-def _model_order(models_dir, only=None):
+def _model_files(models_dir, only=None):
     """The module files of a directory in loading order: `core.def` first,
     whatever its name sorts as (0.6 ruling 9), then the others in byte order
     of file name, each after the modules its `uses` lines name (0.8). A cycle
     is `bad-directive`. A used module no file declares is left to the load,
     which reports `unknown-module`. With `only`, a set of module names: the
-    files of those modules and of the modules they use, and no other."""
+    files of those modules and of the modules they use, and no other.
+
+    -> [(path, text)]: each file is read once, here, and its text is what the
+    load parses (spec 0.25, ruling 1d)."""
     names = sorted(
         (n for n in os.listdir(models_dir) if n.endswith(".def") and os.path.isfile(os.path.join(models_dir, n))),
         key=lambda n: (n != CORE + ".def", os.fsencode(n)),
     )
     uses = {}
+    texts = {}
     by_module = {}
     for n in names:
         with open(os.path.join(models_dir, n), "r", encoding="utf-8") as fh:
-            module, used = scan_uses(fh.read())
+            texts[n] = fh.read()
+        module, used = scan_uses(texts[n])
         uses[n] = used
         if module is not None:
             by_module.setdefault(module, n)
@@ -65,7 +70,7 @@ def _model_order(models_dir, only=None):
             if dep is not None and dep != n:
                 place(dep)
         state[n] = 2
-        order.append(os.path.join(models_dir, n))
+        order.append((os.path.join(models_dir, n), texts[n]))
 
     if only is None:
         for n in names:
@@ -76,6 +81,19 @@ def _model_order(models_dir, only=None):
             if n in wanted:
                 place(n)
     return order
+
+
+def _model_order(models_dir, only=None):
+    """The paths of `_model_files`, in the same order."""
+    return [path for path, _ in _model_files(models_dir, only)]
+
+
+def _model_from_text(text, path, models, max_distribution):
+    """A module file's text, read once by `_model_files`, parsed as
+    `load_model_file` parses the file."""
+    module = parse_model_text(text, source=path, models=models, max_distribution=max_distribution)
+    module.path = path
+    return module
 
 
 def requires_hold(kind, have, lists):
@@ -374,8 +392,8 @@ class Engine:
             for pack in packs:
                 only.update(pack.uses)
         if os.path.isdir(models_dir):
-            for path in _model_order(models_dir, only):
-                eng.add_model(load_model_file(path, models=eng.models, max_distribution=max_distribution))
+            for path, text in _model_files(models_dir, only):
+                eng.add_model(_model_from_text(text, path, eng.models, max_distribution))
         for pack in packs:
             eng.add(pack)
         return eng

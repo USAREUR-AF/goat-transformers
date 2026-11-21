@@ -123,10 +123,56 @@ x86_64, 36 top-level tests and examples, none failing:
 | `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 3299 run, 3299 passed (96 packs loaded) |
 | `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 314 run, 314 passed |
 | `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 13180 inputs fed, 0 failed |
+| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 21553 vectors (1174 failing conversions), 0 outcomes differ |
 | `TestMalformedRulings` | the malformed-input rulings of the specification, such as nesting depth and bytes that are not UTF-8 | pass |
 | tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 95 run, 95 passed |
 | `TestHeapPerListItem` | the heap a decode takes per item of a long list; runs only with `GOAT_XF_HEAP=1` | skipped in CI |
 | the other tests and `ExampleLoadPacksOnly`, `ExampleEngine_LoadFS` | the tokenizer, float and time formatting, wire errors, kinds, groups, sequential wires, derive functions, the directory and `fs.FS` loaders | pass |
+
+## Parse once, and the benchmark
+
+An `Engine` keeps, for its life, what it parsed and computed at load
+(`spec/engine-spec.md`, Version 0.25, ruling 1): each pack and module as a
+parsed structure, each layout with its lines and locators already read, the
+value tables of `via` indexed in both directions, the canonical values of
+`requires` and `case`, the gate value an open `if` block encodes, and the
+list of `derive` lines in application order. A conversion only reads them; it
+parses no pack or module text and writes nothing an instance keeps, so one
+`Engine` may be used by several goroutines at once once loading is done.
+Loading and the setters (`LoadModel`, `AddModule`, `LoadPack`, `AddPack`,
+`LoadFS`, `SetMaxItems`, `SetMaxDistribution`) must not run while another
+goroutine uses the instance. Loading reads each module file and each
+`pack.def` once.
+
+The benchmark (ruling 2) is the command `goat-bench`. From the repository
+root:
+
+```
+go -C engines/go run ./cmd/goat-bench ../../bench/set.json
+```
+
+or build it once and run it from the root:
+
+```
+cd engines/go && go build -o goat-bench ./cmd/goat-bench && cd ../..
+engines/go/goat-bench bench/set.json
+```
+
+The argument is the benchmark set (default `bench/set.json`); the paths of
+its vectors are relative to the directory above the set's directory, whose
+`packs` and `model` directories are read. It loads only the packs that the
+vectors name in `from` and `to`, and the modules they use, then converts each
+vector's input once, checks it against `expect`, and converts it `iterations`
+times. Standard output gets one JSON line per vector and then one for the
+load (ruling 2c), written when every vector has passed; a failure writes
+nothing on standard output, its message on standard error, and exits 1.
+
+`TestParseOnceConcurrent` checks rulings 1b and 1c: it runs every conversion
+vector on one instance, then on a second instance from four goroutines at
+once, each starting elsewhere in the list, and compares the bytes, the
+decoded entity and every error message. `go test -race -short -run
+TestParseOnceConcurrent` runs it on every sixteenth vector under the race
+detector.
 
 ## Static binaries and WebAssembly
 

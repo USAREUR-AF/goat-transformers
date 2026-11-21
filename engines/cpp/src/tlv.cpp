@@ -591,7 +591,8 @@ Entity decode_tlv(const Pack& p, const std::string& text) {
     });
 
     // Walk into every set on the path of a line of the selected scope.
-    const std::vector<LineRef> lines = active_lines(p, kind);
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
     for (const auto& line : lines) {
         const PathLine pl = path_of(line);
         const std::vector<std::uint32_t>& path = *pl.path;
@@ -667,7 +668,8 @@ Entity decode_tlv(const Pack& p, const std::string& text) {
 std::string encode_tlv(const Pack& p, const Entity& e) {
     const Kind* kind = select_encode_kind(p, e);
     const EncodeSource src(p, kind, e);
-    const std::vector<LineRef> lines = active_lines(p, kind);
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
 
     // Ruling 9 of 0.13: on a path a numeric `when` or a `const` names, the item
     // holds the earliest of their values and no `field` on it is encoded.

@@ -18,29 +18,9 @@ func (g *Gate) matches(v uint64) bool {
 	return in != g.not
 }
 
-// value is the gate value encode step 3 gives an open block: the first
-// listed value, or for `!` the smallest value not listed; ok is false when a
-// `!` list names every value.
-func (g *Gate) value() (uint64, bool) {
-	if !g.not {
-		return g.vals[0], true
-	}
-	listed := map[uint64]bool{}
-	for _, x := range g.vals {
-		listed[x] = true
-	}
-	// A list of k values leaves a value below k+1 unlisted, unless the
-	// list names every value of a narrow gate.
-	for v := uint64(0); v <= uint64(len(g.vals)); v++ {
-		if g.loc.blen < 64 && v>>uint(g.loc.blen) != 0 {
-			break
-		}
-		if !listed[v] {
-			return v, true
-		}
-	}
-	return 0, false
-}
+// value is the gate value encode step 3 gives an open block, as computeValue
+// gave it when the line was read.
+func (g *Gate) value() (uint64, bool) { return g.openVal, g.openOK }
 
 // holdsOn evaluates the block alone (not its enclosing blocks) on data, its
 // scope starting at message bit base, as decode does: a gate any of whose

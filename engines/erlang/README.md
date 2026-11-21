@@ -10,21 +10,24 @@ An independent, clean-room implementation of the gt engine, written from
 ./run_tests       # loads ../../model and ../../packs, runs every vector
 ```
 
-| Test | Command (repository root) | Measured (2026-11-20) |
+| Test | Command (repository root) | Measured (2026-11-21) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 20307/20307 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 21583/21583 |
 | load vectors | same run | 1166/1166 |
 | capability vectors | same run | 18/18 |
-| malformed inputs | same run | 113331/113331 |
-| tool vectors (Version 0.23) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 95/95 |
-| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 6849/6849 vectors; every bits, protobuf, text and tlv pack `unknown-wire` (below) |
+| malformed inputs | same run | 129534/129534 |
+| concurrent conversions (Version 0.25) | same run | 437/437 |
+| benchmark (Version 0.25) | `engines/erlang/bench.sh` | 15 vectors, 15 packs (below) |
+| tool vectors (Version 0.23) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 97/97 |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 7883/7883 vectors; every bits, protobuf, text and tlv pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
 `vectors: N/N passed` (conversion vectors), `load vectors: N/N passed`
 (`packs/conformance/load-vectors/`, with `pack` or `packs`) and
 `capability vectors: N/N passed` (`packs/conformance/capability-vectors/`),
-then `malformed inputs: N/N passed`, and exits non-zero on any failure. A
+then `malformed inputs: N/N passed`, then `concurrent conversions: N/N
+passed` (below), and exits non-zero on any failure. A
 conversion vector's `max_items` sets the limit on list items for that vector,
 and a `model` value its grammar refuses (ruling 2c of 0.11) fails the vector.
 A vector whose format is not loaded is run, and pins `unknown-format`.
@@ -50,8 +53,112 @@ fixed cases of six-bit armor (0.14) on `conformance-armor` and
 `error:{convert_error, Kind, Message}` with a named `Kind` and a `Message`
 beginning with the kind and a colon. The cases are a fixed function of the
 vectors, so two runs make the same ones.
+The concurrent check (rulings 1b and 1c of 0.25) takes the first two
+conversion vectors of each `conformance-*` pack, those that convert and those
+that fail, loads the packs they name into one instance and keeps it in a
+`persistent_term`, so that every process reads the same instance without a
+copy. Each case is converted alone in a new process for its reference
+result; then four processes, started together, each convert every case on
+that instance, each in its own order (the list rotated), so that every
+conversion comes after conversions of other messages, failed ones included,
+while the other processes convert. A case passes when all four give the
+reference result: the same bytes, or the same error kind and message.
 `./run_tests <packs> [<model>]` runs against other directories; the model
 directory defaults to the one beside `<packs>`.
+
+## Parse once, and the benchmark (engine-spec Version 0.25)
+
+An engine instance is an immutable map (`gt_engine:new/0` and the loaders
+return a new one), so what a load computes stays with the instance for its
+life and no conversion can change it. Kept since load (ruling 1a):
+
+| Kept | Where |
+|---|---|
+| every model module, parsed | `modules` of the instance (`gt_model:parse/1` once per module) |
+| every pack, parsed and checked | `packs` of the instance (`gt_pack:parse/1` once per pack) |
+| the kinds by name, and (xml) by root element | `kind_index`, `root_index` of the pack |
+| each kind's scope: the common lines, then the kind's | `scope` of the kind |
+| the plan of each scope (`gt_engine:scope_plan/2`) | `plan` of the kind; `plan` of the pack without kinds |
+| the plan of each `group` body (xml, json, geojson) | `plan` of the body |
+
+A plan is what a wire computes from the lines of a scope alone: on xml,
+json and geojson the locators the lines map (residue on decode) and the
+values `const` and valued `when` lines fix (encode); on xml also where
+`element` lines make elements; on tlv the nested sets the lines walk into,
+the places they name (residue), the order of each set's items and the lines
+of each item (encode, `gt_tlv:plan/1`). The bits, protobuf and text wires
+read their lines as they are; no plan is kept for them. The writer's check
+for characters XML cannot hold uses a pattern compiled once per node
+(`persistent_term`), which depends on nothing loaded.
+
+Nothing observable changes (1b). The instance holds no state a conversion
+writes; a decode keeps its item count and first field failure in the
+process dictionary and erases them when it ends, failed or not, and the
+sequential encoder erases its own entry the same way. An instance can be
+used from any number of processes at once (1c): it is one term, read and
+never written; a caller that wants the processes to share it without a copy
+keeps it in a `persistent_term`, as the concurrent check of `./run_tests`
+does.
+
+Loading reads each file once (1d): `gt_engine:model_texts/1` reads every
+module file of a directory once and gives the module order (core first, each
+module after those it uses) with the texts; `load_dir/3`, `load_packs/4`,
+the command-line tool and the conformance runner load those texts.
+`load_packs/4` reads each named `pack.def` once and takes the `uses` lines
+from that text. A second load of the same directory into the same instance
+is `duplicate-module` (or `duplicate-format`), as before.
+
+The benchmark (ruling 2), from the repository root:
+
+```
+engines/erlang/bench.sh                     # bench/set.json
+engines/erlang/bench.sh <set.json>          # another set
+```
+
+It builds the engine first if `ebin/` is empty (the build's own lines go to
+standard error) and runs `src/gt_bench.erl`. The repository root is the
+directory above the set's directory, so it can be started from anywhere.
+It loads into one new instance, with `gt_engine:load_packs/4`, the packs the
+set's vectors name (their `from` and `to` formats, in order of first
+appearance, each from `packs/<format>/pack.def`) and the modules those use,
+and times that load; then for each vector, in order, it converts the
+vector's input (with its `context`, if any) once, compares the output with
+`expect` byte for byte, then converts it `iterations` times and times that.
+Standard output holds only the lines of ruling 2c; a vector whose output
+differs stops the run with a message on standard error and exit status 1.
+
+Measured (2026-11-21, one machine, 16 cores, `nice -n 10`, under a load
+average of 15 to 30 from other work: the numbers are informative only,
+ruling 2d). Before is the engine of 0.24 with the same `gt_bench.erl`, run
+alternately with the 0.25 engine; each figure is the lower of two runs.
+
+| Vector | 0.24, ns per conversion | 0.25, ns per conversion |
+|---|---|---|
+| `packs/cot-xml/vectors/01-track-to-geojson.json` | 432689 | 255890 |
+| `packs/geojson/vectors/01-geojson-to-cot.json` | 600138 | 349273 |
+| `packs/canonical-track-v2/vectors/02-to-cot-xml.json` | 822873 | 511801 |
+| `packs/sapient/vectors/01-sapient-to-geojson.json` | 202952 | 158294 |
+| `packs/cot-protobuf/vectors/01-event-to-cot-xml.json` | 657561 | 351052 |
+| `packs/isa/vectors/01-isa-to-geojson.json` | 559124 | 452137 |
+| `packs/uci/vectors/gen-001-access_assessment-roundtrip.json` | 5379023 | 3052401 |
+| `packs/a-gra/vectors/gen-001-access_assessment-roundtrip.json` | 4508492 | 2582278 |
+| `packs/nmea2000/vectors/rt-pgn59392.json` | 6744 | 21903 |
+| `packs/mavlink2/vectors/rt-00000-heartbeat.json` | 58754 | 53978 |
+| `packs/asterix-cat062/vectors/12-to-canonical-track-v2-with-context.json` | 342312 | 414872 |
+| `packs/remote-id/vectors/09-basic-id-upstream-test-bytes-to-geojson.json` | 66509 | 52537 |
+| `packs/adsb/vectors/01-identification-tc1-roundtrip.json` | 86789 | 73496 |
+| `packs/nmea0183/vectors/40-rmc-to-geojson.json` | 156050 | 131761 |
+| `packs/dhcpv6-options/vectors/01-solicit-options-round-trip.json` | 1233570 | 129159 |
+| load of the 15 packs and their modules | 13.8 s | 10.1 s |
+| load of every pack (`load_dir/3`, 3946 packs, 2624 modules) | 67.3 s | 58.1 s |
+
+The 0.25 changes do not touch the bits wire: the nmea2000, mavlink2,
+asterix-cat062, remote-id and adsb rows differ by the noise of the machine
+(nmea2000 measured 6744 and 24546 ns before, 21903 and 59464 after). The
+xml writer's compiled pattern accounts for most of the gain on xml output,
+the kept plans for the rest, and the tlv plan for dhcpv6-options. The
+load is faster because each module file is read and scanned for its head
+once instead of three times.
 
 ## Builds with fewer wires (engine-spec Version 0.24)
 
@@ -304,3 +411,4 @@ implemented as the specification states them.
   typemap, value tables, transforms.
 - `src/gt_test.erl`  — conformance runner and the malformed-input check.
 - `src/gt_cli.erl`   — the command-line tool (Version 0.23), started by `goat-xf.sh`.
+- `src/gt_bench.erl` — the benchmark (Version 0.25), started by `bench.sh`.

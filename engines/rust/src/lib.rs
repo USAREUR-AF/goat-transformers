@@ -10,6 +10,8 @@ use std::fmt;
 
 mod exact;
 pub use exact::Exact;
+mod layout;
+use layout::Layout;
 
 // ---------------------------------------------------------------------------
 // Shared model
@@ -4029,6 +4031,9 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool, list: bool) -> Resu
 
 pub struct Engine {
     packs: BTreeMap<String, Pack>,
+    /// format -> what its pack's lines compute once, kept for the life of
+    /// the instance (engine-spec 0.25, ruling 1)
+    layouts: HashMap<String, Layout>,
     modules: BTreeMap<String, Module>,
     /// module name -> key name -> the key's place in `Module::keys`
     key_index: HashMap<String, HashMap<String, usize>>,
@@ -4044,6 +4049,7 @@ impl Default for Engine {
     fn default() -> Engine {
         Engine {
             packs: BTreeMap::new(),
+            layouts: HashMap::new(),
             modules: BTreeMap::new(),
             key_index: HashMap::new(),
             list_index: HashMap::new(),
@@ -4330,6 +4336,8 @@ impl Engine {
         if let Some(body) = &mut pack.seq {
             body.resolve(&ty);
         }
+        // the pack is now as it stays: what its lines compute, once (0.25)
+        self.layouts.insert(pack.format.clone(), Layout::of(&pack));
         self.packs.insert(pack.format.clone(), pack);
         Ok(())
     }
@@ -4425,6 +4433,11 @@ impl Engine {
         let p = Pack::parse(text)?;
         self.load(p)
     }
+    /// The layout kept for a loaded format (engine-spec 0.25).
+    fn layout(&self, format: &str) -> &Layout {
+        static EMPTY: std::sync::OnceLock<Layout> = std::sync::OnceLock::new();
+        self.layouts.get(format).unwrap_or_else(|| EMPTY.get_or_init(Layout::default))
+    }
     fn pack(&self, format: &str) -> Result<&Pack, Error> {
         self.packs
             .get(format)
@@ -4453,6 +4466,8 @@ impl Engine {
     /// `decode` with the limit on list items given for this call.
     pub fn decode_limited(&self, format: &str, bytes: &str, max_items: usize) -> Result<Entity, Error> {
         let p = self.pack(format)?;
+        #[allow(unused_variables)]
+        let lay = self.layout(format);
         let _scope = limit::begin(max_items);
         match p.wire {
             #[cfg(feature = "xml")]
@@ -4460,15 +4475,15 @@ impl Engine {
             #[cfg(feature = "geojson")]
             Wire::GeoJson => geojson::decode(p, bytes),
             #[cfg(feature = "bits")]
-            Wire::Bits => bits::decode(p, bytes),
+            Wire::Bits => bits::decode_in(p, lay, bytes),
             #[cfg(feature = "protobuf")]
-            Wire::Protobuf => protobuf::decode(p, bytes),
+            Wire::Protobuf => protobuf::decode_in(p, lay, bytes),
             #[cfg(feature = "json")]
             Wire::Json => jsonwire::decode(p, bytes),
             #[cfg(feature = "text")]
-            Wire::Text => text::decode(p, bytes),
+            Wire::Text => text::decode_in(p, lay, bytes),
             #[cfg(feature = "tlv")]
-            Wire::Tlv => tlv::decode(p, bytes),
+            Wire::Tlv => tlv::decode_in(p, lay, bytes),
             #[allow(unreachable_patterns)]
             w => {
                 let _ = bytes;
@@ -4478,21 +4493,23 @@ impl Engine {
     }
     pub fn encode(&self, format: &str, ent: &Entity) -> Result<String, Error> {
         let p = self.pack(format)?;
+        #[allow(unused_variables)]
+        let lay = self.layout(format);
         match p.wire {
             #[cfg(feature = "xml")]
-            Wire::Xml => xml::encode(p, ent),
+            Wire::Xml => xml::encode_in(p, lay, ent),
             #[cfg(feature = "geojson")]
             Wire::GeoJson => geojson::encode(p, ent),
             #[cfg(feature = "bits")]
-            Wire::Bits => bits::encode(p, ent),
+            Wire::Bits => bits::encode_in(p, lay, ent),
             #[cfg(feature = "protobuf")]
-            Wire::Protobuf => protobuf::encode(p, ent),
+            Wire::Protobuf => protobuf::encode_in(p, lay, ent),
             #[cfg(feature = "json")]
             Wire::Json => jsonwire::encode(p, ent),
             #[cfg(feature = "text")]
-            Wire::Text => text::encode(p, ent),
+            Wire::Text => text::encode_in(p, lay, ent),
             #[cfg(feature = "tlv")]
-            Wire::Tlv => tlv::encode(p, ent),
+            Wire::Tlv => tlv::encode_in(p, lay, ent),
             #[allow(unreachable_patterns)]
             w => {
                 let _ = ent;
@@ -4923,8 +4940,67 @@ pub mod xml {
         d.finish(p, &sel)
     }
 
+    /// The `element` lines of a scope: one per path (a second line adds
+    /// nothing, ruling 13 of 0.18), each element on the way to a path too,
+    /// each placed at the first line of any kind that addresses the element
+    /// or a path under it. They depend on the scope only.
+    pub(crate) fn element_lines<'a>(sel: &Sel<'a>) -> Vec<(usize, &'a str)> {
+        let mut element_lines: Vec<(usize, &str)> = Vec::new();
+        for (path, ln) in &sel.elements {
+            // the element and each element on the way to it
+            let ends = path.match_indices('/').map(|(i, _)| i).chain(std::iter::once(path.len()));
+            for end in ends {
+                let prefix = &path[..end];
+                if !element_lines.iter().any(|(_, q)| *q == prefix) {
+                    element_lines.push((*ln, prefix));
+                }
+            }
+        }
+        let mut out = Vec::new();
+        if !element_lines.is_empty() {
+            let addressed: Vec<(usize, &str)> = sel
+                .fields
+                .iter()
+                .map(|f| (f.line, f.locator.as_str()))
+                // a `when <locator> present` line names no position (ruling 19 of 0.18)
+                .chain(sel.whens.iter().filter(|w| !w.present).chain(sel.consts.iter()).map(|w| (w.line, w.locator.as_str())))
+                .chain(sel.groups.iter().map(|g| (g.line, g.locator.as_str())))
+                .chain(sel.elements.iter().map(|(p, n)| (*n, p.as_str())))
+                .collect();
+            for (ln, path) in element_lines {
+                let under = |loc: &str| loc == path || loc.starts_with(path) && loc[path.len()..].starts_with('/');
+                let at = addressed.iter().filter(|(_, loc)| under(loc)).map(|(n, _)| *n).min().unwrap_or(ln);
+                out.push((at, path));
+            }
+        }
+        out
+    }
+
+    /// For each field, fixed value and group of a scope, by its locator's
+    /// address (`layout::line_key`): the first line naming its locator among
+    /// the lines a scope always writes or always counts, which are every
+    /// field, every fixed value and every `element` line (ruling 23 of 0.9).
+    /// A group whose locator none of those names has no entry. The groups an
+    /// entity writes are added by `build`.
+    pub(crate) fn static_firsts(sel: &Sel, elements: &[(usize, &str)]) -> layout::Map<(usize, usize), usize> {
+        let by_text = first_lines(
+            sel.fields
+                .iter()
+                .map(|f| (f.line, f.locator.as_str()))
+                .chain(sel.fixed().map(|w| (w.line, w.locator.as_str())))
+                .chain(elements.iter().copied()),
+        );
+        let lines = sel
+            .fields
+            .iter()
+            .map(|f| f.locator.as_str())
+            .chain(sel.fixed().map(|w| w.locator.as_str()))
+            .chain(sel.groups.iter().map(|g| g.locator.as_str()));
+        lines.filter_map(|l| by_text.get(l).map(|n| (layout::line_key(l), *n))).collect()
+    }
+
     /// Write the lines of one scope into `node`: the root, or one item element.
-    fn build(p: &Pack, sel: &Sel, ent: &Entity, node: &mut Node) -> Result<(), Error> {
+    fn build(p: &Pack, lay: &Layout, key: usize, sel: &Sel, ent: &Entity, node: &mut Node) -> Result<(), Error> {
         // fields, `when` and `const` values and groups in line order (ruling 10
         // of 0.5). Of two fields on one locator the earlier present line is
         // written (ruling 16); a `when` or `const` value is written over any field.
@@ -4962,35 +5038,22 @@ pub mod xml {
                 _ => {}
             }
         }
-        // `element` lines: one per path (a second line adds nothing, ruling 13
-        // of 0.18), each placed at the first line of any kind that addresses
-        // the element or a path under it
-        let mut element_lines: Vec<(usize, &str)> = Vec::new();
-        for (path, ln) in &sel.elements {
-            // the element and each element on the way to it
-            let ends = path.match_indices('/').map(|(i, _)| i).chain(std::iter::once(path.len()));
-            for end in ends {
-                let prefix = &path[..end];
-                if !element_lines.iter().any(|(_, q)| *q == prefix) {
-                    element_lines.push((*ln, prefix));
-                }
+        // `element` lines, and the first line of each locator among the
+        // lines that do not depend on the entity: kept for the scope by the
+        // engine (engine-spec 0.25), else computed now
+        let computed;
+        let elements: Vec<(usize, &str)>;
+        let firsts: &layout::Map<(usize, usize), usize>;
+        (elements, firsts) = match lay.xml_scopes.get(&key) {
+            Some(k) => (k.elements.iter().map(|(n, l)| (*n, l.as_str())).collect(), &k.firsts),
+            None => {
+                let elements = element_lines(sel);
+                computed = static_firsts(sel, &elements);
+                (elements, &computed)
             }
-        }
-        if !element_lines.is_empty() {
-            let addressed: Vec<(usize, &str)> = sel
-                .fields
-                .iter()
-                .map(|f| (f.line, f.locator.as_str()))
-                // a `when <locator> present` line names no position (ruling 19 of 0.18)
-                .chain(sel.whens.iter().filter(|w| !w.present).chain(sel.consts.iter()).map(|w| (w.line, w.locator.as_str())))
-                .chain(sel.groups.iter().map(|g| (g.line, g.locator.as_str())))
-                .chain(sel.elements.iter().map(|(p, n)| (*n, p.as_str())))
-                .collect();
-            for (ln, path) in element_lines {
-                let under = |loc: &str| loc == path || loc.starts_with(path) && loc[path.len()..].starts_with('/');
-                let at = addressed.iter().filter(|(_, loc)| under(loc)).map(|(n, _)| *n).min().unwrap_or(ln);
-                lines.push((at, Line::Element(path)));
-            }
+        };
+        for (at, path) in elements {
+            lines.push((at, Line::Element(path)));
         }
         fn loc_of<'b>(l: &Line<'b>) -> &'b str {
             match l {
@@ -5000,13 +5063,27 @@ pub mod xml {
             }
         }
         // a place several lines name is written at the position of the first
-        // of them, whichever line's value or sentinel is written (ruling 23 of 0.9)
-        let firsts = first_lines(
-            sel.fields.iter().map(|f| (f.line, f.locator.as_str())).chain(lines.iter().map(|(n, l)| (*n, loc_of(l)))),
-        );
-        lines.sort_by_key(|(n, l)| match l {
+        // of them, whichever line's value or sentinel is written (ruling 23
+        // of 0.9): the lines of the scope, and the groups the entity writes
+        let written_groups: Vec<(usize, &str)> = lines
+            .iter()
+            .filter_map(|(n, l)| match l {
+                Line::Group(g, _) => Some((*n, g.locator.as_str())),
+                _ => None,
+            })
+            .collect();
+        let first_of = |loc: &str| -> usize {
+            written_groups
+                .iter()
+                .filter(|(_, g)| *g == loc)
+                .map(|(n, _)| *n)
+                .chain(firsts.get(&layout::line_key(loc)).copied())
+                .min()
+                .expect("every line written is a line of the scope")
+        };
+        lines.sort_by_cached_key(|(n, l)| match l {
             Line::Element(_) => (*n, *n),
-            _ => (firsts[loc_of(l)], *n),
+            _ => (first_of(loc_of(l)), *n),
         });
         for (_, line) in &lines {
             match line {
@@ -5034,7 +5111,7 @@ pub mod xml {
                     let body = g.body();
                     for item in items.iter() {
                         let mut n = Node { name: name.to_string(), ..Default::default() };
-                        build(p, &body, item, &mut n)?;
+                        build(p, lay, layout::group_key(g), &body, item, &mut n)?;
                         parent.children.push(n);
                     }
                 }
@@ -5056,10 +5133,15 @@ pub mod xml {
     }
 
     pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
+        encode_in(p, &Layout::default(), ent)
+    }
+
+    /// `encode` with the layout the engine keeps for the pack (engine-spec 0.25).
+    pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, Error> {
         let sel = p.select_encode(ent)?;
         // Build a tree: root attrs, then child elements by first appearance.
         let mut root = Node { name: sel.root.to_string(), ..Default::default() };
-        build(p, &sel, ent, &mut root)?;
+        build(p, lay, layout::kind_key(sel.kind), &sel, ent, &mut root)?;
         // residue belonging to this format, onto root attrs
         for (fmt, loc, raw) in &ent.residue {
             if fmt == &p.format {
@@ -6711,14 +6793,21 @@ pub mod bits {
     /// (first bit of the first item, bits per item) of a group, from the
     /// first bit of its scope.
     #[cfg(feature = "bits")]
-    fn group_span(p: &Pack, g: &GroupDef) -> Result<(u64, u64), Error> {
-        let (word, pos) = parse_group_locator(&g.locator)?;
+    fn group_span(p: &Pack, lay: &Layout, g: &GroupDef) -> Result<(u64, u64), Error> {
+        let (word, pos) = match lay.bits_groups.get(&layout::line_key(&g.locator)) {
+            Some(at) => *at,
+            None => parse_group_locator(&g.locator)?,
+        };
         Ok((word as u64 * p.word_bytes as u64 * 8 + pos as u64, g.item_bits.unwrap_or(1)))
     }
 
     /// (first message bit, bit length) of a locator.
     #[cfg(feature = "bits")]
-    pub(crate) fn span(p: &Pack, loc: &str) -> Result<(u64, u32), Error> {
+    pub(crate) fn span(p: &Pack, lay: &Layout, loc: &str) -> Result<(u64, u32), Error> {
+        // the span the engine keeps for a line of a loaded pack (engine-spec 0.25)
+        if let Some(s) = lay.bits_spans.get(&layout::line_key(loc)) {
+            return Ok(*s);
+        }
         let (word, pos, len) = parse_locator(loc)?;
         Ok((word as u64 * p.word_bytes as u64 * 8 + pos as u64, len))
     }
@@ -6780,8 +6869,8 @@ pub mod bits {
     /// `when` or `const` bit reaches, over the lines in force. `all`: count
     /// `optional` fields too (encode writes them; decode does not need them).
     #[cfg(feature = "bits")]
-    fn message_bytes(p: &Pack, sel: &Sel, all: bool) -> Result<usize, Error> {
-        let end = message_end(p, sel, all)?;
+    fn message_bytes(p: &Pack, lay: &Layout, sel: &Sel, all: bool) -> Result<usize, Error> {
+        let end = message_end(p, lay, sel, all)?;
         let word_bits = p.word_bytes as u64 * 8;
         let words = ((end + word_bits - 1) / word_bits).max(1);
         Ok(words as usize * p.word_bytes)
@@ -6789,7 +6878,7 @@ pub mod bits {
 
     /// The furthest bit the lines in force reach, not rounded to a word.
     #[cfg(feature = "bits")]
-    fn message_end(p: &Pack, sel: &Sel, all: bool) -> Result<u64, Error> {
+    fn message_end(p: &Pack, lay: &Layout, sel: &Sel, all: bool) -> Result<u64, Error> {
         let mut end: u64 = 0;
         let locators = sel
             .fields
@@ -6798,7 +6887,7 @@ pub mod bits {
             .map(|f| &f.locator)
             .chain(sel.fixed().map(|w| &w.locator));
         for loc in locators {
-            let (start, len) = span(p, loc)?;
+            let (start, len) = span(p, lay, loc)?;
             end = end.max(start + len as u64);
         }
         Ok(end)
@@ -7030,8 +7119,8 @@ pub mod bits {
     /// any of whose bits lies beyond `raw` does not, in either form
     /// (engine-spec v0.17).
     #[cfg(feature = "bits")]
-    fn gate_holds(p: &Pack, g: &GateDef, raw: &[u8], total: u64, base: u64) -> bool {
-        match span(p, &g.locator) {
+    fn gate_holds(p: &Pack, lay: &Layout, g: &GateDef, raw: &[u8], total: u64, base: u64) -> bool {
+        match span(p, lay, &g.locator) {
             // `total`: the bits of the input, which six-bit armor does not
             // round to a byte (engine-spec v0.14)
             Ok((off, len)) if base + off + len as u64 > total => false,
@@ -7047,10 +7136,10 @@ pub mod bits {
     /// the block enclosing it holds. A parent comes before its children in
     /// the table.
     #[cfg(feature = "bits")]
-    fn held_on(p: &Pack, gates: &[GateDef], raw: &[u8], total: u64, base: u64) -> Vec<bool> {
+    fn held_on(p: &Pack, lay: &Layout, gates: &[GateDef], raw: &[u8], total: u64, base: u64) -> Vec<bool> {
         let mut held = vec![false; gates.len()];
         for (i, g) in gates.iter().enumerate() {
-            held[i] = g.parent.map_or(true, |q| held[q]) && gate_holds(p, g, raw, total, base);
+            held[i] = g.parent.map_or(true, |q| held[q]) && gate_holds(p, lay, g, raw, total, base);
         }
         held
     }
@@ -7085,13 +7174,13 @@ pub mod bits {
     /// field line with a present key that covers exactly its bits, when the
     /// value written there matches it.
     #[cfg(feature = "bits")]
-    fn keeps_field(p: &Pack, sel: &Sel, ent: &Entity, w: &WhenDef, msg: &[u8], base: u64) -> Result<bool, Error> {
+    fn keeps_field(p: &Pack, lay: &Layout, sel: &Sel, ent: &Entity, w: &WhenDef, msg: &[u8], base: u64) -> Result<bool, Error> {
         if !w.several() {
             return Ok(false);
         }
-        let (off, len) = span(p, &w.locator)?;
+        let (off, len) = span(p, lay, &w.locator)?;
         for f in sel.fields.iter().filter(|f| has_key(ent, f)) {
-            if span(p, &f.locator)? == (off, len) {
+            if span(p, lay, &f.locator)? == (off, len) {
                 return Ok(get_bits(msg, base + off, len, p.order).map_or(false, |v| w.holds_num(v)));
             }
         }
@@ -7099,7 +7188,7 @@ pub mod bits {
     }
 
     #[cfg(feature = "bits")]
-    fn plan_gates(p: &Pack, sel: &Sel, ent: &Entity) -> Result<GatePlan, Error> {
+    fn plan_gates(p: &Pack, lay: &Layout, sel: &Sel, ent: &Entity) -> Result<GatePlan, Error> {
         let gates = sel.gates;
         if gates.is_empty() {
             return Ok(GatePlan { held: Vec::new(), values: Vec::new() });
@@ -7130,7 +7219,7 @@ pub mod bits {
             .chain(gates.iter().map(|g| &g.locator))
             .chain(counts.clone().map(|(l, _)| l));
         for loc in locators {
-            let (off, len) = span(p, loc)?;
+            let (off, len) = span(p, lay, loc)?;
             end = end.max(off + len as u64);
         }
         let mut work = vec![0u8; ((end + 7) / 8) as usize];
@@ -7148,12 +7237,12 @@ pub mod bits {
         // later lines first: the earlier line's value stays.
         let outside = || sel.fields.iter().rev().filter(|f| f.gate.is_none());
         for f in outside().filter(|f| live(ent, f) && sel.value_of(ent, f).is_none()) {
-            let (off, len) = span(p, &f.locator)?;
+            let (off, len) = span(p, lay, &f.locator)?;
             write_sentinel(p, f, off, len, &mut work);
         }
         for f in outside() {
             if let Some(v) = sel.value_of(ent, f) {
-                let (off, len) = span(p, &f.locator)?;
+                let (off, len) = span(p, lay, &f.locator)?;
                 // a value that does not encode fails in step 5
                 if let Ok(w) = p.to_wire(f, v) {
                     let _ = write_field(p, f, &w, off, len, &mut work);
@@ -7164,14 +7253,14 @@ pub mod bits {
             }
         }
         for w in sel.consts.iter().filter(|c| c.gate.is_none()).chain(sel.whens.iter().filter(|w| !w.present)) {
-            let (off, len) = span(p, &w.locator)?;
-            if !keeps_field(p, sel, ent, w, &work, 0)? {
+            let (off, len) = span(p, lay, &w.locator)?;
+            if !keeps_field(p, lay, sel, ent, w, &work, 0)? {
                 set_bits(&mut work, off, len, w.num, p.order);
             }
             mark(&mut written, off, len);
         }
         for (l, g) in counts {
-            let (off, len) = span(p, l)?;
+            let (off, len) = span(p, lay, l)?;
             let n = ent.lists.get(&g.list).map_or(0, |items| items.len() as u64);
             set_bits(&mut work, off, len, low(n, len), p.order);
             mark(&mut written, off, len);
@@ -7183,7 +7272,7 @@ pub mod bits {
             if !open[i] {
                 continue;
             }
-            let (off, len) = span(p, &g.locator)?;
+            let (off, len) = span(p, lay, &g.locator)?;
             if written[off as usize..(off + len as u64) as usize].iter().any(|b| *b) {
                 continue;
             }
@@ -7202,17 +7291,17 @@ pub mod bits {
         }
         // step 4: each block evaluated on the bits of step 3 together with
         // those of an outside default or sentinel no gate value replaced
-        let held = held_on(p, gates, &work, work.len() as u64 * 8, 0);
+        let held = held_on(p, lay, gates, &work, work.len() as u64 * 8, 0);
         Ok(GatePlan { held, values })
     }
 
     /// The furthest bit of a scope's held gate locators (the length paragraph of 0.17).
     #[cfg(feature = "bits")]
-    fn held_gates_end(p: &Pack, sel: &Sel, held: &[bool]) -> Result<u64, Error> {
+    fn held_gates_end(p: &Pack, lay: &Layout, sel: &Sel, held: &[bool]) -> Result<u64, Error> {
         let mut end = 0u64;
         for (g, h) in sel.gates.iter().zip(held) {
             if *h {
-                let (off, len) = span(p, &g.locator)?;
+                let (off, len) = span(p, lay, &g.locator)?;
                 end = end.max(off + len as u64);
             }
         }
@@ -7228,8 +7317,10 @@ pub mod bits {
     /// one item, whose first bit is `base`. `reach` is the furthest bit the
     /// message must hold; `total` the bits of the input.
     #[cfg(feature = "bits")]
+    #[allow(clippy::too_many_arguments)]
     fn decode_scope(
         p: &Pack,
+        lay: &Layout,
         sel: &Sel,
         raw: &[u8],
         total: u64,
@@ -7240,7 +7331,7 @@ pub mod bits {
         // where the items of this scope's groups end
         let mut groups_end = 0u64;
         for f in &sel.fields {
-            let (off, len) = span(p, &f.locator)?;
+            let (off, len) = span(p, lay, &f.locator)?;
             let start = base + off;
             if start + len as u64 > total {
                 // an `optional` field beyond the input is absent
@@ -7263,7 +7354,7 @@ pub mod bits {
             let n = match &g.count {
                 Some(Count::Fixed(n)) => *n,
                 Some(Count::Locator(l)) => {
-                    let (off, len) = span(p, l)?;
+                    let (off, len) = span(p, lay, l)?;
                     *reach = (*reach).max(base + off + len as u64);
                     get_bits(raw, base + off, len, p.order)
                         .filter(|_| base + off + len as u64 <= total)
@@ -7274,7 +7365,7 @@ pub mod bits {
             // the count against what the limit still allows, before any item is read (7d)
             d.replacing(&g.list);
             limit::take(&p.format, &g.list, n)?;
-            let (off, item_bits) = group_span(p, g)?;
+            let (off, item_bits) = group_span(p, lay, g)?;
             let start = base + off;
             let end = n.checked_mul(item_bits).and_then(|b| b.checked_add(start)).filter(|e| *e <= total).ok_or_else(|| {
                 short(p, format!("list `{}` has {} items of {} bits, more than the input holds", g.list, n, item_bits))
@@ -7291,8 +7382,8 @@ pub mod bits {
                 }
                 let mut di = Decoded::new();
                 // the gate blocks of the item, evaluated per item (ruling 2 of 0.17)
-                let item = only_held(&body, &held_on(p, &g.gates, raw, total, at));
-                let nested_end = decode_scope(p, &item, raw, total, at, &mut di, reach)?;
+                let item = only_held(&body, &held_on(p, lay, &g.gates, raw, total, at));
+                let nested_end = decode_scope(p, lay, &item, raw, total, at, &mut di, reach)?;
                 at = (at + item_bits).max(nested_end);
                 items.push(di);
             }
@@ -7305,6 +7396,12 @@ pub mod bits {
 
     #[cfg(feature = "bits")]
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
+        decode_in(p, &Layout::default(), hex)
+    }
+
+    /// `decode` with the layout the engine keeps for the pack (engine-spec 0.25).
+    #[cfg(feature = "bits")]
+    pub(crate) fn decode_in(p: &Pack, lay: &Layout, hex: &str) -> Result<Entity, Error> {
         let _scope = limit::scope();
         // the message and its length in bits: hex, or six-bit armor (engine-spec v0.14)
         let sixbit = p.armor == armor::Armor::Sixbit;
@@ -7319,32 +7416,32 @@ pub mod bits {
             return super::seq::decode(p, body, &raw, total);
         }
         // a `when` whose bits lie beyond the input does not hold
-        let sel = p.select_decode(None, |w| match span(p, &w.locator) {
+        let sel = p.select_decode(None, |w| match span(p, lay, &w.locator) {
             Ok((start, len)) => start + len as u64 <= total && get_bits(&raw, start, len, p.order).map_or(false, |v| w.holds_num(v)),
             Err(_) => false,
         })?;
         // the lines of the gate blocks that hold (engine-spec v0.17)
-        let sel = only_held(&sel, &held_on(p, sel.gates, &raw, total, 0));
+        let sel = only_held(&sel, &held_on(p, lay, sel.gates, &raw, total, 0));
         if sixbit {
             // every bit of the lines in force, not whole words (engine-spec v0.14)
-            let need = message_end(p, &sel, false)?;
+            let need = message_end(p, lay, &sel, false)?;
             if total < need {
                 return Err(short(p, format!("input is {} bits, need {}", total, need)));
             }
             let mut d = Decoded::new();
-            decode_scope(p, &sel, &raw, total, 0, &mut d, &mut 0)?;
+            decode_scope(p, lay, &sel, &raw, total, 0, &mut d, &mut 0)?;
             return d.finish(p, &sel);
         }
         let words = |need: usize| {
             format!("input is {} bytes, need {} ({} words of {})", raw.len(), need, need / p.word_bytes, p.word_bytes)
         };
-        let need = message_bytes(p, &sel, false)?;
+        let need = message_bytes(p, lay, &sel, false)?;
         if raw.len() < need {
             return Err(short(p, words(need)));
         }
         let mut d = Decoded::new();
         let mut reach = 0u64;
-        decode_scope(p, &sel, &raw, total, 0, &mut d, &mut reach)?;
+        decode_scope(p, lay, &sel, &raw, total, 0, &mut d, &mut reach)?;
         // whole words up to the furthest bit, the items of every group included
         let word_bits = p.word_bytes as u64 * 8;
         let need = ((reach + word_bits - 1) / word_bits) as usize * p.word_bytes;
@@ -7357,26 +7454,26 @@ pub mod bits {
     /// The bits one item takes on encode: `item <bits>`, or up to the end of a
     /// nested group counted by a locator, when that is further.
     #[cfg(feature = "bits")]
-    fn item_len(p: &Pack, g: &GroupDef, item: &Entity) -> Result<u64, Error> {
+    fn item_len(p: &Pack, lay: &Layout, g: &GroupDef, item: &Entity) -> Result<u64, Error> {
         let item_bits = g.item_bits.unwrap_or(1);
-        Ok(item_bits.max(group_reach(p, &g.body(), item, 0)?))
+        Ok(item_bits.max(group_reach(p, lay, &g.body(), item, 0)?))
     }
 
     /// The furthest bit the groups of a scope write: each count locator, and
     /// the items of each list the entity has.
     #[cfg(feature = "bits")]
-    pub(crate) fn group_reach(p: &Pack, sel: &Sel, ent: &Entity, base: u64) -> Result<u64, Error> {
+    pub(crate) fn group_reach(p: &Pack, lay: &Layout, sel: &Sel, ent: &Entity, base: u64) -> Result<u64, Error> {
         let mut end = 0u64;
         for g in &sel.groups {
             if let Some(Count::Locator(l)) = &g.count {
-                let (off, len) = span(p, l)?;
+                let (off, len) = span(p, lay, l)?;
                 end = end.max(base + off + len as u64);
             }
             if let Some(items) = ent.lists.get(&g.list) {
-                let (off, _) = group_span(p, g)?;
+                let (off, _) = group_span(p, lay, g)?;
                 let mut at = base + off;
                 for item in items {
-                    at += item_len(p, g, item)?;
+                    at += item_len(p, lay, g, item)?;
                 }
                 end = end.max(at);
             }
@@ -7394,6 +7491,7 @@ pub mod bits {
     #[cfg(feature = "bits")]
     fn write_scope<'p>(
         p: &Pack,
+        lay: &Layout,
         all: &Sel<'p>,
         ent: &Entity,
         base: u64,
@@ -7402,13 +7500,13 @@ pub mod bits {
     ) -> Result<(), Error> {
         // the gate blocks that hold (engine-spec v0.17): the lines written are
         // those outside any block and those of the held blocks
-        let plan = plan_gates(p, all, ent)?;
+        let plan = plan_gates(p, lay, all, ent)?;
         let sel = &only_held(all, &plan.held);
         // an absent key whose field has `absent` writes its first sentinel,
         // first: a line with a value wins over it whatever their order (ruling
         // 16 of 0.9); of two sentinels the earlier line's stays
         for f in sel.fields.iter().rev().filter(|f| live(ent, f) && sel.value_of(ent, f).is_none()) {
-            let (off, len) = span(p, &f.locator)?;
+            let (off, len) = span(p, lay, &f.locator)?;
             write_sentinel(p, f, base + off, len, msg);
         }
         // later lines first: where two fields cover the same bits the earlier
@@ -7418,7 +7516,7 @@ pub mod bits {
                 Some(v) => p.to_wire(f, v).map_err(|e| transform_encode_err(p, f, e))?,
                 None => continue,
             };
-            let (off, len) = span(p, &f.locator)?;
+            let (off, len) = span(p, lay, &f.locator)?;
             let start = base + off;
             write_field(p, f, &v, start, len, msg)?;
         }
@@ -7427,7 +7525,7 @@ pub mod bits {
         if plan.values.iter().any(|v| v.is_some()) {
             let mut present: Vec<(u64, u64)> = Vec::new();
             for f in sel.fields.iter().filter(|f| has_key(ent, f)) {
-                let (off, len) = span(p, &f.locator)?;
+                let (off, len) = span(p, lay, &f.locator)?;
                 present.push((off, off + len as u64));
             }
             for (i, g) in all.gates.iter().enumerate() {
@@ -7435,7 +7533,7 @@ pub mod bits {
                     Some(v) if plan.held[i] => v,
                     _ => continue,
                 };
-                let (off, len) = span(p, &g.locator)?;
+                let (off, len) = span(p, lay, &g.locator)?;
                 for k in 0..len {
                     let at = off + k as u64;
                     if present.iter().any(|(a, b)| *a <= at && at < *b) {
@@ -7465,12 +7563,12 @@ pub mod bits {
                 (None, None) => continue,
             };
             let n = items.len() as u64;
-            let (off, _) = group_span(p, g)?;
+            let (off, _) = group_span(p, lay, g)?;
             let body = g.body();
             let mut at = base + off;
             for item in items {
-                write_scope(p, &body, item, at, msg, checks)?;
-                at += item_len(p, g, item)?;
+                write_scope(p, lay, &body, item, at, msg, checks)?;
+                at += item_len(p, lay, g, item)?;
             }
             match &g.count {
                 Some(Count::Fixed(want)) if *want != n => {
@@ -7482,13 +7580,13 @@ pub mod bits {
         }
         // over the same bits: fields, then `const`, then `when`, then counts (ruling 15 of 0.7)
         for w in sel.consts.iter().chain(sel.whens.iter().filter(|w| !w.present)) {
-            let (off, len) = span(p, &w.locator)?;
-            if !keeps_field(p, sel, ent, w, msg, base)? {
+            let (off, len) = span(p, lay, &w.locator)?;
+            if !keeps_field(p, lay, sel, ent, w, msg, base)? {
                 set_bits(msg, base + off, len, w.num, p.order);
             }
         }
         for (l, n, g) in counts {
-            let (coff, len) = span(p, l)?;
+            let (coff, len) = span(p, lay, l)?;
             if len < 64 && n >> len != 0 {
                 return Err(Error {
                     msg: format!(
@@ -7521,9 +7619,9 @@ pub mod bits {
     /// Step 6 of 0.17 on the final output: every scope and item decodes to
     /// the blocks encode chose.
     #[cfg(feature = "bits")]
-    fn check_gates(p: &Pack, msg: &[u8], total: u64, checks: &[GateCheck]) -> Result<(), Error> {
+    fn check_gates(p: &Pack, lay: &Layout, msg: &[u8], total: u64, checks: &[GateCheck]) -> Result<(), Error> {
         for (gates, base, held) in checks {
-            let out = held_on(p, gates, msg, total, *base);
+            let out = held_on(p, lay, gates, msg, total, *base);
             if let Some(i) = (0..out.len()).find(|i| out[*i] != held[*i]) {
                 let g = &gates[i];
                 return err(format!(
@@ -7541,6 +7639,12 @@ pub mod bits {
 
     #[cfg(feature = "bits")]
     pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
+        encode_in(p, &Layout::default(), ent)
+    }
+
+    /// `encode` with the layout the engine keeps for the pack (engine-spec 0.25).
+    #[cfg(feature = "bits")]
+    pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, Error> {
         let sixbit = p.armor == armor::Armor::Sixbit;
         if let Some(body) = &p.seq {
             // six-bit armor: the cursor after the last line, not rounded (engine-spec v0.14)
@@ -7550,27 +7654,27 @@ pub mod bits {
         let sel = p.select_encode(ent)?;
         // whole words up to the furthest bit: the lines in force, extended by the items
         let word_bits = p.word_bytes as u64 * 8;
-        let items = ((group_reach(p, &sel, ent, 0)? + word_bits - 1) / word_bits) as usize * p.word_bytes;
+        let items = ((group_reach(p, lay, &sel, ent, 0)? + word_bits - 1) / word_bits) as usize * p.word_bytes;
         // the lines in force and the gate locators of the held blocks (engine-spec v0.17)
-        let held = plan_gates(p, &sel, ent)?.held;
-        let gates_end = held_gates_end(p, &sel, &held)?;
+        let held = plan_gates(p, lay, &sel, ent)?.held;
+        let gates_end = held_gates_end(p, lay, &sel, &held)?;
         let gates = ((gates_end + word_bits - 1) / word_bits) as usize * p.word_bytes;
-        let lines = message_bytes(p, &only_held(&sel, &held), true)?;
+        let lines = message_bytes(p, lay, &only_held(&sel, &held), true)?;
         let mut msg: Vec<u8> = vec![0u8; lines.max(items).max(gates)];
         let mut checks = Vec::new();
-        write_scope(p, &sel, ent, 0, &mut msg, &mut checks)?;
+        write_scope(p, lay, &sel, ent, 0, &mut msg, &mut checks)?;
         if sixbit {
             // L: the lines outside any block, the held blocks' lines and their
             // gate locators (engine-spec v0.14, v0.17); the output decodes
             // from L bits rounded up to a character
-            let len = armor::fixed_len(p, &only_held(&sel, &held), ent)?.max(gates_end);
+            let len = armor::fixed_len(p, lay, &only_held(&sel, &held), ent)?.max(gates_end);
             let bits = (len + 5) / 6 * 6;
             let mut out = msg.clone();
             out.resize(((bits + 7) / 8) as usize, 0);
-            check_gates(p, &out, bits, &checks)?;
+            check_gates(p, lay, &out, bits, &checks)?;
             return Ok(armor::write(&msg, len));
         }
-        check_gates(p, &msg, msg.len() as u64 * 8, &checks)?;
+        check_gates(p, lay, &msg, msg.len() as u64 * 8, &checks)?;
         Ok(to_hex(&msg))
     }
 
@@ -7898,9 +8002,29 @@ pub mod protobuf {
     /// Decode the fields and groups of one scope: the message, or one item
     /// read as a submessage.
     #[cfg(feature = "protobuf")]
-    fn decode_scope(p: &Pack, sel: &Sel, msg: &mut Parsed, d: &mut Decoded) -> Result<(), Error> {
-        for f in sel.fields.iter().filter(|f| f.locator != ".") {
-            let path = parse_path(&f.locator)?;
+    fn decode_scope(p: &Pack, lay: &Layout, key: usize, sel: &Sel, msg: &mut Parsed, d: &mut Decoded) -> Result<(), Error> {
+        // with the scope's index (engine-spec 0.25), only the lines whose
+        // first field occurs: a line whose first field does not occur reads
+        // nothing and fails nothing, so the result is that of every line
+        let (fields, groups): (Vec<&FieldDef>, Vec<&GroupDef>) = match lay.pb_scopes.get(&key) {
+            Some(ix) => {
+                let mut numbers: Vec<u32> = msg.root.iter().map(|(n, _)| *n).collect();
+                numbers.sort_unstable();
+                numbers.dedup();
+                let at = |m: &layout::Map<u32, Vec<usize>>| {
+                    let mut places: Vec<usize> = numbers.iter().filter_map(|n| m.get(n)).flatten().copied().collect();
+                    places.sort_unstable();
+                    places
+                };
+                (
+                    at(&ix.fields).into_iter().map(|i| sel.fields[i]).collect(),
+                    at(&ix.groups).into_iter().map(|i| sel.groups[i]).collect(),
+                )
+            }
+            None => (sel.fields.iter().copied().filter(|f| f.locator != ".").collect(), sel.groups.clone()),
+        };
+        for f in fields {
+            let path = lay.pb_path(&f.locator)?;
             if let Some(wv) = msg.resolve(&path)? {
                 // a sentinel: the line yields no value (engine-spec v0.9)
                 if !is_sentinel(f, &wv) {
@@ -7908,8 +8032,8 @@ pub mod protobuf {
                 }
             }
         }
-        for g in &sel.groups {
-            let path = parse_path(&g.locator)?;
+        for g in groups {
+            let path = lay.pb_path(&g.locator)?;
             let (last, before) = path.split_last().ok_or(Error { msg: "empty protobuf path".into() })?;
             // the message that holds the items: the last occurrence of each step
             let holder = match msg.fields_at(before)? {
@@ -7946,7 +8070,9 @@ pub mod protobuf {
                     }
                 }
                 match v {
-                    WireVal::LenDelim(sub) if into => decode_scope(p, &body, &mut Parsed::new(sub)?, &mut di)?,
+                    WireVal::LenDelim(sub) if into => {
+                        decode_scope(p, lay, layout::group_key(g), &body, &mut Parsed::new(sub)?, &mut di)?
+                    }
                     _ if into && g.scalar().is_none() => {
                         return err(format!(
                             "malformed-wire: format `{}`: an item of list `{}` is not a submessage",
@@ -7964,20 +8090,26 @@ pub mod protobuf {
 
     #[cfg(feature = "protobuf")]
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
+        decode_in(p, &Layout::default(), hex)
+    }
+
+    /// `decode` with the layout the engine keeps for the pack (engine-spec 0.25).
+    #[cfg(feature = "protobuf")]
+    pub(crate) fn decode_in(p: &Pack, lay: &Layout, hex: &str) -> Result<Entity, Error> {
         let _scope = limit::scope();
         let raw = super::bits::from_hex(hex)?;
         // a malformed message is an error, not a kind mismatch, and is one
         // whether or not a line of the pack reads it
         let msg = std::cell::RefCell::new(Parsed::new(&raw)?);
         let sel = p.select_decode(None, |w| {
-            let found = parse_path(&w.locator).and_then(|path| msg.borrow_mut().resolve(&path));
+            let found = lay.pb_path(&w.locator).and_then(|path| msg.borrow_mut().resolve(&path));
             match found {
                 Ok(Some(v)) => w.present || matches!(v, WireVal::Varint(x) if w.holds_num(x)),
                 _ => false,
             }
         })?;
         let mut d = Decoded::new();
-        decode_scope(p, &sel, &mut msg.into_inner(), &mut d)?;
+        decode_scope(p, lay, layout::kind_key(sel.kind), &sel, &mut msg.into_inner(), &mut d)?;
         d.finish(p, &sel)
     }
 
@@ -8036,18 +8168,18 @@ pub mod protobuf {
 
     /// The tree one scope writes: the message, or one submessage item.
     #[cfg(feature = "protobuf")]
-    fn build(p: &Pack, sel: &Sel, ent: &Entity) -> Result<BTreeMap<u32, Node>, Error> {
+    fn build(p: &Pack, lay: &Layout, sel: &Sel, ent: &Entity) -> Result<BTreeMap<u32, Node>, Error> {
         let mut tree: BTreeMap<u32, Node> = BTreeMap::new();
         // an absent key whose field has `absent` writes its first sentinel where
         // no line with a value writes (engine-spec v0.9): later lines first, so
         // of two sentinels on one path the earlier line's stays
         for (f, s) in sentinel_lines(sel, ent, |f| f.locator == ".").into_iter().rev() {
-            insert(&mut tree, &parse_path(&f.locator)?, sentinel_wire(f, s)?)?;
+            insert(&mut tree, &lay.pb_path(&f.locator)?, sentinel_wire(f, s)?)?;
         }
         // later lines first: of two fields on one path the earlier line's value stays
         for f in sel.fields.iter().rev().filter(|f| f.locator != ".") {
             if let Some(v) = sel.value_of(ent, f) {
-                let path = parse_path(&f.locator)?;
+                let path = lay.pb_path(&f.locator)?;
                 let wv = p
                     .to_wire(f, v)
                     .and_then(|w| f.transform.encode_pb(&w))
@@ -8085,7 +8217,7 @@ pub mod protobuf {
                         nodes.push(Node::Leaf(wv));
                     }
                     // an item with nothing written is an empty length-delimited occurrence
-                    (None, None) => nodes.push(Node::Msg(build(p, &body, item)?)),
+                    (None, None) => nodes.push(Node::Msg(build(p, lay, &body, item)?)),
                 }
             }
             // a `.` line with a numeric transform: the packed form
@@ -8100,7 +8232,7 @@ pub mod protobuf {
                 }
                 _ => Node::Many(nodes),
             };
-            insert_node(&mut tree, &parse_path(&g.locator)?, node)?;
+            insert_node(&mut tree, &lay.pb_path(&g.locator)?, node)?;
         }
         // `when` and `const` values: a varint for an integer, nothing for `present`
         for w in sel.fixed() {
@@ -8117,22 +8249,28 @@ pub mod protobuf {
                     }
                 }
             }
-            insert(&mut tree, &parse_path(&w.locator)?, WireVal::Varint(num))?;
+            insert(&mut tree, &lay.pb_path(&w.locator)?, WireVal::Varint(num))?;
         }
         Ok(tree)
     }
 
     #[cfg(feature = "protobuf")]
     pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
+        encode_in(p, &Layout::default(), ent)
+    }
+
+    /// `encode` with the layout the engine keeps for the pack (engine-spec 0.25).
+    #[cfg(feature = "protobuf")]
+    pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, Error> {
         let sel = p.select_encode(ent)?;
-        let mut tree = build(p, &sel, ent)?;
+        let mut tree = build(p, lay, &sel, ent)?;
         // `present` with no field written under the path: an empty
         // length-delimited field, so the output decodes as the same kind
         for w in &sel.whens {
             if w.present {
-                let path = parse_path(&w.locator)?;
+                let path = lay.pb_path(&w.locator)?;
                 let mut cur = &mut tree;
-                for step in &path {
+                for step in path.iter() {
                     let tmp = cur;
                     cur = match tmp.entry(*step).or_insert_with(|| Node::Msg(BTreeMap::new())) {
                         Node::Msg(m) => m,

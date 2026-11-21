@@ -1,0 +1,21 @@
+{
+  "about": "The benchmark set of spec 0.25: conversion vectors on every wire, small and catalog formats. Each engine converts each input `iterations` times after loading the packs of the set once, checks every output against `expect`, and prints one result line per vector (spec 0.25, ruling 2).",
+  "iterations": 2000,
+  "vectors": [
+    "packs/cot-xml/vectors/01-track-to-geojson.json",
+    "packs/geojson/vectors/01-geojson-to-cot.json",
+    "packs/canonical-track-v2/vectors/02-to-cot-xml.json",
+    "packs/sapient/vectors/01-sapient-to-geojson.json",
+    "packs/cot-protobuf/vectors/01-event-to-cot-xml.json",
+    "packs/isa/vectors/01-isa-to-geojson.json",
+    "packs/uci/vectors/gen-001-access_assessment-roundtrip.json",
+    "packs/a-gra/vectors/gen-001-access_assessment-roundtrip.json",
+    "packs/nmea2000/vectors/rt-pgn59392.json",
+    "packs/mavlink2/vectors/rt-00000-heartbeat.json",
+    "packs/asterix-cat062/vectors/12-to-canonical-track-v2-with-context.json",
+    "packs/remote-id/vectors/09-basic-id-upstream-test-bytes-to-geojson.json",
+    "packs/adsb/vectors/01-identification-tc1-roundtrip.json",
+    "packs/nmea0183/vectors/40-rmc-to-geojson.json",
+    "packs/dhcpv6-options/vectors/01-solicit-options-round-trip.json"
+  ]
+}

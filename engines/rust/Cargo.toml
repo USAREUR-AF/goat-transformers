@@ -35,3 +35,9 @@ path = "src/main.rs"
 [lib]
 name = "goat_transformers"
 path = "src/lib.rs"
+
+# Engine-spec 0.25, ruling 2: the benchmark over `bench/set.json`. Its set has
+# a vector on every wire, so it is built only where all seven are.
+[[example]]
+name = "bench"
+required-features = ["xml", "geojson", "json", "bits", "protobuf", "text", "tlv"]

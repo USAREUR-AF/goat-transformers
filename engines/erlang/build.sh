@@ -36,8 +36,8 @@ for w in $all; do has "$w" || defs="$defs -Dno_wire_$w"; done
 mods="gt_engine gt_pack gt_model gt_num gt_derive gt_iso gt_cli"
 has xml && mods="$mods gt_xml"
 # gt_json reads JSON text for json and geojson, and the conformance
-# runner gt_test reads the vectors with it
-if has json || has geojson; then mods="$mods gt_json gt_test"; fi
+# runner gt_test and the benchmark gt_bench read JSON with it
+if has json || has geojson; then mods="$mods gt_json gt_test gt_bench"; fi
 has bits && mods="$mods gt_bits gt_seq"
 has protobuf && mods="$mods gt_protobuf"
 has text && mods="$mods gt_text"

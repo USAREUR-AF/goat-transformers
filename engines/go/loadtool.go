@@ -30,16 +30,12 @@ func LoadTool(modelsDir, packsDir, maxDistribution string, only []string) (*Engi
 	if err := e.SetMaxDistribution(maxDistribution); err != nil {
 		return nil, err
 	}
-	files, err := moduleFiles(modelsDir)
+	files, err := readModuleFiles(modelsDir)
 	if err != nil {
 		return nil, err
 	}
 	for _, f := range files {
-		text, err := os.ReadFile(f)
-		if err != nil {
-			return nil, &Error{Kind: ErrBadDirective, Source: f, Detail: err.Error()}
-		}
-		if err := e.LoadModel(text, f); err != nil {
+		if err := f.load(e); err != nil {
 			return nil, err
 		}
 	}

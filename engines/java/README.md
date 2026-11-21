@@ -208,22 +208,27 @@ and runs:
   nesting, XML declarations, number forms), and a sweep that feeds damaged
   copies of every conversion vector's input to `decode` and `convert` and
   requires each failure to be a `GtException` with a named kind: never
-  another exception.
+  another exception;
+- the checks of `ParseOnceTests` (Version 0.25, ruling 1; see
+  [Parse once](#parse-once)).
 
 It prints each failure and exits non-zero on any. Measured with
-`nice -n 10 ./build.sh` on this tree (14028 vectors, 1761 packs):
+`nice -n 10 ./build.sh` on this tree (21583 vectors, 3946 packs), on a
+loaded machine:
 
 ```
-conversion vectors: 14028/14028 passed (1761 packs, 679 model modules)
-load vectors: 512/512 passed
+conversion vectors: 21583/21583 passed (3946 packs, 2624 model modules)
+load vectors: 1166/1166 passed
 capability vectors: 18/18 passed
-packs-only: loadOnly checked for 48 of 1761 packs, 24061 ms (GOAT_SWEEP_FULL=1 for all)
-malformed input sweep: 1468191 inputs over 14028 of 14028 conversion vectors (49 damaged copies each) and 1761 packs of 6 wires, 1103663 named errors, 0 defects, 13860 ms (GOAT_SWEEP_FULL=1 for the full sweep)
-unit checks: 733/733 passed
+packs-only: loadOnly checked for 48 of 3946 packs, 411 ms (GOAT_SWEEP_FULL=1 for all)
+malformed input sweep: 1421111 inputs over 21583 of 21583 conversion vectors (30 damaged copies each) and 3946 packs of 7 wires, 1063671 named errors, 0 defects, 40005 ms (GOAT_SWEEP_FULL=1 for the full sweep)
+parse once: 8 threads x 2 rounds x 2387 conversions on one instance, 0 differ
+parse once (0.25): 2489 ms
+unit checks: 874/874 passed
 OK
 ```
 
-`./build.sh` takes 52 s in all.
+`./build.sh` takes 78 s in all.
 
 The tool vectors (`packs/conformance/tool-vectors/`, spec Version 0.23) run
 against the tool, after `./build.sh` has written the jar, from the repository
@@ -258,10 +263,11 @@ The sweep is bounded, and its size does not depend on the number of packs:
   that point, the first vector of every pack is kept and the others are
   sampled by seed.
 
-`loadOnly` reads the whole `model` directory on each call, which is about
-0.5 s here. So `--packs-only` loading is checked one pack at a time for a
-fixed sample of 48 packs: the first of each wire, the pack with the most
-`uses` lines, and the rest chosen by seed.
+`--packs-only` loading is checked one pack at a time for a fixed sample of
+48 packs: the first of each wire, the pack with the most `uses` lines, and
+the rest chosen by seed. Since Version 0.25 `loadOnly` reads only the files
+of the modules it needs (see [Parse once](#parse-once)), so the sample is
+there to keep the run short, not because one call is slow.
 
 `GOAT_SWEEP_FULL=1 ./build.sh` runs the full checks for a deliberate deep run.
 These are the earlier sweep, which gives a damaged copy of every vector to
@@ -279,6 +285,84 @@ That run takes 14 min 38 s in all. Before the sweep was bounded, the plain
 `./build.sh` took 13 min 50 s with 26,151,719 sweep inputs. The one-pack
 `loadOnly` loop took most of that time, about 12 minutes, and the sweep about
 2 minutes. Both grow with the number of packs.
+
+## Parse once
+
+Version 0.25 (ruling 1) lets an engine keep what it parsed. An `Engine`
+keeps, for its whole life, the parsed form of every model module and pack it
+loaded, and each pack's codec with the layouts the codec computes when the
+pack is added (the element plan of an `xml` kind, the field-number paths of
+a `protobuf` pack, the item tree of a `tlv` pack, the plan of a `bits` kind
+and of a sequential layout, the column map of a `text` kind). A conversion
+reads them and writes none of them; its own state (the decoded message, the
+entity, the item budget, which is per thread) lives only for that call, so a
+failed conversion leaves nothing behind.
+
+Loading reads each file once. `Engine.loadOnly` parses each named pack once
+and reads only the module files it needs: a module is looked for in
+`<models>/<module>.def`, the file `spec/shared-model.md` names for it. When
+one of those files is missing, unreadable as a module head, or declares
+another module, it reads the whole directory as `Engine.load` does. Measured
+before and after the change, one after the other on the same loaded machine
+(load average about 28 on 16 cores): `Engine.loadOnly(packs, ["cot-xml"])`
+took 2154 ms a call before and 1 ms after; loading the 15 packs of the
+benchmark set took 10.8 s and 7.5 s before, 6.9 s and 5.9 s after;
+`Engine.load` of all 3946 packs took 19.0 s before and 17.7 s after (it read
+each file once already). The conversions themselves did not change: they
+already used the parsed packs, and their times moved within the noise of the
+machine.
+
+Once loaded, one `Engine` may be used from several threads at once: each
+`convert`, `decode`, `encode`, `complete` and `capability` gives the result
+it gives alone (ruling 1c). Loading (`loadModel`, `loadPack`, `add`) and the
+setters (`setMaxItems`, `setMaxDistribution`) are not safe to call while
+another thread converts; finish them before you share the instance.
+`ParseOnceTests` checks this: eight threads, each in its own order, run the
+conformance vectors and the benchmark set twice on the instance that already
+ran every vector and the malformed-input sweep, and every result must be the
+one of the same conversion run alone.
+
+## Benchmark
+
+The benchmark of Version 0.25 (ruling 2), from the repository root:
+
+```bash
+engines/java/bench.sh                 # optional argument: the set, default bench/set.json
+```
+
+It compiles `goat.transformers.Bench` (`src/bench/java/`) against the engine
+classes of `build/main`, running `./build.sh --no-test` first when they are
+missing, and runs it. The bench class is not in the jar. It loads, into one
+instance and timed, the packs the set's vectors name in `from` and `to`,
+with `core` and the modules their `uses` lines need (`Engine.loadOnly`).
+Then, for each vector in order, it converts the input once and compares the
+output with `expect`, then converts it `iterations` times, timed. Standard
+output is one JSON line per vector, then the load line, and nothing else;
+the build's output goes to standard error. A vector whose output differs
+from `expect` stops the run with exit status 1 and the reason on standard
+error. The numbers are measurements of one machine at one time; nothing
+fails on them (ruling 2d).
+
+Measured with `nice -n 10 engines/java/bench.sh` on the same loaded machine:
+
+```
+{"vector": "packs/cot-xml/vectors/01-track-to-geojson.json", "iterations": 2000, "ns_per_op": 383026}
+{"vector": "packs/geojson/vectors/01-geojson-to-cot.json", "iterations": 2000, "ns_per_op": 503986}
+{"vector": "packs/canonical-track-v2/vectors/02-to-cot-xml.json", "iterations": 2000, "ns_per_op": 480673}
+{"vector": "packs/sapient/vectors/01-sapient-to-geojson.json", "iterations": 2000, "ns_per_op": 223247}
+{"vector": "packs/cot-protobuf/vectors/01-event-to-cot-xml.json", "iterations": 2000, "ns_per_op": 197957}
+{"vector": "packs/isa/vectors/01-isa-to-geojson.json", "iterations": 2000, "ns_per_op": 115894}
+{"vector": "packs/uci/vectors/gen-001-access_assessment-roundtrip.json", "iterations": 2000, "ns_per_op": 890889}
+{"vector": "packs/a-gra/vectors/gen-001-access_assessment-roundtrip.json", "iterations": 2000, "ns_per_op": 457272}
+{"vector": "packs/nmea2000/vectors/rt-pgn59392.json", "iterations": 2000, "ns_per_op": 45874}
+{"vector": "packs/mavlink2/vectors/rt-00000-heartbeat.json", "iterations": 2000, "ns_per_op": 7126}
+{"vector": "packs/asterix-cat062/vectors/12-to-canonical-track-v2-with-context.json", "iterations": 2000, "ns_per_op": 98995}
+{"vector": "packs/remote-id/vectors/09-basic-id-upstream-test-bytes-to-geojson.json", "iterations": 2000, "ns_per_op": 54745}
+{"vector": "packs/adsb/vectors/01-identification-tc1-roundtrip.json", "iterations": 2000, "ns_per_op": 46450}
+{"vector": "packs/nmea0183/vectors/40-rmc-to-geojson.json", "iterations": 2000, "ns_per_op": 134277}
+{"vector": "packs/dhcpv6-options/vectors/01-solicit-options-round-trip.json", "iterations": 2000, "ns_per_op": 210163}
+{"load": 15, "ns": 6903855046}
+```
 
 ## Where to read next
 

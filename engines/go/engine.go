@@ -14,11 +14,16 @@ import (
 // Engine holds the loaded model modules, keyed by module name, and the loaded
 // packs, keyed by format name.
 type Engine struct {
-	modules  map[string]*Module
-	packs    map[string]*Pack
-	maxDist  string
-	derives  []*Derive // every derive line in application order; nil until first use
-	maxItems int64     // the limit on list items one decode holds (ruling 7 of 0.11)
+	modules map[string]*Module
+	packs   map[string]*Pack
+	maxDist string
+	// Kept for the life of the instance (spec 0.25, ruling 1): every derive
+	// line in application order, rebuilt when a module with derive lines
+	// loads, never during a conversion; and the modules that have them, in
+	// byte order of name.
+	derives    []*Derive
+	deriveMods []*Module
+	maxItems   int64 // the limit on list items one decode holds (ruling 7 of 0.11)
 }
 
 // DefaultMaxItems is the limit on list items of a decode unless the caller
@@ -100,7 +105,9 @@ func (e *Engine) AddModule(m *Module) error {
 		return &Error{Kind: ErrDuplicateModule, Module: m.Name, Source: m.Source, Detail: fmt.Sprintf("module %s already loaded from %s", m.Name, prev.Source)}
 	}
 	e.modules[m.Name] = m
-	e.derives = nil
+	if len(m.Derives) > 0 {
+		e.addDerives(m)
+	}
 	return nil
 }
 
@@ -249,16 +256,12 @@ func LoadDirs(modelsDir, packsDir, maxDistribution string) (*Engine, error) {
 	if err := e.SetMaxDistribution(maxDistribution); err != nil {
 		return nil, err
 	}
-	files, err := moduleFiles(modelsDir)
+	files, err := readModuleFiles(modelsDir)
 	if err != nil {
 		return nil, err
 	}
 	for _, f := range files {
-		text, err := os.ReadFile(f)
-		if err != nil {
-			return nil, &Error{Kind: ErrBadDirective, Source: f, Detail: err.Error()}
-		}
-		if err := e.LoadModel(text, f); err != nil {
+		if err := f.load(e); err != nil {
 			return nil, err
 		}
 	}
@@ -310,15 +313,15 @@ func LoadPacksOnly(modelsDir, packsDir, maxDistribution string, names []string) 
 		}
 		packs = append(packs, p)
 	}
-	files, err := moduleFiles(modelsDir)
+	files, err := readModuleFiles(modelsDir)
 	if err != nil {
 		return nil, err
 	}
 	usesOf := map[string][]string{}
 	for _, f := range files {
-		if name, uses := moduleHeader(f); name != "" {
-			if _, dup := usesOf[name]; !dup {
-				usesOf[name] = uses
+		if f.name != "" {
+			if _, dup := usesOf[f.name]; !dup {
+				usesOf[f.name] = f.uses
 			}
 		}
 	}
@@ -340,14 +343,10 @@ func LoadPacksOnly(modelsDir, packsDir, maxDistribution string, names []string) 
 		}
 	}
 	for _, f := range files {
-		if name, _ := moduleHeader(f); !needed[name] {
+		if !needed[f.name] {
 			continue
 		}
-		text, err := os.ReadFile(f)
-		if err != nil {
-			return nil, &Error{Kind: ErrBadDirective, Source: f, Detail: err.Error()}
-		}
-		if err := e.LoadModel(text, f); err != nil {
+		if err := f.load(e); err != nil {
 			return nil, err
 		}
 	}

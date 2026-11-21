@@ -174,10 +174,11 @@ impl Loc {
     }
 }
 
-/// The locator of a line already checked at load.
+/// The locator of a line already checked at load, as the layout the engine
+/// keeps holds it (engine-spec 0.25), else read now.
 #[cfg(feature = "tlv")]
-fn loc(p: &Pack, s: &str) -> Option<Loc> {
-    Loc::parse(s, p.tlv.tag).ok()
+fn loc<'a>(p: &Pack, lay: &'a Layout, s: &str) -> Option<std::borrow::Cow<'a, Loc>> {
+    lay.tlv_loc(p, s)
 }
 
 // ---------------------------------------------------------------------------
@@ -429,9 +430,9 @@ fn find(c: &TlvConf, b: &[u8], top: &[Item], path: &[u32]) -> Result<Option<(usi
 
 /// The tags the lines of a scope name, as a tree: a tag a line names or
 /// walks into, and under it the tags named in its value read as a set.
-#[derive(Default)]
+#[derive(Default, Debug)]
 #[cfg(feature = "tlv")]
-struct Names {
+pub(crate) struct Names {
     tags: HashMap<u32, Names>,
     /// a line walks into the value as a set
     walked: bool,
@@ -479,9 +480,29 @@ fn residue(c: &TlvConf, b: &[u8], items: &[Item], names: &Names, prefix: &str, o
     Ok(())
 }
 
+/// The tags the lines of a selection name (fields, `when` and `const`), as
+/// the tree the residue of a decode is read against. It depends on the
+/// selection only, so the engine keeps it for each kind (engine-spec 0.25).
 #[cfg(feature = "tlv")]
-fn when_holds(p: &Pack, b: &[u8], top: &[Item], w: &WhenDef) -> bool {
-    let l = match loc(p, &w.locator) {
+pub(crate) fn names(p: &Pack, sel: &Sel) -> Names {
+    let lay = Layout::default();
+    let mut names = Names::default();
+    for (tags, present) in sel
+        .fields
+        .iter()
+        .map(|f| (&f.locator, false))
+        .chain(sel.whens.iter().map(|w| (&w.locator, w.present)))
+        .chain(sel.consts.iter().map(|w| (&w.locator, false)))
+        .filter_map(|(s, present)| loc(p, &lay, s).map(|l| (l.into_owned().tags, present)))
+    {
+        names.add(&tags, present);
+    }
+    names
+}
+
+#[cfg(feature = "tlv")]
+fn when_holds(p: &Pack, lay: &Layout, b: &[u8], top: &[Item], w: &WhenDef) -> bool {
+    let l = match loc(p, lay, &w.locator) {
         Some(l) => l,
         None => return false,
     };
@@ -511,6 +532,12 @@ pub(crate) fn decode_value(t: &Transform, v: &[u8]) -> Result<Value, Error> {
 
 #[cfg(feature = "tlv")]
 pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
+    decode_in(p, &Layout::default(), input)
+}
+
+/// `decode` with the layout the engine keeps for the pack (engine-spec 0.25).
+#[cfg(feature = "tlv")]
+pub(crate) fn decode_in(p: &Pack, lay: &Layout, input: &str) -> Result<Entity, Error> {
     let c = &p.tlv;
     let b = bits::from_hex(input).map_err(|e| malformed(p, e.msg.trim_start_matches("malformed-wire: ")))?;
     // step 2: the key and the length of the set
@@ -543,24 +570,21 @@ pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
             return Err(malformed(p, format!("the checksum is {:04x}, the message states {:04x}", sum, stated)));
         }
     }
-    let sel = p.select_decode(None, |w| when_holds(p, &b, &top, w))?;
+    let sel = p.select_decode(None, |w| when_holds(p, lay, &b, &top, w))?;
     // every set a line of the selected scope walks into, read whole; its residue
-    let mut names = Names::default();
-    for (tags, present) in sel
-        .fields
-        .iter()
-        .map(|f| (&f.locator, false))
-        .chain(sel.whens.iter().map(|w| (&w.locator, w.present)))
-        .chain(sel.consts.iter().map(|w| (&w.locator, false)))
-        .filter_map(|(s, present)| loc(p, s).map(|l| (l.tags, present)))
-    {
-        names.add(&tags, present);
-    }
+    let computed;
+    let names = match lay.tlv_names.get(&layout::kind_key(sel.kind)) {
+        Some(n) => n,
+        None => {
+            computed = names(p, &sel);
+            &computed
+        }
+    };
     let mut res = Vec::new();
-    residue(c, &b, &top, &names, "", &mut res).map_err(|m| malformed(p, m))?;
+    residue(c, &b, &top, names, "", &mut res).map_err(|m| malformed(p, m))?;
     let mut d = Decoded::new();
     for f in &sel.fields {
-        let l = match loc(p, &f.locator) {
+        let l = match loc(p, lay, &f.locator) {
             Some(l) => l,
             None => continue,
         };
@@ -789,7 +813,7 @@ fn put_len(p: &Pack, len: u64, out: &mut Vec<u8>) -> Result<(), Error> {
 
 /// The items of one set: the lines' items in line order, then the residue.
 #[cfg(feature = "tlv")]
-fn write_node(p: &Pack, sel: &Sel, ent: &Entity, node: &Node, out: &mut Vec<u8>) -> Result<(), Error> {
+fn write_node(p: &Pack, lay: &Layout, sel: &Sel, ent: &Entity, node: &Node, out: &mut Vec<u8>) -> Result<(), Error> {
     // the value of each slot that is not `present` (None: no item)
     let mut values: Vec<Option<Vec<u8>>> = Vec::with_capacity(node.slots.len());
     for slot in &node.slots {
@@ -798,11 +822,11 @@ fn write_node(p: &Pack, sel: &Sel, ent: &Entity, node: &Node, out: &mut Vec<u8>)
             continue;
         }
         let v = if let Some(w) = slot.fixed {
-            loc(p, &w.locator).and_then(|l| l.size).map(|n| be_bytes(w.num, n))
+            loc(p, lay, &w.locator).and_then(|l| l.size).map(|n| be_bytes(w.num, n))
         } else if let Some((f, v)) = slot.fields.iter().find_map(|f| sel.value_of(ent, f).map(|v| (*f, v))) {
             let e = |e: Error| transform_encode_err(p, f, e);
             let v = p.to_wire(f, v).map_err(e)?;
-            let size = loc(p, &f.locator).and_then(|l| l.size);
+            let size = loc(p, lay, &f.locator).and_then(|l| l.size);
             Some(encode_value(&f.transform, &v, size).map_err(e)?)
         } else {
             None
@@ -812,7 +836,7 @@ fn write_node(p: &Pack, sel: &Sel, ent: &Entity, node: &Node, out: &mut Vec<u8>)
             (Some(v), _) => Some(v),
             (None, Some(sub)) => {
                 let mut inner = Vec::new();
-                write_node(p, sel, ent, sub, &mut inner)?;
+                write_node(p, lay, sel, ent, sub, &mut inner)?;
                 // a nested set with no items is not written
                 Some(inner).filter(|i| !i.is_empty())
             }
@@ -837,7 +861,7 @@ fn write_node(p: &Pack, sel: &Sel, ent: &Entity, node: &Node, out: &mut Vec<u8>)
             Res::Item(t, v) => put_item(p, *t, v, out)?,
             Res::Set(t, n) => {
                 let mut inner = Vec::new();
-                write_node(p, sel, ent, n, &mut inner)?;
+                write_node(p, lay, sel, ent, n, &mut inner)?;
                 put_item(p, *t, &inner, out)?;
             }
         }
@@ -847,6 +871,12 @@ fn write_node(p: &Pack, sel: &Sel, ent: &Entity, node: &Node, out: &mut Vec<u8>)
 
 #[cfg(feature = "tlv")]
 pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
+    encode_in(p, &Layout::default(), ent)
+}
+
+/// `encode` with the layout the engine keeps for the pack (engine-spec 0.25).
+#[cfg(feature = "tlv")]
+pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, Error> {
     let c = &p.tlv;
     let sel = p.select_encode(ent)?;
     // the lines of the scope in line order: common lines stand before the first `kind`
@@ -857,7 +887,7 @@ pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
     lines.sort_by_key(|l| l.0);
     let mut root = Node::default();
     for (_, s, line) in lines {
-        if let Some(l) = loc(p, s) {
+        if let Some(l) = loc(p, lay, s) {
             root.add(&l.tags, line);
         }
     }
@@ -880,7 +910,7 @@ pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
         root.add_residue(&tags, bytes);
     }
     let mut set = Vec::new();
-    write_node(p, &sel, ent, &root, &mut set)?;
+    write_node(p, lay, &sel, ent, &root, &mut set)?;
     if let Some(t) = c.checksum {
         put_item(p, t, &[0, 0], &mut set)?;
     }

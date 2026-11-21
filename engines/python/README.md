@@ -213,6 +213,33 @@ builds. Sizes:
 | all seven wires | 142760 bytes | 506532 bytes, 23 modules |
 | `xml`, `json`, `geojson` | 82612 bytes (58%) | 286851 bytes, 15 modules |
 
+## Parse once, and the benchmark
+
+Status: Built (Version 0.25). An `Engine` keeps, for its whole life, every
+model module and pack it parsed at load, and the layouts worked out from them:
+the scope of each kind and group body (`Plan`), and, the first time a scope
+is used, the facts its wire needs (the bits a `bits` scope reaches, the
+fields a `text` scope addresses, the tags a `tlv` scope names, where an `xml`
+scope writes each locator). A conversion parses nothing it loaded. Each kept
+layout is built whole and only then stored, so one engine can be used from
+several threads at once and every conversion gives the result of a new engine
+(`tests/test_parse_once.py`). A load reads each module and pack file once.
+
+The benchmark (ruling 2), run from the repository root:
+
+```
+python3 -I engines/python/bench.py              # bench/set.json
+python3 -I engines/python/bench.py <set.json>   # another set
+```
+
+It loads the packs the set's vectors name (`from` and `to`) and the modules
+they use into one engine, converts each vector's input once and compares it
+with `expect` (a difference stops the run, exit status 1, the reason on
+standard error), then converts it `iterations` times. Standard output holds one
+line `{"vector": …, "iterations": …, "ns_per_op": …}` per vector, then
+`{"load": <packs>, "ns": …}`, and nothing else. The numbers belong to one
+machine at one time; nothing fails on them.
+
 ## Test
 
 Status: Measured. The `python` job of `.github/workflows/conformance.yml` runs,
@@ -233,6 +260,7 @@ not in the tool.
 | `test_vectors.py` | every conversion vector of every pack (17628 of 2687 packs, 17627 passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (862, all passed); every capability vector (18, all passed) |
 | `test_malformed.py` | the input of every conversion vector cut and changed (103161 damaged inputs, none raised anything but a named error); rulings 35 to 39 |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool |
+| `test_parse_once.py` | Version 0.25, ruling 1: the cases of `bench/set.json` (each input whole, cut and changed, `expect` converted back, decodes) give a new engine's result on an engine that converted the others, and from eight threads at once on one new engine; a load opens each file once |
 | `reduced-build-check.py`, run from the repository root as `python3 -I engines/python/reduced-build-check.py` | a build with `xml`, `json` and `geojson` only (Version 0.24; "Builds with fewer wires" above) |
 | `tools/tool-vectors.py`, run from the repository root as `python3 -I tools/tool-vectors.py -- engines/python/goat-xf-py.py` | every tool vector of `packs/conformance/tool-vectors` (97, all passed): the command-line contract of Version 0.23 |
 

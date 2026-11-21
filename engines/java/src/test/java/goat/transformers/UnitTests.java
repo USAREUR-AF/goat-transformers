@@ -867,7 +867,7 @@ final class UnitTests {
         for (ModelModule m : e.modules()) modules.add(m.name);
         eq("packs-only: only the modules they need", "[core, track]", modules.toString());
         Engine all = Engine.load(packsDir);
-        // Each loadOnly reads the whole model directory, so one call per pack grows as packs times modules. Unless
+        // Each loadOnly reads the files of the modules it needs (ruling 1d of 0.25), and the sample keeps the run short. Unless
         // GOAT_SWEEP_FULL=1, the packs loaded one by one are a fixed sample of PACKS_ONLY_SAMPLE: the first pack of
         // each wire by format name, the pack with the most uses lines, and the rest chosen by the seed of the format.
         java.util.List<Pack> sample = new java.util.ArrayList<>(all.packs());

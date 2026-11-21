@@ -91,6 +91,20 @@ pub fn build(b: *std.Build) void {
     const cli_step = b.step("cli", "Build the command-line tool zig-out/bin/goat-xf (spec Version 0.23)");
     cli_step.dependOn(&b.addInstallArtifact(cli_exe, .{}).step);
 
+    // `zig build bench`: builds the benchmark of spec Version 0.25 (ruling 2),
+    // zig-out/bin/gt-bench-zig, always ReleaseFast. It is run from the
+    // repository root, where it finds `bench/set.json`, `packs` and `model`:
+    //   engines/zig/bench.sh
+    const bench_exe = b.addExecutable(.{
+        .name = "gt-bench-zig",
+        .root_source_file = b.path("src/bench.zig"),
+        .target = target,
+        .optimize = .ReleaseFast,
+    });
+    bench_exe.root_module.addOptions("build_options", wire_opts);
+    const bench_step = b.step("bench", "Build the benchmark of spec Version 0.25, zig-out/bin/gt-bench-zig (run it with engines/zig/bench.sh)");
+    bench_step.dependOn(&b.addInstallArtifact(bench_exe, .{}).step);
+
     // `zig build module-test`:the module another program imports loads packs and converts.
     const module_tests = b.addTest(.{
         .root_source_file = b.path("src/root.zig"),
