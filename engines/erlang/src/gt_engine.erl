@@ -264,6 +264,12 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
     %% the `requires =` and `case` values, in line order: each line's types,
     %% then its duplicates (0.20, ruling 19)
     value_checks(maps:get(vchecks, P, []), KeyTypes, Mismatch),
+    %% the `at` errors of 0.33 come last among the module checks (rulings
+    %% 10, 14 and 25): the form in file order, then the fixed-window check
+    case maps:get(at_errs, P, []) of
+        [] -> ok;
+        [{AtFmt, AtArgs} | _] -> gt_pack:load_error('bad-directive', "pack ~s " ++ AtFmt, [Name | AtArgs])
+    end,
     %% the typemap by either side; of two entries with one value the first is used
     Typemap = maps:get(typemap, P),
     %% kept for the life of the instance (ruling 1a of 0.25): each kind's
