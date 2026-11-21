@@ -1016,6 +1016,8 @@ final class Seq {
                 tt = TlvTransform.parse(tname, format, where);
             } else {
                 bt = BitsTransform.parse(tname, format, where);
+                // a UPER int: locator takes no <places> (engine-spec 0.55, Load errors), checked after the file
+                if (bt.hasPlaces()) uperBad(format, locator, where + ": a UPER locator takes no <places> argument on " + tname);
             }
             if (via != null) vias.add(new String[]{via, locator, where});
             Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, false, false, false, ln);

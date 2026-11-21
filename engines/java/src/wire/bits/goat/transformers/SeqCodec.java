@@ -486,11 +486,11 @@ final class SeqCodec extends BitsWire<byte[]> {
             for (int i = 0; i < codes.length; i++) codes[i] = (int) BitsCodec.readBits(msg, at + (long) i * cw, cw, msb);
             return f.bits.decodeChars(codes);
         }
-        if (f.bits.isAscii()) {
+        if (f.bits.isByteText()) {
             byte[] bytes = new byte[len / 8];
             for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) BitsCodec.readBits(msg, at + 8L * i, 8, msb);
             if (f.swap) BitsCodec.reverseBytes(bytes);
-            return f.bits.decodeAscii(bytes, f.trim);
+            return f.bits.decodeBytes(bytes, f.trim);
         }
         if (f.bits.isSixbit()) return BitsTransform.decodeSixbit(BitsCodec.readSixbit(msg, at, len, msb), f.trim);
         long raw = BitsCodec.readBits(msg, at, len, msb);
@@ -1224,8 +1224,8 @@ final class SeqCodec extends BitsWire<byte[]> {
                 if (f.bits.isChars()) {
                     int cw = f.bits.charWidth();
                     for (int c : f.bits.encodeChars(v, n.len / cw)) w.put(cw, c);
-                } else if (f.bits.isAscii()) {
-                    byte[] bytes = f.bits.encodeAscii(v, n.len / 8);
+                } else if (f.bits.isByteText()) {
+                    byte[] bytes = f.bits.encodeBytes(v, n.len / 8);
                     if (f.swap) BitsCodec.reverseBytes(bytes);
                     for (byte b : bytes) w.put(8, b & 0xffL);
                 } else if (f.bits.isSixbit()) {

@@ -15,7 +15,9 @@ public final class BitsTransform {
         // engine-spec 0.15
         UISCALE, SISCALE, SMAG, SMSCALE, F32SCALE, F64SCALE, CHARS, OCTAL,
         // engine-spec 0.22
-        HEX }
+        HEX,
+        // engine-spec 0.55
+        UTF8 }
 
     /** The character sets of {@code chars:<set>}. */
     enum CharSet { ICAO6, AIS6, ASCII7, ASCII8,
@@ -32,6 +34,8 @@ public final class BitsTransform {
     private double num;
     private double den;
     private double offset;
+    /** uscale, sscale: the decimal places of the third argument (engine-spec 0.55), or -1 when there is none. */
+    private int places = -1;
     private Scales.Exact exact;       // uiscale, siscale
     private Scales.Floating floating; // smscale, f32scale, f64scale
     private CharSet set;              // chars
@@ -52,6 +56,7 @@ public final class BitsTransform {
             case SISCALE:
             case SMAG: return "int";
             case ASCII:
+            case UTF8:
             case SIXBIT:
             case CHARS:
             case HEX:
@@ -62,11 +67,20 @@ public final class BitsTransform {
 
     boolean isAscii() { return kind == Kind.ASCII; }
 
+    /**
+     * {@code ascii} or {@code utf8} (engine-spec 0.55): the transforms that take the field's bytes in wire order, with
+     * {@code swap} and {@code trim}, through {@link #decodeBytes} and {@link #encodeBytes}.
+     */
+    boolean isByteText() { return kind == Kind.ASCII || kind == Kind.UTF8; }
+
+    /** {@code uscale} or {@code sscale} with a {@code <places>} argument (engine-spec 0.55). */
+    boolean hasPlaces() { return places >= 0; }
+
     /** {@code sixbit} (engine-spec 0.14): six-bit character codes. */
     boolean isSixbit() { return kind == Kind.SIXBIT; }
 
     /** {@code ascii} or {@code sixbit}: the transforms that take the field option {@code trim}. */
-    boolean takesTrim() { return kind == Kind.ASCII || kind == Kind.SIXBIT; }
+    boolean takesTrim() { return kind == Kind.ASCII || kind == Kind.UTF8 || kind == Kind.SIXBIT; }
 
     /**
      * {@code chars:<set>}, and {@code hex} (engine-spec 0.22): read and written as characters of {@link #charWidth}
@@ -138,6 +152,7 @@ public final class BitsTransform {
             case "f64":
             case "ascii":
             case "sixbit":
+            case "utf8":  // engine-spec 0.55
             case "hex":   // engine-spec 0.22
                 return n.indexOf(':') < 0;
             default:
@@ -181,6 +196,7 @@ public final class BitsTransform {
             case "f32": return new BitsTransform(Kind.F32, name);
             case "f64": return new BitsTransform(Kind.F64, name);
             case "ascii": return new BitsTransform(Kind.ASCII, name);
+            case "utf8": return new BitsTransform(Kind.UTF8, name);
             case "sixbit": return new BitsTransform(Kind.SIXBIT, name);
             case "hex": {
                 BitsTransform t = new BitsTransform(Kind.HEX, name);
@@ -197,8 +213,14 @@ public final class BitsTransform {
                 return t;
             }
             default: {
-                if (p.length != 2 && p.length != 3) {
-                    throw bad(format, where, p[0] + " takes " + p[0] + ":<factor>[:<offset>], got \"" + name + "\"");
+                // engine-spec 0.55: a third argument <places>; no argument may be empty, and there are at most three
+                if (p.length < 2 || p.length > 4) {
+                    throw bad(format, where, p[0] + " takes " + p[0] + ":<factor>[:<offset>[:<places>]], got \"" + name + "\"");
+                }
+                for (int i = 1; i < p.length; i++) {
+                    if (p[i].isEmpty()) {
+                        throw bad(format, where, "argument " + i + " of \"" + name + "\" is empty (write " + p[0] + ":<factor>:0:<places>)");
+                    }
                 }
                 BitsTransform t = new BitsTransform(p[0].equals("uscale") ? Kind.USCALE : Kind.SSCALE, name);
                 int slash = p[1].indexOf('/');
@@ -216,7 +238,14 @@ public final class BitsTransform {
                     t.factor = number(p[1], "scale factor", name, format, where);
                     if (t.factor == 0) throw bad(format, where, "a scale factor reads as zero: \"" + p[1] + "\"");
                 }
-                t.offset = p.length == 3 ? number(p[2], "scale offset", name, format, where) : 0.0;
+                t.offset = p.length >= 3 ? number(p[2], "scale offset", name, format, where) : 0.0;
+                if (p.length == 4) {
+                    // a decimal integer as 2c of 0.11 states, leading zeros allowed, at most 15
+                    if (!Transform.UNSIGNED.matcher(p[3]).matches() || new BigInteger(p[3]).compareTo(BigInteger.valueOf(15)) > 0) {
+                        throw bad(format, where, "places is an unsigned decimal integer from 0 to 15, got \"" + p[3] + "\" in \"" + name + "\"");
+                    }
+                    t.places = Integer.parseInt(p[3].replaceFirst("^0+(?=.)", ""));
+                }
                 return t;
             }
         }
@@ -281,8 +310,9 @@ public final class BitsTransform {
             case F32: return len == 32 ? null : "f32 needs a 32-bit field, got " + len;
             case F64: return len == 64 ? null : "f64 needs a 64-bit field, got " + len;
             case ASCII:
+            case UTF8:
                 return (len % 8 == 0 && len >= 8 && len <= 2040) ? null
-                        : "ascii needs a length that is a multiple of 8 from 8 to 2040, got " + len;
+                        : name + " needs a length that is a multiple of 8 from 8 to 2040, got " + len;
             case SIXBIT:
                 return (len % 6 == 0 && len >= 6 && len <= 1530) ? null
                         : "sixbit needs a length that is a multiple of 6 from 6 to 1530, got " + len;
@@ -309,6 +339,27 @@ public final class BitsTransform {
         return d + offset;
     }
 
+    /** The powers of ten 10^0 to 10^15, each exact as a double. */
+    private static final double[] POW10 = {1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15};
+
+    /**
+     * {@code uscale} and {@code sscale} decode at a bit position or bit length (engine-spec 0.55): the value of ruling 1
+     * of 0.5, then, with {@code <places>}, rounded to that many decimal places (steps 1 to 4); a value that is not
+     * finite is transform-decode with {@code <places>} (ruling 5).
+     */
+    private double scaleDecodeBits(double v) {
+        double x = scaleDecode(v);
+        if (places < 0) return x;
+        if (!Double.isFinite(x)) throw new IllegalArgumentException("the scaled value is not finite");
+        double p = POW10[places];
+        double y = x * p;
+        if (Double.isFinite(y)) {
+            double r = Transform.roundHalfAway(y);
+            if (Math.abs(r) < 1e15) return r / p + 0.0;   // + 0.0: a result of zero is +0
+        }
+        return x;
+    }
+
     /** Raw {@code len}-bit value to model value. Not for {@code ascii}. */
     Object decode(long raw, int len) {
         switch (kind) {
@@ -319,9 +370,9 @@ public final class BitsTransform {
             case LINSCALE:
                 return (double) twosValue(raw, len) / maxposD * range;
             case USCALE:
-                return scaleDecode(unsignedToDouble(raw));
+                return scaleDecodeBits(unsignedToDouble(raw));
             case SSCALE:
-                return scaleDecode((double) twosValue(raw, len));
+                return scaleDecodeBits((double) twosValue(raw, len));
             case F32:
                 return finite((double) Float.intBitsToFloat((int) raw));
             case F64:
@@ -539,6 +590,64 @@ public final class BitsTransform {
             }
         }
         return new String(bytes, 0, n, StandardCharsets.US_ASCII);
+    }
+
+    /** {@code ascii} or {@code utf8}: the field's bytes in wire order ({@code swap} applied) to text. */
+    String decodeBytes(byte[] bytes, boolean trim) {
+        return kind == Kind.UTF8 ? decodeUtf8(bytes, trim) : decodeAscii(bytes, trim);
+    }
+
+    /** {@code ascii} or {@code utf8}: text to {@code size} bytes in wire order, before {@code swap}. */
+    byte[] encodeBytes(Object value, int size) {
+        return kind == Kind.UTF8 ? encodeUtf8(value, size) : encodeAscii(value, size);
+    }
+
+    /**
+     * {@code utf8} on {@code bits} (engine-spec 0.55): trailing NUL bytes removed, then with {@code trim} the trailing
+     * spaces before them; what is left is valid UTF-8 (RFC 3629) holding no NUL, else transform-decode.
+     */
+    static String decodeUtf8(byte[] bytes, boolean trim) {
+        int n = bytes.length;
+        while (n > 0 && bytes[n - 1] == 0) n--;
+        if (trim) while (n > 0 && bytes[n - 1] == 0x20) n--;
+        for (int i = 0; i < n; i++) {
+            if (bytes[i] == 0) throw new IllegalArgumentException("a NUL byte at offset " + i + " is inside the text");
+        }
+        try {
+            return StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT)
+                    .decode(java.nio.ByteBuffer.wrap(bytes, 0, n)).toString();
+        } catch (java.nio.charset.CharacterCodingException ex) {
+            throw new IllegalArgumentException("the field's bytes are not valid UTF-8");
+        }
+    }
+
+    /**
+     * {@code utf8} on {@code bits}: the text's UTF-8 bytes, NUL-padded to {@code size}. U+0000, a lone surrogate (which
+     * UTF-8 cannot carry) or text longer than {@code size} bytes is transform-encode.
+     */
+    static byte[] encodeUtf8(Object value, int size) {
+        String s = value instanceof Double ? Transform.formatDouble((Double) value) : String.valueOf(value);
+        int z = s.indexOf('\u0000');
+        if (z >= 0) throw new IllegalArgumentException("the text holds U+0000 at offset " + z);
+        byte[] b;
+        try {
+            java.nio.ByteBuffer bb = StandardCharsets.UTF_8.newEncoder()
+                    .onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT)
+                    .encode(java.nio.CharBuffer.wrap(s));
+            b = new byte[bb.remaining()];
+            bb.get(b);
+        } catch (java.nio.charset.CharacterCodingException ex) {
+            throw new IllegalArgumentException("the text holds a lone surrogate, which UTF-8 cannot carry");
+        }
+        if (b.length > size) {
+            throw new IllegalArgumentException("text of " + b.length + " UTF-8 bytes does not fit a field of " + size + " bytes");
+        }
+        byte[] out = new byte[size];
+        System.arraycopy(b, 0, out, 0, b.length);
+        return out;
     }
 
     /**

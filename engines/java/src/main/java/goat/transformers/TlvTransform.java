@@ -45,9 +45,12 @@ final class TlvTransform {
         String head = c < 0 ? name : name.substring(0, c);
         switch (head) {
             case "uscale":
-                return new TlvTransform(Kind.USCALE, name, BitsTransform.parse(name, format, where));
-            case "sscale":
-                return new TlvTransform(Kind.SSCALE, name, BitsTransform.parse(name, format, where));
+            case "sscale": {
+                BitsTransform bt = BitsTransform.parse(name, format, where);
+                // <places> is for a bit position or bit length of bits only (engine-spec 0.55, Load errors)
+                if (bt.hasPlaces()) throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, where + ": no <places> on tlv");
+                return new TlvTransform(head.equals("uscale") ? Kind.USCALE : Kind.SSCALE, name, bt);
+            }
             default:
                 break;
         }

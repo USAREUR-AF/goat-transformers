@@ -183,11 +183,11 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
                     int[] codes = new int[loc.len / w];
                     for (int i = 0; i < codes.length; i++) codes[i] = (int) readBits(msg, start + (long) w * i, w);
                     v = f.bits.decodeChars(codes);
-                } else if (f.bits.isAscii()) {
+                } else if (f.bits.isByteText()) {
                     byte[] bytes = new byte[loc.len / 8];
                     for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) readBits(msg, start + 8L * i, 8);
                     if (f.swap) reverse(bytes);
-                    v = f.bits.decodeAscii(bytes, f.trim);
+                    v = f.bits.decodeBytes(bytes, f.trim);
                 } else if (f.bits.isSixbit()) {
                     v = BitsTransform.decodeSixbit(readSixbit(msg, start, loc.len, msb), f.trim);
                 } else {
@@ -373,8 +373,8 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
                 int w = f.bits.charWidth();
                 int[] codes = f.bits.encodeChars(v, loc.len / w);
                 for (int c = 0; c < codes.length; c++) writeBits(b, start + (long) w * c, w, codes[c]);
-            } else if (f.bits.isAscii()) {
-                byte[] bytes = f.bits.encodeAscii(v, loc.len / 8);
+            } else if (f.bits.isByteText()) {
+                byte[] bytes = f.bits.encodeBytes(v, loc.len / 8);
                 if (f.swap) reverse(bytes);
                 for (int i = 0; i < bytes.length; i++) writeBits(b, start + 8L * i, 8, bytes[i] & 0xffL);
             } else if (f.bits.isSixbit()) {
