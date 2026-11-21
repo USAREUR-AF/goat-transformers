@@ -1,0 +1,151 @@
+# A tag `xf-pipe-v<version>` builds goat-xf-pipe-zenoh (adapters/zenoh) for
+# Linux arm64 (aarch64-unknown-linux-gnu: NVIDIA Jetson Thor and Orin) and
+# attaches it to a GitHub Release of that tag, with SHA-256 sums and a build
+# provenance attestation, as release.yml does for the library.
+#
+# The tag must equal the version in adapters/zenoh/Cargo.toml (`xf-pipe-v0.1.0`
+# for 0.1.0); the first job refuses one that does not. The library's own tags
+# (`v<version>`, release.yml) do not start this workflow, and this one's do not
+# start that one.
+#
+# A pull request that touches adapters/ or this file runs the same build,
+# package and smoke test without releasing, so a tag is never the first build.
+#
+# The package, goat-xf-pipe-zenoh_<version>_linux_arm64.tar.gz, holds the
+# binary, packs/ and model/ of the tag without the conformance vectors, LICENSE,
+# NOTICE, the licence files and LICENSES/ (tools/goat-pkg archive writes those),
+# and adapters/zenoh/dist/README.txt with the run line.
+#
+# This workflow publishes to GitHub Releases only and holds no other token.
+name: release-pipe
+on:
+  push:
+    tags: ["xf-pipe-v*"]
+  pull_request:
+    paths:
+      - "adapters/**"
+      - ".github/workflows/release-pipe.yml"
+permissions:
+  contents: read
+concurrency:
+  group: release-pipe-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+env:
+  TARGET: aarch64-unknown-linux-gnu
+  # Jetson Orin on JetPack 6 is Ubuntu 22.04 (glibc 2.35); Thor on JetPack 7 is
+  # Ubuntu 24.04. The binary must not need a newer glibc than the oldest.
+  MAX_GLIBC: "2.35"
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - id: version
+        name: The tag names the version of adapters/zenoh/Cargo.toml
+        env:
+          EVENT: ${{ github.event_name }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          crate=$(python3 -I -c 'import tomllib; print(tomllib.load(open("adapters/zenoh/Cargo.toml", "rb"))["package"]["version"])')
+          if [ "$EVENT" = "push" ]; then
+            version="${TAG#xf-pipe-v}"
+            if [ "$version" != "$crate" ]; then
+              echo "::error::tag $TAG names version $version; adapters/zenoh/Cargo.toml has $crate"
+              exit 1
+            fi
+          else
+            version="$crate"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: version
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: goat-xf-pipe-zenoh, release build
+        run: |
+          rustup target add "$TARGET"
+          cargo build --release --locked --target "$TARGET"
+        working-directory: adapters/zenoh
+      - name: The binary needs glibc ${{ env.MAX_GLIBC }} or older
+        run: |
+          bin="adapters/zenoh/target/$TARGET/release/goat-xf-pipe-zenoh"
+          file "$bin"
+          need=$(objdump -T "$bin" | grep -o 'GLIBC_[0-9.]*' | sed 's/GLIBC_//' | sort -uV | tail -1)
+          echo "highest glibc symbol version: $need"
+          if [ "$(printf '%s\n%s\n' "$need" "$MAX_GLIBC" | sort -V | tail -1)" != "$MAX_GLIBC" ]; then
+            echo "::error::the binary needs glibc $need; Jetson Orin (JetPack 6) has $MAX_GLIBC"
+            exit 1
+          fi
+      - name: Package
+        run: |
+          stage="goat-xf-pipe-zenoh_${VERSION}_linux_arm64"
+          python3 -I tools/goat-pkg archive --prefix "$stage" --out "$RUNNER_TEMP/base.tar.gz"
+          mkdir -p "$RUNNER_TEMP/stage" out
+          tar -xzf "$RUNNER_TEMP/base.tar.gz" -C "$RUNNER_TEMP/stage"
+          cp "adapters/zenoh/target/$TARGET/release/goat-xf-pipe-zenoh" "$RUNNER_TEMP/stage/$stage/"
+          sed -e "s/@VERSION@/$VERSION/g" -e "s/@TAG@/${GITHUB_REF_NAME//\//\\/}/g" adapters/zenoh/dist/README.txt > "$RUNNER_TEMP/stage/$stage/README.txt"
+          for f in goat-xf-pipe-zenoh README.txt LICENSE NOTICE packs model LICENSES; do
+            test -e "$RUNNER_TEMP/stage/$stage/$f" || { echo "::error::the package has no $f"; exit 1; }
+          done
+          tar -czf "out/$stage.tar.gz" -C "$RUNNER_TEMP/stage" "$stage"
+          ls -l out
+      - name: Smoke test of the package (help, and one conversion through stdin)
+        run: |
+          stage="goat-xf-pipe-zenoh_${VERSION}_linux_arm64"
+          mkdir -p "$RUNNER_TEMP/smoke"
+          tar -xzf "out/$stage.tar.gz" -C "$RUNNER_TEMP/smoke"
+          dir="$RUNNER_TEMP/smoke/$stage"
+          "$dir/goat-xf-pipe-zenoh" --help | grep -q 'zenoh:<key expression>'
+          python3 -I -c 'import json; print(json.load(open("packs/cot-xml/vectors/01-track-to-geojson.json"))["input"])' > "$RUNNER_TEMP/in.txt"
+          ( cd "$dir" && ./goat-xf-pipe-zenoh --packs packs --packs-only --from-format cot-xml \
+              --in stdin: --in-frame newline --to-format geojson --out-frame newline --out stdout: \
+              --status-every 0 < "$RUNNER_TEMP/in.txt" > "$RUNNER_TEMP/out.txt" )
+          grep -q '"type":"Feature"' "$RUNNER_TEMP/out.txt"
+          echo "converted: $(head -c 160 "$RUNNER_TEMP/out.txt")"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: goat-xf-pipe-zenoh
+          path: out/
+          if-no-files-found: error
+
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/xf-pipe-v')
+    needs: [version, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write      # create the release and attach the files
+      id-token: write      # sign the provenance attestation
+      attestations: write  # store it
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: goat-xf-pipe-zenoh
+          path: out
+      - name: SHA-256 sums
+        run: |
+          sha256sum -- * > SHA256SUMS
+          cat SHA256SUMS
+        working-directory: out
+      - uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-checksums: out/SHA256SUMS
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" --verify-tag --title "goat-xf-pipe-zenoh $VERSION (Linux arm64)" \
+            --notes "goat-xf-pipe-zenoh $VERSION for Linux arm64 (aarch64-unknown-linux-gnu; NVIDIA Jetson Thor and Orin, glibc $MAX_GLIBC or later), with the packs and model of $TAG. Verify with \`sha256sum -c SHA256SUMS\` and \`gh attestation verify <file> --repo $GH_REPO\`. The run line is in README.txt inside the archive." \
+            out/*

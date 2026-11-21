@@ -7,7 +7,9 @@
 //! - [`io`] holds the sources and sinks.
 //! - [`cli`] is the `goat-xf-pipe` command line, as a function, so that an
 //!   adapter crate with a dependency can add its scheme and reuse the rest.
+//! - [`metrics`] serves the counters for Prometheus (`--metrics <addr>`).
 
 pub mod cli;
 pub mod io;
+pub mod metrics;
 pub mod uri;

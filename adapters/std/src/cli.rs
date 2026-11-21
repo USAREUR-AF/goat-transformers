@@ -51,6 +51,10 @@ Failure
   --on-error skip|stop     skip: count the message, report it, go on (default)
                            stop: count it, report it, stop
   --status-every <seconds> the status line on stderr (default 10; 0 for none)
+  --metrics <addr>         serve the counters for Prometheus on GET /metrics at
+                           <addr> (`:9464` for every address, `127.0.0.1:9464`):
+                           messages in and out by format, errors by stage
+                           (decode, encode, deliver, source), format and name
 
   --config <file>          read options from a file: one per line, no dashes,
                            `#` starts a comment
@@ -84,6 +88,7 @@ pub struct Config {
     pub receive_time_key: Option<String>,
     pub on_error: OnError,
     pub status_every: u64,
+    pub metrics: Option<String>,
     pub help: bool,
 }
 
@@ -104,6 +109,7 @@ impl Default for Config {
             receive_time_key: None,
             on_error: OnError::Skip,
             status_every: 10,
+            metrics: None,
             help: false,
         }
     }
@@ -205,6 +211,7 @@ fn parse_into(args: &[String], mut c: Config, depth: usize) -> Result<Config, St
                 }
             }
             "--status-every" => c.status_every = v.parse().map_err(|_| "--status-every is a number of seconds".to_string())?,
+            "--metrics" => once(&mut c.metrics, name, v)?,
             "--config" => {
                 if depth > 0 {
                     return Err("a configuration file cannot name another".to_string());
@@ -307,6 +314,12 @@ pub fn run(name: &str, args: &[String], extra: &[&dyn Scheme]) -> i32 {
     if let Err(e) = p.check() {
         return usage(e);
     }
+    if let Some(addr) = &c.metrics {
+        match crate::metrics::serve(addr, p.stats.clone(), from.clone()) {
+            Ok(bound) => eprintln!("{}: metrics at http://{}/metrics", name, bound),
+            Err(e) => return usage(format!("--metrics {}", e)),
+        }
+    }
     let policy = if c.on_error == OnError::Stop { "stop" } else { "skip" };
     eprintln!("{}: {} from {} -> {}; on-error {}", name, from, input, shown.join(", "), policy);
     let outcome = p.run(&AtomicBool::new(false));
@@ -345,6 +358,7 @@ mod tests {
             "--packs", "p", "--from-format", "cot-xml", "--in", "udp://:4242", "--to-format", "geojson", "--out-frame", "newline",
             "--out", "stdout:", "--out", "dir:out", "--to-format", "cot-xml", "--out-frame", "whole", "--out", "tcp://h:1",
             "--set", "uid=a=b", "--set", "time_ms=5", "--on-error", "stop", "--status-every", "0", "--packs-only",
+            "--metrics", ":9464",
         ]))
         .unwrap();
         assert_eq!(c.default_to.as_deref(), Some("geojson"));
@@ -354,6 +368,7 @@ mod tests {
         assert_eq!(c.outs[2], OutSpec { uri: "tcp://h:1".into(), to: None, frame: None });
         assert_eq!(c.sets, vec![("uid".to_string(), "a=b".to_string()), ("time_ms".to_string(), "5".to_string())]);
         assert_eq!((c.on_error, c.status_every, c.packs_only), (OnError::Stop, 0, true));
+        assert_eq!(c.metrics.as_deref(), Some(":9464"));
     }
 
     #[test]
