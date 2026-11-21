@@ -1,0 +1,14 @@
+{
+  "name": "gen-date_command_request-roundtrip",
+  "from": "esphome-date-command-request",
+  "to": "esphome-date-command-request",
+  "input": "106418890120ae0128d301",
+  "expect": "106418890120ae0128d301",
+  "model": {
+    "@kind": "date_command_request",
+    "esphomedatecommandrequest.date_command_request_year": "100",
+    "esphomedatecommandrequest.date_command_request_month": "137",
+    "esphomedatecommandrequest.date_command_request_day": "174",
+    "esphomedatecommandrequest.date_command_request_device_id": "211"
+  }
+}

@@ -1,0 +1,5 @@
+{
+ "1": "serial_proxy_get_modem_pins_response_instance",
+ "2": "serial_proxy_get_modem_pins_response_line_states",
+ "3": "serial_proxy_get_modem_pins_response_status"
+}

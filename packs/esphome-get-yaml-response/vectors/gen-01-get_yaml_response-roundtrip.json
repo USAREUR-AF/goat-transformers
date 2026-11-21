@@ -1,0 +1,12 @@
+{
+  "name": "gen-get_yaml_response-roundtrip",
+  "from": "esphome-get-yaml-response",
+  "to": "esphome-get-yaml-response",
+  "input": "1001188901",
+  "expect": "1001188901",
+  "model": {
+    "@kind": "get_yaml_response",
+    "esphomegetyamlresponse.get_yaml_response_done": "1",
+    "esphomegetyamlresponse.get_yaml_response_total_size": "137"
+  }
+}

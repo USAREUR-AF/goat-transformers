@@ -1,0 +1,30 @@
+{
+  "name": "gen-homeassistant_action_request-roundtrip",
+  "from": "esphome-homeassistant-action-request",
+  "to": "esphome-homeassistant-action-request",
+  "input": "0a09736572766963652d3012100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d381a110a056b65792d39120876616c75652d31301a120a066b65792d3131120876616c75652d313222120a066b65792d3133120876616c75652d313422120a066b65792d3135120876616c75652d3136280130ae0138014213726573706f6e73655f74656d706c6174652d34",
+  "expect": "0a09736572766963652d3012100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d381a110a056b65792d39120876616c75652d31301a120a066b65792d3131120876616c75652d313222120a066b65792d3133120876616c75652d313422120a066b65792d3135120876616c75652d3136280130ae0138014213726573706f6e73655f74656d706c6174652d34",
+  "model": {
+    "@kind": "homeassistant_action_request",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_service": "service-0",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_is_event": "1",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_call_id": "174",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_wants_response": "1",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_response_template": "response_template-4",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data.#": "2",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data[0].esphomehomeassistantactionrequest.homeassistant_service_map_key": "key-5",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data[0].esphomehomeassistantactionrequest.homeassistant_service_map_value": "value-6",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data[1].esphomehomeassistantactionrequest.homeassistant_service_map_key": "key-7",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data[1].esphomehomeassistantactionrequest.homeassistant_service_map_value": "value-8",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data_template.#": "2",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data_template[0].esphomehomeassistantactionrequest.homeassistant_service_map_key": "key-9",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data_template[0].esphomehomeassistantactionrequest.homeassistant_service_map_value": "value-10",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data_template[1].esphomehomeassistantactionrequest.homeassistant_service_map_key": "key-11",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_data_template[1].esphomehomeassistantactionrequest.homeassistant_service_map_value": "value-12",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_variables.#": "2",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_variables[0].esphomehomeassistantactionrequest.homeassistant_service_map_key": "key-13",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_variables[0].esphomehomeassistantactionrequest.homeassistant_service_map_value": "value-14",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_variables[1].esphomehomeassistantactionrequest.homeassistant_service_map_key": "key-15",
+    "esphomehomeassistantactionrequest.homeassistant_action_request_variables[1].esphomehomeassistantactionrequest.homeassistant_service_map_value": "value-16"
+  }
+}

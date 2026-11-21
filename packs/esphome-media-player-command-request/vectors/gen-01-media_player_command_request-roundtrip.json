@@ -1,0 +1,19 @@
+{
+  "name": "gen-media_player_command_request-roundtrip",
+  "from": "esphome-media-player-command-request",
+  "to": "esphome-media-player-command-request",
+  "input": "1001180120012d0000004030013a0b6d656469615f75726c2d3540014801508c03",
+  "expect": "1001180120012d0000004030013a0b6d656469615f75726c2d3540014801508c03",
+  "model": {
+    "@kind": "media_player_command_request",
+    "esphomemediaplayercommandrequest.media_player_command_request_has_command": "1",
+    "esphomemediaplayercommandrequest.media_player_command_request_command": "1",
+    "esphomemediaplayercommandrequest.media_player_command_request_has_volume": "1",
+    "esphomemediaplayercommandrequest.media_player_command_request_volume": "2",
+    "esphomemediaplayercommandrequest.media_player_command_request_has_media_url": "1",
+    "esphomemediaplayercommandrequest.media_player_command_request_media_url": "media_url-5",
+    "esphomemediaplayercommandrequest.media_player_command_request_has_announcement": "1",
+    "esphomemediaplayercommandrequest.media_player_command_request_announcement": "1",
+    "esphomemediaplayercommandrequest.media_player_command_request_device_id": "396"
+  }
+}

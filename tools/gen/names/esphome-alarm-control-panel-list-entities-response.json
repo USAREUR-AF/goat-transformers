@@ -1,0 +1,11 @@
+{
+ "1": "list_entities_alarm_control_panel_response_object_id",
+ "10": "list_entities_alarm_control_panel_response_requires_code_to_arm",
+ "11": "list_entities_alarm_control_panel_response_device_id",
+ "3": "list_entities_alarm_control_panel_response_name",
+ "5": "list_entities_alarm_control_panel_response_icon",
+ "6": "list_entities_alarm_control_panel_response_disabled_by_default",
+ "7": "list_entities_alarm_control_panel_response_entity_category",
+ "8": "list_entities_alarm_control_panel_response_supported_features",
+ "9": "list_entities_alarm_control_panel_response_requires_code"
+}

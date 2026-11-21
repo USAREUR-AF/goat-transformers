@@ -1,0 +1,14 @@
+{
+  "name": "gen-hello_request-roundtrip",
+  "from": "esphome-hello-request",
+  "to": "esphome-hello-request",
+  "input": "0a0d636c69656e745f696e666f2d3010890118ae012001",
+  "expect": "0a0d636c69656e745f696e666f2d3010890118ae012001",
+  "model": {
+    "@kind": "hello_request",
+    "esphomehellorequest.hello_request_client_info": "client_info-0",
+    "esphomehellorequest.hello_request_api_version_major": "137",
+    "esphomehellorequest.hello_request_api_version_minor": "174",
+    "esphomehellorequest.hello_request_outgoing_connection_target": "1"
+  }
+}

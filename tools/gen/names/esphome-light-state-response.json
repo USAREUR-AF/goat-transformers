@@ -1,0 +1,15 @@
+{
+ "10": "light_state_response_color_brightness",
+ "11": "light_state_response_color_mode",
+ "12": "light_state_response_cold_white",
+ "13": "light_state_response_warm_white",
+ "14": "light_state_response_device_id",
+ "2": "light_state_response_state",
+ "3": "light_state_response_brightness",
+ "4": "light_state_response_red",
+ "5": "light_state_response_green",
+ "6": "light_state_response_blue",
+ "7": "light_state_response_white",
+ "8": "light_state_response_color_temperature",
+ "9": "light_state_response_effect"
+}

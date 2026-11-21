@@ -1,0 +1,13 @@
+{
+  "name": "gen-valve_state_response-roundtrip",
+  "from": "esphome-valve-state-response",
+  "to": "esphome-valve-state-response",
+  "input": "150000003e180120ae01",
+  "expect": "150000003e180120ae01",
+  "model": {
+    "@kind": "valve_state_response",
+    "esphomevalvestateresponse.valve_state_response_position": "0.125",
+    "esphomevalvestateresponse.valve_state_response_current_operation": "1",
+    "esphomevalvestateresponse.valve_state_response_device_id": "174"
+  }
+}

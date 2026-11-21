@@ -1,0 +1,33 @@
+{
+  "name": "gen-climate_command_request-roundtrip",
+  "from": "esphome-climate-command-request",
+  "to": "esphome-climate-command-request",
+  "input": "1001180120012d0000004030013d0000504040014d000090405001580160016801700178018001018a0112637573746f6d5f66616e5f6d6f64652d3135900101980101a00101aa0110637573746f6d5f7072657365742d3139b00101bd010000a840c0019207",
+  "expect": "1001180120012d0000004030013d0000504040014d000090405001580160016801700178018001018a0112637573746f6d5f66616e5f6d6f64652d3135900101980101a00101aa0110637573746f6d5f7072657365742d3139b00101bd010000a840c0019207",
+  "model": {
+    "@kind": "climate_command_request",
+    "esphomeclimatecommandrequest.climate_command_request_has_mode": "1",
+    "esphomeclimatecommandrequest.climate_command_request_mode": "1",
+    "esphomeclimatecommandrequest.climate_command_request_has_target_temperature": "1",
+    "esphomeclimatecommandrequest.climate_command_request_target_temperature": "2",
+    "esphomeclimatecommandrequest.climate_command_request_has_target_temperature_low": "1",
+    "esphomeclimatecommandrequest.climate_command_request_target_temperature_low": "3.25",
+    "esphomeclimatecommandrequest.climate_command_request_has_target_temperature_high": "1",
+    "esphomeclimatecommandrequest.climate_command_request_target_temperature_high": "4.5",
+    "esphomeclimatecommandrequest.climate_command_request_unused_has_legacy_away": "1",
+    "esphomeclimatecommandrequest.climate_command_request_unused_legacy_away": "1",
+    "esphomeclimatecommandrequest.climate_command_request_has_fan_mode": "1",
+    "esphomeclimatecommandrequest.climate_command_request_fan_mode": "1",
+    "esphomeclimatecommandrequest.climate_command_request_has_swing_mode": "1",
+    "esphomeclimatecommandrequest.climate_command_request_swing_mode": "1",
+    "esphomeclimatecommandrequest.climate_command_request_has_custom_fan_mode": "1",
+    "esphomeclimatecommandrequest.climate_command_request_custom_fan_mode": "custom_fan_mode-15",
+    "esphomeclimatecommandrequest.climate_command_request_has_preset": "1",
+    "esphomeclimatecommandrequest.climate_command_request_preset": "1",
+    "esphomeclimatecommandrequest.climate_command_request_has_custom_preset": "1",
+    "esphomeclimatecommandrequest.climate_command_request_custom_preset": "custom_preset-19",
+    "esphomeclimatecommandrequest.climate_command_request_has_target_humidity": "1",
+    "esphomeclimatecommandrequest.climate_command_request_target_humidity": "5.25",
+    "esphomeclimatecommandrequest.climate_command_request_device_id": "914"
+  }
+}

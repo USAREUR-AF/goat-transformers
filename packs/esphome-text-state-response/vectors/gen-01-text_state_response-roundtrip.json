@@ -1,0 +1,13 @@
+{
+  "name": "gen-text_state_response-roundtrip",
+  "from": "esphome-text-state-response",
+  "to": "esphome-text-state-response",
+  "input": "120773746174652d30180120ae01",
+  "expect": "120773746174652d30180120ae01",
+  "model": {
+    "@kind": "text_state_response",
+    "esphometextstateresponse.text_state_response_state": "state-0",
+    "esphometextstateresponse.text_state_response_missing_state": "1",
+    "esphometextstateresponse.text_state_response_device_id": "174"
+  }
+}

@@ -1,0 +1,17 @@
+{
+ "1": "list_entities_media_player_response_object_id",
+ "10": "list_entities_media_player_response_device_id",
+ "11": "list_entities_media_player_response_feature_flags",
+ "3": "list_entities_media_player_response_name",
+ "5": "list_entities_media_player_response_icon",
+ "6": "list_entities_media_player_response_disabled_by_default",
+ "7": "list_entities_media_player_response_entity_category",
+ "8": "list_entities_media_player_response_supports_pause",
+ "9[]": "list_entities_media_player_response_supported_formats",
+ "MediaPlayerSupportedFormat:1": "media_player_supported_format_format",
+ "MediaPlayerSupportedFormat:2": "media_player_supported_format_sample_rate",
+ "MediaPlayerSupportedFormat:3": "media_player_supported_format_num_channels",
+ "MediaPlayerSupportedFormat:4": "media_player_supported_format_purpose",
+ "MediaPlayerSupportedFormat:5": "media_player_supported_format_sample_bytes",
+ "MediaPlayerSupportedFormat:6": "media_player_supported_format_bitrate"
+}

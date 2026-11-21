@@ -1,0 +1,23 @@
+{
+  "name": "gen-list_entities_cover_response-roundtrip",
+  "from": "esphome-cover-list-entities-response",
+  "to": "esphome-cover-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d31280130013801420e6465766963655f636c6173732d354801520669636f6e2d375801600168d60370017801",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d31280130013801420e6465766963655f636c6173732d354801520669636f6e2d375801600168d60370017801",
+  "model": {
+    "@kind": "list_entities_cover_response",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_object_id": "object_id-0",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_name": "name-1",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_assumed_state": "1",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_supports_position": "1",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_supports_tilt": "1",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_device_class": "device_class-5",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_disabled_by_default": "1",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_icon": "icon-7",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_entity_category": "1",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_supports_stop": "1",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_device_id": "470",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_supports_stop_tilt": "1",
+    "esphomecoverlistentitiesresponse.list_entities_cover_response_supports_toggle": "1"
+  }
+}

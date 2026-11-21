@@ -1,0 +1,12 @@
+{
+ "1": "list_entities_lock_response_object_id",
+ "10": "list_entities_lock_response_requires_code",
+ "11": "list_entities_lock_response_code_format",
+ "12": "list_entities_lock_response_device_id",
+ "3": "list_entities_lock_response_name",
+ "5": "list_entities_lock_response_icon",
+ "6": "list_entities_lock_response_disabled_by_default",
+ "7": "list_entities_lock_response_entity_category",
+ "8": "list_entities_lock_response_assumed_state",
+ "9": "list_entities_lock_response_supports_open"
+}

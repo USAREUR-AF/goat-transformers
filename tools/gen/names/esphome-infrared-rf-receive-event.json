@@ -1,0 +1,5 @@
+{
+ "1": "infrared_rfreceive_event_device_id",
+ "3[]": "infrared_rfreceive_event_timings",
+ "InfraredRFReceiveEvent:3[]item": "infrared_rfreceive_event_timings_item"
+}

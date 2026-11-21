@@ -1,0 +1,11 @@
+{
+  "name": "gen-bluetooth_gattget_services_done_response-roundtrip",
+  "from": "esphome-bluetooth-gatt-get-services-done-response",
+  "to": "esphome-bluetooth-gatt-get-services-done-response",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "bluetooth_gattget_services_done_response",
+    "esphomebluetoothgattgetservicesdoneresponse.bluetooth_gattget_services_done_response_address": "100"
+  }
+}

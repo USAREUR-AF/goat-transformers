@@ -1,0 +1,10 @@
+{
+ "1[]": "voice_assistant_configuration_response_available_wake_words",
+ "2[]": "voice_assistant_configuration_response_active_wake_words",
+ "3": "voice_assistant_configuration_response_max_active_wake_words",
+ "VoiceAssistantConfigurationResponse:2[]item": "voice_assistant_configuration_response_active_wake_words_item",
+ "VoiceAssistantWakeWord:1": "voice_assistant_wake_word_id",
+ "VoiceAssistantWakeWord:2": "voice_assistant_wake_word_wake_word",
+ "VoiceAssistantWakeWord:3[]": "voice_assistant_wake_word_trained_languages",
+ "VoiceAssistantWakeWord:3[]item": "voice_assistant_wake_word_trained_languages_item"
+}

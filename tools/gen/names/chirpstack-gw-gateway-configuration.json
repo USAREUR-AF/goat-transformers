@@ -1,0 +1,18 @@
+{
+ "2": "gateway_configuration_version",
+ "3[]": "gateway_configuration_channels",
+ "4.1": "stats_interval_seconds",
+ "4.2": "stats_interval_nanos",
+ "5": "gateway_configuration_gateway_id",
+ "gw.ChannelConfiguration:1": "channel_configuration_frequency",
+ "gw.ChannelConfiguration:2": "channel_configuration_modulation_legacy",
+ "gw.ChannelConfiguration:3.1": "channel_configuration_lora_modulation_config_bandwidth_legacy",
+ "gw.ChannelConfiguration:3.2[]": "channel_configuration_lora_modulation_config_spreading_factors",
+ "gw.ChannelConfiguration:3.3": "channel_configuration_lora_modulation_config_bandwidth",
+ "gw.ChannelConfiguration:4.1": "channel_configuration_fsk_modulation_config_bandwidth_legacy",
+ "gw.ChannelConfiguration:4.2": "channel_configuration_fsk_modulation_config_bitrate",
+ "gw.ChannelConfiguration:4.3": "channel_configuration_fsk_modulation_config_bandwidth",
+ "gw.ChannelConfiguration:5": "channel_configuration_board",
+ "gw.ChannelConfiguration:6": "channel_configuration_demodulator",
+ "gw.LoraModulationConfig:2[]item": "lora_modulation_config_spreading_factors_item"
+}

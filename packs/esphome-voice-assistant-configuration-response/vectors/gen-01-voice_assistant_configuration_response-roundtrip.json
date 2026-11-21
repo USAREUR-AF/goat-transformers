@@ -1,0 +1,23 @@
+{
+  "name": "gen-voice_assistant_configuration_response-roundtrip",
+  "from": "esphome-voice-assistant-configuration-response",
+  "to": "esphome-voice-assistant-configuration-response",
+  "input": "0a280a0469642d31120b77616b655f776f72642d321a13747261696e65645f6c616e6775616765732d330a280a0469642d34120b77616b655f776f72642d351a13747261696e65645f6c616e6775616765732d3612136163746976655f77616b655f776f7264732d3712136163746976655f77616b655f776f7264732d381864",
+  "expect": "0a280a0469642d31120b77616b655f776f72642d321a13747261696e65645f6c616e6775616765732d330a280a0469642d34120b77616b655f776f72642d351a13747261696e65645f6c616e6775616765732d3612136163746976655f77616b655f776f7264732d3712136163746976655f77616b655f776f7264732d381864",
+  "model": {
+    "@kind": "voice_assistant_configuration_response",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_max_active_wake_words": "100",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words.#": "2",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words[0].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_id": "id-1",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words[0].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_wake_word": "wake_word-2",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words[0].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_trained_languages.#": "1",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words[0].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_trained_languages[0].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_trained_languages_item": "trained_languages-3",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words[1].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_id": "id-4",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words[1].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_wake_word": "wake_word-5",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words[1].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_trained_languages.#": "1",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_available_wake_words[1].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_trained_languages[0].esphomevoiceassistantconfigurationresponse.voice_assistant_wake_word_trained_languages_item": "trained_languages-6",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_active_wake_words.#": "2",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_active_wake_words[0].esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_active_wake_words_item": "active_wake_words-7",
+    "esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_active_wake_words[1].esphomevoiceassistantconfigurationresponse.voice_assistant_configuration_response_active_wake_words_item": "active_wake_words-8"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-lock_command_request-roundtrip",
+  "from": "esphome-lock-command-request",
+  "to": "esphome-lock-command-request",
+  "input": "100118012206636f64652d3228d301",
+  "expect": "100118012206636f64652d3228d301",
+  "model": {
+    "@kind": "lock_command_request",
+    "esphomelockcommandrequest.lock_command_request_command": "1",
+    "esphomelockcommandrequest.lock_command_request_has_code": "1",
+    "esphomelockcommandrequest.lock_command_request_code": "code-2",
+    "esphomelockcommandrequest.lock_command_request_device_id": "211"
+  }
+}

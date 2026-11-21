@@ -1,0 +1,12 @@
+{
+  "name": "gen-sendspin_pairing_token_response-roundtrip",
+  "from": "esphome-sendspin-pairing-token-response",
+  "to": "esphome-sendspin-pairing-token-response",
+  "input": "08011207746f6b656e2d31",
+  "expect": "08011207746f6b656e2d31",
+  "model": {
+    "@kind": "sendspin_pairing_token_response",
+    "esphomesendspinpairingtokenresponse.sendspin_pairing_token_response_status": "1",
+    "esphomesendspinpairingtokenresponse.sendspin_pairing_token_response_token": "token-1"
+  }
+}

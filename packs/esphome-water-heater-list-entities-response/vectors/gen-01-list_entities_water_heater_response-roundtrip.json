@@ -1,0 +1,24 @@
+{
+  "name": "gen-list_entities_water_heater_response-roundtrip",
+  "from": "esphome-water-heater-list-entities-response",
+  "to": "esphome-water-heater-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d31220669636f6e2d3228013001389d0245000078404d00009040550000a4405a02010160b1036801",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d31220669636f6e2d3228013001389d0245000078404d00009040550000a4405a02010160b1036801",
+  "model": {
+    "@kind": "list_entities_water_heater_response",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_object_id": "object_id-0",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_name": "name-1",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_icon": "icon-2",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_disabled_by_default": "1",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_entity_category": "1",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_device_id": "285",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_min_temperature": "3.875",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_max_temperature": "4.5",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_target_temperature_step": "5.125",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_supported_features": "433",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_temperature_unit": "1",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_supported_modes.#": "2",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_supported_modes[0].esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_supported_modes_item": "1",
+    "esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_supported_modes[1].esphomewaterheaterlistentitiesresponse.list_entities_water_heater_response_supported_modes_item": "1"
+  }
+}

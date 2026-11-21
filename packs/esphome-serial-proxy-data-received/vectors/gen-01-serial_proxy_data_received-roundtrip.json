@@ -1,0 +1,11 @@
+{
+  "name": "gen-serial_proxy_data_received-roundtrip",
+  "from": "esphome-serial-proxy-data-received",
+  "to": "esphome-serial-proxy-data-received",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "serial_proxy_data_received",
+    "esphomeserialproxydatareceived.serial_proxy_data_received_instance": "100"
+  }
+}

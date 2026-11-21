@@ -1,0 +1,15 @@
+{
+ "1": "list_entities_cover_response_object_id",
+ "10": "list_entities_cover_response_icon",
+ "11": "list_entities_cover_response_entity_category",
+ "12": "list_entities_cover_response_supports_stop",
+ "13": "list_entities_cover_response_device_id",
+ "14": "list_entities_cover_response_supports_stop_tilt",
+ "15": "list_entities_cover_response_supports_toggle",
+ "3": "list_entities_cover_response_name",
+ "5": "list_entities_cover_response_assumed_state",
+ "6": "list_entities_cover_response_supports_position",
+ "7": "list_entities_cover_response_supports_tilt",
+ "8": "list_entities_cover_response_device_class",
+ "9": "list_entities_cover_response_disabled_by_default"
+}

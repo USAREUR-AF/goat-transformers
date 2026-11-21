@@ -1,0 +1,12 @@
+{
+  "name": "gen-conn_state-roundtrip",
+  "from": "chirpstack-gw-conn-state",
+  "to": "chirpstack-gw-conn-state",
+  "input": "10011a0c676174657761795f69642d30",
+  "expect": "10011a0c676174657761795f69642d30",
+  "model": {
+    "@kind": "conn_state",
+    "chirpstackgwconnstate.conn_state_gateway_id": "gateway_id-0",
+    "chirpstackgwconnstate.conn_state_state": "1"
+  }
+}

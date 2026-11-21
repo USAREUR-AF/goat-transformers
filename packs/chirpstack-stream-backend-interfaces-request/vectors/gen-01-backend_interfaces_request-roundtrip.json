@@ -1,0 +1,20 @@
+{
+  "name": "gen-backend_interfaces_request-roundtrip",
+  "from": "chirpstack-stream-backend-interfaces-request",
+  "to": "chirpstack-stream-backend-interfaces-request",
+  "input": "0a0b73656e6465725f69642d30120d72656365697665725f69642d311a0608ae0110d30120f8012a0e6d6573736167655f747970652d35320d726573756c745f636f64652d363a0e726571756573745f626f64792d37420f726571756573745f6572726f722d384a0f726573706f6e73655f626f64792d39",
+  "expect": "0a0b73656e6465725f69642d30120d72656365697665725f69642d311a0608ae0110d30120f8012a0e6d6573736167655f747970652d35320d726573756c745f636f64652d363a0e726571756573745f626f64792d37420f726571756573745f6572726f722d384a0f726573706f6e73655f626f64792d39",
+  "model": {
+    "@kind": "backend_interfaces_request",
+    "chirpstackstreambackendinterfacesrequest.backend_interfaces_request_sender_id": "sender_id-0",
+    "chirpstackstreambackendinterfacesrequest.backend_interfaces_request_receiver_id": "receiver_id-1",
+    "chirpstackstreambackendinterfacesrequest.time_seconds": "174",
+    "chirpstackstreambackendinterfacesrequest.time_nanos": "211",
+    "chirpstackstreambackendinterfacesrequest.backend_interfaces_request_transaction_id": "248",
+    "chirpstackstreambackendinterfacesrequest.backend_interfaces_request_message_type": "message_type-5",
+    "chirpstackstreambackendinterfacesrequest.backend_interfaces_request_result_code": "result_code-6",
+    "chirpstackstreambackendinterfacesrequest.backend_interfaces_request_request_body": "request_body-7",
+    "chirpstackstreambackendinterfacesrequest.backend_interfaces_request_request_error": "request_error-8",
+    "chirpstackstreambackendinterfacesrequest.backend_interfaces_request_response_body": "response_body-9"
+  }
+}

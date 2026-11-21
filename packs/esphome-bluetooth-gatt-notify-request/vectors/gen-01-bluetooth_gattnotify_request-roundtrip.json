@@ -1,0 +1,13 @@
+{
+  "name": "gen-bluetooth_gattnotify_request-roundtrip",
+  "from": "esphome-bluetooth-gatt-notify-request",
+  "to": "esphome-bluetooth-gatt-notify-request",
+  "input": "08641089011801",
+  "expect": "08641089011801",
+  "model": {
+    "@kind": "bluetooth_gattnotify_request",
+    "esphomebluetoothgattnotifyrequest.bluetooth_gattnotify_request_address": "100",
+    "esphomebluetoothgattnotifyrequest.bluetooth_gattnotify_request_handle": "137",
+    "esphomebluetoothgattnotifyrequest.bluetooth_gattnotify_request_enable": "1"
+  }
+}

@@ -1,0 +1,6 @@
+{
+ "2": "time_command_request_hour",
+ "3": "time_command_request_minute",
+ "4": "time_command_request_second",
+ "5": "time_command_request_device_id"
+}

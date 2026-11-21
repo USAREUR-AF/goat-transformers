@@ -1,0 +1,6 @@
+{
+ "1": "bluetooth_device_request_address",
+ "2": "bluetooth_device_request_request_type",
+ "3": "bluetooth_device_request_has_address_type",
+ "4": "bluetooth_device_request_address_type"
+}

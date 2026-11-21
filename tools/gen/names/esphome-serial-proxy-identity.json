@@ -1,0 +1,15 @@
+{
+ "1": "serial_proxy_identity_instance",
+ "2": "serial_proxy_identity_source",
+ "3": "serial_proxy_identity_flags",
+ "4": "serial_proxy_identity_manufacturer",
+ "5": "serial_proxy_identity_product",
+ "6": "serial_proxy_identity_serial_number",
+ "7.1": "usb_vendor_id",
+ "7.2": "usb_product_id",
+ "7.3": "usb_bcd_device",
+ "7.4": "usb_interface_number",
+ "7.5": "usb_interface_class",
+ "7.6": "usb_port_number",
+ "7.7": "usb_interface_description"
+}

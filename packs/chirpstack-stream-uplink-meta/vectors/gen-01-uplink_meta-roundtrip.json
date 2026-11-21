@@ -1,0 +1,28 @@
+{
+  "name": "gen-uplink_meta-roundtrip",
+  "from": "chirpstack-stream-uplink-meta",
+  "to": "chirpstack-stream-uplink-meta",
+  "input": "0a096465765f6575692d30122a08890112251a2308ae0110d3011a12636f64655f726174655f6c65676163792d342001280130e70238011a6e0a0d676174657761795f69642d313910c8061a0608ed06109207220608810810a6082a0608cb0810f0083095093d0000384040df0948840a50a90a58ce0a622209000000000080354011000000000040374019000000000000394020012d0000003f8001018a010608b70710dc071a6e0a0d676174657761795f69642d343110f60c1a06089b0d10c00d220608af0e10d40e2a0608f90e109e0f30c30f3d0000203f408d1048b21050d71058fc106222090000000000003440110000000000c0354019000000000080374020012d0000c8408001018a010608e50d108a0e208f0528b40530d9053801",
+  "expect": "0a096465765f6575692d30122a08890112251a2308ae0110d3011a12636f64655f726174655f6c65676163792d342001280130e70238011a6e0a0d676174657761795f69642d313910c8061a0608ed06109207220608810810a6082a0608cb0810f0083095093d0000384040df0948840a50a90a58ce0a622209000000000080354011000000000040374019000000000000394020012d0000003f8001018a010608b70710dc071a6e0a0d676174657761795f69642d343110f60c1a06089b0d10c00d220608af0e10d40e2a0608f90e109e0f30c30f3d0000203f408d1048b21050d71058fc106222090000000000003440110000000000c0354019000000000080374020012d0000c8408001018a010608e50d108a0e208f0528b40530d9053801",
+  "model": {
+    "@kind": "uplink_meta",
+    "chirpstackstreamuplinkmeta.uplink_meta_dev_eui": "dev_eui-0",
+    "chirpstackstreamuplinkmeta.tx_info_frequency": "137",
+    "chirpstackstreamuplinkmeta.tx_info_lora_bandwidth": "174",
+    "chirpstackstreamuplinkmeta.tx_info_lora_spreading_factor": "211",
+    "chirpstackstreamuplinkmeta.tx_info_lora_code_rate_legacy": "code_rate_legacy-4",
+    "chirpstackstreamuplinkmeta.tx_info_lora_code_rate": "1",
+    "chirpstackstreamuplinkmeta.tx_info_lora_polarization_inversion": "1",
+    "chirpstackstreamuplinkmeta.tx_info_lora_preamble": "359",
+    "chirpstackstreamuplinkmeta.tx_info_lora_no_crc": "1",
+    "chirpstackstreamuplinkmeta.uplink_meta_phy_payload_byte_count": "655",
+    "chirpstackstreamuplinkmeta.uplink_meta_mac_command_byte_count": "692",
+    "chirpstackstreamuplinkmeta.uplink_meta_application_payload_byte_count": "729",
+    "chirpstackstreamuplinkmeta.uplink_meta_frame_type": "1",
+    "chirpstackstreamuplinkmeta.uplink_meta_rx_info.#": "2",
+    "chirpstackstreamuplinkmeta.uplink_meta_rx_info[0].chirpstackstreamuplinkmeta.uplink_rx_info_gateway_id": "gateway_id-19",
+    "chirpstackstreamuplinkmeta.uplink_meta_rx_info[0].chirpstackstreamuplinkmeta.uplink_rx_info_uplink_id": "840",
+    "chirpstackstreamuplinkmeta.uplink_meta_rx_info[1].chirpstackstreamuplinkmeta.uplink_rx_info_gateway_id": "gateway_id-41",
+    "chirpstackstreamuplinkmeta.uplink_meta_rx_info[1].chirpstackstreamuplinkmeta.uplink_rx_info_uplink_id": "1654"
+  }
+}

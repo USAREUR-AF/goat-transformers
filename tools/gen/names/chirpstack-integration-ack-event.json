@@ -1,0 +1,17 @@
+{
+ "1": "ack_event_deduplication_id",
+ "2.1": "time_seconds",
+ "2.2": "time_nanos",
+ "3.1": "device_info_tenant_id",
+ "3.10": "device_info_device_class_enabled",
+ "3.2": "device_info_tenant_name",
+ "3.3": "device_info_application_id",
+ "3.4": "device_info_application_name",
+ "3.5": "device_info_device_profile_id",
+ "3.6": "device_info_device_profile_name",
+ "3.7": "device_info_device_name",
+ "3.8": "device_info_dev_eui",
+ "4": "ack_event_queue_item_id",
+ "5": "ack_event_acknowledged",
+ "6": "ack_event_f_cnt_down"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-bluetooth_gattread_request-roundtrip",
+  "from": "esphome-bluetooth-gatt-read-request",
+  "to": "esphome-bluetooth-gatt-read-request",
+  "input": "0864108901",
+  "expect": "0864108901",
+  "model": {
+    "@kind": "bluetooth_gattread_request",
+    "esphomebluetoothgattreadrequest.bluetooth_gattread_request_address": "100",
+    "esphomebluetoothgattreadrequest.bluetooth_gattread_request_handle": "137"
+  }
+}

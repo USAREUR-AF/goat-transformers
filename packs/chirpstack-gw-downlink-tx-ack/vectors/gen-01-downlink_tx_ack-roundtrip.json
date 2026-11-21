@@ -1,0 +1,15 @@
+{
+  "name": "gen-downlink_tx_ack-roundtrip",
+  "from": "chirpstack-gw-downlink-tx-ack",
+  "to": "chirpstack-gw-downlink-tx-ack",
+  "input": "1089012a0208012a020801320c676174657761795f69642d30",
+  "expect": "1089012a0208012a020801320c676174657761795f69642d30",
+  "model": {
+    "@kind": "downlink_tx_ack",
+    "chirpstackgwdownlinktxack.downlink_tx_ack_gateway_id": "gateway_id-0",
+    "chirpstackgwdownlinktxack.downlink_tx_ack_downlink_id": "137",
+    "chirpstackgwdownlinktxack.downlink_tx_ack_items.#": "2",
+    "chirpstackgwdownlinktxack.downlink_tx_ack_items[0].chirpstackgwdownlinktxack.downlink_tx_ack_item_status": "1",
+    "chirpstackgwdownlinktxack.downlink_tx_ack_items[1].chirpstackgwdownlinktxack.downlink_tx_ack_item_status": "1"
+  }
+}

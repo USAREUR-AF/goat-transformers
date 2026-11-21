@@ -1,0 +1,20 @@
+{
+  "name": "gen-list_entities_valve_response-roundtrip",
+  "from": "esphome-valve-list-entities-response",
+  "to": "esphome-valve-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801420e6465766963655f636c6173732d3548015001580160b103",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801420e6465766963655f636c6173732d3548015001580160b103",
+  "model": {
+    "@kind": "list_entities_valve_response",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_object_id": "object_id-0",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_name": "name-1",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_icon": "icon-2",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_disabled_by_default": "1",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_entity_category": "1",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_device_class": "device_class-5",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_assumed_state": "1",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_supports_position": "1",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_supports_stop": "1",
+    "esphomevalvelistentitiesresponse.list_entities_valve_response_device_id": "433"
+  }
+}

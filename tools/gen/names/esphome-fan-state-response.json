@@ -1,0 +1,9 @@
+{
+ "2": "fan_state_response_state",
+ "3": "fan_state_response_oscillating",
+ "4": "fan_state_response_speed",
+ "5": "fan_state_response_direction",
+ "6": "fan_state_response_speed_level",
+ "7": "fan_state_response_preset_mode",
+ "8": "fan_state_response_device_id"
+}

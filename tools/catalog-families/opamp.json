@@ -1,0 +1,7 @@
+{
+  "name": "OpAMP",
+  "domain": "networks",
+  "prefixes": [
+    "opamp-"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "gen-mesh-roundtrip",
+  "from": "chirpstack-gw-event",
+  "to": "chirpstack-gw-event",
+  "input": "1a300a0c676174657761795f69642d30120a72656c61795f69642d311a0608ae0110d30122050a0308f80122050a03089d02",
+  "expect": "1a300a0c676174657761795f69642d30120a72656c61795f69642d311a0608ae0110d30122050a0308f80122050a03089d02",
+  "model": {
+    "@kind": "mesh",
+    "chirpstackgwevent.mesh_gateway_id": "gateway_id-0",
+    "chirpstackgwevent.mesh_relay_id": "relay_id-1",
+    "chirpstackgwevent.time_seconds": "174",
+    "chirpstackgwevent.time_nanos": "211",
+    "chirpstackgwevent.mesh_events.#": "2",
+    "chirpstackgwevent.mesh_events[0].chirpstackgwevent.mesh_event_item_proprietary_event_type": "248",
+    "chirpstackgwevent.mesh_events[1].chirpstackgwevent.mesh_event_item_proprietary_event_type": "285"
+  }
+}

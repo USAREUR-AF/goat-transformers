@@ -1,0 +1,20 @@
+{
+  "name": "gen-cover_command_request-roundtrip",
+  "from": "esphome-cover-command-request",
+  "to": "esphome-cover-command-request",
+  "input": "1001180120012d0000004030013d00005040400148e70250015801",
+  "expect": "1001180120012d0000004030013d00005040400148e70250015801",
+  "model": {
+    "@kind": "cover_command_request",
+    "esphomecovercommandrequest.cover_command_request_has_legacy_command": "1",
+    "esphomecovercommandrequest.cover_command_request_legacy_command": "1",
+    "esphomecovercommandrequest.cover_command_request_has_position": "1",
+    "esphomecovercommandrequest.cover_command_request_position": "2",
+    "esphomecovercommandrequest.cover_command_request_has_tilt": "1",
+    "esphomecovercommandrequest.cover_command_request_tilt": "3.25",
+    "esphomecovercommandrequest.cover_command_request_stop": "1",
+    "esphomecovercommandrequest.cover_command_request_device_id": "359",
+    "esphomecovercommandrequest.cover_command_request_stop_tilt": "1",
+    "esphomecovercommandrequest.cover_command_request_toggle": "1"
+  }
+}

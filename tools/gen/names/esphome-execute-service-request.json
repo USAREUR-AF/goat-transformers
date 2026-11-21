@@ -1,0 +1,18 @@
+{
+ "2[]": "execute_service_request_args",
+ "3": "execute_service_request_call_id",
+ "4": "execute_service_request_return_response",
+ "ExecuteServiceArgument:1": "execute_service_argument_bool_",
+ "ExecuteServiceArgument:2": "execute_service_argument_legacy_int",
+ "ExecuteServiceArgument:3": "execute_service_argument_float_",
+ "ExecuteServiceArgument:4": "execute_service_argument_string_",
+ "ExecuteServiceArgument:5": "execute_service_argument_int_",
+ "ExecuteServiceArgument:6[]": "execute_service_argument_bool_array",
+ "ExecuteServiceArgument:6[]item": "execute_service_argument_bool_array_item",
+ "ExecuteServiceArgument:7[]": "execute_service_argument_int_array",
+ "ExecuteServiceArgument:7[]item": "execute_service_argument_int_array_item",
+ "ExecuteServiceArgument:8[]": "execute_service_argument_float_array",
+ "ExecuteServiceArgument:8[]item": "execute_service_argument_float_array_item",
+ "ExecuteServiceArgument:9[]": "execute_service_argument_string_array",
+ "ExecuteServiceArgument:9[]item": "execute_service_argument_string_array_item"
+}

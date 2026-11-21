@@ -1,0 +1,14 @@
+{
+  "name": "gen-media_player_state_response-roundtrip",
+  "from": "esphome-media-player-state-response",
+  "to": "esphome-media-player-state-response",
+  "input": "10011d0000403f200128d301",
+  "expect": "10011d0000403f200128d301",
+  "model": {
+    "@kind": "media_player_state_response",
+    "esphomemediaplayerstateresponse.media_player_state_response_state": "1",
+    "esphomemediaplayerstateresponse.media_player_state_response_volume": "0.75",
+    "esphomemediaplayerstateresponse.media_player_state_response_muted": "1",
+    "esphomemediaplayerstateresponse.media_player_state_response_device_id": "211"
+  }
+}

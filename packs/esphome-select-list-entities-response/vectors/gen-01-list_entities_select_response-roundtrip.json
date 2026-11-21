@@ -1,0 +1,19 @@
+{
+  "name": "gen-list_entities_select_response-roundtrip",
+  "from": "esphome-select-list-entities-response",
+  "to": "esphome-select-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3232096f7074696f6e732d3632096f7074696f6e732d3738014001489d02",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3232096f7074696f6e732d3632096f7074696f6e732d3738014001489d02",
+  "model": {
+    "@kind": "list_entities_select_response",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_object_id": "object_id-0",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_name": "name-1",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_icon": "icon-2",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_disabled_by_default": "1",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_entity_category": "1",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_device_id": "285",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_options.#": "2",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_options[0].esphomeselectlistentitiesresponse.list_entities_select_response_options_item": "options-6",
+    "esphomeselectlistentitiesresponse.list_entities_select_response_options[1].esphomeselectlistentitiesresponse.list_entities_select_response_options_item": "options-7"
+  }
+}

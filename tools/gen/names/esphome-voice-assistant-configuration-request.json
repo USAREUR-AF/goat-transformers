@@ -1,0 +1,11 @@
+{
+ "1[]": "voice_assistant_configuration_request_external_wake_words",
+ "VoiceAssistantExternalWakeWord:1": "voice_assistant_external_wake_word_id",
+ "VoiceAssistantExternalWakeWord:2": "voice_assistant_external_wake_word_wake_word",
+ "VoiceAssistantExternalWakeWord:3[]": "voice_assistant_external_wake_word_trained_languages",
+ "VoiceAssistantExternalWakeWord:3[]item": "voice_assistant_external_wake_word_trained_languages_item",
+ "VoiceAssistantExternalWakeWord:4": "voice_assistant_external_wake_word_model_type",
+ "VoiceAssistantExternalWakeWord:5": "voice_assistant_external_wake_word_model_size",
+ "VoiceAssistantExternalWakeWord:6": "voice_assistant_external_wake_word_model_hash",
+ "VoiceAssistantExternalWakeWord:7": "voice_assistant_external_wake_word_url"
+}

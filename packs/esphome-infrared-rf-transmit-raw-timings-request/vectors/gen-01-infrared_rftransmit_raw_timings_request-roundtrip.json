@@ -1,0 +1,17 @@
+{
+  "name": "gen-infrared_rftransmit_raw_timings_request-roundtrip",
+  "from": "esphome-infrared-rf-transmit-raw-timings-request",
+  "to": "esphome-infrared-rf-transmit-raw-timings-request",
+  "input": "086418890120ae012a022d3730d301",
+  "expect": "086418890120ae012a022d3730d301",
+  "model": {
+    "@kind": "infrared_rftransmit_raw_timings_request",
+    "esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_device_id": "100",
+    "esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_carrier_frequency": "137",
+    "esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_repeat_count": "174",
+    "esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_modulation": "211",
+    "esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_timings.#": "2",
+    "esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_timings[0].esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_timings_item": "-23",
+    "esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_timings[1].esphomeinfraredrftransmitrawtimingsrequest.infrared_rftransmit_raw_timings_request_timings_item": "-28"
+  }
+}

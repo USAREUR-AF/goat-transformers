@@ -1,0 +1,13 @@
+{
+  "name": "gen-bluetooth_device_clear_cache_response-roundtrip",
+  "from": "esphome-bluetooth-device-clear-cache-response",
+  "to": "esphome-bluetooth-device-clear-cache-response",
+  "input": "0864100118ae01",
+  "expect": "0864100118ae01",
+  "model": {
+    "@kind": "bluetooth_device_clear_cache_response",
+    "esphomebluetoothdeviceclearcacheresponse.bluetooth_device_clear_cache_response_address": "100",
+    "esphomebluetoothdeviceclearcacheresponse.bluetooth_device_clear_cache_response_success": "1",
+    "esphomebluetoothdeviceclearcacheresponse.bluetooth_device_clear_cache_response_error": "174"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gen-time_state_response-roundtrip",
+  "from": "esphome-time-state-response",
+  "to": "esphome-time-state-response",
+  "input": "100118890120ae0128d30130f801",
+  "expect": "100118890120ae0128d30130f801",
+  "model": {
+    "@kind": "time_state_response",
+    "esphometimestateresponse.time_state_response_missing_state": "1",
+    "esphometimestateresponse.time_state_response_hour": "137",
+    "esphometimestateresponse.time_state_response_minute": "174",
+    "esphometimestateresponse.time_state_response_second": "211",
+    "esphometimestateresponse.time_state_response_device_id": "248"
+  }
+}

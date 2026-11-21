@@ -1,0 +1,17 @@
+{
+  "name": "gen-water_heater_command_request-roundtrip",
+  "from": "esphome-water-heater-command-request",
+  "to": "esphome-water-heater-command-request",
+  "input": "10641801250000b03f28d30130f8013d000050404500007840",
+  "expect": "10641801250000b03f28d30130f8013d000050404500007840",
+  "model": {
+    "@kind": "water_heater_command_request",
+    "esphomewaterheatercommandrequest.water_heater_command_request_has_fields": "100",
+    "esphomewaterheatercommandrequest.water_heater_command_request_mode": "1",
+    "esphomewaterheatercommandrequest.water_heater_command_request_target_temperature": "1.375",
+    "esphomewaterheatercommandrequest.water_heater_command_request_device_id": "211",
+    "esphomewaterheatercommandrequest.water_heater_command_request_state": "248",
+    "esphomewaterheatercommandrequest.water_heater_command_request_target_temperature_low": "3.25",
+    "esphomewaterheatercommandrequest.water_heater_command_request_target_temperature_high": "3.875"
+  }
+}

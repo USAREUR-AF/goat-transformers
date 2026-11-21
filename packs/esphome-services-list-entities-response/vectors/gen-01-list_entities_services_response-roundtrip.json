@@ -1,0 +1,18 @@
+{
+  "name": "gen-list_entities_services_response-roundtrip",
+  "from": "esphome-services-list-entities-response",
+  "to": "esphome-services-list-entities-response",
+  "input": "0a066e616d652d301a370a066e616d652d3310011a0d6465736372697074696f6e2d3522096578616d706c652d362801320f64656661756c745f76616c75652d381a3a0a066e616d652d3910011a0e6465736372697074696f6e2d3131220a6578616d706c652d31322801321064656661756c745f76616c75652d313420012a0d6465736372697074696f6e2d32",
+  "expect": "0a066e616d652d301a370a066e616d652d3310011a0d6465736372697074696f6e2d3522096578616d706c652d362801320f64656661756c745f76616c75652d381a3a0a066e616d652d3910011a0e6465736372697074696f6e2d3131220a6578616d706c652d31322801321064656661756c745f76616c75652d313420012a0d6465736372697074696f6e2d32",
+  "model": {
+    "@kind": "list_entities_services_response",
+    "esphomeserviceslistentitiesresponse.list_entities_services_response_name": "name-0",
+    "esphomeserviceslistentitiesresponse.list_entities_services_response_supports_response": "1",
+    "esphomeserviceslistentitiesresponse.list_entities_services_response_description": "description-2",
+    "esphomeserviceslistentitiesresponse.list_entities_services_response_args.#": "2",
+    "esphomeserviceslistentitiesresponse.list_entities_services_response_args[0].esphomeserviceslistentitiesresponse.list_entities_services_argument_name": "name-3",
+    "esphomeserviceslistentitiesresponse.list_entities_services_response_args[0].esphomeserviceslistentitiesresponse.list_entities_services_argument_type": "1",
+    "esphomeserviceslistentitiesresponse.list_entities_services_response_args[1].esphomeserviceslistentitiesresponse.list_entities_services_argument_name": "name-9",
+    "esphomeserviceslistentitiesresponse.list_entities_services_response_args[1].esphomeserviceslistentitiesresponse.list_entities_services_argument_type": "1"
+  }
+}

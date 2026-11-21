@@ -1,0 +1,12 @@
+{
+  "name": "gen-tts-application-up-to-geojson",
+  "from": "tts-application-up",
+  "to": "geojson",
+  "input": "0a210a0b6465766963655f69642d3012120a106170706c69636174696f6e5f69642d311212636f7272656c6174696f6e5f6964732d31311212636f7272656c6174696f6e5f6964732d31325a270a09736572766963652d35121a090000000000802540110000000000002940188c0320b1032801620608ae0110d3017001",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[12.5,10.75]},\"properties\":{}}",
+  "model": {
+    "@kind": "location_solved",
+    "lat": "10.75",
+    "lon": "12.5"
+  }
+}

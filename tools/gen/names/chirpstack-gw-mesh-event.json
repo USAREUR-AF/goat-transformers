@@ -1,0 +1,12 @@
+{
+ "1": "mesh_event_gateway_id",
+ "2": "mesh_event_relay_id",
+ "3.1": "time_seconds",
+ "3.2": "time_nanos",
+ "4[]": "mesh_event_events",
+ "gw.MeshEventHeartbeatRelayPath:1": "mesh_event_heartbeat_relay_path_relay_id",
+ "gw.MeshEventHeartbeatRelayPath:2": "mesh_event_heartbeat_relay_path_rssi",
+ "gw.MeshEventHeartbeatRelayPath:3": "mesh_event_heartbeat_relay_path_snr",
+ "gw.MeshEventItem:1.1": "mesh_event_item_proprietary_event_type",
+ "gw.MeshEventItem:2.4[]": "mesh_event_item_heartbeat_relay_path"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-bluetooth_gattget_services_request-roundtrip",
+  "from": "esphome-bluetooth-gatt-get-services-request",
+  "to": "esphome-bluetooth-gatt-get-services-request",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "bluetooth_gattget_services_request",
+    "esphomebluetoothgattgetservicesrequest.bluetooth_gattget_services_request_address": "100"
+  }
+}

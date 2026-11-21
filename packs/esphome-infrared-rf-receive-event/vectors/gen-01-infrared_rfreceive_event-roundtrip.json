@@ -1,0 +1,14 @@
+{
+  "name": "gen-infrared_rfreceive_event-roundtrip",
+  "from": "esphome-infrared-rf-receive-event",
+  "to": "esphome-infrared-rf-receive-event",
+  "input": "08641a020f19",
+  "expect": "08641a020f19",
+  "model": {
+    "@kind": "infrared_rfreceive_event",
+    "esphomeinfraredrfreceiveevent.infrared_rfreceive_event_device_id": "100",
+    "esphomeinfraredrfreceiveevent.infrared_rfreceive_event_timings.#": "2",
+    "esphomeinfraredrfreceiveevent.infrared_rfreceive_event_timings[0].esphomeinfraredrfreceiveevent.infrared_rfreceive_event_timings_item": "-8",
+    "esphomeinfraredrfreceiveevent.infrared_rfreceive_event_timings[1].esphomeinfraredrfreceiveevent.infrared_rfreceive_event_timings_item": "-13"
+  }
+}

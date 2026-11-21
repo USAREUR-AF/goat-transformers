@@ -1,0 +1,15 @@
+{
+  "name": "gen-cover_state_response-roundtrip",
+  "from": "esphome-cover-state-response",
+  "to": "esphome-cover-state-response",
+  "input": "10011d0000403f250000b03f280130f801",
+  "expect": "10011d0000403f250000b03f280130f801",
+  "model": {
+    "@kind": "cover_state_response",
+    "esphomecoverstateresponse.cover_state_response_legacy_state": "1",
+    "esphomecoverstateresponse.cover_state_response_position": "0.75",
+    "esphomecoverstateresponse.cover_state_response_tilt": "1.375",
+    "esphomecoverstateresponse.cover_state_response_current_operation": "1",
+    "esphomecoverstateresponse.cover_state_response_device_id": "248"
+  }
+}

@@ -1,0 +1,7 @@
+{
+ "1": "bluetooth_set_connection_params_request_address",
+ "2": "bluetooth_set_connection_params_request_min_interval",
+ "3": "bluetooth_set_connection_params_request_max_interval",
+ "4": "bluetooth_set_connection_params_request_latency",
+ "5": "bluetooth_set_connection_params_request_timeout"
+}

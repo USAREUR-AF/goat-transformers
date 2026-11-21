@@ -1,0 +1,6 @@
+{
+ "1": "mesh_command_gateway_id",
+ "2": "mesh_command_relay_id",
+ "3[]": "mesh_command_commands",
+ "gw.MeshCommandItem:1.1": "mesh_command_item_proprietary_command_type"
+}

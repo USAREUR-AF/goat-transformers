@@ -1,0 +1,11 @@
+{
+  "name": "gen-voice_assistant_announce_finished-roundtrip",
+  "from": "esphome-voice-assistant-announce-finished",
+  "to": "esphome-voice-assistant-announce-finished",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "voice_assistant_announce_finished",
+    "esphomevoiceassistantannouncefinished.voice_assistant_announce_finished_success": "1"
+  }
+}

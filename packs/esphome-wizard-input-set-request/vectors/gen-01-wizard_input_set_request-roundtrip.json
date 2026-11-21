@@ -1,0 +1,11 @@
+{
+  "name": "gen-wizard_input_set_request-roundtrip",
+  "from": "esphome-wizard-input-set-request",
+  "to": "esphome-wizard-input-set-request",
+  "input": "120b656e746974795f69642d30",
+  "expect": "120b656e746974795f69642d30",
+  "model": {
+    "@kind": "wizard_input_set_request",
+    "esphomewizardinputsetrequest.wizard_input_set_request_entity_id": "entity_id-0"
+  }
+}

@@ -1,0 +1,6 @@
+{
+ "1": "voice_assistant_announce_request_media_id",
+ "2": "voice_assistant_announce_request_text",
+ "3": "voice_assistant_announce_request_preannounce_media_id",
+ "4": "voice_assistant_announce_request_start_conversation"
+}

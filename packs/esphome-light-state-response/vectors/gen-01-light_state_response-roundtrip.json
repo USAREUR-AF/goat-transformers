@@ -1,0 +1,23 @@
+{
+  "name": "gen-light_state_response-roundtrip",
+  "from": "esphome-light-state-response",
+  "to": "esphome-light-state-response",
+  "input": "10011d0000403f25000028402d0000504035000078403d00009040450000a4404a096566666563742d313155000000405801650000b8406d0000cc4070a004",
+  "expect": "10011d0000403f25000028402d0000504035000078403d00009040450000a4404a096566666563742d313155000000405801650000b8406d0000cc4070a004",
+  "model": {
+    "@kind": "light_state_response",
+    "esphomelightstateresponse.light_state_response_state": "1",
+    "esphomelightstateresponse.light_state_response_brightness": "0.75",
+    "esphomelightstateresponse.light_state_response_color_mode": "1",
+    "esphomelightstateresponse.light_state_response_color_brightness": "2",
+    "esphomelightstateresponse.light_state_response_red": "2.625",
+    "esphomelightstateresponse.light_state_response_green": "3.25",
+    "esphomelightstateresponse.light_state_response_blue": "3.875",
+    "esphomelightstateresponse.light_state_response_white": "4.5",
+    "esphomelightstateresponse.light_state_response_color_temperature": "5.125",
+    "esphomelightstateresponse.light_state_response_cold_white": "5.75",
+    "esphomelightstateresponse.light_state_response_warm_white": "6.375",
+    "esphomelightstateresponse.light_state_response_effect": "effect-11",
+    "esphomelightstateresponse.light_state_response_device_id": "544"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gen-voice_assistant_set_configuration-roundtrip",
+  "from": "esphome-voice-assistant-set-configuration",
+  "to": "esphome-voice-assistant-set-configuration",
+  "input": "0a136163746976655f77616b655f776f7264732d300a136163746976655f77616b655f776f7264732d31",
+  "expect": "0a136163746976655f77616b655f776f7264732d300a136163746976655f77616b655f776f7264732d31",
+  "model": {
+    "@kind": "voice_assistant_set_configuration",
+    "esphomevoiceassistantsetconfiguration.voice_assistant_set_configuration_active_wake_words.#": "2",
+    "esphomevoiceassistantsetconfiguration.voice_assistant_set_configuration_active_wake_words[0].esphomevoiceassistantsetconfiguration.voice_assistant_set_configuration_active_wake_words_item": "active_wake_words-0",
+    "esphomevoiceassistantsetconfiguration.voice_assistant_set_configuration_active_wake_words[1].esphomevoiceassistantsetconfiguration.voice_assistant_set_configuration_active_wake_words_item": "active_wake_words-1"
+  }
+}

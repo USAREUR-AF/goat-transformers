@@ -1,0 +1,15 @@
+{
+  "name": "gen-mesh_command-roundtrip",
+  "from": "chirpstack-gw-mesh-command",
+  "to": "chirpstack-gw-mesh-command",
+  "input": "0a0c676174657761795f69642d30120a72656c61795f69642d311a050a0308ae011a050a0308d301",
+  "expect": "0a0c676174657761795f69642d30120a72656c61795f69642d311a050a0308ae011a050a0308d301",
+  "model": {
+    "@kind": "mesh_command",
+    "chirpstackgwmeshcommand.mesh_command_gateway_id": "gateway_id-0",
+    "chirpstackgwmeshcommand.mesh_command_relay_id": "relay_id-1",
+    "chirpstackgwmeshcommand.mesh_command_commands.#": "2",
+    "chirpstackgwmeshcommand.mesh_command_commands[0].chirpstackgwmeshcommand.mesh_command_item_proprietary_command_type": "174",
+    "chirpstackgwmeshcommand.mesh_command_commands[1].chirpstackgwmeshcommand.mesh_command_item_proprietary_command_type": "211"
+  }
+}

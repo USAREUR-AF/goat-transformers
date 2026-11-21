@@ -1,0 +1,10 @@
+{
+ "1": "list_entities_binary_sensor_response_object_id",
+ "10": "list_entities_binary_sensor_response_device_id",
+ "3": "list_entities_binary_sensor_response_name",
+ "5": "list_entities_binary_sensor_response_device_class",
+ "6": "list_entities_binary_sensor_response_is_status_binary_sensor",
+ "7": "list_entities_binary_sensor_response_disabled_by_default",
+ "8": "list_entities_binary_sensor_response_icon",
+ "9": "list_entities_binary_sensor_response_entity_category"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-authentication_response-roundtrip",
+  "from": "esphome-authentication-response",
+  "to": "esphome-authentication-response",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "authentication_response",
+    "esphomeauthenticationresponse.authentication_response_invalid_password": "1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+ "10": "siren_command_request_device_id",
+ "2": "siren_command_request_has_state",
+ "3": "siren_command_request_state",
+ "4": "siren_command_request_has_tone",
+ "5": "siren_command_request_tone",
+ "6": "siren_command_request_has_duration",
+ "7": "siren_command_request_duration",
+ "8": "siren_command_request_has_volume",
+ "9": "siren_command_request_volume"
+}

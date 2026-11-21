@@ -1,0 +1,23 @@
+{
+  "name": "gen-list_entities_media_player_response-roundtrip",
+  "from": "esphome-media-player-list-entities-response",
+  "to": "esphome-media-player-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d323001380140014a180a08666f726d61742d3810b10318d603200128a00430c5044a190a09666f726d61742d3134108f0518b405200128fe0530a30650c20258e702",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d323001380140014a180a08666f726d61742d3810b10318d603200128a00430c5044a190a09666f726d61742d3134108f0518b405200128fe0530a30650c20258e702",
+  "model": {
+    "@kind": "list_entities_media_player_response",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_object_id": "object_id-0",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_name": "name-1",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_icon": "icon-2",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_disabled_by_default": "1",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_entity_category": "1",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_supports_pause": "1",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_device_id": "322",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_feature_flags": "359",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_supported_formats.#": "2",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_supported_formats[0].esphomemediaplayerlistentitiesresponse.media_player_supported_format_format": "format-8",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_supported_formats[0].esphomemediaplayerlistentitiesresponse.media_player_supported_format_sample_rate": "433",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_supported_formats[1].esphomemediaplayerlistentitiesresponse.media_player_supported_format_format": "format-14",
+    "esphomemediaplayerlistentitiesresponse.list_entities_media_player_response_supported_formats[1].esphomemediaplayerlistentitiesresponse.media_player_supported_format_sample_rate": "655"
+  }
+}

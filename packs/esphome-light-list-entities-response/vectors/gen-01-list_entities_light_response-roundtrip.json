@@ -1,0 +1,28 @@
+{
+  "name": "gen-list_entities_light_response-roundtrip",
+  "from": "esphome-light-list-entities-response",
+  "to": "esphome-light-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d3128013001380140014d0000784055000090405a0a656666656374732d31345a0a656666656374732d3135620201016801720669636f6e2d3978018001fb03",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d3128013001380140014d0000784055000090405a0a656666656374732d31345a0a656666656374732d3135620201016801720669636f6e2d3978018001fb03",
+  "model": {
+    "@kind": "list_entities_light_response",
+    "esphomelightlistentitiesresponse.list_entities_light_response_object_id": "object_id-0",
+    "esphomelightlistentitiesresponse.list_entities_light_response_name": "name-1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_legacy_supports_brightness": "1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_legacy_supports_rgb": "1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_legacy_supports_white_value": "1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_legacy_supports_color_temperature": "1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_min_mireds": "3.875",
+    "esphomelightlistentitiesresponse.list_entities_light_response_max_mireds": "4.5",
+    "esphomelightlistentitiesresponse.list_entities_light_response_disabled_by_default": "1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_icon": "icon-9",
+    "esphomelightlistentitiesresponse.list_entities_light_response_entity_category": "1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_device_id": "507",
+    "esphomelightlistentitiesresponse.list_entities_light_response_supported_color_modes.#": "2",
+    "esphomelightlistentitiesresponse.list_entities_light_response_supported_color_modes[0].esphomelightlistentitiesresponse.list_entities_light_response_supported_color_modes_item": "1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_supported_color_modes[1].esphomelightlistentitiesresponse.list_entities_light_response_supported_color_modes_item": "1",
+    "esphomelightlistentitiesresponse.list_entities_light_response_effects.#": "2",
+    "esphomelightlistentitiesresponse.list_entities_light_response_effects[0].esphomelightlistentitiesresponse.list_entities_light_response_effects_item": "effects-14",
+    "esphomelightlistentitiesresponse.list_entities_light_response_effects[1].esphomelightlistentitiesresponse.list_entities_light_response_effects_item": "effects-15"
+  }
+}

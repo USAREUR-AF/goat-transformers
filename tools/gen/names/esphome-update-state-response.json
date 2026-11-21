@@ -1,0 +1,12 @@
+{
+ "10": "update_state_response_release_url",
+ "11": "update_state_response_device_id",
+ "2": "update_state_response_missing_state",
+ "3": "update_state_response_in_progress",
+ "4": "update_state_response_has_progress",
+ "5": "update_state_response_progress",
+ "6": "update_state_response_current_version",
+ "7": "update_state_response_latest_version",
+ "8": "update_state_response_title",
+ "9": "update_state_response_release_summary"
+}

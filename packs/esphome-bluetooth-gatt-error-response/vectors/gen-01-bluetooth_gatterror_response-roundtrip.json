@@ -1,0 +1,13 @@
+{
+  "name": "gen-bluetooth_gatterror_response-roundtrip",
+  "from": "esphome-bluetooth-gatt-error-response",
+  "to": "esphome-bluetooth-gatt-error-response",
+  "input": "086410890118ae01",
+  "expect": "086410890118ae01",
+  "model": {
+    "@kind": "bluetooth_gatterror_response",
+    "esphomebluetoothgatterrorresponse.bluetooth_gatterror_response_address": "100",
+    "esphomebluetoothgatterrorresponse.bluetooth_gatterror_response_handle": "137",
+    "esphomebluetoothgatterrorresponse.bluetooth_gatterror_response_error": "174"
+  }
+}

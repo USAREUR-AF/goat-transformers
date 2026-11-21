@@ -1,0 +1,8 @@
+{
+ "1": "voice_assistant_timer_event_response_event_type",
+ "2": "voice_assistant_timer_event_response_timer_id",
+ "3": "voice_assistant_timer_event_response_name",
+ "4": "voice_assistant_timer_event_response_total_seconds",
+ "5": "voice_assistant_timer_event_response_seconds_left",
+ "6": "voice_assistant_timer_event_response_is_active"
+}

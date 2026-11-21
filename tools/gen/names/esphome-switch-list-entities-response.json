@@ -1,0 +1,10 @@
+{
+ "1": "list_entities_switch_response_object_id",
+ "10": "list_entities_switch_response_device_id",
+ "3": "list_entities_switch_response_name",
+ "5": "list_entities_switch_response_icon",
+ "6": "list_entities_switch_response_assumed_state",
+ "7": "list_entities_switch_response_disabled_by_default",
+ "8": "list_entities_switch_response_entity_category",
+ "9": "list_entities_switch_response_device_class"
+}

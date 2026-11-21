@@ -1,0 +1,6 @@
+{
+ "2": "valve_command_request_has_position",
+ "3": "valve_command_request_position",
+ "4": "valve_command_request_stop",
+ "5": "valve_command_request_device_id"
+}

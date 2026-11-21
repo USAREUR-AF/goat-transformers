@@ -1,0 +1,11 @@
+{
+  "name": "gen-disconnect_request-roundtrip",
+  "from": "esphome-disconnect-request",
+  "to": "esphome-disconnect-request",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "disconnect_request",
+    "esphomedisconnectrequest.disconnect_request_reason": "1"
+  }
+}

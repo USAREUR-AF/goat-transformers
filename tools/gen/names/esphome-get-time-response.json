@@ -1,0 +1,17 @@
+{
+ "2": "get_time_response_timezone",
+ "3.1": "parsed_timezone_std_offset_seconds",
+ "3.2": "parsed_timezone_dst_offset_seconds",
+ "3.3.1": "parsed_timezone_dst_start_time_seconds",
+ "3.3.2": "parsed_timezone_dst_start_day",
+ "3.3.3": "parsed_timezone_dst_start_type",
+ "3.3.4": "parsed_timezone_dst_start_month",
+ "3.3.5": "parsed_timezone_dst_start_week",
+ "3.3.6": "parsed_timezone_dst_start_day_of_week",
+ "3.4.1": "parsed_timezone_dst_end_time_seconds",
+ "3.4.2": "parsed_timezone_dst_end_day",
+ "3.4.3": "parsed_timezone_dst_end_type",
+ "3.4.4": "parsed_timezone_dst_end_month",
+ "3.4.5": "parsed_timezone_dst_end_week",
+ "3.4.6": "parsed_timezone_dst_end_day_of_week"
+}

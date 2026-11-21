@@ -1,0 +1,6 @@
+{
+ "1": "hello_request_client_info",
+ "2": "hello_request_api_version_major",
+ "3": "hello_request_api_version_minor",
+ "4": "hello_request_outgoing_connection_target"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-bluetooth_set_connection_params_response-roundtrip",
+  "from": "esphome-bluetooth-set-connection-params-response",
+  "to": "esphome-bluetooth-set-connection-params-response",
+  "input": "0864108901",
+  "expect": "0864108901",
+  "model": {
+    "@kind": "bluetooth_set_connection_params_response",
+    "esphomebluetoothsetconnectionparamsresponse.bluetooth_set_connection_params_response_address": "100",
+    "esphomebluetoothsetconnectionparamsresponse.bluetooth_set_connection_params_response_error": "137"
+  }
+}

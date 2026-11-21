@@ -1,0 +1,25 @@
+{
+  "name": "gen-device_capabilities_response-roundtrip",
+  "from": "esphome-device-capabilities-response",
+  "to": "esphome-device-capabilities-response",
+  "input": "0a110864120d6d61635f616464726573732d31120308ae011a0608d30110f801220e0a076e616d652d3130100118a004220e0a076e616d652d31331001188f052a020801321008c202120b636c69656e745f69642d373a020801420308b103",
+  "expect": "0a110864120d6d61635f616464726573732d31120308ae011a0608d30110f801220e0a076e616d652d3130100118a004220e0a076e616d652d31331001188f052a020801321008c202120b636c69656e745f69642d373a020801420308b103",
+  "model": {
+    "@kind": "device_capabilities_response",
+    "esphomedevicecapabilitiesresponse.bluetooth_proxy_feature_flags": "100",
+    "esphomedevicecapabilitiesresponse.bluetooth_proxy_mac_address": "mac_address-1",
+    "esphomedevicecapabilitiesresponse.voice_assistant_feature_flags": "174",
+    "esphomedevicecapabilitiesresponse.zwave_proxy_feature_flags": "211",
+    "esphomedevicecapabilitiesresponse.zwave_proxy_home_id": "248",
+    "esphomedevicecapabilitiesresponse.wizard_configured": "1",
+    "esphomedevicecapabilitiesresponse.sendspin_feature_flags": "322",
+    "esphomedevicecapabilitiesresponse.sendspin_client_id": "client_id-7",
+    "esphomedevicecapabilitiesresponse.store_yaml_supported": "1",
+    "esphomedevicecapabilitiesresponse.crash_report_flags": "433",
+    "esphomedevicecapabilitiesresponse.device_capabilities_response_serial_proxies.#": "2",
+    "esphomedevicecapabilitiesresponse.device_capabilities_response_serial_proxies[0].esphomedevicecapabilitiesresponse.serial_proxy_info_name": "name-10",
+    "esphomedevicecapabilitiesresponse.device_capabilities_response_serial_proxies[0].esphomedevicecapabilitiesresponse.serial_proxy_info_port_type": "1",
+    "esphomedevicecapabilitiesresponse.device_capabilities_response_serial_proxies[1].esphomedevicecapabilitiesresponse.serial_proxy_info_name": "name-13",
+    "esphomedevicecapabilitiesresponse.device_capabilities_response_serial_proxies[1].esphomedevicecapabilitiesresponse.serial_proxy_info_port_type": "1"
+  }
+}

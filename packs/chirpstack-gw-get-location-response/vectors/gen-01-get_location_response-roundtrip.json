@@ -1,0 +1,17 @@
+{
+  "name": "gen-get_location_response-roundtrip",
+  "from": "chirpstack-gw-get-location-response",
+  "to": "chirpstack-gw-get-location-response",
+  "input": "0a2209000000000000d03f110000000000000040190000000000000e4020012d000028401206089d0210c202",
+  "expect": "0a2209000000000000d03f110000000000000040190000000000000e4020012d000028401206089d0210c202",
+  "model": {
+    "@kind": "get_location_response",
+    "chirpstackgwgetlocationresponse.location_latitude": "0.25",
+    "chirpstackgwgetlocationresponse.location_longitude": "2",
+    "chirpstackgwgetlocationresponse.location_altitude": "3.75",
+    "chirpstackgwgetlocationresponse.location_source": "1",
+    "chirpstackgwgetlocationresponse.location_accuracy": "2.625",
+    "chirpstackgwgetlocationresponse.updated_at_seconds": "285",
+    "chirpstackgwgetlocationresponse.updated_at_nanos": "322"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-date_time_command_request-roundtrip",
+  "from": "esphome-date-time-command-request",
+  "to": "esphome-date-time-command-request",
+  "input": "1864",
+  "expect": "1864",
+  "model": {
+    "@kind": "date_time_command_request",
+    "esphomedatetimecommandrequest.date_time_command_request_device_id": "100"
+  }
+}

@@ -1,0 +1,12 @@
+{
+ "1": "homeassistant_action_request_service",
+ "2[]": "homeassistant_action_request_data",
+ "3[]": "homeassistant_action_request_data_template",
+ "4[]": "homeassistant_action_request_variables",
+ "5": "homeassistant_action_request_is_event",
+ "6": "homeassistant_action_request_call_id",
+ "7": "homeassistant_action_request_wants_response",
+ "8": "homeassistant_action_request_response_template",
+ "HomeassistantServiceMap:1": "homeassistant_service_map_key",
+ "HomeassistantServiceMap:2": "homeassistant_service_map_value"
+}

@@ -1,0 +1,14 @@
+{
+ "1": "list_entities_number_response_object_id",
+ "10": "list_entities_number_response_entity_category",
+ "11": "list_entities_number_response_unit_of_measurement",
+ "12": "list_entities_number_response_mode",
+ "13": "list_entities_number_response_device_class",
+ "14": "list_entities_number_response_device_id",
+ "3": "list_entities_number_response_name",
+ "5": "list_entities_number_response_icon",
+ "6": "list_entities_number_response_min_value",
+ "7": "list_entities_number_response_max_value",
+ "8": "list_entities_number_response_step",
+ "9": "list_entities_number_response_disabled_by_default"
+}

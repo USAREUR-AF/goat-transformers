@@ -1,0 +1,11 @@
+{
+  "name": "gen-get_gateway_id_response-roundtrip",
+  "from": "chirpstack-gw-get-gateway-id-response",
+  "to": "chirpstack-gw-get-gateway-id-response",
+  "input": "0a0c676174657761795f69642d30",
+  "expect": "0a0c676174657761795f69642d30",
+  "model": {
+    "@kind": "get_gateway_id_response",
+    "chirpstackgwgetgatewayidresponse.get_gateway_id_response_gateway_id": "gateway_id-0"
+  }
+}

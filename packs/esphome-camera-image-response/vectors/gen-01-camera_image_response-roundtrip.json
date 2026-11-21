@@ -1,0 +1,12 @@
+{
+  "name": "gen-camera_image_response-roundtrip",
+  "from": "esphome-camera-image-response",
+  "to": "esphome-camera-image-response",
+  "input": "1801208901",
+  "expect": "1801208901",
+  "model": {
+    "@kind": "camera_image_response",
+    "esphomecameraimageresponse.camera_image_response_done": "1",
+    "esphomecameraimageresponse.camera_image_response_device_id": "137"
+  }
+}

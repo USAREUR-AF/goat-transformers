@@ -1,0 +1,22 @@
+{
+  "name": "gen-voice_assistant_request-roundtrip",
+  "from": "esphome-voice-assistant-request",
+  "to": "esphome-voice-assistant-request",
+  "input": "08011211636f6e766572736174696f6e5f69642d3118ae01220b08d30110f8011d000050402a1277616b655f776f72645f7068726173652d36320e77616b655f776f72645f69642d37388c03450000b8404d0000cc4050fb03",
+  "expect": "08011211636f6e766572736174696f6e5f69642d3118ae01220b08d30110f8011d000050402a1277616b655f776f72645f7068726173652d36320e77616b655f776f72645f69642d37388c03450000b8404d0000cc4050fb03",
+  "model": {
+    "@kind": "voice_assistant_request",
+    "esphomevoiceassistantrequest.voice_assistant_request_start": "1",
+    "esphomevoiceassistantrequest.voice_assistant_request_conversation_id": "conversation_id-1",
+    "esphomevoiceassistantrequest.voice_assistant_request_flags": "174",
+    "esphomevoiceassistantrequest.audio_settings_noise_suppression_level": "211",
+    "esphomevoiceassistantrequest.audio_settings_auto_gain": "248",
+    "esphomevoiceassistantrequest.audio_settings_volume_multiplier": "3.25",
+    "esphomevoiceassistantrequest.voice_assistant_request_wake_word_phrase": "wake_word_phrase-6",
+    "esphomevoiceassistantrequest.voice_assistant_request_wake_word_id": "wake_word_id-7",
+    "esphomevoiceassistantrequest.voice_assistant_request_wake_word_audio_bytes": "396",
+    "esphomevoiceassistantrequest.voice_assistant_request_wake_word_probability": "5.75",
+    "esphomevoiceassistantrequest.voice_assistant_request_wake_word_probability_cutoff": "6.375",
+    "esphomevoiceassistantrequest.voice_assistant_request_wake_word_audio_bytes2": "507"
+  }
+}

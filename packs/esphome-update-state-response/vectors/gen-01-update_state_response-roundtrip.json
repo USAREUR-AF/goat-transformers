@@ -1,0 +1,20 @@
+{
+  "name": "gen-update_state_response-roundtrip",
+  "from": "esphome-update-state-response",
+  "to": "esphome-update-state-response",
+  "input": "1001180120012d00000040321163757272656e745f76657273696f6e2d343a106c61746573745f76657273696f6e2d3542077469746c652d364a1172656c656173655f73756d6d6172792d37520d72656c656173655f75726c2d3858b103",
+  "expect": "1001180120012d00000040321163757272656e745f76657273696f6e2d343a106c61746573745f76657273696f6e2d3542077469746c652d364a1172656c656173655f73756d6d6172792d37520d72656c656173655f75726c2d3858b103",
+  "model": {
+    "@kind": "update_state_response",
+    "esphomeupdatestateresponse.update_state_response_missing_state": "1",
+    "esphomeupdatestateresponse.update_state_response_in_progress": "1",
+    "esphomeupdatestateresponse.update_state_response_has_progress": "1",
+    "esphomeupdatestateresponse.update_state_response_progress": "2",
+    "esphomeupdatestateresponse.update_state_response_current_version": "current_version-4",
+    "esphomeupdatestateresponse.update_state_response_latest_version": "latest_version-5",
+    "esphomeupdatestateresponse.update_state_response_title": "title-6",
+    "esphomeupdatestateresponse.update_state_response_release_summary": "release_summary-7",
+    "esphomeupdatestateresponse.update_state_response_release_url": "release_url-8",
+    "esphomeupdatestateresponse.update_state_response_device_id": "433"
+  }
+}

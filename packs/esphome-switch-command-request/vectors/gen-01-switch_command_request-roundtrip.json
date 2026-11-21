@@ -1,0 +1,12 @@
+{
+  "name": "gen-switch_command_request-roundtrip",
+  "from": "esphome-switch-command-request",
+  "to": "esphome-switch-command-request",
+  "input": "1001188901",
+  "expect": "1001188901",
+  "model": {
+    "@kind": "switch_command_request",
+    "esphomeswitchcommandrequest.switch_command_request_state": "1",
+    "esphomeswitchcommandrequest.switch_command_request_device_id": "137"
+  }
+}

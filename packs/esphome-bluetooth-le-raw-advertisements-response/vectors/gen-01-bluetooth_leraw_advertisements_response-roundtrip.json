@@ -1,0 +1,15 @@
+{
+  "name": "gen-bluetooth_leraw_advertisements_response-roundtrip",
+  "from": "esphome-bluetooth-le-raw-advertisements-response",
+  "to": "esphome-bluetooth-le-raw-advertisements-response",
+  "input": "0a070864100f18ae010a0808d301102d189d02",
+  "expect": "0a070864100f18ae010a0808d301102d189d02",
+  "model": {
+    "@kind": "bluetooth_leraw_advertisements_response",
+    "esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisements_response_advertisements.#": "2",
+    "esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisements_response_advertisements[0].esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisement_address": "100",
+    "esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisements_response_advertisements[0].esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisement_rssi": "-8",
+    "esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisements_response_advertisements[1].esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisement_address": "211",
+    "esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisements_response_advertisements[1].esphomebluetoothlerawadvertisementsresponse.bluetooth_leraw_advertisement_rssi": "-23"
+  }
+}

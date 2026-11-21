@@ -1,0 +1,12 @@
+{
+  "name": "gen-voice_assistant_response-roundtrip",
+  "from": "esphome-voice-assistant-response",
+  "to": "esphome-voice-assistant-response",
+  "input": "08641001",
+  "expect": "08641001",
+  "model": {
+    "@kind": "voice_assistant_response",
+    "esphomevoiceassistantresponse.voice_assistant_response_port": "100",
+    "esphomevoiceassistantresponse.voice_assistant_response_error": "1"
+  }
+}

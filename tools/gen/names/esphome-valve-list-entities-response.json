@@ -1,0 +1,12 @@
+{
+ "1": "list_entities_valve_response_object_id",
+ "10": "list_entities_valve_response_supports_position",
+ "11": "list_entities_valve_response_supports_stop",
+ "12": "list_entities_valve_response_device_id",
+ "3": "list_entities_valve_response_name",
+ "5": "list_entities_valve_response_icon",
+ "6": "list_entities_valve_response_disabled_by_default",
+ "7": "list_entities_valve_response_entity_category",
+ "8": "list_entities_valve_response_device_class",
+ "9": "list_entities_valve_response_assumed_state"
+}

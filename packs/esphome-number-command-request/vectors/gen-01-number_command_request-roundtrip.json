@@ -1,0 +1,12 @@
+{
+  "name": "gen-number_command_request-roundtrip",
+  "from": "esphome-number-command-request",
+  "to": "esphome-number-command-request",
+  "input": "150000003e188901",
+  "expect": "150000003e188901",
+  "model": {
+    "@kind": "number_command_request",
+    "esphomenumbercommandrequest.number_command_request_state": "0.125",
+    "esphomenumbercommandrequest.number_command_request_device_id": "137"
+  }
+}

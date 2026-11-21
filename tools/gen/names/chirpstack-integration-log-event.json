@@ -1,0 +1,16 @@
+{
+ "1.1": "time_seconds",
+ "1.2": "time_nanos",
+ "2.1": "device_info_tenant_id",
+ "2.10": "device_info_device_class_enabled",
+ "2.2": "device_info_tenant_name",
+ "2.3": "device_info_application_id",
+ "2.4": "device_info_application_name",
+ "2.5": "device_info_device_profile_id",
+ "2.6": "device_info_device_profile_name",
+ "2.7": "device_info_device_name",
+ "2.8": "device_info_dev_eui",
+ "3": "log_event_level",
+ "4": "log_event_code",
+ "5": "log_event_description"
+}

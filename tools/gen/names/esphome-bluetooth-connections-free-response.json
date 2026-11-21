@@ -1,0 +1,6 @@
+{
+ "1": "bluetooth_connections_free_response_free",
+ "2": "bluetooth_connections_free_response_limit",
+ "3[]": "bluetooth_connections_free_response_allocated",
+ "BluetoothConnectionsFreeResponse:3[]item": "bluetooth_connections_free_response_allocated_item"
+}

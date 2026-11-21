@@ -1,0 +1,11 @@
+{
+  "name": "gen-noise_encryption_set_key_response-roundtrip",
+  "from": "esphome-noise-encryption-set-key-response",
+  "to": "esphome-noise-encryption-set-key-response",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "noise_encryption_set_key_response",
+    "esphomenoiseencryptionsetkeyresponse.noise_encryption_set_key_response_success": "1"
+  }
+}
