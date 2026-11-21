@@ -1,0 +1,6 @@
+Packs donki-*; modules donki*
+  NASA CCMC DONKI-API 2.0, OpenAPI document,
+  https://ccmc.gsfc.nasa.gov/DONKI/api/openapi/ (read 2026-11-21). A work of
+  NASA, a United States Government agency (17 U.S.C. 105); restated under
+  Apache-2.0. Credit: NASA CCMC and the Moon to Mars Space Weather Analysis
+  Office. Not NASA material; no endorsement implied.
