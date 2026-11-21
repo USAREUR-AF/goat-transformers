@@ -1,0 +1,14 @@
+{
+  "name": "gmt-time-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "54717a0e",
+  "expect": "54717a0e",
+  "model": {
+    "@kind": "gmt-time",
+    "seatalk.attribute_high": "7",
+    "seatalk.time_rs": "122",
+    "seatalk.time_hours": "14"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x54.ts; 14:30:39 (seconds 2 x 16 + 7); expect derived there, no engine run"
+}

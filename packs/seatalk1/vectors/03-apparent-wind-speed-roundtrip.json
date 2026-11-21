@@ -1,0 +1,13 @@
+{
+  "name": "apparent-wind-speed-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "11010c05",
+  "expect": "11010c05",
+  "model": {
+    "seatalk.apparent_wind_speed_units": "0",
+    "seatalk.apparent_wind_speed_knots": "12",
+    "seatalk.apparent_wind_speed_tenths": "5"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x11.ts; 12.5 knots; expect derived there, no engine run"
+}

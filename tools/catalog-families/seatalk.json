@@ -1,0 +1,7 @@
+{
+  "name": "Raymarine SeaTalk 1",
+  "domain": "sea",
+  "exact": [
+    "seatalk1"
+  ]
+}

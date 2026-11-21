@@ -1,0 +1,16 @@
+{
+  "name": "heading-course-rudder-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "84262d5a0204fe0008",
+  "expect": "84262d5a0204fe0008",
+  "model": {
+    "@kind": "heading-course-rudder",
+    "seatalk.heading_vw": "45",
+    "seatalk.autopilot_mode": "2",
+    "seatalk.alarms": "4",
+    "seatalk.rudder_position": "-2",
+    "seatalk.autopilot_tt": "8"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x84.ts; auto mode, off-course alarm, rudder 2 degrees to port; expect derived there, no engine run"
+}

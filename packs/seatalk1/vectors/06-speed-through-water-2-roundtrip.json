@@ -1,0 +1,14 @@
+{
+  "name": "speed-through-water-2-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "26048a02640240",
+  "expect": "26048a02640240",
+  "model": {
+    "seatalk.speed_sensor_1": "6.5",
+    "seatalk.speed_sensor_2_or_average": "6.12",
+    "seatalk.speed_flags_d": "4",
+    "seatalk.speed_flags_e": "0"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x26.ts; expect derived there, no engine run"
+}

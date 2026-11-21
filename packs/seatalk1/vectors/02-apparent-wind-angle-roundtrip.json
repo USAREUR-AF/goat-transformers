@@ -1,0 +1,12 @@
+{
+  "name": "apparent-wind-angle-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "1001005b",
+  "expect": "1001005b",
+  "model": {
+    "@kind": "apparent-wind-angle",
+    "seatalk.apparent_wind_angle": "45.5"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x10.ts; 45.5 degrees, high octet first; expect derived there, no engine run"
+}

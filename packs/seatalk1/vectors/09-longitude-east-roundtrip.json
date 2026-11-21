@@ -1,0 +1,12 @@
+{
+  "name": "longitude-east-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "510204c994",
+  "expect": "510204c994",
+  "model": {
+    "seatalk.longitude_degrees": "4",
+    "seatalk.longitude_minutes_raw": "38089"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x51.ts; expect derived there, no engine run"
+}

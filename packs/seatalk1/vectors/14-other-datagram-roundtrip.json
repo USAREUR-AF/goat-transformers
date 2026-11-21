@@ -1,0 +1,14 @@
+{
+  "name": "other-datagram-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "650002",
+  "expect": "650002",
+  "model": {
+    "@kind": "other",
+    "seatalk.command": "101",
+    "seatalk.data_first": "2",
+    "seatalk.data_more.#": "0"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/index.ts; a datagram the parser does not decode (0x65), kept as its octets; expect derived there, no engine run"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "cut-depth-is-malformed",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "00028445",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x00.ts; the depth word is cut; expect derived there, no engine run"
+}

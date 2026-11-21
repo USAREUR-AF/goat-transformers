@@ -1,0 +1,192 @@
+# SeaTalk 1 datagram: command, attribute, data; 21 datagrams laid out, any other kept as octets. Written by
+# tools/gen/seatalk-pack.py; do not edit by hand.
+format        seatalk1
+version       0.1.0
+distribution  public
+source        "SignalK/signalk-parser-nmea0183, https://github.com/SignalK/signalk-parser-nmea0183 at commit 5ab479bcfc1bec0d36f98616e5f9be96f52e3f23, src/hooks/seatalk/0x00.ts to 0x9C.ts (Apache License 2.0, Copyright 2016 Signal K and contributors); layouts restated, no code or comment copied"
+uses          seatalk
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  depth
+when  8  0
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.depth_anchor_alarm  1  uint
+field  seatalk.depth_metric_units  1  uint
+field  seatalk.depth_flag_y1  1  uint
+field  seatalk.depth_flag_y0  1  uint
+field  seatalk.depth_flag_z3  1  uint
+field  seatalk.depth_transducer_defective  1  uint
+field  seatalk.depth_deep_alarm  1  uint
+field  seatalk.depth_shallow_alarm  1  uint
+field  seatalk.depth_raw  16  uint  swap
+
+kind  apparent-wind-angle
+when  8  16
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.apparent_wind_angle  16  uscale:1/2
+
+kind  apparent-wind-speed
+when  8  17
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.apparent_wind_speed_units  1  uint
+field  seatalk.apparent_wind_speed_knots  7  uint
+field  seatalk.apparent_wind_speed_pad  4  uint
+field  seatalk.apparent_wind_speed_tenths  4  uint
+
+kind  speed-through-water
+when  8  32
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.speed_through_water  16  uscale:1/10  swap
+
+kind  trip-mileage
+when  8  33
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.trip_low  16  uint  swap
+field  seatalk.trip_pad  4  uint
+field  seatalk.trip_high  4  uint
+
+kind  total-mileage
+when  8  34
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.total_mileage  16  uscale:1/10  swap
+field  seatalk.total_pad  8  uint
+
+kind  total-and-trip-log
+when  8  37
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.total_low  16  uint  swap
+field  seatalk.trip_low  16  uint  swap
+field  seatalk.trip_pad  4  uint
+field  seatalk.trip_high  4  uint
+
+kind  speed-through-water-2
+when  8  38
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.speed_sensor_1  16  uscale:1/100  swap
+field  seatalk.speed_sensor_2_or_average  16  uscale:1/100  swap
+field  seatalk.speed_flags_d  4  uint
+field  seatalk.speed_flags_e  4  uint
+
+kind  water-temperature
+when  8  39
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.water_temperature  16  uscale:1/10:-10  swap
+
+kind  latitude
+when  8  80
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.latitude_degrees  8  uint
+field  seatalk.latitude_minutes_raw  16  uint  swap
+
+kind  longitude
+when  8  81
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.longitude_degrees  8  uint
+field  seatalk.longitude_minutes_raw  16  uint  swap
+
+kind  speed-over-ground
+when  8  82
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.speed_over_ground  16  uscale:1/10  swap
+
+kind  magnetic-course
+when  8  83
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.course_vw  8  uint
+
+kind  gmt-time
+when  8  84
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.time_rs  8  uint
+field  seatalk.time_hours  8  uint
+
+kind  date
+when  8  86
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.date_day  8  uint
+field  seatalk.date_year  8  uint
+
+kind  satellite-info
+when  8  87
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.satellite_hdop  8  uint
+
+kind  target-waypoint-name
+when  8  130
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.waypoint_xx  8  uint
+field  seatalk.waypoint_xx_complement  8  uint
+field  seatalk.waypoint_yy  8  uint
+field  seatalk.waypoint_yy_complement  8  uint
+field  seatalk.waypoint_zz  8  uint
+field  seatalk.waypoint_zz_complement  8  uint
+
+kind  heading-course-rudder
+when  8  132
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.heading_vw  8  uint
+field  seatalk.autopilot_course_xy  8  uint
+field  seatalk.autopilot_pad  4  uint
+field  seatalk.autopilot_mode  4  uint
+field  seatalk.alarm_pad  4  uint
+field  seatalk.alarms  4  uint
+field  seatalk.rudder_position  8  twos
+field  seatalk.autopilot_ss  8  uint
+field  seatalk.autopilot_tt  8  uint
+
+kind  navigation-to-waypoint
+when  8  133
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.xte_low  8  uint
+field  seatalk.nav_v  4  uint
+field  seatalk.nav_u  4  uint
+field  seatalk.nav_z  4  uint
+field  seatalk.nav_w  4  uint
+field  seatalk.nav_zz  8  uint
+field  seatalk.nav_y  4  uint
+field  seatalk.nav_f  4  uint
+field  seatalk.nav_zero  8  uint
+field  seatalk.nav_yf_complement  8  uint
+
+kind  compass-variation
+when  8  153
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.compass_variation  8  twos
+
+kind  heading-rudder
+when  8  156
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.heading_vw  8  uint
+field  seatalk.rudder_position  8  twos
+
+kind  other
+field  seatalk.command  8  uint
+field  seatalk.attribute_high  4  uint
+count  extra_data  4
+field  seatalk.data_first  8  uint
+group  seatalk.data_more  count  @extra_data
+  field  seatalk.octet  8  uint
+end
