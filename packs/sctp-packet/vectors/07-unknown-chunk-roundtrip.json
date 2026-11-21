@@ -1,0 +1,12 @@
+{
+  "name": "unknown-chunk-roundtrip",
+  "from": "sctp-packet",
+  "to": "sctp-packet",
+  "input": "13880f1c0000000155555555c000000701020300",
+  "expect": "13880f1c0000000155555555c000000701020300",
+  "model": {
+    "sctp.chunks[0].sctp.chunk_type": "192",
+    "sctp.chunks[0].sctp.value.#": "3"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 9260 sections 3.1 to 3.3; a chunk of type 192 (FORWARD TSN of RFC 3758) kept as octets; expect derived there, no engine run"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Signalling transport (Diameter, SCTP)",
+  "domain": "networks",
+  "exact": [
+    "diameter",
+    "sctp-packet"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "cookie-error-shutdown-roundtrip",
+  "from": "sctp-packet",
+  "to": "sctp-packet",
+  "input": "13880f1c55667788444444440a00000a636f6f6b696500000b0000040900000c00090008000000650700000800000065080000040e010004",
+  "expect": "13880f1c55667788444444440a00000a636f6f6b696500000b0000040900000c00090008000000650700000800000065080000040e010004",
+  "model": {
+    "sctp.chunks.#": "6",
+    "sctp.chunks[0].sctp.cookie.#": "6",
+    "sctp.chunks[2].sctp.causes[0].sctp.tsn": "101",
+    "sctp.chunks[3].sctp.cum_tsn_ack": "101",
+    "sctp.chunks[5].sctp.chunk_type": "14"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 9260 sections 3.1 to 3.3; COOKIE ECHO, COOKIE ACK, an ERROR with a No User Data cause, SHUTDOWN, SHUTDOWN ACK and SHUTDOWN COMPLETE in one packet (a sequence for the test, not one association's); expect derived there, no engine run"
+}

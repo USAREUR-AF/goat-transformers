@@ -1,0 +1,119 @@
+# SCTP packet (RFC 9260): the common header and the chunks, with the bodies of the chunks of
+# section 3.3, their parameters and error causes. Public. Written by tools/gen/telecom-pack.py; do
+# not edit by hand. Wire bits, layout sequential, msb; I/O is hex text. pack.md states what is mapped.
+format        sctp-packet
+version       0.1.0
+distribution  public
+source        "IETF RFC 9260, Stream Control Transmission Protocol, June 2022, https://www.rfc-editor.org/rfc/rfc9260.txt (sha256 04bdd3255e9e5ddf1e401e9d5d726ec2750e5269cb52485db3f7f4fe77500354); layout restated"
+uses          inet
+uses          sctp
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  inet.src_port               16  uint
+field  inet.dst_port               16  uint
+field  inet.sctp_verification_tag  32  uint
+field  inet.sctp_checksum          32  uint
+group  sctp.chunks  rest
+  field  sctp.chunk_type  8  uint
+  field  sctp.chunk_flags  8  uint
+  length  16  bytes  plus  4
+    switch  sctp.chunk_type
+      case  0                       # DATA
+        field  sctp.tsn  32  uint
+        field  sctp.stream_id  16  uint
+        field  sctp.stream_seq  16  uint
+        field  sctp.ppid  32  uint
+        group  sctp.user_data  rest
+          field  sctp.octet  8  uint
+        end
+      case  1,2                     # INIT, INIT ACK
+        field  sctp.initiate_tag  32  uint
+        field  sctp.a_rwnd  32  uint
+        field  sctp.outbound_streams  16  uint
+        field  sctp.inbound_streams  16  uint
+        field  sctp.initial_tsn  32  uint
+        group  sctp.parameters  rest
+          field  sctp.param_type  16  uint
+          length  16  bytes  plus  4
+            switch  sctp.param_type
+              case  5
+                field  sctp.ipv4_address  32  uint
+              case  6
+                field  sctp.ipv6_address  128  hex
+              case  9
+                field  sctp.cookie_increment  32  uint
+              case  12
+                group  sctp.address_types  rest
+                  field  sctp.address_type  16  uint
+                end
+              case  7,8
+                group  sctp.value  rest
+                  field  sctp.octet  8  uint
+                end
+              else
+                group  sctp.value  rest
+                  field  sctp.octet  8  uint
+                end
+            end
+          end
+          align  32
+        end
+      case  3                       # SACK
+        field  sctp.cum_tsn_ack  32  uint
+        field  sctp.a_rwnd  32  uint
+        count  gaps  16
+        count  dups  16
+        group  sctp.gap_blocks  count  @gaps
+          field  sctp.gap_start  16  uint
+          field  sctp.gap_end  16  uint
+        end
+        group  sctp.duplicate_tsns  count  @dups
+          field  sctp.duplicate_tsn  32  uint
+        end
+      case  4,5                     # HEARTBEAT, HEARTBEAT ACK
+        group  sctp.parameters  rest
+          field  sctp.param_type  16  uint
+          length  16  bytes  plus  4
+            group  sctp.value  rest
+              field  sctp.octet  8  uint
+            end
+          end
+          align  32
+        end
+      case  6,9                     # ABORT, ERROR
+        group  sctp.causes  rest
+          field  sctp.cause_code  16  uint
+          length  16  bytes  plus  4
+            switch  sctp.cause_code
+              case  1
+                field  sctp.stream_id  16  uint
+                pad  16
+              case  3
+                field  sctp.staleness  32  uint
+              case  9
+                field  sctp.tsn  32  uint
+              else
+                group  sctp.value  rest
+                  field  sctp.octet  8  uint
+                end
+            end
+          end
+          align  32
+        end
+      case  7                       # SHUTDOWN
+        field  sctp.cum_tsn_ack  32  uint
+      case  10                      # COOKIE ECHO
+        group  sctp.cookie  rest
+          field  sctp.octet  8  uint
+        end
+      case  8,11,14                 # SHUTDOWN ACK, COOKIE ACK, SHUTDOWN COMPLETE
+      else
+        group  sctp.value  rest
+          field  sctp.octet  8  uint
+        end
+    end
+  end
+  align  32
+end

@@ -1,0 +1,24 @@
+{
+  "name": "capabilities-exchange-request-roundtrip",
+  "from": "diameter",
+  "to": "diameter",
+  "input": "010000ac80000101000000000000100152000001000001084000001a636c69656e742e6578616d706c652e6f7267000000000128400000136578616d706c652e6f726700000001014000000e0001c000020a00000000010a4000000c00007ed90000010d00000011676f61742d746573740000000000010b0000000c00000003000001024000000cffffffff00000104400000200000010a4000000c000028af000001024000000c01000023",
+  "expect": "010000ac80000101000000000000100152000001000001084000001a636c69656e742e6578616d706c652e6f7267000000000128400000136578616d706c652e6f726700000001014000000e0001c000020a00000000010a4000000c00007ed90000010d00000011676f61742d746573740000000000010b0000000c00000003000001024000000cffffffff00000104400000200000010a4000000c000028af000001024000000c01000023",
+  "model": {
+    "@kind": "message",
+    "diameter.flag_r": "1",
+    "diameter.command_code": "257",
+    "diameter.hop_by_hop_id": "4097",
+    "diameter.avps.#": "8",
+    "diameter.avps[0].diameter.avp_code": "264",
+    "diameter.avps[0].diameter.avp_flag_m": "1",
+    "diameter.avps[0].diameter.avp_data.#": "18",
+    "diameter.avps[2].diameter.address_family": "1",
+    "diameter.avps[2].diameter.address_ipv4": "3221225994",
+    "diameter.avps[4].diameter.avp_flag_m": "0",
+    "diameter.avps[6].diameter.unsigned32": "4294967295",
+    "diameter.avps[7].diameter.grouped_avps.#": "2",
+    "diameter.avps[7].diameter.grouped_avps[1].diameter.unsigned32": "16777251"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 6733 sections 3 and 4; a Capabilities-Exchange-Request with identities, an IPv4 Host-IP-Address, Vendor-Id, Product-Name, Firmware-Revision, Auth-Application-Id and a grouped Vendor-Specific-Application-Id; expect derived there, no engine run"
+}

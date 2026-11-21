@@ -1,0 +1,17 @@
+{
+  "name": "accounting-answer-failed-avp-roundtrip",
+  "from": "diameter",
+  "to": "diameter",
+  "input": "010000842000010f000000030000100352000003000001074000001f636c69656e742e6578616d706c652e6f72673b313b3737000000010c4000000c0000138d000000374000000ced5fa85d0000011f40000010000000000000002a000001174000002800000129400000200000010a4000000c000028af0000012a4000000c00001389",
+  "expect": "010000842000010f000000030000100352000003000001074000001f636c69656e742e6578616d706c652e6f72673b313b3737000000010c4000000c0000138d000000374000000ced5fa85d0000011f40000010000000000000002a000001174000002800000129400000200000010a4000000c000028af0000012a4000000c00001389",
+  "model": {
+    "diameter.application_id": "3",
+    "diameter.flag_e": "1",
+    "diameter.avps[2].diameter.time": "3982469213",
+    "diameter.avps[3].diameter.unsigned64": "42",
+    "diameter.avps[4].diameter.grouped_avps.#": "1",
+    "diameter.avps[4].diameter.grouped_avps[0].diameter.avp_code": "297",
+    "diameter.avps[4].diameter.grouped_avps[0].diameter.avp_data.#": "24"
+  },
+  "source": "built by tools/gen/telecom-vectors.py from values chosen there; layout restated from RFC 6733 sections 3 and 4; an Accounting-Answer with an error: Event-Timestamp, Accounting-Sub-Session-Id and a Failed-AVP holding a grouped Experimental-Result, which, two levels down, is kept as octets; expect derived there, no engine run"
+}
