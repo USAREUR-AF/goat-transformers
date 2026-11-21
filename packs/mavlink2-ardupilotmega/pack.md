@@ -145,9 +145,12 @@ above the ellipsoid), times that may be since boot, and speed, course and veloci
 Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds of this pack. No kind requires a core key, so a GeoJSON or CoT entity, or an
 entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
-For 19 kinds the required keys are all mapped by another kind too; an entity
-built from such a kind's keys with its kind cleared selects the first
-qualifying kind in id order: `fence_fetch_point`, `data16`, `data32`, `data64`, `rally_fetch_point`, `ahrs2`, `autopilot_version_request`, `gopro_get_request`, `device_op_read`, `device_op_write`, `esc_telemetry_1_to_4`, `esc_telemetry_5_to_8`, `esc_telemetry_9_to_12`, `osd_param_show_config`, `esc_telemetry_13_to_16`, `esc_telemetry_17_to_20`, `esc_telemetry_21_to_24`, `esc_telemetry_25_to_28`, `esc_telemetry_29_to_32`.
+For 19 kinds the required keys are all mapped by at least one other kind.
+Encode selects the first kind whose required keys are present, so pack.def
+writes a kind before every kind whose required keys it maps, unless that kind
+also maps all of its own; otherwise the kinds are in id order. An entity built
+from a kind's keys, with its kind cleared, therefore selects that kind.
+The exceptions, where two kinds each map the other's required keys: `rally_fetch_point` selects `fence_fetch_point`, `device_op_write` selects `device_op_read`, `esc_telemetry_5_to_8` selects `esc_telemetry_1_to_4`, `esc_telemetry_9_to_12` selects `esc_telemetry_1_to_4`, `esc_telemetry_13_to_16` selects `esc_telemetry_1_to_4`, `esc_telemetry_17_to_20` selects `esc_telemetry_1_to_4`, `esc_telemetry_21_to_24` selects `esc_telemetry_1_to_4`, `esc_telemetry_25_to_28` selects `esc_telemetry_1_to_4`, `esc_telemetry_29_to_32` selects `esc_telemetry_1_to_4`.
 
 ## Times
 

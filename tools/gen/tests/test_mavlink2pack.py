@@ -218,11 +218,23 @@ class GeneratedFilesLoad(unittest.TestCase):
                          ("mavlink2", "bits", "fixed", "lsb", 1, "public"))
         self.assertEqual(p.uses, ["core", "mavlink"])
 
-    def test_kinds_are_in_message_id_order_whatever_the_order_in_the_files(self):
+    def test_kinds_are_in_encode_order_whatever_the_order_in_the_files(self):
+        # id order, except that a kind comes after every kind that maps all of
+        # its required keys: system_time (id 2) requires only time_unix_usec,
+        # which gps_raw_int, attitude and global_position_int also map
         self.assertEqual([k.name for k in self.pack.kinds],
-                         ["heartbeat", "sys_status", "system_time", "gps_raw_int", "attitude", "global_position_int",
+                         ["heartbeat", "sys_status", "gps_raw_int", "attitude", "global_position_int", "system_time",
                           "command_long", "hil_gps", "gps2_raw", "adsb_vehicle", "test_point", "test_survey",
                           "utm_global_position", "test_shapes", "test_arrays", "test_unknowns"])
+
+    def test_an_entity_built_from_a_kind_selects_that_kind(self):
+        # encode takes the first kind whose every required key is present
+        # (engine-spec, Encode 2); with the kinds in encode order, the keys of
+        # any kind of the fixture select that kind
+        for kind in self.pack.kinds:
+            keys = {n.key for n in kind.lines if n.d == "field"}
+            first = next(k for k in self.pack.kinds if set(k.requires) <= keys)
+            self.assertEqual(first.name, kind.name)
 
     def test_a_kind_is_selected_by_message_id_and_full_payload_length(self):
         # TEST_SHAPES: id 50001 in the 24-bit MSGID at bit 56; 52 base bytes and

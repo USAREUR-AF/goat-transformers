@@ -150,14 +150,6 @@ field     mavlinkardupilotmega.target_component 0:152:8 uint
 field     mavlinkardupilotmega.idx 0:160:8 uint
 field     mavlinkardupilotmega.count 0:168:8 uint
 
-kind      fence_fetch_point
-when      0:56:24 161
-when      0:8:8 3
-requires  mavlinkardupilotmega.target_system mavlinkardupilotmega.target_component mavlinkardupilotmega.idx
-field     mavlinkardupilotmega.target_system 0:80:8 uint
-field     mavlinkardupilotmega.target_component 0:88:8 uint
-field     mavlinkardupilotmega.idx 0:96:8 uint
-
 kind      ahrs
 when      0:56:24 163
 when      0:8:8 28
@@ -226,139 +218,6 @@ requires  mavlinkardupilotmega.direction_deg mavlinkardupilotmega.speed_m_per_s 
 field     mavlinkardupilotmega.direction_deg 0:80:32 f32
 field     mavlinkardupilotmega.speed_m_per_s 0:112:32 f32
 field     mavlinkardupilotmega.speed_z_m_per_s 0:144:32 f32
-
-kind      data16
-when      0:56:24 169
-when      0:8:8 18
-requires  mavlinkardupilotmega.type mavlinkardupilotmega.len_bytes mavlinkardupilotmega.data_0 mavlinkardupilotmega.data_1 mavlinkardupilotmega.data_2 mavlinkardupilotmega.data_3
-field     mavlinkardupilotmega.type 0:80:8 uint
-field     mavlinkardupilotmega.len_bytes 0:88:8 uint
-field     mavlinkardupilotmega.data_0 0:96:8 uint
-field     mavlinkardupilotmega.data_1 0:104:8 uint
-field     mavlinkardupilotmega.data_2 0:112:8 uint
-field     mavlinkardupilotmega.data_3 0:120:8 uint
-field     mavlinkardupilotmega.data_4 0:128:8 uint
-field     mavlinkardupilotmega.data_5 0:136:8 uint
-field     mavlinkardupilotmega.data_6 0:144:8 uint
-field     mavlinkardupilotmega.data_7 0:152:8 uint
-field     mavlinkardupilotmega.data_8 0:160:8 uint
-field     mavlinkardupilotmega.data_9 0:168:8 uint
-field     mavlinkardupilotmega.data_10 0:176:8 uint
-field     mavlinkardupilotmega.data_11 0:184:8 uint
-field     mavlinkardupilotmega.data_12 0:192:8 uint
-field     mavlinkardupilotmega.data_13 0:200:8 uint
-field     mavlinkardupilotmega.data_14 0:208:8 uint
-field     mavlinkardupilotmega.data_15 0:216:8 uint
-
-kind      data32
-when      0:56:24 170
-when      0:8:8 34
-requires  mavlinkardupilotmega.type mavlinkardupilotmega.len_bytes mavlinkardupilotmega.data_16 mavlinkardupilotmega.data_17 mavlinkardupilotmega.data_18 mavlinkardupilotmega.data_19
-field     mavlinkardupilotmega.type 0:80:8 uint
-field     mavlinkardupilotmega.len_bytes 0:88:8 uint
-field     mavlinkardupilotmega.data_0 0:96:8 uint
-field     mavlinkardupilotmega.data_1 0:104:8 uint
-field     mavlinkardupilotmega.data_2 0:112:8 uint
-field     mavlinkardupilotmega.data_3 0:120:8 uint
-field     mavlinkardupilotmega.data_4 0:128:8 uint
-field     mavlinkardupilotmega.data_5 0:136:8 uint
-field     mavlinkardupilotmega.data_6 0:144:8 uint
-field     mavlinkardupilotmega.data_7 0:152:8 uint
-field     mavlinkardupilotmega.data_8 0:160:8 uint
-field     mavlinkardupilotmega.data_9 0:168:8 uint
-field     mavlinkardupilotmega.data_10 0:176:8 uint
-field     mavlinkardupilotmega.data_11 0:184:8 uint
-field     mavlinkardupilotmega.data_12 0:192:8 uint
-field     mavlinkardupilotmega.data_13 0:200:8 uint
-field     mavlinkardupilotmega.data_14 0:208:8 uint
-field     mavlinkardupilotmega.data_15 0:216:8 uint
-field     mavlinkardupilotmega.data_16 0:224:8 uint
-field     mavlinkardupilotmega.data_17 0:232:8 uint
-field     mavlinkardupilotmega.data_18 0:240:8 uint
-field     mavlinkardupilotmega.data_19 0:248:8 uint
-field     mavlinkardupilotmega.data_20 0:256:8 uint
-field     mavlinkardupilotmega.data_21 0:264:8 uint
-field     mavlinkardupilotmega.data_22 0:272:8 uint
-field     mavlinkardupilotmega.data_23 0:280:8 uint
-field     mavlinkardupilotmega.data_24 0:288:8 uint
-field     mavlinkardupilotmega.data_25 0:296:8 uint
-field     mavlinkardupilotmega.data_26 0:304:8 uint
-field     mavlinkardupilotmega.data_27 0:312:8 uint
-field     mavlinkardupilotmega.data_28 0:320:8 uint
-field     mavlinkardupilotmega.data_29 0:328:8 uint
-field     mavlinkardupilotmega.data_30 0:336:8 uint
-field     mavlinkardupilotmega.data_31 0:344:8 uint
-
-kind      data64
-when      0:56:24 171
-when      0:8:8 66
-requires  mavlinkardupilotmega.type mavlinkardupilotmega.len_bytes mavlinkardupilotmega.data_32 mavlinkardupilotmega.data_33 mavlinkardupilotmega.data_34 mavlinkardupilotmega.data_35
-field     mavlinkardupilotmega.type 0:80:8 uint
-field     mavlinkardupilotmega.len_bytes 0:88:8 uint
-field     mavlinkardupilotmega.data_0 0:96:8 uint
-field     mavlinkardupilotmega.data_1 0:104:8 uint
-field     mavlinkardupilotmega.data_2 0:112:8 uint
-field     mavlinkardupilotmega.data_3 0:120:8 uint
-field     mavlinkardupilotmega.data_4 0:128:8 uint
-field     mavlinkardupilotmega.data_5 0:136:8 uint
-field     mavlinkardupilotmega.data_6 0:144:8 uint
-field     mavlinkardupilotmega.data_7 0:152:8 uint
-field     mavlinkardupilotmega.data_8 0:160:8 uint
-field     mavlinkardupilotmega.data_9 0:168:8 uint
-field     mavlinkardupilotmega.data_10 0:176:8 uint
-field     mavlinkardupilotmega.data_11 0:184:8 uint
-field     mavlinkardupilotmega.data_12 0:192:8 uint
-field     mavlinkardupilotmega.data_13 0:200:8 uint
-field     mavlinkardupilotmega.data_14 0:208:8 uint
-field     mavlinkardupilotmega.data_15 0:216:8 uint
-field     mavlinkardupilotmega.data_16 0:224:8 uint
-field     mavlinkardupilotmega.data_17 0:232:8 uint
-field     mavlinkardupilotmega.data_18 0:240:8 uint
-field     mavlinkardupilotmega.data_19 0:248:8 uint
-field     mavlinkardupilotmega.data_20 0:256:8 uint
-field     mavlinkardupilotmega.data_21 0:264:8 uint
-field     mavlinkardupilotmega.data_22 0:272:8 uint
-field     mavlinkardupilotmega.data_23 0:280:8 uint
-field     mavlinkardupilotmega.data_24 0:288:8 uint
-field     mavlinkardupilotmega.data_25 0:296:8 uint
-field     mavlinkardupilotmega.data_26 0:304:8 uint
-field     mavlinkardupilotmega.data_27 0:312:8 uint
-field     mavlinkardupilotmega.data_28 0:320:8 uint
-field     mavlinkardupilotmega.data_29 0:328:8 uint
-field     mavlinkardupilotmega.data_30 0:336:8 uint
-field     mavlinkardupilotmega.data_31 0:344:8 uint
-field     mavlinkardupilotmega.data_32 0:352:8 uint
-field     mavlinkardupilotmega.data_33 0:360:8 uint
-field     mavlinkardupilotmega.data_34 0:368:8 uint
-field     mavlinkardupilotmega.data_35 0:376:8 uint
-field     mavlinkardupilotmega.data_36 0:384:8 uint
-field     mavlinkardupilotmega.data_37 0:392:8 uint
-field     mavlinkardupilotmega.data_38 0:400:8 uint
-field     mavlinkardupilotmega.data_39 0:408:8 uint
-field     mavlinkardupilotmega.data_40 0:416:8 uint
-field     mavlinkardupilotmega.data_41 0:424:8 uint
-field     mavlinkardupilotmega.data_42 0:432:8 uint
-field     mavlinkardupilotmega.data_43 0:440:8 uint
-field     mavlinkardupilotmega.data_44 0:448:8 uint
-field     mavlinkardupilotmega.data_45 0:456:8 uint
-field     mavlinkardupilotmega.data_46 0:464:8 uint
-field     mavlinkardupilotmega.data_47 0:472:8 uint
-field     mavlinkardupilotmega.data_48 0:480:8 uint
-field     mavlinkardupilotmega.data_49 0:488:8 uint
-field     mavlinkardupilotmega.data_50 0:496:8 uint
-field     mavlinkardupilotmega.data_51 0:504:8 uint
-field     mavlinkardupilotmega.data_52 0:512:8 uint
-field     mavlinkardupilotmega.data_53 0:520:8 uint
-field     mavlinkardupilotmega.data_54 0:528:8 uint
-field     mavlinkardupilotmega.data_55 0:536:8 uint
-field     mavlinkardupilotmega.data_56 0:544:8 uint
-field     mavlinkardupilotmega.data_57 0:552:8 uint
-field     mavlinkardupilotmega.data_58 0:560:8 uint
-field     mavlinkardupilotmega.data_59 0:568:8 uint
-field     mavlinkardupilotmega.data_60 0:576:8 uint
-field     mavlinkardupilotmega.data_61 0:584:8 uint
-field     mavlinkardupilotmega.data_62 0:592:8 uint
-field     mavlinkardupilotmega.data_63 0:600:8 uint
 
 kind      data96
 when      0:56:24 172
@@ -463,6 +322,139 @@ field     mavlinkardupilotmega.data_93 0:840:8 uint
 field     mavlinkardupilotmega.data_94 0:848:8 uint
 field     mavlinkardupilotmega.data_95 0:856:8 uint
 
+kind      data64
+when      0:56:24 171
+when      0:8:8 66
+requires  mavlinkardupilotmega.type mavlinkardupilotmega.len_bytes mavlinkardupilotmega.data_32 mavlinkardupilotmega.data_33 mavlinkardupilotmega.data_34 mavlinkardupilotmega.data_35
+field     mavlinkardupilotmega.type 0:80:8 uint
+field     mavlinkardupilotmega.len_bytes 0:88:8 uint
+field     mavlinkardupilotmega.data_0 0:96:8 uint
+field     mavlinkardupilotmega.data_1 0:104:8 uint
+field     mavlinkardupilotmega.data_2 0:112:8 uint
+field     mavlinkardupilotmega.data_3 0:120:8 uint
+field     mavlinkardupilotmega.data_4 0:128:8 uint
+field     mavlinkardupilotmega.data_5 0:136:8 uint
+field     mavlinkardupilotmega.data_6 0:144:8 uint
+field     mavlinkardupilotmega.data_7 0:152:8 uint
+field     mavlinkardupilotmega.data_8 0:160:8 uint
+field     mavlinkardupilotmega.data_9 0:168:8 uint
+field     mavlinkardupilotmega.data_10 0:176:8 uint
+field     mavlinkardupilotmega.data_11 0:184:8 uint
+field     mavlinkardupilotmega.data_12 0:192:8 uint
+field     mavlinkardupilotmega.data_13 0:200:8 uint
+field     mavlinkardupilotmega.data_14 0:208:8 uint
+field     mavlinkardupilotmega.data_15 0:216:8 uint
+field     mavlinkardupilotmega.data_16 0:224:8 uint
+field     mavlinkardupilotmega.data_17 0:232:8 uint
+field     mavlinkardupilotmega.data_18 0:240:8 uint
+field     mavlinkardupilotmega.data_19 0:248:8 uint
+field     mavlinkardupilotmega.data_20 0:256:8 uint
+field     mavlinkardupilotmega.data_21 0:264:8 uint
+field     mavlinkardupilotmega.data_22 0:272:8 uint
+field     mavlinkardupilotmega.data_23 0:280:8 uint
+field     mavlinkardupilotmega.data_24 0:288:8 uint
+field     mavlinkardupilotmega.data_25 0:296:8 uint
+field     mavlinkardupilotmega.data_26 0:304:8 uint
+field     mavlinkardupilotmega.data_27 0:312:8 uint
+field     mavlinkardupilotmega.data_28 0:320:8 uint
+field     mavlinkardupilotmega.data_29 0:328:8 uint
+field     mavlinkardupilotmega.data_30 0:336:8 uint
+field     mavlinkardupilotmega.data_31 0:344:8 uint
+field     mavlinkardupilotmega.data_32 0:352:8 uint
+field     mavlinkardupilotmega.data_33 0:360:8 uint
+field     mavlinkardupilotmega.data_34 0:368:8 uint
+field     mavlinkardupilotmega.data_35 0:376:8 uint
+field     mavlinkardupilotmega.data_36 0:384:8 uint
+field     mavlinkardupilotmega.data_37 0:392:8 uint
+field     mavlinkardupilotmega.data_38 0:400:8 uint
+field     mavlinkardupilotmega.data_39 0:408:8 uint
+field     mavlinkardupilotmega.data_40 0:416:8 uint
+field     mavlinkardupilotmega.data_41 0:424:8 uint
+field     mavlinkardupilotmega.data_42 0:432:8 uint
+field     mavlinkardupilotmega.data_43 0:440:8 uint
+field     mavlinkardupilotmega.data_44 0:448:8 uint
+field     mavlinkardupilotmega.data_45 0:456:8 uint
+field     mavlinkardupilotmega.data_46 0:464:8 uint
+field     mavlinkardupilotmega.data_47 0:472:8 uint
+field     mavlinkardupilotmega.data_48 0:480:8 uint
+field     mavlinkardupilotmega.data_49 0:488:8 uint
+field     mavlinkardupilotmega.data_50 0:496:8 uint
+field     mavlinkardupilotmega.data_51 0:504:8 uint
+field     mavlinkardupilotmega.data_52 0:512:8 uint
+field     mavlinkardupilotmega.data_53 0:520:8 uint
+field     mavlinkardupilotmega.data_54 0:528:8 uint
+field     mavlinkardupilotmega.data_55 0:536:8 uint
+field     mavlinkardupilotmega.data_56 0:544:8 uint
+field     mavlinkardupilotmega.data_57 0:552:8 uint
+field     mavlinkardupilotmega.data_58 0:560:8 uint
+field     mavlinkardupilotmega.data_59 0:568:8 uint
+field     mavlinkardupilotmega.data_60 0:576:8 uint
+field     mavlinkardupilotmega.data_61 0:584:8 uint
+field     mavlinkardupilotmega.data_62 0:592:8 uint
+field     mavlinkardupilotmega.data_63 0:600:8 uint
+
+kind      data32
+when      0:56:24 170
+when      0:8:8 34
+requires  mavlinkardupilotmega.type mavlinkardupilotmega.len_bytes mavlinkardupilotmega.data_16 mavlinkardupilotmega.data_17 mavlinkardupilotmega.data_18 mavlinkardupilotmega.data_19
+field     mavlinkardupilotmega.type 0:80:8 uint
+field     mavlinkardupilotmega.len_bytes 0:88:8 uint
+field     mavlinkardupilotmega.data_0 0:96:8 uint
+field     mavlinkardupilotmega.data_1 0:104:8 uint
+field     mavlinkardupilotmega.data_2 0:112:8 uint
+field     mavlinkardupilotmega.data_3 0:120:8 uint
+field     mavlinkardupilotmega.data_4 0:128:8 uint
+field     mavlinkardupilotmega.data_5 0:136:8 uint
+field     mavlinkardupilotmega.data_6 0:144:8 uint
+field     mavlinkardupilotmega.data_7 0:152:8 uint
+field     mavlinkardupilotmega.data_8 0:160:8 uint
+field     mavlinkardupilotmega.data_9 0:168:8 uint
+field     mavlinkardupilotmega.data_10 0:176:8 uint
+field     mavlinkardupilotmega.data_11 0:184:8 uint
+field     mavlinkardupilotmega.data_12 0:192:8 uint
+field     mavlinkardupilotmega.data_13 0:200:8 uint
+field     mavlinkardupilotmega.data_14 0:208:8 uint
+field     mavlinkardupilotmega.data_15 0:216:8 uint
+field     mavlinkardupilotmega.data_16 0:224:8 uint
+field     mavlinkardupilotmega.data_17 0:232:8 uint
+field     mavlinkardupilotmega.data_18 0:240:8 uint
+field     mavlinkardupilotmega.data_19 0:248:8 uint
+field     mavlinkardupilotmega.data_20 0:256:8 uint
+field     mavlinkardupilotmega.data_21 0:264:8 uint
+field     mavlinkardupilotmega.data_22 0:272:8 uint
+field     mavlinkardupilotmega.data_23 0:280:8 uint
+field     mavlinkardupilotmega.data_24 0:288:8 uint
+field     mavlinkardupilotmega.data_25 0:296:8 uint
+field     mavlinkardupilotmega.data_26 0:304:8 uint
+field     mavlinkardupilotmega.data_27 0:312:8 uint
+field     mavlinkardupilotmega.data_28 0:320:8 uint
+field     mavlinkardupilotmega.data_29 0:328:8 uint
+field     mavlinkardupilotmega.data_30 0:336:8 uint
+field     mavlinkardupilotmega.data_31 0:344:8 uint
+
+kind      data16
+when      0:56:24 169
+when      0:8:8 18
+requires  mavlinkardupilotmega.type mavlinkardupilotmega.len_bytes mavlinkardupilotmega.data_0 mavlinkardupilotmega.data_1 mavlinkardupilotmega.data_2 mavlinkardupilotmega.data_3
+field     mavlinkardupilotmega.type 0:80:8 uint
+field     mavlinkardupilotmega.len_bytes 0:88:8 uint
+field     mavlinkardupilotmega.data_0 0:96:8 uint
+field     mavlinkardupilotmega.data_1 0:104:8 uint
+field     mavlinkardupilotmega.data_2 0:112:8 uint
+field     mavlinkardupilotmega.data_3 0:120:8 uint
+field     mavlinkardupilotmega.data_4 0:128:8 uint
+field     mavlinkardupilotmega.data_5 0:136:8 uint
+field     mavlinkardupilotmega.data_6 0:144:8 uint
+field     mavlinkardupilotmega.data_7 0:152:8 uint
+field     mavlinkardupilotmega.data_8 0:160:8 uint
+field     mavlinkardupilotmega.data_9 0:168:8 uint
+field     mavlinkardupilotmega.data_10 0:176:8 uint
+field     mavlinkardupilotmega.data_11 0:184:8 uint
+field     mavlinkardupilotmega.data_12 0:192:8 uint
+field     mavlinkardupilotmega.data_13 0:200:8 uint
+field     mavlinkardupilotmega.data_14 0:208:8 uint
+field     mavlinkardupilotmega.data_15 0:216:8 uint
+
 kind      rangefinder
 when      0:56:24 173
 when      0:8:8 8
@@ -502,6 +494,14 @@ field     mavlinkardupilotmega.idx 0:208:8 uint
 field     mavlinkardupilotmega.count 0:216:8 uint
 field     mavlinkardupilotmega.rally_point_flags 0:224:8 uint
 
+kind      fence_fetch_point
+when      0:56:24 161
+when      0:8:8 3
+requires  mavlinkardupilotmega.target_system mavlinkardupilotmega.target_component mavlinkardupilotmega.idx
+field     mavlinkardupilotmega.target_system 0:80:8 uint
+field     mavlinkardupilotmega.target_component 0:88:8 uint
+field     mavlinkardupilotmega.idx 0:96:8 uint
+
 kind      rally_fetch_point
 when      0:56:24 176
 when      0:8:8 3
@@ -520,17 +520,6 @@ field     mavlinkardupilotmega.compensationy 0:144:32 f32
 field     mavlinkardupilotmega.compensationz 0:176:32 f32
 field     mavlinkardupilotmega.throttle_dpct 0:208:16 uint
 field     mavlinkardupilotmega.interference_pct 0:224:16 uint
-
-kind      ahrs2
-when      0:56:24 178
-when      0:8:8 24
-requires  mavlinkardupilotmega.roll_rad mavlinkardupilotmega.pitch_rad mavlinkardupilotmega.yaw_rad mavlinkardupilotmega.altitude_m
-field     mavlinkardupilotmega.roll_rad 0:80:32 f32
-field     mavlinkardupilotmega.pitch_rad 0:112:32 f32
-field     mavlinkardupilotmega.yaw_rad 0:144:32 f32
-field     mavlinkardupilotmega.altitude_m 0:176:32 f32
-field     lat 0:208:32 sscale:1/10000000
-field     lon 0:240:32 sscale:1/10000000
 
 kind      camera_status
 when      0:56:24 179
@@ -587,12 +576,16 @@ field     mavlinkardupilotmega.v2 0:304:32 f32
 field     mavlinkardupilotmega.v3 0:336:32 f32
 field     mavlinkardupilotmega.v4 0:368:32 f32
 
-kind      autopilot_version_request
-when      0:56:24 183
-when      0:8:8 2
-requires  mavlinkardupilotmega.target_system mavlinkardupilotmega.target_component
-field     mavlinkardupilotmega.target_system 0:80:8 uint
-field     mavlinkardupilotmega.target_component 0:88:8 uint
+kind      ahrs2
+when      0:56:24 178
+when      0:8:8 24
+requires  mavlinkardupilotmega.roll_rad mavlinkardupilotmega.pitch_rad mavlinkardupilotmega.yaw_rad mavlinkardupilotmega.altitude_m
+field     mavlinkardupilotmega.roll_rad 0:80:32 f32
+field     mavlinkardupilotmega.pitch_rad 0:112:32 f32
+field     mavlinkardupilotmega.yaw_rad 0:144:32 f32
+field     mavlinkardupilotmega.altitude_m 0:176:32 f32
+field     lat 0:208:32 sscale:1/10000000
+field     lon 0:240:32 sscale:1/10000000
 
 kind      remote_log_data_block
 when      0:56:24 184
@@ -954,14 +947,6 @@ field     mavlinkardupilotmega.gopro_heartbeat_status 0:80:8 uint
 field     mavlinkardupilotmega.capture_mode 0:88:8 uint
 field     mavlinkardupilotmega.gopro_heartbeat_flags 0:96:8 uint
 
-kind      gopro_get_request
-when      0:56:24 216
-when      0:8:8 3
-requires  mavlinkardupilotmega.target_system mavlinkardupilotmega.target_component mavlinkardupilotmega.cmd_id
-field     mavlinkardupilotmega.target_system 0:80:8 uint
-field     mavlinkardupilotmega.target_component 0:88:8 uint
-field     mavlinkardupilotmega.cmd_id 0:96:8 uint
-
 kind      gopro_get_response
 when      0:56:24 217
 when      0:8:8 6
@@ -984,6 +969,14 @@ field     mavlinkardupilotmega.value_0 0:104:8 uint
 field     mavlinkardupilotmega.value_1 0:112:8 uint
 field     mavlinkardupilotmega.value_2 0:120:8 uint
 field     mavlinkardupilotmega.value_3 0:128:8 uint
+
+kind      gopro_get_request
+when      0:56:24 216
+when      0:8:8 3
+requires  mavlinkardupilotmega.target_system mavlinkardupilotmega.target_component mavlinkardupilotmega.cmd_id
+field     mavlinkardupilotmega.target_system 0:80:8 uint
+field     mavlinkardupilotmega.target_component 0:88:8 uint
+field     mavlinkardupilotmega.cmd_id 0:96:8 uint
 
 kind      gopro_set_response
 when      0:56:24 219
@@ -1920,6 +1913,13 @@ field     mavlinkardupilotmega.target_system 0:112:8 uint
 field     mavlinkardupilotmega.target_component 0:120:8 uint
 field     mavlinkardupilotmega.osd_screen 0:128:8 uint
 field     mavlinkardupilotmega.osd_index 0:136:8 uint
+
+kind      autopilot_version_request
+when      0:56:24 183
+when      0:8:8 2
+requires  mavlinkardupilotmega.target_system mavlinkardupilotmega.target_component
+field     mavlinkardupilotmega.target_system 0:80:8 uint
+field     mavlinkardupilotmega.target_component 0:88:8 uint
 
 kind      osd_param_show_config_reply
 when      0:56:24 11036

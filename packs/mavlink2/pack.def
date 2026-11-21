@@ -53,13 +53,6 @@ field     mavlink.onboard_control_sensors_present_extended 0:328:32 uint
 field     mavlink.onboard_control_sensors_enabled_extended 0:360:32 uint
 field     mavlink.onboard_control_sensors_health_extended 0:392:32 uint
 
-kind      system_time
-when      0:56:24 2
-when      0:8:8 12
-requires  mavlink.time_boot_ms
-field     time_ms 0:80:64 uiscale:1/1000
-field     mavlink.time_boot_ms 0:144:32 uint
-
 kind      ping
 when      0:56:24 4
 when      0:8:8 14
@@ -115,22 +108,6 @@ requires  mavlink.custom_mode mavlink.target_system mavlink.base_mode
 field     mavlink.custom_mode 0:80:32 uint
 field     mavlink.target_system 0:112:8 uint
 field     mavlink.base_mode 0:120:8 uint
-
-kind      param_request_read
-when      0:56:24 20
-when      0:8:8 20
-requires  mavlink.param_index mavlink.target_system mavlink.target_component mavlink.param_id
-field     mavlink.param_index 0:80:16 twos absent 65535
-field     mavlink.target_system 0:96:8 uint
-field     mavlink.target_component 0:104:8 uint
-field     mavlink.param_id 0:112:128 ascii
-
-kind      param_request_list
-when      0:56:24 21
-when      0:8:8 2
-requires  mavlink.target_system mavlink.target_component
-field     mavlink.target_system 0:80:8 uint
-field     mavlink.target_component 0:88:8 uint
 
 kind      param_value
 when      0:56:24 22
@@ -332,18 +309,6 @@ field     mavlink.press_diff_hpa 0:144:32 f32
 field     mavlink.temperature_cdegc 0:176:16 twos
 field     mavlink.temperature_press_diff_cdegc 0:192:16 twos absent 0
 
-kind      attitude
-when      0:56:24 30
-when      0:8:8 28
-requires  mavlink.roll_rad mavlink.pitch_rad mavlink.yaw_rad mavlink.rollspeed_rad_per_s mavlink.pitchspeed_rad_per_s mavlink.yawspeed_rad_per_s
-field     mavlink.time_boot_ms 0:80:32 uint
-field     mavlink.roll_rad 0:112:32 f32
-field     mavlink.pitch_rad 0:144:32 f32
-field     mavlink.yaw_rad 0:176:32 f32
-field     mavlink.rollspeed_rad_per_s 0:208:32 f32
-field     mavlink.pitchspeed_rad_per_s 0:240:32 f32
-field     mavlink.yawspeed_rad_per_s 0:272:32 f32
-
 kind      attitude_quaternion
 when      0:56:24 31
 when      0:8:8 48
@@ -360,18 +325,6 @@ field     mavlink.repr_offset_q_0 0:336:32 f32 absent 0
 field     mavlink.repr_offset_q_1 0:368:32 f32 absent 0
 field     mavlink.repr_offset_q_2 0:400:32 f32 absent 0
 field     mavlink.repr_offset_q_3 0:432:32 f32 absent 0
-
-kind      local_position_ned
-when      0:56:24 32
-when      0:8:8 28
-requires  mavlink.x_m mavlink.y_m mavlink.z_m mavlink.vx_m_per_s mavlink.vy_m_per_s mavlink.vz_m_per_s
-field     mavlink.time_boot_ms 0:80:32 uint
-field     mavlink.x_m 0:112:32 f32
-field     mavlink.y_m 0:144:32 f32
-field     mavlink.z_m 0:176:32 f32
-field     mavlink.vx_m_per_s 0:208:32 f32
-field     mavlink.vy_m_per_s 0:240:32 f32
-field     mavlink.vz_m_per_s 0:272:32 f32
 
 kind      global_position_int
 when      0:56:24 33
@@ -511,14 +464,6 @@ field     mavlink.mission_id 0:128:32 uint absent 0
 field     mavlink.fence_id 0:160:32 uint absent 0
 field     mavlink.rally_points_id 0:192:32 uint absent 0
 
-kind      mission_request_list
-when      0:56:24 43
-when      0:8:8 3
-requires  mavlink.target_system mavlink.target_component mavlink.mission_type
-field     mavlink.target_system 0:80:8 uint
-field     mavlink.target_component 0:88:8 uint
-field     mavlink.mission_type 0:96:8 uint
-
 kind      mission_count
 when      0:56:24 44
 when      0:8:8 9
@@ -528,14 +473,6 @@ field     mavlink.target_system 0:96:8 uint
 field     mavlink.target_component 0:104:8 uint
 field     mavlink.mission_type 0:112:8 uint
 field     mavlink.opaque_id 0:120:32 uint absent 0
-
-kind      mission_clear_all
-when      0:56:24 45
-when      0:8:8 3
-requires  mavlink.target_system mavlink.target_component mavlink.mission_type
-field     mavlink.target_system 0:80:8 uint
-field     mavlink.target_component 0:88:8 uint
-field     mavlink.mission_type 0:96:8 uint
 
 kind      mission_item_reached
 when      0:56:24 46
@@ -552,25 +489,6 @@ field     mavlink.target_component 0:88:8 uint
 field     mavlink.mission_ack_type 0:96:8 uint
 field     mavlink.mission_type 0:104:8 uint
 field     mavlink.opaque_id 0:112:32 uint absent 0
-
-kind      set_gps_global_origin
-when      0:56:24 48
-when      0:8:8 21
-requires  mavlink.latitude_dege7 mavlink.longitude_dege7 mavlink.altitude_mm mavlink.target_system mavlink.time_usec_us
-field     mavlink.latitude_dege7 0:80:32 twos
-field     mavlink.longitude_dege7 0:112:32 twos
-field     mavlink.altitude_mm 0:144:32 twos
-field     mavlink.target_system 0:176:8 uint
-field     mavlink.time_usec_us 0:184:64 uint
-
-kind      gps_global_origin
-when      0:56:24 49
-when      0:8:8 20
-requires  mavlink.latitude_dege7 mavlink.longitude_dege7 mavlink.altitude_mm mavlink.time_usec_us
-field     mavlink.latitude_dege7 0:80:32 twos
-field     mavlink.longitude_dege7 0:112:32 twos
-field     mavlink.altitude_mm 0:144:32 twos
-field     mavlink.time_usec_us 0:176:64 uint
 
 kind      param_map_rc
 when      0:56:24 50
@@ -656,56 +574,6 @@ field     mavlink.nav_bearing_deg 0:240:16 twos
 field     mavlink.target_bearing_deg 0:256:16 twos
 field     mavlink.wp_dist_m 0:272:16 uint
 
-kind      global_position_int_cov
-when      0:56:24 63
-when      0:8:8 181
-requires  mavlink.covariance_21 mavlink.covariance_22 mavlink.covariance_23 mavlink.covariance_24 mavlink.covariance_25 mavlink.covariance_26
-field     mavlink.time_usec_us 0:80:64 uint
-field     lat 0:144:32 sscale:1/10000000
-field     lon 0:176:32 sscale:1/10000000
-field     mavlink.alt_mm 0:208:32 twos
-field     mavlink.relative_alt_mm 0:240:32 twos
-field     mavlink.vx_m_per_s 0:272:32 f32
-field     mavlink.vy_m_per_s 0:304:32 f32
-field     mavlink.vz_m_per_s 0:336:32 f32
-field     mavlink.covariance_0 0:368:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_1 0:400:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_2 0:432:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_3 0:464:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_4 0:496:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_5 0:528:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_6 0:560:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_7 0:592:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_8 0:624:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_9 0:656:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_10 0:688:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_11 0:720:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_12 0:752:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_13 0:784:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_14 0:816:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_15 0:848:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_16 0:880:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_17 0:912:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_18 0:944:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_19 0:976:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_20 0:1008:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_21 0:1040:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_22 0:1072:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_23 0:1104:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_24 0:1136:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_25 0:1168:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_26 0:1200:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_27 0:1232:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_28 0:1264:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_29 0:1296:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_30 0:1328:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_31 0:1360:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_32 0:1392:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_33 0:1424:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_34 0:1456:32 f32 absent 2143289344,4290772992
-field     mavlink.covariance_35 0:1488:32 f32 absent 2143289344,4290772992
-field     mavlink.estimator_type 0:1520:8 uint
-
 kind      local_position_ned_cov
 when      0:56:24 64
 when      0:8:8 225
@@ -766,6 +634,56 @@ field     mavlink.covariance_42 0:1776:32 f32 absent 2143289344,4290772992
 field     mavlink.covariance_43 0:1808:32 f32 absent 2143289344,4290772992
 field     mavlink.covariance_44 0:1840:32 f32 absent 2143289344,4290772992
 field     mavlink.estimator_type 0:1872:8 uint
+
+kind      global_position_int_cov
+when      0:56:24 63
+when      0:8:8 181
+requires  mavlink.covariance_21 mavlink.covariance_22 mavlink.covariance_23 mavlink.covariance_24 mavlink.covariance_25 mavlink.covariance_26
+field     mavlink.time_usec_us 0:80:64 uint
+field     lat 0:144:32 sscale:1/10000000
+field     lon 0:176:32 sscale:1/10000000
+field     mavlink.alt_mm 0:208:32 twos
+field     mavlink.relative_alt_mm 0:240:32 twos
+field     mavlink.vx_m_per_s 0:272:32 f32
+field     mavlink.vy_m_per_s 0:304:32 f32
+field     mavlink.vz_m_per_s 0:336:32 f32
+field     mavlink.covariance_0 0:368:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_1 0:400:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_2 0:432:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_3 0:464:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_4 0:496:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_5 0:528:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_6 0:560:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_7 0:592:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_8 0:624:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_9 0:656:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_10 0:688:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_11 0:720:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_12 0:752:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_13 0:784:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_14 0:816:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_15 0:848:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_16 0:880:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_17 0:912:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_18 0:944:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_19 0:976:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_20 0:1008:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_21 0:1040:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_22 0:1072:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_23 0:1104:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_24 0:1136:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_25 0:1168:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_26 0:1200:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_27 0:1232:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_28 0:1264:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_29 0:1296:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_30 0:1328:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_31 0:1360:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_32 0:1392:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_33 0:1424:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_34 0:1456:32 f32 absent 2143289344,4290772992
+field     mavlink.covariance_35 0:1488:32 f32 absent 2143289344,4290772992
+field     mavlink.estimator_type 0:1520:8 uint
 
 kind      rc_channels
 when      0:56:24 65
@@ -876,6 +794,22 @@ field     mavlink.frame 0:352:8 uint
 field     mavlink.current 0:360:8 uint
 field     mavlink.autocontinue 0:368:8 uint
 field     mavlink.mission_type 0:376:8 uint
+
+kind      mission_request_list
+when      0:56:24 43
+when      0:8:8 3
+requires  mavlink.target_system mavlink.target_component mavlink.mission_type
+field     mavlink.target_system 0:80:8 uint
+field     mavlink.target_component 0:88:8 uint
+field     mavlink.mission_type 0:96:8 uint
+
+kind      mission_clear_all
+when      0:56:24 45
+when      0:8:8 3
+requires  mavlink.target_system mavlink.target_component mavlink.mission_type
+field     mavlink.target_system 0:80:8 uint
+field     mavlink.target_component 0:88:8 uint
+field     mavlink.mission_type 0:96:8 uint
 
 kind      vfr_hud
 when      0:56:24 74
@@ -1067,39 +1001,6 @@ field     mavlink.yaw_rad 0:400:32 f32
 field     mavlink.yaw_rate_rad_per_s 0:432:32 f32
 field     mavlink.position_target_global_int_type_mask 0:464:16 uint
 field     mavlink.coordinate_frame 0:480:8 uint
-
-kind      local_position_ned_system_global_offset
-when      0:56:24 89
-when      0:8:8 28
-requires  mavlink.x_m mavlink.y_m mavlink.z_m mavlink.roll_rad mavlink.pitch_rad mavlink.yaw_rad
-field     mavlink.time_boot_ms 0:80:32 uint
-field     mavlink.x_m 0:112:32 f32
-field     mavlink.y_m 0:144:32 f32
-field     mavlink.z_m 0:176:32 f32
-field     mavlink.roll_rad 0:208:32 f32
-field     mavlink.pitch_rad 0:240:32 f32
-field     mavlink.yaw_rad 0:272:32 f32
-
-kind      hil_state
-when      0:56:24 90
-when      0:8:8 56
-requires  mavlink.vx_cm_per_s mavlink.vy_cm_per_s mavlink.vz_cm_per_s mavlink.xacc_mg mavlink.yacc_mg mavlink.zacc_mg
-field     mavlink.time_usec_us 0:80:64 uint
-field     mavlink.roll_rad 0:144:32 f32
-field     mavlink.pitch_rad 0:176:32 f32
-field     mavlink.yaw_rad 0:208:32 f32
-field     mavlink.rollspeed_rad_per_s 0:240:32 f32
-field     mavlink.pitchspeed_rad_per_s 0:272:32 f32
-field     mavlink.yawspeed_rad_per_s 0:304:32 f32
-field     lat 0:336:32 sscale:1/10000000
-field     lon 0:368:32 sscale:1/10000000
-field     mavlink.alt_mm 0:400:32 twos
-field     mavlink.vx_cm_per_s 0:432:16 twos
-field     mavlink.vy_cm_per_s 0:448:16 twos
-field     mavlink.vz_cm_per_s 0:464:16 twos
-field     mavlink.xacc_mg 0:480:16 twos
-field     mavlink.yacc_mg 0:496:16 twos
-field     mavlink.zacc_mg 0:512:16 twos
 
 kind      hil_controls
 when      0:56:24 91
@@ -1294,6 +1195,18 @@ field     mavlink.covariance_17 0:880:32 f32 absent 2143289344,4290772992
 field     mavlink.covariance_18 0:912:32 f32 absent 2143289344,4290772992
 field     mavlink.covariance_19 0:944:32 f32 absent 2143289344,4290772992
 field     mavlink.covariance_20 0:976:32 f32 absent 2143289344,4290772992
+
+kind      local_position_ned_system_global_offset
+when      0:56:24 89
+when      0:8:8 28
+requires  mavlink.x_m mavlink.y_m mavlink.z_m mavlink.roll_rad mavlink.pitch_rad mavlink.yaw_rad
+field     mavlink.time_boot_ms 0:80:32 uint
+field     mavlink.x_m 0:112:32 f32
+field     mavlink.y_m 0:144:32 f32
+field     mavlink.z_m 0:176:32 f32
+field     mavlink.roll_rad 0:208:32 f32
+field     mavlink.pitch_rad 0:240:32 f32
+field     mavlink.yaw_rad 0:272:32 f32
 
 kind      highres_imu
 when      0:56:24 105
@@ -1730,6 +1643,39 @@ field     mavlink.xacc_mg 0:544:16 twos
 field     mavlink.yacc_mg 0:560:16 twos
 field     mavlink.zacc_mg 0:576:16 twos
 
+kind      hil_state
+when      0:56:24 90
+when      0:8:8 56
+requires  mavlink.vx_cm_per_s mavlink.vy_cm_per_s mavlink.vz_cm_per_s mavlink.xacc_mg mavlink.yacc_mg mavlink.zacc_mg
+field     mavlink.time_usec_us 0:80:64 uint
+field     mavlink.roll_rad 0:144:32 f32
+field     mavlink.pitch_rad 0:176:32 f32
+field     mavlink.yaw_rad 0:208:32 f32
+field     mavlink.rollspeed_rad_per_s 0:240:32 f32
+field     mavlink.pitchspeed_rad_per_s 0:272:32 f32
+field     mavlink.yawspeed_rad_per_s 0:304:32 f32
+field     lat 0:336:32 sscale:1/10000000
+field     lon 0:368:32 sscale:1/10000000
+field     mavlink.alt_mm 0:400:32 twos
+field     mavlink.vx_cm_per_s 0:432:16 twos
+field     mavlink.vy_cm_per_s 0:448:16 twos
+field     mavlink.vz_cm_per_s 0:464:16 twos
+field     mavlink.xacc_mg 0:480:16 twos
+field     mavlink.yacc_mg 0:496:16 twos
+field     mavlink.zacc_mg 0:512:16 twos
+
+kind      attitude
+when      0:56:24 30
+when      0:8:8 28
+requires  mavlink.roll_rad mavlink.pitch_rad mavlink.yaw_rad mavlink.rollspeed_rad_per_s mavlink.pitchspeed_rad_per_s mavlink.yawspeed_rad_per_s
+field     mavlink.time_boot_ms 0:80:32 uint
+field     mavlink.roll_rad 0:112:32 f32
+field     mavlink.pitch_rad 0:144:32 f32
+field     mavlink.yaw_rad 0:176:32 f32
+field     mavlink.rollspeed_rad_per_s 0:208:32 f32
+field     mavlink.pitchspeed_rad_per_s 0:240:32 f32
+field     mavlink.yawspeed_rad_per_s 0:272:32 f32
+
 kind      scaled_imu2
 when      0:56:24 116
 when      0:8:8 24
@@ -1872,20 +1818,6 @@ field     mavlink.log_data_data_86 0:824:8 uint
 field     mavlink.log_data_data_87 0:832:8 uint
 field     mavlink.log_data_data_88 0:840:8 uint
 field     mavlink.log_data_data_89 0:848:8 uint
-
-kind      log_erase
-when      0:56:24 121
-when      0:8:8 2
-requires  mavlink.target_system mavlink.target_component
-field     mavlink.target_system 0:80:8 uint
-field     mavlink.target_component 0:88:8 uint
-
-kind      log_request_end
-when      0:56:24 122
-when      0:8:8 2
-requires  mavlink.target_system mavlink.target_component
-field     mavlink.target_system 0:80:8 uint
-field     mavlink.target_component 0:88:8 uint
 
 kind      gps_inject_data
 when      0:56:24 123
@@ -3433,6 +3365,25 @@ field     mavlink.approach_z_m 0:464:32 f32
 field     mavlink.target_system 0:496:8 uint
 field     mavlink.time_usec_us 0:504:64 uint
 
+kind      set_gps_global_origin
+when      0:56:24 48
+when      0:8:8 21
+requires  mavlink.latitude_dege7 mavlink.longitude_dege7 mavlink.altitude_mm mavlink.target_system mavlink.time_usec_us
+field     mavlink.latitude_dege7 0:80:32 twos
+field     mavlink.longitude_dege7 0:112:32 twos
+field     mavlink.altitude_mm 0:144:32 twos
+field     mavlink.target_system 0:176:8 uint
+field     mavlink.time_usec_us 0:184:64 uint
+
+kind      gps_global_origin
+when      0:56:24 49
+when      0:8:8 20
+requires  mavlink.latitude_dege7 mavlink.longitude_dege7 mavlink.altitude_mm mavlink.time_usec_us
+field     mavlink.latitude_dege7 0:80:32 twos
+field     mavlink.longitude_dege7 0:112:32 twos
+field     mavlink.altitude_mm 0:144:32 twos
+field     mavlink.time_usec_us 0:176:64 uint
+
 kind      message_interval
 when      0:56:24 244
 when      0:8:8 6
@@ -4554,14 +4505,6 @@ field     mavlink.logging_data_acked_data_246 0:2096:8 uint
 field     mavlink.logging_data_acked_data_247 0:2104:8 uint
 field     mavlink.logging_data_acked_data_248 0:2112:8 uint
 
-kind      logging_ack
-when      0:56:24 268
-when      0:8:8 4
-requires  mavlink.sequence mavlink.target_system mavlink.target_component
-field     mavlink.sequence 0:80:16 uint
-field     mavlink.target_system 0:96:8 uint
-field     mavlink.target_component 0:104:8 uint
-
 kind      video_stream_information
 when      0:56:24 269
 when      0:8:8 217
@@ -4977,22 +4920,6 @@ field     mavlink.hw_unique_id_15 0:984:8 uint
 field     mavlink.sw_version_major 0:992:8 uint
 field     mavlink.sw_version_minor 0:1000:8 uint
 
-kind      param_ext_request_read
-when      0:56:24 320
-when      0:8:8 20
-requires  mavlink.param_index mavlink.target_system mavlink.target_component mavlink.param_id
-field     mavlink.param_index 0:80:16 twos absent 65535
-field     mavlink.target_system 0:96:8 uint
-field     mavlink.target_component 0:104:8 uint
-field     mavlink.param_id 0:112:128 ascii
-
-kind      param_ext_request_list
-when      0:56:24 321
-when      0:8:8 2
-requires  mavlink.target_system mavlink.target_component
-field     mavlink.target_system 0:80:8 uint
-field     mavlink.target_component 0:88:8 uint
-
 kind      param_ext_value
 when      0:56:24 322
 when      0:8:8 149
@@ -5172,6 +5099,18 @@ field     mavlink.child_frame_id 0:1912:8 uint
 field     mavlink.reset_counter 0:1920:8 uint
 field     mavlink.estimator_type 0:1928:8 uint
 field     mavlink.quality_pct 0:1936:8 twos absent 0
+
+kind      local_position_ned
+when      0:56:24 32
+when      0:8:8 28
+requires  mavlink.x_m mavlink.y_m mavlink.z_m mavlink.vx_m_per_s mavlink.vy_m_per_s mavlink.vz_m_per_s
+field     mavlink.time_boot_ms 0:80:32 uint
+field     mavlink.x_m 0:112:32 f32
+field     mavlink.y_m 0:144:32 f32
+field     mavlink.z_m 0:176:32 f32
+field     mavlink.vx_m_per_s 0:208:32 f32
+field     mavlink.vy_m_per_s 0:240:32 f32
+field     mavlink.vz_m_per_s 0:272:32 f32
 
 kind      trajectory_representation_waypoints
 when      0:56:24 332
@@ -5377,6 +5316,24 @@ field     mavlink.target_system 0:96:8 uint
 field     mavlink.target_component 0:104:8 uint
 field     mavlink.param_id 0:112:128 ascii
 field     mavlink.param_error_error 0:240:8 uint
+
+kind      param_request_read
+when      0:56:24 20
+when      0:8:8 20
+requires  mavlink.param_index mavlink.target_system mavlink.target_component mavlink.param_id
+field     mavlink.param_index 0:80:16 twos absent 65535
+field     mavlink.target_system 0:96:8 uint
+field     mavlink.target_component 0:104:8 uint
+field     mavlink.param_id 0:112:128 ascii
+
+kind      param_ext_request_read
+when      0:56:24 320
+when      0:8:8 20
+requires  mavlink.param_index mavlink.target_system mavlink.target_component mavlink.param_id
+field     mavlink.param_index 0:80:16 twos absent 65535
+field     mavlink.target_system 0:96:8 uint
+field     mavlink.target_component 0:104:8 uint
+field     mavlink.param_id 0:112:128 ascii
 
 kind      debug_float_array
 when      0:56:24 350
@@ -5985,6 +5942,13 @@ field     mavlink.time_boot_ms 0:80:32 uint
 field     mavlink.file_crc 0:112:32 uint
 field     mavlink.uri 0:144:800 ascii
 
+kind      system_time
+when      0:56:24 2
+when      0:8:8 12
+requires  mavlink.time_boot_ms
+field     time_ms 0:80:64 uiscale:1/1000
+field     mavlink.time_boot_ms 0:144:32 uint
+
 kind      play_tune_v2
 when      0:56:24 400
 when      0:8:8 254
@@ -6078,6 +6042,14 @@ field     mavlink.sequence_oldest_available 0:96:16 uint
 field     mavlink.target_system 0:112:8 uint
 field     mavlink.target_component 0:120:8 uint
 field     mavlink.reason 0:128:8 uint
+
+kind      logging_ack
+when      0:56:24 268
+when      0:8:8 4
+requires  mavlink.sequence mavlink.target_system mavlink.target_component
+field     mavlink.sequence 0:80:16 uint
+field     mavlink.target_system 0:96:8 uint
+field     mavlink.target_component 0:104:8 uint
 
 kind      radio_rc_channels
 when      0:56:24 420
@@ -6714,6 +6686,34 @@ field     mavlink.operator_altitude_geo_m 0:144:32 f32 absent 3296329728
 field     time_ms 0:176:32 uiscale:1000:1546300800000
 field     mavlink.target_system 0:208:8 uint
 field     mavlink.target_component 0:216:8 uint
+
+kind      param_request_list
+when      0:56:24 21
+when      0:8:8 2
+requires  mavlink.target_system mavlink.target_component
+field     mavlink.target_system 0:80:8 uint
+field     mavlink.target_component 0:88:8 uint
+
+kind      log_erase
+when      0:56:24 121
+when      0:8:8 2
+requires  mavlink.target_system mavlink.target_component
+field     mavlink.target_system 0:80:8 uint
+field     mavlink.target_component 0:88:8 uint
+
+kind      log_request_end
+when      0:56:24 122
+when      0:8:8 2
+requires  mavlink.target_system mavlink.target_component
+field     mavlink.target_system 0:80:8 uint
+field     mavlink.target_component 0:88:8 uint
+
+kind      param_ext_request_list
+when      0:56:24 321
+when      0:8:8 2
+requires  mavlink.target_system mavlink.target_component
+field     mavlink.target_system 0:80:8 uint
+field     mavlink.target_component 0:88:8 uint
 
 kind      hygrometer_sensor
 when      0:56:24 12920

@@ -51,13 +51,6 @@ field     mavlink.onboard_control_sensors_present_extended 0:328:32 uint
 field     mavlink.onboard_control_sensors_enabled_extended 0:360:32 uint
 field     mavlink.onboard_control_sensors_health_extended 0:392:32 uint
 
-kind      system_time
-when      0:56:24 2
-when      0:8:8 12
-requires  mavlink.time_boot_ms
-field     time_ms 0:80:64 uiscale:1/1000
-field     mavlink.time_boot_ms 0:144:32 uint
-
 kind      gps_raw_int
 when      0:56:24 24
 when      0:8:8 52
@@ -104,6 +97,13 @@ field     mavlink.vx_cm_per_s 0:240:16 twos
 field     mavlink.vy_cm_per_s 0:256:16 twos
 field     mavlink.vz_cm_per_s 0:272:16 twos
 field     mavlink.hdg_cdeg 0:288:16 uint
+
+kind      system_time
+when      0:56:24 2
+when      0:8:8 12
+requires  mavlink.time_boot_ms
+field     time_ms 0:80:64 uiscale:1/1000
+field     mavlink.time_boot_ms 0:144:32 uint
 
 kind      command_long
 when      0:56:24 76

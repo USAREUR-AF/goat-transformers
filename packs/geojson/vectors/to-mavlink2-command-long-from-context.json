@@ -1,0 +1,25 @@
+{
+ "name": "to-mavlink2-command-long-from-context",
+ "from": "geojson",
+ "to": "mavlink2",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0]},\"properties\":{}}",
+ "context": {
+  "mavlink.incompat_flags": "0",
+  "mavlink.compat_flags": "1",
+  "mavlink.seq": "55",
+  "mavlink.sysid": "77",
+  "mavlink.compid": "77",
+  "mavlink.param1": "0.5",
+  "mavlink.param2": "2.25",
+  "mavlink.param3": "4",
+  "mavlink.param4": "-4.5",
+  "mavlink.param5": "-2.75",
+  "mavlink.param6": "-1",
+  "mavlink.param7": "0.75",
+  "mavlink.command": "55585",
+  "mavlink.target_system": "248",
+  "mavlink.target_component": "207",
+  "mavlink.confirmation": "166"
+ },
+ "expect": "fd210001374d4d4c00000000003f0000104000008040000090c0000030c0000080bf0000403f21d9f8cfa6"
+}

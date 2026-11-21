@@ -1013,6 +1013,42 @@ def find_shadows(names, requires, raw):
             for i, required in enumerate(requires)]
 
 
+def encode_order(kinds):
+    """The kinds in the order pack.def writes them. Encode selects the first kind
+    whose every `requires` key is present (engine-spec, Encode 2), so a kind A
+    comes before a kind B when A maps every key B requires and B does not map
+    every key A requires: an entity built from A's keys then selects A, not B.
+    Otherwise id order holds; a cycle is broken by id order too."""
+    raw = [set(raw_keys(k.fields)) for k in kinds]
+    req = [set(k.requires) for k in kinds]
+    n = len(kinds)
+    before = [set() for _ in range(n)]          # before[b]: kinds that must precede b
+    for a in range(n):
+        for b in range(n):
+            if a != b and req[b] <= raw[a] and not req[a] <= raw[b]:
+                before[b].add(a)
+    out, done = [], set()
+    while len(out) < n:
+        ready = [i for i in range(n) if i not in done and before[i] <= done]
+        i = ready[0] if ready else min(i for i in range(n) if i not in done)
+        out.append(i)
+        done.add(i)
+    return [kinds[i] for i in out]
+
+
+def misselected(kinds):
+    """The kinds an entity built from their own keys, kind cleared, does not
+    select: an earlier kind in encode order qualifies first."""
+    order = encode_order(kinds)
+    out = []
+    for k in kinds:
+        keys = set(raw_keys(k.fields))
+        first = next(o for o in order if set(o.requires) <= keys)
+        if first is not k:
+            out.append((k, first))
+    return out
+
+
 def with_sentinels(fields):
     """The mapped fields with the `absent` values of every line."""
     out = []
@@ -1155,7 +1191,7 @@ def emit_pack(kinds, sha):
             "when   %s %d" % (loc(*LOC_STX), STX)]
     for k, location, _ in COMMON_KEYS:
         out.append("field  %s.%s %s uint" % (HEADER_MODULE, k, loc(*location)))
-    for kind in kinds:
+    for kind in encode_order(kinds):
         out.append("")
         out.append("kind      %s" % kind.name)
         out.append("when      %s %d" % (loc(*LOC_MSGID), kind.message.id))
@@ -1630,11 +1666,25 @@ def _md_requires(plan):
     a("kinds, so encoding an entity that came from another format selects a kind only")
     a("when the entity holds those `mavlink.` keys. No kind requires a core key, so a")
     a("GeoJSON or CoT entity selects no kind (`no-kind`).")
-    if shadow:
-        a("For %d kinds the required keys are all shared with at least one other kind" % len(shadow))
-        a("that maps every one of them; an entity built from such a kind's keys with its")
-        a("kind cleared selects the first qualifying kind in id order: %s." % _ticked(k.name for k in shadow))
+    o.extend(_md_encode_order(plan.kinds, shadow))
     a("")
+    return o
+
+
+def _md_encode_order(kinds, shadow):
+    """The paragraph on the order of the kinds in pack.def."""
+    o = []
+    a = o.append
+    if shadow:
+        a("For %d kinds the required keys are all mapped by at least one other kind." % len(shadow))
+        a("Encode selects the first kind whose required keys are present, so pack.def")
+        a("writes a kind before every kind whose required keys it maps, unless that kind")
+        a("also maps all of its own; otherwise the kinds are in id order. An entity built")
+        a("from a kind's keys, with its kind cleared, therefore selects that kind.")
+        miss = misselected(kinds)
+        if miss:
+            a("The exceptions, where two kinds each map the other's required keys: %s." % ", ".join(
+                "`%s` selects `%s`" % (k.name, f.name) for k, f in miss))
     return o
 
 
@@ -1958,10 +2008,7 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
     a("Each kind requires up to %d of its own raw keys, the ones used by the fewest" % MAX_REQUIRES)
     a("kinds of this pack. No kind requires a core key, so a GeoJSON or CoT entity, or an")
     a("entity decoded by another MAVLink pack, selects no kind here (`no-kind`).")
-    if shadow:
-        a("For %d kinds the required keys are all mapped by another kind too; an entity" % len(shadow))
-        a("built from such a kind's keys with its kind cleared selects the first")
-        a("qualifying kind in id order: %s." % ", ".join("`%s`" % m.kind for m in shadow))
+    o.extend(_md_encode_order(plan.kinds, shadow))
     a("")
     o.extend(_md_times(plan))
     o.extend(_md_sentinels(plan))
@@ -2377,12 +2424,13 @@ def check_frame_invariants(pack):
 
 
 def check_pack_matches_plan(pack, module, plan):
-    """The loaded pack states what was planned: the same kinds in the same
-    order, each selected by its message id and full payload length, and the
-    module declares exactly the `mavlink.` keys the pack maps."""
-    if [k.name for k in pack.kinds] != [k.name for k in plan.kinds]:
+    """The loaded pack states what was planned: the same kinds in encode order
+    (encode_order), each selected by its message id and full payload length,
+    and the module declares exactly the `mavlink.` keys the pack maps."""
+    order = encode_order(plan.kinds)
+    if [k.name for k in pack.kinds] != [k.name for k in order]:
         raise GenError("the kinds differ from the source messages", pack.label)
-    for loaded, kind in zip(pack.kinds, plan.kinds):
+    for loaded, kind in zip(pack.kinds, order):
         whens = sorted((n.start, n.bits, int(n.value)) for n in loaded.lines if n.d == "when")
         if whens != sorted([LOC_MSGID + (kind.message.id,), LOC_LEN + (kind.length,)]):
             raise GenError("kind %s: when lines do not match id and length" % kind.name, pack.label, loaded.line)
