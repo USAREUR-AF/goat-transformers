@@ -1,0 +1,5 @@
+Packs seatalk1; module seatalk
+  SignalK/signalk-parser-nmea0183, https://github.com/SignalK/signalk-parser-nmea0183
+  at commit 5ab479bcfc1bec0d36f98616e5f9be96f52e3f23, src/hooks/seatalk/.
+  Apache License 2.0, Copyright Signal K and contributors. Layouts restated;
+  no text copied.

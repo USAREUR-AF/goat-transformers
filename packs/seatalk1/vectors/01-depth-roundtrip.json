@@ -1,0 +1,15 @@
+{
+  "name": "depth-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "0002844501",
+  "expect": "0002844501",
+  "model": {
+    "@kind": "depth",
+    "seatalk.attribute_length": "2",
+    "seatalk.depth_anchor_alarm": "1",
+    "seatalk.depth_transducer_defective": "1",
+    "seatalk.depth_raw": "325"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x00.ts; 32.5 feet, anchor alarm on, transducer defective; expect derived there, no engine run"
+}

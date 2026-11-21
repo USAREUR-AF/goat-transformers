@@ -1,0 +1,15 @@
+{
+  "name": "total-and-trip-log-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "25144523d20400",
+  "expect": "25144523d20400",
+  "model": {
+    "@kind": "total-and-trip-log",
+    "seatalk.attribute_high": "1",
+    "seatalk.total_low": "9029",
+    "seatalk.trip_low": "1234",
+    "seatalk.trip_high": "0"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x25.ts; total (1 x 65536 + 0x2345) / 10 nm, trip 12.34 nm; expect derived there, no engine run"
+}

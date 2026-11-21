@@ -1,0 +1,11 @@
+{
+  "name": "water-temperature-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "27011d01",
+  "expect": "27011d01",
+  "model": {
+    "seatalk.water_temperature": "18.5"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x27.ts; (285 - 100) / 10 = 18.5 degrees Celsius; expect derived there, no engine run"
+}

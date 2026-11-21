@@ -1,0 +1,12 @@
+{
+  "name": "target-waypoint-name-roundtrip",
+  "from": "seatalk1",
+  "to": "seatalk1",
+  "input": "820515ea639c2ad5",
+  "expect": "820515ea639c2ad5",
+  "model": {
+    "seatalk.waypoint_xx": "21",
+    "seatalk.waypoint_xx_complement": "234"
+  },
+  "source": "built by tools/gen/seatalk-vectors.py from values chosen there; layout restated from SignalK/signalk-parser-nmea0183 src/hooks/seatalk/0x82.ts; each name octet followed by its complement; expect derived there, no engine run"
+}
