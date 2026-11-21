@@ -83,10 +83,10 @@ def obs_vectors():
                 {O + "obs_system": "G", O + "obs_type_count": "  4", O + "obs_type_1": "C1C", O + "obs_type_4": "S1C"},
                 ref=R_OBS + "; four GPS observation types")))
     d = header("TIME OF FIRST OBS", (0, f(2026, 6, "%d"), 6), (6, f(3, 6, "%d"), 6), (12, f(14, 6, "%d"), 6), (18, f(0, 6, "%d"), 6),
-               (24, f(0, 6, "%d"), 6), (30, f(0.0, 13, "%.7f"), 13), (48, "GPS", 3))
+               (24, f(0, 6, "%d"), 6), (30, f(0.0, 13, "%.7f"), 13), (48, "GAL", 3))
     out.append((p, "04-time-of-first-obs-roundtrip.json", vec(p, "time-of-first-obs-roundtrip", d,
-                {O + "first_year": "  2026", O + "first_second": "    0.0000000", O + "first_time_system": "GPS"},
-                ref=R_OBS + "; the time of the first observation in GPS time, kept raw")))
+                {O + "first_year": "  2026", O + "first_second": "    0.0000000", O + "first_time_system": "GAL"},
+                ref=R_OBS + "; the first observation epoch, in the time system named GAL, kept raw")))
     e = header("END OF HEADER")
     out.append((p, "05-end-of-header-roundtrip.json", vec(p, "end-of-header-roundtrip", e, ref=R_OBS + "; the last header line")))
     g = line((0, ">", 1), (2, "2026", 4), (7, "03", 2), (10, "14", 2), (13, "00", 2), (16, "00", 2), (18, f(30.0, 11, "%.7f"), 11),
