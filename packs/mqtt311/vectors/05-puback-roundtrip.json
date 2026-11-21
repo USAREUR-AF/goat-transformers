@@ -1,0 +1,12 @@
+{
+  "name": "puback-roundtrip",
+  "from": "mqtt311",
+  "to": "mqtt311",
+  "input": "4002000a",
+  "expect": "4002000a",
+  "model": {
+    "@kind": "puback",
+    "mqtt.packet_id": "10"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 3.1.1 sections 2 and 3; PUBACK; expect derived there, no engine run"
+}

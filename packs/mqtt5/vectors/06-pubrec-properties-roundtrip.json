@@ -1,0 +1,14 @@
+{
+  "name": "pubrec-properties-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "500c001780081f000571756f7461",
+  "expect": "500c001780081f000571756f7461",
+  "model": {
+    "@kind": "pubrec",
+    "mqtt.reason_code": "128",
+    "mqtt.properties.#": "1",
+    "mqtt.properties[0].mqtt.property_id": "31"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; PUBREC with a failure reason code and a reason string; expect derived there, no engine run"
+}

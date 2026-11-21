@@ -1,0 +1,16 @@
+{
+  "name": "binding-request-roundtrip",
+  "from": "stun",
+  "to": "stun",
+  "input": "000100102112a442b7e7a701bc34d686fa87dfae80220009676f61742d74657374000000",
+  "expect": "000100102112a442b7e7a701bc34d686fa87dfae80220009676f61742d74657374000000",
+  "model": {
+    "@kind": "message",
+    "stun.message_type": "1",
+    "stun.magic_cookie": "554869826",
+    "stun.transaction_id": "b7e7a701bc34d686fa87dfae",
+    "stun.attributes.#": "1",
+    "stun.attributes[0].stun.attr_value.#": "9"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; a Binding request with SOFTWARE (9 octets, padded to 12); expect derived there, no engine run"
+}

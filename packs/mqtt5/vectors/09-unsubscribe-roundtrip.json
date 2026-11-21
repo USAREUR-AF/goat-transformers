@@ -1,0 +1,12 @@
+{
+  "name": "unsubscribe-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "a20e001900000973656e736f72732f23",
+  "expect": "a20e001900000973656e736f72732f23",
+  "model": {
+    "@kind": "unsubscribe",
+    "mqtt.unsubscriptions.#": "1"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; UNSUBSCRIBE; expect derived there, no engine run"
+}

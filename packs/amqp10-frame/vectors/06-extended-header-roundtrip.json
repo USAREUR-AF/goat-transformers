@@ -1,0 +1,12 @@
+{
+  "name": "extended-header-roundtrip",
+  "from": "amqp10-frame",
+  "to": "amqp10-frame",
+  "input": "0000001003000000aabbccdd00531845",
+  "expect": "0000001003000000aabbccdd00531845",
+  "model": {
+    "amqp.doff": "3",
+    "amqp.extended_header_and_body.#": "8"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from AMQP 1.0 Part 2 sections 2.2 and 2.3 and Part 1 section 1.6; a frame with a data offset of 3: an extended header of 4 octets before the body; expect derived there, no engine run"
+}

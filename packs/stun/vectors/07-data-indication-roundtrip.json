@@ -1,0 +1,18 @@
+{
+  "name": "data-indication-roundtrip",
+  "from": "stun",
+  "to": "stun",
+  "input": "0017003c2112a442b7e7a701bc34d686fa87dfae001200080001329aea12d5470013000568656c6c6f00000080040008000003040000057880010009020004286e6f2076360000000017000402000000",
+  "expect": "0017003c2112a442b7e7a701bc34d686fa87dfae001200080001329aea12d5470013000568656c6c6f00000080040008000003040000057880010009020004286e6f2076360000000017000402000000",
+  "model": {
+    "stun.message_type": "23",
+    "stun.attributes[1].stun.attr_value.#": "5",
+    "stun.attributes[2].stun.icmp_type": "3",
+    "stun.attributes[2].stun.icmp_code": "4",
+    "stun.attributes[2].stun.icmp_error_data": "1400",
+    "stun.attributes[3].stun.error_family": "2",
+    "stun.attributes[3].stun.error_number": "40",
+    "stun.attributes[4].stun.requested_family": "2"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; a Data indication with XOR-PEER-ADDRESS, DATA, ICMP, ADDRESS-ERROR-CODE and REQUESTED-ADDRESS-FAMILY; expect derived there, no engine run"
+}

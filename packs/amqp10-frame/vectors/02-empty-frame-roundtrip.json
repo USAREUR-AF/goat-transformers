@@ -1,0 +1,13 @@
+{
+  "name": "empty-frame-roundtrip",
+  "from": "amqp10-frame",
+  "to": "amqp10-frame",
+  "input": "0000000802000000",
+  "expect": "0000000802000000",
+  "model": {
+    "@kind": "empty_frame",
+    "amqp.doff": "2",
+    "amqp.channel": "0"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from AMQP 1.0 Part 2 sections 2.2 and 2.3 and Part 1 section 1.6; an empty frame (heartbeat); expect derived there, no engine run"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "open-frame-roundtrip",
+  "from": "amqp10-frame",
+  "to": "amqp10-frame",
+  "input": "0000001302000000005310c00602a102633140",
+  "expect": "0000001302000000005310c00602a102633140",
+  "model": {
+    "@kind": "frame",
+    "amqp.frame_type": "0",
+    "amqp.descriptor_constructor": "83",
+    "amqp.performative": "16",
+    "amqp.body.#": "8"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from AMQP 1.0 Part 2 sections 2.2 and 2.3 and Part 1 section 1.6; an open performative on channel 0 (container-id and a null hostname, kept as octets); expect derived there, no engine run"
+}

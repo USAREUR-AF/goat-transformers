@@ -1,0 +1,14 @@
+{
+  "name": "puback-reason-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "4003001610",
+  "expect": "4003001610",
+  "model": {
+    "mqtt.reason_code": "16",
+    "@absent": [
+      "mqtt.properties"
+    ]
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; PUBACK of Remaining Length 3: a reason code, no property length; expect derived there, no engine run"
+}

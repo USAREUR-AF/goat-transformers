@@ -1,0 +1,18 @@
+{
+  "name": "binding-success-roundtrip",
+  "from": "stun",
+  "to": "stun",
+  "input": "0101002c2112a442b7e7a701bc34d686fa87dfae002000080001a147e112a643000100140002805520010db800000000000000000000000180280004326661fa",
+  "expect": "0101002c2112a442b7e7a701bc34d686fa87dfae002000080001a147e112a643000100140002805520010db800000000000000000000000180280004326661fa",
+  "model": {
+    "stun.message_type": "257",
+    "stun.attributes.#": "3",
+    "stun.attributes[0].stun.family": "1",
+    "stun.attributes[0].stun.port": "41287",
+    "stun.attributes[0].stun.ipv4": "3776095811",
+    "stun.attributes[1].stun.family": "2",
+    "stun.attributes[1].stun.ipv6": "20010db8000000000000000000000001",
+    "stun.attributes[2].stun.attr_type": "32808"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; a Binding success response with XOR-MAPPED-ADDRESS (IPv4, the XORed values on the wire), MAPPED-ADDRESS (IPv6) and FINGERPRINT; expect derived there, no engine run"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "suback-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "90050018000287",
+  "expect": "90050018000287",
+  "model": {
+    "@kind": "suback",
+    "mqtt.properties.#": "0",
+    "mqtt.reason_codes.#": "2",
+    "mqtt.reason_codes[1].mqtt.code": "135"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; SUBACK with no properties and two reason codes; expect derived there, no engine run"
+}

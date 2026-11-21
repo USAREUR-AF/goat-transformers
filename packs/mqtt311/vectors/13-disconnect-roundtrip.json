@@ -1,0 +1,12 @@
+{
+  "name": "disconnect-roundtrip",
+  "from": "mqtt311",
+  "to": "mqtt311",
+  "input": "e000",
+  "expect": "e000",
+  "model": {
+    "@kind": "disconnect",
+    "mqtt.remaining_length_v0": "0"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 3.1.1 sections 2 and 3; DISCONNECT; expect derived there, no engine run"
+}

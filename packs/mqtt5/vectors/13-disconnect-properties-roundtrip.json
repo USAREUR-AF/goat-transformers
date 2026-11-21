@@ -1,0 +1,12 @@
+{
+  "name": "disconnect-properties-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "e00f8e0d1f000a74616b656e206f766572",
+  "expect": "e00f8e0d1f000a74616b656e206f766572",
+  "model": {
+    "mqtt.reason_code": "142",
+    "mqtt.properties.#": "1"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; DISCONNECT, session taken over, with a reason string; expect derived there, no engine run"
+}

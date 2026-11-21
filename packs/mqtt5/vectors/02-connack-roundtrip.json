@@ -1,0 +1,17 @@
+{
+  "name": "connack-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "20130000101200066175746f2d31240122000a2901",
+  "expect": "20130000101200066175746f2d31240122000a2901",
+  "model": {
+    "@kind": "connack",
+    "mqtt.reason_code": "0",
+    "mqtt.properties.#": "4",
+    "mqtt.properties[0].mqtt.property_string.#": "6",
+    "mqtt.properties[1].mqtt.property_byte": "1",
+    "mqtt.properties[2].mqtt.property_u16": "10",
+    "mqtt.properties[3].mqtt.property_id": "41"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; CONNACK with an assigned client identifier, maximum QoS, topic alias maximum and subscription identifiers available; expect derived there, no engine run"
+}

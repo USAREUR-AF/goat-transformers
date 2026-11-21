@@ -1,0 +1,15 @@
+{
+  "name": "subscribe-roundtrip",
+  "from": "mqtt311",
+  "to": "mqtt311",
+  "input": "821e000c000e73656e736f72732f2b2f74656d70010008616c657274732f2300",
+  "expect": "821e000c000e73656e736f72732f2b2f74656d70010008616c657274732f2300",
+  "model": {
+    "@kind": "subscribe",
+    "mqtt.packet_id": "12",
+    "mqtt.subscriptions.#": "2",
+    "mqtt.subscriptions[0].mqtt.requested_qos": "1",
+    "mqtt.subscriptions[1].mqtt.topic_filter.#": "8"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 3.1.1 sections 2 and 3; SUBSCRIBE to two topic filters; expect derived there, no engine run"
+}

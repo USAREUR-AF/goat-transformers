@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "mqtt311",
+  "to": "mqtt311",
+  "input": "400200",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 3.1.1 sections 2 and 3; a PUBACK without the second octet of its packet identifier; expect derived there, no engine run"
+}

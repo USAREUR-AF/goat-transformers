@@ -1,0 +1,51 @@
+# AMQP 1.0 frame (OASIS standard, Part 2 Transport, sections 2.2 and 2.3): the protocol
+# header, an empty frame, or a frame with its header, the descriptor of its performative and
+# the rest of the body as octets. Public; the OASIS notice applies (packs/amqp10-frame/REUSE.toml).
+# Written by tools/gen/messaging-pack.py; do not edit by hand. pack.md states what is not mapped.
+format        amqp10-frame
+version       0.1.0
+distribution  public
+source        "OASIS, Advanced Message Queuing Protocol (AMQP) Version 1.0, Part 2: Transport, OASIS Standard, 29 October 2012, https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.xml (sha256 9cd32460d1730975ff0a9dbb66573ff456cbd53ffd8d4f6899c497f02867f637); layout restated"
+source        "OASIS, AMQP Version 1.0, Part 1: Types, https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.xml (sha256 2ccf30b2c55924aaa5291cc34430a91b75c85d11d34bc008c36fc7ca7574d28c), the encodings of the descriptor"
+uses          amqp
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    protocol_header
+when    32  1095586128
+field  amqp.protocol_id  8  uint
+field  amqp.major  8  uint
+field  amqp.minor  8  uint
+field  amqp.revision  8  uint
+
+kind    empty_frame
+when    32  8
+field  amqp.doff  8  uint
+field  amqp.frame_type  8  uint
+field  amqp.channel  16  uint
+
+kind    frame
+length  32  whole
+field  amqp.doff  8  uint
+field  amqp.frame_type  8  uint
+field  amqp.channel  16  uint
+switch  amqp.doff
+  case  2
+    field  amqp.descriptor_marker  8  uint
+    field  amqp.descriptor_constructor  8  uint
+    switch  amqp.descriptor_constructor
+      case  83
+        field  amqp.performative  8  uint
+      case  128
+        field  amqp.performative  64  uint
+      else
+    end
+    group  amqp.body  rest
+      field  amqp.octet  8  uint
+    end
+  else
+    group  amqp.extended_header_and_body  rest
+      field  amqp.octet  8  uint
+    end
+end

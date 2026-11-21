@@ -1,0 +1,11 @@
+{
+  "name": "pingresp-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "d000",
+  "expect": "d000",
+  "model": {
+    "@kind": "pingresp"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; PINGRESP; expect derived there, no engine run"
+}

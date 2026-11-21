@@ -1,0 +1,1964 @@
+# MQTT 5.0 control packet (OASIS standard): the fixed header and every packet type. Public;
+# the OASIS notice applies (packs/mqtt5/REUSE.toml). Written by tools/gen/messaging-pack.py;
+# do not edit by hand. Wire bits, layout sequential, msb; I/O is hex text. pack.md states
+# what is mapped, how the Variable Byte Integers are read, and what is not mapped.
+format        mqtt5
+version       0.1.0
+distribution  public
+source        "OASIS, MQTT Version 5.0, OASIS Standard, 7 March 2019, https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html (sha256 16f24e2b021d86b3bbb2b39c8b5ee134b3d39f69320ba61d3c07a38af74e696c); layout restated"
+uses          mqtt
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    connect
+when    4  1
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+length  16  bytes
+  group  mqtt.protocol_name  rest
+    field  mqtt.octet  8  uint
+  end
+end
+field  mqtt.protocol_level  8  uint
+field  mqtt.username_flag  1  uint
+field  mqtt.password_flag  1  uint
+field  mqtt.will_retain  1  uint
+field  mqtt.will_qos  2  uint
+field  mqtt.will_flag  1  uint
+field  mqtt.clean_start  1  uint
+field  mqtt.connect_reserved  1  uint
+field  mqtt.keep_alive  16  uint
+field  mqtt.properties_length_c  1  uint
+switch  mqtt.properties_length_c
+  case  0
+    length  7  bytes
+      group  mqtt.properties  rest
+        field  mqtt.property_id  8  uint
+        switch  mqtt.property_id
+          case  1,23,25,36,37,40,41,42
+            field  mqtt.property_byte  8  uint
+          case  19,33,34,35
+            field  mqtt.property_u16  16  uint
+          case  2,17,24,39
+            field  mqtt.property_u32  32  uint
+          case  3,8,18,21,26,28,31
+            length  16  bytes
+              group  mqtt.property_string  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  9,22
+            length  16  bytes
+              group  mqtt.property_binary  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  11
+            field  mqtt.property_vbi_c1  1  uint
+            field  mqtt.property_vbi_v0  7  uint
+            switch  mqtt.property_vbi_c1
+              case  1
+                field  mqtt.property_vbi_c2  1  uint
+                field  mqtt.property_vbi_v1  7  uint
+                switch  mqtt.property_vbi_c2
+                  case  1
+                    field  mqtt.property_vbi_c3  1  uint
+                    field  mqtt.property_vbi_v2  7  uint
+                    switch  mqtt.property_vbi_c3
+                      case  1
+                        const  1  0
+                        field  mqtt.property_vbi_v3  7  uint
+                      case  0
+                    end
+                  case  0
+                end
+              case  0
+            end
+          case  38
+            length  16  bytes
+              group  mqtt.property_name  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            length  16  bytes
+              group  mqtt.property_value  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          else
+            group  mqtt.property_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+      end
+    end
+    length  16  bytes
+      group  mqtt.client_id  rest
+        field  mqtt.octet  8  uint
+      end
+    end
+    switch  mqtt.will_flag
+      case  1
+        field  mqtt.will_properties_length_c  1  uint
+        switch  mqtt.will_properties_length_c
+          case  0
+            length  7  bytes
+              group  mqtt.will_properties  rest
+                field  mqtt.property_id  8  uint
+                switch  mqtt.property_id
+                  case  1,23,25,36,37,40,41,42
+                    field  mqtt.property_byte  8  uint
+                  case  19,33,34,35
+                    field  mqtt.property_u16  16  uint
+                  case  2,17,24,39
+                    field  mqtt.property_u32  32  uint
+                  case  3,8,18,21,26,28,31
+                    length  16  bytes
+                      group  mqtt.property_string  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  9,22
+                    length  16  bytes
+                      group  mqtt.property_binary  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  11
+                    field  mqtt.property_vbi_c1  1  uint
+                    field  mqtt.property_vbi_v0  7  uint
+                    switch  mqtt.property_vbi_c1
+                      case  1
+                        field  mqtt.property_vbi_c2  1  uint
+                        field  mqtt.property_vbi_v1  7  uint
+                        switch  mqtt.property_vbi_c2
+                          case  1
+                            field  mqtt.property_vbi_c3  1  uint
+                            field  mqtt.property_vbi_v2  7  uint
+                            switch  mqtt.property_vbi_c3
+                              case  1
+                                const  1  0
+                                field  mqtt.property_vbi_v3  7  uint
+                              case  0
+                            end
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  38
+                    length  16  bytes
+                      group  mqtt.property_name  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                    length  16  bytes
+                      group  mqtt.property_value  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  else
+                    group  mqtt.property_rest  rest
+                      field  mqtt.octet  8  uint
+                    end
+                end
+              end
+            end
+            length  16  bytes
+              group  mqtt.will_topic  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            length  16  bytes
+              group  mqtt.will_payload  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            switch  mqtt.username_flag
+              case  1
+                length  16  bytes
+                  group  mqtt.username  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  0
+            end
+            switch  mqtt.password_flag
+              case  1
+                length  16  bytes
+                  group  mqtt.password  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  0
+            end
+          case  1
+            field  mqtt.will_properties_length_low  7  uint
+            group  mqtt.packet_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+      case  0
+        switch  mqtt.username_flag
+          case  1
+            length  16  bytes
+              group  mqtt.username  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  0
+        end
+        switch  mqtt.password_flag
+          case  1
+            length  16  bytes
+              group  mqtt.password  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  0
+        end
+    end
+  case  1
+    field  mqtt.properties_length_low  7  uint
+    group  mqtt.packet_rest  rest
+      field  mqtt.octet  8  uint
+    end
+end
+
+kind    connack
+when    4  2
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.connack_reserved  7  uint
+field  mqtt.session_present  1  uint
+field  mqtt.reason_code  8  uint
+field  mqtt.properties_length_c  1  uint
+switch  mqtt.properties_length_c
+  case  0
+    length  7  bytes
+      group  mqtt.properties  rest
+        field  mqtt.property_id  8  uint
+        switch  mqtt.property_id
+          case  1,23,25,36,37,40,41,42
+            field  mqtt.property_byte  8  uint
+          case  19,33,34,35
+            field  mqtt.property_u16  16  uint
+          case  2,17,24,39
+            field  mqtt.property_u32  32  uint
+          case  3,8,18,21,26,28,31
+            length  16  bytes
+              group  mqtt.property_string  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  9,22
+            length  16  bytes
+              group  mqtt.property_binary  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  11
+            field  mqtt.property_vbi_c1  1  uint
+            field  mqtt.property_vbi_v0  7  uint
+            switch  mqtt.property_vbi_c1
+              case  1
+                field  mqtt.property_vbi_c2  1  uint
+                field  mqtt.property_vbi_v1  7  uint
+                switch  mqtt.property_vbi_c2
+                  case  1
+                    field  mqtt.property_vbi_c3  1  uint
+                    field  mqtt.property_vbi_v2  7  uint
+                    switch  mqtt.property_vbi_c3
+                      case  1
+                        const  1  0
+                        field  mqtt.property_vbi_v3  7  uint
+                      case  0
+                    end
+                  case  0
+                end
+              case  0
+            end
+          case  38
+            length  16  bytes
+              group  mqtt.property_name  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            length  16  bytes
+              group  mqtt.property_value  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          else
+            group  mqtt.property_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+      end
+    end
+  case  1
+    field  mqtt.properties_length_low  7  uint
+    group  mqtt.packet_rest  rest
+      field  mqtt.octet  8  uint
+    end
+end
+
+kind    publish
+when    4  3
+field  mqtt.dup  1  uint
+field  mqtt.qos  2  uint
+field  mqtt.retain  1  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+length  16  bytes
+  group  mqtt.topic  rest
+    field  mqtt.octet  8  uint
+  end
+end
+switch  mqtt.qos
+  case  1,2,3
+    field  mqtt.packet_id  16  uint
+  case  0
+end
+field  mqtt.properties_length_c  1  uint
+switch  mqtt.properties_length_c
+  case  0
+    length  7  bytes
+      group  mqtt.properties  rest
+        field  mqtt.property_id  8  uint
+        switch  mqtt.property_id
+          case  1,23,25,36,37,40,41,42
+            field  mqtt.property_byte  8  uint
+          case  19,33,34,35
+            field  mqtt.property_u16  16  uint
+          case  2,17,24,39
+            field  mqtt.property_u32  32  uint
+          case  3,8,18,21,26,28,31
+            length  16  bytes
+              group  mqtt.property_string  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  9,22
+            length  16  bytes
+              group  mqtt.property_binary  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  11
+            field  mqtt.property_vbi_c1  1  uint
+            field  mqtt.property_vbi_v0  7  uint
+            switch  mqtt.property_vbi_c1
+              case  1
+                field  mqtt.property_vbi_c2  1  uint
+                field  mqtt.property_vbi_v1  7  uint
+                switch  mqtt.property_vbi_c2
+                  case  1
+                    field  mqtt.property_vbi_c3  1  uint
+                    field  mqtt.property_vbi_v2  7  uint
+                    switch  mqtt.property_vbi_c3
+                      case  1
+                        const  1  0
+                        field  mqtt.property_vbi_v3  7  uint
+                      case  0
+                    end
+                  case  0
+                end
+              case  0
+            end
+          case  38
+            length  16  bytes
+              group  mqtt.property_name  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            length  16  bytes
+              group  mqtt.property_value  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          else
+            group  mqtt.property_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+      end
+    end
+    group  mqtt.payload  rest
+      field  mqtt.octet  8  uint
+    end
+  case  1
+    field  mqtt.properties_length_low  7  uint
+    group  mqtt.packet_rest  rest
+      field  mqtt.octet  8  uint
+    end
+end
+
+kind    puback
+when    4  4
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+switch  mqtt.remaining_length_c1
+  case  0
+    switch  mqtt.remaining_length_v0
+      case  2
+      case  3
+        field  mqtt.reason_code  8  uint
+      else
+        field  mqtt.reason_code  8  uint
+        field  mqtt.properties_length_c  1  uint
+        switch  mqtt.properties_length_c
+          case  0
+            length  7  bytes
+              group  mqtt.properties  rest
+                field  mqtt.property_id  8  uint
+                switch  mqtt.property_id
+                  case  1,23,25,36,37,40,41,42
+                    field  mqtt.property_byte  8  uint
+                  case  19,33,34,35
+                    field  mqtt.property_u16  16  uint
+                  case  2,17,24,39
+                    field  mqtt.property_u32  32  uint
+                  case  3,8,18,21,26,28,31
+                    length  16  bytes
+                      group  mqtt.property_string  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  9,22
+                    length  16  bytes
+                      group  mqtt.property_binary  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  11
+                    field  mqtt.property_vbi_c1  1  uint
+                    field  mqtt.property_vbi_v0  7  uint
+                    switch  mqtt.property_vbi_c1
+                      case  1
+                        field  mqtt.property_vbi_c2  1  uint
+                        field  mqtt.property_vbi_v1  7  uint
+                        switch  mqtt.property_vbi_c2
+                          case  1
+                            field  mqtt.property_vbi_c3  1  uint
+                            field  mqtt.property_vbi_v2  7  uint
+                            switch  mqtt.property_vbi_c3
+                              case  1
+                                const  1  0
+                                field  mqtt.property_vbi_v3  7  uint
+                              case  0
+                            end
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  38
+                    length  16  bytes
+                      group  mqtt.property_name  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                    length  16  bytes
+                      group  mqtt.property_value  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  else
+                    group  mqtt.property_rest  rest
+                      field  mqtt.octet  8  uint
+                    end
+                end
+              end
+            end
+          case  1
+            field  mqtt.properties_length_low  7  uint
+            group  mqtt.packet_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+    end
+  case  1
+    field  mqtt.reason_code  8  uint
+    field  mqtt.properties_length_c  1  uint
+    switch  mqtt.properties_length_c
+      case  0
+        length  7  bytes
+          group  mqtt.properties  rest
+            field  mqtt.property_id  8  uint
+            switch  mqtt.property_id
+              case  1,23,25,36,37,40,41,42
+                field  mqtt.property_byte  8  uint
+              case  19,33,34,35
+                field  mqtt.property_u16  16  uint
+              case  2,17,24,39
+                field  mqtt.property_u32  32  uint
+              case  3,8,18,21,26,28,31
+                length  16  bytes
+                  group  mqtt.property_string  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  9,22
+                length  16  bytes
+                  group  mqtt.property_binary  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  11
+                field  mqtt.property_vbi_c1  1  uint
+                field  mqtt.property_vbi_v0  7  uint
+                switch  mqtt.property_vbi_c1
+                  case  1
+                    field  mqtt.property_vbi_c2  1  uint
+                    field  mqtt.property_vbi_v1  7  uint
+                    switch  mqtt.property_vbi_c2
+                      case  1
+                        field  mqtt.property_vbi_c3  1  uint
+                        field  mqtt.property_vbi_v2  7  uint
+                        switch  mqtt.property_vbi_c3
+                          case  1
+                            const  1  0
+                            field  mqtt.property_vbi_v3  7  uint
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  0
+                end
+              case  38
+                length  16  bytes
+                  group  mqtt.property_name  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+                length  16  bytes
+                  group  mqtt.property_value  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              else
+                group  mqtt.property_rest  rest
+                  field  mqtt.octet  8  uint
+                end
+            end
+          end
+        end
+      case  1
+        field  mqtt.properties_length_low  7  uint
+        group  mqtt.packet_rest  rest
+          field  mqtt.octet  8  uint
+        end
+    end
+end
+
+kind    pubrec
+when    4  5
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+switch  mqtt.remaining_length_c1
+  case  0
+    switch  mqtt.remaining_length_v0
+      case  2
+      case  3
+        field  mqtt.reason_code  8  uint
+      else
+        field  mqtt.reason_code  8  uint
+        field  mqtt.properties_length_c  1  uint
+        switch  mqtt.properties_length_c
+          case  0
+            length  7  bytes
+              group  mqtt.properties  rest
+                field  mqtt.property_id  8  uint
+                switch  mqtt.property_id
+                  case  1,23,25,36,37,40,41,42
+                    field  mqtt.property_byte  8  uint
+                  case  19,33,34,35
+                    field  mqtt.property_u16  16  uint
+                  case  2,17,24,39
+                    field  mqtt.property_u32  32  uint
+                  case  3,8,18,21,26,28,31
+                    length  16  bytes
+                      group  mqtt.property_string  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  9,22
+                    length  16  bytes
+                      group  mqtt.property_binary  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  11
+                    field  mqtt.property_vbi_c1  1  uint
+                    field  mqtt.property_vbi_v0  7  uint
+                    switch  mqtt.property_vbi_c1
+                      case  1
+                        field  mqtt.property_vbi_c2  1  uint
+                        field  mqtt.property_vbi_v1  7  uint
+                        switch  mqtt.property_vbi_c2
+                          case  1
+                            field  mqtt.property_vbi_c3  1  uint
+                            field  mqtt.property_vbi_v2  7  uint
+                            switch  mqtt.property_vbi_c3
+                              case  1
+                                const  1  0
+                                field  mqtt.property_vbi_v3  7  uint
+                              case  0
+                            end
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  38
+                    length  16  bytes
+                      group  mqtt.property_name  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                    length  16  bytes
+                      group  mqtt.property_value  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  else
+                    group  mqtt.property_rest  rest
+                      field  mqtt.octet  8  uint
+                    end
+                end
+              end
+            end
+          case  1
+            field  mqtt.properties_length_low  7  uint
+            group  mqtt.packet_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+    end
+  case  1
+    field  mqtt.reason_code  8  uint
+    field  mqtt.properties_length_c  1  uint
+    switch  mqtt.properties_length_c
+      case  0
+        length  7  bytes
+          group  mqtt.properties  rest
+            field  mqtt.property_id  8  uint
+            switch  mqtt.property_id
+              case  1,23,25,36,37,40,41,42
+                field  mqtt.property_byte  8  uint
+              case  19,33,34,35
+                field  mqtt.property_u16  16  uint
+              case  2,17,24,39
+                field  mqtt.property_u32  32  uint
+              case  3,8,18,21,26,28,31
+                length  16  bytes
+                  group  mqtt.property_string  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  9,22
+                length  16  bytes
+                  group  mqtt.property_binary  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  11
+                field  mqtt.property_vbi_c1  1  uint
+                field  mqtt.property_vbi_v0  7  uint
+                switch  mqtt.property_vbi_c1
+                  case  1
+                    field  mqtt.property_vbi_c2  1  uint
+                    field  mqtt.property_vbi_v1  7  uint
+                    switch  mqtt.property_vbi_c2
+                      case  1
+                        field  mqtt.property_vbi_c3  1  uint
+                        field  mqtt.property_vbi_v2  7  uint
+                        switch  mqtt.property_vbi_c3
+                          case  1
+                            const  1  0
+                            field  mqtt.property_vbi_v3  7  uint
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  0
+                end
+              case  38
+                length  16  bytes
+                  group  mqtt.property_name  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+                length  16  bytes
+                  group  mqtt.property_value  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              else
+                group  mqtt.property_rest  rest
+                  field  mqtt.octet  8  uint
+                end
+            end
+          end
+        end
+      case  1
+        field  mqtt.properties_length_low  7  uint
+        group  mqtt.packet_rest  rest
+          field  mqtt.octet  8  uint
+        end
+    end
+end
+
+kind    pubrel
+when    4  6
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+switch  mqtt.remaining_length_c1
+  case  0
+    switch  mqtt.remaining_length_v0
+      case  2
+      case  3
+        field  mqtt.reason_code  8  uint
+      else
+        field  mqtt.reason_code  8  uint
+        field  mqtt.properties_length_c  1  uint
+        switch  mqtt.properties_length_c
+          case  0
+            length  7  bytes
+              group  mqtt.properties  rest
+                field  mqtt.property_id  8  uint
+                switch  mqtt.property_id
+                  case  1,23,25,36,37,40,41,42
+                    field  mqtt.property_byte  8  uint
+                  case  19,33,34,35
+                    field  mqtt.property_u16  16  uint
+                  case  2,17,24,39
+                    field  mqtt.property_u32  32  uint
+                  case  3,8,18,21,26,28,31
+                    length  16  bytes
+                      group  mqtt.property_string  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  9,22
+                    length  16  bytes
+                      group  mqtt.property_binary  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  11
+                    field  mqtt.property_vbi_c1  1  uint
+                    field  mqtt.property_vbi_v0  7  uint
+                    switch  mqtt.property_vbi_c1
+                      case  1
+                        field  mqtt.property_vbi_c2  1  uint
+                        field  mqtt.property_vbi_v1  7  uint
+                        switch  mqtt.property_vbi_c2
+                          case  1
+                            field  mqtt.property_vbi_c3  1  uint
+                            field  mqtt.property_vbi_v2  7  uint
+                            switch  mqtt.property_vbi_c3
+                              case  1
+                                const  1  0
+                                field  mqtt.property_vbi_v3  7  uint
+                              case  0
+                            end
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  38
+                    length  16  bytes
+                      group  mqtt.property_name  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                    length  16  bytes
+                      group  mqtt.property_value  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  else
+                    group  mqtt.property_rest  rest
+                      field  mqtt.octet  8  uint
+                    end
+                end
+              end
+            end
+          case  1
+            field  mqtt.properties_length_low  7  uint
+            group  mqtt.packet_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+    end
+  case  1
+    field  mqtt.reason_code  8  uint
+    field  mqtt.properties_length_c  1  uint
+    switch  mqtt.properties_length_c
+      case  0
+        length  7  bytes
+          group  mqtt.properties  rest
+            field  mqtt.property_id  8  uint
+            switch  mqtt.property_id
+              case  1,23,25,36,37,40,41,42
+                field  mqtt.property_byte  8  uint
+              case  19,33,34,35
+                field  mqtt.property_u16  16  uint
+              case  2,17,24,39
+                field  mqtt.property_u32  32  uint
+              case  3,8,18,21,26,28,31
+                length  16  bytes
+                  group  mqtt.property_string  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  9,22
+                length  16  bytes
+                  group  mqtt.property_binary  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  11
+                field  mqtt.property_vbi_c1  1  uint
+                field  mqtt.property_vbi_v0  7  uint
+                switch  mqtt.property_vbi_c1
+                  case  1
+                    field  mqtt.property_vbi_c2  1  uint
+                    field  mqtt.property_vbi_v1  7  uint
+                    switch  mqtt.property_vbi_c2
+                      case  1
+                        field  mqtt.property_vbi_c3  1  uint
+                        field  mqtt.property_vbi_v2  7  uint
+                        switch  mqtt.property_vbi_c3
+                          case  1
+                            const  1  0
+                            field  mqtt.property_vbi_v3  7  uint
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  0
+                end
+              case  38
+                length  16  bytes
+                  group  mqtt.property_name  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+                length  16  bytes
+                  group  mqtt.property_value  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              else
+                group  mqtt.property_rest  rest
+                  field  mqtt.octet  8  uint
+                end
+            end
+          end
+        end
+      case  1
+        field  mqtt.properties_length_low  7  uint
+        group  mqtt.packet_rest  rest
+          field  mqtt.octet  8  uint
+        end
+    end
+end
+
+kind    pubcomp
+when    4  7
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+switch  mqtt.remaining_length_c1
+  case  0
+    switch  mqtt.remaining_length_v0
+      case  2
+      case  3
+        field  mqtt.reason_code  8  uint
+      else
+        field  mqtt.reason_code  8  uint
+        field  mqtt.properties_length_c  1  uint
+        switch  mqtt.properties_length_c
+          case  0
+            length  7  bytes
+              group  mqtt.properties  rest
+                field  mqtt.property_id  8  uint
+                switch  mqtt.property_id
+                  case  1,23,25,36,37,40,41,42
+                    field  mqtt.property_byte  8  uint
+                  case  19,33,34,35
+                    field  mqtt.property_u16  16  uint
+                  case  2,17,24,39
+                    field  mqtt.property_u32  32  uint
+                  case  3,8,18,21,26,28,31
+                    length  16  bytes
+                      group  mqtt.property_string  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  9,22
+                    length  16  bytes
+                      group  mqtt.property_binary  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  11
+                    field  mqtt.property_vbi_c1  1  uint
+                    field  mqtt.property_vbi_v0  7  uint
+                    switch  mqtt.property_vbi_c1
+                      case  1
+                        field  mqtt.property_vbi_c2  1  uint
+                        field  mqtt.property_vbi_v1  7  uint
+                        switch  mqtt.property_vbi_c2
+                          case  1
+                            field  mqtt.property_vbi_c3  1  uint
+                            field  mqtt.property_vbi_v2  7  uint
+                            switch  mqtt.property_vbi_c3
+                              case  1
+                                const  1  0
+                                field  mqtt.property_vbi_v3  7  uint
+                              case  0
+                            end
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  38
+                    length  16  bytes
+                      group  mqtt.property_name  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                    length  16  bytes
+                      group  mqtt.property_value  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  else
+                    group  mqtt.property_rest  rest
+                      field  mqtt.octet  8  uint
+                    end
+                end
+              end
+            end
+          case  1
+            field  mqtt.properties_length_low  7  uint
+            group  mqtt.packet_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+    end
+  case  1
+    field  mqtt.reason_code  8  uint
+    field  mqtt.properties_length_c  1  uint
+    switch  mqtt.properties_length_c
+      case  0
+        length  7  bytes
+          group  mqtt.properties  rest
+            field  mqtt.property_id  8  uint
+            switch  mqtt.property_id
+              case  1,23,25,36,37,40,41,42
+                field  mqtt.property_byte  8  uint
+              case  19,33,34,35
+                field  mqtt.property_u16  16  uint
+              case  2,17,24,39
+                field  mqtt.property_u32  32  uint
+              case  3,8,18,21,26,28,31
+                length  16  bytes
+                  group  mqtt.property_string  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  9,22
+                length  16  bytes
+                  group  mqtt.property_binary  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  11
+                field  mqtt.property_vbi_c1  1  uint
+                field  mqtt.property_vbi_v0  7  uint
+                switch  mqtt.property_vbi_c1
+                  case  1
+                    field  mqtt.property_vbi_c2  1  uint
+                    field  mqtt.property_vbi_v1  7  uint
+                    switch  mqtt.property_vbi_c2
+                      case  1
+                        field  mqtt.property_vbi_c3  1  uint
+                        field  mqtt.property_vbi_v2  7  uint
+                        switch  mqtt.property_vbi_c3
+                          case  1
+                            const  1  0
+                            field  mqtt.property_vbi_v3  7  uint
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  0
+                end
+              case  38
+                length  16  bytes
+                  group  mqtt.property_name  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+                length  16  bytes
+                  group  mqtt.property_value  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              else
+                group  mqtt.property_rest  rest
+                  field  mqtt.octet  8  uint
+                end
+            end
+          end
+        end
+      case  1
+        field  mqtt.properties_length_low  7  uint
+        group  mqtt.packet_rest  rest
+          field  mqtt.octet  8  uint
+        end
+    end
+end
+
+kind    subscribe
+when    4  8
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+field  mqtt.properties_length_c  1  uint
+switch  mqtt.properties_length_c
+  case  0
+    length  7  bytes
+      group  mqtt.properties  rest
+        field  mqtt.property_id  8  uint
+        switch  mqtt.property_id
+          case  1,23,25,36,37,40,41,42
+            field  mqtt.property_byte  8  uint
+          case  19,33,34,35
+            field  mqtt.property_u16  16  uint
+          case  2,17,24,39
+            field  mqtt.property_u32  32  uint
+          case  3,8,18,21,26,28,31
+            length  16  bytes
+              group  mqtt.property_string  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  9,22
+            length  16  bytes
+              group  mqtt.property_binary  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  11
+            field  mqtt.property_vbi_c1  1  uint
+            field  mqtt.property_vbi_v0  7  uint
+            switch  mqtt.property_vbi_c1
+              case  1
+                field  mqtt.property_vbi_c2  1  uint
+                field  mqtt.property_vbi_v1  7  uint
+                switch  mqtt.property_vbi_c2
+                  case  1
+                    field  mqtt.property_vbi_c3  1  uint
+                    field  mqtt.property_vbi_v2  7  uint
+                    switch  mqtt.property_vbi_c3
+                      case  1
+                        const  1  0
+                        field  mqtt.property_vbi_v3  7  uint
+                      case  0
+                    end
+                  case  0
+                end
+              case  0
+            end
+          case  38
+            length  16  bytes
+              group  mqtt.property_name  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            length  16  bytes
+              group  mqtt.property_value  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          else
+            group  mqtt.property_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+      end
+    end
+    group  mqtt.subscriptions  rest
+      length  16  bytes
+        group  mqtt.topic_filter  rest
+          field  mqtt.octet  8  uint
+        end
+      end
+      field  mqtt.options_reserved  2  uint
+      field  mqtt.retain_handling  2  uint
+      field  mqtt.retain_as_published  1  uint
+      field  mqtt.no_local  1  uint
+      field  mqtt.requested_qos  2  uint
+    end
+  case  1
+    field  mqtt.properties_length_low  7  uint
+    group  mqtt.packet_rest  rest
+      field  mqtt.octet  8  uint
+    end
+end
+
+kind    suback
+when    4  9
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+field  mqtt.properties_length_c  1  uint
+switch  mqtt.properties_length_c
+  case  0
+    length  7  bytes
+      group  mqtt.properties  rest
+        field  mqtt.property_id  8  uint
+        switch  mqtt.property_id
+          case  1,23,25,36,37,40,41,42
+            field  mqtt.property_byte  8  uint
+          case  19,33,34,35
+            field  mqtt.property_u16  16  uint
+          case  2,17,24,39
+            field  mqtt.property_u32  32  uint
+          case  3,8,18,21,26,28,31
+            length  16  bytes
+              group  mqtt.property_string  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  9,22
+            length  16  bytes
+              group  mqtt.property_binary  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  11
+            field  mqtt.property_vbi_c1  1  uint
+            field  mqtt.property_vbi_v0  7  uint
+            switch  mqtt.property_vbi_c1
+              case  1
+                field  mqtt.property_vbi_c2  1  uint
+                field  mqtt.property_vbi_v1  7  uint
+                switch  mqtt.property_vbi_c2
+                  case  1
+                    field  mqtt.property_vbi_c3  1  uint
+                    field  mqtt.property_vbi_v2  7  uint
+                    switch  mqtt.property_vbi_c3
+                      case  1
+                        const  1  0
+                        field  mqtt.property_vbi_v3  7  uint
+                      case  0
+                    end
+                  case  0
+                end
+              case  0
+            end
+          case  38
+            length  16  bytes
+              group  mqtt.property_name  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            length  16  bytes
+              group  mqtt.property_value  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          else
+            group  mqtt.property_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+      end
+    end
+    group  mqtt.reason_codes  rest
+      field  mqtt.code  8  uint
+    end
+  case  1
+    field  mqtt.properties_length_low  7  uint
+    group  mqtt.packet_rest  rest
+      field  mqtt.octet  8  uint
+    end
+end
+
+kind    unsubscribe
+when    4  10
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+field  mqtt.properties_length_c  1  uint
+switch  mqtt.properties_length_c
+  case  0
+    length  7  bytes
+      group  mqtt.properties  rest
+        field  mqtt.property_id  8  uint
+        switch  mqtt.property_id
+          case  1,23,25,36,37,40,41,42
+            field  mqtt.property_byte  8  uint
+          case  19,33,34,35
+            field  mqtt.property_u16  16  uint
+          case  2,17,24,39
+            field  mqtt.property_u32  32  uint
+          case  3,8,18,21,26,28,31
+            length  16  bytes
+              group  mqtt.property_string  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  9,22
+            length  16  bytes
+              group  mqtt.property_binary  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  11
+            field  mqtt.property_vbi_c1  1  uint
+            field  mqtt.property_vbi_v0  7  uint
+            switch  mqtt.property_vbi_c1
+              case  1
+                field  mqtt.property_vbi_c2  1  uint
+                field  mqtt.property_vbi_v1  7  uint
+                switch  mqtt.property_vbi_c2
+                  case  1
+                    field  mqtt.property_vbi_c3  1  uint
+                    field  mqtt.property_vbi_v2  7  uint
+                    switch  mqtt.property_vbi_c3
+                      case  1
+                        const  1  0
+                        field  mqtt.property_vbi_v3  7  uint
+                      case  0
+                    end
+                  case  0
+                end
+              case  0
+            end
+          case  38
+            length  16  bytes
+              group  mqtt.property_name  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            length  16  bytes
+              group  mqtt.property_value  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          else
+            group  mqtt.property_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+      end
+    end
+    group  mqtt.unsubscriptions  rest
+      length  16  bytes
+        group  mqtt.topic_filter  rest
+          field  mqtt.octet  8  uint
+        end
+      end
+    end
+  case  1
+    field  mqtt.properties_length_low  7  uint
+    group  mqtt.packet_rest  rest
+      field  mqtt.octet  8  uint
+    end
+end
+
+kind    unsuback
+when    4  11
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+field  mqtt.properties_length_c  1  uint
+switch  mqtt.properties_length_c
+  case  0
+    length  7  bytes
+      group  mqtt.properties  rest
+        field  mqtt.property_id  8  uint
+        switch  mqtt.property_id
+          case  1,23,25,36,37,40,41,42
+            field  mqtt.property_byte  8  uint
+          case  19,33,34,35
+            field  mqtt.property_u16  16  uint
+          case  2,17,24,39
+            field  mqtt.property_u32  32  uint
+          case  3,8,18,21,26,28,31
+            length  16  bytes
+              group  mqtt.property_string  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  9,22
+            length  16  bytes
+              group  mqtt.property_binary  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          case  11
+            field  mqtt.property_vbi_c1  1  uint
+            field  mqtt.property_vbi_v0  7  uint
+            switch  mqtt.property_vbi_c1
+              case  1
+                field  mqtt.property_vbi_c2  1  uint
+                field  mqtt.property_vbi_v1  7  uint
+                switch  mqtt.property_vbi_c2
+                  case  1
+                    field  mqtt.property_vbi_c3  1  uint
+                    field  mqtt.property_vbi_v2  7  uint
+                    switch  mqtt.property_vbi_c3
+                      case  1
+                        const  1  0
+                        field  mqtt.property_vbi_v3  7  uint
+                      case  0
+                    end
+                  case  0
+                end
+              case  0
+            end
+          case  38
+            length  16  bytes
+              group  mqtt.property_name  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+            length  16  bytes
+              group  mqtt.property_value  rest
+                field  mqtt.octet  8  uint
+              end
+            end
+          else
+            group  mqtt.property_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+      end
+    end
+    group  mqtt.reason_codes  rest
+      field  mqtt.code  8  uint
+    end
+  case  1
+    field  mqtt.properties_length_low  7  uint
+    group  mqtt.packet_rest  rest
+      field  mqtt.octet  8  uint
+    end
+end
+
+kind    pingreq
+when    4  12
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+
+kind    pingresp
+when    4  13
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+
+kind    disconnect
+when    4  14
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+switch  mqtt.remaining_length_c1
+  case  0
+    switch  mqtt.remaining_length_v0
+      case  0
+      case  1
+        field  mqtt.reason_code  8  uint
+      else
+        field  mqtt.reason_code  8  uint
+        field  mqtt.properties_length_c  1  uint
+        switch  mqtt.properties_length_c
+          case  0
+            length  7  bytes
+              group  mqtt.properties  rest
+                field  mqtt.property_id  8  uint
+                switch  mqtt.property_id
+                  case  1,23,25,36,37,40,41,42
+                    field  mqtt.property_byte  8  uint
+                  case  19,33,34,35
+                    field  mqtt.property_u16  16  uint
+                  case  2,17,24,39
+                    field  mqtt.property_u32  32  uint
+                  case  3,8,18,21,26,28,31
+                    length  16  bytes
+                      group  mqtt.property_string  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  9,22
+                    length  16  bytes
+                      group  mqtt.property_binary  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  11
+                    field  mqtt.property_vbi_c1  1  uint
+                    field  mqtt.property_vbi_v0  7  uint
+                    switch  mqtt.property_vbi_c1
+                      case  1
+                        field  mqtt.property_vbi_c2  1  uint
+                        field  mqtt.property_vbi_v1  7  uint
+                        switch  mqtt.property_vbi_c2
+                          case  1
+                            field  mqtt.property_vbi_c3  1  uint
+                            field  mqtt.property_vbi_v2  7  uint
+                            switch  mqtt.property_vbi_c3
+                              case  1
+                                const  1  0
+                                field  mqtt.property_vbi_v3  7  uint
+                              case  0
+                            end
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  38
+                    length  16  bytes
+                      group  mqtt.property_name  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                    length  16  bytes
+                      group  mqtt.property_value  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  else
+                    group  mqtt.property_rest  rest
+                      field  mqtt.octet  8  uint
+                    end
+                end
+              end
+            end
+          case  1
+            field  mqtt.properties_length_low  7  uint
+            group  mqtt.packet_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+    end
+  case  1
+    field  mqtt.reason_code  8  uint
+    field  mqtt.properties_length_c  1  uint
+    switch  mqtt.properties_length_c
+      case  0
+        length  7  bytes
+          group  mqtt.properties  rest
+            field  mqtt.property_id  8  uint
+            switch  mqtt.property_id
+              case  1,23,25,36,37,40,41,42
+                field  mqtt.property_byte  8  uint
+              case  19,33,34,35
+                field  mqtt.property_u16  16  uint
+              case  2,17,24,39
+                field  mqtt.property_u32  32  uint
+              case  3,8,18,21,26,28,31
+                length  16  bytes
+                  group  mqtt.property_string  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  9,22
+                length  16  bytes
+                  group  mqtt.property_binary  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  11
+                field  mqtt.property_vbi_c1  1  uint
+                field  mqtt.property_vbi_v0  7  uint
+                switch  mqtt.property_vbi_c1
+                  case  1
+                    field  mqtt.property_vbi_c2  1  uint
+                    field  mqtt.property_vbi_v1  7  uint
+                    switch  mqtt.property_vbi_c2
+                      case  1
+                        field  mqtt.property_vbi_c3  1  uint
+                        field  mqtt.property_vbi_v2  7  uint
+                        switch  mqtt.property_vbi_c3
+                          case  1
+                            const  1  0
+                            field  mqtt.property_vbi_v3  7  uint
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  0
+                end
+              case  38
+                length  16  bytes
+                  group  mqtt.property_name  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+                length  16  bytes
+                  group  mqtt.property_value  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              else
+                group  mqtt.property_rest  rest
+                  field  mqtt.octet  8  uint
+                end
+            end
+          end
+        end
+      case  1
+        field  mqtt.properties_length_low  7  uint
+        group  mqtt.packet_rest  rest
+          field  mqtt.octet  8  uint
+        end
+    end
+end
+
+kind    auth
+when    4  15
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+switch  mqtt.remaining_length_c1
+  case  0
+    switch  mqtt.remaining_length_v0
+      case  0
+      case  1
+        field  mqtt.reason_code  8  uint
+      else
+        field  mqtt.reason_code  8  uint
+        field  mqtt.properties_length_c  1  uint
+        switch  mqtt.properties_length_c
+          case  0
+            length  7  bytes
+              group  mqtt.properties  rest
+                field  mqtt.property_id  8  uint
+                switch  mqtt.property_id
+                  case  1,23,25,36,37,40,41,42
+                    field  mqtt.property_byte  8  uint
+                  case  19,33,34,35
+                    field  mqtt.property_u16  16  uint
+                  case  2,17,24,39
+                    field  mqtt.property_u32  32  uint
+                  case  3,8,18,21,26,28,31
+                    length  16  bytes
+                      group  mqtt.property_string  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  9,22
+                    length  16  bytes
+                      group  mqtt.property_binary  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  case  11
+                    field  mqtt.property_vbi_c1  1  uint
+                    field  mqtt.property_vbi_v0  7  uint
+                    switch  mqtt.property_vbi_c1
+                      case  1
+                        field  mqtt.property_vbi_c2  1  uint
+                        field  mqtt.property_vbi_v1  7  uint
+                        switch  mqtt.property_vbi_c2
+                          case  1
+                            field  mqtt.property_vbi_c3  1  uint
+                            field  mqtt.property_vbi_v2  7  uint
+                            switch  mqtt.property_vbi_c3
+                              case  1
+                                const  1  0
+                                field  mqtt.property_vbi_v3  7  uint
+                              case  0
+                            end
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  38
+                    length  16  bytes
+                      group  mqtt.property_name  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                    length  16  bytes
+                      group  mqtt.property_value  rest
+                        field  mqtt.octet  8  uint
+                      end
+                    end
+                  else
+                    group  mqtt.property_rest  rest
+                      field  mqtt.octet  8  uint
+                    end
+                end
+              end
+            end
+          case  1
+            field  mqtt.properties_length_low  7  uint
+            group  mqtt.packet_rest  rest
+              field  mqtt.octet  8  uint
+            end
+        end
+    end
+  case  1
+    field  mqtt.reason_code  8  uint
+    field  mqtt.properties_length_c  1  uint
+    switch  mqtt.properties_length_c
+      case  0
+        length  7  bytes
+          group  mqtt.properties  rest
+            field  mqtt.property_id  8  uint
+            switch  mqtt.property_id
+              case  1,23,25,36,37,40,41,42
+                field  mqtt.property_byte  8  uint
+              case  19,33,34,35
+                field  mqtt.property_u16  16  uint
+              case  2,17,24,39
+                field  mqtt.property_u32  32  uint
+              case  3,8,18,21,26,28,31
+                length  16  bytes
+                  group  mqtt.property_string  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  9,22
+                length  16  bytes
+                  group  mqtt.property_binary  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              case  11
+                field  mqtt.property_vbi_c1  1  uint
+                field  mqtt.property_vbi_v0  7  uint
+                switch  mqtt.property_vbi_c1
+                  case  1
+                    field  mqtt.property_vbi_c2  1  uint
+                    field  mqtt.property_vbi_v1  7  uint
+                    switch  mqtt.property_vbi_c2
+                      case  1
+                        field  mqtt.property_vbi_c3  1  uint
+                        field  mqtt.property_vbi_v2  7  uint
+                        switch  mqtt.property_vbi_c3
+                          case  1
+                            const  1  0
+                            field  mqtt.property_vbi_v3  7  uint
+                          case  0
+                        end
+                      case  0
+                    end
+                  case  0
+                end
+              case  38
+                length  16  bytes
+                  group  mqtt.property_name  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+                length  16  bytes
+                  group  mqtt.property_value  rest
+                    field  mqtt.octet  8  uint
+                  end
+                end
+              else
+                group  mqtt.property_rest  rest
+                  field  mqtt.octet  8  uint
+                end
+            end
+          end
+        end
+      case  1
+        field  mqtt.properties_length_low  7  uint
+        group  mqtt.packet_rest  rest
+          field  mqtt.octet  8  uint
+        end
+    end
+end

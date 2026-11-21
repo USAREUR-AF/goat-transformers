@@ -1,0 +1,20 @@
+{
+  "name": "publish-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "3222000e73656e736f72732f372f74656d7000150b2300030bac02090002cafe32312e35",
+  "expect": "3222000e73656e736f72732f372f74656d7000150b2300030bac02090002cafe32312e35",
+  "model": {
+    "@kind": "publish",
+    "mqtt.qos": "1",
+    "mqtt.packet_id": "21",
+    "mqtt.properties.#": "3",
+    "mqtt.properties[0].mqtt.property_u16": "3",
+    "mqtt.properties[1].mqtt.property_vbi_c1": "1",
+    "mqtt.properties[1].mqtt.property_vbi_v0": "44",
+    "mqtt.properties[1].mqtt.property_vbi_v1": "2",
+    "mqtt.properties[2].mqtt.property_binary.#": "2",
+    "mqtt.payload.#": "4"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; PUBLISH at QoS 1 with a topic alias, the subscription identifier 300 (two octets) and correlation data; expect derived there, no engine run"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "connect-roundtrip",
+  "from": "mqtt311",
+  "to": "mqtt311",
+  "input": "103700044d51545404ce003c000873656e736f722d37000f7374617475732f73656e736f722d3700076f66666c696e65000364657600020102",
+  "expect": "103700044d51545404ce003c000873656e736f722d37000f7374617475732f73656e736f722d3700076f66666c696e65000364657600020102",
+  "model": {
+    "@kind": "connect",
+    "mqtt.remaining_length_c1": "0",
+    "mqtt.remaining_length_v0": "55",
+    "mqtt.protocol_level": "4",
+    "mqtt.username_flag": "1",
+    "mqtt.password_flag": "1",
+    "mqtt.will_qos": "1",
+    "mqtt.will_flag": "1",
+    "mqtt.clean_start": "1",
+    "mqtt.keep_alive": "60",
+    "mqtt.client_id.#": "8",
+    "mqtt.will_topic.#": "15",
+    "mqtt.username.#": "3",
+    "mqtt.password.#": "2",
+    "mqtt.protocol_name.#": "4",
+    "mqtt.protocol_name[0].mqtt.octet": "77"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 3.1.1 sections 2 and 3; CONNECT with a will, a user name and a password; expect derived there, no engine run"
+}

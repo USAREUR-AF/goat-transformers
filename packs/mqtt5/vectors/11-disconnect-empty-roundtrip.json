@@ -1,0 +1,14 @@
+{
+  "name": "disconnect-empty-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "e000",
+  "expect": "e000",
+  "model": {
+    "@kind": "disconnect",
+    "@absent": [
+      "mqtt.reason_code"
+    ]
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; DISCONNECT of Remaining Length 0; expect derived there, no engine run"
+}

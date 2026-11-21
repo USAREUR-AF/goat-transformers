@@ -1,0 +1,13 @@
+{
+  "name": "channel-data-roundtrip",
+  "from": "stun",
+  "to": "stun",
+  "input": "4001000568656c6c6f",
+  "expect": "4001000568656c6c6f",
+  "model": {
+    "@kind": "channel_data",
+    "stun.channel_low": "1",
+    "stun.data.#": "5"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; a ChannelData message on channel 0x4001 with 5 octets; expect derived there, no engine run"
+}
