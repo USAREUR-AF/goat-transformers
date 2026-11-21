@@ -1,0 +1,14 @@
+{
+  "name": "caa-roundtrip",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "000380000000000100000000076578616d706c65036f726700010100010000012c00150005697373756563612e6578616d706c652e6e6574",
+  "expect": "000380000000000100000000076578616d706c65036f726700010100010000012c00150005697373756563612e6578616d706c652e6e6574",
+  "model": {
+    "dnsmsg.answers[0].dnsmsg.type": "257",
+    "dnsmsg.answers[0].dnsmsg.caa_flags": "0",
+    "dnsmsg.answers[0].dnsmsg.caa_tag.#": "5",
+    "dnsmsg.answers[0].dnsmsg.caa_value.#": "14"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4 and RFC 8659 section 4.1; a CAA issue record; expect derived there, no engine run"
+}

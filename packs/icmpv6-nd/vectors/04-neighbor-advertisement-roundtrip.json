@@ -1,0 +1,15 @@
+{
+  "name": "neighbor-advertisement-roundtrip",
+  "from": "icmpv6-nd",
+  "to": "icmpv6-nd",
+  "input": "88004444e000000020010db8000100000000000000000005020102005e0010aa",
+  "expect": "88004444e000000020010db8000100000000000000000005020102005e0010aa",
+  "model": {
+    "inet.icmpv6_type": "136",
+    "icmpnd.router": "1",
+    "icmpnd.solicited": "1",
+    "icmpnd.override": "1",
+    "icmpnd.options[0].icmpnd.option_type": "2"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 4861 sections 4.1 to 4.6 and RFC 8106 section 5; a neighbor advertisement with R, S and O set; expect derived there, no engine run"
+}

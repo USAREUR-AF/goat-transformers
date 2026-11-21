@@ -1,0 +1,16 @@
+{
+  "name": "mdns-srv-aaaa-roundtrip",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "000084000000000200000000055f68747470045f746370056c6f63616c0000218001000000780015000000001f90077072696e746572056c6f63616c00077072696e746572056c6f63616c00001c800100000078001020010db8000000000000000000000007",
+  "expect": "000084000000000200000000055f68747470045f746370056c6f63616c0000218001000000780015000000001f90077072696e746572056c6f63616c00077072696e746572056c6f63616c00001c800100000078001020010db8000000000000000000000007",
+  "model": {
+    "dnsmsg.answers.#": "2",
+    "dnsmsg.answers[0].dnsmsg.owner_label1": "_http",
+    "dnsmsg.answers[0].dnsmsg.class": "32769",
+    "dnsmsg.answers[0].dnsmsg.port": "8080",
+    "dnsmsg.answers[0].dnsmsg.target_label1": "printer",
+    "dnsmsg.answers[1].dnsmsg.aaaa": "20010db8000000000000000000000007"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4, RFC 2782 and RFC 3596; an mDNS-style response with SRV and AAAA records (cache-flush class); expect derived there, no engine run"
+}

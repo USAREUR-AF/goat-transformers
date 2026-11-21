@@ -1,0 +1,12 @@
+{
+  "name": "other-option-roundtrip",
+  "from": "icmpv6-nd",
+  "to": "icmpv6-nd",
+  "input": "870066660000000020010db80001000000000000000000050e01010203040506",
+  "expect": "870066660000000020010db80001000000000000000000050e01010203040506",
+  "model": {
+    "icmpnd.options[0].icmpnd.option_type": "14",
+    "icmpnd.options[0].icmpnd.option_data": "010203040506"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 4861 sections 4.1 to 4.6 and RFC 8106 section 5; a neighbor solicitation with a nonce option, kept as hex; expect derived there, no engine run"
+}

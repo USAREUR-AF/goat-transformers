@@ -1,0 +1,9 @@
+{
+  "name": "Internet control plane (DNS message, DHCPv6 message, ICMPv6 ND)",
+  "domain": "networks",
+  "exact": [
+    "dns-message",
+    "dhcpv6-message",
+    "icmpv6-nd"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "relay-forward-roundtrip",
+  "from": "dhcpv6-message",
+  "to": "dhcpv6-message",
+  "input": "0c0020010db8000100000000000000000001fe80000000000000000000000000000100120004657468300009003801a1b2c30008000200000001000e000100012faf080002005e0010aa0003000c0000000100000000000000000006000400170018000e0000",
+  "expect": "0c0020010db8000100000000000000000001fe80000000000000000000000000000100120004657468300009003801a1b2c30008000200000001000e000100012faf080002005e0010aa0003000c0000000100000000000000000006000400170018000e0000",
+  "model": {
+    "dhcpv6msg.msg_type": "12",
+    "dhcpv6msg.hop_count": "0",
+    "dhcpv6msg.link_address": "20010db8000100000000000000000001",
+    "dhcpv6msg.peer_address": "fe800000000000000000000000000001",
+    "dhcpv6msg.options[0].dhcpv6msg.option_code": "18",
+    "dhcpv6msg.options[1].dhcpv6msg.option_code": "9",
+    "dhcpv6msg.options[1].dhcpv6msg.option_data.#": "56"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 9915 sections 8, 9 and 21; a RELAY-FORW with an interface ID and the relayed SOLICIT (kept as octets); expect derived there, no engine run"
+}

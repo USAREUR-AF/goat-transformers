@@ -1,0 +1,16 @@
+{
+  "name": "mx-and-txt-roundtrip",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "000784000001000200000000076578616d706c6503636f6d00000f0001076578616d706c6503636f6d00000f00010000012c0014000a046d61696c076578616d706c6503636f6d00076578616d706c6503636f6d00001000010000012c00100b763d73706631202d616c6c03616263",
+  "expect": "000784000001000200000000076578616d706c6503636f6d00000f0001076578616d706c6503636f6d00000f00010000012c0014000a046d61696c076578616d706c6503636f6d00076578616d706c6503636f6d00001000010000012c00100b763d73706631202d616c6c03616263",
+  "model": {
+    "dnsmsg.answers[0].dnsmsg.preference": "10",
+    "dnsmsg.answers[0].dnsmsg.target_label1": "mail",
+    "dnsmsg.answers[1].dnsmsg.type": "16",
+    "dnsmsg.answers[1].dnsmsg.txt.#": "2",
+    "dnsmsg.answers[1].dnsmsg.txt[0].dnsmsg.txt_chars.#": "11",
+    "dnsmsg.answers[1].dnsmsg.txt[1].dnsmsg.txt_chars.#": "3"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4; MX and TXT records (two character strings); expect derived there, no engine run"
+}

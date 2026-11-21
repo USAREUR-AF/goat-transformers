@@ -1,0 +1,19 @@
+{
+  "name": "query-a-roundtrip",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "12340100000100000000000003777777076578616d706c65036f72670000010001",
+  "expect": "12340100000100000000000003777777076578616d706c65036f72670000010001",
+  "model": {
+    "inet.dns_id": "4660",
+    "inet.dns_rd": "1",
+    "dnsmsg.questions.#": "1",
+    "dnsmsg.questions[0].dnsmsg.qname_label1": "www",
+    "dnsmsg.questions[0].dnsmsg.qname_label2": "example",
+    "dnsmsg.questions[0].dnsmsg.qname_label3": "org",
+    "dnsmsg.questions[0].dnsmsg.qname_len4": "0",
+    "dnsmsg.questions[0].dnsmsg.qtype": "1",
+    "dnsmsg.answers.#": "0"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4; a recursive query for the A record of www.example.org; expect derived there, no engine run"
+}

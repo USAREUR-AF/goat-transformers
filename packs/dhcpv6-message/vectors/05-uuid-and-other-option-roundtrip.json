@@ -1,0 +1,14 @@
+{
+  "name": "uuid-and-other-option-roundtrip",
+  "from": "dhcpv6-message",
+  "to": "dhcpv6-message",
+  "input": "0b0000ff000100120004000102030405060708090a0b0c0d0e0f002700060104686f7374",
+  "expect": "0b0000ff000100120004000102030405060708090a0b0c0d0e0f002700060104686f7374",
+  "model": {
+    "dhcpv6msg.options[0].dhcpv6msg.duid_type": "4",
+    "dhcpv6msg.options[0].dhcpv6msg.duid_uuid": "000102030405060708090a0b0c0d0e0f",
+    "dhcpv6msg.options[1].dhcpv6msg.option_code": "39",
+    "dhcpv6msg.options[1].dhcpv6msg.option_data.#": "6"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 9915 sections 8, 9 and 21; an INFORMATION-REQUEST with a DUID-UUID and a client FQDN option kept as octets; expect derived there, no engine run"
+}

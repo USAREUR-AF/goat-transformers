@@ -1,0 +1,347 @@
+# ICMPv6 Neighbor Discovery messages (RFC 4861): Router Solicitation and Advertisement, Neighbor
+# Solicitation and Advertisement, Redirect, with their options. Type, code, checksum and the RS and RA
+# fields are the inet keys of icmpv6-header. Written by tools/gen/inet-more-pack.py; do not edit by hand.
+format        icmpv6-nd
+version       0.1.0
+distribution  public
+source        "IETF RFC 4861, Neighbor Discovery for IP version 6, sections 4.1 to 4.6; RFC 8106 section 5 (RDNSS, DNSSL); https://www.rfc-editor.org/; layouts restated"
+uses          inet
+uses          icmpnd
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  inet.icmpv6_type  8  uint
+field  inet.icmpv6_code  8  uint
+field  inet.icmpv6_checksum  16  uint
+switch  inet.icmpv6_type
+  case  133
+    field  inet.icmpv6_reserved  32  uint
+  case  134
+    field  inet.icmpv6_ra_cur_hop_limit  8  uint
+    field  inet.icmpv6_ra_managed  1  uint
+    field  inet.icmpv6_ra_other  1  uint
+    field  inet.icmpv6_ra_reserved  6  uint
+    field  inet.icmpv6_ra_router_lifetime  16  uint
+    field  inet.icmpv6_ra_reachable_time  32  uint
+    field  inet.icmpv6_ra_retrans_timer  32  uint
+  case  135
+    field  icmpnd.ns_reserved  32  uint
+    field  icmpnd.target  128  hex
+  case  136
+    field  icmpnd.router  1  uint
+    field  icmpnd.solicited  1  uint
+    field  icmpnd.override  1  uint
+    field  icmpnd.na_reserved  29  uint
+    field  icmpnd.target  128  hex
+  case  137
+    field  icmpnd.redirect_reserved  32  uint
+    field  icmpnd.target  128  hex
+    field  icmpnd.destination  128  hex
+end
+group  icmpnd.options  rest
+  field  icmpnd.option_type  8  uint
+  field  icmpnd.option_length  8  uint
+  switch  icmpnd.option_type
+    case  1,2
+      switch  icmpnd.option_length
+        case  1
+          field  icmpnd.link_layer_address  48  hex
+        case  2
+          field  icmpnd.link_layer_address  112  hex
+        case  3
+          field  icmpnd.link_layer_address  176  hex
+        case  4
+          field  icmpnd.link_layer_address  240  hex
+      end
+    case  3
+      switch  icmpnd.option_length
+        case  4
+          field  icmpnd.prefix_length  8  uint
+          field  icmpnd.on_link  1  uint
+          field  icmpnd.autonomous  1  uint
+          field  icmpnd.router_address  1  uint
+          field  icmpnd.prefix_reserved1  5  uint
+          field  icmpnd.valid_lifetime  32  uint
+          field  icmpnd.preferred_lifetime  32  uint
+          field  icmpnd.prefix_reserved2  32  uint
+          field  icmpnd.prefix  128  hex
+      end
+    case  4
+      field  icmpnd.redirected_reserved  48  uint
+      switch  icmpnd.option_length
+        case  1
+        case  2
+          field  icmpnd.redirected_packet  64  hex
+        case  3
+          field  icmpnd.redirected_packet  128  hex
+        case  4
+          field  icmpnd.redirected_packet  192  hex
+        case  5
+          field  icmpnd.redirected_packet  256  hex
+        case  6
+          field  icmpnd.redirected_packet  320  hex
+        case  7
+          field  icmpnd.redirected_packet  384  hex
+        case  8
+          field  icmpnd.redirected_packet  448  hex
+        case  9
+          field  icmpnd.redirected_packet  512  hex
+        case  10
+          field  icmpnd.redirected_packet  576  hex
+        case  11
+          field  icmpnd.redirected_packet  640  hex
+        case  12
+          field  icmpnd.redirected_packet  704  hex
+        case  13
+          field  icmpnd.redirected_packet  768  hex
+        case  14
+          field  icmpnd.redirected_packet  832  hex
+        case  15
+          field  icmpnd.redirected_packet  896  hex
+        case  16
+          field  icmpnd.redirected_packet  960  hex
+        case  17
+          field  icmpnd.redirected_packet  1024  hex
+        case  18
+          field  icmpnd.redirected_packet  1088  hex
+        case  19
+          field  icmpnd.redirected_packet  1152  hex
+        case  20
+          field  icmpnd.redirected_packet  1216  hex
+        case  21
+          field  icmpnd.redirected_packet  1280  hex
+        case  22
+          field  icmpnd.redirected_packet  1344  hex
+        case  23
+          field  icmpnd.redirected_packet  1408  hex
+        case  24
+          field  icmpnd.redirected_packet  1472  hex
+        case  25
+          field  icmpnd.redirected_packet  1536  hex
+        case  26
+          field  icmpnd.redirected_packet  1600  hex
+        case  27
+          field  icmpnd.redirected_packet  1664  hex
+        case  28
+          field  icmpnd.redirected_packet  1728  hex
+        case  29
+          field  icmpnd.redirected_packet  1792  hex
+        case  30
+          field  icmpnd.redirected_packet  1856  hex
+        case  31
+          field  icmpnd.redirected_packet  1920  hex
+        case  32
+          field  icmpnd.redirected_packet  1984  hex
+      end
+    case  5
+      switch  icmpnd.option_length
+        case  1
+          field  icmpnd.mtu_reserved  16  uint
+          field  icmpnd.mtu  32  uint
+      end
+    case  25
+      field  icmpnd.rdnss_reserved  16  uint
+      field  icmpnd.rdnss_lifetime  32  uint
+      switch  icmpnd.option_length
+        case  1
+        case  2
+          field  icmpnd.rdnss_addresses  64  hex
+        case  3
+          field  icmpnd.rdnss_addresses  128  hex
+        case  4
+          field  icmpnd.rdnss_addresses  192  hex
+        case  5
+          field  icmpnd.rdnss_addresses  256  hex
+        case  6
+          field  icmpnd.rdnss_addresses  320  hex
+        case  7
+          field  icmpnd.rdnss_addresses  384  hex
+        case  8
+          field  icmpnd.rdnss_addresses  448  hex
+        case  9
+          field  icmpnd.rdnss_addresses  512  hex
+        case  10
+          field  icmpnd.rdnss_addresses  576  hex
+        case  11
+          field  icmpnd.rdnss_addresses  640  hex
+        case  12
+          field  icmpnd.rdnss_addresses  704  hex
+        case  13
+          field  icmpnd.rdnss_addresses  768  hex
+        case  14
+          field  icmpnd.rdnss_addresses  832  hex
+        case  15
+          field  icmpnd.rdnss_addresses  896  hex
+        case  16
+          field  icmpnd.rdnss_addresses  960  hex
+        case  17
+          field  icmpnd.rdnss_addresses  1024  hex
+        case  18
+          field  icmpnd.rdnss_addresses  1088  hex
+        case  19
+          field  icmpnd.rdnss_addresses  1152  hex
+        case  20
+          field  icmpnd.rdnss_addresses  1216  hex
+        case  21
+          field  icmpnd.rdnss_addresses  1280  hex
+        case  22
+          field  icmpnd.rdnss_addresses  1344  hex
+        case  23
+          field  icmpnd.rdnss_addresses  1408  hex
+        case  24
+          field  icmpnd.rdnss_addresses  1472  hex
+        case  25
+          field  icmpnd.rdnss_addresses  1536  hex
+        case  26
+          field  icmpnd.rdnss_addresses  1600  hex
+        case  27
+          field  icmpnd.rdnss_addresses  1664  hex
+        case  28
+          field  icmpnd.rdnss_addresses  1728  hex
+        case  29
+          field  icmpnd.rdnss_addresses  1792  hex
+        case  30
+          field  icmpnd.rdnss_addresses  1856  hex
+        case  31
+          field  icmpnd.rdnss_addresses  1920  hex
+        case  32
+          field  icmpnd.rdnss_addresses  1984  hex
+      end
+    case  31
+      field  icmpnd.dnssl_reserved  16  uint
+      field  icmpnd.dnssl_lifetime  32  uint
+      switch  icmpnd.option_length
+        case  1
+        case  2
+          field  icmpnd.dnssl_names  64  hex
+        case  3
+          field  icmpnd.dnssl_names  128  hex
+        case  4
+          field  icmpnd.dnssl_names  192  hex
+        case  5
+          field  icmpnd.dnssl_names  256  hex
+        case  6
+          field  icmpnd.dnssl_names  320  hex
+        case  7
+          field  icmpnd.dnssl_names  384  hex
+        case  8
+          field  icmpnd.dnssl_names  448  hex
+        case  9
+          field  icmpnd.dnssl_names  512  hex
+        case  10
+          field  icmpnd.dnssl_names  576  hex
+        case  11
+          field  icmpnd.dnssl_names  640  hex
+        case  12
+          field  icmpnd.dnssl_names  704  hex
+        case  13
+          field  icmpnd.dnssl_names  768  hex
+        case  14
+          field  icmpnd.dnssl_names  832  hex
+        case  15
+          field  icmpnd.dnssl_names  896  hex
+        case  16
+          field  icmpnd.dnssl_names  960  hex
+        case  17
+          field  icmpnd.dnssl_names  1024  hex
+        case  18
+          field  icmpnd.dnssl_names  1088  hex
+        case  19
+          field  icmpnd.dnssl_names  1152  hex
+        case  20
+          field  icmpnd.dnssl_names  1216  hex
+        case  21
+          field  icmpnd.dnssl_names  1280  hex
+        case  22
+          field  icmpnd.dnssl_names  1344  hex
+        case  23
+          field  icmpnd.dnssl_names  1408  hex
+        case  24
+          field  icmpnd.dnssl_names  1472  hex
+        case  25
+          field  icmpnd.dnssl_names  1536  hex
+        case  26
+          field  icmpnd.dnssl_names  1600  hex
+        case  27
+          field  icmpnd.dnssl_names  1664  hex
+        case  28
+          field  icmpnd.dnssl_names  1728  hex
+        case  29
+          field  icmpnd.dnssl_names  1792  hex
+        case  30
+          field  icmpnd.dnssl_names  1856  hex
+        case  31
+          field  icmpnd.dnssl_names  1920  hex
+        case  32
+          field  icmpnd.dnssl_names  1984  hex
+      end
+    else
+      switch  icmpnd.option_length
+        case  1
+          field  icmpnd.option_data  48  hex
+        case  2
+          field  icmpnd.option_data  112  hex
+        case  3
+          field  icmpnd.option_data  176  hex
+        case  4
+          field  icmpnd.option_data  240  hex
+        case  5
+          field  icmpnd.option_data  304  hex
+        case  6
+          field  icmpnd.option_data  368  hex
+        case  7
+          field  icmpnd.option_data  432  hex
+        case  8
+          field  icmpnd.option_data  496  hex
+        case  9
+          field  icmpnd.option_data  560  hex
+        case  10
+          field  icmpnd.option_data  624  hex
+        case  11
+          field  icmpnd.option_data  688  hex
+        case  12
+          field  icmpnd.option_data  752  hex
+        case  13
+          field  icmpnd.option_data  816  hex
+        case  14
+          field  icmpnd.option_data  880  hex
+        case  15
+          field  icmpnd.option_data  944  hex
+        case  16
+          field  icmpnd.option_data  1008  hex
+        case  17
+          field  icmpnd.option_data  1072  hex
+        case  18
+          field  icmpnd.option_data  1136  hex
+        case  19
+          field  icmpnd.option_data  1200  hex
+        case  20
+          field  icmpnd.option_data  1264  hex
+        case  21
+          field  icmpnd.option_data  1328  hex
+        case  22
+          field  icmpnd.option_data  1392  hex
+        case  23
+          field  icmpnd.option_data  1456  hex
+        case  24
+          field  icmpnd.option_data  1520  hex
+        case  25
+          field  icmpnd.option_data  1584  hex
+        case  26
+          field  icmpnd.option_data  1648  hex
+        case  27
+          field  icmpnd.option_data  1712  hex
+        case  28
+          field  icmpnd.option_data  1776  hex
+        case  29
+          field  icmpnd.option_data  1840  hex
+        case  30
+          field  icmpnd.option_data  1904  hex
+        case  31
+          field  icmpnd.option_data  1968  hex
+        case  32
+          field  icmpnd.option_data  2032  hex
+      end
+  end
+end

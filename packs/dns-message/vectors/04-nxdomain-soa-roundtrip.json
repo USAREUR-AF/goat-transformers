@@ -1,0 +1,16 @@
+{
+  "name": "nxdomain-soa-roundtrip",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "000984030001000000010000046e6f7065076578616d706c6503636f6d0000010001076578616d706c6503636f6d000006000100000e10003d036e7331076578616d706c6503636f6d000a686f73746d6173746572076578616d706c6503636f6d0078c4046500001c20000003840012750000000e10",
+  "expect": "000984030001000000010000046e6f7065076578616d706c6503636f6d0000010001076578616d706c6503636f6d000006000100000e10003d036e7331076578616d706c6503636f6d000a686f73746d6173746572076578616d706c6503636f6d0078c4046500001c20000003840012750000000e10",
+  "model": {
+    "inet.dns_rcode": "3",
+    "dnsmsg.authority.#": "1",
+    "dnsmsg.authority[0].dnsmsg.mname_label1": "ns1",
+    "dnsmsg.authority[0].dnsmsg.rname_label1": "hostmaster",
+    "dnsmsg.authority[0].dnsmsg.serial": "2026112101",
+    "dnsmsg.authority[0].dnsmsg.minimum": "3600"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4; a name error with the zone's SOA in the authority section; expect derived there, no engine run"
+}

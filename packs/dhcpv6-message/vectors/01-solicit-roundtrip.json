@@ -1,0 +1,20 @@
+{
+  "name": "solicit-roundtrip",
+  "from": "dhcpv6-message",
+  "to": "dhcpv6-message",
+  "input": "01a1b2c30008000200000001000e000100012faf080002005e0010aa0003000c0000000100000000000000000006000400170018000e0000",
+  "expect": "01a1b2c30008000200000001000e000100012faf080002005e0010aa0003000c0000000100000000000000000006000400170018000e0000",
+  "model": {
+    "dhcpv6msg.msg_type": "1",
+    "dhcpv6msg.transaction_id": "10597059",
+    "dhcpv6msg.options.#": "5",
+    "dhcpv6msg.options[0].dhcpv6msg.elapsed_time": "0",
+    "dhcpv6msg.options[1].dhcpv6msg.duid_type": "1",
+    "dhcpv6msg.options[1].dhcpv6msg.duid_time": "800000000",
+    "dhcpv6msg.options[1].dhcpv6msg.link_layer_address.#": "6",
+    "dhcpv6msg.options[2].dhcpv6msg.iaid": "1",
+    "dhcpv6msg.options[3].dhcpv6msg.requested_options.#": "2",
+    "dhcpv6msg.options[4].dhcpv6msg.option_code": "14"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 9915 sections 8, 9 and 21; a SOLICIT with elapsed time, a DUID-LLT client ID, an empty IA_NA, an ORO and rapid commit; expect derived there, no engine run"
+}
