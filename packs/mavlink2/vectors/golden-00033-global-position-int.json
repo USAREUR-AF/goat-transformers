@@ -11,9 +11,9 @@
   "lon": "-65.52",
   "mavlink.alt_mm": "2003195204",
   "mavlink.relative_alt_mm": "-2005440939",
-  "mavlink.vx_cm_per_s": "30566",
-  "mavlink.vy_cm_per_s": "-30601",
-  "mavlink.vz_cm_per_s": "-26232",
+  "mavlink.vx_ms": "305.66",
+  "mavlink.vy_ms": "-306.01",
+  "mavlink.vz_ms": "-262.32",
   "mavlink.hdg_cdeg": "43673"
  },
  "source": "pymavlink 2.4.50, dialect v20.common: GLOBAL_POSITION_INT(time_boot_ms, lat, lon, alt, relative_alt, vx, vy, vz, hdg) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
