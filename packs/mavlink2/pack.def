@@ -329,15 +329,15 @@ field     mavlink.repr_offset_q_3 0:432:32 f32 absent 0
 kind      global_position_int
 when      0:56:24 33
 when      0:8:8 28
-requires  mavlink.alt_mm mavlink.relative_alt_mm mavlink.vx_cm_per_s mavlink.vy_cm_per_s mavlink.vz_cm_per_s mavlink.hdg_cdeg
+requires  mavlink.alt_mm mavlink.relative_alt_mm mavlink.vx_ms mavlink.vy_ms mavlink.vz_ms mavlink.hdg_cdeg
 field     mavlink.time_boot_ms 0:80:32 uint
 field     lat 0:112:32 sscale:1/10000000
 field     lon 0:144:32 sscale:1/10000000
 field     mavlink.alt_mm 0:176:32 twos
 field     mavlink.relative_alt_mm 0:208:32 twos
-field     mavlink.vx_cm_per_s 0:240:16 twos
-field     mavlink.vy_cm_per_s 0:256:16 twos
-field     mavlink.vz_cm_per_s 0:272:16 twos
+field     mavlink.vx_ms 0:240:16 sscale:1/100
+field     mavlink.vy_ms 0:256:16 sscale:1/100
+field     mavlink.vz_ms 0:272:16 sscale:1/100
 field     mavlink.hdg_cdeg 0:288:16 uint absent 65535
 
 kind      rc_channels_scaled
@@ -1634,9 +1634,9 @@ field     mavlink.yawspeed_rad_per_s 0:336:32 f32
 field     lat 0:368:32 sscale:1/10000000
 field     lon 0:400:32 sscale:1/10000000
 field     mavlink.alt_mm 0:432:32 twos
-field     mavlink.vx_cm_per_s 0:464:16 twos
-field     mavlink.vy_cm_per_s 0:480:16 twos
-field     mavlink.vz_cm_per_s 0:496:16 twos
+field     mavlink.vx_ms 0:464:16 sscale:1/100
+field     mavlink.vy_ms 0:480:16 sscale:1/100
+field     mavlink.vz_ms 0:496:16 sscale:1/100
 field     mavlink.ind_airspeed_cm_per_s 0:512:16 uint
 field     mavlink.true_airspeed_cm_per_s 0:528:16 uint
 field     mavlink.xacc_mg 0:544:16 twos
@@ -1646,7 +1646,7 @@ field     mavlink.zacc_mg 0:576:16 twos
 kind      hil_state
 when      0:56:24 90
 when      0:8:8 56
-requires  mavlink.vx_cm_per_s mavlink.vy_cm_per_s mavlink.vz_cm_per_s mavlink.xacc_mg mavlink.yacc_mg mavlink.zacc_mg
+requires  mavlink.vx_ms mavlink.vy_ms mavlink.vz_ms mavlink.xacc_mg mavlink.yacc_mg mavlink.zacc_mg
 field     mavlink.time_usec_us 0:80:64 uint
 field     mavlink.roll_rad 0:144:32 f32
 field     mavlink.pitch_rad 0:176:32 f32
@@ -1657,9 +1657,9 @@ field     mavlink.yawspeed_rad_per_s 0:304:32 f32
 field     lat 0:336:32 sscale:1/10000000
 field     lon 0:368:32 sscale:1/10000000
 field     mavlink.alt_mm 0:400:32 twos
-field     mavlink.vx_cm_per_s 0:432:16 twos
-field     mavlink.vy_cm_per_s 0:448:16 twos
-field     mavlink.vz_cm_per_s 0:464:16 twos
+field     mavlink.vx_ms 0:432:16 sscale:1/100
+field     mavlink.vy_ms 0:448:16 sscale:1/100
+field     mavlink.vz_ms 0:464:16 sscale:1/100
 field     mavlink.xacc_mg 0:480:16 twos
 field     mavlink.yacc_mg 0:496:16 twos
 field     mavlink.zacc_mg 0:512:16 twos
@@ -5279,9 +5279,9 @@ field     mavlink.relative_alt_mm 0:240:32 twos
 field     mavlink.next_lat_dege7 0:272:32 twos
 field     mavlink.next_lon_dege7 0:304:32 twos
 field     mavlink.next_alt_mm 0:336:32 twos
-field     mavlink.vx_cm_per_s 0:368:16 twos
-field     mavlink.vy_cm_per_s 0:384:16 twos
-field     mavlink.vz_cm_per_s 0:400:16 twos
+field     mavlink.vx_ms 0:368:16 sscale:1/100
+field     mavlink.vy_ms 0:384:16 sscale:1/100
+field     mavlink.vz_ms 0:400:16 sscale:1/100
 field     mavlink.h_acc_mm 0:416:16 uint
 field     mavlink.v_acc_mm 0:432:16 uint
 field     mavlink.vel_acc_cm_per_s 0:448:16 uint

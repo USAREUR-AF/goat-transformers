@@ -16,9 +16,9 @@
   "lat": "-32.76",
   "lon": "-65.52",
   "mavlink.alt_mm": "-573785174",
-  "mavlink.vx_cm_per_s": "-13125",
-  "mavlink.vy_cm_per_s": "-8756",
-  "mavlink.vz_cm_per_s": "-4387",
+  "mavlink.vx_ms": "-131.25",
+  "mavlink.vy_ms": "-87.56",
+  "mavlink.vz_ms": "-43.87",
   "mavlink.xacc_mg": "-18",
   "mavlink.yacc_mg": "4607",
   "mavlink.zacc_mg": "8721"

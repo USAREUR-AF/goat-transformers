@@ -126,9 +126,9 @@ key  vx_m_per_s  float  m/s  "field vx of LOCAL_POSITION_NED, GLOBAL_POSITION_IN
 key  vy_m_per_s  float  m/s  "field vy of LOCAL_POSITION_NED, GLOBAL_POSITION_INT_COV, LOCAL_POSITION_NED_COV and 6 more"
 key  vz_m_per_s  float  m/s  "field vz of LOCAL_POSITION_NED, GLOBAL_POSITION_INT_COV, LOCAL_POSITION_NED_COV and 6 more"
 key  relative_alt_mm  int  mm  "field relative_alt of GLOBAL_POSITION_INT, GLOBAL_POSITION_INT_COV, CAMERA_IMAGE_CAPTURED and 1 more"
-key  vx_cm_per_s  int  cm/s  "field vx of GLOBAL_POSITION_INT, HIL_STATE, HIL_STATE_QUATERNION and 1 more"
-key  vy_cm_per_s  int  cm/s  "field vy of GLOBAL_POSITION_INT, HIL_STATE, HIL_STATE_QUATERNION and 1 more"
-key  vz_cm_per_s  int  cm/s  "field vz of GLOBAL_POSITION_INT, HIL_STATE, HIL_STATE_QUATERNION and 1 more"
+key  vx_ms  float  m/s  "field vx of GLOBAL_POSITION_INT, HIL_STATE, HIL_STATE_QUATERNION and 1 more"
+key  vy_ms  float  m/s  "field vy of GLOBAL_POSITION_INT, HIL_STATE, HIL_STATE_QUATERNION and 1 more"
+key  vz_ms  float  m/s  "field vz of GLOBAL_POSITION_INT, HIL_STATE, HIL_STATE_QUATERNION and 1 more"
 key  hdg_cdeg  int  cdeg  "field hdg of GLOBAL_POSITION_INT"
 key  chan1_scaled  int  -  "field chan1_scaled of RC_CHANNELS_SCALED"
 key  chan2_scaled  int  -  "field chan2_scaled of RC_CHANNELS_SCALED"
@@ -3982,3 +3982,5 @@ key  time_utc_us  int  us  "field time_utc of CAMERA_IMAGE_CAPTURED until its va
 key  time_us  int  us  "field time of UTM_GLOBAL_POSITION until its value that means unknown was stated; now a core key, this key is no longer mapped"
 key  open_drone_id_system_timestamp_s  int  s  "field timestamp of OPEN_DRONE_ID_SYSTEM until its value that means unknown was stated; now a core key, this key is no longer mapped"
 key  open_drone_id_system_update_timestamp_s  int  s  "field timestamp of OPEN_DRONE_ID_SYSTEM_UPDATE until its value that means unknown was stated; now a core key, this key is no longer mapped"
+derive  speed_ms  hypot    mavlink.vy_ms  mavlink.vx_ms
+derive  course    bearing  mavlink.vy_ms  mavlink.vx_ms

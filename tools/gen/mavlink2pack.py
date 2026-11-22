@@ -791,6 +791,19 @@ def is_core_latlon(f):
     return BIND_INVALID and sentinel_or_none(f) is not None
 
 
+# Ground velocity: int16_t vx / vy / vz in cm/s (GLOBAL_POSITION_INT and the messages that
+# share its fields) are read as float m/s, as lat / lon are read as float degrees, so that the
+# module can derive core speed_ms and course from keys of its own (engine-spec, Derived keys:
+# a derive works on floats and names only core or its own module). vz points down.
+VELOCITY_NAMES = ("vx", "vy", "vz")
+CMS_TO_MS = "1/100"
+
+
+def is_velocity_cms(f):
+    return (f.name in VELOCITY_NAMES and f.units == "cm/s" and f.base == "int16_t"
+            and f.n is None and f.invalid is None)
+
+
 def core_name(f):
     """The core key of a field is_core_latlon accepts."""
     return "lat" if f.name in LAT_NAMES else "lon"
@@ -925,6 +938,10 @@ def assign_keys(layouts):
                         declare(key, type_class(f), unit, m, f)
                         lines.append(Line(MODULE + "." + key, pos + 8 * f.size * i, 8 * f.size,
                                           transform_for(f)))
+                elif is_velocity_cms(f) and (m.name, f.name) not in qualified:
+                    vstem = f.name + "_ms"
+                    declare(vstem, "float", "m/s", m, f)
+                    lines.append(Line(MODULE + "." + vstem, pos, 16, "sscale:" + CMS_TO_MS))
                 else:
                     declare(stem, type_class(f), unit, m, f)
                     lines.append(Line(MODULE + "." + stem, pos, 8 * f.bytes, transform_for(f)))
@@ -1160,6 +1177,10 @@ def emit_model(keys, sha, retired=()):
         names = ", ".join(m for m, _ in decl.uses)
         out.append('key  %s  %s  %s  "field %s of %s until its value that means unknown was stated; '
                    'now a core key, this key is no longer mapped"' % (k, decl.type, decl.unit, decl.uses[0][1], names))
+    if MODULE == HEADER_MODULE and "vx_ms" in keys and "vy_ms" in keys:
+        # vy is east and vx is north (NED); bearing takes east, north.
+        out += ["derive  speed_ms  hypot    %s.vy_ms  %s.vx_ms" % (MODULE, MODULE),
+                "derive  course    bearing  %s.vy_ms  %s.vx_ms" % (MODULE, MODULE)]
     return "\n".join(out) + "\n"
 
 
