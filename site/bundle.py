@@ -430,7 +430,7 @@ def check_hero(html, pairs):
             if line.strip() and line not in every:
                 fail("the background line `%s` is not in the remote-id or cot-xml pack" % line)
 
-    m = re.search(r'<pre class="sig-xml">(.*?)</pre>', html, re.S)
+    m = re.search(r'<pre class="sig-xml"[^>]*>(.*?)</pre>', html, re.S)
     out = re.sub(r"\n\s+", " ", unescape(m.group(1))) if m else ""
     if out != pairs["remote-id>cot-xml"]["expect"]:
         fail("the output drawn is not what goat-xf prints: %s" % out)
