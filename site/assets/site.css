@@ -371,7 +371,19 @@ footer ul { display: flex; flex-wrap: wrap; gap: 6px 22px; list-style: none; mar
   background: var(--panel); color: var(--ink); font-size: 0.85rem; line-height: 1.35;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); transform: translate(-50%, calc(-100% - 10px));
 }
-.radial-private { display: block; margin-top: 4px; }
+.rd-scale { fill: none; stroke: var(--rule); stroke-width: 1px; }
+.rd-scale-t { font-size: 12px; fill: var(--quiet); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+.rd-lead { fill: none; stroke: var(--ink); stroke-width: 1px; }
+.rd-ex-t { font-size: 13px; }
+.rd-ex-name { font-weight: 700; }
+.rd-mark circle { fill: var(--ink); }
+.rd-mark-t { fill: var(--paper); font-family: var(--sans); font-size: 12px; font-weight: 700; }
+.rd-scale-t, .rd-ex-t, .rd-lead, .rd-mark { pointer-events: none; }
+/* How to read it: numbered as the markers drawn on the chart. */
+.radial-key-h { font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; }
+.radial-key-list { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 22px; font-size: 0.86rem; line-height: 1.45; }
+.radial-key-list li { break-inside: avoid; margin-bottom: 10px; display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 9px; }
+.radial-key-list .rk-n { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-top: 0.05em; border-radius: 50%; background: var(--ink); color: var(--paper); font-size: 0.74rem; font-weight: 700; line-height: 1; }
 .radial-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; font-size: 0.9rem; line-height: 1.4; }
 .radial-legend li { display: grid; grid-template-columns: 12px minmax(0, 1fr); column-gap: 10px; }
 .radial-legend .rl-sw { width: 12px; height: 12px; margin-top: 0.3em; border-radius: 2px; background: var(--rd); }
@@ -388,6 +400,16 @@ footer ul { display: flex; flex-wrap: wrap; gap: 6px 22px; list-style: none; mar
   .radial { grid-template-columns: minmax(0, 1fr); }
   .radial-chart { margin: 0 auto; width: 100%; }
 }
+@media (max-width: 600px) {
+  .radial-key { order: 2; }
+  .radial-fig figcaption { order: 3; }
+  .radial-key-list { columns: 1; }
+  .rd-scale-t { font-size: 16px; }
+  .rd-ex-t { font-size: 17px; }
+  .rd-mark circle { r: 12px; }
+  .rd-mark-t { font-size: 15px; }
+}
 @media (forced-colors: active) {
   .rd-bar { fill: CanvasText; } .rd-dom { fill: Canvas; stroke: CanvasText; }
+  .rd-mark circle { fill: CanvasText; } .rd-mark-t { fill: Canvas; } .radial-key-list .rk-n { background: CanvasText; color: Canvas; }
 }

@@ -103,6 +103,11 @@ R_BAR_MAX = 300        # the longest family
 MIN_BAR = 8            # a family of one pack
 R_PRIVATE = 318        # the dashed ring
 DOM_GAP = 2.0          # degrees between domains
+SCALE_GAP = 7.0        # degrees left open at the top, where the scale is labelled
+SCALE_SIZE = 12        # the scale's labels
+EX_SIZE = 13           # the worked example's two lines
+MARK_R = 10            # a numbered marker (the page only)
+MARK_PRIVATE = 225     # where marker 4 sits on the dashed ring, in degrees
 BAR_GAP = 0.18         # degrees each side of a bar
 LABEL_SIZE = 12
 LABEL_PAD = 6          # units of arc beside a label
@@ -134,9 +139,15 @@ def survey(packs_dir, families_dir):
 
 def allocate(domains):
     """Each domain's arc in degrees: its share of the families, but never
-    narrower than its label. -> [(start, end)] clockwise from the top."""
+    narrower than its label. -> [(start, end)] clockwise from the top, which
+    leaves SCALE_GAP open at the top for the scale's labels."""
+    return allocate_full(domains)[0]
+
+
+def allocate_full(domains):
+    """-> ([(start, end)], [True for each domain widened to fit its label])"""
     total_fams = sum(len(d["families"]) for d in domains)
-    room = 360.0 - DOM_GAP * len(domains)
+    room = 360.0 - DOM_GAP * (len(domains) - 1) - SCALE_GAP
     mins = []
     for d in domains:
         w = fig.text_width(d["short"], LABEL_SIZE, True) + 2 * LABEL_PAD
@@ -154,12 +165,12 @@ def allocate(domains):
             break
         for i in newly:
             fixed[i] = True
-    spans, at = [], DOM_GAP / 2
+    spans, at = [], SCALE_GAP / 2
     for a in angles:
         spans.append((at, at + a))
         at += a + DOM_GAP
-    assert abs(at - DOM_GAP / 2 - 360.0) < 1e-6 and total_fams
-    return spans
+    assert abs(at - DOM_GAP + SCALE_GAP / 2 - 360.0) < 1e-6 and total_fams
+    return spans, fixed
 
 
 def pt(r, deg):
@@ -201,6 +212,79 @@ def bar_length(n, top):
     return MIN_BAR + (R_BAR_MAX - R_BAR0 - MIN_BAR) * math.log(n) / math.log(top)
 
 
+def bar_radius(n, top):
+    return R_BAR0 + bar_length(n, top)
+
+
+def scale_values(top):
+    """The packs at which a faint ring is drawn: 1, 10, 100, ... up to the
+    longest family."""
+    out, v = [], 1
+    while v <= top:
+        out.append(v)
+        v *= 10
+    return out
+
+
+def longest(domains):
+    """-> (domain index, family index, family) of the family with the most
+    packs; the first of them in ring order on a tie."""
+    best = None
+    for i, d in enumerate(domains):
+        for k, f in enumerate(d["families"]):
+            if best is None or f["packs"] > best[2]["packs"]:
+                best = (i, k, f)
+    return best
+
+
+def example(domains, spans, top):
+    """Where the worked example goes: the longest bar, a leader from its tip
+    straight up (on the right half) or down (on the left half), so it runs
+    beside the smallest families of the domain before it, and two lines of
+    text at the edge of the view box. -> dict of the geometry and the text."""
+    i, k, f = longest(domains)
+    a0, a1 = spans[i]
+    step = (a1 - a0) / len(domains[i]["families"])
+    theta = a0 + (k + 0.5) * step
+    x0, y0 = pt(bar_radius(f["packs"], top) + 4, theta)
+    up = theta % 360 < 180
+    y_end = 46 if up else VIEW - 46
+    lines = (f["name"], "%s pack%s, the longest bar" % (fig.grouped(f["packs"]), "" if f["packs"] == 1 else "s"))
+    ys = (16, 38) if up else (VIEW - 30, VIEW - 8)
+    right = x0 >= C
+    x_text = min(x0 + 20, VIEW - 2) if right else max(x0 - 20, 2)
+    width = max(fig.text_width(lines[0], EX_SIZE, True), fig.text_width(lines[1], EX_SIZE))
+    if (right and x_text - width < 0) or (not right and x_text + width > VIEW):
+        raise RadialError("the worked example %r does not fit beside its leader" % lines[0])
+    # marker 3 at the far end of the leader, beside the two lines
+    my = y_end + MARK_R + 2 if up else y_end - MARK_R - 2
+    return {"domain": domains[i], "family": f, "theta": theta, "x0": x0, "y0": y0, "y_end": y_end,
+            "lines": lines, "ys": ys, "x_text": x_text, "anchor": "end" if right else "start",
+            "mark": (x0, my)}
+
+
+def marker(n, x, y):
+    return ('<g class="rd-mark" aria-hidden="true"><circle cx="%s" cy="%s" r="%d"/>'
+            '<text x="%s" y="%s" class="rd-mark-t" text-anchor="middle" dy="0.35em">%d</text></g>'
+            % (f2(x), f2(y), MARK_R, f2(x), f2(y), n))
+
+
+def domain_marker_at(domains, spans):
+    """Marker 2 sits on the inner ring of the domain with the most free arc
+    beside its label, between the end of the label and the end of the arc.
+    -> (domain index, angle)."""
+    best = None
+    for i, (d, (a0, a1)) in enumerate(zip(domains, spans)):
+        half = math.degrees((fig.text_width(d["short"], LABEL_SIZE, True) + 2 * LABEL_PAD) / 2 / R_LABEL)
+        free = (a1 - a0) / 2 - half
+        if best is None or free > best[0]:
+            best = (free, i, (a0 + a1) / 2 + half + free / 2)
+    r_mid = (R_DOM_IN + R_DOM_OUT) / 2
+    if math.radians(best[0]) * r_mid < 2 * MARK_R:
+        raise RadialError("no domain's arc has room beside its label for the marker")
+    return best[1], best[2]
+
+
 def tip(fam, dom):
     return "%s: %s pack%s (%s)" % (fam["name"], fig.grouped(fam["packs"]), "" if fam["packs"] == 1 else "s", dom["name"])
 
@@ -217,8 +301,12 @@ def chart(domains, ids, interactive):
     spans = allocate(domains)
     top = max(f["packs"] for d in domains for f in d["families"])
     fams, packs = totals(domains)
-    out = ['<circle cx="%d" cy="%d" r="%d" class="rd-private"/>' % (C, C, R_PRIVATE),
-           '<circle cx="%d" cy="%d" r="%d" class="rd-core"/>' % (C, C, R_CORE),
+    scale = scale_values(top)
+    ex = example(domains, spans, top)
+    out = ['<circle cx="%d" cy="%d" r="%d" class="rd-private"/>' % (C, C, R_PRIVATE)]
+    # the log scale: a faint ring at 1, 10, 100 ... packs, under the bars
+    out += ['<circle cx="%d" cy="%d" r="%s" class="rd-scale"/>' % (C, C, f2(bar_radius(v, top))) for v in scale]
+    out += ['<circle cx="%d" cy="%d" r="%d" class="rd-core"/>' % (C, C, R_CORE),
            '<text x="%d" y="%d" class="rd-t rd-core-t" text-anchor="middle">shared</text>' % (C, C - 4),
            '<text x="%d" y="%d" class="rd-t rd-core-t" text-anchor="middle">model</text>' % (C, C + 16)]
     first = True
@@ -240,6 +328,21 @@ def chart(domains, ids, interactive):
                 first = False
             else:
                 out.append('<path d="%s" class="rd-bar rd-%s"><title>%s</title></path>' % (sector(R_BAR0, r1, b0, b1), d["id"], escape(text)))
+    # the scale's labels, up the open spoke at the top, over everything
+    for v in scale:
+        out.append('<text x="%d" y="%s" class="rd-t rd-scale-t" text-anchor="middle" dy="0.35em">%s</text>'
+                   % (C, f2(C - bar_radius(v, top)), fig.grouped(v) + (" packs" if v == scale[-1] and v > 1 else "")))
+    # the worked example: the longest bar, named, with its pack count
+    lead_end = ex["mark"][1] + (MARK_R if ex["y_end"] < C else -MARK_R) if interactive else ex["y_end"]
+    out.append('<path d="M%s %sV%s" class="rd-lead"/>' % (f2(ex["x0"]), f2(ex["y0"]), f2(lead_end)))
+    out.append('<text class="rd-t rd-ex-t" text-anchor="%s"><tspan x="%s" y="%d" class="rd-ex-name">%s</tspan><tspan x="%s" y="%d">%s</tspan></text>'
+               % (ex["anchor"], f2(ex["x_text"]), ex["ys"][0], escape(ex["lines"][0]), f2(ex["x_text"]), ex["ys"][1], escape(ex["lines"][1])))
+    if interactive:
+        _, ang = domain_marker_at(domains, spans)
+        out.append(marker(1, C, C - 44))
+        out.append(marker(2, *pt((R_DOM_IN + R_DOM_OUT) / 2, ang)))
+        out.append(marker(3, *ex["mark"]))
+        out.append(marker(4, *pt(R_PRIVATE, MARK_PRIVATE)))
     return out, fams, packs
 
 
@@ -247,12 +350,50 @@ def colour_css(theme_index):
     return " ".join(".rd-%s{--rd:%s}" % (k, v[theme_index]) for k, v in COLOURS.items())
 
 
+def and_list(items):
+    items = list(items)
+    if len(items) < 2:
+        return "".join(items)
+    return "%s and %s" % (", ".join(items[:-1]), items[-1])
+
+
+def key_items(domains):
+    """The four entries of "How to read it", numbered as the markers on the
+    chart. Each states what the code draws, with the tree's numbers."""
+    fams, _ = totals(domains)
+    top = max(f["packs"] for d in domains for f in d["families"])
+    _, _, best = longest(domains)
+    fixed = allocate_full(domains)[1]
+    free = [escape(d["short"]) for d, f in zip(domains, fixed) if not f]
+    if not any(fixed):
+        arc = "Arc width: its share of the %d families." % fams
+    elif free:
+        arc = ("Arc width is mostly not a count: each arc fits its label, and only %s %s wider, by number of "
+               "families." % (and_list(free), "is" if len(free) == 1 else "are"))
+    else:
+        arc = "Arc width is not a count: each arc fits its label."
+    rings = and_list(fig.grouped(v) for v in scale_values(top))
+    return [
+        "<b>Center: the shared model.</b> Every format converts through it.",
+        "<b>Inner ring: a domain,</b> the color of its bars and its legend square. "
+        + arc,
+        "<b>A bar: one family,</b> largest first, clockwise. Length: its packs on a log scale, read against the "
+        "faint rings at %s. The longest: %s, %s pack%s." % (rings, escape(best["name"]), fig.grouped(best["packs"]),
+                                                             "" if best["packs"] == 1 else "s"),
+        "<b>Dashed ring: private overlays</b> plug in here; the same engines read them. None is drawn or counted.",
+    ]
+
+
 def site_block(domains):
     els, fams, packs = chart(domains, "rd", True)
     nd = len(domains)
+    top = max(f["packs"] for d in domains for f in d["families"])
+    _, _, best = longest(domains)
     desc = ("%s public formats in %d families and %d domains, drawn around the shared model: one bar per family, "
-            "its length the logarithm of its pack count, coloured by domain. A dashed outer ring stands for private "
-            "overlays." % (fig.grouped(packs), fams, nd))
+            "its length the logarithm of its pack count, read against faint rings at %s packs, coloured by domain. "
+            "The longest bar is %s, %s packs. A dashed outer ring stands for private overlays."
+            % (fig.grouped(packs), fams, nd, and_list(fig.grouped(v) for v in scale_values(top)),
+               best["name"], fig.grouped(best["packs"])))
     lines = [START,
              '<section id="catalog" class="catalog" aria-labelledby="h-catalog">',
              '  <div class="wrap">',
@@ -260,6 +401,13 @@ def site_block(domains):
              '    <h2 id="h-catalog">%s formats in %d families, one shared model</h2>' % (fig.grouped(packs), fams),
              '    <div class="radial">',
              '      <figure class="radial-fig">',
+             '        <div class="radial-key">',
+             '          <p class="radial-key-h" id="rd-key-h">How to read it</p>',
+             '          <ol class="radial-key-list" aria-labelledby="rd-key-h">']
+    for n, text in enumerate(key_items(domains), 1):
+        lines.append('            <li><span class="rk-n" aria-hidden="true">%d</span><span>%s</span></li>' % (n, text))
+    lines += ['          </ol>',
+             '        </div>',
              '        <div class="radial-chart">',
              '          <svg viewBox="0 0 %d %d" role="group" aria-labelledby="rd-title" aria-describedby="rd-desc" id="rd-svg">' % (VIEW, VIEW),
              '            <title id="rd-title">Every public format family, by domain</title>',
@@ -269,9 +417,8 @@ def site_block(domains):
     lines += ['          </svg>',
               '          <div class="radial-tip" id="rd-tip" role="status" aria-live="polite" hidden></div>',
               '        </div>',
-              '        <figcaption>One bar per family of formats, its length the logarithm of its number of packs. '
-              'Hover over a bar, or focus the chart and use the arrow keys, for its name and count. '
-              '<span class="radial-private">The dashed outer ring: private overlays plug in here: the same engines read them.</span></figcaption>',
+              '        <figcaption>Hover over a bar, or focus the chart and use the arrow keys, for its family and '
+              'number of packs. The table under the chart lists every family.</figcaption>',
               '      </figure>',
               '      <ul class="radial-legend">']
     for d in domains:
@@ -323,11 +470,15 @@ def standalone(domains, theme):
            "  .rd-bar{fill:var(--rd)}",
            "  .rd-private{fill:none;stroke:%s;stroke-width:1.5;stroke-dasharray:6 6}" % c["quiet"],
            "  .rd-sw{fill:var(--rd)}",
+           "  .rd-scale{fill:none;stroke:%s;stroke-width:1}" % c["rule"],
+           "  .rd-scale-t{font-size:%dpx;fill:%s;paint-order:stroke;stroke:%s;stroke-width:4px;stroke-linejoin:round}" % (SCALE_SIZE, c["quiet"], c["bg"]),
+           "  .rd-lead{fill:none;stroke:%s;stroke-width:1}" % c["ink"],
+           "  .rd-ex-t{font-size:%dpx} .rd-ex-name{font-weight:700}" % EX_SIZE,
            "  %s" % colour_css(ti),
            "</style>",
            '<rect x="0" y="0" width="%d" height="%d" class="rd-bg"/>' % (VIEW, height),
            '<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">%s</text>' % escape(title),
-           '<text x="20" y="50" class="rd-t rd-q" font-size="13">Bar length: the logarithm of the pack count; colour: the domain.</text>',
+           '<text x="20" y="50" class="rd-t rd-q" font-size="13">Bar length: the pack count on a log scale, read against the faint rings; colour: the domain.</text>',
            '<g transform="translate(0 %d)">' % head]
     out += els
     out.append("</g>")

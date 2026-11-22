@@ -67,7 +67,8 @@ it is done.
 - the catalog chart, the page's first section (one bar per format family
   around the shared model), is written by `python3 -I tools/catalog-radial.py
   --site` from `tools/catalog-families/` and `packs/` on every build, as the
-  counts are; a pack with no family stops the build. The counts pull request
+  counts are, with its "How to read it" key, the numbered markers drawn on
+  the chart to match it, the faint log-scale rings and the longest bar named; a pack with no family stops the build. The counts pull request
   commits it (`--check` there); `assets/radial.mjs` adds the hover and
   keyboard layer, and the chart is complete without it;
 - the two outputs shown near the top of the page must be what `goat-xf` prints

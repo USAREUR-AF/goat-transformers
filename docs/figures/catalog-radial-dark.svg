@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 922" width="100%" role="img" aria-labelledby="t d">
-<title id="t">Every public format, by family: 206 families, 4,178 formats</title>
+<title id="t">Every public format, by family: 230 families, 4,248 formats</title>
 <desc id="d">One bar per family around the shared model, its length the logarithm of its pack count, coloured by domain. A dashed outer ring stands for private overlays, which the same engines read.</desc>
 <style>
   .rd-bg{fill:#0b131a} .rd-t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"Liberation Sans","DejaVu Sans",sans-serif;fill:#e2e9ee}
@@ -9,277 +9,313 @@
   .rd-bar{fill:var(--rd)}
   .rd-private{fill:none;stroke:#9fb0bb;stroke-width:1.5;stroke-dasharray:6 6}
   .rd-sw{fill:var(--rd)}
+  .rd-scale{fill:none;stroke:#2b3a46;stroke-width:1}
+  .rd-scale-t{font-size:12px;fill:#9fb0bb;paint-order:stroke;stroke:#0b131a;stroke-width:4px;stroke-linejoin:round}
+  .rd-lead{fill:none;stroke:#e2e9ee;stroke-width:1}
+  .rd-ex-t{font-size:13px} .rd-ex-name{font-weight:700}
   .rd-air{--rd:#3987e5} .rd-land{--rd:#d95926} .rd-sea{--rd:#199e70} .rd-space{--rd:#9085e9} .rd-uncrewed{--rd:#e66767} .rd-c2{--rd:#6d8ff0} .rd-sensors{--rd:#0ca30c} .rd-transport{--rd:#d55181} .rd-iot{--rd:#c98500} .rd-networks{--rd:#1fa08f} .rd-maps{--rd:#c77a3a}
 </style>
 <rect x="0" y="0" width="680" height="922" class="rd-bg"/>
-<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">Every public format, by family: 206 families, 4,178 formats</text>
-<text x="20" y="50" class="rd-t rd-q" font-size="13">Bar length: the logarithm of the pack count; colour: the domain.</text>
+<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">Every public format, by family: 230 families, 4,248 formats</text>
+<text x="20" y="50" class="rd-t rd-q" font-size="13">Bar length: the pack count on a log scale, read against the faint rings; colour: the domain.</text>
 <g transform="translate(0 64)">
 <circle cx="340" cy="340" r="318" class="rd-private"/>
+<circle cx="340" cy="340" r="156" class="rd-scale"/>
+<circle cx="340" cy="340" r="212.83" class="rd-scale"/>
+<circle cx="340" cy="340" r="269.65" class="rd-scale"/>
 <circle cx="340" cy="340" r="100" class="rd-core"/>
 <text x="340" y="336" class="rd-t rd-core-t" text-anchor="middle">shared</text>
 <text x="340" y="356" class="rd-t rd-core-t" text-anchor="middle">model</text>
-<path d="M342.48 198.02A142 142 0 0 1 379.74 203.68L370.23 236.32A108 108 0 0 0 341.88 232.02Z" class="rd-dom rd-air"/>
-<path id="rd-dark-l0" d="M342.13 218.02A122 122 0 0 1 374.15 222.88" fill="none"/>
+<path d="M348.67 198.26A142 142 0 0 1 385.65 205.54L374.72 237.73A108 108 0 0 0 346.59 232.2Z" class="rd-dom rd-air"/>
+<path id="rd-dark-l0" d="M347.45 218.23A122 122 0 0 1 379.22 224.48" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l0" startOffset="50%" text-anchor="middle">Air</textPath></text>
-<path d="M344.94 100.11A239 239 0 0 1 356.2 100.61L349.99 192.34A148 148 0 0 0 343.05 192.03Z" class="rd-bar rd-air"><title>ASTERIX: 30 packs (Air)</title></path>
-<path d="M352.77 167.37A173 173 0 0 1 360.86 168.16L357.84 193.08A148 148 0 0 0 350.92 192.4Z" class="rd-bar rd-air"><title>ADS-B: 2 packs (Air)</title></path>
-<path d="M361.94 168.29A173 173 0 0 1 369.98 169.51L365.63 194.24A148 148 0 0 0 358.76 193.19Z" class="rd-bar rd-air"><title>OpenSky Network REST API: 2 packs (Air)</title></path>
-<path d="M371.05 169.7A173 173 0 0 1 379.01 171.35L373.35 195.81A148 148 0 0 0 366.54 194.4Z" class="rd-bar rd-air"><title>readsb JSON: 2 packs (Air)</title></path>
-<path d="M376.11 188.24A156 156 0 0 1 383.19 190.1L380.98 197.79A148 148 0 0 0 374.26 196.02Z" class="rd-bar rd-air"><title>GDL 90: 1 pack (Air)</title></path>
-<path d="M384.48 205.15A142 142 0 0 1 431.76 231.63L409.79 257.58A108 108 0 0 0 373.83 237.43Z" class="rd-dom rd-land"/>
-<path id="rd-dark-l1" d="M378.21 224.14A122 122 0 0 1 418.84 246.9" fill="none"/>
+<path d="M355.4 100.56A239 239 0 0 1 366.62 101.54L356.42 192.91A148 148 0 0 0 349.5 192.31Z" class="rd-bar rd-air"><title>ASTERIX: 30 packs (Air)</title></path>
+<path d="M360.29 168.09A173 173 0 0 1 368.34 169.23L364.23 194A148 148 0 0 0 357.35 193.02Z" class="rd-bar rd-air"><title>ADS-B: 2 packs (Air)</title></path>
+<path d="M369.41 169.41A173 173 0 0 1 377.38 170.98L371.96 195.49A148 148 0 0 0 365.14 194.15Z" class="rd-bar rd-air"><title>OpenSky Network REST API: 2 packs (Air)</title></path>
+<path d="M378.45 171.22A173 173 0 0 1 386.33 173.21L379.61 197.4A148 148 0 0 0 372.87 195.7Z" class="rd-bar rd-air"><title>readsb JSON: 2 packs (Air)</title></path>
+<path d="M382.69 189.96A156 156 0 0 1 389.69 192.13L387.14 199.71A148 148 0 0 0 380.5 197.65Z" class="rd-bar rd-air"><title>GDL 90: 1 pack (Air)</title></path>
+<path d="M390.32 207.21A142 142 0 0 1 436.4 235.74L413.32 260.7A108 108 0 0 0 378.27 239.01Z" class="rd-dom rd-land"/>
+<path id="rd-dark-l1" d="M383.23 225.92A122 122 0 0 1 422.83 250.42" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l1" startOffset="50%" text-anchor="middle">Land</textPath></text>
-<path d="M427.19 78.4A275 275 0 0 1 432.23 80.14L389.5 200.52A148 148 0 0 0 386.8 199.59Z" class="rd-bar rd-land"><title>OCPP 2.0.1: 128 packs (Land vehicles)</title></path>
-<path d="M432.89 83.41A272 272 0 0 1 437.83 85.25L393.06 201.84A148 148 0 0 0 390.38 200.84Z" class="rd-bar rd-land"><title>Waymo Open Dataset: 114 packs (Land vehicles)</title></path>
-<path d="M437.4 91.05A267 267 0 0 1 442.19 92.98L396.58 203.24A148 148 0 0 0 393.92 202.17Z" class="rd-bar rd-land"><title>CAN DBC (opendbc): 91 packs (Land vehicles)</title></path>
-<path d="M442.26 97.13A263 263 0 0 1 446.94 99.15L400.06 204.73A148 148 0 0 0 397.43 203.6Z" class="rd-bar rd-land"><title>OCPP 1.6: 78 packs (Land vehicles)</title></path>
-<path d="M443.52 110.75A251 251 0 0 1 447.93 112.79L403.5 206.32A148 148 0 0 0 400.91 205.11Z" class="rd-bar rd-land"><title>Baidu Apollo: 48 packs (Land vehicles)</title></path>
-<path d="M445.33 121.8A242 242 0 0 1 449.53 123.88L406.9 207.98A148 148 0 0 0 404.34 206.72Z" class="rd-bar rd-land"><title>Eclipse uProtocol: 33 packs (Land vehicles)</title></path>
-<path d="M446.3 133.47A232 232 0 0 1 450.27 135.56L410.26 209.74A148 148 0 0 0 407.73 208.41Z" class="rd-bar rd-land"><title>AgGateway ADAPT: 22 packs (Land vehicles)</title></path>
-<path d="M445.32 147.64A219 219 0 0 1 449.02 149.71L413.57 211.58A148 148 0 0 0 411.08 210.18Z" class="rd-bar rd-land"><title>Tier IV (ROS 2): 13 packs (Land vehicles)</title></path>
-<path d="M449.22 152.11A217 217 0 0 1 452.83 154.26L416.84 213.51A148 148 0 0 0 414.38 212.05Z" class="rd-bar rd-land"><title>ASAM OSI (Open Simulation Interface): 12 packs (Land vehicles)</title></path>
-<path d="M452.86 156.8A215 215 0 0 1 456.38 159.01L420.05 215.52A148 148 0 0 0 417.63 213.99Z" class="rd-bar rd-land"><title>Autoware (ROS 2): 11 packs (Land vehicles)</title></path>
-<path d="M453.23 166.33A207 207 0 0 1 456.56 168.55L423.21 217.61A148 148 0 0 0 420.83 216.02Z" class="rd-bar rd-land"><title>Eclipse KUKSA.val: 8 packs (Land vehicles)</title></path>
-<path d="M451.05 178.84A195 195 0 0 1 454.15 181.01L426.31 219.78A148 148 0 0 0 423.98 218.13Z" class="rd-bar rd-land"><title>Tesla Fleet Telemetry: 5 packs (Land vehicles)</title></path>
-<path d="M431.77 213.85A156 156 0 0 1 434.19 215.65L429.36 222.03A148 148 0 0 0 427.07 220.32Z" class="rd-bar rd-land"><title>AgOpenGPS: 1 pack (Land vehicles)</title></path>
-<path d="M434.97 216.24A156 156 0 0 1 437.35 218.1L432.36 224.35A148 148 0 0 0 430.1 222.59Z" class="rd-bar rd-land"><title>COVESA VSS: 1 pack (Land vehicles)</title></path>
-<path d="M438.11 218.71A156 156 0 0 1 440.44 220.63L435.29 226.75A148 148 0 0 0 433.08 224.93Z" class="rd-bar rd-land"><title>OpenXC: 1 pack (Land vehicles)</title></path>
-<path d="M435.49 234.9A142 142 0 0 1 463.32 269.59L433.79 286.45A108 108 0 0 0 412.63 260.07Z" class="rd-dom rd-sea"/>
-<path id="rd-dark-l2" d="M422.04 249.7A122 122 0 0 1 445.95 279.51" fill="none"/>
+<path d="M438.52 82.45A275 275 0 0 1 442.71 84.1L395.12 202.65A148 148 0 0 0 392.88 201.77Z" class="rd-bar rd-land"><title>OCPP 2.0.1: 128 packs (Land vehicles)</title></path>
+<path d="M443.23 87.39A272 272 0 0 1 447.34 89.11L398.21 203.93A148 148 0 0 0 395.99 203Z" class="rd-bar rd-land"><title>Waymo Open Dataset: 114 packs (Land vehicles)</title></path>
+<path d="M446.69 94.89A267 267 0 0 1 450.67 96.66L401.27 205.28A148 148 0 0 0 399.07 204.3Z" class="rd-bar rd-land"><title>CAN DBC (opendbc): 91 packs (Land vehicles)</title></path>
+<path d="M450.6 100.81A263 263 0 0 1 454.49 102.65L404.3 206.7A148 148 0 0 0 402.12 205.67Z" class="rd-bar rd-land"><title>OCPP 1.6: 78 packs (Land vehicles)</title></path>
+<path d="M450.7 114.13A251 251 0 0 1 454.37 115.97L407.29 208.18A148 148 0 0 0 405.14 207.1Z" class="rd-bar rd-land"><title>Baidu Apollo: 48 packs (Land vehicles)</title></path>
+<path d="M451.52 124.9A242 242 0 0 1 455.01 126.75L410.25 209.74A148 148 0 0 0 408.12 208.61Z" class="rd-bar rd-land"><title>Eclipse uProtocol: 33 packs (Land vehicles)</title></path>
+<path d="M451.55 136.25A232 232 0 0 1 454.85 138.1L413.18 211.36A148 148 0 0 0 411.07 210.18Z" class="rd-bar rd-land"><title>AgGateway ADAPT: 22 packs (Land vehicles)</title></path>
+<path d="M449.63 150.07A219 219 0 0 1 452.71 151.88L416.07 213.04A148 148 0 0 0 413.99 211.82Z" class="rd-bar rd-land"><title>Tier IV (ROS 2): 13 packs (Land vehicles)</title></path>
+<path d="M452.87 154.28A217 217 0 0 1 455.88 156.15L418.91 214.79A148 148 0 0 0 416.86 213.52Z" class="rd-bar rd-land"><title>ASAM OSI (Open Simulation Interface): 12 packs (Land vehicles)</title></path>
+<path d="M455.88 158.69A215 215 0 0 1 458.82 160.6L421.72 216.61A148 148 0 0 0 419.7 215.29Z" class="rd-bar rd-land"><title>Autoware (ROS 2): 11 packs (Land vehicles)</title></path>
+<path d="M455.56 167.88A207 207 0 0 1 458.35 169.78L424.49 218.49A148 148 0 0 0 422.5 217.12Z" class="rd-bar rd-land"><title>Eclipse KUKSA.val: 8 packs (Land vehicles)</title></path>
+<path d="M452.74 180.01A195 195 0 0 1 455.33 181.87L427.21 220.43A148 148 0 0 0 425.25 219.02Z" class="rd-bar rd-land"><title>Tesla Fleet Telemetry: 5 packs (Land vehicles)</title></path>
+<path d="M448.83 192.74A183 183 0 0 1 451.22 194.53L429.89 222.43A148 148 0 0 0 427.96 220.98Z" class="rd-bar rd-land"><title>Vehicle diagnostics (ISO-TP, UDS, DoIP): 3 packs (Land vehicles)</title></path>
+<path d="M435.53 216.67A156 156 0 0 1 437.53 218.24L432.52 224.49A148 148 0 0 0 430.63 222.99Z" class="rd-bar rd-land"><title>AgOpenGPS: 1 pack (Land vehicles)</title></path>
+<path d="M438.29 218.86A156 156 0 0 1 440.25 220.48L435.11 226.61A148 148 0 0 0 433.25 225.07Z" class="rd-bar rd-land"><title>COVESA VSS: 1 pack (Land vehicles)</title></path>
+<path d="M441 221.11A156 156 0 0 1 442.93 222.77L437.65 228.78A148 148 0 0 0 435.82 227.21Z" class="rd-bar rd-land"><title>OpenXC: 1 pack (Land vehicles)</title></path>
+<path d="M443.66 223.42A156 156 0 0 1 445.55 225.13L440.13 231.02A148 148 0 0 0 438.34 229.4Z" class="rd-bar rd-land"><title>SAE J1939 frames: 1 pack (Land vehicles)</title></path>
+<path d="M439.98 239.17A142 142 0 0 1 466.27 275.04L436.04 290.59A108 108 0 0 0 416.04 263.31Z" class="rd-dom rd-sea"/>
+<path id="rd-dark-l2" d="M425.9 253.37A122 122 0 0 1 448.49 284.19" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l2" startOffset="50%" text-anchor="middle">Sea</textPath></text>
-<path d="M472.07 195.56A195 195 0 0 1 474.63 197.94L441.81 232.58A148 148 0 0 0 439.87 230.77Z" class="rd-bar rd-sea"><title>Argo floats (GDAC index, metadata JSON): 5 packs (Sea)</title></path>
-<path d="M471.71 202.77A190 190 0 0 1 474.15 205.15L444.38 235.07A148 148 0 0 0 442.48 233.22Z" class="rd-bar rd-sea"><title>Maritime routes and NMEA extras (RTZ, TAG block, PUBX, AIS area notice): 4 packs (Sea)</title></path>
-<path d="M474.99 205.99A190 190 0 0 1 477.37 208.43L446.88 237.63A148 148 0 0 0 445.03 235.73Z" class="rd-bar rd-sea"><title>NGA Maritime Safety Information: 4 packs (Sea)</title></path>
-<path d="M473.04 214.17A183 183 0 0 1 475.27 216.58L449.33 240.24A148 148 0 0 0 447.53 238.3Z" class="rd-bar rd-sea"><title>Signal K: 3 packs (Sea)</title></path>
-<path d="M468.61 224.13A173 173 0 0 1 470.66 226.45L451.71 242.92A148 148 0 0 0 449.95 240.93Z" class="rd-bar rd-sea"><title>AIS: 2 packs (Sea)</title></path>
-<path d="M471.37 227.27A173 173 0 0 1 473.37 229.64L454.03 245.65A148 148 0 0 0 452.32 243.62Z" class="rd-bar rd-sea"><title>ERDDAP tabledap: 2 packs (Sea)</title></path>
-<path d="M474.06 230.48A173 173 0 0 1 476 232.9L456.27 248.43A148 148 0 0 0 454.62 246.37Z" class="rd-bar rd-sea"><title>NMEA 2000: 2 packs (Sea)</title></path>
-<path d="M463.16 244.26A156 156 0 0 1 464.86 246.48L458.46 251.27A148 148 0 0 0 456.85 249.17Z" class="rd-bar rd-sea"><title>AIS binary applications of variable length: 1 pack (Sea)</title></path>
-<path d="M465.44 247.26A156 156 0 0 1 467.08 249.53L460.57 254.17A148 148 0 0 0 459.01 252.02Z" class="rd-bar rd-sea"><title>AIS regional binary messages (St. Lawrence Seaway, USCG PAWSS): 1 pack (Sea)</title></path>
-<path d="M467.65 250.33A156 156 0 0 1 469.24 252.63L462.61 257.11A148 148 0 0 0 461.1 254.92Z" class="rd-bar rd-sea"><title>aisstream.io: 1 pack (Sea)</title></path>
-<path d="M469.78 253.44A156 156 0 0 1 471.31 255.78L464.58 260.1A148 148 0 0 0 463.13 257.88Z" class="rd-bar rd-sea"><title>IOOS glider DAC: 1 pack (Sea)</title></path>
-<path d="M471.84 256.61A156 156 0 0 1 473.31 258.98L466.47 263.13A148 148 0 0 0 465.08 260.88Z" class="rd-bar rd-sea"><title>NDBC realtime2 buoy data: 1 pack (Sea)</title></path>
-<path d="M473.82 259.82A156 156 0 0 1 475.23 262.23L468.3 266.22A148 148 0 0 0 466.95 263.93Z" class="rd-bar rd-sea"><title>NMEA 0183: 1 pack (Sea)</title></path>
-<path d="M465.7 273.94A142 142 0 0 1 481.92 335.33L447.94 336.45A108 108 0 0 0 435.6 289.76Z" class="rd-dom rd-space"/>
-<path id="rd-dark-l3" d="M447.99 283.25A122 122 0 0 1 461.93 335.99" fill="none"/>
+<path d="M478.24 201.45A195 195 0 0 1 480.47 203.71L446.22 236.94A148 148 0 0 0 444.54 235.23Z" class="rd-bar rd-sea"><title>Argo floats (GDAC index, metadata JSON): 5 packs (Sea)</title></path>
+<path d="M477.34 208.4A190 190 0 0 1 479.46 210.64L448.51 239.35A148 148 0 0 0 446.86 237.61Z" class="rd-bar rd-sea"><title>Maritime routes and NMEA extras (RTZ, TAG block, PUBX, AIS area notice): 4 packs (Sea)</title></path>
+<path d="M480.27 211.52A190 190 0 0 1 482.33 213.81L450.74 241.81A148 148 0 0 0 449.14 240.03Z" class="rd-bar rd-sea"><title>NGA Maritime Safety Information: 4 packs (Sea)</title></path>
+<path d="M477.77 219.38A183 183 0 0 1 479.71 221.63L452.92 244.33A148 148 0 0 0 451.35 242.51Z" class="rd-bar rd-sea"><title>Signal K: 3 packs (Sea)</title></path>
+<path d="M472.77 228.93A173 173 0 0 1 474.55 231.09L455.04 246.89A148 148 0 0 0 453.52 245.04Z" class="rd-bar rd-sea"><title>AIS: 2 packs (Sea)</title></path>
+<path d="M475.23 231.94A173 173 0 0 1 476.97 234.14L457.1 249.49A148 148 0 0 0 455.62 247.61Z" class="rd-bar rd-sea"><title>ERDDAP tabledap: 2 packs (Sea)</title></path>
+<path d="M477.63 235A173 173 0 0 1 479.31 237.24L459.1 252.15A148 148 0 0 0 457.67 250.23Z" class="rd-bar rd-sea"><title>NMEA 2000: 2 packs (Sea)</title></path>
+<path d="M466.12 248.19A156 156 0 0 1 467.59 250.24L461.05 254.84A148 148 0 0 0 459.65 252.9Z" class="rd-bar rd-sea"><title>AIS binary applications of variable length: 1 pack (Sea)</title></path>
+<path d="M468.15 251.04A156 156 0 0 1 469.57 253.13L462.93 257.58A148 148 0 0 0 461.58 255.61Z" class="rd-bar rd-sea"><title>AIS regional binary messages (St. Lawrence Seaway, USCG PAWSS): 1 pack (Sea)</title></path>
+<path d="M470.12 253.95A156 156 0 0 1 471.49 256.06L464.75 260.37A148 148 0 0 0 463.45 258.36Z" class="rd-bar rd-sea"><title>aisstream.io: 1 pack (Sea)</title></path>
+<path d="M472.02 256.89A156 156 0 0 1 473.35 259.04L466.51 263.19A148 148 0 0 0 465.25 261.15Z" class="rd-bar rd-sea"><title>IOOS glider DAC: 1 pack (Sea)</title></path>
+<path d="M473.85 259.88A156 156 0 0 1 475.13 262.05L468.2 266.05A148 148 0 0 0 466.99 263.99Z" class="rd-bar rd-sea"><title>NDBC realtime2 buoy data: 1 pack (Sea)</title></path>
+<path d="M475.62 262.9A156 156 0 0 1 476.85 265.11L469.83 268.95A148 148 0 0 0 468.66 266.86Z" class="rd-bar rd-sea"><title>NMEA 0183: 1 pack (Sea)</title></path>
+<path d="M477.32 265.97A156 156 0 0 1 478.49 268.2L471.39 271.88A148 148 0 0 0 470.27 269.77Z" class="rd-bar rd-sea"><title>Raymarine SeaTalk 1: 1 pack (Sea)</title></path>
+<path d="M468.46 279.49A142 142 0 0 1 481.99 341.53L447.99 341.16A108 108 0 0 0 437.7 293.98Z" class="rd-dom rd-space"/>
+<path id="rd-dark-l3" d="M450.37 288.01A122 122 0 0 1 461.99 341.31" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l3" startOffset="50%" text-anchor="middle">Space</textPath></text>
-<path d="M602.98 202.85A296 296 0 0 1 611.8 221.27L475.62 280.76A148 148 0 0 0 471.23 271.56Z" class="rd-bar rd-space"><title>Space Data Standards: 298 packs (Space)</title></path>
-<path d="M552.39 248.81A231 231 0 0 1 558.16 263.64L479.69 291.11A148 148 0 0 0 475.99 281.61Z" class="rd-bar rd-space"><title>NASA GCN notices: 21 packs (Space)</title></path>
-<path d="M550.78 267.71A222 222 0 0 1 555.26 282.39L482.97 301.73A148 148 0 0 0 480 291.99Z" class="rd-bar rd-space"><title>CCSDS frames and packets: 15 packs (Space)</title></path>
-<path d="M545.93 286.27A212 212 0 0 1 549.14 300.57L485.44 312.58A148 148 0 0 0 483.21 302.63Z" class="rd-bar rd-space"><title>NASA cFE: 10 packs (Space)</title></path>
-<path d="M510.31 309A173 173 0 0 1 512.04 320.79L487.09 323.58A148 148 0 0 0 485.61 313.49Z" class="rd-bar rd-space"><title>CubeSat Space Protocol: 2 packs (Space)</title></path>
-<path d="M495.14 323.66A156 156 0 0 1 495.9 334.38L487.9 334.67A148 148 0 0 0 487.19 324.5Z" class="rd-bar rd-space"><title>CCSDS NDM/XML: 1 pack (Space)</title></path>
-<path d="M482 340.29A142 142 0 0 1 449.98 429.83L423.65 408.32A108 108 0 0 0 448 340.22Z" class="rd-dom rd-uncrewed"/>
-<path id="rd-dark-l4" d="M442.23 423.5A132 132 0 0 0 472 340.27" fill="none"/>
+<path d="M608.72 214.45A296 296 0 0 1 613.96 226.34L476.7 283.29A148 148 0 0 0 474.09 277.35Z" class="rd-bar rd-space"><title>Space Data Standards: 298 packs (Space)</title></path>
+<path d="M554.05 252.77A231 231 0 0 1 557.66 262.23L479.37 290.2A148 148 0 0 0 477.06 284.15Z" class="rd-bar rd-space"><title>NASA GCN notices: 21 packs (Space)</title></path>
+<path d="M550.31 266.35A222 222 0 0 1 553.33 275.63L481.69 297.25A148 148 0 0 0 479.68 291.08Z" class="rd-bar rd-space"><title>CCSDS frames and packets: 15 packs (Space)</title></path>
+<path d="M546.39 279.14A215 215 0 0 1 548.86 288.24L483.65 304.4A148 148 0 0 0 481.96 298.14Z" class="rd-bar rd-space"><title>NASA DONKI: 11 packs (Space)</title></path>
+<path d="M546.89 290.1A212 212 0 0 1 548.88 299.21L485.26 311.64A148 148 0 0 0 483.87 305.3Z" class="rd-bar rd-space"><title>NASA cFE: 10 packs (Space)</title></path>
+<path d="M526.91 304.72A190 190 0 0 1 528.28 312.94L486.5 318.95A148 148 0 0 0 485.43 312.55Z" class="rd-bar rd-space"><title>NASA NeoWs: 4 packs (Space)</title></path>
+<path d="M521.41 315.09A183 183 0 0 1 522.33 323.07L487.37 326.31A148 148 0 0 0 486.62 319.87Z" class="rd-bar rd-space"><title>CelesTrak GP data and TLE: 3 packs (Space)</title></path>
+<path d="M512.46 325.07A173 173 0 0 1 512.95 332.64L487.87 333.71A148 148 0 0 0 487.45 327.24Z" class="rd-bar rd-space"><title>CubeSat Space Protocol: 2 packs (Space)</title></path>
+<path d="M495.9 334.35A156 156 0 0 1 496 341.19L488 341.13A148 148 0 0 0 487.9 334.64Z" class="rd-bar rd-space"><title>CCSDS NDM/XML: 1 pack (Space)</title></path>
+<path d="M481.85 346.48A142 142 0 0 1 445.96 434.54L420.59 411.9A108 108 0 0 0 447.89 344.93Z" class="rd-dom rd-uncrewed"/>
+<path id="rd-dark-l4" d="M438.49 427.88A132 132 0 0 0 471.86 346.02" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l4" startOffset="50%" text-anchor="middle">Uncrewed</textPath></text>
-<path d="M640 341.55A300 300 0 0 1 639.8 351.04L487.9 345.45A148 148 0 0 0 488 340.76Z" class="rd-bar rd-uncrewed"><title>ArduPilot DataFlash log: 342 packs (Uncrewed systems and robots)</title></path>
-<path d="M636.57 352.79A296 296 0 0 1 636.02 362.17L487.59 351.05A148 148 0 0 0 487.86 346.38Z" class="rd-bar rd-uncrewed"><title>PX4 ULog: 301 packs (Uncrewed systems and robots)</title></path>
-<path d="M631.31 363.66A292 292 0 0 1 630.41 372.86L487.06 356.64A148 148 0 0 0 487.51 351.98Z" class="rd-bar rd-uncrewed"><title>Cyphal (UAVCAN v1): 250 packs (Uncrewed systems and robots)</title></path>
-<path d="M626.96 374.3A288 288 0 0 1 625.73 383.37L486.32 362.21A148 148 0 0 0 486.95 357.57Z" class="rd-bar rd-uncrewed"><title>Gazebo messages (gz-msgs): 219 packs (Uncrewed systems and robots)</title></path>
-<path d="M613.29 383.24A276 276 0 0 1 611.79 391.86L485.38 367.74A148 148 0 0 0 486.18 363.13Z" class="rd-bar rd-uncrewed"><title>DroneCAN (UAVCAN v0): 133 packs (Uncrewed systems and robots)</title></path>
-<path d="M607.51 392.79A272 272 0 0 1 605.71 401.23L484.22 373.24A148 148 0 0 0 485.2 368.65Z" class="rd-bar rd-uncrewed"><title>MAVSDK (gRPC protobuf): 113 packs (Uncrewed systems and robots)</title></path>
-<path d="M590.9 399.48A257 257 0 0 1 588.89 407.39L482.86 378.68A148 148 0 0 0 484.01 374.14Z" class="rd-bar rd-uncrewed"><title>ROS 2 interface packages: 62 packs (Uncrewed systems and robots)</title></path>
-<path d="M582.38 407.27A251 251 0 0 1 580.13 414.9L481.29 384.07A148 148 0 0 0 482.61 379.58Z" class="rd-bar rd-uncrewed"><title>Foxglove: 48 packs (Uncrewed systems and robots)</title></path>
-<path d="M578.65 416.09A250 250 0 0 1 576.12 423.61L479.51 389.4A148 148 0 0 0 481.01 384.96Z" class="rd-bar rd-uncrewed"><title>UTM APIs (ASTM F3411 network RID, F3548): 46 packs (Uncrewed systems and robots)</title></path>
-<path d="M574.56 424.72A249 249 0 0 1 571.76 432.1L477.54 394.65A148 148 0 0 0 479.2 390.27Z" class="rd-bar rd-uncrewed"><title>Parrot ARSDK: 44 packs (Uncrewed systems and robots)</title></path>
-<path d="M568.42 432.43A246 246 0 0 1 565.38 439.62L475.37 399.83A148 148 0 0 0 477.19 395.52Z" class="rd-bar rd-uncrewed"><title>Parrot ARSDK protobuf: 39 packs (Uncrewed systems and robots)</title></path>
-<path d="M541.69 430.66A221 221 0 0 1 538.72 437L473 404.92A148 148 0 0 0 474.99 400.68Z" class="rd-bar rd-uncrewed"><title>MAVLink 2: 14 packs (Uncrewed systems and robots)</title></path>
-<path d="M536.47 437.44A219 219 0 0 1 533.29 443.61L470.44 409.92A148 148 0 0 0 472.59 405.76Z" class="rd-bar rd-uncrewed"><title>Open-RMF (ROS 2): 13 packs (Uncrewed systems and robots)</title></path>
-<path d="M522.11 439.09A207 207 0 0 1 518.88 444.8L467.7 414.82A148 148 0 0 0 470 410.74Z" class="rd-bar rd-uncrewed"><title>VDA 5050 mobile robot interface: 8 packs (Uncrewed systems and robots)</title></path>
-<path d="M503.51 437.19A190 190 0 0 1 500.35 442.31L464.77 419.61A148 148 0 0 0 467.22 415.62Z" class="rd-bar rd-uncrewed"><title>RC and small-UAS telemetry: 4 packs (Uncrewed systems and robots)</title></path>
-<path d="M485.34 434.03A173 173 0 0 1 482.3 438.58L461.66 424.28A148 148 0 0 0 464.26 420.39Z" class="rd-bar rd-uncrewed"><title>Remote ID (ASTM F3411): 2 packs (Uncrewed systems and robots)</title></path>
-<path d="M467.67 429.64A156 156 0 0 1 464.77 433.64L458.37 428.83A148 148 0 0 0 461.13 425.04Z" class="rd-bar rd-uncrewed"><title>DRIP (RFC 9575): 1 pack (Uncrewed systems and robots)</title></path>
-<path d="M464.18 434.42A156 156 0 0 1 461.13 438.3L454.92 433.26A148 148 0 0 0 457.81 429.58Z" class="rd-bar rd-uncrewed"><title>MassRobotics AMR interoperability: 1 pack (Uncrewed systems and robots)</title></path>
-<path d="M446.78 433.61A142 142 0 0 1 420.6 456.91L401.3 428.92A108 108 0 0 0 421.21 411.2Z" class="rd-dom rd-c2"/>
-<path id="rd-dark-l5" d="M414.92 448.68A132 132 0 0 0 439.26 427.02" fill="none"/>
+<path d="M639.64 354.63A300 300 0 0 1 639.03 364.11L487.52 351.89A148 148 0 0 0 487.82 347.22Z" class="rd-bar rd-uncrewed"><title>ArduPilot DataFlash log: 342 packs (Uncrewed systems and robots)</title></path>
+<path d="M635.73 365.71A296 296 0 0 1 634.77 375.06L486.96 357.48A148 148 0 0 0 487.44 352.82Z" class="rd-bar rd-uncrewed"><title>PX4 ULog: 301 packs (Uncrewed systems and robots)</title></path>
+<path d="M630 376.34A292 292 0 0 1 628.7 385.5L486.2 363.04A148 148 0 0 0 486.85 358.4Z" class="rd-bar rd-uncrewed"><title>Cyphal (UAVCAN v1): 250 packs (Uncrewed systems and robots)</title></path>
+<path d="M625.19 386.79A288 288 0 0 1 623.56 395.79L485.22 368.57A148 148 0 0 0 486.05 363.96Z" class="rd-bar rd-uncrewed"><title>Gazebo messages (gz-msgs): 219 packs (Uncrewed systems and robots)</title></path>
+<path d="M611.15 395.12A276 276 0 0 1 609.27 403.67L484.03 374.06A148 148 0 0 0 485.03 369.48Z" class="rd-bar rd-uncrewed"><title>DroneCAN (UAVCAN v0): 133 packs (Uncrewed systems and robots)</title></path>
+<path d="M604.95 404.41A272 272 0 0 1 602.78 412.76L482.63 379.49A148 148 0 0 0 483.81 374.96Z" class="rd-bar rd-uncrewed"><title>MAVSDK (gRPC protobuf): 113 packs (Uncrewed systems and robots)</title></path>
+<path d="M588.07 410.37A257 257 0 0 1 585.72 418.19L481.03 384.88A148 148 0 0 0 482.38 380.39Z" class="rd-bar rd-uncrewed"><title>ROS 2 interface packages: 62 packs (Uncrewed systems and robots)</title></path>
+<path d="M579.21 417.77A251 251 0 0 1 576.63 425.31L479.23 390.19A148 148 0 0 0 480.75 385.76Z" class="rd-bar rd-uncrewed"><title>Foxglove: 48 packs (Uncrewed systems and robots)</title></path>
+<path d="M575.11 426.43A250 250 0 0 1 572.25 433.83L477.23 395.44A148 148 0 0 0 478.91 391.07Z" class="rd-bar rd-uncrewed"><title>UTM APIs (ASTM F3411 network RID, F3548): 46 packs (Uncrewed systems and robots)</title></path>
+<path d="M570.64 434.87A249 249 0 0 1 567.53 442.12L475.02 400.6A148 148 0 0 0 476.87 396.3Z" class="rd-bar rd-uncrewed"><title>Parrot ARSDK: 44 packs (Uncrewed systems and robots)</title></path>
+<path d="M564.17 442.31A246 246 0 0 1 560.82 449.35L472.63 405.68A148 148 0 0 0 474.64 401.45Z" class="rd-bar rd-uncrewed"><title>Parrot ARSDK protobuf: 39 packs (Uncrewed systems and robots)</title></path>
+<path d="M537.54 439.38A221 221 0 0 1 534.3 445.58L470.04 410.66A148 148 0 0 0 472.21 406.51Z" class="rd-bar rd-uncrewed"><title>MAVLink 2: 14 packs (Uncrewed systems and robots)</title></path>
+<path d="M532.03 445.91A219 219 0 0 1 528.58 451.94L467.27 415.54A148 148 0 0 0 469.6 411.48Z" class="rd-bar rd-uncrewed"><title>Open-RMF (ROS 2): 13 packs (Uncrewed systems and robots)</title></path>
+<path d="M517.61 446.94A207 207 0 0 1 514.14 452.51L464.31 420.32A148 148 0 0 0 466.79 416.34Z" class="rd-bar rd-uncrewed"><title>VDA 5050 mobile robot interface: 8 packs (Uncrewed systems and robots)</title></path>
+<path d="M499.12 444.23A190 190 0 0 1 495.74 449.21L461.18 424.97A148 148 0 0 0 463.8 421.1Z" class="rd-bar rd-uncrewed"><title>RC and small-UAS telemetry: 4 packs (Uncrewed systems and robots)</title></path>
+<path d="M481.1 440.28A173 173 0 0 1 477.86 444.69L457.87 429.51A148 148 0 0 0 460.64 425.73Z" class="rd-bar rd-uncrewed"><title>Remote ID (ASTM F3411): 2 packs (Uncrewed systems and robots)</title></path>
+<path d="M463.64 435.12A156 156 0 0 1 460.57 438.99L454.39 433.91A148 148 0 0 0 457.3 430.25Z" class="rd-bar rd-uncrewed"><title>DRIP (RFC 9575): 1 pack (Uncrewed systems and robots)</title></path>
+<path d="M459.95 439.75A156 156 0 0 1 456.73 443.49L450.74 438.18A148 148 0 0 0 453.79 434.63Z" class="rd-bar rd-uncrewed"><title>MassRobotics AMR interoperability: 1 pack (Uncrewed systems and robots)</title></path>
+<path d="M442.59 438.18A142 142 0 0 1 415.42 460.32L397.36 431.51A108 108 0 0 0 418.03 414.67Z" class="rd-dom rd-c2"/>
+<path id="rd-dark-l5" d="M410.11 451.84A132 132 0 0 0 435.37 431.26" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l5" startOffset="50%" text-anchor="middle">C2</textPath></text>
-<path d="M469.81 454.52A173 173 0 0 1 467.67 456.9L449.16 439.95A148 148 0 0 0 450.98 437.91Z" class="rd-bar rd-c2"><title>Cursor on Target: 2 packs (C2 and tactical)</title></path>
-<path d="M466.94 457.7A173 173 0 0 1 464.74 460.02L446.65 442.62A148 148 0 0 0 448.53 440.63Z" class="rd-bar rd-c2"><title>goat-processors outputs: 2 packs (C2 and tactical)</title></path>
-<path d="M463.98 460.8A173 173 0 0 1 461.73 463.07L444.08 445.22A148 148 0 0 0 446 443.28Z" class="rd-bar rd-c2"><title>UCI: 2 packs (C2 and tactical)</title></path>
-<path d="M449 451.6A156 156 0 0 1 446.93 453.59L441.44 447.77A148 148 0 0 0 443.41 445.88Z" class="rd-bar rd-c2"><title>A-GRA: 1 pack (C2 and tactical)</title></path>
-<path d="M446.21 454.26A156 156 0 0 1 444.08 456.2L438.74 450.24A148 148 0 0 0 440.76 448.4Z" class="rd-bar rd-c2"><title>C2SIM: 1 pack (C2 and tactical)</title></path>
-<path d="M443.35 456.85A156 156 0 0 1 441.17 458.74L435.99 452.65A148 148 0 0 0 438.05 450.86Z" class="rd-bar rd-c2"><title>Canonical Track v2: 1 pack (C2 and tactical)</title></path>
-<path d="M440.43 459.38A156 156 0 0 1 438.21 461.21L433.17 454.99A148 148 0 0 0 435.28 453.25Z" class="rd-bar rd-c2"><title>DIS (IEEE 1278.1): 1 pack (C2 and tactical)</title></path>
-<path d="M437.44 461.82A156 156 0 0 1 435.18 463.6L430.3 457.26A148 148 0 0 0 432.45 455.58Z" class="rd-bar rd-c2"><title>GeoTrackV1: 1 pack (C2 and tactical)</title></path>
-<path d="M434.4 464.2A156 156 0 0 1 432.09 465.92L427.37 459.46A148 148 0 0 0 429.56 457.83Z" class="rd-bar rd-c2"><title>NVG: 1 pack (C2 and tactical)</title></path>
-<path d="M431.3 466.5A156 156 0 0 1 428.95 468.16L424.38 461.59A148 148 0 0 0 426.61 460.01Z" class="rd-bar rd-c2"><title>STANAG 4676 ISR tracking: 1 pack (C2 and tactical)</title></path>
-<path d="M416.47 459.65A142 142 0 0 1 339.69 482L339.76 448A108 108 0 0 0 398.16 431Z" class="rd-dom rd-sensors"/>
-<path id="rd-dark-l6" d="M339.71 472A132 132 0 0 0 411.08 451.23" fill="none"/>
+<path d="M464.69 460.08A173 173 0 0 1 462.45 462.36L444.69 444.61A148 148 0 0 0 446.61 442.66Z" class="rd-bar rd-c2"><title>Cursor on Target: 2 packs (C2 and tactical)</title></path>
+<path d="M461.68 463.13A173 173 0 0 1 459.39 465.35L442.07 447.17A148 148 0 0 0 444.03 445.27Z" class="rd-bar rd-c2"><title>goat-processors outputs: 2 packs (C2 and tactical)</title></path>
+<path d="M458.6 466.1A173 173 0 0 1 456.25 468.27L439.39 449.66A148 148 0 0 0 441.4 447.81Z" class="rd-bar rd-c2"><title>UCI: 2 packs (C2 and tactical)</title></path>
+<path d="M444.03 456.25A156 156 0 0 1 441.87 458.15L436.64 452.09A148 148 0 0 0 438.7 450.29Z" class="rd-bar rd-c2"><title>A-GRA: 1 pack (C2 and tactical)</title></path>
+<path d="M441.12 458.79A156 156 0 0 1 438.91 460.63L433.84 454.45A148 148 0 0 0 435.94 452.69Z" class="rd-bar rd-c2"><title>C2SIM: 1 pack (C2 and tactical)</title></path>
+<path d="M438.15 461.25A156 156 0 0 1 435.9 463.04L430.98 456.73A148 148 0 0 0 433.12 455.03Z" class="rd-bar rd-c2"><title>Canonical Track v2: 1 pack (C2 and tactical)</title></path>
+<path d="M435.12 463.64A156 156 0 0 1 432.83 465.38L428.06 458.95A148 148 0 0 0 430.25 457.3Z" class="rd-bar rd-c2"><title>DIS (IEEE 1278.1): 1 pack (C2 and tactical)</title></path>
+<path d="M432.04 465.96A156 156 0 0 1 429.69 467.64L425.09 461.09A148 148 0 0 0 427.32 459.5Z" class="rd-bar rd-c2"><title>GeoTrackV1: 1 pack (C2 and tactical)</title></path>
+<path d="M428.89 468.2A156 156 0 0 1 426.51 469.82L422.07 463.16A148 148 0 0 0 424.33 461.62Z" class="rd-bar rd-c2"><title>NVG: 1 pack (C2 and tactical)</title></path>
+<path d="M425.69 470.36A156 156 0 0 1 423.27 471.92L419 465.15A148 148 0 0 0 421.3 463.67Z" class="rd-bar rd-c2"><title>STANAG 4676 ISR tracking: 1 pack (C2 and tactical)</title></path>
+<path d="M411.17 462.87A142 142 0 0 1 334.26 481.88L335.63 447.91A108 108 0 0 0 394.13 433.45Z" class="rd-dom rd-sensors"/>
+<path id="rd-dark-l6" d="M334.66 471.89A132 132 0 0 0 406.16 454.22" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l6" startOffset="50%" text-anchor="middle">Sensors</textPath></text>
-<path d="M469.42 543.93A241 241 0 0 1 465.84 546.16L417.11 466.33A148 148 0 0 0 419.31 464.96Z" class="rd-bar rd-sensors"><title>NITF 2.1: 32 packs (Sensors)</title></path>
-<path d="M459.77 539.03A232 232 0 0 1 456.27 541.09L414.08 468.13A148 148 0 0 0 416.31 466.81Z" class="rd-bar rd-sensors"><title>SBP (Swift Navigation): 22 packs (Sensors)</title></path>
-<path d="M453.21 538.68A228 228 0 0 1 449.72 540.63L411.01 469.85A148 148 0 0 0 413.27 468.59Z" class="rd-bar rd-sensors"><title>RoboSense lidar: 19 packs (Sensors)</title></path>
-<path d="M447.15 538.9A225 225 0 0 1 443.65 540.74L407.9 471.5A148 148 0 0 0 410.19 470.29Z" class="rd-bar rd-sensors"><title>Septentrio SBF: 17 packs (Sensors)</title></path>
-<path d="M440.22 537.12A221 221 0 0 1 436.75 538.84L404.76 473.08A148 148 0 0 0 407.08 471.93Z" class="rd-bar rd-sensors"><title>u-blox UBX: 14 packs (Sensors)</title></path>
-<path d="M431.92 531.95A212 212 0 0 1 428.54 533.53L401.57 474.58A148 148 0 0 0 403.92 473.49Z" class="rd-bar rd-sensors"><title>Inertial Sense: 10 packs (Sensors)</title></path>
-<path d="M426.26 531.71A210 210 0 0 1 422.89 533.2L398.35 476.01A148 148 0 0 0 400.73 474.97Z" class="rd-bar rd-sensors"><title>Ouster lidar: 9 packs (Sensors)</title></path>
-<path d="M413.9 515.27A190 190 0 0 1 410.82 516.54L395.1 477.36A148 148 0 0 0 397.5 476.37Z" class="rd-bar rd-sensors"><title>GNSS correction transport and network timing (NTRIP, NTP/NTS, PTP): 4 packs (Sensors)</title></path>
-<path d="M409.71 516.98A190 190 0 0 1 406.6 518.17L391.82 478.63A148 148 0 0 0 394.24 477.7Z" class="rd-bar rd-sensors"><title>ISA: 4 packs (Sensors)</title></path>
-<path d="M405.48 518.59A190 190 0 0 1 402.34 519.71L388.51 479.82A148 148 0 0 0 390.95 478.95Z" class="rd-bar rd-sensors"><title>MISB local sets: 4 packs (Sensors)</title></path>
-<path d="M401.21 520.09A190 190 0 0 1 398.05 521.14L385.17 480.94A148 148 0 0 0 387.63 480.13Z" class="rd-bar rd-sensors"><title>STANAG 4607 GMTI: 4 packs (Sensors)</title></path>
-<path d="M391.8 505.18A173 173 0 0 1 388.9 506.06L381.8 481.97A148 148 0 0 0 384.28 481.22Z" class="rd-bar rd-sensors"><title>OGC SensorThings: 2 packs (Sensors)</title></path>
-<path d="M387.85 506.36A173 173 0 0 1 384.93 507.17L378.42 482.93A148 148 0 0 0 380.91 482.23Z" class="rd-bar rd-sensors"><title>OGC SWE: 2 packs (Sensors)</title></path>
-<path d="M383.88 507.45A173 173 0 0 1 380.94 508.19L375.01 483.8A148 148 0 0 0 377.52 483.17Z" class="rd-bar rd-sensors"><title>RINEX (GNSS observation and navigation files): 2 packs (Sensors)</title></path>
-<path d="M379.89 508.45A173 173 0 0 1 376.93 509.12L371.58 484.59A148 148 0 0 0 374.1 484.02Z" class="rd-bar rd-sensors"><title>SAPIENT: 2 packs (Sensors)</title></path>
-<path d="M375.87 509.35A173 173 0 0 1 372.9 509.95L368.13 485.3A148 148 0 0 0 370.67 484.79Z" class="rd-bar rd-sensors"><title>Velodyne lidar: 2 packs (Sensors)</title></path>
-<path d="M368.69 493.34A156 156 0 0 1 366 493.82L364.66 485.93A148 148 0 0 0 367.21 485.48Z" class="rd-bar rd-sensors"><title>gpsd JSON: 1 pack (Sensors)</title></path>
-<path d="M365.03 493.98A156 156 0 0 1 362.33 494.39L361.19 486.48A148 148 0 0 0 363.75 486.08Z" class="rd-bar rd-sensors"><title>IGS SSR: 1 pack (Sensors)</title></path>
-<path d="M361.36 494.53A156 156 0 0 1 358.65 494.88L357.7 486.94A148 148 0 0 0 360.27 486.61Z" class="rd-bar rd-sensors"><title>Livox SDK2: 1 pack (Sensors)</title></path>
-<path d="M357.68 494.99A156 156 0 0 1 354.96 495.28L354.2 487.32A148 148 0 0 0 356.77 487.05Z" class="rd-bar rd-sensors"><title>OGC Moving Features JSON: 1 pack (Sensors)</title></path>
-<path d="M353.99 495.37A156 156 0 0 1 351.27 495.59L350.69 487.61A148 148 0 0 0 353.27 487.4Z" class="rd-bar rd-sensors"><title>OGC O&amp;M Simple Features: 1 pack (Sensors)</title></path>
-<path d="M350.29 495.66A156 156 0 0 1 347.56 495.82L347.18 487.83A148 148 0 0 0 349.76 487.68Z" class="rd-bar rd-sensors"><title>RTCM 3: 1 pack (Sensors)</title></path>
-<path d="M346.58 495.86A156 156 0 0 1 343.85 495.95L343.66 487.95A148 148 0 0 0 346.25 487.87Z" class="rd-bar rd-sensors"><title>SBAS L1 messages: 1 pack (Sensors)</title></path>
-<path d="M342.87 495.97A156 156 0 0 1 340.14 496L340.14 488A148 148 0 0 0 342.73 487.97Z" class="rd-bar rd-sensors"><title>Unicore UNI: 1 pack (Sensors)</title></path>
-<path d="M334.73 481.9A142 142 0 0 1 247.21 447.49L269.43 421.75A108 108 0 0 0 335.99 447.93Z" class="rd-dom rd-transport"/>
-<path id="rd-dark-l7" d="M253.74 439.92A132 132 0 0 0 335.1 471.91" fill="none"/>
+<path d="M460.41 549.38A241 241 0 0 1 456.97 551.32L411.67 469.49A148 148 0 0 0 413.78 468.3Z" class="rd-bar rd-sensors"><title>NITF 2.1: 32 packs (Sensors)</title></path>
+<path d="M451.21 543.93A232 232 0 0 1 447.87 545.72L408.73 471.07A148 148 0 0 0 410.86 469.93Z" class="rd-bar rd-sensors"><title>SBP (Swift Navigation): 22 packs (Sensors)</title></path>
+<path d="M444.91 543.18A228 228 0 0 1 441.58 544.87L405.75 472.6A148 148 0 0 0 407.9 471.5Z" class="rd-bar rd-sensors"><title>RoboSense lidar: 19 packs (Sensors)</title></path>
+<path d="M439.09 543.03A225 225 0 0 1 435.76 544.63L402.73 474.05A148 148 0 0 0 404.91 473.01Z" class="rd-bar rd-sensors"><title>Septentrio SBF: 17 packs (Sensors)</title></path>
+<path d="M432.47 540.87A221 221 0 0 1 429.17 542.35L399.68 475.43A148 148 0 0 0 401.89 474.44Z" class="rd-bar rd-sensors"><title>u-blox UBX: 14 packs (Sensors)</title></path>
+<path d="M424.6 535.29A212 212 0 0 1 421.4 536.65L396.6 476.75A148 148 0 0 0 398.83 475.81Z" class="rd-bar rd-sensors"><title>Inertial Sense: 10 packs (Sensors)</title></path>
+<path d="M419.18 534.74A210 210 0 0 1 415.99 536.01L393.5 477.99A148 148 0 0 0 395.74 477.1Z" class="rd-bar rd-sensors"><title>Ouster lidar: 9 packs (Sensors)</title></path>
+<path d="M407.64 517.78A190 190 0 0 1 404.73 518.86L390.36 479.17A148 148 0 0 0 392.63 478.33Z" class="rd-bar rd-sensors"><title>GNSS correction transport and network timing (NTRIP, NTP/NTS, PTP): 4 packs (Sensors)</title></path>
+<path d="M403.6 519.26A190 190 0 0 1 400.66 520.28L387.2 480.27A148 148 0 0 0 389.49 479.48Z" class="rd-bar rd-sensors"><title>ISA: 4 packs (Sensors)</title></path>
+<path d="M399.53 520.66A190 190 0 0 1 396.57 521.61L384.02 481.3A148 148 0 0 0 386.32 480.57Z" class="rd-bar rd-sensors"><title>MISB local sets: 4 packs (Sensors)</title></path>
+<path d="M395.43 521.96A190 190 0 0 1 392.45 522.84L380.81 482.26A148 148 0 0 0 383.13 481.58Z" class="rd-bar rd-sensors"><title>STANAG 4607 GMTI: 4 packs (Sensors)</title></path>
+<path d="M386.69 506.69A173 173 0 0 1 383.96 507.43L377.58 483.15A148 148 0 0 0 379.92 482.52Z" class="rd-bar rd-sensors"><title>GNSS receiver binary (NovAtel OEM, SiRF): 2 packs (Sensors)</title></path>
+<path d="M382.9 507.71A173 173 0 0 1 380.16 508.38L374.33 483.96A148 148 0 0 0 376.68 483.38Z" class="rd-bar rd-sensors"><title>OGC SensorThings: 2 packs (Sensors)</title></path>
+<path d="M379.1 508.63A173 173 0 0 1 376.34 509.25L371.07 484.7A148 148 0 0 0 373.43 484.18Z" class="rd-bar rd-sensors"><title>OGC SWE: 2 packs (Sensors)</title></path>
+<path d="M375.28 509.47A173 173 0 0 1 372.5 510.03L367.79 485.37A148 148 0 0 0 370.16 484.89Z" class="rd-bar rd-sensors"><title>RINEX (GNSS observation and navigation files): 2 packs (Sensors)</title></path>
+<path d="M371.43 510.23A173 173 0 0 1 368.65 510.72L364.49 485.96A148 148 0 0 0 366.88 485.54Z" class="rd-bar rd-sensors"><title>SAPIENT: 2 packs (Sensors)</title></path>
+<path d="M367.58 510.9A173 173 0 0 1 364.78 511.32L361.19 486.48A148 148 0 0 0 363.58 486.11Z" class="rd-bar rd-sensors"><title>Velodyne lidar: 2 packs (Sensors)</title></path>
+<path d="M361.36 494.53A156 156 0 0 1 358.84 494.86L357.87 486.92A148 148 0 0 0 360.27 486.61Z" class="rd-bar rd-sensors"><title>gpsd JSON: 1 pack (Sensors)</title></path>
+<path d="M357.86 494.97A156 156 0 0 1 355.33 495.25L354.54 487.28A148 148 0 0 0 356.95 487.03Z" class="rd-bar rd-sensors"><title>IGS SSR: 1 pack (Sensors)</title></path>
+<path d="M354.35 495.34A156 156 0 0 1 351.81 495.55L351.21 487.58A148 148 0 0 0 353.62 487.37Z" class="rd-bar rd-sensors"><title>Livox SDK2: 1 pack (Sensors)</title></path>
+<path d="M350.84 495.62A156 156 0 0 1 348.29 495.78L347.87 487.79A148 148 0 0 0 350.28 487.64Z" class="rd-bar rd-sensors"><title>OGC Moving Features JSON: 1 pack (Sensors)</title></path>
+<path d="M347.31 495.83A156 156 0 0 1 344.77 495.93L344.52 487.93A148 148 0 0 0 346.94 487.84Z" class="rd-bar rd-sensors"><title>OGC O&amp;M Simple Features: 1 pack (Sensors)</title></path>
+<path d="M343.79 495.95A156 156 0 0 1 341.24 496L341.18 488A148 148 0 0 0 343.59 487.96Z" class="rd-bar rd-sensors"><title>RTCM 3: 1 pack (Sensors)</title></path>
+<path d="M340.26 496A156 156 0 0 1 337.71 495.98L337.83 487.98A148 148 0 0 0 340.25 488Z" class="rd-bar rd-sensors"><title>SBAS L1 messages: 1 pack (Sensors)</title></path>
+<path d="M336.73 495.97A156 156 0 0 1 334.18 495.89L334.48 487.9A148 148 0 0 0 336.9 487.97Z" class="rd-bar rd-sensors"><title>Unicore UNI: 1 pack (Sensors)</title></path>
+<path d="M329.31 481.6A142 142 0 0 1 243.17 443.86L266.35 418.99A108 108 0 0 0 331.87 447.69Z" class="rd-dom rd-transport"/>
+<path id="rd-dark-l7" d="M249.99 436.55A132 132 0 0 0 330.06 471.63" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l7" startOffset="50%" text-anchor="middle">Transport</textPath></text>
-<path d="M329.32 605.14A265 265 0 0 1 321.05 604.67L329.43 487.62A148 148 0 0 0 334.04 487.88Z" class="rd-bar rd-transport"><title>GBFS: 84 packs (Transport)</title></path>
-<path d="M320.76 586.9A247 247 0 0 1 313.06 586.18L323.9 487.12A148 148 0 0 0 328.5 487.55Z" class="rd-bar rd-transport"><title>Eclipse SUMO traffic simulation files: 41 packs (Transport)</title></path>
-<path d="M312.31 579.15A240 240 0 0 1 304.86 578.17L318.4 486.41A148 148 0 0 0 322.98 487.02Z" class="rd-bar rd-transport"><title>GTFS Schedule: 31 packs (Transport)</title></path>
-<path d="M305.62 563.29A225 225 0 0 1 298.67 562.11L312.92 485.5A148 148 0 0 0 317.48 486.28Z" class="rd-bar rd-transport"><title>OCPI: 17 packs (Transport)</title></path>
-<path d="M299.75 548.99A212 212 0 0 1 293.25 547.63L307.49 484.38A148 148 0 0 0 312.01 485.33Z" class="rd-bar rd-transport"><title>WZDx: 10 packs (Transport)</title></path>
-<path d="M293.19 541.96A207 207 0 0 1 286.9 540.41L302.1 483.06A148 148 0 0 0 306.58 484.18Z" class="rd-bar rd-transport"><title>Curb Data Specification: 8 packs (Transport)</title></path>
-<path d="M285.65 540.07A207 207 0 0 1 279.43 538.27L296.76 481.54A148 148 0 0 0 301.2 482.82Z" class="rd-bar rd-transport"><title>GOFS: 8 packs (Transport)</title></path>
-<path d="M279.17 534.74A204 204 0 0 1 273.12 532.75L291.48 479.82A148 148 0 0 0 295.87 481.27Z" class="rd-bar rd-transport"><title>TOMP-API: 7 packs (Transport)</title></path>
-<path d="M274.68 524.5A195 195 0 0 1 268.95 522.37L286.27 477.9A148 148 0 0 0 290.61 479.51Z" class="rd-bar rd-transport"><title>OSDM (railways): 5 packs (Transport)</title></path>
-<path d="M269.84 516.8A190 190 0 0 1 264.35 514.52L281.14 475.79A148 148 0 0 0 285.41 477.56Z" class="rd-bar rd-transport"><title>NeTEx: 4 packs (Transport)</title></path>
-<path d="M266.12 507.55A183 183 0 0 1 260.93 505.16L276.09 473.49A148 148 0 0 0 280.29 475.42Z" class="rd-bar rd-transport"><title>ERTMS/ETCS (SUBSET-026): 3 packs (Transport)</title></path>
-<path d="M264.27 495.66A173 173 0 0 1 259.45 493.22L271.13 471A148 148 0 0 0 275.25 473.09Z" class="rd-bar rd-transport"><title>GTFS Realtime: 2 packs (Transport)</title></path>
-<path d="M258.49 492.71A173 173 0 0 1 253.76 490.1L266.27 468.33A148 148 0 0 0 270.31 470.57Z" class="rd-bar rd-transport"><title>hafas-client: 2 packs (Transport)</title></path>
-<path d="M252.82 489.55A173 173 0 0 1 248.19 486.76L261.51 465.47A148 148 0 0 0 265.46 467.86Z" class="rd-bar rd-transport"><title>OpenTripPlanner GraphQL: 2 packs (Transport)</title></path>
-<path d="M256.44 471.73A156 156 0 0 1 252.37 469.06L256.86 462.44A148 148 0 0 0 260.72 464.98Z" class="rd-bar rd-transport"><title>ETSI ITS: 1 pack (Transport)</title></path>
-<path d="M251.56 468.51A156 156 0 0 1 247.59 465.68L252.33 459.24A148 148 0 0 0 256.09 461.92Z" class="rd-bar rd-transport"><title>MDS: 1 pack (Transport)</title></path>
-<path d="M246.8 465.1A156 156 0 0 1 242.94 462.13L247.92 455.87A148 148 0 0 0 251.58 458.68Z" class="rd-bar rd-transport"><title>TransXChange: 1 pack (Transport)</title></path>
-<path d="M242.18 461.52A156 156 0 0 1 238.43 458.4L243.64 452.33A148 148 0 0 0 247.19 455.29Z" class="rd-bar rd-transport"><title>Valhalla: 1 pack (Transport)</title></path>
-<path d="M243.51 444.18A142 142 0 0 1 203.4 378.79L236.11 369.5A108 108 0 0 0 266.62 419.24Z" class="rd-dom rd-iot"/>
-<path id="rd-dark-l8" d="M213.02 376.05A132 132 0 0 0 250.31 436.85" fill="none"/>
+<path d="M319.2 604.53A265 265 0 0 1 311.47 603.81L324.09 487.14A148 148 0 0 0 328.4 487.54Z" class="rd-bar rd-transport"><title>GBFS: 84 packs (Transport)</title></path>
+<path d="M311.83 586.04A247 247 0 0 1 304.64 585.11L318.87 486.48A148 148 0 0 0 323.16 487.04Z" class="rd-bar rd-transport"><title>Eclipse SUMO traffic simulation files: 41 packs (Transport)</title></path>
+<path d="M304.13 578.06A240 240 0 0 1 297.19 576.91L313.68 485.64A148 148 0 0 0 317.95 486.35Z" class="rd-bar rd-transport"><title>GTFS Schedule: 31 packs (Transport)</title></path>
+<path d="M298.43 562.06A225 225 0 0 1 291.95 560.75L308.52 484.61A148 148 0 0 0 312.77 485.47Z" class="rd-bar rd-transport"><title>OCPI: 17 packs (Transport)</title></path>
+<path d="M293.43 547.67A212 212 0 0 1 287.38 546.22L303.41 483.4A148 148 0 0 0 307.62 484.41Z" class="rd-bar rd-transport"><title>WZDx: 10 packs (Transport)</title></path>
+<path d="M287.48 540.56A207 207 0 0 1 281.64 538.94L298.34 482.01A148 148 0 0 0 302.51 483.17Z" class="rd-bar rd-transport"><title>Curb Data Specification: 8 packs (Transport)</title></path>
+<path d="M280.39 538.56A207 207 0 0 1 274.61 536.74L293.32 480.45A148 148 0 0 0 297.44 481.75Z" class="rd-bar rd-transport"><title>GOFS: 8 packs (Transport)</title></path>
+<path d="M274.43 533.2A204 204 0 0 1 268.81 531.2L288.36 478.7A148 148 0 0 0 292.44 480.15Z" class="rd-bar rd-transport"><title>TOMP-API: 7 packs (Transport)</title></path>
+<path d="M270.56 522.99A195 195 0 0 1 265.24 520.88L283.46 476.78A148 148 0 0 0 287.49 478.37Z" class="rd-bar rd-transport"><title>OSDM (railways): 5 packs (Transport)</title></path>
+<path d="M266.24 515.33A190 190 0 0 1 261.14 513.1L278.64 474.68A148 148 0 0 0 282.61 476.42Z" class="rd-bar rd-transport"><title>NeTEx: 4 packs (Transport)</title></path>
+<path d="M263.04 506.16A183 183 0 0 1 258.21 503.83L273.9 472.42A148 148 0 0 0 277.8 474.29Z" class="rd-bar rd-transport"><title>ERTMS/ETCS (SUBSET-026): 3 packs (Transport)</title></path>
+<path d="M261.71 494.39A173 173 0 0 1 257.23 492.04L269.24 469.99A148 148 0 0 0 273.07 472Z" class="rd-bar rd-transport"><title>GTFS Realtime: 2 packs (Transport)</title></path>
+<path d="M256.28 491.51A173 173 0 0 1 251.88 489L264.66 467.39A148 148 0 0 0 268.42 469.54Z" class="rd-bar rd-transport"><title>hafas-client: 2 packs (Transport)</title></path>
+<path d="M250.95 488.44A173 173 0 0 1 246.65 485.78L260.19 464.63A148 148 0 0 0 263.86 466.91Z" class="rd-bar rd-transport"><title>OpenTripPlanner GraphQL: 2 packs (Transport)</title></path>
+<path d="M255.05 470.84A156 156 0 0 1 251.26 468.3L255.81 461.72A148 148 0 0 0 259.4 464.13Z" class="rd-bar rd-transport"><title>ETSI ITS: 1 pack (Transport)</title></path>
+<path d="M250.45 467.74A156 156 0 0 1 246.76 465.07L251.54 458.65A148 148 0 0 0 255.05 461.19Z" class="rd-bar rd-transport"><title>GS1 EPCIS 2.0 events: 1 pack (Transport)</title></path>
+<path d="M245.97 464.48A156 156 0 0 1 242.37 461.68L247.38 455.44A148 148 0 0 0 250.79 458.09Z" class="rd-bar rd-transport"><title>MDS: 1 pack (Transport)</title></path>
+<path d="M241.61 461.06A156 156 0 0 1 238.11 458.13L243.34 452.07A148 148 0 0 0 246.66 454.85Z" class="rd-bar rd-transport"><title>TransXChange: 1 pack (Transport)</title></path>
+<path d="M237.37 457.49A156 156 0 0 1 233.98 454.44L239.42 448.57A148 148 0 0 0 242.63 451.46Z" class="rd-bar rd-transport"><title>Valhalla: 1 pack (Transport)</title></path>
+<path d="M239.6 440.42A142 142 0 0 1 202.55 375.65L235.46 367.11A108 108 0 0 0 263.64 416.38Z" class="rd-dom rd-iot"/>
+<path id="rd-dark-l8" d="M212.23 373.14A132 132 0 0 0 246.67 433.35" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l8" startOffset="50%" text-anchor="middle">IoT</textPath></text>
-<path d="M150.14 543.72A278 278 0 0 1 146.6 540.37L237.22 446.49A148 148 0 0 0 239.1 448.27Z" class="rd-bar rd-iot"><title>ESPHome native API: 143 packs (IoT)</title></path>
-<path d="M149.56 534.84A272 272 0 0 1 146.18 531.47L234.71 444.01A148 148 0 0 0 236.55 445.84Z" class="rd-bar rd-iot"><title>SunSpec Modbus: 112 packs (IoT)</title></path>
-<path d="M148.26 527.05A267 267 0 0 1 145.02 523.66L232.27 441.48A148 148 0 0 0 234.06 443.35Z" class="rd-bar rd-iot"><title>FIWARE Smart Data Models: 93 packs (IoT)</title></path>
-<path d="M153.36 513.61A254 254 0 0 1 150.35 510.31L229.89 438.89A148 148 0 0 0 231.63 440.8Z" class="rd-bar rd-iot"><title>EVerest charging stack: 55 packs (IoT)</title></path>
-<path d="M159.87 499.73A240 240 0 0 1 157.1 496.55L227.56 436.24A148 148 0 0 0 229.27 438.19Z" class="rd-bar rd-iot"><title>ChirpStack v4: 31 packs (IoT)</title></path>
-<path d="M174.01 480.28A217 217 0 0 1 171.58 477.35L225.31 433.54A148 148 0 0 0 226.96 435.53Z" class="rd-bar rd-iot"><title>Meshtastic: 12 packs (IoT)</title></path>
-<path d="M181.08 467.95A204 204 0 0 1 178.87 465.15L223.11 430.78A148 148 0 0 0 224.72 432.82Z" class="rd-bar rd-iot"><title>OpenADR 3: 7 packs (IoT)</title></path>
-<path d="M178.09 464.14A204 204 0 0 1 175.94 461.28L220.99 427.98A148 148 0 0 0 222.55 430.05Z" class="rd-bar rd-iot"><title>Zigbee Cluster Library (zigbee-herdsman): 7 packs (IoT)</title></path>
-<path d="M178.25 458.01A200 200 0 0 1 176.21 455.16L218.93 425.12A148 148 0 0 0 220.44 427.23Z" class="rd-bar rd-iot"><title>KNX: 6 packs (IoT)</title></path>
-<path d="M179.19 451.56A195 195 0 0 1 177.26 448.73L216.94 422.22A148 148 0 0 0 218.4 424.36Z" class="rd-bar rd-iot"><title>IEEE C37.118 synchrophasor (pypmu): 5 packs (IoT)</title></path>
-<path d="M181.18 444.68A190 190 0 0 1 179.37 441.88L215.02 419.27A148 148 0 0 0 216.43 421.45Z" class="rd-bar rd-iot"><title>Modbus: 4 packs (IoT)</title></path>
-<path d="M178.73 440.87A190 190 0 0 1 176.99 438.03L213.17 416.27A148 148 0 0 0 214.52 418.48Z" class="rd-bar rd-iot"><title>Shelly Gen2+ RPC: 4 packs (IoT)</title></path>
-<path d="M182.49 433.38A183 183 0 0 1 180.88 430.61L211.39 413.24A148 148 0 0 0 212.69 415.48Z" class="rd-bar rd-iot"><title>OPC UA binary (NodeSet structures): 3 packs (IoT)</title></path>
-<path d="M180.31 429.61A183 183 0 0 1 178.77 426.8L209.69 410.16A148 148 0 0 0 210.93 412.43Z" class="rd-bar rd-iot"><title>Tasmota: 3 packs (IoT)</title></path>
-<path d="M178.23 425.79A183 183 0 0 1 176.75 422.94L208.05 407.04A148 148 0 0 0 209.25 409.34Z" class="rd-bar rd-iot"><title>The Things Stack: 3 packs (IoT)</title></path>
-<path d="M185.18 417.44A173 173 0 0 1 183.85 414.72L206.5 403.88A148 148 0 0 0 207.63 406.21Z" class="rd-bar rd-iot"><title>BLE beacons: 2 packs (IoT)</title></path>
-<path d="M183.38 413.73A173 173 0 0 1 182.12 410.98L205.01 400.69A148 148 0 0 0 206.1 403.04Z" class="rd-bar rd-iot"><title>Home Assistant: 2 packs (IoT)</title></path>
-<path d="M181.67 409.99A173 173 0 0 1 180.47 407.21L203.61 397.46A148 148 0 0 0 204.64 399.84Z" class="rd-bar rd-iot"><title>Low-power mesh (6LoWPAN, RPL): 2 packs (IoT)</title></path>
-<path d="M180.05 406.2A173 173 0 0 1 178.92 403.39L202.28 394.2A148 148 0 0 0 203.25 396.6Z" class="rd-bar rd-iot"><title>OpenMQTTGateway: 2 packs (IoT)</title></path>
-<path d="M194.48 396.22A156 156 0 0 1 193.52 393.66L201.03 390.91A148 148 0 0 0 201.94 393.33Z" class="rd-bar rd-iot"><title>DSMR P1 (Dutch smart meters): 1 pack (IoT)</title></path>
-<path d="M193.19 392.74A156 156 0 0 1 192.28 390.16L199.86 387.59A148 148 0 0 0 200.71 390.03Z" class="rd-bar rd-iot"><title>OMA LwM2M: 1 pack (IoT)</title></path>
-<path d="M191.97 389.23A156 156 0 0 1 191.13 386.63L198.77 384.24A148 148 0 0 0 199.56 386.71Z" class="rd-bar rd-iot"><title>SML (Smart Message Language): 1 pack (IoT)</title></path>
-<path d="M190.84 385.7A156 156 0 0 1 190.07 383.08L197.76 380.87A148 148 0 0 0 198.49 383.35Z" class="rd-bar rd-iot"><title>Sparkplug B: 1 pack (IoT)</title></path>
-<path d="M202.13 373.99A142 142 0 0 1 232.29 247.47L258.08 269.63A108 108 0 0 0 235.14 365.85Z" class="rd-dom rd-networks"/>
-<path id="rd-dark-l9" d="M221.55 369.21A122 122 0 0 1 247.46 260.5" fill="none"/>
+<path d="M142.49 536.32A278 278 0 0 1 139.87 533.65L233.64 442.92A148 148 0 0 0 235.03 444.33Z" class="rd-bar rd-iot"><title>ESPHome native API: 143 packs (IoT)</title></path>
+<path d="M143.02 528.22A272 272 0 0 1 140.52 525.57L231.64 440.8A148 148 0 0 0 233 442.25Z" class="rd-bar rd-iot"><title>SunSpec Modbus: 112 packs (IoT)</title></path>
+<path d="M142.73 521.21A267 267 0 0 1 140.32 518.54L229.67 438.65A148 148 0 0 0 231 440.12Z" class="rd-bar rd-iot"><title>FIWARE Smart Data Models: 93 packs (IoT)</title></path>
+<path d="M148.92 508.71A254 254 0 0 1 146.67 506.13L227.75 436.46A148 148 0 0 0 229.05 437.95Z" class="rd-bar rd-iot"><title>EVerest charging stack: 55 packs (IoT)</title></path>
+<path d="M156.42 495.76A240 240 0 0 1 154.35 493.28L225.87 434.23A148 148 0 0 0 227.15 435.75Z" class="rd-bar rd-iot"><title>ChirpStack v4: 31 packs (IoT)</title></path>
+<path d="M171.55 477.31A217 217 0 0 1 169.72 475.04L224.04 431.96A148 148 0 0 0 225.28 433.51Z" class="rd-bar rd-iot"><title>Meshtastic: 12 packs (IoT)</title></path>
+<path d="M179.35 465.77A204 204 0 0 1 177.68 463.6L222.25 429.66A148 148 0 0 0 223.46 431.23Z" class="rd-bar rd-iot"><title>OpenADR 3: 7 packs (IoT)</title></path>
+<path d="M176.9 462.58A204 204 0 0 1 175.28 460.38L220.51 427.33A148 148 0 0 0 221.69 428.92Z" class="rd-bar rd-iot"><title>Zigbee Cluster Library (zigbee-herdsman): 7 packs (IoT)</title></path>
+<path d="M177.61 457.12A200 200 0 0 1 176.05 454.93L218.81 424.96A148 148 0 0 0 219.96 426.57Z" class="rd-bar rd-iot"><title>KNX: 6 packs (IoT)</title></path>
+<path d="M179.03 451.34A195 195 0 0 1 177.56 449.17L217.16 422.55A148 148 0 0 0 218.28 424.19Z" class="rd-bar rd-iot"><title>IEEE C37.118 synchrophasor (pypmu): 5 packs (IoT)</title></path>
+<path d="M181.46 445.1A190 190 0 0 1 180.07 442.97L215.56 420.12A148 148 0 0 0 216.65 421.78Z" class="rd-bar rd-iot"><title>Modbus: 4 packs (IoT)</title></path>
+<path d="M179.42 441.96A190 190 0 0 1 178.07 439.8L214.01 417.65A148 148 0 0 0 215.06 419.33Z" class="rd-bar rd-iot"><title>Shelly Gen2+ RPC: 4 packs (IoT)</title></path>
+<path d="M183.51 435.09A183 183 0 0 1 182.25 432.99L212.5 415.16A148 148 0 0 0 213.52 416.86Z" class="rd-bar rd-iot"><title>BACnet/IP, EtherNet/IP and HART-IP framing: 3 packs (IoT)</title></path>
+<path d="M181.67 431.99A183 183 0 0 1 180.45 429.86L211.05 412.63A148 148 0 0 0 212.03 414.35Z" class="rd-bar rd-iot"><title>Metering (M-Bus, wireless M-Bus, DLMS HDLC): 3 packs (IoT)</title></path>
+<path d="M179.89 428.86A183 183 0 0 1 178.71 426.7L209.64 410.08A148 148 0 0 0 210.59 411.82Z" class="rd-bar rd-iot"><title>OPC UA binary (NodeSet structures): 3 packs (IoT)</title></path>
+<path d="M178.17 425.69A183 183 0 0 1 177.04 423.51L208.29 407.5A148 148 0 0 0 209.2 409.26Z" class="rd-bar rd-iot"><title>Tasmota: 3 packs (IoT)</title></path>
+<path d="M176.52 422.48A183 183 0 0 1 175.42 420.28L206.98 404.89A148 148 0 0 0 207.87 406.67Z" class="rd-bar rd-iot"><title>The Things Stack: 3 packs (IoT)</title></path>
+<path d="M183.94 414.92A173 173 0 0 1 182.95 412.82L205.73 402.26A148 148 0 0 0 206.58 404.05Z" class="rd-bar rd-iot"><title>BLE beacons: 2 packs (IoT)</title></path>
+<path d="M182.5 411.83A173 173 0 0 1 181.55 409.71L204.53 399.6A148 148 0 0 0 205.34 401.41Z" class="rd-bar rd-iot"><title>Home Assistant: 2 packs (IoT)</title></path>
+<path d="M181.12 408.71A173 173 0 0 1 180.21 406.58L203.38 396.92A148 148 0 0 0 204.16 398.75Z" class="rd-bar rd-iot"><title>LoRaWAN framing (PHYPayload, Semtech UDP forwarder): 2 packs (IoT)</title></path>
+<path d="M179.79 405.57A173 173 0 0 1 178.93 403.42L202.29 394.22A148 148 0 0 0 203.03 396.06Z" class="rd-bar rd-iot"><title>Low-power mesh (6LoWPAN, RPL): 2 packs (IoT)</title></path>
+<path d="M178.53 402.4A173 173 0 0 1 177.71 400.23L201.25 391.5A148 148 0 0 0 201.95 393.35Z" class="rd-bar rd-iot"><title>OpenMQTTGateway: 2 packs (IoT)</title></path>
+<path d="M177.34 399.21A173 173 0 0 1 176.56 397.03L200.26 388.76A148 148 0 0 0 200.93 390.62Z" class="rd-bar rd-iot"><title>Smart-home serial framing (Z-Wave Serial API, EnOcean ESP3): 2 packs (IoT)</title></path>
+<path d="M192.39 390.46A156 156 0 0 1 191.72 388.48L199.33 385.99A148 148 0 0 0 199.96 387.88Z" class="rd-bar rd-iot"><title>DSMR P1 (Dutch smart meters): 1 pack (IoT)</title></path>
+<path d="M191.42 387.55A156 156 0 0 1 190.8 385.55L198.45 383.21A148 148 0 0 0 199.04 385.11Z" class="rd-bar rd-iot"><title>OMA LwM2M: 1 pack (IoT)</title></path>
+<path d="M190.52 384.61A156 156 0 0 1 189.93 382.6L197.63 380.42A148 148 0 0 0 198.18 382.32Z" class="rd-bar rd-iot"><title>SML (Smart Message Language): 1 pack (IoT)</title></path>
+<path d="M189.67 381.66A156 156 0 0 1 189.12 379.64L196.86 377.61A148 148 0 0 0 197.37 379.52Z" class="rd-bar rd-iot"><title>Sparkplug B: 1 pack (IoT)</title></path>
+<path d="M201.39 370.83A142 142 0 0 1 233.85 245.68L259.26 268.27A108 108 0 0 0 234.58 363.45Z" class="rd-dom rd-networks"/>
+<path id="rd-dark-l9" d="M220.91 366.49A122 122 0 0 1 248.8 258.97" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l9" startOffset="50%" text-anchor="middle">Networks</textPath></text>
-<path d="M68.91 405.94A278 278 0 0 1 67.8 401.18L195.6 372.46A148 148 0 0 0 196.19 374.98Z" class="rd-bar rd-networks"><title>HL7 FHIR R4: 146 packs (Networks)</title></path>
-<path d="M82.23 396.24A263 263 0 0 1 81.28 391.72L194.87 369.01A148 148 0 0 0 195.4 371.55Z" class="rd-bar rd-networks"><title>OCSF: 79 packs (Networks)</title></path>
-<path d="M97.45 386.91A247 247 0 0 1 96.67 382.65L194.22 365.55A148 148 0 0 0 194.69 368.1Z" class="rd-bar rd-networks"><title>IETF packet headers: 40 packs (Networks)</title></path>
-<path d="M97.02 381.02A246 246 0 0 1 96.34 376.76L193.66 362.08A148 148 0 0 0 194.06 364.64Z" class="rd-bar rd-networks"><title>STIX 2.1: 39 packs (Networks)</title></path>
-<path d="M107.98 373.52A234 234 0 0 1 107.42 369.45L193.17 358.59A148 148 0 0 0 193.52 361.16Z" class="rd-bar rd-networks"><title>OpenConfig (RFC 7951 JSON): 24 packs (Networks)</title></path>
-<path d="M112.97 367.3A228 228 0 0 1 112.53 363.32L192.77 355.09A148 148 0 0 0 193.06 357.67Z" class="rd-bar rd-networks"><title>IETF YANG data (RFC 7951 JSON): 19 packs (Networks)</title></path>
-<path d="M119.89 361.17A221 221 0 0 1 119.55 357.31L192.45 351.59A148 148 0 0 0 192.68 354.17Z" class="rd-bar rd-networks"><title>Tunnelling and VPN (VXLAN-GPE, Geneve options, MPLS stack, IKEv2): 14 packs (Networks)</title></path>
-<path d="M123.24 355.66A217 217 0 0 1 123 351.86L192.22 348.08A148 148 0 0 0 192.38 350.66Z" class="rd-bar rd-networks"><title>OpenTelemetry OTLP: 12 packs (Networks)</title></path>
-<path d="M130.02 350.15A210 210 0 0 1 129.87 346.48L192.07 344.56A148 148 0 0 0 192.17 347.15Z" class="rd-bar rd-networks"><title>Zeek JSON logs (scope separator _): 9 packs (Networks)</title></path>
-<path d="M132.74 345.08A207 207 0 0 1 132.69 341.46L192 341.04A148 148 0 0 0 192.04 343.63Z" class="rd-bar rd-networks"><title>gNMI: 8 packs (Networks)</title></path>
-<path d="M132.68 340.15A207 207 0 0 1 132.71 336.52L192.02 337.52A148 148 0 0 0 192 340.11Z" class="rd-bar rd-networks"><title>IPPM active measurement (OWAMP, TWAMP, STAMP): 8 packs (Networks)</title></path>
-<path d="M136.03 335.3A204 204 0 0 1 136.14 331.73L192.12 334A148 148 0 0 0 192.04 336.59Z" class="rd-bar rd-networks"><title>IP flow export (IPFIX, NetFlow, sFlow): 7 packs (Networks)</title></path>
-<path d="M140 330.63A200 200 0 0 1 140.19 327.13L192.31 330.48A148 148 0 0 0 192.16 333.07Z" class="rd-bar rd-networks"><title>Media transport (MPEG-TS, SRT, RIST, WebRTC DCEP, RTP): 6 packs (Networks)</title></path>
-<path d="M150.26 326.58A190 190 0 0 1 150.53 323.26L192.57 326.97A148 148 0 0 0 192.37 329.56Z" class="rd-bar rd-networks"><title>Messaging protocols (MQTT, AMQP 1.0, STUN/TURN): 4 packs (Networks)</title></path>
-<path d="M150.63 322.07A190 190 0 0 1 150.98 318.76L192.93 323.47A148 148 0 0 0 192.66 326.05Z" class="rd-bar rd-networks"><title>Web transport framing (HTTP/2, HTTP/3, WebSocket, TLS 1.3): 4 packs (Networks)</title></path>
-<path d="M158.16 318.41A183 183 0 0 1 158.57 315.23L193.36 319.98A148 148 0 0 0 193.03 322.55Z" class="rd-bar rd-networks"><title>3GPP mobile core (GTP-U, GTPv2-C, PFCP): 3 packs (Networks)</title></path>
-<path d="M158.73 314.09A183 183 0 0 1 159.21 310.92L193.88 316.5A148 148 0 0 0 193.49 319.06Z" class="rd-bar rd-networks"><title>Amateur and paging radio (AX.25, KISS, POCSAG): 3 packs (Networks)</title></path>
-<path d="M159.4 309.79A183 183 0 0 1 159.95 306.63L194.48 313.03A148 148 0 0 0 194.03 315.58Z" class="rd-bar rd-networks"><title>Internet control plane (DNS message, DHCPv6 message, ICMPv6 ND): 3 packs (Networks)</title></path>
-<path d="M160.17 305.5A183 183 0 0 1 160.8 302.36L195.16 309.57A148 148 0 0 0 194.65 312.11Z" class="rd-bar rd-networks"><title>QUIC (long-header packets, frames, transport parameters): 3 packs (Networks)</title></path>
-<path d="M161.04 301.23A183 183 0 0 1 161.74 298.1L195.93 306.14A148 148 0 0 0 195.36 308.67Z" class="rd-bar rd-networks"><title>Remote access and file sharing (SSH, SMB2/3): 3 packs (Networks)</title></path>
-<path d="M162.01 296.99A183 183 0 0 1 162.79 293.88L196.77 302.72A148 148 0 0 0 196.14 305.23Z" class="rd-bar rd-networks"><title>Routing control protocols (BMP, BFD, RPKI to Router): 3 packs (Networks)</title></path>
-<path d="M172.75 295.35A173 173 0 0 1 173.56 292.43L197.7 299.33A148 148 0 0 0 197.01 301.82Z" class="rd-bar rd-networks"><title>CISA KEV catalog: 2 packs (Networks)</title></path>
-<path d="M173.86 291.38A173 173 0 0 1 174.74 288.48L198.71 295.95A148 148 0 0 0 197.96 298.43Z" class="rd-bar rd-networks"><title>IETF option areas: 2 packs (Networks)</title></path>
-<path d="M175.06 287.44A173 173 0 0 1 176.01 284.56L199.79 292.6A148 148 0 0 0 198.99 295.07Z" class="rd-bar rd-networks"><title>OpAMP: 2 packs (Networks)</title></path>
-<path d="M176.36 283.53A173 173 0 0 1 177.37 280.68L200.96 289.28A148 148 0 0 0 200.09 291.72Z" class="rd-bar rd-networks"><title>OpenC2: 2 packs (Networks)</title></path>
-<path d="M177.75 279.66A173 173 0 0 1 178.83 276.83L202.21 285.99A148 148 0 0 0 201.28 288.41Z" class="rd-bar rd-networks"><title>Prometheus remote write: 2 packs (Networks)</title></path>
-<path d="M179.23 275.82A173 173 0 0 1 180.38 273.01L203.53 282.73A148 148 0 0 0 202.55 285.13Z" class="rd-bar rd-networks"><title>Security event logs: 2 packs (Networks)</title></path>
-<path d="M180.8 272.01A173 173 0 0 1 182.02 269.24L204.93 279.5A148 148 0 0 0 203.89 281.87Z" class="rd-bar rd-networks"><title>Signalling transport (Diameter, SCTP): 2 packs (Networks)</title></path>
-<path d="M198.03 275.34A156 156 0 0 1 199.19 272.86L206.41 276.3A148 148 0 0 0 205.31 278.65Z" class="rd-bar rd-networks"><title>BGP MRT: 1 pack (Networks)</title></path>
-<path d="M199.61 271.98A156 156 0 0 1 200.82 269.53L207.96 273.14A148 148 0 0 0 206.81 275.47Z" class="rd-bar rd-networks"><title>CACAO playbooks: 1 pack (Networks)</title></path>
-<path d="M201.27 268.66A156 156 0 0 1 202.54 266.24L209.59 270.02A148 148 0 0 0 208.38 272.32Z" class="rd-bar rd-networks"><title>CloudEvents: 1 pack (Networks)</title></path>
-<path d="M203.01 265.38A156 156 0 0 1 204.33 262.99L211.29 266.94A148 148 0 0 0 210.03 269.2Z" class="rd-bar rd-networks"><title>CVE JSON record: 1 pack (Networks)</title></path>
-<path d="M204.82 262.14A156 156 0 0 1 206.2 259.79L213.06 263.9A148 148 0 0 0 211.75 266.13Z" class="rd-bar rd-networks"><title>Elastic Common Schema: 1 pack (Networks)</title></path>
-<path d="M206.71 258.95A156 156 0 0 1 208.15 256.63L214.91 260.9A148 148 0 0 0 213.54 263.1Z" class="rd-bar rd-networks"><title>HSRP: 1 pack (Networks)</title></path>
-<path d="M208.67 255.8A156 156 0 0 1 210.17 253.51L216.83 257.95A148 148 0 0 0 215.41 260.12Z" class="rd-bar rd-networks"><title>MISP core format: 1 pack (Networks)</title></path>
-<path d="M210.71 252.7A156 156 0 0 1 212.26 250.45L218.81 255.04A148 148 0 0 0 217.34 257.18Z" class="rd-bar rd-networks"><title>OpenIOC 1.1: 1 pack (Networks)</title></path>
-<path d="M212.83 249.65A156 156 0 0 1 214.43 247.44L220.87 252.19A148 148 0 0 0 219.35 254.28Z" class="rd-bar rd-networks"><title>OSV vulnerability entry: 1 pack (Networks)</title></path>
-<path d="M215.01 246.65A156 156 0 0 1 216.66 244.48L222.99 249.38A148 148 0 0 0 221.42 251.44Z" class="rd-bar rd-networks"><title>PCEP: 1 pack (Networks)</title></path>
-<path d="M217.27 243.71A156 156 0 0 1 218.97 241.57L225.18 246.62A148 148 0 0 0 223.56 248.64Z" class="rd-bar rd-networks"><title>Suricata EVE JSON: 1 pack (Networks)</title></path>
-<path d="M219.59 240.81A156 156 0 0 1 221.35 238.72L227.43 243.91A148 148 0 0 0 225.77 245.9Z" class="rd-bar rd-networks"><title>Wi-Fi beacon frame: 1 pack (Networks)</title></path>
-<path d="M235.58 243.77A142 142 0 0 1 337.52 198.02L338.12 232.02A108 108 0 0 0 260.58 266.81Z" class="rd-dom rd-maps"/>
-<path id="rd-dark-l10" d="M250.29 257.32A122 122 0 0 1 337.87 218.02" fill="none"/>
+<path d="M67.47 399.72A278 278 0 0 1 66.7 396.06L195.02 369.74A148 148 0 0 0 195.43 371.68Z" class="rd-bar rd-networks"><title>HL7 FHIR R4: 146 packs (Networks)</title></path>
+<path d="M81.22 391.39A263 263 0 0 1 80.55 387.92L194.46 366.88A148 148 0 0 0 194.83 368.83Z" class="rd-bar rd-networks"><title>OCSF: 79 packs (Networks)</title></path>
+<path d="M96.79 383.34A247 247 0 0 1 96.23 380.07L193.96 364.01A148 148 0 0 0 194.3 365.96Z" class="rd-bar rd-networks"><title>IETF packet headers: 40 packs (Networks)</title></path>
+<path d="M96.6 378.44A246 246 0 0 1 96.11 375.18L193.52 361.13A148 148 0 0 0 193.81 363.09Z" class="rd-bar rd-networks"><title>STIX 2.1: 39 packs (Networks)</title></path>
+<path d="M107.76 372.01A234 234 0 0 1 107.35 368.89L193.13 358.24A148 148 0 0 0 193.39 360.21Z" class="rd-bar rd-networks"><title>OpenConfig (RFC 7951 JSON): 24 packs (Networks)</title></path>
+<path d="M112.9 366.75A228 228 0 0 1 112.56 363.7L192.8 355.34A148 148 0 0 0 193.02 357.31Z" class="rd-bar rd-networks"><title>IETF YANG data (RFC 7951 JSON): 19 packs (Networks)</title></path>
+<path d="M119.92 361.54A221 221 0 0 1 119.65 358.59L192.52 352.44A148 148 0 0 0 192.7 354.42Z" class="rd-bar rd-networks"><title>Tunnelling and VPN (VXLAN-GPE, Geneve options, MPLS stack, IKEv2): 14 packs (Networks)</title></path>
+<path d="M123.33 356.91A217 217 0 0 1 123.13 354L192.31 349.53A148 148 0 0 0 192.45 351.51Z" class="rd-bar rd-networks"><title>OpenTelemetry OTLP: 12 packs (Networks)</title></path>
+<path d="M130.13 352.22A210 210 0 0 1 129.98 349.41L192.15 346.62A148 148 0 0 0 192.25 348.61Z" class="rd-bar rd-networks"><title>Zeek JSON logs (scope separator _): 9 packs (Networks)</title></path>
+<path d="M132.83 347.98A207 207 0 0 1 132.75 345.2L192.05 343.71A148 148 0 0 0 192.11 345.69Z" class="rd-bar rd-networks"><title>gNMI: 8 packs (Networks)</title></path>
+<path d="M132.72 343.9A207 207 0 0 1 132.68 341.12L192 340.8A148 148 0 0 0 192.03 342.78Z" class="rd-bar rd-networks"><title>IPPM active measurement (OWAMP, TWAMP, STAMP): 8 packs (Networks)</title></path>
+<path d="M135.98 339.82A204 204 0 0 1 136 337.08L192.02 337.88A148 148 0 0 0 192 339.87Z" class="rd-bar rd-networks"><title>IP flow export (IPFIX, NetFlow, sFlow): 7 packs (Networks)</title></path>
+<path d="M139.82 335.88A200 200 0 0 1 139.9 333.19L192.09 334.97A148 148 0 0 0 192.03 336.95Z" class="rd-bar rd-networks"><title>Media transport (MPEG-TS, SRT, RIST, WebRTC DCEP, RTP): 6 packs (Networks)</title></path>
+<path d="M144.44 332.12A195 195 0 0 1 144.56 329.49L192.21 332.06A148 148 0 0 0 192.12 334.04Z" class="rd-bar rd-networks"><title>Amateur digital voice and data (M17, D-STAR, DMR): 5 packs (Networks)</title></path>
+<path d="M150.13 328.6A190 190 0 0 1 150.3 326.05L192.4 329.15A148 148 0 0 0 192.27 331.13Z" class="rd-bar rd-networks"><title>Directory and naming (NetBIOS name and datagram services, LLMNR, SLPv2): 4 packs (Networks)</title></path>
+<path d="M150.39 324.86A190 190 0 0 1 150.61 322.32L192.64 326.24A148 148 0 0 0 192.47 328.22Z" class="rd-bar rd-networks"><title>Messaging protocols (MQTT, AMQP 1.0, STUN/TURN): 4 packs (Networks)</title></path>
+<path d="M150.73 321.13A190 190 0 0 1 151 318.59L192.94 323.34A148 148 0 0 0 192.73 325.32Z" class="rd-bar rd-networks"><title>Printing (IPP binary encoding, LPD): 4 packs (Networks)</title></path>
+<path d="M151.13 317.41A190 190 0 0 1 151.45 314.87L193.3 320.45A148 148 0 0 0 193.05 322.42Z" class="rd-bar rd-networks"><title>Web transport framing (HTTP/2, HTTP/3, WebSocket, TLS 1.3): 4 packs (Networks)</title></path>
+<path d="M158.65 314.67A183 183 0 0 1 159 312.24L193.71 317.57A148 148 0 0 0 193.42 319.53Z" class="rd-bar rd-networks"><title>3GPP mobile core (GTP-U, GTPv2-C, PFCP): 3 packs (Networks)</title></path>
+<path d="M159.18 311.11A183 183 0 0 1 159.58 308.68L194.18 314.69A148 148 0 0 0 193.85 316.65Z" class="rd-bar rd-networks"><title>Amateur and paging radio (AX.25, KISS, POCSAG): 3 packs (Networks)</title></path>
+<path d="M159.78 307.55A183 183 0 0 1 160.24 305.14L194.71 311.82A148 148 0 0 0 194.34 313.77Z" class="rd-bar rd-networks"><title>Finance messages (FIX tag=value, QIF, OFX transactions): 3 packs (Networks)</title></path>
+<path d="M160.46 304.01A183 183 0 0 1 160.96 301.6L195.29 308.97A148 148 0 0 0 194.89 310.91Z" class="rd-bar rd-networks"><title>Internet control plane (DNS message, DHCPv6 message, ICMPv6 ND): 3 packs (Networks)</title></path>
+<path d="M161.2 300.48A183 183 0 0 1 161.75 298.09L195.93 306.12A148 148 0 0 0 195.49 308.06Z" class="rd-bar rd-networks"><title>QUIC (long-header packets, frames, transport parameters): 3 packs (Networks)</title></path>
+<path d="M162.02 296.97A183 183 0 0 1 162.61 294.58L196.62 303.29A148 148 0 0 0 196.15 305.22Z" class="rd-bar rd-networks"><title>Remote access and file sharing (SSH, SMB2/3): 3 packs (Networks)</title></path>
+<path d="M162.9 293.47A183 183 0 0 1 163.54 291.1L197.38 300.48A148 148 0 0 0 196.86 302.39Z" class="rd-bar rd-networks"><title>Routing control protocols (BMP, BFD, RPKI to Router): 3 packs (Networks)</title></path>
+<path d="M173.47 292.72A173 173 0 0 1 174.12 290.5L198.18 297.68A148 148 0 0 0 197.63 299.58Z" class="rd-bar rd-networks"><title>CISA KEV catalog: 2 packs (Networks)</title></path>
+<path d="M174.44 289.45A173 173 0 0 1 175.13 287.24L199.04 294.89A148 148 0 0 0 198.45 296.78Z" class="rd-bar rd-networks"><title>Health data (HL7 v2 segments, DICOM files): 2 packs (Networks)</title></path>
+<path d="M175.46 286.2A173 173 0 0 1 176.2 284L199.96 292.12A148 148 0 0 0 199.33 294.01Z" class="rd-bar rd-networks"><title>IETF option areas: 2 packs (Networks)</title></path>
+<path d="M176.56 282.97A173 173 0 0 1 177.34 280.79L200.93 289.37A148 148 0 0 0 200.26 291.24Z" class="rd-bar rd-networks"><title>ISO transport over TCP and RDP connection negotiation (TPKT/X.224, RDP_NEG): 2 packs (Networks)</title></path>
+<path d="M177.71 279.77A173 173 0 0 1 178.53 277.6L201.95 286.65A148 148 0 0 0 201.25 288.5Z" class="rd-bar rd-networks"><title>OpAMP: 2 packs (Networks)</title></path>
+<path d="M178.93 276.58A173 173 0 0 1 179.79 274.43L203.03 283.94A148 148 0 0 0 202.29 285.78Z" class="rd-bar rd-networks"><title>OpenC2: 2 packs (Networks)</title></path>
+<path d="M180.21 273.42A173 173 0 0 1 181.12 271.29L204.16 281.25A148 148 0 0 0 203.38 283.08Z" class="rd-bar rd-networks"><title>Prometheus remote write: 2 packs (Networks)</title></path>
+<path d="M181.55 270.29A173 173 0 0 1 182.5 268.17L205.34 278.59A148 148 0 0 0 204.53 280.4Z" class="rd-bar rd-networks"><title>Security event logs: 2 packs (Networks)</title></path>
+<path d="M182.95 267.18A173 173 0 0 1 183.94 265.08L206.58 275.95A148 148 0 0 0 205.73 277.74Z" class="rd-bar rd-networks"><title>Signalling transport (Diameter, SCTP): 2 packs (Networks)</title></path>
+<path d="M199.79 271.6A156 156 0 0 1 200.72 269.73L207.87 273.33A148 148 0 0 0 206.98 275.11Z" class="rd-bar rd-networks"><title>BGP MRT: 1 pack (Networks)</title></path>
+<path d="M201.17 268.86A156 156 0 0 1 202.13 267L209.2 270.74A148 148 0 0 0 208.29 272.5Z" class="rd-bar rd-networks"><title>CACAO playbooks: 1 pack (Networks)</title></path>
+<path d="M202.6 266.14A156 156 0 0 1 203.6 264.3L210.59 268.18A148 148 0 0 0 209.64 269.92Z" class="rd-bar rd-networks"><title>CloudEvents: 1 pack (Networks)</title></path>
+<path d="M204.08 263.44A156 156 0 0 1 205.12 261.63L212.03 265.65A148 148 0 0 0 211.05 267.37Z" class="rd-bar rd-networks"><title>COSE: 1 pack (Networks)</title></path>
+<path d="M205.61 260.78A156 156 0 0 1 206.69 258.99L213.52 263.14A148 148 0 0 0 212.5 264.84Z" class="rd-bar rd-networks"><title>CVE JSON record: 1 pack (Networks)</title></path>
+<path d="M207.2 258.15A156 156 0 0 1 208.31 256.38L215.06 260.67A148 148 0 0 0 214.01 262.35Z" class="rd-bar rd-networks"><title>DTN Bundle Protocol 7: 1 pack (Networks)</title></path>
+<path d="M208.83 255.55A156 156 0 0 1 209.98 253.8L216.65 258.22A148 148 0 0 0 215.56 259.88Z" class="rd-bar rd-networks"><title>Elastic Common Schema: 1 pack (Networks)</title></path>
+<path d="M210.52 252.98A156 156 0 0 1 211.7 251.26L218.28 255.81A148 148 0 0 0 217.16 257.45Z" class="rd-bar rd-networks"><title>HSRP: 1 pack (Networks)</title></path>
+<path d="M212.26 250.45A156 156 0 0 1 213.47 248.75L219.96 253.43A148 148 0 0 0 218.81 255.04Z" class="rd-bar rd-networks"><title>MISP core format: 1 pack (Networks)</title></path>
+<path d="M214.05 247.95A156 156 0 0 1 215.3 246.27L221.69 251.08A148 148 0 0 0 220.51 252.67Z" class="rd-bar rd-networks"><title>OpenIOC 1.1: 1 pack (Networks)</title></path>
+<path d="M215.89 245.49A156 156 0 0 1 217.17 243.84L223.46 248.77A148 148 0 0 0 222.25 250.34Z" class="rd-bar rd-networks"><title>OSV vulnerability entry: 1 pack (Networks)</title></path>
+<path d="M217.77 243.07A156 156 0 0 1 219.08 241.44L225.28 246.49A148 148 0 0 0 224.04 248.04Z" class="rd-bar rd-networks"><title>PCEP: 1 pack (Networks)</title></path>
+<path d="M219.7 240.68A156 156 0 0 1 221.05 239.07L227.15 244.25A148 148 0 0 0 225.87 245.77Z" class="rd-bar rd-networks"><title>Suricata EVE JSON: 1 pack (Networks)</title></path>
+<path d="M221.68 238.33A156 156 0 0 1 223.06 236.75L229.05 242.05A148 148 0 0 0 227.75 243.54Z" class="rd-bar rd-networks"><title>Wi-Fi beacon frame: 1 pack (Networks)</title></path>
+<path d="M237.2 242.04A142 142 0 0 1 331.33 198.26L333.41 232.2A108 108 0 0 0 261.82 265.49Z" class="rd-dom rd-maps"/>
+<path id="rd-dark-l10" d="M251.68 255.83A122 122 0 0 1 332.55 218.23" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-dark-l10" startOffset="50%" text-anchor="middle">Maps</textPath></text>
-<path d="M157.98 171.2A248 248 0 0 1 160.97 168.04L233.26 237.48A148 148 0 0 0 231.48 239.36Z" class="rd-bar rd-maps"><title>OGC API: 42 packs (Maps, weather and alerts)</title></path>
-<path d="M167.42 172.14A240 240 0 0 1 170.39 169.15L235.73 234.97A148 148 0 0 0 233.91 236.81Z" class="rd-bar rd-maps"><title>NWS weather.gov API: 31 packs (Maps, weather and alerts)</title></path>
-<path d="M176.62 173.34A233 233 0 0 1 179.56 170.51L238.26 232.52A148 148 0 0 0 236.39 234.31Z" class="rd-bar rd-maps"><title>aviationweather.gov Data API: 23 packs (Maps, weather and alerts)</title></path>
-<path d="M187.83 177.21A222 222 0 0 1 190.71 174.57L240.84 230.13A148 148 0 0 0 238.94 231.88Z" class="rd-bar rd-maps"><title>OGC JSON encodings: 15 packs (Maps, weather and alerts)</title></path>
-<path d="M191.75 173.64A222 222 0 0 1 194.68 171.07L243.48 227.8A148 148 0 0 0 241.54 229.51Z" class="rd-bar rd-maps"><title>OpenAQ API: 15 packs (Maps, weather and alerts)</title></path>
-<path d="M195.75 170.16A222 222 0 0 1 198.74 167.66L246.18 225.54A148 148 0 0 0 244.19 227.2Z" class="rd-bar rd-maps"><title>Overture Maps: 15 packs (Maps, weather and alerts)</title></path>
-<path d="M209.59 178.84A207 207 0 0 1 212.43 176.58L248.93 223.34A148 148 0 0 0 246.9 224.95Z" class="rd-bar rd-maps"><title>OGC I3S (Indexed 3D Scene Layers): 8 packs (Maps, weather and alerts)</title></path>
-<path d="M213.46 175.78A207 207 0 0 1 216.35 173.59L251.73 221.2A148 148 0 0 0 249.66 222.77Z" class="rd-bar rd-maps"><title>USGS Water Data API: 8 packs (Maps, weather and alerts)</title></path>
-<path d="M227.51 186.61A190 190 0 0 1 230.22 184.67L254.58 219.14A148 148 0 0 0 252.48 220.65Z" class="rd-bar rd-maps"><title>WMO BUFR sequences: 4 packs (Maps, weather and alerts)</title></path>
-<path d="M235.26 189.8A183 183 0 0 1 237.9 187.99L257.48 217.14A148 148 0 0 0 255.34 218.6Z" class="rd-bar rd-maps"><title>Environment Agency flood monitoring: 3 packs (Maps, weather and alerts)</title></path>
-<path d="M238.86 187.35A183 183 0 0 1 241.54 185.61L260.42 215.21A148 148 0 0 0 258.25 216.63Z" class="rd-bar rd-maps"><title>OGC CoverageJSON: 3 packs (Maps, weather and alerts)</title></path>
-<path d="M242.52 184.99A183 183 0 0 1 245.24 183.31L263.41 213.36A148 148 0 0 0 261.21 214.72Z" class="rd-bar rd-maps"><title>Open311 GeoReport v2: 3 packs (Maps, weather and alerts)</title></path>
-<path d="M246.23 182.72A183 183 0 0 1 249 181.1L266.45 211.57A148 148 0 0 0 264.21 212.88Z" class="rd-bar rd-maps"><title>OpenStreetMap PBF: 3 packs (Maps, weather and alerts)</title></path>
-<path d="M254.92 189.25A173 173 0 0 1 257.57 187.78L269.52 209.86A148 148 0 0 0 267.26 211.11Z" class="rd-bar rd-maps"><title>Davis WeatherLink Live: 2 packs (Maps, weather and alerts)</title></path>
-<path d="M258.53 187.27A173 173 0 0 1 261.21 185.86L272.64 208.22A148 148 0 0 0 270.34 209.42Z" class="rd-bar rd-maps"><title>GeoPackage geometry: 2 packs (Maps, weather and alerts)</title></path>
-<path d="M262.18 185.37A173 173 0 0 1 264.9 184.03L275.79 206.65A148 148 0 0 0 273.47 207.8Z" class="rd-bar rd-maps"><title>NHC tropical cyclone status: 2 packs (Maps, weather and alerts)</title></path>
-<path d="M265.88 183.56A173 173 0 0 1 268.63 182.29L278.98 205.16A148 148 0 0 0 276.63 206.25Z" class="rd-bar rd-maps"><title>USGS earthquake feed: 2 packs (Maps, weather and alerts)</title></path>
-<path d="M269.62 181.85A173 173 0 0 1 272.4 180.64L282.21 203.75A148 148 0 0 0 279.83 204.78Z" class="rd-bar rd-maps"><title>WMO binary codes: 2 packs (Maps, weather and alerts)</title></path>
-<path d="M279.99 196.01A156 156 0 0 1 282.51 194.98L285.46 202.41A148 148 0 0 0 283.06 203.39Z" class="rd-bar rd-maps"><title>CAP alerts: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M283.43 194.62A156 156 0 0 1 285.98 193.65L288.75 201.16A148 148 0 0 0 286.33 202.07Z" class="rd-bar rd-maps"><title>CityJSON: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M286.9 193.31A156 156 0 0 1 289.48 192.41L292.07 199.98A148 148 0 0 0 289.62 200.84Z" class="rd-bar rd-maps"><title>Garmin TCX: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M290.4 192.09A156 156 0 0 1 293 191.25L295.41 198.88A148 148 0 0 0 292.95 199.68Z" class="rd-bar rd-maps"><title>Geobuf: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M293.94 190.96A156 156 0 0 1 296.55 190.17L298.78 197.86A148 148 0 0 0 296.3 198.6Z" class="rd-bar rd-maps"><title>GeoJSON: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M297.49 189.9A156 156 0 0 1 300.13 189.18L302.17 196.92A148 148 0 0 0 299.67 197.6Z" class="rd-bar rd-maps"><title>GPX: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M301.08 188.93A156 156 0 0 1 303.73 188.28L305.59 196.06A148 148 0 0 0 303.07 196.68Z" class="rd-bar rd-maps"><title>KML: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M304.68 188.05A156 156 0 0 1 307.35 187.46L309.02 195.28A148 148 0 0 0 306.49 195.84Z" class="rd-bar rd-maps"><title>Mapbox Vector Tile: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M308.3 187.25A156 156 0 0 1 310.98 186.72L312.47 194.58A148 148 0 0 0 309.93 195.09Z" class="rd-bar rd-maps"><title>NASA EONET events: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M311.95 186.54A156 156 0 0 1 314.64 186.08L315.94 193.97A148 148 0 0 0 313.38 194.41Z" class="rd-bar rd-maps"><title>NOAA CO-OPS tides and currents: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M315.6 185.92A156 156 0 0 1 318.3 185.52L319.42 193.44A148 148 0 0 0 316.86 193.82Z" class="rd-bar rd-maps"><title>OGC Moving Features CSV: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M319.28 185.38A156 156 0 0 1 321.98 185.04L322.91 192.99A148 148 0 0 0 320.34 193.31Z" class="rd-bar rd-maps"><title>Overpass API JSON: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M322.96 184.93A156 156 0 0 1 325.68 184.66L326.41 192.63A148 148 0 0 0 323.83 192.89Z" class="rd-bar rd-maps"><title>STAC Item: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M326.65 184.57A156 156 0 0 1 329.37 184.36L329.92 192.34A148 148 0 0 0 327.34 192.54Z" class="rd-bar rd-maps"><title>WMO WCMP2: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M330.35 184.3A156 156 0 0 1 333.08 184.15L333.43 192.15A148 148 0 0 0 330.85 192.28Z" class="rd-bar rd-maps"><title>WMO WIS2 notification: 1 pack (Maps, weather and alerts)</title></path>
-<path d="M334.06 184.11A156 156 0 0 1 336.79 184.03L336.95 192.03A148 148 0 0 0 334.36 192.11Z" class="rd-bar rd-maps"><title>WMS capabilities: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M160.83 168.17A248 248 0 0 1 163.15 165.79L234.57 236.14A148 148 0 0 0 233.18 237.56Z" class="rd-bar rd-maps"><title>OGC API: 42 packs (Maps, weather and alerts)</title></path>
+<path d="M169.56 169.97A240 240 0 0 1 171.85 167.7L236.63 234.08A148 148 0 0 0 235.22 235.48Z" class="rd-bar rd-maps"><title>NWS weather.gov API: 31 packs (Maps, weather and alerts)</title></path>
+<path d="M178.05 171.95A233 233 0 0 1 180.32 169.8L238.74 232.07A148 148 0 0 0 237.3 233.43Z" class="rd-bar rd-maps"><title>aviationweather.gov Data API: 23 packs (Maps, weather and alerts)</title></path>
+<path d="M188.56 176.54A222 222 0 0 1 190.77 174.52L240.88 230.09A148 148 0 0 0 239.42 231.43Z" class="rd-bar rd-maps"><title>OGC JSON encodings: 15 packs (Maps, weather and alerts)</title></path>
+<path d="M191.81 173.58A222 222 0 0 1 194.05 171.61L243.07 228.16A148 148 0 0 0 241.58 229.47Z" class="rd-bar rd-maps"><title>OpenAQ API: 15 packs (Maps, weather and alerts)</title></path>
+<path d="M195.11 170.7A222 222 0 0 1 197.4 168.77L245.29 226.27A148 148 0 0 0 243.77 227.55Z" class="rd-bar rd-maps"><title>Overture Maps: 15 packs (Maps, weather and alerts)</title></path>
+<path d="M208.33 179.86A207 207 0 0 1 210.49 178.11L247.55 224.43A148 148 0 0 0 246 225.68Z" class="rd-bar rd-maps"><title>Bright Sky (DWD open data): 8 packs (Maps, weather and alerts)</title></path>
+<path d="M211.51 177.3A207 207 0 0 1 213.7 175.59L249.84 222.63A148 148 0 0 0 248.27 223.85Z" class="rd-bar rd-maps"><title>OGC I3S (Indexed 3D Scene Layers): 8 packs (Maps, weather and alerts)</title></path>
+<path d="M214.74 174.8A207 207 0 0 1 216.96 173.14L252.17 220.88A148 148 0 0 0 250.58 222.07Z" class="rd-bar rd-maps"><title>USGS Water Data API: 8 packs (Maps, weather and alerts)</title></path>
+<path d="M228.08 186.2A190 190 0 0 1 230.15 184.71L254.53 219.17A148 148 0 0 0 252.92 220.33Z" class="rd-bar rd-maps"><title>WMO BUFR sequences: 4 packs (Maps, weather and alerts)</title></path>
+<path d="M235.19 189.85A183 183 0 0 1 237.22 188.45L256.93 217.51A148 148 0 0 0 255.29 218.64Z" class="rd-bar rd-maps"><title>Environment Agency flood monitoring: 3 packs (Maps, weather and alerts)</title></path>
+<path d="M238.17 187.81A183 183 0 0 1 240.22 186.46L259.35 215.9A148 148 0 0 0 257.7 216.99Z" class="rd-bar rd-maps"><title>OGC CoverageJSON: 3 packs (Maps, weather and alerts)</title></path>
+<path d="M241.19 185.84A183 183 0 0 1 243.26 184.52L261.81 214.34A148 148 0 0 0 260.14 215.4Z" class="rd-bar rd-maps"><title>Open311 GeoReport v2: 3 packs (Maps, weather and alerts)</title></path>
+<path d="M244.24 183.92A183 183 0 0 1 246.35 182.65L264.3 212.82A148 148 0 0 0 262.61 213.85Z" class="rd-bar rd-maps"><title>OpenStreetMap PBF: 3 packs (Maps, weather and alerts)</title></path>
+<path d="M252.4 190.69A173 173 0 0 1 254.41 189.53L266.82 211.36A148 148 0 0 0 265.1 212.35Z" class="rd-bar rd-maps"><title>Davis WeatherLink Live: 2 packs (Maps, weather and alerts)</title></path>
+<path d="M255.36 189A173 173 0 0 1 257.39 187.88L269.37 209.94A148 148 0 0 0 267.63 210.9Z" class="rd-bar rd-maps"><title>Defra UK-AIR: 2 packs (Maps, weather and alerts)</title></path>
+<path d="M258.35 187.36A173 173 0 0 1 260.4 186.28L271.95 208.57A148 148 0 0 0 270.19 209.5Z" class="rd-bar rd-maps"><title>GeoPackage geometry: 2 packs (Maps, weather and alerts)</title></path>
+<path d="M261.37 185.78A173 173 0 0 1 263.44 184.74L274.55 207.26A148 148 0 0 0 272.77 208.15Z" class="rd-bar rd-maps"><title>NHC tropical cyclone status: 2 packs (Maps, weather and alerts)</title></path>
+<path d="M264.42 184.26A173 173 0 0 1 266.52 183.26L277.17 206A148 148 0 0 0 275.38 206.85Z" class="rd-bar rd-maps"><title>USGS earthquake feed: 2 packs (Maps, weather and alerts)</title></path>
+<path d="M267.5 182.81A173 173 0 0 1 269.62 181.85L279.82 204.79A148 148 0 0 0 278.02 205.6Z" class="rd-bar rd-maps"><title>WMO binary codes: 2 packs (Maps, weather and alerts)</title></path>
+<path d="M277.47 197.08A156 156 0 0 1 279.39 196.26L282.5 203.63A148 148 0 0 0 280.68 204.41Z" class="rd-bar rd-maps"><title>CAP alerts: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M280.3 195.88A156 156 0 0 1 282.23 195.09L285.2 202.52A148 148 0 0 0 283.36 203.27Z" class="rd-bar rd-maps"><title>CityJSON: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M283.15 194.73A156 156 0 0 1 285.1 193.98L287.91 201.47A148 148 0 0 0 286.06 202.18Z" class="rd-bar rd-maps"><title>Garmin TCX: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M286.02 193.64A156 156 0 0 1 287.98 192.93L290.65 200.47A148 148 0 0 0 288.79 201.14Z" class="rd-bar rd-maps"><title>Geobuf: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M288.91 192.6A156 156 0 0 1 290.89 191.93L293.41 199.52A148 148 0 0 0 291.53 200.16Z" class="rd-bar rd-maps"><title>GeoJSON: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M291.82 191.63A156 156 0 0 1 293.82 190.99L296.18 198.63A148 148 0 0 0 294.29 199.23Z" class="rd-bar rd-maps"><title>GPX: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M294.75 190.71A156 156 0 0 1 296.76 190.11L298.98 197.8A148 148 0 0 0 297.07 198.36Z" class="rd-bar rd-maps"><title>KML: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M297.7 189.84A156 156 0 0 1 299.72 189.29L301.79 197.02A148 148 0 0 0 299.87 197.54Z" class="rd-bar rd-maps"><title>Mapbox Vector Tile: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M300.67 189.04A156 156 0 0 1 302.7 188.53L304.61 196.29A148 148 0 0 0 302.68 196.78Z" class="rd-bar rd-maps"><title>MET Norway Locationforecast: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M303.65 188.29A156 156 0 0 1 305.69 187.82L307.45 195.62A148 148 0 0 0 305.51 196.07Z" class="rd-bar rd-maps"><title>NASA EONET events: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M306.64 187.61A156 156 0 0 1 308.69 187.17L310.29 195.01A148 148 0 0 0 308.35 195.42Z" class="rd-bar rd-maps"><title>NOAA CO-OPS tides and currents: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M309.65 186.98A156 156 0 0 1 311.7 186.59L313.16 194.45A148 148 0 0 0 311.21 194.83Z" class="rd-bar rd-maps"><title>OGC Moving Features CSV: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M312.67 186.41A156 156 0 0 1 314.73 186.06L316.03 193.95A148 148 0 0 0 314.07 194.29Z" class="rd-bar rd-maps"><title>Open-Meteo: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M315.7 185.9A156 156 0 0 1 317.77 185.59L318.91 193.51A148 148 0 0 0 316.94 193.81Z" class="rd-bar rd-maps"><title>Overpass API JSON: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M318.74 185.46A156 156 0 0 1 320.81 185.18L321.8 193.12A148 148 0 0 0 319.83 193.38Z" class="rd-bar rd-maps"><title>STAC Item: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M321.79 185.07A156 156 0 0 1 323.86 184.84L324.69 192.79A148 148 0 0 0 322.72 193.01Z" class="rd-bar rd-maps"><title>WMO WCMP2: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M324.84 184.74A156 156 0 0 1 326.92 184.55L327.59 192.52A148 148 0 0 0 325.62 192.7Z" class="rd-bar rd-maps"><title>WMO WIS2 notification: 1 pack (Maps, weather and alerts)</title></path>
+<path d="M327.9 184.47A156 156 0 0 1 329.99 184.32L330.5 192.31A148 148 0 0 0 328.52 192.45Z" class="rd-bar rd-maps"><title>WMS capabilities: 1 pack (Maps, weather and alerts)</title></path>
+<text x="340" y="184" class="rd-t rd-scale-t" text-anchor="middle" dy="0.35em">1</text>
+<text x="340" y="127.17" class="rd-t rd-scale-t" text-anchor="middle" dy="0.35em">10</text>
+<text x="340" y="70.35" class="rd-t rd-scale-t" text-anchor="middle" dy="0.35em">100 packs</text>
+<path d="M643.37 359.63V46" class="rd-lead"/>
+<text class="rd-t rd-ex-t" text-anchor="end"><tspan x="663.37" y="16" class="rd-ex-name">ArduPilot DataFlash log</tspan><tspan x="663.37" y="38">342 packs, the longest bar</tspan></text>
 </g>
 <rect x="20" y="750" width="12" height="12" rx="2" class="rd-sw rd-air"/>
 <text x="38" y="760" class="rd-t" font-size="13">Air <tspan class="rd-q">37</tspan></text>
 <rect x="340" y="750" width="12" height="12" rx="2" class="rd-sw rd-land"/>
-<text x="358" y="760" class="rd-t" font-size="13">Land vehicles <tspan class="rd-q">566</tspan></text>
+<text x="358" y="760" class="rd-t" font-size="13">Land vehicles <tspan class="rd-q">570</tspan></text>
 <rect x="20" y="772" width="12" height="12" rx="2" class="rd-sw rd-sea"/>
-<text x="38" y="782" class="rd-t" font-size="13">Sea <tspan class="rd-q">28</tspan></text>
+<text x="38" y="782" class="rd-t" font-size="13">Sea <tspan class="rd-q">29</tspan></text>
 <rect x="340" y="772" width="12" height="12" rx="2" class="rd-sw rd-space"/>
-<text x="358" y="782" class="rd-t" font-size="13">Space <tspan class="rd-q">347</tspan></text>
+<text x="358" y="782" class="rd-t" font-size="13">Space <tspan class="rd-q">365</tspan></text>
 <rect x="20" y="794" width="12" height="12" rx="2" class="rd-sw rd-uncrewed"/>
 <text x="38" y="804" class="rd-t" font-size="13">Uncrewed systems and robots <tspan class="rd-q">1,640</tspan></text>
 <rect x="340" y="794" width="12" height="12" rx="2" class="rd-sw rd-c2"/>
 <text x="358" y="804" class="rd-t" font-size="13">C2 and tactical <tspan class="rd-q">13</tspan></text>
 <rect x="20" y="816" width="12" height="12" rx="2" class="rd-sw rd-sensors"/>
-<text x="38" y="826" class="rd-t" font-size="13">Sensors <tspan class="rd-q">157</tspan></text>
+<text x="38" y="826" class="rd-t" font-size="13">Sensors <tspan class="rd-q">159</tspan></text>
 <rect x="340" y="816" width="12" height="12" rx="2" class="rd-sw rd-transport"/>
-<text x="358" y="826" class="rd-t" font-size="13">Transport <tspan class="rd-q">228</tspan></text>
+<text x="358" y="826" class="rd-t" font-size="13">Transport <tspan class="rd-q">229</tspan></text>
 <rect x="20" y="838" width="12" height="12" rx="2" class="rd-sw rd-iot"/>
-<text x="38" y="848" class="rd-t" font-size="13">IoT <tspan class="rd-q">500</tspan></text>
+<text x="38" y="848" class="rd-t" font-size="13">IoT <tspan class="rd-q">510</tspan></text>
 <rect x="340" y="838" width="12" height="12" rx="2" class="rd-sw rd-networks"/>
-<text x="358" y="848" class="rd-t" font-size="13">Networks <tspan class="rd-q">463</tspan></text>
+<text x="358" y="848" class="rd-t" font-size="13">Networks <tspan class="rd-q">485</tspan></text>
 <rect x="20" y="860" width="12" height="12" rx="2" class="rd-sw rd-maps"/>
-<text x="38" y="870" class="rd-t" font-size="13">Maps, weather and alerts <tspan class="rd-q">199</tspan></text>
+<text x="38" y="870" class="rd-t" font-size="13">Maps, weather and alerts <tspan class="rd-q">211</tspan></text>
 <text x="20" y="898" class="rd-t rd-q" font-size="13">The dashed outer ring: private overlays plug in here: the same engines read them.</text>
 </svg>
