@@ -40,6 +40,11 @@ python3 -I "$here/bundle.py" \
   --wasm "$repo/bindings/wasm/target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm" \
   --goat-xf "$repo/engines/rust/target/release/goat-xf"
 
+# No command box is cut off at 1440 or 390 px, and no output box at 1440
+# (headless Chrome; skipped with a notice when there is none outside CI).
+echo "build.sh: the page's command and output boxes"
+python3 -I "$here/fitcheck.py" "$here" index.html
+
 if [ "$clean" = 1 ]; then
   rm -rf "$repo/bindings/wasm/target" "$repo/engines/rust/target"
   echo "build.sh: removed the cargo target directories"

@@ -11,6 +11,7 @@ scripts, no analytics.
 | `assets/demo.mjs` | the copy buttons and the demo |
 | `assets/hero.mjs` | plays the conversion drawn in the first screen, one pack line at a time (a still frame with reduced motion or JavaScript off) |
 | `assets/journey.svg`, `assets/model-bus.svg`, `assets/icon.svg` | the two figures and the tab icon |
+| `fitcheck.py` | run by `build.sh`: fails when a command box is cut off at 1440 or 390 px |
 | `build.sh`, `bundle.py` | write `assets/engine/` from the tree and check the page against it |
 | `assets/engine/` | generated, not kept in git (`site/.gitignore`) |
 | `assets/figures/` | the README's hub figure, `docs/figures/hub-light.svg` and `hub-dark.svg`, copied by `bundle.py` on every build; not kept in git |
@@ -100,3 +101,7 @@ touches `site/`, and on a push to main also deploys `site/` with
 source is set to "GitHub Actions" (Settings, Pages); until a repository owner
 sets it, the page is built and checked and the deploy job is skipped.
 `tools/boundary-gate` allows `.html` and `.css` files under `site/` only.
+
+## Command and output boxes
+
+Every `<pre>` on the page is marked `data-box="command"` or `data-box="output"`. A command box shows the whole command at any width: it wraps at spaces, each line of it a `<span class="ln">` with a hanging indent, and Copy copies the exact text. An output box may scroll inside its box on a narrow screen, and its caption says so. `build.sh` ends by running `fitcheck.py`, which loads the page in headless Chrome at 1440 and 390 px wide and fails when a box is cut off.
