@@ -97,10 +97,11 @@ class RadialTree(unittest.TestCase):
         self.assertEqual(marks, ["1", "2", "3", "4"])
         # the scale: one faint ring per power of ten up to the longest family (3 packs: only 1)
         self.assertEqual(block.count('class="rd-scale"'), 1)
-        # the worked example names the longest family and its count, in the chart and in the key
+        # the worked example names the longest family and its count on the chart
         self.assertIn('class="rd-ex-name">Radar &amp; co</tspan>', block)
         self.assertIn("3 packs, the longest bar", block)
-        self.assertIn("The longest: Radar &amp; co, 3 packs.", block)
+        # the key names the scale rings from the tree
+        self.assertIn("faint rings at 1)", block)
 
     def test_scale_values(self):
         self.assertEqual(rad.scale_values(1), [1])
