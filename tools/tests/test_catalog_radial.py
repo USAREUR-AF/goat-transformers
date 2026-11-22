@@ -68,10 +68,10 @@ class RadialTree(unittest.TestCase):
     def test_arcs_fill_the_ring_and_hold_their_labels(self):
         ds = self.domains()
         spans = rad.allocate(ds)
-        self.assertAlmostEqual(spans[0][0], rad.DOM_GAP / 2)
+        self.assertAlmostEqual(spans[0][0], rad.SCALE_GAP / 2)
         for (a0, a1), (b0, _) in zip(spans, spans[1:]):
             self.assertAlmostEqual(b0 - a1, rad.DOM_GAP)
-        self.assertAlmostEqual(spans[-1][1] + rad.DOM_GAP / 2, 360.0)
+        self.assertAlmostEqual(spans[-1][1] + rad.SCALE_GAP / 2, 360.0)
         for d, (a0, a1) in zip(ds, spans):
             need = rad.fig.text_width(d["short"], rad.LABEL_SIZE, True) + 2 * rad.LABEL_PAD
             self.assertGreaterEqual((a1 - a0) * 3.141592653589793 / 180 * rad.R_LABEL, need - 1e-6)
@@ -88,6 +88,24 @@ class RadialTree(unittest.TestCase):
         self.assertIn('class="rd-private"', block)
         self.assertIn("7 formats in 4 families", block)
         self.assertEqual(block.count("<tr><td>"), 4)
+
+    def test_page_block_explains_how_to_read_it(self):
+        block = rad.site_block(self.domains())
+        # four key entries and four markers drawn on the chart, numbered alike
+        self.assertEqual(len(re.findall(r'<span class="rk-n" aria-hidden="true">\d</span>', block)), 4)
+        marks = re.findall(r'class="rd-mark-t"[^>]*>(\d)</text>', block)
+        self.assertEqual(marks, ["1", "2", "3", "4"])
+        # the scale: one faint ring per power of ten up to the longest family (3 packs: only 1)
+        self.assertEqual(block.count('class="rd-scale"'), 1)
+        # the worked example names the longest family and its count, in the chart and in the key
+        self.assertIn('class="rd-ex-name">Radar &amp; co</tspan>', block)
+        self.assertIn("3 packs, the longest bar", block)
+        self.assertIn("The longest: Radar &amp; co, 3 packs.", block)
+
+    def test_scale_values(self):
+        self.assertEqual(rad.scale_values(1), [1])
+        self.assertEqual(rad.scale_values(342), [1, 10, 100])
+        self.assertEqual(rad.scale_values(1000), [1, 10, 100, 1000])
 
     def test_write_then_check(self):
         self.assertEqual(self.run_tool()[0], 0)
@@ -142,6 +160,16 @@ class RepositoryChart(unittest.TestCase):
         self.assertEqual(sum(len(d["families"]) for d in ds), len(table["families"]))
         self.assertEqual(set(d["id"] for d in ds), set(rad.COLOURS))
         rad.allocate(ds)  # the labels fit
+        # the worked example and the markers fit inside the view box
+        spans = rad.allocate(ds)
+        top = max(f["packs"] for d in ds for f in d["families"])
+        ex = rad.example(ds, spans, top)
+        mx, my = ex["mark"]
+        self.assertTrue(rad.MARK_R <= mx <= rad.VIEW - rad.MARK_R and rad.MARK_R <= my <= rad.VIEW - rad.MARK_R)
+        rad.domain_marker_at(ds, spans)
+        # the scale labels sit in the open gap at the top, clear of the first and last bars
+        self.assertGreater(spans[0][0], 0)
+        self.assertLess(spans[-1][1], 360)
 
 
 if __name__ == "__main__":

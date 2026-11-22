@@ -19,7 +19,8 @@ if (svg && tip) {
     const r = bar.getBoundingClientRect(), o = box.getBoundingClientRect();
     tip.textContent = bar.dataset.tip;
     tip.hidden = false;
-    const x = Math.min(Math.max(r.left + r.width / 2 - o.left, 90), o.width - 90);
+    const half = Math.min(tip.offsetWidth / 2, o.width / 2);
+    const x = Math.min(Math.max(r.left + r.width / 2 - o.left, half), o.width - half);
     tip.style.left = `${x}px`;
     tip.style.top = `${r.top - o.top}px`;
   };
