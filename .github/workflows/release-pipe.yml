@@ -1,5 +1,6 @@
 # A tag `xf-pipe-v<version>` builds goat-xf-pipe-zenoh (adapters/zenoh) for
-# Linux arm64 (aarch64-unknown-linux-gnu: NVIDIA Jetson Thor and Orin) and
+# Linux arm64 (aarch64-unknown-linux-gnu: NVIDIA Jetson Thor and Orin, Raspberry Pi)
+# and Linux amd64 (x86_64-unknown-linux-gnu: x86 mini PCs, ZimaBoards, cloud hosts) and
 # attaches it to a GitHub Release of that tag, with SHA-256 sums and a build
 # provenance attestation, as release.yml does for the library.
 #
@@ -14,7 +15,7 @@
 # The binary is built with Zenoh's TCP, UDP and TLS links; a smoke test sends
 # messages from one copy to another over tls/127.0.0.1 on every build.
 #
-# The package, goat-xf-pipe-zenoh_<version>_linux_arm64.tar.gz, holds the
+# Each package, goat-xf-pipe-zenoh_<version>_linux_<amd64|arm64>.tar.gz, holds the
 # binary, packs/ and model/ of the tag without the conformance vectors, LICENSE,
 # NOTICE, the licence files and LICENSES/ (tools/goat-pkg archive writes those),
 # and adapters/zenoh/dist/README.txt with the run line.
@@ -34,7 +35,6 @@ concurrency:
   group: release-pipe-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 env:
-  TARGET: aarch64-unknown-linux-gnu
   # Jetson Orin on JetPack 6 is Ubuntu 22.04 (glibc 2.35); Thor on JetPack 7 is
   # Ubuntu 24.04. The binary must not need a newer glibc than the oldest.
   MAX_GLIBC: "2.35"
@@ -66,10 +66,22 @@ jobs:
 
   build:
     needs: version
-    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            target: aarch64-unknown-linux-gnu
+            runner: ubuntu-24.04-arm
+          - arch: amd64
+            target: x86_64-unknown-linux-gnu
+            runner: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     env:
       VERSION: ${{ needs.version.outputs.version }}
+      TARGET: ${{ matrix.target }}
+      ARCH: ${{ matrix.arch }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: goat-xf-pipe-zenoh, release build
@@ -84,7 +96,7 @@ jobs:
           need=$(objdump -T "$bin" | grep -o 'GLIBC_[0-9.]*' | sed 's/GLIBC_//' | sort -uV | tail -1)
           echo "highest glibc symbol version: $need"
           if [ "$(printf '%s\n%s\n' "$need" "$MAX_GLIBC" | sort -V | tail -1)" != "$MAX_GLIBC" ]; then
-            echo "::error::the binary needs glibc $need; Jetson Orin (JetPack 6) has $MAX_GLIBC"
+            echo "::error::the binary needs glibc $need; the oldest hosts (Ubuntu 22.04, Jetson Orin on JetPack 6) have $MAX_GLIBC"
             exit 1
           fi
       # The goat routers accept only TLS (xf-pipe-v0.1.0 had no TLS link and
@@ -95,7 +107,7 @@ jobs:
         run: bash adapters/zenoh/tests/tls-smoke.sh "adapters/zenoh/target/$TARGET/release/goat-xf-pipe-zenoh" packs
       - name: Package
         run: |
-          stage="goat-xf-pipe-zenoh_${VERSION}_linux_arm64"
+          stage="goat-xf-pipe-zenoh_${VERSION}_linux_${ARCH}"
           python3 -I tools/goat-pkg archive --prefix "$stage" --out "$RUNNER_TEMP/base.tar.gz"
           mkdir -p "$RUNNER_TEMP/stage" out
           tar -xzf "$RUNNER_TEMP/base.tar.gz" -C "$RUNNER_TEMP/stage"
@@ -108,7 +120,7 @@ jobs:
           ls -l out
       - name: Smoke test of the package (help, and one conversion through stdin)
         run: |
-          stage="goat-xf-pipe-zenoh_${VERSION}_linux_arm64"
+          stage="goat-xf-pipe-zenoh_${VERSION}_linux_${ARCH}"
           mkdir -p "$RUNNER_TEMP/smoke"
           tar -xzf "out/$stage.tar.gz" -C "$RUNNER_TEMP/smoke"
           dir="$RUNNER_TEMP/smoke/$stage"
@@ -121,7 +133,7 @@ jobs:
           echo "converted: $(head -c 160 "$RUNNER_TEMP/out.txt")"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: goat-xf-pipe-zenoh
+          name: goat-xf-pipe-zenoh-${{ matrix.arch }}
           path: out/
           if-no-files-found: error
 
@@ -139,7 +151,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: goat-xf-pipe-zenoh
+          pattern: goat-xf-pipe-zenoh-*
+          merge-multiple: true
           path: out
       - name: SHA-256 sums
         run: |
@@ -155,6 +168,6 @@ jobs:
           GH_REPO: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
         run: |
-          gh release create "$TAG" --verify-tag --title "goat-xf-pipe-zenoh $VERSION (Linux arm64)" \
-            --notes "goat-xf-pipe-zenoh $VERSION for Linux arm64 (aarch64-unknown-linux-gnu; NVIDIA Jetson Thor and Orin, glibc $MAX_GLIBC or later), with the packs and model of $TAG. Verify with \`sha256sum -c SHA256SUMS\` and \`gh attestation verify <file> --repo $GH_REPO\`. The run line is in README.txt inside the archive." \
+          gh release create "$TAG" --verify-tag --title "goat-xf-pipe-zenoh $VERSION (Linux amd64 and arm64)" \
+            --notes "goat-xf-pipe-zenoh $VERSION for Linux amd64 (x86_64-unknown-linux-gnu; x86 mini PCs, ZimaBoards, cloud hosts) and Linux arm64 (aarch64-unknown-linux-gnu; NVIDIA Jetson Thor and Orin, Raspberry Pi), both glibc $MAX_GLIBC or later, with the packs and model of $TAG. Verify with \`sha256sum -c SHA256SUMS\` and \`gh attestation verify <file> --repo $GH_REPO\`. The run line is in README.txt inside the archive." \
             out/*
