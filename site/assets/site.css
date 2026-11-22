@@ -135,7 +135,7 @@ section > .wrap > * { min-width: 0; }
 .sentence { font-size: 1.04rem; color: var(--quiet); max-width: 58ch; }
 .cmdbox { display: flex; align-items: stretch; border: 1px solid var(--rule); background: var(--panel); border-radius: 2px; max-width: 640px; }
 .cmdbox pre { margin: 0; padding: 11px 14px; flex: 1; min-width: 0; font-size: 0.84rem; line-height: 1.6; white-space: pre; overflow-x: auto; }
-.cmdbox pre::before { content: "$ "; color: var(--accent); }
+.cmdbox pre .ln::before { content: "$ "; color: var(--accent); }
 .cmdbox .pr { color: var(--accent); user-select: none; }
 .cmdbox .copy { border: 0; border-left: 1px solid var(--rule); border-radius: 0; padding: 0 16px; color: var(--accent); font-weight: 600; }
 
@@ -183,6 +183,14 @@ section > .wrap > * { min-width: 0; }
 }
 .term pre { margin: 0; padding: 12px; overflow-x: auto; font-size: 0.82rem; line-height: 1.55; }
 .term pre.wrap-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+/* a command shows whole: it wraps at spaces, continuation lines hang two characters in */
+pre[data-box="command"] { white-space: pre-wrap; overflow-wrap: anywhere; }
+pre .ln { display: block; padding-left: 2ch; text-indent: -2ch; }
+/* a word with a hyphen or slash moves to the next line whole, and breaks only if it alone is wider than the box */
+pre .ln .w { display: inline-block; max-width: 100%; text-indent: 0; }
+/* an output box keeps its columns and may scroll inside its box below 1100 px; its caption says so there */
+.scrollhint { display: none; }
+@media (max-width: 1099px) { .scrollhint { display: initial; } p.scrollhint { display: block; margin: 6px 0 0; font-size: 0.82rem; color: var(--quiet); } }
 .term .prompt { color: var(--quiet); user-select: none; }
 .term .out { color: var(--quiet); }
 .copy {
@@ -329,7 +337,7 @@ footer ul { display: flex; flex-wrap: wrap; gap: 6px 22px; list-style: none; mar
   .prompt-line { font-size: 0.72rem; }
   .cmdbox { flex-direction: column; }
   .cmdbox pre { font-size: 0.69rem; padding: 10px 12px; }
-  .cmdbox pre::before { content: none; }
+  .cmdbox pre .ln::before { content: none; }
   .cmdbox .copy { border-left: 0; border-top: 1px solid var(--rule); padding: 9px 12px; text-align: left; }
   .wordmark { font-size: min(9.2vw, 40px); }
   .sentence { font-size: 0.98rem; }

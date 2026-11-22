@@ -75,9 +75,9 @@ default le        9999999</pre>
         <a class="button" href="#use">Install</a>
       </p>
       <div class="cmdbox">
-        <pre id="install">git clone https://github.com/USAREUR-AF/goat-transformers
-cd goat-transformers/engines/rust
-cargo build --release</pre>
+        <pre id="install" data-box="command"><span class="ln">git clone <span class="w">https://github.com/USAREUR-AF/goat-transformers</span>
+</span><span class="ln">cd <span class="w">goat-transformers/engines/rust</span>
+</span><span class="ln">cargo build <span class="w">--release</span></span></pre>
         <button class="copy js-only" type="button" data-copy="install">Copy</button>
       </div>
     </div>
@@ -96,7 +96,7 @@ cargo build --release</pre>
         <li data-step="def" data-pack="cot-xml" data-line="default type      a-u-X"><code class="ln">default type a-u-X, ce 9999999, le 9999999</code><span class="rd">from the cot-xml pack</span><span class="to">not known</span></li>
       </ol>
       <div class="sig-head out"><span><b>OUT</b> cot-xml, what goat-xf prints</span></div>
-<pre class="sig-xml">&lt;event version="2.0" type="<span data-out="def">a-u-X</span>"&gt;&lt;point
+<pre class="sig-xml" data-box="output">&lt;event version="2.0" type="<span data-out="def">a-u-X</span>"&gt;&lt;point
   lat="<span data-out="lat">45.539309</span>" lon="<span data-out="lon">-122.966389</span>"
   hae="<span data-out="hae">110</span>" ce="<span data-out="def">9999999</span>" le="<span data-out="def">9999999</span>"/&gt;&lt;detail/&gt;&lt;/event&gt;</pre>
       <figcaption id="sig-cap" class="sr">One Remote ID Location message converted to Cursor on Target. Each step is one line of a pack: the bytes it reads, the integer they hold, and the model value written into the output.</figcaption>
@@ -626,10 +626,10 @@ cargo build --release</pre>
 
     <div class="term">
       <div class="term-head"><span>Quick start: needs a Rust toolchain and nothing else</span><button class="copy js-only" type="button" data-copy="quickstart">Copy</button></div>
-<pre id="quickstart">git clone https://github.com/USAREUR-AF/goat-transformers
-cd goat-transformers/engines/rust &amp;&amp; cargo build --release
-echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
-  | ./target/release/goat-xf convert --from remote-id --to cot-xml --packs-only remote-id,cot-xml</pre>
+<pre id="quickstart" data-box="command"><span class="ln">git clone <span class="w">https://github.com/USAREUR-AF/goat-transformers</span>
+</span><span class="ln">cd <span class="w">goat-transformers/engines/rust</span> &amp;&amp; cargo build <span class="w">--release</span>
+</span><span class="ln">echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
+</span><span class="ln">  | <span class="w">./target/release/goat-xf</span> convert <span class="w">--from</span> <span class="w">remote-id</span> <span class="w">--to</span> <span class="w">cot-xml</span> <span class="w">--packs-only</span> <span class="w">remote-id,cot-xml</span></span></pre>
     </div>
 
     <div class="capture" aria-label="One Remote ID message converted to two other formats">
@@ -695,7 +695,7 @@ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
         </div>
         <div class="pane">
           <p class="label" id="demo-out-label">Message out: Cursor on Target XML</p>
-          <pre class="out-box" id="demo-output" aria-live="polite" aria-labelledby="demo-out-label">&lt;event version="2.0" type="a-u-X"&gt;&lt;point lat="45.539309" lon="-122.966389" hae="110" ce="9999999" le="9999999"/&gt;&lt;detail/&gt;&lt;/event&gt;</pre>
+          <pre class="out-box" id="demo-output" aria-live="polite" aria-labelledby="demo-out-label" data-box="output">&lt;event version="2.0" type="a-u-X"&gt;&lt;point lat="45.539309" lon="-122.966389" hae="110" ce="9999999" le="9999999"/&gt;&lt;detail/&gt;&lt;/event&gt;</pre>
           <p class="meta" id="demo-verdict">Output of <code>goat-xf</code> for this input.</p>
           <p class="label">Keys that carry between these two formats</p>
           <ul class="keys" id="demo-carried"><li>uid</li><li>lat</li><li>lon</li><li>hae</li></ul>
@@ -707,7 +707,7 @@ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
       <div class="demo-foot">
         <div class="term js-only">
           <div class="term-head"><span>The same conversion with the command-line tool</span><button class="copy" type="button" data-copy="demo-cli">Copy</button></div>
-          <pre id="demo-cli" class="wrap-text">echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 | goat-xf convert --from remote-id --to cot-xml --packs-only remote-id,cot-xml</pre>
+          <pre id="demo-cli" class="wrap-text" data-box="command">echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 | goat-xf convert --from remote-id --to cot-xml --packs-only remote-id,cot-xml</pre>
         </div>
         <p class="status" id="demo-status">JavaScript is off or the module has not loaded: this is one conversion, shown as <code>goat-xf</code> prints it. With JavaScript on, the engine converts what you type.</p>
       </div>
@@ -791,8 +791,8 @@ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
     <p class="lead">This is the complete pack for a NATO Vector Graphics point, beside the message it describes.</p>
     <div class="grid2">
       <div class="term">
-        <div class="term-head"><span><a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/packs/nvg/pack.def">packs/nvg/pack.def</a>, comments left out</span></div>
-<pre>format   nvg
+        <div class="term-head"><span><a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/packs/nvg/pack.def">packs/nvg/pack.def</a>, comments left out<span class="scrollhint">; on a narrow screen it scrolls sideways</span></span></div>
+<pre data-box="output">format   nvg
 version  0.1.0
 distribution public
 source  "NATO Vector Graphics 1.5 XSD (NATO ACT, public)"
@@ -806,11 +806,11 @@ field   type      point/@symbol   string</pre>
       <div style="display:grid;gap:20px;min-width:0">
         <div class="term">
           <div class="term-head"><span>The message</span></div>
-          <pre class="wrap-text">&lt;nvg&gt;&lt;point x="11.2" y="48.137" label="ALPHA" symbol="app6a:SFGPUCI----D"/&gt;&lt;/nvg&gt;</pre>
+          <pre class="wrap-text" data-box="output">&lt;nvg&gt;&lt;point x="11.2" y="48.137" label="ALPHA" symbol="app6a:SFGPUCI----D"/&gt;&lt;/nvg&gt;</pre>
         </div>
         <div class="term">
           <div class="term-head"><span>With that file in packs/nvg/, in all seven engines</span></div>
-          <pre class="wrap-text"><span class="prompt">$ </span>goat-xf convert --from nvg --to geojson &lt; point.xml
+          <pre class="wrap-text" data-box="output"><span class="prompt">$ </span>goat-xf convert --from nvg --to geojson &lt; point.xml
 <span class="out">{"type":"Feature","geometry":{"type":"Point","coordinates":[11.2,48.137]},"properties":{"type":"app6a:SFGPUCI----D","callsign":"ALPHA"}}</span></pre>
         </div>
       </div>
@@ -835,14 +835,15 @@ field   type      point/@symbol   string</pre>
       <div>
         <h3>Only the packs you name</h3>
         <p>A pack loads on its own, so a deployment carries only the formats it uses.</p>
-        <div class="term"><pre><span class="prompt">$ </span>goat-xf list-formats --packs-only remote-id,cot-xml
+        <div class="term"><pre data-box="output"><span class="prompt">$ </span>goat-xf list-formats --packs-only remote-id,cot-xml
 <span class="out">cot-xml
 remote-id</span></pre></div>
+        <p class="scrollhint">On a narrow screen the output scrolls sideways.</p>
       </div>
       <div>
         <h3>The planner</h3>
         <p><code>tools/goat-pkg plan</code> takes the formats, the language and the runtime and prints the smallest package.</p>
-        <div class="term"><pre class="wrap-text"><span class="prompt">$ </span>tools/goat-pkg plan --formats remote-id,cot-xml --language rust --runtime wasm
+        <div class="term"><pre class="wrap-text" data-box="output"><span class="prompt">$ </span>tools/goat-pkg plan --formats remote-id,cot-xml --language rust --runtime wasm
 <span class="out">engine:      engines/rust
 packs:       remote-id, cot-xml   (only these)
 wires used:  bits, xml   (a minimal engine build can exclude the rest)
