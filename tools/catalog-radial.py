@@ -359,28 +359,13 @@ def and_list(items):
 
 def key_items(domains):
     """The four entries of "How to read it", numbered as the markers on the
-    chart. Each states what the code draws, with the tree's numbers."""
-    fams, _ = totals(domains)
-    top = max(f["packs"] for d in domains for f in d["families"])
-    _, _, best = longest(domains)
-    fixed = allocate_full(domains)[1]
-    free = [escape(d["short"]) for d, f in zip(domains, fixed) if not f]
-    if not any(fixed):
-        arc = "Arc width: its share of the %d families." % fams
-    elif free:
-        arc = ("Arc width is mostly not a count: each arc fits its label, and only %s %s wider, by number of "
-               "families." % (and_list(free), "is" if len(free) == 1 else "are"))
-    else:
-        arc = "Arc width is not a count: each arc fits its label."
-    rings = and_list(fig.grouped(v) for v in scale_values(top))
+    chart. One short line each."""
+    rings = and_list(fig.grouped(v) for v in scale_values(max(f["packs"] for d in domains for f in d["families"])))
     return [
-        "<b>Center: the shared model.</b> Every format converts through it.",
-        "<b>Inner ring: a domain,</b> the color of its bars and its legend square. "
-        + arc,
-        "<b>A bar: one family,</b> largest first, clockwise. Length: its packs on a log scale, read against the "
-        "faint rings at %s. The longest: %s, %s pack%s." % (rings, escape(best["name"]), fig.grouped(best["packs"]),
-                                                             "" if best["packs"] == 1 else "s"),
-        "<b>Dashed ring: private overlays</b> plug in here; the same engines read them. None is drawn or counted.",
+        "<b>Center:</b> the shared model. Every format converts through it.",
+        "<b>Colored ring:</b> the domain. Segment width is not a count.",
+        "<b>Each bar:</b> one format family. Longer means more formats (log scale; faint rings at %s)." % rings,
+        "<b>Dashed ring:</b> where private formats plug in.",
     ]
 
 
