@@ -106,10 +106,11 @@ MAX_REQUIRES = 6
 DEGE7 = "1/10000000"         # engine-spec 0.5 ruling 1: a power-of-ten scale is a fraction
 
 # What the pack is checked against when --core-def is not given: a module that
-# declares the only two core keys this pack maps.
+# declares the core keys this pack maps (lat, lon, time_ms) and derives (course, speed_ms).
 CORE_STAND_IN = ("module core\nversion 0.0.0\ndistribution public\n"
                  'source "stand-in for model/core.def: the core keys the mavlink2 pack maps"\n'
-                 "key lat float deg\nkey lon float deg\nkey time_ms int ms\n")
+                 "key lat float deg\nkey lon float deg\nkey time_ms int ms\n"
+                 "key course float deg\nkey speed_ms float m/s\n")
 
 TYPE_RE = re.compile(r"^(char|u?int(?:8|16|32|64)_t|float|double)(?:\[(\d+)\])?$")
 SIZES = {"char": 1, "uint8_t": 1, "int8_t": 1, "uint16_t": 2, "int16_t": 2,
@@ -1177,7 +1178,7 @@ def emit_model(keys, sha, retired=()):
         names = ", ".join(m for m, _ in decl.uses)
         out.append('key  %s  %s  %s  "field %s of %s until its value that means unknown was stated; '
                    'now a core key, this key is no longer mapped"' % (k, decl.type, decl.unit, decl.uses[0][1], names))
-    if MODULE == HEADER_MODULE and "vx_ms" in keys and "vy_ms" in keys:
+    if VELOCITY_ON and MODULE == HEADER_MODULE and "vx_ms" in keys and "vy_ms" in keys:
         # vy is east and vx is north (NED); bearing takes east, north.
         out += ["derive  speed_ms  hypot    %s.vy_ms  %s.vx_ms" % (MODULE, MODULE),
                 "derive  course    bearing  %s.vy_ms  %s.vx_ms" % (MODULE, MODULE)]
@@ -1412,6 +1413,26 @@ CROSS = [
      '<point lat="35.6762" lon="139.6503" hae="9999999" ce="9999999" le="9999999"/><detail/></event>', "cot-xml"),
 ]
 
+# With core speed_ms and course declared, the mavlink module derives them from vx_ms and
+# vy_ms (emit_model), and these conversions carry them. Derived by hand:
+#   GLOBAL_POSITION_INT vx 150, vy -75 cm/s: north 1.5, east -0.75 m/s,
+#     speed_ms = hypot(-0.75, 1.5) = 1.6770509831248424, course = bearing(-0.75, 1.5) = 333.434948822922
+#   UTM_GLOBAL_POSITION vx, vy 0: speed_ms 0; course absent (bearing of a zero vector)
+VELOCITY_EXPECT = {
+    ("GLOBAL_POSITION_INT", "geojson"):
+        '{"type":"Feature","geometry":{"type":"Point","coordinates":[8.545594,47.397742]},'
+        '"properties":{"course":333.434948822922,"speed_ms":1.6770509831248424}}',
+    ("UTM_GLOBAL_POSITION", "geojson"):
+        '{"type":"Feature","geometry":{"type":"Point","coordinates":[139.6503,35.6762]},'
+        '"properties":{"time_ms":1700000000000,"speed_ms":0}}',
+    ("UTM_GLOBAL_POSITION", "cot-xml"):
+        '<event version="2.0" type="a-u-X" time="2023-11-14T22:13:20.000Z" start="2023-11-14T22:13:20.000Z">'
+        '<point lat="35.6762" lon="139.6503" hae="9999999" ce="9999999" le="9999999"/>'
+        '<detail><track speed="0"/></detail></event>',
+}
+VELOCITY_ON = True     # generate() re-checks it: the core module declares speed_ms and course
+
+
 # Same-format vectors of the time binding, written by hand: a microsecond count
 # that is not a whole number of milliseconds decodes to the nearest millisecond
 # (round half away from zero) and re-encodes as that millisecond times 1000.
@@ -1466,6 +1487,9 @@ def vector_files(kinds):
         if name not in by_name:
             raise GenError("the source has no message %s, which a vector to %s is written from" % (name, target))
         kind = by_name[name]
+        kind_keys = {line.key for f in kind.fields for line in f.lines}
+        if VELOCITY_ON and {HEADER_MODULE + ".vx_ms", HEADER_MODULE + ".vy_ms"} <= kind_keys:
+            expect = VELOCITY_EXPECT.get((name, target), expect)
         data = frame(kind, build_payload(kind, values), seq, sysid, compid, True)
         pos, gone = {}, []
         for f in kind.fields:
@@ -2342,6 +2366,19 @@ def engine_encode(pack, name, entity):
     return word.to_bytes(message_bytes(lines), "little")
 
 
+def derive_velocity(entity):
+    """The mavlink module's derives (emit_model): core speed_ms and course from
+    vx_ms (north) and vy_ms (east); course is absent when both are 0."""
+    north, east = entity.get(HEADER_MODULE + ".vx_ms"), entity.get(HEADER_MODULE + ".vy_ms")
+    if not VELOCITY_ON or north is None or east is None:
+        return entity
+    out = dict(entity)
+    out.setdefault("speed_ms", math.hypot(east, north))
+    if north != 0 or east != 0:
+        out.setdefault("course", math.degrees(math.atan2(east, north)) % 360.0)
+    return out
+
+
 def geojson_encode(entity):
     """Canonical GeoJSON for an entity that holds no geojson key but lat/lon
     (engine-spec 0.1.1 rulings 3-5; packs/geojson/pack.def)."""
@@ -2349,8 +2386,9 @@ def geojson_encode(entity):
         geom = '{"type":"Point","coordinates":[%s,%s]}' % (fmt_float(entity["lon"]), fmt_float(entity["lat"]))
     else:
         geom = "null"
-    props = '"time_ms":%d' % entity["time_ms"] if "time_ms" in entity else ""
-    return '{"type":"Feature","geometry":%s,"properties":{%s}}' % (geom, props)
+    props = (['"time_ms":%d' % entity["time_ms"]] if "time_ms" in entity else []) + \
+        ['"%s":%s' % (k, fmt_float(entity[k])) for k in ("course", "speed_ms") if k in entity]
+    return '{"type":"Feature","geometry":%s,"properties":{%s}}' % (geom, ",".join(props))
 
 
 def iso_ms(ms):
@@ -2369,7 +2407,10 @@ def cot_encode(entity):
              if "time_ms" in entity else "")
     point = ('<point lat="%s" lon="%s" hae="9999999" ce="9999999" le="9999999"/>'
              % (fmt_float(entity["lat"]), fmt_float(entity["lon"])))
-    return '<event version="2.0" type="a-u-X"%s>%s<detail/></event>' % (times, point)
+    track = " ".join('%s="%s"' % (a, fmt_float(entity[k])) for a, k in (("course", "course"), ("speed", "speed_ms"))
+                     if k in entity)
+    detail = "<detail><track %s/></detail>" % track if track else "<detail/>"
+    return '<event version="2.0" type="a-u-X"%s>%s%s</event>' % (times, point, detail)
 
 
 # ------------------------------------------------------------------ check ---
@@ -2501,9 +2542,9 @@ def check_vectors(pack, vectors):
                 got = engine_encode(pack, kname, entity).hex()
                 kinds_seen.add(kname)
             elif vec["to"] == "geojson":
-                got = geojson_encode(entity)
+                got = geojson_encode(derive_velocity(entity))
             elif vec["to"] == "cot-xml":
-                got = cot_encode(entity)
+                got = cot_encode(derive_velocity(entity))
             else:
                 raise GenError("unknown target %s" % vec["to"], label)
         except CodecError as e:
@@ -2590,6 +2631,8 @@ def mappable(f):
 def generate(out, core_text, core_label, src=None, provenance=None):
     """One run over the directory of `out`: parse, plan, emit, check. Returns
     the summary lines; raises GenError or gtcheck.CheckError."""
+    global VELOCITY_ON
+    VELOCITY_ON = {"speed_ms", "course"} <= set(re.findall(r"(?m)^key\s+(\S+)", core_text))
     src = src or out.path(SOURCE_DIR)
     sha = read_provenance(src, provenance)
     messages = load_messages(src)

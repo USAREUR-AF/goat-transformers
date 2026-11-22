@@ -87,15 +87,15 @@ field     mavlink.yawspeed_rad_per_s 0:272:32 f32
 kind      global_position_int
 when      0:56:24 33
 when      0:8:8 28
-requires  mavlink.global_position_int_alt_mm mavlink.relative_alt_mm mavlink.vx_cm_per_s mavlink.vy_cm_per_s mavlink.vz_cm_per_s mavlink.hdg_cdeg
+requires  mavlink.global_position_int_alt_mm mavlink.relative_alt_mm mavlink.vx_ms mavlink.vy_ms mavlink.vz_ms mavlink.hdg_cdeg
 field     mavlink.time_boot_ms 0:80:32 uint
 field     lat 0:112:32 sscale:1/10000000
 field     lon 0:144:32 sscale:1/10000000
 field     mavlink.global_position_int_alt_mm 0:176:32 twos
 field     mavlink.relative_alt_mm 0:208:32 twos
-field     mavlink.vx_cm_per_s 0:240:16 twos
-field     mavlink.vy_cm_per_s 0:256:16 twos
-field     mavlink.vz_cm_per_s 0:272:16 twos
+field     mavlink.vx_ms 0:240:16 sscale:1/100
+field     mavlink.vy_ms 0:256:16 sscale:1/100
+field     mavlink.vz_ms 0:272:16 sscale:1/100
 field     mavlink.hdg_cdeg 0:288:16 uint
 
 kind      system_time
