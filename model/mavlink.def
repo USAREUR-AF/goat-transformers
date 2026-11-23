@@ -3984,3 +3984,4 @@ key  open_drone_id_system_timestamp_s  int  s  "field timestamp of OPEN_DRONE_ID
 key  open_drone_id_system_update_timestamp_s  int  s  "field timestamp of OPEN_DRONE_ID_SYSTEM_UPDATE until its value that means unknown was stated; now a core key, this key is no longer mapped"
 derive  speed_ms  hypot    mavlink.vy_ms  mavlink.vx_ms
 derive  course    bearing  mavlink.vy_ms  mavlink.vx_ms
+derive  uid  text_of  mavlink.sysid

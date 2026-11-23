@@ -110,6 +110,7 @@ and `--out-frame`. Nothing is inferred from the content.
 | `fixed:<N>` | exactly N bytes |
 | `start:<byte>:len:<N>:<be\|le>` | a start byte, a length of N bytes, then that many bytes. Bytes before a start byte are skipped and reported as `frame-desync` |
 | `start:<byte>:len:<N>:<be\|le>:total` | the same, but the length counts the whole frame from the start byte, and the whole frame is the message. An ASTERIX category 062 data block is `start:0x3e:len:2:be:total` |
+| `mavlink2` | MAVLink 2 frames: STX `0xFD`, the 10-byte header, the payload, the checksum and an optional signature. A payload trimmed of trailing zero bytes is zero-filled to its message's full length, which the adapter reads from the `mavlink2` packs it loads, and LEN is rewritten, so the pack decodes it. Bytes before an STX are skipped; MAVLink 1 frames and unknown message ids pass through unchanged. The checksum is not checked |
 | `whole` | the whole unit: one datagram, one file, one publication, or one XML or JSON document read to the end of the input. Also written `datagram`, `file` or `document` |
 
 Two options follow a framing after a comma:

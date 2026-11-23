@@ -338,3 +338,50 @@ fn bytes_that_are_not_text_for_a_text_format_are_counted_as_not_utf8() {
     assert!(r.stderr.contains("in=2 converted=1 failed=1 [not-utf8=1]"), "{}", r.stderr);
     assert_eq!(r.status, 3);
 }
+
+/// One MAVLink 2 GLOBAL_POSITION_INT frame (message 33) from system 7, payload
+/// trimmed of trailing zero bytes as a MAVLink 2 sender does. The checksum is
+/// not mapped, so two placeholder bytes stand in for it.
+fn gpi_frame(hdg_cdeg: u16) -> Vec<u8> {
+    let mut p = Vec::new();
+    p.extend(5000u32.to_le_bytes()); // time_boot_ms
+    p.extend(473977420i32.to_le_bytes()); // lat 47.397742
+    p.extend(85455940i32.to_le_bytes()); // lon 8.545594
+    p.extend(120000i32.to_le_bytes()); // alt mm
+    p.extend(50000i32.to_le_bytes()); // relative_alt mm
+    p.extend(4515i16.to_le_bytes()); // vx cm/s, north
+    p.extend((-873i16).to_le_bytes()); // vy cm/s, east
+    p.extend(0i16.to_le_bytes()); // vz
+    p.extend(hdg_cdeg.to_le_bytes());
+    while p.last() == Some(&0) {
+        p.pop();
+    }
+    let mut f = vec![0xFD, p.len() as u8, 0, 0, 1, 7, 1, 33, 0, 0];
+    f.extend(&p);
+    f.extend([0x12, 0x34]);
+    f
+}
+
+#[test]
+fn a_mavlink2_frame_trimmed_of_trailing_zeros_decodes_with_mavlink2_framing() {
+    let full = gpi_frame(36000); // heading 360.00 deg: no trailing zero byte, 28 bytes
+    let trimmed = gpi_frame(100); // heading 1.00 deg: the high byte is zero, so 27 bytes
+    assert_eq!((full[1], trimmed[1]), (28, 27));
+    let common = ["--from-format", "mavlink2", "--in", "stdin:", "--in-frame", "mavlink2", "--out", "stdout:", "--to-format", "geojson", "--out-frame", "newline"];
+
+    let r = pipe(&common, &[full.clone(), trimmed.clone()].concat());
+    assert_eq!(r.status, 0, "{}", r.stderr);
+    let got = lines(&r.stdout);
+    assert_eq!(got.len(), 2, "{}", r.stderr);
+    for l in &got {
+        assert!(l.contains("8.545594") && l.contains("47.397742"), "{}", l);
+    }
+
+    // without the framing the trimmed frame is refused: the pack is written for the full length
+    let r = pipe(&["--from-format", "mavlink2", "--in", "stdin:", "--in-frame", "whole", "--out", "stdout:", "--to-format", "geojson", "--out-frame", "newline"], &trimmed);
+    assert!(r.stderr.contains("no-kind"), "{}", r.stderr);
+
+    // the framing needs a mavlink2 pack to know the full lengths
+    let r = pipe(&["--from-format", "geojson", "--in", "stdin:", "--in-frame", "mavlink2", "--out", "stdout:", "--to-format", "geojson"], b"");
+    assert_eq!(r.status, 2, "{}", r.stderr);
+}

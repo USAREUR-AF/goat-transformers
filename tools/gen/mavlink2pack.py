@@ -110,7 +110,7 @@ DEGE7 = "1/10000000"         # engine-spec 0.5 ruling 1: a power-of-ten scale is
 CORE_STAND_IN = ("module core\nversion 0.0.0\ndistribution public\n"
                  'source "stand-in for model/core.def: the core keys the mavlink2 pack maps"\n'
                  "key lat float deg\nkey lon float deg\nkey time_ms int ms\n"
-                 "key course float deg\nkey speed_ms float m/s\n")
+                 "key course float deg\nkey speed_ms float m/s\nkey uid string -\n")
 
 TYPE_RE = re.compile(r"^(char|u?int(?:8|16|32|64)_t|float|double)(?:\[(\d+)\])?$")
 SIZES = {"char": 1, "uint8_t": 1, "int8_t": 1, "uint16_t": 2, "int16_t": 2,
@@ -1182,6 +1182,11 @@ def emit_model(keys, sha, retired=()):
         # vy is east and vx is north (NED); bearing takes east, north.
         out += ["derive  speed_ms  hypot    %s.vy_ms  %s.vx_ms" % (MODULE, MODULE),
                 "derive  course    bearing  %s.vy_ms  %s.vx_ms" % (MODULE, MODULE)]
+    if UID_ON and MODULE == HEADER_MODULE:
+        # Each vehicle is one entity: its uid is its MAVLink system id as decimal text, so a
+        # receiver keeps one track per vehicle, and CAT062 takes its track number from it
+        # (the cat062 module derives track_number by parse_int of uid).
+        out.append("derive  uid  text_of  %s.sysid" % MODULE)
     return "\n".join(out) + "\n"
 
 
@@ -1431,6 +1436,7 @@ VELOCITY_EXPECT = {
         '<detail><track speed="0"/></detail></event>',
 }
 VELOCITY_ON = True     # generate() re-checks it: the core module declares speed_ms and course
+UID_ON = True          # generate() re-checks it: the core module declares uid
 
 
 # Same-format vectors of the time binding, written by hand: a microsecond count
@@ -2631,8 +2637,9 @@ def mappable(f):
 def generate(out, core_text, core_label, src=None, provenance=None):
     """One run over the directory of `out`: parse, plan, emit, check. Returns
     the summary lines; raises GenError or gtcheck.CheckError."""
-    global VELOCITY_ON
+    global VELOCITY_ON, UID_ON
     VELOCITY_ON = {"speed_ms", "course"} <= set(re.findall(r"(?m)^key\s+(\S+)", core_text))
+    UID_ON = "uid" in set(re.findall(r"(?m)^key\s+(\S+)", core_text))
     src = src or out.path(SOURCE_DIR)
     sha = read_provenance(src, provenance)
     messages = load_messages(src)
