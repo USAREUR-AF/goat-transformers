@@ -10,10 +10,11 @@ CAT062; split the output into lines with newline framing.
 | `uid` | `group` | the system track's identifier when fuse makes the tracks |
 | `cat062.track_number` | `track_number` | a number 1 to 65535 the track keeps while it lives |
 | `time_ms` | `now_ms` | the tick the track describes, epoch ms |
+| `type`, `callsign` | `attributes.type.value`, `attributes.callsign.value` | the fused identity, when the fuse pack names the attribute and a member states it |
 | `lat`, `lon`, `hae`, `course`, `speed_ms` | same names | the fused estimate; `hae` is fused from the reports' `hae`, metres above the WGS 84 ellipsoid |
 
 Not mapped: `members` (an array, which the json wire does not carry in
-engine-spec 0.5), and `ce`, `hae_from`, `from`, `attributes`, which are
+engine-spec 0.5), and `ce`, `hae_from`, `from` and the rest of `attributes`, which are
 residue and return only when the message goes back to this format.
 
 To write ASTERIX CAT062 the encoder also needs `cat062.sac`, `cat062.sic` and

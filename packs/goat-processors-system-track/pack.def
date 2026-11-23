@@ -5,7 +5,7 @@
 # fuse does (the runner writes one of them), `track_number` its number 1 to
 # 65535 held while the track lives, and `now_ms` the tick it describes.
 format  goat-processors-system-track
-version 0.1.0
+version 0.2.0
 distribution public
 source  "USAREUR-AF/goat-processors runner/README.md, section What the runner publishes (Apache-2.0)"
 uses    track
@@ -19,3 +19,5 @@ field   lon       lon       float
 field   hae       hae       float
 field   course    course    float
 field   speed_ms  speed_ms  float
+field   type      attributes.type.value      string
+field   callsign  attributes.callsign.value  string

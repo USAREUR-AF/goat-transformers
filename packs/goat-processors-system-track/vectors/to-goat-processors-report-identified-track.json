@@ -1,0 +1,7 @@
+{
+ "name": "to-goat-processors-report-identified-track",
+ "from": "goat-processors-system-track",
+ "to": "goat-processors-report",
+ "input": "{\"group\":\"s1\",\"track_number\":1,\"now_ms\":1795000060000,\"lat\":1.0001,\"lon\":1.0539,\"hae\":1500,\"course\":90,\"speed_ms\":100,\"attributes\":{\"type\":{\"value\":\"a-h-A\",\"from\":\"src/7\"},\"callsign\":{\"value\":\"T7\",\"from\":\"src/7\"}}}",
+ "expect": "{\"uid\":\"s1\",\"time_ms\":1795000060000,\"lat\":1.0001,\"lon\":1.0539,\"hae\":1500,\"course\":90,\"speed_ms\":100,\"type\":\"a-h-A\",\"callsign\":\"T7\"}"
+}
