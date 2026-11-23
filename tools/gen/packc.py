@@ -1248,8 +1248,8 @@ class Compiler:
 
         `possible`: keys that may be present before derivation. `needed`: keys the
         encoder reads. Both are extended. `produced`: keys the source decode itself
-        gives; a line whose target is one of them is not needed, because a derive
-        line only sets a key the entity lacks (the `uid` <-> `mmsi` pair of a model
+        gives or the caller supplies as context; a line whose target is one of them
+        is not needed, because a derive line only sets a key the entity lacks (the `uid` <-> `mmsi` pair of a model
         module, say, never derives `uid` from a source that decodes `uid`).
         Returns the lines kept."""
         produced = set(produced)
@@ -1449,7 +1449,9 @@ def compile_plan(model_dir, packs_dir, src, dst, context, keep_names):
         for k in dpack.body["kinds"]:
             # an earlier kind left out still selects by its required keys
             needed.update(k["requires"])
-        produced = set(view.src_keys.get((), ())) | set(view.src_lists.get((), ()))
+        # A context key is filled before derivation (engine-spec, Order inside convert), so a
+        # derive line whose target the caller supplies is never needed either.
+        produced = set(view.src_keys.get((), ())) | set(view.src_lists.get((), ())) | set(context)
         kept = c.compile_derives(possible, needed, True, produced)
         view.possible_top, view.needed_top = possible, needed
 
