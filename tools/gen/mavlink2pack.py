@@ -1496,6 +1496,7 @@ def vector_files(kinds):
         kind_keys = {line.key for f in kind.fields for line in f.lines}
         if VELOCITY_ON and {HEADER_MODULE + ".vx_ms", HEADER_MODULE + ".vy_ms"} <= kind_keys:
             expect = VELOCITY_EXPECT.get((name, target), expect)
+        expect = with_uid(expect, target, sysid)
         data = frame(kind, build_payload(kind, values), seq, sysid, compid, True)
         pos, gone = {}, []
         for f in kind.fields:
@@ -2375,14 +2376,30 @@ def engine_encode(pack, name, entity):
 def derive_velocity(entity):
     """The mavlink module's derives (emit_model): core speed_ms and course from
     vx_ms (north) and vy_ms (east); course is absent when both are 0."""
+    out = dict(entity)
+    sysid = entity.get(HEADER_MODULE + ".sysid")
+    if UID_ON and sysid is not None:
+        out.setdefault("uid", str(sysid))
     north, east = entity.get(HEADER_MODULE + ".vx_ms"), entity.get(HEADER_MODULE + ".vy_ms")
     if not VELOCITY_ON or north is None or east is None:
-        return entity
-    out = dict(entity)
+        return out
     out.setdefault("speed_ms", math.hypot(east, north))
     if north != 0 or east != 0:
         out.setdefault("course", math.degrees(math.atan2(east, north)) % 360.0)
     return out
+
+
+def with_uid(expect, target, sysid):
+    """A hand-written conversion expectation with the uid the mavlink module derives from
+    the frame's system id (emit_model), where the target writes it: GeoJSON `id` after
+    `properties`, CoT `@uid` after `@version`."""
+    if not UID_ON:
+        return expect
+    if target == "geojson" and expect.endswith("}"):
+        return expect[:-1] + ',"id":"%d"}' % sysid
+    if target == "cot-xml":
+        return expect.replace('<event version="2.0" ', '<event version="2.0" uid="%d" ' % sysid, 1)
+    return expect
 
 
 def geojson_encode(entity):
@@ -2394,7 +2411,8 @@ def geojson_encode(entity):
         geom = "null"
     props = (['"time_ms":%d' % entity["time_ms"]] if "time_ms" in entity else []) + \
         ['"%s":%s' % (k, fmt_float(entity[k])) for k in ("course", "speed_ms") if k in entity]
-    return '{"type":"Feature","geometry":%s,"properties":{%s}}' % (geom, ",".join(props))
+    uid = ',"id":"%s"' % entity["uid"] if "uid" in entity else ""
+    return '{"type":"Feature","geometry":%s,"properties":{%s}%s}' % (geom, ",".join(props), uid)
 
 
 def iso_ms(ms):
@@ -2416,7 +2434,8 @@ def cot_encode(entity):
     track = " ".join('%s="%s"' % (a, fmt_float(entity[k])) for a, k in (("course", "course"), ("speed", "speed_ms"))
                      if k in entity)
     detail = "<detail><track %s/></detail>" % track if track else "<detail/>"
-    return '<event version="2.0" type="a-u-X"%s>%s%s</event>' % (times, point, detail)
+    uid = ' uid="%s"' % entity["uid"] if "uid" in entity else ""
+    return '<event version="2.0"%s type="a-u-X"%s>%s%s</event>' % (uid, times, point, detail)
 
 
 # ------------------------------------------------------------------ check ---

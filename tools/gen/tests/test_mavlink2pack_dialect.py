@@ -187,7 +187,8 @@ class WhatThePackHolds(DialectCase):
     def test_geojson_vector_has_the_hand_written_expect(self):
         path = os.path.join(self.pack_dir(self.root), "vectors", "x-01-test_fix-to-geojson.json")
         vec = json.load(open(path, encoding="utf-8"))
-        self.assertEqual(vec["expect"], CROSS[0][5])
+        # the hand-written expect, with the uid the mavlink module derives from the system id
+        self.assertEqual(vec["expect"], CROSS[0][5][:-1] + ',"id":"%d"}' % CROSS[0][2])
         self.assertEqual((vec["model"]["lat"], vec["model"]["lon"]), ("47.397742", "8.545594"))
 
 

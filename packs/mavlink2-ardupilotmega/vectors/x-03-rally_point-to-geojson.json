@@ -3,7 +3,7 @@
   "from": "mavlink2-ardupilotmega",
   "to": "geojson",
   "input": "fd13000017ffbeaf000000175bca00d2496b50002800786901010001002bc0",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[180,-90]},\"properties\":{}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[180,-90]},\"properties\":{},\"id\":\"255\"}",
   "model": {
     "@kind": "rally_point",
     "lat": "-90",
