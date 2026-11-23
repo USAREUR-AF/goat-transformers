@@ -3,7 +3,7 @@
   "from": "mavlink2-ardupilotmega",
   "to": "geojson",
   "input": "fd2600001602c21e2b0060ea0000c0dcd1eba89f215a000020c000000000000000000000403f000044410000944101019075",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2153,-33.8568]},\"properties\":{}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2153,-33.8568]},\"properties\":{},\"id\":\"2\"}",
   "model": {
     "@kind": "water_depth",
     "lat": "-33.8568",

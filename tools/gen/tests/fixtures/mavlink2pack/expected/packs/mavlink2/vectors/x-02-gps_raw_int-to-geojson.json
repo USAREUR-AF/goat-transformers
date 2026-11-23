@@ -3,7 +3,7 @@
   "from": "mavlink2",
   "to": "geojson",
   "input": "fd34000008010118000000401e18240a0600c0dcd1eba89f215a90e200007800b40000000000030b00000000000000000000000000000000000000000000289f",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2153,-33.8568]},\"properties\":{}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2153,-33.8568]},\"properties\":{},\"id\":\"1\"}",
   "model": {
     "@kind": "gps_raw_int",
     "lat": "-33.8568",

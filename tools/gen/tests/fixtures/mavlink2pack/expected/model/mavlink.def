@@ -143,3 +143,4 @@ key  time_unix_usec_us  int  us  "field time_unix_usec of SYSTEM_TIME until its 
 key  time_us  int  us  "field time of UTM_GLOBAL_POSITION until its value that means unknown was stated; now a core key, this key is no longer mapped"
 derive  speed_ms  hypot    mavlink.vy_ms  mavlink.vx_ms
 derive  course    bearing  mavlink.vy_ms  mavlink.vx_ms
+derive  uid  text_of  mavlink.sysid

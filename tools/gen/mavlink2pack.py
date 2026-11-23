@@ -110,7 +110,7 @@ DEGE7 = "1/10000000"         # engine-spec 0.5 ruling 1: a power-of-ten scale is
 CORE_STAND_IN = ("module core\nversion 0.0.0\ndistribution public\n"
                  'source "stand-in for model/core.def: the core keys the mavlink2 pack maps"\n'
                  "key lat float deg\nkey lon float deg\nkey time_ms int ms\n"
-                 "key course float deg\nkey speed_ms float m/s\n")
+                 "key course float deg\nkey speed_ms float m/s\nkey uid string -\n")
 
 TYPE_RE = re.compile(r"^(char|u?int(?:8|16|32|64)_t|float|double)(?:\[(\d+)\])?$")
 SIZES = {"char": 1, "uint8_t": 1, "int8_t": 1, "uint16_t": 2, "int16_t": 2,
@@ -1182,6 +1182,11 @@ def emit_model(keys, sha, retired=()):
         # vy is east and vx is north (NED); bearing takes east, north.
         out += ["derive  speed_ms  hypot    %s.vy_ms  %s.vx_ms" % (MODULE, MODULE),
                 "derive  course    bearing  %s.vy_ms  %s.vx_ms" % (MODULE, MODULE)]
+    if UID_ON and MODULE == HEADER_MODULE:
+        # Each vehicle is one entity: its uid is its MAVLink system id as decimal text, so a
+        # receiver keeps one track per vehicle, and CAT062 takes its track number from it
+        # (the cat062 module derives track_number by parse_int of uid).
+        out.append("derive  uid  text_of  %s.sysid" % MODULE)
     return "\n".join(out) + "\n"
 
 
@@ -1431,6 +1436,7 @@ VELOCITY_EXPECT = {
         '<detail><track speed="0"/></detail></event>',
 }
 VELOCITY_ON = True     # generate() re-checks it: the core module declares speed_ms and course
+UID_ON = True          # generate() re-checks it: the core module declares uid
 
 
 # Same-format vectors of the time binding, written by hand: a microsecond count
@@ -1490,6 +1496,7 @@ def vector_files(kinds):
         kind_keys = {line.key for f in kind.fields for line in f.lines}
         if VELOCITY_ON and {HEADER_MODULE + ".vx_ms", HEADER_MODULE + ".vy_ms"} <= kind_keys:
             expect = VELOCITY_EXPECT.get((name, target), expect)
+        expect = with_uid(expect, target, sysid)
         data = frame(kind, build_payload(kind, values), seq, sysid, compid, True)
         pos, gone = {}, []
         for f in kind.fields:
@@ -2369,14 +2376,30 @@ def engine_encode(pack, name, entity):
 def derive_velocity(entity):
     """The mavlink module's derives (emit_model): core speed_ms and course from
     vx_ms (north) and vy_ms (east); course is absent when both are 0."""
+    out = dict(entity)
+    sysid = entity.get(HEADER_MODULE + ".sysid")
+    if UID_ON and sysid is not None:
+        out.setdefault("uid", str(sysid))
     north, east = entity.get(HEADER_MODULE + ".vx_ms"), entity.get(HEADER_MODULE + ".vy_ms")
     if not VELOCITY_ON or north is None or east is None:
-        return entity
-    out = dict(entity)
+        return out
     out.setdefault("speed_ms", math.hypot(east, north))
     if north != 0 or east != 0:
         out.setdefault("course", math.degrees(math.atan2(east, north)) % 360.0)
     return out
+
+
+def with_uid(expect, target, sysid):
+    """A hand-written conversion expectation with the uid the mavlink module derives from
+    the frame's system id (emit_model), where the target writes it: GeoJSON `id` after
+    `properties`, CoT `@uid` after `@version`."""
+    if not UID_ON:
+        return expect
+    if target == "geojson" and expect.endswith("}"):
+        return expect[:-1] + ',"id":"%d"}' % sysid
+    if target == "cot-xml":
+        return expect.replace('<event version="2.0" ', '<event version="2.0" uid="%d" ' % sysid, 1)
+    return expect
 
 
 def geojson_encode(entity):
@@ -2388,7 +2411,8 @@ def geojson_encode(entity):
         geom = "null"
     props = (['"time_ms":%d' % entity["time_ms"]] if "time_ms" in entity else []) + \
         ['"%s":%s' % (k, fmt_float(entity[k])) for k in ("course", "speed_ms") if k in entity]
-    return '{"type":"Feature","geometry":%s,"properties":{%s}}' % (geom, ",".join(props))
+    uid = ',"id":"%s"' % entity["uid"] if "uid" in entity else ""
+    return '{"type":"Feature","geometry":%s,"properties":{%s}%s}' % (geom, ",".join(props), uid)
 
 
 def iso_ms(ms):
@@ -2410,7 +2434,8 @@ def cot_encode(entity):
     track = " ".join('%s="%s"' % (a, fmt_float(entity[k])) for a, k in (("course", "course"), ("speed", "speed_ms"))
                      if k in entity)
     detail = "<detail><track %s/></detail>" % track if track else "<detail/>"
-    return '<event version="2.0" type="a-u-X"%s>%s%s</event>' % (times, point, detail)
+    uid = ' uid="%s"' % entity["uid"] if "uid" in entity else ""
+    return '<event version="2.0"%s type="a-u-X"%s>%s%s</event>' % (uid, times, point, detail)
 
 
 # ------------------------------------------------------------------ check ---
@@ -2631,8 +2656,9 @@ def mappable(f):
 def generate(out, core_text, core_label, src=None, provenance=None):
     """One run over the directory of `out`: parse, plan, emit, check. Returns
     the summary lines; raises GenError or gtcheck.CheckError."""
-    global VELOCITY_ON
+    global VELOCITY_ON, UID_ON
     VELOCITY_ON = {"speed_ms", "course"} <= set(re.findall(r"(?m)^key\s+(\S+)", core_text))
+    UID_ON = "uid" in set(re.findall(r"(?m)^key\s+(\S+)", core_text))
     src = src or out.path(SOURCE_DIR)
     sha = read_provenance(src, provenance)
     messages = load_messages(src)

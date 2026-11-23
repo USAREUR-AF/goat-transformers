@@ -347,6 +347,114 @@ impl Framer for Whole {
     }
 }
 
+/// MAVLink 2 frames (https://mavlink.io/en/guide/serialization.html).
+///
+/// A frame is STX 0xFD, LEN, INCOMPAT, COMPAT, SEQ, SYSID, COMPID, MSGID (3
+/// bytes, little-endian), LEN payload bytes, a 2-byte checksum and, when
+/// INCOMPAT bit 0 is set, a 13-byte signature. A sender trims trailing zero
+/// bytes from the payload; a receiver reads the missing bytes as zero. This
+/// framer does that: a payload shorter than its message's full length is
+/// zero-filled and LEN is rewritten, so a pack written for the full length
+/// decodes it. The checksum and signature are carried unchanged (they are not
+/// mapped). Bytes before an STX are skipped, as a MAVLink receiver does; a
+/// MAVLink 1 frame (STX 0xFE) and a frame whose id is not in `lengths` pass
+/// through unchanged.
+pub struct Mavlink2 {
+    buf: Buf,
+    lengths: std::sync::Arc<std::collections::BTreeMap<u32, usize>>,
+}
+impl Mavlink2 {
+    pub fn new(lengths: std::sync::Arc<std::collections::BTreeMap<u32, usize>>) -> Mavlink2 {
+        Mavlink2 { buf: Buf::default(), lengths }
+    }
+}
+const MAV2_STX: u8 = 0xFD;
+const MAV1_STX: u8 = 0xFE;
+impl Framer for Mavlink2 {
+    fn push(&mut self, bytes: &[u8]) {
+        self.buf.push(bytes);
+    }
+    fn next(&mut self) -> Result<Option<Vec<u8>>, AdapterError> {
+        // skip to the next start byte
+        let a = self.buf.avail();
+        let skip = a.iter().position(|&b| b == MAV2_STX || b == MAV1_STX).unwrap_or(a.len());
+        if skip > 0 {
+            self.buf.skip(skip);
+        }
+        let a = self.buf.avail();
+        if a.len() < 2 {
+            return Ok(None);
+        }
+        if a[0] == MAV1_STX {
+            let total = 6 + a[1] as usize + 2;
+            if a.len() < total {
+                return Ok(None);
+            }
+            return Ok(Some(self.buf.take(total)));
+        }
+        if a.len() < 10 {
+            return Ok(None);
+        }
+        let len = a[1] as usize;
+        let sig = if a[2] & 0x01 != 0 { 13 } else { 0 };
+        let total = 10 + len + 2 + sig;
+        if a.len() < total {
+            return Ok(None);
+        }
+        let frame = self.buf.take(total);
+        let id = frame[7] as u32 | (frame[8] as u32) << 8 | (frame[9] as u32) << 16;
+        match self.lengths.get(&id) {
+            Some(&full) if full > len && full <= 255 => {
+                let mut out = Vec::with_capacity(10 + full + 2 + sig);
+                out.extend_from_slice(&frame[..10]);
+                out[1] = full as u8;
+                out.extend_from_slice(&frame[10..10 + len]);
+                out.resize(10 + full, 0);
+                out.extend_from_slice(&frame[10 + len..]);
+                Ok(Some(out))
+            }
+            _ => Ok(Some(frame)),
+        }
+    }
+    fn finish(&mut self) -> Result<Option<Vec<u8>>, AdapterError> {
+        let r = self.next();
+        let left = self.buf.clear();
+        match r {
+            Ok(Some(m)) if left == 0 => Ok(Some(m)),
+            Ok(Some(_)) | Ok(None) if left > 0 => Err(truncated(left)),
+            other => other,
+        }
+    }
+    fn wrap(&self, msg: &[u8], out: &mut Vec<u8>) -> Result<(), AdapterError> {
+        out.extend_from_slice(msg);
+        Ok(())
+    }
+}
+
+/// The full payload length of every MAVLink 2 message a pack defines: from
+/// each kind's `when 0:56:24 <id>` (the message id) and `when 0:8:8 <len>`
+/// (the payload length) lines of `pack.def` text.
+pub fn mavlink2_lengths(pack_def: &str, into: &mut std::collections::BTreeMap<u32, usize>) {
+    let (mut id, mut len): (Option<u32>, Option<usize>) = (None, None);
+    let mut flush = |id: &mut Option<u32>, len: &mut Option<usize>| {
+        if let (Some(i), Some(l)) = (id.take(), len.take()) {
+            into.insert(i, l);
+        }
+    };
+    for line in pack_def.lines() {
+        let f: Vec<&str> = line.split_whitespace().collect();
+        match f.as_slice() {
+            ["kind", ..] => {
+                flush(&mut id, &mut len);
+            }
+            ["when", "0:56:24", v] => id = v.parse().ok(),
+            ["when", "0:8:8", v] => len = v.parse().ok(),
+            _ => {}
+        }
+    }
+    flush(&mut id, &mut len);
+}
+
 /// Frame one complete unit (a datagram, a publication): every message in it,
 /// and the first error if the unit did not frame cleanly. The framer is
 /// empty afterwards, so the next unit starts clean.
@@ -387,6 +495,10 @@ pub enum FrameSpec {
     Fixed { n: usize },
     Start { start: u8, n: usize, big: bool, total: bool },
     Whole,
+    /// MAVLink 2 frames, each payload zero-filled to its message's full
+    /// length. `lengths` maps a message id to that length; the caller fills it
+    /// from the loaded packs (`mavlink2_lengths`).
+    Mavlink2 { lengths: std::sync::Arc<std::collections::BTreeMap<u32, usize>> },
 }
 
 /// A framing and its options.
@@ -440,6 +552,7 @@ impl Framing {
     /// start:<byte>:len:<N>:<be|le>  a start byte, a length, then the message
     /// start:<byte>:len:<N>:<be|le>:total   the length counts the whole frame, which is the message
     /// whole                         the whole datagram, file or document (also: datagram, file, document)
+    /// mavlink2                      MAVLink 2 frames; a payload trimmed of trailing zeros is zero-filled
     /// ```
     ///
     /// then, after commas, `max=<bytes>` and `hex`.
@@ -449,6 +562,7 @@ impl Framing {
         let f: Vec<&str> = head.split(':').collect();
         let spec = match f.as_slice() {
             ["newline"] => FrameSpec::Newline,
+            ["mavlink2"] => FrameSpec::Mavlink2 { lengths: Default::default() },
             ["whole"] | ["datagram"] | ["file"] | ["document"] => FrameSpec::Whole,
             ["len", n, e] => FrameSpec::Length { n: len_bytes(n, s)?, big: endian(e, s)? },
             ["len", n] if *n == "1" => FrameSpec::Length { n: 1, big: true },
@@ -470,7 +584,7 @@ impl Framing {
                 };
                 FrameSpec::Start { start: start as u8, n, big, total }
             }
-            _ => return Err(bad(s, "expected newline, len:<N>:<be|le>, fixed:<N>, start:<byte>:len:<N>:<be|le>[:total] or whole")),
+            _ => return Err(bad(s, "expected newline, len:<N>:<be|le>, fixed:<N>, start:<byte>:len:<N>:<be|le>[:total], mavlink2 or whole")),
         };
         let mut fr = Framing::of(spec);
         for opt in parts {
@@ -485,12 +599,13 @@ impl Framing {
 
     /// A new framer with an empty buffer. One per stream.
     pub fn build(&self) -> Box<dyn Framer> {
-        match self.spec {
+        match &self.spec {
             FrameSpec::Newline => Box::new(Newline::new(self.max)),
-            FrameSpec::Length { n, big } => Box::new(LengthPrefix::new(n, big, self.max)),
-            FrameSpec::Fixed { n } => Box::new(Fixed::new(n)),
-            FrameSpec::Start { start, n, big, total } => Box::new(StartLength::new(start, n, big, total, self.max)),
+            FrameSpec::Length { n, big } => Box::new(LengthPrefix::new(*n, *big, self.max)),
+            FrameSpec::Fixed { n } => Box::new(Fixed::new(*n)),
+            FrameSpec::Start { start, n, big, total } => Box::new(StartLength::new(*start, *n, *big, *total, self.max)),
             FrameSpec::Whole => Box::new(Whole::new(self.max)),
+            FrameSpec::Mavlink2 { lengths } => Box::new(Mavlink2::new(lengths.clone())),
         }
     }
 }
@@ -498,6 +613,73 @@ impl Framing {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn gpi_lengths() -> std::sync::Arc<std::collections::BTreeMap<u32, usize>> {
+        let mut m = std::collections::BTreeMap::new();
+        mavlink2_lengths("kind heartbeat\nwhen 0:56:24 0\nwhen 0:8:8 9\nkind global_position_int\nwhen      0:56:24 33\nwhen      0:8:8 28\n", &mut m);
+        std::sync::Arc::new(m)
+    }
+    fn frame(id: u32, payload: &[u8]) -> Vec<u8> {
+        let mut f = vec![0xFD, payload.len() as u8, 0, 0, 7, 1, 1, id as u8, (id >> 8) as u8, (id >> 16) as u8];
+        f.extend_from_slice(payload);
+        f.extend_from_slice(&[0xAB, 0xCD]);
+        f
+    }
+
+    #[test]
+    fn mavlink2_lengths_from_a_pack() {
+        let m = gpi_lengths();
+        assert_eq!(m.get(&0), Some(&9));
+        assert_eq!(m.get(&33), Some(&28));
+        assert_eq!(m.len(), 2);
+    }
+
+    #[test]
+    fn mavlink2_zero_fills_a_trimmed_payload() {
+        let fr = Framing { spec: FrameSpec::Mavlink2 { lengths: gpi_lengths() }, max: DEFAULT_MAX, hex: false };
+        let mut f = fr.build();
+        let trimmed: Vec<u8> = (1..=27).collect(); // GLOBAL_POSITION_INT with hdg's high byte trimmed
+        let (msgs, err) = frame_unit(f.as_mut(), &frame(33, &trimmed));
+        assert!(err.is_none());
+        assert_eq!(msgs.len(), 1);
+        let m = &msgs[0];
+        assert_eq!(m[1], 28, "LEN is the full length");
+        assert_eq!(&m[10..37], &trimmed[..]);
+        assert_eq!(m[37], 0, "the trimmed byte reads zero");
+        assert_eq!(&m[38..], &[0xAB, 0xCD], "checksum carried");
+    }
+
+    #[test]
+    fn mavlink2_full_unknown_v1_and_several_in_one_datagram() {
+        let fr = Framing::parse("mavlink2").unwrap();
+        let fr = Framing { spec: FrameSpec::Mavlink2 { lengths: gpi_lengths() }, ..fr };
+        let full: Vec<u8> = vec![5; 28];
+        let mut unit = frame(33, &full);
+        unit.extend(frame(999, &[1, 2, 3])); // an id no pack names: unchanged
+        unit.extend([0xFE, 2, 0, 1, 1, 0, 9, 9, 0xAA, 0xBB]); // MAVLink 1: unchanged
+        unit.extend([0x00, 0x11]); // noise before the next STX is skipped
+        unit.extend(frame(0, &[1, 2])); // heartbeat trimmed to 2 bytes
+        let mut f = fr.build();
+        let (msgs, err) = frame_unit(f.as_mut(), &unit);
+        assert!(err.is_none(), "{:?}", err.map(|e| e.kind));
+        assert_eq!(msgs.len(), 4);
+        assert_eq!(msgs[0], frame(33, &full));
+        assert_eq!(msgs[1], frame(999, &[1, 2, 3]));
+        assert_eq!(msgs[2][0], 0xFE);
+        assert_eq!(msgs[3][1], 9);
+        assert_eq!(&msgs[3][10..19], &[1, 2, 0, 0, 0, 0, 0, 0, 0]);
+    }
+
+    #[test]
+    fn mavlink2_an_incomplete_frame_is_truncated() {
+        let fr = Framing { spec: FrameSpec::Mavlink2 { lengths: gpi_lengths() }, max: DEFAULT_MAX, hex: false };
+        let mut f = fr.build();
+        let mut fr_bytes = frame(33, &[1; 28]);
+        fr_bytes.truncate(20);
+        let (msgs, err) = frame_unit(f.as_mut(), &fr_bytes);
+        assert!(msgs.is_empty());
+        assert_eq!(err.unwrap().kind, "frame-truncated");
+    }
 
     fn drain(f: &mut dyn Framer) -> Vec<Vec<u8>> {
         let mut v = Vec::new();

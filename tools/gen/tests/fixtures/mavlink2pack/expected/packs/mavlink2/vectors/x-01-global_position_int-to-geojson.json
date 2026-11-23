@@ -3,7 +3,7 @@
   "from": "mavlink2",
   "to": "geojson",
   "input": "fd1c000007010121000040e201004c52401c44f41705a4720700d43000009600b5ff0a002823de2d",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{\"course\":333.434948822922,\"speed_ms\":1.6770509831248424}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{\"course\":333.434948822922,\"speed_ms\":1.6770509831248424},\"id\":\"1\"}",
   "model": {
     "@kind": "global_position_int",
     "lat": "47.397742",

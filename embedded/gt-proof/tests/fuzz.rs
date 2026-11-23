@@ -24,7 +24,9 @@ fn scale() -> usize {
 /// Cross-format conversions with the context keys their targets need.
 const PAIRS: [(&str, &str, &[&str]); 4] = [
     ("remote-id", "asterix-cat062", &["cat062.sac", "cat062.sic", "cat062.time_of_day_s", "cat062.track_number", "track.confirmed"]),
-    ("mavlink2", "remote-id", &["rid.status", "rid.direction_raw", "rid.speed_h_raw", "rid.timestamp_ds"]),
+    // uid: a Remote ID's UAS ID is the registered serial the caller gives, not the MAVLink
+    // system id the mavlink module derives (with `text_of`, which the device has no text store for)
+    ("mavlink2", "remote-id", &["rid.status", "rid.direction_raw", "rid.speed_h_raw", "rid.timestamp_ds", "uid"]),
     ("conformance-groups-bits-msb", "conformance-groups-bits-var", &[]),
     ("conformance-seq-msb", "conformance-seq-lsb", &[]),
 ];

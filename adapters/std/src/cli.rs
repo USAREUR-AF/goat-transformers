@@ -38,6 +38,7 @@ Endpoints
              tcp://<host>:<port>   tcp-listen://[<host>]:<port>
              udp://[<host>]:<port>   udp://<group>:<port>?iface=<address>
   framing    newline | len:<N>:<be|le> | fixed:<N> | start:<byte>:len:<N>:<be|le>[:total] | whole
+             | mavlink2 (MAVLink 2 frames; a trimmed payload is zero-filled to its full length)
              then optionally ,max=<bytes> and ,hex
   udp and dir endpoints are `whole` unless stated (one datagram or one file is
   one message). Every other endpoint is a stream and its framing must be stated.
@@ -282,6 +283,26 @@ pub fn run(name: &str, args: &[String], extra: &[&dyn Scheme]) -> i32 {
             eprintln!("{}: cannot load the formats: {}", name, e);
             return 2;
         }
+    };
+
+    // MAVLink 2 framing reads each message's full payload length from the packs it decodes
+    let in_frame = match in_frame {
+        Some(mut f) => {
+            if let goat_adapters_core::frame::FrameSpec::Mavlink2 { .. } = f.spec {
+                let mut lengths = std::collections::BTreeMap::new();
+                for fmt in named.iter().filter(|n| n.starts_with("mavlink2")) {
+                    if let Ok(text) = std::fs::read_to_string(Path::new(&packs).join(fmt).join("pack.def")) {
+                        goat_adapters_core::frame::mavlink2_lengths(&text, &mut lengths);
+                    }
+                }
+                if lengths.is_empty() {
+                    return usage("--in-frame mavlink2 needs --from-format mavlink2 (or a mavlink2 dialect) and its pack".to_string());
+                }
+                f.spec = goat_adapters_core::frame::FrameSpec::Mavlink2 { lengths: std::sync::Arc::new(lengths) };
+            }
+            Some(f)
+        }
+        None => None,
     };
 
     // the endpoints

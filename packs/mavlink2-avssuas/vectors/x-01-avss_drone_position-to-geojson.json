@@ -3,7 +3,7 @@
   "from": "mavlink2-avssuas",
   "to": "geojson",
   "input": "fd1800001f010193ea00881300001862b21ed0fcecffb88800000000f4410000fa413525",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.1246,51.5007]},\"properties\":{}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.1246,51.5007]},\"properties\":{},\"id\":\"1\"}",
   "model": {
     "@kind": "avss_drone_position",
     "lat": "51.5007",
