@@ -488,3 +488,86 @@ mod controlled_inner {
         assert!(e.formats().is_empty(), "{:?}", e.formats());
     }
 }
+
+// ---------------------------------------------------------------------------
+// Engine-spec 0.93, ruling 2, fail closed: "With a profile, a module file
+// that 2b gives no name is not loaded, also when it is shown public ... and a
+// pack or module that uses it is `unknown-module` ... `core` is no exception
+// ... With no profile nothing changes."
+// ---------------------------------------------------------------------------
+
+fn nameless_module(module_line: &str) -> String {
+    format!("{}\nversion 1.0.0\ndistribution public\nsource \"t\"\nkey k int -\n", module_line)
+}
+
+fn uses_pack(format: &str, module: &str) -> String {
+    format!(
+        "format {}\nversion 1.0.0\ndistribution public\nsource \"t\"\nuses {}\nwire json\nfield lat pos.lat float\n",
+        format, module
+    )
+}
+
+fn unknown_module(r: Result<Vec<goat_transformers::LoadedPack>, goat_transformers::Error>) {
+    let e = r.unwrap_err();
+    assert!(e.msg.starts_with("unknown-module:"), "{}", e.msg);
+}
+
+/// A pack that uses a module file 2b gives no name (a comment after the
+/// name, or a quoted name): `unknown-module` under each profile, and the
+/// module is not loaded; with no profile both load.
+#[test]
+fn a_pack_using_a_module_2b_gives_no_name() {
+    for line in ["module mx # note", "module \"mx\""] {
+        let t = Tree::new(
+            "nameless-pack",
+            &[("model/core.def", CORE), ("model/mx.def", &nameless_module(line)), ("packs/p/pack.def", &uses_pack("c-p", "mx"))],
+        );
+        for profile in ["open", "open+copyleft", "everything"] {
+            let mut e = Engine::new();
+            unknown_module(e.load_tree(&t.packs(), &with(Some(profile))));
+            assert_eq!(e.modules(), vec!["core"], "{} {}", line, profile);
+            assert!(e.formats().is_empty());
+        }
+        let mut e = Engine::new();
+        e.load_tree(&t.packs(), &with(None)).unwrap();
+        assert_eq!(e.modules(), vec!["core", "mx"], "{}", line);
+        assert_eq!(e.formats(), vec!["c-p"]);
+    }
+}
+
+/// A module that uses such a module: `unknown-module` under a profile, at
+/// the module load, before any pack; with no profile it loads.
+#[test]
+fn a_module_using_a_module_2b_gives_no_name() {
+    let user = "module my\nversion 1.0.0\ndistribution public\nsource \"t\"\nuses mx\nkey j int -\n";
+    let t = Tree::new(
+        "nameless-module",
+        &[
+            ("model/core.def", CORE),
+            ("model/mx.def", &nameless_module("module mx # note")),
+            ("model/my.def", user),
+            ("packs/p/pack.def", &pack("c-p", "public")),
+        ],
+    );
+    let mut e = Engine::new();
+    unknown_module(e.load_tree(&t.packs(), &with(Some("everything"))));
+    assert!(!e.modules().contains(&"my".to_string()), "{:?}", e.modules());
+    assert!(e.formats().is_empty());
+    let mut e = Engine::new();
+    e.load_tree(&t.packs(), &with(None)).unwrap();
+    assert_eq!(e.modules(), vec!["core", "mx", "my"]);
+}
+
+/// `core` is no exception: a `core.def` 2b gives no name is not loaded under
+/// a profile, and every pack is `unknown-module`; with no profile it loads.
+#[test]
+fn a_core_2b_gives_no_name() {
+    let core = "module core # note\nversion 1.0.0\ndistribution public\nsource \"t\"\nkey lat float -\n";
+    let t = Tree::new("nameless-core", &[("model/core.def", core), ("packs/p/pack.def", &pack("c-p", "public"))]);
+    let mut e = Engine::new();
+    unknown_module(e.load_tree(&t.packs(), &with(Some("open"))));
+    assert!(e.modules().is_empty());
+    let mut e = Engine::new();
+    e.load_tree(&t.packs(), &with(None)).unwrap();
+    assert_eq!(e.formats(), vec!["c-p"]);
+}

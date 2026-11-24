@@ -428,9 +428,13 @@ impl Licences {
         let mut names: Vec<(Option<String>, Vec<String>)> = Vec::new();
         for f in files {
             let lic = module_licence(&beside(f, ".license"))?;
-            // 0.93, ruling 2: a file that is not shown public is in none
-            own.push(if shown_public(f) { *table.get(&lic).unwrap_or(&2) } else { NONE });
-            names.push(name_lines(f));
+            let lines = name_lines(f);
+            // 0.93, ruling 2: a file that is not shown public is in none, and
+            // so is one that 2b gives no name (fail closed: with a profile it
+            // is not loaded, and what uses it is `unknown-module`)
+            let public = shown_public(f) && lines.0.is_some();
+            own.push(if public { *table.get(&lic).unwrap_or(&2) } else { NONE });
+            names.push(lines);
         }
         // the widest over what each module uses, directly or through others:
         // a fixed point, so that a cycle of `uses` ends
