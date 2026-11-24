@@ -6,28 +6,26 @@ engine (shared-model hardening, item 2). Each vector is a frame as pymavlink
 packs it (the CRC left off, as the pack maps none), a round trip, and a
 `model` of every key whose value follows from its field line.
 
-On 21 Nov 2026: 197 vectors for the 235 kinds of the pack; the rest are below.
+On 24 Nov 2026: 200 vectors for the 235 kinds of the pack; the rest are below.
 
-## Findings for the pack (not written as vectors)
+## Findings for the pack, and where they stand
 
-1. **A same-format round trip loses microseconds** (`golden-pymavlink-skip.txt`):
-   `system_time`, `camera_image_captured` and `utm_global_position` map a
-   uint64 microsecond time to `time_ms`. Encoding writes the millisecond
-   value back, so the frame that returns differs from the one that came in.
-   A same-format round trip is lossless by the shared model's guarantee; the
-   microseconds need a raw key (or `time_ns`, spec 0.45) beside `time_ms`.
-2. **MAVLink 2 payload truncation**: every kind selects on the full payload
-   length (`when 0:8:8 <length>`), extension fields included. A MAVLink 2
-   sender drops the trailing zero bytes of the payload
-   (https://mavlink.io/en/guide/serialization.html#payload_truncation), so a
-   frame whose last fields are zero (or that leaves the extensions out) has
-   a shorter LEN and selects no kind. pymavlink does this: GLOBAL_POSITION_INT
-   with `hdg` 0 goes out with LEN 25, not 28, and decodes to `no-kind`. The
-   golden vectors avoid it (every covered byte non-zero); real traffic does
-   not.
-3. **uint64 fields above 2^63**: the shared model's `int` is 64-bit signed, so
-   a uint64 value of 2^63 or more cannot be a model value. The vectors keep
-   the top byte below 0x80.
+1. **A same-format round trip lost microseconds** (fixed): `system_time`,
+   `camera_image_captured` and `utm_global_position` mapped a uint64
+   microsecond time to `time_ms`, so the frame that came back differed. After
+   #335 and #338 their golden vectors pass, and the skip list is empty.
+2. **MAVLink 2 payload truncation** (handled by the adapters, #338): every
+   kind selects on the full payload length (`when 0:8:8 <length>`). A MAVLink
+   2 sender drops the trailing zero bytes of the payload
+   (https://mavlink.io/en/guide/serialization.html#payload_truncation).
+   `goat-xf-pipe`'s framing `mavlink2` zero-fills each payload to its
+   message's full length before the engine sees it, as the guide asks of a
+   receiver. The library's `convert` still takes the full-length payload: a
+   trimmed frame given to it directly (pymavlink's GLOBAL_POSITION_INT with
+   `hdg` 0, LEN 25) is `no-kind`. The golden vectors are full length.
+3. **uint64 fields above 2^63** (open): the shared model's `int` is 64-bit
+   signed, so a uint64 value of 2^63 or more cannot be a model value. The
+   vectors keep the top byte below 0x80.
 
 ## Kinds without a vector for other reasons
 
