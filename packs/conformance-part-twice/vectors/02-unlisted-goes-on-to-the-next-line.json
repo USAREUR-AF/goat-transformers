@@ -1,0 +1,12 @@
+{
+  "name": "unlisted-goes-on-to-the-next-line",
+  "from": "conformance-part-twice",
+  "to": "conformance-part-twice",
+  "input": "{\"t\":\"a-f\"}",
+  "expect": "{\"t\":\"f-f\"}",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: with `unlisted` the line counts as one whose place is absent"
+}

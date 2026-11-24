@@ -1,0 +1,12 @@
+{
+  "name": "const-texts-read",
+  "from": "conformance-part-const",
+  "to": "conformance-part-const",
+  "input": "{\"u\":\"x\",\"t\":\"5-q-present-a b\"}",
+  "expect": "{\"u\":\"part:-:1\",\"t\":\"5-q-present-a b\"}",
+  "model": {
+    "probe.label": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 4: the 0.6 const is not checked on decode, the part const is"
+}

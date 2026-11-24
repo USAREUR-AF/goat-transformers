@@ -1,0 +1,9 @@
+{
+  "name": "whole-unlisted-not-held",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-json-whole",
+  "input": "{\"x\":6,\"tag\":\"k-h-U\"}",
+  "expect": "{\"t\":\"k-h-U\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: env is unlisted and not held"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "default-fills-a-part",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default",
+  "input": "{\"x\":6}",
+  "expect": "{\"t\":\"k-h-S\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: its `default`"
+}

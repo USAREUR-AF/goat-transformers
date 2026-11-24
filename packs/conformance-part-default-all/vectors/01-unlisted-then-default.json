@@ -1,0 +1,14 @@
+{
+  "name": "unlisted-then-default",
+  "from": "conformance-part-default-all",
+  "to": "conformance-part-default-all",
+  "input": "{\"t\":\"k-a-A\"}",
+  "expect": "{\"t\":\"k-h-A\"}",
+  "model": {
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: the key `unlisted` left absent takes its default"
+}

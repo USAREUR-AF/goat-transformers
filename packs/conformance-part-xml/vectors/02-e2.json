@@ -1,0 +1,13 @@
+{
+  "name": "e2",
+  "from": "conformance-part-xml",
+  "to": "conformance-part-xml",
+  "input": "<e t=\"k-f-S-C\"/>",
+  "expect": "<e t=\"k-f-S\"/>",
+  "model": {
+    "probe.x": "3",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 1: without a whole line the parts no line names are lost; a token of which `unlisted` left one key absent is transform-encode, with every key absent nothing is written"
+}

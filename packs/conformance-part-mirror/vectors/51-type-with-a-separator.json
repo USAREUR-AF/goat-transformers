@@ -1,0 +1,9 @@
+{
+  "name": "type-with-a-separator",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-type",
+  "input": "{\"type\":\"a-f-G\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: the passed text holds the separator"
+}

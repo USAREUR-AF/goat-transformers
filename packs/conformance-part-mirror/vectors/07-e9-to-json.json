@@ -1,0 +1,9 @@
+{
+  "name": "e9-to-json",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-json",
+  "input": "{\"x\":3,\"y\":2}",
+  "expect": "{\"t\":\"k-f-S\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: parts 0 to 2"
+}

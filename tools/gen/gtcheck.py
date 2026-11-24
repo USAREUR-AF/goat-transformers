@@ -12,7 +12,8 @@ and `switch` blocks, and the sequential extents and counts of 0.21: `group
 the long and terminated fields of 0.22:
 the `hex` transform, the set `ascii8`, the locator `until:<code>`, the field
 option `stop <code>` and `bit_order msb-lsb`, and the load rules of the
-`inner <format> [partial]` line of 0.34) and imports no engine, so a generator
+`inner <format> [partial]` line of 0.34; and the part lines of 0.64,
+`part:<sep>:<n>`, `unlisted` and `const ... part`) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -55,7 +56,9 @@ TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_
                    # engine-spec 0.18: xml, json and geojson only (ruling 11)
                    "iso8601_short": "int",
                    # engine-spec 0.46
-                   "codestr": "string", "codenum": "int"}
+                   "codestr": "string", "codenum": "int",
+                   # engine-spec 0.64: one part of a text token
+                   "part": "string"}
 JSON_TRANSFORMS = dict(TEXT_TRANSFORMS, bool="int")
 BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": "float",
                    "sscale": "float", "f32": "float", "f64": "float", "ascii": "string",
@@ -380,6 +383,7 @@ _DERIVE_TYPES = {
 
 # spec 0.18: the separator names of `tokens` and `has_token` (ruling 9:
 # lowercase and exact)
+_PART_NUMBER = re.compile(r"(?:0|[1-9][0-9]{0,2})\Z")     # spec 0.64: 0 to 255, no leading zeros
 _SEPARATOR_NAMES = {"space": " ", "comma": ",", "colon": ":"}
 
 
@@ -701,7 +705,7 @@ class Node:
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
                  "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper",
-                 "values", "ranges", "until", "stop", "as_key", "names", "at", "optional")
+                 "values", "ranges", "until", "stop", "as_key", "names", "at", "optional", "part")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
@@ -714,6 +718,7 @@ class Node:
         self.as_key = None          # spec 0.30: the key of `when ... as <key>`
         self.optional = False       # spec 0.52: `as <key> optional`
         self.at = None              # spec 0.33: the offset of `when ... at <offset>`
+        self.part = None            # spec 0.64: (separator character, part number)
         # spec 0.31: the count names of `group <list> count @<a> [@<b>]`;
         # spec 0.83: the one of `length @<name> units <u>` (u is `count`)
         self.names = None
@@ -1356,6 +1361,8 @@ class _Loader:
             else:
                 self._one_group_per_list(lines)
                 self._paths_through_groups(lines)
+            if self.pack.wire in ("xml", "json", "geojson", "text"):
+                self._part_groups(lines)
 
     def _block(self, lines, group, visible, declared, in_kind, top, chain=False):
         """The lines of one block. `visible` is a stack of {presence name: size}
@@ -1593,6 +1600,12 @@ class _Loader:
         elif name == "chars":
             if len(targs) != 1 or targs[0] not in CHAR_SETS:
                 self.bad(node, "`chars` takes one of the sets %s" % ", ".join(sorted(CHAR_SETS)))
+        elif name == "part":
+            # spec 0.64: a separator as for `tokens` (0.18) and a part number
+            if len(targs) != 2 or _separator(targs[0]) is None or not _PART_NUMBER.match(targs[1]) \
+                    or int(targs[1]) > 255:
+                self.bad(node, "`part` takes a separator and a part number from 0 to 255")
+            node.part = (_separator(targs[0]), int(targs[1]))
         elif name == "linscale":
             if len(targs) != 2 or not all(_NUMBER.match(t) for t in targs) or float(targs[0]) == 0:
                 self.bad(node, "`linscale` takes a maximum and a range")
@@ -1751,7 +1764,7 @@ class _Loader:
             if opt == "via" and node.via is None and i + 1 < len(a):
                 node.via = a[i + 1]
                 i += 1
-            elif opt in ("swap", "trim", "optional") and opt not in node.opts:
+            elif opt in ("swap", "trim", "optional", "unlisted") and opt not in node.opts:
                 node.opts.add(opt)
             elif opt == "absent" and node.absent is None and i + 1 < len(a):
                 # spec 0.9: the token after `absent` is always its argument
@@ -1769,6 +1782,13 @@ class _Loader:
                 self.bad(node, "field option `%s` is unknown, repeated or incomplete" % opt)
             i += 1
         bits_wire = self.pack.wire == "bits"
+        if "unlisted" in node.opts and (node.part is None or node.via is None):
+            self.bad(node, "`unlisted` needs `part` and `via`")
+        if node.part is not None:
+            self._part(node, group)
+            if node.opts & {"swap", "trim"} or node.absent is not None or node.with_ is not None \
+                    or node.stop is not None:
+                self.bad(node, "a `part` line takes only `via`, `unlisted` and, on text, `optional`")
         self._terminated(node, bits_wire)
         if self.pack.wire == "cbor" and (node.opts or node.absent is not None):
             self.bad(node, "`%s` on the cbor wire, whose only field option is `via`"
@@ -1970,11 +1990,27 @@ class _Loader:
                 self.bad(node, "the `when` value `%s` does not fit the field" % v)
             node.ranges.append((lo, hi))
 
+    def _part(self, node, group):
+        """Spec 0.64: the place of a part line."""
+        pack = self.pack
+        if pack.wire == "text":
+            if node.col is not None or len(node.fields) != 1:
+                self.bad(node, "`part` on a column or a pair")
+            if node.part[0] == pack.separator or (node.part[0] == "*" and pack.checksum == "nmea"):
+                self.bad(node, "the separator of `part` is the delimiter, or `*` under `checksum nmea`")
+        if pack.wire == "geojson" and group is None and node.loc.startswith("geometry."):
+            self.bad(node, "`part` on `%s`" % node.loc)
+
     def _const(self, node, group):
-        if len(node.args) != 2:
+        a = node.args
+        is_part = len(a) == 3 and a[1].split(":")[0] == "part"      # spec 0.64
+        if len(a) != 2 and not is_part:
             self.bad(node, "`const` takes a locator and a value")
-        self._locator(node, node.args[0], group, "const")
-        node.value = node.args[1]
+        self._locator(node, a[0], group, "const")
+        node.value = a[-1]
+        if is_part:
+            self._transform(node, a[1], None)
+            self._part(node, group)
         if node.value == "present":
             self.bad(node, "`const <path> present` on the tlv wire" if self.pack.wire == "tlv"
                      else "`const <locator> present`; write `=present` for the text")
@@ -1984,6 +2020,10 @@ class _Loader:
             self._text_value(node, "const")
         elif self.pack.wire == "tlv":
             self._tlv_value(node, "const")
+        if is_part:
+            text = node.value[1:] if node.value.startswith("=") else node.value
+            if not text or node.part[0] in text:
+                self.bad(node, "the text of a `const ... part` is empty or holds the separator")
 
     def _presence(self, node, visible, declared):
         a = node.args
@@ -2343,6 +2383,39 @@ class _Loader:
                 if node.key in seen:
                     self.bad(node, "list `%s` is mapped by two groups of one scope" % node.key)
                 seen.add(node.key)
+
+    def _part_groups(self, lines):
+        """Spec 0.64 "Load errors", over one reading scope (the common lines
+        with one kind's, or a group body): the lines of each locator that a
+        part line addresses."""
+        placed = {}
+        for node in lines:
+            if node.d in ("field", "const", "when", "group"):
+                placed.setdefault(node.loc, []).append(node)
+        for loc, nodes in placed.items():
+            parts = [n for n in nodes if n.part is not None]
+            if not parts:
+                continue
+            numbers, whole = set(), None
+            for n in nodes:
+                if n.part is not None:
+                    if n.part[0] != parts[0].part[0]:
+                        self.bad(n, "two separators on `%s`" % loc)
+                    if n.part[1] in numbers:
+                        self.bad(n, "part %d of `%s` is named twice" % (n.part[1], loc))
+                    numbers.add(n.part[1])
+                elif n.d == "field" and n.tr == "string" and n.via is None and n.absent is None \
+                        and n.with_ is None and whole is None:
+                    whole = n
+                else:
+                    self.bad(n, "a `%s` on `%s`, whose token is read in parts" % (n.d, loc))
+            fields = [n for n in parts if n.d == "field"]
+            if not fields:
+                self.bad(parts[0], "no part field on `%s`" % loc)
+            if whole is not None and any(n.key == whole.key for n in fields):
+                self.bad(whole, "`%s` is the key of the whole line and of a part line" % whole.key)
+            if numbers != set(range(max(numbers) + 1)):
+                self.bad(parts[0], "a part below the highest is not named on `%s`" % loc)
 
     def _text_group_last(self, lines):
         """0.10 "Groups": the group is the last thing in its scope; no other

@@ -1,0 +1,9 @@
+{
+  "name": "whole-alone",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-json-whole",
+  "input": "{\"tag\":\"k-h-A-M\"}",
+  "expect": "{\"t\":\"k-h-A-M\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: no part key held; every part decodes"
+}

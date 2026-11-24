@@ -31,6 +31,7 @@ SCRIPTS = (
     "conformance-lookahead-vectors.py",
     "conformance-malformed-vectors.py",
     "conformance-noword-vectors.py",
+    "conformance-part-vectors.py",
     "conformance-rulings07-vectors.py",
     "conformance-rulings011-vectors.py",
     "conformance-rulings011b-vectors.py",

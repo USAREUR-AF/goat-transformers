@@ -1,0 +1,9 @@
+{
+  "name": "delimiter-in-a-value",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-text-sep",
+  "input": "{\"label\":\"a|\",\"w1\":\"b\",\"z\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, 0.10: text that holds the delimiter"
+}

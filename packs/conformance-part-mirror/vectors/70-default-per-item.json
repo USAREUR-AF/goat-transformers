@@ -1,0 +1,9 @@
+{
+  "name": "default-per-item",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-items-default",
+  "input": "{\"y\":1,\"recs\":[{\"x\":6},{\"x\":3,\"y\":1},{}]}",
+  "expect": "{\"recs\":[{\"t\":\"h-S\"},{\"t\":\"f-A\"},{}]}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2 per item; one default alone writes nothing"
+}

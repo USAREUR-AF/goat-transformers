@@ -1,0 +1,16 @@
+{
+  "name": "e5",
+  "from": "conformance-part-text-whole",
+  "to": "conformance-part-text-whole",
+  "input": "k-h-U,9",
+  "expect": "k-h-U,9",
+  "model": {
+    "probe.x": "6",
+    "probe.tag": "k-h-U",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "missing-part",
+  "from": "conformance-part-text-whole",
+  "to": "conformance-part-text-whole",
+  "input": "k-h,9",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: a field whose part is missing is transform-decode, with `unlisted` too (the whole line too)"
+}

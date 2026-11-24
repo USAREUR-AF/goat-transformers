@@ -1,0 +1,14 @@
+{
+  "name": "first-entry-both-ways",
+  "from": "conformance-part-tables",
+  "to": "conformance-part-tables",
+  "input": "{\"t\":\"b/01/lo\"}",
+  "expect": "{\"t\":\"a/01/lo\"}",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "7",
+    "probe.ratio": "0.5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, tables of 0.6: encode uses the first entry"
+}

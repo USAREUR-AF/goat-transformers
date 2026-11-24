@@ -1,0 +1,9 @@
+{
+  "name": "no-pass-through-of-text",
+  "from": "conformance-part-strict",
+  "to": "conformance-part-strict",
+  "input": "{\"t\":\"h-c-q\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3: a text with no entry does not pass through a string table"
+}

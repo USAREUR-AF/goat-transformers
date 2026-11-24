@@ -1,0 +1,14 @@
+{
+  "name": "no-via-entry",
+  "from": "conformance-part-type-via",
+  "to": "conformance-part-type-via",
+  "input": "<e t=\"h\"/>",
+  "expect": "<e/>",
+  "model": {
+    "@absent": [
+      "type"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3: the table has no entry, whatever the typemap holds"
+}

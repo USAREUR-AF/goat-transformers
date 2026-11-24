@@ -1,0 +1,9 @@
+{
+  "name": "const-still-checked",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-other",
+  "input": "{\"x\":3,\"tag\":\"b-h\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: every const part is checked"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "e8-to-text",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-text",
+  "input": "{\"x\":6,\"y\":1,\"z\":9}",
+  "expect": "k-h-A,9",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: parts 0 to 2"
+}

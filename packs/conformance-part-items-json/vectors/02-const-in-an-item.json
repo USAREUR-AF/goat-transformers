@@ -1,0 +1,9 @@
+{
+  "name": "const-in-an-item",
+  "from": "conformance-part-items-json",
+  "to": "conformance-part-items-json",
+  "input": "{\"recs\":[{\"t\":\"k-h\"},{\"t\":\"b-h\"}]}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: an item whose const part differs fails the decode"
+}

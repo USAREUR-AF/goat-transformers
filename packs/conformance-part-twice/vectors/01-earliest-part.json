@@ -1,0 +1,12 @@
+{
+  "name": "earliest-part",
+  "from": "conformance-part-twice",
+  "to": "conformance-part-twice",
+  "input": "{\"t\":\"h-f\"}",
+  "expect": "{\"t\":\"h-h\"}",
+  "model": {
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, 0.6: the earliest line; encode writes the value at both"
+}

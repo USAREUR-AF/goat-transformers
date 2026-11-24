@@ -1,0 +1,12 @@
+{
+  "name": "empty-part",
+  "from": "conformance-part-strict",
+  "to": "conformance-part-strict",
+  "input": "{\"t\":\"h-b-\"}",
+  "expect": "{\"t\":\"h-b-\"}",
+  "model": {
+    "probe.w1": ""
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 7: an empty part is the empty text"
+}

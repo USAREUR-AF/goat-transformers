@@ -1,0 +1,16 @@
+{
+  "name": "e4",
+  "from": "conformance-part-text-whole",
+  "to": "conformance-part-text-whole",
+  "input": "k-a-G,9",
+  "expect": "k-a-G,9",
+  "model": {
+    "probe.tag": "k-a-G",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

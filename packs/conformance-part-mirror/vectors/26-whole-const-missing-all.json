@@ -1,0 +1,9 @@
+{
+  "name": "whole-const-missing-all",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-json-whole",
+  "input": "{\"tag\":\"\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the empty token has one part, the empty text, not k"
+}

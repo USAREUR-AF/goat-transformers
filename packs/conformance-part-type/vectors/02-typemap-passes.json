@@ -1,0 +1,12 @@
+{
+  "name": "typemap-passes",
+  "from": "conformance-part-type",
+  "to": "conformance-part-type",
+  "input": "<e t=\"k-q\"/>",
+  "expect": "<e t=\"k-q\"/>",
+  "model": {
+    "type": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3: a code without an entry passes"
+}

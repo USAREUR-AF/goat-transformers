@@ -1,0 +1,9 @@
+{
+  "name": "e8-to-xml",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-xml",
+  "input": "{\"x\":6,\"y\":1}",
+  "expect": "<e t=\"k-h-A\"/>",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: parts 0 to 2"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "e3",
+  "from": "conformance-part-json-whole",
+  "to": "conformance-part-json-whole",
+  "input": "{\"t\":\"k-p-S\"}",
+  "expect": "{\"t\":\"k-p-S\"}",
+  "model": {
+    "probe.x": "0",
+    "probe.y": "2",
+    "probe.tag": "k-p-S"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

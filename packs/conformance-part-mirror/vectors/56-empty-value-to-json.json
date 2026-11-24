@@ -1,0 +1,9 @@
+{
+  "name": "empty-value-to-json",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-empty-json",
+  "input": "{\"label\":\"\"}",
+  "expect": "{\"t\":\"\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 7: written as `string` writes the empty text"
+}

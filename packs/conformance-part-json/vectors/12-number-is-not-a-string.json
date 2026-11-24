@@ -1,0 +1,9 @@
+{
+  "name": "number-is-not-a-string",
+  "from": "conformance-part-json",
+  "to": "conformance-part-json",
+  "input": "{\"t\":5}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 4: a place `string` cannot read is a failure of each line"
+}

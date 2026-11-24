@@ -1,0 +1,9 @@
+{
+  "name": "a-foreign-type-does-not-fit",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-type-whole",
+  "input": "{\"type\":\"a-f-G\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 2: the text another format set must fit this pack's parts"
+}

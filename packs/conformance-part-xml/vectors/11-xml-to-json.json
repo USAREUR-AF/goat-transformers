@@ -1,0 +1,9 @@
+{
+  "name": "xml-to-json",
+  "from": "conformance-part-xml",
+  "to": "conformance-part-json",
+  "input": "<e t=\"k-s-A-Q\"/>",
+  "expect": "{\"t\":\"k-s-A\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Decode and Encode step 2"
+}

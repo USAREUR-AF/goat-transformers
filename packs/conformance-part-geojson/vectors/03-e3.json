@@ -1,0 +1,13 @@
+{
+  "name": "e3",
+  "from": "conformance-part-geojson",
+  "to": "conformance-part-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"k-p-S\"}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"k-p-S\"}}",
+  "model": {
+    "probe.x": "0",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 1: without a whole line the parts no line names are lost; a token of which `unlisted` left one key absent is transform-encode, with every key absent nothing is written"
+}

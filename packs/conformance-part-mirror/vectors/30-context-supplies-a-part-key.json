@@ -1,0 +1,12 @@
+{
+  "name": "context-supplies-a-part-key",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-json-whole",
+  "input": "{\"y\":1}",
+  "expect": "{\"t\":\"k-f-A\"}",
+  "context": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2 with a context key (0.6)"
+}

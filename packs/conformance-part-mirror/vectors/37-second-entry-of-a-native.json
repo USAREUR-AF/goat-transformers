@@ -1,0 +1,9 @@
+{
+  "name": "second-entry-of-a-native",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-tables",
+  "input": "{\"x\":2,\"y\":7,\"ratio\":2}",
+  "expect": "{\"t\":\"a/01/hi\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, tables of 0.6"
+}

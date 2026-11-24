@@ -1,0 +1,12 @@
+{
+  "name": "unreadable-place-forgiven",
+  "from": "conformance-part-other-plain",
+  "to": "conformance-part-other-plain",
+  "input": "{\"x\":3,\"t\":5}",
+  "expect": "{\"x\":3,\"t\":\"f\"}",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 4 without a const: the one failed line is forgiven (0.6 ruling 5)"
+}

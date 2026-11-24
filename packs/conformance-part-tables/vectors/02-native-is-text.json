@@ -1,0 +1,14 @@
+{
+  "name": "native-is-text",
+  "from": "conformance-part-tables",
+  "to": "conformance-part-mirror",
+  "input": "{\"t\":\"a/1/hi\"}",
+  "expect": "{\"x\":1,\"ratio\":2}",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3: `part` yields string, so the native `1` is not `01`"
+}

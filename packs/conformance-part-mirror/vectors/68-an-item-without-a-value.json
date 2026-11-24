@@ -1,0 +1,9 @@
+{
+  "name": "an-item-without-a-value",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-items-dot",
+  "input": "{\"recs\":[{\"x\":6,\"label\":\"q\"},{}]}",
+  "expect": "{\"recs\":[\"h-q\",null]}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 13: an item without a value (0.7 ruling 11)"
+}

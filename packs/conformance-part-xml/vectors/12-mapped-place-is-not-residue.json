@@ -1,0 +1,9 @@
+{
+  "name": "mapped-place-is-not-residue",
+  "from": "conformance-part-xml",
+  "to": "conformance-part-xml",
+  "input": "<e t=\"k-a-G\" r=\"1\"/>",
+  "expect": "<e r=\"1\"/>",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 14: a place that a part group maps is never residue"
+}

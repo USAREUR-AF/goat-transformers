@@ -1,0 +1,9 @@
+{
+  "name": "const-after-kind-selection",
+  "from": "conformance-part-kinds",
+  "to": "conformance-part-kinds",
+  "input": "{\"t\":\"b-h\",\"k\":\"a\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 4: checked after kind selection, so no other kind is tried"
+}

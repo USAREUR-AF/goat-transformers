@@ -1,0 +1,14 @@
+{
+  "name": "not-removed",
+  "from": "conformance-part-text-optional-const",
+  "to": "conformance-part-text-optional-const",
+  "input": "9",
+  "expect": "9,",
+  "model": {
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 15: a field that a const part addresses is never removed; ruling 8: the const is not written"
+}

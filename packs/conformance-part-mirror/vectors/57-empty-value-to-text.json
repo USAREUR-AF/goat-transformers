@@ -1,0 +1,9 @@
+{
+  "name": "empty-value-to-text",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-empty-text",
+  "input": "{\"label\":\"\",\"z\":9}",
+  "expect": ",9",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 7: written as `string` writes the empty text"
+}

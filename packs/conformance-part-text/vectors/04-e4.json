@@ -1,0 +1,15 @@
+{
+  "name": "e4",
+  "from": "conformance-part-text",
+  "to": "conformance-part-text",
+  "input": "k-a-G,9",
+  "expect": ",9",
+  "model": {
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 1: without a whole line the parts no line names are lost; a token of which `unlisted` left one key absent is transform-encode, with every key absent nothing is written"
+}

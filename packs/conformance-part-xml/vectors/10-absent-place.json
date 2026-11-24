@@ -1,0 +1,15 @@
+{
+  "name": "absent-place",
+  "from": "conformance-part-xml",
+  "to": "conformance-part-xml",
+  "input": "<e/>",
+  "expect": "<e/>",
+  "model": {
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: an absent place leaves every key absent; Encode step 3 writes nothing, the const part included"
+}

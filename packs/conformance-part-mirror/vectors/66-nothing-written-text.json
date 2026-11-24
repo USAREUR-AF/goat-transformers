@@ -1,0 +1,9 @@
+{
+  "name": "nothing-written-text",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-items-text",
+  "input": "{\"label\":\"q\",\"recs\":[{\"x\":6},{}]}",
+  "expect": "q,k-h,",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 13: in a group body \"the entity\" is the item"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "both-parts-empty",
+  "from": "conformance-part-empty-element",
+  "to": "conformance-part-empty-element",
+  "input": "<e><a>-</a></e>",
+  "expect": "<e><a>-</a></e>",
+  "model": {
+    "probe.label": "",
+    "probe.w1": ""
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 7"
+}

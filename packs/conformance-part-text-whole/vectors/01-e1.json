@@ -1,0 +1,14 @@
+{
+  "name": "e1",
+  "from": "conformance-part-text-whole",
+  "to": "conformance-part-text-whole",
+  "input": "k-h-A-M-F-F,9",
+  "expect": "k-h-A-M-F-F,9",
+  "model": {
+    "probe.x": "6",
+    "probe.y": "1",
+    "probe.tag": "k-h-A-M-F-F"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

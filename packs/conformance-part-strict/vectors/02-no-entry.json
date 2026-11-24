@@ -1,0 +1,9 @@
+{
+  "name": "no-entry",
+  "from": "conformance-part-strict",
+  "to": "conformance-part-strict",
+  "input": "{\"t\":\"a-a-q\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: no entry without `unlisted`"
+}

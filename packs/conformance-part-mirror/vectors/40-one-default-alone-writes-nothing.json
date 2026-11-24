@@ -1,0 +1,9 @@
+{
+  "name": "one-default-alone-writes-nothing",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default",
+  "input": "{}",
+  "expect": "{}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode steps 2 and 3: x has neither"
+}

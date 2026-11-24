@@ -1,0 +1,20 @@
+{
+  "name": "items",
+  "from": "conformance-part-items-xml",
+  "to": "conformance-part-items-xml",
+  "input": "<e><r t=\"k-h-Z\"/><r t=\"k-a\"/><r/></e>",
+  "expect": "<e><r t=\"k-h-Z\"/><r t=\"k-a\"/><r/></e>",
+  "model": {
+    "probe.recs.#": "3",
+    "probe.recs[0].probe.x": "6",
+    "probe.recs[0].probe.tag": "k-h-Z",
+    "probe.recs[1].probe.tag": "k-a",
+    "@absent": [
+      "probe.recs[1].probe.x",
+      "probe.recs[2].probe.x",
+      "probe.recs[2].probe.tag"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 13: in a group body \"the entity\" is the item"
+}

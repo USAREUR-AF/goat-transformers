@@ -1,0 +1,13 @@
+{
+  "name": "two-parts",
+  "from": "conformance-part-sep-ampersand",
+  "to": "conformance-part-sep-ampersand",
+  "input": "<e t=\"a&amp;b\"/>",
+  "expect": "<e t=\"a&amp;b\"/>",
+  "model": {
+    "probe.label": "a",
+    "probe.w1": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 10: separators as for `tokens`"
+}

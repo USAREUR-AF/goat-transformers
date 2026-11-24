@@ -1,0 +1,9 @@
+{
+  "name": "whole-disagrees",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-json-whole",
+  "input": "{\"x\":3,\"y\":1,\"tag\":\"k-h-A\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: ident 6 is not the held 3 (ruling 2)"
+}

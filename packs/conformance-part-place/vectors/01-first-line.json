@@ -1,0 +1,9 @@
+{
+  "name": "first-line",
+  "from": "conformance-part-place",
+  "to": "conformance-part-place",
+  "input": "<e b=\"2\" t=\"k-h\" a=\"1\"/>",
+  "expect": "<e a=\"1\" t=\"k-h\" b=\"2\"/>",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 8"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "kind-a",
+  "from": "conformance-part-kinds",
+  "to": "conformance-part-kinds",
+  "input": "{\"t\":\"k-h\",\"k\":\"a\"}",
+  "expect": "{\"t\":\"k-h\",\"k\":\"a\"}",
+  "model": {
+    "@kind": "a",
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, a group is the common lines with one kind's"
+}

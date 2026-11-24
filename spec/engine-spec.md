@@ -6126,8 +6126,8 @@ line's key holds the token, and for each part line:
 2. Otherwise, when the entity holds a key of a part line, or every part field
    has a held value or a `default`, parts 0 to the highest `<n>` are written,
    joined by `<sep>`: each the text of its `const` or of its field (its held
-   value, or its `default`). A field with no value, a value with no table entry, and a text that holds `<sep>`,
-   are `transform-encode`.
+   value, or its `default`). A field with no value, a value with no table
+   entry, and a text that holds `<sep>`, are `transform-encode`.
 3. Otherwise a `default` of the whole line's key is checked and written as in
    step 1; without one nothing is written, the `const` parts included.
 
@@ -6136,8 +6136,9 @@ line's key holds the token, and for each part line:
 `bad-directive`: a separator or `<n>` outside the rules; two part lines of one
 group for one part; a number from 0 to the highest `<n>` that no part line of
 the group names; a group with no part `field`; two separators in one group; a
-second whole line; a whole line and a part line of one key; or any other `field`, `const`, `when` (`present` included)
-or `group` on the group's locator; `unlisted` without `via`, on another
+second whole line; a whole line and a part line of one key; or any other
+`field`, `const`, `when` (`present` included) or `group` on the group's
+locator; `unlisted` without `via`, on another
 transform, or twice; any field option but `via`, `unlisted` and, on `text`,
 `optional`; `also` after a part line; `part` on another wire, a column, a pair
 or `geometry.*`; on `text`, a `<sep>` that is the delimiter, or `*` under
@@ -6194,6 +6195,22 @@ not `string` without a `via` is `key-type-mismatch`.
     removed (0.10 step 5 needs every line to carry it).
 16. **`geojson`** members that are numbers are not pinned by a vector: 0.1's
     rule for `string` there applies.
+
+17. **`const .`** in a scalar item stays `bad-directive` (0.7 ruling 18), with
+    `part` too.
+18. **Another line** in Encode step 1 is any other line of the scope that maps
+    the key, a second part line of the same group included.
+19. **Per scope.** "A group with no part `field`" is checked like ruling 6: a
+    common const part with a kind that adds no part field is `bad-directive`.
+20. **`geometry.*`** inside a geojson group body is a member path (0.9 ruling
+    25), so `part` loads there.
+21. **Held** in step 1 excludes a `default`.
+
+### Stated, not yet pinned by a vector
+
+22. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
+    16, ruling 17, ruling 18 for a second part line, and ruling 13 for a
+    scalar item on `xml`.
 
 ## Not in this version
 

@@ -1,0 +1,9 @@
+{
+  "name": "whole-and-text-key-differ",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-strict-whole",
+  "input": "{\"tag\":\"h-b-q\",\"w1\":\"r\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: w1 differs"
+}

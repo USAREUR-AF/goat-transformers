@@ -1,0 +1,9 @@
+{
+  "name": "e10-ident-to-xml",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-xml",
+  "input": "{\"x\":2,\"y\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: a value with no table entry"
+}
