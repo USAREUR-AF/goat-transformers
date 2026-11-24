@@ -5984,19 +5984,36 @@ number in brackets).
     its range check included. On `text` columns `codenum` keeps the column's
     leading spaces (and refuses them) and pads with spaces on the right.
 
+15. **Parameters and sets are after-file checks.** 0.11 ruling 5b makes a
+    transform's parameters a line check; for `code`, `codestr` and `codenum`
+    the table above replaces it: every error of their list, an empty list
+    (`code:`) and a second colon (`code:D:x`) included, is `bad-directive`
+    after the file is read. A `charset` error is raised with the checks that
+    need the whole file, before `missing-distribution`.
+16. **Place of `charset`.** It stands at the top level of the pack, before the
+    first message `kind`. Inside a block, a group body included, it is
+    `bad-directive` after the file.
+17. **Width** is plain digits; `+4` is `bad-directive`.
+18. **`cbor` (Version 0.28)** takes none of the three: `bad-directive`.
+19. **`absent` and `codenum`.** The sentinel is the raw number, not the
+    `codenum` value. A held value whose bits equal the sentinel is written
+    (0.9) and decodes as absent.
+20. **The largest product** is 2^63: the greatest `codenum` value is then
+    2^63 − 1.
+
 ### Stated, not yet pinned by a vector
 
-15. `code` under `msb-lsb` with a `len` that is not a multiple of 8.
-16. `codenum` with 16 positions whose product reaches exactly `2^63`.
+21. `code` under `msb-lsb` with a `len` that is not a multiple of 8, for
+    conversion; `stop` and `until:` with `code` (`bad-directive`, 0.22).
 
 ## Vector additions
 
-- `conformance-codes-bits`: a five-position field with two sets of different
+- `conformance-charset-bits`: a five-position field with two sets of different
   widths; decode, encode and round trip; an unused code (`transform-decode`);
   a text with a character outside its position's set (`transform-encode`);
   `codenum` of the same field, at 0 and at the largest value; one past the
   largest (`transform-encode`).
-- `conformance-codes-text`: `codestr` on `json` and on `text`; a four-
+- `conformance-charset-text`: `codestr` on `json` and on `text`; a four-
   character text (`transform-decode`); a lowercase letter where only
   uppercase is in the set; `codenum` on `xml`.
 - By finding:

@@ -5,5 +5,5 @@
   "input": "{\"s1\":\"AB12\"}",
   "expect_error": "transform-encode",
   "source": "constructed",
-  "reference": "spec 0.42, On bits; one character per position"
+  "reference": "spec 0.46, On bits; one character per position"
 }

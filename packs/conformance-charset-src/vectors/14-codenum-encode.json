@@ -1,0 +1,9 @@
+{
+  "name": "codenum-encode",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-xml",
+  "input": "{\"x\":12345}",
+  "expect": "<R num=\"12345\"/>",
+  "source": "constructed",
+  "reference": "spec 0.46, On text wires (xml); the five characters"
+}

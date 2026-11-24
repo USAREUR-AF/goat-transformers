@@ -1,0 +1,9 @@
+{
+  "name": "codestr-character-outside-its-set",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-json",
+  "input": "{\"s1\":\"AI123\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.46, On text wires (json); I is not in L"
+}

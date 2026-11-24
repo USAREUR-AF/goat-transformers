@@ -1,8 +1,8 @@
-# Conformance probe pack for spec 0.42 on `json`: plain members, the source
+# Conformance probe pack for spec 0.46 on `json`: plain members, the source
 # of entities the `conformance-charset-*` packs are encoded from and the
 # target that shows decoded values. Public. No kinds.
 format  conformance-charset-src
-version 0.42.0
+version 0.46.0
 distribution public
 source  "synthetic format, no external standard"
 uses    probe

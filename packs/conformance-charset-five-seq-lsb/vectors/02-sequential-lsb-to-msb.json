@@ -1,0 +1,9 @@
+{
+  "name": "sequential-lsb-to-msb",
+  "from": "conformance-charset-five-seq-lsb",
+  "to": "conformance-charset-five-seq-msb",
+  "input": "ef44a8ef4450",
+  "expect": "089df5089dea",
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 6; the same characters from the same number under both bit orders; full sets: codenum equals uint"
+}

@@ -8,5 +8,5 @@
     "probe.x": "42"
   },
   "source": "constructed",
-  "reference": "spec 0.42, On text wires (text); the field ends inside the column; encode pads with a space on the right"
+  "reference": "spec 0.46, On text wires (text); the field ends inside the column; encode pads with a space on the right"
 }

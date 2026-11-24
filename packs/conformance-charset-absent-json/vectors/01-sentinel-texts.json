@@ -1,0 +1,15 @@
+{
+  "name": "sentinel-texts",
+  "from": "conformance-charset-absent-json",
+  "to": "conformance-charset-absent-json",
+  "input": "{\"call\":\"NONE\",\"num\":\"NA\"}",
+  "expect": "{\"call\":\"NONE\",\"num\":\"NA\"}",
+  "model": {
+    "@absent": [
+      "probe.s1",
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`absent`, 0.9); on json the text, before any lookup"
+}

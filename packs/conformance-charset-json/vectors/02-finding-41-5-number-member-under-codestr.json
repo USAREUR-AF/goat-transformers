@@ -5,5 +5,5 @@
   "input": "{\"id\":12345}",
   "expect_error": "transform-decode",
   "source": "constructed",
-  "reference": "spec 0.42, On text wires (json); ruling 11: the member must be a string"
+  "reference": "spec 0.46, On text wires (json); ruling 11: the member must be a string"
 }

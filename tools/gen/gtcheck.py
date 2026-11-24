@@ -53,7 +53,9 @@ DISTRIBUTIONS = ("public", "controlled")
 TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int", "iso8601_s": "int",
                    "scale": "float", "iscale": "int",
                    # engine-spec 0.18: xml, json and geojson only (ruling 11)
-                   "iso8601_short": "int"}
+                   "iso8601_short": "int",
+                   # engine-spec 0.46
+                   "codestr": "string", "codenum": "int"}
 JSON_TRANSFORMS = dict(TEXT_TRANSFORMS, bool="int")
 BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": "float",
                    "sscale": "float", "f32": "float", "f64": "float", "ascii": "string",
@@ -62,7 +64,11 @@ BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": 
                    "uiscale": "int", "siscale": "int", "smag": "int", "smscale": "float",
                    "f32scale": "float", "f64scale": "float", "chars": "string", "octal": "string",
                    # engine-spec 0.22
-                   "hex": "string"}
+                   "hex": "string",
+                   # engine-spec 0.46
+                   "code": "string", "codenum": "int"}
+CODE_TRANSFORMS = ("code", "codestr", "codenum")       # engine-spec 0.46
+_CHARSET_NAME = re.compile(r"[A-Za-z0-9_-]+\Z")
 CHAR_SETS = {"icao6": 6, "ais6": 6, "ascii7": 7, "ascii8": 8}
 BIT_ORDERS = ("lsb", "msb", "msb-lsb")      # msb-lsb: engine-spec 0.22
 PROTOBUF_TRANSFORMS = {"pstring": "string", "pvarint": "int", "psint": "int",
@@ -114,6 +120,7 @@ SEQUENTIAL_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "
 # spec 0.17: the lines a gate block of a fixed layout may hold
 GATE_BODY = ("field", "const", "default", "if")
 DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
+    "charset",                  # engine-spec 0.46
     "root", "kind", "when", "requires", "field", "const", "default", "end", "tag", "key",
     # spec 0.18: an xml element written when empty
     "element", "alt",
@@ -818,6 +825,8 @@ class _Loader:
         # passes (rulings 10, 14 and 16); (line, message) of the `at` form,
         # then of the fixed window
         self.at_form, self.at_window = [], []
+        self.charset_lines = []     # spec 0.46: (line number, args, after a `kind`, in a block)
+        self.charsets = {}          # spec 0.46: name -> (characters, width or None off bits)
 
     def fail(self, kind, message, line=None):
         raise CheckError(kind, message, line, self.pack.label)
@@ -869,6 +878,11 @@ class _Loader:
                 if len(a) != 2:
                     self.bad(no, "`typemap` takes a native code and a type")
                 pack.typemap.append((a[0], a[1]))
+                continue
+            if d == "charset":                  # 0.46: step 3 of 5b of 0.11; the rest after the file
+                if len(a) not in (2, 3):
+                    self.bad(no, "`charset` takes a name, characters and an optional width")
+                self.charset_lines.append((no, a, bool(pack.kinds), bool(open_blocks)))
                 continue
             owner = open_blocks[-1] if open_blocks else None
             kinds = owner.kinds if owner is not None else pack.kinds
@@ -1094,6 +1108,7 @@ class _Loader:
                                            or (pack.separator is not None and pack.separator in pack.start)):
                 self.bad(where["start"], "start `%s` is not one or more characters from 0x21 to 0x7E "
                                          "without the delimiter" % pack.start)
+        self._charsets()
         self._tlv_header()
         self._armor()
         self._encoding()
@@ -1118,6 +1133,54 @@ class _Loader:
             for _, lines in pack.scopes():
                 self._fixed_extents(lines, item=None)
         return self
+
+    def _charsets(self):
+        """The `charset` lines of 0.46, after the file is read (rulings 7, 8, 9
+        and 14: off the bits wire a width is ignored)."""
+        for no, a, after_kind, in_block in self.charset_lines:
+            name, characters = a[0], a[1]
+            if in_block:
+                self.bad(no, "`charset` inside a block (ruling 16 of 0.46)")
+            if after_kind:
+                self.bad(no, "`charset` after the first `kind`")
+            if not _CHARSET_NAME.match(name):
+                self.bad(no, "charset name `%s` is not of letters, digits, `_` and `-`" % name)
+            if name in self.charsets:
+                self.bad(no, "a second `charset %s`" % name)
+            if not characters or not printable(characters, 0x21) or '"' in characters:
+                self.bad(no, "a `charset` holds characters from 0x21 to 0x7E other than the double quote")
+            if len(set(characters)) != len(characters):
+                self.bad(no, "`charset %s` repeats a character" % name)
+            width = None
+            if self.pack.wire == "bits":
+                least = max(1, (len(characters) - 1).bit_length())
+                width = least
+                if len(a) == 3:
+                    if not _UINT.match(a[2]) or not least <= int(a[2]) <= 8:
+                        self.bad(no, "the width of `charset %s` is not %d to 8" % (name, least))
+                    width = int(a[2])
+            self.charsets[name] = (characters, width)
+
+    def _codes(self, node, name, targs, bits):
+        """`code`, `codestr` and `codenum` of 0.46: the sets and, on bits, the length."""
+        names = targs[0].split(",") if len(targs) == 1 and targs[0] else []
+        if not 1 <= len(names) <= 16:
+            self.bad(node, "`%s` takes 1 to 16 sets" % name)
+        for n in names:
+            if n not in self.charsets:
+                self.bad(node, "no `charset` declares the set `%s`" % n)
+        sets = [self.charsets[n] for n in names]
+        if self.pack.wire == "bits":
+            if bits is None:
+                self.bad(node, "`%s` needs a bit length" % name)
+            if bits > 64 or bits != sum(w for _, w in sets):
+                self.bad(node, "`%s`: %d bits is above 64 or not the sum of the widths" % (name, bits))
+        if name == "codenum" and math.prod(len(c) for c, _ in sets) > 1 << 63:
+            self.bad(node, "`codenum`: the product of the sizes is above 2^63")
+        if self.pack.wire == "text":
+            banned = (self.pack.separator or "") + ("*" if self.pack.checksum == "nmea" else "")
+            if any(ch in characters for ch in banned for characters, _ in sets):
+                self.bad(node, "`%s` names a set that holds the delimiter, or `*` under `checksum nmea`" % name)
 
     def _armor(self):
         """0.14: `armor <hex|sixbit>` on the bits wire only, before the first
@@ -1525,6 +1588,8 @@ class _Loader:
             if len(targs) not in (1, 2) or not exact_factor_ok(targs[0]) or not all(
                     exact_offset_ok(t) for t in targs[1:]):
                 self.bad(node, "`%s` takes an exact factor and an optional integer offset" % name)
+        elif name in CODE_TRANSFORMS:
+            self._codes(node, name, targs, bits)
         elif name == "chars":
             if len(targs) != 1 or targs[0] not in CHAR_SETS:
                 self.bad(node, "`chars` takes one of the sets %s" % ", ".join(sorted(CHAR_SETS)))

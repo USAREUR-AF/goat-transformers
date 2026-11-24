@@ -10,5 +10,5 @@
     "probe.n": "7"
   },
   "source": "constructed",
-  "reference": "spec 0.42, On text wires (text); the column's trailing space is removed, and written back (ruling 14)"
+  "reference": "spec 0.46, On text wires (text); the column's trailing space is removed, and written back (ruling 14)"
 }

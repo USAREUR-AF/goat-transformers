@@ -5,5 +5,5 @@
   "input": "80",
   "expect_error": "transform-decode",
   "source": "constructed",
-  "reference": "spec 0.42 ruling 8; code 1 is unused"
+  "reference": "spec 0.46 ruling 8; code 1 is unused"
 }

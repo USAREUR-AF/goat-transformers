@@ -371,6 +371,10 @@ class Pack:
             if t[0] == "length" and len(t) > 1 and t[1].startswith("@"):
                 refuse("unsupported-feature", "%s: `length @<name> units <u>` (spec 0.83) is not in the device profile"
                        % self.format)
+        for t in rows:      # spec 0.46: character-coded identifiers are not in the device profile
+            if t[0] == "charset" or (t[0] == "field" and len(t) > 3 and t[3].split(":")[0] in ("code", "codenum")):
+                refuse("unsupported-feature", "%s: `charset`, `code` and `codenum` (spec 0.46) are not in the device "
+                       "profile" % self.format)
         for t in rows:      # spec 0.21: sequential extents and counts are not in the device profile
             if t[0] == "count" or (t[0] == "group" and len(t) > 2
                                    and (t[2] in ("rest", "last") or (t[2] == "count" and len(t) > 3

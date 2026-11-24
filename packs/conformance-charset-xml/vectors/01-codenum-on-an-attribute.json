@@ -9,5 +9,5 @@
     "probe.s1": "AB123"
   },
   "source": "constructed",
-  "reference": "spec 0.42, On text wires (xml); codenum 00042 is 42; the width 99 of D is ignored off bits (ruling 14)"
+  "reference": "spec 0.46, On text wires (xml); codenum 00042 is 42; the width 99 of D is ignored off bits (ruling 14)"
 }

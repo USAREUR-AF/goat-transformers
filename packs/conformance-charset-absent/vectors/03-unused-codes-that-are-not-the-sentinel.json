@@ -1,0 +1,9 @@
+{
+  "name": "unused-codes-that-are-not-the-sentinel",
+  "from": "conformance-charset-absent",
+  "to": "conformance-charset-absent",
+  "input": "fffffe001123",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`absent`, 0.9); ruling 2"
+}

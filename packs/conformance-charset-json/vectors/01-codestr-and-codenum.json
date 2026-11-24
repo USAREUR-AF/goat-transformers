@@ -10,5 +10,5 @@
     "probe.x": "42"
   },
   "source": "constructed",
-  "reference": "spec 0.42, On text wires (json); codenum 00042 is 42 and is written back with its code-0 characters"
+  "reference": "spec 0.46, On text wires (json); codenum 00042 is 42 and is written back with its code-0 characters"
 }

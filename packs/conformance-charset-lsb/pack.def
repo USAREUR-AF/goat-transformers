@@ -1,8 +1,9 @@
-# Conformance probe pack for spec 0.42: the identifier of
-# conformance-charset-bits in the default bit order (lsb): each position is
-# read as `uint` reads its own bits, low bit first. Public. No kinds.
+# Conformance probe pack for spec 0.46 ruling 6: the identifier of
+# conformance-charset-bits in the default bit order (lsb). The 24 bits are
+# read as one number, low bit first (so the bytes are little-endian), and the
+# first position is at the number's most significant end. Public. No kinds.
 format  conformance-charset-lsb
-version 0.42.0
+version 0.46.0
 distribution public
 source  "synthetic format, no external standard"
 uses    probe

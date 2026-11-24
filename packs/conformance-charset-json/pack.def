@@ -1,7 +1,7 @@
-# Conformance probe pack for spec 0.42 on `json`: `codestr` and `codenum`
+# Conformance probe pack for spec 0.46 on `json`: `codestr` and `codenum`
 # members, written as strings (ruling 11). Public. No kinds.
 format  conformance-charset-json
-version 0.42.0
+version 0.46.0
 distribution public
 source  "synthetic format, no external standard"
 uses    probe

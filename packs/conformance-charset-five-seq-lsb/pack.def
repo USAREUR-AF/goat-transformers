@@ -1,0 +1,17 @@
+# Conformance probe pack for spec 0.46 ruling 6 on a sequential layout, bit
+# order lsb: five positions of 5, 5, 3, 3 and 3 bits, as characters and, after
+# 5 other bits, as a number. Public. No kinds.
+format  conformance-charset-five-seq-lsb
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+layout  sequential
+bit_order  lsb
+charset L  ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
+charset E  01234567
+field   probe.s1  19  code:L,L,E,E,E
+field   probe.y   5   uint
+field   probe.n   19  codenum:L,L,E,E,E
+field   probe.z   5   uint

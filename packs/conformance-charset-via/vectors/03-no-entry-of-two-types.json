@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-of-two-types",
+  "from": "conformance-charset-via",
+  "to": "conformance-charset-via",
+  "input": "0108",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`via`, 0.6); 8 has no entry and the types differ"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-swap",
+  "from": "conformance-charset-bits",
+  "to": "conformance-charset-swapopt",
+  "input": "0011235d6987",
+  "expect": "23110087695d",
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`swap`); encode reverses the bytes after"
+}

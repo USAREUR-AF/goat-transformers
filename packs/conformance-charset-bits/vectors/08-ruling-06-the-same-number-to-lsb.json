@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-the-same-number-to-lsb",
+  "from": "conformance-charset-bits",
+  "to": "conformance-charset-lsb",
+  "input": "0011235d6987",
+  "expect": "231100",
+  "source": "constructed",
+  "reference": "spec 0.46, On bits; ruling 6: the number 0x001123 in either bit order"
+}

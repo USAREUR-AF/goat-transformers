@@ -1,0 +1,16 @@
+{
+  "name": "code-in-a-sequential-group-item",
+  "from": "conformance-charset-items",
+  "to": "conformance-charset-items",
+  "input": "02089df580f8014000",
+  "expect": "02089df580f8014000",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "BC357",
+    "probe.items[0].probe.qty": "43",
+    "probe.items[1].probe.label": "7A012",
+    "probe.items[1].probe.qty": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (groups)"
+}

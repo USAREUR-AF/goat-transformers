@@ -1,0 +1,13 @@
+{
+  "name": "other-texts-decode",
+  "from": "conformance-charset-absent-json",
+  "to": "conformance-charset-absent-json",
+  "input": "{\"call\":\"AB123\",\"num\":\"07\"}",
+  "expect": "{\"call\":\"AB123\",\"num\":\"07\"}",
+  "model": {
+    "probe.s1": "AB123",
+    "probe.x": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`absent`, 0.9); neither text is a sentinel"
+}

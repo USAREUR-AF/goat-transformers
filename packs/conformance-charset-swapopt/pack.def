@@ -1,0 +1,15 @@
+# Conformance probe pack for spec 0.46 with the field option `swap`: the bytes
+# are reversed before the number is read, so its most significant end is in
+# the last byte. Public. No kinds.
+format  conformance-charset-swapopt
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset L  ABCDEFGHJKLMNPQRSTUVWXYZ  6
+charset D  0123456789
+field   probe.s1  0:0:24   code:L,L,D,D,D     swap
+field   probe.n   0:24:24  codenum:L,L,D,D,D  swap

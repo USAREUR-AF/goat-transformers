@@ -1,0 +1,16 @@
+# Conformance probe pack for spec 0.46 with `absent` (0.9) on `bits`: the raw
+# number of the whole field, compared before any lookup. 16777215 holds codes
+# no set has; 4386 is the raw number of AB122 (a valid identifier).
+# Public. No kinds.
+format  conformance-charset-absent
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset L  ABCDEFGHJKLMNPQRSTUVWXYZ  6
+charset D  0123456789
+field   probe.s1  0:0:24   code:L,L,D,D,D     absent 16777215
+field   probe.n   0:24:24  codenum:L,L,D,D,D  absent 4386

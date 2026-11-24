@@ -1,0 +1,13 @@
+{
+  "name": "via-after-the-transform",
+  "from": "conformance-charset-via",
+  "to": "conformance-charset-via",
+  "input": "0107",
+  "expect": "0107",
+  "model": {
+    "probe.s1": "alpha",
+    "probe.s2": "seven"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`via`, 0.6); the string 01 and the integer 7 (not the text 07) are looked up"
+}

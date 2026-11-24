@@ -1,9 +1,0 @@
-{
-  "name": "codenum-writes-every-position",
-  "from": "conformance-charset-src",
-  "to": "conformance-charset-json",
-  "input": "{\"x\":7}",
-  "expect": "{\"num\":\"00007\"}",
-  "source": "constructed",
-  "reference": "spec 0.42, On text wires (json); ruling 3"
-}

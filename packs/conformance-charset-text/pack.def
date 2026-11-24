@@ -1,9 +1,9 @@
-# Conformance probe pack for spec 0.42 on `text`: field 0 a `codestr`,
+# Conformance probe pack for spec 0.46 on `text`: field 0 a `codestr`,
 # field 1 a 6-character column read by `codenum` (ruling 14), field 2 an
 # int. The `charset` lines stand before the `wire` line (ruling 14).
 # Public. No kinds.
 format  conformance-charset-text
-version 0.42.0
+version 0.46.0
 distribution public
 source  "synthetic format, no external standard"
 uses    probe

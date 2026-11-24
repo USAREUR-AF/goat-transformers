@@ -5,5 +5,5 @@
   "input": "601123000000",
   "expect_error": "transform-decode",
   "source": "constructed",
-  "reference": "spec 0.42, On bits; ruling 2: code 24 is beyond L's 24 characters"
+  "reference": "spec 0.46, On bits; ruling 2: code 24 is beyond L's 24 characters"
 }

@@ -1,0 +1,12 @@
+{
+  "name": "one-text-other-codes",
+  "from": "conformance-charset-order-a",
+  "to": "conformance-charset-order-b",
+  "input": "1b",
+  "expect": "e4",
+  "model": {
+    "probe.s1": "ABCD"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 1; code order is the pack's: both packs read the text ABCD"
+}

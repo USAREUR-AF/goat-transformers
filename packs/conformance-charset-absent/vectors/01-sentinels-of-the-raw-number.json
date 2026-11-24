@@ -1,0 +1,15 @@
+{
+  "name": "sentinels-of-the-raw-number",
+  "from": "conformance-charset-absent",
+  "to": "conformance-charset-absent",
+  "input": "ffffff001122",
+  "expect": "ffffff001122",
+  "model": {
+    "@absent": [
+      "probe.s1",
+      "probe.n"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`absent`, 0.9); 16777215 is compared before any lookup (its codes are unused), and so is 4386 = 0x1122, the raw number, not 1122, the codenum"
+}

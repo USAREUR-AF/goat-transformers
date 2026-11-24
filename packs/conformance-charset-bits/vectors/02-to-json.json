@@ -5,5 +5,5 @@
   "input": "0011235d6987",
   "expect": "{\"s1\":\"AB123\",\"n\":574987}",
   "source": "constructed",
-  "reference": "spec 0.42, On bits; the values"
+  "reference": "spec 0.46, On bits; the values"
 }

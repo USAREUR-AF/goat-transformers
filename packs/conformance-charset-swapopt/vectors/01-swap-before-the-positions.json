@@ -1,0 +1,13 @@
+{
+  "name": "swap-before-the-positions",
+  "from": "conformance-charset-swapopt",
+  "to": "conformance-charset-swapopt",
+  "input": "23110087695d",
+  "expect": "23110087695d",
+  "model": {
+    "probe.s1": "AB123",
+    "probe.n": "574987"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`swap`); the bytes are reversed, then the number is read"
+}

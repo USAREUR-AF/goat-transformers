@@ -1,0 +1,16 @@
+# Conformance probe pack for spec 0.46 with `via` (0.6): the table sees the
+# string `code` yields and the integer `codenum` yields. Public. No kinds.
+format  conformance-charset-via
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset D  0123456789
+map     grade  01  alpha
+map     grade  02  beta
+map     nums   7   seven
+field   probe.s1  0:0:8  code:D,D     via grade
+field   probe.s2  0:8:8  codenum:D,D  via nums

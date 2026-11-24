@@ -63,6 +63,21 @@ field  probe.number  0:0:32  uint
 """
 
 
+class CharsetRefusedTest(unittest.TestCase):
+    """The character-coded identifiers of engine-spec 0.46 are not compiled."""
+
+    HEAD = ('format cs\nversion 0.1.0\ndistribution public\nsource "test"\nuses probe\nwire bits\n'
+            'word_bytes 1\nbit_order msb\n')
+
+    def test_charset_code_and_codenum_are_unsupported(self):
+        for body in ("charset D 0123456789\nfield probe.id 0:0:8 uint\n",
+                     "field uid 0:0:8 code:D,D\n", "field probe.id 0:0:8 codenum:D,D\n"):
+            with self.assertRaises(packc.Refused) as cm:
+                packc.Pack(self.HEAD + body, "cs")
+            self.assertEqual(cm.exception.reason, "unsupported-feature")
+            self.assertIn("0.46", str(cm.exception))
+
+
 class DeriveTargetFromSourceTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()

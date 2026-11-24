@@ -1,11 +1,11 @@
-# Conformance probe pack for spec 0.42 on `bits`, most significant bit
+# Conformance probe pack for spec 0.46 on `bits`, most significant bit
 # first: a five-position identifier of two sets of different widths, as
 # characters (`code`, bytes 0-2) and as a number (`codenum`, bytes 3-5).
 # L is 24 letters (no I, no O) given 6 bits, so codes 24 to 63 are unused;
 # D is the ten digits in the default 4 bits, so codes 10 to 15 are unused.
 # Public. No kinds.
 format  conformance-charset-bits
-version 0.42.0
+version 0.46.0
 distribution public
 source  "synthetic format, no external standard"
 uses    probe

@@ -8,5 +8,5 @@
     "probe.s1": "00"
   },
   "source": "constructed",
-  "reference": "spec 0.42 ruling 8; a one-character set takes 1 bit: 0 0 is 00"
+  "reference": "spec 0.46 ruling 8; a one-character set takes 1 bit: 0 0 is 00"
 }

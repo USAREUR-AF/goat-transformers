@@ -1,0 +1,15 @@
+# Conformance probe pack for spec 0.46 under `bit_order msb-lsb`: a 16-bit
+# field (5, 5, 3 and 3 bits), whose first wire bit is the number's least
+# significant bit. Public. No kinds.
+format  conformance-charset-msb-lsb
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb-lsb
+charset L  ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
+charset E  01234567
+field   probe.s1  0:0:16  code:L,L,E,E
+field   probe.x   0:0:16  uint

@@ -5,5 +5,5 @@
   "input": "{\"call\":\"ab123\"}",
   "expect_error": "transform-decode",
   "source": "constructed",
-  "reference": "spec 0.42, On text wires (json); ruling 4"
+  "reference": "spec 0.46, On text wires (json); ruling 4"
 }

@@ -5,5 +5,5 @@
   "input": "<R><call>ab123</call></R>",
   "expect_error": "transform-decode",
   "source": "constructed",
-  "reference": "spec 0.42, On text wires (xml); ruling 4"
+  "reference": "spec 0.46, On text wires (xml); ruling 4"
 }

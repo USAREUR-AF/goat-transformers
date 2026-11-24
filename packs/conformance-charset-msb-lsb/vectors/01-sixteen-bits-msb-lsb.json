@@ -1,0 +1,13 @@
+{
+  "name": "sixteen-bits-msb-lsb",
+  "from": "conformance-charset-msb-lsb",
+  "to": "conformance-charset-msb-lsb",
+  "input": "b910",
+  "expect": "b910",
+  "model": {
+    "probe.s1": "BC35",
+    "probe.x": "2205"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (bit orders); ruling 6: the first position is at the top of the number"
+}

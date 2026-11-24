@@ -17,6 +17,7 @@ SCRIPTS = (
     "conformance-asopt-inner-vectors.py",
     "conformance-asopt-vectors.py",
     "conformance-cat062-vectors.py",
+    "conformance-charset-vectors.py",
     "conformance-cond-vectors.py",
     "conformance-derive16-vectors.py",
     "conformance-emptygroup-vectors.py",

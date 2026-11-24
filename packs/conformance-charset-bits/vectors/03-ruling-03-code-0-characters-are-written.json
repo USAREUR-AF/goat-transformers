@@ -9,5 +9,5 @@
     "probe.n": "0"
   },
   "source": "constructed",
-  "reference": "spec 0.42, On bits; ruling 3: every code 0 is a character; the number is 0"
+  "reference": "spec 0.46, On bits; ruling 3: every code 0 is a character; the number is 0"
 }

@@ -1,0 +1,13 @@
+{
+  "name": "other-values-decode",
+  "from": "conformance-charset-absent",
+  "to": "conformance-charset-absent",
+  "input": "001123001123",
+  "expect": "001123001123",
+  "model": {
+    "probe.s1": "AB123",
+    "probe.n": "1123"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`absent`, 0.9); neither raw number is a sentinel"
+}

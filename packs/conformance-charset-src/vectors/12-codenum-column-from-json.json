@@ -1,9 +1,0 @@
-{
-  "name": "codenum-column-from-json",
-  "from": "conformance-charset-src",
-  "to": "conformance-charset-text",
-  "input": "{\"x\":42}",
-  "expect": ",00042 ,",
-  "source": "constructed",
-  "reference": "spec 0.42, On text wires (text); the column of 6 holds 00042 and a space"
-}

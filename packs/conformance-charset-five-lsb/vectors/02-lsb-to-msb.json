@@ -1,0 +1,17 @@
+{
+  "name": "lsb-to-msb",
+  "from": "conformance-charset-five-lsb",
+  "to": "conformance-charset-five-msb",
+  "input": "ef44a84a01f8",
+  "expect": "089df557c00a",
+  "model": {
+    "probe.s1": "BC357",
+    "probe.n": "17647",
+    "probe.x": "17647",
+    "probe.y": "21",
+    "probe.z": "10",
+    "probe.s2": "7A012"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 6; the same characters from the same number under both bit orders; full sets: codenum equals uint"
+}

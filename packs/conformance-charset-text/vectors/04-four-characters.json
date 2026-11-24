@@ -5,5 +5,5 @@
   "input": "AB12,00042 ,7",
   "expect_error": "transform-decode",
   "source": "constructed",
-  "reference": "spec 0.42, On text wires (text); ruling 3"
+  "reference": "spec 0.46, On text wires (text); ruling 3"
 }

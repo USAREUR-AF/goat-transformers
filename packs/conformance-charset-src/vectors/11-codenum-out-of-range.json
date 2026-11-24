@@ -1,0 +1,9 @@
+{
+  "name": "codenum-out-of-range",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-json",
+  "input": "{\"x\":100000}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.46, On text wires (json); 10^5 is the product"
+}
