@@ -7754,9 +7754,14 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    refuses the encode (`transform-encode`), in the strict direction of 0.11.
    A key that only a `default` would fill is not held: on a line that is not
    written, its `default` is not checked.
+10. **A wrap whose arithmetic is not finite.** When `<max> − <min>` or any
+   step of the `float` formula is not finite, or the result is above `<max>`,
+   the encode is `transform-encode`: no value is substituted (the strict
+   direction of 0.11). The result that equals `<max>` or falls below `<min>`
+   by rounding still becomes `<min>`.
 
 Stated, not yet pinned by a vector: a submessage holding only fields that
-`implicit` leaves out, without a `when … present`; a wrapped `float` still
-outside `[<min>, <max>)` after the double arithmetic; an `int` range bound
+`implicit` leaves out, without a `when … present`; a wrapped `float` above
+`<max>` after finite double arithmetic; an `int` range bound
 beyond a signed 64-bit integer; `range` on a sequential field with `also`
 keys; the `default` of a line that is not written (ruling 9).

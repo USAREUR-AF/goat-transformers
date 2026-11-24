@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-a-wrap-that-is-not-finite-is-refused",
+  "from": "conformance-range-056-2",
+  "to": "conformance-range-056-2",
+  "input": "{\"a\":1.7e308}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 10: 1.7e308 is finite and outside [-1.5e308, 1.5e308); max - min = 3e308 is above the largest double, so it is not finite."
+}

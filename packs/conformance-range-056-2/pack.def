@@ -1,0 +1,9 @@
+# Conformance probe pack for ruling 10 of 0.56: a `wrap` whose bounds are so far
+# apart that <max> - <min> is not a finite double. Public. No kinds.
+format  conformance-range-056-2
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.a  a  float  range -1.5e308 1.5e308 wrap
