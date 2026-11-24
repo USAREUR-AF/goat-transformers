@@ -22,7 +22,7 @@ from . import uper
 # 0.19 adds `size`; 0.21 adds `rest`, `last` and `count @<name>` (the count of a `count` line)
 GROUP_MODES = ("count", "while", "more", "fx", "size", "rest", "last")
 _HEADER = ("format", "version", "wire", "layout", "bit_order", "word_bytes", "distribution", "source", "uses",
-           "map", "typemap", "root", "armor", "encoding", "framing")
+           "map", "typemap", "root", "armor", "encoding", "framing", "charset")
 _SINGLE = ("layout", "bit_order")
 
 
@@ -491,7 +491,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     from .packdef import (
         BIT_ORDERS, HEADER_ONCE, NEEDS_WIRE, TEXT_DIRECTIVES, Default, Field, Pack, _check_transform, _Deferred,
         set_stop,
-        _LineBad, armor_line, check_armor, check_encoding, line_head, parse_absent, set_bit_order,
+        _LineBad, armor_line, charset_line, check_armor, check_charsets, check_encoding, line_head, parse_absent, set_bit_order,
         ValueCheck, requires_term, holds_at, split_list, when_values,
     )
 
@@ -517,6 +517,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     encoding = []      # 0.19: the `encoding` lines, checked after the file (`check_encoding`)
     uper_lines = []    # 0.19: (lineno, BadDirective) for each UPER line, refused when the pack is not UPER
     framing = []       # 0.92: (word, lineno, after a message kind) of each `framing` line
+    charsets = []      # 0.46: the `charset` lines, checked after the file (`check_charsets`)
     at_form = []       # 0.33: (lineno, BadDirective) of the form of `at`, raised by `Engine.add` (ruling 10)
 
     def line_bad(msg_text, lineno, locator=None):
@@ -1048,6 +1049,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 armor_line(args, armor, any_kind, lineno)
             elif kw == "encoding":  # 0.19: checked after the file is read (`check_encoding`)
                 encoding.append((args[0], lineno, any_kind))
+            elif kw == "charset":  # 0.46: before the first message `kind` (ruling 16)
+                charset_line(args, charsets, msg.cur is not None, lineno)
             elif kw == "ext":
                 uper_line("'ext'", lineno)
                 nd = Node(T_EXT, lineno, body=[])
@@ -1545,6 +1548,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
         for _, lineno, _ in framing:
             deferred.append((lineno, bad("'framing' in a pack with %s" % (
                 "'armor sixbit'" if armor_value == "sixbit" else "'encoding uper'"), lineno, "framing")))
+    check_charsets(charsets, "bits", key_refs, deferred, source, name)
     if not is_uper:  # ruling 9 of 0.19
         deferred.extend(uper_lines)
     if armor_value == "sixbit" or is_uper:  # 0.34: not in a pack with `armor sixbit` or `encoding uper`

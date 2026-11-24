@@ -728,6 +728,8 @@ def build_bits_transform(name, length):
     if name.startswith("linscale:"):
         maxpos, value_range = linscale_params(name)
         return LinscaleT(name, length, maxpos, value_range)
+    if code_family(name) is not None:  # 0.46
+        return CodeBitsT(name, length)
     if v15_family(name) in V15_BITS:
         return build_v15_bits(name, length)
     raise ValueError("unknown bits transform %r" % name)
@@ -753,7 +755,154 @@ TRANSFORM_WIRES = {
     "uiscale": ("bits",), "siscale": ("bits",), "smag": ("bits",), "smscale": ("bits",), "f32scale": ("bits",),
     "f64scale": ("bits",), "chars": ("bits",), "octal": ("bits",),
     "scale": ("xml", "geojson", "json"), "iscale": ("xml", "geojson", "json"),
+    # 0.46: characters of the sets a pack declares with `charset`
+    "code": ("bits",), "codestr": _TEXTUAL, "codenum": ("bits",) + _TEXTUAL,
 }
+CODE_FAMILIES = frozenset(("code", "codestr", "codenum"))  # 0.46
+
+
+def code_family(name):
+    """`code`, `codestr` or `codenum` (0.46), or None for any other transform name."""
+    head = name.split(":", 1)[0]
+    return head if head in CODE_FAMILIES else None
+
+
+class CharSet:
+    """A `charset` line (0.46): the characters in code order, and on `bits`
+    the bits per character."""
+
+    __slots__ = ("chars", "codes", "width")
+
+    def __init__(self, chars, width):
+        self.chars = chars
+        self.codes = {c: i for i, c in enumerate(chars)}
+        self.width = width
+
+
+def charset_width(size):
+    """The default width of a set: max(1, ceil(log2(size))) (ruling 8 of 0.46)."""
+    return max(1, (size - 1).bit_length())
+
+
+class _Codes:
+    """The positions of a `code`, `codestr` or `codenum` transform (0.46). The
+    sets need the whole file: `resolve` binds them after it is read."""
+
+    code_sets = True
+
+    def _init_codes(self, name):
+        self.name = name
+        self.number = name.split(":", 1)[0] == "codenum"
+        self.yields = "int" if self.number else "string"
+        self.sets = ()
+
+    def resolve(self, charsets):
+        """Raises ValueError (`bad-directive` after the file) for a list that
+        is not 1 to 16 declared sets, or a `codenum` product above 2^63."""
+        text = self.name.partition(":")[2]
+        names = text.split(",") if text else []
+        if not 1 <= len(names) <= 16:
+            raise ValueError("%d position(s); 1 to 16 are allowed" % len(names))
+        for n in names:
+            if n not in charsets:
+                raise ValueError("no 'charset' line declares the set %r" % n)
+        self.sets = tuple(charsets[n] for n in names)
+        if self.number:
+            product = 1
+            for s in self.sets:
+                product *= len(s.chars)
+            if product > 1 << 63:
+                raise ValueError("the product of the sizes is above 2^63")
+
+    def _text_codes(self, text):
+        if not isinstance(text, str):
+            raise ValueError("%s needs a str, got %s" % (self.name, type(text).__name__))
+        if len(text) != len(self.sets):
+            raise ValueError("%s: the text has %d character(s), not %d" % (self.name, len(text), len(self.sets)))
+        out = []
+        for s, c in zip(self.sets, text):
+            code = s.codes.get(c)
+            if code is None:
+                raise ValueError("%s: character %r is not in the set of its position" % (self.name, c))
+            out.append(code)
+        return out
+
+    def _number_codes(self, value):
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise ValueError("%s needs an int, got %s" % (self.name, type(value).__name__))
+        out = []
+        rest = value
+        if rest >= 0:
+            for s in reversed(self.sets):
+                rest, code = divmod(rest, len(s.chars))
+                out.append(code)
+        if rest:  # negative, or at or above the product of the sizes
+            raise ValueError("%s: %d is out of range" % (self.name, value))
+        out.reverse()
+        return out
+
+    def _value(self, codes):
+        if not self.number:
+            return "".join([s.chars[c] for s, c in zip(self.sets, codes)])
+        v = 0
+        for s, c in zip(self.sets, codes):
+            v = v * len(s.chars) + c
+        return v
+
+    def _codes(self, value):
+        return self._number_codes(value) if self.number else self._text_codes(value)
+
+
+class CodeBitsT(_Codes, BitsTransform):
+    """`code` and `codenum` on `bits` (0.46): position 0 in the most
+    significant bits of the field read as one unsigned integer."""
+
+    def __init__(self, name, length):
+        BitsTransform.__init__(self, name, length)
+        self._init_codes(name)
+
+    def resolve(self, charsets):
+        _Codes.resolve(self, charsets)
+        total = sum(s.width for s in self.sets)
+        if total != self.length:
+            raise ValueError("a bit length of %d, but the widths add up to %d" % (self.length, total))
+
+    def decode(self, bits):
+        codes = []
+        shift = self.length
+        for s in self.sets:
+            shift -= s.width
+            c = (bits >> shift) & ((1 << s.width) - 1)
+            if c >= len(s.chars):
+                raise ValueError("%s: code %d is not used by the set of its position" % (self.name, c))
+            codes.append(c)
+        return self._value(codes)
+
+    def encode(self, value):
+        out = 0
+        for s, c in zip(self.sets, self._codes(value)):
+            out = out << s.width | c
+        return out
+
+
+class CodeTextT(_Codes, Transform):
+    """`codestr` and `codenum` on `xml`, `json`, `geojson` and `text` (0.46)."""
+
+    kind = "string"
+    numeric = False  # a `text` column keeps leading spaces and pads on the right (ruling 14)
+    pair = False
+
+    def __init__(self, name):
+        self._init_codes(name)
+
+    def decode(self, text):
+        return self._value(self._text_codes(text))
+
+    def decode_json(self, text):
+        raise ValueError("%s needs a JSON string" % self.name)  # a geojson number (ruling 11)
+
+    def encode(self, value):
+        return "".join([s.chars[c] for s, c in zip(self.sets, self._codes(value))])
 
 
 _TEXT_FAMILIES = ("int", "dec", "dm", "hms", "hms_dmy")
@@ -814,7 +963,9 @@ def check_transform_text(name):
     head, colon, _ = name.partition(":")
     if head not in TRANSFORM_WIRES:
         raise UnknownTransformName(head)
-    if head == "linscale":
+    if head in CODE_FAMILIES:
+        pass  # 0.46 ruling 15: every error of the list is a check after the file
+    elif head == "linscale":
         linscale_params(name)
     elif head in ("uscale", "sscale"):
         scale_params(name)
