@@ -1,0 +1,19 @@
+{
+  "name": "uat-header-only-roundtrip",
+  "from": "uat",
+  "to": "uat",
+  "input": "6100abcd000000000000000000000000000000000000000000000000000000000000",
+  "expect": "6100abcd000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "header-only",
+    "uat.payload_type": "12",
+    "uat.address_qualifier": "1",
+    "uat.address": "43981",
+    "uat.reserved_bits_32_91": "0",
+    "uat.reserved_bits_92_151": "0",
+    "uat.reserved_bits_152_211": "0",
+    "uat.reserved_bits_212_271": "0"
+  },
+  "source": "constructed",
+  "reference": "dump978 f40aa9a0 uat_message.cc; bytes by tools/gen/uat-vectors.py; payload types 11-31 carry only the header for dump978"
+}

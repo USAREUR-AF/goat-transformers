@@ -1,0 +1,9 @@
+{
+  "name": "uat-long-type9-to-geojson",
+  "from": "uat",
+  "to": "geojson",
+  "input": "48a1b2c3d555563333320dd801e628e09b0000000000000000000000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[35.99998712539673,-29.999992847442627]},\"properties\":{}}",
+  "source": "constructed",
+  "reference": "dump978 f40aa9a0 uat_message.cc; bytes by tools/gen/uat-vectors.py"
+}

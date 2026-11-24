@@ -1,0 +1,9 @@
+{
+  "name": "uat-basic-to-geojson",
+  "from": "uat",
+  "to": "geojson",
+  "input": "00a1b2c340b60d51699a0dd801e628e09b00",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-122.75683164596558,45.500006675720215]},\"properties\":{}}",
+  "source": "constructed",
+  "reference": "dump978 f40aa9a0 uat_message.cc; bytes by tools/gen/uat-vectors.py; geojson by hand: pressure altitude is not hae"
+}
