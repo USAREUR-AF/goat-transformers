@@ -9,6 +9,7 @@ from .errors import (
     MissingVersion, MissingWire, UnknownDirective, UnknownTransform, UnknownWire, UnterminatedQuote,
 )
 from .transforms import (
+    read_number_text,
     TRANSFORMS, JSON_TRANSFORMS, build_bits_transform, bits_len_allowed, format_float,
     PROTOBUF_TRANSFORMS, UnknownTransformName, check_transform_text, read_uint_text, transform_valid_on,
     PartT, build_v15_text, v15_family, terminator_code, CharSet, CodeTextT, charset_width, code_family,
@@ -104,7 +105,8 @@ _GROUP_LINES = ("field", "const", "default", "group", "if", "end")
 # The lines of a gate block (0.17).
 _GATE_LINES = ("field", "const", "default", "if", "end")
 FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent", "with", "stop",  # `stop`: 0.22
-                 "unlisted")  # 0.64
+                 "unlisted",  # 0.64
+                 "null", "implicit", "range", "wrap")  # 0.56
 _JSON_NUMBER = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\Z")
 TEXT_DIRECTIVES = ("delimiter", "start", "checksum")  # the `text` wire (0.10)
 ARMORS = ("hex", "sixbit")  # the `bits` wire (0.14)
@@ -131,6 +133,10 @@ class Field:
     gate: object = None     # bits, fixed layout: the innermost gate block holding the line (0.17)
     with_key: str = None    # `with <other-key>` (0.18): written only when the scope holds that key
     unlisted: bool = False  # 0.64: a part with no table entry counts as absent
+    null: bool = False      # `null` (0.56): an absent key writes the JSON value null
+    implicit: bool = False  # `implicit` (0.56): a protobuf scalar at its proto3 default is left out
+    range: tuple = None     # `range <min> <max> [wrap]` (0.56): (min text, max text, wrap)
+    rng: tuple = None       # set by Engine.add: (min, max, wrap) read as the key's type
 
     is_field = True
     is_const = False
@@ -898,31 +904,64 @@ def set_stop(transform, tname, text):
     return None
 
 
-def _parse_options(tokens, fmt, locator, where):
-    """-> {option: value} for the tokens after a `field` line's transform."""
+def scan_options(tokens, allowed, bad, refused=None):
+    """-> {option: value} for the tokens after a `field` line's transform: the
+    form of each option and of its arguments (step 9 of ruling 5b of 0.11).
+    `bad(msg)` -> the exception to raise. `range` takes two arguments, each
+    number text (2b of 0.11) at this step, and is stored as (min, max, wrap);
+    `wrap` is valid only directly after `range <min> <max>` (0.56).
+    `refused(opt)`, when given, -> the exception for an option that the
+    layout refuses where it stands, or None."""
     out = {}
     i = 0
+    after_range = -1  # the index just past the arguments of `range`
     while i < len(tokens):
         opt = tokens[i]
-        if opt not in FIELD_OPTIONS:  # 0.6 ruling 12
-            raise _LineBad("unknown field option %r at %s" % (opt, where), format=fmt, locator=locator)
+        if refused is not None:
+            err = refused(opt)
+            if err is not None:
+                raise err
+        if opt not in allowed:  # 0.6 ruling 12
+            raise bad("unknown field option %r" % opt)
         if opt in out:
-            raise _LineBad("field option %r is given twice at %s" % (opt, where), format=fmt, locator=locator)
+            raise bad("field option %r is given twice" % opt)
         if opt in ("via", "absent", "with", "stop"):
             # The token after `absent` is always its argument (ruling 11 of 0.9).
             if i + 1 >= len(tokens):
-                raise _LineBad(
-                    "field option %r takes %s at %s" % (
-                        opt, "a table name" if opt == "via" else "a model key" if opt == "with" else
-                        "a terminator code" if opt == "stop" else "a value", where),
-                    format=fmt, locator=locator,
-                )
+                raise bad("field option %r takes %s" % (
+                    opt, "a table name" if opt == "via" else "a model key" if opt == "with" else
+                    "a terminator code" if opt == "stop" else "a value"))
             out[opt] = tokens[i + 1]
             i += 2
+        elif opt == "range":  # 0.56
+            if i + 2 >= len(tokens):
+                raise bad("field option 'range' takes two arguments, <min> and <max>")
+            for t in tokens[i + 1:i + 3]:
+                try:
+                    read_number_text(t)
+                except ValueError as e:
+                    raise bad("field option 'range': %s (number text, 2b of 0.11)" % e)
+            out["range"] = (tokens[i + 1], tokens[i + 2], False)
+            i += 3
+            after_range = i
+        elif opt == "wrap":  # 0.56: directly after `range <min> <max>`
+            if i != after_range:
+                raise bad("field option 'wrap' is written directly after 'range <min> <max>'")
+            out["range"] = out["range"][:2] + (True,)
+            out["wrap"] = True
+            i += 1
         else:
             out[opt] = True
             i += 1
     return out
+
+
+def _parse_options(tokens, fmt, locator, where):
+    """-> {option: value} for the tokens after a `field` line's transform."""
+    return scan_options(
+        tokens, FIELD_OPTIONS,
+        lambda msg: _LineBad("%s at %s" % (msg, where), format=fmt, locator=locator),
+    )
 
 
 def parse_absent(wire, transform, length, text, fmt, locator, where, coord=False):
@@ -939,10 +978,69 @@ def parse_absent(wire, transform, length, text, fmt, locator, where, coord=False
     if len(values) > 1 and "" in values:
         raise bad("has an empty value in its list %r" % text)
     tname = transform.name
+    integer = wire == "bits" or (wire == "protobuf" and tname != "pstring")
+    if wire == "bits" and length > 64:
+        raise _Deferred(bad("is on a bits field of %d bits; a sentinel is at most 64 bits" % length))
+    # 0.56: a value that begins with `>=` or `<=`, as written, is a range sentinel
+    ranges = []
+    exact = []
+    for v in values:
+        if v[:2] not in (">=", "<="):
+            exact.append(v)
+            continue
+        n = v[2:]
+        if tname in ("pdouble", "pfloat", "bool"):
+            raise bad("range sentinel %r on the '%s' transform; use exact values there" % (v, tname))
+        try:
+            if integer:
+                ranges.append((v[:2], read_uint_text(n, length if wire == "bits" else 64)))
+            else:
+                ranges.append((v[:2], read_number_text(n)))
+        except ValueError as e:
+            raise bad("range sentinel %r: %s" % (v, e))
+    if not exact:  # only ranges: an absent key writes nothing (0.56)
+        return Sentinels((), ranges), None
+    sets, first = _exact_absent(wire, transform, length, exact, bad, coord)
+    return Sentinels(sets, ranges), first
+
+
+class Sentinels(frozenset):
+    """The sentinels of an `absent` option: the exact raw values as the wire
+    compares them, and the range sentinels of 0.56, `(">=" | "<=", n)`. An
+    integer raw value is compared as it is; a text (bytes on `pstring`)
+    matches a range when it is number text (2b of 0.11) whose nearest double
+    compares with `n`."""
+
+    def __new__(cls, exact, ranges=()):
+        obj = frozenset.__new__(cls, exact)
+        obj.ranges = tuple(ranges)
+        return obj
+
+    def __contains__(self, v):
+        if frozenset.__contains__(self, v):
+            return True
+        if not self.ranges:
+            return False
+        if isinstance(v, int) and not isinstance(v, bool):
+            x = v
+        else:
+            try:
+                if isinstance(v, (bytes, bytearray)):
+                    v = bytes(v).decode("utf-8")
+                x = read_number_text(v)
+            except (ValueError, TypeError, UnicodeDecodeError):
+                return False
+        for op, n in self.ranges:
+            if (x >= n) if op == ">=" else (x <= n):
+                return True
+        return False
+
+
+def _exact_absent(wire, transform, length, values, bad, coord):
+    """The exact sentinels of 0.9 -> (the set the wire compares, the first as written)."""
+    tname = transform.name
     if wire == "bits" or (wire == "protobuf" and tname != "pstring"):
         if wire == "bits":
-            if length > 64:
-                raise _Deferred(bad("is on a bits field of %d bits; a sentinel is at most 64 bits" % length))
             width = length
         else:
             width = 32 if tname == "pfloat" else 64
@@ -1143,6 +1241,7 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
             defer("a part line takes the options 'via', 'unlisted' and, on 'text', 'optional' only")
         if "stop" in opts:  # 0.22: a `chars` field of the bits wire
             defer("field option 'stop' applies to a 'chars' field of the bits wire only")
+    _defer_056(wire, tname, locator, in_group, opts, defer)
 
     transform = None
     if valid:
@@ -1181,7 +1280,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
     f = None
     if transform is not None:
         f = Field(key, locator, transform, loc, lineno, via=via, swap="swap" in opts, optional="optional" in opts,
-                  with_key=opts.get("with"), unlisted="unlisted" in opts)
+                  with_key=opts.get("with"), unlisted="unlisted" in opts, null="null" in opts,
+                  implicit="implicit" in opts, range=opts.get("range"))
         # step 10: the values of `absent`
         if wire != "text":
             try:
@@ -1192,6 +1292,24 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
         deferred.extend(later)
         return None
     return f
+
+
+def _defer_056(wire, tname, locator, in_group, opts, defer):
+    """The checks of `null` and `implicit` that need the wire, the transform
+    or the group: made after the file, in fixed and sequential layouts (0.56).
+    The checks of `range` that need the key's type are made by Engine.add."""
+    if "null" in opts:
+        if wire not in ("json", "geojson"):
+            defer("field option 'null' applies to the json and geojson wires only")
+        elif wire == "geojson" and not in_group and locator.startswith("geometry."):
+            defer("field option 'null' is not an option of a geojson geometry locator")
+    if "implicit" in opts:
+        if wire != "protobuf":
+            defer("field option 'implicit' applies to the protobuf wire only")
+        elif tname not in ("pvarint", "psint", "pdouble", "pfloat", "pstring"):
+            defer("field option 'implicit' applies to pvarint, psint, pdouble, pfloat and pstring only")
+        elif in_group and locator == ".":
+            defer("field option 'implicit' is not an option of a scalar item")
 
 
 def _with_absent(f, wire, opts, fmt, where):
@@ -1237,10 +1355,12 @@ def _resolve_tlv_field(name, key, locator, tname, options, where, lineno, deferr
             bad("field option %r is not an option of the tlv wire" % opt)
     if "absent" in opts:  # ruling 10 of 0.13: an empty value is already absent on tlv
         bad("field option 'absent' is not an option of the tlv wire (ruling 10 of 0.13)")
+    _defer_056("tlv", tname, locator, False, opts, bad)
     if later:
         deferred.extend(later)
         return None
-    return Field(key, locator, transform, loc, lineno, via=opts.get("via"), with_key=opts.get("with"))
+    return Field(key, locator, transform, loc, lineno, via=opts.get("via"), with_key=opts.get("with"),
+                 range=opts.get("range"))
 
 
 def _cbor_path(name, locator, where, dot_ok):

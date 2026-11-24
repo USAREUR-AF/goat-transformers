@@ -20,7 +20,7 @@ message is any number of bits, and the output is the bits up to the cursor
 after the last line, not rounded to a byte, zero-filled to a multiple of 6.
 """
 
-from .entity import Entity, Item, _via_decode, _via_encode, failure, via_may_fail
+from .entity import Entity, Item, _via_decode, _via_encode, apply_range, failure, via_may_fail
 from .errors import BadDirective, GTError, MalformedWire, MessageCount, NoKind, TransformDecodeFailure, TransformEncodeFailure
 from .seqdef import (
     T_ALIGN, T_CHAIN, T_CHOICE, T_CONST, T_COUNT, T_EXT, T_FIELD, T_GROUP, T_IF, T_LENGTH, T_OPT, T_PAD,
@@ -1181,6 +1181,9 @@ class _Writer:
         self.held = []
         self.wins = []
         self.hook = None
+        # ruling 9 of 0.56: the first `range` error of a line written, reported only when
+        # the pass is the final one; presence and the cases are as if there were no `range`
+        self.range_err = None
         self.msb_like = pack.armor == "sixbit" or pack.bit_order == "msb"
 
     def mismatch(self):
@@ -1683,7 +1686,7 @@ class _Writer:
     def field(self, nd, ctx):
         """Write one field line and note what decode would read from it."""
         start = self.pos
-        out, raw = self.line_out(nd, ctx)
+        out, raw = self.line_out(nd, ctx, reached=True)
         length = nd.length
         if out is _UPER_ABSENT:  # a UPER locator: the value of ruling 1 of 0.19
             self.uper_absent(nd)
@@ -1754,7 +1757,17 @@ class _Writer:
                 value = n2c[value]
             got[key] = value
 
-    def line_out(self, nd, ctx):
+    def ranged(self, f, value, reached):
+        """`value` checked or wrapped by the `range` of `f` (0.56). An error is
+        noted when the line is `reached`, and the value is left as it is."""
+        try:
+            return apply_range(f, value)
+        except ValueError as e:
+            if reached and self.range_err is None:
+                self.range_err = TransformEncodeFailure(str(e), format=self.pack.name, locator=f.locator)
+            return value
+
+    def line_out(self, nd, ctx, reached=False):
         """-> (what the line writes, what decode reads back) of one field
         line: the value of the earliest key of the line that is present, else
         the earliest `default` among them, else the line's first sentinel
@@ -1791,7 +1804,12 @@ class _Writer:
                 # the integer into the field's bits, then `swap`
                 v = first.absent_out & ((1 << length) - 1)
                 return (_swap_int(v, length) if first.swap else v), None
+        own = bindings[0]
+        if own is not f and own.rng is not None and own.key not in fields and own.key in ctx.defaults:
+            self.ranged(own, ctx.defaults[own.key], reached)  # a default an `also` key's value stands over
         try:
+            if f.rng is not None:
+                value = self.ranged(f, value, reached)  # 0.56: before `via` and the transform
             c2n = self.pack.cot_to_native
             if c2n and f.key == "type" and value in c2n:
                 value = c2n[value]
@@ -1977,9 +1995,13 @@ def encode(pack, entity, kind_ref=None, layer=None, messages=None):
             out = wr.finish()
         except GTError:
             if last or not wr.mismatch():
+                if wr.range_err is not None:  # of a line earlier in reading order (ruling 12 of 0.20)
+                    raise wr.range_err
                 raise
             out = None
         if not wr.mismatch():
+            if wr.range_err is not None:
+                raise wr.range_err
             return out
         if last:  # ruling 33 of 0.20
             raise TransformEncodeFailure("the predicted cases of the switches never settle", format=pack.name)

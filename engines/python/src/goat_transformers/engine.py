@@ -15,8 +15,10 @@ from .licence import Licences, check_profile, rank_name
 from .modeldef import parse_model_text, scan_uses
 from .packdef import CORE, DISTRIBUTIONS, load_pack, parse_pack_text, split_key
 from . import parts
-from .entity import Entity, Item, NoEntry, _build_via, _via_decode, _via_encode, failure, via_may_fail
-from .transforms import canonical_value_text, read_typed, table_side_type, value_canon
+from .entity import Entity, Item, NoEntry, _build_via, _via_decode, _via_encode, apply_range, failure, via_may_fail
+from .transforms import (
+    canonical_value_text, read_int_text, read_number_text, read_typed, table_side_type, value_canon,
+)
 
 DERIVE_PASSES = 8  # spec 0.6: the pass repeats until it sets nothing, at most 8 times
 MAX_ITEMS = 100000  # ruling 7b of 0.11: the default limit on the list items of one decode
@@ -123,7 +125,8 @@ class _Enc:
     encoded scope of each item of its list (absent when the entity has no such
     list)."""
 
-    __slots__ = ("plan", "values", "groups", "sentinels", "defaulted", "errors", "have", "suppressed")
+    __slots__ = ("plan", "values", "groups", "sentinels", "defaulted", "errors", "have", "suppressed", "nulls",
+                 "omitted")
 
     def __init__(self, plan, have=None):
         self.plan = plan
@@ -134,6 +137,39 @@ class _Enc:
         self.errors = {}        # index of a line of a gate block -> its encode error, raised if the block is held
         self.have = have        # the scope's keys (bits: whether a gate block is open, 0.17)
         self.suppressed = set() # the indices of field lines whose `with` key the scope does not hold (0.18)
+        self.nulls = set()      # the indices of `null` lines whose key is absent, with no default or sentinel (0.56)
+        self.omitted = set()    # the indices in `values` that `implicit` leaves out (0.56)
+
+
+def _read_range(f, key_type, fmt):
+    """The arguments of `range <min> <max> [wrap]` read as the key's type
+    (0.56): `bad-directive` on a key that is not `int` or `float`, on an `int`
+    key's argument that is not integer text, and when `<min>` is not less than
+    `<max>`. -> (min, max, wrap)."""
+    lo_text, hi_text, wrap = f.range
+
+    def bad(msg):
+        return BadDirective("field option 'range' %s, at line %d" % (msg, f.lineno), format=fmt, locator=f.locator)
+
+    if key_type not in ("int", "float"):
+        raise bad("is on key %s, which is %s, not int or float" % (f.key, key_type))
+    read = read_int_text if key_type == "int" else read_number_text
+    try:
+        lo, hi = read(lo_text), read(hi_text)
+    except ValueError as e:
+        raise bad("takes %s text: %s" % ("integer" if key_type == "int" else "number", e))
+    if not lo < hi:
+        raise bad("has <min> %s not less than <max> %s" % (lo_text, hi_text))
+    return lo, hi, wrap
+
+
+def _is_proto_default(enc):
+    """Whether a protobuf `(wire type, payload)` holds the proto3 default of
+    its wire type (0.56): the varint 0, +0.0 (every byte zero), the empty text."""
+    payload = enc[1]
+    if isinstance(payload, int):
+        return payload == 0
+    return not any(payload)
 
 
 def _check_unread_numbers(doc, read, fmt):
@@ -343,6 +379,8 @@ class Engine:
                     "key %s is declared %s; %s" % (f.key, want, what), format=fmt, locator=f.locator
                 )
             f.key_type = want
+            if getattr(f, "range", None) is not None:
+                f.rng = _read_range(f, want, fmt)
             if f.via is not None:
                 _build_via(f, pack.tables[f.via])
         for key, d, (m, k) in keyed:
@@ -1060,7 +1098,7 @@ class Engine:
                 if token is not None:
                     values[g.at] = token
         for i, f in plan.ifields:
-            if i in skip:
+            if i in skip and f.rng is None:
                 continue  # its item holds a `when` or `const` value (ruling 9 of 0.13)
             key = f.key
             w = f.with_key
@@ -1089,13 +1127,24 @@ class Engine:
                     if f.absent_out is not None:  # the first sentinel, in place of every option (0.9)
                         values[i] = f.absent_out
                         enc.sentinels.add(i)
+                        if f.implicit and _is_proto_default(values[i]):
+                            enc.omitted.add(i)
+                    elif f.null:
+                        enc.nulls.add(i)  # 0.56: null where no line on the member writes a value
                     continue
             try:
+                if f.rng is not None:
+                    value = apply_range(f, value)  # 0.56: before `via` and the transform
+                    if i in skip:
+                        enc.defaulted.discard(i)
+                        continue  # reached, so checked (ruling 9 of 0.56), but not encoded
                 if c2n and key == "type" and value in c2n:
                     value = c2n[value]
                 if f.via_enc is not None:
                     value = _via_encode(f, value)
                 values[i] = f.transform.encode(value)
+                if f.implicit and _is_proto_default(values[i]):
+                    enc.omitted.add(i)
             except ValueError as e:
                 err = TransformEncodeFailure(str(e), format=pack.name, locator=f.locator)
                 if f.gate is None:
