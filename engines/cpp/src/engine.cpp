@@ -254,6 +254,9 @@ void Engine::load_tool_into(const std::string& packs_dir, const std::string& mod
                 lines.push_back(defs.back().lines);
                 // 0.93 ruling 2: a file that is not shown public is in none.
                 if (!defs.back().shown_public) rank[i] = detail::kProfileNone;
+                // 0.93 ruling 2: with a profile, a module file that 2b gives no
+                // name is not loaded (fail closed), shown public or not.
+                if (profile && !defs.back().lines.has_module) rank[i] = detail::kProfileNone;
             }
             for (bool changed = true; changed;) {
                 changed = false;

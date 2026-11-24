@@ -1920,6 +1920,56 @@ int main() {
         fs::remove_all(dir, ec);
     }
 
+    // 0.93 ruling 2, fail closed: with a profile, a module file that 2b gives
+    // no name is not loaded, also when it is shown public; a pack or module
+    // that uses it is unknown-module. With no profile nothing changes.
+    {
+        namespace fs = std::filesystem;
+        const fs::path dir = fs::temp_directory_path() /
+                             ("goat-transformers-unit-093-noname-" +
+                              std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+        try {
+            auto put = [&](const fs::path& rel, const std::string& text) {
+                fs::create_directories((dir / rel).parent_path());
+                std::ofstream out(dir / rel, std::ios::binary);
+                out << text;
+            };
+            const std::string tail = "version 0.1.0\ndistribution public\nsource s\n";
+            put("model/core.def", "module core\n" + tail + "key uid string -\n");
+            put("packs/p/pack.def", "format f-p\n" + tail + "uses mx\nwire json\nfield uid id string\n");
+            const std::string packs = (dir / "packs").string(), models = (dir / "model").string();
+            const auto C = gt::Distribution::Controlled;
+            const std::vector<std::string> only_p{"p"};
+            for (const char* line : {"module mx # note", "module \"mx\""}) {
+                const std::string w = std::string("0.93 r2 fail closed (") + line + ")";
+                put("model/mx.def", std::string(line) + "\n" + tail + "key n int -\n");
+                fs::remove(dir / "model/my.def");
+                check(detail::shown_public(std::string(line) + "\n" + tail), w + ": the file is shown public");
+                for (const char* profile : {"open", "everything"})
+                    expect_error(gt::ErrorKind::UnknownModule,
+                                 [&] { (void)gt::Engine::load_tool(packs, models, &only_p, C, std::string(profile)); },
+                                 w + ", profile " + profile + ": a pack that uses it is unknown-module");
+                // A module that uses it.
+                put("model/my.def", "module my\n" + tail + "uses mx\nkey m int -\n");
+                std::vector<std::string> none_named;
+                expect_error(gt::ErrorKind::UnknownModule,
+                             [&] { (void)gt::Engine::load_tool(packs, models, &none_named, C, std::string("everything")); },
+                             w + ": a module that uses it is unknown-module");
+                // No profile: it loads, and so do its users.
+                try {
+                    gt::Engine e = gt::Engine::load_tool(packs, models, &only_p);
+                    check(e.has_module("mx") && e.has_module("my") && e.has_format("f-p"), w + ", no profile: loads");
+                } catch (const std::exception& ex) {
+                    check(false, w + ", no profile: threw " + ex.what());
+                }
+            }
+        } catch (const std::exception& ex) {
+            check(false, std::string("0.93 r2 fail closed threw: ") + ex.what());
+        }
+        std::error_code ec;
+        fs::remove_all(dir, ec);
+    }
+
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";
     return failures == 0 ? 0 : 1;
 }
