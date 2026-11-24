@@ -9,6 +9,7 @@ CAT062; split the output into lines with newline framing.
 |---|---|---|
 | `uid` | `group` | the system track's identifier when fuse makes the tracks |
 | `cat062.track_number` | `track_number` | a number 1 to 65535 the track keeps while it lives |
+| `cat062.mon` | `mono` | 1 when the track's members come from one source, 0 when from more than one; a runner that does not publish it leaves the target's default (ASTERIX CAT062: 1) |
 | `time_ms` | `now_ms` | the tick the track describes, epoch ms |
 | `lat`, `lon`, `hae`, `course`, `speed_ms` | same names | the fused estimate; `hae` is fused from the reports' `hae`, metres above the WGS 84 ellipsoid |
 
