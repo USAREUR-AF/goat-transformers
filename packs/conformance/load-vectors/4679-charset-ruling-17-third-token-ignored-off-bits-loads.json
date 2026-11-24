@@ -1,0 +1,8 @@
+{
+  "name": "4679-charset-ruling-17-third-token-ignored-off-bits-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey s1 string -\nkey n int -\nkey x int -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.46.0\ndistribution public\nsource \"probe\"\nuses probe\nwire json\ncharset D 01 +4\nfield probe.s1 a codestr:D\n"
+}

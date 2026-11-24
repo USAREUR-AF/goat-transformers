@@ -1,0 +1,14 @@
+{
+  "name": "string-member-matches",
+  "from": "conformance-charset-absent-number",
+  "to": "conformance-charset-absent-number",
+  "input": "{\"a\":\"5\"}",
+  "expect": "{\"a\":5}",
+  "model": {
+    "@absent": [
+      "probe.s1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 22 (0.9 unchanged); the sentinel is compared as text before ruling 11's check; `absent 5` writes the number 5"
+}

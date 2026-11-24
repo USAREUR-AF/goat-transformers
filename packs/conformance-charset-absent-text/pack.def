@@ -1,0 +1,10 @@
+# Conformance probe pack for spec 0.46 ruling 22: `absent =5` on `json` matches
+# the member "5" and the number 5, and writes the text 5 for an absent key. Public. No kinds.
+format  conformance-charset-absent-text
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    json
+charset D  0123456789
+field   probe.s1  a  codestr:D  absent =5

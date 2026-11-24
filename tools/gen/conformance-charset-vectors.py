@@ -39,7 +39,7 @@ import gtcheck  # noqa: E402
 
 PACKS = ("src", "bits", "lsb", "one", "swapopt", "msb-lsb", "five-msb", "five-lsb", "five-seq-msb", "five-seq-lsb",
          "items", "absent", "wide", "armor", "json", "absent-json", "text", "xml",
-         "order-a", "order-b", "via")
+         "order-a", "order-b", "via", "absent-number", "absent-text")
 PREFIX = "conformance-charset-"
 TD, TE = "transform-decode", "transform-encode"
 SOURCE = "constructed"
@@ -392,6 +392,15 @@ def record_encode(pack, ent):
     return ",".join(fields)
 
 
+def json_sentinel(f):
+    """The member value an absent key writes (0.9 rulings 9 and 12): number text
+    is the number, a leading `=` forces the text. Decode compares texts."""
+    a = f["absent"]
+    if a.startswith("="):
+        return a[1:]
+    return int(a) if re.fullmatch(r"-?(0|[1-9][0-9]*)", a) else a
+
+
 def json_decode(pack, text):
     obj = json.loads(text)
     keys = {}
@@ -399,7 +408,7 @@ def json_decode(pack, text):
         v = obj.get(f["loc"])
         if v is None:
             continue
-        if f["absent"] is not None and v == f["absent"]:
+        if f["absent"] is not None and str(v) == str(json_sentinel(f)):
             continue                                       # 0.9: the text, before any lookup
         if f["tr"] in ("codestr", "codenum"):
             if not isinstance(v, str):
@@ -416,7 +425,7 @@ def json_encode(pack, ent):
         if f["key"] in ent["keys"]:
             out.append("%s:%s" % (json.dumps(f["loc"]), json.dumps(text_form(pack, f, ent["keys"][f["key"]]))))
         elif f["absent"] is not None:
-            out.append("%s:%s" % (json.dumps(f["loc"]), json.dumps(f["absent"])))
+            out.append("%s:%s" % (json.dumps(f["loc"]), json.dumps(json_sentinel(f))))
     return "{" + ",".join(out) + "}"
 
 
@@ -671,6 +680,19 @@ def build(sink):
         model_={"probe.s1": "AB123", "probe.x": "7"}, ref=AB + "neither text is a sentinel")
     vec("absent-json", "absent-json", "text-that-is-not-the-sentinel", '{"num":"NB"}', error=TD, ref=AB + "ruling 3")
 
+    R22 = "spec 0.46 ruling 22 (0.9 unchanged); "
+    both = "the sentinel is compared as text before ruling 11's check; "
+    vec("absent-number", "absent-number", "string-member-matches", '{"a":"5"}', '{"a":5}',
+        model_={"@absent": ["probe.s1"]}, ref=R22 + both + "`absent 5` writes the number 5")
+    vec("absent-number", "absent-number", "number-member-matches", '{"a":5}', '{"a":5}',
+        model_={"@absent": ["probe.s1"]}, ref=R22 + both + "`absent 5` writes the number 5")
+    vec("absent-text", "absent-text", "string-member-matches", '{"a":"5"}', '{"a":"5"}',
+        model_={"@absent": ["probe.s1"]}, ref=R22 + both + "`absent =5` writes the text 5")
+    vec("absent-text", "absent-text", "number-member-matches", '{"a":5}', '{"a":"5"}',
+        model_={"@absent": ["probe.s1"]}, ref=R22 + both + "`absent =5` writes the text 5")
+    vec("absent-text", "absent-text", "number-that-is-not-the-sentinel", '{"a":6}', error=TD,
+        ref=R22 + "6 is no sentinel; ruling 11: the member must be a string")
+
     TX = "spec 0.46, On text wires (text); "
     rec = "AB123,00042 ,7"
     vec("text", "text", "codestr-and-codenum-column", rec, rec, model_={"probe.s1": "AB123", "probe.x": "42", "probe.n": "7"},
@@ -818,6 +840,29 @@ def build(sink):
     load("ruling-15-second-colon", bits + LD + "field probe.s1 0:0:4 code:D:x\n")
     load("ruling-17-width-with-a-plus-sign", bits + "charset D 0123456789 +4\n")
     load("ruling-18-code-on-cbor", head + "wire cbor\n" + LD + "field probe.s1 1 code:L,D\n")
+    # rulings 21, 23 and 24, from 4668
+    gj = head + "wire geojson\n" + LD
+    bare = bits + LD + "field probe.s1 0:0:8 code\n"
+    bare_text = tx + LD + "field probe.s1 0 codestr\n"
+    load("ruling-21-bare-code", bare)
+    load("ruling-21-bare-code-then-bogus", bare + bogus, "unknown-directive", gtcheck_kind="bad-directive")
+    load("ruling-21-bare-codestr-on-text", bare_text)
+    load("ruling-21-bare-codestr-on-text-then-bogus", bare_text + bogus, "unknown-directive",
+         gtcheck_kind="bad-directive")
+    load("ruling-23-codestr-on-a-geojson-coordinate", gj + "field probe.s1 geometry.lat codestr:L,D\n")
+    load("ruling-23-codestr-on-a-geojson-coordinate-then-bogus", gj + "field probe.s1 geometry.lat codestr:L,D\n"
+         + bogus, "unknown-directive", gtcheck_kind="bad-directive")
+    load("ruling-23-codenum-on-a-geojson-coordinate", gj + "field probe.n geometry.lat codenum:L,D\n")
+    load("ruling-23-geometry-path-in-a-group-body-loads", gj + "group probe.items properties.items\n"
+         "  field probe.label geometry.lat codestr:L,D\n  field probe.n geometry.lon codenum:L,D\nend\n", None)
+    load("ruling-24-width-with-a-leading-zero-loads", bits + "charset D 0123456789 08\nfield probe.s1 0:0:8 code:D\n",
+         None)
+    load("ruling-24-more-characters-than-2-width-off-bits-loads", js + "charset D 0123456789 2\n"
+         "field probe.s1 a codestr:D\n", None)
+    load("ruling-24-charset-after-a-group-with-item-kinds-loads", sq + "group probe.items count 8\n  kind a\n"
+         "  when 8 1\n  field probe.n 8 uint\nend\ncharset D 0123456789\nfield probe.s1 8 code:D,D\n"
+         "kind m\nwhen 8 1\n", None)
+    load("ruling-17-third-token-ignored-off-bits-loads", js + "charset D 01 +4\nfield probe.s1 a codestr:D\n", None)
     rel = "packs/conformance/load-vectors"
     for f in sink.listdir(rel):
         if f[:2] == "46" and f[4:13] == "-charset-" and rel + "/" + f not in sink.written:

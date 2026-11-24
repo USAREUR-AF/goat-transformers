@@ -1741,6 +1741,9 @@ class _Loader:
         node.key = a[0]
         self._locator(node, a[1], group, "field")
         self._transform(node, a[2], node.bits if self.pack.wire == "bits" and node.until is None else None)
+        if node.tr in CODE_TRANSFORMS and self.pack.wire == "geojson" and group is None \
+                and node.loc.startswith("geometry."):
+            self.bad(node, "`%s` on a geojson coordinate (ruling 23 of 0.46)" % node.tr)
         node.opts, node.also = set(), []
         i = 3
         while i < len(a):
