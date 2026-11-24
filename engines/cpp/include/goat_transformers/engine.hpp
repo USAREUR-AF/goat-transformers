@@ -720,11 +720,28 @@ public:
     // is read and the load is as above, unless `read_licences` is true: then
     // every licence file is read in the same order and nothing is skipped
     // (the `licences` subcommand). pack_licences() holds the result.
+    //
+    // A controlled pack is in no licence profile (engine-spec.md 0.93). With
+    // licences read, a module file or pack.def that is not shown public
+    // (ruling 1: an exact `distribution public` line and no doubtful line)
+    // has the profile none, whatever its licence; each such file is read
+    // once, and the text whose lines gave its profile is the text parsed.
+    // With a profile, the engine's distribution limit becomes public
+    // (ruling 5; see load_tool_into).
     static Engine load_tool(const std::string& packs_dir, const std::string& models_dir,
                             const std::vector<std::string>* names,
                             Distribution max_distribution = Distribution::Controlled,
                             const std::optional<std::string>& profile = std::nullopt,
                             bool read_licences = false);
+    // load_tool on this instance, with its limit (0.93 ruling 6). With a
+    // profile: a text that is not a profile is bad-licence, the limit
+    // unchanged; then, when this instance already holds a controlled module
+    // or pack, distribution-refused before anything is read; then the limit
+    // is public from here on, also when the load fails later, whatever is set
+    // before or after. With no profile the load is bounded by the limit.
+    void load_tool_into(const std::string& packs_dir, const std::string& models_dir,
+                        const std::vector<std::string>* names,
+                        const std::optional<std::string>& profile = std::nullopt, bool read_licences = false);
     // True for the three profile names.
     static bool is_profile(const std::string& name);
     // The licences of the loaded packs in byte order of directory name, when
@@ -732,8 +749,12 @@ public:
     const std::vector<PackLicence>& pack_licences() const noexcept { return pack_licences_; }
 
     // The distribution limit, Controlled by default. It applies to later loads.
+    // After a load with a profile it is Public, whatever is set (0.93 ruling
+    // 6): setting Controlled then is no error and has no effect.
     void set_max_distribution(Distribution limit) { max_distribution_ = limit; }
-    Distribution max_distribution() const noexcept { return max_distribution_; }
+    Distribution max_distribution() const noexcept {
+        return profile_limit_ ? Distribution::Public : max_distribution_;
+    }
 
     // The limit on list items one decode holds (0.11 ruling 7): every item of
     // every list at every nesting level counts one. 100,000 by default; with 0
@@ -836,6 +857,7 @@ private:
                              const Context* context, const std::map<std::string, std::string>* text,
                              const TextContext* ordered = nullptr) const;
     Distribution max_distribution_ = Distribution::Controlled;
+    bool profile_limit_ = false;  // a load with a profile was made (0.93 ruling 6)
     std::uint64_t max_items_ = kDefaultMaxItems;
     std::vector<PackLicence> pack_licences_;
 };

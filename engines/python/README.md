@@ -27,6 +27,7 @@ Status: Built. Exported by `goat_transformers`; bytes go in and bytes come out.
 | Call | Does |
 |---|---|
 | `Engine.from_dir(packs_dir, models_dir=None, max_distribution="controlled", packs_only=None, profile=None, with_inner=False)` | loads every `<models_dir>/*.def` (default: `model` beside `packs_dir`), then every `<packs_dir>/<format>/pack.def`; with `packs_only`, only the named packs and the modules they use (with `with_inner`, also the packs their `inner` lines name, transitively, Version 0.34); with `profile`, only the modules and packs of that licence profile (Licence profiles, below) |
+| `load_dir(packs_dir, models_dir=None, packs_only=None, profile=None, with_inner=False)` | `from_dir` on an existing engine: what is loaded stays, and the load is bounded by the engine's distribution limit. With `profile`, an engine that already holds a controlled module or pack refuses the load, `distribution-refused`, before anything is read (Licence profiles, below) |
 | `Engine(max_distribution=..., max_items=100000)`, `load_model(text, source=...)`, `load(text, source=...)` | an empty engine; load one model module, then one pack, from text. A second pack with a loaded `format` name is `duplicate-format`, and the first stays loaded |
 | `set_max_items(n)` | the limit on list items one decode holds, over every list at every level (ruling 7 of 0.11); 0 or more, 100,000 by default. Going over it is `malformed-wire`; `encode` is not limited |
 | `formats()`, `pack(fmt)`, `model_keys(fmt)` | the loaded format names; one parsed pack; the keys a pack maps |
@@ -114,6 +115,25 @@ anything is read. Without `profile` no licence file is read and loading is as
 before. With a profile, `engine.licences` maps each loaded format to
 `(directory, licence, profile)` of its pack.
 
+Version 0.93: a module file or `pack.def` is in a profile only when it is
+shown public: one of its lines is exactly `distribution`, spaces or tabs,
+`public`, no other line begins with `distribution` once its double quotes and
+end spaces are removed, and it holds no NUL, no U+FEFF and no carriage return
+other than before a line feed or at its end. Any other such file, whatever its
+licence (an unreadable or non-UTF-8 one included), is in no profile, and so is
+whatever uses it; a `core` that is not shown public leaves no pack. A load
+with a profile sets the engine's distribution limit to `public` (also when
+`controlled` was asked for), for that load and every later one: a controlled
+text loaded later with `load` or `load_model`, or a later `load_dir` without a
+profile, is `distribution-refused`, and `set_max_distribution("controlled")`
+afterwards is no error and has no effect. The order: a profile not one of the
+three is `bad-licence` with the limit unchanged; then an engine that already
+holds a controlled module or pack is `distribution-refused`; both leave the
+limit unchanged and load nothing; then the limit is `public`, and
+stays so when the load fails later. The engine reads a module file and a
+`pack.def` once for its profile and again to load it, so a file that changed
+in between to `controlled` is `distribution-refused`.
+
 ```python
 engine = Engine.from_dir("packs", packs_only=["cot-xml", "geojson"], profile="open")
 ```
@@ -147,7 +167,7 @@ pip, the same tool is `goat-xf-py`, and `python3 -m goat_transformers` starts it
 | `--models <dir>` | all five | the model module directory (default: the `--packs` text followed by `/../model`); every `*.def` in it is loaded |
 | `--packs-only <name>[,<name>...]` | all five | load only these subdirectories of `--packs`, in the order given |
 | `--max-items <n>` | all five | the limit on list items one decode holds (default 100000) |
-| `--max-distribution public\|controlled` | all five | refuse modules and packs above this distribution (default `controlled`) |
+| `--max-distribution public\|controlled` | all five | refuse modules and packs above this distribution (default `controlled`; beside `--profile` always `public`, Version 0.93) |
 | `--profile open\|open+copyleft\|everything` | all five | load only the modules and packs of this licence profile (default: none, everything loads); any other value is a usage error |
 | `--json` | `licences` | the output as JSON; the one option that takes no value |
 | `--set <key>=<value>` | `convert` | a caller-supplied model key, read as the key's declared type; repeatable |
@@ -290,9 +310,10 @@ It loads every pack and model module. One run on 2026-11-21 gave
 | `test_whenas30.py` | Version 0.30, what `convert` cannot reach: a kind or item kind recorded on the entity skips the implicit term, writes the held value or the first listed value, and is `transform-encode` for a held value its `when` does not match (ruling 25); a 64-bit label with the top bit set decodes negative and encodes back (ruling 7); `when 8 1 as as` is `bad-directive` (ruling 31) |
 | `test_lookahead33.py` | Version 0.33, what the vectors do not reach: overlapping windows, a written window overwritten without a check and a standing one leaving held bits (ruling 26); a switch on an `as` key a window binds (ruling 22) and on a field a window wrote; a partial window in the `msb`, `lsb` and `msb-lsb` bit orders |
 | `test_licences.py` | Version 0.29: `Engine.from_dir` with each profile on the fixture trees of `packs/conformance/tool-fixtures/licences-*`, a profile not one of the three, and the line forms of ruling 1 (`REUSE.toml`, `.def.license`, `licences.toml`) and the profiles of ruling 2 on temporary trees |
+| `test_controlled93.py` | Version 0.93: the forms of ruling 1 (shown public), a controlled pack, module and `core` under a public licence (ruling 2), and the distribution limit of rulings 5 and 6: `public` beside `controlled`, a file changed to `controlled` between its two reads, set before and after, a later direct load and a later load without a profile, an engine already holding a controlled module or pack, and the order of the errors; with `with_inner` (0.34), an inner pack that is controlled or uses a controlled module is never loaded under a profile (the outer pack loads, its `inner` line is `unknown-format`) and is `distribution-refused` under a `public` limit |
 | `test_parse_once.py` | Version 0.25, ruling 1: the cases of `bench/set.json` (each input whole, cut and changed, `expect` converted back, decodes) give a new engine's result on an engine that converted the others, and from eight threads at once on one new engine; a load opens each file once |
 | `reduced-build-check.py`, run from the repository root as `python3 -I engines/python/reduced-build-check.py` | a build with `xml`, `json` and `geojson` only (Version 0.24; "Builds with fewer wires" above) |
-| `tools/tool-vectors.py`, run from the repository root as `python3 -I tools/tool-vectors.py -- engines/python/goat-xf-py.py` | every tool vector of `packs/conformance/tool-vectors` (135, all passed): the command-line contract of Version 0.23 and the licence profiles of Version 0.29 |
+| `tools/tool-vectors.py`, run from the repository root as `python3 -I tools/tool-vectors.py -- engines/python/goat-xf-py.py` | every tool vector of `packs/conformance/tool-vectors` (183, all passed): the command-line contract of Version 0.23 and the licence profiles of Versions 0.29 and 0.93 |
 
 The same job then installs the package with pip, writes a bundle of `cot-xml`
 and `geojson` with `tools/goat-pkg bundle`, and checks that `Engine.from_dir`

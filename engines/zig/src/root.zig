@@ -14,6 +14,8 @@
 //! each module's `.def.license`, and loads only what the profile holds; a
 //! file it cannot read, or another profile name, is `error.@"bad-licence"`.
 //! With no profile it reads no licence file.
+//! A file not shown public (Version 0.93) is in no profile; after a load
+//! with a profile the engine's distribution limit is `public` for good.
 //!
 //!     const loaded = try engine.loadTree(.{ .packs_dir = "vendor/goat/packs", .profile = "open" });
 //! The engine keeps what it loads for its whole life and frees nothing on its
@@ -56,6 +58,7 @@ test "the module loads two packs and converts" {
 
 test {
     _ = @import("licence.zig");
+    _ = @import("controlled_test.zig");
 }
 
 // Version 0.29, ruling 3: the library loader with a profile.

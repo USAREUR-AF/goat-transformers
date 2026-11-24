@@ -276,9 +276,17 @@ class Plan(PkgCase):
                         self.assertNotIn("darwin-musl", command)
 
     def test_a_named_pack_that_does_not_load_with_its_modules_is_refused(self):
-        self.tree.write("packs/alpha/pack.def", FILES["packs/alpha/pack.def"] + "uses absent\n")
+        # a key its modules do not declare: the pack is in a profile, and fails at load
+        self.tree.write("packs/alpha/pack.def", FILES["packs/alpha/pack.def"] + "field nosuchkey k string\n")
         err = self.refused("plan", "--formats", "alpha")
-        self.assertIn("error: the named packs do not load: unknown-module", err)
+        self.assertIn("error: the named packs do not load: undeclared-key", err)
+
+    def test_a_named_pack_that_uses_a_missing_module_is_in_no_profile(self):
+        # spec 0.93 ruling 2: for a tool, a pack whose uses names no module file has the profile none
+        self.tree.write("packs/alpha/pack.def", FILES["packs/alpha/pack.def"] + "uses absent\n")
+        for profile in ("open", "everything"):
+            err = self.refused("plan", "--formats", "alpha", "--profile", profile)
+            self.assertIn("packs/alpha, uses module absent, which no module file names", err)
 
     def test_a_pack_that_does_not_parse_is_not_available(self):
         self.tree.write("packs/alpha/pack.def", "format alpha\nno-such-directive 1\n")
@@ -544,6 +552,19 @@ class Profiles(PkgCase):
         self.assertIn("licences.toml", files)
         with open(os.path.join(self.out, "manifest.json"), encoding="utf-8") as fh:
             self.assertEqual(json.load(fh)["profile"], "everything")
+
+    def test_a_pack_that_is_not_shown_public_is_in_no_profile(self):
+        """Spec 0.93: its licence (here the default, Apache-2.0) does not put it
+        in a profile; even `everything` leaves it out."""
+        text = FILES["packs/alpha/pack.def"]
+        self.assertIn("distribution public", text)
+        self.tree.write("packs/alpha/pack.def", text.replace("distribution public", "distribution controlled"))
+        for profile in ("open", "open+copyleft", "everything"):
+            names = self.archive("--profile", profile)
+            self.assertNotIn("packs/alpha/pack.def", names, profile)
+            self.assertIn("packs/beta-dir/pack.def" if profile == "everything" else "model/core.def", names)
+            err = self.refused("plan", "--formats", "alpha", "--profile", profile)
+            self.assertIn("packs/alpha, is not shown public", err)
 
     def test_the_plan_request_takes_a_profile(self):
         self.assertEqual(pkg.plan_request("formats=a").profile, "open")

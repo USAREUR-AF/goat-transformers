@@ -2,6 +2,7 @@
 // reads (ruling 1) and the profile of a licence (ruling 2a).
 #pragma once
 
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
@@ -49,5 +50,27 @@ struct DefLines {
     std::vector<std::string> uses;
 };
 DefLines read_def_lines(const std::string& path);
+
+// A module file or pack.def read once for its profile (0.29 ruling 2b, 0.93
+// ruling 1): `read` is false when it cannot be read; `text` is its bytes, the
+// text that is then parsed; `lines` its `module` and `uses` lines (none when
+// it is not UTF-8); `shown_public` ruling 1 of 0.93.
+struct DefFile {
+    bool read = false;
+    std::string text;
+    DefLines lines;
+    bool shown_public = false;
+};
+DefFile read_def_file(const std::string& path);
+// 0.93 ruling 1 on the bytes of a file: valid UTF-8, no NUL byte, no U+FEFF,
+// no carriage return that is not before a line feed or at the end, at least
+// one line `distribution<spaces or tabs>public` and no doubtful line.
+bool shown_public(const std::string& text);
+// A test hook (0.93 ruling 5): this engine reads each file once, so a file
+// cannot change between its profile and its parse. When set, it is called
+// with the path and the text of each module file and pack.def held by a load
+// that read licences, after its profile and before its parse, and may change
+// the text that is parsed. Empty outside tests.
+extern std::function<void(const std::string& path, std::string& text)> def_text_hook;
 
 }  // namespace goat_transformers::detail

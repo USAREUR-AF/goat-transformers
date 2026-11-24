@@ -181,19 +181,40 @@ bool Engine::is_profile(const std::string& name) { return detail::profile_rank(n
 Engine Engine::load_tool(const std::string& packs_dir, const std::string& models_dir,
                          const std::vector<std::string>* names, Distribution max_distribution,
                          const std::optional<std::string>& profile, bool read_licences) {
+    Engine eng;
+    eng.set_max_distribution(max_distribution);
+    eng.load_tool_into(packs_dir, models_dir, names, profile, read_licences);
+    return eng;
+}
+
+void Engine::load_tool_into(const std::string& packs_dir, const std::string& models_dir,
+                            const std::vector<std::string>* names, const std::optional<std::string>& profile,
+                            bool read_licences) {
+    Engine& eng = *this;
     // 0.29 ruling 3a: a profile that is not one of the three is refused before
-    // anything is read.
+    // anything is read, the limit unchanged (0.93 ruling 6).
     int held = detail::kProfileNone;  // with no profile every module and pack is held
     if (profile) {
         held = detail::profile_rank(*profile);
         if (held < 0)
             throw Error(ErrorKind::BadLicence, "", "",
                         "'" + *profile + "' is not a profile: open, open+copyleft or everything");
+        // 0.93 ruling 6: an instance that already holds a controlled module or
+        // pack is refused before anything is read; then the limit is public,
+        // and stays so when the load fails later (ruling 5).
+        for (const auto& kv : modules_)
+            if (kv.second.distribution == Distribution::Controlled)
+                throw Error(ErrorKind::DistributionRefused, "", "",
+                            "a load with the profile " + *profile + " on an engine that holds the controlled module '" +
+                                kv.first + "'");
+        for (const auto& kv : packs_)
+            if (kv.second->distribution == Distribution::Controlled)
+                throw Error(ErrorKind::DistributionRefused, kv.first, "",
+                            "a load with the profile " + *profile + " on an engine that holds the controlled pack '" +
+                                kv.first + "'");
+        profile_limit_ = true;
     }
     const bool licences = profile.has_value() || read_licences;
-
-    Engine eng;
-    eng.set_max_distribution(max_distribution);
     std::error_code ec;
 
     // 0.29 ruling 3b: the table first, `<packs>/../licences.toml` as given.
@@ -222,12 +243,20 @@ Engine Engine::load_tool(const std::string& packs_dir, const std::string& models
         // profile of every module (2b), its licence's and those of the
         // modules it uses, directly or through others, to a fixed point.
         std::vector<int> rank(files.size(), detail::kProfileNone);
+        std::vector<detail::DefFile> defs;  // with licences: each file, read once
         if (licences) {
             std::vector<detail::DefLines> lines;
             lines.reserve(files.size());
+            defs.reserve(files.size());
             for (std::size_t i = 0; i < files.size(); ++i) {
                 rank[i] = detail::licence_rank(table, detail::read_module_licence((mdir / (files[i] + ".license")).string()));
-                lines.push_back(detail::read_def_lines((mdir / files[i]).string()));
+                defs.push_back(detail::read_def_file((mdir / files[i]).string()));
+                lines.push_back(defs.back().lines);
+                // 0.93 ruling 2: a file that is not shown public is in none.
+                if (!defs.back().shown_public) rank[i] = detail::kProfileNone;
+                // 0.93 ruling 2: with a profile, a module file that 2b gives no
+                // name is not loaded (fail closed), shown public or not.
+                if (profile && !defs.back().lines.has_module) rank[i] = detail::kProfileNone;
             }
             for (bool changed = true; changed;) {
                 changed = false;
@@ -255,8 +284,14 @@ Engine Engine::load_tool(const std::string& packs_dir, const std::string& models
         std::vector<Module> parsed;
         parsed.reserve(files.size());
         for (std::size_t i = 0; i < files.size(); ++i)
-            if (rank[i] <= held)
-                parsed.push_back(detail::parse_model_unchecked(read_text(mdir / files[i]), (mdir / files[i]).string()));
+            if (rank[i] <= held) {
+                const fs::path file = mdir / files[i];
+                // The text whose lines gave the profile is the text parsed (0.93
+                // ruling 5); a file that could not be read fails as before.
+                const bool once = licences && defs[i].read;
+                if (once && detail::def_text_hook) detail::def_text_hook(file.string(), defs[i].text);
+                parsed.push_back(detail::parse_model_unchecked(once ? std::move(defs[i].text) : read_text(file), file.string()));
+            }
         load_modules(eng, parsed, nullptr);
     }
 
@@ -265,21 +300,26 @@ Engine Engine::load_tool(const std::string& packs_dir, const std::string& models
     std::vector<PackLicence> found;
     auto load_pack = [&](const std::string& n, const fs::path& dir) {
         PackLicence lic;
+        const fs::path def = dir / "pack.def";
+        detail::DefFile file;
         if (licences) {
             lic.dir = n;
             lic.licence = detail::read_pack_licence((dir / "REUSE.toml").string());
             int r = detail::licence_rank(table, lic.licence);
             const auto core_rank = module_rank.find("core");
             if (core_rank != module_rank.end()) r = std::max(r, core_rank->second);
-            for (const auto& u : detail::read_def_lines((dir / "pack.def").string()).uses) {
+            file = detail::read_def_file(def.string());
+            for (const auto& u : file.lines.uses) {
                 const auto it = module_rank.find(u);
                 if (it != module_rank.end()) r = std::max(r, it->second);
             }
+            if (!file.shown_public) r = detail::kProfileNone;  // 0.93 ruling 2
             if (r > held) return;
             lic.profile = detail::profile_name(r);
         }
-        const fs::path def = dir / "pack.def";
-        Pack p = parse_pack(read_text(def), def.string());
+        // Read once (0.93 ruling 5): the text that gave the profile is parsed.
+        if (licences && file.read && detail::def_text_hook) detail::def_text_hook(def.string(), file.text);
+        Pack p = parse_pack(licences && file.read ? std::move(file.text) : read_text(def), def.string());
         lic.format = p.format;
         eng.add_pack(std::move(p));
         if (licences) found.push_back(std::move(lic));
@@ -302,7 +342,7 @@ Engine Engine::load_tool(const std::string& packs_dir, const std::string& models
             load_pack(n, dir);
         }
         finish();
-        return eng;
+        return;
     }
     // Without names packs_dir is listed; with names each is looked up in it,
     // so a packs_dir that does not exist makes the first name unknown-format.
@@ -319,7 +359,6 @@ Engine Engine::load_tool(const std::string& packs_dir, const std::string& models
     std::sort(dirs.begin(), dirs.end());
     for (const auto& n : dirs) load_pack(n, fs::path(packs_dir) / n);
     finish();
-    return eng;
 }
 
 void Engine::load_model(const std::string& text, const std::string& origin) {
@@ -332,7 +371,7 @@ void Engine::add_model(Module module) {
         auto it = modules_.find(name);
         return it == modules_.end() ? nullptr : &it->second;
     };
-    if (module.distribution == Distribution::Controlled && max_distribution_ == Distribution::Public)
+    if (module.distribution == Distribution::Controlled && max_distribution() == Distribution::Public)
         throw Error(ErrorKind::DistributionRefused, "", "",
                     "module '" + module.name + "' is controlled and the engine limit is public (" + module.origin + ")");
     // v0.8: every used module is loaded, and a public module uses only public modules.
@@ -382,7 +421,7 @@ void split_model_key(const std::string& key, std::string& module, std::string& n
 // The v0.4 load checks, each over every `field` line of every kind (and, for the
 // key checks, every `requires` key), in the spec's order.
 void Engine::add_pack(Pack pack) {
-    if (pack.distribution == Distribution::Controlled && max_distribution_ == Distribution::Public)
+    if (pack.distribution == Distribution::Controlled && max_distribution() == Distribution::Public)
         throw Error(ErrorKind::DistributionRefused, pack.format, "",
                     "pack is controlled and the engine limit is public (" + pack.source + ")");
 

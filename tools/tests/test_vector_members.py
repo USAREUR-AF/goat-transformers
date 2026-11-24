@@ -3,6 +3,7 @@
     python3 -I -m unittest discover -s tools/tests
 """
 import json
+import os
 import unittest
 
 from support import REPO, TempTree, load_tool, run_main
@@ -99,7 +100,32 @@ class VectorMembers(unittest.TestCase):
         self.assertIn("no section '## Tool vectors'", err)
 
 
+class Files(unittest.TestCase):
+    def test_hex_for_a_file_that_can_be_text_fails(self):
+        for data in ("", "61090a", "efbbbf61", "zz"):
+            self.assertEqual(len(vm.needless_hex({"files": {"a": {"hex": data}}})), 1, data)
+        for data in ("00", "0d0a", "7f", "c285", "ff"):
+            self.assertEqual(vm.needless_hex({"files": {"a": {"hex": data}, "b": "text"}}), [], data)
+        self.assertEqual(len(vm.needless_hex({"files": {"a": {}}})), 1)
+
+    def test_the_tool_reports_it(self):
+        tree = TempTree()
+        self.addCleanup(tree.cleanup)
+        tree.write("spec/vector-format.md", SPEC.replace("| `exit` | yes | x |", "| `files` | no | x |\n| `exit` | yes | x |"))
+        tree.write("packs/conformance/tool-vectors/001.json",
+                   json.dumps({"name": "t", "args": [], "files": {"p": {"hex": "61"}}, "exit": 0}))
+        code, _, err = run_main(vm.main, root=tree.root)
+        self.assertEqual(code, 1)
+        self.assertIn("001.json: `files`: p is hex for a file that can be text", err)
+
+
 class Repository(unittest.TestCase):
+    def test_files_is_a_member_of_a_tool_vector_only(self):
+        with open(os.path.join(REPO, vm.SPEC), encoding="utf-8") as fh:
+            spec = fh.read()
+        having = [kind for kind, heading, _ in vm.KINDS if "files" in vm.members(spec, heading)]
+        self.assertEqual(having, ["tool"])
+
     def test_every_vector_of_the_repository(self):
         code, _, err = run_main(vm.main, root=REPO)
         self.assertEqual(code, 0, err)

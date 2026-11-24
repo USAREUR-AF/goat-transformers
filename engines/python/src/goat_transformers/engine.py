@@ -164,6 +164,7 @@ class Engine:
         self.models = {}
         self.licences = {}  # format -> (directory, licence, profile), filled by from_dir with a profile
         self._derives = None
+        self._profile_bound = False  # a load with a profile has set the limit to `public` (0.93, ruling 6)
         self.set_max_distribution(max_distribution)
         self.set_max_items(max_items)
         for m in models:
@@ -173,10 +174,31 @@ class Engine:
 
     def set_max_distribution(self, limit):
         """The distribution limit: `controlled` (default) loads everything;
-        `public` refuses every controlled module and pack."""
+        `public` refuses every controlled module and pack. After a load with
+        a profile the limit is the lower of `public` and `limit` (spec 0.93,
+        ruling 6): setting `controlled` then is no error and has no effect."""
         if limit not in DISTRIBUTIONS:
             raise ValueError("max distribution must be one of %s, got %r" % (", ".join(DISTRIBUTIONS), limit))
-        self.max_distribution = limit
+        self.max_distribution = "public" if self._profile_bound else limit
+
+    def _begin_profile_load(self, profile):
+        """The start of a load with a profile (spec 0.93, rulings 5 and 6), in
+        this order: a name not one of the three is `bad-licence`, the limit
+        unchanged; then, when this instance already holds a controlled module
+        or pack, `distribution-refused` before anything is read, the limit
+        unchanged; both leave no trace; then the limit is `public` from here on, also when
+        the load fails later. -> the rank of the profile."""
+        rank = check_profile(profile)
+        held = sorted(m for m, mod in self.models.items() if mod.distribution == "controlled")
+        held += sorted(f for f, p in self.packs.items() if p.distribution == "controlled")
+        if held:
+            raise DistributionRefused(
+                "a load with a profile on an engine that holds controlled %s %s"
+                % ("module or pack" if len(held) == 1 else "modules and packs", ", ".join(held))
+            )
+        self._profile_bound = True
+        self.max_distribution = "public"
+        return rank
 
     def set_max_items(self, limit):
         """The limit on list items one decode holds, counted over every list
@@ -410,12 +432,26 @@ class Engine:
         Without `profile` no licence file is read. `licences` maps each loaded
         format to its pack's `(directory, licence, profile)` when a profile
         was given."""
+        if profile is not None:
+            check_profile(profile)  # before anything is read, also the limit (3a)
+        eng = cls(max_distribution=max_distribution)
+        eng.load_dir(packs_dir, models_dir, packs_only=packs_only, profile=profile, with_inner=with_inner)
+        return eng
+
+    def load_dir(self, packs_dir, models_dir=None, packs_only=None, profile=None, with_inner=False):
+        """`from_dir` on this engine: the modules and packs loaded so far stay,
+        and the load is bounded by this engine's distribution limit. With
+        `profile` (spec 0.93, ruling 6): a name not one of the three is
+        `bad-licence`; an engine that already holds a controlled module or
+        pack refuses the load (`distribution-refused`) before anything is
+        read; then the limit is `public` for this load and every later one,
+        whatever the caller sets."""
+        eng = self
         lic = None
         if profile is not None:
-            limit = check_profile(profile)  # before anything is read (3a)
+            limit = eng._begin_profile_load(profile)  # before anything is read (3a)
         if models_dir is None:
             models_dir = os.path.join(packs_dir, os.pardir, "model")
-        eng = cls(max_distribution=max_distribution)
         skip = None
         if profile is not None:
             lic = Licences(packs_dir, models_dir).read()
@@ -472,11 +508,10 @@ class Engine:
                 only.update(pack.uses)
         if os.path.isdir(models_dir):
             for path, text in _model_files(models_dir, only, skip):
-                eng.add_model(_model_from_text(text, path, eng.models, max_distribution))
+                eng.add_model(_model_from_text(text, path, eng.models, eng.max_distribution))
         for pack in packs:
             eng.add(pack)
-        eng.licences = held
-        return eng
+        eng.licences.update(held)
 
     def formats(self):
         return sorted(self.packs)

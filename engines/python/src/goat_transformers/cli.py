@@ -140,7 +140,8 @@ def load(opts, read_licences=False):
     if "--max-items" in opts:
         eng.set_max_items(int(opts["--max-items"]))
     lic, skip, held = None, None, []
-    rank_limit = PROFILES.index(opts["--profile"]) if "--profile" in opts else NONE
+    # with a profile the limit is `public`, also beside --max-distribution controlled (0.93, ruling 5)
+    rank_limit = eng._begin_profile_load(opts["--profile"]) if "--profile" in opts else NONE
     if "--profile" in opts or read_licences:
         lic = Licences(packs_dir, models_dir).read()  # before any module is loaded (3b)
         skip = lic.skipped_modules(rank_limit)
@@ -158,7 +159,7 @@ def load(opts, read_licences=False):
     # the modules first, before --packs is read at all (Loading, 1)
     if os.path.isdir(models_dir):
         for path, text in _model_files(models_dir, skip=skip):
-            eng.add_model(_model_from_text(text, path, eng.models, limit))
+            eng.add_model(_model_from_text(text, path, eng.models, eng.max_distribution))
     if "--packs-only" in opts:
         for name in opts["--packs-only"].split(","):
             d = os.path.join(packs_dir, name)

@@ -12,6 +12,7 @@
 
 #include "codecs.hpp"
 #include "goat_transformers/engine.hpp"
+#include "licences.hpp"
 #include "util.hpp"
 
 namespace gt = goat_transformers;
@@ -1429,7 +1430,8 @@ int main() {
             put("packs/closed/REUSE.toml", "SPDX-License-Identifier=\"CLOSED\"\n");
             put("packs/uses-p/pack.def", HDR "format f-uses-p\nuses p\nwire json\nfield uid id string\n");
             // Broken, and outside `open`: skipped unread with that profile.
-            put("packs/zbroken/pack.def", "this is not a pack\n");
+            // Shown public (0.93 ruling 1), so its profile is that of its licence.
+            put("packs/zbroken/pack.def", "distribution public\nthis is not a pack\n");
             put("packs/zbroken/REUSE.toml", "SPDX-License-Identifier = \"NC\"\n");
             const std::string packs = (dir / "packs").string(), models = (dir / "model").string();
             auto listing = [](const gt::Engine& e) {
@@ -1652,6 +1654,320 @@ int main() {
         }
     } catch (const std::exception& ex) {
         check(false, std::string("0.31 counts and the item limit threw: ") + ex.what());
+    }
+
+    // A controlled pack is in no licence profile (engine-spec.md 0.93): the
+    // library side of rulings 1, 5 and 6, which the tool vectors cannot reach.
+    {
+        namespace fs = std::filesystem;
+        // Ruling 1 on the bytes of a file.
+        const std::string dp = "distribution public\n";
+        check(detail::shown_public("module m\n  distribution \t public\r\n"), "0.93 r1: the exact line, trimmed");
+        check(detail::shown_public(dp + dp), "0.93 r1: the exact line twice");
+        check(!detail::shown_public("module m\n"), "0.93 r1: no line");
+        check(!detail::shown_public("distribution controlled\n"), "0.93 r1: controlled");
+        for (const char* doubtful : {"\"distribution\" controlled", "distri\"bution\" x", "distribution\"controlled\"",
+                                     "distribution # x", "distribution \"public\"", "distributions x"})
+            check(!detail::shown_public(dp + doubtful + "\n"), std::string("0.93 r1: doubtful beside public: ") + doubtful);
+        check(!detail::shown_public(dp + std::string("x\0y\n", 4)), "0.93 r1: a NUL byte");
+        check(!detail::shown_public("\xEF\xBB\xBF" + dp), "0.93 r1: a byte-order mark at the start");
+        check(!detail::shown_public(dp + "# \xEF\xBB\xBF\n"), "0.93 r1: U+FEFF anywhere");
+        check(!detail::shown_public("distribution\rpublic\n"), "0.93 r1: a carriage return between the words");
+        check(!detail::shown_public("\rdistribution public\n"), "0.93 r1: a carriage return before them");
+        check(detail::shown_public("distribution public\r"), "0.93 r1: a carriage return at the end of the file");
+        check(!detail::shown_public(dp + "# \xFF\n"), "0.93 r1: not UTF-8");
+
+        const fs::path dir = fs::temp_directory_path() /
+                             ("goat-transformers-unit-093-" +
+                              std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+        try {
+            auto put = [&](const fs::path& rel, const std::string& text) {
+                fs::create_directories((dir / rel).parent_path());
+                std::ofstream out(dir / rel, std::ios::binary);
+                out << text;
+            };
+            const std::string src = "source s\n";
+            const std::string core = "module core\nversion 0.1.0\ndistribution public\n" + src + "key uid string -\n";
+            const std::string pub = "format f-pub\nversion 0.1.0\ndistribution public\n" + src + "wire json\nfield uid id string\n";
+            const std::string ctl = "format f-ctl\nversion 0.1.0\ndistribution controlled\n" + src + "wire json\nfield uid id string\n";
+            const std::string ctl_module = "module cm\nversion 0.1.0\ndistribution controlled\n" + src + "key k int -\n";
+            put("good/model/core.def", core);
+            put("good/packs/pub/pack.def", pub);
+            put("good/packs/ctl/pack.def", ctl);
+            // A tree whose licences.toml is bad-licence when it is read.
+            put("bad/licences.toml", "not a table\n");
+            put("bad/model/core.def", core);
+            put("bad/packs/pub/pack.def", pub);
+            const std::string good = (dir / "good/packs").string(), good_m = (dir / "good/model").string();
+            const std::string bad = (dir / "bad/packs").string(), bad_m = (dir / "bad/model").string();
+            const std::string no_models = (dir / "no-model").string();
+            const auto P = gt::Distribution::Public, C = gt::Distribution::Controlled;
+
+            // Ruling 5: with a profile the limit is public, also when the caller asked for controlled.
+            gt::Engine e = gt::Engine::load_tool(good, good_m, nullptr, C, "everything");
+            check(e.formats() == std::vector<std::string>({"f-pub"}), "0.93 r2: the controlled pack is skipped");
+            check(e.max_distribution() == P, "0.93 r5: a profile sets the limit public beside controlled");
+
+            // Ruling 6: set before (controlled) on an instance; the load makes it public.
+            gt::Engine f;
+            f.set_max_distribution(C);
+            f.load_tool_into(good, good_m, nullptr, std::string("open"));
+            check(f.max_distribution() == P, "0.93 r6: the limit is the lower of public and what was set before");
+            // Set after: no error and no effect.
+            f.set_max_distribution(C);
+            check(f.max_distribution() == P, "0.93 r6: setting controlled afterwards has no effect");
+            // A controlled text loaded directly later is distribution-refused.
+            expect_error(gt::ErrorKind::DistributionRefused, [&] { f.add_pack(gt::parse_pack(ctl, "ctl")); },
+                         "0.93 r6: a controlled pack loaded directly later");
+            expect_error(gt::ErrorKind::DistributionRefused, [&] { f.load_model(ctl_module, "cm.def"); },
+                         "0.93 r6: a controlled module loaded directly later");
+            // A later load with no profile is bounded by the limit, not by the profile.
+            std::vector<std::string> only_ctl{"ctl"};
+            expect_error(gt::ErrorKind::DistributionRefused,
+                         [&] { f.load_tool_into(good, no_models, &only_ctl); },
+                         "0.93 r6: a later load with no profile is bounded by the limit");
+            put("good/packs/nc/pack.def", "format f-nc\nversion 0.1.0\ndistribution public\n" + src +
+                                              "wire json\nfield uid id string\n");
+            // REUSE-IgnoreStart: the quoted licence line is data
+            put("good/packs/nc/REUSE.toml", "SPDX-License-Identifier = \"NC\"\n");
+            // REUSE-IgnoreEnd
+            std::vector<std::string> only_nc{"nc"};
+            f.load_tool_into(good, no_models, &only_nc);
+            check(f.has_format("f-nc"), "0.93 r6: a later load with no profile is not bounded by the profile");
+
+            // Ruling 6, the order. An instance holding a controlled module.
+            gt::Engine g;
+            g.load_model(core, "core.def");
+            g.load_model(ctl_module, "cm.def");
+            expect_error(gt::ErrorKind::BadLicence, [&] { g.load_tool_into(bad, bad_m, nullptr, std::string("Open")); },
+                         "0.93 r6: a name that is no profile is bad-licence first");
+            check(g.max_distribution() == C, "0.93 r6: after a name that is no profile the limit is unchanged");
+            // `bad` holds a licences.toml that is bad-licence when read, so
+            // distribution-refused shows that nothing was read; the limit is
+            // unchanged and nothing was loaded (no trace).
+            expect_error(gt::ErrorKind::DistributionRefused,
+                         [&] { g.load_tool_into(bad, bad_m, nullptr, std::string("open")); },
+                         "0.93 r6: a profile on an instance holding a controlled module, before anything is read");
+            check(g.max_distribution() == C, "0.93 r6: refused by the instance check, the limit is unchanged");
+            check(g.modules() == std::vector<std::string>({"cm", "core"}) && g.formats().empty() &&
+                      g.pack_licences().empty(),
+                  "0.93 r6: refused by the instance check, nothing is loaded");
+            // The same for a name that is no profile, on a fresh instance.
+            gt::Engine fresh;
+            expect_error(gt::ErrorKind::BadLicence,
+                         [&] { fresh.load_tool_into(good, good_m, nullptr, std::string("none")); },
+                         "0.93 r6: a name that is no profile, on an empty instance");
+            check(fresh.max_distribution() == C && fresh.modules().empty() && fresh.formats().empty(),
+                  "0.93 r6: after a name that is no profile, the limit is unchanged and nothing is loaded");
+            // An instance holding a controlled pack.
+            gt::Engine h;
+            h.load_model(core, "core.def");
+            h.add_pack(gt::parse_pack(ctl, "ctl"));
+            expect_error(gt::ErrorKind::DistributionRefused,
+                         [&] { h.load_tool_into(bad, bad_m, nullptr, std::string("everything")); },
+                         "0.93 r6: a profile on an instance holding a controlled pack, before anything is read");
+            check(h.max_distribution() == C && h.formats() == std::vector<std::string>({"f-ctl"}) &&
+                      h.modules() == std::vector<std::string>({"core"}),
+                  "0.93 r6: refused for a controlled pack, the limit is unchanged and nothing is loaded");
+
+            // Ruling 5 through the hook: a file shown public when read for its
+            // profile that reads as controlled when it is loaded.
+            auto to_controlled = [](const std::string& path, std::string& text) {
+                if (path.find("core.def") == std::string::npos) return;  // the module alone
+                const std::string from = "distribution public", to = "distribution controlled";
+                const std::size_t at = text.find(from);
+                if (at != std::string::npos) text.replace(at, from.size(), to);
+            };
+            detail::def_text_hook = to_controlled;
+            gt::Engine r5;
+            r5.set_max_distribution(C);
+            std::vector<std::string> only_pub{"pub"};
+            expect_error(gt::ErrorKind::DistributionRefused,
+                         [&] { r5.load_tool_into(good, good_m, &only_pub, std::string("everything")); },
+                         "0.93 r5: a module that reads as controlled when it is loaded");
+            check(r5.max_distribution() == P, "0.93 r5: the limit stays public after that failure");
+            detail::def_text_hook = [](const std::string& path, std::string& text) {
+                if (path.find("pack.def") != std::string::npos) {
+                    const std::size_t at = text.find("distribution public");
+                    if (at != std::string::npos) text.replace(at, 19, "distribution controlled");
+                }
+            };
+            gt::Engine r5p;
+            expect_error(gt::ErrorKind::DistributionRefused,
+                         [&] { r5p.load_tool_into(good, good_m, &only_pub, std::string("open")); },
+                         "0.93 r5: a pack that reads as controlled when it is loaded");
+            detail::def_text_hook = nullptr;
+            // An instance holding only public files passes the instance check.
+            gt::Engine m;
+            m.load_model(core, "core.def");
+            m.add_pack(gt::parse_pack(pub, "pub"));
+            // The limit is public and stays so when the load fails later.
+            expect_error(gt::ErrorKind::BadLicence, [&] { m.load_tool_into(bad, bad_m, nullptr, std::string("open")); },
+                         "0.93 r6: a load with a profile that fails later");
+            check(m.max_distribution() == P, "0.93 r6: the limit stays public when the load fails later");
+
+            // Ruling 7: no profile, licences read (the `licences` subcommand): nothing changes.
+            gt::Engine n;
+            n.load_tool_into(good, good_m, nullptr, std::nullopt, true);
+            check(n.max_distribution() == C && n.has_format("f-ctl"), "0.93 r7: read_licences alone leaves the limit");
+            std::string listed;
+            for (const auto& pl : n.pack_licences()) listed += pl.dir + "\t" + pl.profile + "\n";
+            eq(listed, "ctl\tnone\nnc\teverything\npub\topen\n", "0.93 r7: a pack not shown public is listed as none");
+        } catch (const std::exception& ex) {
+            check(false, std::string("0.93 controlled packs threw: ") + ex.what());
+        }
+        detail::def_text_hook = nullptr;
+        std::error_code ec;
+        fs::remove_all(dir, ec);
+    }
+
+    // 0.93 with 0.34: a controlled inner pack never loads. The inner pack is
+    // an ordinary pack of the load (this engine follows no `inner` line when
+    // loading), so the profile and the limit reach it as any pack; the outer
+    // pack then fails check 1 of 0.34 where the line is reached.
+    {
+        namespace fs = std::filesystem;
+        const fs::path dir = fs::temp_directory_path() /
+                             ("goat-transformers-unit-093-inner-" +
+                              std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+        try {
+            auto put = [&](const fs::path& rel, const std::string& text) {
+                fs::create_directories((dir / rel).parent_path());
+                std::ofstream out(dir / rel, std::ios::binary);
+                out << text;
+            };
+            const std::string seq = "wire bits\nlayout sequential\nbit_order msb\n";
+            auto pack = [](const std::string& format, const std::string& dist, const std::string& body) {
+                return "format " + format + "\nversion 0.1.0\ndistribution " + dist + "\nsource s\n" + body;
+            };
+            put("model/core.def", "module core\nversion 0.1.0\ndistribution public\nsource s\nkey a int -\nkey b int -\n");
+            put("packs/out/pack.def", pack("f-out", "public", seq + "field a 8 uint\ninner f-in\n"));
+            const std::string packs = (dir / "packs").string(), models = (dir / "model").string();
+            const auto P = gt::Distribution::Public, C = gt::Distribution::Controlled;
+            const std::vector<std::string> both{"out", "in"};
+            gt::Entity ent;
+            ent.fields["a"] = gt::Value::of_int(1);
+            ent.fields["b"] = gt::Value::of_int(2);
+            const struct {
+                const char* what;
+                std::string def;
+            } inners[] = {
+                {"(a) an inner pack that is not shown public", pack("f-in", "controlled", seq + "field b 8 uint\n")},
+                {"(b) a public inner pack that uses a controlled module",
+                 pack("f-in", "public", "uses cm\n" + seq + "field b 8 uint\n")},
+            };
+            for (const auto& in : inners) {
+                put("packs/in/pack.def", in.def);
+                // The controlled module stands only for (b), so (c) of (a) is refused at the inner pack itself.
+                const bool uses_cm = in.def.find("uses cm") != std::string::npos;
+                if (uses_cm) put("model/cm.def", "module cm\nversion 0.1.0\ndistribution controlled\nsource s\nkey k int -\n");
+                else fs::remove(dir / "model/cm.def");
+                const std::string w = std::string("0.93 inner ") + in.what;
+                for (const char* profile : {"open", "open+copyleft", "everything"}) {
+                    for (const std::vector<std::string>* names : {static_cast<const std::vector<std::string>*>(nullptr), &both}) {
+                        const std::string ww = w + ", profile " + profile + (names ? ", both named" : ", every pack");
+                        gt::Engine e = gt::Engine::load_tool(packs, models, names, C, std::string(profile));
+                        check(e.formats() == std::vector<std::string>({"f-out"}), ww + ": only the outer pack loads");
+                        expect_error(gt::ErrorKind::UnknownFormat, [&] { (void)e.decode("f-out", "0102"); },
+                                     ww + ": decode through the outer pack");
+                        expect_error(gt::ErrorKind::UnknownFormat, [&] { (void)e.encode("f-out", ent); },
+                                     ww + ": encode through the outer pack");
+                        expect_error(gt::ErrorKind::UnknownFormat, [&] { (void)e.decode("f-in", "02"); },
+                                     ww + ": decode of the inner format");
+                        expect_error(gt::ErrorKind::UnknownFormat, [&] { (void)e.encode("f-in", ent); },
+                                     ww + ": encode of the inner format");
+                        try {
+                            check(e.model_keys("f-out") == std::vector<std::string>({"a"}),
+                                  ww + ": model_keys of the outer pack adds nothing for the inner line");
+                        } catch (const std::exception& ex) {
+                            check(false, ww + ": model_keys of the outer pack failed: " + ex.what());
+                        }
+                    }
+                }
+                // (c) No profile, limit public, the inner pack in the load.
+                for (const std::vector<std::string>* names : {static_cast<const std::vector<std::string>*>(nullptr), &both}) {
+                    const std::string ww = w + ", no profile, limit public" + (names ? ", both named" : ", every pack");
+                    bool returned = false;
+                    expect_error(gt::ErrorKind::DistributionRefused,
+                                 [&] {
+                                     gt::Engine e = gt::Engine::load_tool(packs, models, names, P);
+                                     returned = true;
+                                 },
+                                 ww + ": distribution-refused");
+                    check(!returned, ww + ": nothing loaded (no engine is returned)");
+                    // Which file is refused: the inner pack for (a), the controlled module it uses for (b).
+                    try {
+                        (void)gt::Engine::load_tool(packs, models, names, P);
+                    } catch (const gt::Error& ex) {
+                        const std::string msg = ex.what();
+                        check(uses_cm ? msg.find("module 'cm'") != std::string::npos : ex.format() == "f-in",
+                              ww + ": the refused file is " + (uses_cm ? "module cm" : "pack f-in") + ", got " + msg);
+                    }
+                    // On an instance, the inner format is never loaded.
+                    gt::Engine i;
+                    i.set_max_distribution(P);
+                    try {
+                        i.load_tool_into(packs, models, names);
+                    } catch (const gt::Error&) {
+                    }
+                    check(!i.has_format("f-in") && !i.has_module("cm"), ww + ": the inner pack is not loaded on an instance");
+                }
+            }
+        } catch (const std::exception& ex) {
+            check(false, std::string("0.93 inner packs threw: ") + ex.what());
+        }
+        std::error_code ec;
+        fs::remove_all(dir, ec);
+    }
+
+    // 0.93 ruling 2, fail closed: with a profile, a module file that 2b gives
+    // no name is not loaded, also when it is shown public; a pack or module
+    // that uses it is unknown-module. With no profile nothing changes.
+    {
+        namespace fs = std::filesystem;
+        const fs::path dir = fs::temp_directory_path() /
+                             ("goat-transformers-unit-093-noname-" +
+                              std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+        try {
+            auto put = [&](const fs::path& rel, const std::string& text) {
+                fs::create_directories((dir / rel).parent_path());
+                std::ofstream out(dir / rel, std::ios::binary);
+                out << text;
+            };
+            const std::string tail = "version 0.1.0\ndistribution public\nsource s\n";
+            put("model/core.def", "module core\n" + tail + "key uid string -\n");
+            put("packs/p/pack.def", "format f-p\n" + tail + "uses mx\nwire json\nfield uid id string\n");
+            const std::string packs = (dir / "packs").string(), models = (dir / "model").string();
+            const auto C = gt::Distribution::Controlled;
+            const std::vector<std::string> only_p{"p"};
+            for (const char* line : {"module mx # note", "module \"mx\""}) {
+                const std::string w = std::string("0.93 r2 fail closed (") + line + ")";
+                put("model/mx.def", std::string(line) + "\n" + tail + "key n int -\n");
+                fs::remove(dir / "model/my.def");
+                check(detail::shown_public(std::string(line) + "\n" + tail), w + ": the file is shown public");
+                for (const char* profile : {"open", "everything"})
+                    expect_error(gt::ErrorKind::UnknownModule,
+                                 [&] { (void)gt::Engine::load_tool(packs, models, &only_p, C, std::string(profile)); },
+                                 w + ", profile " + profile + ": a pack that uses it is unknown-module");
+                // A module that uses it.
+                put("model/my.def", "module my\n" + tail + "uses mx\nkey m int -\n");
+                std::vector<std::string> none_named;
+                expect_error(gt::ErrorKind::UnknownModule,
+                             [&] { (void)gt::Engine::load_tool(packs, models, &none_named, C, std::string("everything")); },
+                             w + ": a module that uses it is unknown-module");
+                // No profile: it loads, and so do its users.
+                try {
+                    gt::Engine e = gt::Engine::load_tool(packs, models, &only_p);
+                    check(e.has_module("mx") && e.has_module("my") && e.has_format("f-p"), w + ", no profile: loads");
+                } catch (const std::exception& ex) {
+                    check(false, w + ", no profile: threw " + ex.what());
+                }
+            }
+        } catch (const std::exception& ex) {
+            check(false, std::string("0.93 r2 fail closed threw: ") + ex.what());
+        }
+        std::error_code ec;
+        fs::remove_all(dir, ec);
     }
 
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";

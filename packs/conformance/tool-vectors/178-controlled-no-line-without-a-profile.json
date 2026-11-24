@@ -1,0 +1,66 @@
+{
+  "name": "controlled-no-line-without-a-profile",
+  "args": [
+    "list-formats",
+    "--packs-only",
+    "m-no-line",
+    "--packs",
+    "{files}/packs"
+  ],
+  "files": {
+    "licences.toml": "# The flags of the fixture's licences (spec 0.29, ruling 1c).\n\n[licences.\"Apache-2.0\"]\nname = \"Apache-2.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-SA-4.0\"]\nname = \"CC-BY-SA-4.0\"\ncommercial = \"yes\"\nshare_alike\t=  true\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-NC-SA-4.0\"]\nname = \"CC-BY-NC-SA-4.0\"\ncommercial = \"no\"\nshare_alike\t=  true\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-4.0\"]\nname = \"CC-BY-4.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = [\"weapons that can harm humans\"]\ndistribution = \"public\"\n\n[licences.\"LicenseRef-unstated\"]\nname = \"LicenseRef-unstated\"\ncommercial = \"unknown\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"OGL-UK-3.0\"]\nname = \"OGL-UK-3.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"controlled\"\n",
+    "model/core.def": "module core\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nkey lat float - \"a fixture key\"\n",
+    "model/mc.def": "module mc\nversion 0.93.0\ndistribution public # note\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\n",
+    "model/mq.def": "module mq\nversion 0.93.0\ndistribution \"public\"\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\n",
+    "model/mu.def": "module mu\nversion 0.93.0\ndistribution\tpublic\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\n",
+    "packs/m-adjacent-quote/pack.def": "format c-m-adjacent-quote\nversion 0.93.0\ndistribution\"public\"\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-alone/pack.def": "format c-m-alone\nversion 0.93.0\ndistribution\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-byte-order-mark-first/pack.def": "﻿format c-m-byte-order-mark-first\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-byte-order-mark/pack.def": "﻿distribution public\nformat c-m-byte-order-mark\nversion 0.93.0\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-carriage-return-before/pack.def": {
+      "hex": "666f726d617420632d6d2d63617272696167652d72657475726e2d6265666f72650a76657273696f6e20302e39332e300a0d646973747269627574696f6e207075626c69630a736f757263652022676f61742d7472616e73666f726d65727320737065632f656e67696e652d737065632e6d642c2056657273696f6e20302e3933202873796e74686574696320666978747572652c206e6f2065787465726e616c207374616e6461726429220a77697265206a736f6e0a6669656c64206c617420706f732e6c617420666c6f61740a"
+    },
+    "packs/m-carriage-return-between/pack.def": {
+      "hex": "666f726d617420632d6d2d63617272696167652d72657475726e2d6265747765656e0a76657273696f6e20302e39332e300a646973747269627574696f6e0d7075626c69630a736f757263652022676f61742d7472616e73666f726d65727320737065632f656e67696e652d737065632e6d642c2056657273696f6e20302e3933202873796e74686574696320666978747572652c206e6f2065787465726e616c207374616e6461726429220a77697265206a736f6e0a6669656c64206c617420706f732e6c617420666c6f61740a"
+    },
+    "packs/m-comment/pack.def": "format c-m-comment\nversion 0.93.0\ndistribution public # note\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-controlled-tabs/pack.def": "format c-m-controlled-tabs\nversion 0.93.0\n\tdistribution\tcontrolled\t\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-controlled/pack.def": "format c-m-controlled\nversion 0.93.0\ndistribution controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-extra-token/pack.def": "format c-m-extra-token\nversion 0.93.0\ndistribution public public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-no-line/pack.def": "format c-m-no-line\nversion 0.93.0\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-not-utf-8/pack.def": {
+      "hex": "666f726d617420632d6d2d6e6f742d7574662d380a76657273696f6e20302e39332e300a646973747269627574696f6e207075626c69630a736f757263652022676f61742d7472616e73666f726d65727320737065632f656e67696e652d737065632e6d642c2056657273696f6e20302e3933202873796e74686574696320666978747572652c206e6f2065787465726e616c207374616e6461726429220a77697265206a736f6e0a6669656c64206c617420706f732e6c617420666c6f61740a2320ff0a"
+    },
+    "packs/m-nul-in-a-comment/pack.def": {
+      "hex": "666f726d617420632d6d2d6e756c2d696e2d612d636f6d6d656e740a76657273696f6e20302e39332e300a2320000a646973747269627574696f6e207075626c69630a736f757263652022676f61742d7472616e73666f726d65727320737065632f656e67696e652d737065632e6d642c2056657273696f6e20302e3933202873796e74686574696320666978747572652c206e6f2065787465726e616c207374616e6461726429220a77697265206a736f6e0a6669656c64206c617420706f732e6c617420666c6f61740a"
+    },
+    "packs/m-nul/pack.def": {
+      "hex": "666f726d617420632d6d2d6e756c0a76657273696f6e20302e39332e300a22646973747269627574696f6e2220636f6e74726f6c6c65640a000a646973747269627574696f6e207075626c69630a736f757263652022676f61742d7472616e73666f726d65727320737065632f656e67696e652d737065632e6d642c2056657273696f6e20302e3933202873796e74686574696320666978747572652c206e6f2065787465726e616c207374616e6461726429220a77697265206a736f6e0a6669656c64206c617420706f732e6c617420666c6f61740a"
+    },
+    "packs/m-other-value/pack.def": "format c-m-other-value\nversion 0.93.0\ndistribution restricted\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-public-and-adjacent-quote/pack.def": "format c-m-public-and-adjacent-quote\nversion 0.93.0\ndistribution public\ndistribution\"controlled\"\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-public-and-carriage-return/pack.def": {
+      "hex": "666f726d617420632d6d2d7075626c69632d616e642d63617272696167652d72657475726e0a76657273696f6e20302e39332e300a646973747269627574696f6e207075626c69630a0d646973747269627574696f6e20636f6e74726f6c6c65640a736f757263652022676f61742d7472616e73666f726d65727320737065632f656e67696e652d737065632e6d642c2056657273696f6e20302e3933202873796e74686574696320666978747572652c206e6f2065787465726e616c207374616e6461726429220a77697265206a736f6e0a6669656c64206c617420706f732e6c617420666c6f61740a"
+    },
+    "packs/m-public-and-comment/pack.def": "format c-m-public-and-comment\nversion 0.93.0\ndistribution public\ndistribution # x\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-public-and-longer-word/pack.def": "format c-m-public-and-longer-word\nversion 0.93.0\ndistribution public\ndistributions controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-public-and-quote-inside/pack.def": "format c-m-public-and-quote-inside\nversion 0.93.0\ndistribution public\ndistri\"bution\" controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-public-and-quoted-line/pack.def": "format c-m-public-and-quoted-line\nversion 0.93.0\ndistribution public\n\"distribution public\"\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-public-and-quoted-word/pack.def": "format c-m-public-and-quoted-word\nversion 0.93.0\ndistribution public\n\"distribution\" controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-quoted-controlled/pack.def": "format c-m-quoted-controlled\nversion 0.93.0\ndistribution \"controlled\"\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-quoted-word/pack.def": "format c-m-quoted-word\nversion 0.93.0\n\"distribution\" public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-quoted/pack.def": "format c-m-quoted\nversion 0.93.0\ndistribution \"public\"\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-two-lines-reversed/pack.def": "format c-m-two-lines-reversed\nversion 0.93.0\ndistribution controlled\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-two-lines/pack.def": "format c-m-two-lines\nversion 0.93.0\ndistribution public\ndistribution controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-upper-case-value/pack.def": "format c-m-upper-case-value\nversion 0.93.0\ndistribution Public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/m-uses-mc/pack.def": "format c-m-uses-mc\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses mc\nwire json\nfield lat pos.lat float\n",
+    "packs/m-uses-mq/pack.def": "format c-m-uses-mq\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses mq\nwire json\nfield lat pos.lat float\n",
+    "packs/u-commented-out/pack.def": "format c-u-commented-out\nversion 0.93.0\n# distribution controlled\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/u-plain/pack.def": "format c-u-plain\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/u-source-text/pack.def": "format c-u-source-text\nversion 0.93.0\ndistribution public\nsource \"distribution controlled\"\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/u-spaces-and-tabs/pack.def": "format c-u-spaces-and-tabs\nversion 0.93.0\n \tdistribution \t public\t \nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/u-uses-mu/pack.def": "format c-u-uses-mu\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses mu\nwire json\nfield lat pos.lat float\n"
+  },
+  "exit": 1,
+  "error_kind": "missing-distribution"
+}

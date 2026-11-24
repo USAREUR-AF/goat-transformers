@@ -376,6 +376,40 @@ fn name_lines(path: &Path) -> (Option<String>, Vec<String>) {
     (module, uses)
 }
 
+/// Engine-spec 0.93, ruling 1: is this module file or `pack.def` shown
+/// public? It is when it was read as UTF-8, holds no NUL, no U+FEFF and no
+/// carriage return other than one directly before a line feed or at the end
+/// of the file, has at least one line (cut and trimmed as `lines`) that is
+/// exactly `distribution`, spaces or tabs, `public`, and has no doubtful
+/// line: one that, with its double quotes removed and then spaces, tabs and
+/// carriage returns trimmed at its ends, begins with `distribution` and is
+/// not that exact line.
+fn shown_public(path: &Path) -> bool {
+    let text = match std::fs::read(path).ok().and_then(|b| String::from_utf8(b).ok()) {
+        Some(t) => t,
+        None => return false,
+    };
+    if text.contains(['\0', '\u{feff}']) {
+        return false;
+    }
+    let b = text.as_bytes();
+    if b.iter().enumerate().any(|(i, &c)| c == b'\r' && i + 1 != b.len() && b[i + 1] != b'\n') {
+        return false;
+    }
+    let mut public = false;
+    for line in lines(&text) {
+        if after_word(line, "distribution") == Some("public") {
+            public = true;
+            continue;
+        }
+        let unquoted: String = line.chars().filter(|&c| c != '"').collect();
+        if unquoted.trim_matches(|c| c == ' ' || c == '\t' || c == '\r').starts_with("distribution") {
+            return false;
+        }
+    }
+    public
+}
+
 /// What the pre-pass of ruling 3b learned.
 struct Licences {
     table: HashMap<String, u8>,
@@ -394,8 +428,13 @@ impl Licences {
         let mut names: Vec<(Option<String>, Vec<String>)> = Vec::new();
         for f in files {
             let lic = module_licence(&beside(f, ".license"))?;
-            own.push(*table.get(&lic).unwrap_or(&2));
-            names.push(name_lines(f));
+            let lines = name_lines(f);
+            // 0.93, ruling 2: a file that is not shown public is in none, and
+            // so is one that 2b gives no name (fail closed: with a profile it
+            // is not loaded, and what uses it is `unknown-module`)
+            let public = shown_public(f) && lines.0.is_some();
+            own.push(if public { *table.get(&lic).unwrap_or(&2) } else { NONE });
+            names.push(lines);
         }
         // the widest over what each module uses, directly or through others:
         // a fixed point, so that a cycle of `uses` ends
@@ -428,7 +467,8 @@ impl Licences {
     /// Ruling 2c: a pack's licence and profile rank.
     fn pack(&self, dir: &Path, def: &Path) -> Result<(String, u8), Error> {
         let lic = pack_licence(&dir.join("REUSE.toml"))?;
-        let mut rank = *self.table.get(&lic).unwrap_or(&2);
+        // 0.93, ruling 2: a `pack.def` that is not shown public is in none
+        let mut rank = if shown_public(def) { *self.table.get(&lic).unwrap_or(&2) } else { NONE };
         let (_, uses) = name_lines(def);
         for name in std::iter::once("core").chain(uses.iter().map(String::as_str)) {
             if let Some(&r) = self.by_name.get(name) {
@@ -438,6 +478,23 @@ impl Licences {
         Ok((lic, rank))
     }
 }
+
+// A test's hook between the reading of a file for its profile and its load
+// (0.93, ruling 5: a file that changed in between); nothing outside tests.
+#[cfg(test)]
+thread_local! {
+    static BETWEEN: std::cell::RefCell<Option<Box<dyn Fn(&Path)>>> = std::cell::RefCell::new(None);
+}
+#[cfg(test)]
+fn between(p: &Path) {
+    BETWEEN.with(|b| {
+        if let Some(f) = &*b.borrow() {
+            f(p)
+        }
+    })
+}
+#[cfg(not(test))]
+fn between(_: &Path) {}
 
 /// A `--packs-only` name: one path component, not `.` or `..`.
 fn plain_name(name: &str) -> bool {
@@ -459,6 +516,23 @@ impl Engine {
     /// failure. Returns the packs loaded, in the order loaded.
     pub fn load_tree(&mut self, packs: &Path, opts: &LoadOptions) -> Result<Vec<LoadedPack>, Error> {
         let profile = opts.profile.as_deref().map(Profile::parse).transpose()?;
+        if profile.is_some() {
+            // 0.93, ruling 6: after the name, and before anything is read, an
+            // instance that already holds a controlled module or pack is
+            // refused; then the limit is `public` for the life of the
+            // instance, also when this load fails later (ruling 5)
+            if let Some(what) = self.holds_controlled() {
+                return Err(Error {
+                    msg: format!(
+                        "distribution-refused: this engine already holds controlled {}, so it cannot load with a licence profile",
+                        what
+                    ),
+                });
+            }
+            // set only after the name and the instance check: a refusal by
+            // either leaves the limit unchanged (ruling 6)
+            self.limit_by_profile();
+        }
         let models = opts.models.clone().unwrap_or_else(|| beside(packs, "/../model"));
         let files = module_files(&models);
         let licences = if profile.is_some() || opts.read_licences { Some(Licences::read(packs, &files)?) } else { None };
@@ -467,6 +541,7 @@ impl Engine {
             Some(l) => files.into_iter().zip(&l.file_rank).filter(|(_, &r)| held(r)).map(|(f, _)| f).collect(),
             None => files,
         };
+        between(&models);
         self.load_model_files(files)?;
 
         // the packs reached, in order: (directory name, directory)
@@ -510,6 +585,7 @@ impl Engine {
                 }
                 None => None,
             };
+            between(&def);
             let format = self.load_pack_file(&def)?;
             loaded.push(LoadedPack { dir: name, format, licence });
         }
@@ -571,5 +647,170 @@ mod tests {
         assert_eq!(after_word("uses  x", "uses"), Some("x"));
         assert_eq!(after_word("usesx", "uses"), None);
         assert_eq!(key_value("share_alike\t=  true", "share_alike"), Some("true"));
+    }
+
+    // Engine-spec 0.93, ruling 5: "A file that reads as controlled when it is
+    // loaded is `distribution-refused` and the load fails, as any load
+    // failure. By ruling 2 that is only a file that changed after it was
+    // read for its profile." The hook `between` changes it in that gap.
+
+    struct Tree(PathBuf);
+    impl Drop for Tree {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+    const CORE: &str = "module core\nversion 1.0.0\ndistribution public\nsource \"t\"\nkey lat float -\n";
+    fn pack(format: &str, distribution: &str) -> String {
+        format!("format {}\nversion 1.0.0\ndistribution {}\nsource \"t\"\nwire json\nfield lat pos.lat float\n", format, distribution)
+    }
+    fn tree(tag: &str, files: &[(&str, String)]) -> Tree {
+        let root = std::env::temp_dir().join(format!("goat-xf-093-r5-{}-{}", tag, std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        for (path, text) in files {
+            let f = root.join(path);
+            std::fs::create_dir_all(f.parent().unwrap()).unwrap();
+            std::fs::write(&f, text).unwrap();
+        }
+        Tree(root)
+    }
+    /// Run `f` with the hook set to `hook`, and clear it after.
+    fn with_hook<T>(hook: impl Fn(&Path) + 'static, f: impl FnOnce() -> T) -> T {
+        BETWEEN.with(|b| *b.borrow_mut() = Some(Box::new(hook)));
+        let out = f();
+        BETWEEN.with(|b| *b.borrow_mut() = None);
+        out
+    }
+    fn profile(p: &str) -> LoadOptions {
+        LoadOptions { profile: Some(p.to_string()), ..LoadOptions::default() }
+    }
+
+    /// A `pack.def` shown public when its profile was read, controlled when
+    /// it is loaded: `distribution-refused`, also when the caller asked for
+    /// `controlled` ("without a message also when the caller asked for
+    /// `controlled`"), and the load stops there, so the next pack is not
+    /// loaded.
+    #[test]
+    #[cfg(feature = "json")] // the packs are on the `json` wire
+    fn a_pack_changed_after_its_profile_is_refused() {
+        let t = tree(
+            "pack",
+            &[
+                ("model/core.def", CORE.to_string()),
+                ("packs/a/pack.def", pack("c-a", "public")),
+                ("packs/b/pack.def", pack("c-b", "public")),
+            ],
+        );
+        let changed = t.0.join("packs/a/pack.def");
+        let mut e = Engine::new();
+        e.set_max_distribution(crate::Distribution::Controlled);
+        let r = with_hook(
+            move |p: &Path| {
+                if p == changed {
+                    std::fs::write(p, pack("c-a", "controlled")).unwrap();
+                }
+            },
+            || e.load_tree(&t.0.join("packs"), &profile("everything")),
+        );
+        let err = r.unwrap_err();
+        assert!(err.msg.starts_with("distribution-refused:"), "{}", err.msg);
+        assert!(e.formats().is_empty(), "{:?}", e.formats());
+    }
+
+    /// A module file shown public when the profiles were computed,
+    /// controlled when the modules are loaded: `distribution-refused`, and no
+    /// pack is loaded.
+    #[test]
+    #[cfg(feature = "json")] // the packs are on the `json` wire
+    fn a_module_changed_after_its_profile_is_refused() {
+        let t = tree(
+            "module",
+            &[
+                ("model/core.def", CORE.to_string()),
+                ("model/extra.def", "module extra\nversion 1.0.0\ndistribution public\nsource \"t\"\n".to_string()),
+                ("packs/a/pack.def", pack("c-a", "public")),
+            ],
+        );
+        let models = t.0.join("packs/../model");
+        let mut e = Engine::new();
+        let r = with_hook(
+            move |p: &Path| {
+                if p == models {
+                    std::fs::write(
+                        p.join("extra.def"),
+                        "module extra\nversion 1.0.0\ndistribution controlled\nsource \"t\"\n",
+                    )
+                    .unwrap();
+                }
+            },
+            || e.load_tree(&t.0.join("packs"), &profile("open")),
+        );
+        let err = r.unwrap_err();
+        assert!(err.msg.starts_with("distribution-refused:"), "{}", err.msg);
+        assert!(e.formats().is_empty(), "{:?}", e.formats());
+        assert!(!e.modules().contains(&"extra".to_string()), "{:?}", e.modules());
+    }
+
+    /// Without a profile the same change is loaded: the limit stays
+    /// `controlled` (ruling 7), so only the profile makes the refusal.
+    #[test]
+    #[cfg(feature = "json")] // the packs are on the `json` wire
+    fn without_a_profile_a_changed_pack_loads() {
+        let t = tree("noprofile", &[("model/core.def", CORE.to_string()), ("packs/a/pack.def", pack("c-a", "public"))]);
+        let changed = t.0.join("packs/a/pack.def");
+        let mut e = Engine::new();
+        let read = LoadOptions { read_licences: true, ..LoadOptions::default() };
+        with_hook(
+            move |p: &Path| {
+                if p == changed {
+                    std::fs::write(p, pack("c-a", "controlled")).unwrap();
+                }
+            },
+            || e.load_tree(&t.0.join("packs"), &read),
+        )
+        .unwrap();
+        assert_eq!(e.formats(), vec!["c-a"]);
+    }
+
+    /// Ruling 1: the forms of a shown-public file.
+    #[test]
+    fn shown_public_forms() {
+        let check = |n: usize, bytes: &[u8]| {
+            let dir = std::env::temp_dir().join(format!("goat-xf-093-sp-{}-{}", std::process::id(), n));
+            std::fs::create_dir_all(&dir).unwrap();
+            let f = dir.join("pack.def");
+            std::fs::write(&f, bytes).unwrap();
+            let got = shown_public(&f);
+            let _ = std::fs::remove_dir_all(&dir);
+            got
+        };
+        let yes: [&[u8]; 5] = [
+            b"distribution public\n",
+            b"  distribution\t public \r\n",
+            b"format x\ndistribution public\r",
+            b"distribution public\ndistribution public\n",
+            b"# distribution controlled\ndistribution public\n",
+        ];
+        for (n, b) in yes.iter().enumerate() {
+            assert!(check(n, b), "{:?}", String::from_utf8_lossy(b));
+        }
+        let no: [&[u8]; 12] = [
+            b"distribution controlled\n",
+            b"format x\n",
+            b"distribution public\n\"distribution\" controlled\n",
+            b"distribution public\ndistri\"bution\" x\n",
+            b"distribution public\ndistribution\"controlled\"\n",
+            b"distribution public\ndistribution # x\n",
+            b"distribution \"public\"\n",
+            b"distribution\rpublic\n",
+            b"\rdistribution public\n",
+            b"\xef\xbb\xbfdistribution public\n",
+            b"distribution public\n\x00",
+            b"distribution public\n\xff\n",
+        ];
+        for (n, b) in no.iter().enumerate() {
+            assert!(!check(100 + n, b), "{:?}", String::from_utf8_lossy(b));
+        }
+        assert!(!shown_public(Path::new("/nonexistent/goat-xf/pack.def")));
     }
 }

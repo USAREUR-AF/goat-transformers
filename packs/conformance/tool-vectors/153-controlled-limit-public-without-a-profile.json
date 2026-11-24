@@ -1,0 +1,28 @@
+{
+  "name": "controlled-limit-public-without-a-profile",
+  "args": [
+    "list-formats",
+    "--max-distribution",
+    "public",
+    "--packs",
+    "{files}/packs"
+  ],
+  "files": {
+    "licences.toml": "# The flags of the fixture's licences (spec 0.29, ruling 1c).\n\n[licences.\"Apache-2.0\"]\nname = \"Apache-2.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-SA-4.0\"]\nname = \"CC-BY-SA-4.0\"\ncommercial = \"yes\"\nshare_alike\t=  true\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-NC-SA-4.0\"]\nname = \"CC-BY-NC-SA-4.0\"\ncommercial = \"no\"\nshare_alike\t=  true\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-4.0\"]\nname = \"CC-BY-4.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = [\"weapons that can harm humans\"]\ndistribution = \"public\"\n\n[licences.\"LicenseRef-unstated\"]\nname = \"LicenseRef-unstated\"\ncommercial = \"unknown\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"OGL-UK-3.0\"]\nname = \"OGL-UK-3.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"controlled\"\n",
+    "model/core.def": "module core\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nkey lat float - \"a fixture key\"\n",
+    "model/ctl.def": "module ctl\nversion 0.93.0\ndistribution controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\n",
+    "packs/ctl-apache/pack.def": "format c-ctl-apache\nversion 0.93.0\ndistribution controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/ctl-nc/REUSE.toml": "version = 1\n\n[[annotations]]\npath = \"**\"\nprecedence = \"override\"\nSPDX-FileCopyrightText = \"2026 goat-transformers fixture\"\nSPDX-License-Identifier = \"CC-BY-NC-SA-4.0\"\n",
+    "packs/ctl-nc/pack.def": "format c-ctl-nc\nversion 0.93.0\ndistribution controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/ctl-sa/REUSE.toml": "version = 1\n\n[[annotations]]\npath = \"**\"\nprecedence = \"override\"\nSPDX-FileCopyrightText = \"2026 goat-transformers fixture\"\nSPDX-License-Identifier = \"CC-BY-SA-4.0\"\n",
+    "packs/ctl-sa/pack.def": "format c-ctl-sa\nversion 0.93.0\ndistribution controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/ctl-uses-ctl/pack.def": "format c-ctl-uses-ctl\nversion 0.93.0\ndistribution controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses ctl\nwire json\nfield lat pos.lat float\n",
+    "packs/pub-apache/pack.def": "format c-pub-apache\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/pub-nc/REUSE.toml": "version = 1\n\n[[annotations]]\npath = \"**\"\nprecedence = \"override\"\nSPDX-FileCopyrightText = \"2026 goat-transformers fixture\"\nSPDX-License-Identifier = \"CC-BY-NC-SA-4.0\"\n",
+    "packs/pub-nc/pack.def": "format c-pub-nc\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/pub-sa/REUSE.toml": "version = 1\n\n[[annotations]]\npath = \"**\"\nprecedence = \"override\"\nSPDX-FileCopyrightText = \"2026 goat-transformers fixture\"\nSPDX-License-Identifier = \"CC-BY-SA-4.0\"\n",
+    "packs/pub-sa/pack.def": "format c-pub-sa\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n"
+  },
+  "exit": 1,
+  "error_kind": "distribution-refused"
+}

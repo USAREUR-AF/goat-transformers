@@ -5717,6 +5717,107 @@ kind's last line is not fixed either.
 - A look-ahead past lines of variable width.
 - `at` on a fixed layout, where every `when` is already positional.
 
+# Version 0.93: a controlled pack is in no licence profile
+
+Status: Written. Version 0.29 takes the profile of a pack and of a module from
+its licence and the licence table alone. A pack whose own `distribution` line
+says `controlled` (0.4), under a licence that the table calls public, is then
+in a profile and loads under it. A profile is a promise about what may be
+passed on, so this version puts a file in a profile only when the file itself
+says that it is public.
+
+It adds no directive, no option and no error kind. It amends, in 0.29: 2a to
+2c, "Two lines are read" in 2b, 3a, and "every earlier result holds" for files
+that do not hold the exact line of ruling 1; in 0.23: the default of
+`--max-distribution` beside a profile; in 0.4: the distribution limit.
+
+## Rulings
+
+1. **Shown public.** A module file or `pack.def` is **shown public** when it
+   was read as UTF-8, at least one of its lines, cut and trimmed as ruling 1
+   of 0.29 says, is exactly `distribution`, one or more spaces or tabs, and
+   `public`, and no line is a **doubtful** one. A line is doubtful when, with
+   every double quote in it removed and then spaces, tabs and carriage returns
+   removed at its ends, it begins with `distribution`, and it is not that exact
+   line (with its quotes). So `"distribution" controlled`, `distri"bution" x`,
+   `distribution"controlled"` and `distribution # x` are doubtful. A file that
+   holds a NUL byte, a U+FEFF, or a carriage return that is not directly before
+   a line feed or at the end of the file, anywhere, that has no such line, or
+   that is not UTF-8 or cannot be read, is not shown public.
+2. **The profile.** A file that is not shown public has the profile none,
+   whatever its licence and the table say. Through 2b and 2c of 0.29, so has
+   every module and pack that uses it, and with a `core` that is not shown
+   public, and whose `module` line 2b reads, every pack. With a profile, a module
+   file that 2b gives no name is **not loaded, also when it is shown public**
+   (`module mx # note`, `module "mx"`), and a pack or module that uses it is
+   `unknown-module`, as any pack that uses a module that is not loaded: by 2b
+   its `uses` finds no module, so nothing of the module's licence would reach
+   it. `core` is no exception: with such a line it is not loaded, and a pack
+   that uses it is `unknown-module` (as for a `core` that cannot be read). With no profile nothing changes
+   (ruling 7). For a tool (ruling 8) such a module file has the profile none,
+   and so has a pack or module with a `uses` line whose name no module file
+   has.
+3. **The order of reading** stays that of 0.29: the licence of a module or
+   pack is read first, so `bad-licence` comes before the skip, and the checks
+   of a `--packs-only` name come before both.
+4. **What is skipped is skipped** as 3c to 3e of 0.29 state: the module is not
+   loaded, the pack is not otherwise read, so its own load errors
+   (`missing-distribution` among them) are not reported. `--packs-only` with
+   such a name skips it, without an error. A pack whose `uses` line 2b does
+   not read and that names a skipped module is `unknown-module`.
+5. **A profile sets the limit.** With a profile, the distribution limit of 0.4
+   is `public`, without a message also when the caller asked for `controlled`.
+   A file that reads as controlled when it is loaded is `distribution-refused`
+   and the load fails, as any load failure. By ruling 2 that is only a file
+   that changed after it was read for its profile; an engine that reads each
+   file once and loads the bytes it checked cannot meet it, and tests the
+   refusal with a hook of its own.
+6. **An engine in a program.** The limit of ruling 5 is the engine instance's
+   from the load with a profile on: its limit is the lower of `public` and what
+   a caller sets before or after, so a controlled text loaded directly later
+   is `distribution-refused`. A load with a profile on an instance that
+   already holds a controlled module or pack is `distribution-refused` before
+   anything is read. The order: a profile name that is none of the three is
+   `bad-licence` first; then that instance check; both refuse with the limit
+   unchanged and leave no trace. Then the limit is `public`, and stays so when
+   the load fails later, so what it loaded before it failed stays within it. Setting
+   `controlled` afterwards is no error and has no effect. A later load with no
+   profile is bounded by the limit, not by the profile.
+7. **No profile asked for:** nothing here is read and nothing changes, except
+   by `licences`, which reads every file as 4c of 0.29 says and lists a pack
+   that is not shown public with the profile `none`.
+8. **The tools.** `tools/licences.py`, and every tool that chooses packs or
+   modules by a profile, give the same profiles: a tool does not load what it
+   chooses, so ruling 1 is all that stands there. For a tool a pack or module
+   with a **doubtful** `uses` line also has the profile none: a line that,
+   with every double quote removed and then spaces, tabs and carriage returns
+   removed at its ends, begins with `uses`, and that 2b does not read. In an
+   engine such a line is not looked at: a pack whose line names a skipped
+   module is `unknown-module` (ruling 4). `tools/licences.py --check` refuses a
+   `model/*.def` or a `packs/*/pack.def` that is not shown public or has a
+   doubtful `uses` line.
+
+## Until an engine has this version
+
+`--max-distribution public` beside `--profile` refuses every controlled file
+in an engine. It does nothing for a tool that packages by profile.
+
+## Vector additions
+
+Tool vectors from 139. A file that is not shown public never stands in the
+repository as a file: a vector carries it in its `files` member
+(`spec/vector-format.md`). A
+controlled pack under each of three public licences and each profile; a
+controlled module under a public licence and a public pack that uses it,
+directly and through another; a `core` that is not shown public; each form of
+ruling 1, the carriage return between the words and before them, the quoted
+word, the byte-order mark, a file that is not UTF-8, no line, `public` beside
+a doubtful line; such a pack with a bad licence file; a quoted `uses` of a
+skipped module; a skipped name in `--packs-only`; `licences` with and without
+a profile and with `--json`; `--max-distribution controlled` beside a profile;
+no profile. Ruling 6 needs a test in each engine's library, and ruling 8 a
+test of the tools.
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in

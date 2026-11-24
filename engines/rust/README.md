@@ -44,7 +44,7 @@ The methods of `Engine`:
 | Method | Does |
 |---|---|
 | `new()` | an empty engine |
-| `set_max_distribution(d)` | refuse modules and packs above `d` with `distribution-refused` |
+| `set_max_distribution(d)` | refuse modules and packs above `d` with `distribution-refused`; after a load with a licence profile the limit stays `public` (spec 0.93) |
 | `set_max_items(n)` | the limit on list items one decode holds (default `DEFAULT_MAX_ITEMS`, 100000); one more is `malformed-wire` |
 | `load_model(text)`, `load_model_dir(dir)` | load one model module, or every `*.def` of a directory (`core.def` first, each module after the modules it uses) |
 | `load_def(text)`, `load_pack_dir(dir)` | load one pack, or every `<dir>/<name>/pack.def` |
@@ -95,9 +95,11 @@ From these every pack and module is in one of three profiles, or in none
 | `open+copyleft` | `open`, and share-alike licences that allow commercial use |
 | `everything` | every public licence: also non-commercial, unknown, or with a field-of-use limit |
 
-A licence marked `distribution = "controlled"` is in none of them. A pack's
-profile is the widest of its own licence, `core`'s, and those of the modules
-it uses. `load_tree` takes the profile as text, so a wrong name is
+A licence marked `distribution = "controlled"` is in none of them, and so is
+a module file or `pack.def` that does not itself say `distribution public`
+in exactly that form, with no other line beginning with `distribution`
+(spec 0.93). A pack's profile is the widest of its own licence, `core`'s,
+and those of the modules it uses. `load_tree` takes the profile as text, so a wrong name is
 `bad-licence` before anything is read:
 
 ```rust
@@ -122,6 +124,13 @@ profile and no `read_licences`, no licence file is read and everything loads
 as before. A licence file that does not follow the forms of the
 specification is `bad-licence`.
 
+A load with a profile sets the engine's distribution limit to `public` for
+the life of the instance, whatever `set_max_distribution` was given before
+or after (spec 0.93): a controlled module or pack loaded later, with or
+without a profile, is `distribution-refused`. On an instance that already
+holds a controlled module or pack, a load with a profile is
+`distribution-refused` before anything is read.
+
 ## The command-line tool `goat-xf`
 
 The tool follows the command-line contract of spec 0.23
@@ -142,7 +151,7 @@ goat-xf help
 | `--models <dir>` | the model modules; default `<packs>/../model` |
 | `--packs-only <name>[,<name>...]` | load only these packs of `--packs`, in this order |
 | `--max-items <n>` | the limit on list items one decode holds; default 100000, 0 refuses any item |
-| `--max-distribution <public\|controlled>` | `public` refuses controlled modules and packs |
+| `--max-distribution <public\|controlled>` | `public` refuses controlled modules and packs; beside `--profile` the limit is `public` whatever is given (spec 0.93) |
 | `--profile <open\|open+copyleft\|everything>` | load only the modules and packs this licence profile holds (spec 0.29); default: no profile, no licence file read |
 
 `convert` reads the message on standard input and writes the result to
@@ -191,9 +200,9 @@ zz-first-by-format	lic-aa	Apache-2.0	open
 | `tests/parse_once.rs` | spec 0.25, ruling 1: every conversion vector, failing ones included, gives the same output or error on one instance in line order, in reverse order and on four threads at once; the benchmark set and one failing vector of each wire give the same on a new instance; a second load is still a duplicate (the debug build runs the reverse order and the threads on every eighth vector and every failing one, and the new instance for the failing vectors only) | 3 tests |
 | `tests/seconds.rs` | spec 0.26, ruling 1: the transform `iso8601_s` loads on the xml, geojson, json and text wires; it is `bad-directive` on another wire and with a parameter; it gives an integer, so on a key of another type it is `key-type-mismatch`; writing drops the milliseconds and keeps to the years 0001 to 9999 | 5 tests |
 | `tests/inner.rs` | spec 0.34: keys and lists that the outer and the inner message both hold (Decode step 4, rulings 7, 17, 19, 22 and 23) | 8 tests |
-| `tests/licences.rs` | spec 0.29: `load_tree` with a licence profile on the fixture trees of the tool vectors: what each profile loads and skips, the widest profile of a pack and its modules, a skipped broken pack, `bad-licence` for a wrong profile name and for a bad licence file before any module loads, no licence file read without a profile, a non-directory on the path read as an absent file | 6 tests |
+| `tests/licences.rs` | spec 0.29: `load_tree` with a licence profile on the fixture trees of the tool vectors: what each profile loads and skips, the widest profile of a pack and its modules, a skipped broken pack, `bad-licence` for a wrong profile name and for a bad licence file before any module loads, no licence file read without a profile, a non-directory on the path read as an absent file; spec 0.93, ruling 6: the instance's limit after a load with a profile, set before or after, a later direct load and a later load with no profile, an instance that already holds a controlled module or pack, the order of the errors, a failed load that keeps the limit; with spec 0.34, a controlled `inner` pack never loads: not shown public or using a controlled module under a profile, or refused by a `public` limit, while the public outer pack loads alone and is `unknown-format` at its `inner` line; under a profile a module file with no name by 0.29 2b (`module mx # note`, `module "mx"`, `core` too) is not loaded and what uses it is `unknown-module` | 21 tests |
 | `tests/reduced.rs` | spec 0.24: a pack on a wire the build lacks is `unknown-wire`; a value that is no wire keeps its message (run in a reduced build by `reduced-build-check.sh`) | 2 tests |
-| `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23 and the licence profiles of spec 0.29: every tool vector under `packs/conformance/tool-vectors/` | 135 tool vectors, 0 failed |
+| `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23 and the licence profiles of spec 0.29: every tool vector under `packs/conformance/tool-vectors/` | 183 tool vectors, 0 failed |
 
 `GOAT_FUZZ_ITERS=<n>` multiplies the fuzz inputs; `GOAT_FUZZ_SEED=<n>`
 changes the seed.

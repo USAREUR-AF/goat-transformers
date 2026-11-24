@@ -156,6 +156,101 @@ class Tree(unittest.TestCase):
         self.assertEqual(self.profiles()["plain"], "none")
         self.assertIn("plain", lic.excluded(self.root, "everything")["packs"])
 
+    # --- spec 0.93: a file is in a profile only when it shows itself public ---
+
+    def test_a_controlled_pack_under_a_public_licence_is_in_no_profile(self):
+        for target, lid in (("packs/plain", None), ("packs/copyleft", "CC-BY-SA-4.0"), ("packs/nc", "CC-BY-NC-SA-4.0")):
+            name = target.split("/")[1]
+            self.tree.write(target + "/pack.def", "format f-%s\n" % name + HEAD.replace("public", "controlled") + "wire json\n")
+            self.assertEqual(self.profiles()[name], "none", lid)
+            for profile in lic.PROFILES:
+                self.assertIn(name, lic.excluded(self.root, profile)["packs"])
+            problems, _ = lic.check(self.root)
+            self.assertTrue(any("pack %s is not shown public" % name in p for p in problems), problems)
+
+    def test_each_form_that_is_not_shown_public(self):
+        body = "format f-plain\nversion 1.0.0\nsource \"test\"\nwire json\n"
+        cases = {
+            "no line": body.encode(),
+            "quoted word": ('"distribution" public\n' + body).encode(),
+            "quoted value": ('distribution "public"\n' + body).encode(),
+            "comment": ("distribution public # x\n" + body).encode(),
+            "public and a doubtful line": ('distribution public\ndistri"bution" controlled\n' + body).encode(),
+            "glued": ('distribution public\ndistribution"controlled"\n' + body).encode(),
+            "word alone": ("distribution public\ndistribution\n" + body).encode(),
+            "two values": ("distribution public\ndistribution controlled\n" + body).encode(),
+            "cr between words": ("distribution\rpublic\n" + body).encode(),
+            "lone cr elsewhere": ("distribution public\n" + body + "x\ry\n").encode(),
+            "bom": ("\ufeffdistribution public\n" + body).encode(),
+            "bom later": ("distribution public\n# \ufeff\n" + body).encode(),
+            "nul": ("distribution public\n" + body + "\0").encode(),
+            "not utf-8": b"distribution public\n" + body.encode() + b"\xff\n",
+        }
+        for why, data in cases.items():
+            self.tree.write("packs/plain/pack.def", data)
+            self.assertEqual(self.profiles()["plain"], "none", why)
+            self.assertIn("plain", lic.excluded(self.root, "everything")["packs"], why)
+
+    def test_forms_that_are_shown_public(self):
+        body = "format f-plain\nversion 1.0.0\nsource \"test\"\nwire json\n"
+        for why, text in {"tab": "distribution\tpublic\n", "spaces around": "  distribution   public \t\n",
+                          "crlf": "distribution public\r\n", "cr at the end": body + "distribution public\r",
+                          "another word": "distributions are fine\ndistribution public\n"}.items():
+            if why == "another word":
+                continue  # judged below: a line that begins with the word is doubtful
+            self.tree.write("packs/plain/pack.def", text if why == "cr at the end" else text + body)
+            self.assertEqual(self.profiles()["plain"], "open", why)
+        self.tree.write("packs/plain/pack.def", "distributions x\ndistribution public\n" + body)
+        self.assertEqual(self.profiles()["plain"], "none", "a line that begins with the word is doubtful")
+
+    def test_a_controlled_module_spreads_to_the_packs_that_use_it(self):
+        self.tree.write("model/book.def", "module book\n" + HEAD.replace("public", "controlled"))
+        p = self.profiles()
+        self.assertEqual((p["uses-book"], p["uses-derived"], p["plain"]), ("none", "none", "open"))
+        self.assertIn("derived.def", lic.excluded(self.root, "everything")["modules"])
+        self.assertIn("is not shown public", lic.survey(self.root)["packs"]["uses-derived"]["because"])
+
+    def test_a_core_not_shown_public_puts_every_pack_in_none(self):
+        self.tree.write("model/core.def", "module core\nversion 1.0.0\nsource \"test\"\n")
+        self.assertEqual(set(self.profiles().values()), {"none"})
+
+    def test_a_doubtful_uses_line(self):
+        for line in ('"uses" book', 'us"es" book', "uses book # x", "uses  book  x", 'uses"book"'):
+            self.tree.write("packs/plain/pack.def", "format f-plain\n" + HEAD + line + "\nwire json\n")
+            self.assertEqual(self.profiles()["plain"], "none", line)
+            self.assertTrue(any("doubtful uses" in p for p in lic.check(self.root)[0]), line)
+        self.tree.write("packs/plain/pack.def", "format f-plain\n" + HEAD + "uses\tbook\nwire json\n")
+        self.assertEqual(self.profiles()["plain"], "everything")
+
+    def test_a_module_file_without_a_name_and_what_uses_it(self):
+        """Spec 0.93 ruling 2 (fail closed): a module file 2b gives no name, and a
+        pack or module whose uses names no module file, are in no profile."""
+        for line in ("module book # note", 'module "book"'):
+            self.tree.write("model/book.def", line + "\n" + HEAD)
+            p = self.profiles()
+            self.assertEqual((p["uses-book"], p["uses-derived"], p["plain"]), ("none", "none", "open"), line)
+            s = lic.survey(self.root)
+            self.assertEqual(s["modules"]["book.def"]["profile"], "none", line)
+            self.assertIn("no module file names", s["packs"]["uses-book"]["because"])
+            self.assertTrue(any("has no module name" in x for x in lic.check(self.root)[0]), line)
+        self.tree.write("model/book.def", "module book\n" + HEAD)
+        self.tree.write("packs/plain/pack.def", "format f-plain\n" + HEAD + "uses nosuch\nwire json\n")
+        self.assertEqual(self.profiles()["plain"], "none")
+        self.assertIn("plain", lic.excluded(self.root, "everything")["packs"])
+
+    def test_a_tree_without_licence_files_still_leaves_out_a_controlled_pack(self):
+        for name in ("REUSE.toml", "licences.toml", "packs/copyleft/REUSE.toml", "packs/nc/REUSE.toml",
+                     "packs/fou/REUSE.toml", "packs/unstated/REUSE.toml", "model/book.def.license"):
+            os.remove(os.path.join(self.root, *name.split("/")))
+        self.tree.write("packs/plain/pack.def", "format f-plain\n" + HEAD.replace("public", "controlled") + "wire json\n")
+        self.assertEqual(set(lic.excluded(self.root, "open")["packs"]), {"plain"})
+
+    def test_a_pack_def_that_is_not_utf_8_does_not_stop_the_tool(self):
+        self.tree.write("packs/plain/pack.def", b"format f-plain\n\xff\n")
+        self.assertEqual(self.profiles()["plain"], "none")
+        code, _, _ = run_main(lic.main, "--list", root=self.root)
+        self.assertEqual(code, 0)
+
     def test_two_modules_of_one_name_take_the_wider(self):
         self.tree.write("model/book2.def", "module book\n" + HEAD)
         self.assertEqual(self.profiles()["uses-book"], "everything")

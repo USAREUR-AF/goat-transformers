@@ -239,6 +239,42 @@ final class Licences {
         return out;
     }
 
+    private static final Pattern SHOWN_PUBLIC = Pattern.compile("distribution[ \\t]+public");
+
+    /**
+     * Ruling 1 of 0.93: true when the text of a module file or {@code pack.def} is <b>shown public</b>. It holds no
+     * U+0000, no U+FEFF and no carriage return that is not directly before a line feed or at the end; at least one
+     * of its lines (cut and trimmed as ruling 1 of 0.29) is exactly {@code distribution}, spaces or tabs, and
+     * {@code public}; and no line is doubtful: with every double quote removed, then spaces, tabs and carriage
+     * returns removed at its ends, it begins with {@code distribution}, and it is not that exact line. Null text (a
+     * file that cannot be read or is not UTF-8) is not shown public.
+     */
+    static boolean shownPublic(String text) {
+        if (text == null) return false;
+        int n = text.length();
+        for (int i = 0; i < n; i++) {
+            char c = text.charAt(i);
+            if (c == '\0' || c == '\uFEFF') return false;
+            if (c == '\r' && i + 1 < n && text.charAt(i + 1) != '\n') return false;
+        }
+        boolean found = false;
+        for (String line : lines(text)) {
+            if (SHOWN_PUBLIC.matcher(line).matches()) {
+                found = true;
+                continue;
+            }
+            String bare = line.replace("\"", "");
+            int a = 0, b = bare.length();
+            while (a < b && " \t\r".indexOf(bare.charAt(a)) >= 0) a++;
+            while (b > a && " \t\r".indexOf(bare.charAt(b - 1)) >= 0) b--;
+            if (bare.startsWith("distribution", a) && b - a >= "distribution".length()) return false;
+        }
+        return found;
+    }
+
+    /** Ruling 2 of 0.93: the rank of a file from its licence's rank; none when the file is not shown public. */
+    static int fileRank(int licenceRank, String text) { return shownPublic(text) ? licenceRank : NONE; }
+
     /** UTF-8 text of a file, or null when it cannot be read or is not UTF-8 (ruling 2b: no line, never bad-licence). */
     static String textOrNull(byte[] bytes) { return bytes == null ? null : utf8(bytes); }
 
@@ -272,8 +308,11 @@ final class Licences {
                 String text = textOrNull(bytes);
                 if (text != null) texts.put(f.toString(), text);
                 files.add(f);
-                heads.add(heads(text));
-                ranks.add(lic);
+                List<String> head = heads(text);
+                heads.add(head);
+                // 0.93, ruling 2: a file not shown public is in no profile; with a profile, a module file that 2b gives
+                // no name is not loaded, shown public or not (what uses it then finds no module: unknown-module)
+                ranks.add(head.get(0) == null ? NONE : fileRank(lic, text));
             }
             // The widest of a module's own licence and the modules it uses, through others: a fixed point.
             boolean changed = true;
@@ -299,9 +338,12 @@ final class Licences {
             for (int i = 0; i < files.size(); i++) fileRank.put(files.get(i), ranks.get(i));
         }
 
-        /** 2c: the rank of a pack from its licence and the {@code uses} lines of its {@code pack.def} text (null: none). */
+        /**
+         * 2c: the rank of a pack from its licence and the {@code uses} lines of its {@code pack.def} text (null: none);
+         * none when the text is not shown public (0.93, ruling 2).
+         */
         int packRank(String licence, String packText) {
-            int r = rankOfLicence(table, licence);
+            int r = fileRank(rankOfLicence(table, licence), packText);   // 0.93, ruling 2
             Integer core = nameRank.get(ModelModule.CORE);
             if (core != null && core > r) r = core;
             List<String> h = heads(packText);

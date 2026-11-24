@@ -190,13 +190,19 @@ profile(Sub, Opts) -> {ok, Sub, Opts}.
 load(Sub, Opts) ->
     Packs = maps:get(<<"--packs">>, Opts, <<"packs">>),
     Models = maps:get(<<"--models">>, Opts, <<Packs/binary, "/../model">>),
-    E0 = gt_engine:set_max_distribution(gt_engine:new(),
-                                        maps:get(<<"--max-distribution">>, Opts, controlled)),
     Rank = case {maps:find(<<"--profile">>, Opts), Sub} of
                {{ok, R}, _} -> R;
                {error, <<"licences">>} -> 4;
                {error, _} -> off
            end,
+    %% a profile sets the limit to public, also beside --max-distribution
+    %% controlled (Version 0.93, ruling 5); `licences` without a profile
+    %% (rank 4) changes nothing (ruling 7)
+    Limit = case Rank of
+                R1 when is_integer(R1), R1 < 4 -> public;
+                _ -> maps:get(<<"--max-distribution">>, Opts, controlled)
+            end,
+    E0 = gt_engine:set_max_distribution(gt_engine:new(), Limit),
     %% each module file read once (ruling 1d of 0.25)
     Read = gt_engine:model_read(Models),
     {Ctx, Held} = case Rank of

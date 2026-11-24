@@ -35,6 +35,7 @@
 const std = @import("std");
 const build_options = @import("build_options");
 const licence = @import("licence.zig");
+const builtin = @import("builtin");
 pub const Profile = licence.Profile;
 
 // ---------------------------------------------------------------------------
@@ -3513,6 +3514,15 @@ pub const Engine = struct {
     packs: std.ArrayList(*Pack),
     pack_index: std.StringHashMap(*Pack),
     max_distribution: Dist = .controlled,
+    // Version 0.93, ruling 6: set by a load with a profile; from then on the
+    // limit is `public`, whatever a caller sets.
+    profile_limit: bool = false,
+    // Version 0.93, ruling 5: in a test build only, a hook that may change
+    // the text of a module file or `pack.def` after it was read for its
+    // profile and before it is loaded (this engine loads the pack bytes it
+    // checked, so the refusal cannot otherwise be reached for a pack).
+    test_load_hook: if (builtin.is_test) ?*const fn (std.mem.Allocator, []const u8, []const u8) []const u8 else void =
+        if (builtin.is_test) null else {},
     // The limit on the list items one decode holds (ruling 7 of 0.11).
     max_items: usize = default_max_items,
     // Message of the last failure: "<kind>: <detail>".
@@ -3529,8 +3539,32 @@ pub const Engine = struct {
         };
     }
 
+    // The distribution limit (Version 0.4). After a load with a profile it
+    // is the lower of `public` and `d` (Version 0.93, ruling 6): setting
+    // `controlled` then is no error and has no effect.
     pub fn setMaxDistribution(self: *Engine, d: Dist) void {
-        self.max_distribution = d;
+        self.max_distribution = if (self.profile_limit) .public else d;
+    }
+
+    // Does this instance hold a controlled module or pack?
+    fn holdsControlled(self: *const Engine) bool {
+        var it = self.modules.valueIterator();
+        while (it.next()) |m| {
+            if (m.*.distribution.? == .controlled) return true;
+        }
+        for (self.packs.items) |p| {
+            if (p.distribution.? == .controlled) return true;
+        }
+        return false;
+    }
+
+    // The text a file of a load with a profile is loaded from: the text read,
+    // or what the test hook makes of it (ruling 5 of 0.93).
+    fn hooked(self: *Engine, path: []const u8, text: []const u8) []const u8 {
+        if (builtin.is_test) {
+            if (self.test_load_hook) |h| return h(self.alloc, path, text);
+        }
+        return text;
     }
 
     fn fail(self: *Engine, err: anyerror, comptime fmt: []const u8, args: anytype) void {
@@ -3973,6 +4007,18 @@ pub const Engine = struct {
             (Profile.parse(name) orelse return self.failLicence(try std.fmt.allocPrint(alloc, "{s} is not a profile (open, open+copyleft, everything)", .{name})))
         else
             null;
+        // Version 0.93, ruling 6: a load with a profile on an instance that
+        // holds a controlled module or pack is refused before anything is
+        // read, the limit unchanged; then the limit is `public`, and stays
+        // so whatever happens after.
+        if (profile != null) {
+            if (self.holdsControlled()) {
+                self.fail(E.@"distribution-refused", "a load with a profile on an engine that holds a controlled module or pack", .{});
+                return E.@"distribution-refused";
+            }
+            self.profile_limit = true;
+            self.max_distribution = .public;
+        }
         const reading = profile != null or opts.read_licences;
         const packs_dir = opts.packs_dir;
         const models_dir = opts.models_dir orelse try std.fmt.allocPrint(alloc, "{s}/../model", .{packs_dir});
@@ -4005,6 +4051,8 @@ pub const Engine = struct {
                 };
                 lic[i] = licence.licenceProfile(&table, id);
                 mod_lines[i] = try licence.defFileLines(alloc, try std.fmt.allocPrint(alloc, "{s}/{s}", .{ models_dir, name }));
+                // Version 0.93, ruling 2: a file not shown public is in none
+                if (!mod_lines[i].public) lic[i] = .none;
             }
             mod_prof = try licence.moduleProfiles(alloc, mod_lines, lic);
         }
@@ -4014,6 +4062,9 @@ pub const Engine = struct {
         if (profile) |pr| {
             var held = std.ArrayList([]const u8).init(alloc);
             for (all_names, 0..) |name, i| {
+                // Version 0.93, ruling 2: a module file 2b gives no name is
+                // not loaded, also when it is shown public
+                if (mod_lines[i].module == null) continue;
                 if (pr.holds(mod_prof[i])) try held.append(name);
             }
             names = held.items;
@@ -4023,6 +4074,9 @@ pub const Engine = struct {
             self.last_error = try std.fmt.allocPrint(alloc, "error: cannot read the model directory {s}: {s}", .{ models_dir, @errorName(err) });
             return err;
         };
+        if (profile != null) {
+            for (mf.texts, 0..) |*t, i| t.* = self.hooked(mf.names[i], t.*);
+        }
         for (0..mf.names.len) |i| try self.loadModelOrdered(mf, i);
 
         // 3d: the packs, each reached as Version 0.23, Loading, 2 says
@@ -4088,7 +4142,8 @@ pub const Engine = struct {
             };
             const dl = try licence.defLines(alloc, text);
             // 2c: its licence, the module `core`, and the modules it uses
-            var p = licence.licenceProfile(table, id);
+            // Version 0.93, ruling 2: a `pack.def` not shown public is in none
+            var p: Profile = if (dl.public) licence.licenceProfile(table, id) else .none;
             p = licence.usesProfile(mod_lines, mod_prof, p, &.{"core"});
             p = licence.usesProfile(mod_lines, mod_prof, p, dl.uses);
             if (profile) |pr| {
@@ -4097,7 +4152,7 @@ pub const Engine = struct {
             entry.licence = id;
             entry.profile = p;
         }
-        const pk = self.loadPack(text) catch |err| {
+        const pk = self.loadPack(if (profile != null) self.hooked(name, text) else text) catch |err| {
             if (err == error.OutOfMemory) return err;
             self.last_error = try std.fmt.allocPrint(alloc, "{s} ({s}/{s}/pack.def)", .{ self.last_error, packs_dir, name });
             return err;

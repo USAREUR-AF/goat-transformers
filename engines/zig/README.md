@@ -70,10 +70,10 @@ value its grammar refuses makes the vector fail as invalid. Stdlib only.
 | Command (from `engines/zig`) | What it runs | Result |
 |---|---|---|
 | `zig build test` | conversion, load and capability vectors, then the malformed-input run | `vectors`, `load vectors`, `capability vectors`, `malformed inputs` lines |
-| `zig build module-test` | the module another program imports, and one engine converting on eight threads at once (spec Version 0.25, below) | `2/2 tests passed` |
+| `zig build module-test` | the module another program imports, one engine converting on eight threads at once (spec Version 0.25, below), the licence profiles (Versions 0.29 and 0.93, below) | `11 passed` |
 | `engines/zig/bench.sh` (from the repository root) | the benchmark of spec Version 0.25 (below) | one JSON line per vector, then the load line |
 | `engines/zig/reduced-check.sh` (from the repository root) | the reduced-build check of spec Version 0.24 (below) | `reduced-build check: passed` |
-| `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 135/135 passed` |
+| `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 183/183 passed` |
 
 ## Parse once, and the benchmark (spec Version 0.25)
 
@@ -265,6 +265,23 @@ writes one line per loaded pack in byte order of directory name:
 "licence":...,"profile":...},...]}` instead. `zig build module-test` includes
 a test of `loadTree` with each profile against
 `packs/conformance/tool-fixtures/licences-*`.
+
+Version 0.93 (a controlled pack is in no licence profile): a module file or
+`pack.def` is in a profile only when it is shown public (`licence.shownPublic`:
+UTF-8, no NUL, no U+FEFF, no stray carriage return, an exact `distribution
+public` line and no doubtful line); otherwise its profile is `none`, and so is
+that of everything that uses it. With a profile, a module file whose `module`
+line gives no name (`module mx # note`, `module "mx"`) is not loaded, shown
+public or not, and what uses it is `unknown-module`. A load with a profile first refuses a bad
+profile name (`bad-licence`), then, on an engine that already holds a
+controlled module or pack, is `distribution-refused`; both leave the engine as
+it was. After those two checks the engine's limit is `public` for the rest of
+its life, also when the load fails: `setMaxDistribution(.controlled)` then has
+no effect, and a later load without a profile is bounded by it. A file that
+reads as controlled when it is loaded is `distribution-refused`; pack files are
+read once, so `src/controlled_test.zig` reaches this through the test-only
+`Engine.test_load_hook`, and tests the other rulings and a controlled inner
+pack (Version 0.34) under each profile.
 
 The module listing of `loadTree`, `loadModelDir` and `loadPacksOnly` takes the
 files whose names end in `.def` that are regular files or symbolic links to
