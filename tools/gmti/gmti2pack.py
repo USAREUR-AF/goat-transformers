@@ -459,7 +459,7 @@ def write_segment_md(kinds, stats, nlines):
           "`gmti-segment-records`.", "",
           "## Message convention", "",
           "Hex text of one segment, most significant bit first. Input after the stated segment size is",
-          "ignored. Vectors are synthetic, packed by `tools/gmti/vectors.py`.", ""]
+          "ignored. Vectors 18 to 27 hold observed segment bodies (PROVENANCE.md); the others are synthetic, packed by", "`tools/gmti/vectors.py`.", ""]
     with out_open(os.path.join(REPO, "packs", "gmti-segment", "pack.md")) as f:
         f.write("\n".join(t))
 
@@ -483,7 +483,7 @@ def write_records_md(summary, rec_out, srec_out):
              "| kind | mask | body bytes before the records | record bytes | list | basis |", "|---|---|---|---|---|---|"]
         for p, start, isize, mask in summary:
             m = ("`%x`" % mask) if mask is not None else "none"
-            t.append("| `%s` | %s | %d | %d | `%s` | %s |" % (p["kind"], m, start - (37 if hdr else 5), isize, list_key(p["list"]), p["basis"]))
+            t.append("| `%s` | %s | %d | %d | `%s` | %s |" % (p["kind"], m, start - 37, isize, list_key(p["list"]), p["basis"]))
         t += ["",
               "%d `field` lines. Keys are those of `model/gmti.def` and the detection keys of" %
               sum(1 for l in lines if l.strip().startswith("field")),

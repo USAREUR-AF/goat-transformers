@@ -206,9 +206,9 @@ def pubx_pack():
          ["field     pubx.%-16s %-6s string" % (k, i) for i, k in pos_tail] + [""]
     L += ["kind      pubx-03", "when      0       PUBX", "when      1       03", "requires  pubx.sat_count",
           "field     pubx.sat_count     2      int", "group     pubx.satellites    3      item 6",
-          "  field   pubx.sv_id         0      int", "  field   pubx.sv_status     1      string",
-          "  field   pubx.azimuth       2      int", "  field   pubx.elevation     3      int",
-          "  field   pubx.cno           4      int", "  field   pubx.lock_time     5      int", "end", ""]
+          "  field   pubx.sv_id         0      int:2", "  field   pubx.sv_status     1      string",
+          "  field   pubx.azimuth       2      int:3", "  field   pubx.elevation     3      int:2",
+          "  field   pubx.cno           4      int", "  field   pubx.lock_time     5      int:3", "end", ""]
     L += ["kind      pubx-04", "when      0       PUBX", "when      1       04", "requires  pubx.date"] + common + \
          ["field     pubx.date          3      string", "field     pubx.utc_tow       4      string",
           "field     pubx.week          5      int", "field     pubx.reserved      6      string",

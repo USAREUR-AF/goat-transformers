@@ -39,4 +39,5 @@ the repeated records of a dwell, an HRR segment and a processing history segment
 ## Message convention
 
 Hex text of one segment, most significant bit first. Input after the stated segment size is
-ignored. Vectors are synthetic, packed by `tools/gmti/vectors.py`.
+ignored. Vectors 18 to 27 hold observed segment bodies (PROVENANCE.md); the others are synthetic, packed by
+`tools/gmti/vectors.py`.

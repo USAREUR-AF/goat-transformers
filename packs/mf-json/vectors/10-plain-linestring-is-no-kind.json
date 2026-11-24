@@ -1,0 +1,9 @@
+{
+  "name": "plain-linestring-is-no-kind",
+  "from": "mf-json",
+  "to": "mf-json",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[1,2],[3,4]]},\"properties\":{}}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "OGC 19-045r3 requirement 1.4: a Trajectory has properties.datetimes"
+}

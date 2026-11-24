@@ -61,12 +61,12 @@ when      1       03
 requires  pubx.sat_count
 field     pubx.sat_count     2      int
 group     pubx.satellites    3      item 6
-  field   pubx.sv_id         0      int
+  field   pubx.sv_id         0      int:2
   field   pubx.sv_status     1      string
-  field   pubx.azimuth       2      int
-  field   pubx.elevation     3      int
+  field   pubx.azimuth       2      int:3
+  field   pubx.elevation     3      int:2
   field   pubx.cno           4      int
-  field   pubx.lock_time     5      int
+  field   pubx.lock_time     5      int:3
 end
 
 kind      pubx-04
