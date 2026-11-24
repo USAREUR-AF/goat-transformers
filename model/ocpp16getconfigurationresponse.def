@@ -12,3 +12,4 @@ key   configuration_key_value  string  -  "member `configurationKey[].value` of 
 key   unknown_key_value  string  -  "member `unknownKey[]..` of GetConfigurationResponse (JSON string)"
 list  configuration_key  "array `configurationKey` of GetConfigurationResponse, one item per element"
 list  unknown_key  "array `unknownKey` of GetConfigurationResponse, one item per element"
+key   meant  int  -  "any value: this message is meant, though it has no mandatory member; not on the wire"

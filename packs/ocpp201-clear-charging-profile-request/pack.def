@@ -14,3 +14,24 @@ field  ocpp201clearchargingprofilerequest.charging_profile_criteria_custom_data_
 field  ocpp201clearchargingprofilerequest.charging_profile_criteria_evse_id  chargingProfileCriteria.evseId  int
 field  ocpp201clearchargingprofilerequest.charging_profile_criteria_charging_profile_purpose  chargingProfileCriteria.chargingProfilePurpose  string
 field  ocpp201clearchargingprofilerequest.charging_profile_criteria_stack_level  chargingProfileCriteria.stackLevel  int
+
+kind      message
+requires  ocpp201clearchargingprofilerequest.meant
+
+kind      message_with_custom_data_vendor_id
+requires  ocpp201clearchargingprofilerequest.custom_data_vendor_id
+
+kind      message_with_charging_profile_id
+requires  ocpp201clearchargingprofilerequest.charging_profile_id
+
+kind      message_with_charging_profile_criteria_custom_data_vendor_id
+requires  ocpp201clearchargingprofilerequest.charging_profile_criteria_custom_data_vendor_id
+
+kind      message_with_charging_profile_criteria_evse_id
+requires  ocpp201clearchargingprofilerequest.charging_profile_criteria_evse_id
+
+kind      message_with_charging_profile_criteria_charging_profile_purpose
+requires  ocpp201clearchargingprofilerequest.charging_profile_criteria_charging_profile_purpose
+
+kind      message_with_charging_profile_criteria_stack_level
+requires  ocpp201clearchargingprofilerequest.charging_profile_criteria_stack_level

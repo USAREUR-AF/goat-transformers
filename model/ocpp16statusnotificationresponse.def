@@ -6,3 +6,4 @@ distribution  public
 source        "OCPP 1.6 JSON schema StatusNotificationResponse.json (Open Charge Alliance): StatusNotificationResponse.json sha256 e0def785787a562c4b33aa81f7f213bcf4146ab74fec40e14143d326db49afcd"
 source        "License: LicenseRef-unstated: Open Charge Alliance schemas, no licence stated in the files"
 source        "https://github.com/mobilityhouse/ocpp at tag 2.1.0, commit 91f4f89140a2198dc5a300cfea88d947ac91ae28 (copies of the Open Charge Alliance JSON schemas)"
+key   meant  int  -  "any value: this message is meant, though it has no mandatory member; not on the wire"

@@ -12,3 +12,18 @@ field  ocpp16clearchargingprofile.id  id  int
 field  ocpp16clearchargingprofile.connector_id  connectorId  int
 field  ocpp16clearchargingprofile.charging_profile_purpose  chargingProfilePurpose  string
 field  ocpp16clearchargingprofile.stack_level  stackLevel  int
+
+kind      message
+requires  ocpp16clearchargingprofile.meant
+
+kind      message_with_id
+requires  ocpp16clearchargingprofile.id
+
+kind      message_with_connector_id
+requires  ocpp16clearchargingprofile.connector_id
+
+kind      message_with_charging_profile_purpose
+requires  ocpp16clearchargingprofile.charging_profile_purpose
+
+kind      message_with_stack_level
+requires  ocpp16clearchargingprofile.stack_level

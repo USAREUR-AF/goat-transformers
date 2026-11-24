@@ -18,7 +18,12 @@ License: LicenseRef-unstated: Open Charge Alliance schemas, no licence stated in
 |---|---|---|---|---|
 | `notify_monitoring_report_response` | `NotifyMonitoringReportResponse.json` | - | 1 | 0 |
 
-One message, no `when`: the pack has no `kind` lines.
+The schema makes no member mandatory, so `{}` is a valid message. The pack ends with kinds that hold
+only `requires`: `message` requires `ocpp201notifymonitoringreportresponse.meant`, a key that is not on the wire, and each
+`message_with_...` kind requires one mapped top-level member. An entity from another format that holds
+none of these keys is `no-kind`, not an empty message. No kind has a `when`, so every message decodes
+as the first kind, `message`, and `Entity.kind` is now recorded; same-format bytes do not change. An
+entity built by hand must hold one of the keys.
 
 ## How a schema is read
 

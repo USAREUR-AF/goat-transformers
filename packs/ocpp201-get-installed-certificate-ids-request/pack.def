@@ -12,3 +12,12 @@ field  ocpp201getinstalledcertificateidsrequest.custom_data_vendor_id  customDat
 group  ocpp201getinstalledcertificateidsrequest.certificate_type  certificateType
   field  ocpp201getinstalledcertificateidsrequest.certificate_type_value  .  string
 end
+
+kind      message
+requires  ocpp201getinstalledcertificateidsrequest.meant
+
+kind      message_with_custom_data_vendor_id
+requires  ocpp201getinstalledcertificateidsrequest.custom_data_vendor_id
+
+kind      message_with_certificate_type
+requires  ocpp201getinstalledcertificateidsrequest.certificate_type

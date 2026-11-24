@@ -16,3 +16,12 @@ end
 group  ocpp16getconfigurationresponse.unknown_key  unknownKey
   field  ocpp16getconfigurationresponse.unknown_key_value  .  string
 end
+
+kind      message
+requires  ocpp16getconfigurationresponse.meant
+
+kind      message_with_configuration_key
+requires  ocpp16getconfigurationresponse.configuration_key
+
+kind      message_with_unknown_key
+requires  ocpp16getconfigurationresponse.unknown_key

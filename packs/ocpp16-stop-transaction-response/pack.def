@@ -11,3 +11,15 @@ wire          json
 field  ocpp16stoptransactionresponse.id_tag_info_expiry_date  idTagInfo.expiryDate  string
 field  ocpp16stoptransactionresponse.id_tag_info_parent_id_tag  idTagInfo.parentIdTag  string
 field  ocpp16stoptransactionresponse.id_tag_info_status  idTagInfo.status  string
+
+kind      message
+requires  ocpp16stoptransactionresponse.meant
+
+kind      message_with_id_tag_info_expiry_date
+requires  ocpp16stoptransactionresponse.id_tag_info_expiry_date
+
+kind      message_with_id_tag_info_parent_id_tag
+requires  ocpp16stoptransactionresponse.id_tag_info_parent_id_tag
+
+kind      message_with_id_tag_info_status
+requires  ocpp16stoptransactionresponse.id_tag_info_status

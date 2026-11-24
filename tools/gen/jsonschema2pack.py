@@ -1609,6 +1609,10 @@ def run(argv=None):
     ap.add_argument("--notes-file", help="hand-written notes placed into pack.md")
     ap.add_argument("--cross", action="append", default=[], metavar="PACKDEF=VECTOR:FIELD[@KEY=VALUE,...]",
                     help="also write a vector from that pack's vector text into this pack, with optional context")
+    ap.add_argument("--opt-in", metavar="KEY",
+                    help="for one message with no mandatory member: declare the int key KEY in the module, and end the "
+                         "pack with kinds that hold only `requires`, one for KEY and one for each mapped top-level key, "
+                         "so that an entity that holds none of them is no-kind and not an empty object")
     ap.add_argument("--version", default="0.1.0")
     ap.add_argument("--max-depth", type=int, metavar="N",
                     help="json: objects nested deeper than N levels (arrays count as a level) are not "
@@ -1784,6 +1788,18 @@ def run(argv=None):
 
     pack_text = write_pack(a, kinds, use_kinds, src_lines)
     module_text = write_module(a, module_keys, module_lists, src_lines)
+    if a.opt_in:
+        if use_kinds or len(kinds) != 1:
+            raise GenError("--opt-in is for a pack of one message without kinds")
+        if a.opt_in in module_keys or a.opt_in in module_lists:
+            raise GenError("--opt-in %s: the module has that name already" % a.opt_in)
+        module_text += 'key   %s  int  -  "any value: this message is meant, though it has no mandatory member; not on the wire"\n' % a.opt_in
+        opt_kinds = [("message", "%s.%s" % (a.module, a.opt_in))]
+        for ln in kinds[0]["lines"]:
+            key = ln.key if isinstance(ln, Leaf) else ln.list
+            opt_kinds.append(("message_with_" + key.split(".", 1)[1], key))
+        for name, key in opt_kinds:
+            pack_text += "\nkind      %s\nrequires  %s\n" % (name, key)
     pack = Pack(pack_text)
 
     # vectors
@@ -1899,6 +1915,12 @@ def run(argv=None):
         out.write("%s/%s" % (vdir, fn), t)
     for other, fn, v, _c, _d in cross:
         out.write("packs/%s/vectors/%s" % (other, fn), json.dumps(v, indent=1, ensure_ascii=False) + "\n")
+    if a.opt_in:
+        n = "to-%s-uid-only-is-no-kind" % a.format
+        out.write("packs/goat-processors-report/vectors/%s.json" % n, json.dumps(collections.OrderedDict([
+            ("name", n), ("from", "goat-processors-report"), ("to", a.format), ("input", '{"uid":"x"}'),
+            ("expect_error", "no-kind"), ("source", "constructed"),
+            ("reference", "engine-spec 0.5, Encode step 2: the entity holds the required key of no kind")]), indent=1) + "\n")
     out.write(pdir + "/pack.def", pack_text)
     out.write("model/%s.def" % a.module, module_text)
     out.write(pdir + "/pack.md", write_md(a, reg, kinds, bound, module_keys, module_lists, vectors, cross,
@@ -2142,7 +2164,14 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds):
         w.append("| `%s` | `%s` | %s | %d | %d |" % (k["name"], k["ref"],
                                                      ", ".join("`%s %s`" % x for x in k["when"]) or "-",
                                                      nlines, len(k["notmapped"])))
-    if not use_kinds:
+    if a.opt_in:
+        w.append("\nThe schema makes no member mandatory, so `{}` is a valid message. The pack ends with kinds that hold")
+        w.append("only `requires`: `message` requires `%s.%s`, a key that is not on the wire, and each" % (a.module, a.opt_in))
+        w.append("`message_with_...` kind requires one mapped top-level member. An entity from another format that holds")
+        w.append("none of these keys is `no-kind`, not an empty message. No kind has a `when`, so every message decodes")
+        w.append("as the first kind, `message`, and `Entity.kind` is now recorded; same-format bytes do not change. An")
+        w.append("entity built by hand must hold one of the keys.")
+    elif not use_kinds:
         w.append("\nOne message, no `when`: the pack has no `kind` lines.")
     w.append("")
     w.append("## How a schema is read\n")
