@@ -6228,9 +6228,28 @@ not `string` without a `via` is `key-type-mismatch`.
     the value passes through (0.6), so the line succeeds and the earliest
     line's value is kept. Pinned by `conformance-twolines-*`.
 
+27. **Ruling 26, further.** A part line has no entry when its table lacks the
+    text, also where the types are the same (ruling 3). Ruling 26 is about
+    tables only: what the wire states of a line it reads holds whatever other
+    lines of the key do (9c of 0.11: a submessage on a line's path that does
+    not parse is `malformed-wire`), and a line that is absent, a sentinel, in
+    a block not held, or whose transform fails changes nothing. The failure is
+    a `transform-decode` like others, so a list over the limit wins (7f of
+    0.11).
+28. **Another line** (rulings 18 and 25) is counted over the pack's lines: a
+    line that `with` suppresses on this encode is one; a line of another kind
+    is not.
+29. **Places and locators.** A part group is by locator text: on `text`, `0`
+    and `00` are two groups. A `const` on `geometry.*` stays the `bad-locator`
+    line check of 5a of 0.11. A const part at an absent place is not checked.
+30. **Step 2** takes a `default` as there whether or not its value has an
+    entry; without one it is `transform-encode`. A missing part is
+    `transform-decode` with `unlisted` too, and so is a table text that does
+    not read as the key's type.
+
 ### Stated, not yet pinned by a vector
 
-27. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
+31. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
     16, ruling 17, ruling 18 for a second part line, and ruling 13 for a
     scalar item on `xml`.
 
