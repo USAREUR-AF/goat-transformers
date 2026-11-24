@@ -863,6 +863,11 @@ def build(sink):
          "  when 8 1\n  field probe.n 8 uint\nend\ncharset D 0123456789\nfield probe.s1 8 code:D,D\n"
          "kind m\nwhen 8 1\n", None)
     load("ruling-17-third-token-ignored-off-bits-loads", js + "charset D 01 +4\nfield probe.s1 a codestr:D\n", None)
+    # ruling 15: the values of `absent` stay a line check (0.11 5b, step 10), so
+    # they come before a later `bogus`
+    load("ruling-15-absent-value-does-not-fit-then-bogus", bits + LD
+         + "field probe.s1 0:0:9 code:L,D absent 512\n" + bogus)
+    load("ruling-15-absent-null-on-json-then-bogus", js + LD + "field probe.s1 a codestr:L,D absent null\n" + bogus)
     rel = "packs/conformance/load-vectors"
     for f in sink.listdir(rel):
         if f[:2] == "46" and f[4:13] == "-charset-" and rel + "/" + f not in sink.written:
