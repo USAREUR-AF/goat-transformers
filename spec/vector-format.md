@@ -292,7 +292,7 @@ file under `packs/conformance/tool-vectors/*.json`:
 | `name` | yes | unique within the directory |
 | `args` | yes | array of strings: the arguments after the program, the subcommand first; may be empty |
 | `stdin_hex` | no | the bytes on standard input, as lower-case hex; absent means no bytes |
-| `files` | no | an object: each key a path, each value a string of lower-case hex, the bytes of that file (Version 0.93). A path is one or more names joined by `/`; a name is one or more of `A`-`Z`, `a`-`z`, `0`-`9`, `.`, `_` and `-`, and not `.` or `..` |
+| `files` | no | an object: each key a path, each value a string, the text of that file as UTF-8, or an object with the one member `hex`, its bytes as lower-case hex, only where the file is not UTF-8 text or holds a control character other than tab and line feed (Version 0.93). A path is one or more names joined by `/`; a name is one or more of `A`-`Z`, `a`-`z`, `0`-`9`, `.`, `_` and `-`, and not `.` or `..` |
 | `exit` | yes | `0`, `1` or `2` |
 | `stdout_text` | with `exit` 0, unless `stdout_any` | the UTF-8 text standard output must hold, byte for byte |
 | `stdout_any` | with `exit` 0, in place of `stdout_text` | `true`: standard output must not be empty, and is not compared (the text of `help`) |

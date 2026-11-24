@@ -5740,9 +5740,10 @@ that do not hold the exact line of ruling 1; in 0.23: the default of
    every double quote in it removed and then spaces, tabs and carriage returns
    removed at its ends, it begins with `distribution`, and it is not that exact
    line (with its quotes). So `"distribution" controlled`, `distri"bution" x`,
-   `distribution"controlled"` and `distribution # x` are doubtful. A NUL byte
-   anywhere, a carriage return inside a line, a byte-order mark, no such line,
-   a file that is not UTF-8 or cannot be read: such a file is not shown public.
+   `distribution"controlled"` and `distribution # x` are doubtful. A file that
+   holds a NUL byte, a U+FEFF, or a carriage return that is not directly before
+   a line feed or at the end of the file, anywhere, that has no such line, or
+   that is not UTF-8 or cannot be read, is not shown public.
 2. **The profile.** A file that is not shown public has the profile none,
    whatever its licence and the table say. Through 2b and 2c of 0.29, so has
    every module and pack that uses it, and with a `core` that is not shown
