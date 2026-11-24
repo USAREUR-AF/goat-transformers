@@ -1025,9 +1025,13 @@ impl<'a> Parser<'a> {
                     until: None,
                     stop: None,
                     code: CodeSeq::of(&toks[3]),
+                    unlisted: false,
                 };
                 for table in field_options(&mut f, toks, ln, false)? {
                     self.vias.push((table, ln));
+                }
+                if f.unlisted {
+                    return bad(ln, "`unlisted` is valid only on a `part` line with `via`");
                 }
                 if let Some(code) = until_text {
                     let set = match f.transform {

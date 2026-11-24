@@ -130,7 +130,7 @@ pub(crate) fn two_parts(t: &Transform) -> bool {
 
 /// The transforms the text wire accepts.
 pub(crate) fn valid_on_text(t: &Transform) -> bool {
-    matches!(t, Transform::StringT | Transform::Int | Transform::Float | Transform::Iso8601Ms | Transform::Iso8601S)
+    matches!(t, Transform::StringT | Transform::Part(..) | Transform::Int | Transform::Float | Transform::Iso8601Ms | Transform::Iso8601S)
         || matches!(t, Transform::Codestr | Transform::Codenum)
         || t.is_text_only()
 }
@@ -210,6 +210,7 @@ fn days_in_month(y: i64, m: i64) -> i64 {
 pub(crate) fn decode_one(t: &Transform, s: &str) -> Result<Value, Error> {
     match t {
         Transform::StringT => Ok(Value::Str(s.to_string())),
+        Transform::Part(sep, n) => part::nth(s, *sep, *n).map(|t| Value::Str(t.to_string())),
         Transform::Int | Transform::IntW(_) => read_int(s).map(Value::I64),
         Transform::Float | Transform::Dec(_, _) => read_float(s).map(Value::F64),
         Transform::Iso8601Ms | Transform::Iso8601S => iso8601_to_ms(s).map(Value::I64),
@@ -671,6 +672,18 @@ fn decode_fields(p: &Pack, lay: &Layout, fields: &[&FieldDef], rec: &[&str], bas
     }
 }
 
+/// The `const … part` lines of one scope (engine-spec v0.64).
+#[cfg(feature = "text")]
+fn check_parts(lay: &Layout, consts: &[&WhenDef], rec: &[&str], base: usize, d: &mut Decoded) {
+    for c in consts.iter().filter(|c| c.part.is_some()) {
+        if let Some(Loc::Field(i)) = kept(lay, &c.locator).map(|l| l.shift(base)) {
+            if let Some(s) = whole(rec, i) {
+                d.check_part(c, Ok(s));
+            }
+        }
+    }
+}
+
 #[cfg(feature = "text")]
 pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
     decode_in(p, &Layout::default(), input)
@@ -684,6 +697,7 @@ pub(crate) fn decode_in(p: &Pack, lay: &Layout, input: &str) -> Result<Entity, E
     let sel = p.select_decode(None, |w| when_holds(lay, &rec, w))?;
     let mut d = Decoded::new();
     decode_fields(p, lay, &sel.fields, &rec, 0, &mut d);
+    check_parts(lay, &sel.consts, &rec, 0, &mut d);
     let mut group_start = usize::MAX;
     if let Some(g) = sel.groups.first() {
         let (start, n) = group_span(g);
@@ -699,6 +713,7 @@ pub(crate) fn decode_in(p: &Pack, lay: &Layout, input: &str) -> Result<Entity, E
             for j in 0..count {
                 let mut di = Decoded::new();
                 decode_fields(p, lay, &body.fields, &rec, start + j * n, &mut di);
+                check_parts(lay, &body.consts, &rec, start + j * n, &mut di);
                 items.push(di);
             }
             d.put_list(&g.list, items);
@@ -871,7 +886,30 @@ fn write_scope(
     rec: &mut Record,
 ) -> Result<usize, Error> {
     let mut reach = 0usize;
+    // engine-spec v0.64: one token for the lines of a part group, written
+    // where the group's first line stands
+    let parts = part::groups(sel);
+    let mut tokens = parts.iter().peekable();
+    let write_token = |g: &part::Group, rec: &mut Record, reach: &mut usize| -> Result<(), Error> {
+        let (l, t) = match (kept(lay, g.locator).map(|l| l.shift(base)), g.token(p, sel, ent)?) {
+            (Some(l), Some(t)) => (l, t),
+            _ => return Ok(()),
+        };
+        check_text(p, &t)
+            .map_err(|e| Error { msg: format!("transform-encode: format `{}`: at `{}`: {}", p.format, g.locator, e.msg) })?;
+        *reach = (*reach).max(l.highest() + 1);
+        if let Loc::Field(i) = l {
+            rec.at(i).put_whole(&t);
+        }
+        Ok(())
+    };
     for f in &sel.fields {
+        while let Some(g) = tokens.next_if(|g| g.line <= f.line) {
+            write_token(g, rec, &mut reach)?;
+        }
+        if parts.iter().any(|g| g.locator == f.locator) {
+            continue;
+        }
         let v = match sel.value_of(ent, f) {
             Some(v) => v,
             None => continue,
@@ -903,6 +941,9 @@ fn write_scope(
                 rec.at(i).put_col(from, &padded);
             }
         }
+    }
+    for g in tokens {
+        write_token(g, rec, &mut reach)?;
     }
     let mut fixed: Vec<&WhenDef> = fixed.to_vec();
     fixed.sort_by_key(|w| w.line);
@@ -943,6 +984,8 @@ pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, 
         .iter()
         .filter_map(|f| kept(lay, &f.locator).map(|l| (l, f.optional)))
         .chain(fixed.iter().filter_map(|w| kept(lay, &w.locator).map(|l| (l, false))))
+        // a field a const part addresses is never removed (ruling 15 of 0.64)
+        .chain(sel.consts.iter().filter(|c| c.part.is_some()).filter_map(|c| kept(lay, &c.locator).map(|l| (l, false))))
         .collect();
     let mut count = lines.iter().map(|(l, _)| l.highest() + 1).max().unwrap_or(0);
     // the group's items, back to back from its field
@@ -952,7 +995,7 @@ pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, 
         group = Some((start, usize::MAX));
         if let Some(items) = ent.lists.get(&g.list).filter(|items| !items.is_empty()) {
             let body = g.body();
-            let consts: Vec<&WhenDef> = body.consts.clone();
+            let consts: Vec<&WhenDef> = body.consts.iter().copied().filter(|c| c.part.is_none()).collect();
             // each item is `n` fields long, whether or not its keys are present
             for (j, item) in items.iter().enumerate() {
                 write_scope(p, lay, &body, &consts, item, start + j * n, &mut rec)?;
