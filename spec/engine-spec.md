@@ -6208,9 +6208,21 @@ not `string` without a `via` is `key-type-mismatch`.
     25), so `part` loads there.
 21. **Held** in step 1 excludes a `default`.
 
+22. **Compared as values.** "To that value" in Encode step 1 compares numbers
+    as numbers: -0 equals 0.
+23. **`tlv` and `cbor`.** A `part` with malformed parameters on a `field` is
+    an after-file check there (0.13 ruling 8, 0.28 ruling 25). On a `const`
+    with three arguments the check is a line check on every wire. A `const`
+    has three arguments only when the text of its second up to the first `:`
+    is `part`.
+24. **The whole line with other options.** A `string` line on the group's
+    locator with any option other than `optional` on `text` is "any other
+    `field`".
+25. **Only `field` lines** of the scope are "another line" (ruling 18).
+
 ### Stated, not yet pinned by a vector
 
-22. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
+26. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
     16, ruling 17, ruling 18 for a second part line, and ruling 13 for a
     scalar item on `xml`.
 
