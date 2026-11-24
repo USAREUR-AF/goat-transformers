@@ -321,7 +321,61 @@ pub const DefLines = struct {
     /// the name of the first `module` line; null: none
     module: ?[]const u8 = null,
     uses: []const []const u8 = &.{},
+    /// the file is shown public (Version 0.93, ruling 1); a file that
+    /// cannot be read or is not UTF-8 is not
+    public: bool = false,
 };
+
+// --- Version 0.93, ruling 1: shown public ----------------------------------
+
+/// Is `l` (a line cut and trimmed as ruling 1 of 0.29 says) exactly
+/// `distribution`, one or more spaces or tabs, and `public`?
+fn exactPublicLine(l: []const u8) bool {
+    const word = "distribution";
+    if (!std.mem.startsWith(u8, l, word)) return false;
+    const rest = l[word.len..];
+    if (rest.len == 0 or !isSpace(rest[0])) return false;
+    return std.mem.eql(u8, std.mem.trimLeft(u8, rest, " \t"), "public");
+}
+
+/// A doubtful line: with every double quote removed and then spaces, tabs
+/// and carriage returns removed at its ends, it begins with `distribution`,
+/// and it is not the exact line of `exactPublicLine` (with its quotes).
+fn doubtfulLine(l: []const u8) bool {
+    if (exactPublicLine(l)) return false;
+    var buf: [12]u8 = undefined; // the length of `distribution`
+    var n: usize = 0;
+    var started = false;
+    for (l) |c| {
+        if (c == '"') continue;
+        if (!started and (c == ' ' or c == '\t' or c == '\r')) continue;
+        started = true;
+        if (n == buf.len) break;
+        buf[n] = c;
+        n += 1;
+    }
+    return n == buf.len and std.mem.eql(u8, &buf, "distribution");
+}
+
+/// Version 0.93, ruling 1: the text of a module file or `pack.def` is shown
+/// public when it is UTF-8, holds no NUL, no U+FEFF and no carriage return
+/// other than one directly before a line feed or at the end, has at least
+/// one exact `distribution public` line, and no doubtful line.
+pub fn shownPublic(text: []const u8) bool {
+    if (!std.unicode.utf8ValidateSlice(text)) return false;
+    if (std.mem.indexOf(u8, text, "\xef\xbb\xbf") != null) return false; // U+FEFF
+    for (text, 0..) |c, i| {
+        if (c == 0) return false;
+        if (c == '\r' and i + 1 != text.len and text[i + 1] != '\n') return false;
+    }
+    var found = false;
+    var lines = Lines.init(text);
+    while (lines.next()) |l| {
+        if (doubtfulLine(l)) return false;
+        if (exactPublicLine(l)) found = true;
+    }
+    return found;
+}
 
 /// `word`, one or more spaces or tabs, and a name: the name.
 fn wordName(l: []const u8, word: []const u8) ?[]const u8 {
@@ -335,7 +389,7 @@ fn wordName(l: []const u8, word: []const u8) ?[]const u8 {
 /// The lines of `text`; text that is not UTF-8 adds no line.
 pub fn defLines(alloc: std.mem.Allocator, text: []const u8) !DefLines {
     if (!std.unicode.utf8ValidateSlice(text)) return .{};
-    var out = DefLines{};
+    var out = DefLines{ .public = shownPublic(text) };
     var uses = std.ArrayList([]const u8).init(alloc);
     var lines = Lines.init(text);
     while (lines.next()) |l| {
@@ -405,4 +459,35 @@ test "table lines" {
     try std.testing.expectEqual(@as(usize, 1), dl.uses.len);
     try std.testing.expectEqualStrings("y", dl.uses[0]);
     _ = &msg;
+}
+
+test "shown public (Version 0.93, ruling 1)" {
+    const yes = [_][]const u8{
+        "format x\ndistribution public\n",
+        "distribution\tpublic\r\n",
+        "distribution public\r",
+        "  distribution  public  \ndistribution public\n",
+        "# distribution controlled\ndistribution public\nsource \"distribution controlled\"\n",
+    };
+    for (yes) |t| try std.testing.expect(shownPublic(t));
+    const no = [_][]const u8{
+        "",
+        "format x\n",
+        "distribution controlled\n",
+        "distribution public\ndistribution controlled\n",
+        "distribution public\n\"distribution\" controlled\n",
+        "distribution public\ndistri\"bution\" x\n",
+        "distribution public\ndistribution\"controlled\"\n",
+        "distribution public\ndistribution # x\n",
+        "distribution public\n\"distribution public\"\n",
+        "distribution public\ndistributions x\n",
+        "distribution public # note\n",
+        "distribution \"public\"\n",
+        "distribution\rpublic\n",
+        "x\n\rdistribution public\n",
+        "\xef\xbb\xbfformat x\ndistribution public\n",
+        "distribution public\n# \x00\n",
+        "distribution public\n# \xff\n",
+    };
+    for (no) |t| try std.testing.expect(!shownPublic(t));
 }
