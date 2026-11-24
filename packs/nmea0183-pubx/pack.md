@@ -20,8 +20,8 @@ The fields whose units and formats the source does not state are strings, kept a
 
 `lat` and `lon` (`pubx-00`): the source gives the latitude and longitude of PUBX 00 as the NMEA pair
 of a `ddmm.mmmm` field and a hemisphere letter (its example sentence has six decimals of minutes),
-the form `dm` reads; core `lat` and `lon` are WGS 84 degrees, north and east positive; the cited
-source gives no datum for this sentence. No other key: the
+the form `dm` reads, north and east positive. The cited source gives no datum for this sentence, and none is asserted
+here: core `lat` and `lon` mean WGS 84, so binding them is an assumption. No other key: the
 time fields have no date in 00 and 01, and the 04 date's time scale is not stated.
 
 ## Not mapped

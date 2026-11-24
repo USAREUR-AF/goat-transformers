@@ -151,10 +151,12 @@ by section, and its content is stated here in this project's words.
 
 What the evidence does not show:
 
-- **Datum.** The source does not name the datum of the positions.
-  `core.lat` and `core.lon` are WGS 84. The binding assumes AIS positions are
-  WGS 84; a person should confirm it from a public source before the pack is
-  relied on for that.
+- **Datum.** The gpsd document does not name the datum of the positions.
+  Recommendation ITU-R M.1371-6 (02/2026), section A7-3, says that all
+  positions should be sent in WGS 84 (read 2026-11-24,
+  https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.1371-6-202602-I!!PDF-E.pdf,
+  sha256 `126025db40f545454bbfc192c85353bd24bded48016f853ec184ef46f704a1dd`).
+  Nothing else in the pack is taken from it.
 - **Type 27 course.** The source gives the type 27 course in whole degrees, 0
   to 359, without saying it is relative to true north. It is the raw key
   `ais.course_lr`, not `course`.

@@ -23,6 +23,19 @@ Cursor on Target event XML, the `<event>` document with a `<point>` and
 Written when the entity has no value: `type` `a-u-X`, and `hae`, `ce`, `le`
 `9999999`. On decode, `9999999` and `9999999.0` in `hae`, `ce` or `le` mean "not known" and leave the key absent (`absent`, spec 0.9), so a target format gets no value rather than the number; a round trip writes `9999999` again. `how` and `stale` are written only when the entity has them.
 
+`detail/track/@speed` is bound to `speed_ms`, the ground speed of the shared model. The MITRE Track schema defines it
+otherwise: the magnitude of the velocity in three dimensions, which the schema's own example gives a vertical climb with
+no ground speed. The two differ while the object climbs or descends; a conversion does not correct for it.
+
+`ce` and `le`: the MITRE Base-Event schema says each may describe an area or a height range that is not an error, and
+that when it is an error the value is the one-sigma point of a zero-mean normal distribution. `ce` and `le` of the
+shared model state no sigma, and a conversion carries the number as it is.
+
+Read 2026-11-24, public release, in the repository deptofdefense/AndroidTacticalAssaultKit-CIV at
+889eee292c43d3d2eafdd1f2fbf378ad5cd89ecc, `takcot/mitre`: Base-Event schema (sha256
+`08da89898d4f37498faf82d03adb7f6fcae6f0d59128f80553c63bfe21000f14`) and Track schema (sha256
+`0b53a2eecb5165cccaa2c7e10291902607d71139a0163c9816a414a7167bd078`).
+
 A `start` that differs from `time` does not survive a round trip: both leave
 with the value of `time`. Unmapped attributes of `<event>` round-trip through
 residue; unmapped child elements are not carried.

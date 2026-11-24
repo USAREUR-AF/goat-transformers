@@ -94,7 +94,9 @@ in which the `adsb.tc` field alone sets the type code.
 The operational status kinds use the ADS-B version 2 field names. A version 1
 message has the same bit boundaries: `adsb.gva` then holds the barometric
 altitude quality and `adsb.sil_supp` a reserved bit. The meaning of the
-indicator fields depends on `adsb.version`, a value in the same message.
+indicator fields depends on `adsb.version`, a value in the same message. A version 0
+message has other fields at these bits (the book's first operational status table: capability and status codes by
+phase of flight, then reserved bits), and the pack does not choose by version: its names do not apply to it.
 
 Type code 29 subtype 1 and type code 28 subtype 1 are not laid out bit by bit
 in the book. Their layouts are RTCA DO-260B's, checked here against published
