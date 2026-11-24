@@ -435,10 +435,10 @@ class Engine:
         if profile is not None:
             check_profile(profile)  # before anything is read, also the limit (3a)
         eng = cls(max_distribution=max_distribution)
-        eng.load_dir(packs_dir, models_dir, packs_only=packs_only, profile=profile)
+        eng.load_dir(packs_dir, models_dir, packs_only=packs_only, profile=profile, with_inner=with_inner)
         return eng
 
-    def load_dir(self, packs_dir, models_dir=None, packs_only=None, profile=None):
+    def load_dir(self, packs_dir, models_dir=None, packs_only=None, profile=None, with_inner=False):
         """`from_dir` on this engine: the modules and packs loaded so far stay,
         and the load is bounded by this engine's distribution limit. With
         `profile` (spec 0.93, ruling 6): a name not one of the three is

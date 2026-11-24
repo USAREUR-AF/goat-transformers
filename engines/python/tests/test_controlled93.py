@@ -13,7 +13,7 @@ from unittest import mock
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "src"))
 
-from goat_transformers import BadLicence, DistributionRefused, Engine, GTError  # noqa: E402
+from goat_transformers import BadLicence, DistributionRefused, DistributionViolation, Engine, Entity, GTError, UnknownFormat  # noqa: E402
 from goat_transformers import licence  # noqa: E402
 
 TABLE = (
@@ -206,6 +206,88 @@ class TestLimit(Tree):
         self.assertEqual(eng.max_distribution, "public")
         with self.assertRaises(GTError):
             eng.load(pack("f-ctl", "controlled"))
+
+
+INNER_CORE = 'module core\nversion 0.93.0\ndistribution public\nsource "unit test"\n' \
+    'key x int - "a key"\nkey y int - "a key"\n'
+CTL_MODULE = 'module ctl\nversion 0.93.0\ndistribution controlled\nsource "unit test"\nkey z int - "a key"\n'
+
+
+def bits_pack(fmt, dist="public", uses=(), body="field x 8 uint\n"):
+    return ("format %s\nversion 0.93.0\ndistribution %s\nsource \"unit test\"\n%swire bits\n"
+            "layout sequential\nbit_order msb\n%s" % (fmt, dist, "".join("uses %s\n" % u for u in uses), body))
+
+
+class TestInner(Tree):
+    """0.34 `inner` with 0.93: an inner pack the profile or the limit refuses
+    is never loaded through `with_inner`. The outer pack's profile is 2c of
+    0.29 (its licence, `core`, its `uses`), so it does not depend on its
+    inner pack and the outer pack loads; reaching its `inner` line is
+    `unknown-format` (0.34, Reaching the `inner` line, check 1: a pack
+    refused at load by a distribution limit or a licence profile is not
+    loaded), and `model_keys` does not fail (0.34, Capability)."""
+
+    def setUp(self):
+        super().setUp()
+        shutil.rmtree(os.path.join(self.root, "packs", "pub"))
+        self.write("model/core.def", INNER_CORE)
+        self.write("model/ctl.def", CTL_MODULE)
+        self.write("packs/f-out/pack.def", bits_pack("f-out", body="field x 8 uint\ninner f-in\n"))
+
+    def loads(self, profile):
+        eng_a = Engine.from_dir(self.packs, packs_only=["f-out"], profile=profile, with_inner=True)
+        eng_b = Engine()
+        eng_b.load_dir(self.packs, packs_only=["f-out"], profile=profile, with_inner=True)
+        return eng_a, eng_b
+
+    def assert_inner_unusable(self, eng):
+        self.assertEqual(eng.formats(), ["f-out"])
+        for call in (lambda: eng.decode("f-out", b"0507"),
+                     lambda: eng.encode("f-out", Entity(fields={"x": 5, "y": 7})),
+                     lambda: eng.decode("f-in", b"07"),
+                     lambda: eng.encode("f-in", Entity(fields={"y": 7}))):
+            with self.assertRaises(UnknownFormat):
+                call()
+        self.assertEqual(eng.model_keys("f-out"), ["x"])
+
+    def check_every_profile(self):
+        for profile in ("open", "open+copyleft", "everything"):
+            for eng in self.loads(profile):
+                with self.subTest(profile=profile):
+                    self.assert_inner_unusable(eng)
+
+    def test_the_fixture_with_a_public_inner_pack(self):
+        # the control: a public inner pack loads through with_inner and is used
+        self.write("packs/f-in/pack.def", bits_pack("f-in", body="field y 8 uint\n"))
+        for eng in self.loads("open"):
+            self.assertEqual(eng.formats(), ["f-in", "f-out"])
+            self.assertEqual(eng.decode("f-out", b"0507").fields, {"x": 5, "y": 7})
+            self.assertEqual(eng.encode("f-out", Entity(fields={"x": 5, "y": 7})), b"0507")
+            self.assertEqual(eng.model_keys("f-out"), ["x", "y"])
+
+    def test_controlled_inner_pack(self):
+        self.write("packs/f-in/pack.def", bits_pack("f-in", "controlled", body="field y 8 uint\n"))
+        self.check_every_profile()
+        # without a profile, at the default limit, both load; the line is then check 4
+        eng = Engine.from_dir(self.packs, packs_only=["f-out"], with_inner=True)
+        self.assertEqual(eng.formats(), ["f-in", "f-out"])
+        with self.assertRaises(DistributionViolation):
+            eng.decode("f-out", b"0507")
+
+    def test_public_inner_pack_using_a_controlled_module(self):
+        self.write("packs/f-in/pack.def", bits_pack("f-in", uses=["ctl"], body="field y 8 uint\n"))
+        self.check_every_profile()
+        # without a profile the inner pack itself is distribution-violation at load (0.4)
+        with self.assertRaises(DistributionViolation):
+            Engine.from_dir(self.packs, packs_only=["f-out"], with_inner=True)
+
+    def test_limit_public_without_profile_refuses_a_controlled_inner_pack(self):
+        self.write("packs/f-in/pack.def", bits_pack("f-in", "controlled", body="field y 8 uint\n"))
+        with self.assertRaises(DistributionRefused):
+            Engine.from_dir(self.packs, packs_only=["f-out"], max_distribution="public", with_inner=True)
+        eng = Engine(max_distribution="public")
+        with self.assertRaises(DistributionRefused):
+            eng.load_dir(self.packs, packs_only=["f-out"], with_inner=True)
 
 
 if __name__ == "__main__":
