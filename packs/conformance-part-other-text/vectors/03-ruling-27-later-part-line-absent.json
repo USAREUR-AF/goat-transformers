@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-later-part-line-absent",
+  "from": "conformance-part-other-text",
+  "to": "conformance-part-mirror",
+  "input": "{\"l\":\"x\"}",
+  "expect": "{\"label\":\"x\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 27: an absent line changes nothing"
+}

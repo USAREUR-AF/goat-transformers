@@ -1,0 +1,9 @@
+{
+  "name": "ruling-28-line-written",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-with-whole",
+  "input": "{\"x\":3,\"z\":1,\"tag\":\"h\"}",
+  "expect": "{\"x\":3,\"t\":\"h\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 28: another line is counted over the pack's lines; z is held"
+}

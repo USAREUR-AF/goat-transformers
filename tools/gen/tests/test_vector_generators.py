@@ -43,6 +43,7 @@ SCRIPTS = (
     "conformance-transforms-vectors.py",
     "conformance-twocount-vectors.py",
     "conformance-twolines-vectors.py",
+    "conformance-twolines-wires-vectors.py",
     "conformance-units-vectors.py",
     "conformance-whenas-vectors.py",
 )

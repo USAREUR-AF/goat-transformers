@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-in-a-submessage",
+  "from": "conformance-twolines-w-pb-path",
+  "to": "conformance-twolines-w-pb-path",
+  "input": "080312030a017a",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: no entry and another type fails the decode, inside a submessage"
+}

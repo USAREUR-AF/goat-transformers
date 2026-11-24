@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-that-is-not-the-sentinel",
+  "from": "conformance-twolines-w-json-sentinel",
+  "to": "conformance-twolines-w-json-sentinel",
+  "input": "{\"a\":3,\"b\":\"NB\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: no entry and another type fails the decode, after a line that succeeds"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "at-the-limit",
+  "from": "conformance-twolines-w-json-limit",
+  "to": "conformance-twolines-w-json-limit",
+  "input": "{\"a\":3,\"b\":\"zz\",\"nums\":[1]}",
+  "expect_error": "transform-decode",
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: no entry and another type fails the decode, with the list at the limit"
+}

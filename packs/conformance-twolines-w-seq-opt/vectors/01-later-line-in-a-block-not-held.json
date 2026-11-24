@@ -1,0 +1,12 @@
+{
+  "name": "later-line-in-a-block-not-held",
+  "from": "conformance-twolines-w-seq-opt",
+  "to": "conformance-twolines-w-seq-opt",
+  "input": "0300",
+  "expect": "038066",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27: a line in a block not held changes nothing"
+}

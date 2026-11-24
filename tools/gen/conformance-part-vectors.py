@@ -217,7 +217,7 @@ def check_whole(p, lines, group, token, ent):
             if x.part[1] >= len(pieces) or pieces[x.part[1]] != x.text:
                 raise Fail("transform-encode", "const")
             continue
-        if any(o is not x and o.d == "field" and o.key == x.key for o in lines):
+        if any(o is not x and o.d == "field" and o.key == x.key for o in lines):     # rulings 18, 25, 28
             continue
         try:
             v = part_value(p, x, token)
@@ -271,6 +271,8 @@ def encode_scope(p, lines, ent):
                 out.append((x.loc, None, [(encode_scope(p, x.body, it), x) for it in ent[x.a[0]]]))
         elif x.d == "field":
             v = ent.get(x.key, defaults.get(x.key))
+            if "with" in x.opts and x.opts[x.opts.index("with") + 1] not in ent:
+                v = None
             if v is not None and x.key == "type":
                 v = next((n for n, c in p["typemap"] if c == v), v)
             out.append((x.loc, v, None))
@@ -884,6 +886,45 @@ end
     vec(M, "body-whole", "ruling-25-group-body-does-not-exempt", '{"x":3,"tag":"h","recs":[{"x":3}]}', error=ENC,
         ref=R25 + "a line of a group body is of another scope: 6 is not the held 3")
 
+    # rulings 27 to 30
+    pack("other-text", "A string key on a plain line and, later, on a part line with a string table (ruling 27).",
+         "wire json\n" + strict + "field probe.label l string\nfield probe.label t part:-:0 via st\n")
+    R27 = "ruling 27: a part line has no entry when its table lacks the text, also where the types are the same; "
+    vec("other-text", M, "ruling-27-later-part-line-without-an-entry", '{"l":"x","t":"zz"}', error=DEC,
+        ref=R27 + "the earlier line succeeds")
+    vec("other-text", M, "ruling-27-later-part-line-with-an-entry", '{"l":"x","t":"a"}', '{"label":"x"}', ref=R27 + "it has one")
+    vec("other-text", M, "ruling-27-later-part-line-absent", '{"l":"x"}', '{"label":"x"}',
+        ref="ruling 27: an absent line changes nothing")
+    vec("other-text", M, "ruling-27-later-part-line-transform-fails", '{"l":"x","t":5}', '{"label":"x"}',
+        ref="ruling 27: a line whose transform fails changes nothing")
+    pack("with-whole", "Another line of the part key that `with` can suppress (ruling 28).",
+         "wire json\n" + T2 + "field probe.x x int with probe.z\nfield probe.tag t string\nfield probe.x t part:-:0 via t2\n")
+    R28 = "ruling 28: another line is counted over the pack's lines; "
+    vec(M, "with-whole", "ruling-28-suppressed-line-is-another-line", '{"x":3,"tag":"h"}', '{"t":"h"}',
+        ref=R28 + "z is not held, so the line is suppressed, and x is still not checked")
+    vec(M, "with-whole", "ruling-28-line-written", '{"x":3,"z":1,"tag":"h"}', '{"x":3,"t":"h"}', ref=R28 + "z is held")
+    pack("kind-whole", "A line of the part key in another kind (ruling 28).",
+         "wire json\n" + T2 + "kind a\nwhen k a\nrequires probe.tag\nfield probe.tag t string\n"
+         "field probe.x t part:-:0 via t2\nkind b\nwhen k b\nfield probe.x x int\n")
+    vec(M, "kind-whole", "ruling-28-line-of-another-kind-is-not", '{"x":3,"tag":"h"}', error=ENC,
+        ref=R28 + "the line of kind b is not one, so 6 is checked against 3")
+    vec(M, "kind-whole", "ruling-28-agrees", '{"x":6,"tag":"h"}', '{"k":"a","t":"h"}', ref=R28 + "6 agrees")
+    pack("text-two-groups", "`0` and `00` are two part groups of one field (ruling 29).",
+         "wire text\nfield probe.label 0 part:-:0\nfield probe.w1 00 part:/:0\n")
+    vec("text-two-groups", M, "ruling-29-two-groups-of-one-field", "a-b/c", '{"label":"a","w1":"a-b"}',
+        ref="ruling 29: a part group is by locator text")
+    R30 = "ruling 30: step 2 takes a `default` whether or not its value has an entry; without one transform-encode; "
+    pack("default-noentry", "A default whose value has no table entry (ruling 30).",
+         "wire json\n" + TT + "default probe.x 2\nfield probe.x t part:-:0 via t2\nfield probe.y t part:-:1 via t3\n")
+    pack("default-noentry-all", "Defaults on every part key, one without an entry, and a whole default (ruling 30).",
+         "wire json\n" + TT + "default probe.tag h-S\ndefault probe.x 2\ndefault probe.y 1\nfield probe.tag t string\n"
+         "field probe.x t part:-:0 via t2\nfield probe.y t part:-:1 via t3\n")
+    vec(M, "default-noentry", "ruling-30-default-without-an-entry", '{"y":1}', error=ENC, ref=R30 + "y is held")
+    vec(M, "default-noentry", "ruling-30-held-value-in-its-place", '{"x":6,"y":1}', '{"t":"h-A"}', ref=R30 + "x is held")
+    vec(M, "default-noentry-all", "ruling-30-every-default-before-the-whole-default", "{}", error=ENC,
+        ref=R30 + "every part field has a default, so step 3 is not reached")
+    vec(M, "default-noentry-all", "ruling-30-one-held", '{"x":6}', '{"t":"h-A"}', ref=R30 + "x is held")
+
     # ==========================================================================
     # load vectors from 6400
     # ==========================================================================
@@ -911,8 +952,8 @@ end
             gtcheck.load_pack(text, m)
         except gtcheck.CheckError as e:
             got = e.kind
-        # gtcheck names an unknown directive or transform `bad-directive` (no 0.11 order)
-        if error in (UNK, "unknown-transform"):
+        # gtcheck names these three `bad-directive` (no 0.11 order)
+        if error in (UNK, "unknown-transform", "bad-locator"):
             assert got == BAD, (full, got)
         else:
             assert got == error, (full, error, got)
@@ -1065,6 +1106,18 @@ end
     # 0.11 5b: step 7 (the transform) comes before step 8 (the locator form)
     load("0-11-5b-transform-name-before-the-locator-form", xm + "field probe.label a//b nosuch\n", "unknown-transform")
     load("0-11-5b-parameters-of-part-before-the-locator-form", xm + "field probe.label a//b part:-\n")
+    # ruling 29, from 6535
+    load("ruling-29-0-and-00-on-text-are-two-groups-load", tx + "field probe.label 0 part:-:0\nfield probe.w1 00 part:/:0\n", None)
+    load("ruling-29-0-and-00-do-not-fill-one-group", tx + "field probe.label 0 part:-:0\nfield probe.w1 00 part:-:1\n")
+    # ruling 29 as corrected, from 6537
+    pl = gj + "field probe.label properties.t part:-:0\n"
+    for g in ("lon", "lat", "alt"):
+        load("ruling-29-const-on-geometry-" + g, pl + "const geometry.%s part:-:0 c\n" % g)
+    for g in ("lon", "lat", "alt"):
+        load("ruling-29-field-on-geometry-%s-is-checked-after-the-file" % g, pl + "field probe.w1 geometry.%s part:-:0\nbogus\n" % g, UNK)
+        load("ruling-29-const-on-geometry-%s-is-checked-after-the-file" % g, pl + "const geometry.%s part:-:0 c\nbogus\n" % g, UNK)
+    load("ruling-29-field-on-another-geometry-locator-is-a-line-check", pl + "field probe.w1 geometry.x part:-:0\nbogus\n", "bad-locator")
+    load("ruling-29-const-on-another-geometry-locator-is-a-line-check", pl + "const geometry.x part:-:0 c\nbogus\n", "bad-locator")
     return written
 
 

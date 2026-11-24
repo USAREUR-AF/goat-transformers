@@ -1,0 +1,9 @@
+{
+  "name": "held-key-selects-its-case",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch",
+  "input": "{\"x\":6,\"z\":9}",
+  "expect": "066809",
+  "source": "constructed",
+  "reference": "spec 0.20 rulings 31 and 33 with 0.64 ruling 26: both lines read back"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "later-line-absent",
+  "from": "conformance-twolines-w-text-later",
+  "to": "conformance-twolines-w-text-later",
+  "input": "3,",
+  "expect": "3,f",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27: an absent line changes nothing"
+}

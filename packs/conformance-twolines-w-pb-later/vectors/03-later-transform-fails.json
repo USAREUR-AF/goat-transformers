@@ -1,0 +1,12 @@
+{
+  "name": "later-transform-fails",
+  "from": "conformance-twolines-w-pb-later",
+  "to": "conformance-twolines-w-pb-later",
+  "input": "08031005",
+  "expect": "0803120166",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27: another wire type is a failed transform (0.9 ruling 15), which changes nothing"
+}

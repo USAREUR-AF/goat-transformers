@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-in-the-earlier-line",
+  "from": "conformance-twolines-w-bits-earlier",
+  "to": "conformance-twolines-w-bits-earlier",
+  "input": "7a03",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: no entry and another type fails the decode, before a line that succeeds"
+}
