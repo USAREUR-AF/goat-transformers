@@ -1,0 +1,12 @@
+{
+  "name": "zero-round-trip",
+  "from": "conformance-part-zero",
+  "to": "conformance-part-zero",
+  "input": "{\"t\":\"n-q\"}",
+  "expect": "{\"t\":\"n-q\"}",
+  "model": {
+    "probe.ratio": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 22"
+}

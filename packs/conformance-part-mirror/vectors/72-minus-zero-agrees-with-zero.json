@@ -1,0 +1,9 @@
+{
+  "name": "minus-zero-agrees-with-zero",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-zero",
+  "input": "{\"ratio\":-0.0,\"tag\":\"n-q\"}",
+  "expect": "{\"t\":\"n-q\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 22: the token reads 0 and the entity holds -0, which are equal numbers"
+}

@@ -857,6 +857,14 @@ end
         ref="Load errors: `*` is refused under `checksum nmea` only")
     vec(M, "text-sep", "delimiter-in-a-value", '{"label":"a|","w1":"b","z":9}', error=ENC, ref="0.10: text that holds the delimiter")
 
+    # ruling 22: compared as values
+    pack("zero", "A float table and a whole line: -0 and 0 are one number (ruling 22).",
+         "wire json\nmap z n 0\nmap z h 0.5\nfield probe.tag t string\nfield probe.ratio t part:-:0 via z\n")
+    vec(M, "zero", "minus-zero-agrees-with-zero", '{"ratio":-0.0,"tag":"n-q"}', '{"t":"n-q"}',
+        ref="ruling 22: the token reads 0 and the entity holds -0, which are equal numbers")
+    vec(M, "zero", "another-number-disagrees", '{"ratio":0.5,"tag":"n-q"}', error=ENC, ref="ruling 22: 0.5 is not 0")
+    vec("zero", "zero", "zero-round-trip", '{"t":"n-q"}', '{"t":"n-q"}', model={"probe.ratio": "0"}, ref="ruling 22")
+
     # ==========================================================================
     # load vectors from 6400
     # ==========================================================================
@@ -884,8 +892,8 @@ end
             gtcheck.load_pack(text, m)
         except gtcheck.CheckError as e:
             got = e.kind
-        # gtcheck names every unknown directive `bad-directive` (no 0.11 order)
-        if error == UNK:
+        # gtcheck names an unknown directive or transform `bad-directive` (no 0.11 order)
+        if error in (UNK, "unknown-transform"):
             assert got == BAD, (full, got)
         else:
             assert got == error, (full, error, got)
@@ -1023,6 +1031,21 @@ end
             ("const-text-holds-the-separator", ok + "const t part:-:1 a-b\n"),
             ("int-key-without-via", js + "field probe.x t part:-:0\n")):
         load("ruling-11-%s-is-checked-after-the-file" % name, text + "bogus\n", UNK)
+    # rulings 23 and 24, and 0.11 5b, from 6524
+    tlv, cb = head + "wire tlv\n", head + "wire cbor\n"
+    load("ruling-23-tlv-parameters-of-a-field", tlv + "field probe.label 5 part:-\n")
+    load("ruling-23-tlv-parameters-of-a-field-are-checked-after-the-file", tlv + "field probe.label 5 part:-\nbogus\n", UNK)
+    load("ruling-23-cbor-parameters-of-a-field-are-checked-after-the-file", cb + "field probe.label a part:-\nbogus\n", UNK)
+    load("ruling-23-xml-parameters-of-a-const-are-a-line-check", xm + "const @t part:- c\nbogus\n")
+    load("ruling-23-tlv-parameters-of-a-const-are-a-line-check", tlv + "const 5 part:- c\nbogus\n")
+    load("ruling-23-const-of-three-arguments-that-is-not-a-part", ok + "const t party:-:1 c\n")
+    load("ruling-24-whole-line-with-optional-and-another-option", tx + "field probe.label 0 part:-:0\n"
+         "field probe.tag 0 string optional with probe.x\n")
+    load("ruling-24-whole-line-with-via-on-text", tx + "map s a b\nfield probe.label 0 part:-:0\nfield probe.tag 0 string via s\n")
+    load("ruling-24-is-checked-after-the-file", ok + "field probe.tag t string with probe.x\nbogus\n", UNK)
+    # 0.11 5b: step 7 (the transform) comes before step 8 (the locator form)
+    load("0-11-5b-transform-name-before-the-locator-form", xm + "field probe.label a//b nosuch\n", "unknown-transform")
+    load("0-11-5b-parameters-of-part-before-the-locator-form", xm + "field probe.label a//b part:-\n")
     return written
 
 

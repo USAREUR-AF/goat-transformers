@@ -575,6 +575,9 @@ V011_ORDER |= {"4637", "4659", "4663", "4656", "4658", "4633", "4655", "4657", "
 V011_ORDER |= {"6503", "6504", "6505", "6506", "6507", "6508", "6509", "6510", "6511", "6512",
                "6513", "6514", "6515", "6516", "6517", "6518", "6519", "6520", "6521", "6522",
                "6523"}
+# Rulings 23 and 24 of 0.64 likewise; and an unknown transform (0.11 5b step 7),
+# which gtcheck names `bad-directive`.
+V011_ORDER |= {"6525", "6526", "6532", "6533"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line

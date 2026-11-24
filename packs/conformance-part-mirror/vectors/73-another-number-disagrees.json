@@ -1,0 +1,9 @@
+{
+  "name": "another-number-disagrees",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-zero",
+  "input": "{\"ratio\":0.5,\"tag\":\"n-q\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 22: 0.5 is not 0"
+}
