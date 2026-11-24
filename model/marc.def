@@ -1,0 +1,28 @@
+# The marc module: MARC 21 leader and directory fields. Written by tools/gen/biblio-pack.py.
+module        marc
+version       0.1.0
+distribution  public
+source        "Library of Congress, MARC 21 Format for Bibliographic Data, https://www.loc.gov/marc/bibliographic/bdleader.html, bddirectory.html and bdintro.html (maintained with Library and Archives Canada; excerpts with credit); positions restated, no text copied"
+key   record_length                     string  -  "leader 00-04 record length: the whole record's length in characters, five digits"
+key   record_status                     string  -  "leader 05 record status (a, c, d, n, p)"
+key   type_of_record                    string  -  "leader 06 type of record (a language material, e cartographic, g projected medium ...)"
+key   bibliographic_level               string  -  "leader 07 bibliographic level (a, b, c, d, i, m, s)"
+key   type_of_control                   string  -  "leader 08 type of control (blank, a archival)"
+key   character_coding_scheme           string  -  "leader 09 character coding scheme (blank MARC-8, a UCS/Unicode)"
+key   indicator_count                   string  -  "leader 10 indicator count (2)"
+key   subfield_code_count               string  -  "leader 11 subfield code count (2)"
+key   base_address                      string  -  "leader 12-16 base address of data: the length of the leader and directory, five digits"
+key   encoding_level                    string  -  "leader 17 encoding level"
+key   descriptive_cataloging_form       string  -  "leader 18 descriptive cataloging form"
+key   multipart_resource_level          string  -  "leader 19 multipart resource record level"
+key   length_of_field_length            string  -  "leader 20 length of the length-of-field portion (4)"
+key   length_of_starting_position       string  -  "leader 21 length of the starting-character-position portion (5)"
+key   length_of_implementation_portion  string  -  "leader 22 length of the implementation-defined portion (0)"
+key   undefined                         string  -  "leader 23 undefined (0)"
+list  directory                         "the directory entries in order; the last item is the field terminator that ends the directory, holding the variable fields"
+key   entry_first                       int     -  "a directory entry's first character code (the tag's first character), or 30 (the field terminator) for the item that holds the variable fields"
+key   tag_rest                          string  -  "a directory entry: the tag's second and third characters"
+key   field_length                      string  -  "a directory entry: the field's length, four digits"
+key   starting_position                 string  -  "a directory entry: the field's starting position relative to the base address, five digits"
+list  field_data                        "the variable fields after the directory, as octets (each ended by 0x1E, the last also by 0x1D)"
+key   octet                             int     -  "one octet"

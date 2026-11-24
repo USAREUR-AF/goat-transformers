@@ -1,0 +1,8 @@
+{
+  "name": "Bibliographic records (MARC 21, CSL-JSON)",
+  "domain": "networks",
+  "exact": [
+    "marc21-record",
+    "csl-json-item"
+  ]
+}

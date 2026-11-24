@@ -1,0 +1,5 @@
+Packs marc21-record; module marc
+  Library of Congress, MARC 21 Format for Bibliographic Data,
+  https://www.loc.gov/marc/bibliographic/ (Leader, Directory, Introduction),
+  maintained with Library and Archives Canada. Layouts restated; no text
+  copied.

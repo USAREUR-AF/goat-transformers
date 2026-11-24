@@ -1,0 +1,40 @@
+# MARC 21 record (ISO 2709 structure): leader, directory, field terminator, variable fields. Written by
+# tools/gen/biblio-pack.py; do not edit by hand.
+format        marc21-record
+version       0.1.0
+distribution  public
+source        "Library of Congress, MARC 21 Format for Bibliographic Data, https://www.loc.gov/marc/bibliographic/bdleader.html, bddirectory.html and bdintro.html (maintained with Library and Archives Canada; excerpts with credit); positions restated, no text copied"
+uses          marc
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  marc.record_length  40  chars:ascii8
+field  marc.record_status  8  chars:ascii8
+field  marc.type_of_record  8  chars:ascii8
+field  marc.bibliographic_level  8  chars:ascii8
+field  marc.type_of_control  8  chars:ascii8
+field  marc.character_coding_scheme  8  chars:ascii8
+field  marc.indicator_count  8  chars:ascii8
+field  marc.subfield_code_count  8  chars:ascii8
+field  marc.base_address  40  chars:ascii8
+field  marc.encoding_level  8  chars:ascii8
+field  marc.descriptive_cataloging_form  8  chars:ascii8
+field  marc.multipart_resource_level  8  chars:ascii8
+field  marc.length_of_field_length  8  chars:ascii8
+field  marc.length_of_starting_position  8  chars:ascii8
+field  marc.length_of_implementation_portion  8  chars:ascii8
+field  marc.undefined  8  chars:ascii8
+group  marc.directory  rest
+  field  marc.entry_first  8  uint
+  switch  marc.entry_first
+    case  30
+      group  marc.field_data  rest
+        field  marc.octet  8  uint
+      end
+    else
+      field  marc.tag_rest  16  chars:ascii8
+      field  marc.field_length  32  chars:ascii8
+      field  marc.starting_position  40  chars:ascii8
+  end
+end

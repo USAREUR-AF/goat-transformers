@@ -1,0 +1,5 @@
+Packs csl-json-item; module csl
+  Citation Style Language data schema, https://github.com/citation-style-language/schema
+  at commit e3ce254a72c4470a5ed3b9d23b428017d25674e9, schemas/input/csl-data.json. MIT
+  License, Copyright (c) 2007-2018 Citation Style Language and contributors.
+  Structure restated; no text copied.
