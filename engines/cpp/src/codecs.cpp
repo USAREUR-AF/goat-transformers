@@ -736,6 +736,19 @@ const Value* EncodeSource::model_value(const FieldLine& f) const {
     return v;
 }
 
+void EncodeSource::apply_line_range(const FieldLine& f, Value& v) const {
+    if (use_range) {
+        apply_range(p, f, v);
+        return;
+    }
+    if (!f.range_wrap) return;
+    try {
+        apply_range(p, f, v);
+    } catch (const Error&) {
+        // A wrap that cannot be made is refused by the encode, not by a prediction.
+    }
+}
+
 void EncodeSource::check_range(const FieldLine& f) const {
     if (!f.has_range || !use_range || suppressed(f)) return;
     if (const Value* v = model_value(f)) {
@@ -747,10 +760,10 @@ void EncodeSource::check_range(const FieldLine& f) const {
 bool EncodeSource::value(const FieldLine& f, Value& out) const {
     const Value* v = model_value(f);
     if (!v) return false;
-    if (f.has_range && use_range) {
+    if (f.has_range) {
         // v0.56: the model value, a default's included, before `via` and the transform.
         Value ranged = *v;
-        apply_range(p, f, ranged);
+        apply_line_range(f, ranged);
         out = typemapped_out(p, f, ranged);
     } else {
         out = typemapped_out(p, f, *v);

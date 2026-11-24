@@ -2920,7 +2920,7 @@ struct Scope {
         if (!item.fields.count(f.key))
             if (const DefaultLine* d = case_default(f)) {
                 Value dv = d->value;
-                if (f.has_range && src.use_range) apply_range(p, f, dv);  // v0.56: a default is checked as any value
+                if (f.has_range) src.apply_line_range(f, dv);  // v0.56: a default is checked as any value
                 out = typemapped_out(p, f, dv);
                 if (f.table >= 0) {
                     try {
@@ -3742,7 +3742,8 @@ int predicted_case(const SeqNode& n, const Scope& s) {
         Item back;
         if (line) {
             SeqOut tmp{s.p, std::string(), bit_mode(s.p.bit_order), 0, {}, {}, s.sw};
-            // 0.56 ruling 9: presence is computed as if there were no `range`.
+            // 0.56 ruling 9: presence is computed as if there were no `range`, but
+            // a switch key that wraps is predicted as wrapped.
             const bool use_range = s.src.use_range;
             s.src.use_range = false;
             try {

@@ -330,9 +330,12 @@ struct EncodeSource {
     // when none. No `range`, type mapping or table.
     const Value* model_value(const FieldLine& f) const;
     bool has_value(const FieldLine& f) const { return model_value(f) != nullptr; }
-    // v0.56 ruling 9: presence is computed as if there were no `range`; false
-    // while a switch's case is predicted.
+    // v0.56 ruling 9: presence is computed as if there were no `range`, but a
+    // `switch` key that wraps is predicted as wrapped. False while a switch's
+    // case is predicted: a wrap is then made, and nothing is refused.
     mutable bool use_range = true;
+    // `range` applied to the model value `v` of a line, as `use_range` says.
+    void apply_line_range(const FieldLine& f, Value& v) const;
     // v0.18: does the entity (or the item) hold a key or list? A scalar holds
     // when present, a list when present with at least one item; a `default`
     // never holds (ruling 2).
