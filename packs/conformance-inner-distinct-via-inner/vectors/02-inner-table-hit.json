@@ -1,0 +1,12 @@
+{
+  "name": "inner-table-hit",
+  "from": "conformance-inner-distinct-via-inner",
+  "to": "conformance-inner-distinct-via-inner",
+  "input": "0501",
+  "expect": "0501",
+  "model": {
+    "probe.s1": "one"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6: 1 is one"
+}

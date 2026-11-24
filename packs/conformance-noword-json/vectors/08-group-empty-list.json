@@ -1,0 +1,9 @@
+{
+  "name": "group-empty-list",
+  "from": "conformance-noword-json",
+  "to": "conformance-noword-group",
+  "input": "{\"items\":[]}",
+  "expect": "",
+  "source": "constructed",
+  "reference": "spec 0.52 rulings 18 and 19: a group that starts at bit 0 with no items reaches bit 0: zero words; encode writes none"
+}

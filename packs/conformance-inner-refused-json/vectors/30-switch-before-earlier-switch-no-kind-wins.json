@@ -1,0 +1,9 @@
+{
+  "name": "switch-before-earlier-switch-no-kind-wins",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-switch-before",
+  "input": "{\"w\":5,\"x\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: an error of an earlier line wins"
+}

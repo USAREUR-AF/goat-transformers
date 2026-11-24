@@ -1,0 +1,14 @@
+{
+  "name": "recorded-kind-is-written-again",
+  "from": "conformance-asopt-order",
+  "to": "conformance-asopt-order",
+  "input": "0603",
+  "expect": "0603",
+  "model": {
+    "@kind": "second",
+    "probe.x": "6",
+    "probe.z": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52: a kind recorded on the entity is unchanged (0.5 Encode step 1)"
+}

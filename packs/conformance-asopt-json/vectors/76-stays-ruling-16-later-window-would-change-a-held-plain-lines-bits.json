@@ -1,0 +1,9 @@
+{
+  "name": "stays-ruling-16-later-window-would-change-a-held-plain-lines-bits",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-stays",
+  "input": "{\"x\":5,\"w\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: a window takes no bit away from a held key; the plain `when` wrote 5 for x; the first window writes 0x51, which agrees there; the second would change the nibble 5 to 6"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "item-limit-not-met",
+  "from": "conformance-inner-refused-list",
+  "to": "conformance-inner-refused-list",
+  "input": "02050607",
+  "expect_error": "bad-directive",
+  "max_items": 2,
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; 2 items, limit 2: the line is reached"
+}

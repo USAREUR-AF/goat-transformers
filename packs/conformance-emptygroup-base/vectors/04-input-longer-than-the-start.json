@@ -1,0 +1,12 @@
+{
+  "name": "input-longer-than-the-start",
+  "from": "conformance-emptygroup-base",
+  "to": "conformance-emptygroup-base",
+  "input": "05000000aabb",
+  "expect": "05000000",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.5: extra bytes are ignored; spec 0.52 ruling 18: encode writes up to the start"
+}

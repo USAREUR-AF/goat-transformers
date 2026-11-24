@@ -1,0 +1,9 @@
+{
+  "name": "input-ends-before-the-gated-field",
+  "from": "conformance-emptygroup-gate",
+  "to": "conformance-emptygroup-gate",
+  "input": "0500",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the required length is the greater of the start and what the other lines require; the gate does not hold; 2 bytes of 4"
+}

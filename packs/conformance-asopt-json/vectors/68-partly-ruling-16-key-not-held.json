@@ -1,0 +1,9 @@
+{
+  "name": "partly-ruling-16-key-not-held",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-partly",
+  "input": "{\"z\":6}",
+  "expect": "1506",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: x is absent: the first value 1, then 0x15 without a check"
+}

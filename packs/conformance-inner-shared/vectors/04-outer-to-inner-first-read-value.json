@@ -3,7 +3,7 @@
   "from": "conformance-inner-shared",
   "to": "conformance-inner-fixed",
   "input": "0a3507",
-  "expect": "3a07",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 Decode step 4: x=10 from the outer field; fixed lsb byte 0 = 0x3a, z 07"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-shared and its inner pack conformance-inner-fixed both map probe.x, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

@@ -1,0 +1,15 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-presence-name",
+  "to": "conformance-inner-refused-works-presence-name",
+  "input": "0041",
+  "expect": "0041",
+  "model": {
+    "uid": "A",
+    "@absent": [
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a presence name is not a key"
+}

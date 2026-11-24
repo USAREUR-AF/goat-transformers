@@ -1,0 +1,9 @@
+{
+  "name": "distinct-narrow-inner-value-that-fits",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-distinct-narrow",
+  "input": "{\"w\":1,\"z\":5}",
+  "expect": "0150",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: the inner message after w"
+}

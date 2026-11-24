@@ -4,10 +4,7 @@
   "to": "conformance-inner-countafter",
   "input": "020a0b030c0d0e",
   "max_items": 5,
-  "expect": "020a0b020a0b",
-  "model": {
-    "probe.nums.#": "2"
-  },
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 22: the inner list holds 2 of 5; the outer count 3 fits the 3 left; its list is discarded"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-countafter and its inner pack conformance-inner-restonly both map probe.nums[], probe.nums[].probe.val, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

@@ -1,0 +1,9 @@
+{
+  "name": "zero-inside-count-0-empty-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-zero-inside",
+  "input": "{\"n\":5,\"x\":7,\"items\":[]}",
+  "expect": "05000007",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: nothing changes"
+}

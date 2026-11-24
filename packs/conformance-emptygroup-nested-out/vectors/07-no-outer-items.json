@@ -1,0 +1,12 @@
+{
+  "name": "no-outer-items",
+  "from": "conformance-emptygroup-nested-out",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "0500",
+  "expect": "0500",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: no item, so the nested group is not reached; items start at byte 2"
+}

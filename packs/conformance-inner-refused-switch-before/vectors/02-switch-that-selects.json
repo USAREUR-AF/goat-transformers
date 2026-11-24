@@ -1,0 +1,9 @@
+{
+  "name": "switch-that-selects",
+  "from": "conformance-inner-refused-switch-before",
+  "to": "conformance-inner-refused-switch-before",
+  "input": "01070102",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; the switch selects its case, so the line is reached"
+}

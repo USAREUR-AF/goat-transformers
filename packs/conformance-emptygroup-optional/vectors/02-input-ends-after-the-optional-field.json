@@ -1,0 +1,9 @@
+{
+  "name": "input-ends-after-the-optional-field",
+  "from": "conformance-emptygroup-optional",
+  "to": "conformance-emptygroup-optional",
+  "input": "050007",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the required length is the greater of the start and what the other lines require; 3 bytes of 4"
+}

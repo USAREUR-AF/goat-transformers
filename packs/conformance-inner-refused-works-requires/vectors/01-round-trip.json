@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-requires",
+  "to": "conformance-inner-refused-works-requires",
+  "input": "010205",
+  "expect": "010205",
+  "model": {
+    "probe.w": "2",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key named only by `requires` is not mapped"
+}

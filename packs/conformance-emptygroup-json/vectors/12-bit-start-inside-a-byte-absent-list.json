@@ -1,0 +1,9 @@
+{
+  "name": "bit-start-inside-a-byte-absent-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-bit",
+  "input": "{\"n\":5}",
+  "expect": "0500000000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 36 bits, 5 bytes"
+}

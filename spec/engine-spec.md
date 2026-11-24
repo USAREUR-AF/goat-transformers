@@ -5,6 +5,12 @@ from this document and the vectors, never from another engine's source. The
 document grows by one section per version; a later section that replaces an
 earlier sentence says so, and the later section holds.
 
+Versions merge in number order, with these exceptions: 0.32 merged before
+0.23, 0.29 before 0.27 and 0.28, and after 0.34 come 0.93, 0.52, 0.83, 0.92, 0.46
+and 0.64, in that order. "Later" above
+means merged later. A number between them that has no section is not yet
+built.
+
 ## What an engine does
 
 Three operations:
@@ -6247,3 +6253,215 @@ only the outer pack's own keys.
   holds, compared with the inner message or with a count of its own. A
   `length` block states the extent in bytes or bits only, and a 0.21 `count`
   line still needs a group of its own pack.
+
+# Version 0.52: a discriminator key the entity need not hold
+
+Status: Written. With Version 0.30 a kind whose `when` line binds a key
+qualifies on encode only when the entity holds that key. An entity from a
+format that has no such key then qualifies for no kind, so a pack cannot bind
+its discriminator in every kind and still be a target for other formats. This
+version adds a word that relaxes the choosing rule for one line.
+
+```
+when  <len> <value>[,<value>…]  [at <offset>]  as <model-key>  [optional]
+```
+
+`optional` follows the key of an `as` (Version 0.30) on a `when` of a message
+kind or an item kind, with or without `at` (Version 0.33). It changes the
+choosing of a kind and nothing else.
+
+## Encode
+
+**Choosing the kind.** The implicit `requires` term of a kind's `when … as
+<k> optional` line fails only when the entity holds `<k>` with a value that
+the `when` does not match. It holds when the entity does not hold `<k>`.
+Kinds are tried in pack order, as in Version 0.5.
+
+**The bits written** are unchanged. Without `at`, Version 0.30 applies: the
+held value, or the first listed value when the entity does not hold `<k>`.
+With `at`, Version 0.33 alone applies: bits that match already stand.
+
+Decode, a kind recorded on the entity or on the item, and `model_keys` are
+unchanged.
+
+## Load errors
+
+`bad-directive`: `optional` that does not directly follow the key of an `as`;
+`optional` twice; a token after it; `optional` on an `as` of a common `when`
+(of the message or of a group body). Ruling 3 states when each is checked.
+
+## Rulings for 0.52
+
+1. **Amended rules.** Of 0.30: "only when the entity holds `<k>`" (Choosing
+   the kind), "with a token after the key" (Load errors) and ruling 15. Of
+   0.33: ruling 11 and the form in Load errors. The form is now `when <len>
+   <values> [at <n>] [as <k> [optional]]`. Vector 07 of
+   `conformance-whenas-json` stands: its line has no `optional`.
+2. **Choosing looks at keys only** (Version 0.5). A window that settles to
+   `transform-encode` (0.33) does not make the next kind be tried.
+3. **When the errors are raised.** A third token that is neither `at` nor
+   `as` is the line check of ruling 23 of 0.20, `optional` included (`when 8
+   1 optional`). On a line without `at`, the errors of this version are raised
+   with the `as` syntax checks (rulings 16 and 29 of 0.30), the one for a
+   common `when` included. On a line that holds `at`, a wrong, repeated or
+   misplaced token is the broken order of rulings 27 and 28 of 0.33 (late, key
+   not read). `optional` on a common `when` in the right order is a late `at`
+   form error whose key is read.
+4. **The token after `as` is the key,** except `as` itself (ruling 31 of
+   0.30): `as optional` and `as at` name keys. Such an `at` does not make the
+   line one that holds `at`.
+5. **Several `as` lines in one kind** each have their own term; one may be
+   `optional` and another not. Every term must hold.
+6. **Plain `requires` terms still apply.** `requires <k>` beside `as <k>
+   optional` needs the key.
+7. **What an entity holds** includes keys from the context and from
+   derivations, as for `requires` (0.6). A `default` does not count (ruling 6
+   of 0.30). For an item kind, the entity is the item.
+8. **The order of kinds decides for an entity without the key.** The first
+   kind all of whose terms hold takes it. A pack whose kinds have no other
+   terms sends every such entity to its first kind; `requires` lines on the
+   kinds' own keys tell them apart, the more specific kind first.
+9. **A `switch` on the key** (ruling 19 of 0.30) selects by the bits written,
+   for a kind's line as for a common one: an absent key selects by the first
+   listed value, or with `at` by the settled bits.
+10. **Layers (Version 0.34).** Encode sets no key. An outer and an inner pack
+    cannot bind one key at an `inner` line: ruling 20 refuses it.
+11. **Which check sees the line.** The third token decides first: `when 8 1
+    optional at 0` is the line check. `when 8 1 as at 0` has the key `at` and
+    a token after it (the `as` syntax check); `as at at 0` holds `at`.
+12. **The word is exact:** `OPTIONAL` is another token, as `AS` is (ruling 22
+    of 0.30).
+13. **On a common line without `at`** the error comes before the key passes,
+    so an undeclared key there is not reported.
+
+14. **The first `as` only** (ruling 4). The token after a later `as` is not
+    exempt: `when 8 1 as k as at` holds `at`, and its error is the late one.
+15. **`at optional as k`** has `optional` out of place: the broken order, with
+    the key not read. So have `at as as k` and `at at as k`: one of the words
+    `at`, `as` and `optional` in the offset's place is never an offset alone
+    bad (ruling 28 of 0.33), of which `+8` is an example.
+
+16. **A held key under two windows** (amends rulings 5, 12 and 26 of 0.33;
+    a window takes no bit away from a held key, so in ruling 26 a window that
+    writes its value does not make bits that a held key wrote "bits of an
+    earlier window"). The
+    bits of a `when … as <k>` line of the kind, with or without `at`, whose
+    key the entity holds count as bits that key wrote. A later window that
+    would change one is `transform-encode`, as for a `field`. The bits of a
+    line whose key the entity does not hold are not such bits by themselves:
+    they are written over without a check, except a bit that a held key
+    wrote. "Later" is the order of settling: windows
+    settle after all lines are written, so a window is later than every plain
+    `when … as` of its kind, wherever that line stands. Reason: otherwise the
+    output decodes another value of a held key.
+17. **`as k at 0` on a pack that is not sequential** is the late `at` error
+    (rulings 27 and 30 of 0.33). Ruling 15 of 0.33 is about the
+    text wires (`when @t at` matches the text `at`), not about this line.
+
+18. **An empty counted group on a fixed layout** (settles 0.7, "The message
+    length is extended by the items"). A `bits` group of a fixed layout that
+    decode or encode reaches extends the message at least to the group's
+    start, also when it has no items: a count locator that reads 0, an empty
+    or an absent list (ruling 14 of 0.7), or `count 0`. Decode of a shorter
+    input is `malformed-wire`; encode writes up to the start, with zero bits
+    where no line writes. It holds in the common lines and the selected kind,
+    for a group nested in an item, and for the `L` of 0.14.
+    - It settles what ruling 14 of 0.34 leaves open for a message on its own;
+      the inner message's end there is unchanged and agrees with it.
+    - The length decode requires is the greater of the start and what the
+      other lines require. An `optional` field, or a line of a gate block that
+      does not hold, before the start does not lower it. Where the other
+      lines already require as much, nothing changes.
+    - An item whose empty nested group starts beyond `item <bits>` ends at
+      that start; the next item begins there (ruling 4 of 0.7).
+    - Such a pack loads when the nested count is a locator. A nested group
+      with a fixed count, `count 0` included, that starts beyond the item is
+      `bad-directive` (ruling 4 of 0.7).
+    - A group in the body of a list with no items is not reached.
+    - An absent list under `count 0` stays `transform-encode` (ruling 5 of
+      0.7).
+
+19. **No counted bit** (settles 0.5, "as many whole words as the furthest
+    mapped or `when` bit reaches", with 0.17). A fixed layout none of whose
+    counted lines has a bit on this input or for this entity has zero words:
+    every line is in a 0.17 block that does not hold, or there is no line with
+    a bit. Decode needs no byte, an empty input included; encode writes none.
+    There is no smallest length of one word (ruling 14 of 0.34 leaves this to
+    a message on its own; an inner message then ends at 0, as there). An `optional` field counts as it
+    does in 0.6: not for what decode needs, and on encode it does, so a layout
+    with only such a field writes it.
+
+20. **A key both packs map is refused** (amends 0.34). When an `inner` line is
+    reached, on decode and on encode, a fifth check follows the four of 0.34:
+    no key that the outer pack's **lines in reach** map is a mapped key of the
+    inner pack; otherwise `bad-directive`, at the `inner` line, naming the
+    inner format. The lines in reach of an `inner` line in a kind are the
+    common lines and that kind's lines. Of an `inner` line in the common lines
+    they are the common lines and the lines of every kind, since the kind may
+    be chosen after the line; one clashing kind then refuses every message
+    that reaches the line. A pack without kinds has common lines only. Lines
+    after the `inner` line count, and a line counts whether or not it is
+    reached or its block is read: every block, every `case` and `else`
+    included. For an `inner` line in a kind, lines of other kinds do not
+    count. A key is mapped as 6a to 6c of 0.11, ruling 13 of 0.8 (`also`) and
+    ruling 24 of 0.30 (`when … as`, with or without `at` or `optional`) state,
+    in both packs; the mapped keys of the inner pack are its `model_keys`, all
+    its kinds together, whichever kind is selected. Keys are compared as the
+    entries of `model_keys` are, as exact text: a list both map (`rows[]`) is
+    refused, an item key and an entity key of one name are two entries, and so
+    are `rows[].sub[]` and `sub[]`. A key named only by `requires`, `with`,
+    `default`, `switch`, a derivation or the caller's context is not mapped;
+    count and presence names are not keys.
+20b. **When the check is made.** Before the whole-byte test of the cursor and
+    before any inner line is read or written, also when the line is `partial`
+    and when the inner input is empty. A format that is not loaded and the
+    other three checks of 0.34 come first. On decode it stops the decode. An
+    error that stopped the decode before the line wins: a `malformed-wire`, an
+    item limit, a `no-kind` (of a common `when`, an item or a `switch`), and
+    the `transform-decode` of ruling 35 of 0.20. It is ahead of every other
+    `transform-decode`. A `length` block whose extent ends beyond the input or
+    beyond its enclosing extent is `malformed-wire` at its `length` line,
+    before anything in the block is read, and so before any check of an
+    `inner` line in it; a `length … whole` longer than the input is met at its
+    own line likewise. On encode it is an error of the `inner` line for ruling
+    12 of 0.20, as the other four are: an error of an earlier line wins, and
+    so does the `no-kind` of choosing the outer message's kind. A `no-kind` of
+    a later `switch` or of the inner pack does not win. An engine that keeps a
+    lookup (0.34) keeps checks 1 to 4; the fifth belongs to each `inner` line.
+    The check is not one of the pack: `model_keys` and the capability report
+    of 0.34 keep checks 1 to 4, so a clashing line still adds the inner pack's
+    keys there. An `inner` line in a block that reads as absent (ruling 21 of
+    0.8) is not reached on decode, though encode may reach it; a line at the
+    end of its own extent is reached.
+20c. **What 0.34 says that has nothing left to apply to.** Decode step 4's
+    keeping of the first value read where both packs map the key, and its
+    sentence "A list is one key" on a list of both; "Items of an inner list
+    discarded by step 4 are not counted (7g)"; "A key mapped by both packs is
+    written by both" (Encode); "no key mapped by both packs held different
+    values" (Conversion); the last sentence of ruling 8 of 0.34 (its first
+    stands: such a pack loads); the last sentence of ruling 9 of 0.34; "a list
+    that step 4 discards included" (ruling 14 of 0.34); and rulings 21, 22 and
+    23 of 0.34. Of ruling 20 of 0.34 the first sentence stands and "Step 4 is
+    about" to its end goes; two outer groups of one list are 7g's alone. Of
+    ruling 7 of 0.34 "An inner `count` is checked against the remaining budget
+    when it is read (7d)" and "A `count <n>` the pack states is not read from
+    the wire, so 7d does not check it" stand. Ruling 19 of 0.34, the order of
+    errors, and the join of keys that one pack maps stand.
+20d. **The outer pack's `typemap`** applies only to values that lines of the
+    outer pack read or write, and the inner pack's only to its own ("pack-wide",
+    ruling 18 of 0.5). A `type` that the inner message gave is not changed by
+    the outer pack's `typemap`, on decode or on encode, also when no line in
+    reach of the outer pack maps `type`. Whether a pack with a `typemap` line
+    and no field on `type` loads is not ruled here.
+
+### Stated, not yet pinned by a vector
+
+21. Ruling 10, and `model_keys` unchanged (no capability vector, as for ruling
+    27 of 0.30).
+22. A recorded kind, pinned only by round trips, whose key always matches
+    (ruling 25 of 0.30).
+23. A `switch` on an `optional` key in an item kind.
+
+## Not in this version
+
+- `optional` on a `requires` line.

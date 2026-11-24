@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-window-inner-error-alone",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-window",
+  "input": "{\"w\":2}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 12: the encode error of the line earliest in reading order is reported, and 0.34 Encode: an inner encode error stands at the `inner` line; the window stands; the inner kind needs x"
+}

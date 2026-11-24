@@ -1,0 +1,9 @@
+{
+  "name": "items-at-held-bits-differ",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-items-at",
+  "input": "{\"recs\":[{\"y\":71}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 with `at` in an item kind, 0.33 Encode: y = 0x47: 7 does not match; the first value 1 differs from bits y wrote"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "decode-else",
+  "from": "conformance-asopt-state-window-else",
+  "to": "conformance-asopt-state-window-else",
+  "input": "0407",
+  "expect": "0407",
+  "model": {
+    "probe.x": "4",
+    "probe.w": "7",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 Decode: x = 4 is in no case: else"
+}

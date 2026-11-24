@@ -1,0 +1,12 @@
+{
+  "name": "works-default-key-from-the-context",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-works-default",
+  "input": "{\"w\":2}",
+  "expect": "0204",
+  "context": {
+    "probe.x": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key named by the caller's context is not mapped"
+}

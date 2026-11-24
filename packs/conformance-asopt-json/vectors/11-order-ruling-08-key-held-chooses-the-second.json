@@ -1,0 +1,9 @@
+{
+  "name": "order-ruling-08-key-held-chooses-the-second",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-order",
+  "input": "{\"x\":6,\"z\":3}",
+  "expect": "0603",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: the implicit term fails only when the entity holds the key with a value the `when` does not match; x = 6 does not match first"
+}

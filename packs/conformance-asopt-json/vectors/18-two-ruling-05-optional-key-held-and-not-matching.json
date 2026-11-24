@@ -1,0 +1,9 @@
+{
+  "name": "two-ruling-05-optional-key-held-and-not-matching",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-two",
+  "input": "{\"x\":5,\"w\":7,\"y\":9}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 5: several `as` lines each have their own term and every term must hold; x = 5 fails the optional term of a and of b"
+}

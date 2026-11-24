@@ -1,0 +1,13 @@
+{
+  "name": "outer-type",
+  "from": "conformance-inner-refused-works-type-map",
+  "to": "conformance-inner-refused-json",
+  "input": "0141",
+  "expect": "{\"type\":\"a-f\"}",
+  "model": {
+    "@kind": "a",
+    "type": "a-f"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20d: the outer typemap applies to the outer line of type"
+}

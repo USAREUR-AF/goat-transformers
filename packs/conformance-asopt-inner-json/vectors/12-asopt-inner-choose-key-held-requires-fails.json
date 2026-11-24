@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-choose-key-held-requires-fails",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-choose",
+  "input": "{\"x\":2,\"y\":5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: x = 2 fails a; b requires z"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "switch-at-ruling-09-key-absent-selects-by-standing-bits",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-switch-at",
+  "input": "{\"w\":2,\"z\":6}",
+  "expect": "0206",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 9: a `switch` on the key selects by the bits written; with `at` by the settled bits: w's 02 matches and stands: case 2, z"
+}

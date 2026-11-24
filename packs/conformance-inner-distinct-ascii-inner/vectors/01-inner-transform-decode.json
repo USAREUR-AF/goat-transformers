@@ -1,0 +1,9 @@
+{
+  "name": "inner-transform-decode",
+  "from": "conformance-inner-distinct-ascii-inner",
+  "to": "conformance-inner-distinct-ascii-inner",
+  "input": "050105",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: an inner error keeps its kind"
+}

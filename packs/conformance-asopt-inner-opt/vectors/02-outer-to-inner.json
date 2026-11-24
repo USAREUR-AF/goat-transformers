@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-inner",
+  "from": "conformance-asopt-inner-opt",
+  "to": "conformance-asopt-inner-in-opt",
+  "input": "050107",
+  "expect": "0107",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion: Entity.inner_kind p is kept"
+}

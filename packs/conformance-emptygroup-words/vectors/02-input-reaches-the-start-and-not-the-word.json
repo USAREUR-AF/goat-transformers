@@ -1,0 +1,9 @@
+{
+  "name": "input-reaches-the-start-and-not-the-word",
+  "from": "conformance-emptygroup-words",
+  "to": "conformance-emptygroup-words",
+  "input": "0500000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: with whole words (0.5): 5 bytes of 8"
+}

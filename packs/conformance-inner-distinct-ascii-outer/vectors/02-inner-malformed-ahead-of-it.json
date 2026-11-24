@@ -1,0 +1,9 @@
+{
+  "name": "inner-malformed-ahead-of-it",
+  "from": "conformance-inner-distinct-ascii-outer",
+  "to": "conformance-inner-distinct-ascii-outer",
+  "input": "01",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: an inner malformed-wire (y is missing) is reported ahead of the earlier transform-decode"
+}

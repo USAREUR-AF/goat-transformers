@@ -1,0 +1,9 @@
+{
+  "name": "unheld-gate-longer-input",
+  "from": "conformance-emptygroup-inner-gate",
+  "to": "conformance-emptygroup-inner-gate",
+  "input": "070207",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19 and 0.34 ruling 14: no counted bit, the end is 0; spec 0.34 Decode step 3: bytes after the inner message's end; "
+}

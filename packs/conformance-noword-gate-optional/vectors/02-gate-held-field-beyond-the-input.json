@@ -1,0 +1,14 @@
+{
+  "name": "gate-held-field-beyond-the-input",
+  "from": "conformance-noword-gate-optional",
+  "to": "conformance-noword-gate-optional",
+  "input": "01",
+  "expect": "",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.17 Decode: the gate holds and the optional y is absent. Encode: the block is not open and the gate reads 0: spec 0.52 ruling 19: the one line is in a block that does not hold: zero words; none"
+}

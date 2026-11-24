@@ -1,0 +1,9 @@
+{
+  "name": "distinct-narrow-inner-encode-error-keeps-its-kind",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-distinct-narrow",
+  "input": "{\"w\":1,\"z\":31}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: 31 does not fit the inner z : 4"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "two-at-ruling-02-window-disagrees-with-its-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-two-at",
+  "input": "{\"w\":7,\"y\":8}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.33 Encode: a is chosen; 08 matches but does not agree with w = 7, and 7 differs from the bits y wrote"
+}

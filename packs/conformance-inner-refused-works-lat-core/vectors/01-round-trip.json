@@ -1,0 +1,12 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-lat-core",
+  "to": "conformance-inner-refused-works-lat-core",
+  "input": "0305",
+  "expect": "0305",
+  "model": {
+    "lat": "1.5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.4 ruling 2 and 0.52 ruling 20: the entity key is the literal text, so core.lat and lat are two entries; each is written from its own value"
+}

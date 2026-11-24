@@ -1,0 +1,9 @@
+{
+  "name": "held-gate-inner-input-short",
+  "from": "conformance-emptygroup-inner-gate-partial",
+  "to": "conformance-emptygroup-inner-gate-partial",
+  "input": "0701",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.17 Decode: y of the held block is missing"
+}

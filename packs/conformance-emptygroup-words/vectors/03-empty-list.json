@@ -1,0 +1,12 @@
+{
+  "name": "empty-list",
+  "from": "conformance-emptygroup-words",
+  "to": "conformance-emptygroup-words",
+  "input": "0500000000000000",
+  "expect": "0500000000000000",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 2 whole words"
+}

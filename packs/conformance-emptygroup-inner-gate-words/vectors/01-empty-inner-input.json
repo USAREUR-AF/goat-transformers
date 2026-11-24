@@ -1,0 +1,15 @@
+{
+  "name": "empty-inner-input",
+  "from": "conformance-emptygroup-inner-gate-words",
+  "to": "conformance-emptygroup-inner-gate-words",
+  "input": "07",
+  "expect": "07",
+  "model": {
+    "probe.x": "7",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19 and 0.34 ruling 14: no counted bit, the end is 0; no smallest length of one word"
+}

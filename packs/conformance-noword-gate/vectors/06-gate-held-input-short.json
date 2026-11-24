@@ -1,0 +1,9 @@
+{
+  "name": "gate-held-input-short",
+  "from": "conformance-noword-gate",
+  "to": "conformance-noword-gate",
+  "input": "01",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.17 Decode: a field of a held block beyond the input"
+}

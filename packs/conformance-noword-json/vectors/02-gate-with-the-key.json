@@ -1,0 +1,9 @@
+{
+  "name": "gate-with-the-key",
+  "from": "conformance-noword-json",
+  "to": "conformance-noword-gate",
+  "input": "{\"y\":7}",
+  "expect": "0107",
+  "source": "constructed",
+  "reference": "spec 0.17 Encode steps 1, 3 and 5: open, gate value 1"
+}

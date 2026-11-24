@@ -1,0 +1,9 @@
+{
+  "name": "items-at-key-and-field-absent",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-items-at",
+  "input": "{\"recs\":[{}]}",
+  "expect": "0101",
+  "source": "constructed",
+  "reference": "spec 0.52 with `at` in an item kind, 0.33 Encode: the zero bits do not match 1..3: the first value 1"
+}

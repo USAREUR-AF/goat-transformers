@@ -1,0 +1,8 @@
+{
+  "name": "5295-emptygroup-nested-locator-count-starting-beyond-the-item-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey qty int -\nkey val int -\nlist items \"a list\"\nlist subs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.52.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nfield probe.n 0:0:8 uint\ngroup probe.items 2:0 item 16 count 1:0:8\n  field probe.qty 0:0:8 uint\n  group probe.subs 4:0 item 8 count 1:0:8\n    field probe.val 0:0:8 uint\n  end\nend\n"
+}

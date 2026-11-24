@@ -1,0 +1,14 @@
+{
+  "name": "empty-input",
+  "from": "conformance-noword-gate-words",
+  "to": "conformance-noword-gate-words",
+  "input": "",
+  "expect": "",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: the one line is in a block that does not hold: zero words; there is no smallest length of one word"
+}

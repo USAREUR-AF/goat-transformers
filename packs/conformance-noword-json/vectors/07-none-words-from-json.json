@@ -1,0 +1,9 @@
+{
+  "name": "none-words-from-json",
+  "from": "conformance-noword-json",
+  "to": "conformance-noword-none-words",
+  "input": "{\"y\":7}",
+  "expect": "",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: no line with a bit: zero words; encode writes none"
+}

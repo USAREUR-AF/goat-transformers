@@ -1,0 +1,9 @@
+{
+  "name": "state-twice-switch-reads-the-earliest-line-of-the-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-state-twice",
+  "input": "{\"y\":5,\"z\":6}",
+  "expect": "000105",
+  "source": "constructed",
+  "reference": "spec 0.6 One key at several locators: decode takes x from the earliest line, the common one, 0; the window writes 1 over the kind's x. The case is the one decode would select (0.20 Encode): 0, y"
+}

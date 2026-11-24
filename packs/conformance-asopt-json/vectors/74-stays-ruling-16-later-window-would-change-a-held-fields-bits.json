@@ -1,0 +1,9 @@
+{
+  "name": "stays-ruling-16-later-window-would-change-a-held-fields-bits",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-stays",
+  "input": "{\"y\":5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: a window takes no bit away from a held key; y = 5 wrote the low nibble; the first window writes 0x15, which agrees there and changes the pad; the second would change the nibble 5 to 6"
+}

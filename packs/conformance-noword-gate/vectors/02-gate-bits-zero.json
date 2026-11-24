@@ -1,0 +1,14 @@
+{
+  "name": "gate-bits-zero",
+  "from": "conformance-noword-gate",
+  "to": "conformance-noword-gate",
+  "input": "00",
+  "expect": "",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: the one line is in a block that does not hold: zero words; the gate reads 0, not 1; encode: the block is not open and the gate reads 0 (0.17 steps 1 and 4)"
+}

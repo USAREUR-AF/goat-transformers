@@ -1,0 +1,9 @@
+{
+  "name": "5300-asopt-ruling-15-as-in-the-place-of-the-offset-after-missing-distribution",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey w int -\nkey x int -\nkey y int -\nkey a float -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.52.0\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 8 1 at as as probe.nosuch\nfield probe.y 8 uint\n",
+  "expect_error": "missing-distribution"
+}

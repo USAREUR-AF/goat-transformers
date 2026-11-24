@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-opt-outer-req-outer-key-held",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-opt-outer-req",
+  "input": "{\"w\":2,\"y\":7}",
+  "expect": "020107",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind, for the outer and for the inner pack; w = 2 matches; x is absent: 1"
+}

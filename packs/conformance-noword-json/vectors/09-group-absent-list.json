@@ -1,0 +1,9 @@
+{
+  "name": "group-absent-list",
+  "from": "conformance-noword-json",
+  "to": "conformance-noword-group",
+  "input": "{}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.7 ruling 5, kept by 0.52 ruling 18"
+}

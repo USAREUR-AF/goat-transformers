@@ -1,0 +1,9 @@
+{
+  "name": "works-type-map-type-of-the-inner-pack",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-works-type-map",
+  "input": "{\"w\":5,\"type\":\"a-g\"}",
+  "expect": "020541",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20d: written by the inner pack's own rules"
+}

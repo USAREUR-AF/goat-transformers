@@ -1,0 +1,12 @@
+{
+  "name": "held-ruling-07-key-derived-from-a-context-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-held",
+  "input": "{\"y\":5}",
+  "expect": "0605",
+  "context": {
+    "probe.n": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 7: what an entity holds includes keys from the context and from derivations; the context fills n and the derivation n_copy = 6 (0.6: context, then derivations)"
+}

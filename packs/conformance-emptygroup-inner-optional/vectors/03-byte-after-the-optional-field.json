@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-the-optional-field",
+  "from": "conformance-emptygroup-inner-optional",
+  "to": "conformance-emptygroup-inner-optional",
+  "input": "0707aa",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 14: an optional line counts: the end is 1; spec 0.34 Decode step 3: bytes after the inner message's end; "
+}

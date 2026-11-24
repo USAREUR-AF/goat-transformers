@@ -1,0 +1,9 @@
+{
+  "name": "two-at-ruling-05-at-key-absent-other-held",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-two-at",
+  "input": "{\"x\":2,\"y\":9}",
+  "expect": "0209",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 5: several `as` lines each have their own term and every term must hold; a needs w; b: x = 2, w absent; the window's 09 matches 7..9 and stands"
+}

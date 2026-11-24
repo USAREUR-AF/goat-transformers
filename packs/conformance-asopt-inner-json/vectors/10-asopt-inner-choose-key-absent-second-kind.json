@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-choose-key-absent-second-kind",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-choose",
+  "input": "{\"z\":6}",
+  "expect": "0206",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: a requires y; b: the inner pack in-z"
+}

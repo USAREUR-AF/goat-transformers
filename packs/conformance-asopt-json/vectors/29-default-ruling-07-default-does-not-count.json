@@ -1,0 +1,9 @@
+{
+  "name": "default-ruling-07-default-does-not-count",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-default",
+  "input": "{\"y\":4}",
+  "expect": "0104",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 7: a `default` does not count: 9 neither fails 1..3 nor is written; the first value 1"
+}

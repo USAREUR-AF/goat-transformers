@@ -1,0 +1,9 @@
+{
+  "name": "last-item-empty-nested-group-input-short",
+  "from": "conformance-emptygroup-nested-out",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "0502070100002a080000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 10 bytes of 11"
+}

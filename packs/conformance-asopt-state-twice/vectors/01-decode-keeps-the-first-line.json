@@ -1,0 +1,17 @@
+{
+  "name": "decode-keeps-the-first-line",
+  "from": "conformance-asopt-state-twice",
+  "to": "conformance-asopt-json",
+  "input": "000206",
+  "expect": "{\"x\":0,\"y\":6}",
+  "model": {
+    "@kind": "a",
+    "probe.x": "0",
+    "probe.y": "6",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.6: x = 0 from the common line, although the kind's x reads 2: case 0, y"
+}

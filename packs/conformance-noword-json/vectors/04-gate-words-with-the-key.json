@@ -1,0 +1,9 @@
+{
+  "name": "gate-words-with-the-key",
+  "from": "conformance-noword-json",
+  "to": "conformance-noword-gate-words",
+  "input": "{\"y\":7}",
+  "expect": "01070000",
+  "source": "constructed",
+  "reference": "spec 0.17 Encode: one whole word"
+}

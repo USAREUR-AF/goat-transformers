@@ -1,0 +1,9 @@
+{
+  "name": "items-at-matching-bits-stand",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-items-at",
+  "input": "{\"recs\":[{\"y\":66}]}",
+  "expect": "0142",
+  "source": "constructed",
+  "reference": "spec 0.52 with `at` in an item kind, 0.33 Encode: y = 0x42, its low nibble 2 matches and stands"
+}

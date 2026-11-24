@@ -1,0 +1,9 @@
+{
+  "name": "switch-at-ruling-09-key-absent-selects-by-the-first-value-settled",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-switch-at",
+  "input": "{\"y\":5,\"z\":6}",
+  "expect": "0105",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 9: a `switch` on the key selects by the bits written; w is absent: the window is written 1: case 1, y"
+}

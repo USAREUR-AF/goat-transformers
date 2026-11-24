@@ -1,0 +1,9 @@
+{
+  "name": "overlap-ruling-16-window-would-change-a-held-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-overlap",
+  "input": "{\"x\":16,\"y\":1,\"z\":2}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: the bits of a `when ... as <k>` line whose key the entity holds count as bits that key wrote; the first window writes 0x10 for x = 16; the second would change its low nibble 0 to 5"
+}

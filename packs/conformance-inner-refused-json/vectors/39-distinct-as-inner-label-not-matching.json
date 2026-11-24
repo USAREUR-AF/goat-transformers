@@ -1,0 +1,9 @@
+{
+  "name": "distinct-as-inner-label-not-matching",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-distinct-as",
+  "input": "{\"w\":1,\"n\":9,\"y\":7}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 9: the inner common label 1,2 does not match n = 9; the error stands at the `inner` line"
+}

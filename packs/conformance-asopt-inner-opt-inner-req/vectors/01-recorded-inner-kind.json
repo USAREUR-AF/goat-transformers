@@ -1,0 +1,12 @@
+{
+  "name": "recorded-inner-kind",
+  "from": "conformance-asopt-inner-opt-inner-req",
+  "to": "conformance-asopt-inner-opt-inner-req",
+  "input": "050107",
+  "expect": "050107",
+  "model": {
+    "@inner_kind": "p"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 10: a kind recorded"
+}

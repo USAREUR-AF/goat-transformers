@@ -1,0 +1,9 @@
+{
+  "name": "decode-sets-the-key-for-another-format",
+  "from": "conformance-asopt-kinds",
+  "to": "conformance-asopt-json",
+  "input": "0105",
+  "expect": "{\"x\":1,\"y\":5}",
+  "source": "constructed",
+  "reference": "spec 0.30 Decode, unchanged by 0.52: x = 1"
+}

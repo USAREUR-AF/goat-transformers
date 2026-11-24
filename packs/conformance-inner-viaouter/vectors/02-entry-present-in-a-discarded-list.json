@@ -3,7 +3,7 @@
   "from": "conformance-inner-viaouter",
   "to": "conformance-inner-names",
   "input": "014101",
-  "expect": "41",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 Decode step 4: the inner item 01 has an entry, its list is discarded, names A is kept; converted to another format so that only decode is tested"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-viaouter and its inner pack conformance-inner-vianames both map probe.names[], probe.names[].probe.tag, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

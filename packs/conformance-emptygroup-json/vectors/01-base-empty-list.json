@@ -1,0 +1,9 @@
+{
+  "name": "base-empty-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-base",
+  "input": "{\"n\":5,\"items\":[]}",
+  "expect": "05000000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: encode writes up to the start"
+}

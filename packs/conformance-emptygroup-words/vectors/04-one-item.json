@@ -1,0 +1,12 @@
+{
+  "name": "one-item",
+  "from": "conformance-emptygroup-words",
+  "to": "conformance-emptygroup-words",
+  "input": "0501000000aa0000",
+  "expect": "0501000000aa0000",
+  "model": {
+    "probe.items[0].probe.qty": "170"
+  },
+  "source": "constructed",
+  "reference": "spec 0.7: the item is byte 5"
+}

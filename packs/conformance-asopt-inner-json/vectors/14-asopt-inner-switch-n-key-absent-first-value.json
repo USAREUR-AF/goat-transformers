@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-switch-n-key-absent-first-value",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-switch-n",
+  "input": "{\"y\":5,\"z\":6,\"n\":9}",
+  "expect": "010509",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 9 and 0.33 Encode: the window settles before the switch; then the `inner` line; w is absent: 1, case 1, y"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ahead-of-an-earlier-transform-decode",
+  "from": "conformance-inner-refused-ascii",
+  "to": "conformance-inner-refused-ascii",
+  "input": "010102",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: label 01 is a transform-decode, which does not stop the decode"
+}

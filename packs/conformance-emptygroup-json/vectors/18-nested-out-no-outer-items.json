@@ -1,0 +1,9 @@
+{
+  "name": "nested-out-no-outer-items",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "{\"n\":5,\"items\":[]}",
+  "expect": "0500",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: items start at byte 2"
+}

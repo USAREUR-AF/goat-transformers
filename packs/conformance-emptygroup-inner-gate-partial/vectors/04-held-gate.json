@@ -1,0 +1,13 @@
+{
+  "name": "held-gate",
+  "from": "conformance-emptygroup-inner-gate-partial",
+  "to": "conformance-emptygroup-inner-gate-partial",
+  "input": "070107",
+  "expect": "070107",
+  "model": {
+    "probe.x": "7",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 14: a held block's lines and gate locator count: 2 bytes"
+}

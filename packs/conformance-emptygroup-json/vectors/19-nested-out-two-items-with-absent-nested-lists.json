@@ -1,0 +1,9 @@
+{
+  "name": "nested-out-two-items-with-absent-nested-lists",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "{\"n\":5,\"items\":[{\"qty\":7},{\"qty\":8}]}",
+  "expect": "05020700000008000000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: an item ends at the start of its empty nested group, and the next item begins there; encode: the second item at byte 6"
+}

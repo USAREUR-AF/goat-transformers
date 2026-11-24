@@ -1,0 +1,15 @@
+{
+  "name": "empty-inner-input",
+  "from": "conformance-emptygroup-inner-optional-partial",
+  "to": "conformance-emptygroup-inner-optional-partial",
+  "input": "07",
+  "expect": "0700",
+  "model": {
+    "probe.x": "7",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 15 and 0.52 ruling 19: decode needs no byte; on encode the optional line counts"
+}

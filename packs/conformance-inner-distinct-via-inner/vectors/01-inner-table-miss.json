@@ -1,0 +1,9 @@
+{
+  "name": "inner-table-miss",
+  "from": "conformance-inner-distinct-via-inner",
+  "to": "conformance-inner-distinct-via-inner",
+  "input": "0509",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.6: 9 has no entry and the types differ"
+}

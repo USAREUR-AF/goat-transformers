@@ -1,0 +1,13 @@
+{
+  "name": "field-present",
+  "from": "conformance-emptygroup-inner-optional-partial",
+  "to": "conformance-emptygroup-inner-optional-partial",
+  "input": "0707",
+  "expect": "0707",
+  "model": {
+    "probe.x": "7",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 14: the end is 1"
+}

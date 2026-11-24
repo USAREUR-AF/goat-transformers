@@ -1,0 +1,9 @@
+{
+  "name": "transform-decode-of-a-switch-key-wins",
+  "from": "conformance-inner-refused-ascii-switch",
+  "to": "conformance-inner-refused-ascii-switch",
+  "input": "010102",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: the transform-decode of ruling 35 of 0.20 stopped the decode before the line"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "switch-ruling-09-key-absent-selects-by-the-first-value",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-switch",
+  "input": "{\"y\":5}",
+  "expect": "0305",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 9: a `switch` on the key selects by the bits written; 03: case 3, y"
+}

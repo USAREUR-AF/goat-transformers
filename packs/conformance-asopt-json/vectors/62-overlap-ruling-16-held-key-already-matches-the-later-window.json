@@ -1,0 +1,9 @@
+{
+  "name": "overlap-ruling-16-held-key-already-matches-the-later-window",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-overlap",
+  "input": "{\"x\":21,\"y\":1,\"z\":2}",
+  "expect": "1502",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: the bits of a `when ... as <k>` line whose key the entity holds count as bits that key wrote; the first window writes 0x15 for x = 21; the second's 5 matches and stands; the switch reads 21: z"
+}

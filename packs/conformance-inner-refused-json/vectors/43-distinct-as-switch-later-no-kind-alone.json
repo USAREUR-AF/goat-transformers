@@ -1,0 +1,9 @@
+{
+  "name": "distinct-as-switch-later-no-kind-alone",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-distinct-as-switch",
+  "input": "{\"n\":1,\"w\":5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20: no case holds w = 5"
+}

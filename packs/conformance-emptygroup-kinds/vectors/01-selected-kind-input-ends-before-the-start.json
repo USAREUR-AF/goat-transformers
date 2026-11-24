@@ -1,0 +1,9 @@
+{
+  "name": "selected-kind-input-ends-before-the-start",
+  "from": "conformance-emptygroup-kinds",
+  "to": "conformance-emptygroup-kinds",
+  "input": "010007",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: kind a is selected; its group starts at byte 5"
+}

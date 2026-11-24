@@ -1,0 +1,9 @@
+{
+  "name": "stays-ruling-16-later-window-changes-only-pad-bits",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-stays",
+  "input": "{\"z\":5}",
+  "expect": "25",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: a window takes no bit away from a held key; 0x15 over z = 5, then the high nibble 2 over bits of the pad: 0x25"
+}

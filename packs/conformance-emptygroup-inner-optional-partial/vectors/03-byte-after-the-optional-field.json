@@ -1,0 +1,13 @@
+{
+  "name": "byte-after-the-optional-field",
+  "from": "conformance-emptygroup-inner-optional-partial",
+  "to": "conformance-emptygroup-inner-optional-partial",
+  "input": "0707aa",
+  "expect": "0707",
+  "model": {
+    "probe.x": "7",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 14: an optional line counts: the end is 1; spec 0.34 ruling 18: `partial` ignores them, and they do not come back; "
+}

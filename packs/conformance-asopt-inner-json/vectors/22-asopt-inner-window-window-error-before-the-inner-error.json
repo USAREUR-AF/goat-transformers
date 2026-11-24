@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-window-window-error-before-the-inner-error",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-window",
+  "input": "{\"w\":7}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 12: the encode error of the line earliest in reading order is reported, and 0.34 Encode: an inner encode error stands at the `inner` line; the window's 07 does not match and 1 differs from the bits w wrote (0.33 Encode): transform-encode of the `when` line, before the inner no-kind (x is absent)"
+}

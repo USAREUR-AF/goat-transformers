@@ -1,0 +1,9 @@
+{
+  "name": "gate-zero-without-the-key",
+  "from": "conformance-noword-json",
+  "to": "conformance-noword-gate-zero",
+  "input": "{}",
+  "expect": "0000",
+  "source": "constructed",
+  "reference": "spec 0.17 Encode step 4: bits nothing wrote read as 0, so the gate 0 holds although the block is not open; the block's line counts for this entity, so the length is not zero words"
+}

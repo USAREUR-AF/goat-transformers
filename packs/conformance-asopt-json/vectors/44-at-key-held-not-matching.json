@@ -1,0 +1,9 @@
+{
+  "name": "at-key-held-not-matching",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-at",
+  "input": "{\"x\":9,\"y\":5,\"z\":7}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: the implicit term fails only when the entity holds the key with a value the `when` does not match; x = 9 matches neither kind"
+}

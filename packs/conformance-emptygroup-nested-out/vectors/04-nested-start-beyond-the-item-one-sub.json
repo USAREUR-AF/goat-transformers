@@ -1,0 +1,12 @@
+{
+  "name": "nested-start-beyond-the-item-one-sub",
+  "from": "conformance-emptygroup-nested-out",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "0501070100002a",
+  "expect": "0501070100002a",
+  "model": {
+    "probe.items[0].probe.subs[0].probe.val": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.7 ruling 4: the sub is byte 4 of the item"
+}

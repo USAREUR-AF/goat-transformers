@@ -1,0 +1,9 @@
+{
+  "name": "common-common-group-absent-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-common",
+  "input": "{\"n\":5}",
+  "expect": "02000500",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: kind b; up to byte 4"
+}

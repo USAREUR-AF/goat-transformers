@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-default",
+  "to": "conformance-inner-refused-works-default",
+  "input": "0205",
+  "expect": "0205",
+  "model": {
+    "probe.w": "2",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key named only by `default` is not mapped"
+}

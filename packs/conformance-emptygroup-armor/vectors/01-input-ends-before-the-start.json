@@ -1,0 +1,9 @@
+{
+  "name": "input-ends-before-the-start",
+  "from": "conformance-emptygroup-armor",
+  "to": "conformance-emptygroup-armor",
+  "input": "500",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: for the `L` of 0.14 and its decode: the start is bit 20; 18 bits are there"
+}

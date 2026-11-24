@@ -1,0 +1,17 @@
+{
+  "name": "decode-and-round-trip",
+  "from": "conformance-asopt-state-window-else",
+  "to": "conformance-asopt-state-window-else",
+  "input": "0306",
+  "expect": "0306",
+  "model": {
+    "@kind": "a",
+    "probe.x": "3",
+    "probe.z": "6",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 Decode: 3 lies in 1..9 and in the window's values; x = 3 selects z"
+}

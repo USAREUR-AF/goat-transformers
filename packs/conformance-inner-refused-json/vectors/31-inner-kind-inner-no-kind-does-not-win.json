@@ -1,0 +1,9 @@
+{
+  "name": "inner-kind-inner-no-kind-does-not-win",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-inner-kind",
+  "input": "{\"w\":1}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: a no-kind of the inner pack does not win: the inner pack is not called"
+}

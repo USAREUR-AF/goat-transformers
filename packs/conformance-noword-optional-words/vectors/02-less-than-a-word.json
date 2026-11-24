@@ -1,0 +1,12 @@
+{
+  "name": "less-than-a-word",
+  "from": "conformance-noword-optional-words",
+  "to": "conformance-noword-optional-words",
+  "input": "07",
+  "expect": "07000000",
+  "model": {
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6: `optional`: a field beyond the input is absent, encode is unchanged; ruling 14: decode requires words up to the furthest bit that is not optional, here none; y is inside the input; encode: one whole word"
+}

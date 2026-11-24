@@ -1,0 +1,9 @@
+{
+  "name": "lat-quoted-encode",
+  "from": "conformance-inner-refused-json-lat",
+  "to": "conformance-inner-refused-lat-quoted",
+  "input": "{\"lat\":1.5}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; quotes are removed, so \"lat\" is the key lat"
+}

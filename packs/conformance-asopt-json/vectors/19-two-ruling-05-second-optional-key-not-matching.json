@@ -1,0 +1,9 @@
+{
+  "name": "two-ruling-05-second-optional-key-not-matching",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-two",
+  "input": "{\"w\":9,\"y\":9}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 5: several `as` lines each have their own term and every term must hold; w = 9 fails a and b"
+}

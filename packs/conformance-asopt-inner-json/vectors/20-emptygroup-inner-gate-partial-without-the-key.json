@@ -1,0 +1,9 @@
+{
+  "name": "emptygroup-inner-gate-partial-without-the-key",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-emptygroup-inner-gate-partial",
+  "input": "{\"x\":7}",
+  "expect": "07",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19 and 0.34 ruling 14: no counted bit, the end is 0; encode writes none"
+}

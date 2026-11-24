@@ -1,0 +1,9 @@
+{
+  "name": "if-encode",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-if",
+  "input": "{\"w\":1}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; x is in an `if` block that is not read or written"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "distinct-as-inner-label-matching",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-distinct-as",
+  "input": "{\"w\":1,\"n\":2,\"y\":7}",
+  "expect": "010207",
+  "source": "constructed",
+  "reference": "spec 0.30: n = 2 is written"
+}

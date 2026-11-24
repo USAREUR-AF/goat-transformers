@@ -1,0 +1,9 @@
+{
+  "name": "kinds-selected-kind-absent-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-kinds",
+  "input": "{\"x\":7}",
+  "expect": "0100070000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: kind a requires x; up to byte 5"
+}

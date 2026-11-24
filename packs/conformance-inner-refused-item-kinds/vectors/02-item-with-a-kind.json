@@ -1,0 +1,9 @@
+{
+  "name": "item-with-a-kind",
+  "from": "conformance-inner-refused-item-kinds",
+  "to": "conformance-inner-refused-item-kinds",
+  "input": "01010102",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; the item has a kind, so the line is reached"
+}

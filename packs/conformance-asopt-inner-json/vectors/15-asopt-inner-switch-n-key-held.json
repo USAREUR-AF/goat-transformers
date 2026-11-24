@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-switch-n-key-held",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-switch-n",
+  "input": "{\"x\":2,\"z\":6,\"n\":9}",
+  "expect": "020609",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 9 and 0.33 Encode: the window settles before the switch; then the `inner` line; x = 2 is written: case 2, z"
+}

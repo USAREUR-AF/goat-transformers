@@ -1,0 +1,9 @@
+{
+  "name": "common-kinds-no-kind-chosen",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-common-kinds",
+  "input": "{\"w\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: on encode the no-kind of choosing the outer message's kind wins"
+}

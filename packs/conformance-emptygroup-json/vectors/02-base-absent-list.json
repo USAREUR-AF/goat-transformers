@@ -1,0 +1,9 @@
+{
+  "name": "base-absent-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-base",
+  "input": "{\"n\":5}",
+  "expect": "05000000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: an absent list writes a count of 0 (ruling 14 of 0.7) and reaches the start"
+}

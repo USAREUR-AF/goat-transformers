@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-two-lists",
+  "to": "conformance-inner-refused-works-two-lists",
+  "input": "010506",
+  "expect": "010506",
+  "model": {
+    "probe.items[0].probe.y": "5",
+    "probe.recs[0].probe.y": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: items[].y and recs[].y are two entries"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "two-items-with-empty-nested-groups",
+  "from": "conformance-emptygroup-armor-nested",
+  "to": "conformance-emptygroup-armor-nested",
+  "input": "527002000",
+  "expect": "527002000",
+  "model": {
+    "probe.items[0].probe.qty": "7",
+    "probe.items[1].probe.qty": "8",
+    "probe.items[1].probe.subs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: an item ends at the start of its empty nested group, and the next item begins there; ruling 10 of 0.14; items at bits 12 and 32; L is 52: 9 characters"
+}

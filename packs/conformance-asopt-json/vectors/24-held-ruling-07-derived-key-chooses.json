@@ -1,0 +1,9 @@
+{
+  "name": "held-ruling-07-derived-key-chooses",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-held",
+  "input": "{\"n\":4,\"y\":5}",
+  "expect": "0405",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 7: what an entity holds includes keys from the context and from derivations; n_copy = n = 4 fails a, matches b"
+}

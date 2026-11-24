@@ -1,0 +1,9 @@
+{
+  "name": "to-a-shared-list",
+  "from": "conformance-inner-refused-works-item-outer",
+  "to": "conformance-inner-refused-list",
+  "input": "010705",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; the list recs is mapped by both; the entity holds one item"
+}

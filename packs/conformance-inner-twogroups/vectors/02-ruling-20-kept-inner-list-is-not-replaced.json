@@ -3,11 +3,7 @@
   "from": "conformance-inner-twogroups",
   "to": "conformance-inner-twogroups",
   "input": "40010b010c",
-  "expect": "c0010b010b010b",
-  "model": {
-    "probe.nums.#": "1",
-    "probe.nums[0].probe.val": "11"
-  },
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 20: the inner [11] is read first and kept; the outer [12] after it is discarded. Encode: the list is present, so both presence bits are set"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-twogroups and its inner pack conformance-inner-restonly both map probe.nums[], probe.nums[].probe.val, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

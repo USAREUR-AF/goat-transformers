@@ -1,0 +1,14 @@
+{
+  "name": "decode-and-round-trip",
+  "from": "conformance-asopt-inner-after-other",
+  "to": "conformance-asopt-inner-after-other",
+  "input": "01090011",
+  "expect": "01090011",
+  "model": {
+    "probe.n": "9",
+    "probe.w": "0",
+    "probe.y": "17"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode"
+}

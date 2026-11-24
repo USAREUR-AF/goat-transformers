@@ -1,0 +1,9 @@
+{
+  "name": "when-before-earlier-transform-encode-wins",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-when-before",
+  "input": "{\"w\":9,\"x\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: the common `when` does not match w = 9: an error of an earlier line (ruling 12 of 0.20)"
+}

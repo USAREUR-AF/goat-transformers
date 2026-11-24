@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-the-start",
+  "from": "conformance-emptygroup-inner-base",
+  "to": "conformance-emptygroup-inner-base",
+  "input": "0705000000aa",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18 and 0.34 ruling 14: the empty group of the inner pack counts up to its start, byte 4; spec 0.34 Decode step 3: bytes after the inner message's end; "
+}

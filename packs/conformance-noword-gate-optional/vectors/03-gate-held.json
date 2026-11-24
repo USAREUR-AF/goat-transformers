@@ -1,0 +1,12 @@
+{
+  "name": "gate-held",
+  "from": "conformance-noword-gate-optional",
+  "to": "conformance-noword-gate-optional",
+  "input": "0107",
+  "expect": "0107",
+  "model": {
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.17: open, gate value 1"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "else-encode",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-else",
+  "input": "{\"w\":0}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; x is in an `else` that is not selected"
+}

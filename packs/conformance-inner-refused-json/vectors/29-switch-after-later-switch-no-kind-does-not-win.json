@@ -1,0 +1,9 @@
+{
+  "name": "switch-after-later-switch-no-kind-does-not-win",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-switch-after",
+  "input": "{\"x\":5}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: a no-kind of a later `switch` does not win"
+}

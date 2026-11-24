@@ -1,0 +1,9 @@
+{
+  "name": "switch-at-ruling-09-key-held-over-an-absent-field",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-switch-at",
+  "input": "{\"x\":2,\"z\":6}",
+  "expect": "0206",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 9: a `switch` on the key selects by the bits written; x = 2 is written: case 2, z"
+}

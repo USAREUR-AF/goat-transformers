@@ -1,0 +1,17 @@
+{
+  "name": "decode-is-unchanged",
+  "from": "conformance-asopt-kinds",
+  "to": "conformance-asopt-kinds",
+  "input": "0306",
+  "expect": "0306",
+  "model": {
+    "@kind": "two",
+    "probe.x": "3",
+    "probe.z": "6",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52: decode is unchanged; 03 lies in 2..4, x = 3 (0.30 Decode)"
+}

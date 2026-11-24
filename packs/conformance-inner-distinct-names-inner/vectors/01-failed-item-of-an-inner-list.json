@@ -1,0 +1,9 @@
+{
+  "name": "failed-item-of-an-inner-list",
+  "from": "conformance-inner-distinct-names-inner",
+  "to": "conformance-inner-distinct-names-inner",
+  "input": "054101",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.7 and 0.34: the second tag 01 is no character"
+}

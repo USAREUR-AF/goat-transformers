@@ -1,0 +1,9 @@
+{
+  "name": "two-ruling-05-one-held-one-absent",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-two",
+  "input": "{\"x\":2,\"y\":9}",
+  "expect": "2809",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 5: several `as` lines each have their own term and every term must hold; a needs w; b: x = 2 matches, w absent"
+}

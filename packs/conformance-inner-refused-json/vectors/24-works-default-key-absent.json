@@ -1,0 +1,9 @@
+{
+  "name": "works-default-key-absent",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-works-default",
+  "input": "{\"w\":2}",
+  "expect": "0200",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: not mapped; the outer pack's default is no line of the inner pack, which writes its absent key as at the top level (0.34 Encode)"
+}

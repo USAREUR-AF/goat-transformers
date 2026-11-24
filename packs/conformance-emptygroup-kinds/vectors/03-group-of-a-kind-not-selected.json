@@ -1,0 +1,13 @@
+{
+  "name": "group-of-a-kind-not-selected",
+  "from": "conformance-emptygroup-kinds",
+  "to": "conformance-emptygroup-kinds",
+  "input": "0205",
+  "expect": "0205",
+  "model": {
+    "@kind": "b",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: kind b is selected; kind a's group does not count"
+}

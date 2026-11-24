@@ -1,0 +1,13 @@
+{
+  "name": "bytes-no-line-writes",
+  "from": "conformance-emptygroup-inner-base",
+  "to": "conformance-emptygroup-inner-base",
+  "input": "0705001122",
+  "expect": "0705000000",
+  "model": {
+    "probe.items.#": "0",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18 and 0.34 ruling 14: the empty group of the inner pack counts up to its start, byte 4; they lie before the end and are not left over; encode writes zero bits"
+}

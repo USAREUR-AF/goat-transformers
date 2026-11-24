@@ -1,0 +1,14 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-item-inner",
+  "to": "conformance-inner-refused-works-item-inner",
+  "input": "050607",
+  "expect": "050607",
+  "model": {
+    "probe.y": "5",
+    "probe.recs.#": "2",
+    "probe.recs[0].probe.y": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: an item key and an entity key of one name are two entries"
+}

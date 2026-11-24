@@ -1,0 +1,13 @@
+{
+  "name": "empty-list",
+  "from": "conformance-emptygroup-inner-base-partial",
+  "to": "conformance-emptygroup-inner-base-partial",
+  "input": "0705000000",
+  "expect": "0705000000",
+  "model": {
+    "probe.items.#": "0",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18 and 0.34 ruling 14: the empty group of the inner pack counts up to its start, byte 4; nothing is left over"
+}

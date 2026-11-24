@@ -1,0 +1,9 @@
+{
+  "name": "items-keys-absent-matching-and-requires",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-items",
+  "input": "{\"recs\":[{\"y\":7},{\"x\":6},{},{\"x\":2,\"y\":1},{\"x\":6,\"y\":1}]}",
+  "expect": "051760502160",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 7: for an item kind, the entity is the item; x absent with y: p, 1 7. x = 6: q, 6 0. no key: p requires y, so q, 5 0. x = 2: p, 2 1. x = 6 with y: p's term fails, q, 6 0"
+}

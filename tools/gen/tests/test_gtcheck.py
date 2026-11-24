@@ -547,6 +547,9 @@ V011_ORDER |= {"3337", "3338", "3343"}
 # line check before any `at` error); gtcheck refuses the locator as the line is
 # read but names it `bad-directive`, as for 3128 and 3131.
 V011_ORDER |= {"3349"}
+# Ruling 3 of 0.52: the same two orders (`unknown-directive` for a later `bogus`
+# line, `missing-version` first) for the errors of `as <key> optional`.
+V011_ORDER |= {"5256", "5258", "5259", "5261", "5262", "5264", "5265", "5267", "5283", "5289"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line

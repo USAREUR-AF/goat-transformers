@@ -1,0 +1,12 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-type-map",
+  "to": "conformance-inner-refused-works-type-map",
+  "input": "020541",
+  "expect": "020541",
+  "model": {
+    "type": "a-g"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20d: the inner typemap both ways"
+}

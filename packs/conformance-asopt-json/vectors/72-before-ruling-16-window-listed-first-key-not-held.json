@@ -1,0 +1,9 @@
+{
+  "name": "before-ruling-16-window-listed-first-key-not-held",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-before",
+  "input": "{\"y\":9}",
+  "expect": "1509",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: x is not held: the first value 0x10, then the low nibble 5 without a check"
+}

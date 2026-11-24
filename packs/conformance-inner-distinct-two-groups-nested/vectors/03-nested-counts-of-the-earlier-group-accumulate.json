@@ -1,0 +1,10 @@
+{
+  "name": "nested-counts-of-the-earlier-group-accumulate",
+  "from": "conformance-inner-distinct-two-groups-nested",
+  "to": "conformance-inner-distinct-two-groups-nested",
+  "input": "c00202050602070801090100",
+  "expect_error": "malformed-wire",
+  "max_items": 4,
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 20, first sentence, with 7g of 0.11: 7a and 7d: the earlier group holds 2 items and 2 nested ones when the second nested count of 2 is read: 6 of 4; its items count until the later group replaces them"
+}

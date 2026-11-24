@@ -1,0 +1,9 @@
+{
+  "name": "leftover-ignored",
+  "from": "conformance-inner-distinct-count-partial",
+  "to": "conformance-inner-distinct-count-partial",
+  "input": "01050106ff",
+  "expect": "01050106",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 18"
+}

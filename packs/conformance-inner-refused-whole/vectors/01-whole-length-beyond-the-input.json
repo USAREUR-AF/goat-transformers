@@ -1,0 +1,9 @@
+{
+  "name": "whole-length-beyond-the-input",
+  "from": "conformance-inner-refused-whole",
+  "to": "conformance-inner-refused-whole",
+  "input": "050102",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: a `length ... whole` longer than the input is met at its own line"
+}

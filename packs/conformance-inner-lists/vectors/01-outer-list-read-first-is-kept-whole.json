@@ -3,12 +3,7 @@
   "from": "conformance-inner-lists",
   "to": "conformance-inner-lists",
   "input": "020a0b0c0d0e",
-  "expect": "020a0b0a0b",
-  "model": {
-    "probe.nums.#": "2",
-    "probe.nums[0].probe.val": "10",
-    "probe.nums[1].probe.val": "11"
-  },
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 Decode step 4: the outer list (count 2: 0a 0b) is read first and kept whole; the inner list 0c 0d 0e is discarded. Encode writes the one list in both places"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-lists and its inner pack conformance-inner-restonly both map probe.nums[], probe.nums[].probe.val, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

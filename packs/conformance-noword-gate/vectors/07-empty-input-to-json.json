@@ -1,0 +1,9 @@
+{
+  "name": "empty-input-to-json",
+  "from": "conformance-noword-gate",
+  "to": "conformance-noword-json",
+  "input": "",
+  "expect": "{}",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: the one line is in a block that does not hold: zero words; no key"
+}

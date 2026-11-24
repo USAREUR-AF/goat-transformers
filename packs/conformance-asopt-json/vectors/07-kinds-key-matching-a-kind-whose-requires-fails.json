@@ -1,0 +1,9 @@
+{
+  "name": "kinds-key-matching-a-kind-whose-requires-fails",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-kinds",
+  "input": "{\"x\":3,\"y\":5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: the implicit term fails only when the entity holds the key with a value the `when` does not match; x = 3 fails one; two requires z; any does not match 3"
+}

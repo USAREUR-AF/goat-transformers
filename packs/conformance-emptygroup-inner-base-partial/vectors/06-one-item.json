@@ -1,0 +1,12 @@
+{
+  "name": "one-item",
+  "from": "conformance-emptygroup-inner-base-partial",
+  "to": "conformance-emptygroup-inner-base-partial",
+  "input": "0705010000aa",
+  "expect": "0705010000aa",
+  "model": {
+    "probe.items.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 14: the items count"
+}

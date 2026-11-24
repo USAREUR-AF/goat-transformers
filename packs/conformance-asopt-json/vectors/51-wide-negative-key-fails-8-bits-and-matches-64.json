@@ -1,0 +1,9 @@
+{
+  "name": "wide-negative-key-fails-8-bits-and-matches-64",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-wide",
+  "input": "{\"x\":-1,\"z\":3}",
+  "expect": "ffffffffffffffff03",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: the implicit term fails only when the entity holds the key with a value the `when` does not match; ruling 7 of 0.30: a value is matched as an unsigned 64-bit pattern, and a negative one never matches fewer than 64 bits; -1: short fails, long is 2^64-1"
+}

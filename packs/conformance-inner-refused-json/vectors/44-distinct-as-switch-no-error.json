@@ -1,0 +1,9 @@
+{
+  "name": "distinct-as-switch-no-error",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-distinct-as-switch",
+  "input": "{\"n\":1,\"y\":7,\"w\":1,\"z\":9}",
+  "expect": "0201070109",
+  "source": "constructed",
+  "reference": "spec 0.34 and 0.20 Encode"
+}

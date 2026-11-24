@@ -1,0 +1,13 @@
+{
+  "name": "held-gate",
+  "from": "conformance-emptygroup-inner-gate-words-partial",
+  "to": "conformance-emptygroup-inner-gate-words-partial",
+  "input": "0701070000",
+  "expect": "0701070000",
+  "model": {
+    "probe.x": "7",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 14: rounded up to a whole word"
+}

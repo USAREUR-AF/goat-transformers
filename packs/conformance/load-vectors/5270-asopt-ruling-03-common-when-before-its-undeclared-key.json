@@ -1,0 +1,9 @@
+{
+  "name": "5270-asopt-ruling-03-common-when-before-its-undeclared-key",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey w int -\nkey x int -\nkey y int -\nkey a float -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.52.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nwhen 8 1 as probe.nosuch optional\nkind a\n",
+  "expect_error": "bad-directive"
+}

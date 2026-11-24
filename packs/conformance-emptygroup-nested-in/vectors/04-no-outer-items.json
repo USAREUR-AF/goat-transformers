@@ -1,0 +1,12 @@
+{
+  "name": "no-outer-items",
+  "from": "conformance-emptygroup-nested-in",
+  "to": "conformance-emptygroup-nested-in",
+  "input": "0500",
+  "expect": "0500",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: no item, so the nested group is not reached"
+}

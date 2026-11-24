@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-sublist",
+  "to": "conformance-inner-refused-works-sublist",
+  "input": "01010507",
+  "expect": "01010507",
+  "model": {
+    "probe.recs[0].probe.subs[0].probe.val": "5",
+    "probe.subs[0].probe.val": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: recs[].subs[] and subs[] are two entries"
+}

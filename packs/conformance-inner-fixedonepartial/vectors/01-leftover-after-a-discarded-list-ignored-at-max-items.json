@@ -4,11 +4,7 @@
   "to": "conformance-inner-fixedonepartial",
   "input": "020a0b0c0dff",
   "max_items": 2,
-  "expect": "020a0b0a0b",
-  "model": {
-    "probe.nums.#": "2",
-    "probe.nums[0].probe.val": "10"
-  },
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34, rulings 14 and 18; discarded items are not counted (ruling 7), nor are ignored bytes"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-fixedonepartial and its inner pack conformance-inner-fixedone both map probe.nums[], probe.nums[].probe.val, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

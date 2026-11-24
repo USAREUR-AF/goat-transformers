@@ -1,0 +1,10 @@
+{
+  "name": "item-limit-still-checked",
+  "from": "conformance-inner-distinct-count-partial",
+  "to": "conformance-inner-distinct-count-partial",
+  "input": "01050106ff",
+  "expect_error": "malformed-wire",
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.34, `max_items`: the inner counts are checked against the budget the outer lines left (ruling 7); a count of 1 with 0 left, also with `partial`"
+}

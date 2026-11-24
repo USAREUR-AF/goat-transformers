@@ -1,0 +1,9 @@
+{
+  "name": "input-ends-before-the-word",
+  "from": "conformance-emptygroup-words",
+  "to": "conformance-emptygroup-words",
+  "input": "05000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the start is bit 40, in word 1: 2 words of 4 bytes"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "recorded-inner-kind",
+  "from": "conformance-inner-distinct-around",
+  "to": "conformance-inner-distinct-around",
+  "input": "0302000507",
+  "expect": "0302000507",
+  "model": {
+    "@inner_kind": "b",
+    "probe.y": "5",
+    "probe.w": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 5: kind b is recorded and written again"
+}

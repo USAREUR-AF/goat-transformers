@@ -1,0 +1,18 @@
+{
+  "name": "decode-and-round-trip",
+  "from": "conformance-asopt-inner-choose",
+  "to": "conformance-asopt-inner-choose",
+  "input": "0206",
+  "expect": "0206",
+  "model": {
+    "@kind": "b",
+    "probe.x": "2",
+    "probe.z": "6",
+    "@absent": [
+      "@inner_kind",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: b's inner pack; it has no kinds, so no inner kind is recorded"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "under-ruling-16-held-key-already-matches-the-window",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-under",
+  "input": "{\"x\":21,\"y\":9}",
+  "expect": "1509",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: the bits of a `when ... as <k>` line whose key the entity holds count as bits that key wrote; the plain `when` writes 0x15; the window's 5 matches and stands"
+}

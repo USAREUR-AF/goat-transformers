@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-count-name",
+  "to": "conformance-inner-refused-works-count-name",
+  "input": "010541",
+  "expect": "010541",
+  "model": {
+    "probe.recs.#": "1",
+    "uid": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a count name is not a key"
+}

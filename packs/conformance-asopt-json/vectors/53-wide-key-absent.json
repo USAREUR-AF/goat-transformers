@@ -1,0 +1,9 @@
+{
+  "name": "wide-key-absent",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-wide",
+  "input": "{\"y\":1}",
+  "expect": "0001",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: the implicit term fails only when the entity holds the key with a value the `when` does not match; spec 0.52 The bits written: without `at`, the held value, or the first listed value when the key is not held; lo of 0..255: 00"
+}

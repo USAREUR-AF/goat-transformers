@@ -1,0 +1,9 @@
+{
+  "name": "kinds-key-matching-the-second-kind-is-written",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-kinds",
+  "input": "{\"x\":3,\"y\":5,\"z\":6}",
+  "expect": "0306",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: the implicit term fails only when the entity holds the key with a value the `when` does not match; x = 3 does not match one; it matches two. spec 0.52 The bits written: without `at`, the held value, or the first listed value when the key is not held; 03, not 02"
+}

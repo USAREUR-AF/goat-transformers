@@ -1,0 +1,9 @@
+{
+  "name": "count-0-input-ends-before-the-other-line",
+  "from": "conformance-emptygroup-zero-inside",
+  "to": "conformance-emptygroup-zero-inside",
+  "input": "050000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.5: x at byte 3 is missing"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "kind-without-the-key",
+  "from": "conformance-inner-refused-common-kinds",
+  "to": "conformance-inner-refused-common-kinds",
+  "input": "01020107",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; of a common `inner` line the lines of every kind are in reach; kind a would be selected, kind b maps x"
+}

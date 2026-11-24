@@ -3,10 +3,7 @@
   "from": "conformance-inner-asciifirst",
   "to": "conformance-inner-asciifirst",
   "input": "4101",
-  "expect": "4141",
-  "model": {
-    "probe.s1": "A"
-  },
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 23: s1 A; the inner 01 does not decode and is forgiven (ruling 5 of 0.6). Encode writes A in both places"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-asciifirst and its inner pack conformance-inner-asciione both map probe.s1, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

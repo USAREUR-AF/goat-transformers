@@ -1,0 +1,13 @@
+{
+  "name": "count-0-start-before-another-line",
+  "from": "conformance-emptygroup-zero-inside",
+  "to": "conformance-emptygroup-zero-inside",
+  "input": "05000007",
+  "expect": "05000007",
+  "model": {
+    "probe.items.#": "0",
+    "probe.x": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the start, byte 1, lies before x: nothing changes"
+}

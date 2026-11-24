@@ -1,0 +1,9 @@
+{
+  "name": "works-requires-key-held",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-works-requires",
+  "input": "{\"w\":2,\"x\":5}",
+  "expect": "010205",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key named only by `requires` is not mapped"
+}
