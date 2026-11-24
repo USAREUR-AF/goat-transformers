@@ -67,6 +67,8 @@ final class Seq {
         /** {@code when ... at <offset>} (engine-spec 0.33): the offset in bits from kind start, unsigned; -1 for none. */
         long at = -1;
         boolean hasAt;
+        /** {@code as <key> optional} (engine-spec 0.52): a key the entity does not hold does not stop the kind. */
+        boolean asOptional;
         /**
          * {@code presence}: its name, whether it is {@code fx}, its slot in the state of one decode or encode;
          * {@code count}: its name; {@code inner}: the format of the inner pack (engine-spec 0.34).
@@ -275,6 +277,18 @@ final class Seq {
             default:
                 return t.equals("uint") || t.equals("twos") || head.equals("uscale") || head.equals("sscale");
         }
+    }
+
+    /**
+     * True when the tokens after the values of a {@code when} hold {@code at} as a word. The token after the first
+     * {@code as} is its key, and no word (rulings 4, 11 and 14 of 0.52); {@code as} itself is never a key.
+     */
+    static boolean holdsAt(List<String> rest) {
+        int key = rest.indexOf("as") + 1;   // 0 when there is no `as`: no token is exempt (an `at` there is the word)
+        for (int i = 0; i < rest.size(); i++) {
+            if (rest.get(i).equals("at") && (key == 0 || i != key)) return true;
+        }
+        return false;
     }
 
     /** Directives that exist only in a sequential pack. */
@@ -643,24 +657,25 @@ final class Seq {
                 case "when": {
                     String asKey = null;
                     long at = -1;
-                    boolean hasAt = false;
+                    boolean hasAt = false, asOptional = false;
                     if (kw.equals("when") && args.size() > 2) {
-                        // `when <len> <values> [at <n>] [as <k>]`, in that order (ruling 11 of 0.33); `at` and `as` are
-                        // matched exactly (ruling 15 of 0.33, rulings 15 and 22 of 0.30)
+                        // `when <len> <values> [at <n>] [as <k> [optional]]`, in that order (ruling 11 of 0.33, ruling 1
+                        // of 0.52); the words are matched exactly (ruling 15 of 0.33, 15 and 22 of 0.30, 12 of 0.52)
                         List<String> rest = args.subList(2, args.size());
                         int i = 0;
-                        if (rest.contains("at")) {
-                            // engine-spec 0.33: a line holding `at` has the form `at <n> [as <k>]`; any token out of
-                            // that order, `as` included, is an `at` form error checked after the module checks
-                            // (rulings 10, 14 and 27)
+                        if (holdsAt(rest)) {
+                            // engine-spec 0.33: a line holding `at` has the form `at <n> [as <k> [optional]]`; any token
+                            // out of that order, `as` included, is an `at` form error checked after the module checks
+                            // (rulings 10, 14 and 27); a word in the place of the offset is out of order (15 of 0.52)
                             hasAt = true;
                             i = rest.size();   // `as` is read here, not by the checks of 0.30
                             String v = rest.size() >= 2 ? rest.get(1) : null;
-                            boolean form = rest.get(0).equals("at") && v != null
-                                    && (rest.size() == 2 || (rest.size() == 4 && rest.get(2).equals("as") && !rest.get(3).equals("as")
-                                            && !rest.get(3).equals("at")));
+                            boolean keyed = rest.size() >= 4 && rest.get(2).equals("as") && !rest.get(3).equals("as")
+                                    && (rest.size() == 4 || (rest.size() == 5 && rest.get(4).equals("optional")));
+                            boolean form = rest.get(0).equals("at") && v != null && !v.equals("at") && !v.equals("as")
+                                    && !v.equals("optional") && (rest.size() == 2 || keyed);
                             if (!form) {
-                                atBad(format, where + ": a when holding at is when <len> <values> at <n> [as <k>], got \""
+                                atBad(format, where + ": a when holding at is when <len> <values> at <n> [as <k> [optional]], got \""
                                         + String.join(" ", rest) + "\"");
                             } else if (!v.matches("[0-9]+") || new java.math.BigInteger(v).bitLength() > 64) {
                                 atBad(format, where + ": at takes plain decimal digits that fit 64 bits, got \"" + v + "\"");
@@ -669,7 +684,10 @@ final class Seq {
                             }
                             // on a line in the right order the key is read and checked first, even when the offset
                             // alone is bad (ruling 10); on a line whose order is broken it is not read as a key (ruling 28)
-                            if (form && rest.size() == 4) asKey = rest.get(3);
+                            if (form && keyed) {
+                                asKey = rest.get(3);
+                                asOptional = rest.size() == 5;
+                            }
                         } else if (!rest.get(0).equals("as")) {
                             throw bad(format, null, where + ": a when value list has no spaces: a third token after the length");
                         }
@@ -677,10 +695,15 @@ final class Seq {
                             // engine-spec 0.30, ruling 16: no key, `as` twice (ruling 31), a token after the key
                             List<String> a = rest.subList(i, rest.size());
                             if (a.size() == 1) throw bad(format, null, where + ": as names no key");
+                            // engine-spec 0.52: `optional` directly after the key, once and last
+                            asOptional = a.size() == 3 && a.get(2).equals("optional");
                             if (a.get(1).equals("as") || (a.size() > 2 && a.get(2).equals("as"))) {
                                 throw bad(format, null, where + ": as given twice on one when line");
                             }
-                            if (a.size() > 2) throw bad(format, null, where + ": a token after the key of as: \"" + a.get(2) + "\"");
+                            if (a.size() > 2 && !asOptional) throw bad(format, null, where + ": a token after the key of as: \"" + String.join(" ", a.subList(2, a.size())) + "\"");
+                            if (asOptional && f.isBody() && f.kind == null) {
+                                throw bad(format, null, where + ": optional is for the as of a kind's when, not of a common when");
+                            }
                             asKey = a.get(1);
                         }
                     } else {
@@ -692,6 +715,7 @@ final class Seq {
                     Node n = new Node(isWhen ? Op.WHEN : Op.CONST, ln);
                     n.len = len;
                     n.hasAt = hasAt;
+                    n.asOptional = asOptional;
                     if (hasAt) n.at = at < 0 && atError != null ? 0 : at;   // a malformed offset: the pack is refused later
                     if (isWhen) {
                         // engine-spec 0.20: a list of values and ranges; the first value is written
@@ -1561,6 +1585,23 @@ final class Seq {
     static void modelKeys(Body body, String prefix, Set<String> out, java.util.function.Function<String, List<String>> inner) {
         Set<Node> seen = Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         for (Kind k : body.kinds) modelKeys(k.all, prefix, out, seen, inner);
+    }
+
+    /** The entries of {@code model_keys} that {@code nodes} map themselves, those of an inner pack left out. */
+    static Set<String> ownKeys(List<Node> nodes) {
+        Set<String> out = new java.util.HashSet<>();
+        modelKeys(nodes, "", out, Collections.newSetFromMap(new java.util.IdentityHashMap<>()), f -> null);
+        return out;
+    }
+
+    /** The {@code inner} lines among {@code nodes}: they stand there or in {@code length} blocks (engine-spec 0.34). */
+    static List<Node> innerLines(List<Node> nodes) {
+        List<Node> out = new ArrayList<>();
+        for (Node n : nodes) {
+            if (n.op == Op.INNER) out.add(n);
+            else if (n.op == Op.LENGTH) out.addAll(innerLines(n.body));
+        }
+        return out;
     }
 
     private static void modelKeys(List<Node> nodes, String prefix, Set<String> out, Set<Node> seen,
