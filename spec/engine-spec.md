@@ -5747,9 +5747,16 @@ that do not hold the exact line of ruling 1; in 0.23: the default of
 2. **The profile.** A file that is not shown public has the profile none,
    whatever its licence and the table say. Through 2b and 2c of 0.29, so has
    every module and pack that uses it, and with a `core` that is not shown
-   public, and whose `module` line 2b reads, every pack. A module whose name 2b
-   does not read adds nothing (2c); it is not loaded, and a pack that uses it
-   is `unknown-module`.
+   public, and whose `module` line 2b reads, every pack. With a profile, a module
+   file that 2b gives no name is **not loaded, also when it is shown public**
+   (`module mx # note`, `module "mx"`), and a pack or module that uses it is
+   `unknown-module`, as any pack that uses a module that is not loaded: by 2b
+   its `uses` finds no module, so nothing of the module's licence would reach
+   it. `core` is no exception: with such a line it is not loaded, and a pack
+   that uses it is `unknown-module` (as for a `core` that cannot be read). With no profile nothing changes
+   (ruling 7). For a tool (ruling 8) such a module file has the profile none,
+   and so has a pack or module with a `uses` line whose name no module file
+   has.
 3. **The order of reading** stays that of 0.29: the licence of a module or
    pack is read first, so `bad-licence` comes before the skip, and the checks
    of a `--packs-only` name come before both.
