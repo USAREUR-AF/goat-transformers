@@ -5762,15 +5762,18 @@ that do not hold the exact line of ruling 1; in 0.23: the default of
    is `public`, without a message also when the caller asked for `controlled`.
    A file that reads as controlled when it is loaded is `distribution-refused`
    and the load fails, as any load failure. By ruling 2 that is only a file
-   that changed after it was read for its profile.
+   that changed after it was read for its profile; an engine that reads each
+   file once and loads the bytes it checked cannot meet it, and tests the
+   refusal with a hook of its own.
 6. **An engine in a program.** The limit of ruling 5 is the engine instance's
    from the load with a profile on: its limit is the lower of `public` and what
    a caller sets before or after, so a controlled text loaded directly later
    is `distribution-refused`. A load with a profile on an instance that
    already holds a controlled module or pack is `distribution-refused` before
    anything is read. The order: a profile name that is none of the three is
-   `bad-licence` first, with the limit unchanged; then that instance check;
-   then the limit is `public`, and stays so when the load fails later. Setting
+   `bad-licence` first; then that instance check; both refuse with the limit
+   unchanged and leave no trace. Then the limit is `public`, and stays so when
+   the load fails later, so what it loaded before it failed stays within it. Setting
    `controlled` afterwards is no error and has no effect. A later load with no
    profile is bounded by the limit, not by the profile.
 7. **No profile asked for:** nothing here is read and nothing changes, except
