@@ -1,0 +1,19 @@
+{
+ "name": "golden-rmc-6",
+ "from": "nmea0183",
+ "to": "nmea0183",
+ "input": "$GPRMC,180102.30,A,0000.07407,S,17959.25926,E,43.625,45.00,101126,2.1,E,A*1D",
+ "expect": "$GPRMC,180102.30,A,0000.07407,S,17959.25926,E,43.625,45.00,101126,2.1,E,A*1D",
+ "model": {
+  "@kind": "rmc",
+  "nmea0183.talker": "GP",
+  "lat": "-0.0012345",
+  "lon": "179.98765433333332",
+  "time_ms": "1794333662300",
+  "nmea0183.status": "A",
+  "nmea0183.sog_kn": "43.625",
+  "course": "45.0"
+ },
+ "source": "pynmea2 1.19.0: pynmea2.RMC('GP', 'RMC', fields).render, then pynmea2.parse of that sentence for the model values. Written by tools/gen/golden-pynmea2.py; no engine is run.",
+ "reference": "NMEA 0183 RMC as pynmea2 reads it: latitude and longitude from ddmm.mmmmm and dddmm.mmmmm with the hemisphere, time from hhmmss.ss and the date ddmmyy. Field text is written in the pack's canonical forms (packs/nmea0183/pack.def), so the sentence round-trips unchanged."
+}
