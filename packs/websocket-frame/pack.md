@@ -19,8 +19,6 @@ None.
   A masked close frame's status code is read from masked octets. Needed: an XOR-with-key transform.
 - **The payload length as an extent**: the length is carried, not computed; the payload runs to the end
   of the input.
-- **A close frame without a body**: RFC 6455 section 5.5.1 allows it; the pack reads the 16-bit status code of
-  every close frame, so such a frame is `malformed-wire`.
 - Message reassembly from fragments; extensions that use the RSV bits.
 
 ## Vectors
