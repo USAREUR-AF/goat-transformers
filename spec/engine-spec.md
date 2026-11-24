@@ -6250,7 +6250,9 @@ not `string` without a `via` is `key-type-mismatch`.
     not read as the key's type.
 
 31. **A `switch` key with several lines** (rulings 31 and 33 of 0.20). Every
-    line of the key is read back from the bits written, as decode reads them.
+    line of the key that is written is read back from the bits written, as
+    decode reads them, a line after a `switch` that is written included. A
+    `switch` in a block or case that is not written does not count.
     A line that fails the decode by ruling 26 makes the encode
     `transform-encode`, whatever the first line gives.
 
