@@ -1,0 +1,9 @@
+{
+  "name": "ruling-02-unused-digit-code",
+  "from": "conformance-charset-bits",
+  "to": "conformance-charset-bits",
+  "input": "001a23000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.42, On bits; code 10 is beyond D"
+}

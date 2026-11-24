@@ -1,0 +1,13 @@
+{
+  "name": "decode-encode-round-trip",
+  "from": "conformance-charset-bits",
+  "to": "conformance-charset-bits",
+  "input": "0011235d6987",
+  "expect": "0011235d6987",
+  "model": {
+    "probe.s1": "AB123",
+    "probe.n": "574987"
+  },
+  "source": "constructed",
+  "reference": "spec 0.42, On bits; code gives AB123; codenum gives 574987"
+}

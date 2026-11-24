@@ -1,0 +1,9 @@
+{
+  "name": "finding-41-5-codenum-writes-a-string",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-json",
+  "input": "{\"x\":12345}",
+  "expect": "{\"num\":\"12345\"}",
+  "source": "constructed",
+  "reference": "spec 0.42, On text wires (json); ruling 11: codenum encode writes a string"
+}

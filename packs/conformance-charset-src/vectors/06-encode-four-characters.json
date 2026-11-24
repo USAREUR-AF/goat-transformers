@@ -1,0 +1,9 @@
+{
+  "name": "encode-four-characters",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-bits",
+  "input": "{\"s1\":\"AB12\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.42, On bits; one character per position"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "four-characters",
+  "from": "conformance-charset-text",
+  "to": "conformance-charset-text",
+  "input": "AB12,00042 ,7",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.42, On text wires (text); ruling 3"
+}

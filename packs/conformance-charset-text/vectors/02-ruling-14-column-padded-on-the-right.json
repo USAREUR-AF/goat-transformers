@@ -1,0 +1,12 @@
+{
+  "name": "ruling-14-column-padded-on-the-right",
+  "from": "conformance-charset-text",
+  "to": "conformance-charset-text",
+  "input": "AB123,00042,7",
+  "expect": "AB123,00042 ,7",
+  "model": {
+    "probe.x": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.42, On text wires (text); the field ends inside the column; encode pads with a space on the right"
+}

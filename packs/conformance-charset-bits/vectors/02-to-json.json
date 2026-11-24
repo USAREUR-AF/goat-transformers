@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-charset-bits",
+  "to": "conformance-charset-src",
+  "input": "0011235d6987",
+  "expect": "{\"s1\":\"AB123\",\"n\":574987}",
+  "source": "constructed",
+  "reference": "spec 0.42, On bits; the values"
+}

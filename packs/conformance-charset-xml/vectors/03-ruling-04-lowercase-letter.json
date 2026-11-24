@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-lowercase-letter",
+  "from": "conformance-charset-xml",
+  "to": "conformance-charset-xml",
+  "input": "<R><call>ab123</call></R>",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.42, On text wires (xml); ruling 4"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "column-absent",
+  "from": "conformance-charset-text",
+  "to": "conformance-charset-text",
+  "input": "AB123,,7",
+  "expect": "AB123,,7",
+  "model": {
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.42, On text wires (text); an empty field: the key is absent"
+}

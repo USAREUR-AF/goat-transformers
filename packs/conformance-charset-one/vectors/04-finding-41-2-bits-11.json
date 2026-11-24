@@ -1,0 +1,9 @@
+{
+  "name": "finding-41-2-bits-11",
+  "from": "conformance-charset-one",
+  "to": "conformance-charset-one",
+  "input": "c0",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.42 ruling 8; code 1 is unused"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "text-to-bits",
+  "from": "conformance-charset-text",
+  "to": "conformance-charset-bits",
+  "input": "AB123,00042 ,7",
+  "expect": "001123000007",
+  "source": "constructed",
+  "reference": "spec 0.42, On text wires (text); the identifier keeps its code-0 characters"
+}

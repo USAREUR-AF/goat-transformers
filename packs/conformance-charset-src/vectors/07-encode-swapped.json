@@ -1,0 +1,9 @@
+{
+  "name": "encode-swapped",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-swap",
+  "input": "{\"x\":1,\"n\":25,\"y\":1}",
+  "expect": "0102050100",
+  "source": "constructed",
+  "reference": "spec 0.42 ruling 6 with 0.37; encode in the message's order"
+}

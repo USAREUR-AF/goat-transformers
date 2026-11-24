@@ -1,0 +1,14 @@
+{
+  "name": "codestr-and-codenum",
+  "from": "conformance-charset-json",
+  "to": "conformance-charset-json",
+  "input": "{\"call\":\"AB123\",\"id\":\"01234\",\"num\":\"00042\"}",
+  "expect": "{\"call\":\"AB123\",\"id\":\"01234\",\"num\":\"00042\"}",
+  "model": {
+    "probe.s1": "AB123",
+    "probe.s2": "01234",
+    "probe.x": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.42, On text wires (json); codenum 00042 is 42 and is written back with its code-0 characters"
+}

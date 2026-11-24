@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-lowercase-letter",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-bits",
+  "input": "{\"s1\":\"ab123\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.42, On bits; ruling 4: case is exact"
+}

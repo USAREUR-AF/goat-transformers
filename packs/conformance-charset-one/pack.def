@@ -1,0 +1,12 @@
+# Conformance probe pack for spec 0.42 ruling 8: a one-character set takes
+# 1 bit, and code 1 is unused. Public. No kinds.
+format  conformance-charset-one
+version 0.42.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset Z  0
+field   probe.s1  0:0:2  code:Z,Z

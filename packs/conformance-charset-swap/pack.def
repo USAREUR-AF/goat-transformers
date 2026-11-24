@@ -1,0 +1,17 @@
+# Conformance probe pack for spec 0.42 ruling 6 with 0.37: byte 0 is the
+# order line (1: swapped); bytes 1-2 are a `codenum` of two 8-bit digit
+# positions, never reversed; bytes 3-4 are a `uint`, reversed when swapped.
+# Public. No kinds.
+format  conformance-charset-swap
+version 0.42.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset B  0123456789  8
+field   probe.x  0:0:8    uint
+swap_when probe.x 1
+field   probe.n  0:8:16   codenum:B,B
+field   probe.y  0:24:16  uint

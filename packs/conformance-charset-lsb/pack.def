@@ -1,0 +1,13 @@
+# Conformance probe pack for spec 0.42: the identifier of
+# conformance-charset-bits in the default bit order (lsb): each position is
+# read as `uint` reads its own bits, low bit first. Public. No kinds.
+format  conformance-charset-lsb
+version 0.42.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+charset L  ABCDEFGHJKLMNPQRSTUVWXYZ  6
+charset D  0123456789
+field   probe.s1  0:0:24  code:L,L,D,D,D

@@ -5824,6 +5824,218 @@ a profile and with `--json`; `--max-distribution controlled` beside a profile;
 no profile. Ruling 6 needs a test in each engine's library, and ruling 8 a
 test of the tools.
 
+# Version 0.46: five-character track numbers
+
+Status: Written. Many track and unit identifiers are written as a short
+string of characters, often five, from a restricted alphabet. Each position
+may have its own alphabet: letters and digits in the leading positions,
+digits only, or a smaller digit range, in the rest. Binary messages pack each
+character as a code of a few bits. Text messages write the characters.
+Version 0.15's `chars` takes one character set for every position. It cannot
+state a different alphabet per position, nor the identifier as a number.
+Version 0.46 adds pack-defined character sets and three transforms over a
+sequence of them.
+
+The rules are general: any number of positions from 1 to 16. A five-position
+identifier is the common case and the examples use it. No alphabet is fixed
+by this specification. A pack states the alphabets its format defines.
+
+## Grammar
+
+```
+charset  <name> <characters> [<width>]    # pack-wide: the characters in code order
+field    <key> <locator> code:<set>,<set>,…        # bits: yields string
+field    <key> <locator> codestr:<set>,<set>,…     # text wires: yields string
+field    <key> <locator> codenum:<set>,<set>,…     # bits and text wires: yields int
+```
+
+- **`charset`** is a pack-level line, before the first `kind`, repeatable,
+  one name each. It may stand before the `wire` line, as `kind` and
+  `default` may (ruling 14).
+  - `<name>` is one or more of `A`–`Z`, `a`–`z`, `0`–`9`, `_` and `-`
+    (ruling 7).
+  - `<characters>` is one or more characters from 0x21 to 0x7E, all
+    distinct, in code order: the first has code 0. `"` cannot be one of
+    them. A `#` needs double quotes only at the start of the token, where it
+    would begin a comment (ruling 1 of 0.1.1; ruling 9).
+  - `<width>`, on `bits`, is the bits per character. It defaults to
+    `max(1, ⌈log2(size)⌉)`, where `size` is the number of characters; a
+    given width is at least that and at most 8 (ruling 8). On other wires it
+    is ignored entirely, its range check included (ruling 14).
+- **Positions.** The list after the transform name names one set per
+  position, first position first, 1 to 16 positions. One set may be named at
+  several positions (`code:L,L,D,D,D`).
+
+## On `bits`: `code` and `codenum`
+
+The field's `len` is the sum of the positions' widths. The field is read as
+one unsigned integer of `len` bits, as `uint` reads it at that place in the
+pack's bit order (after `swap`). Position 0 is its most significant `w_0`
+bits, position 1 the next `w_1` bits, and so on; the last position holds the
+least significant bits. The order does not depend on the bit order: the first
+character written is at the top of the number (ruling 6). `len` is at most 64.
+A position's value is the character's code.
+
+- **`code` decode.** Each code is looked up in its position's set. A code at
+  or beyond the set's size is `transform-decode`. The value is the
+  characters, first position first, always one per position.
+- **`code` encode.** The text has exactly one character per position, each
+  in its position's set; otherwise `transform-encode`. Each code is written
+  in its position's bits.
+- **`codenum` decode.** The value is the mixed-radix number of the codes,
+  first position most significant: `v = c_0`, then `v = v × size_i + c_i`
+  for each later position. A code at or beyond its set's size is
+  `transform-decode`.
+- **`codenum` encode.** The integer `x` is split into codes by the reverse
+  of that rule, last position first. An `x` below 0 or at or above the
+  product of the sizes is `transform-encode`.
+
+## On text wires: `codestr` and `codenum`
+
+`codestr` and `codenum` are valid on `xml`, `json`, `geojson` and `text`. The
+text is read as the wire reads a field. On `json` and `geojson` the member
+must be a string, otherwise `transform-decode`, and encode writes a string,
+`codenum` included (ruling 11). On a `text` column, `codenum` is not one of
+0.10's numeric transforms: a column's leading spaces are kept (and refused),
+and padding is with spaces on the right (ruling 14). On `text`, a set used by
+`codestr` or `codenum` must not hold the record's delimiter, or `*` under
+`checksum nmea` (ruling 12).
+
+- **Decode.** The text has exactly one character per position, each in its
+  position's set; otherwise `transform-decode`. No character is trimmed,
+  case is compared exactly, and a shorter text is refused (ruling 3).
+  `codestr` yields the text; `codenum` yields the mixed-radix number of its
+  codes, as on `bits`.
+- **Encode.** `codestr` checks the text as decode does
+  (`transform-encode`). `codenum` writes the characters of `x`'s codes, all
+  positions included.
+
+## Where the rules apply
+
+| Construct | Rule |
+|---|---|
+| wires | `code` on `bits` only; `codestr` on `xml`, `json`, `geojson`, `text`; `codenum` on `bits` and those four. `protobuf`, `tlv` and UPER locators: `bad-directive` |
+| layouts | `bits` fixed and sequential; a field with a bit length in a UPER pack, as for the 0.15 transforms (ruling 27 of 0.19) |
+| bit orders, `swap` | the field is read as `uint` reads it, under all three orders and with `swap` |
+| `absent` (0.9) | on `bits` the raw value of the whole field as `uint` reads it (`len` ≤ 64), before any lookup; on `xml`, `json` and `geojson` the text. On `text` `absent` stays `bad-directive` (ruling 16 of 0.10), `codestr` and `codenum` included (ruling 10) |
+| `via` | sees the string or the integer the transform yields |
+| `default`, kinds, groups, gates | no special rule |
+| `armor sixbit` (0.14) | valid |
+| model keys | `code` and `codestr` yield `string`, `codenum` yields `int`. Two formats convert an identifier when they map it to the same key, as for any value |
+
+## Load errors
+
+| Error | Cause | When it is checked (ruling 5b of 0.11) |
+|---|---|---|
+| `bad-directive` | `charset` with other than two or three arguments | step 3 |
+| `bad-directive` | a `charset` name outside its grammar; a set with a repeated character, a `"`, a character outside 0x21 to 0x7E, more characters than `2^width`; on `bits`, a width outside its range (ruling 8); a second `charset` of one name; `charset` after the first `kind`; on `text`, a set used by `codestr` or `codenum` that holds the delimiter, or `*` under `checksum nmea` | after the file is read |
+| `bad-directive` | a transform naming a set no `charset` declares, no position or more than 16; a `bits` field whose `len` is not the sum of the widths, or is above 64; `codenum` whose product of sizes is above `2^63` | after the file is read (the set names need the whole file) |
+| `bad-directive` | a transform on a wire that does not take it (above) | after the file is read, with the checks that need the wire (ruling 10 of 0.10) |
+
+`charset` is added to a pack's directives in ruling 5b of 0.11. In a module
+it is `unknown-directive`.
+
+## Rulings for 0.46
+
+1. **Code order is the pack's.** The first character of a `charset` has code
+   0. Two packs that write the same characters with different codes declare
+   different sets, and both read the same text.
+2. **Unused codes.** On `bits`, a code at or beyond the set's size is
+   `transform-decode`. With `<width>` larger than needed, the codes above
+   the set are unused.
+3. **Leading zeros are characters.** The text form always has one character
+   per position. A position's code-0 character is written, never dropped,
+   and a text that is shorter is `transform-decode`. In the `codenum` form a
+   leading code-0 character adds 0, so the number does not show it.
+4. **Case is exact.** `a` and `A` are different characters. A pack whose
+   format accepts either case uses a `via` table, or declares both in a set
+   with distinct codes.
+5. **The string and the number are two keys.** A pack chooses the form its
+   model key has. `codenum` on one format and `codestr` on another meet only
+   if both map one key of one type.
+6. **The most significant end first.** Sources print an identifier with its
+   first character in the highest bits of the number. With `lsb` this differs
+   from `chars` (0.15), which reads characters in bit order. `codenum` is the
+   mixed-radix number of the codes; when every set is full (its size is 2 to
+   the power of its width) it equals the field read as `uint`.
+
+Rulings 7 to 14 settle the findings of the review of this version (finding
+number in brackets).
+
+7. **Set names** [41-1] are one or more of `A`–`Z`, `a`–`z`, `0`–`9`, `_`
+   and `-`; anything else is `bad-directive` after the file.
+8. **Width** [41-2]. The default is `max(1, ⌈log2(size)⌉)`. A given width
+   is at least that and at most 8. A one-character set takes 1 bit, and
+   code 1 is then unused (`transform-decode`).
+9. **`#` and `"`** [41-3]. `#` needs quotes only at the start of the token
+   (`charset S AB#C` loads, with 4 characters). A set cannot hold `"`;
+   that is `bad-directive` after the file.
+10. **`absent` on `text`** [41-4] stays `bad-directive` (ruling 16 of 0.10),
+    `codestr` included.
+11. **`json` members** [41-5] must be strings, otherwise `transform-decode`.
+    Encode writes a string, `codenum` included.
+12. **Characters `text` cannot carry** [41-6]. On `text`, a set used by
+    `codestr` or `codenum` that holds the record's delimiter, or `*` under
+    `checksum nmea`, is `bad-directive` after the file.
+13. **An empty set name** [41-8]: `code:L,,D` names a set no `charset`
+    declares, `bad-directive` after the file.
+14. **Placement, width and columns** [41-8]. `charset` may stand before the
+    `wire` line. A width on a pack that is not `bits` is ignored entirely,
+    its range check included. On `text` columns `codenum` keeps the column's
+    leading spaces (and refuses them) and pads with spaces on the right.
+
+### Stated, not yet pinned by a vector
+
+15. `code` under `msb-lsb` with a `len` that is not a multiple of 8.
+16. `codenum` with 16 positions whose product reaches exactly `2^63`.
+
+## Vector additions
+
+- `conformance-codes-bits`: a five-position field with two sets of different
+  widths; decode, encode and round trip; an unused code (`transform-decode`);
+  a text with a character outside its position's set (`transform-encode`);
+  `codenum` of the same field, at 0 and at the largest value; one past the
+  largest (`transform-encode`).
+- `conformance-codes-text`: `codestr` on `json` and on `text`; a four-
+  character text (`transform-decode`); a lowercase letter where only
+  uppercase is in the set; `codenum` on `xml`.
+- By finding:
+  - [41-2] `charset Z 0`, `code:Z,Z` on a 2-bit field: bits `00` give
+    `"00"`; any pattern holding a 1 is `transform-decode`;
+  - [41-5] `json` `{"id":12345}` under `codestr:D,D,D,D,D`:
+    `transform-decode`; `codenum` encode writes `"12345"`;
+  - ruling 6: one identifier of sets of 5, 5, 3, 3 and 3 bits under `msb`
+    and under `lsb`, with the same characters from the same number.
+- Load vectors:
+  - [41-1] `charset A,B 0123`: `bad-directive`;
+  - [41-3] `charset S AB#C` loads with 4 characters; `charset Q A"B`:
+    `bad-directive`;
+  - [41-4] a `text` pack with `field k 1 codestr:L,L absent AA`:
+    `bad-directive`;
+  - [41-6] delimiter `,` and `charset P A,B` used by `codestr:P`:
+    `bad-directive`;
+  - every other row of Load errors.
+
+## Not in this version
+
+- A text form that omits leading code-0 characters, or pads with spaces.
+- An identifier whose positions change alphabet depending on another
+  position's value.
+- Check characters computed from the others.
+- Sets shared between packs. A `charset` is declared per pack, so related
+  packs repeat their tables; packs share nothing by design.
+
+## Why this rule
+
+Short identifiers with a different alphabet per position are common in
+tracking and reporting formats, both packed into bits and written as text.
+They need to convert between the two forms exactly, leading zeros included.
+`chars` covers one alphabet. A per-position list of pack-declared sets
+covers these identifiers with no alphabet fixed in the specification. A
+format's own table stays in its pack, and a restricted format's table stays
+in its overlay. The number form serves formats that carry the same
+identifier as an integer.
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in
