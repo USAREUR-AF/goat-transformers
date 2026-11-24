@@ -343,6 +343,26 @@ class BitsTest(Refusals):
         self.refuse_pack(HEAD + "wire bits\nfield probe.qty 0:0:8 uint\n", "bad-directive", None)
 
 
+class ValueForms055Test(Refusals):
+    """engine-spec 0.55: `iso8601_si`, decimal places, `utf8` on bits."""
+
+    def test_the_forms_load_and_give_their_types(self):
+        for wire in ("xml\nroot e", "json", "geojson"):
+            gtcheck.load_pack(HEAD + "wire %s\nfield time_ms properties.t iso8601_si\n" % wire
+                              if wire == "geojson" else HEAD + "wire %s\nfield time_ms t iso8601_si\n" % wire, model())
+        gtcheck.load_pack(HEAD + "wire bits\nword_bytes 1\nfield lat 0:0:16 uscale:0.1:0:07\n"
+                          "field lon 2:0:16 sscale:1/128:0:15\nfield uid 4:0:16 utf8 trim swap\n", model())
+
+    def test_what_the_forms_refuse(self):
+        for line in ("uscale:0.1:0:16", "uscale:0.1:0:-1", "uscale:0.1:0:", "uscale:0.1::1", "uscale:0.1:0:1:1",
+                     "uscale:0.1:0:1.0"):
+            self.refuse_pack(HEAD + "wire bits\nword_bytes 1\nfield lat 0:0:16 %s\n" % line, "bad-directive", 8)
+        self.refuse_pack(HEAD + "wire bits\nword_bytes 1\nfield uid 0:0:12 utf8\n", "bad-directive", 8)
+        self.refuse_pack(HEAD + "wire bits\nword_bytes 1\nfield time_ms 0:0:16 iso8601_si\n", "bad-directive", 8)
+        self.refuse_pack(HEAD + "wire json\nfield time_ms t iso8601_si:3\n", "bad-directive", 7)
+        self.refuse_pack(HEAD + "wire tlv\ntag 2\nfield lat 1:4 uscale:0.1:0:1\n", "bad-directive", 8)
+
+
 class GroupsTest(Refusals):
     def test_a_group_holds_its_body_and_nests(self):
         pack = gtcheck.load_pack(HEAD + "wire json\ngroup probe.items items\n  field probe.label name string\n"
@@ -584,6 +604,9 @@ V011_ORDER |= {"6540", "6541", "6542", "6543", "6544", "6545", "6546", "6547"}
 # A sequential-only line in a pack that is not sequential is checked after the
 # file (0.11 5b), so a later `bogus` line gives `unknown-directive`.
 V011_ORDER |= {"6548", "6549", "6550", "6551", "6552", "6553", "6554", "6555", "6556"}
+# 0.55: on tlv a transform's parameters are checked after the file, so a later
+# `bogus` line gives `unknown-directive` (5523).
+V011_ORDER |= {"5523"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line

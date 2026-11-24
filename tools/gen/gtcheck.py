@@ -11,9 +11,11 @@ and `switch` blocks, and the sequential extents and counts of 0.21: `group
 `group <list> count @<name>` (two names, `count @<a> @<b>`, from 0.31), and
 the long and terminated fields of 0.22:
 the `hex` transform, the set `ascii8`, the locator `until:<code>`, the field
-option `stop <code>` and `bit_order msb-lsb`, and the load rules of the
-`inner <format> [partial]` line of 0.34; and the part lines of 0.64,
-`part:<sep>:<n>`, `unlisted` and `const ... part`) and imports no engine, so a generator
+option `stop <code>` and `bit_order msb-lsb`, the load rules of the
+`inner <format> [partial]` line of 0.34, the part lines of 0.64,
+`part:<sep>:<n>`, `unlisted` and `const ... part`, and the transforms of 0.55:
+`iso8601_si`, the decimal places of `uscale` and `sscale`, `utf8` on bits) and
+imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -58,7 +60,9 @@ TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_
                    # engine-spec 0.46
                    "codestr": "string", "codenum": "int",
                    # engine-spec 0.64: one part of a text token
-                   "part": "string"}
+                   "part": "string",
+                   # engine-spec 0.55: xml, json and geojson only
+                   "iso8601_si": "int"}
 JSON_TRANSFORMS = dict(TEXT_TRANSFORMS, bool="int")
 BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": "float",
                    "sscale": "float", "f32": "float", "f64": "float", "ascii": "string",
@@ -69,7 +73,9 @@ BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": 
                    # engine-spec 0.22
                    "hex": "string",
                    # engine-spec 0.46
-                   "code": "string", "codenum": "int"}
+                   "code": "string", "codenum": "int",
+                   # engine-spec 0.55
+                   "utf8": "string"}
 CODE_TRANSFORMS = ("code", "codestr", "codenum")       # engine-spec 0.46
 _CHARSET_NAME = re.compile(r"[A-Za-z0-9_-]+\Z")
 CHAR_SETS = {"icao6": 6, "ais6": 6, "ascii7": 7, "ascii8": 8}
@@ -80,6 +86,7 @@ PROTOBUF_TRANSFORMS = {"pstring": "string", "pvarint": "int", "psint": "int",
 # `dm`, `hms` and `hms_dmy` are valid on this wire only.
 RECORD_TRANSFORMS = dict(TEXT_TRANSFORMS, dec="float", dm="float", hms="float", hms_dmy="int")
 del RECORD_TRANSFORMS["iso8601_short"]   # 0.18 ruling 21: xml, json and geojson only
+del RECORD_TRANSFORMS["iso8601_si"]      # 0.55, the same wires
 PAIR_TRANSFORMS = ("dm", "hms_dmy")
 NUMERIC_TEXT = ("int", "float", "dec")
 # 0.13 "Transforms for `tlv`": `utf8` and `hex` are valid on this wire only;
@@ -1584,9 +1591,16 @@ class _Loader:
         if name not in table:
             self.bad(node, "transform `%s` is not valid on the %s wire" % (name, self.pack.wire))
         if name in ("uscale", "sscale"):
-            if len(targs) not in (1, 2) or parse_factor(targs[0]) is None or not all(
-                    _NUMBER.match(t) for t in targs[1:]):
-                self.bad(node, "`%s` takes a factor (a number or `<num>/<den>`) and an optional offset" % name)
+            if len(targs) not in (1, 2, 3) or parse_factor(targs[0]) is None or not all(
+                    _NUMBER.match(t) for t in targs[1:2]):
+                self.bad(node, "`%s` takes a factor (a number or `<num>/<den>`), an optional offset "
+                         "and optional decimal places" % name)
+            if len(targs) == 3:
+                # engine-spec 0.55 "Rounding a scale to decimal places"
+                if not (_UINT.match(targs[2]) and int(targs[2]) <= 15):
+                    self.bad(node, "the decimal places of `%s` are a decimal integer from 0 to 15" % name)
+                if self.pack.wire != "bits" or node.uper is not None:
+                    self.bad(node, "`%s` takes decimal places only at a position or length of the bits wire" % name)
         elif name in ("smscale", "f32scale", "f64scale", "scale"):
             if len(targs) not in (1, 2) or parse_factor(targs[0]) is None or not all(
                     _NUMBER.match(t) for t in targs[1:]):
@@ -1614,7 +1628,7 @@ class _Loader:
         elif targs:
             self.bad(node, "transform `%s` takes no argument" % name)
         if bits is not None:
-            if name == "ascii":
+            if name in ("ascii", "utf8"):
                 ok = bits % 8 == 0 and 8 <= bits <= 2040
             elif name == "sixbit":
                 ok = bits % 6 == 0 and 6 <= bits <= 1530
@@ -1802,8 +1816,8 @@ class _Loader:
             self.bad(node, "`swap` needs the bits wire and a length that is a multiple of 8")
         if "swap" in node.opts and node.tr in ("sixbit", "chars", "octal", "hex"):
             self.bad(node, "`swap` with `%s`" % node.tr)
-        if "trim" in node.opts and not (bits_wire and node.tr in ("ascii", "sixbit")):
-            self.bad(node, "`trim` needs the bits wire and the `ascii` or `sixbit` transform")
+        if "trim" in node.opts and not (bits_wire and node.tr in ("ascii", "sixbit", "utf8")):
+            self.bad(node, "`trim` needs the bits wire and the `ascii`, `sixbit` or `utf8` transform")
         text_wire = self.pack.wire == "text"
         if "optional" in node.opts and not ((bits_wire and not self.pack.sequential) or text_wire):
             self.bad(node, "`optional` needs a fixed-layout bits pack or the text wire")
