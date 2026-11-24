@@ -1,0 +1,35 @@
+# PEGELONLINE REST API v2: one gauging station (/stations/{id}.json), with its time series and their
+# current measurements where the request includes them. Public. Written by hand; pack.md states the
+# evidence for lat and lon and why no time is time_ms.
+format  pegelonline-station
+version 0.1.0
+distribution public
+source  "PEGELONLINE REST API v2, Wasserstraßen- und Schifffahrtsverwaltung des Bundes, https://www.pegelonline.wsv.de/webservice/dokuRestapi (read 2026-11-21); layout restated"
+uses    pegelonline
+wire    json
+
+field  pegelonline.uuid                  uuid                string
+field  pegelonline.number                number              string
+field  pegelonline.shortname             shortname           string
+field  pegelonline.longname              longname            string
+field  pegelonline.km                    km                  float
+field  pegelonline.agency                agency              string
+field  lon                               longitude           float
+field  lat                               latitude            float
+field  pegelonline.voice_service_number  voiceServiceNumber  string
+field  pegelonline.remark                remark              string
+field  pegelonline.water_shortname       water.shortname     string
+field  pegelonline.water_longname        water.longname      string
+group  pegelonline.timeseries  timeseries
+  field  pegelonline.ts_shortname           shortname                     string
+  field  pegelonline.ts_longname            longname                      string
+  field  pegelonline.unit                   unit                          string
+  field  pegelonline.equidistance           equidistance                  int
+  field  pegelonline.current_time           currentMeasurement.timestamp  string
+  field  pegelonline.current_value          currentMeasurement.value      float
+  field  pegelonline.state_mnw_mhw          currentMeasurement.stateMnwMhw string
+  field  pegelonline.state_nsw_hsw          currentMeasurement.stateNswHsw string
+  field  pegelonline.gauge_zero_unit        gaugeZero.unit                string
+  field  pegelonline.gauge_zero_value       gaugeZero.value               float
+  field  pegelonline.gauge_zero_valid_from  gaugeZero.validFrom           string
+end

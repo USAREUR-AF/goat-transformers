@@ -1,0 +1,6 @@
+Packs pegelonline-station, pegelonline-timeseries, pegelonline-current; module pegelonline
+  PEGELONLINE REST API v2, Wasserstraßen- und Schifffahrtsverwaltung des
+  Bundes (WSV). https://www.pegelonline.wsv.de/webservice/dokuRestapi, read
+  2026-11-21. Datenlizenz Deutschland - Zero - Version 2.0
+  (DL-DE-ZERO-2.0); no attribution required, source named.
+  Layouts restated; no text copied.

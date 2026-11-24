@@ -1,0 +1,9 @@
+{
+  "name": "value-as-text",
+  "from": "pegelonline-current",
+  "to": "pegelonline-current",
+  "input": "{\"timestamp\":\"2026-07-15T08:45:00+02:00\",\"value\":\"412\",\"stateMnwMhw\":\"high\",\"stateNswHsw\":\"normal\"}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/pegelonline-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "PEGELONLINE REST API v2 documentation (pegelonline.wsv.de/webservice/dokuRestapi); value is a decimal number; text there is a transform failure"
+}

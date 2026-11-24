@@ -1,0 +1,22 @@
+# PEGELONLINE REST API v2: one time series of a station (/stations/{id}/{timeseries}.json), with its
+# current measurement and gauge zero where the request includes them. Public. Written by hand;
+# pack.md states the evidence for time_ms.
+format  pegelonline-timeseries
+version 0.1.0
+distribution public
+source  "PEGELONLINE REST API v2, Wasserstraßen- und Schifffahrtsverwaltung des Bundes, https://www.pegelonline.wsv.de/webservice/dokuRestapi (read 2026-11-21); layout restated"
+uses    pegelonline
+wire    json
+
+field  pegelonline.ts_shortname           shortname                     string
+field  pegelonline.ts_longname            longname                      string
+field  pegelonline.unit                   unit                          string
+field  pegelonline.equidistance           equidistance                  int
+field  time_ms                            currentMeasurement.timestamp  iso8601_ms
+field  pegelonline.current_time           currentMeasurement.timestamp  string
+field  pegelonline.current_value          currentMeasurement.value      float
+field  pegelonline.state_mnw_mhw          currentMeasurement.stateMnwMhw string
+field  pegelonline.state_nsw_hsw          currentMeasurement.stateNswHsw string
+field  pegelonline.gauge_zero_unit        gaugeZero.unit                string
+field  pegelonline.gauge_zero_value       gaugeZero.value               float
+field  pegelonline.gauge_zero_valid_from  gaugeZero.validFrom           string

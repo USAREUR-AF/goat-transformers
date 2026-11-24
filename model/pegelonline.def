@@ -1,0 +1,29 @@
+# The pegelonline module: the members of the PEGELONLINE REST API (version 2) of the German Federal
+# Waterways and Shipping Administration, as it holds them. packs/pegelonline-station/pack.md states
+# the evidence for lat, lon and time_ms.
+module        pegelonline
+version       0.1.0
+distribution  public
+source        "PEGELONLINE REST API v2, https://www.pegelonline.wsv.de/webservice/dokuRestapi (read 2026-11-21); restated by goat-transformers"
+key   uuid                   string  -    "unchangeable unique identifier of the gauging station"
+key   number                 string  -    "gauge number"
+key   shortname              string  -    "station name, at most 40 characters"
+key   longname               string  -    "station name, at most 255 characters"
+key   km                     float   km   "river kilometre of the station"
+key   agency                 string  -    "the waterways and shipping office responsible"
+key   voice_service_number   string  -    "telephone number of the spoken measurement service, international form; only where the station offers it"
+key   remark                 string  -    "general remark on the station, at most 60 characters; only where one is held"
+key   water_shortname        string  -    "short name of the water body (water.shortname)"
+key   water_longname         string  -    "long name of the water body (water.longname)"
+list  timeseries                          "the time series of a station, where the request includes them"
+key   ts_shortname           string  -    "short name of the time series, such as W (water level)"
+key   ts_longname            string  -    "long name of the time series"
+key   unit                   string  -    "unit of the values of the time series"
+key   equidistance           int     min  "interval between the values of the time series, in minutes"
+key   current_time           string  -    "time of the current measurement as written: ISO 8601 with its offset, local legal time (CET/CEST)"
+key   current_value          float   -    "current measurement, in the unit of the time series"
+key   state_mnw_mhw          string  -    "the current water level against mean low and mean high water: low, normal, high, unknown, commented or out-dated; water levels only"
+key   state_nsw_hsw          string  -    "the current water level against the highest navigable water level: normal, high, unknown, commented or out-dated; water levels only"
+key   gauge_zero_unit        string  -    "unit of the gauge zero: metres above a normal height zero, as written (gaugeZero.unit)"
+key   gauge_zero_value       float   m    "height of the gauge zero above the national normal height zero, not the ellipsoid (gaugeZero.value)"
+key   gauge_zero_valid_from  string  -    "date from which the gauge zero holds, ISO 8601 (gaugeZero.validFrom)"

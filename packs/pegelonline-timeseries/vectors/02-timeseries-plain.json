@@ -1,0 +1,12 @@
+{
+  "name": "timeseries-plain",
+  "from": "pegelonline-timeseries",
+  "to": "pegelonline-timeseries",
+  "input": "{\"shortname\":\"W\",\"longname\":\"WASSERSTAND ROHDATEN\",\"unit\":\"cm\",\"equidistance\":15}",
+  "expect": "{\"shortname\":\"W\",\"longname\":\"WASSERSTAND ROHDATEN\",\"unit\":\"cm\",\"equidistance\":15}",
+  "model": {
+    "pegelonline.ts_shortname": "W"
+  },
+  "source": "derived by tools/gen/pegelonline-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "PEGELONLINE REST API v2 documentation (pegelonline.wsv.de/webservice/dokuRestapi); a series requested without its current measurement: time_ms absent"
+}

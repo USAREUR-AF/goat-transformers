@@ -1,0 +1,16 @@
+{
+  "name": "timeseries-roundtrip",
+  "from": "pegelonline-timeseries",
+  "to": "pegelonline-timeseries",
+  "input": "{\"shortname\":\"W\",\"longname\":\"WASSERSTAND ROHDATEN\",\"unit\":\"cm\",\"equidistance\":15,\"currentMeasurement\":{\"timestamp\":\"2026-11-21T12:15:00+01:00\",\"value\":157.0,\"stateMnwMhw\":\"normal\",\"stateNswHsw\":\"normal\"},\"gaugeZero\":{\"unit\":\"m. ü. NHN\",\"value\":31.82,\"validFrom\":\"1936-11-01\"}}",
+  "expect": "{\"shortname\":\"W\",\"longname\":\"WASSERSTAND ROHDATEN\",\"unit\":\"cm\",\"equidistance\":15,\"currentMeasurement\":{\"timestamp\":\"2026-11-21T11:15:00.000Z\",\"value\":157,\"stateMnwMhw\":\"normal\",\"stateNswHsw\":\"normal\"},\"gaugeZero\":{\"unit\":\"m. ü. NHN\",\"value\":31.82,\"validFrom\":\"1936-11-01\"}}",
+  "model": {
+    "time_ms": "1795259700000",
+    "pegelonline.current_time": "2026-11-21T12:15:00+01:00",
+    "pegelonline.current_value": "157",
+    "pegelonline.gauge_zero_value": "31.82",
+    "pegelonline.equidistance": "15"
+  },
+  "source": "derived by tools/gen/pegelonline-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "PEGELONLINE REST API v2 documentation (pegelonline.wsv.de/webservice/dokuRestapi); one water-level series; the time with its +01:00 offset is time_ms in UTC, and is written back in UTC with Z (the shared line comes first on the locator)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-pegelonline-station",
+  "from": "geojson",
+  "to": "pegelonline-station",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10.25,52.5]},\"properties\":{}}",
+  "expect": "{\"longitude\":10.25,\"latitude\":52.5}",
+  "source": "derived by tools/gen/pegelonline-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "PEGELONLINE REST API v2 documentation (pegelonline.wsv.de/webservice/dokuRestapi); a GeoJSON point written as a station: longitude, then latitude, in line order"
+}

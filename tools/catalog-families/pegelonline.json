@@ -1,0 +1,8 @@
+{
+  "name": "PEGELONLINE",
+  "domain": "maps",
+  "prefixes": [
+    "pegelonline-"
+  ],
+  "detail": "gauging stations, time series and current water levels of German federal waterways (WSV)"
+}

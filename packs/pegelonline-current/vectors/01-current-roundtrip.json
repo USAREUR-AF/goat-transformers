@@ -1,0 +1,15 @@
+{
+  "name": "current-roundtrip",
+  "from": "pegelonline-current",
+  "to": "pegelonline-current",
+  "input": "{\"timestamp\":\"2026-07-15T08:45:00+02:00\",\"value\":412.0,\"stateMnwMhw\":\"high\",\"stateNswHsw\":\"normal\"}",
+  "expect": "{\"timestamp\":\"2026-07-15T06:45:00.000Z\",\"value\":412,\"stateMnwMhw\":\"high\",\"stateNswHsw\":\"normal\"}",
+  "model": {
+    "time_ms": "1784097900000",
+    "pegelonline.current_time": "2026-07-15T08:45:00+02:00",
+    "pegelonline.current_value": "412",
+    "pegelonline.state_mnw_mhw": "high"
+  },
+  "source": "derived by tools/gen/pegelonline-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "PEGELONLINE REST API v2 documentation (pegelonline.wsv.de/webservice/dokuRestapi); a summer measurement (+02:00, CEST) above mean high water"
+}
