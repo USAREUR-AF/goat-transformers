@@ -4054,7 +4054,14 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 // the case decode would select from the bits the key's line
                 // wrote; a key whose line wrote nothing is absent (engine-spec v0.20)
                 // a key that does not read back: the output would not decode (ruling 31 of 0.20)
-                let value = match key_state(w.back.last().expect("a scope"), &sw.key) {
+                // a later line of the key whose table fails fails the decode
+                // (ruling 26 of 0.64), so the key does not read back then either
+                let back = w.back.last().expect("a scope");
+                let state = match back.hard_keys.contains(&sw.key) {
+                    true => Err(back.hard.last().cloned().unwrap_or_default()),
+                    false => key_state(back, &sw.key),
+                };
+                let value = match state {
                     Ok(v) => v,
                     Err(m) => {
                         w.look.set(sw, ent, None);
