@@ -56,8 +56,12 @@ type seqReader struct {
 	p     *Pack
 	data  []byte
 	pos   int
-	limit int  // the first bit the lines may not read
-	ext   bool // inside a `length` extent: a line at or after limit reads as absent
+	input int // the first bit past the input; a `length … whole` line lowers it
+	// ext is set inside a `length` extent, which ends at bit end: a line at
+	// or after end reads as absent. A whole length read in the block may end
+	// the input before end (0.83 ruling 16).
+	ext bool
+	end int
 	// extBits is set when the innermost extent is counted in bits (a
 	// `length … bits` block): a rest item needs 1 bit there, not 8 (0.21).
 	extBits bool
@@ -71,6 +75,9 @@ type seqReader struct {
 	// whole is the smallest length a `length … whole` line stated, in bits;
 	// -1 when none was read (0.34 ruling 13).
 	whole int
+	// units holds the counts read in the message and the items being read,
+	// for 0.83 ruling 9.
+	units []*seqCountRead
 }
 
 // seqCountRead is what a count line read: the number of items, unless the
@@ -80,6 +87,11 @@ type seqCountRead struct {
 	ok    bool
 	items uint64
 	huge  bool
+	// unread is set when the `length @` block the count sizes was not read
+	// (0.83 ruling 9).
+	unread bool
+	sized  bool // a `length @` block of the count was read
+	cd     *seqCountDef
 }
 
 type seqPendingBit struct {
@@ -96,29 +108,134 @@ func (r *seqReader) malformed(format string, a ...any) error {
 // reads as absent (0.8 ruling 7); a line that runs past the end is
 // malformed-wire.
 func (r *seqReader) take(n int, what string) (start int, ok bool, err error) {
-	if r.pos+n <= r.limit {
+	if r.pos+n <= r.limit() {
 		start = r.pos
 		r.pos += n
 		return start, true, nil
 	}
-	if r.ext && r.pos >= r.limit {
+	if r.beyond() {
 		return 0, false, nil
 	}
-	if r.ext {
-		return 0, false, r.malformed("%s needs %d bit(s) at bit %d and its length extent ends at bit %d", what, n, r.pos, r.limit)
+	if r.ext && r.end <= r.input {
+		return 0, false, r.malformed("%s needs %d bit(s) at bit %d and its length extent ends at bit %d", what, n, r.pos, r.end)
 	}
-	return 0, false, r.malformed("%s needs %d bit(s) at bit %d and the message has %d", what, n, r.pos, r.limit)
+	return 0, false, r.malformed("%s needs %d bit(s) at bit %d and the input has %d", what, n, r.pos, r.input)
+}
+
+// limit is the first bit the lines may not read: the end of the extent or of
+// the input, whichever comes first.
+func (r *seqReader) limit() int {
+	if r.ext && r.end < r.input {
+		return r.end
+	}
+	return r.input
 }
 
 // beyond reports whether the cursor stands at or after the end of a `length`
 // extent.
-func (r *seqReader) beyond() bool { return r.ext && r.pos >= r.limit }
+func (r *seqReader) beyond() bool { return r.ext && r.pos >= r.end }
+
+// toEnd moves the cursor to the end of the extent, or of the message outside
+// one.
+func (r *seqReader) toEnd() {
+	switch {
+	case r.ext:
+		r.pos = r.end
+	case r.pos < r.input:
+		r.pos = r.input
+	}
+}
+
+// block reads the lines of a block as an extent that ends at bit end, then
+// skips what no line read.
+func (r *seqReader) block(n *seqNode, end int) error {
+	ext, outer, extBits := r.ext, r.end, r.extBits
+	r.ext, r.end, r.extBits = true, end, n.bits
+	err := r.nodes(n.body)
+	r.ext, r.end, r.extBits = ext, outer, extBits
+	if err != nil {
+		return err
+	}
+	// Content of the extent no line reads is skipped.
+	r.pos = end
+	return nil
+}
+
+// unitBlock reads a `length @<name> units <u>` block (0.83): an extent of as
+// many units as the count states.
+func (r *seqReader) unitBlock(n *seqNode) error {
+	st := r.cnts[n.cnt]
+	// Absent at or past the end of the extent around it, whatever the count
+	// states (ruling 4).
+	if r.beyond() {
+		if st != nil {
+			st.unread = true
+		}
+		r.skipped(n.body)
+		return nil
+	}
+	if st == nil || !st.ok {
+		return nil
+	}
+	// An extent that ends beyond the block around it or beyond the input is
+	// refused before anything in it is read (rulings 4 and 5). The product
+	// is exact (ruling 3).
+	hi, size := bits.Mul64(st.items, uint64(n.units))
+	limit := r.limit()
+	if st.huge || hi != 0 || r.pos > limit || size > uint64(limit-r.pos) {
+		return r.malformed("the length block on line %d states %d unit(s) of %d bit(s) at bit %d and %d are left", n.line, st.items, n.units, r.pos, limit-r.pos)
+	}
+	st.sized = true
+	return r.block(n, r.pos+int(size))
+}
+
+// unitCounts checks, once a message or an item has been read with its kind,
+// that the block of each count it read that states units was read (0.83
+// ruling 9). from is the number of counts read before it.
+func (r *seqReader) unitCounts(from int) error {
+	read := r.units[from:]
+	r.units = r.units[:from]
+	for _, st := range read {
+		if st.unread && !st.sized && (st.huge || st.items != 0) {
+			return r.malformed("count %s on line %d states %d unit(s) and its block is not read", st.cd.name, st.cd.line, st.items)
+		}
+	}
+	return nil
+}
+
+// skipped marks the counts whose `length @` block stands among lines that
+// are not read: an `if`, `opt` or chain part, or a block that is absent. Of a
+// switch there every case counts (0.83 ruling 9).
+func (r *seqReader) skipped(list []*seqNode) {
+	if !r.p.units {
+		return
+	}
+	for _, n := range list {
+		switch n.op {
+		case seqGroup:
+		case seqSwitchOp:
+			for _, c := range n.sw.cases {
+				r.skipped(c.body)
+			}
+			if n.sw.els != nil {
+				r.skipped(n.sw.els.body)
+			}
+		default:
+			if n.units != 0 {
+				if st := r.cnts[n.cnt]; st != nil {
+					st.unread = true
+				}
+			}
+			r.skipped(n.body)
+		}
+	}
+}
 
 func decodeSeq(d *decodeState, data []byte, nbits int) error {
 	p := d.pack
-	// limit is the bits the input carries: under six-bit armor not a whole
+	// nbits is the bits the input carries: under six-bit armor not a whole
 	// number of bytes (0.14).
-	r := &seqReader{d: d, p: p, data: data, limit: nbits, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}, cnts: map[*seqCountDef]*seqCountRead{}, whole: -1}
+	r := &seqReader{d: d, p: p, data: data, input: nbits, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}, cnts: map[*seqCountDef]*seqCountRead{}, whole: -1}
 	k, err := r.body(p.sbody)
 	if err != nil {
 		return err
@@ -149,11 +266,12 @@ func decodeSeq(d *decodeState, data []byte, nbits int) error {
 // body reads one message or one item: the common lines, then the lines of
 // the first kind whose `when` lines all hold where the common lines ended.
 func (r *seqReader) body(b *seqBody) (*seqKind, error) {
+	from := len(r.units)
 	if err := r.nodes(b.common); err != nil {
 		return nil, err
 	}
 	if len(b.kinds) == 0 {
-		return nil, nil
+		return nil, r.unitCounts(from)
 	}
 	// Kind start: where the common lines ended (0.33). A `when … at` reads
 	// its window there plus its offset and does not move the cursor; a plain
@@ -168,13 +286,13 @@ func (r *seqReader) body(b *seqBody) (*seqKind, error) {
 		for _, w := range k.whens {
 			from := pos
 			if w.at {
-				if w.off > uint64(r.limit-start) {
+				if start > r.limit() || w.off > uint64(r.limit()-start) {
 					holds = false
 					break
 				}
 				from = start + int(w.off)
 			}
-			if from+w.n > r.limit || !inRanges(w.rng, getBits(r.data, from, w.n, r.p.msb)) {
+			if from+w.n > r.limit() || !inRanges(w.rng, getBits(r.data, from, w.n, r.p.msb)) {
 				holds = false
 				break
 			}
@@ -192,7 +310,10 @@ func (r *seqReader) body(b *seqBody) (*seqKind, error) {
 				}
 			}
 			r.pos = pos
-			return k, r.nodes(k.nodes)
+			if err := r.nodes(k.nodes); err != nil {
+				return k, err
+			}
+			return k, r.unitCounts(from)
 		}
 	}
 	return nil, &Error{Kind: ErrNoKind, Format: r.p.Format, Detail: fmt.Sprintf("what stands at bit %d matches no kind", r.pos)}
@@ -246,10 +367,12 @@ func (r *seqReader) node(n *seqNode) error {
 		if r.beyond() {
 			return nil
 		}
-		if rem := r.pos % n.n; rem != 0 {
+		// It stops at the end of the input or of the extent (0.8 ruling 20).
+		limit := r.limit()
+		if rem := r.pos % n.n; rem != 0 && r.pos < limit {
 			r.pos += n.n - rem
-			if r.pos > r.limit {
-				r.pos = r.limit
+			if r.pos > limit {
+				r.pos = limit
 			}
 		}
 	case seqWhen:
@@ -267,18 +390,20 @@ func (r *seqReader) node(n *seqNode) error {
 		for _, c := range n.conds {
 			bits := r.pres[c.p]
 			if (c.bit < len(bits) && bits[c.bit]) == c.neg {
+				r.skipped(n.body)
 				return nil
 			}
 		}
 		return r.nodes(n.body)
 	case seqOpt:
 		at, ok, err := r.take(1, "opt")
-		if err != nil || !ok {
+		if err != nil {
 			return err
 		}
-		if bitAt(r.data, at, p.msb) == 1 {
+		if ok && bitAt(r.data, at, p.msb) == 1 {
 			return r.nodes(n.body)
 		}
+		r.skipped(n.body)
 	case seqChain:
 		for i, c := range n.body {
 			if c.op != seqFx {
@@ -292,6 +417,7 @@ func (r *seqReader) node(n *seqNode) error {
 				return err
 			}
 			if !ok || bitAt(r.data, at, p.msb) == 0 {
+				r.skipped(n.body[i+1:])
 				break
 			}
 			// A chain that ends with an fx line whose bit is 1 holds a part
@@ -301,9 +427,16 @@ func (r *seqReader) node(n *seqNode) error {
 			}
 		}
 	case seqLength:
+		if n.units != 0 {
+			return r.unitBlock(n)
+		}
 		at, ok, err := r.take(n.n, "length")
-		if err != nil || !ok {
+		if err != nil {
 			return err
+		}
+		if !ok {
+			r.skipped(n.body)
+			return nil
 		}
 		size, err := r.stated(at, n)
 		if err != nil {
@@ -312,19 +445,12 @@ func (r *seqReader) node(n *seqNode) error {
 		if !n.bits {
 			size *= 8
 		}
-		if size > int64(r.limit-r.pos) {
-			return r.malformed("the length block on line %d states %d bit(s) at bit %d and %d are left", n.line, size, r.pos, r.limit-r.pos)
+		// Beyond the input or any extent around it, before anything in the
+		// block is read (0.83 ruling 17).
+		if left := r.limit() - r.pos; size > int64(left) {
+			return r.malformed("the length block on line %d states %d bit(s) at bit %d and %d are left", n.line, size, r.pos, left)
 		}
-		end := r.pos + int(size)
-		limit, ext, extBits := r.limit, r.ext, r.extBits
-		r.limit, r.ext, r.extBits = end, true, n.bits
-		err = r.nodes(n.body)
-		r.limit, r.ext, r.extBits = limit, ext, extBits
-		if err != nil {
-			return err
-		}
-		// Content of the extent no line reads is skipped.
-		r.pos = end
+		return r.block(n, r.pos+int(size))
 	case seqWhole:
 		at, ok, err := r.take(n.n, "length")
 		if err != nil || !ok {
@@ -334,16 +460,17 @@ func (r *seqReader) node(n *seqNode) error {
 		if err != nil {
 			return err
 		}
-		if size > int64(r.limit/8) {
-			return r.malformed("the message states a length of %d byte(s) and the input has %d", size, r.limit/8)
+		if size > int64(r.input/8) {
+			return r.malformed("the message states a length of %d byte(s) and the input has %d", size, r.input/8)
 		}
 		if int(size)*8 < r.pos {
 			return r.malformed("the message states a length of %d byte(s) and %d bit(s) were already read", size, r.pos)
 		}
-		// Input beyond the stated length is ignored.
-		r.limit = int(size) * 8
-		if r.whole < 0 || r.limit < r.whole {
-			r.whole = r.limit
+		// Input beyond the stated length is ignored. It ends the input, not
+		// a block around the line (0.8 ruling 8, 0.83 ruling 16).
+		r.input = int(size) * 8
+		if r.whole < 0 || r.input < r.whole {
+			r.whole = r.input
 		}
 	case seqGroup:
 		return r.group(n.g)
@@ -364,7 +491,10 @@ func (r *seqReader) node(n *seqNode) error {
 			return nil
 		}
 		raw := getBits(r.data, at, cd.n, p.msb)
-		st := &seqCountRead{ok: true}
+		st := &seqCountRead{ok: true, cd: cd}
+		if p.units {
+			r.units = append(r.units, st)
+		}
 		if cd.plus >= 0 {
 			if raw < uint64(cd.plus) {
 				return r.malformed("count %s on line %d holds %d, below its plus of %d", cd.name, cd.line, raw, cd.plus)
@@ -609,18 +739,19 @@ func (r *seqReader) inner(n *seqNode) error {
 	if r.pos%8 != 0 {
 		return r.malformed("the inner line on line %d stands at bit %d, not on a whole byte", n.line, r.pos)
 	}
-	if r.limit%8 != 0 {
-		return r.malformed("the extent of the inner line on line %d ends at bit %d, not on a whole byte", n.line, r.limit)
-	}
-	if r.limit > len(r.data)*8 {
+	if r.ext && r.end > r.input {
 		return r.malformed("the extent of the inner line on line %d ends beyond the input", n.line)
 	}
-	start := r.pos
-	if start > r.limit {
-		start = r.limit
+	limit := r.limit()
+	if limit%8 != 0 {
+		return r.malformed("the extent of the inner line on line %d ends at bit %d, not on a whole byte", n.line, limit)
 	}
-	bytes := r.data[start/8 : r.limit/8]
-	r.pos = r.limit
+	start := r.pos
+	if start > limit {
+		start = limit
+	}
+	bytes := r.data[start/8 : limit/8]
+	r.toEnd()
 	sub := &decodeState{pack: in, ent: NewEntity(), limit: d.limit - d.held, eng: d.eng, trackEnd: true, discard: map[string]bool{}}
 	for name := range d.top.Lists {
 		sub.discard[name] = true
@@ -785,8 +916,8 @@ func (r *seqReader) group(g *Group) error {
 		}
 		// A count larger than the bits left is refused before any item is
 		// read (0.8 ruling 14).
-		if count > uint64(r.limit-r.pos) {
-			return r.malformed("list %s: a count of %d and %d bit(s) left", g.List, count, r.limit-r.pos)
+		if count > r.left() {
+			return r.malformed("list %s: a count of %d and %d bit(s) left", g.List, count, r.left())
 		}
 		if err := d.room(g.List, count); err != nil {
 			return err
@@ -814,8 +945,8 @@ func (r *seqReader) group(g *Group) error {
 				return r.malformed("list %s: count %s and count %s state different numbers of items", g.List, g.cnt.name, g.cnt2.name)
 			}
 		}
-		if st.huge || st.items > uint64(r.limit-r.pos) {
-			return r.malformed("list %s: count %s states more items than the %d bit(s) left", g.List, g.cnt.name, r.limit-r.pos)
+		if st.huge || st.items > r.left() {
+			return r.malformed("list %s: count %s states more items than the %d bit(s) left", g.List, g.cnt.name, r.left())
 		}
 		// The limit on list items, before any item is read (7d of 0.11), also
 		// for a list the join will discard (0.34 ruling 7).
@@ -833,7 +964,16 @@ func (r *seqReader) group(g *Group) error {
 		if r.extBits {
 			least = 1
 		}
-		for r.limit-r.pos >= least {
+		// To the stated end of the extent, also when a whole length read in
+		// it ends the input before (0.83 ruling 16).
+		for {
+			end := r.input
+			if r.ext {
+				end = r.end
+			}
+			if end-r.pos < least {
+				break
+			}
 			start := r.pos
 			if err := item(); err != nil {
 				return err
@@ -842,7 +982,7 @@ func (r *seqReader) group(g *Group) error {
 				return r.malformed("list %s: an item of the rest group reads no bits", g.List)
 			}
 		}
-		r.pos = r.limit
+		r.toEnd()
 	case seqLast:
 		// The first indicator at the extent end gives an absent list (above);
 		// a later one there is malformed-wire (0.21 ruling 13).
@@ -1674,6 +1814,12 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			}
 			w.put(at, 1, 1)
 		case seqLength:
+			if n.units != 0 {
+				if err := w.unitBlock(n, sc); err != nil {
+					return err
+				}
+				continue
+			}
 			at := w.alloc(n.n)
 			start := w.pos
 			w.exts = append(w.exts, &seqExtent{start: start, bits: n.bits})
@@ -1791,6 +1937,31 @@ func countValue(items int, plus int64) (uint64, bool) {
 		return 0, false
 	}
 	return uint64(items) - m, true
+}
+
+// unitBlock writes a `length @<name> units <u>` block (0.83) and gives its
+// number of units to the count. A block counted in bytes is padded to a whole
+// byte from its first bit; nothing pads to a unit (ruling 10).
+func (w *seqWriter) unitBlock(n *seqNode, sc seqScope) error {
+	start := w.pos
+	w.exts = append(w.exts, &seqExtent{start: start, bits: n.bits})
+	if err := w.emit(n.body, sc, false); err != nil {
+		return err
+	}
+	if rem := (w.pos - start) % 8; rem != 0 && !n.bits {
+		w.alloc(8 - rem)
+	}
+	if err := w.closeExtent(); err != nil {
+		return err
+	}
+	size := w.pos - start
+	if size%n.units != 0 {
+		return w.fail("the length block on line %d is %d bit(s) long, not a whole number of units of %d", n.line, size, n.units)
+	}
+	if c := w.cntAt[n.cnt]; c != nil {
+		c.items = size / n.units
+	}
+	return nil
 }
 
 // length writes a length field: the size plus what the field counts beyond
