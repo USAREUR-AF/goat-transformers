@@ -49,7 +49,7 @@ class PrePush(unittest.TestCase):
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(body)
 
-    def push(self, overlay="set", status=0, cwd=None):
+    def push(self, overlay="set", status=0, cwd=None, refs="", remote="origin"):
         """Run the hook as git would. -> (exit status, standard output, standard error)"""
         env = dict(self.tree.env, STUB_RECORD=self.record, STUB_STATUS=str(status))
         env.pop("GOAT_XF_OVERLAY", None)
@@ -61,7 +61,8 @@ class PrePush(unittest.TestCase):
         if not os.path.exists(os.path.join(shim, "python3")):
             os.symlink(sys.executable, os.path.join(shim, "python3"))
         env["PATH"] = shim + os.pathsep + env.get("PATH", "")
-        done = subprocess.run(["bash", HOOK], cwd=cwd or self.tree.root, env=env, capture_output=True, text=True)
+        done = subprocess.run(["bash", HOOK, remote, "a-url"], cwd=cwd or self.tree.root, env=env, capture_output=True,
+                              text=True, input=refs)
         return done.returncode, done.stdout, done.stderr
 
     def recorded(self):
@@ -119,6 +120,91 @@ class PrePush(unittest.TestCase):
         code, _, _ = self.push(cwd=os.path.join(self.tree.root, "docs"))
         self.assertEqual(code, 0)
         self.assertEqual(self.recorded()["argv"][:2], ["--root", self.tree.root])
+
+    def commit(self, message):
+        self.tree.git("add", "-A")
+        self.tree.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", message)
+        return self.tree.git("rev-parse", "HEAD").strip()
+
+    def test_names_the_commits_each_pushed_ref_publishes(self):
+        self.write_generator("print('zorblat')\n")
+        zero = "0" * 40
+        first, second = self.commit("one"), None
+        self.tree.write("a.md", "a\n")
+        second = self.commit("two")
+        line = "refs/heads/x %s refs/heads/x %s\n"
+        for refs, want in [
+            (line % (second, first), ["--commits", "%s..%s" % (first, second)]),
+            (line % (second, zero), ["--commits", second]),                 # nothing known of the remote
+            (line % (second, "1" * 40), ["--commits", second]),             # its tip is not here
+            (line % (zero, first), []),                                     # a deletion
+            (line % (second, second), []),
+            (line % (first, second), []),                                   # moved back
+            (line % (second, first) + line % (first, zero),
+             ["--commits", "%s..%s" % (first, second), "--commits", first]),
+        ]:
+            code, _, err = self.push(refs=refs)
+            self.assertEqual(code, 0, err)
+            self.assertEqual([a for a in self.recorded()["argv"][4:] if not a.startswith("--ref-name=")],
+                             ["--require-needles"] + want)
+        self.tree.git("update-ref", "refs/remotes/origin/main", first)
+        self.push(refs=line % (second, zero))
+        self.assertEqual(self.recorded()["argv"][5:],
+                         ["--ref-name=refs/heads/x", "--commits", "%s..%s" % (first, second)])
+
+    def test_with_the_real_gate_a_needle_a_later_commit_removed_refuses_the_push(self):
+        self.tree.write(".gitignore", "x\n")
+        shutil.copyfile(os.path.join(REPO, "tools", "boundary-gate"), os.path.join(self.tree.root, "tools", "boundary-gate"))
+        base = self.commit("base")
+        self.tree.write("docs/notes.md", "the zorblat value\n")
+        self.commit("add")
+        self.tree.write("docs/notes.md", "the value\n")
+        tip = self.commit("remove")
+        self.write_generator("print('zorblat')\n")
+        code, out, _ = self.push()
+        self.assertEqual(code, 0, out)  # the tree alone is clean
+        code, out, _ = self.push(refs="refs/heads/x %s refs/heads/x %s\n" % (tip, base))
+        self.assertEqual(code, 1)
+        self.assertIn("boundary-gate: needle   docs/notes.md:1: ", out)
+
+    def test_names_a_tag_on_a_published_commit(self):
+        self.write_generator("print('zorblat')\n")
+        tip = self.commit("one")
+        self.tree.git("update-ref", "refs/remotes/origin/main", tip)
+        self.tree.git("-c", "user.name=t", "-c", "user.email=t@t", "tag", "-a", "v1", "-m", "text")
+        tag = self.tree.git("rev-parse", "v1").strip()
+        self.push(refs="refs/tags/v1 %s refs/tags/v1 %s\n" % (tag, "0" * 40))
+        self.assertEqual(self.recorded()["argv"][5:], ["--ref-name=refs/tags/v1", "--tag", tag])
+        self.push(refs="refs/tags/w %s refs/tags/w %s" % (tip, "0" * 40))  # lightweight; no final line break
+        self.assertEqual(self.recorded()["argv"][5:], ["--ref-name=refs/tags/w"])
+
+    def test_refuses_a_ref_that_is_no_commit(self):
+        self.write_generator("print('zorblat')\n")
+        self.commit("one")
+        for rev in ("HEAD^{tree}", "HEAD:tools/boundary-gate"):
+            oid = self.tree.git("rev-parse", rev).strip()
+            code, _, err = self.push(refs="refs/tags/t %s refs/tags/t %s\n" % (oid, "0" * 40))
+            self.assertEqual(code, 1)
+            self.assertIn("push refused", err)
+        code, _, _ = self.push(refs="refs/heads/x %s refs/heads/x %s\n" % ("1" * 40, "0" * 40))
+        self.assertEqual(code, 1)
+        self.assertFalse(os.path.exists(self.record))
+
+    def test_with_the_real_gate_a_needle_in_a_tag_or_a_ref_name_refuses_the_push(self):
+        shutil.copyfile(os.path.join(REPO, "tools", "boundary-gate"), os.path.join(self.tree.root, "tools", "boundary-gate"))
+        tip = self.commit("one")
+        self.tree.git("update-ref", "refs/remotes/origin/main", tip)
+        self.write_generator("print('zorblat')\n")
+        zero = "0" * 40
+        for name, message, want in [("v1", "fine", 0), ("v2", "the zorblat", 1), ("zorblat", "fine", 1)]:
+            self.tree.git("-c", "user.name=t", "-c", "user.email=t@t", "tag", "-a", name, "-m", message)
+            tag = self.tree.git("rev-parse", name).strip()
+            code, out, _ = self.push(refs="refs/tags/%s %s refs/tags/%s %s\n" % (name, tag, name, zero))
+            self.assertEqual(code, want, out)
+            self.assertNotIn("zorblat", out)
+        code, out, _ = self.push(refs="refs/heads/fix/zorblat-2 %s refs/heads/fix/zorblat-2 %s\n" % (tip, zero))
+        self.assertEqual(code, 1, out)
+        self.assertNotIn("zorblat", out)
 
     def test_with_the_real_gate_a_needle_in_the_tree_refuses_the_push(self):
         shutil.copyfile(os.path.join(REPO, "tools", "boundary-gate"), os.path.join(self.tree.root, "tools", "boundary-gate"))

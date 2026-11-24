@@ -62,8 +62,28 @@ python3 -I "$GOAT_XF_OVERLAY/tools/needles.py" > "$needles"
 python3 -I tools/boundary-gate --needles "$needles" --require-needles
 ```
 
-`tools/hooks/pre-push` runs those commands before every push and refuses the
-push when the needle list cannot be built. `GOAT_XF_OVERLAY` is the path of the
+When the list is loaded, each needle is matched against itself; one the matcher
+does not find fails the gate. Two needles that differ only in what stands
+between their words are two needles.
+
+These options cover what the tree does not show:
+
+- `--commits BASE..TIP` also checks every commit of the range: its message,
+  author and committer, every path it changes, and every content it brings in,
+  also content that a later commit removes. An empty range and a shallow
+  repository fail.
+- `--tag TAG` checks an annotated tag and `--ref-name NAME` the name of a ref.
+- `--needles-only` runs the needle check alone on the tree of any repository
+  (`--root`), binary files included. The exit status depends on needles only.
+  Content that is compressed or encoded is not unpacked: the output lists each
+  binary file, for a person to look at.
+
+The waiver for generated packs (below) reads the provenance and the generator
+from the working tree, also when it judges a hit in an older commit. It waives
+only a needle that the cited public source holds.
+
+`tools/hooks/pre-push` runs the check with the commits, the annotated
+tags and the ref names the push would publish before every push, and refuses the push when the needle list cannot be built. `GOAT_XF_OVERLAY` is the path of the
 overlay checkout; the default is a directory named `goat-transformers-overlay`
 beside this repository. A contributor with no overlay does not install the
 hook. To install it:
