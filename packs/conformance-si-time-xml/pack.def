@@ -1,0 +1,9 @@
+# Conformance probe pack for the transform `iso8601_si` (spec 0.55) on the
+# `xml` wire. Public. No kinds.
+format  conformance-si-time-xml
+version 0.55.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+wire    xml
+root    msg
+field   time_ms  @t  iso8601_si

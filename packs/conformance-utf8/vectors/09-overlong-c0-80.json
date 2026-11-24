@@ -1,0 +1,9 @@
+{
+  "name": "overlong-c0-80",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "c0800000000000000000000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; decode: c0 80 is an overlong form of U+0000"
+}

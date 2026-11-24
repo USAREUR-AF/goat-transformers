@@ -1,0 +1,12 @@
+{
+  "name": "roundtrip-whole-second-no-fraction",
+  "from": "conformance-si-time-geojson",
+  "to": "conformance-si-time-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"1969-12-31T23:59:59Z\"},\"id\":\"u\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"1969-12-31T23:59:59Z\"},\"id\":\"u\"}",
+  "model": {
+    "time_ms": "-1000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, A time with three fraction digits or none; on geojson; ruling 3: the round trip is exact for the text iso8601_si writes"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "decode-ruling-3-no-fraction",
+  "from": "conformance-si-time",
+  "to": "conformance-si-time",
+  "input": "{\"t\":\"2025-10-29T12:00:40Z\"}",
+  "expect": "{\"ms\":1761739240000,\"t\":\"2025-10-29T12:00:40Z\"}",
+  "model": {
+    "time_ms": "1761739240000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, A time with three fraction digits or none; ruling 3: decode is that of iso8601_ms; no fraction: milliseconds 0; written back with no fraction; 2025-10-29T12:00:40Z is 1761739240 s after 1970 (Python datetime)"
+}

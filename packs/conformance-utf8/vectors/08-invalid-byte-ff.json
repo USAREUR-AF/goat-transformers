@@ -1,0 +1,9 @@
+{
+  "name": "invalid-byte-ff",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "ff000000000000000000000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; decode: ff is never valid UTF-8 (RFC 3629)"
+}

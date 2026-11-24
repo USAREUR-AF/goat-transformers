@@ -1,0 +1,12 @@
+{
+  "name": "a-zero-result",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "0190000000000000000000000000",
+  "expect": "0190000000000000000000000000",
+  "model": {
+    "probe.a": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; the zero is 400 * 0.1 = 40 exactly, minus 40: +0; decode: x = 400 * 0.1 + -40 = 0 (product 40.0); y = x * 10 = 0.0; round = 0; / 10 = 0; encode: q = 400.0, round = 400; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

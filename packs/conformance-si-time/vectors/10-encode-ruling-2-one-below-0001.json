@@ -1,0 +1,9 @@
+{
+  "name": "encode-ruling-2-one-below-0001",
+  "from": "conformance-si-time",
+  "to": "conformance-si-time",
+  "input": "{\"ms\":-62135596800001}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.55, A time with three fraction digits or none; ruling 2: -62135596800001 lies before 0001-01-01T00:00:00Z: transform-encode"
+}

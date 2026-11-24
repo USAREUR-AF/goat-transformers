@@ -55,6 +55,7 @@ vectors, and the same change in the other six engines.
 | Sequential extents and counts | a list that fills the rest of a message or of a stated length, a count placed before other fields, a flag on the last item | Built, seven engines (spec 0.21) |
 | Conditional output and flag tokens | a value written only when another exists; several flags joined into one token list | Built, seven engines (spec 0.18) |
 | XML namespaces and prefixes | documents whose elements carry a prefix | Designed |
+| Text and value forms | a time with no fraction at a whole second and three digits otherwise; a scaled value rounded to the decimal places its source states; UTF-8 text in a binary field | Built, seven engines (spec 0.55) |
 
 The Designed rows come from generating packs for whole public catalogs
 (MAVLink, NMEA 2000, Mode S, Remote ID) and from the comparisons in

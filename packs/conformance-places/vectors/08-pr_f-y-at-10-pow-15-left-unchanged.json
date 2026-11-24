@@ -1,0 +1,12 @@
+{
+  "name": "pr_f-y-at-10-pow-15-left-unchanged",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "0000000000005af3107a40000000",
+  "expect": "0000000000005af3107a40000000",
+  "model": {
+    "probe.pr_f": "100000000000000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; decode: x = 100000000000000 * 1.0 + 0 = 100000000000000 (product 100000000000000.0); y = x * 10 = 1000000000000000; |round(y)| = 1000000000000000 is not below 10^15, so the value is x = 100000000000000; encode: q = 100000000000000.0, round = 100000000000000; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

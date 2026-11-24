@@ -1,0 +1,12 @@
+{
+  "name": "ascii",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "4741544f520000000000000000000000",
+  "expect": "4741544f520000000000000000000000",
+  "model": {
+    "probe.s1": "GATOR"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; ASCII bytes, NUL-padded to 8; other fields all NUL (empty, present; ruling 3 of 0.5)"
+}

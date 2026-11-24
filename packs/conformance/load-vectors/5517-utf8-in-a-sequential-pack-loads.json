@@ -1,0 +1,8 @@
+{
+  "name": "5517-utf8-in-a-sequential-pack-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey a float -\nkey ratio float -\nkey label string -\nkey s1 string -\nkey s2 string -\n"
+  ],
+  "pack": "format probe\nversion 0.55.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nbit_order msb\nfield probe.s1 16 utf8\nfield probe.n 8 uint\n"
+}

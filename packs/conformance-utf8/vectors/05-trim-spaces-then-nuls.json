@@ -1,0 +1,12 @@
+{
+  "name": "trim-spaces-then-nuls",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "00000000000000006120200000000000",
+  "expect": "00000000000000006100000000000000",
+  "model": {
+    "probe.s2": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; s2 61 20 20 00 with trim: the NUL, then the two spaces, are removed; a encodes as 61 00 00 00; other fields all NUL (empty, present; ruling 3 of 0.5)"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "a-temperature-one-place",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "027d000000000000000000000000",
+  "expect": "027d000000000000000000000000",
+  "model": {
+    "probe.a": "23.7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; decode: x = 637 * 0.1 + -40 = 23.700000000000003 (product 63.7); y = x * 10 = 237.00000000000003; round = 237; / 10 = 23.7; encode: q = 637.0, round = 637; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

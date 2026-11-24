@@ -1,0 +1,12 @@
+{
+  "name": "swap-label-reversed",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "00000000000000000000000064636261",
+  "expect": "00000000000000000000000064636261",
+  "model": {
+    "probe.label": "abcd"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; label wire bytes 64 63 62 61 are reversed to 61 62 63 64 before decode, and reversed again after encode; other fields all NUL (empty, present; ruling 3 of 0.5)"
+}

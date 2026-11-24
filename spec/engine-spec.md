@@ -7429,3 +7429,140 @@ error table of 0.11.
 
 - This check in `encode`.
 - A check for packs without message kinds that do not opt in.
+
+---
+
+# Version 0.55: text and value forms
+
+Status: Draft. Three transforms, each closing a difference measured in a
+project that uses the library: a time text with no fraction at a whole second
+that keeps its trailing zeros, a decimal-places argument for the scales of
+`bits`, and UTF-8 text on `bits`. No model change.
+
+## A time with three fraction digits or none
+
+| Name | Wires | Decode | Encode |
+|---|---|---|---|
+| `iso8601_si` | `xml`, `json`, `geojson` | that of `iso8601_ms` (Version 0.6, ruling 3 of 0.11) | `YYYY-MM-DDTHH:MM:SSZ` when the milliseconds are 0; otherwise `YYYY-MM-DDTHH:MM:SS.`, the three digits of the milliseconds, then `Z` |
+
+It yields `int` (epoch milliseconds), as `iso8601_ms` does, and takes no
+parameter (`iso8601_si:3` is `bad-directive`). It is not `iso8601_s` (Version
+0.26), which drops the milliseconds of every instant. It differs from
+`iso8601_short` (Version 0.18) in keeping the trailing zeros of the fraction
+(250 ms is `.250`, not `.25`) and from `iso8601_ms` in writing no fraction at
+a whole second (`…:40Z`, not `…:40.000Z`).
+
+## Rounding a scale to decimal places
+
+```
+uscale:<factor>:<offset>:<places>
+sscale:<factor>:<offset>:<places>
+```
+
+A third argument to the `uscale` and `sscale` transforms of `bits` (Version
+0.5, `bits`: more transforms). Decode computes the value `x` as ruling 1 of 0.5
+states, then:
+
+1. `p = 10^places` as a double (each power of ten from 10^0 to 10^15 is exact);
+2. `y = x * p`, one double multiplication;
+3. when `y` is finite and `|round(y)| < 10^15`, where `round` is
+   round-half-away-from-zero to an integral double, the value is
+   `round(y) / p`, one correctly rounded division; a result of zero is +0;
+4. otherwise the value is `x`, unchanged.
+
+Encode is unchanged: `round((x - offset) / factor)` as ruling 1 of 0.5 states.
+
+## UTF-8 text on `bits`
+
+| Name | Yields | Decode | Encode |
+|---|---|---|---|
+| `utf8` | string | `len` is a multiple of 8, from 8 to 2040: the bytes in wire order, trailing NUL bytes removed, read as UTF-8 | the text's UTF-8 bytes, NUL-padded to `len / 8` |
+
+`utf8` takes its bytes as `ascii` does (Version 0.5; ruling 3 of 0.22 under
+`msb-lsb`), and the field options `swap` and `trim` apply to it as they apply
+to `ascii`: `swap` reverses the field's bytes before decode reads them and
+after encode writes them; `trim` removes, in one pass each, the trailing NUL
+bytes and then the trailing spaces (0x20) before them, so a NUL left after
+that is inside the text (`61 00 20 00` is `transform-decode`). Valid UTF-8 is that of RFC 3629: no overlong form, no surrogate
+code point (U+D800 to U+DFFF), nothing above U+10FFFF. Every code point but
+U+0000 is accepted; there is no refusal of control characters.
+
+- Decode is `transform-decode` when the bytes left after the trailing NULs are
+  removed (and, with `trim`, the trailing spaces) are not valid UTF-8, a
+  character cut off by the end of the field included, or hold a NUL.
+- Encode is `transform-encode` when the text holds U+0000 or a code point
+  that UTF-8 cannot carry (a lone surrogate, which only a context value can
+  give, since JSON input refuses one), or when its UTF-8 is longer than
+  `len / 8` bytes.
+- A field of NUL bytes only decodes to the empty string, present; the empty
+  string encodes to NUL bytes only (ruling 3 of 0.5).
+
+`utf8` is valid wherever `ascii` is on `bits`: at a bit position in a fixed
+layout, and at a bit length in a `layout sequential` pack (Version 0.8). It is
+not a character set of `chars` (Version 0.15) and does not combine with
+`until:` (Version 0.22). Its uses on `tlv` (Version 0.13) and on UPER
+`octets:` locators (Version 0.19) are unchanged.
+
+## Load errors
+
+`bad-directive`:
+
+- `iso8601_si` on `bits`, `protobuf`, `text`, `tlv` or `cbor`;
+- `utf8` on `bits` with a `len` it does not allow (on `tlv` and UPER
+  `octets:` its rules of 0.13 and 0.19 apply; on `cbor` `utf8`, `uscale` and
+  `sscale` stay `bad-directive`, as 0.28 states);
+- a `<places>` argument on any transform but `uscale` and `sscale` at a bit
+  position or bit length of `bits` (`smscale`, `f32scale`, `f64scale`,
+  `linscale`, the `scale` of the text wires and `uscale` on a UPER `int:`
+  locator, Version 0.19, take none);
+- a `<places>` that is not a decimal integer as 2c of 0.11 states (leading
+  zeros allowed: `07` is 7), or is above 15;
+- an empty argument in any position of `uscale` or `sscale`
+  (`uscale:0.1::1`, `uscale:0.1:`): write `uscale:0.1:0:1`;
+- more than three arguments to `uscale` or `sscale`.
+
+The form and range of `<places>`, an empty argument and the count of
+arguments are transform parameters, checked as the line is read (ruling 5b of
+0.11, step 7), except on `tlv` and `cbor`, whose transforms and their
+parameters are checked after the file (ruling 8 of 0.13, ruling 25 of 0.28). `utf8` on `bits`, `<places>` on `tlv` (where `uscale` and
+`sscale` are valid, Version 0.13) and `<places>` on a UPER `int:` locator
+need the wire and the locator, and are checked after the file (ruling 10 of
+0.10).
+
+## Rulings for 0.55
+
+1. **Negative and far instants.** `iso8601_si` takes the milliseconds as
+   `ms − 1000 × floor(ms / 1000)`, as ruling 11 of 0.18 does: −1 is
+   `1969-12-31T23:59:59.999Z`, −1000 is `1969-12-31T23:59:59Z`.
+2. **Years.** `iso8601_si` writes the years 0001 to 9999 (ruling 3f of 0.11);
+   an instant outside them is `transform-encode`. Unlike `iso8601_short`
+   (ruling 24 of 0.18) it never writes year 0000, so every instant it writes
+   decodes back.
+3. **Decode of every form.** `iso8601_si` decodes `…:40Z`, `…:40.25Z` and
+   `…:40.250Z` alike, as `iso8601_ms` does; its round trip is exact for the
+   text it writes.
+4. **Places and `absent`.** The `absent` option (Version 0.9) compares the raw
+   bits, before the scale and the rounding.
+5. **A value that is not finite.** With `<places>`, when `x` is not finite
+   the decode is `transform-decode`, since a model float is always finite
+   (Version 0.6, Not-a-number and infinity). Step 4 covers only a finite `x`
+   whose `y` is not finite or whose rounding reaches 10^15. This version
+   states nothing new for `uscale` and `sscale` without `<places>`.
+6. **Places and `via`.** A `via` table sees the value after the rounding.
+7. **Places on a fraction factor** (`uscale:1/128:0:2`) applies the same steps
+   to the `x` that ruling 1 of 0.5 gives for a fraction.
+
+## A correction to an earlier version
+
+Version 0.13 said "`utf8` and `hex` are valid only on `tlv`", and Version
+0.19 added UPER `octets:`. From this version `utf8` is also valid on `bits`
+as stated above; `hex` is unchanged. The load vector
+`wire-tlv-56-utf8-on-bits`, which expected `bad-directive` for
+`field uid 0:0:8 utf8` on `bits`, now expects the pack to load, and is
+renamed `wire-tlv-56-utf8-on-bits-loads-from-0.55`.
+
+Stated, not yet pinned by a vector: ruling 5 (a non-finite `x` needs a
+factor or offset at the edge of the double range); "a result of zero is +0"
+(the sign of a model zero is not visible in a vector, and both encode to the
+same bits); a lone surrogate on `utf8` encode (only a context value can give
+one); `<places>` on `f64scale` and on the `scale` of the text wires.

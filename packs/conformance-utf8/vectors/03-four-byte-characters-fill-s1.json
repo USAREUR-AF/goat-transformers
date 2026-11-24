@@ -1,0 +1,12 @@
+{
+  "name": "four-byte-characters-fill-s1",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "f09f9880f09f98800000000000000000",
+  "expect": "f09f9880f09f98800000000000000000",
+  "model": {
+    "probe.s1": "\ud83d\ude00\ud83d\ude00"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; U+1F600 is f0 9f 98 80; two fill the 8 bytes, no NUL; other fields all NUL (empty, present; ruling 3 of 0.5)"
+}
