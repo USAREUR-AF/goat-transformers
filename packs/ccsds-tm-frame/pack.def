@@ -32,3 +32,4 @@ field    ccsdstm.secondary_header_length   0:50:6  uint
 
 kind     primary-header                               # 6 octets mapped
 when     0:32:1  0
+requires ccsdstm.secondary_header_flag=0 ccsdstm.spacecraft_id ccsdstm.virtual_channel_id ccsdstm.ocf_flag ccsdstm.mc_frame_count ccsdstm.vc_frame_count ccsdstm.sync_flag ccsdstm.packet_order_flag ccsdstm.segment_length_id ccsdstm.first_header_pointer

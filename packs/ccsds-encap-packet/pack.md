@@ -34,13 +34,14 @@ the header only (vector 02).
 | `length-4-octets` | bits 6-7 = 11 | 8 octets | `ccsdsep.ccsds_defined` |
 | `length-2-octets` | bits 6-7 = 10 | 4 octets | `ccsdsep.user_defined` |
 | `length-1-octet` | bits 6-7 = 01 | 2 octets | `ccsdsep.packet_length` |
-| `idle` | bits 6-7 = 00 | 1 octet | none |
+| `idle` | bits 6-7 = 00 | 1 octet | `ccsdsep.protocol_id=0` (4.1.2.4.4) |
 
 Each header form has fixed field places, so each is a kind and no gate block
 is needed. On encode from another format, the kinds are tried in the order
 above: an entity with the CCSDS defined field gets the 8-octet header, one with
 the user defined field the 4-octet header, one with a length the 2-octet
-header, and any other the idle packet. The pack does not check that an idle
+header, one with protocol ID 0 and no length the idle packet, and any other is
+`no-kind`. The pack does not check that an idle
 packet has protocol ID 0 or that the length fits the data.
 
 ## Shared keys

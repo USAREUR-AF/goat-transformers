@@ -51,10 +51,11 @@ the integer key holds every value.
 | Kind | `when` | `requires` | Header |
 |---|---|---|---|
 | `non-truncated` | bit 31 = 0 | `ccsdsuslp.frame_length` | 7 to 14 octets |
-| `truncated` | bit 31 = 1 | none | 4 octets (annex D) |
+| `truncated` | bit 31 = 1 | the spacecraft, source/destination, virtual channel and MAP fields | 4 octets (annex D) |
 
 An entity with no kind encodes as `non-truncated` when it holds the frame
-length and as `truncated` otherwise.
+length, as `truncated` when it holds what that kind requires, and is
+`no-kind` otherwise.
 
 ## Shared keys
 

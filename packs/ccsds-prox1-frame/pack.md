@@ -42,7 +42,8 @@ check that they are 0.
 | `u-frame` | bit 3 = 0 | user data |
 | `p-frame` | bit 3 = 1 | supervisory protocol data units |
 
-An entity with no kind encodes as `u-frame`.
+An entity with no kind encodes by `ccsdsprox1.pdu_type_id` (bit 3) when it
+holds the header fields, and is `no-kind` otherwise.
 
 ## Shared keys
 

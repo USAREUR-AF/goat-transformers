@@ -113,6 +113,9 @@ def mbus_record():
     return ["group  mbus.records  rest"] + ind(1, rec) + ["end"]
 
 
+MBUS_HEAD = ["mbus.control_reserved", "mbus.control_prm", "mbus.control_fcb_acd", "mbus.control_fcv_dfc", "mbus.control_function", "mbus.address", "mbus.checksum"]
+
+
 def mbus_pack():
     o = "mbus.octet"
     variable = ([F("mbus.identification", 32, "hex"), F("mbus.manufacturer", 16, swap=True), F("mbus.version", 8),
@@ -124,13 +127,14 @@ def mbus_pack():
             sw("mbus.ci", [("114,118", variable), ("115,119", fixed)], octets("mbus.data", o)))
     L = head("mbus-frame", ["Wired M-Bus frame: ACK, short, control and long frames, with the variable-data header and its records or the",
                             "fixed-data block. Written by tools/gen/meter2-pack.py; do not edit by hand."], "mbus", ["mbus"])
-    L += ["kind  ack", "when  8  229", ""]
-    L += ["kind  short", "when  8  16"] + mbus_control() + [F("mbus.address", 8), F("mbus.checksum", 8), "const  8  22", ""]
-    L += ["kind  long", "when  8  104", "length  8  bytes  plus  -2"] + ind(1, body) + ["end", F("mbus.checksum", 8), "const  8  22"]
+    L += ["kind  ack", "when  8  229  as  mbus.start", ""]
+    L += ["kind  short", "when  8  16  as  mbus.start", "requires  " + "  ".join(MBUS_HEAD)] + mbus_control() + [F("mbus.address", 8), F("mbus.checksum", 8), "const  8  22", ""]
+    L += ["kind  long", "when  8  104  as  mbus.start", "requires  mbus.length_repeat  " + "  ".join(MBUS_HEAD) + "  mbus.ci", "length  8  bytes  plus  -2"] + ind(1, body) + ["end", F("mbus.checksum", 8), "const  8  22"]
     return text(L)
 
 
 MBUS_KEYS = [
+    ("int", "start", "the first octet: 229 (0xE5) ACK, 16 (0x10) short frame, 104 (0x68) control or long frame"),
     ("int", "control_reserved", "control field bit 7 (0)"),
     ("int", "control_prm", "control field bit 6: 1 a message from the master, 0 from a slave"),
     ("int", "control_fcb_acd", "control field bit 5: FCB from the master, ACD from a slave"),

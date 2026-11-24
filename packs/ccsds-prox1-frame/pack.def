@@ -23,6 +23,10 @@ field  ccsdsprox1.frame_seq_number     0:32:8   uint
 
 kind     u-frame                                      # PDU type ID 0: user data
 when     0:3:1  0
+requires ccsdsprox1.pdu_type_id=0 ccsdsprox1.qos_indicator ccsdsprox1.dfc_id ccsdsprox1.spacecraft_id ccsdsprox1.physical_channel_id ccsdsprox1.port_id ccsdsprox1.source_dest_id ccsdsprox1.frame_length ccsdsprox1.frame_seq_number
+field    ccsdsprox1.pdu_type_id  0:3:1  uint
 
 kind     p-frame                                      # PDU type ID 1: supervisory protocol data units
 when     0:3:1  1
+requires ccsdsprox1.pdu_type_id=1 ccsdsprox1.qos_indicator ccsdsprox1.dfc_id ccsdsprox1.spacecraft_id ccsdsprox1.physical_channel_id ccsdsprox1.port_id ccsdsprox1.source_dest_id ccsdsprox1.frame_length ccsdsprox1.frame_seq_number
+field    ccsdsprox1.pdu_type_id  0:3:1  uint

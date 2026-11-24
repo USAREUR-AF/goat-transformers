@@ -48,3 +48,9 @@ None.
 (application reset); a variable data response with five records and two fillers; a plain-text VIF with a
 variable-length value and manufacturer data; a fixed data response; another start character
 (`no-kind`); a cut long frame (`malformed-wire`).
+
+## Kind on encode from another format
+
+The kind is the one whose value `mbus.start` holds (the first octet, `when ... as`), and
+its `requires` line names the fields that kind always has.
+An entity that fits no kind is `no-kind`.

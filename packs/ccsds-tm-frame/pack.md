@@ -44,10 +44,11 @@ transmitted, most significant) is `0:<a>:<b-a+1>`.
 | Kind | `when` | `requires` |
 |---|---|---|
 | `with-secondary-header` | bit 32 = 1 | `ccsdstm.secondary_header_length` |
-| `primary-header` | bit 32 = 0 | none |
+| `primary-header` | bit 32 = 0 | `ccsdstm.secondary_header_flag=0` and the other header fields (4.1.2.1: all mandatory) |
 
 An entity with no kind encodes as `with-secondary-header` when it holds the
-length of the secondary header and as `primary-header` otherwise.
+length of the secondary header, as `primary-header` when it holds what that
+kind requires, and is `no-kind` otherwise.
 
 ## Shared keys
 
