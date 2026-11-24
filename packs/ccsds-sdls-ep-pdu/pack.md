@@ -29,6 +29,8 @@ None.
 
 ## Not mapped
 
+- **Start SA identifiers**: section 5.5.1.2.2.2 gives each Global Virtual Channel or Global MAP identifier 32 bits.
+  The pack reads 16-bit items, so each identifier comes as two items, high half first.
 - **Fields of managed length**: key IDs, challenges and responses (key management), the rekey and
   ARSN values (SA management), the log counters and events (monitoring and control). Their lengths
   are managed parameters, never sent; they are octets after the fields of fixed length. Needed:

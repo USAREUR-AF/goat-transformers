@@ -286,7 +286,7 @@ ND_KEYS = [
     ("key", "link_layer_address", "link-layer address option: the address (and any padding), as hexadecimal digits"),
     ("key", "prefix_length", "prefix information: prefix length"), ("key", "on_link", "prefix information L flag: on-link"),
     ("key", "autonomous", "prefix information A flag: usable for autonomous address configuration"),
-    ("key", "router_address", "prefix information: the bit after A, in the Reserved1 field of RFC 4861"),
+    ("key", "router_address", "prefix information R flag (RFC 6275): the prefix field holds a whole address of the sending router"),
     ("key", "prefix_reserved1", "prefix information: the 5 reserved bits"), ("key", "valid_lifetime", "prefix information: valid lifetime, seconds (0xFFFFFFFF infinity)"),
     ("key", "preferred_lifetime", "prefix information: preferred lifetime, seconds"), ("key", "prefix_reserved2", "prefix information: the 32 reserved bits"),
     ("key", "prefix", "prefix information: the prefix, as hexadecimal digits"),

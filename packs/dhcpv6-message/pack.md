@@ -28,8 +28,8 @@ None.
 
 - **The relayed message** (option 9) is octets: an option holding a whole message would need the layout
   to recur. Run the pack again on the octets.
-- **IA_TA (4) and DNS servers (23)** are laid out, but RFC 9915 does not define them: it obsoletes IA_TA, and
-  option 23 is not in it. Their layouts were not checked against a source.
+- **IA_TA (4) and DNS servers (23)** are not defined in RFC 9915, which obsoletes IA_TA. Their layouts are those
+  of RFC 8415 section 21.5 and RFC 3646 section 3, both read after the pack was written; they match.
 - **Deeper nesting** than an IA address's or prefix's options, and the options whose bodies are DNS names
   (domain list, FQDN) or vendor-defined (vendor options, authentication): octets.
 

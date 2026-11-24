@@ -18,7 +18,7 @@ key   link_layer_address   string  -  "link-layer address option: the address (a
 key   prefix_length        int     -  "prefix information: prefix length"
 key   on_link              int     -  "prefix information L flag: on-link"
 key   autonomous           int     -  "prefix information A flag: usable for autonomous address configuration"
-key   router_address       int     -  "prefix information: the bit after A, in the Reserved1 field of RFC 4861"
+key   router_address       int     -  "prefix information R flag (RFC 6275): the prefix field holds a whole address of the sending router"
 key   prefix_reserved1     int     -  "prefix information: the 5 reserved bits"
 key   valid_lifetime       int     -  "prefix information: valid lifetime, seconds (0xFFFFFFFF infinity)"
 key   preferred_lifetime   int     -  "prefix information: preferred lifetime, seconds"
