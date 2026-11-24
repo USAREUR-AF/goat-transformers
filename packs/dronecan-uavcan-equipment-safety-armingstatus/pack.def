@@ -11,4 +11,7 @@ uses          dcuavcanequipmentsafety
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dcuavcanequipmentsafety.arming_status_status
 field  dcuavcanequipmentsafety.arming_status_status  8  uint

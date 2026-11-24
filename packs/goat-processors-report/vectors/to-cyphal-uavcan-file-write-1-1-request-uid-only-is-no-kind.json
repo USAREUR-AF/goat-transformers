@@ -1,0 +1,9 @@
+{
+ "name": "to-cyphal-uavcan-file-write-1-1-request-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "cyphal-uavcan-file-write-1-1-request",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "the DSDL definition pack.def names: the fields are in every payload; an entity with only a uid holds none of them"
+}

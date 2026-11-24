@@ -15,6 +15,10 @@ Status: Built. Generated and checked by the generator's own codec and reader.
 payload: the bytes the transport delivers for one transfer, without transport
 headers, tail bytes or transfer CRC. Hex text.
 
+On encode from another format the one kind requires the top-level fields; an
+entity without them is `no-kind`, not a payload of zeros. `Entity.kind` is now
+recorded (`message`); same-format bytes do not change.
+
 **Port-ID.** The type has the fixed service-ID 409. The port-ID travels in the
 transport frame (the CAN identifier, the UDP header), not in the payload, and the
 payload has no field that tells types apart. So each data type is its own

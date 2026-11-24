@@ -11,5 +11,8 @@ uses          dcuavcanequipmenthardpoint
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dcuavcanequipmenthardpoint.command_hardpoint_id  dcuavcanequipmenthardpoint.command_command
 field  dcuavcanequipmenthardpoint.command_hardpoint_id  8  uint
 field  dcuavcanequipmenthardpoint.command_command  16  uint  swap

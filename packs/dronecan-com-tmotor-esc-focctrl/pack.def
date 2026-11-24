@@ -11,6 +11,9 @@ uses          dccomtmotoresc
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dccomtmotoresc.foc_ctrl_esc_index  dccomtmotoresc.foc_ctrl_esc_mode  dccomtmotoresc.foc_ctrl_esc_fdb_rate  dccomtmotoresc.foc_ctrl_esc_cmd  dccomtmotoresc.foc_ctrl_esc_cmd_val
 field  dccomtmotoresc.foc_ctrl_esc_index  8  uint
 field  dccomtmotoresc.foc_ctrl_esc_mode  8  uint
 field  dccomtmotoresc.foc_ctrl_esc_fdb_rate  8  uint

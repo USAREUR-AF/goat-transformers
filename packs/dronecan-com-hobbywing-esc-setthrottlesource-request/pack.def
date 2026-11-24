@@ -11,4 +11,7 @@ uses          dccomhobbywingesc
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dccomhobbywingesc.set_throttle_source_request_source
 field  dccomhobbywingesc.set_throttle_source_request_source  8  uint

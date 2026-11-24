@@ -11,5 +11,8 @@ uses          dccomhobbywingesc
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dccomhobbywingesc.set_angle_request_option  dccomhobbywingesc.set_angle_request_angle
 field  dccomhobbywingesc.set_angle_request_option  8  uint
 field  dccomhobbywingesc.set_angle_request_angle  16  uint  swap

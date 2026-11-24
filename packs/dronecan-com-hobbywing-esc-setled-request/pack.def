@@ -11,6 +11,9 @@ uses          dccomhobbywingesc
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dccomhobbywingesc.set_led_request_option  dccomhobbywingesc.set_led_request_color  dccomhobbywingesc.set_led_request_blink
 field  dccomhobbywingesc.set_led_request_option  8  uint
 field  dccomhobbywingesc.set_led_request_color  8  uint
 field  dccomhobbywingesc.set_led_request_blink  8  uint

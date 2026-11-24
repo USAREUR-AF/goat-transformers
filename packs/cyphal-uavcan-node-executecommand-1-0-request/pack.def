@@ -11,6 +11,9 @@ uses          cyuavcannode
 wire          bits
 layout        sequential
 bit_order     lsb
+
+kind  message
+requires  cyuavcannode.execute_command_1_0_request_command
 field  cyuavcannode.execute_command_1_0_request_command  16  uint
 group  cyuavcannode.execute_command_1_0_request_parameter  count 8
   field  cyuavcannode.execute_command_1_0_request_parameter_item  8  uint
