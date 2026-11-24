@@ -1,0 +1,9 @@
+{
+  "name": "no-case-for-0-before-the-later-line",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-no0-after",
+  "input": "{}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: the error of the later line stands at that line, after the switch that has no case for 0 (0.20 ruling 12)"
+}

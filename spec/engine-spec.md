@@ -6256,7 +6256,8 @@ not `string` without a `via` is `key-type-mismatch`.
     A line that fails the decode by ruling 26 makes the encode
     `transform-encode`, whatever the first line gives. The error stands at
     that line or at the `switch`, whichever is later in reading order (ruling
-    12 of 0.20). A group item is a scope of its own.
+    12 of 0.20); at the `switch` it comes before its case is selected, so
+    before `no-kind`. A group item is a scope of its own.
 
 ### Stated, not yet pinned by a vector
 

@@ -1,0 +1,9 @@
+{
+  "name": "later-line-before-the-switch-held",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-no0-before",
+  "input": "{\"x\":6,\"z\":9}",
+  "expect": "066809",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: both lines carry 6"
+}

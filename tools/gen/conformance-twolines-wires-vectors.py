@@ -399,6 +399,55 @@ def build(sink):
             d["model"] = model
         d["source"], d["reference"] = "constructed", "spec " + ref
         put("packs/%s/vectors/%02d-%s.json" % (frm, num[frm], vname), json.dumps(d, indent=2) + "\n")
+    # 0.64 ruling 31: where the error stands, and a switch in a `case` that is not written.
+    six = "switch  probe.x\n  case 6\n    field  probe.z  8  uint\nend\n"
+    later, plain_x = F + "8  ascii" + V, F + "8  uint\n"
+    inner = "".join("    %s\n" % l for l in six.replace("  case 6", "  case 0\n    pad 8\n  case 6").splitlines())
+    n_after, n_before, n_case = P + "seq-switch-no0-after", P + "seq-switch-no0-before", P + "seq-switch-case"
+    for name, about, lines in (
+            (n_after, "no case for 0, the later line after the switch", plain_x + six + later),
+            (n_before, "no case for 0, both lines before the switch", plain_x + later + six),
+            (n_case, "the switch in a `case`, the later line after it", "field   probe.y  8  uint\n" + plain_x
+             + "switch  probe.y\n  case 1\n" + inner + "  else\n    pad 8\nend\n" + later)):
+        put("packs/%s/pack.def" % name, GENERATED + "# Conformance probe pack: a switch on a key of two lines, %s\n"
+            "# (0.64 ruling 31). Public. No kinds.\n" % about + top % (name, SOURCE) + seq + lines + "map     t h 6\nmap     t f 3\n")
+
+    def reported(to, x, y, z):
+        """Second computation: (place in reading order, rank, error) of each error; the least is reported. At one
+        place a key that does not read back (rank 0) has no value to select a case by (rank 1)."""
+        native = next((k for k, v in TABLE.items() if v == x), None)
+        first, errors = x or 0, []
+        place = {n_after: (3, 2), n_before: (2, 3), n_case: (4, 3)}[to]           # (later line, switch)
+        is_written = to != n_case or y == 1
+        if is_written and native is None:
+            errors.append((max(place), 0, "transform-encode"))
+        if is_written and first not in ((0, 6) if to == n_case else (6,)):
+            errors.append((place[1], 1, "no-kind"))
+        if errors:
+            return min(errors)[2]
+        case = bytes([z or 0 if is_written and first == 6 else 0])
+        tail = (native or "\0").encode()
+        head = bytes([y or 0]) if to == n_case else b""
+        return (head + bytes([first]) + (tail + case if to == n_before else case + tail)).hex()
+
+    for to, vname, inp, want, args, ref in (
+            (n_after, "no-case-for-0-before-the-later-line", "{}", "no-kind", (None, None, None),
+             "the error of the later line stands at that line, after the switch that has no case for 0 (0.20 ruling 12)"),
+            (n_after, "no-case-for-0-held", '{"x":6,"z":9}', "060968", (6, None, 9), "both lines carry 6"),
+            (n_before, "later-line-before-a-switch-with-no-case-for-0", "{}", "transform-encode", (None, None, None),
+             "the error stands at the switch, and the encode is transform-encode whatever the first line gives"),
+            (n_before, "later-line-before-the-switch-held", '{"x":6,"z":9}', "066809", (6, None, 9), "both lines carry 6"),
+            (n_case, "switch-in-a-case-not-written", '{"y":2}', "02000000", (None, 2, None),
+             "a `switch` in a case that is not written does not count, so the lines are not read back"),
+            (n_case, "switch-in-a-case-written", '{"y":1}', "transform-encode", (None, 1, None),
+             "the case is written, so the later line is read back"),
+            (n_case, "switch-in-a-case-written-held", '{"x":6,"y":1,"z":9}', "01060968", (6, 1, 9), "both lines carry 6")):
+        assert reported(to, *args) == want, (vname, reported(to, *args))
+        num[mir] += 1
+        d = {"name": vname, "from": mir, "to": to, "input": inp,
+             "expect_error" if want in ("no-kind", "transform-encode") else "expect": want,
+             "source": "constructed", "reference": "spec " + R31 + ref}
+        put("packs/%s/vectors/%02d-%s.json" % (mir, num[mir], vname), json.dumps(d, indent=2) + "\n")
     return written
 
 
