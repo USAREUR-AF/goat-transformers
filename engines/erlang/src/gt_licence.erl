@@ -8,7 +8,7 @@
 %%
 %% Every failure here is error:{load_error, 'bad-licence', Message}.
 -module(gt_licence).
--export([profile/1, rank_name/1, start/4, pack/3, held/2, uses_names/1]).
+-export([profile/1, rank_name/1, start/4, pack/3, held/2, uses_names/1, shown_public/1]).
 
 -define(NONE, 4).
 
@@ -46,7 +46,13 @@ start(LicencesPath, ModelsDir, Rank, Read) ->
                                    {ok, Bin} -> heads(Bin);
                                    _ -> {undefined, []}
                                end,
-                {F, Name, Uses, licence_rank(Lic, Table)}
+                %% 0.93, ruling 2: a file not shown public is in none, and a
+                %% module whose name 2b does not read is not loaded
+                Own = case shown_public(R) andalso Name =/= undefined of
+                          true -> licence_rank(Lic, Table);
+                          false -> ?NONE
+                      end,
+                {F, Name, Uses, Own}
             end || {F, R} <- Read],
     Names = fixpoint(Mods, #{}),
     Files = maps:from_list([{F, file_rank(Own, Uses, Names)} || {F, _, Uses, Own} <- Mods]),
@@ -78,7 +84,11 @@ pack(#{table := Table, names := Names}, PackDir, Text) ->
                {ok, Bin} -> uses_names(Bin);
                _ -> []
            end,
-    Rank = file_rank(max(licence_rank(Lic, Table), maps:get(<<"core">>, Names, 0)), Uses, Names),
+    Own = case shown_public(Text) of
+              true -> licence_rank(Lic, Table);
+              false -> ?NONE
+          end,
+    Rank = file_rank(max(Own, maps:get(<<"core">>, Names, 0)), Uses, Names),
     {Lic, Rank}.
 
 %% The `uses` names of a pack.def text, read as ruling 2b reads them.
@@ -86,6 +96,58 @@ uses_names(Bin) ->
     case heads(Bin) of
         {_, Uses} -> Uses
     end.
+
+%% ===================================================================
+%% Version 0.93, ruling 1: a module file or pack.def shown public
+%% ===================================================================
+%% {ok, Bin} (or Bin) -> true when it is UTF-8, holds no NUL, no U+FEFF and
+%% no carriage return other than one before a line feed or at the end, has a
+%% line `distribution`, spaces or tabs, `public`, and no doubtful line: one
+%% that, with every `"` removed and spaces, tabs and carriage returns removed
+%% at its ends, begins with `distribution` and is not that exact line.
+%% Anything else (a file that cannot be read) is not shown public.
+shown_public({ok, Bin}) -> shown_public(Bin);
+shown_public(Bin) when is_binary(Bin) ->
+    valid_utf8(Bin)
+        andalso binary:match(Bin, [<<0>>, <<16#EF, 16#BB, 16#BF>>]) =:= nomatch
+        andalso lone_cr(Bin) =:= false
+        andalso begin
+                    Lines = lines(Bin),
+                    Exact = [L || L <- Lines, exact_public(L)],
+                    Doubtful = [L || L <- Lines, doubtful(L)],
+                    Exact =/= [] andalso Doubtful =:= []
+                end;
+shown_public(_) -> false.
+
+exact_public(L) ->
+    re:run(L, "^distribution[ \\t]+public\\z", [{capture, none}]) =:= match.
+
+doubtful(L) ->
+    Bare = trim_crs(binary:replace(L, <<"\"">>, <<>>, [global])),
+    case Bare of
+        <<"distribution", _/binary>> -> not exact_public(L);
+        _ -> false
+    end.
+
+trim_crs(L) -> trim_crs_right(trim_crs_left(L)).
+trim_crs_left(<<C, R/binary>>) when C =:= $\s; C =:= $\t; C =:= $\r -> trim_crs_left(R);
+trim_crs_left(L) -> L.
+trim_crs_right(L) ->
+    case byte_size(L) of
+        0 -> L;
+        N ->
+            case binary:at(L, N - 1) of
+                C when C =:= $\s; C =:= $\t; C =:= $\r -> trim_crs_right(binary:part(L, 0, N - 1));
+                _ -> L
+            end
+    end.
+
+%% A carriage return not directly before a line feed and not the last byte.
+lone_cr(<<$\r, $\n, R/binary>>) -> lone_cr(R);
+lone_cr(<<$\r>>) -> false;
+lone_cr(<<$\r, _/binary>>) -> true;
+lone_cr(<<_, R/binary>>) -> lone_cr(R);
+lone_cr(<<>>) -> false.
 
 %% ===================================================================
 %% Ruling 2a: the profile of a licence

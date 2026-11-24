@@ -84,6 +84,11 @@
 %% ===================================================================
 new() -> #{max_distribution => controlled, modules => #{}, packs => #{}, derives => []}.
 
+%% After a load with a licence profile (Version 0.93, ruling 6) the limit is
+%% `public` for the life of the instance: setting `controlled` is no error
+%% and has no effect.
+set_max_distribution(#{profile_limit := true} = Engine, Max) when Max =:= public; Max =:= controlled ->
+    Engine;
 set_max_distribution(Engine, Max) when Max =:= public; Max =:= controlled ->
     Engine#{max_distribution := Max};
 set_max_distribution(Engine, Max) ->
@@ -645,10 +650,16 @@ load_packs(#{modules := Loaded} = Engine, PacksDir, Names, ModelsDir) ->
 %% open, open+copyleft, everything (an atom, a string or a binary). Any
 %% other value is bad-licence before anything is read. The licence table
 %% is the PacksDir text followed by /../licences.toml.
+%% With a profile (Version 0.93, rulings 5 and 6), in this order: a name
+%% that is not a profile is bad-licence; an instance that holds a controlled
+%% module or pack is distribution-refused; both before anything is read and
+%% with the instance unchanged. Then the limit is `public` for good
+%% (profile_limit/2), whatever the caller set, and the load goes on.
 load_dir(Engine, PacksDir, ModelsDir, none) -> load_dir(Engine, PacksDir, ModelsDir);
-load_dir(Engine, PacksDir, ModelsDir, Profile) ->
+load_dir(Engine0, PacksDir, ModelsDir, Profile) ->
+    Engine = profile_limit(Engine0, Profile),
     {Ctx, Files} = licence_start(PacksDir, ModelsDir, Profile),
-    E1 = lists:foldl(fun({_F, _, Bin}, E) -> load_model(E, Bin) end, Engine, model_order(Files)),
+    E1 = lists:foldl(fun({_F, _, Bin}, E) -> load_model(E, load_hook(Bin)) end, Engine, model_order(Files)),
     {ok, Entries} = file:list_dir(PacksDir),
     lists:foldl(
       fun(Entry, E) ->
@@ -659,7 +670,7 @@ load_dir(Engine, PacksDir, ModelsDir, Profile) ->
                       Text = file:read_file(Def),
                       {_Lic, Rank} = gt_licence:pack(Ctx, Dir, Text),
                       case gt_licence:held(Ctx, Rank) of
-                          true -> {ok, Bin} = Text, load_pack(E, Bin);
+                          true -> {ok, Bin} = Text, load_pack(E, load_hook(Bin));
                           false -> E
                       end;
                   false -> E
@@ -668,7 +679,8 @@ load_dir(Engine, PacksDir, ModelsDir, Profile) ->
 
 load_packs(Engine, PacksDir, Names, ModelsDir, none) ->
     load_packs(Engine, PacksDir, Names, ModelsDir);
-load_packs(#{modules := Loaded} = Engine, PacksDir, Names, ModelsDir, Profile) ->
+load_packs(Engine0, PacksDir, Names, ModelsDir, Profile) ->
+    #{modules := Loaded} = Engine = profile_limit(Engine0, Profile),
     {Ctx, Files} = licence_start(PacksDir, ModelsDir, Profile),
     Texts = lists:append(
               [begin
@@ -695,11 +707,46 @@ load_packs(#{modules := Loaded} = Engine, PacksDir, Names, ModelsDir, Profile) -
     E1 = lists:foldl(
            fun({_F, {Name, _}, Bin}, E) ->
                    case maps:is_key(Name, Needed) of
-                       true -> load_model(E, Bin);
+                       true -> load_model(E, load_hook(Bin));
                        false -> E
                    end
            end, Engine, Heads),
-    lists:foldl(fun(T, E) -> load_pack(E, T) end, E1, Texts).
+    lists:foldl(fun(T, E) -> load_pack(E, load_hook(T)) end, E1, Texts).
+
+%% The start of a load with a profile (Version 0.93, ruling 6) -> the
+%% instance with the limit `public` for good. A name that is none of the
+%% three profiles is bad-licence first; then an instance that already holds
+%% a controlled module or pack is distribution-refused. Both raise before
+%% anything is read, and the caller's instance is unchanged (an instance is
+%% a value: a failed load gives no new one).
+profile_limit(#{modules := Modules, packs := Packs} = Engine, Profile) ->
+    case gt_licence:profile(Profile) of
+        {ok, _} -> ok;
+        error -> gt_pack:load_error('bad-licence',
+                                    "~p is not a profile (open, open+copyleft, everything)",
+                                    [Profile])
+    end,
+    Held = [{"module", N} || {N, #{distribution := controlled}} <- maps:to_list(Modules)]
+        ++ [{"pack", N} || {N, #{distribution := controlled}} <- maps:to_list(Packs)],
+    case lists:sort(Held) of
+        [] -> ok;
+        [{What, Name} | _] ->
+            gt_pack:load_error('distribution-refused',
+                               "a load with a licence profile on an instance that holds the controlled ~s ~s",
+                               [What, Name])
+    end,
+    Engine#{max_distribution := public, profile_limit => true}.
+
+%% A test-only hook (Version 0.93, ruling 5): this engine reads each file
+%% once and loads the bytes it checked for the profile, so a file that
+%% changes between the two cannot happen here. A test sets
+%% `put({gt_engine, load_hook}, Fun)` in its process; the profile loaders
+%% then load Fun(Text) instead of Text. Unset, the text is loaded as read.
+load_hook(Text) ->
+    case get({gt_engine, load_hook}) of
+        undefined -> Text;
+        Fun -> Fun(Text)
+    end.
 
 %% The profile checked, the licence table and every module file's licence
 %% read (ruling 3b) -> {Ctx, the module files the profile holds}.

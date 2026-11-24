@@ -29,7 +29,8 @@
 %% rulings 1b and 1c of 0.25: run_concurrent/2). Exits non-zero on any
 %% failure.
 -module(gt_test).
--export([main/1, run/1, run/2, run_reduced/3]).
+-include_lib("kernel/include/file.hrl").
+-export([main/1, run/1, run/2, run_reduced/3, run_profile_checks/0]).
 
 main(Args) ->
     case Args of
@@ -54,7 +55,9 @@ run(PacksDir, ModelsDir) ->
     NFail = run_named_load(PacksDir, ModelsDir),
     {MPass0, MFail0} = run_malformed(Engine, PacksDir),
     {RPass, RFail} = run_ruling_cases(Engine),
-    {UPass, UFail} = run_unit_checks(),
+    {UPass0, UFail0} = run_unit_checks(),
+    {PPass, PFail} = run_profile_checks(),
+    {UPass, UFail} = {UPass0 + PPass, UFail0 + PFail},
     {MPass, MFail} = {MPass0 + RPass, MFail0 + RFail},
     {KPass, KFail} = run_concurrent(PacksDir, ModelsDir),
     io:format("vectors: ~p/~p passed~n", [Pass, Pass + Fail]),
@@ -954,6 +957,245 @@ run_unit_checks() ->
       end, {0, 0},
       [{"crc32 of 123456789", gt_tlv:crc32(<<"123456789">>), 16#0376E6E7},
        {"crc32 of no bytes", gt_tlv:crc32(<<>>), 16#FFFFFFFF}]).
+
+%% ===================================================================
+%% Version 0.93 in the library: rulings 5 and 6, and a controlled inner
+%% pack (0.34) that never loads. Each check builds its own tree in a
+%% temporary directory and removes it.
+%% ===================================================================
+run_profile_checks() ->
+    Root = filename:join(case os:getenv("TMPDIR") of
+                             false -> "/tmp";
+                             T -> T
+                         end,
+                         "gt-erlang-093-" ++ os:getpid() ++ "-"
+                         ++ integer_to_list(erlang:unique_integer([positive]))),
+    try
+        Checks = profile_checks(Root),
+        lists:foldl(
+          fun({_Name, ok}, {P, F}) -> {P + 1, F};
+             ({Name, {fail, Why}}, {P, F}) ->
+                  io:format("FAIL profile check ~s: ~0p~n", [Name, Why]),
+                  {P, F + 1}
+          end, {0, 0}, Checks)
+    after
+        rm_tree(Root)
+    end.
+
+-define(T93_CORE, <<"module core\nversion 0.1.0\ndistribution public\n"
+                    "source \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic test, no external standard)\"\n"
+                    "key n int - \"a test key\"\nkey w int - \"a test key\"\n">>).
+-define(T93_CTL, <<"module ctl\nversion 0.1.0\ndistribution controlled\n"
+                   "source \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic test, no external standard)\"\n"
+                   "key c int - \"a test key\"\n">>).
+
+t93_pack(Format, Dist, Uses, Lines) ->
+    iolist_to_binary(
+      ["format ", Format, "\nversion 0.1.0\ndistribution ", Dist, "\n",
+       "source \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic test, no external standard)\"\n",
+       [["uses ", U, "\n"] || U <- Uses],
+       "wire bits\nlayout sequential\nbit_order msb\n", Lines]).
+
+%% A tree: Root/<Name>/model/<file> and Root/<Name>/packs/<dir>/pack.def.
+t93_tree(Root, Name, Modules, Packs) ->
+    Dir = filename:join(Root, Name),
+    lists:foreach(fun({F, Text}) -> write_file(filename:join([Dir, "model", F]), Text) end, Modules),
+    lists:foreach(fun({D, Text}) -> write_file(filename:join([Dir, "packs", D, "pack.def"]), Text) end, Packs),
+    {filename:join(Dir, "packs"), filename:join(Dir, "model")}.
+
+write_file(Path, Text) ->
+    ok = filelib:ensure_dir(Path),
+    ok = file:write_file(Path, Text).
+
+rm_tree(Path) ->
+    case file:read_link_info(Path) of
+        {ok, #file_info{type = directory}} ->
+            {ok, Es} = file:list_dir_all(Path),
+            [rm_tree(filename:join(Path, E)) || E <- Es],
+            file:del_dir(Path);
+        {ok, _} -> file:delete(Path);
+        {error, _} -> ok
+    end.
+
+%% The result of F: {ok, Value} or {Class, Kind} for a load or convert error.
+t93_try(F) ->
+    try F() of
+        V -> {ok, V}
+    catch
+        error:{load_error, K, _} -> {load_error, K};
+        error:{convert_error, K, _} -> {convert_error, K};
+        C:R -> {C, R}
+    end.
+
+t93_check(Name, Got, Want) ->
+    case Got of
+        Want -> {Name, ok};
+        _ -> {Name, {fail, [{expected, Want}, {got, Got}]}}
+    end.
+
+t93_limit(E) -> maps:get(max_distribution, E).
+
+profile_checks(Root) ->
+    Profiles = [open, <<"open+copyleft">>, "everything"],
+    Inner = <<"t93-inner">>, Outer = <<"t93-outer">>,
+    OuterDef = t93_pack(Outer, "public", [], "field n 8 uint\ninner t93-inner\n"),
+    %% a plain tree: one public pack, one controlled pack (in no profile)
+    {PP, PM} = t93_tree(Root, "plain", [{"core.def", ?T93_CORE}],
+                        [{"pub", t93_pack(<<"t93-pub">>, "public", [], "field n 8 uint\n")},
+                         {"ctl", t93_pack(<<"t93-ctl">>, "controlled", [], "field n 8 uint\n")}]),
+    CtlText = t93_pack(<<"t93-ctl">>, "controlled", [], "field n 8 uint\n"),
+    Held = gt_engine:load_model(gt_engine:new(), ?T93_CTL),   % a controlled module held
+    Missing = filename:join(Root, "no-such-dir"),
+    %% (a) inner pack not shown public; (b) shown public, using a controlled module
+    {AP, AM} = t93_tree(Root, "inner-a", [{"core.def", ?T93_CORE}],
+                        [{"t93-outer", OuterDef},
+                         {"t93-inner", t93_pack(Inner, "controlled", [], "field w 8 uint\n")}]),
+    {BP, BM} = t93_tree(Root, "inner-b", [{"core.def", ?T93_CORE}, {"ctl.def", ?T93_CTL}],
+                        [{"t93-outer", OuterDef},
+                         {"t93-inner", t93_pack(Inner, "public", ["ctl"], "field ctl.c 8 uint\n")}]),
+    Entity = #{model => #{<<"n">> => 5, <<"w">> => 6, <<"ctl.c">> => 7}, lists => #{},
+               residue => [], kind => undefined},
+    Rule6 =
+        [%% ruling 6: a bad profile name is bad-licence first, before the
+         %% instance check and before anything is read
+         t93_check("6: a bad profile name is bad-licence",
+                   t93_try(fun() -> gt_engine:load_dir(gt_engine:new(), Missing, Missing, "closed") end),
+                   {load_error, 'bad-licence'}),
+         t93_check("6: a bad profile name comes before the instance check",
+                   t93_try(fun() -> gt_engine:load_packs(Held, Missing, [], Missing, nonsense) end),
+                   {load_error, 'bad-licence'}),
+         %% then the instance check, before anything is read (Missing is not read)
+         t93_check("6: a profile on an instance holding a controlled module is distribution-refused",
+                   t93_try(fun() -> gt_engine:load_dir(Held, Missing, Missing, open) end),
+                   {load_error, 'distribution-refused'}),
+         t93_check("6: a profile on an instance holding a controlled pack is distribution-refused",
+                   t93_try(fun() ->
+                                   E = gt_engine:load_pack(gt_engine:load_model(gt_engine:new(), ?T93_CORE),
+                                                           CtlText),
+                                   gt_engine:load_packs(E, Missing, [], Missing, everything)
+                           end),
+                   {load_error, 'distribution-refused'}),
+         %% both refuse with the limit unchanged and no trace: the instance
+         %% is a value, and after either refusal it is as it was
+         t93_check("6: after both refusals the instance is unchanged and its limit is still controlled",
+                   (fun() ->
+                       _ = t93_try(fun() -> gt_engine:load_dir(Held, Missing, Missing, "closed") end),
+                       _ = t93_try(fun() -> gt_engine:load_dir(Held, Missing, Missing, open) end),
+                       {t93_limit(Held), maps:is_key(profile_limit, Held),
+                        t93_limit(gt_engine:set_max_distribution(Held, public)),
+                        t93_limit(gt_engine:set_max_distribution(
+                                    gt_engine:set_max_distribution(Held, public), controlled))}
+                   end)(),
+                   {controlled, false, public, controlled}),
+         %% then the limit is public, also when the caller set controlled
+         %% (ruling 5), and setting controlled afterwards has no effect
+         t93_check("5/6: a profile load sets the limit to public over controlled",
+                   t93_try(fun() ->
+                                   E0 = gt_engine:set_max_distribution(gt_engine:new(), controlled),
+                                   E = gt_engine:load_dir(E0, PP, PM, open),
+                                   {t93_limit(E), lists:sort(maps:keys(gt_engine:packs(E)))}
+                           end),
+                   {ok, {public, [<<"t93-pub">>]}}),
+         t93_check("6: setting controlled after a profile load is no error and has no effect",
+                   t93_try(fun() ->
+                                   E = gt_engine:load_packs(gt_engine:new(), PP, [<<"pub">>], PM, open),
+                                   t93_limit(gt_engine:set_max_distribution(E, controlled))
+                           end),
+                   {ok, public}),
+         t93_check("6: a controlled text loaded directly after a profile load is distribution-refused",
+                   t93_try(fun() ->
+                                   E = gt_engine:load_dir(gt_engine:new(), PP, PM, open),
+                                   gt_engine:load_pack(gt_engine:set_max_distribution(E, controlled), CtlText)
+                           end),
+                   {load_error, 'distribution-refused'}),
+         t93_check("6: a later load with no profile is bounded by the limit",
+                   t93_try(fun() ->
+                                   E = gt_engine:load_packs(gt_engine:new(), PP, [<<"pub">>], PM, open),
+                                   gt_engine:load_packs(gt_engine:set_max_distribution(E, controlled),
+                                                        PP, [<<"ctl">>], PM)
+                           end),
+                   {load_error, 'distribution-refused'}),
+         %% the limit stays public when the load fails later: a failed load
+         %% gives no instance, so nothing it loaded before it failed is kept
+         t93_check("6: a profile load that fails after the limit keeps nothing it loaded",
+                   (fun() ->
+                       {FP, FM} = t93_tree(Root, "fails-later", [{"core.def", ?T93_CORE}],
+                                           [{"a-good", t93_pack(<<"t93-good">>, "public", [], "field n 8 uint\n")},
+                                            {"b-bad", t93_pack(<<"t93-bad">>, "public", [], "field nope 8 uint\n")}]),
+                       E0 = gt_engine:new(),
+                       R = t93_try(fun() -> gt_engine:load_dir(E0, FP, FM, open) end),
+                       {R, t93_limit(E0), gt_engine:packs(E0), gt_engine:modules(E0)}
+                   end)(),
+                   {{load_error, 'undeclared-key'}, controlled, #{}, #{}})],
+    %% ruling 5: a file that reads as controlled when it is loaded is
+    %% distribution-refused; this engine loads the bytes it checked, so a
+    %% test hook changes them between the check and the load
+    Swap = fun(T) -> binary:replace(T, <<"distribution public">>, <<"distribution controlled">>) end,
+    Hooked = fun(F) ->
+                     put({gt_engine, load_hook}, Swap),
+                     try t93_try(F) after erase({gt_engine, load_hook}) end
+             end,
+    Rule5 =
+        [t93_check("5: a pack that reads as controlled at load is distribution-refused",
+                   Hooked(fun() ->
+                                  E = gt_engine:load_model(gt_engine:new(), ?T93_CORE),
+                                  gt_engine:load_packs(E, PP, [<<"pub">>], PM, open)
+                          end),
+                   {load_error, 'distribution-refused'}),
+         t93_check("5: a module that reads as controlled at load is distribution-refused",
+                   Hooked(fun() -> gt_engine:load_dir(gt_engine:new(), PP, PM, everything) end),
+                   {load_error, 'distribution-refused'}),
+         t93_check("5: the same changed text loads without a profile and the default limit",
+                   Hooked(fun() -> map_size(gt_engine:packs(
+                                              gt_engine:load_packs(gt_engine:new(), PP, [<<"pub">>], PM, none)))
+                          end),
+                   {ok, 1})],
+    %% 0.34 and 0.93: an outer pack whose inner pack does not pass the
+    %% profile checks loads alone; decode and encode through the inner line
+    %% are unknown-format; model_keys of the outer does not fail
+    InnerCases =
+        lists:append(
+          [[t93_check(lists:flatten(io_lib:format("0.34 ~s, profile ~s: only the outer pack loads", [Case, Prof])),
+                      t93_try(fun() ->
+                                      E = gt_engine:load_packs(gt_engine:new(), P,
+                                                               gt_engine:inner_names(P, [Outer]), M, Prof),
+                                      lists:sort(maps:keys(gt_engine:packs(E)))
+                              end),
+                      {ok, [Outer]}),
+            t93_check(lists:flatten(io_lib:format("0.34 ~s, profile ~s: decode through the inner line", [Case, Prof])),
+                      t93_try(fun() ->
+                                      E = gt_engine:load_packs(gt_engine:new(), P,
+                                                               gt_engine:inner_names(P, [Outer]), M, Prof),
+                                      gt_engine:convert(E, Outer, Outer, <<"0506">>)
+                              end),
+                      {convert_error, 'unknown-format'}),
+            t93_check(lists:flatten(io_lib:format("0.34 ~s, profile ~s: encode through the inner line", [Case, Prof])),
+                      t93_try(fun() ->
+                                      E = gt_engine:load_packs(gt_engine:new(), P,
+                                                               gt_engine:inner_names(P, [Outer]), M, Prof),
+                                      gt_engine:encode(E, Outer, Entity)
+                              end),
+                      {convert_error, 'unknown-format'}),
+            t93_check(lists:flatten(io_lib:format("0.34 ~s, profile ~s: model_keys of the outer pack", [Case, Prof])),
+                      t93_try(fun() ->
+                                      E = gt_engine:load_packs(gt_engine:new(), P,
+                                                               gt_engine:inner_names(P, [Outer]), M, Prof),
+                                      gt_engine:model_keys(E, Outer)
+                              end),
+                      {ok, [<<"n">>]})]
+           || {Case, P, M} <- [{"inner not shown public", AP, AM},
+                               {"inner using a controlled module", BP, BM}],
+              Prof <- Profiles]),
+    InnerC =
+        [t93_check(lists:flatten(io_lib:format("0.34 ~s, no profile, limit public: distribution-refused", [Case])),
+                   t93_try(fun() ->
+                                   E0 = gt_engine:set_max_distribution(gt_engine:new(), public),
+                                   gt_engine:load_packs(E0, P, gt_engine:inner_names(P, [Outer]), M)
+                           end),
+                   {load_error, 'distribution-refused'})
+         || {Case, P, M} <- [{"inner not shown public", AP, AM},
+                             {"inner using a controlled module", BP, BM}]],
+    Rule6 ++ Rule5 ++ InnerCases ++ InnerC.
 
 run_ruling_cases(Engine) ->
     Packs = gt_engine:packs(Engine),

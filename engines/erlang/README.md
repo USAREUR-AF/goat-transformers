@@ -12,14 +12,15 @@ An independent, clean-room implementation of the gt engine, written from
 
 | Test | Command (repository root) | Measured (2026-11-24; the benchmark 2026-11-21) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 24604/24604 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 24684/24684 |
 | load vectors | same run | 1471/1471 |
 | capability vectors | same run | 27/27 |
-| malformed inputs | same run | 159469/159469 |
-| concurrent conversions (Version 0.25) | same run | 733/733 |
+| malformed inputs | same run | 159765/159765 |
+| concurrent conversions (Version 0.25) | same run | 740/740 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 16 vectors, 16 packs (below) |
-| tool vectors (Versions 0.23, 0.29) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 135/135 |
-| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8396/8396 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
+| unit checks (the CRC of 0.27; rulings 5 and 6 of 0.93, a controlled inner pack) | same run | 41/41 |
+| tool vectors (Versions 0.23, 0.29, 0.93) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 179/179 |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8398/8398 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
@@ -260,7 +261,8 @@ engines/erlang/goat-xf.sh help
 `packs`, relative to the current directory), `--models <dir>` (default the
 `--packs` text followed by `/../model`), `--packs-only <name>[,<name>...]`,
 `--max-items <n>` (default 100000), `--max-distribution public|controlled`
-(default `controlled`), `--profile open|open+copyleft|everything` (default
+(default `controlled`; with `--profile` the limit is `public` whatever is
+given, Version 0.93), `--profile open|open+copyleft|everything` (default
 none; Version 0.29, below). `licences` also takes `--json`, the one option
 without a value. The tool has no options of its own (`--x-...`).
 
@@ -294,6 +296,15 @@ if it were not there. A pack's licence and `uses` lines are read when it is
 reached, after the `--packs-only` name checks, so a skipped pack is never
 parsed. Without `--profile` no licence file is read and loading is unchanged,
 except for `licences`, which always reads them.
+
+Version 0.93: a module file or `pack.def` is in a profile only when it is
+*shown public* (`gt_licence:shown_public/1`): valid UTF-8 with no NUL, no
+U+FEFF and no carriage return other than one before a line feed or at the
+end, with a line `distribution public` and no doubtful `distribution` line
+(ruling 1). Any other file is in none whatever its licence says, and so is
+every module and pack that uses it, and every pack when `core` is such a file
+(ruling 2); a module file whose `module` line 2b does not read is not loaded
+under a profile. With a profile the distribution limit is `public` (ruling 5).
 
 `licences` writes one line per loaded pack in byte order of directory name:
 directory, format, licence and the pack's own profile (`none` for a pack in
@@ -331,6 +342,21 @@ binary) loads only the modules and packs that profile holds, the table read
 from `PacksDir ++ "/../licences.toml"`. Any other value raises
 `'bad-licence'` before anything is read, as does a licence file that cannot
 be read by the forms of ruling 1.
+
+A load with a profile (Version 0.93, rulings 5 and 6) checks, in this order
+and before anything is read: the profile name (`'bad-licence'`), then that
+the instance holds no controlled module or pack (`'distribution-refused'`).
+Either refusal leaves the caller's instance as it was. Then the instance's
+limit is `public` for good: `set_max_distribution(E, controlled)` afterwards
+is no error and leaves it `public`, and a later load with no profile, or
+`load_model/2` and `load_pack/2` of a controlled text, is
+`'distribution-refused'`. An instance is a value, so a load that fails after
+that point gives no instance: the caller keeps the one it passed, which holds
+nothing of the failed load. This engine reads each file once and loads the
+bytes it checked, so a file that reads as controlled when it is loaded
+(ruling 5) cannot arise; the test suite meets it with a test-only hook
+(`put({gt_engine, load_hook}, Fun)` in the calling process makes the profile
+loaders load `Fun(Text)`).
 
 `load_packs(Engine, PacksDir, Names)` reads `PacksDir/<name>/pack.def` for each
 name (a binary or a string), in the order given, and loads before them `core`,
