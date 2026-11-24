@@ -303,12 +303,12 @@ root:
 
 ```
 $ python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh
-tool vectors: 135/135 passed
+tool vectors: 183/183 passed
 ```
 
 | Test | Command | Measured |
 |---|---|---|
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 135/135 passed on 2026-11-21 (with Version 0.33; the licence vectors 101 to 138 of Version 0.29 included), on a loaded machine (each run starts a JVM and loads every model module) |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 183/183 passed on 2026-11-24 (with Version 0.93; the licence vectors 101 to 186 of Versions 0.29 and 0.93 included), on a loaded machine (each run starts a JVM and loads every model module) |
 
 ### The bounded sweep and `GOAT_SWEEP_FULL=1`
 

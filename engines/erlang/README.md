@@ -19,7 +19,7 @@ An independent, clean-room implementation of the gt engine, written from
 | concurrent conversions (Version 0.25) | same run | 740/740 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 16 vectors, 16 packs (below) |
 | unit checks (the CRC of 0.27; rulings 5 and 6 of 0.93, a controlled inner pack) | same run | 41/41 |
-| tool vectors (Versions 0.23, 0.29, 0.93) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 179/179 |
+| tool vectors (Versions 0.23, 0.29, 0.93) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 183/183 |
 | reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8398/8398 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as

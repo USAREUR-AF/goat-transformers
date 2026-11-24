@@ -142,7 +142,7 @@ cd build && ctest --output-on-failure
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
 | `parse_once` | `goat_transformers_parse_once` | what an instance keeps (0.25 ruling 1), below: every vector gives the same output, error and decoded entity on a new instance (the benchmark set's vectors), in reverse order after failing conversions, and from eight threads at once |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
-| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29 and 0.93): 179/179 pass (2026-11-24). The entry exists when CMake finds a Python 3 interpreter |
+| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29 and 0.93): 183/183 pass (2026-11-24). The entry exists when CMake finds a Python 3 interpreter |
 
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
