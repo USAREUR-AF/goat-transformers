@@ -1,0 +1,9 @@
+{
+  "name": "block-not-written-held",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-opt",
+  "input": "{\"x\":6}",
+  "expect": "060068",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: both lines carry 6"
+}

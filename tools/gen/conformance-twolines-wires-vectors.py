@@ -327,6 +327,78 @@ def build(sink):
             d["model"] = model
         d["source"], d["reference"] = "constructed", "spec " + ref
         put("packs/%s/vectors/%02d-%s.json" % (frm, num[frm], vname), json.dumps(d, indent=2) + "\n")
+    # 0.64 ruling 31: a line of the key after the switch, and a switch in an `opt` block.
+    after, inopt = P + "seq-switch-after", P + "seq-switch-opt"
+    what = {after: ("the later line after the switch", switch + F + "8  ascii" + V),
+            inopt: ("the switch in an `opt` block, the later line after it",
+                    "opt\n  pad 7\n" + "".join("  %s\n" % l for l in switch.splitlines()) + "end\nalign 8\n" + F + "8  ascii" + V)}
+    for name, (about, lines) in what.items():
+        for old in sink.listdir("packs/%s/vectors" % name):
+            sink.remove("packs/%s/vectors/%s" % (name, old))
+        put("packs/%s/pack.def" % name, GENERATED + "# Conformance probe pack: a switch on a key of two lines, %s\n"
+            "# (0.64 ruling 31). Public. No kinds.\n" % about + top % (name, SOURCE)
+            + seq + F + "8  uint\n" + lines + "map     t h 6\nmap     t f 3\n")
+
+    def laid_out(to, x, y, z):
+        """Second computation: the errors in reading order, the first one reported (0.20 ruling 12); then
+        the read-back of the later line, when the switch is written (0.64 ruling 31)."""
+        first, case = x or 0, {0: y, 6: z}
+        native = next((k for k, v in TABLE.items() if v == x), None)
+        table_error = x is not None and native is None
+        if to == sw and table_error:
+            return "transform-encode"
+        content = case.get(first) is not None
+        is_written = to != inopt or content
+        if first not in case:
+            return "no-kind"
+        if table_error or (native is None and is_written):
+            return "transform-encode"
+        body = bytes([case[first] or 0]) if is_written else b""
+        head = {after: b"", inopt: b"\x80" if content else b"\0"}[to]
+        return (bytes([first]) + head + body + (native or "\0").encode()).hex()
+
+    def read_back(to, hx):
+        b = bytes.fromhex(hx)
+        return chr(b[-1]) in TABLE and b[0]
+
+    R31 = "0.64 ruling 31: "
+    R12 = "0.20 ruling 12: the error of the earliest line in reading order; "
+    more = [
+        # 06 | 09 (case 6) | 68; absent: 00 | 09 (case 0) | 00, whose last byte is the empty text.
+        (after, after, "case-of-the-key", "060968", "060968", {"probe.x": "6", "probe.z": "9"}, None,
+         "0.64 ruling 26: the line after the switch has an entry"),
+        (after, after, "no-entry-after-the-switch", "000900", DEC, None, None,
+         "0.64 ruling 26: the empty text after the switch has no entry"),
+        (mir, after, "line-after-the-switch-held", '{"x":6,"z":9}', "060968", None, (6, None, 9), R31 + "both lines carry 6"),
+        (mir, after, "line-after-the-switch-absent-key", '{"y":9}', "transform-encode", None, (None, 9, None),
+         R31 + "a line after a `switch` that is written is read back, and its zero bits have no entry"),
+        (mir, after, "no-kind-before-the-later-line", '{"x":5}', "no-kind", None, (5, None, None),
+         R12 + "the switch has no case 5, and the table without 5 stands after it"),
+        (mir, sw, "table-before-the-switch", '{"x":5}', "transform-encode", None, (5, None, None),
+         R12 + "the table without 5 stands before the switch, which has no case 5"),
+        # opt bit 1 and 7 pad bits: 80; opt bit 0 and the align: 00.
+        (inopt, inopt, "switch-in-a-block-written", "06800968", "06800968", {"probe.x": "6", "probe.z": "9"}, None,
+         "0.64 ruling 26: the later line has an entry"),
+        (mir, inopt, "block-written-held", '{"x":6,"z":9}', "06800968", None, (6, None, 9), R31 + "both lines carry 6"),
+        (mir, inopt, "block-not-written-held", '{"x":6}', "060068", None, (6, None, None), R31 + "both lines carry 6"),
+        (mir, inopt, "block-not-written-absent-key", "{}", "000000", None, (None, None, None),
+         R31 + "a `switch` in a block that is not written does not count, so the lines are not read back"),
+        (mir, inopt, "block-written-absent-key", '{"y":9}', "transform-encode", None, (None, 9, None),
+         R31 + "y of case 0 is content, so the switch is written and the later line is read back")]
+    for frm, to, vname, inp, want, model, args, ref in more:
+        error = want in (DEC, "transform-encode", "no-kind")
+        if args is not None:
+            assert laid_out(to, *args) == want, (vname, laid_out(to, *args))
+        else:
+            got = read_back(to, inp)
+            assert (got is False) is error, vname
+            assert error or laid_out(to, got, None, bytes.fromhex(inp)[-2]) == want, vname
+        num[frm] = num.get(frm, 0) + 1
+        d = {"name": vname, "from": frm, "to": to, "input": inp, "expect_error" if error else "expect": want}
+        if model:
+            d["model"] = model
+        d["source"], d["reference"] = "constructed", "spec " + ref
+        put("packs/%s/vectors/%02d-%s.json" % (frm, num[frm], vname), json.dumps(d, indent=2) + "\n")
     return written
 
 

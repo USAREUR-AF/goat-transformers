@@ -1,0 +1,9 @@
+{
+  "name": "table-before-the-switch",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch",
+  "input": "{\"x\":5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 12: the error of the earliest line in reading order; the table without 5 stands before the switch, which has no case 5"
+}

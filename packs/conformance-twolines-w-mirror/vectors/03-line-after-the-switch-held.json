@@ -1,0 +1,9 @@
+{
+  "name": "line-after-the-switch-held",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-after",
+  "input": "{\"x\":6,\"z\":9}",
+  "expect": "060968",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: both lines carry 6"
+}

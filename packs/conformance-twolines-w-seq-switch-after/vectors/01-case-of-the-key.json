@@ -1,0 +1,13 @@
+{
+  "name": "case-of-the-key",
+  "from": "conformance-twolines-w-seq-switch-after",
+  "to": "conformance-twolines-w-seq-switch-after",
+  "input": "060968",
+  "expect": "060968",
+  "model": {
+    "probe.x": "6",
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: the line after the switch has an entry"
+}

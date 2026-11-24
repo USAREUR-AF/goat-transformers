@@ -6254,7 +6254,9 @@ not `string` without a `via` is `key-type-mismatch`.
     decode reads them, a line after a `switch` that is written included. A
     `switch` in a block or case that is not written does not count.
     A line that fails the decode by ruling 26 makes the encode
-    `transform-encode`, whatever the first line gives.
+    `transform-encode`, whatever the first line gives. The error stands at
+    that line or at the `switch`, whichever is later in reading order (ruling
+    12 of 0.20). A group item is a scope of its own.
 
 ### Stated, not yet pinned by a vector
 
