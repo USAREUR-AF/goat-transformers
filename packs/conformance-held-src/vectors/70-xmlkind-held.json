@@ -1,0 +1,9 @@
+{
+  "name": "xmlkind-held",
+  "from": "conformance-held-src",
+  "to": "conformance-held-xmlkind",
+  "input": "{\"x\":3}",
+  "expect": "<R x=\"3\"/>",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6"
+}

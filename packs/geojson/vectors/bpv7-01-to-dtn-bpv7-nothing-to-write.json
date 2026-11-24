@@ -3,12 +3,12 @@
   "from": "geojson",
   "to": "dtn-bpv7",
   "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.25,45.5]},\"properties\":{},\"id\":\"G-1\"}",
-  "expect": "818107",
+  "expect_error": "no-kind",
   "model": {
     "uid": "G-1",
     "lat": "45.5",
     "lon": "-90.25"
   },
   "source": "constructed",
-  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); No bpv7 key: Encode step 2 takes the first kind whose requires keys are present, whole (no requires). Only the common when [0].[0] 7 writes (Encode step 4): the primary block [7] in the top array, 81 81 07 (pack.md, Shared keys). Derived without an engine by a standalone RFC 8949 codec."
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); No bpv7 key: Encode step 2 takes the first kind whose requires keys are present, whole (no requires). The entity holds uid, lat and lon, and no key of whole or of the common lines: no-kind (Version 0.94, Rule). Derived without an engine by a standalone RFC 8949 codec."
 }

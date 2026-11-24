@@ -1,0 +1,12 @@
+{
+  "name": "y-context-only",
+  "from": "conformance-held-src",
+  "to": "conformance-held-y",
+  "input": "{}",
+  "expect": "{\"t\":\"k\",\"y\":4}",
+  "context": {
+    "probe.y": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: a value the context gave"
+}

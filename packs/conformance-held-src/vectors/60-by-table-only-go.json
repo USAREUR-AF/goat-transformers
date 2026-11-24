@@ -1,0 +1,9 @@
+{
+  "name": "by-table-only-go",
+  "from": "conformance-held-src",
+  "to": "conformance-held-by",
+  "input": "{\"n\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6, the table: only-go"
+}

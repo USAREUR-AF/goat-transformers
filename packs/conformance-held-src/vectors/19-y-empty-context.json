@@ -1,0 +1,10 @@
+{
+  "name": "y-empty-context",
+  "from": "conformance-held-src",
+  "to": "conformance-held-y",
+  "input": "{}",
+  "expect_error": "no-kind",
+  "context": {},
+  "source": "constructed",
+  "reference": "spec 0.94, Rule"
+}

@@ -1,0 +1,13 @@
+# Conformance probe pack for spec 0.94: a kind that requires a list it does not map. Public.
+format     conformance-held-reqlist
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+kind    k
+when    t  k
+requires probe.recs
+kind    other
+when    t  other
+field   probe.w  w  int

@@ -1,0 +1,9 @@
+{
+  "name": "case-key-of-a-case-not-written",
+  "from": "conformance-held-src",
+  "to": "conformance-held-case",
+  "input": "{\"z\":5}",
+  "expect": "0700",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: whether or not a case is written"
+}

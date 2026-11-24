@@ -1,0 +1,9 @@
+{
+  "name": "one-residue-only",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{\"foo\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: residue does not count"
+}

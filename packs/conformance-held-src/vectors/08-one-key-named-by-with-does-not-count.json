@@ -1,0 +1,9 @@
+{
+  "name": "one-key-named-by-with-does-not-count",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{\"c1\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: a key does not count by being named by `with`"
+}

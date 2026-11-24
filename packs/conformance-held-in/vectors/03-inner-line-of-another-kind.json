@@ -1,0 +1,9 @@
+{
+  "name": "inner-line-of-another-kind",
+  "from": "conformance-held-in",
+  "to": "conformance-held-outother",
+  "input": "01",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 4, a kept kind: kept by 0.34, but the inner line is in a kind that is not chosen"
+}

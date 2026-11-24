@@ -1,0 +1,9 @@
+{
+  "name": "wrong-root-with-a-kind",
+  "from": "conformance-held-xmlkind",
+  "to": "conformance-held-xmlkind",
+  "input": "<Q/>",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6: `no-kind` instead of `missing-root` (0.6)"
+}

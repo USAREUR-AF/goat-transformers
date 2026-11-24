@@ -1,0 +1,9 @@
+{
+  "name": "none-no-message-kinds",
+  "from": "conformance-held-src",
+  "to": "conformance-held-none",
+  "input": "{\"x\":1}",
+  "expect": "{}",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 4: a pack without message kinds is not checked"
+}

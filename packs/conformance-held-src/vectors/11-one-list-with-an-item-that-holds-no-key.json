@@ -1,0 +1,9 @@
+{
+  "name": "one-list-with-an-item-that-holds-no-key",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{\"recs\":[{}]}",
+  "expect": "{\"t\":\"k\",\"z\":255,\"d\":5,\"c\":7,\"recs\":[{}]}",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: whether or not its items hold a key"
+}

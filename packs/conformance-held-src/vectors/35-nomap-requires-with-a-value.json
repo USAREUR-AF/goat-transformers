@@ -1,0 +1,9 @@
+{
+  "name": "nomap-requires-with-a-value",
+  "from": "conformance-held-src",
+  "to": "conformance-held-nomap",
+  "input": "{\"x\":1}",
+  "expect": "{\"t\":\"p\"}",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 3: x, which no line maps, is held"
+}

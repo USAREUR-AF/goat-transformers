@@ -1,0 +1,15 @@
+{
+  "name": "same-format-context-of-its-key",
+  "from": "conformance-held-two",
+  "to": "conformance-held-two",
+  "input": "{\"t\":\"one\"}",
+  "expect": "{\"t\":\"one\",\"x\":4}",
+  "model": {
+    "@kind": "first"
+  },
+  "context": {
+    "probe.x": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 2: the same format, with or without context, is unchanged"
+}

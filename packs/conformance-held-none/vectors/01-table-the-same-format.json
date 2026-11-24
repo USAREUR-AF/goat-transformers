@@ -1,0 +1,9 @@
+{
+  "name": "table-the-same-format",
+  "from": "conformance-held-none",
+  "to": "conformance-held-none",
+  "input": "{}",
+  "expect": "{}",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6, the table: the same format's {}"
+}

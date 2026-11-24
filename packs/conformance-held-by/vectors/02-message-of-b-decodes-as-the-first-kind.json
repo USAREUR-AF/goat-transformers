@@ -1,0 +1,13 @@
+{
+  "name": "message-of-b-decodes-as-the-first-kind",
+  "from": "conformance-held-by",
+  "to": "conformance-held-by",
+  "input": "{\"b\":2}",
+  "expect": "{\"b\":2}",
+  "model": {
+    "@kind": "by-a",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6: a message that holds only b decodes as by-a, and the round trip keeps the bytes"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "as-common-as-key",
+  "from": "conformance-held-src",
+  "to": "conformance-held-as",
+  "input": "{\"w\":6}",
+  "expect": "060900",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: a common `as` key; b is chosen (a needs x)"
+}

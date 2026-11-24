@@ -1,0 +1,13 @@
+# Conformance probe pack for spec 0.94: an outer pack whose inner pack is not loaded. Public.
+format     conformance-held-outmissing
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind    k
+when    8  7
+field   probe.w  8  uint
+inner   conformance-held-no-such-pack

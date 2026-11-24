@@ -1,0 +1,9 @@
+{
+  "name": "common-key-of-the-common-lines",
+  "from": "conformance-held-src",
+  "to": "conformance-held-common",
+  "input": "{\"n\":4}",
+  "expect": "{\"n\":4,\"t\":\"k\"}",
+  "source": "constructed",
+  "reference": "spec 0.94, one held key is enough, a common one included"
+}

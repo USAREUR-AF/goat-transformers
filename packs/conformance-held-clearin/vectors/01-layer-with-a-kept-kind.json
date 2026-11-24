@@ -1,0 +1,12 @@
+{
+  "name": "layer-with-a-kept-kind",
+  "from": "conformance-held-clearin",
+  "to": "conformance-held-outclear",
+  "input": "05",
+  "expect": "07000105",
+  "model": {
+    "@kind": "clear"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6: unless a kind is kept; ruling 4"
+}

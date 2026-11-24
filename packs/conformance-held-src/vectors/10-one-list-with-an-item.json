@@ -1,0 +1,9 @@
+{
+  "name": "one-list-with-an-item",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{\"recs\":[{\"x\":4}]}",
+  "expect": "{\"t\":\"k\",\"z\":255,\"d\":5,\"c\":7,\"recs\":[{\"x\":4}]}",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: a list with one item"
+}

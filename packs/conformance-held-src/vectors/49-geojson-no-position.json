@@ -1,0 +1,9 @@
+{
+  "name": "geojson-no-position",
+  "from": "conformance-held-src",
+  "to": "geojson",
+  "input": "{\"n\":1}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 4: an empty GeoJSON Feature (0.1.1 rulings 4 and 5)"
+}

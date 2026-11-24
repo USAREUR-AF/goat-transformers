@@ -1,0 +1,12 @@
+{
+  "name": "inner-to-outer",
+  "from": "conformance-held-in",
+  "to": "conformance-held-out",
+  "input": "01",
+  "expect": "070101",
+  "model": {
+    "@kind": "ping"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 4, a kept kind: Entity.kind names the format of an inner line of the chosen kind"
+}

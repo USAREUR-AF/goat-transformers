@@ -1,0 +1,10 @@
+# Conformance probe pack for spec 0.94: a kind that maps one derived key. Public.
+format     conformance-held-derived
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+kind    k
+when    t  k
+field   probe.n_copy  c  int

@@ -1,0 +1,14 @@
+# Conformance probe pack for spec 0.94: kinds in a group body only: no message kind. Public.
+format     conformance-held-items
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.recs  count 8
+  kind   a
+  when   8  1
+  field  probe.x  8  uint
+end

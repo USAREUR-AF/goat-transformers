@@ -1,0 +1,9 @@
+{
+  "name": "one-key-of-no-line",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{\"n\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule: n is no key of the kind"
+}

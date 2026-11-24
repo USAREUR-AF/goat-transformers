@@ -1,0 +1,9 @@
+{
+  "name": "one-key-text-is-literal",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{\"lat\":1.5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: `lat` is held and `core.lat` is mapped: literal text"
+}

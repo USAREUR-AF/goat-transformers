@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer-common-lines",
+  "from": "conformance-held-in",
+  "to": "conformance-held-outcommon",
+  "input": "01",
+  "expect": "01010700",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 4, a kept kind: of the common lines"
+}

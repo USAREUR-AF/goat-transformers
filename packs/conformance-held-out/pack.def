@@ -1,0 +1,14 @@
+# Conformance probe pack for spec 0.94: an outer pack: the `inner` line in its one kind. Public.
+format     conformance-held-out
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind    carry
+when    8  7
+length  8
+  inner  conformance-held-in
+end

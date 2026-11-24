@@ -1,0 +1,9 @@
+{
+  "name": "outclear-layer-without-a-kept-kind",
+  "from": "conformance-held-src",
+  "to": "conformance-held-outclear",
+  "input": "{\"w\":9}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6: encoding it as a layer can be no-kind"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "items-kinds-in-a-group-body-only",
+  "from": "conformance-held-src",
+  "to": "conformance-held-items",
+  "input": "{\"x\":1}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 4: kinds in a group body only"
+}

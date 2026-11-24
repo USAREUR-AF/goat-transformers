@@ -1,0 +1,13 @@
+{
+  "name": "outer-to-inner",
+  "from": "conformance-held-out",
+  "to": "conformance-held-in",
+  "input": "070101",
+  "expect": "01",
+  "model": {
+    "@kind": "carry",
+    "@inner_kind": "ping"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 4, a kept kind: Entity.inner_kind names `to`"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "list-item-key-does-not-count",
+  "from": "conformance-held-src",
+  "to": "conformance-held-list",
+  "input": "{\"x\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: the keys of a group's items do not count"
+}

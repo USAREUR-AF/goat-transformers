@@ -1,0 +1,9 @@
+{
+  "name": "err-encode-error-when-held",
+  "from": "conformance-held-src",
+  "to": "conformance-held-err",
+  "input": "{\"x\":7}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 5: x is held, and 7 is no bool"
+}
