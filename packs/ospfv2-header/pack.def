@@ -50,6 +50,10 @@ field  inet.ospf_lsa_count          0:192:32   uint
 
 kind      link-state-request
 when      0:8:8  3
+requires  inet.ospf_type=3 inet.ospf_router_id inet.ospf_area_id
+field  inet.ospf_type               0:8:8      uint
 
 kind      link-state-ack
 when      0:8:8  5
+requires  inet.ospf_type=5 inet.ospf_router_id inet.ospf_area_id
+field  inet.ospf_type               0:8:8      uint

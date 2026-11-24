@@ -79,6 +79,9 @@ NET = ["identifier", "operator", "authentication", "fee", "web_net", "web_str", 
 INTS = {"carrier", "nmea", "solution", "bitrate", "port", "fallback_port"}
 
 
+NTRIP_NEEDS = {"STR": "ntrip.mountpoint", "CAS": "ntrip.host  ntrip.port", "NET": "ntrip.net_identifier"}
+
+
 def ntrip_pack():
     T = "ntrip"
     L = ["# NTRIP source-table record, one line per message: STR (data stream), CAS (caster), NET (network) or",
@@ -86,13 +89,13 @@ def ntrip_pack():
          "format        ntrip-sourcetable-line", "version       0.1.0", "distribution  public", SRC["ntrip"],
          "uses          %s" % T, "wire          text", 'delimiter     ";"', ""]
     for kind, fields in (("STR", STR), ("CAS", CAS), ("NET", NET)):
-        L += ["kind  %s" % kind.lower(), "when  0  %s" % kind]
+        L += ["kind  %s" % kind.lower(), "when  0  %s" % kind, "requires  " + NTRIP_NEEDS[kind]]
         for i, k in enumerate(fields, start=1):
             key = "%s_%s" % (kind.lower(), k) if k in ("identifier", "operator", "authentication", "fee", "nmea",
                                                        "country", "latitude", "longitude", "misc") else k
             L.append("field  %s.%s  %d  %s" % (T, key, i, "int" if k in INTS else "string"))
         L.append("")
-    L += ["kind  end", "when  0  ENDSOURCETABLE"]
+    L += ["kind  end", "when  0  ENDSOURCETABLE", "requires  ntrip.record_type=ENDSOURCETABLE", "field  ntrip.record_type  0  string"]
     return "\n".join(L) + "\n"
 
 
@@ -121,7 +124,7 @@ NTRIP_DESC = {
 
 
 def ntrip_keys():
-    order = []
+    order = [("key", "record_type", "the record type, in the closing record (ENDSOURCETABLE)", "string")]
     for kind, fields in (("STR", STR), ("CAS", CAS), ("NET", NET)):
         for k in fields:
             key = "%s_%s" % (kind.lower(), k) if k in ("identifier", "operator", "authentication", "fee", "nmea",

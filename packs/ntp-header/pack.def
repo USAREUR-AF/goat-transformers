@@ -46,4 +46,5 @@ field  inet.ntp_ref_clock           0:96:32    ascii
 
 # Stratum 2 and above.
 kind      secondary
+requires  time_ms
 field  inet.ntp_ref_id              0:96:32    uint

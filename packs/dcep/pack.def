@@ -10,7 +10,8 @@ layout        sequential
 bit_order     msb
 
 kind    open
-when    8  3
+when    8  3  as  dcep.message_type
+requires  dcep.channel_type  dcep.priority  dcep.reliability
 field  dcep.channel_type  8  uint
 field  dcep.priority  16  uint
 field  dcep.reliability  32  uint
@@ -24,4 +25,4 @@ group  dcep.protocol  count  @protocol_length
 end
 
 kind    ack
-when    8  2
+when    8  2  as  dcep.message_type

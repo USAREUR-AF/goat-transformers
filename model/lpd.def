@@ -3,6 +3,8 @@ module        lpd
 version       0.1.0
 distribution  public
 source        "IETF RFC 1179, Line Printer Daemon Protocol, August 1990, sections 3.1 and 5-7, https://www.rfc-editor.org/rfc/rfc1179.txt; layout restated"
+key   command_code      int     -  "daemon command: the code octet, 1 to 5"
+key   subcommand_code   int     -  "receive job subcommand: the code octet, 1 to 3"
 key   queue             string  -  "daemon commands 1 and 2: the printer queue name"
 key   operands          string  -  "daemon commands 3, 4 and 5: the queue name and the other operands (agent, user names, job numbers) as sent, separated by white space"
 key   byte_count        string  -  "receive control file or data file: the number of octets of the file, as the decimal digits sent"

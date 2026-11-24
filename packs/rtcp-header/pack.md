@@ -74,14 +74,15 @@ over the field; an entity without the list writes a count of 0 (ruling 14 of
 | Kind | `when` | Requires |
 |---|---|---|
 | `sender-report` | packet type 200 | `inet.rtcp_packet_count` |
-| `receiver-report` | packet type 201 | |
-| `source-description` | packet type 202 | |
-| `goodbye` | packet type 203 | |
-| `application` | packet type 204 | |
+| `receiver-report` | packet type 201 | `inet.rtcp_packet_type=201`, `inet.rtcp_ssrc`, `inet.rtcp_report_count` |
+| `source-description` | packet type 202 | `inet.rtcp_packet_type=202`, `inet.rtcp_source_count` |
+| `goodbye` | packet type 203 | `inet.rtcp_packet_type=203`, `inet.rtcp_source_count` |
+| `application` | packet type 204 | `inet.rtcp_packet_type=204`, `inet.rtcp_ssrc`, `inet.rtcp_app_name` |
 
 Another packet type (the feedback messages of later RFCs, among others) is
 `no-kind` (vector 12). On encode from another format a sender report is
-written when the entity carries the packet count; otherwise a receiver report.
+written when the entity carries the packet count; otherwise
+the kind of its packet type, and an entity without one is `no-kind`.
 
 Version 0.2.0 moved `inet.rtcp_report_count` and `inet.rtcp_ssrc` from the
 common lines into the kinds that have them: in a source description and a

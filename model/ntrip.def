@@ -3,6 +3,7 @@ module        ntrip
 version       0.1.0
 distribution  public
 source        "BKG, Networked Transport of RTCM via Internet Protocol (Ntrip) Version 1.0 (documentation excerpt, not the official RTCM document), section 6 and Appendix A, https://igs.bkg.bund.de/root_ftp/NTRIP/documentation/NtripDocumentation.pdf (sha256 d2399f37643acec3bff35b26cfc873613048a5f65bf4ccb66032eae708d44977), no licence stated; record layouts restated"
+key   record_type         string  -  "the record type, in the closing record (ENDSOURCETABLE)"
 key   mountpoint          string  -  "STR: the caster mountpoint (up to 100 characters)"
 key   str_identifier      string  -  "STR: source identifier, such as the nearest city"
 key   format              string  -  "STR: data format (RTCM 2.x, RTCM 3, CMR, RAW, RTCA ...)"

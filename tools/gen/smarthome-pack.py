@@ -52,13 +52,14 @@ def module(name, header, src, keys):
 def zwave_pack():
     L = head("zwave-serial-frame", ["Z-Wave Serial API frame: ACK, NAK, CAN, or SOF, length, type, function, payload and checksum. Written by",
                                     "tools/gen/smarthome-pack.py; do not edit by hand."], "zw", ["zwave"])
-    L += ["kind  ack", "when  8  6", "", "kind  nak", "when  8  21", "", "kind  can", "when  8  24", "",
-          "kind  data-frame", "when  8  1", "length  8  bytes  plus  1", "  " + F("zwave.message_type", 8), "  " + F("zwave.function_id", 8),
+    L += ["kind  ack", "when  8  6  as  zwave.start", "", "kind  nak", "when  8  21  as  zwave.start", "", "kind  can", "when  8  24  as  zwave.start", "",
+          "kind  data-frame", "when  8  1  as  zwave.start", "requires  zwave.message_type  zwave.function_id  zwave.checksum", "length  8  bytes  plus  1", "  " + F("zwave.message_type", 8), "  " + F("zwave.function_id", 8),
           "  group  zwave.payload  rest", "    " + F("zwave.octet", 8), "  end", "end", F("zwave.checksum", 8)]
     return "\n".join(L) + "\n"
 
 
 ZWAVE_KEYS = [
+    ("int", "start", "the first octet: 1 SOF (data frame), 6 ACK, 21 NAK, 24 CAN"),
     ("int", "message_type", "0 request, 1 response"),
     ("int", "function_id", "Serial API function (0x02 GetSerialApiInitData, 0x04 ApplicationCommand, 0x13 SendData, 0x15 GetControllerVersion, 0x20 GetControllerId, 0x49 ApplicationUpdateRequest, 0xA8 BridgeApplicationCommand ...)"),
     ("list", "payload", "the function's payload, as octets"),

@@ -59,3 +59,9 @@ name; CONNACK with four properties; PUBLISH with a topic alias, a two-octet subs
 and correlation data; the three forms of PUBACK and PUBREC; SUBSCRIBE with every option; SUBACK,
 UNSUBSCRIBE, UNSUBACK; the three forms of DISCONNECT; AUTH; a PUBLISH whose properties take 156
 octets (kept as octets); PINGRESP.
+
+## Kind on encode from another format
+
+The kind is the one whose value `mqtt.packet_type` holds (the packet type, `when ... as`), and
+its `requires` line names the fields that kind always has.
+An entity that fits no kind is `no-kind`.

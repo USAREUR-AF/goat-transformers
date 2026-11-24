@@ -30,3 +30,9 @@ None.
 
 `tools/gen/smarthome-vectors.py`, without an engine: ACK; NAK; a GetControllerVersion request; an
 ApplicationCommand; a SendData response; another first octet (`no-kind`); a cut frame (`malformed-wire`).
+
+## Kind on encode from another format
+
+The kind is the one whose value `zwave.start` holds (the first octet, `when ... as`), and
+its `requires` line names the fields that kind always has.
+An entity that fits no kind is `no-kind`.

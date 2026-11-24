@@ -12,7 +12,8 @@ layout        sequential
 bit_order     msb
 
 kind    connect
-when    4  1
+when    4  1  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.protocol_level  mqtt.username_flag  mqtt.password_flag  mqtt.will_retain  mqtt.will_qos  mqtt.will_flag  mqtt.clean_start  mqtt.connect_reserved  mqtt.keep_alive  mqtt.properties_length_c
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -245,7 +246,8 @@ switch  mqtt.properties_length_c
 end
 
 kind    connack
-when    4  2
+when    4  2  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.connack_reserved  mqtt.session_present  mqtt.reason_code  mqtt.properties_length_c
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -342,7 +344,8 @@ switch  mqtt.properties_length_c
 end
 
 kind    publish
-when    4  3
+when    4  3  as  mqtt.packet_type
+requires  mqtt.dup  mqtt.qos  mqtt.retain  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.properties_length_c
 field  mqtt.dup  1  uint
 field  mqtt.qos  2  uint
 field  mqtt.retain  1  uint
@@ -451,7 +454,8 @@ switch  mqtt.properties_length_c
 end
 
 kind    puback
-when    4  4
+when    4  4  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.packet_id
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -628,7 +632,8 @@ switch  mqtt.remaining_length_c1
 end
 
 kind    pubrec
-when    4  5
+when    4  5  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.packet_id
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -805,7 +810,8 @@ switch  mqtt.remaining_length_c1
 end
 
 kind    pubrel
-when    4  6
+when    4  6  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.packet_id
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -982,7 +988,8 @@ switch  mqtt.remaining_length_c1
 end
 
 kind    pubcomp
-when    4  7
+when    4  7  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.packet_id
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -1159,7 +1166,8 @@ switch  mqtt.remaining_length_c1
 end
 
 kind    subscribe
-when    4  8
+when    4  8  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.packet_id  mqtt.properties_length_c
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -1266,7 +1274,8 @@ switch  mqtt.properties_length_c
 end
 
 kind    suback
-when    4  9
+when    4  9  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.packet_id  mqtt.properties_length_c
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -1364,7 +1373,8 @@ switch  mqtt.properties_length_c
 end
 
 kind    unsubscribe
-when    4  10
+when    4  10  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.packet_id  mqtt.properties_length_c
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -1466,7 +1476,8 @@ switch  mqtt.properties_length_c
 end
 
 kind    unsuback
-when    4  11
+when    4  11  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0  mqtt.packet_id  mqtt.properties_length_c
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -1564,7 +1575,8 @@ switch  mqtt.properties_length_c
 end
 
 kind    pingreq
-when    4  12
+when    4  12  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -1588,7 +1600,8 @@ switch  mqtt.remaining_length_c1
 end
 
 kind    pingresp
-when    4  13
+when    4  13  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -1612,7 +1625,8 @@ switch  mqtt.remaining_length_c1
 end
 
 kind    disconnect
-when    4  14
+when    4  14  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint
@@ -1788,7 +1802,8 @@ switch  mqtt.remaining_length_c1
 end
 
 kind    auth
-when    4  15
+when    4  15  as  mqtt.packet_type
+requires  mqtt.flags  mqtt.remaining_length_c1  mqtt.remaining_length_v0
 field  mqtt.flags  4  uint
 field  mqtt.remaining_length_c1  1  uint
 field  mqtt.remaining_length_v0  7  uint

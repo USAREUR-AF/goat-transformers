@@ -103,3 +103,8 @@ to GeoJSON carrying `time_ms`. From GeoJSON (in `packs/geojson/vectors`,
 `ntp-header-*.json`): 500 ms past a second rounds up, 499 ms rounds down, the
 last second of era 0, the NTP epoch, and `transform-encode` one second after
 era 0 and one second before 1900.
+
+## Kind on encode from another format
+
+`secondary` requires `time_ms`, the transmit timestamp.
+An entity that fits no kind is `no-kind`.

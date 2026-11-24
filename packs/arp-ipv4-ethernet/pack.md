@@ -18,7 +18,7 @@ octets 0-27; padding after them is read over and not written (vector 04).
 | 2-3 | protocol type | common `when` 0x0800 (IPv4) | |
 | 4 | hardware address length | common `when` 6 | |
 | 5 | protocol address length | common `when` 4 | |
-| 6-7 | opcode | the `when` of the kinds | |
+| 6-7 | opcode | `inet.arp_operation`, also the `when` of the kinds | `uint` |
 | 8-13 | sender hardware address | `inet.arp_sender_hw_addr` | `uint`, 48 bits |
 | 14-17 | sender protocol address | `inet.arp_sender_ip_addr` | `uint`, 32 bits |
 | 18-23 | target hardware address | `inet.arp_target_hw_addr` | `uint`, 48 bits |
@@ -42,7 +42,8 @@ widths.
 | `reply` | opcode 2 |
 
 RFC 826 defines these two opcodes; another opcode is `no-kind` (vector 05). On
-encode from another format, a request is written.
+encode from another format, the kind is the one of `inet.arp_operation`; an
+entity without the operation and the four addresses is `no-kind`.
 
 ## Shared keys
 

@@ -147,10 +147,12 @@ SUB = [
 ]
 
 
-def lpd_bits_pack(name, comment, kinds):
+def lpd_bits_pack(name, comment, kinds, code_key):
     L = bits_head(name, comment, "lpd", ["lpd"])
     for kname, code, lines in kinds:
-        L += ["kind  %s" % kname, "when  8  %d" % code] + lines + [""]
+        L += ["kind  %s" % kname, "when  8  %d  as  %s" % (code, code_key)]
+        needs = [x.split()[1] for x in lines if x.startswith("field")]
+        L += (["requires  " + "  ".join(needs)] if needs else []) + lines + [""]
     return "\n".join(L).rstrip("\n") + "\n"
 
 
@@ -172,6 +174,8 @@ def control_pack():
 
 
 LPD_KEYS = [
+    ("int", "command_code", "daemon command: the code octet, 1 to 5"),
+    ("int", "subcommand_code", "receive job subcommand: the code octet, 1 to 3"),
     ("string", "queue", "daemon commands 1 and 2: the printer queue name"),
     ("string", "operands", "daemon commands 3, 4 and 5: the queue name and the other operands (agent, user names, job numbers) as sent, separated by white space"),
     ("string", "byte_count", "receive control file or data file: the number of octets of the file, as the decimal digits sent"),
@@ -200,10 +204,10 @@ def build(out):
     out.write("packs/ipp-message/pack.def", ipp_pack())
     out.write("packs/lpd-command/pack.def", lpd_bits_pack("lpd-command", [
         "LPD daemon command (RFC 1179 section 5): a binary command code, the queue name and any operands, LF. Written by",
-        "tools/gen/printing-pack.py; do not edit by hand."], DAEMON))
+        "tools/gen/printing-pack.py; do not edit by hand."], DAEMON, "lpd.command_code"))
     out.write("packs/lpd-subcommand/pack.def", lpd_bits_pack("lpd-subcommand", [
         "LPD receive-job subcommand (RFC 1179 section 6): a binary code, the byte count and file name, LF. Written by",
-        "tools/gen/printing-pack.py; do not edit by hand."], SUB))
+        "tools/gen/printing-pack.py; do not edit by hand."], SUB, "lpd.subcommand_code"))
     out.write("packs/lpd-control-file/pack.def", control_pack())
     out.write("model/ipp.def", module("ipp", ["# The ipp module: IPP/1.1 binary encoding fields (RFC 8010). Written by tools/gen/printing-pack.py."], "ipp", IPP_KEYS))
     out.write("model/lpd.def", module("lpd", ["# The lpd module: Line Printer Daemon protocol fields (RFC 1179). Written by tools/gen/printing-pack.py."], "lpd", LPD_KEYS))

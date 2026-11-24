@@ -38,6 +38,8 @@ field  inet.tls_handshake_length    0:48:24    uint
 
 kind      application-data
 when      0:0:8  23
+requires  inet.tls_content_type=23 inet.tls_legacy_version inet.tls_record_length
 
 # Any other content type: the header alone.
 kind      other
+requires  inet.tls_content_type inet.tls_legacy_version inet.tls_record_length

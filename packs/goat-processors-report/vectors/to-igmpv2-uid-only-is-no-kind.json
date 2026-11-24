@@ -1,0 +1,9 @@
+{
+ "name": "to-igmpv2-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "igmpv2",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "RFC 2236 section 2: type, checksum and group address are in every message; an entity with only a uid holds none of them"
+}

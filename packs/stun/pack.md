@@ -54,3 +54,8 @@ None.
 `tools/gen/messaging-vectors.py`, without an engine: Binding request, Binding success (with a
 FINGERPRINT the program computes), Binding error 401, Allocate request and success, ChannelBind,
 Data indication with the TURN attributes, ChannelData, and a truncated message (`malformed-wire`).
+
+## Kind on encode from another format
+
+Each kind requires the header fields it always has.
+An entity that fits no kind is `no-kind`.

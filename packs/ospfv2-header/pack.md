@@ -29,8 +29,11 @@ the mapped part are read over and not written.
 | `hello` | type 1 | 24-27 network mask, 28-29 hello interval, 30 options, 31 router priority, 32-35 router dead interval, 36-39 designated router, 40-43 backup designated router | `inet.ospf_network_mask`, `inet.ospf_hello_interval`, `inet.ospf_options`, `inet.ospf_router_priority`, `inet.ospf_router_dead_interval`, `inet.ospf_dr`, `inet.ospf_bdr` |
 | `database-description` | type 2 | 24-25 interface MTU, 26 options, 27 bits 0-4 reserved, bit 5 I, bit 6 M, bit 7 MS, 28-31 DD sequence number | `inet.ospf_interface_mtu`, `inet.ospf_options`, `inet.ospf_dd_reserved`, `inet.ospf_dd_init`, `inet.ospf_dd_more`, `inet.ospf_dd_master`, `inet.ospf_dd_sequence` |
 | `link-state-update` | type 4 | 24-27 number of LSAs | `inet.ospf_lsa_count` |
-| `link-state-request` | type 3 | none | |
-| `link-state-ack` | type 5 | none | |
+| `link-state-request` | type 3 | none | `inet.ospf_type` (octet 1) |
+| `link-state-ack` | type 5 | none | `inet.ospf_type` (octet 1) |
+
+On encode from another format the last two kinds require their type, the
+router ID and the area ID; an entity that fits no kind is `no-kind`.
 
 `word_bytes 1`, `bit_order msb`; the fields are big-endian. The 64-bit
 authentication field is two 32-bit keys: a key holds a signed 64-bit integer,

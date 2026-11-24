@@ -1,0 +1,9 @@
+{
+ "name": "to-stun-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "stun",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "RFC 8489 section 5 and RFC 8656 section 12.4: the header fields are in every message; an entity with only a uid holds none of them"
+}

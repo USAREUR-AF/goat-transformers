@@ -26,6 +26,10 @@ field  inet.arp_target_ip_addr      0:192:32   uint
 # The opcode (octets 6-7).
 kind      request
 when      0:48:16  1
+requires  inet.arp_operation=1 inet.arp_sender_hw_addr inet.arp_sender_ip_addr inet.arp_target_hw_addr inet.arp_target_ip_addr
+field  inet.arp_operation           0:48:16    uint
 
 kind      reply
 when      0:48:16  2
+requires  inet.arp_operation=2 inet.arp_sender_hw_addr inet.arp_sender_ip_addr inet.arp_target_hw_addr inet.arp_target_ip_addr
+field  inet.arp_operation           0:48:16    uint

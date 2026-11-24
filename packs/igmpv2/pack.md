@@ -13,7 +13,7 @@ octets 0-7; anything after them is read over.
 
 | Octets | Field | Key | Transform |
 |---|---|---|---|
-| 0 | type | the `when` of the kinds; `inet.igmp_type` in kind `other` | `uint` |
+| 0 | type | `inet.igmp_type`; the `when` of the kinds but `other` | `uint` |
 | 1 | max response time | `inet.igmp_max_resp_time` | `uint`, tenths of a second |
 | 2-3 | checksum | `inet.igmp_checksum` | `uint` |
 | 4-7 | group address | `inet.igmp_group_addr` | `uint`, the 32-bit integer |
@@ -27,15 +27,16 @@ checked (vector 07).
 
 | Kind | `when` |
 |---|---|
-| `membership-query` | type 0x11 |
-| `v2-membership-report` | type 0x16 |
-| `leave-group` | type 0x17 |
-| `v1-membership-report` | type 0x12 |
+| `membership-query` | type 0x11; `requires` that type in `inet.igmp_type`, `inet.igmp_max_resp_time`, `inet.igmp_checksum`, `inet.igmp_group_addr` |
+| `v2-membership-report` | type 0x16; `requires` that type in `inet.igmp_type`, `inet.igmp_max_resp_time`, `inet.igmp_checksum`, `inet.igmp_group_addr` |
+| `leave-group` | type 0x17; `requires` that type in `inet.igmp_type`, `inet.igmp_max_resp_time`, `inet.igmp_checksum`, `inet.igmp_group_addr` |
+| `v1-membership-report` | type 0x12; `requires` that type in `inet.igmp_type`, `inet.igmp_max_resp_time`, `inet.igmp_checksum`, `inet.igmp_group_addr` |
 | `other` | none; `requires inet.igmp_type`, which it maps at octet 0 |
 
 A type RFC 2236 does not name is read as kind `other` with the version 2 layout
-(vector 06). On encode from another format a membership query is written,
-since the first kind has no `requires`.
+(vector 06). On encode from another format the kind is the one of
+the entity's `inet.igmp_type`, when the response time, checksum and group
+address are present too; an entity without the type is `no-kind`.
 
 ## Shared keys
 

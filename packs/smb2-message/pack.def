@@ -13,6 +13,7 @@ bit_order     lsb
 
 kind  smb2
 when  32  1112364030
+requires  smb2.structure_size_header  smb2.credit_charge  smb2.status  smb2.command  smb2.credits  smb2.response  smb2.async  smb2.next_command  smb2.message_id  smb2.session_id  smb2.signature
 field  smb2.structure_size_header  16  uint
 field  smb2.credit_charge  16  uint
 field  smb2.status  32  uint
@@ -229,6 +230,7 @@ end
 
 kind  transform
 when  32  1112364029
+requires  smb2.signature  smb2.nonce  smb2.original_message_size  smb2.encryption_flags  smb2.session_id
 field  smb2.signature  128  hex
 field  smb2.nonce  128  hex
 field  smb2.original_message_size  32  uint
@@ -241,6 +243,7 @@ end
 
 kind  compression-transform
 when  32  1112364028
+requires  smb2.original_compressed_segment_size  smb2.compression_algorithm  smb2.compression_flags  smb2.offset_or_length
 field  smb2.original_compressed_segment_size  32  uint
 field  smb2.compression_algorithm  16  uint
 field  smb2.compression_flags  16  uint

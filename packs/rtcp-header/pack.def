@@ -44,6 +44,8 @@ end
 # Packet type 201: the report blocks follow the SSRC.
 kind      receiver-report
 when      0:8:8  201
+requires  inet.rtcp_packet_type=201 inet.rtcp_ssrc inet.rtcp_report_count
+field  inet.rtcp_packet_type        0:8:8      uint
 field  inet.rtcp_report_count       0:3:5      uint
 field  inet.rtcp_ssrc               0:32:32    uint
 group  inet.rtcp_report_blocks  0:64  item 192  count 0:3:5
@@ -59,11 +61,15 @@ end
 # Packet type 202: the header only; the chunks are not mapped.
 kind      source-description
 when      0:8:8  202
+requires  inet.rtcp_packet_type=202 inet.rtcp_source_count
+field  inet.rtcp_packet_type        0:8:8      uint
 field  inet.rtcp_source_count       0:3:5      uint
 
 # Packet type 203: the identifiers of the sources leaving.
 kind      goodbye
 when      0:8:8  203
+requires  inet.rtcp_packet_type=203 inet.rtcp_source_count
+field  inet.rtcp_packet_type        0:8:8      uint
 field  inet.rtcp_source_count       0:3:5      uint
 group  inet.rtcp_bye_sources  0:32  item 32  count 0:3:5
   field  inet.rtcp_bye_ssrc           0:0:32     uint
@@ -72,6 +78,8 @@ end
 # Packet type 204: subtype, SSRC and name; the application data is not mapped.
 kind      application
 when      0:8:8  204
+requires  inet.rtcp_packet_type=204 inet.rtcp_ssrc inet.rtcp_app_name
+field  inet.rtcp_packet_type        0:8:8      uint
 field  inet.rtcp_app_subtype        0:3:5      uint
 field  inet.rtcp_ssrc               0:32:32    uint
 field  inet.rtcp_app_name           0:64:32    ascii

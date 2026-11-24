@@ -35,6 +35,8 @@ end
 
 kind      membership-query
 when      0:0:8  17
+requires  inet.igmp_type=17 inet.igmp3_max_resp_code inet.igmp_checksum inet.igmp_group_addr inet.igmp3_suppress inet.igmp3_qrv inet.igmp3_qqic inet.igmp3_num_sources
+field  inet.igmp_type               0:0:8      uint
 field  inet.igmp3_max_resp_code     0:8:8      uint
 field  inet.igmp_group_addr         0:32:32    uint
 field  inet.igmp3_reserved          0:64:4     uint
