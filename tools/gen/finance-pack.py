@@ -8,7 +8,7 @@
   each a one-character code and its value up to LF, the record ended by the '^' line; the value's key
   by the code. Codes restated from quiffen (quiffen/core/transaction.py, qif.py).
 - ofx-stmttrn: one OFX 2 <STMTTRN> statement transaction element (XML, no namespace): TRNTYPE,
-  DTPOSTED, DTUSER, TRNAMT, FITID, CHECKNUM, NAME, MEMO. Element names and order restated from
+  DTPOSTED, TRNAMT, FITID, CHECKNUM, NAME, MEMO. Element names and order restated from
   ofxparse (ofxparse/ofxparse.py and its test fixtures).
 
 The vectors are not written here: tools/gen/finance-vectors.py derives them with an encoder of its own.
@@ -116,11 +116,15 @@ OFX = [("TRNTYPE", "trntype", "transaction type (CREDIT, DEBIT, CHECK, INT, DIV,
        ("CHECKNUM", "checknum", "check number"), ("NAME", "name", "payee name"), ("MEMO", "memo", "memo")]
 
 
+# The key stays (a merged key is never removed); no XML source read gives the element's place, so it is not mapped.
+OFX_UNPLACED = {"DTUSER"}
+
+
 def ofx_pack():
     L = ["# One OFX 2 statement transaction element <STMTTRN> (XML). Written by tools/gen/finance-pack.py; do not edit by hand.",
          "format        ofx-stmttrn", "version       0.1.0", "distribution  public", SRC["ofx"], "uses          ofx", "wire          xml",
          "root          STMTTRN", ""]
-    L += ["field  ofx.%s  %s/#text  string" % (key, el) for el, key, _ in OFX]
+    L += ["field  ofx.%s  %s/#text  string" % (key, el) for el, key, _ in OFX if el not in OFX_UNPLACED]
     return "\n".join(L) + "\n"
 
 

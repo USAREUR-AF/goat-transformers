@@ -1,0 +1,14 @@
+{
+  "name": "create-buffer-overflow-is-error-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000050000800500010001000000000000001400000000000000fffe000005000000000000000000000000000000000000000000000000000000090000000000000000",
+  "expect": "fe534d4240000000050000800500010001000000000000001400000000000000fffe000005000000000000000000000000000000000000000000000000000000090000000000000000",
+  "model": {
+    "smb2.command": "5",
+    "smb2.structure_size": "9",
+    "smb2.byte_count": "0",
+    "smb2.buffer.#": "1"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 3.3.4.4 and 2.2.2; a CREATE response with STATUS_BUFFER_OVERFLOW, not among the exceptions; expect derived there, no engine run"
+}

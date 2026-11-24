@@ -12,8 +12,10 @@ or the SMB3 transform and compression transform headers. Wire `bits`, `layout se
 - **Header**: structure size, credit charge, status (or channel sequence in a request), command, credits,
   the flag bits one by one (response, async, related, signed, priority, DFS, replay), next command, message
   ID; by the async flag, the async ID or the reserved field and tree ID; session ID; signature.
-- **Commands**, by the response flag and, for a response, the status (0 and STATUS_MORE_PROCESSING_REQUIRED
-  lay out the command's response; any other status is the error response):
+- **Commands**, by the response flag and, for a response, the status ([MS-SMB2] 3.3.4.4): 0 lays
+  out the command's response, as do STATUS_MORE_PROCESSING_REQUIRED for SESSION_SETUP, STATUS_BUFFER_OVERFLOW for
+  READ, IOCTL and QUERY_INFO, and STATUS_NOTIFY_ENUM_DIR for CHANGE_NOTIFY (the last four as octets); any other is
+  the error response:
   - NEGOTIATE request (dialects counted) and response;
   - SESSION_SETUP request and response;
   - LOGOFF and TREE_DISCONNECT;
@@ -35,6 +37,10 @@ None.
 
 ## Not mapped
 
+- **Statuses the message alone cannot decide** ([MS-SMB2] 3.3.4.4): STATUS_BUFFER_OVERFLOW is an exception for READ on a
+  named pipe and for three IOCTL functions only, and STATUS_INVALID_PARAMETER for copychunk when its response is
+  returned. A READ or IOCTL response with STATUS_BUFFER_OVERFLOW is read as the command's response whatever the file or
+  function; an IOCTL response with STATUS_INVALID_PARAMETER is read as the error response. The octets are kept either way.
 - **Buffers by offset**: the variable parts are named by offsets from the header; they normally follow the
   fixed part, and the pack reads them as the octets that do. Needed: a reference to an offset of the
   message.
@@ -47,4 +53,5 @@ None.
 `tools/gen/remote-vectors.py`, without an engine: NEGOTIATE request and response; SESSION_SETUP response with
 more processing required; TREE_CONNECT request and response; CREATE request and response; an error response;
 an async pending response; a signed LOGOFF; a READ as octets; a transform header; SMB1 (`no-kind`); a cut
-header (`malformed-wire`).
+header (`malformed-wire`); READ, QUERY_INFO and IOCTL responses with STATUS_BUFFER_OVERFLOW; a CHANGE_NOTIFY response
+with STATUS_NOTIFY_ENUM_DIR; and two responses with those statuses for other commands, read as errors.

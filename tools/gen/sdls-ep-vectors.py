@@ -56,6 +56,10 @@ def vec(pack, name, inp, model=None, error=None, ref="", to=None, expect=None):
     return v
 
 
+def u32(*v):
+    return b"".join(x.to_bytes(4, "big") for x in v)
+
+
 def pdu(ptype, user, group, proc, data=b"", length_bits=None):
     n = len(data) * 8 if length_bits is None else length_bits
     return bits([(ptype, 1), (user, 1), (group, 2), (proc, 4)]) + u16(n) + data
@@ -64,11 +68,12 @@ def pdu(ptype, user, group, proc, data=b"", length_bits=None):
 def ep_vectors():
     p = "ccsds-sdls-ep-pdu"
     out = []
-    a = pdu(0, 0, 1, 11, u16(5, 0x0101, 0x0102))
+    a = pdu(0, 0, 1, 11, u16(5) + u32(0x00010203, 0x80000001))
     out.append((p, "01-start-sa-roundtrip.json", vec(p, "start-sa-roundtrip", a,
                 {"ccsdssdlsep.procedure_type": "0", "ccsdssdlsep.service_group": "1", "ccsdssdlsep.procedure_id": "11",
-                 "ccsdssdlsep.spi": "5", "ccsdssdlsep.gvc_ids.#": "2", "ccsdssdlsep.gvc_ids[1].ccsdssdlsep.gvc_id": str(0x0102)},
-                ref=R_EP + "; a Start SA command for SPI 5 on two global virtual channels (data field 48 bits)")))
+                 "ccsdssdlsep.spi": "5", "ccsdssdlsep.gvc_ids.#": "2", "ccsdssdlsep.gvc_ids[1].ccsdssdlsep.gvc_id": str(0x80000001),
+                 "ccsdssdlsep.gvc_ids[0].ccsdssdlsep.gvc_id": str(0x00010203)},
+                ref=R_EP + "; a Start SA command for SPI 5 on two GVC/GMAP identifiers of 32 bits each (5.5.1.2.2.2 b; data field 80 bits)")))
     b = pdu(0, 0, 2, 14, u16(5))
     out.append((p, "02-stop-sa-roundtrip.json", vec(p, "stop-sa-roundtrip", b,
                 {"ccsdssdlsep.service_group": "2", "ccsdssdlsep.procedure_id": "14", "ccsdssdlsep.spi": "5"},

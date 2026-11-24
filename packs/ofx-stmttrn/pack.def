@@ -9,7 +9,6 @@ root          STMTTRN
 
 field  ofx.trntype  TRNTYPE/#text  string
 field  ofx.dtposted  DTPOSTED/#text  string
-field  ofx.dtuser  DTUSER/#text  string
 field  ofx.trnamt  TRNAMT/#text  string
 field  ofx.fitid  FITID/#text  string
 field  ofx.checknum  CHECKNUM/#text  string

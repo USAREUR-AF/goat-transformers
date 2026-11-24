@@ -9,6 +9,12 @@ Read on 2026-11-21. No source file is copied into this tree.
 | FFmpeg n7.1, COPYING.LGPLv2.1 | https://github.com/FFmpeg/FFmpeg/blob/b08d7969c550a804a59511c7b83f2dd8cc0499b8/COPYING.LGPLv2.1 | `b634ab5640e258563c536e658cad87080553df6f34f62269a21d554844e58bfe` |
 | GStreamer 1.26.9 (commit f313fae193089408e278c0dd3450145e5a12307b), gst-plugins-bad/gst/mpegtsdemux/mpegtspacketizer.c | https://github.com/GStreamer/gstreamer/blob/f313fae193089408e278c0dd3450145e5a12307b/subprojects/gst-plugins-bad/gst/mpegtsdemux/mpegtspacketizer.c | `7a85ecd4526f982ad37c6ad30ed471cc3566b475268d8a3752b09d9ba3a3a2d5` |
 
+The sign of the splice countdown is not stated by the sources above (GStreamer prints the octet unsigned). Checked
+2026-11-24, after the pack was written: TSDuck v3.40-4165, src/libtsduck/dtv/transport/tsTSPacket.h at
+c158e88648fe8342d8066f551fe7751857512c9e (BSD-2-Clause, sha256 `4db44ed8cd02e3d387da4ced3ee9db604a26fd8a66d6a7cc9c7dae3402593253`) returns it as int8_t
+(getSpliceCountdown); Wireshark de1eec95 epan/dissectors/packet-mp2t.c shows it unsigned (FT_UINT8). ISO/IEC 13818-1
+was not read. The pack reads it signed, as TSDuck does.
+
 ## Licence
 
 The transport stream is specified in ISO/IEC 13818-1 (a paid standard), which this project did not read.

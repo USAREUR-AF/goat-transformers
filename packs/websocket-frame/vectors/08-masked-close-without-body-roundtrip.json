@@ -1,0 +1,17 @@
+{
+  "name": "masked-close-without-body-roundtrip",
+  "from": "websocket-frame",
+  "to": "websocket-frame",
+  "input": "888037fa213d",
+  "expect": "888037fa213d",
+  "model": {
+    "ws.opcode": "8",
+    "ws.mask": "1",
+    "ws.payload_len7": "0",
+    "ws.masking_key": "37fa213d",
+    "@absent": [
+      "ws.close_code"
+    ]
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 6455 sections 5.2 and 5.5.1; the same from a client: MASK and length 0, then the masking key; expect derived there, no engine run"
+}

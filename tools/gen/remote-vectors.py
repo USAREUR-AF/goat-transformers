@@ -205,6 +205,22 @@ def smb2_vectors():
                 ref="[MS-SMB2] 2.2.1; an SMB1 header (0xFF 'SMB')")))
     out.append((p, "14-cut-header-is-malformed.json", vec(p, "cut-header-is-malformed", neg[:40], error="malformed-wire",
                 ref="[MS-SMB2] 2.2.1.2; the NEGOTIATE request of vector 01 cut inside its header")))
+    def resp(cmd, status, body):
+        return smb2_header(cmd, 20, status=status, response=1, tree_id=5) + body
+
+    E = "[MS-SMB2] 3.3.4.4 and "
+    for fname, cmd, status, body, what in (
+            ("15-read-buffer-overflow", 8, 0x80000005, le("HBBIII", 17, 80, 0, 4, 0, 0) + b"abcd", E + "2.2.20; a READ response on a named pipe, STATUS_BUFFER_OVERFLOW"),
+            ("16-query-info-buffer-overflow", 16, 0x80000005, le("HHI", 9, 72, 4) + b"wxyz", E + "2.2.38; a QUERY_INFO response, STATUS_BUFFER_OVERFLOW"),
+            ("17-change-notify-enum-dir", 15, 0x0000010C, le("HHI", 9, 0, 0), E + "2.2.36; a CHANGE_NOTIFY response, STATUS_NOTIFY_ENUM_DIR"),
+            ("18-ioctl-buffer-overflow", 11, 0x80000005, le("HHIQQIIIIII", 49, 0, 0x0011C017, 1, 2, 112, 0, 112, 4, 0, 0) + b"pipe", E + "2.2.32; an FSCTL_PIPE_TRANSCEIVE response, STATUS_BUFFER_OVERFLOW")):
+        out.append((p, fname + "-roundtrip.json", vec(p, fname[3:] + "-roundtrip", resp(cmd, status, body),
+                    {K + "command": str(cmd), K + "status": str(status), K + "body.#": str(len(body)), "@absent": [K + "byte_count", K + "error_context_count"]}, ref=what)))
+    for fname, cmd, status, what in (
+            ("19-create-buffer-overflow-is-error", 5, 0x80000005, "a CREATE response with STATUS_BUFFER_OVERFLOW, not among the exceptions"),
+            ("20-read-more-processing-is-error", 8, 0xC0000016, "a READ response with STATUS_MORE_PROCESSING_REQUIRED, an exception for SESSION_SETUP only")):
+        out.append((p, fname + "-roundtrip.json", vec(p, fname[3:] + "-roundtrip", resp(cmd, status, le("HBBI", 9, 0, 0, 0) + b"\x00"),
+                    {K + "command": str(cmd), K + "structure_size": "9", K + "byte_count": "0", K + "buffer.#": "1"}, ref=E + "2.2.2; " + what)))
     return out
 
 

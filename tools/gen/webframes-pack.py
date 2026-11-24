@@ -170,7 +170,9 @@ def ws_pack():
     L += [F(W, "fin", 1), F(W, "rsv1", 1), F(W, "rsv2", 1), F(W, "rsv3", 1), F(W, "opcode", 4), F(W, "mask", 1), F(W, "payload_len7", 7)]
     L += sw("ws.payload_len7", [("126", [F(W, "payload_len_ext", 16)]), ("127", [F(W, "payload_len_ext", 64)])], [])
     L += sw("ws.mask", [("1", [F(W, "masking_key", 32, "hex")])], [])
-    L += sw("ws.opcode", [("8", [F(W, "close_code", 16)] + octets(W, "close_reason"))], octets(W, "payload"))
+    # RFC 6455 5.5.1: a Close frame MAY contain a body; a body begins with the 2-octet status code
+    close = sw("ws.payload_len7", [("0", octets(W, "close_reason"))], [F(W, "close_code", 16)] + octets(W, "close_reason"))
+    L += sw("ws.opcode", [("8", close)], octets(W, "payload"))
     return text(L)
 
 

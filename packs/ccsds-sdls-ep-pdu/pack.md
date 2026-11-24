@@ -13,7 +13,7 @@ length, which counts **bits** (a `length 16 bits` block, written on encode). The
 
 | Service group, procedure | Data field |
 |---|---|
-| SA management (1 or 2): Start SA (11) | SPI, then the global VC or MAP identifiers (16 bits each) to the end |
+| SA management (1 or 2): Start SA (11) | SPI, then the global VC or MAP identifiers (32 bits each, 5.5.1.2.2.2 b; their encoding is mission-specific) to the end |
 | Stop (14), Expire (9), Delete SA (4); Read ARSN command (0); SA Status Request command (15) | SPI |
 | SA Status Request reply (15) | SPI, the last state transition directive |
 | Create SA (1) | SPI, encryption and authentication flags, the IV, SN and PL field lengths, the MAC field length, then the rest as octets |

@@ -7,7 +7,7 @@ frame, to the end of the input. Written by `tools/gen/webframes-pack.py`.
 
 FIN, RSV1-3, opcode, MASK, the 7-bit payload length and, by its value, the 16-bit (126) or 64-bit (127)
 extended length; the masking key when MASK is set (hex); for a close frame (opcode 8) the status code and
-reason; for any other opcode the payload as octets, as on the wire.
+reason, or neither when the length is 0 (RFC 6455 section 5.5.1: a close frame MAY contain a body); for any other opcode the payload as octets, as on the wire.
 
 ## Shared keys
 
@@ -24,4 +24,5 @@ None.
 ## Vectors
 
 `tools/gen/webframes-vectors.py`, without an engine: an unmasked text frame; a masked binary frame; a fragment
-with a 16-bit length; a close frame; a ping; a cut length (`malformed-wire`).
+with a 16-bit length; a close frame; a ping; a cut length (`malformed-wire`); close frames without a body, unmasked and masked;
+a close frame with the status code alone.

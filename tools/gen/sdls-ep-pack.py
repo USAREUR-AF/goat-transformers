@@ -83,7 +83,7 @@ def key_management():
 
 
 def sa_management():
-    start = [e("spi", 16), "group  ccsdssdlsep.gvc_ids  rest", "  " + e("gvc_id", 16), "end"]
+    start = [e("spi", 16), "group  ccsdssdlsep.gvc_ids  rest", "  " + e("gvc_id", 32), "end"]
     create = [e("spi", 16), e("encryption_flag", 1), e("authentication_flag", 1), e("iv_field_length", 6),
               e("sn_field_length", 6), e("pl_field_length", 2), e("mac_field_length", 8)] + data_octets()
     status = sw("ccsdssdlsep.procedure_type", [("1", [e("spi", 16), e("last_directive", 8)])], spi_only())
@@ -116,7 +116,7 @@ EP_KEYS = [
     ("key", "procedure_id", "the procedure within the service group (key management: 1 OTAR, 2 activation, 3 deactivation, 4 verification, 6 destruction, 7 inventory; SA management: 0 read ARSN, 1 create, 4 delete, 5 set ARSN window, 6 rekey, 9 expire, 10 set ARSN, 11 start, 14 stop, 15 status request; monitoring and control: 1 ping, 2 log status, 3 dump log, 4 erase log, 5 self-test, 7 alarm flag reset)"),
     ("key", "spi", "the SPI of the security association the procedure acts on"),
     ("list", "gvc_ids", "start SA: the global virtual channel or MAP identifiers the SA is applied to"),
-    ("key", "gvc_id", "one global virtual channel or global MAP identifier, 16 bits"),
+    ("key", "gvc_id", "one global virtual channel or global MAP identifier, 32 bits (its encoding is mission-specific)"),
     ("key", "encryption_flag", "create SA: the SA provides encryption"),
     ("key", "authentication_flag", "create SA: the SA provides authentication"),
     ("key", "iv_field_length", "create SA: the length of the security header's IV field"),

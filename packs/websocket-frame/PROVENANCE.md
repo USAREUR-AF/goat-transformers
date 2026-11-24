@@ -4,7 +4,7 @@ Read on 2026-11-21. No source file is copied into this tree.
 
 | Source | Where | SHA-256 |
 |---|---|---|
-| IETF RFC 6455, The WebSocket Protocol, December 2011; section 5.2 | https://www.rfc-editor.org/rfc/rfc6455.txt | `765775326aee0ecca9b04bde3fd1f52932d498e33e34e428bd61b8a24da0fa3b` |
+| IETF RFC 6455, The WebSocket Protocol, December 2011; sections 5.2 and (read 2026-11-24) 5.5.1 | https://www.rfc-editor.org/rfc/rfc6455.txt | `765775326aee0ecca9b04bde3fd1f52932d498e33e34e428bd61b8a24da0fa3b` |
 
 ## Licence
 
