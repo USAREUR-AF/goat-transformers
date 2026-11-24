@@ -569,6 +569,7 @@ type_groups(Lines, {TypeDefaults, KeyTypes} = Ctx) ->
          {uchoice, N, Ext, Alts} ->
              {uchoice, N, Ext, [{I, type_groups(B, Ctx)} || {I, B} <- Alts]};
          {len, Len, Unit, Plus, Body} -> {len, Len, Unit, Plus, type_groups(Body, Ctx)};
+         {lenref, Id, U, Body} -> {lenref, Id, U, type_groups(Body, Ctx)};
          {chain, First, Parts, EndsFx} ->
              {chain, type_groups(First, Ctx),
               [type_groups(Part, Ctx) || Part <- Parts], EndsFx};

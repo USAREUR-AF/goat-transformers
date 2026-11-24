@@ -35,7 +35,10 @@
 -record(d, {msg, hard, pos = 0, model = #{}, lists = #{}, failed = [], env = #{},
             pack, named, static = #{}, pending = [], unit = bytes, counts = #{},
             kstart = 0,
-            top = true, taken = #{}, uncounted = false, whole = false, inner_kind, given = #{}}).
+            top = true, taken = #{}, uncounted = false, whole = false, inner_kind, given = #{},
+            missed = []}).
+%% missed  (0.83) the counts of the scope whose `length @` block stood in a
+%%         block that was not read, or was absent
 %% kstart  the kind start of the kind being tested (0.33)
 
 decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} = Pack, Bytes) ->
@@ -51,6 +54,7 @@ decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} 
                          {K, Dk} = kind(Kinds, none, D1),
                          {{Name, K}, Dk}
                  end,
+    check_missed(D2),
     %% the failed keys of an inner message are settled by the outer decode,
     %% which may read another line of the key (ruling 23 of 0.34)
     case is_map_key(shadow, Pack) of
@@ -133,14 +137,19 @@ set_as(Sets, D) ->
 %% Are Len bits at Pos inside the input, or inside the `length` extent that
 %% ends at Ext? A line that starts at or after the end of an extent reads as
 %% absent; one that straddles the end is `short`.
+%% A whole length read inside the extent ends the input and not the extent
+%% (ruling 16 of 0.83): bits past it are short, never absent. A line that needs
+%% no bits needs no input.
+avail(_Pos, 0, none, _D) -> ok;
 avail(Pos, Len, none, #d{hard = Hard}) ->
     case Pos + Len =< Hard of
         true -> ok;
         false -> short
     end;
-avail(Pos, Len, End, _D) ->
+avail(Pos, Len, End, #d{hard = Hard}) ->
     if Pos >= End -> absent;
-       Pos + Len =< End -> ok;
+       Len =:= 0 -> ok;
+       Pos + Len =< min(End, Hard) -> ok;
        true -> short
     end.
 
@@ -156,6 +165,26 @@ need(Pos, Len, Ext, D) ->
 limit(none, #d{hard = Hard}) -> Hard;
 limit(End, _D) -> End.
 
+%% The same, cut by a whole length read in the extent (0.83): where the bits
+%% left to a count end (ruling 14 of 0.8).
+cut(Ext, #d{hard = Hard} = D) -> min(limit(Ext, D), Hard).
+
+%% A block that is not read, or is absent: the counts that size blocks in it
+%% (ruling 9 of 0.83).
+missed(Lines, #d{pack = Pack, missed = M} = D) ->
+    case maps:get(has_lenref, Pack, false) of
+        false -> D;
+        true -> D#d{missed = gt_pack:lenrefs(Lines) ++ M}
+    end.
+
+%% At the end of the scope that holds the count lines: a count that states
+%% units none of which was read.
+check_missed(#d{missed = Missed, counts = Counts} = D) ->
+    case [N || Id <- Missed, N <- [maps:get(Id, Counts, absent)], is_integer(N), N =/= 0] of
+        [] -> ok;
+        [N | _] -> malformed(D, "a count states ~p units and the block they size is not read", [N])
+    end.
+
 lines(Lines, Ext, D) -> lists:foldl(fun(L, Acc) -> line(L, Ext, Acc) end, D, Lines).
 
 line({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, _With}, Ext, D) ->
@@ -167,7 +196,7 @@ line({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, _With}, Ext, D) ->
     end;
 line({uext, Body}, Ext, D) ->
     case at_end(Ext, D) of
-        true -> D;
+        true -> missed(Body, D);
         false ->
             {E, D1} = rd(1, Ext, D),
             D2 = lines(Body, Ext, D1),
@@ -178,7 +207,7 @@ line({uext, Body}, Ext, D) ->
     end;
 line({uchoice, N, IsExt, Alts}, Ext, D) ->
     case at_end(Ext, D) of
-        true -> D;
+        true -> missed(lists:append([B || {_, B} <- Alts]), D);
         false ->
             {E, D1} = case IsExt of
                           true -> rd(1, Ext, D);
@@ -211,7 +240,7 @@ line({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, _With}, Ext
         true -> D;
         false ->
             W = gt_engine:chars_width(Set),
-            {Codes, D1} = until_scan(Code, W, 2040 div W, limit(Ext, D), D, []),
+            {Codes, D1} = until_scan(Code, W, 2040 div W, cut(Ext, D), D, []),
             lists:foldl(fun(KV, Acc) ->
                                 set_key_with(KV, fun() -> gt_engine:until_text(Set, Codes) end,
                                              Tr, LenT, Acc)
@@ -239,7 +268,7 @@ line({sconst, Len, _}, Ext, D) -> skip(Len, Ext, D);
 line({pad, Len}, Ext, D) -> skip(Len, Ext, D);
 %% `align` stops at the end of the input or extent without error
 line({align, N}, Ext, #d{pos = Pos} = D) ->
-    D#d{pos = max(Pos, min(Pos + (N - Pos rem N) rem N, limit(Ext, D)))};
+    D#d{pos = max(Pos, min(Pos + (N - Pos rem N) rem N, cut(Ext, D)))};
 line({swhen, _, _, _, _, _} = L, Ext, #d{pos = Pos, pack = Pack} = D) ->
     case whens([L], Pos, Ext, D, []) of
         false -> gt_engine:conv_error('no-kind', Pack, "a common when does not hold", []);
@@ -262,19 +291,19 @@ line({presence, Id, N}, Ext, #d{pos = Pos, msg = Msg} = D) ->
 line({ifb, Conds, Body}, Ext, D) ->
     case holds(Conds, D#d.env) of
         true -> lines(Body, Ext, D);
-        false -> D
+        false -> missed(Body, D)
     end;
 line({opt, Body}, Ext, D) ->
     case bit(Ext, D) of
-        absent -> D;
-        {0, D1} -> D1;
+        absent -> missed(Body, D);
+        {0, D1} -> missed(Body, D1);
         {1, D1} -> lines(Body, Ext, D1)
     end;
 line({chain, First, Parts, EndsFx}, Ext, D) ->
     parts(Parts, EndsFx, Ext, lines(First, Ext, D));
 line({len, Len, Unit, Plus, Body}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
-        absent -> D;
+        absent -> missed(Body, D);
         ok ->
             Count = gt_bits:read(D#d.msg, Pos, Len) - Plus,
             Start = Pos + Len,
@@ -286,12 +315,15 @@ line({len, Len, Unit, Plus, Body}, Ext, #d{pos = Pos} = D) ->
                 true -> malformed(D, "the length at bit ~p states less than nothing", [Pos]);
                 false -> ok
             end,
-            case End =< limit(Ext, D) of
-                true -> ok;
-                false -> malformed(D, "the length at bit ~p reaches beyond what holds it", [Pos])
-            end,
-            D1 = lines(Body, End, D#d{pos = Start, unit = Unit}),
-            D1#d{pos = End, unit = D#d.unit}   % what no line read is skipped
+            block(Body, Start, End, Unit, Ext, D)
+    end;
+%% `length @<name> units <u>` (0.83): absent at the end of the extent around it
+%% whatever its count states (ruling 4), else a block of the count's units
+line({lenref, Id, U, Body}, Ext, #d{pos = Pos, counts = Cs} = D) ->
+    case {at_end(Ext, D), maps:get(Id, Cs, absent)} of
+        {true, _} -> missed(Body, missed_one(Id, D));
+        {false, absent} -> missed(Body, D);
+        {false, N} -> block(Body, Pos, Pos + N * U, unit(U), Ext, D)
     end;
 line({lenwhole, Len, Plus}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
@@ -368,6 +400,12 @@ line({inner, Format, Partial, Reach}, Ext, #d{pos = Pos, pack = Pack} = D) ->
         true -> ok;
         false -> malformed(D, "the extent of the inner message ends beyond the input", [])
     end,
+    %% a whole length read in the block is the end of the input (ruling 16 of
+    %% 0.83); at message level the extent ends there
+    case Ext =:= none orelse Ext =< D#d.hard of
+        true -> ok;
+        false -> malformed(D, "the extent of the inner message ends beyond the whole length", [])
+    end,
     Hex = gt_hex:bytes_to_hex(gt_bits:slice(D#d.msg, Pos, End)),
     IE = try gt_engine:decode_inner(Inner#{shadow => D#d.lists, exact => not Partial}, Hex)
          catch error:{convert_error, Kind, _} = Err2:St ->
@@ -411,6 +449,23 @@ skip(Len, Ext, #d{pos = Pos} = D) ->
         absent -> D;
         ok -> D#d{pos = Pos + Len}
     end.
+
+%% A `length` block from Start to End, counted in Unit: End lies within the
+%% extent around it and the input, or a whole length read before (rulings 5 and
+%% 17 of 0.83); what no line read is skipped.
+block(Body, Start, End, Unit, Ext, D) ->
+    case End =< cut(Ext, D) of
+        true -> ok;
+        false -> malformed(D, "the length block at bit ~p reaches beyond what holds it", [Start])
+    end,
+    D1 = lines(Body, End, D#d{pos = Start, unit = Unit}),
+    D1#d{pos = End, unit = D#d.unit}.
+
+%% A `length @` block is counted in bytes when its unit is whole bytes.
+unit(U) when U rem 8 =:= 0 -> bytes;
+unit(_U) -> bits.
+
+missed_one(Id, #d{missed = M} = D) -> D#d{missed = [Id | M]}.
 
 %% One bit at the cursor -> absent | {Bit, D}.
 bit(Ext, #d{pos = Pos} = D) ->
@@ -522,8 +577,8 @@ parts([], true, Ext, D) ->
     end;
 parts([Part | Rest], EndsFx, Ext, D) ->
     case bit(Ext, D) of
-        absent -> D;
-        {0, D1} -> D1;
+        absent -> missed(lists:append([Part | Rest]), D);
+        {0, D1} -> missed(lists:append([Part | Rest]), D1);
         {1, D1} -> parts(Rest, EndsFx, Ext, lines(Part, Ext, D1))
     end.
 
@@ -537,7 +592,7 @@ group({count, Len}, Body, Ext, #d{pos = Pos} = D, Release) ->
             %% the count is compared with the limit before any item is read
             Release(),
             reserve(N, D),
-            case N > limit(Ext, D) - Pos1 of
+            case N > cut(Ext, D) - Pos1 of
                 true -> malformed(D, "a count of ~p is larger than the bits left", [N]);
                 false -> ok
             end,
@@ -568,7 +623,8 @@ group({countref, Id}, Body, Ext, #d{pos = Pos} = D, Release) ->
             %% (ruling 14 of 0.8, ruling 20 of 0.21)
             Release(),
             reserve(N, D),
-            case N > limit(Ext, D) - Pos of
+            %% the cursor may stand beyond a whole length (ruling 16 of 0.83)
+            case N > max(0, cut(Ext, D) - Pos) of
                 true -> malformed(D, "a count of ~p is larger than the bits left", [N]);
                 false -> ok
             end,
@@ -625,7 +681,7 @@ uitems(N, Body, Ext, #d{pos = Pos} = D, Release) ->
     %% `count` (ruling 7d of 0.11)
     Release(),
     reserve(N, D),
-    case N > limit(Ext, D) - Pos of
+    case N > max(0, cut(Ext, D) - Pos) of
         true -> malformed(D, "a count of ~p is larger than the bits left", [N]);
         false -> lists:mapfoldl(fun(_, Acc) -> item_lines(Body, Ext, Acc) end, D, lists:seq(1, N))
     end.
@@ -692,8 +748,10 @@ item(Body, Ext, D) ->
     gt_engine:items_reserve(1, D#d.pack),
     item_lines(Body, Ext, D).
 
-item_lines(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, failed = F, top = Top} = D) ->
-    D1 = lines(Common, Ext, D#d{model = #{}, lists = #{}, failed = [], top = false}),
+item_lines(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, failed = F, top = Top, counts = Cs, missed = Mi} = D) ->
+    %% a count is of its group body alone (ruling 9 of 0.21)
+    D1 = lines(Common, Ext, D#d{model = #{}, lists = #{}, failed = [], top = false,
+                                counts = #{}, missed = []}),
     {Item, D2} =
         case Kinds of
             [] -> {#{model => D1#d.model, lists => D1#d.lists}, D1};
@@ -702,8 +760,9 @@ item_lines(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, fa
                 {#{model => Dk#d.model, lists => Dk#d.lists,
                    kind => {maps:get(name, D#d.pack), K}}, Dk}
         end,
+    check_missed(D2),
     check_failed(D2),
-    {Item, D2#d{model = M, lists = Ls, failed = F, top = Top}}.
+    {Item, D2#d{model = M, lists = Ls, failed = F, top = Top, counts = Cs, missed = Mi}}.
 
 %% ---- ASN.1 unaligned PER (0.19) ----
 -define(I64MIN, -9223372036854775808).
@@ -1167,6 +1226,25 @@ eline({len, Len, Unit, Plus, Body}, _Rest, Src, #e{pos = Pos, pack = Pack, unit 
           end,
     check_starts(E1#e.starts, End, Pack),
     E1#e{pos = End, segs = [{Pos, Len, fits(Count + Plus, Len, Pack)} | E1#e.segs],
+         unit = OUnit, starts = OStarts, rest_hit = E#e.rest_hit};
+%% `length @<name> units <u>` (0.83): the block, then its length in units for
+%% the count, filled in when the message is finished
+eline({lenref, Id, U, Body}, _Rest, Src, #e{pos = Start, pack = Pack, unit = OUnit, starts = OStarts} = E) ->
+    Unit = unit(U),
+    E1 = elines(Body, Src, E#e{unit = Unit, starts = [], rest_hit = false}),
+    Bits = E1#e.pos - Start,
+    Size = case Unit of
+               bits -> Bits;
+               bytes -> (Bits + 7) div 8 * 8
+           end,
+    check_starts(E1#e.starts, Start + Size, Pack),
+    case Size rem U of
+        0 -> ok;
+        _ -> gt_engine:conv_error('transform-encode', Pack,
+                                  "a block of ~p bits is not a whole number of units of ~p", [Size, U])
+    end,
+    #e{counts = Cs, cvals = CV} = E1,
+    E1#e{pos = Start + Size, cvals = CV#{maps:get(Id, Cs) => Size div U},
          unit = OUnit, starts = OStarts, rest_hit = E#e.rest_hit};
 eline({lenwhole, Len, Plus}, _Rest, _Src, #e{pos = Pos, segs = Segs} = E) ->
     E#e{pos = Pos + Len, segs = [{whole, Pos, Len, Plus} | Segs]};
@@ -1742,6 +1820,7 @@ has1({sgroup, List, _, _}, #{lists := Lists}, _Pack) ->
 has1({ifb, _, Body}, Src, Pack) -> has(Body, Src, Pack);
 has1({opt, Body}, Src, Pack) -> has(Body, Src, Pack);
 has1({len, _, _, _, Body}, Src, Pack) -> has(Body, Src, Pack);
+has1({lenref, _, _, Body}, Src, Pack) -> has(Body, Src, Pack);
 has1({chain, First, Parts, _}, Src, Pack) -> has(lists:append([First | Parts]), Src, Pack);
 has1({switch, Key, Ref, Cases, Else}, Src, Pack) ->
     case predict(Key, Ref, Cases, Else, Src) of
@@ -1797,6 +1876,7 @@ sim({opt, Body}, Src, Pack) ->
         false -> Src
     end;
 sim({len, _, _, _, Body}, Src, Pack) -> sims(Body, Src, Pack);
+sim({lenref, _, _, Body}, Src, Pack) -> sims(Body, Src, Pack);
 sim({chain, First, Parts, _}, Src, Pack) -> sim_parts(Parts, sims(First, Src, Pack), Pack);
 sim({switch, Key, Ref, Cases, Else}, Src, Pack) ->
     case predict(Key, Ref, Cases, Else, Src) of
@@ -1837,6 +1917,7 @@ scan1({uchoice, _, _, Alts}, Src, Id, Pack, Acc) ->
     {_, Body} = chosen(Alts, Src, Pack),
     scan(Body, Src, Id, Pack, Acc);
 scan1({len, _, _, _, Body}, Src, Id, Pack, Acc) -> scan(Body, Src, Id, Pack, Acc);
+scan1({lenref, _, _, Body}, Src, Id, Pack, Acc) -> scan(Body, Src, Id, Pack, Acc);
 scan1({chain, First, Parts, _}, Src, Id, Pack, Acc) ->
     scan(lists:append([First | Parts]), Src, Id, Pack, Acc);
 scan1({switch, Key, Ref, Cases, Else}, Src, Id, Pack, Acc) ->
