@@ -543,6 +543,10 @@ the end of the record. `--convert` does not trim the input of a `text` format.
   instant (the milliseconds are dropped, not rounded), over the range of
   `iso8601_ms`. Valid on `xml`, `geojson`, `json` and `text`, with no
   parameter, on an `int` key.
+- `iso8601_si` (Version 0.55): read as `iso8601_ms`; written with three
+  fraction digits, or none at a whole second. Valid on `xml`, `json` and
+  `geojson`. `uscale` and `sscale` on `bits` take `<places>`, and `utf8` is
+  valid on `bits` at a bit position or bit length.
 - `bits` (ruling 4): a value outside its field's range is `transform-encode`;
   the parameters of `linscale`, `uscale` and `sscale` are checked at load.
 - Load (ruling 5): every failure has a kind, and each line is checked in the

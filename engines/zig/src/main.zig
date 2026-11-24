@@ -431,12 +431,14 @@ const TKind = enum {
     codenum,
     // one part of a token, on the text wires (Version 0.64)
     part,
+    // Version 0.55
+    iso8601_si,
 };
 
 // A transform of Version 0.15: on a wire it does not list it is `bad-directive`.
 fn isValueTransform(k: TKind) bool {
     return switch (k) {
-        .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal, .tscale, .iscale, .iso8601_short => true,
+        .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal, .tscale, .iscale, .iso8601_short, .iso8601_si => true,
         else => false,
     };
 }
@@ -449,7 +451,7 @@ const KindCat = enum { text, bits, proto, rec, tlv, cbor };
 
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
-        .string, .float, .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .tscale, .iscale, .part => .text,
+        .string, .float, .int, .iso8601_ms, .iso8601_short, .iso8601_s, .iso8601_si, .bool_, .tscale, .iscale, .part => .text,
         // `codenum` is a transform of `bits` too: see `bitsTransform`
         .codestr, .codenum => .text,
         .uint, .twos, .linscale, .uscale, .sscale, .f32_, .f64_, .ascii, .sixbit => .bits,
@@ -463,7 +465,7 @@ fn kindCategory(k: TKind) KindCat {
 
 // The transforms of the `bits` wire.
 fn bitsTransform(k: TKind) bool {
-    return kindCategory(k) == .bits or k == .hex or k == .codenum;
+    return kindCategory(k) == .bits or k == .hex or k == .codenum or k == .utf8;
 }
 
 // Version 0.46: the transforms over a list of the pack's character sets.
@@ -489,6 +491,8 @@ const Transform = struct {
     // uscale / sscale, and the float scales of 0.15
     factor: Factor = .{},
     offset: f64 = 0,
+    // Version 0.55: `uscale` and `sscale` on bits, `<places>` (0 to 15)
+    places: ?u8 = null,
     // text: `int:<w>`, `dec:<f>[:<w>]` (w 0: none), `dm:<d>:<f>:<PN>`,
     // `hms:<f>`, `hms_dmy:<f>`
     w: usize = 0,
@@ -1393,7 +1397,7 @@ fn yields(k: TKind) KeyType {
     return switch (k) {
         .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal, .text_, .bytes, .code, .codestr, .part => .string,
         .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms, .smscale, .f32scale, .f64scale, .tscale => .float,
-        .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale, .epoch_s, .codenum => .int,
+        .int, .iso8601_ms, .iso8601_short, .iso8601_s, .iso8601_si, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale, .epoch_s, .codenum => .int,
     };
 }
 
@@ -1651,6 +1655,7 @@ fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
     const simple = [_]struct { n: []const u8, k: TKind }{
         .{ .n = "string", .k = .string },   .{ .n = "float", .k = .float },
         .{ .n = "int", .k = .int },         .{ .n = "iso8601_ms", .k = .iso8601_ms }, .{ .n = "iso8601_short", .k = .iso8601_short }, .{ .n = "iso8601_s", .k = .iso8601_s },
+        .{ .n = "iso8601_si", .k = .iso8601_si },
         .{ .n = "bool", .k = .bool_ },      .{ .n = "uint", .k = .uint },
         .{ .n = "twos", .k = .twos },       .{ .n = "f32", .k = .f32_ },
         .{ .n = "f64", .k = .f64_ },        .{ .n = "ascii", .k = .ascii },
@@ -1697,7 +1702,13 @@ fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
         t.factor = parseFactor(fac, true) orelse return bds;
         if (it.next()) |off| {
             t.offset = parseDecimal(off) catch return bds;
-            if (it.next() != null) return bds;
+            if (it.next()) |pl| {
+                // Version 0.55: a decimal integer, leading zeros allowed, 0 to 15
+                const v = parseUnsigned(pl) orelse return bds;
+                if (v > 15) return bds;
+                t.places = @intCast(v);
+                if (it.next() != null) return bds;
+            }
         }
         return t;
     }
@@ -2508,8 +2519,10 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             .uint, .twos, .uscale, .sscale, .f32_, .f64_, .utf8, .hex => {},
             else => return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is not valid on the tlv wire", .{ ln.lineno, ln.key }),
         }
-    } else if (ln.isField() and (ln.transform.kind == .hex or ln.transform.kind == .codenum) and p.wire == .bits) {
-        // `hex` (Version 0.22) and `codenum` (Version 0.46) on bits
+        // `<places>` is for `uscale` and `sscale` on bits (Version 0.55)
+        if (ln.transform.places != null) return bad(diag, alloc, E.@"bad-directive", "line {d}: <places> is not an argument on the tlv wire", .{ln.lineno});
+    } else if (ln.isField() and (ln.transform.kind == .hex or ln.transform.kind == .codenum or ln.transform.kind == .utf8) and p.wire == .bits) {
+        // `hex` (Version 0.22), `codenum` (Version 0.46) and `utf8` (Version 0.55) on bits
     } else if (ln.isField() and kindCategory(ln.transform.kind) == .tlv) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is valid only on the tlv wire", .{ ln.lineno, ln.key });
     } else if (ln.isField() and p.wire == .text) {
@@ -2553,8 +2566,8 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
     if (p.wire != .bits and p.wire != .text and (ln.swap or ln.trim or ln.optional)) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: swap, trim and optional are for the bits wire", .{ln.lineno});
     }
-    if (ln.trim and ln.transform.kind != .ascii and ln.transform.kind != .sixbit) {
-        return bad(diag, alloc, E.@"bad-directive", "line {d}: trim is for the ascii and sixbit transforms", .{ln.lineno});
+    if (ln.trim and ln.transform.kind != .ascii and ln.transform.kind != .sixbit and ln.transform.kind != .utf8) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: trim is for the ascii, sixbit and utf8 transforms", .{ln.lineno});
     }
     if (ln.swap and ln.transform.kind == .sixbit) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: swap on sixbit", .{ln.lineno});
@@ -5636,7 +5649,9 @@ const iso_max_ms: i64 = 253402300799999;
 // are 0, else their digits with trailing zeros removed. `iso8601_ms` writes
 // 0001-01-01 to 9999-12-31 (ruling 3f of 0.11); `iso8601_short` 0000-01-01
 // to 9999-12-31 (ruling 11 of 0.18), checked on the civil year below.
-fn msToIso(alloc: std.mem.Allocator, ms: i64, short: bool) ![]const u8 {
+fn msToIso(alloc: std.mem.Allocator, ms: i64, kind: TKind) ![]const u8 {
+    const short = kind == .iso8601_short;
+    const si = kind == .iso8601_si; // Version 0.55: no fraction at a whole second, else three digits
     if (!short and (ms < iso_min_ms or ms > iso_max_ms)) return E.@"transform-encode"; // ruling 3f of 0.11
     const total_secs = @divFloor(ms, 1000);
     const msec = @mod(ms, 1000);
@@ -5648,7 +5663,7 @@ fn msToIso(alloc: std.mem.Allocator, ms: i64, short: bool) ![]const u8 {
     const ss = rem - mm * 60;
     const c = civilFromDays(days);
     if (c.y < 0 or c.y > 9999) return E.@"transform-encode"; // no four-digit year
-    if (short) {
+    if (short or si) {
         const head = try std.fmt.allocPrint(alloc, "{d:0>4}-{d:0>2}-{d:0>2}T{d:0>2}:{d:0>2}:{d:0>2}", .{
             @as(u64, @intCast(c.y)), @as(u64, @intCast(c.m)), @as(u64, @intCast(c.d)),
             @as(u64, @intCast(hh)),  @as(u64, @intCast(mm)),  @as(u64, @intCast(ss)),
@@ -5657,7 +5672,9 @@ fn msToIso(alloc: std.mem.Allocator, ms: i64, short: bool) ![]const u8 {
         var digits: [3]u8 = undefined;
         _ = std.fmt.bufPrint(&digits, "{d:0>3}", .{@as(u64, @intCast(msec))}) catch unreachable;
         var n: usize = 3;
-        while (digits[n - 1] == '0') n -= 1;
+        if (!si) while (digits[n - 1] == '0') {
+            n -= 1;
+        };
         return std.fmt.allocPrint(alloc, "{s}.{s}Z", .{ head, digits[0..n] });
     }
     return std.fmt.allocPrint(alloc, "{d:0>4}-{d:0>2}-{d:0>2}T{d:0>2}:{d:0>2}:{d:0>2}.{d:0>3}Z", .{
@@ -5671,7 +5688,7 @@ fn msToIso(alloc: std.mem.Allocator, ms: i64, short: bool) ![]const u8 {
 // iso8601_ms less `.fff`, so the second that holds the instant, never
 // rounded; the range is that of iso8601_ms (ruling 3f of 0.11).
 fn msToIsoSeconds(alloc: std.mem.Allocator, ms: i64) ![]const u8 {
-    const full = try msToIso(alloc, ms, false);
+    const full = try msToIso(alloc, ms, .iso8601_ms);
     return std.fmt.allocPrint(alloc, "{s}Z", .{full[0..19]});
 }
 
@@ -6347,7 +6364,7 @@ fn jsonToMV(t: TKind, val: JValue) !MV {
             if (!(f >= -9223372036854775808.0 and f < 9223372036854775808.0) or @floor(f) != f) return E.@"transform-decode";
             return MV{ .int = @intFromFloat(f) };
         },
-        .iso8601_ms, .iso8601_short, .iso8601_s => {
+        .iso8601_ms, .iso8601_short, .iso8601_s, .iso8601_si => {
             if (val != .string) return E.@"transform-decode";
             return MV{ .int = try isoToMs(val.string) };
         },
@@ -6441,9 +6458,9 @@ fn jsonRaw(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
             if (mv != .int) return E.@"transform-encode";
             return intToStr(alloc, mv.int);
         },
-        .iso8601_ms, .iso8601_short => {
+        .iso8601_ms, .iso8601_short, .iso8601_si => {
             if (mv != .int) return E.@"transform-encode";
-            return jsonStr(alloc, try msToIso(alloc, mv.int, tr.kind == .iso8601_short));
+            return jsonStr(alloc, try msToIso(alloc, mv.int, tr.kind));
         },
         .iso8601_s => {
             if (mv != .int) return E.@"transform-encode";
@@ -6728,6 +6745,21 @@ fn bitsDecodeField(alloc: std.mem.Allocator, p: *const Pack, buf_in: []const u8,
         for (bytes[0..end]) |b| if (b < 0x20 or b > 0x7e) return E.@"transform-decode";
         return MV{ .str = bytes[0..end] };
     }
+    if (t.kind == .utf8) {
+        // Version 0.55: the bytes as `ascii` takes them, read as UTF-8
+        const n = ln.blen / 8;
+        const bytes = try alloc.alloc(u8, n);
+        for (bytes, 0..) |*b, j| b.* = @intCast(getBits(buf, p.msb, start + 8 * j, 8));
+        var end: usize = n;
+        while (end > 0 and bytes[end - 1] == 0) end -= 1; // trailing NUL bytes removed
+        if (ln.trim) {
+            while (end > 0 and bytes[end - 1] == 0x20) end -= 1; // then trailing spaces
+        }
+        const txt = bytes[0..end];
+        if (std.mem.indexOfScalar(u8, txt, 0) != null) return E.@"transform-decode";
+        if (!std.unicode.utf8ValidateSlice(txt)) return E.@"transform-decode";
+        return MV{ .str = txt };
+    }
     if (t.kind == .sixbit) {
         // each six bits, first to last in the pack's bit order, as one
         // character: 0..31 as `@`..`_`, 32..63 as space..`?` (Version 0.14)
@@ -6754,7 +6786,9 @@ fn bitsDecodeField(alloc: std.mem.Allocator, p: *const Pack, buf_in: []const u8,
         .uscale, .sscale => {
             const v: f64 = if (t.kind == .uscale) @floatFromInt(bits) else @floatFromInt(signExtend(bits, ln.blen));
             // in doubles, in this order: v * factor (or v * num / den), then + offset
-            return MV{ .float = t.factor.mul(v) + t.offset };
+            const x = t.factor.mul(v) + t.offset;
+            if (t.places) |pl| return MV{ .float = try roundPlaces(x, pl) };
+            return MV{ .float = x };
         },
         .f32_ => {
             const f: f32 = @bitCast(@as(u32, @intCast(bits)));
@@ -7088,6 +7122,22 @@ fn bitsEncodeField(ln: *const Line, mv: MV) !u64 {
     }
 }
 
+// Version 0.55: the `<places>` of `uscale` and `sscale`. `x * 10^places`,
+// rounded half away from zero, divided by `10^places`; `x` itself when the
+// product is not finite or its rounding reaches 10^15 (step 4); a value that
+// is not finite is `transform-decode` (ruling 5).
+fn roundPlaces(x: f64, places: u8) !f64 {
+    if (!std.math.isFinite(x)) return E.@"transform-decode";
+    const tens = [16]f64{ 1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15 };
+    const p = tens[places]; // each exact
+    const y = x * p;
+    if (!std.math.isFinite(y)) return x;
+    const r = @round(y); // half away from zero
+    if (!(@abs(r) < 1e15)) return x;
+    const q = r / p;
+    return if (q == 0) 0.0 else q;
+}
+
 // Write one field's `blen` bits at absolute bit `start` of `out`.
 fn bitsPutField(out: []u8, msb: BitOrd, start: usize, ln: *const Line, mv: MV) !void {
     if (ln.transform.kind == .chars) return charsEncode(ln.transform.cset, out, msb, start, ln.blen, mv, ln.stop_code);
@@ -7105,6 +7155,18 @@ fn bitsPutField(out: []u8, msb: BitOrd, start: usize, ln: *const Line, mv: MV) !
         for (mv.str) |b| if (b < 0x20 or b > 0x7e) return E.@"transform-encode";
         for (0..n) |j| {
             const b: u8 = if (j < mv.str.len) mv.str[j] else 0; // NUL-padded
+            setBits(out, msb, start + 8 * j, 8, b);
+        }
+        return;
+    }
+    if (ln.transform.kind == .utf8) {
+        // Version 0.55: the text's UTF-8 bytes, NUL-padded
+        const n = ln.blen / 8;
+        if (mv != .str or mv.str.len > n) return E.@"transform-encode"; // longer text
+        if (std.mem.indexOfScalar(u8, mv.str, 0) != null) return E.@"transform-encode";
+        if (!std.unicode.utf8ValidateSlice(mv.str)) return E.@"transform-encode";
+        for (0..n) |j| {
+            const b: u8 = if (j < mv.str.len) mv.str[j] else 0;
             setBits(out, msb, start + 8 * j, 8, b);
         }
         return;
@@ -7748,7 +7810,7 @@ fn textToMV(t: TKind, raw: []const u8) !MV {
         .string => MV{ .str = raw },
         .float => MV{ .float = try parseDecimal(raw) },
         .int => MV{ .int = try parseDecimalInt(raw) },
-        .iso8601_ms, .iso8601_short, .iso8601_s => MV{ .int = try isoToMs(raw) },
+        .iso8601_ms, .iso8601_short, .iso8601_s, .iso8601_si => MV{ .int = try isoToMs(raw) },
         else => E.@"transform-decode",
     };
 }
@@ -8624,9 +8686,9 @@ fn xmlText(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
             if (mv != .int) return E.@"transform-encode";
             return intToStr(alloc, mv.int);
         },
-        .iso8601_ms, .iso8601_short => {
+        .iso8601_ms, .iso8601_short, .iso8601_si => {
             if (mv != .int) return E.@"transform-encode";
-            return msToIso(alloc, mv.int, tr.kind == .iso8601_short);
+            return msToIso(alloc, mv.int, tr.kind);
         },
         .iso8601_s => {
             if (mv != .int) return E.@"transform-encode";
@@ -12209,7 +12271,7 @@ fn bitsLenOk(t: Transform, blen: usize) bool {
     return switch (t.kind) {
         .f32_, .f32scale => blen == 32,
         .f64_, .f64scale => blen == 64,
-        .ascii => blen >= 8 and blen <= 2040 and blen % 8 == 0,
+        .ascii, .utf8 => blen >= 8 and blen <= 2040 and blen % 8 == 0,
         .sixbit => blen >= 6 and blen <= 1530 and blen % 6 == 0,
         .smag, .smscale => blen >= 2 and blen <= 64,
         .chars => blk: {
@@ -13220,6 +13282,7 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
                 // Version 0.19: the transforms a UPER locator takes; `swap`,
                 // `trim` (ruling 10) and `absent` (ruling 22) are refused
                 if (!uperTakes(u.form, t.kind)) return bad(diag, alloc, bd, "line {d}: the locator {s} does not take the transform of {s}", .{ n.lineno, n.ln.locator, n.ln.key });
+                if (t.places != null) return bad(diag, alloc, bd, "line {d}: <places> is not an argument on a UPER locator", .{n.lineno});
                 if (n.ln.swap or n.ln.trim) return bad(diag, alloc, bd, "line {d}: swap and trim are not options of a UPER locator", .{n.lineno});
                 if (n.ln.absent_raw != null) return bad(diag, alloc, bd, "line {d}: absent is not an option of a UPER locator", .{n.lineno});
             } else if (n.ln.until_raw) |raw| {
@@ -13234,7 +13297,7 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
                 if (!bitsLenOk(n.ln.transform, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
                 try stopCheck(alloc, &n.ln, n.lineno, diag);
                 if (n.ln.swap and t.kind == .hex) return bad(diag, alloc, bd, "line {d}: swap on hex", .{n.lineno});
-                if (n.ln.trim and t.kind != .ascii and t.kind != .sixbit) return bad(diag, alloc, bd, "line {d}: trim is for the ascii and sixbit transforms", .{n.lineno});
+                if (n.ln.trim and t.kind != .ascii and t.kind != .sixbit and t.kind != .utf8) return bad(diag, alloc, bd, "line {d}: trim is for the ascii, sixbit and utf8 transforms", .{n.lineno});
                 if (n.ln.swap and t.kind == .sixbit) return bad(diag, alloc, bd, "line {d}: swap on sixbit", .{n.lineno});
                 if (n.ln.swap and n.ln.blen % 8 != 0) return bad(diag, alloc, bd, "line {d}: swap needs a bit length that is a multiple of 8, not {d}", .{ n.lineno, n.ln.blen });
                 if (n.ln.swap and (t.kind == .chars or t.kind == .octal)) return bad(diag, alloc, bd, "line {d}: swap with {s}", .{ n.lineno, @tagName(t.kind) });
