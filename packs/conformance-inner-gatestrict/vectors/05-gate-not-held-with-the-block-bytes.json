@@ -1,0 +1,9 @@
+{
+  "name": "gate-not-held-with-the-block-bytes",
+  "from": "conformance-inner-gatestrict",
+  "to": "conformance-inner-gatestrict",
+  "input": "090502070109",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 1; the nested gate is not evaluated"
+}

@@ -1,0 +1,14 @@
+# Conformance probe pack (spec 0.34, bytes after the inner message are
+# malformed-wire). Public. No kinds.
+#
+#   n, then one conformance-inner-restsub message
+format     conformance-inner-restsubstrict
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+inner   conformance-inner-restsub

@@ -48,7 +48,10 @@ const std::set<std::string>& pack_directives() {
                                          "switch", "case", "else",
                                          // v0.21, sequential layouts: `count <name> <len> [plus <n>]`,
                                          // checked as the pack is read.
-                                         "count"};
+                                         "count",
+                                         // v0.34, `inner <format> [partial]`: where it stands and the
+                                         // pack that holds it are checked after the file is read.
+                                         "inner"};
     return s;
 }
 
@@ -56,7 +59,9 @@ const std::set<std::string>& pack_directives() {
 const std::set<std::string>& after_wire() {
     static const std::set<std::string> s{"root", "field", "when",  "const", "group", "end",   "word_bytes",
                                          "bit_order", "layout", "also", "pad", "align", "presence", "if",
-                                         "opt",  "chain", "fx",    "length"};
+                                         "opt",  "chain", "fx",    "length",
+                                         // v0.34
+                                         "inner"};
     return s;
 }
 
@@ -280,6 +285,8 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         // v0.33: `at <n>` likewise (ruling 10).
         else if (kw == "when" && nargs >= 3 && (t[3] == "as" || t[3] == "at")) {
         } else if (kw == "when" || kw == "const" || kw == "default") count(nargs == 2, "two arguments");
+        // v0.34: the word after the format is checked after the file.
+        else if (kw == "inner") count(nargs == 1 || nargs == 2, "one or two arguments");
         else if (kw == "map") count(nargs == 3, "three arguments");
         else if (kw == "typemap") count(nargs == 2, "two arguments");
         else if (kw == "end" || kw == "else") count(nargs == 0, "no argument");

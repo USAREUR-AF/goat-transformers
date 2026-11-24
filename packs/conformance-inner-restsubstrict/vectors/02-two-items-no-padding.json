@@ -1,0 +1,14 @@
+{
+  "name": "two-items-no-padding",
+  "from": "conformance-inner-restsubstrict",
+  "to": "conformance-inner-restsubstrict",
+  "input": "0900a00b",
+  "expect": "0900a00b",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "11"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, 24 bits, two items; nothing left"
+}

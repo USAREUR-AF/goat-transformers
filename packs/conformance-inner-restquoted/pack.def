@@ -1,0 +1,12 @@
+# Conformance probe pack (spec 0.34): `partial` in double quotes is
+# `partial`. Public. No kinds.
+format     conformance-inner-restquoted
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+inner   conformance-inner-fixed  "partial"

@@ -9,7 +9,7 @@
 %%   value has its first bit most significant. Read as one big-endian integer
 %%   of N bits, bit i of the message is bit N - 1 - i of the integer.
 -module(gt_bits).
--export([open/2, bit_size/1, read/3,
+-export([open/2, bit_size/1, read/3, slice/3, byte_value/2,
          new/2, new_bits/2, write/4, overwrite/4, to_bytes/1,
          unarmor/1, armor/2, peek/3, written_any/3, write_within/5]).
 
@@ -63,6 +63,15 @@ read({lsb, _, Bin}, Off, Len) ->
     Bits = ((Off + Len + 7) div 8 - First) * 8,
     <<_:First/binary, I:Bits/little, _/binary>> = Bin,
     (I bsr (Off rem 8)) band mask(Len).
+
+%% The whole bytes of a message from bit Off to bit End, both multiples of
+%% 8 and within the message: the input of an inner message (0.34).
+slice({_, _, Bin}, Off, End) -> binary:part(Bin, Off div 8, (End - Off) div 8).
+
+%% The value an 8-bit field at a whole byte holds when the byte is B, in a
+%% bit order: B itself, but with its bits reversed under msb-lsb.
+byte_value(B, msblsb) -> rev(B, 8);
+byte_value(B, _Order) -> B.
 
 %% ---- writing ----
 

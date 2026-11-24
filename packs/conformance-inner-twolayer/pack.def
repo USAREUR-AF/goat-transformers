@@ -1,0 +1,12 @@
+# Conformance probe pack naming an inner pack that has an inner line of its
+# own (spec 0.34, one layer only).
+format     conformance-inner-twolayer
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.w  8  uint
+inner   conformance-inner-rest

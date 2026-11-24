@@ -1,0 +1,13 @@
+{
+  "name": "text",
+  "from": "conformance-inner-ascpartial",
+  "to": "conformance-inner-ascpartial",
+  "input": "0941",
+  "expect": "0941",
+  "model": {
+    "probe.n": "9",
+    "probe.s1": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, end 1; partial, nothing to ignore"
+}

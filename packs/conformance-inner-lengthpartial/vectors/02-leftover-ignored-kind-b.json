@@ -1,0 +1,14 @@
+{
+  "name": "leftover-ignored-kind-b",
+  "from": "conformance-inner-lengthpartial",
+  "to": "conformance-inner-lengthpartial",
+  "input": "0905020102ffee0a",
+  "expect": "09030201020a",
+  "model": {
+    "probe.z": "258",
+    "probe.w": "10",
+    "@inner_kind": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; two bytes ignored"
+}

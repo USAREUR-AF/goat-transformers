@@ -1,0 +1,16 @@
+{
+  "name": "shorter-block-held-longer-input-ignored",
+  "from": "conformance-inner-gaterawpartial",
+  "to": "conformance-inner-gaterawpartial",
+  "input": "0905010007",
+  "expect": "09050100",
+  "model": {
+    "probe.n": "9",
+    "probe.y": "0",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: the block of z does not hold and does not count, end 3"
+}

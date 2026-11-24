@@ -1,0 +1,16 @@
+{
+  "name": "not-held-optional-does-not-count-ignored",
+  "from": "conformance-inner-gateoptpartial",
+  "to": "conformance-inner-gateoptpartial",
+  "input": "09050107",
+  "expect": "09050000",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: gate 1 does not hold, end 1; encode of y absent: zero gate bits hold the block (0.17 step 4)"
+}

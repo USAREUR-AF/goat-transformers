@@ -465,6 +465,25 @@ type Pack struct {
 	// bits wire, `encoding uper` (spec 0.19)
 	uper     bool
 	uperLine int // the first `ext`, `choice`, `alt` or `group … size` line, 0 for none
+
+	// `inner` lines (spec 0.34): the formats they name, each once, in line
+	// order, and the line of the first.
+	innerFormats []string
+	innerLine    int
+}
+
+// InnerFormats returns the formats the pack's `inner` lines name, each once,
+// in line order (spec 0.34).
+func (p *Pack) InnerFormats() []string { return append([]string(nil), p.innerFormats...) }
+
+// hasInnerFor reports whether an `inner` line of the pack names format.
+func (p *Pack) hasInnerFor(format string) bool {
+	for _, f := range p.innerFormats {
+		if f == format {
+			return true
+		}
+	}
+	return false
 }
 
 // HasKinds reports whether the pack declares message kinds.
@@ -486,7 +505,7 @@ func (p *Pack) ModelKeys() []string {
 		}
 	}
 	if p.seq {
-		p.sbody.modelKeys(add, "")
+		p.sbody.modelKeys(add, "", nil)
 		p.modelKeys = out
 		return out
 	}
@@ -722,7 +741,8 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
 		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1,
-		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1, "switch": 1, "case": 1, "else": 0, "count": -2}
+		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1, "switch": 1, "case": 1, "else": 0, "count": -2,
+		"inner": -1}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -782,6 +802,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			// `choice <n> [ext]` (spec 0.19): one or two arguments.
 			return nil, perr(ErrBadDirective, n, "", "choice takes 1 or 2 arguments, got %d", len(args))
 		}
+		if kw == "inner" && len(args) > 2 {
+			// `inner <format> [partial]` (spec 0.34): one or two arguments.
+			return nil, perr(ErrBadDirective, n, "", "inner takes 1 or 2 arguments, got %d", len(args))
+		}
 		// `when … as <model-key>` (0.30): a line whose third token is `as`
 		// passes the argument count; its syntax, and `as` outside a
 		// sequential pack, are checked after the file (ruling 16).
@@ -824,6 +848,13 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			// after the file is read (0.19 ruling 21).
 			if late == nil {
 				late = perr(ErrBadDirective, n, "", "%s is valid only in a pack with encoding uper", kw)
+			}
+			continue
+		} else if kw == "inner" {
+			// `inner` outside a sequential bits pack is bad-directive after the
+			// file (spec 0.34, "The inner line").
+			if late == nil {
+				late = perr(ErrBadDirective, n, "", "inner is valid only in a pack on wire bits with layout sequential")
 			}
 			continue
 		} else if seqOnly[kw] && kw != "if" && !(kw == "length" && len(args) == 1) {
@@ -1291,6 +1322,11 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			return nil, perr(ErrBadDirective, first, "", "encoding uper is not valid with armor sixbit")
 		}
 		p.uper = encValue == "uper"
+	}
+	// `inner` in a pack with `armor sixbit` or `encoding uper` (spec 0.34);
+	// `armor hex`, the default, loads.
+	if p.innerLine != 0 && (p.sixbitArmor || p.uper) {
+		return nil, perr(ErrBadDirective, p.innerLine, "", "inner is not valid in a pack with armor sixbit or encoding uper")
 	}
 	// ext, choice, alt and group … size outside a UPER pack (0.19 ruling 9).
 	if !p.uper && p.uperLine != 0 {

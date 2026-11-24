@@ -288,6 +288,29 @@ def check_length(pack, msg, plan):
         )
 
 
+def check_end(pack, msg, plan):
+    """0.34: bytes of an inner input at or after the inner message's end
+    (ruling 14) are `malformed-wire`. The end is the furthest bit, in whole
+    words, over the lines outside any block (`optional` ones included), the
+    held blocks' lines and gate locators, and the items of the groups."""
+    end = _ends(pack, plan)[1]
+    for g in plan.groups:
+        end = max(end, _item_bases(pack, msg, g, 0)[1])
+    if plan.gates:
+        held = gates_held(pack, msg, plan)
+        for g in plan.gates:
+            if held[g]:
+                end = max(end, _start(pack, g.loc) + g.loc[2])
+        for ln in plan.lines:
+            if ln.gate is not None and held[ln.gate]:
+                end = max(end, _start(pack, ln.loc) + ln.loc[2])
+    need = -(-end // (pack.word_bytes * 8)) * pack.word_bytes
+    if msg.nbytes > need:
+        raise MalformedWire(
+            "the inner message ends after %d byte(s); its input has %d" % (need, msg.nbytes), format=pack.name
+        )
+
+
 def gates_held(pack, view, plan):
     """-> {gate: whether its block holds} for the gate blocks of the scope read
     through `view` (0.17). A gate's bits are read as unsigned; a gate any of

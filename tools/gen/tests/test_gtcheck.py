@@ -549,6 +549,17 @@ V011_ORDER |= {"3337", "3338", "3343"}
 V011_ORDER |= {"3349"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
+# And the 0.34 vectors that pin how the `inner` line meets the 0.11 line
+# checks: `missing-wire` and `layout sequential` standing before it (03, 04),
+# `unterminated-quote` (36), and its after-file checks coming after a later
+# `unknown-directive` (07, 31 to 34, 37). gtcheck reads neither order.
+V011_TLV |= {"wire-inner-03", "wire-inner-04", "wire-inner-07", "wire-inner-31", "wire-inner-32",
+             "wire-inner-33", "wire-inner-34", "wire-inner-36", "wire-inner-37"}
+# Likewise for the word `partial`: a second argument that is another word is an
+# after-file check, so a later `bogus` comes first (02, 42, 64, 65), and
+# `missing-wire` (48, 49) and `unterminated-quote` (67) come before it.
+V011_TLV |= {"wire-inner-02", "wire-inner-42", "wire-inner-48", "wire-inner-49", "wire-inner-64",
+             "wire-inner-65", "wire-inner-67"}
 
 class TlvWireTest(Refusals):
     TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"

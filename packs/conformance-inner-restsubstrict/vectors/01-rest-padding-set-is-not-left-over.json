@@ -1,0 +1,14 @@
+{
+  "name": "rest-padding-set-is-not-left-over",
+  "from": "conformance-inner-restsubstrict",
+  "to": "conformance-inner-restsubstrict",
+  "input": "0900af",
+  "expect": "0900a0",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "10"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: one item, 4 bits left are the padding of 0.21"
+}

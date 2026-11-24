@@ -1,0 +1,17 @@
+{
+  "name": "gate-beyond-the-input",
+  "from": "conformance-inner-gatestrict",
+  "to": "conformance-inner-gatestrict",
+  "input": "0905",
+  "expect": "0905",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, 0.17: a gate beyond the input does not hold; end 1"
+}

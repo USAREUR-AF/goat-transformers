@@ -1,0 +1,16 @@
+{
+  "name": "ruling-02-empty-inner-input-gives-an-entity",
+  "from": "conformance-inner-tail",
+  "to": "conformance-inner-tail",
+  "input": "09",
+  "expect": "09",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "0",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3 and ruling 2: the inner pack is called on no bytes and reads none: a rest list of no items, present and empty; it encodes to nothing"
+}

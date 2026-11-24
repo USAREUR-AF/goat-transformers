@@ -172,6 +172,26 @@ class Plan(PkgCase):
             planned["convertibility"], [engine.capability(a, b) for a in formats for b in formats if a != b])
         self.assertEqual(planned["package"]["wires_used"], ["bits", "geojson", "json", "xml"])
 
+    def test_a_plan_holds_the_packs_inner_lines_name_and_carries_their_keys(self):
+        # spec 0.34: conformance-inner-length frames a conformance-inner-seq
+        # message; the package needs that pack to decode it, and the keys it
+        # maps carry to conformance-inner-fixed through it
+        formats = ["conformance-inner-length", "conformance-inner-fixed"]
+        planned = json.loads(self.ok("plan", "--formats", ",".join(formats), "--json", root=REPO))
+        self.assertEqual(planned["constraints"]["formats"], formats)
+        self.assertEqual(planned["package"]["packs"], [
+            "packs/conformance-inner-length", "packs/conformance-inner-fixed", "packs/conformance-inner-seq"])
+        engine = Engine.from_dir(os.path.join(REPO, "packs"), os.path.join(REPO, "model"), packs_only=formats,
+                                 with_inner=True)
+        self.assertEqual(
+            planned["convertibility"], [engine.capability(a, b) for a in formats for b in formats if a != b])
+        there = planned["convertibility"][0]
+        self.assertEqual((there["grade"], there["carried"]), ("partial", ["probe.x", "probe.y", "probe.z"]))
+
+    def test_an_inner_line_naming_no_pack_of_the_tree_adds_none(self):
+        planned = json.loads(self.ok("plan", "--formats", "conformance-inner-missing", "--json", root=REPO))
+        self.assertEqual(planned["package"]["packs"], ["packs/conformance-inner-missing"])
+
     def test_one_format_has_no_pairs_and_a_repeated_format_counts_once(self):
         self.assertEqual(self.plan(formats="alpha")["convertibility"], [])
         self.assertEqual(self.plan(formats=" alpha, ,alpha")["constraints"]["formats"], ["alpha"])
@@ -331,6 +351,20 @@ class Bundle(PkgCase):
             manifest = json.load(fh)
         self.assertEqual(manifest["modules"], list(engine.models))
         self.assertEqual(sorted(manifest["sha256"]), [f for f in self.files_in(self.out) if f != "manifest.json"])
+
+    def test_a_bundle_of_an_outer_format_holds_its_inner_pack_and_decodes_the_payload(self):
+        self.ok("bundle", "--formats", "conformance-inner-length", "--out", self.out, root=REPO)
+        with open(os.path.join(self.out, "manifest.json"), encoding="utf-8") as fh:
+            manifest = json.load(fh)
+        self.assertEqual(manifest["formats"], ["conformance-inner-length"])
+        self.assertEqual(manifest["packs"], ["conformance-inner-length", "conformance-inner-seq"])
+        engine = Engine.from_dir(os.path.join(self.out, "packs"), os.path.join(self.out, "model"))
+        self.assertEqual(engine.formats(), ["conformance-inner-length", "conformance-inner-seq"])
+        # packs/conformance-inner-length/vectors/01: n=9, then 3 bytes of a
+        # conformance-inner-seq message of kind a (x=2, y=3), then w=10
+        message = b"09030102030a"
+        self.assertEqual(engine.convert("conformance-inner-length", "conformance-inner-length", message), message)
+        self.assertEqual(engine.convert("conformance-inner-length", "conformance-inner-seq", message), b"010203")
 
     def test_writing_again_replaces_model_and_packs_and_nothing_else(self):
         self.bundle(formats="beta#2")

@@ -1,0 +1,9 @@
+{
+  "name": "to-the-inner-pack",
+  "from": "conformance-inner-restpartial",
+  "to": "conformance-inner-fixed",
+  "input": "093507ff",
+  "expect": "3507",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: inner keys only"
+}

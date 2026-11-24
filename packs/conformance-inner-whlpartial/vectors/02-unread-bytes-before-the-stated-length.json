@@ -1,0 +1,13 @@
+{
+  "name": "unread-bytes-before-the-stated-length",
+  "from": "conformance-inner-whlpartial",
+  "to": "conformance-inner-whlpartial",
+  "input": "090405aabb",
+  "expect": "090205",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: stated 4, cursor 2, aabb lie before the end; partial, nothing to ignore"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-countonly",
+  "to": "conformance-inner-countonly",
+  "input": "020a0b",
+  "expect": "020a0b",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "11",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.8 Repeats: count 2, items 0a 0b"
+}

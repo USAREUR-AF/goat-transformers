@@ -1,0 +1,15 @@
+{
+  "name": "25-as-key-before-an-outer-field-and-the-inner-line",
+  "from": "conformance-inner-askeep",
+  "to": "conformance-inner-fixed",
+  "grade": "partial",
+  "carried": [
+    "probe.x",
+    "probe.y",
+    "probe.z"
+  ],
+  "dropped": [
+    "probe.n",
+    "probe.w"
+  ]
+}

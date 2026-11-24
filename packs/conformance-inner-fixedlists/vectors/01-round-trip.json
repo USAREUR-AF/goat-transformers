@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-fixedlists",
+  "to": "conformance-inner-fixedlists",
+  "input": "0a0b0c0d",
+  "expect": "0a0b0c0d",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.deltas.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.7: two fixed lists of two items"
+}

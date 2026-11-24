@@ -26,12 +26,12 @@ Status: Built. Exported by `goat_transformers`; bytes go in and bytes come out.
 
 | Call | Does |
 |---|---|
-| `Engine.from_dir(packs_dir, models_dir=None, max_distribution="controlled", packs_only=None, profile=None)` | loads every `<models_dir>/*.def` (default: `model` beside `packs_dir`), then every `<packs_dir>/<format>/pack.def`; with `packs_only`, only the named packs and the modules they use; with `profile`, only the modules and packs of that licence profile (Licence profiles, below) |
+| `Engine.from_dir(packs_dir, models_dir=None, max_distribution="controlled", packs_only=None, profile=None, with_inner=False)` | loads every `<models_dir>/*.def` (default: `model` beside `packs_dir`), then every `<packs_dir>/<format>/pack.def`; with `packs_only`, only the named packs and the modules they use (with `with_inner`, also the packs their `inner` lines name, transitively, Version 0.34); with `profile`, only the modules and packs of that licence profile (Licence profiles, below) |
 | `Engine(max_distribution=..., max_items=100000)`, `load_model(text, source=...)`, `load(text, source=...)` | an empty engine; load one model module, then one pack, from text. A second pack with a loaded `format` name is `duplicate-format`, and the first stays loaded |
 | `set_max_items(n)` | the limit on list items one decode holds, over every list at every level (ruling 7 of 0.11); 0 or more, 100,000 by default. Going over it is `malformed-wire`; `encode` is not limited |
 | `formats()`, `pack(fmt)`, `model_keys(fmt)` | the loaded format names; one parsed pack; the keys a pack maps |
-| `decode(fmt, data, max_items=None)` | message to `Entity` (`fields`, `lists`, `residue`, `kind`); `max_items` sets the limit for this call |
-| `encode(fmt, entity)` | `Entity` to message |
+| `decode(fmt, data, max_items=None)` | message to `Entity` (`fields`, `lists`, `residue`, `kind`, `inner_kind`); `max_items` sets the limit for this call. `inner_kind` is the `(format, kind name)` the pack of an `inner` line selected (Version 0.34), or None |
+| `encode(fmt, entity)` | `Entity` to message; the kind is the one `kind` names when it names `fmt`, else the one `inner_kind` names, else the first whose `requires` hold |
 | `convert(from_fmt, to_fmt, data, context=None, max_items=None)` | decode, fill the keys the input lacks from `context`, derive, encode; `from`, then `to`, is checked before the input is read |
 | `complete(entity, context=None)` | the middle steps of `convert` on an entity: fill from `context`, then apply the `derive` lines |
 | `capability(from_fmt, to_fmt)` | `{"from", "to", "carried", "dropped", "grade"}`, grade `full`, `partial` or `none` |

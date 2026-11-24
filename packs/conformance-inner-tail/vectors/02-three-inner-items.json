@@ -1,0 +1,15 @@
+{
+  "name": "three-inner-items",
+  "from": "conformance-inner-tail",
+  "to": "conformance-inner-tail",
+  "input": "09010203",
+  "expect": "09010203",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "3",
+    "probe.nums[0].probe.val": "1",
+    "probe.nums[2].probe.val": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3: the inner input 010203 is three items of the inner rest group"
+}

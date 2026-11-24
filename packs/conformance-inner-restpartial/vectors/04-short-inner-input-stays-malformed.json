@@ -1,0 +1,9 @@
+{
+  "name": "short-inner-input-stays-malformed",
+  "from": "conformance-inner-restpartial",
+  "to": "conformance-inner-restpartial",
+  "input": "0935",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 15: the inner pack's own rule (0.5); partial does not excuse it"
+}

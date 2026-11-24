@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-a-present-optional",
+  "from": "conformance-inner-optstrict",
+  "to": "conformance-inner-optstrict",
+  "input": "090005073fff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 4"
+}

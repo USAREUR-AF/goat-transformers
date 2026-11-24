@@ -1,0 +1,14 @@
+# Conformance probe pack whose own list is read before the inner list of the
+# same name (spec 0.34 ruling 21). Public. No kinds.
+format     conformance-inner-namesfirst
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.names count 8
+  field  probe.tag  8  ascii
+end
+inner   conformance-inner-names

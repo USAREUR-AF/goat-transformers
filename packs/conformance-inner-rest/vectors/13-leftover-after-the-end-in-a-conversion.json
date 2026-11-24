@@ -1,0 +1,9 @@
+{
+  "name": "leftover-after-the-end-in-a-conversion",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-fixed",
+  "input": "093507ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, Decode step 3: the check belongs to decode, whatever the target"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "round-trip-a",
+  "from": "conformance-inner-at",
+  "to": "conformance-inner-at",
+  "input": "0501",
+  "expect": "0501",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "1",
+    "@kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33: the window at bit 8 holds 01, kind a; x 05, y 01"
+}

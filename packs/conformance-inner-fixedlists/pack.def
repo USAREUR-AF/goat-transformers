@@ -1,0 +1,18 @@
+# Conformance probe pack used as an inner pack: a fixed layout holding two
+# lists of two items each (spec 0.34, max_items). Public. No kinds.
+#
+#   bytes 0-1   nums, val in 8 bits each
+#   bytes 2-3   deltas, val in 8 bits each
+format     conformance-inner-fixedlists
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+group   probe.nums  0:0  item 8  count 2
+  field  probe.val  0:0:8  uint
+end
+group   probe.deltas  0:16  item 8  count 2
+  field  probe.val  0:0:8  uint
+end

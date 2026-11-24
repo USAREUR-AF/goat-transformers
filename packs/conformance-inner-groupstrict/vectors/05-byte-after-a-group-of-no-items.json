@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-a-group-of-no-items",
+  "from": "conformance-inner-groupstrict",
+  "to": "conformance-inner-groupstrict",
+  "input": "090500ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 2"
+}

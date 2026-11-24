@@ -1,0 +1,9 @@
+{
+  "name": "failure-of-the-wire-stops-before-the-line",
+  "from": "conformance-inner-asciimissing",
+  "to": "conformance-inner-asciimissing",
+  "input": "",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line: s1 reads past the empty input, a failure of the wire that stops the decode; the inner line is not reached"
+}

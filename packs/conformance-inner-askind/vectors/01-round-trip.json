@@ -1,0 +1,15 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-askind",
+  "to": "conformance-inner-askind",
+  "input": "41013507",
+  "expect": "41013507",
+  "model": {
+    "probe.s1": "A",
+    "probe.x": "53",
+    "probe.y": "7",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: s1 is 0x41 'A'; the inner conformance-inner-seq reads kind byte 01 (kind a), x 0x35, y 0x07"
+}

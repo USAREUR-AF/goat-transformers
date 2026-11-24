@@ -1,0 +1,9 @@
+{
+  "name": "leftover-ranks-ahead-of-outer-transform-decode-in-a-kind",
+  "from": "conformance-inner-askind",
+  "to": "conformance-inner-askind",
+  "input": "01013507ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 17: inner 013507 kind a ends at 3"
+}

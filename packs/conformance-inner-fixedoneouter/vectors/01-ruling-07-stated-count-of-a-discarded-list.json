@@ -1,0 +1,14 @@
+{
+  "name": "ruling-07-stated-count-of-a-discarded-list",
+  "from": "conformance-inner-fixedoneouter",
+  "to": "conformance-inner-fixedoneouter",
+  "input": "020a0b0c0d",
+  "max_items": 2,
+  "expect": "020a0b0a0b",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "10"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 7: the outer nums holds 2 items, the limit; the inner nums (0c0d) has a stated count, is discarded and not counted. Encode writes nums 0a0b in both places"
+}

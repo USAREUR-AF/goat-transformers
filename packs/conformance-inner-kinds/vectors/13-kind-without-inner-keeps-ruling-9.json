@@ -1,0 +1,13 @@
+{
+  "name": "kind-without-inner-keeps-ruling-9",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-kinds",
+  "input": "0809ff",
+  "expect": "0809",
+  "model": {
+    "@kind": "plain",
+    "probe.w": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, no inner line read: input beyond the last line of the outer message is ignored (ruling 9 of 0.8)"
+}

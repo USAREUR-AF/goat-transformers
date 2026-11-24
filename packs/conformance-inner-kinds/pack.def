@@ -1,0 +1,23 @@
+# Conformance probe pack for an inner message in one kind of an outer pack
+# (spec 0.34), most significant bit first. Public.
+#
+#   byte 0      the outer kind: 7 = carry, 8 = plain
+#   kind carry  n in 8 bits, then one conformance-inner-seq message to the end
+#   kind plain  w in 8 bits
+format     conformance-inner-kinds
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind carry
+when     8  7
+requires probe.n
+field    probe.n  8  uint
+inner    conformance-inner-seq
+kind plain
+when     8  8
+requires probe.w
+field    probe.w  8  uint

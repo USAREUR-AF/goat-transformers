@@ -1,0 +1,9 @@
+{
+  "name": "unknown-format-when-reached",
+  "from": "conformance-inner-missing",
+  "to": "conformance-inner-missing",
+  "input": "0500",
+  "expect_error": "unknown-format",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line, check 1: conformance-inner-not-a-format is not loaded; the outer pack loaded (nothing about the inner pack is checked at load)"
+}

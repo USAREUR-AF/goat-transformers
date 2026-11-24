@@ -1,0 +1,9 @@
+{
+  "name": "inner-with-its-own-inner-when-reached",
+  "from": "conformance-inner-twolayer",
+  "to": "conformance-inner-twolayer",
+  "input": "05093507",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line, check 3: conformance-inner-rest has an inner line (one layer only)"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-22-nested-counts-of-a-discarded-list-do-not-accumulate",
+  "from": "conformance-inner-nestouter",
+  "to": "conformance-inner-nestouter",
+  "input": "01010a02020b0c020d0e",
+  "max_items": 4,
+  "expect": "01010a01010a",
+  "model": {
+    "probe.items.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 22: the entity holds 1 item and 1 sub, 2 of 4; the discarded list counts 2, and each nested count 2, fit the 2 left"
+}

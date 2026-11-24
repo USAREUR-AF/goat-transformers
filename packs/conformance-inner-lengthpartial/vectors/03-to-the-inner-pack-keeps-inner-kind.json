@@ -1,0 +1,9 @@
+{
+  "name": "to-the-inner-pack-keeps-inner-kind",
+  "from": "conformance-inner-lengthpartial",
+  "to": "conformance-inner-seq",
+  "input": "0904020102ff0a",
+  "expect": "020102",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: kinds kept by conversion are unchanged"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "nested-gate-held",
+  "from": "conformance-inner-gatestrict",
+  "to": "conformance-inner-gatestrict",
+  "input": "090501070109",
+  "expect": "090501070109",
+  "model": {
+    "probe.n": "9",
+    "probe.y": "7",
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 5"
+}

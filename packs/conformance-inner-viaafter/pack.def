@@ -1,0 +1,14 @@
+# Conformance probe pack whose own line of a key comes after an inner line of
+# it that goes through a table (spec 0.34 ruling 23). Public. No kinds.
+format     conformance-inner-viaafter
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length 8
+  inner  conformance-inner-viascalar
+end
+field   probe.s1  8  ascii

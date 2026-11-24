@@ -1,0 +1,9 @@
+{
+  "name": "ruling-03-bytes-beyond-the-whole-length-are-not-inner-input",
+  "from": "conformance-inner-whole",
+  "to": "conformance-inner-whole",
+  "input": "0409020005",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 3: the whole length 4 makes the inner input 0200; kind q's 16-bit x lies past it. Read to the end of the input, it would decode x=5"
+}

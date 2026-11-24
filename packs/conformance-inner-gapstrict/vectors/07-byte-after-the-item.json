@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-the-item",
+  "from": "conformance-inner-gapstrict",
+  "to": "conformance-inner-gapstrict",
+  "input": "090501000007ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 5"
+}

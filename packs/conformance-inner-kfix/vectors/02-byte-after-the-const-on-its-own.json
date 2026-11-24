@@ -1,0 +1,14 @@
+{
+  "name": "byte-after-the-const-on-its-own",
+  "from": "conformance-inner-kfix",
+  "to": "conformance-inner-kfix",
+  "input": "05010709ff",
+  "expect": "05010709",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "7",
+    "@kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: kind a ends at 4; on its own extra bytes are accepted"
+}

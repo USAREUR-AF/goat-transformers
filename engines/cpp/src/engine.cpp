@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <map>
 #include <sstream>
 #include <unordered_map>
@@ -679,9 +680,13 @@ std::vector<std::string> Engine::formats() const {
 }
 
 namespace {
-Entity decode_wire(const Pack& p, const std::string& bytes) {
+// `exact` (v0.34, an inner message): input after the message's end is malformed-wire.
+Entity decode_wire(const Pack& p, const std::string& bytes, const detail::InnerHost* host, bool exact = false) {
 #if GT_WIRE_BITS
-    if (p.sequential) return detail::decode_seq(p, bytes);
+    if (p.sequential) return detail::decode_seq(p, bytes, host, exact);
+#else
+    (void)host;
+    (void)exact;
 #endif
     switch (p.wire) {
         case Wire::Xml:
@@ -698,7 +703,7 @@ Entity decode_wire(const Pack& p, const std::string& bytes) {
 #endif
         case Wire::Bits:
 #if GT_WIRE_BITS
-            return detail::decode_bits(p, bytes);
+            return detail::decode_bits(p, bytes, exact);
 #else
             break;
 #endif
@@ -735,30 +740,12 @@ Entity decode_wire(const Pack& p, const std::string& bytes) {
     }
     throw Error(ErrorKind::UnknownWire, p.format, "", "no codec for this wire");
 }
-}  // namespace
 
-// One decode counts its list items against the limit (0.11 ruling 7). A failed
-// field is kept while the decode goes on; a failure of the wire found later,
-// going over the limit among them, wins over it (7f). Any other error found
-// later does not: the field's failure comes first, as it would without the limit.
-Entity Engine::decode(const std::string& format, const std::string& bytes) const {
-    const Pack& p = pack(format);
-    detail::DecodeScope scope(max_items_);
-    Entity e;
-    try {
-        e = decode_wire(p, bytes);
-    } catch (const Error& ex) {
-        if (ex.kind() != ErrorKind::MalformedWire) scope.raise_failure();
-        throw;
-    }
-    scope.raise_failure();
-    return e;
-}
-
-std::string Engine::encode(const std::string& format, const Entity& entity) const {
-    const Pack& p = pack(format);
+std::string encode_wire(const Pack& p, const Entity& entity, const detail::InnerHost* host) {
 #if GT_WIRE_BITS
-    if (p.sequential) return detail::encode_seq(p, entity);
+    if (p.sequential) return detail::encode_seq(p, entity, host);
+#else
+    (void)host;
 #endif
     switch (p.wire) {
         case Wire::Xml:
@@ -810,7 +797,91 @@ std::string Engine::encode(const std::string& format, const Entity& entity) cons
             break;
 #endif
     }
-    throw Error(ErrorKind::UnknownWire, format, "", "no codec for this wire");
+    throw Error(ErrorKind::UnknownWire, p.format, "", "no codec for this wire");
+}
+
+// v0.34: the engine as the `inner` lines of its sequential packs see it.
+class Host final : public detail::InnerHost {
+public:
+    explicit Host(const Engine& engine) : eng_(engine) {}
+
+    // The checks made where an `inner` line is reached, in their order.
+    const Pack& reach(const Pack& outer, const std::string& format) const override {
+        if (!eng_.has_format(format))
+            throw Error(ErrorKind::UnknownFormat, format, "",
+                        "the 'inner' line of " + outer.format + " names a format no loaded pack defines");
+        const Pack& inner = eng_.pack(format);
+        if (inner.wire != Wire::Bits || inner.armor_sixbit || inner.uper)
+            throw Error(ErrorKind::BadDirective, outer.format, "",
+                        "the inner pack " + format + " of an 'inner' line is not on wire bits, or has 'armor sixbit' or "
+                        "'encoding uper'");
+        if (!inner.inner_formats.empty() || inner.format == outer.format)
+            throw Error(ErrorKind::BadDirective, outer.format, "",
+                        "the inner pack " + format + " of an 'inner' line " +
+                            (inner.format == outer.format ? std::string("is the outer pack itself")
+                                                          : std::string("has an 'inner' line of its own")) +
+                            " (one layer only)");
+        if (outer.distribution == Distribution::Public && inner.distribution != Distribution::Public)
+            throw Error(ErrorKind::DistributionViolation, outer.format, "",
+                        "the public pack's 'inner' line names " + format + ", whose distribution is " +
+                            distribution_name(inner.distribution));
+        return inner;
+    }
+    // Within the decode that is running: its limit and its failed fields.
+    Entity decode(const Pack& inner, const std::string& hex, bool partial) const override {
+        return decode_wire(inner, hex, nullptr, !partial);
+    }
+    // The inner kind: Entity.inner_kind when it names the format, then
+    // Entity.kind (the codecs select by it only when it names the format),
+    // then `requires`.
+    std::string encode(const Pack& inner, const Entity& entity) const override {
+        if (entity.inner_kind.first == inner.format && entity.kind != entity.inner_kind) {
+            Entity named = entity;
+            named.kind = entity.inner_kind;
+            return encode_wire(inner, named, nullptr);
+        }
+        return encode_wire(inner, entity, nullptr);
+    }
+
+private:
+    const Engine& eng_;
+};
+}  // namespace
+
+// One decode counts its list items against the limit (0.11 ruling 7). A failed
+// field is kept while the decode goes on; a failure of the wire found later,
+// going over the limit among them, wins over it (7f). Any other error found
+// later does not: the field's failure comes first, as it would without the limit.
+Entity Engine::decode(const std::string& format, const std::string& bytes) const {
+    const Pack& p = pack(format);
+    detail::DecodeScope scope(max_items_);
+    Entity e;
+    const Host host(*this);
+    try {
+        e = decode_wire(p, bytes, &host);
+    } catch (const Error& ex) {
+        // v0.34: in a pack with an `inner` line every error that stops the decode
+        // is reported ahead of a transform-decode read before it, in either pack.
+        const bool first = ex.kind() == ErrorKind::MalformedWire ||
+                           (!p.inner_formats.empty() && ex.kind() != ErrorKind::TransformDecode);
+        if (!first) scope.raise_failure();
+        throw;
+    }
+    scope.raise_failure();
+    return e;
+}
+
+std::string Engine::encode(const std::string& format, const Entity& entity) const {
+    const Pack& p = pack(format);
+    const Host host(*this);
+    // v0.34: at the top level the kind is selected by Entity.kind when it names
+    // the format, then by Entity.inner_kind when it names the format.
+    if (entity.kind.first != format && entity.inner_kind.first == format) {
+        Entity named = entity;
+        named.kind = entity.inner_kind;
+        return encode_wire(p, named, &host);
+    }
+    return encode_wire(p, entity, &host);
 }
 
 std::string Engine::convert(const std::string& from, const std::string& to, const std::string& bytes) const {
@@ -833,9 +904,20 @@ std::string Engine::convert_impl(const std::string& from, const std::string& to,
                                  const TextContext* ordered) const {
     // unknown-format: `from`, then `to`, before the input is read (0.11 ruling 5).
     (void)pack(from);
-    (void)pack(to);
+    const Pack& target = pack(to);
     Entity e = decode(from, bytes);
-    if (from != to) e.kind = {};  // a cross-format conversion chooses the target kind by `requires`
+    if (from != to) {
+        // A cross-format conversion chooses the target kind by `requires`,
+        // unless the record names a format `to` holds as a layer (v0.34):
+        // Entity.kind kept when an `inner` line of `to` names its format,
+        // Entity.inner_kind when it names `to` or such a format.
+        auto layer = [&](const std::string& format) {
+            return std::find(target.inner_formats.begin(), target.inner_formats.end(), format) !=
+                   target.inner_formats.end();
+        };
+        if (!layer(e.kind.first)) e.kind = {};
+        if (e.inner_kind.first != to && !layer(e.inner_kind.first)) e.inner_kind = {};
+    }
     // A same-format conversion with no context skips both steps, so it stays byte-exact.
     // An empty context counts as given.
     if (from != to || context || text || ordered) {
@@ -951,7 +1033,19 @@ std::vector<std::string> Engine::model_keys(const std::string& format) const {
         }
     } walk{out, seen};
     if (p.sequential) {
-        detail::seq_model_keys(p.seq, "", [&](const std::string& key) { walk.add(key); });
+        // v0.34: each `inner` line on its own; one whose pack does not pass
+        // the checks made where the line is reached adds nothing.
+        const Host host(*this);
+        const std::function<void(const std::string&)> inner = [&](const std::string& name) {
+            const Pack* in = nullptr;
+            try {
+                in = &host.reach(p, name);
+            } catch (const Error&) {
+                return;
+            }
+            for (const auto& key : model_keys(in->format)) walk.add(key);
+        };
+        detail::seq_model_keys(p.seq, "", [&](const std::string& key) { walk.add(key); }, &inner);
         return out;
     }
     walk.lines(detail::active_lines(p, nullptr), "");

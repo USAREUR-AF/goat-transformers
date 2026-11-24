@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer-field-after-the-block",
+  "from": "conformance-inner-seq",
+  "to": "conformance-inner-after",
+  "input": "010203",
+  "expect": "0301020302",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion and Encode: kind a kept; block 010203 counted 03; the outer x after the block writes the one value the entity holds, 02"
+}

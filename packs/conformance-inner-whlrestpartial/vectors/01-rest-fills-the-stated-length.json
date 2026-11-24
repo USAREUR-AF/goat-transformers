@@ -1,0 +1,13 @@
+{
+  "name": "rest-fills-the-stated-length",
+  "from": "conformance-inner-whlrestpartial",
+  "to": "conformance-inner-whlrestpartial",
+  "input": "09030506",
+  "expect": "09030506",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: stated 3; partial, nothing to ignore"
+}

@@ -32,6 +32,22 @@ def _build_via(f, table):
             f.via_enc[m] = native
 
 
+class Failure(tuple):
+    """(key, locator, reason) of a line that could not be decoded; `final`: its
+    transform succeeded and its table has no entry, so no other line of the key
+    makes up for it (ruling 10 of 0.7)."""
+
+    final = False
+
+
+class FinalFailure(Failure):
+    final = True
+
+
+def failure(key, locator, why, final):
+    return (FinalFailure if final else Failure)((key, locator, why))
+
+
 def _via_decode(f, value):
     """After the transform on decode: what the transform yields -> what the key holds."""
     nt = f.transform.yields
@@ -82,12 +98,15 @@ class Entity:
     as hex) pairs, since every occurrence of a tag is kept); it never crosses formats. `kind`
     is the pair `(format, kind name)` a decode selected, or None. `lists` maps
     a list name to its items, in order (0.7); a list that is present and empty
-    is distinct from an absent one."""
+    is distinct from an absent one. `inner_kind` (0.34) is the pair
+    `(format, kind name)` of the kind the pack of an `inner` line selected when
+    a decode read that line, or None."""
 
     fields: dict = dc_field(default_factory=dict)
     residue: dict = dc_field(default_factory=dict)
     kind: tuple = None
     lists: dict = dc_field(default_factory=dict)
+    inner_kind: tuple = None
 
     def __getitem__(self, key):
         return self.fields[key]

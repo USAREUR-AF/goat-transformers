@@ -68,6 +68,9 @@ type seqReader struct {
 	// pending holds the presence bits that are 1 and that only an `if`
 	// inside a case names: each is checked once the message is read.
 	pending []seqPendingBit
+	// whole is the smallest length a `length … whole` line stated, in bits;
+	// -1 when none was read (0.34 ruling 13).
+	whole int
 }
 
 // seqCountRead is what a count line read: the number of items, unless the
@@ -115,7 +118,7 @@ func decodeSeq(d *decodeState, data []byte, nbits int) error {
 	p := d.pack
 	// limit is the bits the input carries: under six-bit armor not a whole
 	// number of bytes (0.14).
-	r := &seqReader{d: d, p: p, data: data, limit: nbits, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}, cnts: map[*seqCountDef]*seqCountRead{}}
+	r := &seqReader{d: d, p: p, data: data, limit: nbits, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}, cnts: map[*seqCountDef]*seqCountRead{}, whole: -1}
 	k, err := r.body(p.sbody)
 	if err != nil {
 		return err
@@ -133,6 +136,9 @@ func decodeSeq(d *decodeState, data []byte, nbits int) error {
 		if !counted {
 			return r.malformed("presence bit %s.%d is 1 and no if block of the lines read names it", pb.p.name, pb.bit)
 		}
+	}
+	if d.end = (r.pos + 7) / 8 * 8; r.whole >= 0 {
+		d.end = r.whole
 	}
 	if k != nil {
 		d.ent.Kind = EntityKind{Format: p.Format, Name: k.name}
@@ -336,6 +342,9 @@ func (r *seqReader) node(n *seqNode) error {
 		}
 		// Input beyond the stated length is ignored.
 		r.limit = int(size) * 8
+		if r.whole < 0 || r.limit < r.whole {
+			r.whole = r.limit
+		}
 	case seqGroup:
 		return r.group(n.g)
 	case seqExt:
@@ -385,6 +394,8 @@ func (r *seqReader) node(n *seqNode) error {
 		}
 		r.read[c] = true
 		return r.nodes(c.body)
+	case seqInner:
+		return r.inner(n)
 	}
 	return nil
 }
@@ -558,6 +569,50 @@ func (w *seqWriter) settle(ks *seqKindWrite, sc seqScope) error {
 	return nil
 }
 
+// inner reads an `inner` line (spec 0.34): the checks made where the line is
+// reached, then the bytes from the cursor to the end of the enclosing extent
+// decoded by the inner pack, whose keys join the entity, each key keeping
+// the first value read.
+func (r *seqReader) inner(n *seqNode) error {
+	d := r.d
+	if d.eng == nil {
+		return &Error{Kind: ErrUnknownFormat, Format: n.inner, Detail: "no engine to find the inner pack in"}
+	}
+	in, err := d.eng.innerPack(r.p, n.inner)
+	if err != nil {
+		return err
+	}
+	if r.pos%8 != 0 {
+		return r.malformed("the inner line on line %d stands at bit %d, not on a whole byte", n.line, r.pos)
+	}
+	if r.limit%8 != 0 {
+		return r.malformed("the extent of the inner line on line %d ends at bit %d, not on a whole byte", n.line, r.limit)
+	}
+	if r.limit > len(r.data)*8 {
+		return r.malformed("the extent of the inner line on line %d ends beyond the input", n.line)
+	}
+	start := r.pos
+	if start > r.limit {
+		start = r.limit
+	}
+	bytes := r.data[start/8 : r.limit/8]
+	r.pos = r.limit
+	sub := &decodeState{pack: in, ent: NewEntity(), limit: d.limit - d.held, eng: d.eng, trackEnd: true, discard: map[string]bool{}}
+	for name := range d.top.Lists {
+		sub.discard[name] = true
+	}
+	sub.rec = sub.ent.item()
+	sub.top = sub.rec
+	if err := decodeBitsData(sub, bytes, len(bytes)*8); err != nil {
+		return err
+	}
+	if left := len(bytes) - sub.end/8; left > 0 && !n.part {
+		return &Error{Kind: ErrMalformedWire, Format: in.Format, Detail: fmt.Sprintf("%d byte(s) are left after the end of the inner message read at the inner line on line %d of pack %s", left, n.line, r.p.Format)}
+	}
+	d.joinInner(sub)
+	return nil
+}
+
 // seqFieldDecode reads the bits of a field line at a bit of data as a decode
 // does: absent when they hold a sentinel, else the transform's value.
 func seqFieldDecode(p *Pack, f *Field, data []byte, at int) (v Value, absent bool, err error) {
@@ -646,7 +701,25 @@ func (r *seqReader) group(g *Group) error {
 	if r.beyond() && g.seqMode != seqRest {
 		return nil
 	}
-	d.replacing(g.List)
+	// A list an inner decode gave is kept; this group's items are read and
+	// discarded (spec 0.34, Decode step 4).
+	kept := d.rec == d.top && d.innerLists[g.List]
+	free := d.freeList(g.List)
+	// A failed item of a list that is discarded is not an error (0.34
+	// ruling 21); a failure of the wire in it stops the decode.
+	if d.discarded(g.List) {
+		failures := len(d.failed)
+		defer func() { d.forget(failures) }()
+	}
+	// The items of a list that is not counted were never held: replacing
+	// them releases nothing (7g).
+	if !free {
+		d.replacing(g.List)
+	}
+	if free {
+		d.free++
+		defer func() { d.free-- }()
+	}
 	items := []*Item{}
 	item := func() error {
 		it, err := d.item(func() error {
@@ -719,6 +792,11 @@ func (r *seqReader) group(g *Group) error {
 		}
 		if st.huge || st.items > uint64(r.limit-r.pos) {
 			return r.malformed("list %s: count %s states more items than the %d bit(s) left", g.List, g.cnt.name, r.limit-r.pos)
+		}
+		// The limit on list items, before any item is read (7d of 0.11), also
+		// for a list the join will discard (0.34 ruling 7).
+		if err := d.room(g.List, st.items); err != nil {
+			return err
 		}
 		for i := uint64(0); i < st.items; i++ {
 			if err := item(); err != nil {
@@ -799,6 +877,9 @@ func (r *seqReader) group(g *Group) error {
 				break
 			}
 		}
+	}
+	if kept {
+		return nil
 	}
 	d.rec.SetList(g.List, items)
 	return nil
@@ -922,6 +1003,8 @@ func (w *seqWriter) fieldBits(f *Field, sc seqScope) []byte {
 // seqWriter writes a sequential message at a cursor.
 type seqWriter struct {
 	p      *Pack
+	eng    *Engine // the engine of the encode: an `inner` line finds its pack there (0.34)
+	ent    *Entity // the entity being written, which an `inner` line encodes again
 	buf    *bitBuf
 	pos    int
 	pres   map[*seqPresenceDef][]bool
@@ -1054,7 +1137,7 @@ func (w *seqWriter) fail(format string, a ...any) error {
 // seqMaxPasses bounds the passes of a settling encode (0.20 ruling 33).
 const seqMaxPasses = 16
 
-func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
+func encodeSeq(e *Engine, p *Pack, ent *Entity) ([]byte, error) {
 	rec := ent.item()
 	nodes, defs, err := seqSelect(p, p.sbody, ent.Kind, rec, "the entity")
 	if err != nil {
@@ -1062,7 +1145,7 @@ func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
 	}
 	forced := map[seqSwitchAt]*seqCase{}
 	for pass := 1; ; pass++ {
-		w := &seqWriter{p: p, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}, forced: forced, actual: map[seqSwitchAt]*seqCase{}}
+		w := &seqWriter{p: p, eng: e, ent: ent, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}, forced: forced, actual: map[seqSwitchAt]*seqCase{}}
 		out, err := w.encodePass(nodes, newScope(p, rec, defs))
 		// Errors of a pass whose prediction does not hold are not reported
 		// (ruling 34): the next pass predicts the cases this one selected.
@@ -1605,11 +1688,38 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			if err := w.emit(c.body, sc.inCase(c), false); err != nil {
 				return err
 			}
+		case seqInner:
+			if err := w.inner(n); err != nil {
+				return err
+			}
 		}
 	}
 	if ks != nil && !ks.done {
 		return w.settle(ks, sc)
 	}
+	return nil
+}
+
+// inner writes an `inner` line (spec 0.34): after the checks made where the
+// line is reached, on a whole byte, the inner pack's encoding of the same
+// entity.
+func (w *seqWriter) inner(n *seqNode) error {
+	if w.eng == nil {
+		return &Error{Kind: ErrUnknownFormat, Format: n.inner, Detail: "no engine to find the inner pack in"}
+	}
+	in, err := w.eng.innerPack(w.p, n.inner)
+	if err != nil {
+		return err
+	}
+	if w.pos%8 != 0 {
+		return w.fail("the inner line on line %d stands at bit %d, not on a whole byte", n.line, w.pos)
+	}
+	out, err := w.eng.encodeLayer(in, w.ent)
+	if err != nil {
+		return err
+	}
+	at := w.alloc(len(out) * 8)
+	copy(w.buf.data[at/8:], out)
 	return nil
 }
 

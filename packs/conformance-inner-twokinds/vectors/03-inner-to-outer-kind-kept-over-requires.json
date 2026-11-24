@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer-kind-kept-over-requires",
+  "from": "conformance-inner-twokinds",
+  "to": "conformance-inner-pick",
+  "input": "020005",
+  "expect": "00020005",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion keeps Entity.kind (conformance-inner-twokinds, q): the target has an inner line naming that format. Encode step 2 selects q; requires (step 3) would select p, giving 000105. n absent 00"
+}

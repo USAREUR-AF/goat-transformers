@@ -1,0 +1,9 @@
+{
+  "name": "leftover-ranks-ahead-of-inner-transform-decode",
+  "from": "conformance-inner-ascstrict",
+  "to": "conformance-inner-ascstrict",
+  "input": "0901ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 17: transform-decode does not stop the decode; end 1 of 2"
+}

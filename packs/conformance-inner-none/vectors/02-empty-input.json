@@ -1,0 +1,9 @@
+{
+  "name": "empty-input",
+  "from": "conformance-inner-none",
+  "to": "conformance-inner-none",
+  "input": "",
+  "expect": "",
+  "source": "constructed",
+  "reference": "spec 0.34, a pack that reads no bits gives an entity for no bytes"
+}

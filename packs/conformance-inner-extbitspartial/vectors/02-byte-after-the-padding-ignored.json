@@ -1,0 +1,13 @@
+{
+  "name": "byte-after-the-padding-ignored",
+  "from": "conformance-inner-extbitspartial",
+  "to": "conformance-inner-extbitspartial",
+  "input": "090c05ffff",
+  "expect": "090805",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: end 3"
+}

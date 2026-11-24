@@ -1,0 +1,9 @@
+{
+  "name": "ruling-21-missing-entry-in-a-discarded-list",
+  "from": "conformance-inner-viaouter",
+  "to": "conformance-inner-viaouter",
+  "input": "014102",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 21: the inner item 02 has no table entry and the types differ, so it is an error though its list is discarded (ruling 4 of 0.6, ruling 10 of 0.7)"
+}

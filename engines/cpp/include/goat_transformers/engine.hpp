@@ -119,6 +119,13 @@ struct Item {
 
 struct Entity : Item {
     std::vector<ResidueEntry> residue;  // decode order
+    // v0.34: the kind the inner pack selected, as (format, kind name), when
+    // decode read an `inner` line of a sequential pack and the inner pack has
+    // kinds. Both empty otherwise, or when the record was cleared. Encode of
+    // an `inner` line selects the inner kind by it first, then by `kind`; a
+    // top-level encode selects by `kind`, then by it, each only when it names
+    // the format being written.
+    std::pair<std::string, std::string> inner_kind;
 };
 
 // ---------------------------------------------------------------- model modules (v0.4)
@@ -489,7 +496,8 @@ struct SeqNode {
     enum class Type { Field, Const, Pad, Align, When, Presence, If, Opt, Chain, Fx, Length, LengthWhole, Group,
                       Ext, Choice, Alt,  // v0.19
                       Switch,  // v0.20
-                      Count };  // v0.21
+                      Count,   // v0.21
+                      Inner };  // v0.34: `inner <format>`
     // v0.19: Size (`group <list> size`). v0.21: Rest (`group <list> rest`), Last
     // (`group <list> last`) and CountRef (`group <list> count @<name>`).
     enum class Repeat { Count, While, More, Fx, Size, Rest, Last, CountRef };
@@ -540,6 +548,10 @@ struct SeqNode {
     int count_id = -1;
     // v0.31: a group with `count @<a> @<b>`: the second count line's index; -1 when none.
     int count_id2 = -1;
+    // v0.34. inner: the format named, looked up when decode or encode reaches the line.
+    std::string inner_format;
+    // `partial`: bytes of the inner input after the inner message's end are ignored.
+    bool inner_partial = false;
     bool holds(std::uint64_t v) const {
         if (ranges.empty()) return v == number;
         for (const auto& r : ranges)
@@ -636,6 +648,9 @@ struct Pack {
     bool cbor_tag = false;
     std::uint64_t cbor_tag_value = 0;
     bool cbor_top_array = false;
+    // v0.34: the format of each `inner` line, file order (a format named twice
+    // is listed twice). Empty for a pack with no `inner` line.
+    std::vector<std::string> inner_formats;
 };
 
 // Parse the text of a pack.def. `source` names the file in error messages.
@@ -750,16 +765,23 @@ public:
     // The keys the pack maps, each once, in the order of first appearance
     // reading the file top to bottom, common lines and every kind alike (0.11
     // ruling 6a). A list is `<list>[]` and an item key `<list>[].<key>`,
-    // nested lists likewise (6b).
+    // nested lists likewise (6b). v0.34: computed when asked for; an `inner`
+    // line whose pack passes the checks made where the line is reached adds,
+    // at its place, the entries of model_keys(<inner>) not yet listed. One
+    // whose pack does not pass them adds nothing.
     std::vector<std::string> model_keys(const std::string& format) const;
     // The capability report of `from` against `to` (0.11 ruling 6). Throws
     // unknown-format for a format that is not loaded.
     Capability capability(const std::string& from, const std::string& to) const;
 
     Entity decode(const std::string& format, const std::string& bytes) const;
+    // The kind is selected by Entity.kind when it names `format`, then by
+    // Entity.inner_kind when it names `format` (v0.34), then by `requires`.
     std::string encode(const std::string& format, const Entity& entity) const;
-    // decode; clear Entity.kind unless from == to; when from != to, the derivations;
-    // encode. A same-format conversion with no context derives nothing, so it stays
+    // decode; clear Entity.kind unless from == to or an `inner` line of `to`
+    // names its format, and Entity.inner_kind unless from == to or it names `to`
+    // or the format of an `inner` line of `to` (v0.34); when from != to, the
+    // derivations; encode. A same-format conversion with no context derives nothing, so it stays
     // byte-exact.
     std::string convert(const std::string& from, const std::string& to,
                         const std::string& bytes) const;

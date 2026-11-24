@@ -1,0 +1,15 @@
+{
+  "name": "not-held-optional-does-not-count-on-its-own",
+  "from": "conformance-inner-gateopt",
+  "to": "conformance-inner-gateopt",
+  "input": "050107",
+  "expect": "050000",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: gate 1 does not hold, end 1; encode of y absent: zero gate bits hold the block (0.17 step 4); decoded on its own extra bytes are accepted"
+}

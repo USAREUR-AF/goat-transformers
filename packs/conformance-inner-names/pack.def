@@ -1,0 +1,13 @@
+# Conformance probe pack used as an inner pack: a list of texts to the end of
+# the message (spec 0.34 ruling 21). Public. No kinds.
+format     conformance-inner-names
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.names rest
+  field  probe.tag  8  ascii
+end

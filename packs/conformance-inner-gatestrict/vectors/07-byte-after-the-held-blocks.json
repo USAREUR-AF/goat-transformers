@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-the-held-blocks",
+  "from": "conformance-inner-gatestrict",
+  "to": "conformance-inner-gatestrict",
+  "input": "090501070109ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 5"
+}

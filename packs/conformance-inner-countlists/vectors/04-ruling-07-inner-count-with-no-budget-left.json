@@ -1,0 +1,10 @@
+{
+  "name": "ruling-07-inner-count-with-no-budget-left",
+  "from": "conformance-inner-countlists",
+  "to": "conformance-inner-countlists",
+  "input": "020a0b030c0d0e",
+  "max_items": 2,
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 7: the outer list uses the whole budget of 2; the inner count 3 is above the 0 left"
+}

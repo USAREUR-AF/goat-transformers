@@ -1,0 +1,14 @@
+{
+  "name": "outer-list-read-first-is-kept-whole",
+  "from": "conformance-inner-lists",
+  "to": "conformance-inner-lists",
+  "input": "020a0b0c0d0e",
+  "expect": "020a0b0a0b",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "10",
+    "probe.nums[1].probe.val": "11"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 4: the outer list (count 2: 0a 0b) is read first and kept whole; the inner list 0c 0d 0e is discarded. Encode writes the one list in both places"
+}

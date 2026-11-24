@@ -21,6 +21,9 @@
 //! pack on a wire the build lacks is not loaded, and a vector that names such
 //! a pack (its `from` or `to`, a pack text of a load vector) is not run; the
 //! count of vectors left out is printed. A build with all seven leaves out none.
+//! Version 0.34: `"@inner_kind"` in `model` is the kind name of
+//! `Entity.inner_kind`, and `"@absent"` may list it. Every pack is loaded, so
+//! the packs `inner` lines name are loaded too.
 
 use goat_transformers::json::Json;
 use goat_transformers::{json, Distribution, Engine, Entity, Grade, KeyType, Value, Wire};
@@ -243,6 +246,16 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
                     Json::Str(s) => s.as_str(),
                     _ => return Err("invalid vector: an `@absent` entry must be a string".into()),
                 };
+                // `@inner_kind` may be listed: `Entity.inner_kind` is absent (Version 0.34)
+                if entry == "@inner_kind" {
+                    if model.iter().any(|(k, _)| k == entry) {
+                        return Err("invalid vector: `@inner_kind` is in `@absent` and is a member of `model`".into());
+                    }
+                    if let Some(k) = &ent.inner_kind {
+                        return Err(format!("`@inner_kind` must be absent, got {:?}", k));
+                    }
+                    continue;
+                }
                 if entry.starts_with('@') {
                     return Err(format!("invalid vector: `@absent` lists `{}`, which is not a key", entry));
                 }
@@ -269,6 +282,13 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
             if k == "@kind" {
                 if ent.kind != Some((from.to_string(), want.clone())) {
                     return Err(format!("selected kind {:?}, want `{}`", ent.kind, want));
+                }
+                continue;
+            }
+            // "@inner_kind": the kind name `Entity.inner_kind` must hold (Version 0.34)
+            if k == "@inner_kind" {
+                if ent.inner_kind.as_ref().map(|(_, name)| name.as_str()) != Some(want.as_str()) {
+                    return Err(format!("inner kind {:?}, want `{}`", ent.inner_kind, want));
                 }
                 continue;
             }

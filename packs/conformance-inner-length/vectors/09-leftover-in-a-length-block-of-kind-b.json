@@ -1,0 +1,9 @@
+{
+  "name": "leftover-in-a-length-block-of-kind-b",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-length",
+  "input": "0904020102ff0a",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: cursor 3 after kind b (02 0102); byte ff lies in the 4-byte extent"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "failed-check-at-a-line-reached-after-transform-decode",
+  "from": "conformance-inner-asciimissing",
+  "to": "conformance-inner-asciimissing",
+  "input": "0100",
+  "expect_error": "unknown-format",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line: s1 byte 01 is a transform-decode (ascii below 0x20), which does not stop the decode; the inner line is reached, its format is not loaded, and that failed check is reported ahead of the transform-decode"
+}

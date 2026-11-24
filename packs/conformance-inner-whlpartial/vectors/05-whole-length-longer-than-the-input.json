@@ -1,0 +1,9 @@
+{
+  "name": "whole-length-longer-than-the-input",
+  "from": "conformance-inner-whlpartial",
+  "to": "conformance-inner-whlpartial",
+  "input": "090405aa",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, 0.8: input shorter than the stated length; partial changes nothing"
+}

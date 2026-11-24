@@ -1,0 +1,13 @@
+{
+  "name": "smallest-of-two-whole-lengths-ignored",
+  "from": "conformance-inner-whltwopartial",
+  "to": "conformance-inner-whltwopartial",
+  "input": "09040305aa",
+  "expect": "09030305",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: 4 and 3 stated, the smallest 3 is the end, aa left"
+}

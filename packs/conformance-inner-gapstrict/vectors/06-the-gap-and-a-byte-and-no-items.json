@@ -1,0 +1,9 @@
+{
+  "name": "the-gap-and-a-byte-and-no-items",
+  "from": "conformance-inner-gapstrict",
+  "to": "conformance-inner-gapstrict",
+  "input": "090500aabb07",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: the empty group counts up to its start, end 4; one byte is left over"
+}

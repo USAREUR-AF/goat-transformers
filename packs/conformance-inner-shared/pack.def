@@ -1,0 +1,15 @@
+# Conformance probe pack whose own field maps a key the inner pack also maps
+# (spec 0.34, Decode step 3 and Encode), most significant bit first. Public.
+#
+#   byte 0      x (the inner conformance-inner-fixed maps x too, in 4 bits)
+#   the rest    one conformance-inner-fixed message
+format     conformance-inner-shared
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.x  8  uint
+inner   conformance-inner-fixed

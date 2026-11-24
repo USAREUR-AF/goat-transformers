@@ -1,0 +1,15 @@
+{
+  "name": "empty-inner-input",
+  "from": "conformance-inner-nonepartial",
+  "to": "conformance-inner-nonepartial",
+  "input": "09",
+  "expect": "09",
+  "model": {
+    "probe.n": "9",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 16: end 0 and nothing over; partial, nothing to ignore"
+}

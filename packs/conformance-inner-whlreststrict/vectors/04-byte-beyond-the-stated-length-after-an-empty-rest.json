@@ -1,0 +1,9 @@
+{
+  "name": "byte-beyond-the-stated-length-after-an-empty-rest",
+  "from": "conformance-inner-whlreststrict",
+  "to": "conformance-inner-whlreststrict",
+  "input": "0901ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: stated 1 of 2"
+}

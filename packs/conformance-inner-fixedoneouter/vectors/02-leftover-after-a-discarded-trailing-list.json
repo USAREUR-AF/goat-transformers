@@ -1,0 +1,9 @@
+{
+  "name": "leftover-after-a-discarded-trailing-list",
+  "from": "conformance-inner-fixedoneouter",
+  "to": "conformance-inner-fixedoneouter",
+  "input": "020a0b0c0dff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: items of the list count though step 4 discards it: end 2, ff left"
+}

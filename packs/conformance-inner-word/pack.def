@@ -1,0 +1,11 @@
+# Conformance probe pack used as an inner pack (spec 0.34):
+# a fixed layout of two-byte words; only the first byte of the word is mapped. Public.
+format     conformance-inner-word
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 2
+bit_order  msb
+field   probe.x  0:0:8  uint

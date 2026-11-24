@@ -9,8 +9,11 @@ writes them, protobuf bytes by an encoder of this file, bit fields by a packer
 of this file. Nothing calls an engine.
 
 The script writes, and owns:
-  packs/conformance-cap-*/      packs/conformance/capability-vectors/
+  packs/conformance-cap-*/      packs/conformance/capability-vectors/01 to 18
   packs/conformance-limit-*/    packs/conformance-pbwhen*/
+
+The capability vectors numbered above 18 (those of 0.34 from 19) are derived
+by hand and committed as they are; this script keeps them.
 
 Inputs: none; every value is stated in this file. Writes, under --out, the
 files named above. The same run always gives the same bytes. With --check
@@ -285,7 +288,16 @@ end
     )
 
     CAP_DIR = "packs/conformance/capability-vectors"
-    clear(CAP_DIR)
+    CAP_LAST = 18       # the vectors after it are not this script's (0.34 from 19)
+
+
+    def cap_owned(name):
+        """A capability vector this script owns: numbered 1 to CAP_LAST."""
+        head = name.split("-")[0]
+        return head.isdigit() and 1 <= int(head) <= CAP_LAST
+
+
+    clear(CAP_DIR, keep=lambda name: not cap_owned(name))
     cap_num = [0]
 
 
@@ -297,6 +309,7 @@ end
         want = "none" if not carried else ("full" if not dropped else "partial")
         assert want == grade, (name, want)
         cap_num[0] += 1
+        assert cap_num[0] <= CAP_LAST, "the capability vectors of 0.11 are numbered 1 to %d" % CAP_LAST
         write_json(
             CAP_DIR + "/%02d-%s.json" % (cap_num[0], name),
             {

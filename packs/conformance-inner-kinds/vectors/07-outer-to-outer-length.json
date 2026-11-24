@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-outer-length",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-length",
+  "input": "0705010203",
+  "expect": "050301020300",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion: Entity.inner_kind names the format of the target's inner line and is kept; n 05, length 03, inner a 010203, w absent 00"
+}

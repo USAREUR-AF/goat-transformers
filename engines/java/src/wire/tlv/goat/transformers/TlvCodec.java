@@ -236,7 +236,7 @@ final class TlvCodec extends Codec<TlvCodec.Msg> {
     @Override
     Entity decodeKind(Msg msg, Pack.Kind kind) {
         Entity e = new Entity();
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         for (Pack.Line l : kind.scope.lines) {
             // every set on the path of every line is walked into and read whole
             Item it = find(msg.top, ((Loc) l.loc).tags);

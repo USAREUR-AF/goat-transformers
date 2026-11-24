@@ -5,8 +5,9 @@
 //! ```
 //!
 //! Run from the repository root (a vector's path is read as written in the
-//! set). It loads only the packs the set's vectors name (`from` and `to`), and
-//! the model modules those packs use, into one engine, and times that. For
+//! set). It loads only the packs the set's vectors name (`from` and `to`), the
+//! packs their `inner` lines name (spec 0.34), and the model modules those
+//! packs use, into one engine, and times that. For
 //! each vector in order it converts the input once and checks the output
 //! against `expect` (a difference fails the run, on standard error, exit 1),
 //! then converts it `iterations` times and times that. Standard output holds
@@ -103,9 +104,26 @@ fn load(packs: &Path, formats: &BTreeSet<String>) -> Engine {
     let models = packs.join("../model");
     let mut pack_texts: Vec<(PathBuf, String)> = Vec::new();
     let mut wanted: Vec<String> = vec!["core".to_string()];
-    for f in formats {
-        let p = packs.join(f).join("pack.def");
+    // the named packs, and the packs their `inner` lines name (spec 0.34),
+    // each once, in byte order of name; an `inner` format with no pack
+    // directory is left to fail where a conversion reaches the line
+    let mut names: BTreeSet<String> = formats.clone();
+    let mut todo: Vec<String> = formats.iter().cloned().collect();
+    let mut texts: BTreeMap<String, (PathBuf, String)> = BTreeMap::new();
+    while let Some(f) = todo.pop() {
+        let p = packs.join(&f).join("pack.def");
+        if !formats.contains(&f) && !p.exists() {
+            continue;
+        }
         let text = read(&p);
+        for inner in lines_of(&text, "inner") {
+            if names.insert(inner.clone()) {
+                todo.push(inner);
+            }
+        }
+        texts.insert(f, (p, text));
+    }
+    for (_, (p, text)) in texts {
         wanted.extend(lines_of(&text, "uses"));
         pack_texts.push((p, text));
     }
@@ -167,6 +185,8 @@ fn main() {
 
     let t = Instant::now();
     let engine = load(&packs, &formats);
+    // the packs loaded: those named, and those their `inner` lines name
+    let loaded = engine.formats().len();
     let load_ns = t.elapsed().as_nanos();
 
     let mut out = String::new();
@@ -189,6 +209,6 @@ fn main() {
             ns / iterations as u128
         ));
     }
-    out.push_str(&format!("{{\"load\": {}, \"ns\": {}}}\n", formats.len(), load_ns));
+    out.push_str(&format!("{{\"load\": {}, \"ns\": {}}}\n", loaded, load_ns));
     print!("{}", out);
 }

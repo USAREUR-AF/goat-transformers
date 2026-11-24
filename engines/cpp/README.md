@@ -116,16 +116,16 @@ the build's lack said, at least one per wire. Then it builds the library and
 the sizes of both. It exits non-zero on any failure. `GT_JOBS` sets the
 parallel jobs (4).
 
-Measured on 2026-11-21 on Linux x86-64 with GCC 15.2, Release, not stripped:
+Measured on 2026-11-24 on Linux x86-64 with GCC 15.2, Release, not stripped:
 
 | File | All eight wires | `xml`, `json`, `geojson` |
 |---|---|---|
-| `libgoat_transformers.a` | 3,336,966 bytes | 2,366,240 bytes (71%) |
-| `goat-xf` | 1,864,656 bytes | 1,326,648 bytes (71%) |
+| `libgoat_transformers.a` | 3,420,664 bytes | 2,415,622 bytes (71%) |
+| `goat-xf` | 1,915,376 bytes | 1,364,408 bytes (71%) |
 
-The check passed with 8377 of 8377 conversion vectors, 394 of 394 load
-vectors and 16 of 16 capability vectors run (15233, 1008 and 2 skipped), and
-2815 packs refused with `unknown-wire` (bits 1835, protobuf 876, text 86,
+The check passed with 8399 of 8399 conversion vectors, 396 of 396 load
+vectors and 16 of 16 capability vectors run (16212, 1075 and 11 skipped), and
+2946 packs refused with `unknown-wire` (bits 1966, protobuf 876, text 86,
 tlv 11, cbor 7). What stays in the reduced build is the pack reader and the transforms
 every wire shares.
 
@@ -142,16 +142,17 @@ cd build && ctest --output-on-failure
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
 | `parse_once` | `goat_transformers_parse_once` | what an instance keeps (0.25 ruling 1), below: every vector gives the same output, error and decoded entity on a new instance (the benchmark set's vectors), in reverse order after failing conversions, and from eight threads at once |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
-| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29): 135/135 pass (2026-11-21). The entry exists when CMake finds a Python 3 interpreter |
+| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29): 135/135 pass (2026-11-24). The entry exists when CMake finds a Python 3 interpreter |
 
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
 
-Measured on 2026-11-21 (Release, all eight wires, through Version 0.33,
-`when … at`, after 0.28's `cbor` wire): all seven ctest entries pass;
-`vectors` ran 23610 of 23610 conversion vectors, 1402 of 1402 load vectors
-and 18 of 18 capability vectors; `unit` made 2144 checks, none failed. `tool_vectors` passed
-135 of 135.
+Measured on 2026-11-24 (Release, all eight wires, through Version 0.34,
+`inner`, with 0.30's `when … as`, 0.31's two counts and 0.33's `when … at`):
+all seven ctest entries pass; `vectors` ran 24611 of 24611 conversion vectors,
+1471 of 1471 load vectors and 27 of 27 capability vectors; `unit` made 2176
+checks, none failed; `malformed_input` made 9580150 convert calls, 0 failed;
+`parse_once` ran 24557 vectors, 0 failures; `tool_vectors` passed 135 of 135.
 
 ## What an instance keeps
 
@@ -176,6 +177,19 @@ setters (`set_max_items`, `set_max_distribution`) and the loading functions
 change the instance and are not to be called while another thread converts.
 Packs are shared by copies of an `Engine`. Loading reads each file once (1d).
 
+## A message of another pack inside a field
+
+An `inner <format> [partial]` line of a `layout sequential` pack (`spec/engine-spec.md`,
+Version 0.34) hands the bytes from the cursor to the end of its extent to the
+pack of that format. Bytes at or after the inner message's end (rulings 13 and
+14) are `malformed-wire`, unless the line says `partial`; a message decoded on
+its own still accepts them. The inner pack is looked up when decode or encode reaches
+the line (`detail::InnerHost`, `src/sequential.hpp`, served by the `Engine`),
+not when the outer pack loads, so packs load in any order. The kind the inner
+pack selected is `Entity::inner_kind`, a `(format, kind name)` pair beside
+`Entity::kind`; both are empty when nothing was selected. `Pack::inner_formats`
+lists the formats of a pack's `inner` lines.
+
 ## Benchmark
 
 `goat-bench` runs the benchmark set `bench/set.json` (engine-spec.md 0.25,
@@ -189,7 +203,8 @@ engines/cpp/build-release/goat-bench bench/set.json
 
 It loads into one instance the packs the set's vectors name (each vector's
 `from` and `to`, a format's pack being the directory of that name in
-`packs`) with the modules they use (`Engine::load_packs`), and times the
+`packs`, and the packs their `inner` lines name, transitively, a name with no
+directory there skipped: Version 0.34) with the modules they use (`Engine::load_packs`), and times the
 load. For each vector in order it converts the input once and compares the
 output with `expect`, then converts it `iterations` times and times that.
 Standard output holds one line per vector,

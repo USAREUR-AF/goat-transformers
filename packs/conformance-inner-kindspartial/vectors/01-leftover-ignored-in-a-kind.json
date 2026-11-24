@@ -1,0 +1,15 @@
+{
+  "name": "leftover-ignored-in-a-kind",
+  "from": "conformance-inner-kindspartial",
+  "to": "conformance-inner-kindspartial",
+  "input": "0705010203ff",
+  "expect": "0705010203",
+  "model": {
+    "@kind": "carry",
+    "@inner_kind": "a",
+    "probe.x": "2",
+    "probe.y": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: input of kinds vector 11 with partial"
+}

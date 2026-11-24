@@ -165,6 +165,11 @@ pub const Entity = struct {
     // Entity.kind is the pair (format, kind name); null when no kind is recorded.
     kind_fmt: ?[]const u8 = null,
     kind_name: []const u8 = "",
+    // Version 0.34: Entity.inner_kind, the pair (format, kind name) of the
+    // kind an inner pack selected; null when none is recorded. Set by decode
+    // only.
+    inner_kind_fmt: ?[]const u8 = null,
+    inner_kind_name: []const u8 = "",
 
     pub fn init(alloc: std.mem.Allocator) Entity {
         return .{ .alloc = alloc };
@@ -191,6 +196,10 @@ pub const Entity = struct {
     fn clearKind(self: *Entity) void {
         self.kind_fmt = null;
         self.kind_name = "";
+    }
+    fn clearInnerKind(self: *Entity) void {
+        self.inner_kind_fmt = null;
+        self.inner_kind_name = "";
     }
 };
 
@@ -248,7 +257,36 @@ const Diag = struct {
     count_only: bool = false,
     // the failure is a line check of a load (ruling 5b of 0.11)
     line_err: bool = false,
+    // Version 0.34: the loaded packs, where decode and encode look up the
+    // pack an `inner` line names; null: none is found
+    packs: ?*const std.StringHashMap(*Pack) = null,
+    // Version 0.34: for an inner decode, the lists the outer entity holds
+    discard: []const []const u8 = &.{},
+    // the inner entity of a fixed layout, and > 0 while a group whose list is
+    // discarded is read: its items are not held
+    root: ?*const Entity = null,
+    no_hold: usize = 0,
+    // what an inner decode that failed with `transform-decode` had read; null:
+    // the failure stopped the decode (a `switch` on a key that failed)
+    partial: ?Entity = null,
+    // with `partial`: the keys whose lines failed and that the inner message
+    // does not hold, forgiven when an outer line gives them (ruling 23 of
+    // 0.34), and whether something failed that is never forgiven
+    failed_keys: []const []const u8 = &.{},
+    unforgiven: bool = false,
+    // Version 0.34: the decode about to start is an inner one, and whether
+    // bytes after its end are an error; taken by that decode
+    inner: InnerMode = .none,
+    // Version 0.34: an inner decode of a fixed layout is running
+    soft: ?*Soft = null,
 };
+
+const InnerMode = enum { none, strict, partial };
+
+// Version 0.34, an inner decode of a fixed layout: a `transform-decode` does
+// not stop it. The first one, and the furthest start of a group (ruling 14).
+// The message's keys that failed are kept for the outer decode (ruling 23).
+const Soft = struct { msg: ?[]const u8 = null, far: usize = 0, keys: std.ArrayListUnmanaged([]const u8) = .{} };
 
 // A load failure kept until the file has been read (ruling 5b of 0.11).
 const Deferred = struct { err: anyerror, msg: []const u8 };
@@ -279,6 +317,19 @@ fn takeItems(diag: *Diag, alloc: std.mem.Allocator, n: u64, list: []const u8) an
         return bad(diag, alloc, E.@"malformed-wire", "list {s}: {d} more items would pass the limit of {d} list items", .{ list, n, diag.max_items });
     }
     diag.held += @intCast(n);
+}
+
+// Hold `n` more list items, unless they are in a list that is discarded
+// (Version 0.34, Decode step 4): there a count read from the wire is checked
+// against the budget left when it is read (ruling 7 of 0.34) and no item is
+// held (7g of 0.11).
+fn holdList(diag: *Diag, alloc: std.mem.Allocator, n: u64, list: []const u8, wire_count: bool) anyerror!void {
+    if (diag.no_hold == 0) return takeItems(diag, alloc, n, list);
+    if (!wire_count) return;
+    if (n > diag.max_items - diag.held) {
+        diag.limit_hit = true;
+        return bad(diag, alloc, E.@"malformed-wire", "list {s}: a count of {d} passes the {d} list items left of the limit of {d}", .{ list, n, diag.max_items - diag.held, diag.max_items });
+    }
 }
 
 // The list items an entity holds, at every nesting level.
@@ -922,6 +973,9 @@ const Pack = struct {
     // and `tag <n>`
     cbor_array: bool = false,
     cbor_tag: ?u64 = null,
+    // Version 0.34: the `inner` lines in file order, each with the number of
+    // key uses read before it (its place in reading order for `model_keys`)
+    inners: std.ArrayListUnmanaged(InnerMark) = .{},
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -959,6 +1013,15 @@ const Pack = struct {
         return null;
     }
 };
+
+// Version 0.34: an `inner <format>` line of a sequential pack.
+const InnerMark = struct { fmt: []const u8, pos: usize, lineno: usize };
+
+// Does an `inner` line of the pack name the format?
+fn packHasInner(p: *const Pack, fmt: []const u8) bool {
+    for (p.inners.items) |im| if (std.mem.eql(u8, im.fmt, fmt)) return true;
+    return false;
+}
 
 // model_keys(format): the union of keys over common and all kinds, in first
 // appearance order. A list is `<list>[]`, an item key `<list>[].<key>`, nested
@@ -2718,7 +2781,7 @@ fn fixedLen(loc: []const u8) ?u64 {
 }
 
 // The directives of a pack (ruling 5 of 0.11).
-const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else", count };
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else", count, inner };
 
 // The header lines a pack has given so far, for the line checks.
 const HeaderSeen = struct {
@@ -2733,7 +2796,8 @@ const HeaderSeen = struct {
 // Does the directive stand after the `wire` line (ruling 5b of 0.11)?
 fn needsWire(d: PackDir) bool {
     return switch (d) {
-        .root, .field, .when, .@"const", .group, .end, .word_bytes, .bit_order, .layout, .also, .pad, .@"align", .presence, .@"if", .opt, .chain, .fx, .length => true,
+        // Version 0.34: `inner` stands after `wire` and `layout sequential`
+        .root, .field, .when, .@"const", .group, .end, .word_bytes, .bit_order, .layout, .also, .pad, .@"align", .presence, .@"if", .opt, .chain, .fx, .length, .inner => true,
         else => false,
     };
 }
@@ -2766,6 +2830,8 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         // Version 0.21: `count <name> <len> [plus <n>]`; its options are
         // checked by the sequential parser
         .count => n >= 2,
+        // Version 0.34: `inner <format> [partial]`
+        .inner => n == 1 or n == 2,
         // `checksum sum16 <tag>` and `checksum crc32 <tag>` of the `tlv` wire
         // have two (ruling 12 of 0.13, ruling 2 of 0.27)
         .checksum => n == 1 or (n == 2 and (std.mem.eql(u8, toks[1], "sum16") or std.mem.eql(u8, toks[1], "crc32"))),
@@ -3185,6 +3251,10 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         try curLines(p, in_group, gtmp).append(ln);
         try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = if (in_group) gstack.items[gstack.items.len - 1] else null });
         if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
+    } else if (is(kw, "inner")) {
+        // Version 0.34: a line of a `layout sequential` `bits` pack only,
+        // checked after the file is read
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: inner on wire {s} without `layout sequential`; it is for the sequential layout of the bits wire only", .{ lineno, @tagName(p.wire) });
     } else {
         return bad(diag, alloc, E.@"unknown-directive", "line {d}: unknown directive {s}", .{ lineno, kw });
     }
@@ -3789,41 +3859,71 @@ pub const Engine = struct {
             }
             if (!seen) try names.append(name);
         }
-        std.mem.sort([]const u8, names.items, {}, strLess);
         const mf_opt = try self.scanModelDir(models_dir);
         if (mf_opt) |mf| {
             for (mf.mod_names, 0..) |mn, j| {
                 if (std.mem.eql(u8, mn, "core")) try self.loadModelOrdered(mf, j);
             }
         }
-        const texts = try alloc.alloc([]const u8, names.items.len);
+        // Each named pack, and (Version 0.34) each pack an `inner` line of a
+        // pack read names, transitively; a name with no `pack.def` under
+        // the packs directory is skipped (its use is `unknown-format`).
+        var text_list = std.ArrayList([]const u8).init(alloc);
+        const named = names.items.len;
         var tokbuf = std.ArrayList([]const u8).init(alloc);
-        for (names.items, 0..) |name, i| {
+        var i: usize = 0;
+        while (i < names.items.len) : (i += 1) {
+            const name = names.items[i];
             const def_path = try std.fmt.allocPrint(alloc, "{s}/{s}/pack.def", .{ packs_dir, name });
-            texts[i] = std.fs.cwd().readFileAlloc(alloc, def_path, max_file) catch |err| {
+            const text = std.fs.cwd().readFileAlloc(alloc, def_path, max_file) catch |err| {
                 self.fail(err, "pack {s}: cannot read {s}", .{ name, def_path });
                 return err;
             };
-            const mf = mf_opt orelse continue;
-            var lines = std.mem.splitScalar(u8, texts[i], '\n');
+            try text_list.append(text);
+            var lines = std.mem.splitScalar(u8, text, '\n');
             while (lines.next()) |line| {
                 tokenizeInto(&tokbuf, line) catch |err| switch (err) {
                     error.OutOfMemory => return err,
                     else => continue,
                 };
+                if (tokbuf.items.len != 2 and tokbuf.items.len != 3) continue;
+                if (std.mem.eql(u8, tokbuf.items[0], "inner")) {
+                    const fmt = tokbuf.items[1];
+                    if (listHolds(names.items, fmt)) continue;
+                    if (fmt.len == 0 or std.mem.indexOfAny(u8, fmt, "/\\") != null or std.mem.eql(u8, fmt, ".") or std.mem.eql(u8, fmt, "..")) continue;
+                    const ipath = try std.fmt.allocPrint(alloc, "{s}/{s}/pack.def", .{ packs_dir, fmt });
+                    std.fs.cwd().access(ipath, .{}) catch continue;
+                    try names.append(try alloc.dupe(u8, fmt));
+                    continue;
+                }
+                const mf = mf_opt orelse continue;
                 if (tokbuf.items.len != 2 or !std.mem.eql(u8, tokbuf.items[0], "uses")) continue;
                 for (mf.mod_names, 0..) |mn, j| {
                     if (std.mem.eql(u8, mn, tokbuf.items[1])) try self.loadModelOrdered(mf, j);
                 }
             }
         }
-        for (names.items, 0..) |name, i| {
-            _ = self.loadPack(texts[i]) catch |err| {
+        // in byte order of name
+        const order = try alloc.alloc(usize, names.items.len);
+        for (order, 0..) |*o, k| o.* = k;
+        std.mem.sort(usize, order, names.items, struct {
+            fn less(ns: [][]const u8, a: usize, b: usize) bool {
+                return std.mem.lessThan(u8, ns[a], ns[b]);
+            }
+        }.less);
+        var sorted = std.ArrayList([]const u8).init(alloc);
+        for (order) |o| {
+            const name = names.items[o];
+            _ = self.loadPack(text_list.items[o]) catch |err| {
+                // a pack reached only through an `inner` line that this
+                // build or limit refuses is not loaded
+                if (o >= named and (err == E.@"unknown-wire" or err == E.@"distribution-refused")) continue;
                 self.last_error = try std.fmt.allocPrint(alloc, "{s} ({s}/{s}/pack.def)", .{ self.last_error, packs_dir, name });
                 return err;
             };
+            try sorted.append(name);
         }
-        return .{ .modules = self.modules.count(), .packs = names.items };
+        return .{ .modules = self.modules.count(), .packs = sorted.items };
     }
 
     /// What `loadTree` is asked to load (Version 0.23, Loading; Version 0.29).
@@ -4148,7 +4248,7 @@ pub const Engine = struct {
     // decode(format, bytes) -> Entity
     pub fn decode(self: *Engine, fmt: []const u8, bytes: []const u8) !Entity {
         const p = try self.pack(fmt);
-        var diag = Diag{ .max_items = self.max_items };
+        var diag = Diag{ .max_items = self.max_items, .packs = &self.pack_index };
         return decodePack(self.scratch, p, bytes, &diag) catch |err| {
             self.fail(err, "decode {s}: {s}", .{ fmt, diag.msg });
             return err;
@@ -4158,7 +4258,7 @@ pub const Engine = struct {
     // encode(format, Entity) -> bytes
     pub fn encode(self: *Engine, fmt: []const u8, e: *const Entity) ![]u8 {
         const p = try self.pack(fmt);
-        var diag = Diag{};
+        var diag = Diag{ .packs = &self.pack_index };
         return encodePack(self.scratch, p, e, &diag) catch |err| {
             self.fail(err, "encode {s}: {s}", .{ fmt, diag.msg });
             return err;
@@ -4211,8 +4311,41 @@ pub const Engine = struct {
     // from == to; fill absent keys from the context; derive; encode. With
     // from == to and no context the entity goes to the encoder as decoded.
     // model_keys(format) (ruling 6a of 0.11).
+    // Version 0.34: computed when asked for. Each `inner` line whose pack
+    // passes the checks of the line adds, at its place in reading order, the
+    // entries of model_keys(<format>) not yet listed.
     pub fn modelKeysOf(self: *Engine, fmt: []const u8) ![]const []const u8 {
-        return modelKeys(self.scratch, try self.pack(fmt));
+        const p = try self.pack(fmt);
+        const own = try modelKeys(self.scratch, p);
+        if (p.inners.items.len == 0) return own;
+        var out = std.ArrayList([]const u8).init(self.scratch);
+        var seen = std.StringHashMap(void).init(self.scratch);
+        var ui: usize = 0; // the key uses walked so far
+        for (p.inners.items) |im| {
+            // the outer entries of the key uses before the line
+            while (ui < im.pos) : (ui += 1) {
+                const ku = p.key_uses.items[ui];
+                // a `when … as` key is a mapped key (rulings 5 and 24 of 0.30)
+                if (ku.use != .field and ku.use != .group and ku.use != .as_) continue;
+                const name = try mkName(self.scratch, ku.grp, ku.key, ku.use == .group);
+                if (seen.contains(name)) continue;
+                try seen.put(name, {});
+                try out.append(name);
+            }
+            const ip = self.findPack(im.fmt) orelse continue;
+            if (innerCheck(p, ip) != null) continue;
+            for (try modelKeys(self.scratch, ip)) |name| {
+                if (seen.contains(name)) continue;
+                try seen.put(name, {});
+                try out.append(name);
+            }
+        }
+        for (own) |name| {
+            if (seen.contains(name)) continue;
+            try seen.put(name, {});
+            try out.append(name);
+        }
+        return out.toOwnedSlice();
     }
 
     // capability(from, to): computed from the two packs alone (ruling 6 of
@@ -4245,8 +4378,20 @@ pub const Engine = struct {
         _ = try self.pack(from);
         _ = try self.pack(to);
         const same = std.mem.eql(u8, from, to);
+        const to_pack = self.findPack(to).?;
         var e = try self.decode(from, bytes);
-        if (!same) e.clearKind();
+        // Entity.kind is kept when from == to, or when an `inner` line of
+        // `to` names its format; Entity.inner_kind when from == to, when it
+        // names `to`, or when an `inner` line of `to` names its format
+        // (Version 0.34)
+        if (!same) {
+            if (e.kind_fmt) |kf| {
+                if (!packHasInner(to_pack, kf)) e.clearKind();
+            }
+            if (e.inner_kind_fmt) |kf| {
+                if (!std.mem.eql(u8, kf, to) and !packHasInner(to_pack, kf)) e.clearInnerKind();
+            }
+        }
         if (!same or context != null) {
             if (context) |c| try self.fillContext(&e, c);
             try self.complete(&e);
@@ -6956,6 +7101,8 @@ fn jsonResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, ob
 // furthest bit the scope's items reach (0 when it has none).
 fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: Doc, e: *Entity, diag: *Diag) anyerror!usize {
     var failed = std.StringArrayHashMap([]const u8).init(alloc);
+    // inner decode (Version 0.34): keys whose table has no entry for the value
+    var dead = std.ArrayListUnmanaged([]const u8){};
     var end: usize = 0;
     // Version 0.17: the gate blocks that hold; a held block's fields and
     // `const` lines that are not `optional` must be in the input
@@ -6984,7 +7131,7 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
         }
         if (ln.tag != .field) continue;
         if (diag.count_only) continue;
-        if (e.fields.contains(ln.key)) continue;
+        if (e.fields.contains(ln.key) or listHolds(dead.items, ln.key)) continue;
         // a line of a block that does not hold counts as a line whose
         // locator is absent: decode goes on to the key's next line
         if (ln.gate) |gt| if (!held[gt.idx]) continue;
@@ -7005,8 +7152,16 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
             // another type fails the decode: later lines of the key are not
             // tried (ruling 4 of 0.6, ruling 10 of 0.7).
             if (ln.via) |t| {
-                mv = tableDecode(t, mv, ln.kty) catch
-                    return bad(diag, alloc, E.@"transform-decode", "field {s} at {s}: the table {s} has no entry for the value", .{ ln.key, ln.locator, ln.via_name });
+                mv = tableDecode(t, mv, ln.kty) catch {
+                    const err = bad(diag, alloc, E.@"transform-decode", "field {s} at {s}: the table {s} has no entry for the value", .{ ln.key, ln.locator, ln.via_name });
+                    const sf = diag.soft orelse return err;
+                    // an error in a discarded list too (ruling 21 of 0.34)
+                    if (sf.msg == null) sf.msg = diag.msg;
+                    _ = failed.orderedRemove(ln.key);
+                    try dead.append(alloc, ln.key);
+                    if (e == diag.root) try sf.keys.append(alloc, ln.key);
+                    continue;
+                };
             }
         }
         if (!ok) {
@@ -7027,10 +7182,19 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
         var fit = failed.iterator();
         while (fit.next()) |en| {
             if (e.fields.contains(en.key_ptr.*)) continue;
+            if (diag.soft) |sf| if (e == diag.root) {
+                try sf.keys.append(alloc, en.key_ptr.*);
+                continue;
+            };
             if (msg.items.len > 0) try msg.appendSlice(", ");
             try msg.writer().print("{s} at {s}", .{ en.key_ptr.*, en.value_ptr.* });
         }
-        if (msg.items.len > 0) return bad(diag, alloc, E.@"transform-decode", "failed fields: {s}", .{msg.items});
+        // ruling 21 of 0.34: not an error in a discarded list
+        if (msg.items.len > 0 and diag.no_hold == 0) {
+            const err = bad(diag, alloc, E.@"transform-decode", "failed fields: {s}", .{msg.items});
+            const sf = diag.soft orelse return err;
+            if (sf.msg == null) sf.msg = diag.msg;
+        }
     }
     return end;
 }
@@ -7205,8 +7369,16 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             // the count locator is inside the bits the scope requires
             const count: u64 = if (g.count_fixed) |n| n else getBits(bd.buf, p.msb, bd.base + g.cstart, g.clen);
             var pos = bd.base + g.gstart;
+            if (diag.soft) |sf| sf.far = @max(sf.far, pos);
+            // a list the outer message of an inner decode holds is discarded,
+            // its nested lists with it (Version 0.34)
+            const drop = diag.discard.len > 0 and e == diag.root and listHolds(diag.discard, g.list);
+            if (drop) diag.no_hold += 1;
+            defer if (drop) {
+                diag.no_hold -= 1;
+            };
             // the count against the limit, before any item is read (7d)
-            try takeItems(diag, alloc, count, g.list);
+            try holdList(diag, alloc, count, g.list, g.count_fixed == null);
             if (count > 0 and (pos > total or count > (total - pos) / g.item_bits)) {
                 return bad(diag, alloc, mw, "group {s}: the input ends before its {d} items", .{ g.list, count });
             }
@@ -7246,9 +7418,48 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
     }
 }
 
+// Version 0.34, ruling 14: one past the furthest bit of the scope's lines (an
+// `optional` one too), of the blocks that hold with their gates, and of
+// `far`, the furthest start of a group. The items are the caller's.
+fn fixedEnd(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, bd: BitsDoc, far: usize) !usize {
+    var end = @max(sc.nbits, far);
+    if (sc.gates.len == 0) return end;
+    const held = try alloc.alloc(bool, sc.gates.len);
+    evalGates(p, sc.gates, bd.buf, bd.nbits, 0, held);
+    for (sc.gates) |gt| {
+        if (held[gt.idx]) end = @max(end, gt.bstart + gt.blen);
+    }
+    for (sc.lines) |*ln| {
+        const gt = ln.gate orelse continue;
+        if (held[gt.idx] and ln.tag != .group) end = @max(end, ln.bstart + ln.blen);
+    }
+    return end;
+}
+
+// Version 0.34, Decode step 3: bytes of the inner input after the message.
+fn leftover(diag: *Diag, alloc: std.mem.Allocator, stop: usize, have: usize) anyerror {
+    return bad(diag, alloc, E.@"malformed-wire", "the message ends at byte {d}, the inner input holds {d}", .{ stop, have });
+}
+
+// Version 0.34: an inner decode that was read to its end, with values that do
+// not decode: `msg` what failed for good, `keys` what an outer line may forgive.
+fn innerFailed(diag: *Diag, alloc: std.mem.Allocator, e: Entity, msg: ?[]const u8, keys: []const []const u8) anyerror {
+    diag.partial = e;
+    diag.failed_keys = keys;
+    diag.unforgiven = msg != null;
+    const text = msg orelse std.mem.join(alloc, ", ", keys) catch "";
+    return bad(diag, alloc, E.@"transform-decode", "failed fields: {s}", .{text});
+}
+
 fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Entity {
     if (built(.bits) and p.seq != null) return seqDecode(alloc, p, bytes, diag);
+    const mode = diag.inner;
+    diag.inner = .none;
+    var soft = Soft{};
+    if (mode != .none) diag.soft = &soft;
+    defer diag.soft = null;
     const doc = try parseDoc(alloc, p, bytes, diag);
+    const held0 = diag.held;
 
     // kind selection
     var kind_idx: ?usize = null;
@@ -7311,13 +7522,14 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
         e.kind_name = p.kinds.items[k].name;
     }
 
+    diag.root = &e;
     const end = decodeScope(alloc, p, sc, doc, &e, diag) catch |err| {
         // Going over the limit wins over a field that fails (ruling 7f of
         // 0.11): the scope is read again for its items alone.
         if (err == error.OutOfMemory or err == E.@"malformed-wire") return err;
         const msg = diag.msg;
         diag.count_only = true;
-        diag.held = 0;
+        diag.held = held0;
         var scratch_e = Entity.init(alloc);
         _ = decodeScope(alloc, p, sc, doc, &scratch_e, diag) catch |err2| {
             if (err2 == error.OutOfMemory) return err2;
@@ -7336,6 +7548,13 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
         if (doc.bits.buf.len < need) {
             return bad(diag, alloc, E.@"malformed-wire", "the message with its items is {d} bytes, the input holds {d}", .{ need, doc.bits.buf.len });
         }
+    }
+    if (built(.bits) and doc == .bits and mode != .none) {
+        if (mode == .strict) {
+            const stop = p.wordBytes(@max(end, try fixedEnd(alloc, p, sc, doc.bits, soft.far)));
+            if (doc.bits.buf.len > stop) return leftover(diag, alloc, stop, doc.bits.buf.len);
+        }
+        if (soft.msg != null or soft.keys.items.len > 0) return innerFailed(diag, alloc, e, soft.msg, soft.keys.items);
     }
 
     // residue: what no common or selected-kind `field` or `when` maps
@@ -7408,6 +7627,13 @@ fn selectKindEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, 
             // a kind the pack does not have is `no-kind` (ruling 24 of 0.5)
             return p.kindIndex(e.kind_name) orelse
                 bad(diag, alloc, E.@"no-kind", "the entity records kind {s}, which the pack does not have", .{e.kind_name});
+        }
+    }
+    // Version 0.34: then Entity.inner_kind when it names this format
+    if (e.inner_kind_fmt) |kf| {
+        if (std.mem.eql(u8, kf, p.format)) {
+            return p.kindIndex(e.inner_kind_name) orelse
+                bad(diag, alloc, E.@"no-kind", "the entity records inner kind {s}, which the pack does not have", .{e.inner_kind_name});
         }
     }
     for (p.kinds.items, 0..) |k, i| {
@@ -10837,7 +11063,7 @@ const SAlso = struct {
 };
 
 const SMode = enum { count, while_, more, fx, size_c, size_u, cref, rest, last };
-const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole, ext, choice, alt, switch_, case_, count };
+const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole, ext, choice, alt, switch_, case_, count, inner };
 
 // Version 0.21: a `count <name> <len> [plus <n>]` line.
 const SCount = struct { name: []const u8, len: usize, plus: i64, lineno: usize };
@@ -10953,6 +11179,7 @@ const SNode = struct {
     // length of the count; length, whole: the bit length of the length field
     len: usize = 0,
     value: u64 = 0, // const, when
+    partial: bool = false, // inner (Version 0.34)
     pres: ?*SPres = null, // presence
     conds: []const SCond = &.{}, // if
     body: []SNode = &.{}, // if, opt, chain, length
@@ -11907,6 +12134,23 @@ const SParser = struct {
                 n.body = try f.nodes.toOwnedSlice(alloc);
             }
             try self.add(n);
+        } else if (is(kw, "inner")) {
+            // Version 0.34: `inner <format>`, in the common lines, a kind or
+            // `length` blocks; under any other block it is `bad-directive`
+            // after the file is read. The format is not looked up here.
+            if (toks.len != 2 and toks.len != 3) return self.err(bd, "inner takes a format name and the word partial", .{});
+            try p.inners.append(alloc, .{ .fmt = toks[1], .pos = p.key_uses.items.len, .lineno = self.lineno });
+            var pending: ?anyerror = null;
+            if (toks.len == 3 and !is(toks[2], "partial")) pending = self.err(bd, "inner {s}: the word {s} is not `partial`", .{ toks[1], toks[2] });
+            for (self.frames.items[1..]) |f| {
+                if (pending != null) break;
+                if (f.tag == .length) continue;
+                const what: []const u8 = if (f.tag == .body) "group" else @tagName(f.tag);
+                pending = self.err(bd, "inner {s} inside a {s} block; it stands in the common lines, a kind or `length` blocks only", .{ toks[1], what });
+                break;
+            }
+            try self.add(.{ .tag = .inner, .lineno = self.lineno, .list = toks[1], .partial = toks.len == 3 });
+            if (pending) |e| return e;
         } else if (is(kw, "element")) {
             return self.err(E.@"bad-directive", "element is for the xml wire only", .{});
         } else {
@@ -12197,6 +12441,9 @@ fn seqCheckRestList(alloc: std.mem.Allocator, list: []const SNode, after_in: boo
         i -= 1;
         const n = &list[i];
         switch (n.tag) {
+            // Version 0.34: an `inner` line is the last wire line of its
+            // extent, as a `rest` group is
+            .inner => if (after) return bad(diag, alloc, bd, "line {d}: an inner line is not the last line of its extent", .{n.lineno}),
             .group => {
                 if (n.mode == .rest) {
                     if (forbid) return bad(diag, alloc, bd, "line {d}: a rest group inside an item, neither within a `length` block of the item's body nor last in an item of a rest group", .{n.lineno});
@@ -12222,6 +12469,33 @@ fn seqCheckRestBody(alloc: std.mem.Allocator, b: *const SBody, forbid: bool, dia
     }
     try seqCheckRestList(alloc, b.common, kind_wire, forbid, diag);
     for (b.kinds) |*k| try seqCheckRestList(alloc, k.lines, false, forbid, diag);
+}
+
+// Version 0.34, after the file is read: at most one `inner` line on any
+// reading path (the common lines with one kind), and none in a pack with
+// `armor` or `encoding uper`.
+fn seqCheckInner(alloc: std.mem.Allocator, p: *const Pack, root: *const SBody, diag: *Diag) anyerror!void {
+    if (p.inners.items.len == 0) return;
+    const bd = E.@"bad-directive";
+    const first = p.inners.items[0].lineno;
+    if (p.armor) return bad(diag, alloc, bd, "line {d}: inner in a pack with armor", .{first});
+    if (p.uper) return bad(diag, alloc, bd, "line {d}: inner in a pack with encoding uper", .{first});
+    const c = seqInnerCount(root.common);
+    if (c > 1) return bad(diag, alloc, bd, "two inner lines in the common lines", .{});
+    for (root.kinds) |*k| {
+        if (c + seqInnerCount(k.lines) > 1) return bad(diag, alloc, bd, "kind {s}: two inner lines on one reading path", .{k.name});
+    }
+}
+
+// The `inner` lines of a list, in `length` blocks too (the only block that
+// may hold one).
+fn seqInnerCount(list: []const SNode) usize {
+    var n: usize = 0;
+    for (list) |*x| {
+        if (x.tag == .inner) n += 1;
+        n += seqInnerCount(x.body);
+    }
+    return n;
 }
 
 fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Pack {
@@ -12285,6 +12559,7 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     try seqCheckRestBody(alloc, root, false, diag);
     // Version 0.33: reported after the key checks (ruling 10)
     try seqCheckWindows(alloc, p, root);
+    try seqCheckInner(alloc, p, root, diag);
     if (p.seq_switch) try seqLinkBody(alloc, root);
     p.seq = root;
     if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
@@ -12373,6 +12648,17 @@ const SDec = struct {
     pending: std.ArrayListUnmanaged(SPending) = .{},
     // the cases being read, outermost first
     open_cases: std.ArrayListUnmanaged(u32) = .{},
+    // Version 0.34: the lists an inner message gave the entity
+    inner_lists: []const []const u8 = &.{},
+    // Version 0.34, an inner decode: the message's entity, the lists the
+    // outer entity holds (discarded from this one by step 4)
+    root: ?*const Entity = null,
+    discard: []const []const u8 = &.{},
+    // Version 0.34, ruling 13: a `length … whole` line was read
+    whole_read: bool = false,
+    // Version 0.34: the decode is an inner one; the keys an inner message gave
+    is_inner: bool = false,
+    inner_keys: std.ArrayListUnmanaged([]const u8) = .{},
 
     const mw = E.@"malformed-wire";
     const SPending = struct { pres: *const SPres, bit: usize, start: usize };
@@ -12501,14 +12787,22 @@ const SDec = struct {
     }
 
     fn setKey(self: *SDec, se: *SEnt, key: []const u8, via: ?*const Table, via_name: []const u8, kty: KeyType, raw: MV) !void {
-        if (se.e.fields.contains(key)) return; // the earliest line of a key wins
+        if (se.e.fields.contains(key)) { // the earliest line of a key wins
+            // a table with no entry is an error also when the inner message
+            // gave the key (ruling 23 of 0.34)
+            if (via) |t| if (se.e == self.root and listHolds(self.inner_keys.items, key)) {
+                _ = tableDecode(t, raw, kty) catch
+                    return self.fieldFailed("field {s}: the table {s} has no entry for the value", .{ key, via_name });
+            };
+            return;
+        }
         var mv = raw;
         if (via) |t| {
             mv = tableDecode(t, mv, kty) catch {
                 // the key failed: a `switch` on it fails the decode
                 // (ruling 35 of 0.20)
                 try se.failed.append(self.alloc, key);
-                return self.fieldFailed(try std.fmt.allocPrint(self.alloc, "field {s}: the table {s} has no entry for the value", .{ key, via_name }));
+                return self.fieldFailed("field {s}: the table {s} has no entry for the value", .{ key, via_name });
             };
         }
         if (mv == .str and std.mem.eql(u8, key, "type")) {
@@ -12679,9 +12973,11 @@ const SDec = struct {
                 if (total < @as(i128, self.pos)) return bad(self.diag, alloc, mw, "the stated length of the message is shorter than what was already read", .{});
                 if (total > @as(i128, self.hard_end)) return bad(self.diag, alloc, mw, "the stated length of the message is {d} bits, the input holds {d}", .{ total, self.hard_end });
                 self.hard_end = @intCast(total);
+                self.whole_read = true;
                 if (!self.in_extent) self.soft_end = self.hard_end;
             },
             .group => try self.group(n, se, env.*),
+            .inner => try self.innerNode(n, se),
             .ext => {
                 if (self.atExtentEnd()) return;
                 const bit = try self.rd(1, "ext");
@@ -12866,7 +13162,84 @@ const SDec = struct {
         for (n.also.items) |a| try self.setKey(se, a.key, a.via, a.via_name, a.kty, mv);
     }
 
+    // Version 0.34: the `inner` line. The checks of the line, then the inner
+    // input (the whole bytes from the cursor to the end of the enclosing
+    // extent) decoded by the inner pack; its keys join the entity, the first
+    // value read in reading order kept.
+    fn innerNode(self: *SDec, n: *const SNode, se: *SEnt) anyerror!void {
+        const alloc = self.alloc;
+        const ip = try innerLookup(alloc, self.diag, self.p, n.list);
+        if (self.pos % 8 != 0) return bad(self.diag, alloc, mw, "inner {s}: the cursor at bit {d} is not on a whole byte", .{ ip.format, self.pos });
+        const end = self.limit();
+        if (end % 8 != 0) return bad(self.diag, alloc, mw, "inner {s}: the enclosing extent ends at bit {d}, not on a whole byte", .{ ip.format, end });
+        const at = @min(self.pos, end);
+        const hex = try hexEncode(alloc, self.buf[at / 8 .. end / 8]);
+        // the lists the entity holds: the inner lists of those names are
+        // discarded, and a sequential inner decode holds none of their items
+        var held_lists = std.ArrayListUnmanaged([]const u8){};
+        for (se.e.lists.ptr[0..se.e.lists.len]) |en| try held_lists.append(alloc, en.key);
+        self.diag.discard = held_lists.items;
+        defer self.diag.discard = &.{};
+        self.diag.inner = if (n.partial) .partial else .strict;
+        self.diag.partial = null;
+        const sub = decodePack(alloc, ip, hex, self.diag) catch |err| failed: {
+            if (err == error.OutOfMemory) return err;
+            const msg = try std.fmt.allocPrint(alloc, "inner {s}: {s}", .{ ip.format, self.diag.msg });
+            // a value that does not decode does not stop the decode (ruling
+            // 9 of 0.1.1); a failure of the wire, a `switch` on a key that
+            // failed (ruling 35 of 0.20) and every other kind does. What was
+            // read joins the entity (ruling 19 of 0.34).
+            if (err == E.@"transform-decode") if (self.diag.partial) |got| {
+                if (self.diag.unforgiven) try self.fieldFailed("{s}", .{msg});
+                // forgiven when an outer line of the key succeeds, before or
+                // after this one (ruling 23 of 0.34)
+                try se.failed.appendSlice(alloc, self.diag.failed_keys);
+                break :failed got;
+            };
+            self.diag.msg = msg;
+            return err;
+        };
+        self.pos = end;
+        for (sub.fields.ptr[0..sub.fields.len]) |en| {
+            if (se.e.fields.contains(en.key)) continue;
+            try se.e.put(en.key, en.value);
+            try self.inner_keys.append(alloc, en.key);
+        }
+        var names = std.ArrayListUnmanaged([]const u8){};
+        try names.appendSlice(alloc, self.inner_lists);
+        for (sub.lists.ptr[0..sub.lists.len]) |en| {
+            // an outer list read first is kept whole: the inner items, which
+            // were not held, are discarded
+            if (se.e.lists.contains(en.key)) continue;
+            try se.e.putList(en.key, en.value);
+            try names.append(alloc, en.key);
+        }
+        self.inner_lists = names.items;
+        if (sub.kind_fmt) |kf| {
+            se.e.inner_kind_fmt = kf;
+            se.e.inner_kind_name = sub.kind_name;
+        }
+    }
+
     fn group(self: *SDec, n: *const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
+        // Version 0.34: a list the inner message gave is not replaced by a
+        // later group of the outer pack; its items are read and not held
+        if (self.discard.len > 0 and se.e == self.root and listHolds(self.discard, n.list)) {
+            self.diag.no_hold += 1;
+            defer self.diag.no_hold -= 1;
+            return self.groupRead(n, se, env);
+        }
+        if (self.inner_lists.len > 0 and se.e == self.root and listHolds(self.inner_lists, n.list)) {
+            var tmp = Entity.init(self.alloc);
+            var st = SEnt{ .e = &tmp };
+            self.diag.no_hold += 1;
+            defer self.diag.no_hold -= 1;
+            return self.groupRead(n, &st, env);
+        }
+        return self.groupRead(n, se, env);
+    }
+
+    fn groupRead(self: *SDec, n: *const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
         var items = ItemList{ .alloc = self.alloc };
         switch (n.mode) {
             .count => {
@@ -12875,7 +13248,7 @@ const SDec = struct {
                 // the count against the limit, less the items of the list it
                 // replaces (rulings 7d and 7g of 0.11), before any item is read
                 try self.replaceList(se, n.list);
-                try takeItems(self.diag, self.alloc, cnt, n.list);
+                try self.holdItems(cnt, n.list, true);
                 // a count larger than the bits left, before any item is read
                 if (cnt > self.left()) {
                     return bad(self.diag, self.alloc, mw, "group {s}: a count of {d} is larger than the {d} bits left", .{ n.list, cnt, self.left() });
@@ -12934,7 +13307,7 @@ const SDec = struct {
                 // the count against the limit, less the items of the list it
                 // replaces (rulings 7d and 7g of 0.11), before any item is read
                 try self.replaceList(se, n.list);
-                try takeItems(self.diag, self.alloc, cnt, n.list);
+                try self.holdItems(cnt, n.list, true);
                 // compared with the bits left at the group (ruling 20)
                 if (cnt > self.left()) {
                     return bad(self.diag, self.alloc, mw, "group {s}: a count of {d} is larger than the {d} bits left", .{ n.list, cnt, self.left() });
@@ -12957,11 +13330,12 @@ const SDec = struct {
                 self.counting += 1;
                 try self.extentItems(n, &sink, env);
                 self.counting -= 1;
-                if (self.counting > 0) return se.e.putList(n.list, &[0]Entity{});
+                // the items of a discarded list (Version 0.34) are not kept either
+                if (self.counting > 0 or self.diag.no_hold > 0) return se.e.putList(n.list, &[0]Entity{});
                 self.restore(save);
                 self.diag.held = held;
                 try self.replaceList(se, n.list);
-                try takeItems(self.diag, self.alloc, sink.n, n.list);
+                try self.holdItems(sink.n, n.list, false);
                 const slots = try self.alloc.alloc(Entity, sink.n);
                 sink = .{ .scratch = sink.scratch, .slots = slots };
                 try self.extentItems(n, &sink, env);
@@ -12977,12 +13351,17 @@ const SDec = struct {
     // A later group of a list the entity holds replaces its items (ruling 33
     // of 0.8): they are no longer counted (ruling 7g of 0.11).
     fn replaceList(self: *SDec, se: *SEnt, list: []const u8) !void {
+        if (self.diag.no_hold > 0) return; // those items were not held either
         if (se.e.lists.get(list)) |old| self.diag.held -= itemsHeld(old);
+    }
+
+    fn holdItems(self: *SDec, n: u64, list: []const u8, counted: bool) !void {
+        return holdList(self.diag, self.alloc, n, list, counted);
     }
 
     // Where the items of a `rest` or `last` group go: counted into a reused
     // entity (`slots` null), or read into `slots`.
-    const Sink = struct { scratch: Entity, slots: ?[]Entity = null, n: usize = 0 };
+    const Sink = struct { scratch: Entity, slots: ?[]Entity = null, n: usize = 0, failed: std.ArrayListUnmanaged([]const u8) = .{} };
 
     const State = struct { pos: usize, hard_end: usize, soft_end: usize, in_extent: bool, ext_bits: bool, read_cases: usize, pending: usize, open_cases: usize };
 
@@ -13014,8 +13393,11 @@ const SDec = struct {
             sc.fields.len = 0;
             sc.lists.len = 0;
             sc.clearKind();
-            var sit = SEnt{ .e = sc };
+            // one list of failed keys for all the items counted
+            sink.failed.clearRetainingCapacity();
+            var sit = SEnt{ .e = sc, .failed = sink.failed };
             try self.body(n.gbody.?, &sit, env);
+            sink.failed = sit.failed;
         }
         sink.n += 1;
     }
@@ -13050,7 +13432,7 @@ const SDec = struct {
 
     fn item(self: *SDec, n: *const SNode, items: *ItemList, env: ?*const PEnv) anyerror!void {
         // a counted group took its items before the first was read
-        if (n.mode != .count and n.mode != .cref) try takeItems(self.diag, self.alloc, 1, n.list);
+        if (n.mode != .count and n.mode != .cref) try self.holdItems(1, n.list, false);
         var it = Entity.init(self.alloc);
         var sit = SEnt{ .e = &it };
         try self.body(n.gbody.?, &sit, env);
@@ -13113,16 +13495,20 @@ const SDec = struct {
             try self.nodes(k.lines, se, &env);
         }
         try self.checkPending(mark);
+        // a failed item of a discarded list is not an error (ruling 21 of 0.34)
+        if (self.diag.no_hold > 0) return;
+        // an inner message's own keys: the outer decode judges them (ruling 23)
+        if (self.is_inner and se.e == self.root) return;
         for (se.failed.items) |key| {
-            if (!se.e.fields.contains(key)) return self.fieldFailed(try std.fmt.allocPrint(self.alloc, "failed fields: {s}", .{key}));
+            if (!se.e.fields.contains(key)) return self.fieldFailed("failed fields: {s}", .{key});
         }
     }
 
     // A field that fails is reported when the message has been read: going
     // over the limit on list items, later in the message too, wins over it
     // (ruling 7f of 0.11). The first such failure is kept.
-    fn fieldFailed(self: *SDec, msg: []const u8) void {
-        if (self.failed_msg == null) self.failed_msg = msg;
+    fn fieldFailed(self: *SDec, comptime fmt: []const u8, args: anytype) !void {
+        if (self.failed_msg == null) self.failed_msg = try std.fmt.allocPrint(self.alloc, fmt, args);
     }
 };
 
@@ -13163,12 +13549,55 @@ fn caseIndex(alloc: std.mem.Allocator, n: *const SNode, val: ?MV) !?usize {
     return null;
 }
 
+// Version 0.34: the checks made when decode or encode reaches an `inner`
+// line, in order: the inner format is loaded; its wire is `bits` with no
+// `armor` and no `encoding uper`; it has no `inner` line and is not the
+// outer pack; a public outer pack has a public inner pack.
+fn innerCheck(outer: *const Pack, ip: *const Pack) ?anyerror {
+    if (ip.wire != .bits or ip.armor or ip.uper) return E.@"bad-directive";
+    if (ip.inners.items.len > 0 or ip == outer or std.mem.eql(u8, ip.format, outer.format)) return E.@"bad-directive";
+    if (outer.distribution == .public and ip.distribution != .public) return E.@"distribution-violation";
+    return null;
+}
+
+fn innerLookup(alloc: std.mem.Allocator, diag: *Diag, outer: *const Pack, fmt: []const u8) anyerror!*const Pack {
+    const ip: *const Pack = (if (diag.packs) |m| m.get(fmt) else null) orelse
+        return bad(diag, alloc, E.@"unknown-format", "inner {s}: no loaded pack has format {s}", .{ fmt, fmt });
+    if (innerCheck(outer, ip)) |err| {
+        const why: []const u8 = switch (err) {
+            E.@"distribution-violation" => "the outer pack is public and the inner pack is not",
+            else => if (ip.wire != .bits or ip.armor or ip.uper)
+                "the inner pack is not on the bits wire without armor and encoding uper"
+            else
+                "the inner pack has an inner line of its own, or is the outer pack (one layer only)",
+        };
+        return bad(diag, alloc, err, "inner {s}: {s}", .{ fmt, why });
+    }
+    return ip;
+}
+
 fn seqDecode(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Entity {
     const in = bitsInput(alloc, p, bytes) catch |err| return bad(diag, alloc, err, "{s}", .{if (p.armor) "the input is not six-bit armored text" else "the input is not hex of even length"});
     var d = SDec{ .alloc = alloc, .p = p, .buf = in.buf, .diag = diag, .hard_end = in.nbits, .soft_end = in.nbits };
     var e = Entity.init(alloc);
     var se = SEnt{ .e = &e };
+    d.root = &e;
+    d.discard = diag.discard;
+    diag.discard = &.{};
+    const mode = diag.inner;
+    diag.inner = .none;
+    d.is_inner = mode != .none;
     try d.body(p.seq.?, &se, null);
+    if (mode == .strict) {
+        // rulings 13 and 17 of 0.34: ahead of a `transform-decode`
+        const stop = ((if (d.whole_read) d.hard_end else d.pos) + 7) / 8;
+        if (in.buf.len > stop) return leftover(diag, alloc, stop, in.buf.len);
+    }
+    if (mode != .none) {
+        var keys = std.ArrayListUnmanaged([]const u8){};
+        for (se.failed.items) |key| if (!e.fields.contains(key)) try keys.append(alloc, key);
+        if (d.failed_msg != null or keys.items.len > 0) return innerFailed(diag, alloc, e, d.failed_msg, keys.items);
+    }
     if (d.failed_msg) |m| return bad(diag, alloc, E.@"transform-decode", "{s}", .{m});
     return e;
 }
@@ -13409,6 +13838,14 @@ const SEnc = struct {
                 if (!is_item) return bad(self.diag, self.alloc, E.@"no-kind", "the entity records kind {s}, which the body does not have", .{ent.kind_name});
             }
         }
+        // Version 0.34: a message then selects by Entity.inner_kind when it
+        // names this format (an item records none)
+        if (!is_item) if (ent.inner_kind_fmt) |kf| {
+            if (std.mem.eql(u8, kf, self.p.format)) {
+                for (b.kinds) |*k| if (std.mem.eql(u8, k.name, ent.inner_kind_name)) return k;
+                return bad(self.diag, self.alloc, E.@"no-kind", "the entity records inner kind {s}, which the body does not have", .{ent.inner_kind_name});
+            }
+        };
         for (b.kinds) |*k| {
             var all = true;
             for (k.requires.items) |t| {
@@ -13616,6 +14053,9 @@ const SEnc = struct {
         var written = std.ArrayListUnmanaged(BitRange){};
         var fields = std.ArrayListUnmanaged(FieldAt){};
         var wi: usize = 0;
+        // a window the plain `when` lines cover is settled before the first
+        // line, which may be a `switch` on its key
+        try self.settleReached(kk, kstart, ent, held.items, &written, fields.items, &wi);
         for (kk.lines, 0..) |*n, i| {
             const at = self.pos;
             try self.node(n, kk.lines[i + 1 ..], &.{}, ent, ds, env);
@@ -13623,17 +14063,22 @@ const SEnc = struct {
                 try fields.append(alloc, .{ .n = n, .at = at });
                 if (heldWrote(n, ent) and self.pos == at + n.ln.blen) try held.append(alloc, .{ .at = at, .len = n.ln.blen });
             }
-            while (nextWindow(kk, &wi)) |w| {
-                const end: u128 = @as(u128, kstart) + w.at_off.? + w.len;
-                if (end > self.pos) break;
-                try self.settleWindow(w, kstart, ent, held.items, &written, fields.items);
-                wi += 1;
-            }
+            try self.settleReached(kk, kstart, ent, held.items, &written, fields.items, &wi);
         }
         // a window not fixed in its kind does not load; any left settle here
         while (nextWindow(kk, &wi)) |w| {
             try self.settleWindow(w, kstart, ent, held.items, &written, fields.items);
             wi += 1;
+        }
+    }
+
+    // Settle, in line order, the windows that end at or before the cursor.
+    fn settleReached(self: *SEnc, kk: *const SKind, kstart: usize, ent: *const Entity, held: []const BitRange, written: *std.ArrayListUnmanaged(BitRange), fields: []const FieldAt, wi: *usize) !void {
+        while (nextWindow(kk, wi)) |w| {
+            const end: u128 = @as(u128, kstart) + w.at_off.? + w.len;
+            if (end > self.pos) break;
+            try self.settleWindow(w, kstart, ent, held, written, fields);
+            wi.* += 1;
         }
     }
 
@@ -13988,6 +14433,7 @@ const SEnc = struct {
                 try self.block(sel.body, ent, ds, env.*);
             },
             .alt => unreachable, // an `alt` is written by its `choice`
+            .inner => try self.innerNode(n, ent),
             .count => {
                 // Version 0.21: n until the group fills it in (ruling 30)
                 try self.cpend.append(alloc, .{ .at = self.pos, .cnt = n.cnt.?, .value = n.cnt.?.plus });
@@ -13996,6 +14442,32 @@ const SEnc = struct {
             },
             .fx => unreachable, // an `fx` line is a line of a chain
         }
+    }
+
+    // Version 0.34: the `inner` line. The checks of the line, a cursor on a
+    // whole byte, then the inner pack's encoding of the same entity at the
+    // cursor. The inner kind: Entity.inner_kind when it names the inner
+    // format, else Entity.kind when it does, else the `requires` lines.
+    fn innerNode(self: *SEnc, n: *const SNode, ent: *const Entity) anyerror!void {
+        const alloc = self.alloc;
+        const ip = try innerLookup(alloc, self.diag, self.p, n.list);
+        if (self.pos % 8 != 0) return bad(self.diag, alloc, te, "inner {s}: the cursor at bit {d} is not on a whole byte", .{ ip.format, self.pos });
+        var sub = ent.*;
+        if (ent.inner_kind_fmt) |kf| {
+            if (std.mem.eql(u8, kf, ip.format)) {
+                sub.kind_fmt = kf;
+                sub.kind_name = ent.inner_kind_name;
+            }
+        }
+        const hex = encodePack(alloc, ip, &sub, self.diag) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            self.diag.msg = try std.fmt.allocPrint(alloc, "inner {s}: {s}", .{ ip.format, self.diag.msg });
+            return err;
+        };
+        const bytes = hexDecode(alloc, hex) catch return bad(self.diag, alloc, te, "inner {s}: its encoding is not bytes", .{ip.format});
+        try self.ensure(self.pos + bytes.len * 8);
+        @memcpy(self.out.items[self.pos / 8 ..][0..bytes.len], bytes);
+        self.pos += bytes.len * 8;
     }
 
     // Version 0.19 ----------------------------------------------------------
@@ -14427,6 +14899,14 @@ fn runVector(eng: *Engine, text: []const u8) !?[]const u8 {
             }
             continue;
         }
+        if (std.mem.eql(u8, key, "@inner_kind")) {
+            // Version 0.34: the kind name Entity.inner_kind holds
+            if (ent.inner_kind_fmt == null) return try std.fmt.allocPrint(alloc, "@inner_kind: expected {s}, the entity records no inner kind", .{exp});
+            if (!std.mem.eql(u8, ent.inner_kind_name, exp)) {
+                return try std.fmt.allocPrint(alloc, "@inner_kind: expected {s}, got ({s}, {s})", .{ exp, ent.inner_kind_fmt.?, ent.inner_kind_name });
+            }
+            continue;
+        }
         if (try checkModelKey(alloc, &ent, key, exp, completed)) |why| return why;
     }
     return null;
@@ -14513,6 +14993,11 @@ fn checkModelKey(alloc: std.mem.Allocator, ent: *const Entity, key: []const u8, 
 // One `"@absent"` entry: a key or a list name the entity lacks, or
 // `"<list>[<i>].<key>"`, an item that exists and lacks the key. null: it holds.
 fn checkAbsentKey(alloc: std.mem.Allocator, ent: *const Entity, key: []const u8) !?[]const u8 {
+    // Version 0.34: `"@inner_kind"`, an entity that records no inner kind
+    if (std.mem.eql(u8, key, "@inner_kind")) {
+        if (ent.inner_kind_fmt) |f| return try std.fmt.allocPrint(alloc, "@absent @inner_kind: the entity records ({s}, {s})", .{ f, ent.inner_kind_name });
+        return null;
+    }
     var cur = ent;
     var rest = key;
     while (std.mem.indexOfScalar(u8, rest, '[')) |open| {
@@ -14698,7 +15183,9 @@ const CapAlloc = struct {
 // ---------------------------------------------------------------------------
 
 // The kinds a `convert` with no context may fail with.
-const named_kinds = [_][]const u8{ "malformed-wire", "transform-decode", "transform-encode", "no-kind", "missing-root" };
+// Version 0.34 adds the kinds raised where decode or encode reaches an
+// `inner` line: `unknown-format`, `bad-directive`, `distribution-violation`.
+const named_kinds = [_][]const u8{ "malformed-wire", "transform-decode", "transform-encode", "no-kind", "missing-root", "unknown-format", "bad-directive", "distribution-violation" };
 
 const fuzz_steps: usize = 96;
 // What one `convert` of the run may hold; more fails the run.
@@ -15159,12 +15646,13 @@ pub fn main() !void {
     try stdout.print("loaded: {d} modules, {d} packs\n", .{ n_modules, pack_dirs.len });
 
     if (keys_opt) |fmt| {
-        const p = eng.findPack(fmt) orelse {
+        if (eng.findPack(fmt) == null) {
             try stdout.print("error: no loaded pack has format {s}\n", .{fmt});
             try bw.flush();
             std.process.exit(2);
-        };
-        for (try modelKeys(alloc, p)) |k| try stdout.print("{s}\n", .{k});
+        }
+        // with the keys of the packs its `inner` lines name (Version 0.34)
+        for (try eng.modelKeysOf(fmt)) |k| try stdout.print("{s}\n", .{k});
         try bw.flush();
         return;
     }

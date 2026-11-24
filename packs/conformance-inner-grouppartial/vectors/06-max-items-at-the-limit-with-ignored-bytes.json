@@ -1,0 +1,13 @@
+{
+  "name": "max-items-at-the-limit-with-ignored-bytes",
+  "from": "conformance-inner-grouppartial",
+  "to": "conformance-inner-grouppartial",
+  "input": "0905020a000b00ffffff",
+  "max_items": 2,
+  "expect": "0905020a000b00",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ignored bytes are not counted"
+}

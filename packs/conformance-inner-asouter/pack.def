@@ -1,0 +1,15 @@
+# Conformance probe pack whose own field gives the key an inner `when … as`
+# binds (spec 0.34 ruling 9), most significant bit first. Public. No kinds.
+#
+#   byte 0      n
+#   the rest    one conformance-inner-aswhen message
+format     conformance-inner-asouter
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+inner   conformance-inner-aswhen

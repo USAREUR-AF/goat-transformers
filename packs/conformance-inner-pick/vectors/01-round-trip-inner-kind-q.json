@@ -1,0 +1,14 @@
+{
+  "name": "round-trip-inner-kind-q",
+  "from": "conformance-inner-pick",
+  "to": "conformance-inner-pick",
+  "input": "09020005",
+  "expect": "09020005",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@inner_kind": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 5 and Encode step 1: Entity.inner_kind q is selected before requires, which would select p"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rest-fills-its-extent",
+  "from": "conformance-inner-lenreststrict",
+  "to": "conformance-inner-lenreststrict",
+  "input": "09020506",
+  "expect": "09020506",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: end 3"
+}

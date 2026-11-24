@@ -1,0 +1,13 @@
+{
+  "name": "end-is-the-stated-length",
+  "from": "conformance-inner-whlstrict",
+  "to": "conformance-inner-whlstrict",
+  "input": "090205",
+  "expect": "090205",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "leftover-ignored-and-outer-line-after-the-block",
+  "from": "conformance-inner-lengthpartial",
+  "to": "conformance-inner-lengthpartial",
+  "input": "0904010203ff0a",
+  "expect": "09030102030a",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "2",
+    "probe.y": "3",
+    "probe.w": "10",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: input of length vector 03 with partial; the length written counts 3 bytes"
+}

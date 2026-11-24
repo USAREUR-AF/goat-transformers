@@ -1,0 +1,17 @@
+{
+  "name": "gate-not-held-with-the-block-bytes-ignored",
+  "from": "conformance-inner-gatepartial",
+  "to": "conformance-inner-gatepartial",
+  "input": "090502070109",
+  "expect": "0905",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: end 1; the nested gate is not evaluated"
+}

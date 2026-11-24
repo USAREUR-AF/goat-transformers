@@ -1,0 +1,9 @@
+{
+  "name": "any-byte",
+  "from": "conformance-inner-nonestrict",
+  "to": "conformance-inner-nonestrict",
+  "input": "09ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 16: end 0"
+}

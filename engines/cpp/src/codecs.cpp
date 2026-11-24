@@ -516,18 +516,41 @@ void DecodeScope::raise_failure() const {
     if (has_failure_) throw Error(ErrorKind::TransformDecode, fail_format, fail_locator, fail_detail);
 }
 
-void take_items(const Pack& p, const std::string& list, std::uint64_t n) {
+void take_items(const Pack& p, const std::string& list, std::uint64_t n, bool count) {
     DecodeScope* s = current_scope;
     if (!s) return;
+    if (s->discarding > 0 && !count) return;  // v0.34: a discarded list is not counted
     if (n > s->limit || s->held > s->limit - n)
         throw Error(ErrorKind::MalformedWire, p.format, "",
                     "the list '" + list + "' takes the items of the message beyond the limit of " +
                         std::to_string(s->limit));
-    s->held += n;
+    if (s->discarding == 0) s->held += n;
 }
 
 void give_back_items(std::uint64_t n) {
-    if (DecodeScope* s = current_scope) s->held = n > s->held ? 0 : s->held - n;
+    if (DecodeScope* s = current_scope)
+        if (s->discarding == 0) s->held = n > s->held ? 0 : s->held - n;
+}
+
+DecodeScope* current_decode() { return current_scope; }
+
+void begin_message(const Item& root) {
+    DecodeScope* s = current_scope;
+    if (!s || !s->discard_claim) return;
+    s->discard_claim = false;
+    s->discard_root = &root;
+    s->inner_root = &root;
+}
+
+DiscardGuard::DiscardGuard(const Item& out, const std::string& list) {
+    DecodeScope* s = current_scope;
+    if (!s || s->discard_root != &out || !s->discard.count(list)) return;
+    scope_ = s;
+    ++s->discarding;
+}
+
+DiscardGuard::~DiscardGuard() {
+    if (scope_) --scope_->discarding;
 }
 
 std::uint64_t count_items(const std::vector<Item>& items) {
@@ -571,7 +594,17 @@ void Decoder::set_json_number(const FieldLine& f, const std::string& text) {
 }
 
 void Decoder::put(const FieldLine& f, Value native) {
-    if (!wants(f)) return;
+    if (!wants(f)) {
+        if (f.table >= 0 && joined.count(f.key)) {  // v0.34 ruling 23
+            try {
+                (void)table_decode(p, f, native);
+            } catch (const std::invalid_argument& ex) {
+                failures.push_back({f.key, f.locator, ex.what(), true});
+                joined.erase(f.key);
+            }
+        }
+        return;
+    }
     if (f.table >= 0) {
         try {
             native = table_decode(p, f, native);
@@ -593,27 +626,42 @@ void Decoder::fail(const FieldLine& f, const std::string& why) {
 
 void Decoder::finish() {
     // A key that another line filled is not a failure (one key at several locators).
-    std::string d, first_locator;
+    std::string d, first_locator, first_format = p.format;
+    // v0.34 ruling 21: in an item of a discarded list a failed field is not an
+    // error; a table with no entry is.
+    const bool discarded = current_scope && current_scope->discarding > 0;
     for (const auto& f : failures) {
+        if (discarded && !f.table) continue;
         if (!f.table && out.fields.count(f.key)) continue;
         if (d.empty()) {
             d = "fields absent after failed decode:";
             first_locator = f.locator;
+            if (!f.format.empty()) first_format = f.format;  // v0.34: an inner message's
         }
         d += " [" + f.key + " (" + f.locator + "): " + f.why + "]";
+    }
+    if (!d.empty() && current_scope && current_scope->inner_root == &out) {
+        // v0.34 ruling 19: the inner message's failures are the outer message's
+        // to raise; the keys whose lines succeeded join.
+        for (auto& f : failures) {
+            if (!f.table && out.fields.count(f.key)) continue;
+            f.format = p.format;
+            current_scope->inner_failures.push_back(f);
+        }
+        d.clear();
     }
     if (!d.empty()) {
         // Inside a decode the first failure is kept and the decode goes on (0.11 ruling 7f).
         if (DecodeScope* s = current_scope) {
             if (!s->has_failure_) {
                 s->has_failure_ = true;
-                s->fail_format = p.format;
+                s->fail_format = first_format;
                 s->fail_locator = first_locator;
                 s->fail_detail = d;
             }
             return;
         }
-        throw Error(ErrorKind::TransformDecode, p.format, first_locator, d);
+        throw Error(ErrorKind::TransformDecode, first_format, first_locator, d);
     }
     // Type mapping: native code -> CoT token; an unmapped code passes through.
     if (!p.typemap.empty()) {
@@ -1955,11 +2003,14 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, c
         const GroupLine& g = *line.group;
         const std::uint64_t count =
             g.count_fixed ? g.count_n : read_bits(in.data, base + g.count_start, g.count_len, in.msb);
+        const DiscardGuard discarded(out, g.list);  // v0.34: a list a layered decode discards
         std::vector<Item>& items = out.lists[g.list];
         give_back_items(count_items(items));
         items.clear();
-        // 0.11 ruling 7d: the count is compared with the limit before any item is read.
-        take_items(p, g.list, count);
+        // 0.11 ruling 7d: the count is compared with the limit before any item is
+        // read. A count the pack states is not read from the wire, so a
+        // discarded list is not compared by it (ruling 7 of 0.34).
+        take_items(p, g.list, count, !g.count_fixed);
         std::vector<LineRef> body_tmp;
         const std::vector<LineRef>& body = body_lines(p, g, body_tmp);
         const std::string item_what = "an item of the group '" + g.list + "'";
@@ -2296,7 +2347,7 @@ const std::vector<int>& plan_gates(const Pack& p, const Kind* kind, std::vector<
 }
 }  // namespace
 
-Entity decode_bits(const Pack& p, const std::string& bytes) {
+Entity decode_bits(const Pack& p, const std::string& bytes, bool exact) {
     // Hex text in, whitespace ignored, even nibble count (engine-spec.md, I/O);
     // or, under `armor sixbit`, six bits a character (0.14), every one checked here.
     std::uint64_t armored = 0;
@@ -2315,15 +2366,29 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
     // bytes ignored; shorter is malformed.
     const std::string what = "the message" + (kind ? " of kind '" + kind->name + "'" : std::string());
     Entity e;
+    begin_message(e);  // v0.34: the inner message of a layered decode
     std::vector<LineRef> lines_tmp;
     std::vector<int> gates_tmp;
-    const std::uint64_t end =
-        bits_decode_scope(in, scope_lines(p, kind, lines_tmp), plan_gates(p, kind, gates_tmp), 0, e, what);
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
+    const std::vector<int>& gates = plan_gates(p, kind, gates_tmp);
+    const std::uint64_t end = bits_decode_scope(in, lines, gates, 0, e, what);
     // Under armor the message is any number of bits: whole words are not required.
     const std::size_t need = p.armor_sixbit ? 0 : whole_words(p, end);
     if (data.size() < need)
         throw Error(ErrorKind::MalformedWire, p.format, "",
                     what + " is " + std::to_string(need) + " bytes, got " + std::to_string(data.size()));
+    if (exact) {
+        // v0.34 ruling 14: the furthest bit of the lines that count, an `optional`
+        // line and the gates of held blocks included; the groups are in `end`.
+        std::vector<char> held(gates.empty() ? 0 : p.gates.size(), 0);
+        if (!gates.empty()) eval_gates(p, data, in.msb, 0, gates, false, held, in.have);
+        const std::size_t stop =
+            whole_words(p, std::max(end, fixed_extent(p, lines, false, &held, &gates)));
+        if (data.size() > stop)
+            throw Error(ErrorKind::MalformedWire, p.format, "",
+                        what + " ends at byte " + std::to_string(stop) + " of " + std::to_string(data.size()) +
+                            " of an 'inner' line without 'partial'");
+    }
     if (in.failed) throw Error(ErrorKind::TransformDecode, p.format, in.fail_locator, in.fail_detail);
     if (kind) e.kind = {p.format, kind->name};
     return e;

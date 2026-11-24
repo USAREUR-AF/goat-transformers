@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-the-last-item",
+  "from": "conformance-inner-groupstrict",
+  "to": "conformance-inner-groupstrict",
+  "input": "0905010affee",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 4"
+}

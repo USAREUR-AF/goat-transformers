@@ -1,0 +1,16 @@
+{
+  "name": "byte-before-the-end-of-an-absent-optional",
+  "from": "conformance-inner-optstrict",
+  "to": "conformance-inner-optstrict",
+  "input": "09000507",
+  "expect": "0900050000",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, rulings 14, 15: end 4 (an optional line counts), 3 bytes: y partly beyond the input, absent, byte 07 not left over"
+}

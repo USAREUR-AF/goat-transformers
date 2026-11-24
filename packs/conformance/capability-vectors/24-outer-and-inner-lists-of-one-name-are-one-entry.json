@@ -1,0 +1,11 @@
+{
+  "name": "24-outer-and-inner-lists-of-one-name-are-one-entry",
+  "from": "conformance-inner-lists",
+  "to": "conformance-inner-budget",
+  "grade": "full",
+  "carried": [
+    "probe.nums[]",
+    "probe.nums[].probe.val"
+  ],
+  "dropped": []
+}

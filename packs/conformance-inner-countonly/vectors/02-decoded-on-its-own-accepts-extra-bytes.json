@@ -1,0 +1,12 @@
+{
+  "name": "decoded-on-its-own-accepts-extra-bytes",
+  "from": "conformance-inner-countonly",
+  "to": "conformance-inner-countonly",
+  "input": "010aff",
+  "expect": "010a",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 9 of 0.8 stays"
+}

@@ -134,7 +134,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
     @Override
     Entity decodeKind(Doc d, Pack.Kind kind) {
         Entity e = new Entity();
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         Set<String> mapped = new HashSet<>();
         for (Pack.Line l : kind.lines) {
             if (l instanceof Pack.Group) {

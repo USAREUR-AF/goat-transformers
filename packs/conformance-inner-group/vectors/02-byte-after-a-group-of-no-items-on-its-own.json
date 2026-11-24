@@ -1,0 +1,12 @@
+{
+  "name": "byte-after-a-group-of-no-items-on-its-own",
+  "from": "conformance-inner-group",
+  "to": "conformance-inner-group",
+  "input": "0500ff",
+  "expect": "0500",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 2; decoded on its own extra bytes are accepted"
+}

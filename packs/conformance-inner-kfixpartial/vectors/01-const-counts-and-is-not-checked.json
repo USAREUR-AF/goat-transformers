@@ -1,0 +1,15 @@
+{
+  "name": "const-counts-and-is-not-checked",
+  "from": "conformance-inner-kfixpartial",
+  "to": "conformance-inner-kfixpartial",
+  "input": "09050107ee",
+  "expect": "0905010709",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "7",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: const at byte 3, end 4; encode writes 9; partial, nothing to ignore"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-the-const",
+  "from": "conformance-inner-kfixstrict",
+  "to": "conformance-inner-kfixstrict",
+  "input": "0905010709ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: kind a ends at 4"
+}

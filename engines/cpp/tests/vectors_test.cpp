@@ -344,7 +344,7 @@ std::string lacked_wire(const std::vector<std::string>& wires, const std::vector
 int main() {
     const fs::path packs = GT_PACKS_DIR;
     int ran = 0, failed = 0, error_vectors = 0, kind_checks = 0, context_vectors = 0, complete_checks = 0,
-        list_checks = 0, absent_checks = 0, limit_vectors = 0;
+        list_checks = 0, absent_checks = 0, limit_vectors = 0, inner_kind_checks = 0;
 
     const std::vector<std::string> built = goat_transformers::built_wires();
     const bool reduced = built.size() != kSpecWires.size();
@@ -449,6 +449,13 @@ int main() {
                 ++skipped;
                 continue;
             }
+            // v0.34 ruling 1: the reduced-build check runs no vector of an outer pack.
+            auto outer = [&](const std::string& f) { return eng.has_format(f) && !eng.pack(f).inner_formats.empty(); };
+            if (reduced && (outer(from->text) || outer(to->text))) {
+                --ran;
+                ++skipped;
+                continue;
+            }
             if (const json::Value* n = v.find("name"))
                 if (n->is(json::Value::Kind::String)) label += " (" + n->text + ")";
             if (!bytes_field(v, "input", "input_b64", input)) throw std::runtime_error("vector lacks input");
@@ -541,9 +548,27 @@ int main() {
                                 errs.push_back("invalid vector: " + entry.text + " is in @absent and in model");
                                 continue;
                             }
+                            if (entry.text == "@inner_kind") {
+                                // v0.34: Entity.inner_kind is absent.
+                                ++inner_kind_checks;
+                                if (!e.inner_kind.second.empty())
+                                    errs.push_back("@absent @inner_kind: present as (" + e.inner_kind.first + ", " +
+                                                   e.inner_kind.second + ")");
+                                continue;
+                            }
                             const std::string err = check_absent_key(e, entry.text);
                             if (!err.empty()) errs.push_back(err);
                         }
+                        continue;
+                    }
+                    if (key == "@inner_kind") {
+                        // v0.34: the kind name Entity.inner_kind must hold.
+                        ++inner_kind_checks;
+                        if (e.inner_kind.second.empty())
+                            errs.push_back("@inner_kind absent, expected " + wtext);
+                        else if (e.inner_kind.second != wtext)
+                            errs.push_back("@inner_kind = (" + e.inner_kind.first + ", " + e.inner_kind.second +
+                                           "), expected " + wtext);
                         continue;
                     }
                     if (key == "@kind") {
@@ -650,7 +675,8 @@ int main() {
     std::cout << "conversion vectors: " << ran << " run, " << (ran - failed) << " passed, " << failed << " failed ("
               << error_vectors << " expect_error, " << kind_checks << " @kind checks, " << context_vectors
               << " with context, " << complete_checks << " @complete, " << list_checks << " list checks, "
-              << absent_checks << " @absent, " << limit_vectors << " with max_items)\n";
+              << absent_checks << " @absent, " << limit_vectors << " with max_items, " << inner_kind_checks
+              << " @inner_kind)\n";
     std::cout << "load vectors: " << load_ran << " run, " << (load_ran - load_failed) << " passed, " << load_failed
               << " failed\n";
     std::cout << "capability vectors: " << cap_ran << " run, " << (cap_ran - cap_failed) << " passed, " << cap_failed

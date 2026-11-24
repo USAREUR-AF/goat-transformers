@@ -6,15 +6,17 @@ A caller brings constraints: the formats they need, the language, the runtime,
 the operating system, the processor architecture, and static or dynamic
 linkage. This tool answers with the smallest package that meets them.
 
-  plan      prints the engine, the packs (only the formats named), the wire
-            types those packs use, the build command, and what carries between
-            each pair of the named formats
+  plan      prints the engine, the packs (only the formats named, and the
+            packs their `inner` lines name, spec 0.34), the wire types those
+            packs use, the build command, and what carries between each pair
+            of the named formats
   formats   lists every format of the tree, its wire type and the model keys
             it maps
-  bundle    writes the packs of the named formats and the model modules they
-            use to a directory, with LICENSE, NOTICE and a manifest.json that
-            records the library version, the commit and the SHA-256 of each
-            file; --embed adds a source file that compiles them into a program
+  bundle    writes the packs of the named formats, the packs their `inner`
+            lines name, and the model modules they use to a directory, with
+            LICENSE, NOTICE and a manifest.json that records the library
+            version, the commit and the SHA-256 of each file; --embed adds a
+            source file that compiles them into a program
   archive   writes every model module and every pack as one .tar.gz, the same
             bytes for the same tree
   --profile open | open+copyleft | everything (plan, bundle, archive; default
@@ -32,7 +34,7 @@ What it guarantees:
   - Packs and model modules are read by the Python engine of this repository
     (engines/python), never by a second parser here. The keys a format maps,
     what carries between two formats, and the modules a pack needs are the
-    engine's answers (`Pack.model_keys`, `Engine.capability`, `Engine.from_dir`).
+    engine's answers (`Engine.model_keys`, `Engine.capability`, `Engine.from_dir`).
   - A build command is printed only for a combination the table below states.
     Anything else is an error that names what is supported.
   - A format that is not in the tree, or a pack that does not load, is an
@@ -196,6 +198,16 @@ def read_packs(root):
     return packs, broken
 
 
+def model_keys(packs):
+    """The keys each format maps, as the engine reports them for these packs
+    held together (`Engine.model_keys`): an `inner` line (spec 0.34,
+    Capability) adds the keys of the pack it names when that pack is among
+    `packs` and passes the checks of the line. -> {format: [key]}"""
+    engine = engine_api().Engine()
+    engine.packs = dict(packs)   # model_keys reads the packs only, never a module
+    return {name: list(engine.model_keys(name)) for name in packs}
+
+
 def pack_dir(pack):
     """The name of the directory a pack was read from."""
     return os.path.basename(pack.path)
@@ -227,14 +239,31 @@ def select(root, formats_arg, packs=None):
 
 
 def load_engine(root, packs):
-    """An engine holding only `packs` and the model modules they need, loaded
-    from the tree the way every engine loads a package."""
+    """An engine holding `packs`, the packs their `inner` lines name (and so
+    on for the packs loaded that way; a name with no directory under packs/
+    is skipped, spec 0.34), and the model modules they all need, loaded from
+    the tree the way every engine loads a package."""
     api = engine_api()
     try:
         return api.Engine.from_dir(
-            os.path.join(root, "packs"), os.path.join(root, "model"), packs_only=[pack_dir(p) for p in packs])
+            os.path.join(root, "packs"), os.path.join(root, "model"), packs_only=[pack_dir(p) for p in packs],
+            with_inner=True)
     except api.GTError as e:
         raise Unmet("the named packs do not load: %s" % e) from e
+
+
+def package_packs(root, packs, profile):
+    """The engine of a package and its packs: the named `packs` first, then
+    the packs their `inner` lines bring in, in directory order. A package of
+    an outer format must decode its payload, so the inner packs go with it;
+    they are refused like a named pack when outside `profile`.
+    -> (engine, [Pack])"""
+    refuse_outside(root, [pack_dir(p) for p in packs], profile)
+    engine = load_engine(root, packs)
+    named = {pack_dir(p) for p in packs}
+    extra = sorted((p for p in engine.packs.values() if pack_dir(p) not in named), key=pack_dir)
+    refuse_outside(root, [pack_dir(p) for p in extra], profile)
+    return engine, list(packs) + extra
 
 
 # --------------------------------------------------------------------------
@@ -248,8 +277,9 @@ def cmd_formats(_args, root):
         print("no packs found under", os.path.join(root, "packs"))
         return 1
     width = max(len(f) for f in packs)
+    keys = model_keys(packs)
     for name, pack in packs.items():
-        print(f"{name:<{width}}  wire={pack.wire:<9} fields={', '.join(pack.model_keys())}")
+        print(f"{name:<{width}}  wire={pack.wire:<9} fields={', '.join(keys[name])}")
     return 0
 
 
@@ -310,7 +340,7 @@ def plan(root, args, packs=None):
     profile = getattr(args, "profile", "open")
     refuse_outside(root, [pack_dir(p) for p in packs], profile)
     linkage, command = build_command(args.language, args.runtime, args.linkage, args.os, args.arch)
-    engine = load_engine(root, packs)
+    engine, packs = package_packs(root, packs, profile)
     return {
         "constraints": {
             "formats": want,
@@ -469,9 +499,8 @@ def sha256(path):
 
 def cmd_bundle(args, root):
     want, packs = select(root, args.formats)
+    engine, packs = package_packs(root, packs, args.profile)
     dirs = [pack_dir(p) for p in packs]
-    refuse_outside(root, dirs, args.profile)
-    engine = load_engine(root, packs)
     # The modules the engine loaded for these packs, in the order it loaded them.
     modules = [(m.name, os.path.basename(m.path)) for m in engine.models.values()]
     out = args.out
@@ -682,7 +711,8 @@ def plan_request(query):
 
 def format_list(packs):
     """The answer of GET /formats: each format, its wire type and its keys."""
-    return [{"format": name, "wire": pack.wire, "keys": list(pack.model_keys())} for name, pack in packs.items()]
+    keys = model_keys(packs)
+    return [{"format": name, "wire": pack.wire, "keys": keys[name]} for name, pack in packs.items()]
 
 
 def make_handler(root, packs):

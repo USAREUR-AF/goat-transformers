@@ -1,0 +1,15 @@
+# Conformance probe pack (spec 0.34): `inner … partial` inside a length
+# block, most significant bit first. Public. No kinds.
+format     conformance-inner-lengthpartial
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+length 8
+  inner  conformance-inner-seq  partial
+end
+field   probe.w  8  uint

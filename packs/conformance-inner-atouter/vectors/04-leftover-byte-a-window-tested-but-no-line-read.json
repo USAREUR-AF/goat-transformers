@@ -1,0 +1,9 @@
+{
+  "name": "leftover-byte-a-window-tested-but-no-line-read",
+  "from": "conformance-inner-atouter",
+  "to": "conformance-inner-atouter",
+  "input": "090205020a",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: inner 0502, the window of kind a reads 02 and does not hold, kind b reads z only, cursor at 1 of 2 bytes"
+}

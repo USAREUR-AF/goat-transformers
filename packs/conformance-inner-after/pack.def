@@ -1,0 +1,19 @@
+# Conformance probe pack whose field after the inner block maps a key the
+# inner pack maps (spec 0.34, Decode step 4), most significant bit first.
+# Public. No kinds.
+#
+#   block       an 8-bit length in bytes, then one conformance-inner-seq message
+#               to the end of the block
+#   byte        x, after the block (the inner kind a maps x too, read first)
+format     conformance-inner-after
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length 8
+  inner  conformance-inner-seq
+end
+field   probe.x  8  uint

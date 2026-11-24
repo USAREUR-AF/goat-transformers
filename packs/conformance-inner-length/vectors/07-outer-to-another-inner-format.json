@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-another-inner-format",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-fixed",
+  "input": "09030102030a",
+  "expect": "3200",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion clears Entity.inner_kind (names neither the target nor an inner line of it); fixed lsb: x=2 low bits, y=3 high bits of byte 0 = 0x32; z absent writes 0"
+}

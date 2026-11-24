@@ -1,0 +1,9 @@
+{
+  "name": "decode-misaligned",
+  "from": "conformance-inner-misaligned",
+  "to": "conformance-inner-misaligned",
+  "input": "535700",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 1: after n (4 bits) the cursor stands on bit 4, not on a whole byte"
+}

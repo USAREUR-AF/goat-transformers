@@ -1,0 +1,17 @@
+# Conformance probe pack used as an inner pack (spec 0.34):
+# a gate after x; a nested gate after y. Public.
+format     conformance-inner-gate
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.x  0:0:8  uint
+if      0:8:8  1
+  field probe.y  0:16:8  uint
+  if    0:24:8 1
+    field probe.z  0:32:8  uint
+  end
+end

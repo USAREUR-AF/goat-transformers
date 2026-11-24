@@ -1,0 +1,14 @@
+{
+  "name": "decoded-on-its-own-accepts-extra-bytes",
+  "from": "conformance-inner-seq",
+  "to": "conformance-inner-seq",
+  "input": "010203ff",
+  "expect": "010203",
+  "model": {
+    "@kind": "a",
+    "probe.x": "2",
+    "probe.y": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 9 of 0.8 stays for a message decoded on its own"
+}

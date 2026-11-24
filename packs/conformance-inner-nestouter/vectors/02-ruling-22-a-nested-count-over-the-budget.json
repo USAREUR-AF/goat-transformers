@@ -1,0 +1,10 @@
+{
+  "name": "ruling-22-a-nested-count-over-the-budget",
+  "from": "conformance-inner-nestouter",
+  "to": "conformance-inner-nestouter",
+  "input": "01010a02020b0c020d0e",
+  "max_items": 3,
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 22: the nested count 2 is over the 1 left"
+}

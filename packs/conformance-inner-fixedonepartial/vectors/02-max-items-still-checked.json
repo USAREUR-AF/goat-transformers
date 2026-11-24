@@ -1,0 +1,10 @@
+{
+  "name": "max-items-still-checked",
+  "from": "conformance-inner-fixedonepartial",
+  "to": "conformance-inner-fixedonepartial",
+  "input": "020a0b0c0dff",
+  "max_items": 1,
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, the outer count 2 is over the limit of 1 (7d); partial changes nothing"
+}

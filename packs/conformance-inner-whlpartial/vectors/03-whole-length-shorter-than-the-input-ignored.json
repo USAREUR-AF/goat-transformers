@@ -1,0 +1,13 @@
+{
+  "name": "whole-length-shorter-than-the-input-ignored",
+  "from": "conformance-inner-whlpartial",
+  "to": "conformance-inner-whlpartial",
+  "input": "090205ff",
+  "expect": "090205",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: stated 2 of 3 bytes"
+}

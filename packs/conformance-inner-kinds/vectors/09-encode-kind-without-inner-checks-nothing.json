@@ -1,0 +1,9 @@
+{
+  "name": "encode-kind-without-inner-checks-nothing",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-unreached",
+  "input": "0705010203",
+  "expect": "0105",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line: n present selects kind good by requires; the inner line of kind gone is not reached and checks nothing: when 01, n 05"
+}

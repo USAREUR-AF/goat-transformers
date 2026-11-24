@@ -1,0 +1,14 @@
+{
+  "name": "padding-bits-set-are-not-left-over",
+  "from": "conformance-inner-substrict",
+  "to": "conformance-inner-substrict",
+  "input": "095aff",
+  "expect": "095ae0",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "87"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: 0101 1010111 = x 5, y 1010111b = 87; 11 bits end in byte 1, the 5 bits 11111 are padding; end 2"
+}

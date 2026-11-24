@@ -10,16 +10,16 @@ An independent, clean-room implementation of the gt engine, written from
 ./run_tests       # loads ../../model and ../../packs, runs every vector
 ```
 
-| Test | Command (repository root) | Measured (2026-11-21) |
+| Test | Command (repository root) | Measured (2026-11-24; the benchmark 2026-11-21) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 23610/23610 |
-| load vectors | same run | 1402/1402 |
-| capability vectors | same run | 18/18 |
-| malformed inputs | same run | 154133/154133 |
-| concurrent conversions (Version 0.25) | same run | 521/521 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 24604/24604 |
+| load vectors | same run | 1471/1471 |
+| capability vectors | same run | 27/27 |
+| malformed inputs | same run | 159469/159469 |
+| concurrent conversions (Version 0.25) | same run | 733/733 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 16 vectors, 16 packs (below) |
 | tool vectors (Versions 0.23, 0.29) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 135/135 |
-| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8374/8374 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8396/8396 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
@@ -223,19 +223,19 @@ message; loads a pack whose `wire` is `nowire`, which must be `unknown-wire`
 without that reason. It then prints the size of both builds, the `.beam`
 files `build.sh` writes, and exits non-zero on any failure.
 
-Measured (2026-11-21, one machine):
+Measured (2026-11-24, one machine):
 
 | Check | Result |
 |---|---|
-| conversion vectors on xml, json and geojson | 8374/8374 passed |
-| packs on bits refused as `unknown-wire` | 1835/1835 |
+| conversion vectors on xml, json and geojson | 8396/8396 passed |
+| packs on bits refused as `unknown-wire` | 1960/1960 |
 | packs on protobuf refused as `unknown-wire` | 876/876 |
 | packs on text refused as `unknown-wire` | 86/86 |
 | packs on tlv refused as `unknown-wire` | 11/11 |
 | packs on cbor refused as `unknown-wire` | 7/7 |
 | `wire nowire` | `unknown-wire`, without the reason |
-| full build, 8 wires | 419392 bytes, 19 `.beam` files |
-| reduced build, xml, json and geojson | 263048 bytes, 12 `.beam` files (62% of full) |
+| full build, 8 wires | 428916 bytes, 19 `.beam` files |
+| reduced build, xml, json and geojson | 268960 bytes, 12 `.beam` files (62% of full) |
 
 Both sizes count `gt_cli` and the conformance runner `gt_test`, which every
 build with json or geojson holds.
@@ -380,7 +380,9 @@ that is present and empty is `[]`; an absent list has no entry. `model_keys`
 names a list `<list>[]` and an item key `<list>[].<key>`. A failed conversion
 raises `error:{convert_error, Kind, Message}` with `Kind` one of `'no-kind'`,
 `'missing-root'`, `'malformed-wire'`, `'transform-decode'`, `'transform-encode'`,
-`'undeclared-key'`, `'key-type-mismatch'` (the last two for a context key) and
+`'undeclared-key'`, `'key-type-mismatch'` (the last two for a context key),
+`'unknown-format'`, and (at an `inner` line, 0.34) `'bad-directive'` and
+`'distribution-violation'`, and
 `Message` beginning with the kind and a colon. Wires: `xml` (a root per kind),
 `geojson`, `json`, `bits` (`bit_order lsb | msb`, fields past their word,
 `swap`, `trim`, `optional`), `protobuf`, `text` (Version 0.10: `delimiter`,
@@ -392,6 +394,26 @@ Version 0.9 is `bad-directive` on it, ruling 16 of 0.10), `tlv` (Version 0.13: `
 one RFC 8949 data item, `tag <n>`, integer, text and `[i]` path steps, groups
 over arrays; hex text in and out; residue is `{Path, Bytes}`, each unmapped
 item as it stood, written back with the core deterministic encoding).
+
+A message of another pack inside a field (engine-spec Version 0.34): an
+`inner <format> [partial]` line of a `layout sequential` bits pack hands the bytes from
+the cursor to the end of its extent to the inner pack, looked up in the engine
+when decode or encode reaches the line (`gt_engine:inner_pack/2`: loaded,
+else `'unknown-format'`; on bits without armor or `encoding uper`, without an
+`inner` line of its own and not the outer pack, else `'bad-directive'`; public
+when the outer pack is, else `'distribution-violation'`). Bytes of that input
+after the inner message's end (`gt_engine:inner_end/3`, rulings 13 and 14) are
+`'malformed-wire'`, unless the line says `partial`; a message decoded on its
+own keeps accepting them. The decoded entity
+then also holds `inner_kind`, `undefined` or `{InnerFormatName, KindName}`,
+the kind the inner pack selected, next to `kind`; an entity without the key
+has none. `convert` keeps `kind` when `To` has an `inner` line naming its
+format, and `inner_kind` when it names `To` or the format of an `inner` line
+of `To`. `gt_engine:model_keys(E, Format)` and `capability` add the keys of
+each inner pack that passes those checks; `gt_engine:model_keys(Pack)` lists
+the pack's own keys. `gt_engine:inner_names(PacksDir, Names)` gives the names
+and, transitively, the packs their `inner` lines name that have a directory:
+the conformance runner and the benchmark load those.
 
 Malformed input (engine-spec "Malformed input (0.8)", rulings 35 to 40): no
 input makes `decode` or `convert` raise anything but `convert_error`. The

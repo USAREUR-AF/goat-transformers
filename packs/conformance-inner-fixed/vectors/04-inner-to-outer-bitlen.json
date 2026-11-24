@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer-bitlen",
+  "from": "conformance-inner-fixed",
+  "to": "conformance-inner-bitlen",
+  "input": "3507",
+  "expect": "103507",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: the extent's length counts the inner bytes; a length in bits: 16 = 0x10"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "whole-length-shorter-than-the-input",
+  "from": "conformance-inner-whlstrict",
+  "to": "conformance-inner-whlstrict",
+  "input": "090205ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: stated 2 of 3 bytes"
+}

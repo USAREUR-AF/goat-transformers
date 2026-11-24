@@ -1,0 +1,11 @@
+# Conformance probe pack used as an inner pack: one text (spec 0.34 ruling 23).
+# Public. No kinds.
+format     conformance-inner-asciione
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.s1  8  ascii

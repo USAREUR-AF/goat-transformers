@@ -1,0 +1,12 @@
+{
+  "name": "byte-beyond-the-stated-length-after-an-empty-rest-on-its-own",
+  "from": "conformance-inner-whlrest",
+  "to": "conformance-inner-whlrest",
+  "input": "01ff",
+  "expect": "01",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: stated 1 of 2; decoded on its own extra bytes are accepted"
+}

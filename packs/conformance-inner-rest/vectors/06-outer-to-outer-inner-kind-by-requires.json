@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-outer-inner-kind-by-requires",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-length",
+  "input": "093507",
+  "expect": "090301050300",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: no Entity.inner_kind or Entity.kind names conformance-inner-seq, so requires selects a (x present): 01 05 03; n 09, length 03, w absent 00"
+}

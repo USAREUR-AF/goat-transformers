@@ -1,0 +1,16 @@
+{
+  "name": "inner-in-a-kind-not-selected-checks-nothing",
+  "from": "conformance-inner-unreached",
+  "to": "conformance-inner-unreached",
+  "input": "0105",
+  "expect": "0105",
+  "model": {
+    "@kind": "good",
+    "probe.n": "5",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line: the inner line of kind gone is not reached and checks nothing; ruling 5: Entity.inner_kind absent"
+}

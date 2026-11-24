@@ -1,0 +1,18 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-rest",
+  "input": "093507",
+  "expect": "093507",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "3",
+    "probe.z": "7",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3: the inner input 3507 is read by the inner pack's own bit order (lsb: x is the low 4 bits of 0x35); step 5: an inner pack with no kind line leaves Entity.inner_kind absent"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "held-block-optional-present",
+  "from": "conformance-inner-gateoptpartial",
+  "to": "conformance-inner-gateoptpartial",
+  "input": "09050007",
+  "expect": "09050007",
+  "model": {
+    "probe.n": "9",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 3; partial, nothing to ignore"
+}

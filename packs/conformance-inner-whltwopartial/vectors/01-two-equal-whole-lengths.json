@@ -1,0 +1,13 @@
+{
+  "name": "two-equal-whole-lengths",
+  "from": "conformance-inner-whltwopartial",
+  "to": "conformance-inner-whltwopartial",
+  "input": "09030305",
+  "expect": "09030305",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: both state 3; partial, nothing to ignore"
+}

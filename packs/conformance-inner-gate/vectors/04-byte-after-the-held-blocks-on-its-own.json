@@ -1,0 +1,12 @@
+{
+  "name": "byte-after-the-held-blocks-on-its-own",
+  "from": "conformance-inner-gate",
+  "to": "conformance-inner-gate",
+  "input": "0501070109ff",
+  "expect": "0501070109",
+  "model": {
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 5; decoded on its own extra bytes are accepted"
+}

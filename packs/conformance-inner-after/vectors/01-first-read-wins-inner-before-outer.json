@@ -1,0 +1,14 @@
+{
+  "name": "first-read-wins-inner-before-outer",
+  "from": "conformance-inner-after",
+  "to": "conformance-inner-after",
+  "input": "0301020309",
+  "expect": "0301020302",
+  "model": {
+    "probe.x": "2",
+    "probe.y": "3",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 4: the inner x 02 comes first in reading order and is kept; the outer x 09 after the block is discarded. Encode writes x=2 in both places"
+}

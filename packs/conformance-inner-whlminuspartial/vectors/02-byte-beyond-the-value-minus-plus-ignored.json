@@ -1,0 +1,14 @@
+{
+  "name": "byte-beyond-the-value-minus-plus-ignored",
+  "from": "conformance-inner-whlminuspartial",
+  "to": "conformance-inner-whlminuspartial",
+  "input": "09050307aabb",
+  "expect": "09050207",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: 3 + 1 = 4 of 5"
+}

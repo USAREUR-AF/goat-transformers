@@ -1,0 +1,13 @@
+{
+  "name": "empty-inner-input-selects-the-kind",
+  "from": "conformance-inner-nonekindstrict",
+  "to": "conformance-inner-nonekindstrict",
+  "input": "09",
+  "expect": "09",
+  "model": {
+    "probe.n": "9",
+    "@inner_kind": "only"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 16: a kind with no `when` always holds; end 0"
+}

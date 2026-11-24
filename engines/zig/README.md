@@ -38,7 +38,12 @@ chooses the kind by it), counts one list from two places that must agree
 (`group <list> count @<a> @<b>`, spec Version 0.31), decides a sequential
 kind by a field that comes after other fields (`when <len> <values> at
 <offset> [as <key>]`, spec Version 0.33: decode looks ahead without moving the
-cursor, encode settles the window once the kind's lines are written), and
+cursor, encode settles the window once the kind's lines are written),
+hands the rest of a sequential message, or of a `length` block, to another
+loaded `bits` pack (`inner <format> [partial]`, spec Version 0.34: the inner pack decodes into the same entity and encodes from it; the kind it selected
+is `Entity.inner_kind_fmt` and `Entity.inner_kind_name`, beside
+`Entity.kind_fmt` and `Entity.kind_name`; `loadPacksOnly` also loads, from
+the packs directory, the packs `inner` lines name, transitively), and
 converts between formats via the shared model.
 
 ## Build and run the conformance harness

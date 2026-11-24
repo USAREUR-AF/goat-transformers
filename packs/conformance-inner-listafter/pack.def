@@ -1,0 +1,21 @@
+# Conformance probe pack whose own list follows the inner message that gave
+# the same list (spec 0.34, Decode step 4; 7g of 0.11), most significant bit
+# first. Public. No kinds.
+#
+#   block       an 8-bit length in bytes, then one conformance-inner-restonly
+#               message: nums, val in 8 bits each
+#   the rest    nums again, val in 8 bits each: read and discarded
+format     conformance-inner-listafter
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length 8
+  inner  conformance-inner-restonly
+end
+group   probe.nums rest
+  field  probe.val  8  uint
+end

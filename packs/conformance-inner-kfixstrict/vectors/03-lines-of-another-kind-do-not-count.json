@@ -1,0 +1,9 @@
+{
+  "name": "lines-of-another-kind-do-not-count",
+  "from": "conformance-inner-kfixstrict",
+  "to": "conformance-inner-kfixstrict",
+  "input": "0905020709",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: kind b ends at 2"
+}

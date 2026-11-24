@@ -1,0 +1,21 @@
+# Conformance probe pack used as an inner pack: a kind told apart by a
+# look-ahead `when … at` (spec 0.33; spec 0.34 ruling 12). Public.
+#
+#   kind a      x in 8 bits, y in 8 bits; the second byte is 1
+#   kind b      z in 8 bits
+format     conformance-inner-at
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind a
+when     8  1  at 8
+requires probe.x
+field    probe.x  8  uint
+field    probe.y  8  uint
+kind b
+requires probe.z
+field    probe.z  8  uint

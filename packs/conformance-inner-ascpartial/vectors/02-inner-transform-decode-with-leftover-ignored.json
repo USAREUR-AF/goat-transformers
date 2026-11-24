@@ -1,0 +1,9 @@
+{
+  "name": "inner-transform-decode-with-leftover-ignored",
+  "from": "conformance-inner-ascpartial",
+  "to": "conformance-inner-ascpartial",
+  "input": "0901ff",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34, rulings 17 and 18"
+}

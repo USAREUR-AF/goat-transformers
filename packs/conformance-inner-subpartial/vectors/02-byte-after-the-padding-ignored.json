@@ -1,0 +1,14 @@
+{
+  "name": "byte-after-the-padding-ignored",
+  "from": "conformance-inner-subpartial",
+  "to": "conformance-inner-subpartial",
+  "input": "095affff",
+  "expect": "095ae0",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "87"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: end 2, third byte left"
+}

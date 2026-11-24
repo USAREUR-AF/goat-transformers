@@ -146,7 +146,7 @@ final class ParseOnceTests {
             formats.add(c.from);
             formats.add(c.to);
         }
-        Engine fresh = Engine.loadOnly(packsDir, formats);
+        Engine fresh = Engine.loadOnly(packsDir, Engine.defaultModelsDir(packsDir), Distribution.CONTROLLED, formats, null, true);   // with inner packs (0.34)
         List<String> first = new ArrayList<>();
         for (Conv c : bench) first.add(c.run(fresh));
         // failures of every kind the decoders have: an empty input, a cut input, bytes that are no message

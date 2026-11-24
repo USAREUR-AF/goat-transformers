@@ -1,0 +1,16 @@
+{
+  "name": "line-absent-in-an-empty-extent",
+  "from": "conformance-inner-extpartial",
+  "to": "conformance-inner-extpartial",
+  "input": "090500",
+  "expect": "09050100",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 7 of 0.8: y starts at the end of the extent, absent; end 2; encode writes every line; partial, nothing to ignore"
+}

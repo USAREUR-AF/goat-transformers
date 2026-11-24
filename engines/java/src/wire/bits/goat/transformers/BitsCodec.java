@@ -68,6 +68,45 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
 
     @Override
     Entity decodeKind(BitMsg in, Pack.Kind kind) {
+        Entity e = new Entity();
+        Failures fails = new Failures(pack.format);
+        read(in, kind, e, fails);
+        finishDecode(e, fails);
+        return e;
+    }
+
+    @Override
+    Layer decodeLayer(byte[] msg) {
+        BitMsg in = new BitMsg(msg, (long) msg.length * 8);
+        Pack.Kind kind = selectForDecode(in);
+        Layer l = new Layer();
+        l.fails = new Failures(pack.format);
+        long far = read(in, kind, l.entity, l.fails);
+        if (pack.hasKinds) l.entity.setKind(pack.format, kind.name);
+        // ruling 14 of 0.34: every line outside a block, the items of the groups, and the blocks that hold
+        l.end = Math.max(Math.max(((Info) kind.scope.info).end, far), heldEnd(msg, in.bits, kind.scope.lines));
+        l.unit = (long) wordBytes * 8;
+        return l;
+    }
+
+    /** The furthest bit of the message's blocks that hold, their gates and their {@code optional} lines included; or 0. */
+    private long heldEnd(byte[] msg, long bits, List<Pack.Line> lines) {
+        long end = 0;
+        for (Pack.Line l : lines) {
+            if (!(l instanceof Pack.Gate)) continue;
+            Pack.Gate g = (Pack.Gate) l;
+            if (!gateHolds(msg, bits, 0, g)) continue;
+            end = Math.max(end, ((Loc) g.loc).end());
+            for (Pack.Line b : g.body.lines) {
+                if (!(b instanceof Pack.Gate)) end = Math.max(end, ((Loc) b.loc).end());
+            }
+            end = Math.max(end, heldEnd(msg, bits, g.body.lines));
+        }
+        return end;
+    }
+
+    /** Decode the lines of the kind into {@code e}; returns the furthest bit of {@link #decodeScope}. */
+    private long read(BitMsg in, Pack.Kind kind, Entity e, Failures fails) {
         Info info = (Info) kind.scope.info;
         byte[] msg = in.b;
         if (pack.armorSixbit) {
@@ -77,9 +116,7 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
             int need = wholeWords(info.need);
             if (msg.length < need) throw tooShort(msg, need, kind);
         }
-        Entity e = new Entity();
-        Failures fails = new Failures();
-        long far = decodeScope(msg, in.bits, kind.scope, 0, e, fails);
+        long far = decodeScope(msg, in.bits, kind.scope, 0, e, fails, ROOT);
         if (pack.armorSixbit) {
             if (in.bits < far) throw armorShort(in.bits, far, kind);
         } else {
@@ -87,8 +124,7 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
             int need = wholeWords(Math.max(info.need, far));
             if (msg.length < need) throw tooShort(msg, need, kind);
         }
-        finishDecode(e, fails);
-        return e;
+        return far;
     }
 
     private GtException armorShort(long bits, long need, Pack.Kind kind) {
@@ -101,12 +137,15 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
                 + (kind.name == null ? "" : " of kind " + kind.name) + " (words of " + wordBytes + ")");
     }
 
+    /** Where a scope is decoded: the message, an item, or an item of a list decode discards (engine-spec 0.34). */
+    private static final int ROOT = 0, ITEM = 1, DISCARDED = 2;
+
     /**
      * Decode the lines of one scope that starts at bit {@code base} of the message. Returns the bit after the last
      * item of its groups, or 0 when it has none.
      */
-    private long decodeScope(byte[] msg, long bits, Pack.Scope scope, long base, Entity e, Failures fails) {
-        return decodeLines(msg, bits, scope.lines, base, false, e, fails);
+    private long decodeScope(byte[] msg, long bits, Pack.Scope scope, long base, Entity e, Failures fails, int place) {
+        return decodeLines(msg, bits, scope.lines, base, false, e, fails, place);
     }
 
     /**
@@ -124,13 +163,13 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
      * holds. Returns the furthest bit the decode requires beyond the scope's fixed extent: the end of the items of
      * its groups, and the lines of the blocks that hold (their {@code optional} fields excepted), or 0.
      */
-    private long decodeLines(byte[] msg, long bits, List<Pack.Line> lines, long base, boolean held, Entity e, Failures fails) {
+    private long decodeLines(byte[] msg, long bits, List<Pack.Line> lines, long base, boolean held, Entity e, Failures fails, int place) {
         long far = 0;
         for (Pack.Line l : lines) {
             if (l instanceof Pack.Gate) {
                 Pack.Gate g = (Pack.Gate) l;
                 // A block that does not hold sets no key; its lines count as lines whose locator is absent.
-                if (gateHolds(msg, bits, base, g)) far = Math.max(far, decodeLines(msg, bits, g.body.lines, base, true, e, fails));
+                if (gateHolds(msg, bits, base, g)) far = Math.max(far, decodeLines(msg, bits, g.body.lines, base, true, e, fails, place));
                 continue;
             }
             if (held && !(l instanceof Pack.Field && ((Pack.Field) l).optional)) {
@@ -144,7 +183,12 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
                     if (base + c.end() > bits) throw malformed("the input ends before the count of " + g.list + " at " + g.countLocator);
                     n = readBits(msg, base + c.start, c.len);
                 }
-                takeItems(n);   // compared with the limit before any item is read (ruling 7d of 0.11)
+                // a list the outer entity holds is discarded by a layered decode: its count is checked against the
+                // limit and its items are not counted (engine-spec 0.34, step 4 and ruling 7)
+                boolean discard = place == DISCARDED || (place == ROOT && heldByOuter(g.list));
+                int mark = fails.size();
+                if (!discard) takeItems(n);   // compared with the limit before any item is read (ruling 7d of 0.11)
+                else if (g.countLocator != null) checkItems(n);   // a count the pack states is not checked
                 long pos = base + ((Loc) g.loc).start;
                 List<Entity> items = new ArrayList<>((int) Math.min(n & 0xffff, 4096));
                 for (long i = 0; i != n; i++) {
@@ -152,11 +196,12 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
                         throw malformed("the input ends before item " + i + " of the " + Long.toUnsignedString(n) + " of " + g.list);
                     }
                     Entity item = new Entity();
-                    long nested = decodeScope(msg, bits, g.body, pos, item, fails);
+                    long nested = decodeScope(msg, bits, g.body, pos, item, fails, discard ? DISCARDED : ITEM);
                     // A nested group counted by a locator may run past the item: the next item starts where it ends.
                     pos = Math.max(pos + g.itemBits, nested);
                     items.add(item);
                 }
+                if (discard) fails.dropSoft(mark);   // ruling 21 of 0.34
                 e.putList(g.list, items);
                 far = Math.max(far, pos);
                 continue;

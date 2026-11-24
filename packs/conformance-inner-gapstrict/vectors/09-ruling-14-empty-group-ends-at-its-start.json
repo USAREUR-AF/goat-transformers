@@ -1,0 +1,9 @@
+{
+  "name": "ruling-14-empty-group-ends-at-its-start",
+  "from": "conformance-inner-gapstrict",
+  "to": "conformance-inner-fixed",
+  "input": "090500aabb",
+  "expect": "0500",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 14: the empty group counts up to its start, end 4, so 0500aabb leaves nothing over; converted to another format so that only decode is tested: x 5 in the low nibble, y and z absent"
+}

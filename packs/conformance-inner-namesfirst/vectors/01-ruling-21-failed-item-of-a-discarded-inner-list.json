@@ -1,0 +1,13 @@
+{
+  "name": "ruling-21-failed-item-of-a-discarded-inner-list",
+  "from": "conformance-inner-namesfirst",
+  "to": "conformance-inner-namesfirst",
+  "input": "014101",
+  "expect": "014141",
+  "model": {
+    "probe.names.#": "1",
+    "probe.names[0].probe.tag": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 21: the inner item 01 does not decode, but its list is discarded; names A is kept and written in both places"
+}

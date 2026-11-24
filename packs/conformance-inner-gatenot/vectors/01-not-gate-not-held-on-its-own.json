@@ -1,0 +1,15 @@
+{
+  "name": "not-gate-not-held-on-its-own",
+  "from": "conformance-inner-gatenot",
+  "to": "conformance-inner-gatenot",
+  "input": "0500",
+  "expect": "05",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: 0 is listed, not held, end 1; decoded on its own extra bytes are accepted"
+}

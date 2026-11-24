@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-empty-inner-input-with-kinds-is-no-kind",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-kinds",
+  "input": "0705",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 6: kind carry reads n 05, and the inner input to the end of the message is empty; no kind of conformance-inner-seq holds"
+}

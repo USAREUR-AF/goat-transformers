@@ -1,0 +1,13 @@
+{
+  "name": "decoded-on-its-own-accepts-extra-bytes",
+  "from": "conformance-inner-fixedlists",
+  "to": "conformance-inner-fixedlists",
+  "input": "0a0b0c0dff",
+  "expect": "0a0b0c0d",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.deltas.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, 0.5: a longer input is accepted on its own"
+}

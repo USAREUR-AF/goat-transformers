@@ -1,0 +1,16 @@
+{
+  "name": "gate-not-held-with-the-block-bytes-on-its-own",
+  "from": "conformance-inner-gate",
+  "to": "conformance-inner-gate",
+  "input": "0502070109",
+  "expect": "05",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 1; the nested gate is not evaluated; decoded on its own extra bytes are accepted"
+}

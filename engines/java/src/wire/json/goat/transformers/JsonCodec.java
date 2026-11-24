@@ -38,7 +38,7 @@ final class JsonCodec extends JsonTree<Map<String, Object>> {
     @Override
     Entity decodeKind(Map<String, Object> top, Pack.Kind kind) {
         Entity e = new Entity();
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         Set<String> mapped = new HashSet<>();
         decodeScope(top, kind.scope, e, fails, mapped);
         unreadOverflow(top, fails.read);

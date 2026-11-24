@@ -1,0 +1,9 @@
+{
+  "name": "error-before-the-line-wins",
+  "from": "conformance-inner-missing",
+  "to": "conformance-inner-missing",
+  "input": "",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line: a line not reached after an earlier error checks nothing; n reads past the empty input"
+}

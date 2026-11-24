@@ -1,0 +1,16 @@
+{
+  "name": "round-trip-inner-kind-a",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-length",
+  "input": "09030102030a",
+  "expect": "09030102030a",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "2",
+    "probe.y": "3",
+    "probe.w": "10",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: n=09; the length 03 bounds the inner input 010203, decoded by conformance-inner-seq as kind a (x=2, y=3); w=0a after the block. Encode selects the inner kind by Entity.inner_kind (step 1) and writes the length 03"
+}

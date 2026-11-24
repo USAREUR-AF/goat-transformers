@@ -1,0 +1,9 @@
+{
+  "name": "smallest-of-two-whole-lengths",
+  "from": "conformance-inner-whltwostrict",
+  "to": "conformance-inner-whltwostrict",
+  "input": "09040305aa",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: 4 and 3 stated, the smallest 3 is the end, aa left"
+}

@@ -1,0 +1,12 @@
+# Conformance probe pack used as an inner pack (spec 0.34):
+# a trailing optional field of 12 bits in the second two-byte word. Public.
+format     conformance-inner-opt
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 2
+bit_order  msb
+field   probe.x  0:0:16  uint
+field   probe.y  1:0:12  uint  optional

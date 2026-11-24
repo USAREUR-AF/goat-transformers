@@ -1,0 +1,9 @@
+{
+  "name": "inner-no-kind-keeps-its-kind",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-kinds",
+  "input": "07050301",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: the inner input 0301 selects no kind of conformance-inner-seq; an error raised in the inner decode keeps its kind"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "byte-after-a-held-optional-on-its-own",
+  "from": "conformance-inner-gateopt",
+  "to": "conformance-inner-gateopt",
+  "input": "050007ff",
+  "expect": "050007",
+  "model": {
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 3; decoded on its own extra bytes are accepted"
+}

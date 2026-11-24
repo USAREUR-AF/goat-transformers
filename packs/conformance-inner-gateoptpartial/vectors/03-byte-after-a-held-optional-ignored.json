@@ -1,0 +1,13 @@
+{
+  "name": "byte-after-a-held-optional-ignored",
+  "from": "conformance-inner-gateoptpartial",
+  "to": "conformance-inner-gateoptpartial",
+  "input": "09050007ff",
+  "expect": "09050007",
+  "model": {
+    "probe.n": "9",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: end 3"
+}

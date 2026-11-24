@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-aswhen",
+  "to": "conformance-inner-aswhen",
+  "input": "0207",
+  "expect": "0207",
+  "model": {
+    "probe.n": "2",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30: the common when reads 02, sets n 2; y 7"
+}

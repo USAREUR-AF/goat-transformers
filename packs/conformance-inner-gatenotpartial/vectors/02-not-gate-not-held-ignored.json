@@ -1,0 +1,16 @@
+{
+  "name": "not-gate-not-held-ignored",
+  "from": "conformance-inner-gatenotpartial",
+  "to": "conformance-inner-gatenotpartial",
+  "input": "090500",
+  "expect": "0905",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: 0 is listed, not held, end 1"
+}

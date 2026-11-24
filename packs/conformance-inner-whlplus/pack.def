@@ -1,0 +1,12 @@
+# Conformance probe pack used as an inner pack (spec 0.34):
+# a whole length plus 2. Public.
+format     conformance-inner-whlplus
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length  8  whole  plus 2
+field   probe.x  8  uint

@@ -1,0 +1,16 @@
+{
+  "name": "nested-gate-not-held-ignored",
+  "from": "conformance-inner-gatepartial",
+  "to": "conformance-inner-gatepartial",
+  "input": "0905010702",
+  "expect": "09050107",
+  "model": {
+    "probe.n": "9",
+    "probe.y": "7",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: end 3, the nested locator at byte 3 does not count"
+}

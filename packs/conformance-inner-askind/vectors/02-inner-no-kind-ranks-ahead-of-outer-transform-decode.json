@@ -1,0 +1,9 @@
+{
+  "name": "inner-no-kind-ranks-ahead-of-outer-transform-decode",
+  "from": "conformance-inner-askind",
+  "to": "conformance-inner-askind",
+  "input": "01033507",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: s1 byte 01 is a transform-decode, which does not stop the decode; the inner kind byte 03 matches neither when 1 nor when 2, a no-kind that stops it and is reported ahead"
+}

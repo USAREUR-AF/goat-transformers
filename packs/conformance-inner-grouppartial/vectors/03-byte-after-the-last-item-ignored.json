@@ -1,0 +1,13 @@
+{
+  "name": "byte-after-the-last-item-ignored",
+  "from": "conformance-inner-grouppartial",
+  "to": "conformance-inner-grouppartial",
+  "input": "0905010affee",
+  "expect": "0905010a00",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: end 4"
+}

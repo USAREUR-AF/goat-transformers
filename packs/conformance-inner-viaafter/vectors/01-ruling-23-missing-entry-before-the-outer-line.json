@@ -1,0 +1,9 @@
+{
+  "name": "ruling-23-missing-entry-before-the-outer-line",
+  "from": "conformance-inner-viaafter",
+  "to": "conformance-inner-viaafter",
+  "input": "010241",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 23: the inner 02 has no entry and the types differ: transform-decode, though the outer line gives A"
+}

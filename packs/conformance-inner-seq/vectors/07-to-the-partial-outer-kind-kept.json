@@ -1,0 +1,9 @@
+{
+  "name": "to-the-partial-outer-kind-kept",
+  "from": "conformance-inner-seq",
+  "to": "conformance-inner-lengthpartial",
+  "input": "020102",
+  "expect": "000302010200",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: Entity.kind kept because the outer pack has an inner line naming the format"
+}

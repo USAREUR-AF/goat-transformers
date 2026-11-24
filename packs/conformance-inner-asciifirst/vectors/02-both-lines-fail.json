@@ -1,0 +1,9 @@
+{
+  "name": "both-lines-fail",
+  "from": "conformance-inner-asciifirst",
+  "to": "conformance-inner-asciifirst",
+  "input": "0101",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 23: no line of s1 succeeds"
+}

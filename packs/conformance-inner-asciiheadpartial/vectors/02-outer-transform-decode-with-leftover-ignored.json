@@ -1,0 +1,9 @@
+{
+  "name": "outer-transform-decode-with-leftover-ignored",
+  "from": "conformance-inner-asciiheadpartial",
+  "to": "conformance-inner-asciiheadpartial",
+  "input": "013507ff",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 17 with partial: no left over error, so the transform-decode stands"
+}

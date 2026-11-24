@@ -1,0 +1,13 @@
+{
+  "name": "byte-after-the-held-blocks-ignored",
+  "from": "conformance-inner-gatepartial",
+  "to": "conformance-inner-gatepartial",
+  "input": "090501070109ff",
+  "expect": "090501070109",
+  "model": {
+    "probe.n": "9",
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: end 5"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "outer-bytes-beyond-the-whole-length-are-not-left-over",
+  "from": "conformance-inner-whole",
+  "to": "conformance-inner-whole",
+  "input": "04090105ffff",
+  "expect": "04090105",
+  "model": {
+    "probe.x": "5",
+    "@inner_kind": "p"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 3 of 0.34: inner input is 0105 only; ffff lies beyond the outer message"
+}

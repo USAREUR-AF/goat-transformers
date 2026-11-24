@@ -1,0 +1,9 @@
+{
+  "name": "any-byte-on-its-own",
+  "from": "conformance-inner-none",
+  "to": "conformance-inner-none",
+  "input": "ff",
+  "expect": "",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 16: end 0; decoded on its own extra bytes are accepted"
+}

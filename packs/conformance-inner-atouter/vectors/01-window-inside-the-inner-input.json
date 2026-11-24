@@ -1,0 +1,16 @@
+{
+  "name": "window-inside-the-inner-input",
+  "from": "conformance-inner-atouter",
+  "to": "conformance-inner-atouter",
+  "input": "090205010a",
+  "expect": "090205010a",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "1",
+    "probe.w": "10",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 12: the inner input is 0501, the window at bit 8 of it holds 01, kind a"
+}

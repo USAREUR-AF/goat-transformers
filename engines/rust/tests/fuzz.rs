@@ -51,8 +51,19 @@ use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::path::{Path, PathBuf};
 
 /// The error kinds `convert` with no context may fail with
-/// (spec/vector-format.md, `expect_error`).
-const KINDS: [&str; 5] = ["malformed-wire", "no-kind", "missing-root", "transform-decode", "transform-encode"];
+/// (spec/vector-format.md, `expect_error`). Version 0.34 adds the checks
+/// made where decode or encode reaches an `inner` line: `unknown-format`,
+/// `bad-directive` and `distribution-violation`.
+const KINDS: [&str; 8] = [
+    "malformed-wire",
+    "no-kind",
+    "missing-root",
+    "transform-decode",
+    "transform-encode",
+    "unknown-format",
+    "bad-directive",
+    "distribution-violation",
+];
 
 /// Random inputs per pack and per alphabet, at `GOAT_FUZZ_ITERS=1`.
 const RANDOM_PER_ALPHABET: usize = 32;

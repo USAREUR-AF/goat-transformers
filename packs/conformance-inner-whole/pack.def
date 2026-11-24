@@ -1,0 +1,17 @@
+# Conformance probe pack for an inner message after a whole length (spec 0.34,
+# ruling 3), most significant bit first. Public. No kinds.
+#
+#   byte 0      the length of the whole message in bytes
+#   byte 1      n
+#   the rest    one conformance-inner-twokinds message, up to the stated length
+format     conformance-inner-whole
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length  8  whole
+field   probe.n  8  uint
+inner   conformance-inner-twokinds

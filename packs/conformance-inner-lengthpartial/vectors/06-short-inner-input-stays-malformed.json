@@ -1,0 +1,9 @@
+{
+  "name": "short-inner-input-stays-malformed",
+  "from": "conformance-inner-lengthpartial",
+  "to": "conformance-inner-lengthpartial",
+  "input": "090201020a",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 15: kind a needs 3 bytes of a 2-byte extent"
+}

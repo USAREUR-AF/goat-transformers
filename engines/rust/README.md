@@ -31,7 +31,7 @@ Everything is in `src/lib.rs`. The types a caller uses:
 | Type | Holds |
 |---|---|
 | `Engine` | the loaded model modules and packs |
-| `Entity` | one decoded message: `fields` (model key to `Value`), `lists`, `residue` (what the model does not hold, kept for a round trip) and `kind` |
+| `Entity` | one decoded message: `fields` (model key to `Value`), `lists`, `residue` (what the model does not hold, kept for a round trip), `kind` and `inner_kind` (the kind the pack of an `inner` line selected, spec 0.34) |
 | `Value` | `Str(String)`, `F64(f64)` or `I64(i64)` |
 | `Error` | `msg`; a conversion error starts with its kind and a colon, e.g. `undeclared-key: ...` |
 | `Distribution` | `Public` or `Controlled` |
@@ -178,18 +178,19 @@ zz-first-by-format	lic-aa	Apache-2.0	open
 ## Test
 
 `cargo test --release` in `engines/rust` (CI runs `cargo test` there, in the
-`rust` job of `.github/workflows/conformance.yml`). Measured on 2026-11-21 with rustc 1.99.1:
+`rust` job of `.github/workflows/conformance.yml`). Measured on 2026-11-24 with rustc 1.99.1:
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 23610 conversion vectors, 1402 load vectors, 18 capability vectors, 0 failed |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 24611 conversion vectors, 1471 load vectors, 27 capability vectors, 0 failed |
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 6703291 inputs over 4528 packs and 23607 vectors |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 6925424 inputs over 4669 packs and 24608 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
 | `tests/cbor.rs` | spec 0.28: the `cbor` wire on byte strings built by hand from RFC 8949: heads of every length, the core deterministic encoding (key order, shortest floats), the depth limit, equal keys, UTF-8 across chunks, tags, residue and the `tag` directive | 17 tests |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
 | `tests/parse_once.rs` | spec 0.25, ruling 1: every conversion vector, failing ones included, gives the same output or error on one instance in line order, in reverse order and on four threads at once; the benchmark set and one failing vector of each wire give the same on a new instance; a second load is still a duplicate (the debug build runs the reverse order and the threads on every eighth vector and every failing one, and the new instance for the failing vectors only) | 3 tests |
 | `tests/seconds.rs` | spec 0.26, ruling 1: the transform `iso8601_s` loads on the xml, geojson, json and text wires; it is `bad-directive` on another wire and with a parameter; it gives an integer, so on a key of another type it is `key-type-mismatch`; writing drops the milliseconds and keeps to the years 0001 to 9999 | 5 tests |
+| `tests/inner.rs` | spec 0.34: keys and lists that the outer and the inner message both hold (Decode step 4, rulings 7, 17, 19, 22 and 23) | 8 tests |
 | `tests/licences.rs` | spec 0.29: `load_tree` with a licence profile on the fixture trees of the tool vectors: what each profile loads and skips, the widest profile of a pack and its modules, a skipped broken pack, `bad-licence` for a wrong profile name and for a bad licence file before any module loads, no licence file read without a profile, a non-directory on the path read as an absent file | 6 tests |
 | `tests/reduced.rs` | spec 0.24: a pack on a wire the build lacks is `unknown-wire`; a value that is no wire keeps its message (run in a reduced build by `reduced-build-check.sh`) | 2 tests |
 | `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23 and the licence profiles of spec 0.29: every tool vector under `packs/conformance/tool-vectors/` | 135 tool vectors, 0 failed |
@@ -206,7 +207,7 @@ cargo run --release --manifest-path engines/rust/Cargo.toml --example bench -- b
 ```
 
 `examples/bench.rs` loads only the packs the set's vectors name (`packs/<format>/pack.def`
-for each `from` and `to`) and the model modules they use (`model/<module>.def`,
+for each `from` and `to`), the packs their `inner` lines name (spec 0.34), and the model modules they use (`model/<module>.def`,
 `core` first, each module after those it uses) into one `Engine`, and times
 that. Then, for each vector in order, it converts the input once and checks the
 output against `expect`, then converts it `iterations` times and times that.
@@ -225,6 +226,20 @@ the tag tree of each kind, and the entity-independent line order of each
 `xml` scope. A `layout sequential` pack is resolved at load already. A conversion
 reads it and never writes it, so one `Engine` converts on several threads at
 once (`tests/parse_once.rs`).
+
+## A message of another pack inside a field
+
+Spec 0.34. An `inner <format> [partial]` line of a `layout sequential` `bits` pack hands
+the bytes to the end of its extent to another loaded pack, which decodes them
+into the same entity and encodes them back from it. The inner pack is looked
+up when decode or encode reaches the line (`src/seq.rs`, the `InnerHost`
+the `Engine` implements), never at load, so packs load in any order; a codec
+called without an engine (`bits::decode`) finds no inner format. The kind the
+inner pack selected is `Entity.inner_kind`. `model_keys` and `capability` of
+an outer pack add the inner pack's keys at the line's place when the inner
+pack passes the checks. `tests/vectors.rs` loads every pack, so the packs
+`inner` lines name are loaded too; `examples/bench.rs` loads them with the
+packs the set names.
 
 ## Builds with fewer wires
 
@@ -270,19 +285,19 @@ conversion, load and capability vector whose packs are on them, and
 `bits`, `protobuf`, `text`, `tlv` and `cbor` and requires `unknown-wire` with the
 wire named in the message. It then builds `goat-xf` both ways and prints the
 sizes. It exits non-zero on any failure. `GOAT_WIRES=<w>,<w>...` checks
-another set. Measured on 2026-11-21 with rustc 1.99.1 on x86_64 Linux:
+another set. Measured on 2026-11-24 with rustc 1.99.1 on x86_64 Linux:
 
 | Reduced build (`xml,json,geojson`) | Measured |
 |---|---|
-| conversion vectors | 8377 run, 0 failed (15233 on other wires left out) |
-| load vectors | 394 run, 0 failed (1008 left out) |
-| capability vectors | 16 run, 0 failed (2 left out) |
+| conversion vectors | 8399 run, 0 failed (16212 on other wires left out) |
+| load vectors | 396 run, 0 failed (1075 left out) |
+| capability vectors | 16 run, 0 failed (11 left out) |
 | `unknown-wire` loads | 5 of 5: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv), `conformance-cbor` (cbor) |
 
 | Release artifact | All eight wires | `xml,json,geojson` |
 |---|---|---|
-| `goat-xf` | 2397456 bytes | 1778584 bytes |
-| `libgoat_transformers.rlib` | 5681540 bytes | 4402318 bytes |
+| `goat-xf` | 2468008 bytes | 1809944 bytes |
+| `libgoat_transformers.rlib` | 5908080 bytes | 4517634 bytes |
 
 ## Static and WebAssembly builds
 

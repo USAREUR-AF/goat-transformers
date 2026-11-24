@@ -1,0 +1,17 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-fixed",
+  "to": "conformance-inner-fixed",
+  "input": "3507",
+  "expect": "3507",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "3",
+    "probe.z": "7",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "lsb fixed layout: x = low 4 bits of byte 0, y = high 4 bits, z = byte 1; ruling 5 of 0.34: no inner line read"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gate-held",
+  "from": "conformance-inner-gatepartial",
+  "to": "conformance-inner-gatepartial",
+  "input": "09050107",
+  "expect": "09050107",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: held block and its locator, end 3; the nested gate lies beyond the input; partial, nothing to ignore"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "when-counts",
+  "from": "conformance-inner-kfixpartial",
+  "to": "conformance-inner-kfixpartial",
+  "input": "090502",
+  "expect": "090502",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@inner_kind": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: the when of kind b, end 2; partial, nothing to ignore"
+}

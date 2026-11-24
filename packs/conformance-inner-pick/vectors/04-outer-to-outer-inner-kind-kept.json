@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-outer-inner-kind-kept",
+  "from": "conformance-inner-pick",
+  "to": "conformance-inner-whole",
+  "input": "09020005",
+  "expect": "0509020005",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion keeps Entity.inner_kind when it names the format of an inner line of the target; Encode step 1 selects q; whole length 5"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-the-partial-pack",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-restpartial",
+  "input": "093507",
+  "expect": "093507",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: encode is the same with or without partial"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "max-items-not-charged-for-bytes",
+  "from": "conformance-inner-budget",
+  "to": "conformance-inner-budget",
+  "input": "0101ff",
+  "max_items": 2,
+  "expect": "0101ff",
+  "model": {
+    "probe.deltas.#": "1",
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, the check reads no item: 1 + 1 items under a limit of 2"
+}
