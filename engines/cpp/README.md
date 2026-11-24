@@ -142,7 +142,7 @@ cd build && ctest --output-on-failure
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
 | `parse_once` | `goat_transformers_parse_once` | what an instance keeps (0.25 ruling 1), below: every vector gives the same output, error and decoded entity on a new instance (the benchmark set's vectors), in reverse order after failing conversions, and from eight threads at once |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
-| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29): 135/135 pass (2026-11-24). The entry exists when CMake finds a Python 3 interpreter |
+| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29 and 0.93): 179/179 pass (2026-11-24). The entry exists when CMake finds a Python 3 interpreter |
 
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
@@ -340,4 +340,22 @@ same order and nothing is skipped. `pack_licences()` lists the loaded packs
 with their licence and profile when the licences were read, and is empty
 otherwise; `Engine::is_profile(name)` tells a profile name. The reader is
 `src/licences.cpp`, by the exact line forms of ruling 1, with no TOML library.
+
+A controlled pack is in no profile (Version 0.93). When the licences are read,
+a module file or `pack.def` that is not shown public (an exact line
+`distribution public` and no doubtful line, ruling 1) has the profile none
+whatever its licence, and so has every module and pack that uses it. Each such
+file is read once: the text that gave its profile is the text parsed, so a file
+that changes during the load cannot be loaded as controlled (the tests reach
+that refusal through `detail::def_text_hook`, which changes the text between
+the profile and the parse). A load with a
+profile makes the engine's distribution limit `public` for good:
+`max_distribution()` is then `Public` whatever `set_max_distribution` was given
+before or after, and a controlled module or pack loaded later is
+`distribution-refused`. `Engine::load_tool_into` is the same load on an
+existing instance; with a profile, an instance that already holds a controlled
+module or pack is refused with `distribution-refused` before anything is read
+(after the check of the profile name). Both refusals leave the limit
+unchanged and nothing loaded; after them the limit is public, also when the
+load fails later.
 The engine has no C interface.

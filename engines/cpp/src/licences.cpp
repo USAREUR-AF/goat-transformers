@@ -292,11 +292,10 @@ int licence_rank(const LicenceTable& table, const std::string& id) {
     return kProfileEverything;
 }
 
-DefLines read_def_lines(const std::string& path) {
+namespace {
+DefLines def_lines_of(const std::string& text) {
     DefLines out;
-    std::string text;
-    std::error_code ec;
-    if (fs::is_directory(path, ec) || !read_all(path, text) || !valid_utf8(text)) return out;
+    if (!valid_utf8(text)) return out;
     for (const std::string& l : lines_of(text)) {
         const std::string_view line = l;
         for (const std::string_view kw : {std::string_view("module"), std::string_view("uses")}) {
@@ -312,6 +311,63 @@ DefLines read_def_lines(const std::string& path) {
         }
     }
     return out;
+}
+}  // namespace
+
+DefLines read_def_lines(const std::string& path) {
+    std::string text;
+    std::error_code ec;
+    if (fs::is_directory(path, ec) || !read_all(path, text)) return DefLines{};
+    return def_lines_of(text);
+}
+
+DefFile read_def_file(const std::string& path) {
+    DefFile f;
+    std::error_code ec;
+    if (fs::is_directory(path, ec) || !read_all(path, f.text)) {
+        f.text.clear();
+        return f;
+    }
+    f.read = true;
+    f.lines = def_lines_of(f.text);
+    f.shown_public = shown_public(f.text);
+    return f;
+}
+
+std::function<void(const std::string&, std::string&)> def_text_hook;
+
+bool shown_public(const std::string& text) {
+    if (!valid_utf8(text)) return false;
+    for (std::size_t i = 0; i < text.size(); ++i) {
+        const char c = text[i];
+        if (c == '\0') return false;
+        if (c == '\r' && i + 1 < text.size() && text[i + 1] != '\n') return false;
+        if (c == '\xEF' && text.compare(i, 3, "\xEF\xBB\xBF") == 0) return false;  // U+FEFF
+    }
+    bool exact_seen = false;
+    for (const std::string& l : lines_of(text)) {
+        const std::string_view line = l;
+        // The exact line: `distribution`, one or more spaces or tabs, `public`.
+        bool exact = false;
+        const std::string_view kw = "distribution";
+        if (starts_with(line, kw)) {
+            const std::size_t at = skip_space(line, kw.size());
+            exact = at > kw.size() && line.substr(at) == "public";
+        }
+        if (exact) {
+            exact_seen = true;
+            continue;
+        }
+        // Doubtful: with every double quote removed, then spaces, tabs and
+        // carriage returns removed at its ends, it begins with `distribution`.
+        std::string bare;
+        for (char d : line)
+            if (d != '"') bare += d;
+        std::size_t b = 0;
+        while (b < bare.size() && (bare[b] == ' ' || bare[b] == '\t' || bare[b] == '\r')) ++b;
+        if (std::string_view(bare).substr(b, kw.size()) == kw) return false;
+    }
+    return exact_seen;
 }
 
 }  // namespace goat_transformers::detail
