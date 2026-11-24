@@ -1,0 +1,10 @@
+{
+  "name": "current-to-timeseries",
+  "from": "pegelonline-current",
+  "to": "pegelonline-timeseries",
+  "input": "{\"timestamp\":\"2026-07-15T08:45:00+02:00\",\"value\":412.0,\"stateMnwMhw\":\"high\",\"stateNswHsw\":\"normal\"}",
+  "expect": "{\"currentMeasurement\":{\"timestamp\":\"2026-07-15T06:45:00.000Z\",\"value\":412,\"stateMnwMhw\":\"high\",\"stateNswHsw\":\"normal\"}}",
+  "model": {},
+  "source": "derived by tools/gen/pegelonline-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "PEGELONLINE REST API v2 documentation (pegelonline.wsv.de/webservice/dokuRestapi); a current measurement written as a time series: it lands under currentMeasurement, its time in UTC"
+}

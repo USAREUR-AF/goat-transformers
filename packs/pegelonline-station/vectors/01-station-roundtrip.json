@@ -1,0 +1,20 @@
+{
+  "name": "station-roundtrip",
+  "from": "pegelonline-station",
+  "to": "pegelonline-station",
+  "input": "{\"uuid\":\"5f0c1e2d-0000-4000-8000-00000000a001\",\"number\":\"48300999\",\"shortname\":\"MUSTERSTADT\",\"longname\":\"MUSTERSTADT AM FLUSS\",\"km\":12.5,\"agency\":\"MUSTERAMT\",\"longitude\":10.25,\"latitude\":52.5,\"voiceServiceNumber\":\"+49 228 0000000 001\",\"water\":{\"shortname\":\"MUSTER\",\"longname\":\"MUSTERFLUSS\"},\"timeseries\":[{\"shortname\":\"W\",\"longname\":\"WASSERSTAND ROHDATEN\",\"unit\":\"cm\",\"equidistance\":15,\"currentMeasurement\":{\"timestamp\":\"2026-11-21T12:15:00+01:00\",\"value\":157.0,\"stateMnwMhw\":\"normal\",\"stateNswHsw\":\"normal\"},\"gaugeZero\":{\"unit\":\"m. ü. NHN\",\"value\":31.82,\"validFrom\":\"1936-11-01\"}},{\"shortname\":\"WT\",\"longname\":\"WASSERTEMPERATUR ROHDATEN\",\"unit\":\"°C\",\"equidistance\":15,\"currentMeasurement\":{\"timestamp\":\"2026-08-01T14:30:00+02:00\",\"value\":18.5}}]}",
+  "expect": "{\"uuid\":\"5f0c1e2d-0000-4000-8000-00000000a001\",\"number\":\"48300999\",\"shortname\":\"MUSTERSTADT\",\"longname\":\"MUSTERSTADT AM FLUSS\",\"km\":12.5,\"agency\":\"MUSTERAMT\",\"longitude\":10.25,\"latitude\":52.5,\"voiceServiceNumber\":\"+49 228 0000000 001\",\"water\":{\"shortname\":\"MUSTER\",\"longname\":\"MUSTERFLUSS\"},\"timeseries\":[{\"shortname\":\"W\",\"longname\":\"WASSERSTAND ROHDATEN\",\"unit\":\"cm\",\"equidistance\":15,\"currentMeasurement\":{\"timestamp\":\"2026-11-21T12:15:00+01:00\",\"value\":157,\"stateMnwMhw\":\"normal\",\"stateNswHsw\":\"normal\"},\"gaugeZero\":{\"unit\":\"m. ü. NHN\",\"value\":31.82,\"validFrom\":\"1936-11-01\"}},{\"shortname\":\"WT\",\"longname\":\"WASSERTEMPERATUR ROHDATEN\",\"unit\":\"°C\",\"equidistance\":15,\"currentMeasurement\":{\"timestamp\":\"2026-08-01T14:30:00+02:00\",\"value\":18.5}}]}",
+  "model": {
+    "lat": "52.5",
+    "lon": "10.25",
+    "pegelonline.km": "12.5",
+    "pegelonline.water_longname": "MUSTERFLUSS",
+    "pegelonline.timeseries.#": "2",
+    "pegelonline.timeseries[0].pegelonline.current_time": "2026-11-21T12:15:00+01:00",
+    "pegelonline.timeseries[0].pegelonline.current_value": "157",
+    "pegelonline.timeseries[0].pegelonline.gauge_zero_value": "31.82",
+    "pegelonline.timeseries[1].pegelonline.unit": "°C"
+  },
+  "source": "derived by tools/gen/pegelonline-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "PEGELONLINE REST API v2 documentation (pegelonline.wsv.de/webservice/dokuRestapi); one station with two time series (water level with its states and gauge zero, water temperature without them); the times inside the list stay as written"
+}

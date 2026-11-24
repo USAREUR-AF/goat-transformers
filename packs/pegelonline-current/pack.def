@@ -1,0 +1,15 @@
+# PEGELONLINE REST API v2: the current measurement of one time series
+# (/stations/{id}/{timeseries}/currentmeasurement.json). Public. Written by hand; pack.md states the
+# evidence for time_ms.
+format  pegelonline-current
+version 0.1.0
+distribution public
+source  "PEGELONLINE REST API v2, Wasserstraßen- und Schifffahrtsverwaltung des Bundes, https://www.pegelonline.wsv.de/webservice/dokuRestapi (read 2026-11-21); layout restated"
+uses    pegelonline
+wire    json
+
+field  time_ms                    timestamp    iso8601_ms
+field  pegelonline.current_time   timestamp    string
+field  pegelonline.current_value  value        float
+field  pegelonline.state_mnw_mhw  stateMnwMhw  string
+field  pegelonline.state_nsw_hsw  stateNswHsw  string

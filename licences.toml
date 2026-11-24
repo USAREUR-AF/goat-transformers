@@ -201,3 +201,12 @@ share_alike = false
 attribution = true
 field_of_use = []
 distribution = "public"
+
+[licences."DL-DE-ZERO-2.0"]
+name = "Data licence Germany - Zero - version 2.0"
+url = "https://www.govdata.de/dl-de/zero-2-0"
+commercial = "yes"
+share_alike = false
+attribution = false
+field_of_use = []
+distribution = "public"
