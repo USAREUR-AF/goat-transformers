@@ -6,8 +6,11 @@ Read on 2026-11-21. No source file is copied into this tree.
 
 | Source | Where | SHA-256 |
 |---|---|---|
-| Microsoft, [MS-SMB2]: Server Message Block (SMB) Protocol Versions 2 and 3, protocol revision 88.0, 28 September 2026; sections 2.2.1-2.2.14, 2.2.41, 2.2.42 | https://winprotocoldocs-bhdugrdyduf5h2e4.b02.azurefd.net/MS-SMB2/%5bMS-SMB2%5d.pdf, from https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/ | `fef3a06507679130a8cfdcaeaed581482d7f235435dd904f6c794f113ff04bd1` |
+| Microsoft, [MS-SMB2]: Server Message Block (SMB) Protocol Versions 2 and 3, protocol revision 88.0, 28 September 2026; sections 2.2.1-2.2.14, 2.2.41, 2.2.42; and, read 2026-11-24, 2.2.20, 2.2.32, 2.2.36, 2.2.38 and 3.3.4.4 | https://winprotocoldocs-bhdugrdyduf5h2e4.b02.azurefd.net/MS-SMB2/%5bMS-SMB2%5d.pdf, from https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/ | `fef3a06507679130a8cfdcaeaed581482d7f235435dd904f6c794f113ff04bd1` |
 | Microsoft, Open Specification Promise (revised 24 February 2023), its list of covered specifications | https://learn.microsoft.com/en-us/openspecs/dev_center/ms-devcentlp/1c24c7c8-28b0-4ce1-a47d-95fe1ff504bc | (web page, read for its list) |
+
+The values of STATUS_BUFFER_OVERFLOW (0x80000005) and STATUS_NOTIFY_ENUM_DIR (0x0000010C) are from [MS-ERREF] 2.3.1 as served at
+https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55 on 2026-11-24.
 
 ## Licence
 

@@ -201,7 +201,11 @@ def smb2_body():
     req = sw("smb2.command", [("0", negotiate_req), ("1", session_req), ("2,4", small), ("3", tree_req), ("5", create_req)], octets(S, "body"))
     resp_ok = sw("smb2.command", [("0", negotiate_resp), ("1", session_resp), ("2,4", small), ("3", tree_resp), ("5", create_resp)],
                  octets(S, "body"))
-    resp = sw("smb2.status", [("0,%d" % 0xC0000016, resp_ok)], error)
+    # [MS-SMB2] 3.3.4.4: these statuses are not failures for these commands; every other one is
+    more = sw("smb2.command", [("1", session_resp)], error)
+    overflow = sw("smb2.command", [("8,11,16", octets(S, "body"))], error)
+    enum_dir = sw("smb2.command", [("15", octets(S, "body"))], error)
+    resp = sw("smb2.status", [("0", resp_ok), ("%d" % 0xC0000016, more), ("%d" % 0x80000005, overflow), ("%d" % 0x0000010C, enum_dir)], error)
     return sw("smb2.response", [("0", req), ("1", resp)])
 
 

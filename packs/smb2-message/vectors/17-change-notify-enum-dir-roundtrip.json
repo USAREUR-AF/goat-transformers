@@ -1,0 +1,17 @@
+{
+  "name": "change-notify-enum-dir-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d42400000000c0100000f00010001000000000000001400000000000000fffe0000050000000000000000000000000000000000000000000000000000000900000000000000",
+  "expect": "fe534d42400000000c0100000f00010001000000000000001400000000000000fffe0000050000000000000000000000000000000000000000000000000000000900000000000000",
+  "model": {
+    "smb2.command": "15",
+    "smb2.status": "268",
+    "smb2.body.#": "8",
+    "@absent": [
+      "smb2.byte_count",
+      "smb2.error_context_count"
+    ]
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 3.3.4.4 and 2.2.36; a CHANGE_NOTIFY response, STATUS_NOTIFY_ENUM_DIR; expect derived there, no engine run"
+}

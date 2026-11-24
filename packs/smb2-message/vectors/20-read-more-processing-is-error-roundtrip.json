@@ -1,0 +1,14 @@
+{
+  "name": "read-more-processing-is-error-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000160000c00800010001000000000000001400000000000000fffe000005000000000000000000000000000000000000000000000000000000090000000000000000",
+  "expect": "fe534d4240000000160000c00800010001000000000000001400000000000000fffe000005000000000000000000000000000000000000000000000000000000090000000000000000",
+  "model": {
+    "smb2.command": "8",
+    "smb2.structure_size": "9",
+    "smb2.byte_count": "0",
+    "smb2.buffer.#": "1"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 3.3.4.4 and 2.2.2; a READ response with STATUS_MORE_PROCESSING_REQUIRED, an exception for SESSION_SETUP only; expect derived there, no engine run"
+}

@@ -30,9 +30,16 @@ switch  ws.mask
 end
 switch  ws.opcode
   case  8
-    field  ws.close_code  16  uint
-    group  ws.close_reason  rest
-      field  ws.octet  8  uint
+    switch  ws.payload_len7
+      case  0
+        group  ws.close_reason  rest
+          field  ws.octet  8  uint
+        end
+      else
+        field  ws.close_code  16  uint
+        group  ws.close_reason  rest
+          field  ws.octet  8  uint
+        end
     end
   else
     group  ws.payload  rest

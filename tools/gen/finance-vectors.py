@@ -9,7 +9,7 @@ program's own restatement of:
   before the CheckSum field modulo 256, three digits;
 - quiffen: a QIF record is lines of a code character and a value, ended by a line '^'; the codes D, T,
   U, M, C, P, A, L, N, S, E, $, %, F, 1-7 and X; header lines begin with '!';
-- ofxparse and its fixtures: a statement transaction <STMTTRN> holds TRNTYPE, DTPOSTED, DTUSER, TRNAMT,
+- ofxparse and its fixtures: a statement transaction <STMTTRN> holds TRNTYPE, DTPOSTED, TRNAMT,
   FITID, CHECKNUM, NAME and MEMO, in that order.
 
 Inputs: values chosen here; no message is taken from a document or a capture. The FIX body length and
@@ -103,7 +103,7 @@ def qif_vectors():
 
 
 def stmttrn(**kw):
-    order = ["TRNTYPE", "DTPOSTED", "DTUSER", "TRNAMT", "FITID", "CHECKNUM", "NAME", "MEMO"]
+    order = ["TRNTYPE", "DTPOSTED", "TRNAMT", "FITID", "CHECKNUM", "NAME", "MEMO"]
     return "<STMTTRN>" + "".join("<%s>%s</%s>" % (k, kw[k], k) for k in order if k in kw) + "</STMTTRN>"
 
 
@@ -114,10 +114,10 @@ def ofx_vectors():
     out.append(("01-debit-roundtrip.json", vec(P, "debit-roundtrip", a,
                 {"ofx.trntype": "DEBIT", "ofx.dtposted": "20250115120000.000", "ofx.trnamt": "-34.51", "ofx.fitid": "0000487",
                  "ofx.name": "ELECTRIC CO", "ofx.memo": "Monthly bill"}, ref=R_O, note="a debit with name and memo", text=True)))
-    b = stmttrn(TRNTYPE="CHECK", DTPOSTED="20250120", DTUSER="20250118", TRNAMT="-25.00", FITID="0000488", CHECKNUM="319", NAME="Check 319")
-    out.append(("02-check-with-dtuser-roundtrip.json", vec(P, "check-with-dtuser-roundtrip", b,
-                {"ofx.trntype": "CHECK", "ofx.dtuser": "20250118", "ofx.checknum": "319"}, ref=R_O,
-                note="a check with the user date and the check number", text=True)))
+    b = stmttrn(TRNTYPE="CHECK", DTPOSTED="20250120", TRNAMT="-25.00", FITID="0000488", CHECKNUM="319", NAME="Check 319")
+    out.append(("02-check-roundtrip.json", vec(P, "check-roundtrip", b,
+                {"ofx.trntype": "CHECK", "ofx.checknum": "319"}, ref=R_O,
+                note="a check with the check number", text=True)))
     c = stmttrn(TRNTYPE="CREDIT", DTPOSTED="20250131", TRNAMT="0.01", FITID="0000489")
     out.append(("03-minimal-credit-roundtrip.json", vec(P, "minimal-credit-roundtrip", c, {"ofx.trnamt": "0.01"}, ref=R_O,
                 note="the required elements only", text=True)))

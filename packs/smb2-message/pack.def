@@ -104,7 +104,7 @@ switch  smb2.response
     end
   case  1
     switch  smb2.status
-      case  0,3221225494
+      case  0
         switch  smb2.command
           case  0
             field  smb2.structure_size  16  uint
@@ -164,6 +164,55 @@ switch  smb2.response
             end
           else
             group  smb2.body  rest
+              field  smb2.octet  8  uint
+            end
+        end
+      case  3221225494
+        switch  smb2.command
+          case  1
+            field  smb2.structure_size  16  uint
+            field  smb2.session_flags  16  uint
+            field  smb2.security_buffer_offset  16  uint
+            field  smb2.security_buffer_length  16  uint
+            group  smb2.buffer  rest
+              field  smb2.octet  8  uint
+            end
+          else
+            field  smb2.structure_size  16  uint
+            field  smb2.error_context_count  8  uint
+            field  smb2.reserved8  8  uint
+            field  smb2.byte_count  32  uint
+            group  smb2.buffer  rest
+              field  smb2.octet  8  uint
+            end
+        end
+      case  2147483653
+        switch  smb2.command
+          case  8,11,16
+            group  smb2.body  rest
+              field  smb2.octet  8  uint
+            end
+          else
+            field  smb2.structure_size  16  uint
+            field  smb2.error_context_count  8  uint
+            field  smb2.reserved8  8  uint
+            field  smb2.byte_count  32  uint
+            group  smb2.buffer  rest
+              field  smb2.octet  8  uint
+            end
+        end
+      case  268
+        switch  smb2.command
+          case  15
+            group  smb2.body  rest
+              field  smb2.octet  8  uint
+            end
+          else
+            field  smb2.structure_size  16  uint
+            field  smb2.error_context_count  8  uint
+            field  smb2.reserved8  8  uint
+            field  smb2.byte_count  32  uint
+            group  smb2.buffer  rest
               field  smb2.octet  8  uint
             end
         end

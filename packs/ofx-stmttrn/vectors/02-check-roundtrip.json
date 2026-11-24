@@ -1,0 +1,12 @@
+{
+  "name": "check-roundtrip",
+  "from": "ofx-stmttrn",
+  "to": "ofx-stmttrn",
+  "input": "<STMTTRN><TRNTYPE>CHECK</TRNTYPE><DTPOSTED>20250120</DTPOSTED><TRNAMT>-25.00</TRNAMT><FITID>0000488</FITID><CHECKNUM>319</CHECKNUM><NAME>Check 319</NAME></STMTTRN>",
+  "expect": "<STMTTRN><TRNTYPE>CHECK</TRNTYPE><DTPOSTED>20250120</DTPOSTED><TRNAMT>-25.00</TRNAMT><FITID>0000488</FITID><CHECKNUM>319</CHECKNUM><NAME>Check 319</NAME></STMTTRN>",
+  "model": {
+    "ofx.trntype": "CHECK",
+    "ofx.checknum": "319"
+  },
+  "source": "built by tools/gen/finance-vectors.py from values chosen there; layout restated from ofxparse ofxparse.py and its test fixtures; a check with the check number; expect derived there, no engine run"
+}

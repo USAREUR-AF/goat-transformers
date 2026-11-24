@@ -42,7 +42,7 @@ length  16  bits
             case  11
               field  ccsdssdlsep.spi  16  uint
               group  ccsdssdlsep.gvc_ids  rest
-                field  ccsdssdlsep.gvc_id  16  uint
+                field  ccsdssdlsep.gvc_id  32  uint
               end
             case  14,9,4
               field  ccsdssdlsep.spi  16  uint

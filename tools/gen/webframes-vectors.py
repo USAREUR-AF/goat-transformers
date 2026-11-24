@@ -167,6 +167,16 @@ def ws_vectors():
                 ref=R + "; an empty ping")))
     out.append((p, "06-cut-length-is-malformed.json", vec(p, "cut-length-is-malformed", ws(0, 2, bytes(200))[:3], error="malformed-wire",
                 ref=R + "; the frame of vector 03 cut inside its 16-bit length")))
+    C = "RFC 6455 sections 5.2 and 5.5.1"
+    out.append((p, "07-close-without-body-roundtrip.json", vec(p, "close-without-body-roundtrip", u8(0x88, 0x00),
+                {K + "opcode": "8", K + "mask": "0", K + "payload_len7": "0", "@absent": [K + "close_code"]},
+                ref=C + "; an unmasked close frame with no body: FIN and opcode 8, then length 0")))
+    out.append((p, "08-masked-close-without-body-roundtrip.json", vec(p, "masked-close-without-body-roundtrip", u8(0x88, 0x80) + key,
+                {K + "opcode": "8", K + "mask": "1", K + "payload_len7": "0", K + "masking_key": "37fa213d", "@absent": [K + "close_code"]},
+                ref=C + "; the same from a client: MASK and length 0, then the masking key")))
+    out.append((p, "09-close-code-only-roundtrip.json", vec(p, "close-code-only-roundtrip", u8(0x88, 0x02) + u16(1001),
+                {K + "opcode": "8", K + "payload_len7": "2", K + "close_code": "1001"},
+                ref=C + "; a close frame whose body is the status code alone")))
     return out
 
 

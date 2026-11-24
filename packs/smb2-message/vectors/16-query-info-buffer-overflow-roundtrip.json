@@ -1,0 +1,17 @@
+{
+  "name": "query-info-buffer-overflow-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000050000801000010001000000000000001400000000000000fffe00000500000000000000000000000000000000000000000000000000000009004800040000007778797a",
+  "expect": "fe534d4240000000050000801000010001000000000000001400000000000000fffe00000500000000000000000000000000000000000000000000000000000009004800040000007778797a",
+  "model": {
+    "smb2.command": "16",
+    "smb2.status": "2147483653",
+    "smb2.body.#": "12",
+    "@absent": [
+      "smb2.byte_count",
+      "smb2.error_context_count"
+    ]
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 3.3.4.4 and 2.2.38; a QUERY_INFO response, STATUS_BUFFER_OVERFLOW; expect derived there, no engine run"
+}

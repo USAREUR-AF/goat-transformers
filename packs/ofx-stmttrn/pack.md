@@ -5,7 +5,7 @@ namespace). Wire `xml`, root `STMTTRN`. Written by `tools/gen/finance-pack.py`.
 
 ## What is mapped
 
-TRNTYPE, DTPOSTED, DTUSER, TRNAMT, FITID, CHECKNUM, NAME and MEMO, each its element text, in that order
+TRNTYPE, DTPOSTED, TRNAMT, FITID, CHECKNUM, NAME and MEMO, each its element text, in that order
 (the order the source's sample statements use).
 
 ## Shared keys
@@ -18,6 +18,8 @@ not ISO 8601, so it is not bound to `time_ms`.
 - **The rest of the OFX document** (signon, statement response, balances, the transaction list around
   this element): one message is one transaction.
 - **OFX 1.x SGML** (elements without end tags): not XML; the xml wire refuses it.
+- **DTUSER**: no XML sample read shows its place (`anzcc.ofx`, where it occurs, has no end tags), so it is not
+  mapped; the key `ofx.dtuser` stays declared.
 - **Other STMTTRN elements** (SIC, PAYEEID, REFNUM, SRVRTID, CURRENCY, PAYEE, BANKACCTTO ...): the source
   does not give their place in the order; they are residue of the xml wire.
 - Values typed (amounts and dates are text).
