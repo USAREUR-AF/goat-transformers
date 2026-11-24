@@ -115,6 +115,7 @@ struct OutNode {
     bool is_object = false;
     bool has_value = false;
     bool sentinel = false;       // the text is a field's sentinel: a line whose key is present writes over it
+    bool null = false;           // the text is the `null` of a `null` option (0.56): a sentinel writes over it too
     std::string text;            // JSON text of a scalar member
     std::vector<OutNode> kids;   // members of an object, output order
 };
@@ -190,17 +191,29 @@ std::string member_text(const Pack& p, const FieldLine& f, const Value& v) {
 // first sentinel (0.9). A line whose key is present writes over a sentinel an
 // earlier line wrote (ruling 16).
 void write_field(const Pack& p, const EncodeSource& src, const FieldLine& f, OutNode& slot) {
-    if (slot.has_value && !slot.sentinel) return;
+    if (slot.has_value && !slot.sentinel) {
+        src.check_range(f);  // 0.56 ruling 9
+        return;
+    }
     if (src.suppressed(f)) return;  // the member keeps its place (0.18 ruling 1)
     Value v;
     if (src.value(f, v)) {
         slot.text = member_text(p, f, v);
         slot.has_value = true;
         slot.sentinel = false;
-    } else if (f.has_absent && !slot.has_value) {
+        slot.null = false;
+    } else if (f.writes_sentinel() && (!slot.has_value || slot.null)) {
         slot.text = f.absent_json;
         slot.has_value = true;
         slot.sentinel = true;
+        slot.null = false;
+    } else if (f.null_member && !slot.has_value) {
+        // v0.56: written null unless a later line on the member writes a value (ruling 1).
+        // A null member is a member: its object is written (out_empty).
+        slot.text = "null";
+        slot.has_value = true;
+        slot.sentinel = true;
+        slot.null = true;
     }
 }
 
@@ -279,11 +292,15 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
         }
         json_locator(p, line.locator(), path, path_tmp);  // validated at pack load
         OutNode* slot = out_slot(root, *path);
-        if (!slot || slot->is_object) continue;  // the path is also used as an object
+        if (!slot || slot->is_object) {  // the path is also used as an object
+            if (line.field) src.check_range(*line.field);
+            continue;
+        }
         if (line.group) {
             const std::vector<Item>* items = src.list(*line.group);
             if ((slot->has_value && !slot->sentinel) || !items) continue;
             slot->sentinel = false;
+            slot->null = false;
             slot->text = json_encode_items(p, *line.group, *items, geo);
             slot->has_value = true;
             continue;
@@ -291,6 +308,7 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
         if (const WhenLine* w = line.fixed()) {
             slot->has_value = true;
             slot->sentinel = false;
+            slot->null = false;
             slot->text = json_when_text(*w);
             continue;
         }
@@ -490,11 +508,15 @@ std::string encode_json(const Pack& p, const Entity& e) {
         const std::vector<std::string>* lpath = &path;
         json_locator(p, locator, lpath, path);  // validated at pack load
         OutNode* slot = out_slot(root, *lpath);
-        if (!slot || slot->is_object) continue;  // the path is also used as an object
+        if (!slot || slot->is_object) {  // the path is also used as an object
+            if (line.field) src.check_range(*line.field);
+            continue;
+        }
         if (line.group) {
             const std::vector<Item>* items = src.list(*line.group);
             if ((slot->has_value && !slot->sentinel) || !items) continue;
             slot->sentinel = false;
+            slot->null = false;
             slot->text = json_encode_items(p, *line.group, *items, false);
             slot->has_value = true;
             continue;
@@ -503,6 +525,7 @@ std::string encode_json(const Pack& p, const Entity& e) {
             if (w->present) continue;
             slot->has_value = true;
             slot->sentinel = false;
+            slot->null = false;
             slot->text = json_when_text(*w);
             continue;
         }

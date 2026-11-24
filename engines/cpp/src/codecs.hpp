@@ -326,6 +326,13 @@ struct EncodeSource {
         : p(pack), e(item), defaults{&g.defaults, nullptr} {}
     // False when the field has no value. Throws transform-encode.
     bool value(const FieldLine& f, Value& out) const;
+    // The model value the line has: the item's, else the default in scope; null
+    // when none. No `range`, type mapping or table.
+    const Value* model_value(const FieldLine& f) const;
+    bool has_value(const FieldLine& f) const { return model_value(f) != nullptr; }
+    // v0.56 ruling 9: presence is computed as if there were no `range`; false
+    // while a switch's case is predicted.
+    mutable bool use_range = true;
     // v0.18: does the entity (or the item) hold a key or list? A scalar holds
     // when present, a list when present with at least one item; a `default`
     // never holds (ruling 2).
@@ -333,6 +340,10 @@ struct EncodeSource {
     // v0.18: a line with `with <other-key>` whose key is not held: it writes
     // nothing, its default and its sentinel included (ruling 1).
     bool suppressed(const FieldLine& f) const { return !f.with.empty() && !holds(f.with); }
+    // v0.56 ruling 9: a line that another line's value keeps from writing is
+    // still checked against its `range` when its key is held or a default fills
+    // it (transform-encode).
+    void check_range(const FieldLine& f) const;
     // The items of a group's list; null when the item has no such list.
     const std::vector<Item>* list(const GroupLine& g) const;
 };
@@ -356,6 +367,20 @@ PartGroup* part_group_of(std::vector<PartGroup>& groups, const LineRef& line);
 // Encode: the token of a group (Encode steps 1 to 3). False when nothing is
 // written. Throws transform-encode.
 bool part_token(const EncodeSource& src, const std::vector<LineRef>& lines, const PartGroup& g, std::string& token);
+// v0.56 `range <min> <max> [wrap]`: checks the model value `v` of a field
+// with `range` against the interval, by the field's key type, and wraps it in
+// place with `wrap`. Throws transform-encode outside a range without `wrap`.
+void apply_range(const Pack& p, const FieldLine& f, Value& v);
+// v0.56: one field option of the output conditions at t[k] (`null`, `implicit`,
+// `range <min> <max> [wrap]`, a stray `wrap`), with its arguments; `k` is left
+// on its last token. 1 when read, 0 when t[k] is not one of them, -1 with `why`
+// when its syntax is refused (bad-directive; ruling 5b of 0.11, step 9: here
+// <min> and <max> are number text, 2b).
+int parse_output_option(const std::vector<std::string>& t, std::size_t& k, FieldLine& f, std::string& why);
+// v0.56: the checks of `range` that need the key's type (bad-directive): an
+// `int` or `float` key, an int key's integer text (2a), <min> below <max> read
+// as that type. False with `why` when refused.
+bool check_range(const FieldLine& f, KeyType type, std::string& why);
 
 // ---- absent-value sentinels (Version 0.9)
 

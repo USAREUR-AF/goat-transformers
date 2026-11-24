@@ -28,6 +28,13 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   set(GT_WARNINGS -Wall -Wextra -Wpedantic)
 endif()
 
+# engine-spec.md 0.56 ruling 11: no operation on doubles is fused.
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  set(GT_FP_OPTIONS -ffp-contract=off)
+elseif(MSVC)
+  set(GT_FP_OPTIONS /fp:precise)
+endif()
+
 # AddressSanitizer and UndefinedBehaviorSanitizer on every target; a finding
 # stops the test that reached it.
 option(GT_SANITIZE "Build with -fsanitize=address,undefined" OFF)
@@ -113,7 +120,7 @@ target_include_directories(goat_transformers
     $<INSTALL_INTERFACE:include>
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_compile_features(goat_transformers PUBLIC cxx_std_17)
-target_compile_options(goat_transformers PRIVATE ${GT_WARNINGS})
+target_compile_options(goat_transformers PRIVATE ${GT_WARNINGS} ${GT_FP_OPTIONS})
 
 if(GT_BUILD_CLI)
   add_executable(goat-xf cli/main.cpp)

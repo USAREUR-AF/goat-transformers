@@ -436,6 +436,13 @@ void check_pack_lines(const std::string& text, const std::string& source) {
                 f.absent_arg = t[++k];
                 continue;
             }
+            // v0.56: `null`, `implicit`, `range <min> <max> [wrap]`.
+            {
+                std::string why;
+                const int r = parse_output_option(t, k, f, why);
+                if (r < 0) c.fail(ErrorKind::BadDirective, why, f.locator);
+                if (r > 0) continue;
+            }
             bool* flag = t[k] == "swap"       ? &swap
                          : t[k] == "trim"     ? &trim
                          : t[k] == "optional" ? &optional

@@ -1060,8 +1060,17 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                     // value, so 0.9's raw value is not stated for it.
                     if (t[k] == "absent")
                         throw bad("'absent' does not apply to the UPER locator '" + f.locator + "'");
+                    // v0.56: `range` on every wire; `null` and `implicit` are refused below.
+                    {
+                        std::string why;
+                        const int r = parse_output_option(t, k, f, why);
+                        if (r < 0) throw bad(why);
+                        if (r > 0) continue;
+                    }
                     throw bad("'" + t[k] + "' is not a field option of a UPER locator, or is given twice");
                 }
+                if (f.null_member || f.implicit)
+                    throw bad(std::string("option '") + (f.null_member ? "null" : "implicit") + "' does not apply to wire bits");
                 mapped_key(t[1]);  // a `switch` key (0.20)
                 also_target = &add(std::move(n));
                 continue;
@@ -1118,11 +1127,22 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                     ++k;
                     continue;
                 }
+                // v0.56: `range` is valid on every wire; `null` and `implicit`
+                // are refused below, as wire checks.
+                {
+                    std::string why;
+                    const int r = parse_output_option(t, k, f, why);
+                    if (r < 0) throw bad(why);
+                    if (r > 0) continue;
+                }
                 bool* flag = t[k] == "swap" ? &f.swap : t[k] == "trim" ? &f.trim : nullptr;
                 if (t[k] == "optional") throw bad("the field option 'optional' is not allowed in a sequential pack");
                 if (!flag || *flag) throw bad("'" + t[k] + "' is not a field option, or is given twice");
                 *flag = true;
             }
+            // v0.56: `null` belongs to json and geojson, `implicit` to protobuf.
+            if (f.null_member || f.implicit)
+                throw bad(std::string("option '") + (f.null_member ? "null" : "implicit") + "' does not apply to wire bits");
             // v0.22: `until:` takes `chars:<set>` and a code its width holds, and
             // no `absent`, `swap`, `trim` or `stop`; `stop` takes a `chars` field.
             if (f.until) {
@@ -1165,6 +1185,9 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.via = t.size() == 4 ? t[3] : std::string();
             f.table = -1;
             f.with.clear();  // `with` belongs to the field line (0.18 ruling 5)
+            // `range` applies to the field line's own key only (0.56 ruling 8).
+            f.has_range = false;
+            f.range_wrap = false;
             prev_field->also.push_back(std::move(f));
             mapped_key(t[1]);
             also_target = prev_field;
@@ -2896,7 +2919,9 @@ struct Scope {
     bool value(const FieldLine& f, Value& out) const {
         if (!item.fields.count(f.key))
             if (const DefaultLine* d = case_default(f)) {
-                out = typemapped_out(p, f, d->value);
+                Value dv = d->value;
+                if (f.has_range && src.use_range) apply_range(p, f, dv);  // v0.56: a default is checked as any value
+                out = typemapped_out(p, f, dv);
                 if (f.table >= 0) {
                     try {
                         out = table_encode(p, f, out);
@@ -2907,6 +2932,18 @@ struct Scope {
                 return true;
             }
         return src.value(f, out);
+    }
+    // v0.56 ruling 9: a reached line is checked whether or not its value is the
+    // one written (a held `also` key may stand there instead of a default).
+    void check_range(const FieldLine& f) const {
+        if (!f.has_range || !src.use_range || src.suppressed(f)) return;
+        if (!item.fields.count(f.key))
+            if (const DefaultLine* d = case_default(f)) {
+                Value dv = d->value;
+                apply_range(p, f, dv);
+                return;
+            }
+        src.check_range(f);
     }
 };
 
@@ -3292,6 +3329,7 @@ void encode_uper_field(SeqOut& out, const SeqNode& n, const Scope& s) {
 
 void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
     const Pack& p = out.p;
+    s.check_range(n.field);
     if (n.uper != SeqNode::Uper::None) {
         encode_uper_field(out, n, s);
         return;
@@ -3320,7 +3358,7 @@ void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
     if (!f) {
         // The first sentinel in place of the zero bits (0.9); it is never
         // content for a presence, `opt` or `fx` bit (ruling 4).
-        if (n.field.has_absent && !s.src.suppressed(n.field)) {
+        if (n.field.writes_sentinel() && !s.src.suppressed(n.field)) {
             std::uint64_t raw = n.field.absent_num.front();
             if (n.field.swap) raw = swap_bytes(raw, n.len);
             out.put(raw, n.len);
@@ -3704,6 +3742,9 @@ int predicted_case(const SeqNode& n, const Scope& s) {
         Item back;
         if (line) {
             SeqOut tmp{s.p, std::string(), bit_mode(s.p.bit_order), 0, {}, {}, s.sw};
+            // 0.56 ruling 9: presence is computed as if there were no `range`.
+            const bool use_range = s.src.use_range;
+            s.src.use_range = false;
             try {
                 if (line->type == Type::When) encode_when(tmp, *line, s);
                 else encode_field(tmp, *line, s);
@@ -3711,6 +3752,7 @@ int predicted_case(const SeqNode& n, const Scope& s) {
                 read_back(s.p, tmp.data, 0, tmp.cur, *line, tmp.msb, d);
             } catch (const Error&) {
             }
+            s.src.use_range = use_range;
         }
         const SeqCase* c = select_case(s.p, n, back);
         index = c ? static_cast<int>(c - n.cases.data()) : -1;

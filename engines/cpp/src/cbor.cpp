@@ -1109,6 +1109,8 @@ void check_field_line(const Pack& p, const FieldLine& f) {
         default:
             bad(p, f.locator, f.line, std::string("transform '") + transform_name(f.transform) + "' is not valid on wire cbor");
     }
+    // v0.56: `range` is refused here, after the file; its form was checked as the line was read.
+    if (f.has_range) bad(p, f.locator, f.line, "option 'range' is not valid on wire cbor");
     if (f.swap || f.trim || f.optional || f.has_absent)
         bad(p, f.locator, f.line, "options 'absent', 'swap', 'trim' and 'optional' are not valid on wire cbor");
 }

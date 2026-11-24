@@ -713,7 +713,10 @@ std::string encode_tlv(const Pack& p, const Entity& e) {
         OSlot& s = n->slot(path.back());
         if (line.field) {
             s.named = true;
-            if (s.fixed || s.has_value || fixed_paths.count(path)) continue;  // another line writes the item
+            if (s.fixed || s.has_value || fixed_paths.count(path)) {  // another line writes the item
+                src.check_range(*line.field);  // 0.56 ruling 9
+                continue;
+            }
             Value v;
             // A line suppressed by `with` writes nothing, its default included (0.18 ruling 1).
             if (src.suppressed(*line.field) || !src.value(*line.field, v)) continue;
