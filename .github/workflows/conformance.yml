@@ -114,6 +114,10 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/cantools"
           "$RUNNER_TEMP/cantools/bin/pip" install --quiet --disable-pip-version-check cantools==45.1.1
           "$RUNNER_TEMP/cantools/bin/python" -I tools/gen/golden-cantools.py --check --cache "$RUNNER_TEMP/dbc-cache"
+      # opendroneid.c and .h are fetched at the commit the remote-id pack names
+      # and refused unless their SHA-256 is the one its PROVENANCE.md records.
+      - name: Remote ID golden vectors are what opendroneid-core-c writes
+        run: python3 -I tools/gen/golden-opendroneid.py --check
   # Spec 0.24: each wire builds alone, and with every wire but it, with no
   # warning; its vectors pass on the build that has it and json. A job of its
   # own: the rust job is near its time limit.

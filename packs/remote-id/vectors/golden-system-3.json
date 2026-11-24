@@ -1,0 +1,25 @@
+{
+ "name": "golden-system-3",
+ "from": "remote-id",
+ "to": "remote-id",
+ "input": "4206d72c441859b7e3d3e8fdffe02e9307379d070100008000",
+ "expect": "4206d72c441859b7e3d3e8fdffe02e9307379d070100008000",
+ "model": {
+  "@kind": "system",
+  "rid.msg_type": "4",
+  "rid.operator_location_type": "2",
+  "rid.classification_type": "1",
+  "rid.operator_lat": "40.7121111",
+  "rid.operator_lon": "-74.0051111",
+  "rid.area_count": "65000",
+  "rid.area_radius": "2550",
+  "rid.area_ceiling": "5000",
+  "rid.area_floor": "-30.5",
+  "rid.category_eu": "3",
+  "rid.class_eu": "7",
+  "rid.operator_hae": "-25.5",
+  "rid.system_timestamp": "2147483649"
+ },
+ "source": "opendroneid-core-c commit 849c03adbe0cdd68997a462fafab397edcfe53f3, libopendroneid/opendroneid.c: encoded and then decoded by the library. Written by tools/gen/golden-opendroneid.py; no engine is run.",
+ "reference": "The bytes are the library's encoder's and the values its decoder's."
+}
