@@ -17,6 +17,8 @@ public enum Transform {
     ISO8601_SHORT("iso8601_short"),
     /** engine-spec 0.26: decode as {@code iso8601_ms}; encode to the whole second, the milliseconds dropped. */
     ISO8601_S("iso8601_s"),
+    /** engine-spec 0.55: decode as {@code iso8601_ms}; encode with no fraction at a whole second, else three digits. */
+    ISO8601_SI("iso8601_si"),
     /** {@code json} wire only: JSON {@code true}/{@code false} to int 1/0. The text forms are "true" and "false". */
     BOOL("bool");
 
@@ -56,6 +58,7 @@ public enum Transform {
             case ISO8601_MS:
             case ISO8601_SHORT:
             case ISO8601_S:
+            case ISO8601_SI:
                 return parseIso(text);
             case BOOL:
                 if (text.equals("true")) return 1L;
@@ -82,6 +85,8 @@ public enum Transform {
                 return formatIsoShort(asLong(value));
             case ISO8601_S:
                 return formatIsoSeconds(asLong(value));
+            case ISO8601_SI:
+                return formatIsoSi(asLong(value));
             case BOOL: {
                 long b = asLong(value);
                 if (b == 1) return "true";
@@ -273,6 +278,23 @@ public enum Transform {
         String f = String.format("%03d", ms);
         while (f.endsWith("0")) f = f.substring(0, f.length() - 1);
         return base + "." + f + "Z";
+    }
+
+    /**
+     * {@code iso8601_si} (engine-spec 0.55): no fraction when the milliseconds are 0, else the three digits, trailing
+     * zeros kept. The milliseconds are {@code ms - 1000 * floor(ms / 1000)} (ruling 1); the years are 0001 to 9999
+     * (ruling 2), and an instant outside them cannot be written.
+     */
+    static String formatIsoSi(long epochMs) {
+        if (epochMs < ISO_MIN || epochMs > ISO_MAX) {
+            throw new IllegalArgumentException("time " + epochMs + " ms lies outside years 0001 to 9999");
+        }
+        long secs = Math.floorDiv(epochMs, 1000L);
+        int ms = (int) Math.floorMod(epochMs, 1000L);
+        LocalDateTime t = LocalDateTime.ofEpochSecond(secs, 0, ZoneOffset.UTC);
+        String base = String.format("%04d-%02d-%02dT%02d:%02d:%02d",
+                t.getYear(), t.getMonthValue(), t.getDayOfMonth(), t.getHour(), t.getMinute(), t.getSecond());
+        return ms == 0 ? base + "Z" : base + String.format(".%03dZ", ms);
     }
 
     /**

@@ -1566,6 +1566,16 @@ final class UnitTests {
         eq("uint 64 top bit", -2L, BitsTransform.parse("uint", "t", "t:1").decode(-2L, 64));
         eq("f32 decode", 12.5, BitsTransform.parse("f32", "t", "t:1").decode(0x41480000L, 32));
         eq("ascii empty", "", BitsTransform.parse("ascii", "t", "t:1").decodeAscii(new byte[4], false));
+        // engine-spec 0.55: what no vector pins (a lone surrogate on utf8 encode, ruling 5, a zero result is +0)
+        check("utf8 encode refuses a lone surrogate", refuses(() -> BitsTransform.encodeUtf8("a\uD800", 4)), "accepted");
+        check("utf8 encode refuses U+0000", refuses(() -> BitsTransform.encodeUtf8("a\u0000", 4)), "accepted");
+        eq("utf8 encode of a pair", 4, BitsTransform.encodeUtf8("\uD83D\uDE00", 4).length);
+        check("places: a non-finite x is transform-decode (ruling 5)",
+                refuses(() -> BitsTransform.parse("uscale:1e308:0:1", "t", "t:1").decode(255L, 8)), "accepted");
+        eq("places: y not finite leaves x", 1e308, BitsTransform.parse("uscale:1e308:0:15", "t", "t:1").decode(1L, 8));
+        eq("places: a zero result is +0", Double.doubleToRawLongBits(0.0),
+                Double.doubleToRawLongBits((Double) BitsTransform.parse("sscale:0.01:0:1", "t", "t:1").decode(0xFFL, 8)));
+        throwsCode("places on a text scale", GtException.Code.BAD_DIRECTIVE, () -> Pack.parse(MINI + "field x @x scale:0.1:0:1\n", "t"));
         eq("json number canonical", "150", Json.canonNumber("1.5e2"));
         eq("json negative zero", "0", Json.canonNumber("-0.0"));
     }
