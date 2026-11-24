@@ -264,6 +264,75 @@ class Datum(Tree):
         self.assertEqual(self.datum("nothing\n", "field uid id string\nfield probe.count n int\n"), [])
 
 
+class InnerKeys(Tree):
+    """A pack and the pack its `inner` line names map no key in common (0.34)."""
+    BITS = HEAD + "uses probe\nwire bits\nlayout sequential\nbit_order msb\n"
+
+    def seq(self, name, body):
+        self.t.write("packs/%s/pack.def" % name, "format %s\n" % name + self.BITS + body)
+
+    def found(self, *args):
+        code, out, err = self.run_tool("--inner-keys", *args)
+        return code, out + err
+
+    def test_packs_with_no_key_in_common_pass(self):
+        self.seq("inside", "field probe.on 8 uint\n")
+        self.seq("outside", "field probe.count 8 uint\ninner inside\n")
+        code, out = self.found()
+        self.assertEqual(code, 0, out)
+        self.assertIn("1 packs with an inner line checked, 0 failures", out)
+
+    def test_a_shared_key_is_refused(self):
+        self.seq("inside", "field probe.on 8 uint\nfield probe.count 8 uint\n")
+        self.seq("outside", "field probe.count 8 uint\ninner inside\n")
+        code, out = self.found()
+        self.assertEqual(code, 1)
+        self.assertIn("outside/pack.def inner:inside = probe.count:", out)
+        self.assertEqual(self.run_tool("--check")[0], 1)
+
+    def test_also_as_partial_kinds_and_lengths_are_seen(self):
+        self.seq("inside", "field probe.on 8 uint\n")
+        self.seq("by-also", "field probe.count 8 uint\nalso probe.on\ninner inside\n")
+        self.seq("by-as", "kind a\nwhen 8 1 as probe.on\ninner inside\n")
+        self.seq("by-length", "length 8\n  inner inside partial\nend\nfield probe.on 8 uint\n")
+        self.seq("by-kind", "kind a\nwhen 8 1\nfield probe.on 8 uint\ninner inside\n")
+        code, out = self.found()
+        self.assertEqual(code, 1)
+        for name in ("by-also", "by-as", "by-length", "by-kind"):
+            self.assertIn("%s/pack.def inner:inside = probe.on:" % name, out)
+
+    def test_a_list_both_map_is_one_key_and_item_keys_are_not_shared(self):
+        self.seq("inside", "group probe.points rest\n  field probe.on 8 uint\nend\n")
+        self.seq("samelist", "group probe.points count 8\n  field probe.count 8 uint\nend\ninner inside\n")
+        self.seq("itemkey", "field probe.on 8 uint\ninner inside\n")
+        code, out = self.found()
+        self.assertEqual(code, 1)
+        self.assertIn("samelist/pack.def inner:inside = probe.points[]:", out)
+        self.assertNotIn("itemkey/", out)
+
+    def test_an_inner_pack_outside_the_tree_is_refused(self):
+        self.seq("outside", "field probe.count 8 uint\ninner elsewhere\n")
+        code, out = self.found()
+        self.assertEqual(code, 1)
+        self.assertIn("not in the tree", out)
+
+    def test_conformance_packs_are_not_checked(self):
+        self.seq("inside", "field probe.count 8 uint\n")
+        self.seq("conformance-out", "field probe.count 8 uint\ninner inside\n")
+        code, out = self.found()
+        self.assertEqual(code, 0, out)
+
+    def test_the_allow_file_does_not_waive_it(self):
+        self.seq("inside", "field probe.count 8 uint\n")
+        self.seq("outside", "field probe.count 8 uint\ninner inside\n")
+        self.t.write("tools/model-checks-allow.txt", "outside/pack.def inner:inside defect(pack): known\n")
+        self.assertEqual(self.found()[0], 1)
+        code, out, err = self.run_tool("--check")
+        self.assertEqual(code, 1)
+        self.assertIn("does not waive", out)
+        self.assertIn("outside/pack.def inner:inside", out)
+
+
 class Repository(unittest.TestCase):
     def test_this_repository_passes_the_check(self):
         started = time.monotonic()

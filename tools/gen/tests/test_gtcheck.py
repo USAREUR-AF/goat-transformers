@@ -826,6 +826,40 @@ class ConformanceLoadVectorsTest(unittest.TestCase):
         self.assertEqual(disagree, [])
 
 
+class InnerKeysTest(unittest.TestCase):
+    """A pack and the pack its `inner` line names map no key in common (0.34)."""
+
+    def load(self, **bodies):
+        head = 'version 0.1.0\ndistribution public\nsource "test"\nuses probe\nwire bits\nlayout sequential\nbit_order msb\n'
+        return [gtcheck.load_pack("format %s\n" % name.replace("_", "-") + head + body, model(), name)
+                for name, body in bodies.items()]
+
+    def refused(self, want, **bodies):
+        with self.assertRaises(gtcheck.CheckError) as c:
+            gtcheck.check_inner_keys(self.load(**bodies))
+        self.assertEqual(c.exception.kind, "inner-keys")
+        self.assertIn(want, str(c.exception))
+
+    def test_no_key_in_common_passes(self):
+        gtcheck.check_inner_keys(self.load(a="field probe.qty 8 uint\n", b="field probe.ratio 32 f32\ninner a\n"))
+
+    def test_a_shared_key_is_refused_with_its_line(self):
+        self.refused("b:10: inner-keys: `inner a`: both packs map probe.qty",
+                     a="field probe.qty 8 uint\n", b="field probe.qty 8 uint\ninner a\n")
+
+    def test_also_as_and_partial(self):
+        self.refused("probe.qty", a="field probe.qty 8 uint\n", b="kind k\nwhen 8 1 as probe.qty\ninner a partial\n")
+        self.refused("probe.label", a="field probe.label 8 ascii\n",
+                     b="length 8\n  inner a\nend\nfield uid 8 ascii\nalso probe.label\n")
+
+    def test_an_inner_pack_not_given_is_refused(self):
+        self.refused("not among the files", b="field probe.qty 8 uint\ninner a\n")
+
+    def test_conformance_packs_are_not_checked(self):
+        gtcheck.check_inner_keys(self.load(a="field probe.qty 8 uint\n",
+                                           conformance_b="field probe.qty 8 uint\ninner a\n"))
+
+
 class RepositoryTest(unittest.TestCase):
     def test_every_module_and_pack_of_the_repository_loads(self):
         model_dir = os.path.join(support.REPO, "model")

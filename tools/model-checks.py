@@ -33,6 +33,15 @@ pack.md names only mean sea level, a barometric altitude or a height above
 ground maps a height from another datum to the ellipsoid unless it converts,
 and its pack.md says so.
 
+The inner-key check: a pack with an `inner` line (spec 0.34) maps no key that
+its inner pack maps. Decode keeps the first value read of such a key and
+encode writes that one in both places, so the other value is lost and the
+inner message's bytes change, with no error. A key is a message key or a list;
+a list both packs map is one key. A pack whose inner format is not in the tree
+fails too, since its keys cannot be compared. Packs named `conformance-*` are
+not checked: they pin what the engines do. The allow file does not waive this
+check.
+
 The failures of today are listed in tools/model-checks-allow.txt, one per
 line: `<pack>/<vector> <key> <reason>` for a value (the key as the entity
 holds it, `<list>[<i>].<key>` inside a list), `<pack>/pack.md datum <reason>`
@@ -45,6 +54,9 @@ without a reason, and a line that no longer fails is removed.
                                               exit 1 on a failure the allow
                                               file does not list, or an allow
                                               line that no longer fails
+  --inner-keys   the inner-key check alone, over every pack of the tree: no
+                 vector is decoded and the allow file is not read; exit 1 on
+                 a failure, with or without --check
   --shard I/N    check only the pack directories whose index in name order is
                  I modulo N (each shard still loads every pack); an allow line
                  is judged only by the shard that holds its pack
@@ -211,6 +223,35 @@ def check_vectors(api, eng, rules, root, dirs, stats):
     return failures
 
 
+def message_keys(entries):
+    """The message keys and the lists (`<list>[]`) among model_keys entries:
+    an entry of a list's items is judged with its list."""
+    return {e for e in entries if "[]." not in e}
+
+
+def check_inner_keys(eng, dirs, by_dir):
+    """-> [(location, key, the keys, why)]: the packs of `dirs` that share a
+    mapped key with a pack an `inner` line of theirs names."""
+    failures = []
+    for d in dirs:
+        fmt = by_dir.get(d)
+        if fmt is None or fmt.startswith("conformance-"):
+            continue
+        pack = eng.pack(fmt)
+        own = message_keys(pack.model_keys())
+        for inner in dict.fromkeys(pack.inners):
+            at = ("%s/pack.def" % d, "inner:%s" % inner)
+            if inner not in eng.formats():
+                failures.append(at + (inner, "the inner format is not in the tree, so its keys cannot be compared"))
+                continue
+            shared = sorted(own & message_keys(eng.pack(inner).model_keys()))
+            if shared:
+                failures.append(at + (",".join(shared), "both packs map it: decode keeps one value and encode writes"
+                                      " that one in both places, so the other is lost and the inner message changes;"
+                                      " bind the outer line to a raw key of its own"))
+    return failures
+
+
 def check_datum(eng, rules, root, dirs, by_dir):
     """-> [(location, "datum", the height keys, why)] for the packs of `dirs`."""
     failures = []
@@ -338,6 +379,7 @@ def main(argv=None):
     ap.add_argument("--allow")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--inner-keys", action="store_true")
     ap.add_argument("--shard", type=parse_shard, default=(0, 1))
     args = ap.parse_args(argv)
     root = os.path.abspath(args.root)
@@ -355,6 +397,14 @@ def main(argv=None):
     rules = Rules(rule_data, eng.models)
     by_dir = {os.path.basename(eng.pack(f).path): f for f in eng.formats()}
 
+    if args.inner_keys:
+        found = check_inner_keys(eng, sorted(by_dir), by_dir)
+        for loc, key, value, why in found:
+            print("%s %s = %s: %s" % (loc, key, value, why))
+        print("model-checks: inner keys: %d packs with an inner line checked, %d failures" % (
+            sum(1 for f in eng.formats() if eng.pack(f).inners and not f.startswith("conformance-")), len(found)))
+        return 1 if found else 0
+
     shard, shards = args.shard
     every = sorted(d for d in os.listdir(os.path.join(root, "packs"))
                    if os.path.isdir(os.path.join(root, "packs", d)))
@@ -367,11 +417,16 @@ def main(argv=None):
     stats["skipped_synthetic"] = stats["vectors"]
     failures = check_vectors(api, eng, rules, root, real, stats)
     failures += check_datum(eng, rules, root, real, by_dir)
+    inner = check_inner_keys(eng, dirs, by_dir)
+    failures += inner
 
     allowed, bad_lines = read_allow(allow_path)
     in_shard = set(dirs)
     allowed = {k: v for k, v in allowed.items() if k[0].split("/", 1)[0] in in_shard}
     failing = {(loc, key) for loc, key, _, _ in failures}
+    for k in {(loc, key) for loc, key, _, _ in inner} & set(allowed):
+        bad_lines.append("the allow file does not waive the inner-key check: %s %s" % k)
+        del allowed[k]
     new = [f for f in failures if (f[0], f[1]) not in allowed]
     stale = sorted(k for k in allowed if k not in failing)
     elapsed = time.monotonic() - started
@@ -394,12 +449,13 @@ def main(argv=None):
         for line in bad_lines:
             print(line)
         datum_n = sum(1 for f in failures if f[1] == "datum")
+        other_n = datum_n + len(inner)
         print("model-checks: %d vectors; %d decoded and checked, %d skipped as synthetic, %d did not decode"
               % (stats["vectors"], stats["decoded"], stats["skipped_synthetic"], stats["not_decoded"]))
         print("model-checks: values checked: %s" % (
             ", ".join("%s %d" % (k, n) for k, n in sorted(stats["checked"].items())) or "none"))
-        print("model-checks: %d failures (%d values, %d datum), %d allowed, %d new, %d allow lines stale; %.0f s"
-              % (len(failures), len(failures) - datum_n, datum_n, len(failures) - len(new), len(new), len(stale),
+        print("model-checks: %d failures (%d values, %d datum, %d inner keys), %d allowed, %d new, %d allow lines stale; %.0f s"
+              % (len(failures), len(failures) - other_n, datum_n, len(inner), len(failures) - len(new), len(new), len(stale),
                  elapsed))
     if args.check and (new or stale or bad_lines):
         return 1
