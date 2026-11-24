@@ -152,7 +152,7 @@ def pubx_vectors():
     out.append((p, "02-pubx-01-roundtrip.json", vec(p, "pubx-01-roundtrip", b,
                 {"pubx.easting": "467125.245", "pubx.northing_ns": "N", "pubx.nav_status": "D3"},
                 ref=R_PUBX + "; a UTM position")))
-    c = sentence("PUBX,03,2,5,U,120,45,40,30,12,-,,,22,0")
+    c = sentence("PUBX,03,2,05,U,120,45,40,030,12,-,,,22,000")
     out.append((p, "03-pubx-03-roundtrip.json", vec(p, "pubx-03-roundtrip", c,
                 {"pubx.sat_count": "2", "pubx.satellites.#": "2", "pubx.satellites[0].pubx.sv_id": "5",
                  "pubx.satellites[0].pubx.azimuth": "120", "pubx.satellites[1].pubx.sv_status": "-",

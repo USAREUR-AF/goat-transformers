@@ -19,16 +19,16 @@ by the segment type and the mask (and, for HRR, the sizes of magnitude and phase
 
 | kind | mask | body bytes before the records | record bytes | list | basis |
 |---|---|---|---|---|---|
-| `dwell-situation` | `ffc71fc260000000` | 96 | 6 | `detection.items` | situation class field table; its stated mask agrees |
-| `dwell-targeting` | `ff071ffb9f800000` | 94 | 19 | `detection.items` | targeting class field table (62-byte body, 19-byte report); the guide's stated mask disagrees, see the next kind |
-| `dwell-targeting-as-masked` | `ffc71ffa7f800000` | 102 | 15 | `detection.items` | the targeting class mask as the guide states it (ff c7 1f fa 7f 80 00 00): scale factors and reduced-size positions |
-| `hrr-m1p0` | `fbffc78200` | 75 | 1 | `gmti.scatterers` | HRR field table of the targeting-with-HRR class; one-byte magnitude, no phase |
-| `hrr-m1p1` | `fbffc78300` | 75 | 2 | `gmti.scatterers` | as above; one-byte magnitude and phase |
-| `hrr-m1p2` | `fbffc78300` | 75 | 3 | `gmti.scatterers` | as above; one-byte magnitude, two-byte phase |
-| `hrr-m2p0` | `fbffc78200` | 75 | 2 | `gmti.scatterers` | as above; two-byte magnitude, no phase |
-| `hrr-m2p1` | `fbffc78300` | 75 | 3 | `gmti.scatterers` | as above; two-byte magnitude, one-byte phase |
-| `hrr-m2p2` | `fbffc78300` | 75 | 4 | `gmti.scatterers` | as above; two-byte magnitude and phase |
-| `prochist` | none | 53 | 23 | `gmti.records` | processing history has no mask: every field is mandatory |
+| `dwell-situation` | `ffc71fc260000000` | 64 | 6 | `detection.items` | situation class field table; its stated mask agrees |
+| `dwell-targeting` | `ff071ffb9f800000` | 62 | 19 | `detection.items` | targeting class field table (62-byte body, 19-byte report); the guide's stated mask disagrees, see the next kind |
+| `dwell-targeting-as-masked` | `ffc71ffa7f800000` | 70 | 15 | `detection.items` | the targeting class mask as the guide states it (ff c7 1f fa 7f 80 00 00): scale factors and reduced-size positions |
+| `hrr-m1p0` | `fbffc78200` | 43 | 1 | `gmti.scatterers` | HRR field table of the targeting-with-HRR class; one-byte magnitude, no phase |
+| `hrr-m1p1` | `fbffc78300` | 43 | 2 | `gmti.scatterers` | as above; one-byte magnitude and phase |
+| `hrr-m1p2` | `fbffc78300` | 43 | 3 | `gmti.scatterers` | as above; one-byte magnitude, two-byte phase |
+| `hrr-m2p0` | `fbffc78200` | 43 | 2 | `gmti.scatterers` | as above; two-byte magnitude, no phase |
+| `hrr-m2p1` | `fbffc78300` | 43 | 3 | `gmti.scatterers` | as above; two-byte magnitude, one-byte phase |
+| `hrr-m2p2` | `fbffc78300` | 43 | 4 | `gmti.scatterers` | as above; two-byte magnitude and phase |
+| `prochist` | none | 21 | 23 | `gmti.records` | processing history has no mask: every field is mandatory |
 
 263 `field` lines. Keys are those of `model/gmti.def` and the detection keys of
 `tools/gmti/detection.tsv.txt`; the fixed layout reads each field as its raw key and, at the same bits,

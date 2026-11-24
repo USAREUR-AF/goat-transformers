@@ -13,7 +13,7 @@ Trajectory encoding when a document has both (clause 7.2, requirement 2.3):
 | Kind | Selected when | Encode requires |
 |---|---|---|
 | `MovingPoint` | `temporalGeometry.type` is `MovingPoint` (clause 7.2.1.1) | the list `mfjson.datetimes` |
-| `Trajectory` | `geometry.type` is `LineString` (clause 7.1) | the list `mfjson.trajectory_datetimes` |
+| `Trajectory` | `geometry.type` is `LineString` and `properties.datetimes` is present (clause 7.1, requirement 1.4) | the list `mfjson.trajectory_datetimes` |
 
 A MovingFeatureCollection (`type` `FeatureCollection`) is not one message (`no-kind`); its
 features are messages one by one. The other temporal geometry types (MovingLineString,

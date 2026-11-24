@@ -31,6 +31,7 @@ field   uid  id  string
 kind    Trajectory
 requires  mfjson.trajectory_datetimes
 when    geometry.type  LineString
+when    properties.datetimes  present
 group   mfjson.trajectory_datetimes  properties.datetimes
   field  mfjson.datetime_ms  .  iso8601_short
   field  mfjson.datetime_ms  .  int

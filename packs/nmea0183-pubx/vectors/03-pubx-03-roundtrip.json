@@ -2,8 +2,8 @@
   "name": "pubx-03-roundtrip",
   "from": "nmea0183-pubx",
   "to": "nmea0183-pubx",
-  "input": "$PUBX,03,2,5,U,120,45,40,30,12,-,,,22,0*65",
-  "expect": "$PUBX,03,2,5,U,120,45,40,30,12,-,,,22,0*65",
+  "input": "$PUBX,03,2,05,U,120,45,40,030,12,-,,,22,000*65",
+  "expect": "$PUBX,03,2,05,U,120,45,40,030,12,-,,,22,000*65",
   "model": {
     "pubx.sat_count": "2",
     "pubx.satellites.#": "2",
