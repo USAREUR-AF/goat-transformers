@@ -6012,7 +6012,7 @@ number in brackets).
 23. **`geojson` coordinates.** `codestr` and `codenum` on a `geometry.*`
     locator are `bad-directive` after the file. Inside a group body such a
     locator is a member path (0.9 ruling 25) and loads.
-24. **Widths and places.** A width may have leading zeros (0.11 ruling 2b). The
+24. **Widths and places.** A width may have leading zeros (0.11 ruling 2c). The
     `2^width` limit on the number of characters applies on `bits` only (ruling
     14). A `charset` after a group with item kinds, before the first message
     `kind`, loads. The limit of 2^63 applies on every wire.
@@ -6020,7 +6020,8 @@ number in brackets).
 ### Stated, not yet pinned by a vector
 
 25. `null` as a `geojson` member under `codestr` or `codenum`: 0.1 has no rule
-    for it, and this version adds none. `code` under `msb-lsb` with a `len` that is not a multiple of 8, for
+    for it, and this version adds none.
+26. `code` under `msb-lsb` with a `len` that is not a multiple of 8, for
     conversion; `stop` and `until:` with `code` (`bad-directive`, 0.22).
 
 ## Vector additions
