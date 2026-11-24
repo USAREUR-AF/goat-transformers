@@ -6847,3 +6847,104 @@ line).
 
 - Padding, or any byte between or after the messages.
 - Messages of more than one inner format in one run.
+
+# Version 0.94: a conversion into a kind holds one of its keys
+
+Status: Written. Converting an entity to a format that holds none of what the
+entity holds gives a message of constants and zeros, and such a message can be
+a valid command (an acknowledgement, an abort, a query). With this version a
+conversion into a pack that has message kinds refuses it. The rule is small on
+purpose: one held key of the kind is enough, a key of the common lines
+included, so an entity that holds only a time passes into a kind whose common
+lines map it. A pack that needs more says so with `requires`.
+
+## Rule
+
+In `convert(from, to, …)` with `from` different from `to`, after the context and
+the derivations (0.6 steps 2 and 3), after the message kind is chosen (0.5) and
+before any line is written: if the pack of `to` has a **message kind** and the
+entity holds **no key of the chosen kind**, the error is `no-kind`.
+
+- **Keys of a kind** are the keys that 6a to 6c of 0.11 and ruling 24 of 0.30
+  list, over the common lines and the chosen kind's lines, whether or not a
+  block, case or line is written (a line that `with` suppresses included); the
+  `model_keys` of the inner pack of an `inner` line among those lines (0.34,
+  whichever inner kind encode will choose; a pack that does not pass 0.34's
+  checks 1 to 4 adds nothing, so the result is then `no-kind` where nothing
+  else is held); and the keys, with `=` or without, of the kind's own
+  `requires` lines, not of a group's. A list counts by the entry of the list
+  (`rows[]`), not by item keys. Keys are compared as literal text. A key does
+  not count by being named by `with`, `switch` or a gate (a line that maps it
+  counts); presence and count names are not keys; the keys of a group's items
+  do not count.
+- **Holds** means a value that decode, the caller's context or a derivation
+  gave: 0, the empty text and a value equal to a sentinel count; a key left
+  absent by a sentinel does not (0.9, 0.12). A `default`, a `const` and a `when`
+  value are not held. A list counts when it has at least one item, whether or
+  not its items hold a key. Residue does not count.
+
+## Rulings
+
+1. **The next kind is not tried.** The kind is the one that 0.5 chooses; this
+   check only refuses it. No output changes other than to this error. A kind
+   with a scalar `requires` or a non-optional `as` always passes; one with an
+   optional `as` passes when its label is held, even alone. A plain `requires`
+   is met by a present list that is empty (0.5), and the check may then refuse.
+2. **Same format and direct encode.** `convert(f, f, …)`, with or without
+   context, and `encode(f, entity)` are unchanged. The `requires` choice of 0.5
+   is made by both as before. A program that decodes and encodes by itself is
+   not covered.
+3. **A kind that maps no key** is refused unless the entity holds one of its
+   `requires` keys, a list with an item (a `requires` key need not be mapped).
+4. **Not checked:** the kind of a group item, the kind of an inner message, and
+   a kept kind: when `Entity.kind` or `Entity.inner_kind` names the format of an
+   `inner` line of the chosen kind or of the common lines (0.34), or names `to`.
+   A pack without message kinds is not checked (ruling 6), a pack whose only
+   `kind` lines are in a group body included: a message with no position still
+   gives an empty GeoJSON Feature.
+5. **Order of errors.** The check is made inside step 4 of 0.6's order in
+   `convert`, between choosing and the first line, and reported like the
+   `no-kind` of choosing (the same error, that one first), ahead of every
+   encode error; context and derivation errors come before it.
+6. **A pack without kinds opts in** with kinds that hold only `requires`; its
+   lines stay common lines, before the first `kind`:
+
+   ```
+   kind     clear
+   requires ocpp16clearcache.go
+   ```
+
+   By 0.5 and 0.20: several terms of one kind must all hold; of several kinds
+   the first that holds is chosen, so any of their keys is enough; a kind
+   without `when` always holds on decode, so a message still decodes (unless a
+   common `when` fails), as the first such kind, whatever it held, and a
+   same-format round trip keeps the recorded kind and the bytes. A named key
+   is any declared key, mapped or not. Beside this check, `encode` of 0.5
+   makes the `requires` choice. What changes for such a pack: `Entity.kind` is
+   recorded with the first kind's name (so a message that holds only `b` in
+   the table below decodes as `by-a`); on `xml` a wrong root is `no-kind`
+   instead of `missing-root` (0.6); as an inner pack it records `inner_kind`,
+   and encoding it as a layer can be `no-kind` unless a kind is kept.
+
+   A pack of no field lines, the same pack with `kind clear` / `requires go`,
+   and a pack with common lines `a`, `b`, `uid` (at `a`, `b`, `id`) and `kind
+   by-a` / `requires a`, `kind by-b` / `requires b`:
+
+   | Entity, from another format | No kinds | `clear` | `by-a`, `by-b` |
+   |---|---|---|---|
+   | only `uid` | `{}` | `no-kind` | `no-kind` |
+   | only `go`, or `go` as context | `{}` | `{}` | `no-kind` |
+   | only `a` | `{}` | `no-kind` | `{"a":…}` |
+   | only `b` and `uid` | `{}` | `no-kind` | `{"b":…,"id":…}` |
+   | the same format's `{}` | `{}` | `{}` | `{}` |
+
+## Amends
+
+0.5 Encode ("A kind with no `requires` always qualifies": it is then also held
+to this check), 0.6 "Order inside `convert`" (step 4), the `no-kind` row of the
+error table of 0.11.
+
+## Not in this version
+
+- This check in `encode`.
+- A check for packs without message kinds that do not opt in.
