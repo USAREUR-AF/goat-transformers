@@ -642,6 +642,7 @@ fn sum16(b: &[u8]) -> u16 {
 /// CRC-32 of ISO/IEC 13818-1 (0.27): polynomial 0x04C11DB7, register
 /// starting at 0xFFFFFFFF, each byte taken most significant bit first, no
 /// reflection and no final XOR.
+#[cfg(any(feature = "tlv", test))]
 fn crc32(b: &[u8]) -> u32 {
     let mut r = 0xFFFF_FFFFu32;
     for &x in b {
