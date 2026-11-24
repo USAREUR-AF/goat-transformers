@@ -508,6 +508,21 @@ def adsb18():
     return out + late
 
 
+# DF 18 airborne velocity of subtypes 2 and 4 converted to the pack adsb: the
+# subtype (ME bits 5 to 7) multiplies the speed by 4, so it must come through.
+KEEPS_VELOCITY_REF = ('pyModeS decoder/bds/bds09.py: the subtype is ME bits 5 to 7 and subtypes 2 and 4 multiply the speed by 4, so it must come through; only the 5-bit downlink format differs (18 to 17)')
+
+
+def adsb18_to_adsb():
+    """The vectors from adsb-df18 to adsb that keep the velocity subtype."""
+    out = []
+    for name, hexmsg in (("to-adsb-keeps-velocity-st2", '90abc0149adf1faf7c148f2cfccc'), ("to-adsb-keeps-velocity-st4", '90abc0169cdcdbf978cc9bd68485')):
+        df17 = "88" + hexmsg[2:]   # only the 5-bit downlink format differs (18 to 17), CA 0 for CF 0
+        out.append({"name": name, "from": "adsb-df18", "to": "adsb", "input": hexmsg, "expect": df17,
+                    "source": "constructed", "reference": KEEPS_VELOCITY_REF})
+    return out
+
+
 def text(v):
     return json.dumps(v, indent=2, ensure_ascii=False) + "\n"
 
@@ -525,6 +540,10 @@ def build(out):
         written["adsb"] = written.get("adsb", 0) + 1
     vdir = "packs/adsb-df18/vectors"
     names = set()
+    for v in adsb18_to_adsb():
+        rel = "%s/%s.json" % (vdir, v["name"])
+        names.add(rel.split("/")[-1])
+        out.write(rel, text(v))
     for i, v in enumerate(adsb18(), 1):
         if v["from"] != "adsb-df18":
             out.write("packs/%s/vectors/to-adsb-df18-%s.json" % (v["from"], v["name"]), text(v))

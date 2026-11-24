@@ -1,9 +1,9 @@
 {
- "name": "to-adsb-keeps-velocity-st4",
- "from": "adsb-df18",
- "to": "adsb",
- "input": "90abc0169cdcdbf978cc9bd68485",
- "expect": "88abc0169cdcdbf978cc9bd68485",
- "source": "constructed",
- "reference": "pyModeS decoder/bds/bds09.py: the subtype is ME bits 5 to 7 and subtypes 2 and 4 multiply the speed by 4, so it must come through; only the 5-bit downlink format differs (18 to 17)"
+  "name": "to-adsb-keeps-velocity-st4",
+  "from": "adsb-df18",
+  "to": "adsb",
+  "input": "90abc0169cdcdbf978cc9bd68485",
+  "expect": "88abc0169cdcdbf978cc9bd68485",
+  "source": "constructed",
+  "reference": "pyModeS decoder/bds/bds09.py: the subtype is ME bits 5 to 7 and subtypes 2 and 4 multiply the speed by 4, so it must come through; only the 5-bit downlink format differs (18 to 17)"
 }
