@@ -1946,7 +1946,9 @@ bits_scope(Pack, Lines0, {Model, Lists, Defaults} = Src, Base) ->
     Held = fun(K) -> holds(K, Model, Lists) end,
     Lines = suppress(armor_unwritten(Pack, Lines0, Held), Held),
     case lists:any(fun(L) -> element(1, L) =:= gate end, Lines) of
-        false -> bits_lines(Pack, Lines, Src, Defaults, Base, true);
+        false ->
+            {Ws, Os, End, Checks} = bits_lines(Pack, Lines, Src, Defaults, Base, true),
+            {Ws, settle_whens(Ws, Os), End, Checks};
         true -> bits_gated(Pack, Lines, Src, Model, Defaults, Base)
     end.
 
@@ -1976,7 +1978,8 @@ bits_gated(Pack, Lines, Src, Model, Defaults, Base) ->
     Gates = [L || L <- Lines, element(1, L) =:= gate],
     %% steps 2 to 4 on the scope's own bits, item-relative; the bits of the
     %% items of its groups are not written for its gates (ruling 9)
-    {OwnWs, OwnOs, _, _} = bits_lines(Pack, Outside, Src, Defaults, Base, false),
+    {OwnWs, OwnOs0, _, _} = bits_lines(Pack, Outside, Src, Defaults, Base, false),
+    OwnOs = settle_whens(OwnWs, OwnOs0),
     Rel = fun(Ws) -> [{T, Off - Base, Len, U} || {T, Off, Len, U} <- Ws] end,
     Ext = scope_extent(Lines),
     V0 = gt_bits:new(max(1, (Ext + 7) div 8), Order),
@@ -1995,9 +1998,11 @@ bits_gated(Pack, Lines, Src, Model, Defaults, Base) ->
     V4 = compose(V0, Rel(OwnWs) ++ GateWs, Rel(OwnOs)),
     {Held, Checks0} = held_gates(Gates, [], V4, Base, #{}, []),
     %% step 5: the outside lines and the held blocks, in line order
-    {Ws, Os, End, Checks} =
+    {Ws, Os0, End, Checks} =
         bits_emit(Pack, Lines, [], Src, Defaults, Base, Held, GateVals,
                   {[], [], 0, lists:reverse(Checks0)}),
+    %% over every line written, as bits_emit reads the lines one at a time
+    Os = settle_whens(Ws, Os0),
     %% step 6: a key the scope holds is mapped by a line that is written
     Mapped = maps:from_list([{K, true} || K <- written_keys(Lines, [], Held)]),
     lists:foreach(
@@ -2150,8 +2155,8 @@ scope_extent(Lines) ->
                 end, 0, Lines).
 
 %% The lines of a scope that are not gate blocks -> {Writes, Overs, End,
-%% Checks}. A field takes the scope's value of its key, else the default
-%% that reaches it. WithItems false leaves out the items of groups.
+%% Checks}. A `when` with a list or a range is left for settle_whens/2. A
+%% field takes the scope's value of its key, else the default that reaches it. WithItems false leaves out the items of groups.
 bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
     Order = maps:get(bit_order, Pack),
     Armor = maps:get(armor, Pack, hex),
@@ -2243,22 +2248,24 @@ bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
               end;
          (_, Acc) -> Acc
       end, {[], [], 0, []}, Lines),
-    Ws = lists:reverse(Ws9),
-    %% a `when` with a list or a range (ruling 3 of 0.20): the value of a
-    %% field line with a present key on exactly its bits when it matches,
-    %% else the first value
-    Os = [case O of
-              {2, Pos, Len, {anyof, _} = Val} ->
-                  case [U || {1, P, L, U} <- Ws, P =:= Pos, L =:= Len] of
-                      [U | _] -> case gt_pack:when_match(U, Val) of
-                                     true -> {2, Pos, Len, U};
-                                     false -> {2, Pos, Len, gt_pack:when_first(Val)}
-                                 end;
-                      [] -> {2, Pos, Len, gt_pack:when_first(Val)}
-                  end;
-              _ -> O
-          end || O <- lists:reverse(Os9)],
-    {Ws, Os, End9, lists:reverse(Cs9)}.
+    {lists:reverse(Ws9), lists:reverse(Os9), End9, lists:reverse(Cs9)}.
+
+%% The overs of a scope with the value of each `when` that has a list or a
+%% range (ruling 3 of 0.20): the value of a field line with a present key on
+%% exactly its bits when it matches, else the first value. Ws holds the
+%% writes of every line of the scope, so that a common field line is seen.
+settle_whens(Ws, Os) ->
+    [case O of
+         {2, Pos, Len, {anyof, _} = Val} ->
+             case [U || {1, P, L, U} <- Ws, P =:= Pos, L =:= Len] of
+                 [U | _] -> case gt_pack:when_match(U, Val) of
+                                true -> {2, Pos, Len, U};
+                                false -> {2, Pos, Len, gt_pack:when_first(Val)}
+                            end;
+                 [] -> {2, Pos, Len, gt_pack:when_first(Val)}
+             end;
+         _ -> O
+     end || O <- Os].
 
 -endif.
 
