@@ -271,6 +271,8 @@ class Licences:
             names[n], uses[n], public = module_and_uses(path)
             if not public:  # 0.93, ruling 2: not shown public, so in no profile
                 own[n] = NONE
+            if names[n] is None:  # 0.93, ruling 2: no name by 2b, never loaded with a profile (fail closed)
+                own[n] = NONE
         rank = dict(own)
         changed = True
         while changed:  # the widest over `uses`, directly or through others (cycles included)

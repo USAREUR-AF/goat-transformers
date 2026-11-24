@@ -13,7 +13,9 @@ from unittest import mock
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "src"))
 
-from goat_transformers import BadLicence, DistributionRefused, DistributionViolation, Engine, Entity, GTError, UnknownFormat  # noqa: E402
+from goat_transformers import (  # noqa: E402
+    BadLicence, DistributionRefused, DistributionViolation, Engine, Entity, GTError, UnknownFormat, UnknownModule,
+)
 from goat_transformers import licence  # noqa: E402
 
 TABLE = (
@@ -288,6 +290,42 @@ class TestInner(Tree):
         eng = Engine(max_distribution="public")
         with self.assertRaises(DistributionRefused):
             eng.load_dir(self.packs, packs_only=["f-out"], with_inner=True)
+
+
+class TestNamelessModule(Tree):
+    """0.93, ruling 2, fail closed: with a profile a module file that 2b
+    gives no name is not loaded, also when it is shown public; whatever uses
+    it is `unknown-module`. With no profile nothing changes."""
+
+    NAMELESS = ('module mx # note\nversion 0.93.0\ndistribution public\nsource "unit test"\n',
+                'module "mx"\nversion 0.93.0\ndistribution public\nsource "unit test"\n')
+
+    def test_a_pack_using_it(self):
+        for text in self.NAMELESS:
+            self.write("model/mx.def", text)
+            self.write("packs/q/pack.def", pack("f-q", uses=["mx"]))
+            self.assertTrue(licence.shown_public(text))
+            for profile in ("open", "everything"):
+                with self.subTest(text=text, profile=profile), self.assertRaises(UnknownModule):
+                    Engine.from_dir(self.packs, profile=profile)
+            eng = Engine.from_dir(self.packs)  # no profile: loads
+            self.assertEqual(eng.formats(), ["f-pub", "f-q"])
+            self.assertIn("mx", eng.models)
+
+    def test_a_module_using_it(self):
+        for text in self.NAMELESS:
+            self.write("model/mx.def", text)
+            self.write("model/my.def", module("my", uses=["mx"]))
+            with self.subTest(text=text), self.assertRaises(UnknownModule):
+                Engine.from_dir(self.packs, profile="everything")
+            self.assertIn("my", Engine.from_dir(self.packs).models)
+
+    def test_core_is_no_exception(self):
+        self.write("model/core.def", 'module core # note\nversion 0.93.0\ndistribution public\nsource "unit test"\n'
+                   'key lat float - "a key"\n')
+        with self.assertRaises(UnknownModule):
+            Engine.from_dir(self.packs, profile="everything")
+        self.assertEqual(Engine.from_dir(self.packs).formats(), ["f-pub"])
 
 
 if __name__ == "__main__":
