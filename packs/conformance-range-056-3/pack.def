@@ -1,0 +1,10 @@
+# Conformance probe pack for ruling 9 of 0.56 and `wrap`: two keys on one member,
+# the second wrapped. Public. No kinds.
+format  conformance-range-056-3
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.y  v  int
+field   probe.x  v  int  range 0 10 wrap

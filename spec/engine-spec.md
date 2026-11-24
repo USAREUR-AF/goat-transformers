@@ -7741,7 +7741,7 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    merges): a field left out by `implicit` carried a held key; it is not a
    loss.
 5. **`range` and `absent`** are independent: `absent` acts on decode and on
-   the encode of an absent key, `range` on the encode of a held value. A
+   the encode of an absent key, `range` on the encode of a held value or of a value a `default` supplies. A
    sentinel written for an absent key is not checked against `range`.
 6. **`range` and `with`.** A line that `with` suppresses is not checked.
 7. **`wrap` of an `int` key** computes `x − (<max> − <min>) × floor((x −
@@ -7752,16 +7752,29 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    checked against its `range`, including a later line on the same locator
    whose value ruling 16 of 0.5 does not write: a held value outside its range
    refuses the encode (`transform-encode`), in the strict direction of 0.11.
-   A key that only a `default` would fill is not held: on a line that is not
-   written, its `default` is not checked.
-10. **A wrap whose arithmetic is not finite.** When `<max> − <min>` or any
+   A line with `wrap` wraps instead; where it is not written it refuses only
+   under ruling 10.
+   A key that only a `default` would fill is not held: its `default` is checked
+   wherever the line would write it, and is not checked when an earlier line
+   on the same locator, compared as text, is the one written. Bits that a
+   `when`, a `const` or an overlapping line covers change nothing here.
+10. **A wrap whose arithmetic is not finite.** A value inside the interval
+   is unchanged and no arithmetic is done. For a value outside it, when `<max> − <min>` or any
    step of the `float` formula is not finite, or the result is above `<max>`,
    the encode is `transform-encode`: no value is substituted (the strict
    direction of 0.11). The result that equals `<max>` or falls below `<min>`
    by rounding still becomes `<min>`.
+11. **The steps of the `float` formula** are five operations on doubles, each
+   rounded to nearest, ties to even, with none fused: `d = <max> − <min>`,
+   `q = (x − <min>) / d`, `f = floor(q)`, `m = d × f`, `r = x − m`; `x − <min>`
+   is one of them and `floor` is exact.
+12. **The bounds of an `int` key** fit a signed 64-bit integer; one that does
+   not is `bad-directive`, with the key-type checks.
+13. **`range` on `cbor`** is refused after the file, but the form of the option
+   is checked as the line is read there too: `range 5` on `cbor` is
+   `bad-directive` at step 9.
 
 Stated, not yet pinned by a vector: a submessage holding only fields that
 `implicit` leaves out, without a `when … present`; a wrapped `float` above
-`<max>` after finite double arithmetic; an `int` range bound
-beyond a signed 64-bit integer; `range` on a sequential field with `also`
+`<max>` after finite double arithmetic; `range` on a sequential field with `also`
 keys; the `default` of a line that is not written (ruling 9).

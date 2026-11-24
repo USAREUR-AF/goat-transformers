@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-default-under-a-const-is-checked",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-5",
+  "input": "{}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9: no earlier line on the same locator is written; the const that covers the bits changes nothing, so the default 99 is outside 0..10."
+}
