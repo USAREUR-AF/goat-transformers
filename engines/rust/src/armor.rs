@@ -165,7 +165,7 @@ pub(crate) fn fixed_len(p: &Pack, lay: &Layout, sel: &Sel, ent: &Entity) -> Resu
         // default and no sentinel, or the line suppressed by `with`, which
         // writes no sentinel either (ruling 23 of 0.18)
         let suppressed = !crate::live(ent, f);
-        if f.optional && (suppressed || (f.absent.is_empty() && sel.value_of(ent, f).is_none())) {
+        if f.optional && (suppressed || (f.sentinel().is_none() && sel.value_of(ent, f).is_none())) {
             continue;
         }
         let (start, len) = span(p, lay, &f.locator)?;

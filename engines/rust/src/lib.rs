@@ -1818,6 +1818,103 @@ pub struct FieldDef {
     /// `unlisted` (engine-spec v0.64): a part with no entry in its `via` table
     /// leaves the line as one whose place is absent
     pub unlisted: bool,
+    /// `null` (json, geojson; engine-spec v0.56): an absent key's member is
+    /// written as JSON `null`
+    pub null: bool,
+    /// `implicit` (protobuf; engine-spec v0.56): a scalar equal to the proto3
+    /// default is not written
+    pub implicit: bool,
+    /// `range <min> <max> [wrap]` (engine-spec v0.56)
+    pub range: Option<RangeOpt>,
+}
+
+/// The `range` option of a field (engine-spec v0.56).
+#[derive(Clone, Debug)]
+pub struct RangeOpt {
+    /// the bounds as written
+    pub min: String,
+    pub max: String,
+    pub wrap: bool,
+    /// the bounds read as the key's type, set when the pack is loaded
+    pub val: Option<RangeVal>,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum RangeVal {
+    Int(i64, i64),
+    Float(f64, f64),
+}
+
+impl RangeVal {
+    /// Read the bounds as the key's type; None when they are not its text, or
+    /// `<min>` is not less than `<max>`.
+    pub(crate) fn read(ty: KeyType, min: &str, max: &str) -> Option<RangeVal> {
+        match ty {
+            KeyType::Int => match (int_text(min), int_text(max)) {
+                (Some(a), Some(b)) if a < b => Some(RangeVal::Int(a, b)),
+                _ => None,
+            },
+            KeyType::Float => match (number_text(min), number_text(max)) {
+                (Some(a), Some(b)) if a < b => Some(RangeVal::Float(a, b)),
+                _ => None,
+            },
+            KeyType::Str => None,
+        }
+    }
+
+    /// Check a model value against the range, or wrap it into it (engine-spec
+    /// v0.56): the value `via` and the transform then see.
+    pub(crate) fn apply(&self, wrap: bool, v: &Value) -> Result<Value, Error> {
+        match (*self, v) {
+            (RangeVal::Int(min, max), Value::I64(x)) => {
+                let x = *x;
+                if x >= min && (x < max || (!wrap && x == max)) {
+                    return Ok(Value::I64(x));
+                }
+                if !wrap {
+                    return err(format!("{} is outside the range [{}, {}]", x, min, max));
+                }
+                // exact: x − (max − min) × floor((x − min) / (max − min)) (ruling 7 of 0.56)
+                let d = max as i128 - min as i128;
+                let k = (x as i128 - min as i128).div_euclid(d);
+                Ok(Value::I64((x as i128 - k * d) as i64))
+            }
+            (RangeVal::Float(min, max), Value::F64(x)) => {
+                let x = *x;
+                if !x.is_finite() {
+                    return err(format!("{} is outside the range [{}, {}]", fmt_f64(x), fmt_f64(min), fmt_f64(max)));
+                }
+                if x >= min && (x < max || (!wrap && x == max)) {
+                    return Ok(Value::F64(x));
+                }
+                if !wrap {
+                    return err(format!(
+                        "{} is outside the range [{}, {}]",
+                        fmt_f64(x),
+                        fmt_f64(min),
+                        fmt_f64(max)
+                    ));
+                }
+                // the steps of ruling 11, none fused
+                let d = max - min;
+                let off = x - min;
+                let q = off / d;
+                let k = q.floor();
+                let m = d * k;
+                let mut r = x - m;
+                // ruling 10: no value is substituted
+                if ![d, off, q, m, r].iter().all(|s| s.is_finite()) || r < min || r > max {
+                    return err(format!("{} cannot be wrapped into the range [{}, {})", fmt_f64(x), fmt_f64(min), fmt_f64(max)));
+                }
+                // the same point of the circle
+                if r == max {
+                    r = min;
+                }
+                Ok(Value::F64(r))
+            }
+            _ => Ok(v.clone()),
+        }
+    }
 }
 
 /// One gate block `if [!]<locator> <value>[,…]` … `end` of a fixed-layout
@@ -1846,6 +1943,18 @@ pub enum Sentinel {
     /// `xml`, `json`, `geojson` and `pstring`: the text compared, and how a
     /// `json` or `geojson` wire writes it
     Text(String, SentinelJson),
+    /// a range sentinel on a raw unsigned integer (engine-spec v0.56): `>=`
+    /// when true, `<=` when false; never written
+    NumRange(bool, u64),
+    /// a range sentinel on a raw text read as number text (engine-spec v0.56)
+    TextRange(bool, f64),
+}
+
+impl Sentinel {
+    /// An exact sentinel, the kind encode may write.
+    pub(crate) fn exact(&self) -> bool {
+        matches!(self, Sentinel::Num(_) | Sentinel::Text(..))
+    }
 }
 
 /// How a sentinel is written on `json` and `geojson` (ruling 9 of 0.9).
@@ -1860,17 +1969,27 @@ impl FieldDef {
     /// Is the raw unsigned integer of this field one of its sentinels?
     #[cfg(any(feature = "bits", feature = "protobuf"))]
     pub(crate) fn absent_num(&self, raw: u64) -> bool {
-        self.absent.iter().any(|s| *s == Sentinel::Num(raw))
+        self.absent.iter().any(|s| match s {
+            Sentinel::Num(n) => *n == raw,
+            Sentinel::NumRange(true, n) => raw >= *n,
+            Sentinel::NumRange(false, n) => raw <= *n,
+            _ => false,
+        })
     }
     /// Is the raw text of this field one of its sentinels?
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "protobuf"))]
     pub(crate) fn absent_text(&self, raw: &str) -> bool {
-        self.absent.iter().any(|s| matches!(s, Sentinel::Text(t, _) if t == raw))
+        let num = || number_text(raw);
+        self.absent.iter().any(|s| match s {
+            Sentinel::Text(t, _) => t == raw,
+            Sentinel::TextRange(ge, n) => num().map_or(false, |x| if *ge { x >= *n } else { x <= *n }),
+            _ => false,
+        })
     }
     /// The sentinel encode writes for an absent key: the first.
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf"))]
     pub(crate) fn sentinel(&self) -> Option<&Sentinel> {
-        self.absent.first()
+        self.absent.iter().find(|s| s.exact())
     }
 }
 
@@ -1942,6 +2061,35 @@ fn field_options_at(f: &mut FieldDef, toks: &[String], ln: usize, allow_optional
                 i += 1;
                 continue;
             }
+            // engine-spec v0.56: two bounds of number text (2b of 0.11), then
+            // an optional `wrap`; the key's type is checked after the file
+            "range" => {
+                if f.range.is_some() {
+                    return bad(ln, "`range` given twice");
+                }
+                let (min, max) = match (toks.get(i + 1), toks.get(i + 2)) {
+                    (Some(a), Some(b)) => (a.clone(), b.clone()),
+                    _ => return bad(ln, "`range` needs <min> <max>"),
+                };
+                for b in [&min, &max] {
+                    if number_text(b).is_none() {
+                        return bad(ln, format!("`range` bound `{}` is not number text", b));
+                    }
+                }
+                i += 3;
+                let wrap = toks.get(i).map_or(false, |t| t == "wrap");
+                if wrap {
+                    i += 1;
+                }
+                f.range = Some(RangeOpt { min, max, wrap, val: None });
+                continue;
+            }
+            "wrap" => match &f.range {
+                Some(r) if r.wrap => return bad(ln, "`wrap` given twice"),
+                _ => return bad(ln, "`wrap` does not follow `range <min> <max>`"),
+            },
+            "null" => &mut f.null,
+            "implicit" => &mut f.implicit,
             "swap" => &mut f.swap,
             "trim" => &mut f.trim,
             // where it is valid is checked after the file (ruling 11 of 0.64)
@@ -2009,6 +2157,31 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
     };
     let mut out = Vec::new();
     for v in values {
+        // engine-spec v0.56: a value that begins with `>=` or `<=`, as written,
+        // is a range sentinel; it is never written
+        let range = v.strip_prefix(">=").map(|n| (true, n)).or_else(|| v.strip_prefix("<=").map(|n| (false, n)));
+        if let Some((ge, n)) = range {
+            out.push(match (wire, &f.transform) {
+                (Wire::Bits, _) => {
+                    let len = bits_len.unwrap_or(0);
+                    if len > 64 {
+                        return bad(ln, format!("`absent` on a field of {} bits; at most 64", len));
+                    }
+                    Sentinel::NumRange(ge, number(n, len)?)
+                }
+                (Wire::Protobuf, Transform::Pvarint | Transform::Psint) => Sentinel::NumRange(ge, number(n, 64)?),
+                (Wire::Protobuf, Transform::Pstring) | (Wire::Xml | Wire::Json | Wire::GeoJson, _)
+                    if f.transform != Transform::Bool =>
+                {
+                    match number_text(n) {
+                        Some(x) => Sentinel::TextRange(ge, x),
+                        None => return bad(ln, format!("range sentinel `{}`: `{}` is not number text", v, n)),
+                    }
+                }
+                _ => return bad(ln, format!("a range sentinel `{}` is not valid with the transform of `{}`", v, f.model_key)),
+            });
+            continue;
+        }
         out.push(match wire {
             Wire::Bits => {
                 let len = bits_len.unwrap_or(0);
@@ -2094,6 +2267,7 @@ fn sentinel_json(s: &Sentinel) -> json::Json {
         Sentinel::Text(_, SentinelJson::Bool(b)) => json::Json::Bool(*b),
         Sentinel::Text(t, SentinelJson::Str) => json::Json::Str(t.clone()),
         Sentinel::Num(n) => json::Json::Num(*n as f64),
+        Sentinel::NumRange(..) | Sentinel::TextRange(..) => json::Json::Null,
     }
 }
 
@@ -2120,6 +2294,26 @@ fn sentinel_lines<'a>(sel: &Sel<'a>, ent: &Entity, skip: impl Fn(&FieldDef) -> b
         .filter(|f| !skip(f) && live(ent, f) && sel.value_of(ent, f).is_none() && !written.contains(&f.locator.as_str()))
         .filter_map(|f| f.sentinel().map(|s| (*f, s)))
         .collect()
+}
+
+/// The `null` lines of one scope that encode writes (engine-spec v0.56): a
+/// line in force whose key is absent, on a member no line in `written`
+/// writes; of several on one member, the first.
+#[cfg(any(feature = "geojson", feature = "json"))]
+fn null_lines<'a>(sel: &Sel<'a>, ent: &Entity, written: &[&str]) -> Vec<&'a FieldDef> {
+    let mut out: Vec<&'a FieldDef> = Vec::new();
+    for f in sel.fields.iter().copied() {
+        if f.null
+            && f.locator != "."
+            && live(ent, f)
+            && sel.value_of(ent, f).is_none()
+            && !written.contains(&f.locator.as_str())
+            && !out.iter().any(|o| o.locator == f.locator)
+        {
+            out.push(f);
+        }
+    }
+    out
 }
 
 /// Does the entity (inside a group, the item) hold `key`? A scalar when it
@@ -2984,6 +3178,9 @@ impl Pack {
                         stop: None,
                         code: CodeSeq::of(&toks[3]),
                         unlisted: false,
+                        null: false,
+                        implicit: false,
+                        range: None,
                     };
                     // options after the transform, in any order (engine-spec v0.6)
                     field_options(&mut f, &toks, ln, true)?;
@@ -3469,6 +3666,21 @@ impl Pack {
         v
     }
 
+    /// Every line of a scope the encode reaches is checked against its `range`,
+    /// its key held or filled by a `default`, also where another line's value
+    /// is the one written (ruling 9 of 0.56).
+    #[cfg(any(feature = "geojson", feature = "json", feature = "protobuf", feature = "tlv"))]
+    fn check_ranges(&self, sel: &Sel, ent: &Entity) -> Result<(), Error> {
+        for f in sel.fields.iter() {
+            if let (Some(r), Some(v)) = (&f.range, sel.value_of(ent, f)) {
+                if let Some(rv) = r.val {
+                    rv.apply(r.wrap, v).map_err(|e| transform_encode_err(self, f, e))?;
+                }
+            }
+        }
+        Ok(())
+    }
+
     /// Encode: a model value on its way to the transform (the reverse of `to_model`).
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn to_wire(&self, f: &FieldDef, v: &Value) -> Result<Value, Error> {
@@ -3478,6 +3690,15 @@ impl Pack {
             _ => None,
         };
         let v = mapped.as_ref().unwrap_or(v);
+        // engine-spec v0.56: the range is checked, or the value wrapped, before `via`
+        let ranged;
+        let v = match f.range.as_ref().and_then(|r| r.val.map(|rv| (rv, r.wrap))) {
+            Some((rv, wrap)) => {
+                ranged = rv.apply(wrap, v)?;
+                &ranged
+            }
+            None => v,
+        };
         if let Some(t) = &f.via {
             let native_ty = f.transform.value_type();
             let key_ty = f.key_type.unwrap_or(native_ty);
@@ -4043,6 +4264,23 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     }
     if f.optional && !matches!(wire, Wire::Bits | Wire::Text) {
         return bad(f.line, "`optional` is valid only on the bits and text wires");
+    }
+    // engine-spec v0.56: `null` on json and geojson, not on a `geometry` locator
+    if f.null && (!matches!(wire, Wire::Json | Wire::GeoJson) || (wire == Wire::GeoJson && f.locator.starts_with("geometry."))) {
+        return bad(f.line, "`null` is valid only on json and on geojson members outside `geometry`");
+    }
+    // engine-spec v0.56: on cbor the field options are `via` and `with`
+    if f.range.is_some() && wire == Wire::Cbor {
+        return bad(f.line, "`range` is not valid on the cbor wire");
+    }
+    // engine-spec v0.56: `implicit` on a protobuf scalar that is not an item
+    if f.implicit {
+        if wire != Wire::Protobuf || !f.transform.is_protobuf() {
+            return bad(f.line, "`implicit` is valid only on protobuf with pvarint, psint, pdouble, pfloat or pstring");
+        }
+        if in_group && f.locator == "." {
+            return bad(f.line, "`implicit` is not valid on a scalar item of a group");
+        }
     }
     // engine-spec v0.10: the text wire's own transforms, and the transforms it takes
     // engine-spec v0.13: the tlv wire's own transforms, and the transforms it takes
@@ -4825,6 +5063,16 @@ impl Engine {
                     yields.name()
                 ));
             }
+            // engine-spec v0.56: `range` on an `int` or `float` key, its bounds
+            // that key's text, `<min>` less than `<max>`
+            if let Some(r) = &f.range {
+                if RangeVal::read(def_ty, &r.min, &r.max).is_none() {
+                    return bad(
+                        f.line,
+                        format!("`range {} {}` on `{}` is not two {} bounds with <min> below <max>", r.min, r.max, f.model_key, def_ty.name()),
+                    );
+                }
+            }
         }
         for d in p.every_default() {
             if self.is_list(&d.model_key) {
@@ -4933,7 +5181,12 @@ impl Engine {
             return err(format!("duplicate-format: a pack with format `{}` is already loaded", pack.format));
         }
         // record each key's declared type, and read each default as it
-        let set_field = |f: &mut FieldDef| f.key_type = self.key_def(&f.model_key).map(|d| d.ty);
+        let set_field = |f: &mut FieldDef| {
+            f.key_type = self.key_def(&f.model_key).map(|d| d.ty);
+            if let (Some(r), Some(ty)) = (&mut f.range, f.key_type) {
+                r.val = RangeVal::read(ty, &r.min, &r.max);
+            }
+        };
         let set_default = |d: &mut DefaultDef| d.value = self.key_def(&d.model_key).and_then(|k| read_as(k.ty, &d.text));
         pack.fields.iter_mut().chain(pack.kinds.iter_mut().flat_map(|k| k.fields.iter_mut())).for_each(set_field);
         pack.defaults.iter_mut().chain(pack.kinds.iter_mut().flat_map(|k| k.defaults.iter_mut())).for_each(set_default);
@@ -7357,6 +7610,10 @@ pub mod geojson {
             if member.map_or(false, |j| json_absent(f, j)) {
                 continue;
             }
+            // `null` on a field that names the option yields no value (engine-spec v0.56)
+            if f.null && matches!(member, Some(Json::Null)) {
+                continue;
+            }
             if let Some(j) = member {
                 // engine-spec v0.46, ruling 11: the member must be a string
                 if let Some(r) = charset::decode_json(f, j) {
@@ -7474,6 +7731,11 @@ pub mod geojson {
         // where no line with a value writes (engine-spec v0.9, rulings 10 and 16)
         for (f, sn) in sentinel_lines(&sel, ent, |_| false) {
             lines.push((f.line, &f.locator, sentinel_json(sn), false));
+        }
+        // `null` (engine-spec v0.56) where no line writes a value or a sentinel
+        let written: Vec<&str> = lines.iter().map(|l| l.1).collect();
+        for f in null_lines(&sel, ent, &written) {
+            lines.push((f.line, &f.locator, Json::Null, false));
         }
         for w in sel.fixed() {
             lines.push((w.line, &w.locator, json_when_value(w), true));
@@ -7836,6 +8098,7 @@ pub mod jsonwire {
             let scalar = body.fields.iter().filter(|f| f.locator == "." && token.is_none()).find_map(|f| body.value_of(item, f).map(|v| (f, v)));
             out.push(match scalar {
                 Some((f, v)) => {
+                    p.check_ranges(&body, item)?;
                     p.to_wire(f, v).and_then(|w| charset::encode_json(f, &w).unwrap_or_else(|| enc(&f.transform, &w))).map_err(|e| transform_encode_err(p, f, e))?
                 }
                 None => {
@@ -7886,6 +8149,13 @@ pub mod jsonwire {
         for (f, sn) in sentinel_lines(sel, ent, |f| f.locator == ".") {
             if let Some(l) = lines.iter_mut().find(|l| l.0 == f.line) {
                 l.2 = Some(sentinel_json(sn));
+            }
+        }
+        // `null` (engine-spec v0.56): an absent key writes `null` where no
+        // line on the member writes a value or a sentinel (ruling 1)
+        for f in null_lines(sel, ent, &lines.iter().filter(|l| l.2.is_some()).map(|l| l.1).collect::<Vec<_>>()) {
+            if let Some(l) = lines.iter_mut().find(|l| l.0 == f.line) {
+                l.2 = Some(Json::Null);
             }
         }
         // a `present` line writes nothing, but its nested objects take its position
@@ -9249,6 +9519,17 @@ pub mod protobuf {
         }
     }
 
+    /// Is a leaf value the proto3 default of its wire type (engine-spec
+    /// v0.56): varint 0, +0.0 (all bits zero), the empty text?
+    #[cfg(feature = "protobuf")]
+    fn is_proto3_default(v: &WireVal) -> bool {
+        match v {
+            WireVal::Varint(0) | WireVal::Fixed64(0) | WireVal::Fixed32(0) => true,
+            WireVal::LenDelim(b) => b.is_empty(),
+            _ => false,
+        }
+    }
+
     /// The leaf value a sentinel is written as: no zig-zag on `psint`.
     #[cfg(feature = "protobuf")]
     fn sentinel_wire(f: &FieldDef, s: &Sentinel) -> Result<WireVal, Error> {
@@ -9476,8 +9757,18 @@ pub mod protobuf {
         // an absent key whose field has `absent` writes its first sentinel where
         // no line with a value writes (engine-spec v0.9): later lines first, so
         // of two sentinels on one path the earlier line's stays
+        // `implicit` (engine-spec v0.56): a value equal to the proto3 default
+        // is not written, but its line still holds the place (ruling 16 of 0.5)
+        let mut places: Vec<(std::borrow::Cow<[u32]>, Option<WireVal>)> = Vec::new();
+        fn place<'l>(places: &mut Vec<(std::borrow::Cow<'l, [u32]>, Option<WireVal>)>, f: &FieldDef, path: std::borrow::Cow<'l, [u32]>, wv: WireVal) {
+            let wv = if f.implicit && is_proto3_default(&wv) { None } else { Some(wv) };
+            match places.iter_mut().find(|(p, _)| *p == path) {
+                Some(e) => e.1 = wv,
+                None => places.push((path, wv)),
+            }
+        }
         for (f, s) in sentinel_lines(sel, ent, |f| f.locator == ".").into_iter().rev() {
-            insert(&mut tree, &lay.pb_path(&f.locator)?, sentinel_wire(f, s)?)?;
+            place(&mut places, f, lay.pb_path(&f.locator)?, sentinel_wire(f, s)?);
         }
         // later lines first: of two fields on one path the earlier line's value stays
         for f in sel.fields.iter().rev().filter(|f| f.locator != ".") {
@@ -9487,6 +9778,11 @@ pub mod protobuf {
                     .to_wire(f, v)
                     .and_then(|w| f.transform.encode_pb(&w))
                     .map_err(|e| transform_encode_err(p, f, e))?;
+                place(&mut places, f, path, wv);
+            }
+        }
+        for (path, wv) in places {
+            if let Some(wv) = wv {
                 insert(&mut tree, &path, wv)?;
             }
         }
@@ -9507,6 +9803,7 @@ pub mod protobuf {
                 let sentinel = body.fields.iter().filter(|f| f.locator == "." && live(item, f)).find_map(|f| f.sentinel().map(|s| (*f, s)));
                 match (scalar, sentinel) {
                     (Some((f, v)), _) => {
+                        p.check_ranges(&body, item)?;
                         let wv = p
                             .to_wire(f, v)
                             .and_then(|w| f.transform.encode_pb(&w))
@@ -9868,6 +10165,9 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     stop: None,
                     code: CodeSeq::of(&toks[3]),
                     unlisted: false,
+                    null: false,
+                    implicit: false,
+                    range: None,
                 };
                 field_options_at(&mut f, &toks, ln, true, false)?;
                 if let Some(w) = wire {

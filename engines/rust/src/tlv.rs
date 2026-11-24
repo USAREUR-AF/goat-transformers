@@ -930,6 +930,7 @@ pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
 pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, Error> {
     let c = &p.tlv;
     let sel = p.select_encode(ent)?;
+    p.check_ranges(&sel, ent)?;
     // the lines of the scope in line order: common lines stand before the first `kind`
     let mut lines: Vec<(usize, &str, Line)> = sel.fields.iter().map(|f| (f.line, f.locator.as_str(), Line::Field(f))).collect();
     for w in sel.whens.iter().chain(sel.consts.iter()) {

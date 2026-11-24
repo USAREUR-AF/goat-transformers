@@ -1026,6 +1026,9 @@ impl<'a> Parser<'a> {
                     stop: None,
                     code: CodeSeq::of(&toks[3]),
                     unlisted: false,
+                    null: false,
+                    implicit: false,
+                    range: None,
                 };
                 for table in field_options(&mut f, toks, ln, false)? {
                     self.vias.push((table, ln));
@@ -1074,7 +1077,8 @@ impl<'a> Parser<'a> {
                     return bad(ln, "`swap` is not valid with `chars`, `octal` or `hex`");
                 }
                 resolve_absent(Wire::Bits, &mut f, Some(len as u32))?;
-                // `also <key> [via <table>]` lines directly after the field (ruling 13 of 0.8)
+                // `also <key> [via <table>]` lines directly after the field (ruling 13 of 0.8);
+                // `range` is the field line's own key's only (ruling 8 of 0.56)
                 let mut also = Vec::new();
                 while let Some((l, t)) = self.peek() {
                     if t[0] != "also" {
@@ -1088,7 +1092,7 @@ impl<'a> Parser<'a> {
                         }
                         _ => return bad(*l, "also needs <model-key> [via <table>]"),
                     };
-                    also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, with: None, ..f.clone() });
+                    also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, with: None, range: None, ..f.clone() });
                     self.i += 1;
                 }
                 let line = First::Field(f.clone(), len as u32, also.clone(), uper.clone());
@@ -2139,6 +2143,19 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         return Err(e);
     }
     check_as(&body)?;
+    // engine-spec v0.56: `null` (json, geojson) and `implicit` (protobuf) do
+    // not fit the bits wire, a check made after the file (ruling 10 of 0.10)
+    let mut wire_opt: Option<usize> = None;
+    body.visit(&mut |v| {
+        if let Visit::Field(f) = v {
+            if f.null || f.implicit {
+                wire_opt = Some(wire_opt.map_or(f.line, |l| l.min(f.line)));
+            }
+        }
+    });
+    if let Some(ln) = wire_opt {
+        return bad(ln, "`null` and `implicit` are not valid on a bits wire");
+    }
     // `armor sixbit` and `encoding uper` need `bit_order msb` (0.14, 0.19); `msb-lsb` is not `msb`
     let armor = p.armor.check(true, p.order == BitOrder::Msb)?;
     // engine-spec v0.19: `encoding uper`, and the lines only it allows (ruling 9)
