@@ -40,7 +40,9 @@ jobs:
           fi
   tools:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # The last eight green runs on main took 396 to 556 s, within 50 s of the old
+    # 10-minute limit; #349's was cancelled at it. 0.93 adds tests and tool vectors.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 -I -m unittest discover -s tools/tests
