@@ -865,6 +865,25 @@ end
     vec(M, "zero", "another-number-disagrees", '{"ratio":0.5,"tag":"n-q"}', error=ENC, ref="ruling 22: 0.5 is not 0")
     vec("zero", "zero", "zero-round-trip", '{"t":"n-q"}', '{"t":"n-q"}', model={"probe.ratio": "0"}, ref="ruling 22")
 
+    # ruling 25: only `field` lines of the scope exempt a part key
+    R25 = "ruling 25: only a `field` line of the scope is another line; "
+    vec(M, "default-whole", "ruling-25-default-does-not-exempt", '{"y":2,"tag":"k-h-A"}', error=ENC,
+        ref=R25 + "y has a `default` and is checked: env 1 is not the held 2")
+    pack("requires-whole", "A `requires` line on a part key (ruling 25).",
+         "wire json\n" + T2 + "kind a\nwhen k a\nrequires probe.x\nfield probe.tag t string\n"
+         "field probe.x t part:-:0 via t2\n")
+    vec(M, "requires-whole", "ruling-25-requires-agrees", '{"x":6,"tag":"h"}', '{"k":"a","t":"h"}',
+        ref=R25 + "6 agrees; the `when` line stands first (0.5 ruling 10)")
+    vec(M, "requires-whole", "ruling-25-requires-does-not-exempt", '{"x":3,"tag":"h"}', error=ENC,
+        ref=R25 + "x is named by `requires` and is checked: 6 is not the held 3")
+    pack("body-whole", "A line on a part key inside a group body (ruling 25).",
+         "wire json\n" + T2 + "field probe.tag t string\nfield probe.x t part:-:0 via t2\n"
+         "group probe.recs recs\n  field probe.x x int\nend\n")
+    vec(M, "body-whole", "ruling-25-group-body-agrees", '{"x":6,"tag":"h","recs":[{"x":3}]}',
+        '{"t":"h","recs":[{"x":3}]}', ref=R25 + "6 agrees; the item's 3 is another scope")
+    vec(M, "body-whole", "ruling-25-group-body-does-not-exempt", '{"x":3,"tag":"h","recs":[{"x":3}]}', error=ENC,
+        ref=R25 + "a line of a group body is of another scope: 6 is not the held 3")
+
     # ==========================================================================
     # load vectors from 6400
     # ==========================================================================

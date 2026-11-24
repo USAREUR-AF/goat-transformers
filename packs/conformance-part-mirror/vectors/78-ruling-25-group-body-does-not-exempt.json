@@ -1,0 +1,9 @@
+{
+  "name": "ruling-25-group-body-does-not-exempt",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-body-whole",
+  "input": "{\"x\":3,\"tag\":\"h\",\"recs\":[{\"x\":3}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 25: only a `field` line of the scope is another line; a line of a group body is of another scope: 6 is not the held 3"
+}

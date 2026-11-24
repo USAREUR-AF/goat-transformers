@@ -1,0 +1,9 @@
+{
+  "name": "ruling-25-default-does-not-exempt",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default-whole",
+  "input": "{\"y\":2,\"tag\":\"k-h-A\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 25: only a `field` line of the scope is another line; y has a `default` and is checked: env 1 is not the held 2"
+}
