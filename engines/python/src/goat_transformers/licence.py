@@ -84,21 +84,49 @@ def read_lines(path):
     return _split(text)
 
 
-def _scan_lines(path):
-    """Ruling 2b: the trimmed lines of a module file or `pack.def`; a file
-    that cannot be read or is not UTF-8 adds no line (never `bad-licence`)."""
+_PUBLIC_LINE = re.compile(r"distribution[ \t]+public")
+
+
+def shown_public(text):
+    """Ruling 1 of 0.93: the text of a module file or `pack.def` is shown
+    public when one of its lines (cut and trimmed as ruling 1 of 0.29 says)
+    is exactly `distribution`, spaces or tabs, `public`, and no line is
+    doubtful: with every double quote removed and then spaces, tabs and
+    carriage returns removed at its ends, it begins with `distribution`, and
+    it is not that exact line. A NUL, a U+FEFF, or a carriage return not
+    directly before a line feed or at the end, anywhere, is never shown
+    public. `text` None (unreadable, not UTF-8) is not shown public."""
+    if text is None or "\0" in text or "\ufeff" in text:
+        return False
+    if "\r" in (text[:-1] if text.endswith("\r") else text).replace("\r\n", ""):
+        return False
+    found = False
+    for line in _split(text):
+        if _PUBLIC_LINE.fullmatch(line):
+            found = True
+        elif line.replace('"', "").strip(" \t\r").startswith("distribution"):
+            return False  # doubtful
+    return found
+
+
+def _scan_text(path):
+    """The text of a module file or `pack.def`, or None when it cannot be
+    read or is not UTF-8 (2b: such a file adds no line, never `bad-licence`;
+    0.93: it is not shown public)."""
     try:
         with open(path, "rb") as fh:
-            return _split(fh.read().decode("utf-8"))
+            return fh.read().decode("utf-8")
     except (OSError, UnicodeDecodeError):
-        return []
+        return None
 
 
 def module_and_uses(path):
-    """-> (the name of the first `module` line or None, the `uses` names)."""
+    """-> (the name of the first `module` line or None, the `uses` names,
+    whether the file is shown public)."""
+    text = _scan_text(path)
     name = None
     uses = []
-    for line in _scan_lines(path):
+    for line in (_split(text) if text is not None else []):
         m = _MODULE.fullmatch(line)
         if m is not None:
             if name is None:
@@ -107,7 +135,7 @@ def module_and_uses(path):
         m = _USES.fullmatch(line)
         if m is not None:
             uses.append(m.group(1))
-    return name, uses
+    return name, uses, shown_public(text)
 
 
 def _one_licence(path, line_re, prefix, bad_after):
@@ -239,8 +267,10 @@ class Licences:
         own, names, uses = {}, {}, {}
         for n in self.module_files:
             path = os.path.join(self.models_dir, n)
-            own[n] = licence_rank(self.table, module_licence(path))
-            names[n], uses[n] = module_and_uses(path)
+            own[n] = licence_rank(self.table, module_licence(path))  # the licence first (0.93, 3)
+            names[n], uses[n], public = module_and_uses(path)
+            if not public:  # 0.93, ruling 2: not shown public, so in no profile
+                own[n] = NONE
         rank = dict(own)
         changed = True
         while changed:  # the widest over `uses`, directly or through others (cycles included)
@@ -270,7 +300,9 @@ class Licences:
         licence = pack_licence(pack_dir)
         rank = licence_rank(self.table, licence)
         rank = max(rank, self.name_rank.get("core", 0))
-        _, uses = module_and_uses(os.path.join(pack_dir, "pack.def"))
+        _, uses, public = module_and_uses(os.path.join(pack_dir, "pack.def"))
+        if not public:  # 0.93, ruling 2
+            rank = NONE
         for u in uses:
             rank = max(rank, self.name_rank.get(u, 0))
         return licence, rank
