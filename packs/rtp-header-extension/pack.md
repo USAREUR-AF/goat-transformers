@@ -21,8 +21,7 @@ None.
 
 ## Not mapped
 
-- The meaning of each element (audio level, absolute send time, transport-wide sequence number and
-  so on) is negotiated per session by its ID; the elements are kept as ID and data.
+- The meaning of each element is negotiated per session by its ID; the elements are kept as ID and data.
 - The length field is carried, not computed from the elements.
 - ID 15 in the one-byte form (reserved: stop reading) is read as an element.
 

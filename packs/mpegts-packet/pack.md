@@ -13,7 +13,7 @@ bits), scrambling control, adaptation field control and continuity counter.
 When the adaptation field control is 2 or 3, the adaptation field (a `length 8 bytes` block): the
 eight flags (discontinuity, random access, elementary stream priority, PCR, OPCR, splicing point,
 transport private data, extension), then by the flags the PCR (33-bit base, 6 reserved bits, 9-bit
-extension), the OPCR, the splice countdown (signed), the private data and the adaptation field
+extension), the OPCR, the splice countdown (read as signed; the sources do not state a sign), the private data and the adaptation field
 extension (each a length and octets), and the stuffing octets. When the control is 1 or 3, the
 payload as octets.
 

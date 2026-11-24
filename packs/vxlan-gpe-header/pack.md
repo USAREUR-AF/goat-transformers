@@ -4,8 +4,7 @@ The VXLAN-GPE header (draft-ietf-nvo3-vxlan-gpe-13 section 3.1; the source is an
 header (port 4790). Wire `bits`, `layout sequential`, most significant bit first. No kind. Input and
 output are hex. Written by `tools/gen/tunnels-pack.py`.
 
-The draft expired in May 2024 without becoming an RFC; it is the published description that
-implementations (Linux, Open vSwitch) follow, and its next protocol values are the IANA LISP-GPE
+The draft expired in May 2024 without becoming an RFC; its next protocol values are the IANA LISP-GPE
 registry of RFC 9305.
 
 ## What is mapped
@@ -25,7 +24,7 @@ P = 0 and next protocol 0; a GPE header converted to VXLAN loses the next protoc
 
 ## Not mapped
 
-- The inner packet after the header (Ethernet, IPv4, IPv6, NSH or MPLS by the next protocol).
+- The inner packet after the header (Ethernet, IPv4, IPv6 or NSH by the next protocol).
 
 ## Vectors
 
