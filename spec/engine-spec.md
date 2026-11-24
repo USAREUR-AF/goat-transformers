@@ -5717,6 +5717,60 @@ kind's last line is not fixed either.
 - A look-ahead past lines of variable width.
 - `at` on a fixed layout, where every `when` is already positional.
 
+# Version 0.93: a controlled pack is in no licence profile
+
+Status: Written. Version 0.29 takes the profile of a pack and of a module from
+its licence and the licence table alone. A pack whose own `distribution` line
+says `controlled` (0.4), under a licence that the table calls public, is then
+in a profile and loads under it. A profile is a promise about what may be
+passed on, so this version makes a controlled file part of none.
+
+It adds no directive, no option and no error kind.
+
+## The rule
+
+1. **A controlled file is in no profile** (amends 2a to 2c of 0.29). A module
+   or pack that is **marked** (ruling 2) has the profile none, whatever its
+   licence and the table say. Through 2b and 2c, so has every module and pack
+   that uses it.
+2. **Marked.** One more line of a module file or `pack.def` is read for the
+   profile, as ruling 2b of 0.29 reads its two. It is a line that, trimmed,
+   is the word `distribution` alone, or begins with `distribution` followed by
+   a space, a tab or a `"`. The file is marked when such a line is not exactly
+   `distribution`, one or more spaces or tabs, and `public`. A quoted value, a
+   trailing comment, another value and no value all mark it; so does one such
+   line among several. A file with no such line is not marked by this ruling:
+   loading it is `missing-distribution`.
+3. **A profile sets the limit** (amends 3a of 0.29). With a profile, the
+   distribution limit of the load (0.4) is `public`, also when the caller set
+   `controlled`. A controlled module or pack that ruling 2 did not mark is
+   `distribution-refused`, never loaded.
+4. **What is skipped is skipped** as 3c to 3e of 0.29 state: a marked module
+   is not loaded, a marked pack is not otherwise read. `--packs-only` with the
+   name of a marked pack skips it, without an error.
+5. **Nothing else changes.** With no profile, nothing here is read and a
+   controlled pack loads as before, within the limit the caller set. In
+   `licences` with no profile, a marked pack is listed with the profile
+   `none`.
+6. **Files that cannot be read** for this (2b of 0.29) add no line and are not
+   marked; loading them fails as it does today, and ruling 3 holds for them.
+7. **The tools.** `tools/licences.py`, and every tool that chooses packs by a
+   profile, give the same profiles.
+
+## Until an engine has this version
+
+`--max-distribution public` beside `--profile` refuses every controlled file.
+
+## Vector additions
+
+Tool vectors from 139, with fixture trees `licences-controlled-*`: a
+controlled pack under each of three public licences and under each profile;
+a controlled module under a public licence and a public pack that uses it,
+directly and through another; a controlled `core`; each form of line that
+ruling 2 names; a marked name in `--packs-only`; `licences` with and without a
+profile and with `--json`; `--max-distribution controlled` beside a profile;
+no profile.
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in
