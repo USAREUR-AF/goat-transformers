@@ -26,6 +26,17 @@ public final class Engine {
     /** The same modules by name, for the lookups of load checks. */
     private final HashMap<String, ModelModule> byName = new HashMap<>();
     private Distribution maxDistribution = Distribution.CONTROLLED;
+    /**
+     * True from the first load with a profile on this instance (spec 0.93, ruling 6): the limit is then {@code public}
+     * whatever a caller sets before or after.
+     */
+    private boolean profiled;
+    /**
+     * Test hook of spec 0.93, ruling 5: when set, applied to the text of each file a load with a profile has already
+     * read and held by its profile, just before that text is loaded. This engine reads each file once, so a file
+     * cannot change between its check and its load; the hook stands for one that did. Null in every other use.
+     */
+    java.util.function.BinaryOperator<String> profiledTextHook;
     /** The licence of each pack loaded under a profile (spec 0.29), in the order loaded. */
     private final List<PackLicence> licences = new ArrayList<>();
 
@@ -86,7 +97,42 @@ public final class Engine {
      * (ruling 3c of 0.29). Each file's text was read by {@code prof}.
      */
     void loadHeldModels(Licences.Profiles prof, int rank) {
-        for (String[] m : heldModels(prof, rank)) loadModel(m[1], m[0]);
+        for (String[] m : heldModels(prof, rank)) loadModel(profiledText(m[0], m[1]), m[0]);
+    }
+
+    /** The text of a file held by its profile, through {@link #profiledTextHook} when a test set it. */
+    private String profiledText(String source, String text) {
+        java.util.function.BinaryOperator<String> h = profiledTextHook;
+        return h == null ? text : h.apply(source, text);
+    }
+
+    /**
+     * The start of every load with a profile (spec 0.93, ruling 6), before anything is read: a name that is none of
+     * the three is {@code bad-licence}; then an instance that already holds a controlled module or pack is
+     * {@code distribution-refused}. Both leave the instance as it was. Then the limit is {@code public} for the rest
+     * of the instance's life, also when the load fails later. Returns the rank of the profile.
+     */
+    int beginProfile(String profile) {
+        int rank = Licences.rankOf(profile);
+        if (rank < 0) {
+            throw new GtException(GtException.Code.BAD_LICENCE, null, null,
+                    "profile \"" + profile + "\" is not open, open+copyleft or everything");
+        }
+        for (ModelModule m : modules.values()) {
+            if (m.distribution == Distribution.CONTROLLED) {
+                throw new GtException(GtException.Code.DISTRIBUTION_REFUSED, null, null, "a load with profile " + profile
+                        + " on an engine that holds controlled module " + m.name);
+            }
+        }
+        for (Pack p : packs.values()) {
+            if (p.distribution == Distribution.CONTROLLED) {
+                throw new GtException(GtException.Code.DISTRIBUTION_REFUSED, p.format, null, "a load with profile " + profile
+                        + " on an engine that holds controlled pack " + p.format);
+            }
+        }
+        profiled = true;
+        maxDistribution = Distribution.PUBLIC;
+        return rank;
     }
 
     private static List<String[]> heldModels(Licences.Profiles prof, int rank) {
@@ -118,7 +164,7 @@ public final class Engine {
         if (text == null) {
             throw new UncheckedIOException("cannot read " + def, new java.nio.charset.MalformedInputException(1));
         }
-        Pack p = loadPack(text, def.toString());
+        Pack p = loadPack(profiledText(def.toString(), text), def.toString());
         licences.add(new PackLicence(dir.getFileName().toString(), p.format, licence, Licences.name(r)));
         return true;
     }
@@ -130,13 +176,19 @@ public final class Engine {
      */
     public static List<String> wires() { return Wires.NAMES; }
 
-    /** The distribution limit: a module or pack marked above it is refused at load. {@code CONTROLLED} by default. */
+    /**
+     * The distribution limit: a module or pack marked above it is refused at load. {@code CONTROLLED} by default;
+     * {@code PUBLIC} for good from the first load with a profile (spec 0.93, ruling 6).
+     */
     public Distribution maxDistribution() { return maxDistribution; }
 
-    /** Set the distribution limit. It applies to every module and pack loaded afterwards. */
+    /**
+     * Set the distribution limit. It applies to every module and pack loaded afterwards. After a load with a profile
+     * the limit stays {@code PUBLIC}: setting {@code CONTROLLED} then is no error and has no effect (spec 0.93).
+     */
     public void setMaxDistribution(Distribution limit) {
         if (limit == null) throw new IllegalArgumentException("distribution limit is null");
-        maxDistribution = limit;
+        maxDistribution = profiled ? Distribution.PUBLIC : limit;
     }
 
     /** Load {@code <packsDir>/../model/*.def}, then every {@code <packsDir>/<name>/pack.def}. */
@@ -166,9 +218,22 @@ public final class Engine {
      * {@code .def.license} are read; a file that does not follow ruling 1 is {@code bad-licence}.
      */
     public static Engine load(Path packsDir, Path modelsDir, Distribution limit, String profile) {
-        int rank = profileRank(profile);
+        profileRank(profile);   // a bad name is refused before anything is made
         Engine e = new Engine();
         e.setMaxDistribution(limit);
+        e.loadAll(packsDir, modelsDir, profile);
+        return e;
+    }
+
+    /**
+     * Load into this instance what {@link #load(Path, Path, Distribution, String)} loads into a new one, under this
+     * instance's limit. With a profile the load starts as {@link #beginProfile} says (spec 0.93, ruling 6): a bad
+     * name is {@code bad-licence} and an instance holding a controlled module or pack {@code distribution-refused},
+     * both before anything is read; then the limit is {@code public} for good.
+     */
+    public void loadAll(Path packsDir, Path modelsDir, String profile) {
+        int rank = profile == null ? -1 : beginProfile(profile);
+        Engine e = this;
         Licences.Profiles prof = null;
         if (rank < 0) {
             for (String[] m : modelsInLoadOrder(modelsDir)) e.loadModel(m[1], m[0]);
@@ -196,7 +261,6 @@ public final class Engine {
                 throw new UncheckedIOException("cannot read " + def, ex);
             }
         }
-        return e;
     }
 
     /** As {@link #loadOnly(Path, Path, Distribution, Collection)}, with the {@code model} directory beside {@code packsDir} and the default limit. */
@@ -236,7 +300,19 @@ public final class Engine {
      */
     public static Engine loadOnly(Path packsDir, Path modelsDir, Distribution limit, Collection<String> names, String profile,
                                   boolean withInner) {
-        int rank = profileRank(profile);
+        profileRank(profile);   // a bad name is refused before anything is made
+        Engine e = new Engine();
+        e.setMaxDistribution(limit);
+        e.loadOnly(packsDir, modelsDir, names, profile, withInner);
+        return e;
+    }
+
+    /**
+     * Load into this instance what {@link #loadOnly(Path, Path, Distribution, Collection, String, boolean)} loads into
+     * a new one, under this instance's limit; a profile starts the load as {@link #loadAll} says (spec 0.93).
+     */
+    public void loadOnly(Path packsDir, Path modelsDir, Collection<String> names, String profile, boolean withInner) {
+        int rank = profile == null ? -1 : beginProfile(profile);
         Licences.Profiles prof = rank < 0 ? null : readProfiles(licencesFile(packsDir), modelsDir);
         List<PackLicence> held = new ArrayList<>();
         Map<String, String[]> byFormat = null;   // format to {path, text}, for the names that are no directory
@@ -275,6 +351,7 @@ public final class Engine {
                 if (text == null && heads != null) text = heads;
             }
             if (text == null) text = read(def);
+            if (prof != null) text = profiledText(def.toString(), text);
             // Parsed now, once; a parse failure is raised where the pack is loaded, after the modules, as before.
             Object parsed;
             try {
@@ -293,10 +370,9 @@ public final class Engine {
             }
             packs.add(new Object[]{def.toString(), parsed});
         }
-        Engine e = new Engine();
-        e.setMaxDistribution(limit);
+        Engine e = this;
         if (prof != null) {
-            for (String[] m : wanted(heldModels(prof, rank), needed)) e.loadModel(m[1], m[0]);
+            for (String[] m : wanted(heldModels(prof, rank), needed)) e.loadModel(profiledText(m[0], m[1]), m[0]);
         } else if (Files.isDirectory(modelsDir)) {
             for (String[] m : neededModels(modelsDir, needed)) e.loadModel(m[1], m[0]);
         }
@@ -309,7 +385,6 @@ public final class Engine {
                 e.licences.add(new PackLicence(h.dir, ((Pack) p[1]).format, h.licence, h.profile));
             }
         }
-        return e;
     }
 
     /** The module files of {@code all} (load order) that declare {@code needed} or a module those use, through others. */

@@ -281,8 +281,9 @@ public final class Cli {
         if (a.maxItems != null) e.setMaxItems(a.maxItems);
         Path models = path(a.models != null ? a.models : a.packs + "/../model");
         // Version 0.29: with a profile, or for licences, the licence files are read before any module is loaded;
-        // licences without a profile holds every module and pack.
-        int rank = a.profile != null ? Licences.rankOf(a.profile) : a.cmd.equals("licences") ? Licences.NONE : -1;
+        // licences without a profile holds every module and pack and leaves the limit as given (0.93, ruling 7).
+        // With a profile the limit is public, also beside --max-distribution controlled (0.93, ruling 5).
+        int rank = a.profile != null ? e.beginProfile(a.profile) : a.cmd.equals("licences") ? Licences.NONE : -1;
         Licences.Profiles prof = null;
         if (rank >= 0) {
             Path table = path(a.packs + "/../licences.toml");

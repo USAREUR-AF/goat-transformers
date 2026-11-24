@@ -79,6 +79,23 @@ name that is not one of the three, are a `GtException` of kind
 `bad-licence`. `engine.licences()` lists each pack loaded under a profile
 (directory, format, licence, the pack's own profile).
 
+A module file or `pack.def` is in a profile only when the file itself is
+shown public (spec Version 0.93): it has a line that is exactly
+`distribution`, spaces or tabs, `public`, no other line that begins with
+`distribution` once its double quotes are removed, and no NUL, byte-order
+mark or stray carriage return. Any other file is in no profile, whatever its
+licence, and so is every module and pack that uses it; a profile skips it
+unread. A load with a profile also sets the engine's distribution limit to
+`public` for the rest of the instance's life, whatever limit was asked for
+before or is set after (`setMaxDistribution(CONTROLLED)` is then no error and
+no effect), and keeps it when the load fails later. The instance loaders
+`engine.loadAll(packsDir, modelsDir, profile)` and
+`engine.loadOnly(packsDir, modelsDir, names, profile, withInner)` load into an
+existing engine: with a profile, a bad profile name is `bad-licence` and an
+engine that already holds a controlled module or pack is
+`distribution-refused`, both before anything is read and with the limit
+unchanged.
+
 ```java
 Engine open = Engine.load(Path.of("packs"), Path.of("model"), Distribution.CONTROLLED, "open");
 for (Engine.PackLicence l : open.licences()) System.out.println(l.format + " " + l.licence + " " + l.profile);
@@ -125,7 +142,7 @@ locale's character set and the contract's command line is UTF-8.
 | `--models DIR` | the model modules; every `.def` file is loaded | the `--packs` text followed by `/../model` |
 | `--packs-only NAME[,NAME...]` | load only these subdirectories of `--packs`, in this order | every pack directory |
 | `--max-items N` | the limit on list items of one decode | 100000 |
-| `--max-distribution public\|controlled` | refuse modules and packs marked above the limit | `controlled` |
+| `--max-distribution public\|controlled` | refuse modules and packs marked above the limit; beside `--profile` the limit is `public` whatever is given (spec 0.93) | `controlled` |
 | `--profile open\|open+copyleft\|everything` | load only the modules and packs of this licence profile (spec 0.29); any other value is usage error 11 | no profile |
 
 Each option is given at most once, except `--set`. `--json` (only for
@@ -253,7 +270,12 @@ and runs:
   [Parse once](#parse-once));
 - the checks of `LicenceTests` (Version 0.29): `load` and `loadOnly` with
   each profile on the fixtures under `packs/conformance/tool-fixtures/`, and
-  the line forms of ruling 1 on files of its own in a temporary directory.
+  the line forms of ruling 1 on files of its own in a temporary directory;
+- the checks of `ControlledTests` (Version 0.93): the forms of a file that is
+  or is not shown public, each sentence of rulings 5 and 6 (the refusal of a
+  file that reads as controlled when loaded through a test-only hook, since
+  this engine reads each file once), and a controlled inner pack (Version
+  0.34) under every profile, on trees written to a temporary directory.
 
 It prints each failure and exits non-zero on any. Measured with
 `nice -n 10 ./build.sh` on this tree on 2026-11-21 (23610 vectors, 4528 packs,
