@@ -1,5 +1,5 @@
 {
-  "name": "ruling-05-whole-byte-test-on-the-exact-cursor",
+  "name": "ruling-05-block-beyond-the-input",
   "from": "conformance-units-inner-unaligned",
   "to": "conformance-units-inner-unaligned",
   "input": "030070",

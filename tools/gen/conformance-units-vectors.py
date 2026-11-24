@@ -1787,7 +1787,7 @@ end
         model={"probe.nums.#": "0", "probe.n": "9"}, ref="ruling 6: present and empty (0.21 ruling 3)")
     vec("rest", "json", "ruling-06-zero-units-to-json", "0009", '{"n":9,"nums":[]}', ref="ruling 6: present and empty")
     vec("json", "rest", "absent-list-writes-zero-units", '{"n":9}', "0009", ref=E + "an absent list writes no bits")
-    vec("rest-tail", "rest-tail", "ruling-05-rest-runs-to-the-stated-end", "030506", error=MW,
+    vec("rest-tail", "rest-tail", "ruling-05-rest-not-reached", "030506", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before an item is read")
     vec("rest-tail", "rest-tail", "rest-ends-at-the-stated-end", "010506", "0105", model={"probe.nums.#": "1"},
         ref=D + "the list ends with the extent; input beyond the last line is ignored (0.8 ruling 9)")
@@ -1807,9 +1807,9 @@ end
     vec("nested", "nested", "ruling-04-beyond-the-enclosing-extent", "0302050609", error=MW,
         ref="ruling 4: the block ends beyond the `length` block around it, though the input goes on")
     # 02 | w = 01, x = 05 | then the end: the block is absent. Encode: w = 1, y = 00, length 3
-    vec("nested", "nested", "ruling-04-block-at-the-end-absent", "02010509", error=MW,
+    vec("nested", "nested", "ruling-09-absent-block-one-unit-stated", "02010509", error=MW,
         ref="ruling 9: the count states 1 unit and its block is not read (absent by ruling 4): malformed-wire when the message has been read")
-    vec("nested", "nested", "ruling-04-absent-whatever-the-count-states", "02ff0509", error=MW,
+    vec("nested", "nested", "ruling-09-absent-block-255-units-stated", "02ff0509", error=MW,
         ref="ruling 9: the count states 255 units and its block is not read (absent by ruling 4): malformed-wire when the message has been read")
     vec("nested", "nested", "ruling-04-count-not-read", "0009", "0301000009",
         model={"probe.n": "9", "@absent": ["probe.x", "probe.y"]},
@@ -1818,7 +1818,7 @@ end
         model={"probe.y": "6", "probe.n": "9"}, ref="0.8: the enclosing extent's unread content is skipped")
     # edge: 01 | a = 05, then the end of the enclosing block: absent. Encode: x = 00,
     # a = 1 unit, length 2 bytes. edge-two: 02 | a = 02 | 1 byte left of the 2 stated
-    vec("edge", "edge", "ruling-04-absent-before-the-check", "0105", error=MW,
+    vec("edge", "edge", "ruling-09-absent-block-units-stated", "0105", error=MW,
         ref="ruling 9: the count states 5 units and its block is not read (absent by ruling 4, and not tested by ruling 5): malformed-wire when the message has been read")
     vec("edge-two", "edge-two", "ruling-04-beyond-with-input-left", "02020709", error=MW,
         ref="ruling 4: 2 bytes stated, 1 left in the enclosing block, though the input holds both")
@@ -1827,9 +1827,9 @@ end
         model={"probe.x": "5", "probe.nums.#": "2", "probe.n": "9"}, ref="ruling 4: a = 3 bytes, b = 2 bytes in them")
     vec("inner", "inner", "ruling-04-beyond-a-length-at", "030305060708", error=MW,
         ref="ruling 4: the innermost `length` block around it is a `length @` block")
-    vec("inner", "inner", "ruling-04-absent-in-a-length-at", "01020509", error=MW,
+    vec("inner", "inner", "ruling-09-absent-in-a-length-at", "01020509", error=MW,
         ref="ruling 9: the count states 2 units and its block is not read (absent by ruling 4 in a `length @` block): malformed-wire when the message has been read")
-    vec("inner", "inner", "ruling-06-absent-in-zero-units", "000209", error=MW,
+    vec("inner", "inner", "ruling-09-absent-in-zero-units", "000209", error=MW,
         ref="ruling 9: the count states 2 units and its block is not read (absent in a block of 0 units): malformed-wire when the message has been read")
     vec("inner", "inner", "ruling-04-zero-units-before-the-end", "020005aa09", "0100" "0509",
         model={"probe.nums.#": "0", "probe.n": "9"},
@@ -1873,7 +1873,7 @@ end
     # ==========================================================================
     vec("presence", "presence", "ruling-14-block-in-an-if", "0280" "0509", "02800509",
         model={"probe.x": "5", "probe.n": "9"}, ref="ruling 14: x in the block sets p.1; w = 1 unit + plus 1")
-    vec("presence", "presence", "ruling-09-not-written", "09400609", error=MW,
+    vec("presence", "presence", "ruling-09-if-not-read", "09400609", error=MW,
         ref="ruling 9: the count states 8 units and its block is not read (in an `if` not read): malformed-wire when the message has been read")
     vec("presence", "presence", "ruling-09-below-the-plus-still-checked", "00400609", error=MW,
         ref="ruling 9 (0.21 ruling 6): the below-plus check is at the count line")
@@ -1921,7 +1921,7 @@ end
         ref="ruling 1: in the path of case 1 the name sizes a block")
     vec("case", "case", "ruling-01-counts-a-list-in-another", "02020607", "02020607", model={"probe.nums.#": "2"},
         ref="ruling 1: in the path of case 2 the name counts a list")
-    vec("case", "case", "ruling-03-units-more-than-the-bits-left", "01ff06", error=MW,
+    vec("case", "case", "ruling-05-units-more-than-the-bits-left", "01ff06", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line (255 units of 8, 8 bits left)")
     vec("case", "case", "ruling-03-items-more-than-the-bits-left", "02ff06", error=MW,
         ref="ruling 14 of 0.8, for a list only")
@@ -1953,15 +1953,15 @@ end
         model={"probe.items.#": "2", "probe.items[0].@kind": "a", "probe.items[1].@kind": "b"},
         ref=D + "4 bytes hold two items of kinds")
     # 03 | 01 05 | one byte stated and not there
-    vec("kinds", "kinds", "ruling-15-one-unit-too-long", "030105", error=MW,
+    vec("kinds", "kinds", "ruling-05-one-unit-too-long", "030105", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before an item is read")
-    vec("kinds", "kinds", "ruling-15-when-inside-field-past-the-input", "04010501", error=MW,
+    vec("kinds", "kinds", "ruling-05-ends-inside-an-item", "04010501", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before an item is read")
-    vec("kinds-open", "kinds-open", "ruling-15-a-kind-without-when", "030105", error=MW,
+    vec("kinds-open", "kinds-open", "ruling-05-a-kind-without-when", "030105", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before an item is read")
     vec("plain-items", "plain-items", "two-plain-items", "0401050206", "0401050206", model={"probe.items.#": "2"},
         ref=D + "4 bytes hold two items")
-    vec("plain-items", "plain-items", "ruling-15-plain-fields-one-unit-too-long", "030105", error=MW,
+    vec("plain-items", "plain-items", "ruling-05-plain-fields-one-unit-too-long", "030105", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before an item is read")
     # w = 03 | whole 04: the whole message | 05 06
     vec("whole-inside", "whole-inside", "whole-inside-a-block", "03040506", "03040506",
@@ -1976,9 +1976,9 @@ end
     vec("old-whole-inside", "old-whole-inside", "ruling-16-field-past-the-stated-whole", "03030506", error=MW,
         ref=R16 + "(ruling 8 of 0.8): y lies past the stated whole: malformed-wire, not absent")
     # w = 05 | length 03: 3 bytes, 1 there
-    vec("plain-inside", "plain-inside", "ruling-17-plain-length-past-the-input", "050307", error=MW,
+    vec("plain-inside", "plain-inside", "ruling-05-block-and-plain-length-past-the-input", "050307", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before the plain length is read")
-    vec("plain-inside", "plain-inside", "ruling-17-plain-length-inside-the-input", "050107", error=MW,
+    vec("plain-inside", "plain-inside", "ruling-05-plain-length-fits-the-block-does-not", "050107", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before the plain length is read")
     # w = 4, v = 0, whole 4, x = 07, two bytes past the whole: the extent is bits 16 to 48. align 64
     # stops at 32, so the second block is read (at 48 it would be absent). Encode: x, zero bits to 64
@@ -2099,23 +2099,23 @@ end
     # w = 5, x = 07: the cursor stands at byte 6, past the input of 2 bytes
     vec("inner-after-rest", "inner-after-rest", "inner-after-a-block", "01070506", "01070506",
         model={"probe.x": "7", "probe.nums.#": "2"}, ref="0.34 Decode: the inner input is 05 06")
-    vec("inner-after-rest", "inner-after-rest", "ruling-05-empty-inner-input", "0507", error=MW,
+    vec("inner-after-rest", "inner-after-rest", "ruling-05-block-beyond-the-input", "0507", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before the inner line")
     vec("inner-after-byte", "inner-after-byte", "inner-after-a-block", "010709", "010709",
         model={"probe.x": "7", "probe.y": "9"}, ref="0.34 Decode: the inner input is 09")
-    vec("inner-after-byte", "inner-after-byte", "ruling-05-empty-inner-input", "0507", error=MW,
+    vec("inner-after-byte", "inner-after-byte", "ruling-05-block-beyond-the-input", "0507", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before the inner line")
     vec("inner-after-kinds", "inner-after-kinds", "inner-after-a-block", "01070209", "01070209",
         model={"@inner_kind": "b", "probe.z": "9"}, ref="0.34 Decode: the inner input is 02 09, kind b")
-    vec("inner-after-kinds", "inner-after-kinds", "ruling-05-empty-inner-input", "0507", error=MW,
+    vec("inner-after-kinds", "inner-after-kinds", "ruling-05-block-beyond-the-input", "0507", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before the inner line")
     # 3 * 12 = 36 bits: bits 8 to 44, past the input of 24 bits, and not a whole byte
-    vec("inner-unaligned", "inner-unaligned", "ruling-05-whole-byte-test-on-the-exact-cursor", "030070", error=MW,
+    vec("inner-unaligned", "inner-unaligned", "ruling-05-block-beyond-the-input", "030070", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before the inner line")
     vec("inner-unaligned", "inner-unaligned", "whole-byte-test-inside-the-input", "01007005", error=MW,
         ref="0.34 Decode 1: the cursor stands at bit 20")
     # 4 * 12 = 48 bits: bits 8 to 56, whole bytes, past the input
-    vec("inner-unaligned", "json", "ruling-05-exact-cursor-on-a-whole-byte", "040070", error=MW,
+    vec("inner-unaligned", "json", "ruling-05-block-beyond-the-input-to-json", "040070", error=MW,
         ref="ruling 5: the extent ends beyond the input: malformed-wire at the line, before the inner line")
     vec("json", "inner-unaligned", "inner-encode-whole-byte-test", '{"x":7,"nums":[5]}', error=TE,
         ref="0.34 Encode: the block writes 12 bits and the cursor stands at bit 20")

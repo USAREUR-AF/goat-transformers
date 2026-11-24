@@ -1,5 +1,5 @@
 {
-  "name": "ruling-03-units-more-than-the-bits-left",
+  "name": "ruling-05-units-more-than-the-bits-left",
   "from": "conformance-units-case",
   "to": "conformance-units-case",
   "input": "01ff06",

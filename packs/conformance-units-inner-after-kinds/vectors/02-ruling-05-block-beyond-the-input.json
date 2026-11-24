@@ -1,5 +1,5 @@
 {
-  "name": "ruling-05-empty-inner-input",
+  "name": "ruling-05-block-beyond-the-input",
   "from": "conformance-units-inner-after-kinds",
   "to": "conformance-units-inner-after-kinds",
   "input": "0507",
