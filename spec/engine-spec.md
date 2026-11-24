@@ -6166,7 +6166,9 @@ not `string` without a `via` is `key-type-mismatch`.
    place that `string` cannot read is a failure of each of its lines, the
    const lines included. It
    has three arguments; `const <locator> part:-:1` with two is a const of 0.6.
-   Its text follows 0.6, always written as text.
+   Its text follows 0.6, always written as text: a leading `=` is taken off
+   and a bare `present` is `bad-directive`. On `text` the const value rules of
+   0.10 hold as well.
 5. **Failed lines.** A missing part is a failed transform (0.6 ruling 5), a
    missing table entry a failed table (0.7 ruling 10).
 6. **Gaps** are checked for the common lines with each kind, or alone when
