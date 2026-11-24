@@ -3,13 +3,12 @@
   "from": "remote-id",
   "to": "geojson",
   "input": "1217b5ff7e90e3ae1e50c9ffff0000000000000000ffff0000",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.0014,51.4778,-1000]},\"properties\":{}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.0014,51.4778]},\"properties\":{}}",
   "model": {
     "@kind": "location",
     "lat": "51.4778",
-    "lon": "-0.0014",
-    "hae": "-1000"
+    "lon": "-0.0014"
   },
   "source": "constructed",
-  "reference": "constructed: every field that has an unknown value in opendroneid.h carries it; the geodetic altitude raw 0 reaches geojson as -1000"
+  "reference": "constructed: every field that has an unknown value in opendroneid.h carries it; the geodetic altitude raw 0 (-1000 m, ODID_Location_data AltitudeGeo) means unknown, so the point has no altitude"
 }

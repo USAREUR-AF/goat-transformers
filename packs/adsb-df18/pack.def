@@ -272,7 +272,8 @@ field  adsb.cpr_lon                   0:71:17    uint
 kind      airborne-velocity-ground-st1
 when      0:32:5     19
 when      0:37:3     1
-requires  adsb.icao adsb.ew_raw adsb.ns_raw adsb.vr_raw
+requires  adsb.velocity_subtype=1 adsb.icao adsb.ew_raw adsb.ns_raw adsb.vr_raw
+field  adsb.velocity_subtype       0:37:3     uint
 field  adsb.tc                        0:32:5     uint
 field  adsb.intent_change             0:40:1     uint
 field  adsb.ifr                       0:41:1     uint
@@ -292,7 +293,8 @@ field  adsb.galt_diff_raw             0:81:7     uint  absent 0,127
 kind      airborne-velocity-ground-st2
 when      0:32:5     19
 when      0:37:3     2
-requires  adsb.icao adsb.ew_raw adsb.ns_raw adsb.vr_raw
+requires  adsb.velocity_subtype=2 adsb.icao adsb.ew_raw adsb.ns_raw adsb.vr_raw
+field  adsb.velocity_subtype       0:37:3     uint
 field  adsb.tc                        0:32:5     uint
 field  adsb.intent_change             0:40:1     uint
 field  adsb.ifr                       0:41:1     uint
@@ -312,7 +314,8 @@ field  adsb.galt_diff_raw             0:81:7     uint  absent 0,127
 kind      airborne-velocity-air-st3
 when      0:32:5     19
 when      0:37:3     3
-requires  adsb.icao adsb.heading_raw adsb.airspeed_raw adsb.vr_raw
+requires  adsb.velocity_subtype=3 adsb.icao adsb.heading_raw adsb.airspeed_raw adsb.vr_raw
+field  adsb.velocity_subtype       0:37:3     uint
 field  adsb.tc                        0:32:5     uint
 field  adsb.intent_change             0:40:1     uint
 field  adsb.ifr                       0:41:1     uint
@@ -332,7 +335,8 @@ field  adsb.galt_diff_raw             0:81:7     uint  absent 0,127
 kind      airborne-velocity-air-st4
 when      0:32:5     19
 when      0:37:3     4
-requires  adsb.icao adsb.heading_raw adsb.airspeed_raw adsb.vr_raw
+requires  adsb.velocity_subtype=4 adsb.icao adsb.heading_raw adsb.airspeed_raw adsb.vr_raw
+field  adsb.velocity_subtype       0:37:3     uint
 field  adsb.tc                        0:32:5     uint
 field  adsb.intent_change             0:40:1     uint
 field  adsb.ifr                       0:41:1     uint

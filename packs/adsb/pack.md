@@ -86,8 +86,8 @@ bits as the `when`. On encode the `when` value is written after the fields, so
 the selected kind decides the type code on the wire, not `adsb.tc`.
 Consequence: kinds that share a layout share their `requires`, so a
 cross-format encode would select the lowest type code of the group whatever
-`adsb.tc` holds. No other pack produces `adsb` keys, so this does not occur
-today. Addition that removes both the repetition and the ambiguity:
+`adsb.tc` holds. `adsb-df18` also produces `adsb` keys, so this occurs when one of its
+messages is converted (stated in its pack.md). Addition that removes both the repetition and the ambiguity:
 `when <locator> <low>..<high>` (or a value list), giving one kind per layout
 in which the `adsb.tc` field alone sets the type code.
 
@@ -203,3 +203,9 @@ selected altitude 16992 ft, barometric setting 1012.8 hPa, selected heading
 the 14 it also checks that the parity field equals the remainder of the first
 88 bits. Vector 43 is a published one-bit variant of vector 42 whose parity
 the source leaves unchanged.
+
+## Velocity subtype
+
+Each airborne velocity kind holds its subtype in `adsb.velocity_subtype` and requires that value, since
+subtypes 1 and 2, and 3 and 4, have the same fields and 2 and 4 multiply the speed by 4. A conversion between
+`adsb` and `adsb-df18` keeps the subtype; an entity with velocity fields but no subtype is `no-kind`.
