@@ -5736,12 +5736,13 @@ that do not hold the exact line of ruling 1; in 0.23: the default of
 1. **Shown public.** A module file or `pack.def` is **shown public** when it
    was read as UTF-8, at least one of its lines, cut and trimmed as ruling 1
    of 0.29 says, is exactly `distribution`, one or more spaces or tabs, and
-   `public`, and no line is a **doubtful** one: one that, trimmed, is the word
-   `distribution` alone or begins with `distribution` followed by a space, a
-   tab, a carriage return or a `"`, and is not that exact line. A NUL byte
-   anywhere, a carriage return inside a line, a byte-order mark, a quoted word or value, a comment
-   on the line, another value, no such line, a file that is not UTF-8 or
-   cannot be read: such a file is not shown public.
+   `public`, and no line is a **doubtful** one. A line is doubtful when, with
+   every double quote in it removed and then spaces, tabs and carriage returns
+   removed at its ends, it begins with `distribution`, and it is not that exact
+   line (with its quotes). So `"distribution" controlled`, `distri"bution" x`,
+   `distribution"controlled"` and `distribution # x` are doubtful. A NUL byte
+   anywhere, a carriage return inside a line, a byte-order mark, no such line,
+   a file that is not UTF-8 or cannot be read: such a file is not shown public.
 2. **The profile.** A file that is not shown public has the profile none,
    whatever its licence and the table say. Through 2b and 2c of 0.29, so has
    every module and pack that uses it, and with a `core` that is not shown
@@ -5778,9 +5779,10 @@ that do not hold the exact line of ruling 1; in 0.23: the default of
    modules by a profile, give the same profiles: a tool does not load what it
    chooses, so ruling 1 is all that stands there. For a tool a pack or module
    with a **doubtful** `uses` line also has the profile none: a line that,
-   with carriage returns, spaces and tabs removed at its ends, begins with
-   `uses` or `"uses"` followed by a space, a tab, a carriage return, a `"` or
-   the end, and that 2b does not read. `tools/licences.py --check` refuses a
+   with every double quote removed and then spaces, tabs and carriage returns
+   removed at its ends, begins with `uses`, and that 2b does not read. In an
+   engine such a line is not looked at: a pack whose line names a skipped
+   module is `unknown-module` (ruling 4). `tools/licences.py --check` refuses a
    `model/*.def` or a `packs/*/pack.def` that is not shown public or has a
    doubtful `uses` line.
 
