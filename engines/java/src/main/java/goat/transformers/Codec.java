@@ -384,6 +384,14 @@ abstract class Codec<W> {
         Object v = e.get(f.key);
         if (v == null) v = defaults.get(f.key);
         if (v == null) return null;
+        if (f.range != null) {
+            // engine-spec 0.56: the model value (a default's too) is checked, or wrapped, before via and the transform
+            try {
+                v = f.range.apply(v);
+            } catch (IllegalArgumentException ex) {
+                throw encodeFailure(f, ex);
+            }
+        }
         if (f.key.equals("type") && v instanceof String && !pack.cotToNative.isEmpty()) {
             String nat = pack.cotToNative.get(v);
             if (nat != null) v = nat;
@@ -480,6 +488,39 @@ abstract class Codec<W> {
             return a instanceof Number && b instanceof Number && ((Number) a).doubleValue() == ((Number) b).doubleValue();
         }
         return b.equals(a);
+    }
+
+    /**
+     * Ruling 9 of 0.56: a reached line whose key is held, or whose absent key a default fills, is checked against its
+     * {@code range} even when it writes nothing (another line, a when or a const holds its place). Not a line that
+     * {@code with} suppresses (ruling 6).
+     */
+    void checkRange(Pack.Line l, Entity e, java.util.Map<String, Object> defaults) {
+        if (!(l instanceof Pack.Field)) return;
+        Pack.Field f = (Pack.Field) l;
+        if (f.range == null || f.suppressed(e)) return;
+        Object v = e.get(f.key);
+        if (v == null) v = defaults.get(f.key);
+        if (v == null) return;
+        try {
+            f.range.apply(v);
+        } catch (IllegalArgumentException ex) {
+            throw encodeFailure(f, ex);
+        }
+    }
+
+    /** {@link #checkRange} on every line of a group whose place another line holds, and of the groups in it. */
+    void checkRanges(Pack.Group g, java.util.List<Entity> items) {
+        for (Entity item : items) {
+            for (Pack.Line l : g.body.lines) {
+                if (l instanceof Pack.Group) {
+                    java.util.List<Entity> nested = item.list(((Pack.Group) l).list);
+                    if (nested != null) checkRanges((Pack.Group) l, nested);
+                } else {
+                    checkRange(l, item, g.body.defaultValues);
+                }
+            }
+        }
     }
 
     /** Decode one text-wire value into the entity. */

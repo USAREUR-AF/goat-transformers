@@ -685,6 +685,10 @@ public final class Engine {
                 throw new GtException(GtException.Code.KEY_TYPE_MISMATCH, p.format, f.locator, "model key " + f.key
                         + " is declared " + declared + " but transform " + f.transformName() + " yields " + f.yields());
             }
+            // engine-spec 0.56: the bounds of range read as the key's type, right after the line's key-type check
+            if (f.out.min != null) {
+                f.range = OutputOptions.Range.of(f.out.min, f.out.max, f.out.wrap, declared, p.format, f.locator, "line " + f.line);
+            }
         }
         // Every check has passed: read each default as its key's type, then bind fields to key types and tables.
         for (Pack.Kind k : p.kinds) readDefaults(k.scope, p.format);

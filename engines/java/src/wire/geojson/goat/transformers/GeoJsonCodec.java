@@ -222,13 +222,13 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
     /** Write {@code v} unless the member holds a value; a sentinel there is replaced in its place. */
     private static void putOver(Map<String, Object> m, String name, Object v) {
         Object have = m.get(name);
-        if (have == null || have == JsonTree.RESERVED || have instanceof JsonTree.Placed) m.put(name, v);
+        if (have == null || have == JsonTree.RESERVED || have == JsonTree.NULLED || have instanceof JsonTree.Placed) m.put(name, v);
     }
 
     /** Write {@code v} unless the member holds a value or a sentinel; a reserved place is filled. */
     private static void putFirst(Map<String, Object> m, String name, Object v) {
         Object have = m.get(name);
-        if (have == null || have == JsonTree.RESERVED) m.put(name, v);
+        if (have == null || have == JsonTree.RESERVED || have == JsonTree.NULLED) m.put(name, v);
     }
 
     static Object jsonValue(Transform t, String s) {
@@ -272,6 +272,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 } else {
                     top.put(l.locator, jv);
                 }
+                checkRange(l, e, kind.scope.defaultValues);   // ruling 9 of 0.56
                 continue;
             }
             if (l instanceof Pack.When) continue;        // nothing is written for `present`
@@ -288,7 +289,13 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             String s = encodeField(f, e, kind.scope);
             if (s == null) {
                 // the first sentinel of an absent key, in place until a line whose key is present writes (ruling 16 of 0.9)
-                if (f.absent == null || f.suppressed(e)) {
+                if (!f.writesSentinel() || f.suppressed(e)) {
+                    // null (engine-spec 0.56): the member is written null unless a line on it writes a value
+                    if (ci < 0 && f.out.nul && !f.suppressed(e)) {
+                        if (l.locator.startsWith("properties.")) putFirst(props, l.locator.substring("properties.".length()), JsonTree.NULLED);
+                        else putFirst(top, l.locator, JsonTree.NULLED);
+                        continue;
+                    }
                     // the member's place, should a later line on the locator write it (ruling 23 of 0.9, ruling 1 of 0.18)
                     if (ci < 0 && l.locator.startsWith("properties.")) props.putIfAbsent(l.locator.substring("properties.".length()), JsonTree.RESERVED);
                     else if (ci < 0) top.putIfAbsent(l.locator, JsonTree.RESERVED);

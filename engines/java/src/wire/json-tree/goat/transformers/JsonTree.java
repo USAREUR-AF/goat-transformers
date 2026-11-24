@@ -212,7 +212,7 @@ abstract class JsonTree<W> extends Codec<W> {
         Map<String, Object> cur = top;
         for (int i = 0; i < path.length - 1; i++) {
             Object v = cur.get(path[i]);
-            if (v == null || v == RESERVED) {
+            if (v == null || v == RESERVED || v == NULLED) {
                 v = new LinkedHashMap<String, Object>();
                 cur.put(path[i], v);
             } else if (!(v instanceof Map)) {
@@ -238,6 +238,12 @@ abstract class JsonTree<W> extends Codec<W> {
     static final Object RESERVED = new Object();
 
     /**
+     * A member a line with {@code null} (engine-spec 0.56) writes as {@code null} because no line on it wrote a
+     * value: a later line's value or sentinel writes over it. {@link #unplace} turns it into {@code null}.
+     */
+    static final Object NULLED = new Object();
+
+    /**
      * Replace every {@link Placed} in the object, and in the objects nested in it, by the value it holds, and
      * remove every {@link #RESERVED} place.
      */
@@ -248,6 +254,7 @@ abstract class JsonTree<W> extends Codec<W> {
             Map.Entry<String, Object> m = it.next();
             Object v = m.getValue();
             if (v == RESERVED) it.remove();
+            else if (v == NULLED) m.setValue(Json.NULL);
             else if (v instanceof Placed) m.setValue(((Placed) v).v);
             else if (v instanceof Map) unplace((Map<String, Object>) v);
         }
@@ -278,10 +285,13 @@ abstract class JsonTree<W> extends Codec<W> {
             }
             if (path.length == 0) {                      // `.`: the item itself as a scalar
                 Pack.Field f = (Pack.Field) l;
-                if (itself != null && !(itself instanceof Placed)) continue;
+                if (itself != null && !(itself instanceof Placed)) {
+                    checkRange(f, e, scope.defaultValues);
+                    continue;
+                }
                 Object jv = encodeOne(f, e, scope);
                 if (jv != null) itself = jv;
-                else if (itself == null && f.absent != null && !f.suppressed(e)) itself = new Placed(f.absent.firstJson());
+                else if (itself == null && f.writesSentinel() && !f.suppressed(e)) itself = new Placed(f.absent.firstJson());
                 continue;
             }
             Map<String, Object> obj = parent(top, path);
@@ -289,9 +299,12 @@ abstract class JsonTree<W> extends Codec<W> {
             if (l instanceof Pack.Group) {
                 Pack.Group g = (Pack.Group) l;
                 List<Entity> items = e.list(g.list);
-                if (items == null || obj == null) continue;   // an absent list writes nothing
-                Object have = obj.get(last);
-                if (have != null && have != RESERVED && !isEmptyObject(have)) continue;
+                if (items == null) continue;   // an absent list writes nothing
+                Object have = obj == null ? null : obj.get(last);
+                if (obj == null || (have != null && have != RESERVED && !isEmptyObject(have))) {
+                    checkRanges(g, items);   // its lines are reached (ruling 9 of 0.56)
+                    continue;
+                }
                 obj.put(last, encodeItems(g, items));
                 continue;
             }
@@ -299,20 +312,59 @@ abstract class JsonTree<W> extends Codec<W> {
             Pack.When w = scope.fixed.get(l.locator);
             if (w != null) {
                 if (obj != null) obj.put(last, Json.whenValue(w));
+                checkRange(l, e, scope.defaultValues);
                 continue;
             }
             if (l instanceof Pack.When) continue;        // nothing is written for `present`
             Pack.Field f = (Pack.Field) l;
-            if (obj == null) continue;
+            if (obj == null) {
+                checkRange(f, e, scope.defaultValues);
+                continue;
+            }
             Object have = obj.get(last);
             boolean over = have instanceof Placed;
-            if (have != null && have != RESERVED && !isEmptyObject(have) && !over) continue; // an earlier line on this locator already wrote it
+            if (have != null && have != RESERVED && !isEmptyObject(have) && !over) {
+                checkRange(f, e, scope.defaultValues);   // ruling 9 of 0.56
+                continue;               // an earlier line on this locator already wrote it
+            }
             Object jv = encodeOne(f, e, scope);
             if (jv != null) obj.put(last, jv);
-            else if (f.absent != null && !over && !f.suppressed(e)) obj.put(last, new Placed(f.absent.firstJson()));
+            else if (f.writesSentinel() && !over && !f.suppressed(e)) obj.put(last, new Placed(f.absent.firstJson()));
             else if (have == null) obj.put(last, RESERVED);   // the member's place, should a later line write it
         }
+        placeNulls(top, scope, e);
         return itself instanceof Placed ? ((Placed) itself).v : itself;
+    }
+
+    /**
+     * {@code null} (engine-spec 0.56): once every line of the scope has written, a member no line wrote a value at is
+     * written {@code null} by a line with the option (ruling 1), unless {@code with} suppresses it (ruling 2). Deeper
+     * members first: a nested object that holds a {@code null} member is written as an object.
+     */
+    private static void placeNulls(Map<String, Object> top, Pack.Scope scope, Entity e) {
+        List<Pack.Field> nulls = null;
+        for (Pack.Line l : scope.lines) {
+            if (!(l instanceof Pack.Field) || ((String[]) l.loc).length == 0) continue;
+            Pack.Field f = (Pack.Field) l;
+            if (!f.out.nul || f.suppressed(e)) continue;
+            if (nulls == null) nulls = new ArrayList<>();
+            nulls.add(f);
+        }
+        if (nulls == null) return;
+        nulls.sort((a, b) -> Integer.compare(((String[]) b.loc).length, ((String[]) a.loc).length));
+        for (Pack.Field f : nulls) {
+            String[] path = (String[]) f.loc;
+            Map<String, Object> obj = parent(top, path);
+            if (obj != null && nothing(obj.get(path[path.length - 1]))) obj.put(path[path.length - 1], NULLED);
+        }
+    }
+
+    /** True when no line has written a member, or anything in the object there. */
+    private static boolean nothing(Object v) {
+        if (v == null || v == RESERVED) return true;
+        if (!(v instanceof Map)) return false;
+        for (Object c : ((Map<?, ?>) v).values()) if (!nothing(c)) return false;
+        return true;
     }
 
     /** The JSON value one field writes, or null when the entity lacks the key and the scope has no default. */

@@ -318,7 +318,7 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
                 // A field with absent writes its first sentinel, so it counts, optional or not (ruling 12 of 0.14).
                 // A line suppressed by `with` writes neither its value, its default nor its sentinel (ruling 1 of 0.18).
                 if (f.optional && (f.suppressed(e)
-                        || (f.absent == null && e.get(f.key) == null && scope.defaultValues.get(f.key) == null))) continue;
+                        || (!f.writesSentinel() && e.get(f.key) == null && scope.defaultValues.get(f.key) == null))) continue;
             }
             l = Math.max(l, ((Loc) line.loc).end());
         }
@@ -446,7 +446,7 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
         for (int i = lines.size() - 1; i >= 0; i--) {
             if (!(lines.get(i) instanceof Pack.Field) || values[i] != null) continue;
             Pack.Field f = (Pack.Field) lines.get(i);
-            if (f.absent == null || f.suppressed(e)) continue; // absent key and no default, or `with`: its bits stay zero
+            if (!f.writesSentinel() || f.suppressed(e)) continue; // absent key and no default, or `with`: its bits stay zero
             Loc loc = (Loc) f.loc;
             long raw = f.absent.firstNum();
             writeBits(b, base + loc.start, loc.len, f.swap ? swapBytes(raw, loc.len) : raw);
@@ -613,7 +613,7 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
             // a held block's field counts toward the length; under armor sixbit an optional one only when it is
             // written, by a value, a default or a sentinel (ruling 14 of 0.17); a line suppressed by `with` writes
             // none of them (ruling 1 of 0.18)
-            boolean writesSentinel = f.absent != null && !f.suppressed(e);
+            boolean writesSentinel = f.writesSentinel() && !f.suppressed(e);
             if (!isOutside && !(pack.armorSixbit && f.optional && partValues[i] == null && !writesSentinel)) {
                 far = Math.max(far, base + ((Loc) f.loc).end());
             }

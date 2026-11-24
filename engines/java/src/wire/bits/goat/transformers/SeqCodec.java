@@ -1902,6 +1902,8 @@ final class SeqCodec extends BitsWire<byte[]> {
      */
     private void encodeField(Seq.Node n, Writer w, Entity e, Map<String, Object> defs) {
         Pack.Field f = null;
+        // ruling 9 of 0.56: the line's own key, also where a held `also` key supplies the bits
+        checkRange(n.keys.get(0), e, defs);
         // a field line suppressed by `with` is no candidate; its `also` keys stay candidates (ruling 5 of 0.18)
         for (Pack.Field k : n.keys) {
             if (e.get(k.key) != null && !k.suppressed(e)) { f = k; break; }
@@ -1963,7 +1965,7 @@ final class SeqCodec extends BitsWire<byte[]> {
         }
         // No key has a value: the field's first sentinel, else zero bits. A sentinel is never content (ruling 4 of 0.9).
         Pack.Field first = n.keys.get(0);
-        if (first.absent != null && !first.suppressed(e)) {
+        if (first.writesSentinel() && !first.suppressed(e)) {
             long raw = first.absent.firstNum();
             w.put(n.len, first.swap ? BitsCodec.swapBytes(raw, n.len) : raw);
             return;

@@ -68,6 +68,15 @@ public final class Pack {
         Map<String, Object> viaEncode;
         /** The key of the {@code with} option (engine-spec 0.18), or null: encode writes the line only when it is held. */
         String with;
+        /** The options {@code null}, {@code implicit} and {@code range} of engine-spec 0.56, as written. */
+        OutputOptions out = new OutputOptions();
+        /** {@code range}, read as the key's type when the pack is checked against the modules; null without it. */
+        OutputOptions.Range range;
+
+        /** True when encode of an absent key writes a sentinel: the option holds an exact value (engine-spec 0.56). */
+        boolean writesSentinel() {
+            return absent != null && absent.writes();
+        }
 
         /**
          * True when the line has {@code with} and the entity (inside a group, the item) does not hold its key: a
@@ -990,8 +999,13 @@ public final class Pack {
     private static String optionSyntax(List<String> args, String format, String loc, String where) {
         String absent = null;
         Set<String> seen = new HashSet<>();
+        OutputOptions out = new OutputOptions();   // engine-spec 0.56: their form here, the rest after the file
         for (int i = 3; i < args.size(); i++) {
             String o = args.get(i);
+            if (OutputOptions.isName(o)) {
+                i = out.take(args, i, format, loc, where);
+                continue;
+            }
             switch (o) {
                 case "absent":
                 case "via":
@@ -1053,7 +1067,7 @@ public final class Pack {
                 PbTransform pb = PbTransform.byName(tname);
                 if (pb == null) return;                       // a transform of another wire, refused after the file
                 if (pb.wireType() == 2) Sentinels.texts(absent, false, format, loc, where);
-                else Sentinels.integers(absent, pb.wireType() == 5 ? 32 : 64, format, loc, where);
+                else Sentinels.integers(absent, pb.wireType() == 5 ? 32 : 64, pb.wireType() == 0, format, loc, where);
                 return;
             }
             case XML:
@@ -1879,6 +1893,8 @@ public final class Pack {
             String o = opts.get(i);
             if (o.equals("absent") || o.equals("via")) {
                 i++;
+            } else if (o.equals("range")) {
+                i += 2;   // its two arguments (engine-spec 0.56)
             } else if (o.equals("with")) {
                 if (with != null) throw badDirective(format, locator, where + ": with given twice");
                 if (i + 1 >= opts.size()) throw badDirective(format, locator, where + ": with takes one key");
@@ -2135,8 +2151,13 @@ public final class Pack {
         if (s.key == null) return resolveWhen(s, ctx, where, inGroup);
         String via = null, absent = null, with = null, stop = null;
         boolean swap = false, trim = false, optional = false, unlisted = false;
+        OutputOptions out = new OutputOptions();
         for (int i = 0; i < s.opts.size(); i++) {
             String o = s.opts.get(i);
+            if (OutputOptions.isName(o)) {
+                i = out.take(s.opts, i, format, s.locator, where);
+                continue;
+            }
             switch (o) {
                 case "stop":
                     // engine-spec 0.22: the code that ends the text of a fixed-size chars field
@@ -2229,6 +2250,7 @@ public final class Pack {
             if (ct == null) throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire cbor");
             f = new Field(s.key, s.locator, null, null, null, null, via, false, false, false, s.line);
             f.cbor = ct;
+            checkOutputOptions(out, f, wire, false, inGroup, format, where);
             f.loc = CborLayout.parsePath(s.locator);
             f.with = with;
             ctx.fields.add(f);
@@ -2369,6 +2391,8 @@ public final class Pack {
         f.with = with;
         if (isPart) f.part = Part.parse(s.arg, format, s.locator, where);
         f.unlisted = unlisted;
+        checkOutputOptions(out, f, wire, dot, inGroup, format, where);
+        f.out = out;
         ctx.fields.add(f);
         ctx.typed.add(f);
         return f;
@@ -2411,6 +2435,34 @@ public final class Pack {
         return c;
     }
 
+    /**
+     * The checks of the options of engine-spec 0.56 that need the wire or the group, after the file: {@code null} on
+     * {@code json} and {@code geojson} only, not on a {@code geojson} {@code geometry} locator; {@code implicit} on
+     * {@code protobuf} only, with one of its five transforms, not on a scalar item. The range bounds are read as the
+     * key's type when the pack is checked against the modules.
+     */
+    static void checkOutputOptions(OutputOptions out, Field f, Wire wire, boolean dot, boolean inGroup, String format, String where) {
+        if (out.min != null && wire == Wire.CBOR) {
+            throw badDirective(format, f.locator, where + ": range is not an option on the cbor wire (its field options are via and with)");
+        }
+        if (out.nul) {
+            if (wire != Wire.JSON && wire != Wire.GEOJSON) {
+                throw badDirective(format, f.locator, where + ": null is an option of the json and geojson wires only");
+            }
+            if (wire == Wire.GEOJSON && !inGroup && Locators.geojsonCoord(f.locator) >= 0) {
+                throw badDirective(format, f.locator, where + ": null is not an option of a geometry locator");
+            }
+        }
+        if (out.implicit) {
+            if (wire != Wire.PROTOBUF || f.pb == null) {
+                throw badDirective(format, f.locator, where + ": implicit is an option of the protobuf wire only");
+            }
+            if (dot || (inGroup && f.locator.equals("."))) {
+                throw badDirective(format, f.locator, where + ": implicit is not an option of a scalar item");
+            }
+        }
+    }
+
     /** The {@code absent} values of a field, read as its wire's raw value (Version 0.9, The raw value). */
     static Sentinels sentinels(Field f, String arg, Wire wire, String format, String where) {
         switch (wire) {
@@ -2418,7 +2470,7 @@ public final class Pack {
                 return Sentinels.integers(arg, Locators.bitsParse(f.locator)[2], format, f.locator, where);
             case PROTOBUF:
                 if (f.pb.wireType() == 2) return Sentinels.texts(arg, false, format, f.locator, where);
-                return Sentinels.integers(arg, f.pb.wireType() == 5 ? 32 : 64, format, f.locator, where);
+                return Sentinels.integers(arg, f.pb.wireType() == 5 ? 32 : 64, f.pb.wireType() == 0, format, f.locator, where);
             case XML:
                 return Sentinels.texts(arg, true, format, f.locator, where);
             case TEXT:

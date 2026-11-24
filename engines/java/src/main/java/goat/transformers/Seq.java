@@ -599,8 +599,13 @@ final class Seq {
                     BitsTransform bt = BitsTransform.isBitsName(tname) ? BitsTransform.parse(tname, format, where) : null;
                     String via = null, absent = null, with = null, stop = null;
                     boolean swap = false, trim = false;
+                    OutputOptions out = new OutputOptions();
                     for (int i = 3; i < args.size(); i++) {
                         String o = args.get(i);
+                        if (OutputOptions.isName(o)) {
+                            i = out.take(args, i, format, locator, where);
+                            continue;
+                        }
                         if (o.equals("stop")) {
                             // engine-spec 0.22: the code that ends the text of a fixed-size chars field
                             if (stop != null) throw bad(format, locator, where + ": stop given twice");
@@ -623,10 +628,12 @@ final class Seq {
                         else throw bad(format, locator, where + ": unknown or repeated field option \"" + o + "\"");
                     }
                     Sentinels sentinels = absent != null && len <= 64 ? Sentinels.integers(absent, len, format, locator, where) : null;
+                    noTextOptions(out, format, locator, where);
                     if (stop != null) bt.stop = Pack.stopCode(stop, bt, format, locator, where);
                     if (via != null) vias.add(new String[]{via, locator, where});
                     Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, swap, trim, false, ln);
                     fl.absent = sentinels;
+                    fl.out = out;
                     afterFile.add(new Object[]{fl, tname, len, where, absent});
                     fl.with = with;
                     fields.add(fl);
@@ -1171,8 +1178,13 @@ final class Seq {
                 throw bad(format, locator, where + ": until: is for a chars:<set> field, got \"" + tname + "\"");
             }
             String via = null, with = null;
+            OutputOptions out = new OutputOptions();
             for (int i = 3; i < args.size(); i++) {
                 String o = args.get(i);
+                if (OutputOptions.isName(o)) {
+                    i = out.take(args, i, format, locator, where);
+                    continue;
+                }
                 if (o.equals("with") && with == null && i + 1 < args.size()) with = args.get(++i);
                 else if (o.equals("via") && via == null && i + 1 < args.size()) via = args.get(++i);
                 else if (o.equals("absent") || o.equals("swap") || o.equals("trim") || o.equals("stop")) {
@@ -1184,8 +1196,10 @@ final class Seq {
             bt.stop = -1;
             int code = Pack.stopCode(locator.substring("until:".length()), bt, format, locator, where);
             if (via != null) vias.add(new String[]{via, locator, where});
+            noTextOptions(out, format, locator, where);
             Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, false, false, false, ln);
             fl.with = with;
+            fl.out = out;
             fields.add(fl);
             typed.add(fl);
             keyRefs.add(new String[]{key, locator});
@@ -1217,8 +1231,13 @@ final class Seq {
             boolean ok = takes(u, tname);
             if (!ok) uperBad(format, locator, where + ": transform \"" + tname + "\" is not one the locator " + locator + " takes");
             String via = null;
+            OutputOptions out = new OutputOptions();
             for (int i = 3; i < args.size(); i++) {
                 String o = args.get(i);
+                if (OutputOptions.isName(o)) {
+                    i = out.take(args, i, format, locator, where);
+                    continue;
+                }
                 if (o.equals("via") && via == null && i + 1 < args.size()) via = args.get(++i);
                 else if (o.equals("absent")) {
                     // ruling 22 of 0.19: the bits of a UPER field depend on its value, no raw sentinel
@@ -1241,8 +1260,10 @@ final class Seq {
                 if (bt.hasPlaces()) uperBad(format, locator, where + ": a UPER locator takes no <places> argument on " + tname);
             }
             if (via != null) vias.add(new String[]{via, locator, where});
+            noTextOptions(out, format, locator, where);
             Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, false, false, false, ln);
             fl.tlv = tt;
+            fl.out = out;
             fields.add(fl);
             typed.add(fl);
             keyRefs.add(new String[]{key, locator});
@@ -1253,6 +1274,15 @@ final class Seq {
             n.keys.add(fl);
             f.lines.add(n);
             f.lastField = n;
+        }
+
+        /**
+         * {@code null} and {@code implicit} (engine-spec 0.56) are options of other wires than {@code bits}: refused,
+         * as a check after the file in a sequential layout too.
+         */
+        private void noTextOptions(OutputOptions out, String format, String locator, String where) {
+            if (out.nul) throw bad(format, locator, where + ": null is an option of the json and geojson wires only");
+            if (out.implicit) throw bad(format, locator, where + ": implicit is an option of the protobuf wire only");
         }
 
         /** A {@code case} or {@code else} line: it ends the case before it and opens its own. */
