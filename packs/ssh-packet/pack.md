@@ -19,8 +19,7 @@ None.
 - **Payload apart from padding**: the padding is the last `padding_length` octets of the block, after a
   payload with no length of its own, so the two are one list. Needed: a trailer after a `rest` list whose
   size a field gives.
-- **Encrypted packets**: with a cipher the packet length is encrypted too (or, with ChaCha20-Poly1305 and
-  the encrypt-then-MAC modes, kept apart); the pack reads plaintext packets. The MAC's size comes from
+- **Encrypted packets**: with a cipher the packet length is encrypted too; the pack reads plaintext packets. The MAC's size comes from
   the negotiated algorithm; it is the octets after the packet.
 - The identification string (`SSH-2.0-...`) that precedes the first packet is a text line.
 

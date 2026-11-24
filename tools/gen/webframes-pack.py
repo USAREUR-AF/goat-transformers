@@ -154,7 +154,7 @@ H3_KEYS = (vkeys("frame_type", "frame type (0 DATA, 1 HEADERS, 3 CANCEL_PUSH, 4 
            vkeys("frame_length", "frame length, octets of the payload (carried, not computed)") +
            [("list", "data", "DATA: the payload, as octets"), ("list", "field_section", "HEADERS, PUSH_PROMISE: the encoded field section (QPACK), as octets")] +
            vkeys("id_value", "CANCEL_PUSH push ID, GOAWAY stream or push ID, MAX_PUSH_ID push ID") +
-           [("list", "settings", "SETTINGS: the settings")] + vkeys("setting_id", "setting identifier (1 QPACK_MAX_TABLE_CAPACITY, 6 MAX_FIELD_SECTION_SIZE, 7 QPACK_BLOCKED_STREAMS ...)") +
+           [("list", "settings", "SETTINGS: the settings")] + vkeys("setting_id", "setting identifier (6 MAX_FIELD_SECTION_SIZE ...)") +
            vkeys("setting_value", "setting value") + vkeys("push_id", "PUSH_PROMISE: push ID") +
            [("list", "payload", "a frame of another type: its payload, as octets"), ("key", "octet", "one octet")])
 
@@ -177,7 +177,7 @@ def ws_pack():
 
 
 WS_KEYS = [
-    ("key", "fin", "FIN: the final fragment of a message"), ("key", "rsv1", "RSV1 (per-message compression when negotiated)"),
+    ("key", "fin", "FIN: the final fragment of a message"), ("key", "rsv1", "RSV1"),
     ("key", "rsv2", "RSV2"), ("key", "rsv3", "RSV3"),
     ("key", "opcode", "opcode: 0 continuation, 1 text, 2 binary, 8 close, 9 ping, 10 pong"), ("key", "mask", "MASK: the payload is masked (client to server)"),
     ("key", "payload_len7", "the 7-bit payload length: 0-125 the length, 126 a 16-bit length follows, 127 a 64-bit length follows"),

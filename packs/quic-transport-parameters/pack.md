@@ -1,7 +1,7 @@
 # Pack: quic-transport-parameters
 
 The QUIC transport parameters (RFC 9000 section 18): the data of the quic_transport_parameters TLS
-extension (type 57), each parameter a variable-length ID, a variable-length value length and the value.
+extension, each parameter a variable-length ID, a variable-length value length and the value.
 Wire `bits`, `layout sequential`. No kind. Written by `tools/gen/quic-pack.py`.
 
 ## Variable-length integers

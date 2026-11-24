@@ -4,7 +4,7 @@ version       0.1.0
 distribution  public
 source        "IETF RFC 6455, The WebSocket Protocol, December 2011, section 5.2, https://www.rfc-editor.org/rfc/rfc6455.txt; layout restated"
 key   fin              int     -  "FIN: the final fragment of a message"
-key   rsv1             int     -  "RSV1 (per-message compression when negotiated)"
+key   rsv1             int     -  "RSV1"
 key   rsv2             int     -  "RSV2"
 key   rsv3             int     -  "RSV3"
 key   opcode           int     -  "opcode: 0 continuation, 1 text, 2 binary, 8 close, 9 ping, 10 pong"

@@ -2,8 +2,8 @@
 
 A whole DNS message (RFC 1035 section 4.1): the header, the question section, and the answer, authority
 and additional sections with their resource records. Wire `bits`, `layout sequential`, most significant
-bit first. No kind. One message is one UDP payload (or a TCP message without its 2-octet length prefix);
-mDNS and DNS-SD messages are DNS messages. Written by `tools/gen/inet-more-pack.py`.
+bit first. No kind. One message is one UDP payload (or a TCP message without its 2-octet length prefix).
+Written by `tools/gen/inet-more-pack.py`.
 
 `dns-header` (on main) reads the 12-octet header; this pack reads the sections too.
 
@@ -40,7 +40,7 @@ lists.
   given value, and text whose length a field gives.
 - **The pack's size**: each name is ten levels of 63 cases, and records appear in three sections, so the
   generated pack is about 18,600 lines.
-- RDATA of the DNSSEC types, SVCB/HTTPS, NAPTR and the others are octets; EDNS option data is octets.
+- RDATA of other types is octets; EDNS option data is octets.
 
 ## Vectors
 

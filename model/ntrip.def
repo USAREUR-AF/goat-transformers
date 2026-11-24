@@ -12,7 +12,7 @@ key   nav_system          string  -  "STR: navigation system(s) (GPS, GPS+GLONAS
 key   network             string  -  "STR: network the stream belongs to"
 key   str_country         string  -  "STR: three-letter ISO 3166 country code"
 key   str_latitude        string  -  "STR: approximate latitude, degrees north, as written"
-key   str_longitude       string  -  "STR: approximate longitude, degrees east, as written (0-360 in many tables)"
+key   str_longitude       string  -  "STR: approximate longitude, degrees east, as written (the documentation's example is 357.85)"
 key   str_nmea            int     -  "STR: 1 the client must send an NMEA GGA position, 0 it must not"
 key   solution            int     -  "STR: 0 single base, 1 network"
 key   generator           string  -  "STR: hardware or software generating the stream"

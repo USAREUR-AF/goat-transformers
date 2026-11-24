@@ -29,7 +29,7 @@ None.
 
 ## Not mapped
 
-- **Frames of other types** (extensions such as DATAGRAM, ACK_FREQUENCY): a frame has no length of its
+- **Frames of other types** (extensions): a frame has no length of its
   own, so an unknown type cannot be skipped; such a payload is `no-kind`.
 - The packet protection and header that wrap the payload (`quic-long-header`), and the short header.
 

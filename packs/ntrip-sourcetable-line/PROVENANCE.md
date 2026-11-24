@@ -8,9 +8,14 @@ Read on 2026-11-21. No source file is copied into this tree.
 |---|---|---|
 | BKG, Networked Transport of RTCM via Internet Protocol (Ntrip) Version 1.0, documentation; section 6 (Source-Table) and Appendix A | https://igs.bkg.bund.de/root_ftp/NTRIP/documentation/NtripDocumentation.pdf | `d2399f37643acec3bff35b26cfc873613048a5f65bf4ccb66032eae708d44977` |
 
+On 2026-11-24 the address served a file with sha256
+`80c082b92e6d1ec61d548ff1803968efdcfdea40f5907e9ddc106c7a8b55d7f0` (22 pages). The field positions and meanings
+of the STR, CAS and NET records were compared with it (its Tables 1 to 3) and match. The pinned file could not
+be fetched again, so it was not re-checked.
+
 ## Licence
 
-The Ntrip standard (RTCM 10410.0 for version 1, 10410.1 for version 2) is sold by RTCM and was not read.
+The Ntrip standard (RTCM 10410.0 for version 1, 10410.1 for version 2) was not read.
 The German Federal Agency for Cartography and Geodesy (BKG), which developed Ntrip, publishes this
 documentation of version 1.0 on its server with no registration. Its title page says it is not the
 official RTCM documentation and points to RTCM for that; it omits the server and client message
