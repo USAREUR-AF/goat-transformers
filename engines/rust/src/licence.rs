@@ -525,6 +525,8 @@ impl Engine {
                     ),
                 });
             }
+            // set only after the name and the instance check: a refusal by
+            // either leaves the limit unchanged (ruling 6)
             self.limit_by_profile();
         }
         let models = opts.models.clone().unwrap_or_else(|| beside(packs, "/../model"));

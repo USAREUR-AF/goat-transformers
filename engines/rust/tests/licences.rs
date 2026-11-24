@@ -212,8 +212,8 @@ fn setting_controlled_after_a_profile_load_has_no_effect() {
 
 /// "A load with a profile on an instance that already holds a controlled
 /// module ... is `distribution-refused` before anything is read": a broken
-/// `licences.toml`, which would be `bad-licence`, is never read; then the
-/// limit is unchanged, since the instance check comes before it.
+/// `licences.toml`, which would be `bad-licence`, is never read; the call
+/// leaves no trace and the limit unchanged (ruling 6).
 #[test]
 fn an_instance_holding_a_controlled_module_is_refused_first() {
     let t = Tree::new("holds-module", &[("licences.toml", BAD_TABLE), ("model/core.def", CORE)]);
@@ -222,7 +222,9 @@ fn an_instance_holding_a_controlled_module_is_refused_first() {
     e.load_model(CTL_MODULE).unwrap();
     let err = e.load_tree(&t.packs(), &with(Some("open"))).unwrap_err();
     assert!(err.msg.starts_with("distribution-refused:"), "{}", err.msg);
+    // no trace: the refused call loaded nothing
     assert_eq!(e.modules(), vec!["core", "ctl"]);
+    assert!(e.formats().is_empty(), "{:?}", e.formats());
     // the limit is unchanged: a controlled pack still loads directly
     e.load_def(&pack("c-ctl", "controlled")).unwrap();
 }
@@ -236,7 +238,10 @@ fn an_instance_holding_a_controlled_pack_is_refused_first() {
     e.load_def(&pack("c-ctl", "controlled")).unwrap();
     let err = e.load_tree(&t.packs(), &with(Some("everything"))).unwrap_err();
     assert!(err.msg.starts_with("distribution-refused:"), "{}", err.msg);
+    // no trace: the refused call loaded nothing
     assert_eq!(e.formats(), vec!["c-ctl"]);
+    assert_eq!(e.modules(), vec!["core"]);
+    // the limit is unchanged: a controlled pack still loads directly
     e.load_def(&pack("c-ctl-2", "controlled")).unwrap();
 }
 
