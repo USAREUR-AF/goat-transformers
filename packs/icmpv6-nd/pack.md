@@ -26,6 +26,8 @@ keys of `icmpv6-header`.
 - **Option bodies by their length**: an option's length counts 8-octet units, which a `length` block does
   not count, so the body's size is chosen by a `switch` on the length (up to 32 units, 256 octets); RDNSS
   addresses and DNSSL names are therefore one hex field each. Needed: a length in n-octet units.
+- **The prefix information bit after A** (`icmpnd.router_address`) is the R bit RFC 6275 section 7.2 adds; RFC
+  4861 has a 6-bit reserved field there. RFC 6275 was read after the pack was written; it matches.
 - The checksum is carried, not computed (it covers an IPv6 pseudo-header).
 
 ## Vectors

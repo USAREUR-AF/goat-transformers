@@ -1,6 +1,6 @@
 # Pack: dstar-radio-header
 
-The 41-octet D-STAR radio header (after descrambling and deinterleaving): three flag octets, the RPT2,
+The 41-octet D-STAR radio header, as decoded octets: three flag octets, the RPT2,
 RPT1, YOUR and MY callsigns (8 characters each), the MY suffix (4 characters) and the checksum. Wire `bits`,
 `layout sequential`, `bit_order msb`. Written by `tools/gen/hamdig-pack.py`.
 
@@ -18,8 +18,8 @@ None.
 ## Not mapped
 
 - **The checksum computed** (CRC-CCITT over the 39 octets): as sent.
-- **Coding** (convolutional coding, interleaving, scrambling of the 660-bit header): below this pack.
-- **The network forms** of the header (DExtra, D-Plus, DCS, G2 packets), which wrap the same 41 octets.
+- **The radio coding** of the header: below this pack.
+- **The network packets** the source reads a header from (DExtra, D-Plus, DCS, G2 and others).
 
 ## Message convention
 

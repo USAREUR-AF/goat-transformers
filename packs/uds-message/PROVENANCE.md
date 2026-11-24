@@ -17,6 +17,8 @@ Read on 2026-11-21. No source file is copied into this tree.
 | `udsoncan/services/SecurityAccess.py` | `211dbdf620371c93a5ac1bbaf665b2ec74d1d1976164914b07b98b0f5b8bf56b` |
 | `udsoncan/services/RoutineControl.py` | `da34d80d9b3ef62e1172561f7c2e66833023b6a743e6213955bcb0ea87d28105` |
 | `udsoncan/services/TesterPresent.py` | `30e64ffc7a39741cf4d0a23ad13d1aba04a58c38a615baed926692b26cac46be` |
+| `udsoncan/ResponseCode.py` (read 2026-11-24) | `a366ef3d401a520085bedba70b14acbe5e9677fc9b3adb49c852b43420264a8c` |
+| `udsoncan/BaseService.py` (read 2026-11-24) | `8225861470109388f91976d88c27c5fa2cf344f62a7bdca31af7ba20cdd15d13` |
 | `LICENSE.txt` | `aae122e22b842c7fe113e6968ff00a52619d3a11b37f7791eebecb7fc7042103` |
 
 ## Licence
@@ -25,7 +27,7 @@ Read on 2026-11-21. No source file is copied into this tree.
 project's rule for code sources the restated layouts carry the default Apache-2.0 label.
 
 This pack restates the layouts (field order, sizes, codes) in its own words; no code, comment or table
-of the source is copied. ISO 14229-1, a paid document, was not used. The vectors are built by `tools/gen/vehnet-vectors.py` from values chosen
+of the source is copied. ISO 14229-1 and its terms: not read. The vectors are built by `tools/gen/vehnet-vectors.py` from values chosen
 there; their expected bytes are derived there, without an engine.
 
 ## Attribution

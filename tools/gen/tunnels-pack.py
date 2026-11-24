@@ -75,7 +75,7 @@ GPE_KEYS = [
     ("key", "b_flag", "B bit: ingress-replicated broadcast, unknown unicast or multicast traffic"),
     ("key", "o_flag", "O bit: an OAM packet"),
     ("key", "reserved", "the 16 reserved bits after the flags, 0"),
-    ("key", "next_protocol", "the header after VXLAN-GPE, from the LISP-GPE next protocol registry (1 IPv4, 2 IPv6, 3 Ethernet, 4 NSH, 5 MPLS)"),
+    ("key", "next_protocol", "the header after VXLAN-GPE, from the LISP-GPE next protocol registry (1 IPv4, 2 IPv6, 3 Ethernet, 4 NSH)"),
 ]
 
 

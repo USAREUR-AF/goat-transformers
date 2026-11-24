@@ -6,12 +6,11 @@ namespace). Wire `xml`, root `STMTTRN`. Written by `tools/gen/finance-pack.py`.
 ## What is mapped
 
 TRNTYPE, DTPOSTED, TRNAMT, FITID, CHECKNUM, NAME and MEMO, each its element text, in that order
-(the order the source's sample statements use).
+(PROVENANCE.md says which sample supports it).
 
 ## Shared keys
 
-None. DTPOSTED is OFX date-time text (YYYYMMDDHHMMSS with optional fraction and time zone in brackets),
-not ISO 8601, so it is not bound to `time_ms`.
+None. DTPOSTED is text as sent, not ISO 8601 in the samples, so it is not bound to `time_ms`.
 
 ## Not mapped
 
@@ -20,7 +19,7 @@ not ISO 8601, so it is not bound to `time_ms`.
 - **OFX 1.x SGML** (elements without end tags): not XML; the xml wire refuses it.
 - **DTUSER**: no XML sample read shows its place (`anzcc.ofx`, where it occurs, has no end tags), so it is not
   mapped; the key `ofx.dtuser` stays declared.
-- **Other STMTTRN elements** (SIC, PAYEEID, REFNUM, SRVRTID, CURRENCY, PAYEE, BANKACCTTO ...): the source
+- **Other STMTTRN elements** (such as SIC): the source
   does not give their place in the order; they are residue of the xml wire.
 - Values typed (amounts and dates are text).
 

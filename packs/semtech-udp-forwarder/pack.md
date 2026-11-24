@@ -1,7 +1,6 @@
 # Pack: semtech-udp-forwarder
 
-One datagram of the Semtech UDP packet forwarder protocol (gateway to network server, UDP port 1700 by
-convention). Wire `bits`, `layout sequential`, `bit_order msb`. No kinds: the identifier chooses the
+One datagram of the Semtech UDP packet forwarder protocol (gateway and server). Wire `bits`, `layout sequential`, `bit_order msb`. No kinds: the identifier chooses the
 layout. Written by `tools/gen/lpwan2-pack.py`.
 
 ## What is mapped
@@ -22,7 +21,6 @@ None.
 - **The JSON object as text or as fields** (`rxpk`, `stat`, `txpk`, `txpk_ack`): its octets, because a
   character field that runs to the end of the message is not in the pack language; the members (and the
   base64 LoRaWAN PHYPayload in `data`) would need a second pass with a JSON pack.
-- The newer Basic Station protocol (WebSocket, JSON) and the GWMP extensions of other forwarders.
 
 ## Message convention
 

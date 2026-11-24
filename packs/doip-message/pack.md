@@ -26,8 +26,8 @@ None.
 - **Optional trailing fields as absent**: a vehicle announcement without the sync status (version 1)
   and an entity status response without the maximum data size re-encode with zeros for them (ruling 7
   of 0.8, vector 10).
-- **A VIN or EID not yet configured** (0x00 or 0xFF fill): the VIN is `chars:ascii8`, which refuses 0xFF.
-- DoIP over TLS (port 3496) and the payload types of later amendments.
+- **A VIN of octets outside ASCII**: the VIN is `chars:ascii8`, which refuses them.
+- DoIP over TLS (port 3496).
 
 ## Message convention
 

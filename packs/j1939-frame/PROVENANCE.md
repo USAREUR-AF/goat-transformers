@@ -27,7 +27,7 @@ Read on 2026-11-21. No source file is copied into this tree.
 
 This pack restates the layouts (field order, sizes, bit positions, codes) in its own words; no code,
 comment or table of the sources is copied. Under this project's rule for code sources the pack keeps
-the default Apache-2.0 label. SAE J1939, a paid set of documents, was not used. The vectors are built by
+the default Apache-2.0 label. SAE J1939 and its terms: not read. The vectors are built by
 `tools/gen/j1939-vectors.py` from values chosen there; their expected bytes are derived there, without
 an engine.
 

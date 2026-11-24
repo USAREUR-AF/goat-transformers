@@ -1,7 +1,6 @@
 # Pack: rtz-route
 
-An RTZ route exchange file, schema revision 1.2 (CIRM; the format of IEC PAS 61174-1:2021, used by
-ECDIS for route plans). Wire `xml`, root `route`; the default namespace `http://www.cirm.org/RTZ/1/2` and
+An RTZ route exchange file, schema revision 1.2 (CIRM; its header names IEC PAS 61174-1:2021). Wire `xml`, root `route`; the default namespace `http://www.cirm.org/RTZ/1/2` and
 `version="1.2"` select the one kind, `route`. One message is one file. Written by
 `tools/gen/maritime-pack.py`. Labelled `LicenseRef-unstated` (PROVENANCE.md).
 
@@ -32,7 +31,7 @@ information's MMSI and IMO number are the planned vessel's, not a sender's.
 - **Schedules after the first**: a group reads the elements under the first matching `schedule`.
 - **Extensions** (`extensions/extension` with vendor content, at every level): their content is any
   XML; extensions inside list items are not kept.
-- RTZ 1.0 and 1.1 (other namespaces) are `no-kind`; the schema of IEC 61174 (RTZ 1.0) differs.
+- Files with another namespace are `no-kind`.
 
 ## Vectors
 

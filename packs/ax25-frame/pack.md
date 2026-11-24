@@ -15,8 +15,7 @@ are hex. Written by `tools/gen/radio-pack.py`. Labelled `LicenseRef-unstated` (P
   and source) or H bit (repeaters), two reserved bits, the SSID, and the extension bit.
 - **The repeater chain** ends at the address whose extension bit is 1. A list cannot end on a bit
   inside its item, so each repeater is a `switch` on the previous address's extension bit, nested
-  eight deep. Version 2.2 allows two repeaters; the pack reads up to eight (the version 2.0 limit,
-  still sent by APRS stations). A ninth is `no-kind`.
+  eight deep. Version 2.2 allows two repeaters; the pack reads up to eight. A ninth is `no-kind`.
 - **Control**: the whole octet. The frame type (I, S, U) is in its low bits, read after the bits
   that hold N(R), P/F and N(S), so the layout after it is a `switch` on the octet's value: I frames
   (every even value) and UI (0x03, 0x13) have a PID and an information field; XID, TEST and FRMR

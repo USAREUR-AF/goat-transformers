@@ -18,7 +18,7 @@ pack relies on neither, as it restates layout facts.)
 
 This pack restates the layouts (field order, sizes, bit positions, codes) in its own words; no code,
 comment or table of the source is copied. Under this project's rule for code sources the pack keeps the
-default Apache-2.0 label. IEC 62056-46 and the DLMS UA Green Book, paid documents, were not used. The vectors are built by `tools/gen/meter2-vectors.py` from values chosen
+default Apache-2.0 label. IEC 62056-46, the DLMS UA Green Book and their terms: not read. The vectors are built by `tools/gen/meter2-vectors.py` from values chosen
 there; their expected bytes are derived there, without an engine.
 
 ## Attribution

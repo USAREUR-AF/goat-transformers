@@ -1,6 +1,6 @@
 # Pack: sirf-binary
 
-A SiRF binary frame (SiRFstar receivers and their derivatives): start A0 A2, the payload length, the
+A SiRF binary frame: start A0 A2, the payload length, the
 payload, the checksum, end B0 B3. Wire `bits`, `layout sequential`, `bit_order msb` (big-endian). One kind,
 `sirf`. Written by `tools/gen/gnssbin-pack.py`.
 

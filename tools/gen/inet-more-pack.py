@@ -127,26 +127,26 @@ def dns_pack():
 
 
 DNS_KEYS = ([("list", "questions", "the question section (its count is written from the list)"),
-             ("key", "qtype", "question type (1 A, 28 AAAA, 15 MX, 255 ANY ...)"), ("key", "qclass", "question class (1 IN; mDNS sets the top bit for a unicast reply)")] +
+             ("key", "qtype", "question type (1 A, 28 AAAA, 15 MX, 255 ANY ...)"), ("key", "qclass", "question class (1 IN)")] +
             name_keys("qname", "question name") +
             [("list", "answers", "the answer section"), ("list", "authority", "the authority section"), ("list", "additional", "the additional section")] +
             name_keys("owner", "record owner name") +
             [("key", "type", "record type (1 A, 2 NS, 5 CNAME, 6 SOA, 12 PTR, 15 MX, 16 TXT, 28 AAAA, 33 SRV, 41 OPT, 257 CAA ...)"),
-             ("key", "class", "record class (1 IN; mDNS uses the top bit as cache flush)"), ("key", "ttl", "time to live, seconds"),
+             ("key", "class", "record class (1 IN)"), ("key", "ttl", "time to live, seconds"),
              ("key", "a", "A: the IPv4 address, the 32-bit integer"), ("key", "aaaa", "AAAA: the IPv6 address, as hexadecimal digits"),
              ("key", "preference", "MX: preference")] +
             name_keys("target", "NS, CNAME, PTR, MX or SRV target name") +
             [("list", "txt", "TXT: the character strings"), ("list", "txt_chars", "TXT: one character string, as octets (its length is written from the list)"),
              ("key", "serial", "SOA: serial"), ("key", "refresh", "SOA: refresh, seconds"), ("key", "retry", "SOA: retry, seconds"),
-             ("key", "expire", "SOA: expire, seconds"), ("key", "minimum", "SOA: minimum (negative caching TTL), seconds")] +
+             ("key", "expire", "SOA: expire, seconds"), ("key", "minimum", "SOA: minimum, seconds")] +
             name_keys("mname", "SOA primary server name") + name_keys("rname", "SOA responsible mailbox name") +
             [("key", "priority", "SRV: priority"), ("key", "weight", "SRV: weight"), ("key", "port", "SRV: port"),
              ("key", "caa_flags", "CAA: flags (128 issuer critical)"), ("list", "caa_tag", "CAA: the property tag, as octets (its length is written from the list)"),
              ("list", "caa_value", "CAA: the property value, as octets"), ("list", "rdata", "RDATA of another type, as octets"),
              ("key", "udp_payload_size", "OPT (EDNS): the requester's UDP payload size"), ("key", "extended_rcode", "OPT: the upper 8 bits of the extended response code"),
-             ("key", "edns_version", "OPT: EDNS version (0)"), ("key", "dnssec_ok", "OPT: DO bit, DNSSEC answers wanted"),
+             ("key", "edns_version", "OPT: EDNS version (0)"), ("key", "dnssec_ok", "OPT: DO bit, DNSSEC OK"),
              ("key", "edns_z", "OPT: the 15 Z bits, 0"), ("list", "edns_options", "OPT: the EDNS options"),
-             ("key", "option_code", "EDNS option code (10 COOKIE, 12 PADDING, 8 client subnet, 15 extended error ...)"),
+             ("key", "option_code", "EDNS option code"),
              ("list", "option_data", "EDNS option data, as octets"), ("key", "octet", "one octet")])
 DNS_STRINGS = [k[1] for k in DNS_KEYS if "_label" in k[1]] + ["aaaa"]
 
@@ -205,7 +205,7 @@ DHCP_KEYS = [
     ("list", "options", "the options, in order"),
     ("key", "option_code", "option code (1 client ID, 2 server ID, 3 IA_NA, 4 IA_TA, 6 ORO, 7 preference, 8 elapsed time, 13 status, 14 rapid commit, 23 DNS servers, 25 IA_PD ...)"),
     ("key", "duid_type", "DUID type: 1 link-layer plus time, 2 enterprise number, 3 link-layer, 4 UUID"),
-    ("key", "hardware_type", "DUID: hardware type (1 Ethernet)"), ("key", "duid_time", "DUID-LLT: time, seconds since 2000-01-01 UTC, modulo 2^32"),
+    ("key", "hardware_type", "DUID: hardware type, as IANA assigns them"), ("key", "duid_time", "DUID-LLT: time, seconds since 2000-01-01 UTC, modulo 2^32"),
     ("list", "link_layer_address", "DUID: the link-layer address, as octets"), ("key", "enterprise_number", "DUID-EN: the IANA enterprise number"),
     ("list", "duid_identifier", "DUID-EN identifier, or a DUID of another type, as octets"), ("key", "duid_uuid", "DUID-UUID: the UUID, as hexadecimal digits"),
     ("key", "iaid", "IA: identity association ID"), ("key", "t1", "IA: T1, seconds"), ("key", "t2", "IA: T2, seconds"),
@@ -286,7 +286,7 @@ ND_KEYS = [
     ("key", "link_layer_address", "link-layer address option: the address (and any padding), as hexadecimal digits"),
     ("key", "prefix_length", "prefix information: prefix length"), ("key", "on_link", "prefix information L flag: on-link"),
     ("key", "autonomous", "prefix information A flag: usable for autonomous address configuration"),
-    ("key", "router_address", "prefix information R flag (RFC 6275): the prefix field holds the router's address"),
+    ("key", "router_address", "prefix information R flag (RFC 6275): the prefix field holds a whole address of the sending router"),
     ("key", "prefix_reserved1", "prefix information: the 5 reserved bits"), ("key", "valid_lifetime", "prefix information: valid lifetime, seconds (0xFFFFFFFF infinity)"),
     ("key", "preferred_lifetime", "prefix information: preferred lifetime, seconds"), ("key", "prefix_reserved2", "prefix information: the 32 reserved bits"),
     ("key", "prefix", "prefix information: the prefix, as hexadecimal digits"),

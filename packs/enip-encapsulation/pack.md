@@ -1,6 +1,6 @@
 # Pack: enip-encapsulation
 
-An EtherNet/IP encapsulation message (TCP port 44818, or UDP for ListIdentity and I/O): the 24-octet
+An EtherNet/IP encapsulation message (TCP or UDP port 44818): the 24-octet
 header and the command data. Wire `bits`, `layout sequential`, `bit_order lsb` (EtherNet/IP is
 little-endian); the socket address item's fields are big-endian (`swap`). No kinds. Written by
 `tools/gen/indauto2-pack.py`.
@@ -28,7 +28,7 @@ None.
 ## Not mapped
 
 - **The CIP message** inside unconnected and connected data items (service, request path, status,
-  data): octets. Its layout is in packet-cip.c and the paid CIP specification.
+  data): octets. The CIP specification: not read.
 - **ListIdentity, ListServices and ListInterfaces replies**: octets (their item list is the same CPF,
   but a request has no data at all, and a count line at the end of an empty block re-encodes as two
   zero octets under ruling 7 of 0.8, so the commands are left to octets).

@@ -11,6 +11,10 @@ Read on 2026-11-21. No source file is copied into this tree.
 | `novatel_gps_driver/include/novatel_gps_driver/binary_header.h` | `75c60fdbfeff3cac48e399c01f9c17260de711423c12c20071bbaf1f6e527307` |
 | `novatel_gps_driver/src/parsers/bestpos.cpp` | `9c74a8438ce0a9faf0b2ca6a5b9a31af15caf57cc682e8f8d05190becf75965e` |
 | `novatel_gps_driver/include/novatel_gps_driver/parsers/bestpos.h` | `0ad41d7ee5884d2892735dde36f15c822698bab5e200f0f5ad835d1727e59a82` |
+| `novatel_gps_driver/src/parsers/header.cpp` (time status values; read 2026-11-24) | `4d4e11d2ce574dc89db4f2a45a855d93d8288c33c8284d14ee0f45cd74bca321` |
+| `novatel_gps_driver/include/novatel_gps_driver/parsers/header.h` (header length; read 2026-11-24) | `79c568fdc0bc9a2e29462c1d037e6cdec492f9d5541b86c40f1e42ad1cb320f4` |
+| `novatel_gps_driver/src/novatel_message_extractor.cpp` (header length and CRC; read 2026-11-24) | `137b3b42eef4317f1f55f51460be10d286f29cdf4bb70ca9432d38eee7861c7e` |
+| `novatel_gps_driver/include/novatel_gps_driver/novatel_message_extractor.h` (read 2026-11-24) | `8af67c88d0af2754acf7e6bfe6723a871b4ef6ee7c74535b664c0f6c0c430cc8` |
 | `novatel_gps_driver/src/novatel_gps.cpp` (how BESTPOS feeds a fix) | `c368be67a72c95af0e3c74c32e81fd6bee28f731bec376ffb9829811638816e9` |
 
 ## Licence

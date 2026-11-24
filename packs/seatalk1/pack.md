@@ -48,9 +48,8 @@ datum is not stated by the source.
   bearing, and the waypoint name's six-bit characters: each part is a key; the combining formulas are
   in the key descriptions. Combining them needs derived keys over several fields.
 - **Depth bit 15**: kept in `depth_raw` (the source masks it before scaling).
-- **The ninth (command) bit** of the bus and collisions: below this pack.
-- Datagrams the source does not decode (autopilot commands 0x86, the 0x58 raw position, 0x30 lamp
-  intensity and others): kept by `other`.
+- Datagrams the source does not decode (such as 0x58, which its comments name for raw position): kept
+  by `other`.
 
 ## Message convention
 

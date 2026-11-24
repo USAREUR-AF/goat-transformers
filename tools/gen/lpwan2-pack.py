@@ -130,7 +130,7 @@ FWD_KEYS = [
     ("int", "protocol_version", "protocol version (2)"), ("int", "token", "random token, repeated in the acknowledgement"),
     ("int", "identifier", "packet type: 0 PUSH_DATA, 1 PUSH_ACK, 2 PULL_DATA, 3 PULL_RESP, 4 PULL_ACK, 5 TX_ACK"),
     ("string", "gateway_eui", "gateway unique identifier (MAC address), the 8 octets as hexadecimal digits"),
-    ("list", "json", "the JSON object (rxpk and stat for PUSH_DATA, txpk for PULL_RESP, txpk_ack for TX_ACK), its UTF-8 octets"),
+    ("list", "json", "the JSON object (rxpk and stat for PUSH_DATA, txpk for PULL_RESP, txpk_ack for TX_ACK), its octets"),
     ("int", "octet", "one octet"),
 ]
 

@@ -3,9 +3,9 @@ module        dstar
 version       0.1.0
 distribution  public
 source        "ircDDBGateway, https://github.com/g4klx/ircDDBGateway at commit f5ab9f7c93c6f28147b84a8f9667f6cc4c027eaa, Common/HeaderData.cpp and Common/DStarDefines.h (GPL-2.0, Copyright (C) 2010-2014 Jonathan Naylor G4KLX); layout restated, no code copied; the JARL D-STAR specification not used"
-key   data              int     -  "flag 1 bit 7: data (not voice)"
-key   repeater          int     -  "flag 1 bit 6: via a repeater"
-key   interrupted       int     -  "flag 1 bit 5: communication interrupted"
+key   data              int     -  "flag 1 bit 7: data"
+key   repeater          int     -  "flag 1 bit 6: repeater"
+key   interrupted       int     -  "flag 1 bit 5: interrupted"
 key   control_signal    int     -  "flag 1 bit 4: control signal"
 key   urgent            int     -  "flag 1 bit 3: urgent"
 key   repeater_control  int     -  "flag 1 bits 2-0: 7 repeater control, 6 auto reply, 4 resend requested, 3 ACK, 2 no response, 1 relay unavailable"

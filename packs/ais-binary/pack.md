@@ -91,8 +91,8 @@ is not encoded as any of them.
 What the evidence does not show, as for pack `ais`:
 
 - **Datum.** The source names no datum. `core.lat` and `core.lon` are WGS 84;
-  the binding assumes AIS positions are WGS 84, the assumption pack `ais`
-  makes and states.
+  ITU-R M.1371-6 A7-3 states WGS 84 for the positions of the AIS messages
+  (see pack `ais`); that it holds inside these application payloads is assumed.
 - **Whose position.** The position is of the entity the message describes,
   which is not always the sending ship: the port and berth (FI 18), the berth
   (FI 20), the meteorological station (FI 11, 31), the signal station or signal

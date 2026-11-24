@@ -3,10 +3,10 @@ module        ofx
 version       0.1.0
 distribution  public
 source        "ofxparse, https://github.com/jseutter/ofxparse at commit 25aa80072be71da9f4ea0924ae1d1aaea2d5820c, ofxparse/ofxparse.py and tests/fixtures/*.ofx (MIT License, Copyright (c) 2009 Jerry Seutter); element names and order restated, no code copied; the OFX specification not used"
-key   trntype   string  -  "TRNTYPE: transaction type (CREDIT, DEBIT, CHECK, INT, DIV, FEE, SRVCHG, DEP, ATM, POS, XFER, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, OTHER)"
-key   dtposted  string  -  "DTPOSTED: date posted, OFX date-time text (YYYYMMDDHHMMSS.XXX[gmt offset:tz])"
-key   dtuser    string  -  "DTUSER: date the user initiated the transaction, OFX date-time text"
-key   trnamt    string  -  "TRNAMT: amount, decimal text (negative for debits)"
+key   trntype   string  -  "TRNTYPE: transaction type, code as sent"
+key   dtposted  string  -  "DTPOSTED: date posted, as sent"
+key   dtuser    string  -  "DTUSER: user date, as sent"
+key   trnamt    string  -  "TRNAMT: amount, as sent"
 key   fitid     string  -  "FITID: financial institution transaction ID"
 key   checknum  string  -  "CHECKNUM: check number"
 key   name      string  -  "NAME: payee name"

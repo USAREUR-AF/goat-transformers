@@ -15,8 +15,7 @@ Read on 2026-11-21. No source file is copied into this tree.
 ## Licence
 
 `LICENSE` is the MIT License, "Copyright (c) 2012-2018, CRS4". Under this project's rule for code sources the
-restated field numbers and names carry the default Apache-2.0 label. The HL7 v2.5 standard (a paid document
-of HL7 International) was not used; hl7apy's tables are the source of the field numbers and names.
+restated field numbers and names carry the default Apache-2.0 label. The HL7 v2.5 standard and its terms: not read; hl7apy's tables are the source of the field numbers and names.
 
 This pack restates the segment structure in its own words (field positions and names); no code is copied.
 The vectors are built by `tools/gen/health-vectors.py` from values chosen there (an invented patient); their

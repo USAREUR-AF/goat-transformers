@@ -32,8 +32,8 @@ codes more) have their own value sets and are `nbns` keys; B replaces a reserved
   octets needs a two-characters-to-one-octet transform the pack language does not have.
 - **Names of more than four labels**: a fifth label is `no-kind`.
 - **Pointers followed**: a pointer is its offset.
-- **Statistics of another length**: the 46 octets of section 4.2.18 are read by field; fewer (some
-  implementations send less) re-encode with zeros up to 46 (ruling 7 of 0.8), and octets beyond are
+- **Statistics of another length**: the 46 octets of section 4.2.18 are read by field; fewer
+  re-encode with zeros up to 46 (ruling 7 of 0.8), and octets beyond are
   skipped.
 - **The TCP length prefix** and the Session Service (section 4.3).
 

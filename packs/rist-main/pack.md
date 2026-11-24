@@ -32,7 +32,7 @@ None.
 
 ## Not mapped
 
-- **The payload** of a reduced overhead packet (usually RTP: see `rtp-packet`) and of a full
+- **The payload** of a reduced overhead packet and of a full
   datagram is octets; with a pre-shared key it is ciphertext.
 - **The JSON keep-alive payload** is octets: the `bits` wire has no text transform whose length the
   end of the packet gives.

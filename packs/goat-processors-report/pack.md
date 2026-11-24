@@ -14,7 +14,7 @@ object, because a JSON member name holding `.` is not addressable (engine-spec
 | `track.source_id` | `track.source_id` (nested) | which source reported the track; usually set on the command line (`--set track.source_id=<source>`) |
 | `uid`, `type`, `callsign` | same names | strings |
 | `time_ms`, `stale_ms` | same names | integers, epoch ms |
-| `lat`, `lon`, `hae`, `ce`, `course`, `speed_ms` | same names | numbers; `hae` is the model key unchanged, metres above the WGS 84 ellipsoid |
+| `lat`, `lon`, `hae`, `ce`, `course`, `speed_ms` | same names | numbers; `hae` is the model key unchanged, metres above the WGS 84 ellipsoid; the source calls `ce` a one-sigma horizontal error, while the model key states no sigma |
 | `time_error_ms`, `time_state` | same names | time quality of the stamping clock |
 
 Not mapped: every other model key. A message decoded from another format

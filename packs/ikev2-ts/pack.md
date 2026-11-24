@@ -17,7 +17,7 @@ None of `core` or `track`. The generic payload header (`ikev2.next_payload`, `ik
 
 ## Not mapped
 
-- Selector types other than 7 and 8 (such as the Fibre Channel type of RFC 4595) are octets after the length.
+- Selector types other than 7 and 8 are octets after the length.
 
 ## Vectors
 

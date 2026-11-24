@@ -8,7 +8,7 @@ hl7apy lists them. Written by `tools/gen/health-pack.py`.
 
 One message is one segment line, without its CR terminator; a whole HL7 message is several lines, one
 per segment. In MSH the field separator `|` is itself MSH-1, so the text after `MSH|` is MSH-2 (the
-encoding characters, normally `^~\&`), and MSH-n is the n-1th field of the line. Every field is marked
+encoding characters), and MSH-n is the n-1th field of the line. Every field is marked
 `optional`, so a line is written back without trailing separators.
 
 ## What is mapped
@@ -33,8 +33,8 @@ maps it as text and nothing more.
 - **The other segments** (EVN, PV1, ORC, OBR, NTE, AL1 and the rest): `no-kind`.
 - **Characters outside printable ASCII** (non-ASCII names in another character set): the text wire refuses
   them (`malformed-wire`).
-- **Data types** (TS times, NM numbers): text.
-- **Message structure** (which segments follow which) and MLLP framing.
+- **Data types**: text.
+- **Message structure** (which segments follow which).
 
 ## Vectors
 

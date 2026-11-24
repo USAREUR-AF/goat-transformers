@@ -17,8 +17,8 @@ field 0: `str` (a data stream), `cas` (a caster), `net` (a network of streams), 
   miscellaneous.
 
 Carrier, NMEA, solution, bit rate and the ports are integers; the rest are strings as written,
-latitude and longitude included (the documentation states two decimals, tables carry more, and
-longitudes are often 0-360).
+latitude and longitude included (the documentation states two decimals, and gives a longitude of
+357.85).
 
 ## Shared keys
 
@@ -32,7 +32,7 @@ None. The latitude and longitude are a stream's or caster's approximate position
 - **Fields after the last named one**: the documentation lets tables add fields before the last
   (miscellaneous) one; such a record's later fields shift, and the pack reads them by position.
 - **The HTTP response** around the table (status line, `Server:`, `Content-Type`, `Content-Length`) and
-  NTRIP version 2 additions (the `NTRIP-...` headers; version 2 is RTCM's document, not read).
+  NTRIP version 2 additions (the `NTRIP-...` headers; version 2 was not read).
 
 ## Vectors
 

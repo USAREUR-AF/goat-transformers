@@ -1,9 +1,9 @@
 # Pack: ptp-message
 
-A PTP (IEEE 1588-2008 and -2019, version 2) message as linuxptp lays it out: the 34-octet common header,
+A PTP (IEEE 1588, version 2) message as linuxptp lays it out: the 34-octet common header,
 the body by message type, and the suffix TLVs to the message length. Wire `bits`, `layout sequential`,
 most significant bit first. No kind: a `switch` on the message type chooses the body; an unassigned type
-is `no-kind`. One message is one UDP payload (ports 319 and 320) or Ethernet payload (EtherType 0x88F7).
+is `no-kind`. One message is one UDP or Ethernet payload.
 Written by `tools/gen/gnss-time-pack.py`.
 
 ## What is mapped

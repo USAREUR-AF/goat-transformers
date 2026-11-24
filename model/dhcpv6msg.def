@@ -11,7 +11,7 @@ key   peer_address        string  -  "relay: peer address, as hexadecimal digits
 list  options             "the options, in order"
 key   option_code         int     -  "option code (1 client ID, 2 server ID, 3 IA_NA, 4 IA_TA, 6 ORO, 7 preference, 8 elapsed time, 13 status, 14 rapid commit, 23 DNS servers, 25 IA_PD ...)"
 key   duid_type           int     -  "DUID type: 1 link-layer plus time, 2 enterprise number, 3 link-layer, 4 UUID"
-key   hardware_type       int     -  "DUID: hardware type (1 Ethernet)"
+key   hardware_type       int     -  "DUID: hardware type, as IANA assigns them"
 key   duid_time           int     -  "DUID-LLT: time, seconds since 2000-01-01 UTC, modulo 2^32"
 list  link_layer_address  "DUID: the link-layer address, as octets"
 key   enterprise_number   int     -  "DUID-EN: the IANA enterprise number"

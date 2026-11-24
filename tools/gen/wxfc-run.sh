@@ -75,7 +75,7 @@ gen "forecast=$MET#/definitions/METJSONForecast" metno-locationforecast metnolf 
 
 OL="CC-BY-4.0 (Open-Meteo's OpenAPI document states CC BY 4.0; the repository open-meteo/open-meteo is AGPL-3.0)"
 OS="Open-Meteo, openapi/forecast.yml of https://github.com/open-meteo/open-meteo at commit 7cc41ffa9a79c2e4c7ad4e18f13b51ab8df610aa, the 200 response of GET /v1/forecast, restated in tools/gen/wxfc/openmeteo-forecast-1.0-response.json"
-EV_OM="The document gives the request's latitude and longitude as geographical WGS 84 coordinates; the response's latitude and longitude are those of the grid cell the forecast was computed for, in the same terms (decimal degrees, WGS 84)."
+EV_OM="The Open-Meteo documentation page (https://open-meteo.com/en/docs, read 2026-11-24, SHA-256 d8436072c9587c17bc418d10a00b55307e3493999cef57eed0cee3618e086a06) gives the response latitude and longitude as the WGS 84 coordinates of the centre of the grid cell the forecast was made from."
 gen "forecast=$OM#/\$defs/ForecastResponse" openmeteo-forecast omfc \
   "Open-Meteo Weather Forecast API, the response of GET /v1/forecast (one location)" "$OL" "$OS" \
   --map forecast:latitude=lat --map forecast:longitude=lon \
@@ -84,7 +84,7 @@ gen "forecast=$OM#/\$defs/ForecastResponse" openmeteo-forecast omfc \
 
 BL="Apache-2.0 (this project's restatement of the Bright Sky API objects; Bright Sky's OpenAPI document and repository are MIT)"
 BSRC="Bright Sky 2.2.12, OpenAPI 3.1.0 document https://api.brightsky.dev/openapi.json (served 2026-11-21, SHA-256 2488b99f28691318939a29eadf55500a7fde7bd646032d193bf16a7885185b63); repository jdemaeyer/brightsky (MIT)"
-EV_TS="The document gives timestamp as the ISO 8601 time of the weather record, with a UTC offset (format date-time); it is the time the record's values hold for, the observation time for observations. iso8601_ms reads it and converts to UTC."
+EV_TS="The document gives timestamp as the ISO 8601 time of the weather record, with a UTC offset (format date-time); it is the time the record's values hold for. iso8601_ms reads it and converts to UTC."
 NOTES=brightsky gen "m=$BS#/components/schemas/WeatherResponse" brightsky-weather bsweather \
   "Bright Sky, the response of GET /weather (hourly records and their sources)" "$BL" "$BSRC"
 NOTES=brightsky gen "m=$BS#/components/schemas/CurrentWeatherResponse" brightsky-current-weather bscurrent \

@@ -19,7 +19,7 @@ None.
   A masked close frame's status code is read from masked octets. Needed: an XOR-with-key transform.
 - **The payload length as an extent**: the length is carried, not computed; the payload runs to the end
   of the input.
-- Message reassembly from fragments; extensions (permessage-deflate) that use RSV1.
+- Message reassembly from fragments; extensions that use the RSV bits.
 
 ## Vectors
 

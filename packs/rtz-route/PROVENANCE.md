@@ -21,7 +21,7 @@ attribute names, nesting, types) in this project's own words; no annotation text
 copied, and the schema is not redistributed. Because no licence is stated the pack is labelled
 `LicenseRef-unstated` (REUSE.toml in this directory; model/rtz.def.license for the module), which keeps
 it out of the `open` profile; the choice is recorded for the operator, who can overturn it. IEC PAS
-61174-1 itself (a paid document) was not read.
+61174-1 itself: not read.
 
 The vectors are built by `tools/gen/maritime-vectors.py` from values chosen there; their expected
 output is derived there, without an engine.

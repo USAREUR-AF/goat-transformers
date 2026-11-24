@@ -164,8 +164,8 @@ def dstar_pack():
 
 
 DSTAR_KEYS = [
-    ("int", "data", "flag 1 bit 7: data (not voice)"), ("int", "repeater", "flag 1 bit 6: via a repeater"),
-    ("int", "interrupted", "flag 1 bit 5: communication interrupted"), ("int", "control_signal", "flag 1 bit 4: control signal"),
+    ("int", "data", "flag 1 bit 7: data"), ("int", "repeater", "flag 1 bit 6: repeater"),
+    ("int", "interrupted", "flag 1 bit 5: interrupted"), ("int", "control_signal", "flag 1 bit 4: control signal"),
     ("int", "urgent", "flag 1 bit 3: urgent"),
     ("int", "repeater_control", "flag 1 bits 2-0: 7 repeater control, 6 auto reply, 4 resend requested, 3 ACK, 2 no response, 1 relay unavailable"),
     ("int", "flag2", "flag 2"), ("int", "flag3", "flag 3"),
@@ -195,16 +195,16 @@ def dmr_pack(src):
 
 
 DMR_KEYS = [
-    ("int", "group", "octet 0 bit 7: group (not individual) destination"), ("int", "response_requested", "octet 0 bit 6: response requested"),
+    ("int", "group", "octet 0 bit 7, which the source reads as GI"), ("int", "response_requested", "octet 0 bit 6, which the source reads as A"),
     ("int", "octet0_bits54", "octet 0 bits 5-4 (in raw and defined short data, added to octet1_low for the block count, as the source does)"),
     ("int", "dpf", "data packet format: 0 UDT, 1 response, 2 unconfirmed data, 3 confirmed data, 13 defined short, 14 raw or status/precoded short, 15 proprietary"),
     ("int", "octet1_high", "octet 1, high nibble"), ("int", "octet1_low", "octet 1, low nibble (raw and defined short: the low block count)"),
-    ("int", "destination_id", "destination ID (24 bits; not meaningful for proprietary headers)"),
-    ("int", "source_id", "source ID (24 bits; not meaningful for proprietary headers)"),
-    ("int", "full_message", "unconfirmed and confirmed: octet 8 bit 7, full message; raw and defined short: octet 8 bit 0"),
+    ("int", "destination_id", "destination ID (24 bits; the source does not read it from a proprietary header)"),
+    ("int", "source_id", "source ID (24 bits; the source does not read it from a proprietary header)"),
+    ("int", "full_message", "unconfirmed and confirmed: octet 8 bit 7; raw and defined short: octet 8 bit 0 (the source's F)"),
     ("int", "blocks", "unconfirmed, confirmed, response: blocks to follow"), ("int", "octet9", "octet 9"),
-    ("int", "resync", "confirmed: octet 9 bit 7; raw and defined short: octet 8 bit 1"),
-    ("int", "send_sequence", "confirmed: octet 9 bits 6-4, send sequence number"), ("int", "octet9_low", "confirmed: octet 9 bits 3-0"),
+    ("int", "resync", "confirmed: octet 9 bit 7; raw and defined short: octet 8 bit 1 (the source's S)"),
+    ("int", "send_sequence", "confirmed: octet 9 bits 6-4 (the source's Ns)"), ("int", "octet9_low", "confirmed: octet 9 bits 3-0"),
     ("int", "octet8_high", "response: octet 8 bit 7"), ("int", "octet8_high6", "raw, defined short, UDT: octet 8 bits 7-2"),
     ("int", "udt_blocks_less_one", "UDT: octet 8 bits 1-0, blocks to follow minus one"),
     ("string", "octets8_9", "proprietary or other formats: octets 8 and 9, as hexadecimal digits"),

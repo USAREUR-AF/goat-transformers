@@ -2,15 +2,15 @@
 
 Bright Sky (`https://api.brightsky.dev`) serves the open data of Deutscher Wetterdienst
 (DWD) as JSON. Each endpoint answers with one object: `/weather` hourly records and the
-sources they come from (`brightsky-weather`), `/current_weather` one record compiled from
-recent observations (`brightsky-current-weather`), `/synop` SYNOP records
+sources they come from (`brightsky-weather`), `/current_weather` one record
+of the current weather (`brightsky-current-weather`), `/synop` SYNOP records
 (`brightsky-synop`), `/sources` the sources (`brightsky-sources`), `/alerts` DWD warnings
 for a place (`brightsky-alerts`) and `/radar` radar records (`brightsky-radar`). Two packs
 read single items: `brightsky-weather-record` and `brightsky-source`.
 
 The units depend on the request's `units` parameter (`dwd`, the default, or `si`); the
-document describes the values without units, and the API documentation lists both sets.
-The packs keep the values as sent.
+document lists both sets of units at that parameter, not at the members. The packs keep
+the values as sent.
 
 ## Evidence for the shared keys
 

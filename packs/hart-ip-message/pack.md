@@ -14,7 +14,7 @@ sequential`, `bit_order msb`. No kinds. Written by `tools/gen/indauto2-pack.py`.
   address) or the 5-octet long address; the counted expansion octets; the command; the byte count as
   sent; in frame types 1 and 6 (responses) the response code and device status; then the data, whose
   last octet is the checksum.
-- Other IDs (session close, keep alive): the body as octets (normally empty).
+- Other IDs (session close, keep alive): the body as octets.
 
 ## Shared keys
 
@@ -24,12 +24,12 @@ None.
 
 - **Preambles**: a pass-through frame that begins with 0xFF preamble octets is not read correctly; the
   pack takes the first octet as the delimiter. A run of octets of one value has no form in the pack
-  language. HART-IP normally sends no preambles.
+  language.
 - **The checksum** as its own field and the byte count as a length: the data runs to the end of the
   message, and the checksum is its last octet; the source reads the data the same way (all but the last
   octet) and does not use the byte count to bound it.
 - **The HART commands' data** (universal and common-practice commands): octets.
-- Direct PDUs, audit log and the other message IDs of later HART-IP versions.
+- Other message IDs: the body as octets.
 
 ## Message convention
 
