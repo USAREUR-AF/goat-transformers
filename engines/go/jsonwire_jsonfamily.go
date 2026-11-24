@@ -128,7 +128,7 @@ func decodeJSONValue(f *Field, v *jval) (Value, error) {
 		return f.tf.decode(v.s)
 	}
 	switch f.Transform {
-	case "string", "iso8601_ms", "iso8601_s", "iso8601_short":
+	case "string", "iso8601_ms", "iso8601_s", "iso8601_short", "iso8601_si":
 		if v.k != jStr {
 			return wrong("string")
 		}

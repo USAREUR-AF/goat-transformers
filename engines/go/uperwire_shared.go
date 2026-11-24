@@ -167,6 +167,10 @@ func resolveUperField(f *Field) (ErrorKind, error) {
 			if err != nil {
 				return ErrUnknownTransform, err
 			}
+			// A UPER int: locator takes no <places> (0.55).
+			if sc.places >= 0 {
+				return ErrBadDirective, fmt.Errorf("%s: <places> is not valid on the locator %s", name, f.Locator)
+			}
 			u.tf, u.sc = uperTfScale, sc
 		}
 	case uperEnum:

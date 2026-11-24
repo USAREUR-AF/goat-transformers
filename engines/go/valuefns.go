@@ -284,7 +284,15 @@ func parseFloatScale(spec string) (*scale, error) {
 	if err := checkUnsignedFraction(spec); err != nil {
 		return nil, err
 	}
-	return parseScale(spec)
+	sc, err := parseScale(spec)
+	if err != nil {
+		return nil, err
+	}
+	// Only uscale and sscale on bits take <places> (0.55).
+	if sc.places >= 0 {
+		return nil, fmt.Errorf("%s takes no <places> argument, got %q", strings.SplitN(spec, ":", 2)[0], spec)
+	}
+	return sc, nil
 }
 
 // checkUnsignedFraction refuses a fraction factor whose num or den is not
