@@ -152,9 +152,8 @@ class Checks(GateCase):
             'source "an invented public document"', 'source "document #7"  # distribution controlled'))
         self.assert_ok()
 
-    def test_marking_does_not_apply_outside_model_and_packs(self):
-        self.tree.write("docs/notes.def", "anything\n")
-        self.tree.write("packs/sample/extra/pack.def", "format nested\n")
+    def test_marking_does_not_apply_to_other_files_than_def(self):
+        self.tree.write("docs/notes.md", "distribution controlled\n")
         self.assert_ok()
 
     # --- closure -----------------------------------------------------------
@@ -1129,6 +1128,127 @@ class Commits(GateCase):
         self.commit("remove")
         self.assert_ok(*self.args, "--needles-only")
         self.assert_findings([("needle", "docs/a.pdf:1")], *self.since(), "--needles-only")
+
+
+# Where no marking check would read a .def file.
+DEF_ELSEWHERE = [
+    "packs/inventedo-one/sub/pack.def", "packs/inventedo-one/other.def", "packs/pack.def", "packs/inventedo-one/pack.DEF",
+    "model/sub/x.def", "model/x.Def", "layouts/secret.def", "x.def",
+]
+
+
+class DefPaths(GateCase):
+    git = True
+
+    def test_a_def_file_anywhere_else_fails(self):
+        for path in DEF_ELSEWHERE:
+            for text in ("distribution controlled\n", "distribution public\n", ""):
+                self.tree.write(path, text)
+                self.assert_findings([("marking", path)])
+            self.tree.remove(path)
+
+    def test_a_fixture_states_no_other_marking(self):
+        for base in ("packs/conformance/tool-fixtures/", "tools/gen/tests/fixtures/"):
+            path = base + "a/packs/b/pack.def"
+            self.tree.write(path, "format b\ndistribution public\n")
+            self.assert_ok()
+            self.tree.write(path, "format b\ndistribution controlled\n")
+            self.assert_findings([("marking", path + ":2")])
+            self.tree.remove(path)
+
+    def test_a_second_format_or_module_line_fails(self):
+        self.tree.write("packs/sample/pack.def", PACK + "format other\n")
+        self.assert_findings([("marking", "packs/sample/pack.def")])
+        self.tree.write("packs/sample/pack.def", PACK)
+        self.tree.write("model/core.def", MODULE + "module other\n")
+        self.assert_findings([("marking", "model/core.def")])
+
+
+class ExampleOverlay(GateCase):
+    """The public example of an overlay, beside a core tree."""
+
+    git = True
+    M = 'module inventedo\ndistribution controlled\nsource "x"\nkey a string - "a"\n'
+    P = ('format inventedo-one\ndistribution controlled\nsource "x"\nwire json\nuses inventedo\n'
+         'field uid id string\nfield inventedo.a a string\n')
+
+    def setUp(self):
+        super().setUp()
+        self.core = os.path.join(self.tree.beside, "core")
+        self.tree.write_beside("core/model/core.def", MODULE)
+        for path in ("model/core.def", "packs/sample/pack.def"):
+            self.tree.remove(path)
+        self.tree.write("model/inventedo.def", self.M)
+        self.tree.write("packs/inventedo-one/pack.def", self.P)
+        self.plain = self.needles("zorb_quux", "zorb-quux")
+        self.args = self.plain + ["--example-overlay", "inventedo", "--core", self.core]
+
+    def test_passes_only_in_its_mode(self):
+        self.assert_ok(*self.args)
+        self.assertEqual({c for c, _, _ in self.run_gate(*self.plain)[1]}, {"marking", "closure"})
+
+    def test_any_needle_still_fails(self):
+        for path, text in [("docs/a.md", "zorb-quux\n"), ("packs/inventedo-one/pack.md", "a zorb_quux\n"), ("docs/zorb_quux.md", "a\n")]:
+            self.tree.write(path, text)
+            code, found, lines = self.run_gate(*self.args)
+            self.assertEqual((code, [c for c, _, _ in found]), (1, ["needle"]), lines)
+            self.tree.remove(path)
+        self.tree.write("packs/inventedo-one/pack.def", self.P.replace('"x"', '"zorb-quux"'))
+        self.assert_findings([("needle", "packs/inventedo-one/pack.def:3")], *self.args)
+
+    def test_a_marking_on_another_name_fails(self):
+        for name, fmt in [("other", "other"), ("other", "inventedo-x"), ("inventedo-x", "other"), ("inventedox", "inventedox")]:
+            self.tree.write("packs/%s/pack.def" % name, 'format %s\ndistribution controlled\nsource "x"\nwire json\nfield uid id string\n' % fmt)
+            self.assert_findings([("marking", "packs/%s/pack.def" % name)], *self.args)
+            self.tree.remove("packs/%s/pack.def" % name)
+        self.tree.write("model/other.def", self.M.replace("inventedo", "other"))
+        self.assert_findings([("marking", "model/other.def")], *self.args)
+
+    def test_a_file_name_without_the_prefix_fails(self):
+        self.tree.write("model/plainname.def", self.M.replace("module inventedo", "module inventedo-hidden"))
+        self.assert_findings([("marking", "model/plainname.def")], *self.args)
+
+    def test_two_format_lines_fail(self):
+        self.tree.write("packs/inventedo-one/pack.def", self.P + "format secret\n")
+        self.assert_findings([("marking", "packs/inventedo-one/pack.def")] * 2, *self.args)
+        self.tree.write("packs/inventedo-one/pack.def", self.P + "format inventedo-two\n")
+        self.assert_findings([("marking", "packs/inventedo-one/pack.def")], *self.args)
+
+    def test_a_def_file_anywhere_else_fails(self):
+        for path in DEF_ELSEWHERE:
+            self.tree.write(path, "distribution controlled\n")
+            self.assert_findings([("marking", path)], *self.args)
+            self.tree.remove(path)
+
+    def test_an_example_marked_public_or_twice_fails(self):
+        for line in ("distribution public", "distribution controlled\ndistribution controlled"):
+            self.tree.write("model/inventedo.def", self.M.replace("distribution controlled", line))
+            self.assert_findings([("marking", "model/inventedo.def")], *self.args)
+
+    def test_modules_and_keys_are_checked_against_core(self):
+        self.tree.write("packs/inventedo-one/pack.def", self.P + "uses nosuch\nfield nokey b string\n")
+        self.assert_findings([("closure", "packs/inventedo-one/pack.def"), ("closure", "packs/inventedo-one/pack.def:9")], *self.args)
+
+    def test_the_other_checks_stay(self):
+        self.tree.write("docs/a.md", MARKINGS[4][1] + "\n")
+        self.tree.write("docs/b.pdf", "x\n")
+        self.tree.write("docs/c.md", HYGIENE[3][1] + "\n")
+        self.assert_findings([("phrase", "docs/a.md:1"), ("filetype", "docs/b.pdf"), ("hygiene", "docs/c.md:1")], *self.args)
+
+    def test_a_core_that_is_not_one_fails(self):
+        self.tree.write_beside("core/model/core.def", MODULE.replace("public\n", "controlled\n", 1))
+        self.assertEqual(self.run_gate(*self.args)[0], 1)
+        os.makedirs(os.path.join(self.tree.beside, "empty"))
+        self.assertEqual(self.run_gate(*self.args[:-1], os.path.join(self.tree.beside, "empty"))[0], 1)
+        self.assertEqual(self.run_gate(*self.args[:-1], self.tree.root)[0], 1)
+
+    def test_a_wrong_command_line_is_status_2(self):
+        over = ["--example-overlay", "inventedo", "--core", self.core]
+        for args in (over, self.plain + over[:2], self.plain + over[2:], self.args + ["--needles-only"],
+                     self.plain + ["--example-overlay", "", "--core", self.core],
+                     self.plain + ["--example-overlay", "abc", "--core", self.core],
+                     self.plain + ["--example-overlay", ".*aa", "--core", self.core]):
+            self.assertEqual(run_main(gate.main, "--root", self.tree.root, *args)[0], 2, args)
 
 
 class NeedlesOnly(GateCase):
