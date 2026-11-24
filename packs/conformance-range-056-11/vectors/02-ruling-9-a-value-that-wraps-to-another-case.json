@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-value-that-wraps-to-another-case",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-11",
+  "input": "{\"x\":15,\"y\":7}",
+  "expect": "8007",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9: 15 wraps to 5, which no case holds: else; y sets p.1 (80), x is not written, the absent key selects else, y is 07. Control: wrapped and unwrapped select alike."
+}

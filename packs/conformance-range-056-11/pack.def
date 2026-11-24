@@ -1,8 +1,9 @@
 # Conformance probe pack for ruling 9 of 0.56: a `switch` key that wraps is
 # predicted as wrapped, most significant bit first. Public. No kinds.
-#   presence p 8 | if p.1: x 8 (default 12, wraps to 2) | case 2: if p.1: y 8
-# Both outcomes are stable: case 2 opens the block whose default selects case 2;
-# `else` opens nothing, and an absent x selects `else`.
+#   presence p 8 | if !p.1: x 8 | case 2: the const aa; else: if p.1: y 8
+# With x 12 (wraps to 2) and y held both outcomes are stable: case 2 leaves p.1
+# 0, so x is written and selects case 2; `else` sets p.1, so x is not written
+# and, absent, selects `else`.
 format  conformance-range-056-11
 version 0.56.0
 distribution public
@@ -12,14 +13,14 @@ wire    bits
 layout  sequential
 bit_order msb
 presence p 8
-if p.1
+if !p.1
   field  probe.x  8  uint  range 0 10 wrap
 end
 switch probe.x
   case 2
+    const 8 170
+  else
     if p.1
       field  probe.y  8  uint
     end
-  else
 end
-default probe.x  12

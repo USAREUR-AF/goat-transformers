@@ -1,9 +1,0 @@
-{
-  "name": "ruling-9-a-held-switch-key-wraps",
-  "from": "conformance-range-json",
-  "to": "conformance-range-056-11",
-  "input": "{\"x\":22,\"y\":7}",
-  "expect": "800207",
-  "source": "constructed",
-  "reference": "spec 0.56 ruling 9: 22 wraps to 2, case 2; p.1 is 1 (80), x 02, y 07."
-}
