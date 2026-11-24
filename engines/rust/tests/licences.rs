@@ -475,13 +475,16 @@ mod controlled_inner {
             }
             outer_alone(&e);
         }
-        // the directory loader: the load fails at the inner pack, with the
-        // inner pack not loaded
-        let t = Tree::new("inner-3", &[("model/core.def", CORE), ("packs/b-in/pack.def", &inner)]);
+        // the directory loader with both packs, the inner one first in byte
+        // order: the load fails at the inner pack and no pack is loaded
+        let t = Tree::new(
+            "inner-3",
+            &[("model/core.def", CORE), ("packs/a-in/pack.def", &inner), ("packs/b-out/pack.def", &outer())],
+        );
         let mut e = Engine::new();
         e.set_max_distribution(Distribution::Public);
         let err = e.load_tree(&t.packs(), &with(None)).unwrap_err();
         assert!(err.msg.starts_with("distribution-refused:"), "{}", err.msg);
-        assert!(e.formats().is_empty());
+        assert!(e.formats().is_empty(), "{:?}", e.formats());
     }
 }
