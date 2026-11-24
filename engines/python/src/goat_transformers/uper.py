@@ -117,6 +117,8 @@ class IntT:
         self.scale = None
         if name.startswith(("uscale:", "sscale:")):
             self.scale = _build_scale(name, 64)  # ValueError for parameters that do not parse
+            if self.scale.places is not None:  # 0.55: not on a UPER `int:` locator
+                raise ValueError("%s takes no <places> on a UPER locator" % name.split(":")[0])
             self.yields = "float"
         else:
             self.yields = "int"
