@@ -5738,14 +5738,16 @@ that do not hold the exact line of ruling 1; in 0.23: the default of
    of 0.29 says, is exactly `distribution`, one or more spaces or tabs, and
    `public`, and no line is a **doubtful** one: one that, trimmed, is the word
    `distribution` alone or begins with `distribution` followed by a space, a
-   tab, a carriage return or a `"`, and is not that exact line. A carriage
-   return inside a line, a byte-order mark, a quoted word or value, a comment
+   tab, a carriage return or a `"`, and is not that exact line. A NUL byte
+   anywhere, a carriage return inside a line, a byte-order mark, a quoted word or value, a comment
    on the line, another value, no such line, a file that is not UTF-8 or
    cannot be read: such a file is not shown public.
 2. **The profile.** A file that is not shown public has the profile none,
    whatever its licence and the table say. Through 2b and 2c of 0.29, so has
    every module and pack that uses it, and with a `core` that is not shown
-   public every pack.
+   public, and whose `module` line 2b reads, every pack. A module whose name 2b
+   does not read adds nothing (2c); it is not loaded, and a pack that uses it
+   is `unknown-module`.
 3. **The order of reading** stays that of 0.29: the licence of a module or
    pack is read first, so `bad-licence` comes before the skip, and the checks
    of a `--packs-only` name come before both.
@@ -5764,15 +5766,24 @@ that do not hold the exact line of ruling 1; in 0.23: the default of
    a caller sets before or after, so a controlled text loaded directly later
    is `distribution-refused`. A load with a profile on an instance that
    already holds a controlled module or pack is `distribution-refused` before
-   anything is read.
+   anything is read. The order: a profile name that is none of the three is
+   `bad-licence` first, with the limit unchanged; then that instance check;
+   then the limit is `public`, and stays so when the load fails later. Setting
+   `controlled` afterwards is no error and has no effect. A later load with no
+   profile is bounded by the limit, not by the profile.
 7. **No profile asked for:** nothing here is read and nothing changes, except
    by `licences`, which reads every file as 4c of 0.29 says and lists a pack
    that is not shown public with the profile `none`.
 8. **The tools.** `tools/licences.py`, and every tool that chooses packs or
    modules by a profile, give the same profiles: a tool does not load what it
-   chooses, so ruling 1 is all that stands there. `tools/licences.py --check`
-   refuses, in the repository, a module file or `pack.def` that is not shown
-   public, and a `uses` line that 2b does not read.
+   chooses, so ruling 1 is all that stands there. For a tool a pack or module
+   with a **doubtful** `uses` line also has the profile none: a line that,
+   with carriage returns, spaces and tabs removed at its ends, begins with
+   `uses` or `"uses"` followed by a space, a tab, a carriage return, a `"` or
+   the end, and that 2b does not read. `tools/licences.py --check` refuses a
+   `model/*.def` or a `packs/*/pack.def` that is not shown public or has a
+   doubtful `uses` line; fixtures below `packs/conformance/` are not such
+   files.
 
 ## Until an engine has this version
 
