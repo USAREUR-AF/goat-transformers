@@ -870,7 +870,7 @@ fn text_unscale(sc: &Scale, x: f64) -> Result<f64, Error> {
 
 /// A float read from the wire: not-a-number and infinity are refused
 /// (ruling 23 of 0.5, extended in 0.6).
-#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
 fn finite(x: f64) -> Result<Value, Error> {
     if x.is_finite() {
         Ok(Value::F64(x))
@@ -2027,7 +2027,7 @@ fn sentinel_lines<'a>(sel: &Sel<'a>, ent: &Entity, skip: impl Fn(&FieldDef) -> b
 /// Does the entity (inside a group, the item) hold `key`? A scalar when it
 /// is present, whatever its value; a list when it has at least one item
 /// (ruling 2 of 0.18).
-#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
 pub(crate) fn holds(ent: &Entity, key: &str) -> bool {
     ent.fields.contains_key(key) || ent.lists.get(key).map_or(false, |l| !l.is_empty())
 }
@@ -2035,7 +2035,7 @@ pub(crate) fn holds(ent: &Entity, key: &str) -> bool {
 /// Is the line in force on encode? False when its `with` key is not held:
 /// the line is then a line whose key is absent and that has neither a
 /// `default` nor a sentinel (engine-spec v0.18).
-#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
 pub(crate) fn live(ent: &Entity, f: &FieldDef) -> bool {
     f.with.as_ref().map_or(true, |(k, _)| holds(ent, k))
 }
@@ -2135,7 +2135,7 @@ pub struct GroupDef {
 
 impl GroupDef {
     /// The lines in force for one item.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     fn body(&self) -> Sel<'_> {
         Sel {
             kind: None,
@@ -2210,7 +2210,7 @@ impl ReqDef {
     }
     /// Does the entity meet the term? A plain key: the key is present, or the
     /// list has an item. With `=`: the value's canonical text is listed.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     pub(crate) fn holds(&self, ent: &Entity) -> bool {
         match &self.values {
             None => ent.fields.contains_key(&self.key) || ent.lists.get(&self.key).map_or(false, |l| !l.is_empty()),
@@ -2312,7 +2312,7 @@ impl<'a> Sel<'a> {
     /// The value encode uses for a field: the entity's, else the `default`.
     /// A default in a gate block applies to the fields of that block and of
     /// the blocks nested in it; the innermost wins (ruling 5 of 0.17).
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn value_of(&self, ent: &'a Entity, f: &FieldDef) -> Option<&'a Value> {
         // a line suppressed by `with` has no value, its default included (engine-spec v0.18)
         if !live(ent, f) {
@@ -2329,7 +2329,7 @@ impl<'a> Sel<'a> {
         })
     }
     /// The values written over any field: every `when` that is not `present`, and every `const`.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     fn fixed(&self) -> impl Iterator<Item = &'a WhenDef> + '_ {
         self.whens.iter().copied().filter(|w| !w.present).chain(self.consts.iter().copied())
     }
@@ -3138,7 +3138,7 @@ impl Pack {
     }
 
     /// The lines in force when `kind` is selected (None: a pack without kinds).
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn sel<'a>(&'a self, kind: Option<&'a KindDef>) -> Sel<'a> {
         let mut fields: Vec<&FieldDef> = self.fields.iter().collect();
         let mut whens: Vec<&WhenDef> = self.whens.iter().collect();
@@ -3165,7 +3165,7 @@ impl Pack {
     /// Decode-side kind selection: `holds` says whether a `when` matches the
     /// wire. `root` is the document's root element (xml): a kind is considered
     /// only when its root, or the pack's, has that name.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn select_decode<'a>(&'a self, root: Option<&str>, holds: impl Fn(&WhenDef) -> bool) -> Result<Sel<'a>, Error> {
         if self.kinds.is_empty() {
             return Ok(self.sel(None));
@@ -3188,7 +3188,7 @@ impl Pack {
 
     /// Encode-side kind selection: the entity's own kind for this format, else
     /// the first kind whose `requires` keys are all present.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn select_encode<'a>(&'a self, ent: &Entity) -> Result<Sel<'a>, Error> {
         if self.kinds.is_empty() {
             return Ok(self.sel(None));
@@ -3223,7 +3223,7 @@ impl Pack {
     /// Decode: the value a transform yielded, on its way to the model. A
     /// `via` table (engine-spec v0.6), else the pack-wide typemap for `type`
     /// (every wire: ruling 18 of 0.5).
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn to_model(&self, f: &FieldDef, v: Value) -> Result<Value, Error> {
         if let Some(t) = &f.via {
             let native_ty = f.transform.value_type();
@@ -3242,7 +3242,7 @@ impl Pack {
     }
 
     /// Decode: the pack-wide typemap, applied to the key `type`.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn typemap_in(&self, f: &FieldDef, v: Value) -> Value {
         if f.model_key == "type" {
             if let Value::Str(code) = &v {
@@ -3255,7 +3255,7 @@ impl Pack {
     }
 
     /// Encode: a model value on its way to the transform (the reverse of `to_model`).
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn to_wire(&self, f: &FieldDef, v: &Value) -> Result<Value, Error> {
         // the typemap, then the table (ruling 6 of 0.6)
         let mapped = match v {
@@ -3418,7 +3418,7 @@ impl Pack {
     }
 }
 
-#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
 fn transform_encode_err(p: &Pack, f: &FieldDef, e: Error) -> Error {
     Error {
         msg: format!("transform-encode: format `{}`: `{}` at `{}`: {}", p.format, f.model_key, f.locator, e.msg),
@@ -3436,7 +3436,7 @@ fn read_as(ty: KeyType, text: &str) -> Option<Value> {
 }
 
 /// Table text in the canonical form a value of that type is compared in.
-#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
 fn canon_text(ty: KeyType, text: &str) -> String {
     match ty {
         KeyType::Str => text.to_string(),
@@ -3483,13 +3483,13 @@ pub(crate) mod limit {
     }
 
     /// A decode called without the engine: the default limit.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     pub fn scope() -> Scope {
         begin(super::DEFAULT_MAX_ITEMS)
     }
 
     /// Hold `n` more items: past the limit is `malformed-wire` (7a, 7f).
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     pub fn take(format: &str, list: &str, n: u64) -> Result<(), Error> {
         STATE.with(|s| match s.get() {
             None => Ok(()),
@@ -3507,14 +3507,14 @@ pub(crate) mod limit {
     }
 
     /// The items of every list of an entity, at every nesting level.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     pub fn items_of(lists: &std::collections::BTreeMap<String, Vec<Entity>>) -> u64 {
         lists.values().map(|items| items.len() as u64 + items.iter().map(|i| items_of(&i.lists)).sum::<u64>()).sum()
     }
 
     /// The entity no longer holds `n` items: a later group replaces the
     /// list they were in (7g).
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     pub fn release(n: u64) {
         STATE.with(|s| {
             if let Some((held, max)) = s.get() {
@@ -3529,7 +3529,7 @@ pub(crate) mod limit {
 /// with a failed line and no value fails the decode (ruling 9 of 0.1.1). A line
 /// whose transform succeeds and whose table refuses the value fails the decode
 /// whatever the other lines of the key do (ruling 4 of 0.6).
-#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
 struct Decoded {
     ent: Entity,
     /// (key, message): a transform failed; an error unless the key gets a value
@@ -3538,26 +3538,26 @@ struct Decoded {
     hard: Vec<String>,
     hard_keys: Vec<String>,
 }
-#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+#[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
 impl Decoded {
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn new() -> Decoded {
         Decoded { ent: Entity::default(), soft: Vec::new(), hard: Vec::new(), hard_keys: Vec::new() }
     }
     /// Before the items of a group are read: the items of a list the group
     /// will replace are no longer held (ruling 7g of 0.11).
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     fn replacing(&self, list: &str) {
         if let Some(old) = self.ent.lists.get(list) {
             limit::release(old.len() as u64 + old.iter().map(|i| limit::items_of(&i.lists)).sum::<u64>());
         }
     }
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn has(&self, f: &FieldDef) -> bool {
         self.ent.fields.contains_key(&f.model_key)
     }
     /// One line whose locator is present: the transform's result, through the table.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn put(&mut self, p: &Pack, f: &FieldDef, v: Result<Value, Error>) {
         if self.has(f) || self.hard_keys.contains(&f.model_key) {
             return;
@@ -3577,7 +3577,7 @@ impl Decoded {
         }
     }
     /// The entity so far and every failure that stands.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn close(self) -> (Entity, Vec<String>) {
         let ent = self.ent;
         let mut failed: Vec<String> =
@@ -3586,7 +3586,7 @@ impl Decoded {
         (ent, failed)
     }
     /// Take the decoded items of a list: a failed item field fails the decode.
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     fn put_list(&mut self, list: &str, items: Vec<Decoded>) {
         let mut out = Vec::new();
         for (i, item) in items.into_iter().enumerate() {
@@ -3596,7 +3596,7 @@ impl Decoded {
         }
         self.ent.lists.insert(list.to_string(), out);
     }
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn finish(self, p: &Pack, sel: &Sel) -> Result<Entity, Error> {
         let (mut ent, failed) = self.close();
         if !failed.is_empty() {

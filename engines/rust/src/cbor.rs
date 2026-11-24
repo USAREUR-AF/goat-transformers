@@ -882,6 +882,7 @@ fn when_holds(top: &Node, w: &WhenDef) -> bool {
 }
 
 /// An item (tags passed over, not `null` or `undefined`) -> model value.
+#[cfg(feature = "cbor")]
 fn decode_value(t: &Transform, n: &Node) -> Result<Value, Error> {
     let i64_of = |v: i128| -> Result<Value, Error> {
         i64::try_from(v).map(Value::I64).or_else(|_| err(format!("{} is outside the signed 64-bit range", v)))
@@ -905,6 +906,7 @@ fn decode_value(t: &Transform, n: &Node) -> Result<Value, Error> {
 
 /// Decode the fields and groups of one scope: the top item, or one element
 /// of a group. `node` has its tags passed over.
+#[cfg(feature = "cbor")]
 fn decode_scope(p: &Pack, sel: &Sel, node: &Node, d: &mut Decoded) -> Result<(), Error> {
     for f in &sel.fields {
         let found = if f.locator == "." { Some(node) } else { resolve(node, &path(&f.locator)).map_err(|m| malformed(p, m))? };
@@ -1022,6 +1024,7 @@ fn residue(b: &[u8], node: &Node, names: &Names, prefix: &str, out: &mut Vec<(St
     }
 }
 
+#[cfg(feature = "cbor")]
 pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
     let _scope = limit::scope();
     let b = bits::from_hex(input).map_err(|e| malformed(p, e.msg.trim_start_matches("malformed-wire: ")))?;
@@ -1274,6 +1277,7 @@ fn conflict(p: &Pack, locator: &str) -> Error {
 /// The item one scope writes, before residue: the top item, or one element
 /// of a group. A `when` or `const` value stands over a field; of several
 /// fields on one path the earliest present one is written (ruling 16 of 0.5).
+#[cfg(feature = "cbor")]
 fn build(p: &Pack, sel: &Sel, ent: &Entity, array: bool) -> Result<Out, Error> {
     let mut root = if array { Out::Arr(BTreeMap::new()) } else { Out::Map(BTreeMap::new()) };
     // every map and array the lines walk into, empty until a value lands in
@@ -1327,6 +1331,7 @@ fn build(p: &Pack, sel: &Sel, ent: &Entity, array: bool) -> Result<Out, Error> {
 }
 
 /// A present list: its array, one element per item in list order.
+#[cfg(feature = "cbor")]
 fn list(p: &Pack, g: &GroupDef, items: &[Entity]) -> Result<Vec<u8>, Error> {
     let body = g.body();
     let shape = body_shape(g);
@@ -1374,6 +1379,7 @@ fn residue_places(key: &str) -> Option<Vec<Place>> {
     Some(out)
 }
 
+#[cfg(feature = "cbor")]
 pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
     let sel = p.select_encode(ent)?;
     let mut root = build(p, &sel, ent, p.cbor.top_array)?;

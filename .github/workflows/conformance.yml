@@ -114,6 +114,15 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/cantools"
           "$RUNNER_TEMP/cantools/bin/pip" install --quiet --disable-pip-version-check cantools==45.1.1
           "$RUNNER_TEMP/cantools/bin/python" -I tools/gen/golden-cantools.py --check --cache "$RUNNER_TEMP/dbc-cache"
+  # Spec 0.24: each wire builds alone, and with every wire but it, with no
+  # warning; its vectors pass on the build that has it and json. A job of its
+  # own: the rust job is near its time limit.
+  rust-single-wire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: engines/rust/single-wire-check.sh
   rust:
     runs-on: ubuntu-latest
     # The suite (every vector, the fuzz run, the reduced builds, the benchmark)
