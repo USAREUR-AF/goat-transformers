@@ -545,6 +545,19 @@ class Profiles(PkgCase):
         with open(os.path.join(self.out, "manifest.json"), encoding="utf-8") as fh:
             self.assertEqual(json.load(fh)["profile"], "everything")
 
+    def test_a_pack_that_is_not_shown_public_is_in_no_profile(self):
+        """Spec 0.93: its licence (here the default, Apache-2.0) does not put it
+        in a profile; even `everything` leaves it out."""
+        text = FILES["packs/alpha/pack.def"]
+        self.assertIn("distribution public", text)
+        self.tree.write("packs/alpha/pack.def", text.replace("distribution public", "distribution controlled"))
+        for profile in ("open", "open+copyleft", "everything"):
+            names = self.archive("--profile", profile)
+            self.assertNotIn("packs/alpha/pack.def", names, profile)
+            self.assertIn("packs/beta-dir/pack.def" if profile == "everything" else "model/core.def", names)
+            err = self.refused("plan", "--formats", "alpha", "--profile", profile)
+            self.assertIn("packs/alpha, is not shown public", err)
+
     def test_the_plan_request_takes_a_profile(self):
         self.assertEqual(pkg.plan_request("formats=a").profile, "open")
         self.assertEqual(pkg.plan_request("formats=a&profile=everything").profile, "everything")

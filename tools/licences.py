@@ -214,18 +214,57 @@ def _names(path, word):
     return out
 
 
+_EXACT_DISTRIBUTION = re.compile(r"^distribution[ \t]+public$")
+
+
+def _doubtful(line, word):
+    """True when `line`, with every double quote removed and then spaces, tabs
+    and carriage returns removed at its ends, begins with `word` (spec 0.93,
+    rulings 1 and 8)."""
+    return line.replace('"', "").strip(" \t\r").startswith(word)
+
+
+def shown(path):
+    """(shown public, has a doubtful `uses` line) of a module file or pack.def,
+    as spec 0.93 rulings 1 and 8 read it. A file that cannot be read, is not
+    UTF-8, or holds a NUL, a U+FEFF or a carriage return not directly before a
+    line feed or at the end, is not shown public."""
+    try:
+        with open(path, "rb") as fh:
+            text = fh.read().decode("utf-8")
+    except (OSError, UnicodeDecodeError):
+        return False, False
+    if "\0" in text or "\ufeff" in text or re.search(r"\r(?!\n|$)", text):
+        return False, False
+    exact = doubtful = doubtful_uses = False
+    for raw in text.split("\n"):
+        line = (raw[:-1] if raw.endswith("\r") else raw).strip(" \t")
+        if _EXACT_DISTRIBUTION.match(line):
+            exact = True
+        elif _doubtful(line, "distribution"):
+            doubtful = True
+        if _doubtful(line, "uses") and not _NAME_LINE["uses"].match(line):
+            doubtful_uses = True
+    return exact and not doubtful, doubtful_uses
+
+
 def _is_module_file(model_dir, fname):
     """A module file as Version 0.23, Loading, 1 selects it."""
     return fname.endswith(".def") and os.path.isfile(os.path.join(model_dir, fname))
 
 
 def _first_args(path, word):
+    """The first argument of each `word` line; none when the file cannot be
+    read as UTF-8 (such a file is not shown public, spec 0.93)."""
     found = []
-    with open(path, encoding="utf-8") as fh:
-        for line in fh:
-            m = re.match(r"^%s\s+(\S+)" % word, line)
-            if m:
-                found.append(m.group(1).strip('"'))
+    try:
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                m = re.match(r"^%s\s+(\S+)" % word, line)
+                if m:
+                    found.append(m.group(1).strip('"'))
+    except (OSError, UnicodeDecodeError):
+        return []
     return found
 
 
@@ -267,7 +306,7 @@ def survey(root, every_file=True):
             problems.append(str(e))
             lid = None
         modules[fname] = {"module": names[0] if names else None, "licence": lid,
-                          "uses": _names(path, "uses")}
+                          "uses": _names(path, "uses"), "shown": shown(path)}
         if names:
             by_name.setdefault(names[0], []).append(fname)
     packs = {}
@@ -283,9 +322,17 @@ def survey(root, every_file=True):
             problems.append(str(e))
             lid = None
         packs[d] = {"format": fmt[0] if fmt else None, "licence": lid,
-                    "uses": _names(path, "uses"), "sources": len(_first_args(path, "source"))}
+                    "uses": _names(path, "uses"), "sources": len(_first_args(path, "source")),
+                    "shown": shown(path)}
 
-    def own_profile(kind, key, lid):
+    def own_profile(kind, key, lid, row):
+        public, doubtful_uses = row["shown"]
+        if not public or doubtful_uses:
+            # spec 0.93: in no profile, whatever the licence; never in this repository (--check)
+            why = "is not shown public" if not public else "has a doubtful uses line"
+            problems.append("%s %s %s (spec 0.93, ruling %s)" % (kind, key, why, 1 if not public else 8))
+            row["not_public"] = why
+            return "none"
         if lid is None:
             problems.append("%s %s has no licence in REUSE.toml" % (kind, key))
             return "everything"
@@ -305,8 +352,8 @@ def survey(root, every_file=True):
         rows = [modules[f] for f in by_name.get(name, [])]
         return max(rows, key=lambda r: rank(r["profile"])) if rows else None
     for fname, row in modules.items():
-        row["profile"] = own_profile("model", fname, row["licence"])
-        row["because"] = None
+        row["profile"] = own_profile("model", fname, row["licence"], row)
+        row["because"] = row.get("not_public")
     changed = True
     while changed:  # a module is as narrow as the modules it uses
         changed = False
@@ -314,16 +361,18 @@ def survey(root, every_file=True):
             for u in row["uses"]:
                 dep = widest_module(u)
                 if dep and rank(dep["profile"]) > rank(row["profile"]):
-                    row["profile"], row["because"] = dep["profile"], "uses module %s (%s)" % (u, dep["licence"])
+                    row["np_root"] = dep.get("not_public") or dep.get("np_root")
+                    row["profile"], row["because"] = dep["profile"], "uses module %s (%s)" % (
+                        u, row["np_root"] or dep["licence"])
                     changed = True
     for d, row in packs.items():
-        row["profile"] = own_profile("pack", d, row["licence"])
-        row["because"] = None
+        row["profile"] = own_profile("pack", d, row["licence"], row)
+        row["because"] = row.get("not_public")
         for u in ["core"] + row["uses"]:  # every pack uses core (spec 0.29, 2c)
             dep = widest_module(u)
             if dep and rank(dep["profile"]) > rank(row["profile"]):
                 row["profile"] = dep["profile"]
-                row["because"] = "uses module %s (%s)" % (u, dep["licence"])
+                row["because"] = "uses module %s (%s)" % (u, dep.get("not_public") or dep.get("np_root") or dep["licence"])
         if row["sources"] == 0:
             problems.append("pack %s has no source line" % d)
     if every_file:
@@ -431,15 +480,8 @@ def excluded(root, profile):
     -> {"packs": {dir: why}, "modules": {file: why}, "formats": set of format names}"""
     if profile not in PROFILES:
         raise LicenceError("profile %s is not one of %s" % (profile, ", ".join(PROFILES)))
-    flags = table(root)
-    named = {lid for _, lid in annotations(root)}
-    packs_dir, model_dir = os.path.join(root, "packs"), os.path.join(root, "model")
-    labelled = (any(os.path.isfile(os.path.join(packs_dir, d, "REUSE.toml")) for d in os.listdir(packs_dir))
-                if os.path.isdir(packs_dir) else False) or (
-        any(n.endswith(".def.license") for n in os.listdir(model_dir)) if os.path.isdir(model_dir) else False)
-    if not labelled and all(lid in flags and in_profile(licence_profile(flags[lid]) or "none", profile)
-                            for lid in named):
-        return {"packs": {}, "modules": {}, "formats": set()}  # no file of the tree is outside the profile
+    # No shortcut on a tree without licence labels: a file that is not shown
+    # public is outside every profile whatever its licence (spec 0.93).
     s = survey(root, every_file=False)
     packs, modules, formats = {}, {}, set()
     for d, row in s["packs"].items():
