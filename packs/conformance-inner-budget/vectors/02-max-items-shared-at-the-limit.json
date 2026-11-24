@@ -1,0 +1,10 @@
+{
+  "name": "max-items-shared-at-the-limit",
+  "from": "conformance-inner-budget",
+  "to": "conformance-inner-budget",
+  "input": "0201ff0a0b",
+  "max_items": 4,
+  "expect": "0201ff0a0b",
+  "source": "constructed",
+  "reference": "spec 0.34 max_items: the outer lines leave 2 of 4; the inner list holds 2"
+}

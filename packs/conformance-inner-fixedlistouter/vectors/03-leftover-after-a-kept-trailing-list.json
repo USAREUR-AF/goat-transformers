@@ -1,0 +1,9 @@
+{
+  "name": "leftover-after-a-kept-trailing-list",
+  "from": "conformance-inner-fixedlistouter",
+  "to": "conformance-inner-fixedlistouter",
+  "input": "020a0b0c0d0e0fff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: two groups of two 8-bit items, end 4"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-outer-length-fits",
+  "from": "conformance-inner-tail",
+  "to": "conformance-inner-narrow",
+  "input": "09010203",
+  "expect": "03010203",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode: the inner message is 3 bytes; the 2-bit length holds 3: pad 6 zero bits then 11 = 0x03"
+}

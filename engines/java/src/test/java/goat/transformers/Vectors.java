@@ -138,7 +138,7 @@ final class Vectors {
             // from == to: clearing it for another format is part of convert, not of the check (ruling 34 of 0.30)
             String decodedKindFormat = e.kindFormat(), decodedKindName = e.kindName();
             if (complete) {
-                if (!from.equals(to)) e.clearKind();
+                engine.keepKinds(from, to, e);   // as convert does (0.5, 0.34)
                 engine.complete(e, context);
             }
             // "@absent" (Version 0.9): keys, item paths and list names the entity must not have. An entry that is
@@ -154,6 +154,13 @@ final class Vectors {
                 }
             }
             for (String k : absent) {
+                if (k.equals("@inner_kind")) {
+                    // Version 0.34: Entity.inner_kind is absent
+                    if (e.innerKindFormat() != null) {
+                        return "model.@absent @inner_kind: present, (" + e.innerKindFormat() + ", " + e.innerKindName() + ")";
+                    }
+                    continue;
+                }
                 String why = absentCheck(e, k);
                 if (why != null) return "model.@absent " + k + ": " + why;
             }
@@ -164,6 +171,13 @@ final class Vectors {
                 if (m.getKey().equals("@kind")) {
                     if (!from.equals(decodedKindFormat) || !want.equals(decodedKindName)) {
                         return "@kind: want (" + from + ", " + want + ") got (" + decodedKindFormat + ", " + decodedKindName + ")";
+                    }
+                    continue;
+                }
+                if (m.getKey().equals("@inner_kind")) {
+                    // Version 0.34: the kind the inner pack selected
+                    if (e.innerKindFormat() == null || !want.equals(e.innerKindName())) {
+                        return "@inner_kind: want " + want + " got (" + e.innerKindFormat() + ", " + e.innerKindName() + ")";
                     }
                     continue;
                 }

@@ -1,0 +1,15 @@
+{
+  "name": "nested-gate-not-held-on-its-own",
+  "from": "conformance-inner-gate",
+  "to": "conformance-inner-gate",
+  "input": "05010702",
+  "expect": "050107",
+  "model": {
+    "probe.y": "7",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 3, the nested locator at byte 3 does not count; decoded on its own extra bytes are accepted"
+}

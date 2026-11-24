@@ -146,7 +146,7 @@ final class TextCodec extends Codec<String[]> {
     @Override
     Entity decodeKind(String[] rec, Pack.Kind kind) {
         Entity e = new Entity();
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         decodeScope(rec, kind.scope, 0, e, fails);
         Info in = (Info) kind.scope.info;
         for (int idx = 0; idx < rec.length; idx++) {

@@ -1,0 +1,13 @@
+{
+  "name": "empty-rest",
+  "from": "conformance-inner-whlreststrict",
+  "to": "conformance-inner-whlreststrict",
+  "input": "0901",
+  "expect": "0901",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: stated 1, the list is present and empty"
+}

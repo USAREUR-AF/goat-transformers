@@ -1,0 +1,9 @@
+{
+  "name": "outer-transform-decode-alone",
+  "from": "conformance-inner-asciihead",
+  "to": "conformance-inner-asciihead",
+  "input": "013507",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: s1 byte 01 is a transform-decode; the inner message decodes"
+}

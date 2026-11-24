@@ -1,0 +1,9 @@
+{
+  "name": "byte-beyond-the-value-minus-plus",
+  "from": "conformance-inner-whlplusstrict",
+  "to": "conformance-inner-whlplusstrict",
+  "input": "090405ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: 4 - 2 = 2; the byte ff is below the value 4"
+}

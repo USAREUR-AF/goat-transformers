@@ -63,6 +63,10 @@ pub struct Entity {
     pub residue: Vec<(String, String, String)>,
     /// (format, kind name) selected by the last decode of a pack with kinds.
     pub kind: Option<(String, String)>,
+    /// (format, kind name) of the kind the pack of an `inner` line selected
+    /// (engine-spec v0.34); absent when no `inner` line was read or its pack
+    /// has no kinds. Set by decode only.
+    pub inner_kind: Option<(String, String)>,
 }
 
 // ---------------------------------------------------------------------------
@@ -2440,6 +2444,8 @@ impl Pack {
         let mut layout_line: Option<usize> = None;
         // engine-spec v0.33: the first `when … at`, an `at` error raised late
         let mut at_err: Option<Error> = None;
+        // engine-spec v0.34: the first `inner` line, refused after the file is read
+        let mut inner_line: Option<usize> = None;
         let mut format = None;
         let mut version = None;
         let mut wire = None;
@@ -2869,6 +2875,10 @@ impl Pack {
                     layout_line = Some(ln);
                 }
                 // engine-spec v0.8: a sequential line in a fixed-layout pack
+                // engine-spec v0.34: `inner` outside a sequential layout, checked after the file
+                "inner" => {
+                    inner_line.get_or_insert(ln);
+                }
                 "pad" | "align" | "presence" | "opt" | "chain" | "fx" | "also" | "count" => {
                     return bad(ln, format!("`{}` is a line of a `layout sequential` pack", toks[0]));
                 }
@@ -2897,6 +2907,9 @@ impl Pack {
             return err("missing-version: the pack has no `version` line");
         }
         let wire = wire.ok_or(Error { msg: "missing-wire: the pack has no `wire` line".into() })?;
+        if let Some(ln) = inner_line {
+            return bad(ln, "`inner` is a line of a `layout sequential` `bits` pack");
+        }
         // ruling 8 of 0.13: on tlv a transform that does not parse is
         // `bad-directive`, checked after the file is read
         if let Some((ln, e)) = bad_transform {
@@ -3327,6 +3340,15 @@ impl Pack {
         out
     }
 
+    /// The formats the `inner` lines of the pack name, in line order
+    /// (engine-spec v0.34).
+    pub fn inner_formats(&self) -> Vec<&str> {
+        match &self.seq {
+            Some(body) => seq::inner_lines(body).into_iter().map(|(f, _)| f).collect(),
+            None => Vec::new(),
+        }
+    }
+
     /// Every `group` line of the pack: (line, list name).
     fn group_lists(&self) -> Vec<(usize, &str)> {
         let mut out: Vec<(usize, &str)> = self.every_group().into_iter().map(|g| (g.line, g.list.as_str())).collect();
@@ -3488,17 +3510,99 @@ pub(crate) mod limit {
         begin(super::DEFAULT_MAX_ITEMS)
     }
 
+    thread_local! {
+        /// engine-spec v0.34: the lists of an inner message that the outer
+        /// entity already holds, whose items are discarded and not counted
+        static UNCOUNTED: std::cell::RefCell<Vec<String>> = const { std::cell::RefCell::new(Vec::new()) };
+        /// how many items are being read around the cursor
+        static ITEMS: Cell<u32> = const { Cell::new(0) };
+        /// how many groups whose items are not counted are being read
+        static SUSPEND: Cell<u32> = const { Cell::new(0) };
+    }
+
+    /// Restores what a guard changed when dropped, on success and on error.
+    #[cfg(feature = "bits")]
+    pub struct Restore(Option<Box<dyn FnOnce()>>);
+    #[cfg(feature = "bits")]
+    impl Drop for Restore {
+        fn drop(&mut self) {
+            if let Some(f) = self.0.take() {
+                f();
+            }
+        }
+    }
+
+    /// An inner decode (engine-spec v0.34) whose lists of these names are
+    /// discarded by the outer entity: their items are not counted (7g).
+    #[cfg(feature = "bits")]
+    pub fn inner(discarded: Vec<String>) -> Restore {
+        let items = ITEMS.with(|c| c.replace(0));
+        let old = UNCOUNTED.with(|u| u.replace(discarded));
+        Restore(Some(Box::new(move || {
+            UNCOUNTED.with(|u| *u.borrow_mut() = old);
+            ITEMS.with(|c| c.set(items));
+        })))
+    }
+
+    /// One item of a list is being read.
+    #[cfg(feature = "bits")]
+    pub fn item() -> Restore {
+        ITEMS.with(|c| c.set(c.get() + 1));
+        Restore(Some(Box::new(|| ITEMS.with(|c| c.set(c.get() - 1)))))
+    }
+
+    /// Is this list, read outside every item, one whose items are not counted?
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
+    pub fn uncounted(list: &str) -> bool {
+        ITEMS.with(|c| c.get()) == 0 && UNCOUNTED.with(|u| u.borrow().iter().any(|l| l == list))
+    }
+
+    /// The items of this group, and of the lists inside them, are not
+    /// counted when it is a list `uncounted` names, or `discarded` for
+    /// another reason.
+    #[cfg(feature = "bits")]
+    pub fn group(list: &str, discarded: bool) -> Restore {
+        if !discarded && !uncounted(list) {
+            return Restore(None);
+        }
+        SUSPEND.with(|c| c.set(c.get() + 1));
+        Restore(Some(Box::new(|| SUSPEND.with(|c| c.set(c.get() - 1)))))
+    }
+
+    /// A count read from the wire (7d): held as `take` holds it; in a group
+    /// whose items are not counted (engine-spec v0.34, ruling 7) it is still
+    /// compared with what the limit allows, and not held.
+    #[cfg(feature = "bits")]
+    pub fn take_count(format: &str, list: &str, n: u64) -> Result<(), Error> {
+        if SUSPEND.with(|c| c.get()) == 0 {
+            return take(format, list, n);
+        }
+        match STATE.with(|s| s.get()) {
+            Some((held, max)) if n > max.saturating_sub(held) => err(over(format, list, max)),
+            _ => Ok(()),
+        }
+    }
+
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
+    fn over(format: &str, list: &str, max: u64) -> String {
+        format!(
+            "malformed-wire: format `{}`: list `{}` would take the decode beyond its limit of {} list items",
+            format, list, max
+        )
+    }
+
     /// Hold `n` more items: past the limit is `malformed-wire` (7a, 7f).
+    /// Inside a group whose items are not counted (engine-spec v0.34) nothing is held.
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     pub fn take(format: &str, list: &str, n: u64) -> Result<(), Error> {
+        if SUSPEND.with(|c| c.get()) > 0 {
+            return Ok(());
+        }
         STATE.with(|s| match s.get() {
             None => Ok(()),
             Some((held, max)) => {
                 if n > max.saturating_sub(held) {
-                    return err(format!(
-                        "malformed-wire: format `{}`: list `{}` would take the decode beyond its limit of {} list items",
-                        format, list, max
-                    ));
+                    return err(over(format, list, max));
                 }
                 s.set(Some((held + n, max)));
                 Ok(())
@@ -3516,6 +3620,10 @@ pub(crate) mod limit {
     /// list they were in (7g).
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     pub fn release(n: u64) {
+        // a group whose items are not counted holds none to release (engine-spec v0.34)
+        if SUSPEND.with(|c| c.get()) > 0 {
+            return;
+        }
         STATE.with(|s| {
             if let Some((held, max)) = s.get() {
                 s.set(Some((held.saturating_sub(n), max)));
@@ -3535,19 +3643,27 @@ struct Decoded {
     /// (key, message): a transform failed; an error unless the key gets a value
     soft: Vec<(String, String)>,
     /// a table refused a value, or an item failed
-    hard: Vec<String>,
+    /// (the key or list, whether a table refused the value, message)
+    hard: Vec<(String, bool, String)>,
     hard_keys: Vec<String>,
+    /// the keys an inner message gave (engine-spec v0.34): a line of one whose
+    /// table refuses the value is still an error (ruling 23)
+    inner_keys: Vec<String>,
 }
 #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
 impl Decoded {
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn new() -> Decoded {
-        Decoded { ent: Entity::default(), soft: Vec::new(), hard: Vec::new(), hard_keys: Vec::new() }
+        Decoded { ent: Entity::default(), soft: Vec::new(), hard: Vec::new(), hard_keys: Vec::new(), inner_keys: Vec::new() }
     }
     /// Before the items of a group are read: the items of a list the group
     /// will replace are no longer held (ruling 7g of 0.11).
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     fn replacing(&self, list: &str) {
+        // items that were not counted are not released (engine-spec v0.34)
+        if limit::uncounted(list) {
+            return;
+        }
         if let Some(old) = self.ent.lists.get(list) {
             limit::release(old.len() as u64 + old.iter().map(|i| limit::items_of(&i.lists)).sum::<u64>());
         }
@@ -3559,19 +3675,22 @@ impl Decoded {
     /// One line whose locator is present: the transform's result, through the table.
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn put(&mut self, p: &Pack, f: &FieldDef, v: Result<Value, Error>) {
-        if self.has(f) || self.hard_keys.contains(&f.model_key) {
+        let held = self.has(f);
+        if self.hard_keys.contains(&f.model_key) || (held && !self.inner_keys.contains(&f.model_key)) {
             return;
         }
         let at = |e: Error| format!("`{}` at `{}`: {}", f.model_key, f.locator, e.msg);
         match v {
             Err(e) => self.soft.push((f.model_key.clone(), at(e))),
             Ok(v) => match p.to_model(f, v) {
+                // the value the inner message gave is kept
+                Ok(_) if held => {}
                 Ok(v) => {
                     self.ent.fields.insert(f.model_key.clone(), v);
                 }
                 Err(e) => {
                     self.hard_keys.push(f.model_key.clone());
-                    self.hard.push(at(e));
+                    self.hard.push((f.model_key.clone(), true, at(e)));
                 }
             },
         }
@@ -3579,10 +3698,16 @@ impl Decoded {
     /// The entity so far and every failure that stands.
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn close(self) -> (Entity, Vec<String>) {
+        let (ent, failed) = self.close_marked();
+        (ent, failed.into_iter().map(|(_, m)| m).collect())
+    }
+    /// `close`, each failure with whether a table refused the value.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
+    fn close_marked(self) -> (Entity, Vec<(bool, String)>) {
         let ent = self.ent;
-        let mut failed: Vec<String> =
-            self.soft.into_iter().filter(|(k, _)| !ent.fields.contains_key(k)).map(|(_, m)| m).collect();
-        failed.extend(self.hard);
+        let mut failed: Vec<(bool, String)> =
+            self.soft.into_iter().filter(|(k, _)| !ent.fields.contains_key(k)).map(|(_, m)| (false, m)).collect();
+        failed.extend(self.hard.into_iter().map(|(_, table, m)| (table, m)));
         (ent, failed)
     }
     /// Take the decoded items of a list: a failed item field fails the decode.
@@ -3590,13 +3715,70 @@ impl Decoded {
     fn put_list(&mut self, list: &str, items: Vec<Decoded>) {
         let mut out = Vec::new();
         for (i, item) in items.into_iter().enumerate() {
-            let (ent, failed) = item.close();
-            self.hard.extend(failed.into_iter().map(|m| format!("{}[{}]: {}", list, i, m)));
+            let (ent, failed) = item.close_marked();
+            self.hard.extend(failed.into_iter().map(|(table, m)| (list.to_string(), table, format!("{}[{}]: {}", list, i, m))));
             out.push(ent);
         }
         self.ent.lists.insert(list.to_string(), out);
     }
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
+    /// The items of an outer list discarded for the inner one read first: a
+    /// value a table refused is still an error (ruling 21 of 0.34).
+    #[cfg(feature = "bits")]
+    fn discard_list(&mut self, list: &str, items: Vec<Decoded>) {
+        for (i, item) in items.into_iter().enumerate() {
+            let refused = item.close_marked().1.into_iter().filter(|(table, _)| *table);
+            self.hard.extend(refused.map(|(_, m)| (list.to_string(), true, format!("{}[{}]: {}", list, i, m))));
+        }
+    }
+    /// The keys of an inner message join those read before it (engine-spec
+    /// v0.34, Decode step 4): the first value read is kept, a list is one key,
+    /// and the failures of the inner lines stand under the rule of 0.6 for one
+    /// key at several locators. A value a table refused is an error whatever is
+    /// held already (ruling 23), in the items of a discarded list too (ruling
+    /// 21); a failed transform there is none. Gives the inner lists that were
+    /// kept.
+    #[cfg(feature = "bits")]
+    fn join(&mut self, inner: Decoded, name: impl Fn(String) -> String) -> Vec<String> {
+        for (k, table, m) in inner.hard {
+            let discarded = !table && self.ent.lists.contains_key(&k);
+            if !discarded {
+                self.hard.push((k, table, name(m)));
+            }
+        }
+        for (k, v) in inner.ent.fields {
+            if !self.ent.fields.contains_key(&k) && !self.hard_keys.contains(&k) {
+                self.inner_keys.push(k.clone());
+                self.ent.fields.insert(k, v);
+            }
+        }
+        // a failed line whose key has a value, then or later, is forgiven by `close`
+        self.soft.extend(inner.soft.into_iter().map(|(k, m)| (k, name(m))));
+        for k in inner.hard_keys {
+            if !self.ent.fields.contains_key(&k) && !self.hard_keys.contains(&k) {
+                self.hard_keys.push(k);
+            }
+        }
+        let mut kept = Vec::new();
+        for (list, items) in inner.ent.lists {
+            // the items of a discarded list were not counted (7g)
+            if !self.ent.lists.contains_key(&list) {
+                kept.push(list.clone());
+                self.ent.lists.insert(list, items);
+            }
+        }
+        // step 5
+        self.ent.inner_kind = inner.ent.kind;
+        kept
+    }
+    #[cfg(feature = "bits")]
+    fn finish_kind(self, p: &Pack) -> Result<Entity, Error> {
+        let (ent, failed) = self.close();
+        if !failed.is_empty() {
+            return err(format!("transform-decode: format `{}`: {}", p.format, failed.join("; ")));
+        }
+        Ok(ent)
+    }
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn finish(self, p: &Pack, sel: &Sel) -> Result<Entity, Error> {
         let (mut ent, failed) = self.close();
         if !failed.is_empty() {
@@ -4593,7 +4775,7 @@ impl Engine {
             #[cfg(feature = "geojson")]
             Wire::GeoJson => geojson::decode(p, bytes),
             #[cfg(feature = "bits")]
-            Wire::Bits => bits::decode_in(p, lay, bytes),
+            Wire::Bits => bits::decode_host(p, lay, bytes, Some(self)),
             #[cfg(feature = "protobuf")]
             Wire::Protobuf => protobuf::decode_in(p, lay, bytes),
             #[cfg(feature = "json")]
@@ -4613,6 +4795,22 @@ impl Engine {
     }
     pub fn encode(&self, format: &str, ent: &Entity) -> Result<String, Error> {
         let p = self.pack(format)?;
+        // at the top level the kind is chosen by `Entity.kind` when it names the
+        // format, then by `Entity.inner_kind` when it does (engine-spec v0.34)
+        let names = |k: &Option<(String, String)>| k.as_ref().is_some_and(|(f, _)| f == format);
+        let chosen: Entity;
+        let ent = if !names(&ent.kind) && names(&ent.inner_kind) {
+            chosen = Entity { kind: ent.inner_kind.clone(), ..ent.clone() };
+            &chosen
+        } else {
+            ent
+        };
+        self.encode_chosen(p, ent)
+    }
+
+    /// `encode` once the kind record the pack reads is in `Entity.kind`.
+    fn encode_chosen(&self, p: &Pack, ent: &Entity) -> Result<String, Error> {
+        let format = p.format.as_str();
         #[allow(unused_variables)]
         let lay = self.layout(format);
         match p.wire {
@@ -4621,7 +4819,7 @@ impl Engine {
             #[cfg(feature = "geojson")]
             Wire::GeoJson => geojson::encode(p, ent),
             #[cfg(feature = "bits")]
-            Wire::Bits => bits::encode_in(p, lay, ent),
+            Wire::Bits => bits::encode_host(p, lay, ent, Some(self)),
             #[cfg(feature = "protobuf")]
             Wire::Protobuf => protobuf::encode_in(p, lay, ent),
             #[cfg(feature = "json")]
@@ -4659,14 +4857,30 @@ impl Engine {
         self.pack(from)?;
         self.pack(to)?;
         let mut ent = self.decode(from, bytes)?;
-        if from != to {
-            ent.kind = None;
-        }
+        self.keep_kinds(from, to, &mut ent);
         if from != to || context.is_some() {
             self.fill(&mut ent, context.unwrap_or(&[]))?;
             self.complete(&mut ent);
         }
         self.encode(to, &ent)
+    }
+
+    /// Engine-spec 0.5 and 0.34, "Conversion": `Entity.kind` is kept when
+    /// `from == to` or when an `inner` line of `to` names its format;
+    /// `Entity.inner_kind` when `from == to`, when it names `to`, or when an
+    /// `inner` line of `to` names its format. Otherwise each is cleared.
+    fn keep_kinds(&self, from: &str, to: &str, ent: &mut Entity) {
+        if from == to {
+            return;
+        }
+        let inners: Vec<&str> = self.packs.get(to).map(|p| p.inner_formats()).unwrap_or_default();
+        let inner_of_to = |k: &Option<(String, String)>| k.as_ref().is_some_and(|(f, _)| inners.contains(&f.as_str()));
+        if !inner_of_to(&ent.kind) {
+            ent.kind = None;
+        }
+        if !inner_of_to(&ent.inner_kind) && !ent.inner_kind.as_ref().is_some_and(|(f, _)| f == to) {
+            ent.inner_kind = None;
+        }
     }
 
     /// `convert` with the context given as text (the CLI's `--set`, a vector's
@@ -4694,9 +4908,7 @@ impl Engine {
         self.pack(from)?;
         self.pack(to)?;
         let mut ent = self.decode_limited(from, bytes, max_items)?;
-        if from != to {
-            ent.kind = None;
-        }
+        self.keep_kinds(from, to, &mut ent);
         if from != to || context.is_some() {
             let context = self.context_from_text(context.unwrap_or(&[]))?;
             self.fill(&mut ent, &context)?;
@@ -4835,7 +5047,29 @@ impl Engine {
     /// The shared-model keys a format maps: field order, and for a pack with
     /// kinds the union over common and all kinds in first appearance order.
     pub fn model_keys(&self, format: &str) -> Vec<String> {
-        self.packs.get(format).map(|p| p.model_keys()).unwrap_or_default()
+        self.packs.get(format).map(|p| self.pack_model_keys(p)).unwrap_or_default()
+    }
+
+    /// `model_keys` of a loaded pack (6a of 0.11), computed when asked for:
+    /// an `inner` line whose pack passes the checks of engine-spec 0.34 adds,
+    /// at its place, the entries of the inner pack not yet listed; one that
+    /// does not adds nothing.
+    fn pack_model_keys(&self, p: &Pack) -> Vec<String> {
+        #[cfg(feature = "bits")]
+        if let Some(body) = p.seq.as_ref().filter(|b| !seq::inner_lines(b).is_empty()) {
+            let mut out = Vec::new();
+            body.model_keys_with("", &mut out, &|format, out| {
+                if seq::InnerHost::inner_check(self, p, format).is_ok() {
+                    for k in self.packs.get(format).map(|ip| ip.model_keys()).unwrap_or_default() {
+                        if !out.contains(&k) {
+                            out.push(k);
+                        }
+                    }
+                }
+            });
+            return out;
+        }
+        p.model_keys()
     }
 
     /// Capability of one ordered conversion A -> B, computed from the field maps:
@@ -4844,7 +5078,7 @@ impl Engine {
     /// other, or clearly noted why not" without running a single conversion.
     /// `model_keys` of a loaded format; `unknown-format` otherwise.
     pub fn try_model_keys(&self, format: &str) -> Result<Vec<String>, Error> {
-        self.pack(format).map(|p| p.model_keys())
+        self.pack(format).map(|p| self.pack_model_keys(p))
     }
 
     /// `capability` (ruling 6 of 0.11); `unknown-format` when `from`, then
@@ -4882,6 +5116,76 @@ impl Engine {
             }
         }
         out
+    }
+}
+
+/// Engine-spec v0.34: the engine finds the pack of an `inner` line when
+/// decode or encode reaches it, never when the outer pack loads.
+#[cfg(feature = "bits")]
+impl seq::InnerHost for Engine {
+    fn inner_check(&self, outer: &Pack, format: &str) -> Result<(), Error> {
+        // 1. loaded (a pack refused at load is not)
+        let ip = self.pack(format)?;
+        // 2. on `bits`, with neither `armor sixbit` nor `encoding uper` (`armor hex` is the default)
+        if ip.wire != Wire::Bits || ip.armor != armor::Armor::Hex || ip.uper {
+            return err(format!(
+                "bad-directive: format `{}`: the `inner` pack `{}` is not a `bits` pack without `armor sixbit` and `encoding uper`",
+                outer.format, format
+            ));
+        }
+        // 3. one layer only
+        if ip.format == outer.format || !ip.inner_formats().is_empty() {
+            return err(format!(
+                "bad-directive: format `{}`: the `inner` pack `{}` is the outer pack or has an `inner` line of its own",
+                outer.format, format
+            ));
+        }
+        // 4. a public outer pack takes a public inner pack only
+        if outer.distribution == Distribution::Public && ip.distribution != Distribution::Public {
+            return err(format!(
+                "distribution-violation: public pack `{}` names {} pack `{}` in an `inner` line",
+                outer.format,
+                ip.distribution.name(),
+                format
+            ));
+        }
+        Ok(())
+    }
+
+    fn inner_decode(&self, format: &str, bytes: &[u8], partial: bool, held: Vec<String>) -> Result<Decoded, Error> {
+        let p = self.pack(format)?;
+        let _discarded = limit::inner(held);
+        let total = bytes.len() as u64 * 8;
+        let (d, end) = match &p.seq {
+            Some(body) => seq::decode_parts(p, body, bytes, total, Some(self))?,
+            None => bits::decode_parts(p, self.layout(format), bytes, total, true)?,
+        };
+        // Decode step 3: bytes at or after the inner message's end
+        if !partial && total > end {
+            return err(format!(
+                "malformed-wire: format `{}`: the message ends at byte {}, its input is {} bytes",
+                format,
+                end / 8,
+                bytes.len()
+            ));
+        }
+        Ok(d)
+    }
+
+    fn inner_encode(&self, format: &str, ent: &Entity) -> Result<Vec<u8>, Error> {
+        let p = self.pack(format)?;
+        // as a layer: `Entity.inner_kind`, then `Entity.kind`, then `requires`
+        let names = |k: &Option<(String, String)>| k.as_ref().filter(|(f, _)| f == format).cloned();
+        let kind = names(&ent.inner_kind).or_else(|| names(&ent.kind));
+        let chosen: Entity;
+        let ent = if kind == ent.kind {
+            ent
+        } else {
+            chosen = Entity { kind, ..ent.clone() };
+            &chosen
+        };
+        let hex = bits::encode_host(p, self.layout(format), ent, Some(self))?;
+        bits::from_hex(&hex)
     }
 }
 
@@ -6994,9 +7298,15 @@ pub mod bits {
     #[cfg(feature = "bits")]
     fn message_bytes(p: &Pack, lay: &Layout, sel: &Sel, all: bool) -> Result<usize, Error> {
         let end = message_end(p, lay, sel, all)?;
+        // at least one word
+        Ok(whole_words(p, end).max(p.word_bytes))
+    }
+
+    /// The bytes of the whole words that hold `end` bits.
+    #[cfg(feature = "bits")]
+    fn whole_words(p: &Pack, end: u64) -> usize {
         let word_bits = p.word_bytes as u64 * 8;
-        let words = ((end + word_bits - 1) / word_bits).max(1);
-        Ok(words as usize * p.word_bytes)
+        ((end + word_bits - 1) / word_bits) as usize * p.word_bytes
     }
 
     /// The furthest bit the lines in force reach, not rounded to a word.
@@ -7487,7 +7797,12 @@ pub mod bits {
             };
             // the count against what the limit still allows, before any item is read (7d)
             d.replacing(&g.list);
-            limit::take(&p.format, &g.list, n)?;
+            let _uncounted = limit::group(&g.list, false);
+            match &g.count {
+                Some(Count::Locator(_)) => limit::take_count(&p.format, &g.list, n)?,
+                // a count the pack states is not read from the wire (ruling 7 of 0.34)
+                _ => limit::take(&p.format, &g.list, n)?,
+            }
             let (off, item_bits) = group_span(p, lay, g)?;
             let start = base + off;
             let end = n.checked_mul(item_bits).and_then(|b| b.checked_add(start)).filter(|e| *e <= total).ok_or_else(|| {
@@ -7506,6 +7821,7 @@ pub mod bits {
                 let mut di = Decoded::new();
                 // the gate blocks of the item, evaluated per item (ruling 2 of 0.17)
                 let item = only_held(&body, &held_on(p, lay, &g.gates, raw, total, at));
+                let _item = limit::item();
                 let nested_end = decode_scope(p, lay, &item, raw, total, at, &mut di, reach)?;
                 at = (at + item_bits).max(nested_end);
                 items.push(di);
@@ -7525,6 +7841,13 @@ pub mod bits {
     /// `decode` with the layout the engine keeps for the pack (engine-spec 0.25).
     #[cfg(feature = "bits")]
     pub(crate) fn decode_in(p: &Pack, lay: &Layout, hex: &str) -> Result<Entity, Error> {
+        decode_host(p, lay, hex, None)
+    }
+
+    /// `decode_in` with the engine that finds the pack of an `inner` line
+    /// (engine-spec v0.34).
+    #[cfg(feature = "bits")]
+    pub(crate) fn decode_host(p: &Pack, lay: &Layout, hex: &str, host: Option<&dyn seq::InnerHost>) -> Result<Entity, Error> {
         let _scope = limit::scope();
         // the message and its length in bits: hex, or six-bit armor (engine-spec v0.14)
         let sixbit = p.armor == armor::Armor::Sixbit;
@@ -7536,15 +7859,25 @@ pub mod bits {
             (raw, total)
         };
         if let Some(body) = &p.seq {
-            return super::seq::decode(p, body, &raw, total);
+            return super::seq::decode_host(p, body, &raw, total, host);
         }
+        decode_parts(p, lay, &raw, total, false)?.0.finish_kind(p)
+    }
+
+    /// The decode of a fixed layout, its failed lines not yet judged, and the
+    /// bit the message ends at (ruling 14 of 0.34). As a layer (`inner`) a
+    /// pack that reads no bits needs no word (rulings 2 and 16 of 0.34).
+    #[cfg(feature = "bits")]
+    pub(crate) fn decode_parts(p: &Pack, lay: &Layout, raw: &[u8], total: u64, inner: bool) -> Result<(Decoded, u64), Error> {
+        let sixbit = p.armor == armor::Armor::Sixbit;
         // a `when` whose bits lie beyond the input does not hold
         let sel = p.select_decode(None, |w| match span(p, lay, &w.locator) {
             Ok((start, len)) => start + len as u64 <= total && get_bits(&raw, start, len, p.order).map_or(false, |v| w.holds_num(v)),
             Err(_) => false,
         })?;
         // the lines of the gate blocks that hold (engine-spec v0.17)
-        let sel = only_held(&sel, &held_on(p, lay, sel.gates, &raw, total, 0));
+        let held = held_on(p, lay, sel.gates, raw, total, 0);
+        let sel = only_held(&sel, &held);
         if sixbit {
             // every bit of the lines in force, not whole words (engine-spec v0.14)
             let need = message_end(p, lay, &sel, false)?;
@@ -7552,26 +7885,31 @@ pub mod bits {
                 return Err(short(p, format!("input is {} bits, need {}", total, need)));
             }
             let mut d = Decoded::new();
-            decode_scope(p, lay, &sel, &raw, total, 0, &mut d, &mut 0)?;
-            return d.finish(p, &sel);
+            decode_scope(p, lay, &sel, raw, total, 0, &mut d, &mut 0)?;
+            d.ent.kind = sel.kind.map(|k| (p.format.clone(), k.name.clone()));
+            // no inner message is in six-bit armor: its end is not asked for
+            return Ok((d, total));
         }
         let words = |need: usize| {
             format!("input is {} bytes, need {} ({} words of {})", raw.len(), need, need / p.word_bytes, p.word_bytes)
         };
-        let need = message_bytes(p, lay, &sel, false)?;
+        let need = if inner { whole_words(p, message_end(p, lay, &sel, false)?) } else { message_bytes(p, lay, &sel, false)? };
         if raw.len() < need {
             return Err(short(p, words(need)));
         }
         let mut d = Decoded::new();
         let mut reach = 0u64;
-        decode_scope(p, lay, &sel, &raw, total, 0, &mut d, &mut reach)?;
+        decode_scope(p, lay, &sel, raw, total, 0, &mut d, &mut reach)?;
         // whole words up to the furthest bit, the items of every group included
-        let word_bits = p.word_bytes as u64 * 8;
-        let need = ((reach + word_bits - 1) / word_bits) as usize * p.word_bytes;
+        let need = whole_words(p, reach);
         if raw.len() < need {
             return Err(short(p, words(need)));
         }
-        d.finish(p, &sel)
+        d.ent.kind = sel.kind.map(|k| (p.format.clone(), k.name.clone()));
+        // ruling 14 of 0.34: every line in force, an `optional` one included,
+        // the gate locators of the held blocks, and the items (`reach`)
+        let end = reach.max(message_end(p, lay, &sel, true)?).max(held_gates_end(p, lay, &sel, &held)?);
+        Ok((d, whole_words(p, end) as u64 * 8))
     }
 
     /// The bits one item takes on encode: `item <bits>`, or up to the end of a
@@ -7768,10 +8106,17 @@ pub mod bits {
     /// `encode` with the layout the engine keeps for the pack (engine-spec 0.25).
     #[cfg(feature = "bits")]
     pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, Error> {
+        encode_host(p, lay, ent, None)
+    }
+
+    /// `encode_in` with the engine that finds the pack of an `inner` line
+    /// (engine-spec v0.34).
+    #[cfg(feature = "bits")]
+    pub(crate) fn encode_host(p: &Pack, lay: &Layout, ent: &Entity, host: Option<&dyn seq::InnerHost>) -> Result<String, Error> {
         let sixbit = p.armor == armor::Armor::Sixbit;
         if let Some(body) = &p.seq {
             // six-bit armor: the cursor after the last line, not rounded (engine-spec v0.14)
-            let (b, cursor) = super::seq::encode_bits(p, body, ent)?;
+            let (b, cursor) = super::seq::encode_host(p, body, ent, host)?;
             return Ok(if sixbit { armor::write(&b, cursor) } else { to_hex(&b) });
         }
         let sel = p.select_encode(ent)?;
@@ -8540,12 +8885,16 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     // engine-spec v0.21: `count <name> <len> [plus <n>]`; its form is checked
     // with the rest of the sequential layout, after the file is read
     ("count", 2, usize::MAX),
+    // engine-spec v0.34: `inner <format> [partial]`, a line the `wire` line and
+    // `layout sequential` stand before; where it stands, and the second
+    // argument, are checked after the file
+    ("inner", 1, 2),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).
 const AFTER_WIRE: &[&str] = &[
     "root", "field", "when", "const", "group", "end", "word_bytes", "bit_order", "layout", "also", "pad", "align",
-    "presence", "if", "opt", "chain", "fx", "length",
+    "presence", "if", "opt", "chain", "fx", "length", "inner",
 ];
 
 /// The checks of ruling 5 of 0.11 that each line of a pack owes as it is

@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-inner",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-fixed",
+  "input": "093507",
+  "expect": "3507",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 4: x, y, z join the entity; n has no field in the target"
+}

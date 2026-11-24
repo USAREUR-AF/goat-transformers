@@ -1,0 +1,9 @@
+{
+  "name": "inner-reads-past-its-input",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-kinds",
+  "input": "070501",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3: the inner input 01 selects kind a, whose x lies past the end of the inner input"
+}

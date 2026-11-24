@@ -1,0 +1,14 @@
+# Conformance probe pack used as an inner pack: a fixed layout whose only list
+# has a count the pack states (spec 0.34 ruling 7). Public. No kinds.
+#
+#   bytes 0-1   nums, val in 8 bits each
+format     conformance-inner-fixedone
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+group   probe.nums  0:0  item 8  count 2
+  field  probe.val  0:0:8  uint
+end

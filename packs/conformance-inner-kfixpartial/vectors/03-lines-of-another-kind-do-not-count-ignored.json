@@ -1,0 +1,16 @@
+{
+  "name": "lines-of-another-kind-do-not-count-ignored",
+  "from": "conformance-inner-kfixpartial",
+  "to": "conformance-inner-kfixpartial",
+  "input": "0905020709",
+  "expect": "090502",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ],
+    "@inner_kind": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: kind b ends at 2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "empty-inner-input-is-no-kind",
+  "from": "conformance-inner-kfixstrict",
+  "to": "conformance-inner-kfixstrict",
+  "input": "09",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.34, rulings 6, 16"
+}

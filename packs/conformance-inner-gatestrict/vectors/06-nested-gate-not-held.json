@@ -1,0 +1,9 @@
+{
+  "name": "nested-gate-not-held",
+  "from": "conformance-inner-gatestrict",
+  "to": "conformance-inner-gatestrict",
+  "input": "0905010702",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 3, the nested locator at byte 3 does not count"
+}

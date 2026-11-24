@@ -1,0 +1,13 @@
+{
+  "name": "round-trip-when-the-keys-agree",
+  "from": "conformance-inner-asouter",
+  "to": "conformance-inner-asouter",
+  "input": "010107",
+  "expect": "010107",
+  "model": {
+    "probe.n": "1",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34: outer n 1; the inner when reads 01 (n already 1); y 7. Encode writes n 1, then the inner when writes n 1 (it matches 1,2) and y 7"
+}

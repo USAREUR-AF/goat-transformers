@@ -1,0 +1,12 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-vianames",
+  "to": "conformance-inner-vianames",
+  "input": "01",
+  "expect": "01",
+  "model": {
+    "probe.names[0].probe.tag": "one"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6: byte 01 through the table is the text one"
+}

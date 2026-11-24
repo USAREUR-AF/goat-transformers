@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-the-padding",
+  "from": "conformance-inner-extbitsstrict",
+  "to": "conformance-inner-extbitsstrict",
+  "input": "090c05ffff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: end 3"
+}

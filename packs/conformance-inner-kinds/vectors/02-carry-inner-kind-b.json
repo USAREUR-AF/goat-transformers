@@ -1,0 +1,14 @@
+{
+  "name": "carry-inner-kind-b",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-kinds",
+  "input": "070502abcd",
+  "expect": "070502abcd",
+  "model": {
+    "@kind": "carry",
+    "@inner_kind": "b",
+    "probe.z": "43981"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 5 and Encode step 1: inner kind b, z=0xabcd"
+}

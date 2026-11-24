@@ -1,0 +1,13 @@
+{
+  "name": "not-gate-held",
+  "from": "conformance-inner-gatenotstrict",
+  "to": "conformance-inner-gatenotstrict",
+  "input": "09050107",
+  "expect": "09050107",
+  "model": {
+    "probe.n": "9",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: 1 is not listed, held, end 3"
+}

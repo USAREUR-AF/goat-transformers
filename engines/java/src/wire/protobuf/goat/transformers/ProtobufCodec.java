@@ -117,7 +117,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
     @Override
     Entity decodeKind(Map<Integer, Val> top, Pack.Kind kind) {
         Entity e = new Entity();
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         decodeScope(top, kind.scope, e, fails);
         finishDecode(e, fails);
         return e;

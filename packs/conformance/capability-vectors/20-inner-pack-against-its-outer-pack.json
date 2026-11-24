@@ -1,0 +1,12 @@
+{
+  "name": "20-inner-pack-against-its-outer-pack",
+  "from": "conformance-inner-seq",
+  "to": "conformance-inner-length",
+  "grade": "full",
+  "carried": [
+    "probe.x",
+    "probe.y",
+    "probe.z"
+  ],
+  "dropped": []
+}

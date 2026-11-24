@@ -1,0 +1,15 @@
+{
+  "name": "byte-after-an-empty-extent-on-its-own",
+  "from": "conformance-inner-ext",
+  "to": "conformance-inner-ext",
+  "input": "0500ff",
+  "expect": "050100",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: end 2; decoded on its own extra bytes are accepted"
+}

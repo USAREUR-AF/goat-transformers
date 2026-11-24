@@ -1,0 +1,9 @@
+{
+  "name": "inner-transform-decode-alone",
+  "from": "conformance-inner-ascstrict",
+  "to": "conformance-inner-ascstrict",
+  "input": "0901",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34, no byte left: 01 is not ascii text"
+}

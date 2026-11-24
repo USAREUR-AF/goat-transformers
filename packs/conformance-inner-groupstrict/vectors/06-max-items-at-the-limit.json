@@ -1,0 +1,13 @@
+{
+  "name": "max-items-at-the-limit",
+  "from": "conformance-inner-groupstrict",
+  "to": "conformance-inner-groupstrict",
+  "input": "0905020a000b00",
+  "max_items": 2,
+  "expect": "0905020a000b00",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, the check counts no items"
+}

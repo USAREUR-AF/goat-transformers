@@ -1,0 +1,12 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-fixedone",
+  "to": "conformance-inner-fixedone",
+  "input": "0a0b",
+  "expect": "0a0b",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.7: one list of two items, the count stated by the pack"
+}

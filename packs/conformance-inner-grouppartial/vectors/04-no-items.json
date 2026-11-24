@@ -1,0 +1,14 @@
+{
+  "name": "no-items",
+  "from": "conformance-inner-grouppartial",
+  "to": "conformance-inner-grouppartial",
+  "input": "090500",
+  "expect": "090500",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "0",
+    "probe.w": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: w counts, end 2; partial, nothing to ignore"
+}

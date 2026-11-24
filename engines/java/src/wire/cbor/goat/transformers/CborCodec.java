@@ -489,7 +489,7 @@ final class CborCodec extends Codec<CborCodec.Msg> {
     @Override
     Entity decodeKind(Msg msg, Pack.Kind kind) {
         Entity e = new Entity();
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         decodeScope(msg.top, kind.scope, e, fails);
         PNode root = (PNode) kind.scope.info;
         if (!root.mapped) residue(msg, msg.top, root, "", e);

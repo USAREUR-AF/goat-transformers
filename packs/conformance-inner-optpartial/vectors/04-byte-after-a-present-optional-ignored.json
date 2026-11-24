@@ -1,0 +1,14 @@
+{
+  "name": "byte-after-a-present-optional-ignored",
+  "from": "conformance-inner-optpartial",
+  "to": "conformance-inner-optpartial",
+  "input": "090005073fff",
+  "expect": "0900050730",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "115"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: end 4"
+}

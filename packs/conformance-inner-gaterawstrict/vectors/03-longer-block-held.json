@@ -1,0 +1,16 @@
+{
+  "name": "longer-block-held",
+  "from": "conformance-inner-gaterawstrict",
+  "to": "conformance-inner-gaterawstrict",
+  "input": "0905020007",
+  "expect": "0905020007",
+  "model": {
+    "probe.n": "9",
+    "probe.z": "7",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 4"
+}

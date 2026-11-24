@@ -1,0 +1,9 @@
+{
+  "name": "encode-reaches-unknown-format",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-missing",
+  "input": "093507",
+  "expect_error": "unknown-format",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line, check 1, on encode: conformance-inner-not-a-format is not loaded"
+}

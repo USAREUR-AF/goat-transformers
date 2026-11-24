@@ -1,0 +1,13 @@
+{
+  "name": "byte-after-the-rest-extent-on-its-own",
+  "from": "conformance-inner-lenrest",
+  "to": "conformance-inner-lenrest",
+  "input": "020506ff",
+  "expect": "020506",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: the rest stops at its extent, end 3; decoded on its own extra bytes are accepted"
+}

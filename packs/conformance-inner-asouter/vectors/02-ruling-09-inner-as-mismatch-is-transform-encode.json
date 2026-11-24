@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-inner-as-mismatch-is-transform-encode",
+  "from": "conformance-inner-asouter",
+  "to": "conformance-inner-asouter",
+  "input": "090107",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 9: decode keeps outer n 9 (read first; the inner when reads 01); encode writes 09, then the inner when \u2026 as n meets n 9, which matches neither 1 nor 2: transform-encode (0.30), standing at the inner line"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "leftover-ignored-and-not-written-back",
+  "from": "conformance-inner-restpartial",
+  "to": "conformance-inner-restpartial",
+  "input": "093507ff",
+  "expect": "093507",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "3",
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: the input of rest vector 02 with partial; the byte does not come back"
+}

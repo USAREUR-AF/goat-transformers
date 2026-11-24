@@ -1,0 +1,9 @@
+{
+  "name": "extent-beyond-the-input",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-length",
+  "input": "0905010203",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 2: the length states 5 bytes, 3 remain"
+}

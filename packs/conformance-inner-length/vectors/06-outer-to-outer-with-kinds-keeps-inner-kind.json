@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-outer-with-kinds-keeps-inner-kind",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-kinds",
+  "input": "09030201020a",
+  "expect": "0709020102",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion: Entity.inner_kind names the format of the target's inner line and is kept; outer kind carry by requires n (0.5); when 07, n 09, inner kind b by Encode step 1: 020102; w is not in kind carry"
+}

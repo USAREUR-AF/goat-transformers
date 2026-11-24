@@ -1,0 +1,12 @@
+# Conformance probe pack naming an inner pack on another wire (spec 0.34,
+# What an inner pack may be): conformance-absent-json is a json pack.
+format     conformance-inner-badwire
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+inner   conformance-absent-json

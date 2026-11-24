@@ -67,7 +67,7 @@
                       binary_part(S, 0, min(6, byte_size(S))) =:= <<"chars:">> orelse
                       binary_part(S, 0, min(7, byte_size(S))) =:= <<"octets:">>)).
 -export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
-         require_marking/2, yields/1, model_keys/1, named/1,
+         require_marking/2, yields/1, model_keys/1, key_names_marked/1, named/1,
          index/1, factor/1, number/1, when_match/2, when_first/1, req_key/1,
          as_holds/2, as_match/2]).
 %% for gt_text
@@ -186,6 +186,12 @@ parse(Bin) ->
                       load_error('bad-directive', "encoding uper with armor sixbit", []);
                   _ -> load_error('bad-directive',
                                   "encoding uper needs layout sequential and bit_order msb", [])
+              end;
+         (inner_header) ->
+              case {maps:get(armor, P1), maps:get(encoding, P1)} of
+                  {sixbit, _} -> load_error('bad-directive', "inner in a pack with armor sixbit", []);
+                  {_, uper} -> load_error('bad-directive', "inner in a pack with encoding uper", []);
+                  _ -> ok
               end;
          ({need_uper, What}) ->
               %% ruling 9 of 0.19
@@ -424,8 +430,8 @@ switch_bodies(Cases, Else) -> Cases ++ [Else].
 %% Union of mapped keys over common and all kinds, in first appearance order.
 %% A list is named `<list>[]` and an item key `<list>[].<key>`, nested lists
 %% likewise.
-model_keys(#{common := Common, kinds := Kinds}) ->
-    Names = lists:append([key_names(L, <<>>) || L <- [Common | [maps:get(lines, K) || K <- Kinds]]]),
+model_keys(P) ->
+    Names = [K || K <- key_names_marked(P), is_binary(K)],
     {Keys, _} = lists:foldl(fun(K, {Acc, Seen}) ->
                                     case maps:is_key(K, Seen) of
                                         true -> {Acc, Seen};
@@ -434,9 +440,15 @@ model_keys(#{common := Common, kinds := Kinds}) ->
                             end, {[], #{}}, Names),
     lists:reverse(Keys).
 
+%% The entries of model_keys in reading order before duplicates are
+%% dropped, with {inner, Format} at the place of each `inner` line (0.34).
+key_names_marked(#{common := Common, kinds := Kinds}) ->
+    lists:append([key_names(L, <<>>) || L <- [Common | [maps:get(lines, K) || K <- Kinds]]]).
+
 key_names(Lines, Prefix) ->
     lists:append(
       [case L of
+           {inner, F, _Partial} -> [{inner, F}];
            {field, K, _, _, _, _} -> [<<Prefix/binary, K/binary>>];
            {group, List, _, _, #{lines := Ls}, _} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
@@ -520,13 +532,17 @@ pack_directives() ->
      %% a switch on a decoded value (Version 0.20)
      <<"switch">>, <<"case">>, <<"else">>,
      %% a named count (Version 0.21)
-     <<"count">>].
+     <<"count">>,
+     %% a message of another pack inside a field (Version 0.34)
+     <<"inner">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
     [<<"root">>, <<"field">>, <<"when">>, <<"const">>, <<"group">>, <<"end">>,
      <<"word_bytes">>, <<"bit_order">>, <<"layout">>, <<"also">>, <<"pad">>, <<"align">>,
-     <<"presence">>, <<"if">>, <<"opt">>, <<"chain">>, <<"fx">>, <<"length">>].
+     <<"presence">>, <<"if">>, <<"opt">>, <<"chain">>, <<"fx">>, <<"length">>,
+     %% Version 0.34: `inner` stands after `wire` and `layout sequential`
+     <<"inner">>].
 
 %% Does a directive take this number of arguments? (ruling 5e of 0.11)
 arg_count_ok(Dir, N) ->
@@ -548,6 +564,8 @@ arg_count_ok(Dir, N) ->
             case Dir of
                 <<"field">> -> N >= 3;
                 <<"when">> -> N =:= 2;
+                %% `inner <format> [partial]` (0.34)
+                <<"inner">> -> N =:= 1 orelse N =:= 2;
                 <<"const">> -> N =:= 2;
                 <<"default">> -> N =:= 2;
                 <<"map">> -> N =:= 3;
@@ -736,7 +754,7 @@ known_directives() ->
      <<"element">>,
      <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>,
      <<"switch">>, <<"case">>, <<"else">>,
-     <<"count">>].
+     <<"count">>, <<"inner">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -976,6 +994,9 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
          || Wire =:= tlv, Why <- [tlv_size_check(Tr, Loc)], Why =/= ok],
     P1 = lists:foldl(fun late/2, P0, Checks),
     add_line({field, Key, Loc, Tr, LocS, Opts}, P1);
+apply_line([<<"inner">> | _], _P) ->
+    %% checked after the file is read (0.34)
+    load_error('bad-directive', "inner is a line of a bits pack with layout sequential", []);
 apply_line([Dir | Args], _P) ->
     %% the lines of a sequential pack are here too: in a fixed-layout pack,
     %% or on another wire, they are bad-directive
@@ -2403,6 +2424,21 @@ seq_apply([<<"count">> | Args], P) ->
         _ -> load_error('bad-directive', "count name ~s holds . ! or @", [Name])
     end,
     seq_add({scount, Name, seq_len(LenS, 1, 64), Plus}, P);
+%% `inner <format> [partial]` (0.34): the rest of the extent is one message of another
+%% pack. It stands in the common lines, in a kind and inside `length`
+%% blocks only, and not in a pack with `armor sixbit` or `encoding uper`;
+%% every check is made after the file is read.
+seq_apply([<<"inner">>, Format | Word], #{sstack := Stack} = P) ->
+    Partial = case Word of
+                  [] -> false;
+                  [<<"partial">>] -> true;
+                  _ -> load_error('bad-directive', "inner is `inner <format> [partial]`", [])
+              end,
+    case [T || #{type := T} <- Stack, T =/= length] of
+        [] -> ok;
+        [T | _] -> load_error('bad-directive', "inner ~s stands in a ~s block", [Format, T])
+    end,
+    seq_add({inner, Format, Partial}, late(inner_header, P));
 %% `switch <key>` / `case <value>[,...]` / `else` / `end` (0.20)
 seq_apply([<<"switch">> | Args], #{switch_n := N} = P) ->
     Key = case Args of
@@ -2813,8 +2849,30 @@ seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
     seq_check_lists(Common1, Kinds1),
     seq_check_counts(Common1, Kinds1),
     rest_scope(Common1, Kinds1, false, top),
+    inner_paths(Common1, Kinds1),
     P#{common := Common1, kinds := Kinds1, presence_named => element(2, St),
-       presence_static => element(3, St)}.
+       presence_static => element(3, St),
+       inner_formats => lists:usort(inner_lines(Common1 ++ lists:append([maps:get(lines, K) || K <- Kinds1])))}.
+
+%% ---- `inner` lines (0.34) ----
+%% The formats of the `inner` lines of a scope, `length` blocks included
+%% (the only blocks an `inner` line may stand in).
+inner_lines(Lines) ->
+    lists:append([case L of
+                      {inner, F, _} -> [F];
+                      {len, _, _, _, Body} -> inner_lines(Body);
+                      _ -> []
+                  end || L <- Lines]).
+
+%% At most one `inner` line on any reading path (ruling 33 of 0.21 as 0.34
+%% applies it): the common lines with each kind's.
+inner_paths(Common, Kinds) ->
+    N = length(inner_lines(Common)),
+    Paths = [N | [N + length(inner_lines(maps:get(lines, K))) || K <- Kinds]],
+    case lists:max(Paths) > 1 of
+        true -> load_error('bad-directive', "two inner lines lie on one reading path", []);
+        false -> ok
+    end.
 
 %% ---- a list in two groups (rulings 23 and 33 of 0.8) ----
 %% Within one scope (the common lines with one kind's, of the message or of
@@ -3566,6 +3624,10 @@ rest_block([L | Rest], After0, Ctx) ->
             end,
             rest_scope(Ls, Ks, false, rest_item);
         {sgroup, _, _, #{lines := Ls, kinds := Ks}} -> rest_scope(Ls, Ks, true, item);
+        %% an `inner` line is the last wire line of its extent as a `rest`
+        %% group is (0.34)
+        {inner, Format, _} when After ->
+            load_error('bad-directive', "inner ~s is not the last line of its extent", [Format]);
         {len, _, _, _, Body} -> rest_block(Body, false, top);
         {chain, First, Parts, EndsFx} ->
             N = length(Parts),

@@ -34,6 +34,22 @@ public final class Entity {
 
     public void clearKind() { kindFormat = null; kindName = null; }
 
+    private String innerKindFormat;
+    private String innerKindName;
+
+    /**
+     * The format of the inner pack whose decode selected a kind for this entity (engine-spec 0.34), or null.
+     * {@code Entity.inner_kind} is the pair (innerKindFormat, innerKindName); it is set by decode only.
+     */
+    public String innerKindFormat() { return innerKindFormat; }
+
+    /** The kind the inner pack selected, or null. */
+    public String innerKindName() { return innerKindName; }
+
+    public void setInnerKind(String format, String name) { innerKindFormat = format; innerKindName = name; }
+
+    public void clearInnerKind() { innerKindFormat = null; innerKindName = null; }
+
     public Map<String, Object> fields() { return fields; }
 
     public Object get(String key) { return fields.get(key); }
@@ -70,5 +86,6 @@ public final class Entity {
     }
 
     @Override
-    public String toString() { return "Entity{kind=" + (kindFormat == null ? "-" : kindFormat + "/" + kindName) + ", fields=" + fields + (lists.isEmpty() ? "" : ", lists=" + lists) + ", residue=" + residue + "}"; }
+    public String toString() { return "Entity{kind=" + (kindFormat == null ? "-" : kindFormat + "/" + kindName)
+            + (innerKindFormat == null ? "" : ", inner_kind=" + innerKindFormat + "/" + innerKindName) + ", fields=" + fields + (lists.isEmpty() ? "" : ", lists=" + lists) + ", residue=" + residue + "}"; }
 }

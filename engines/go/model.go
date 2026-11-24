@@ -84,8 +84,9 @@ func (it *Item) List(name string) ([]*Item, bool) {
 	return l, ok
 }
 
-// Entity is the shared model: named fields and lists plus residue, and the
-// kind the decode selected when the source pack has kinds. Lists maps a list
+// Entity is the shared model: named fields and lists plus residue, the kind
+// the decode selected when the source pack has kinds, and the kind of the
+// message of another pack read at an `inner` line (spec 0.34). Lists maps a list
 // name to its items; a list that is present and empty is distinct from an
 // absent one.
 type Entity struct {
@@ -93,6 +94,11 @@ type Entity struct {
 	Lists   map[string][]*Item
 	Residue []ResidueEntry
 	Kind    EntityKind
+	// InnerKind is the kind the inner pack of an `inner` line selected when
+	// the decode read one (spec 0.34, Decode step 5): the inner format and
+	// the kind name. The zero value means none: no `inner` line was read, or
+	// the inner pack has no kinds. It is set by decode only.
+	InnerKind EntityKind
 }
 
 // NewEntity returns an empty entity.

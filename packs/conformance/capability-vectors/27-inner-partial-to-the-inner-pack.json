@@ -1,0 +1,14 @@
+{
+  "name": "27-inner-partial-to-the-inner-pack",
+  "from": "conformance-inner-restpartial",
+  "to": "conformance-inner-fixed",
+  "grade": "partial",
+  "carried": [
+    "probe.x",
+    "probe.y",
+    "probe.z"
+  ],
+  "dropped": [
+    "probe.n"
+  ]
+}

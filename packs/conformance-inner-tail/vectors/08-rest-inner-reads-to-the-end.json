@@ -1,0 +1,13 @@
+{
+  "name": "rest-inner-reads-to-the-end",
+  "from": "conformance-inner-tail",
+  "to": "conformance-inner-tail",
+  "input": "09010203ff",
+  "expect": "09010203ff",
+  "model": {
+    "probe.nums.#": "4",
+    "probe.nums[3].probe.val": "255"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: a rest group at message level reads to the end; nothing is left"
+}

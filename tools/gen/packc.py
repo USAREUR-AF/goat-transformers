@@ -350,6 +350,10 @@ class Pack:
         if self.wire != "bits":
             refuse("wire-not-bits", "format `%s` is on the `%s` wire; the device profile compiles the `bits` wire only"
                    % (self.format, self.wire))
+        for t in rows:      # spec 0.34: a message of another pack inside a field is not in the device profile
+            if t[0] == "inner":
+                refuse("unsupported-feature", "%s: `inner <format>` (a message of another pack inside a field, "
+                       "spec 0.34) is not in the device profile" % self.format)
         for t in rows:      # spec 0.22: long and terminated fields are not in the device profile
             if ((t[0] == "bit_order" and t[1:] == ["msb-lsb"])
                     or (t[0] in ("field", "also") and len(t) > 3

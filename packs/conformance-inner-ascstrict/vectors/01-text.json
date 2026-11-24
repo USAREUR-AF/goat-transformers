@@ -1,0 +1,13 @@
+{
+  "name": "text",
+  "from": "conformance-inner-ascstrict",
+  "to": "conformance-inner-ascstrict",
+  "input": "0941",
+  "expect": "0941",
+  "model": {
+    "probe.n": "9",
+    "probe.s1": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, end 1"
+}

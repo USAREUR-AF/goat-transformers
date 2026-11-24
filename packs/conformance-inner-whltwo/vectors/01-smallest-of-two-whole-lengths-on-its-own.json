@@ -1,0 +1,12 @@
+{
+  "name": "smallest-of-two-whole-lengths-on-its-own",
+  "from": "conformance-inner-whltwo",
+  "to": "conformance-inner-whltwo",
+  "input": "040305aa",
+  "expect": "030305",
+  "model": {
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: 4 and 3 stated, the smallest 3 is the end, aa left; decoded on its own extra bytes are accepted"
+}

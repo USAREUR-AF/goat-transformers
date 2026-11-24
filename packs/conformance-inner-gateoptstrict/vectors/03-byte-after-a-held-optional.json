@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-a-held-optional",
+  "from": "conformance-inner-gateoptstrict",
+  "to": "conformance-inner-gateoptstrict",
+  "input": "09050007ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 3"
+}

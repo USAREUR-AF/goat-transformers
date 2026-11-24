@@ -1,0 +1,9 @@
+{
+  "name": "input-shorter-than-the-word",
+  "from": "conformance-inner-wordstrict",
+  "to": "conformance-inner-wordstrict",
+  "input": "0905",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 15: 0.5 requires whole words; the inner pack's own rule"
+}

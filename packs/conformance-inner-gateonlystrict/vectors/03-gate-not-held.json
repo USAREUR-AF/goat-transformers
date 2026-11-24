@@ -1,0 +1,9 @@
+{
+  "name": "gate-not-held",
+  "from": "conformance-inner-gateonlystrict",
+  "to": "conformance-inner-gateonlystrict",
+  "input": "0902",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 0, so the gate byte itself is left over"
+}

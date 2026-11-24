@@ -32,6 +32,7 @@ const (
 	seqCaseOp   // the frame of a `case` or `else` body; not a line
 	seqMsg      // the frame of a message body; not a line
 	seqCountOp  // a `count <name> <len> [plus <n>]` line (0.21)
+	seqInner    // an `inner <format>` line (0.34)
 )
 
 // How the items of a sequential group are delimited.
@@ -70,6 +71,7 @@ var seqStructural = map[string]bool{
 	"group": true, "end": true, "kind": true, "requires": true, "default": true,
 	"ext": true, "choice": true, "alt": true,
 	"switch": true, "case": true, "else": true, "count": true,
+	"inner": true,
 }
 
 // uperDirective names the block directives of spec 0.19; outside a
@@ -175,6 +177,8 @@ type seqNode struct {
 	at    bool         // when: a look-ahead `when … at <off>` (0.33)
 	off   uint64       // when … at: the offset in bits from kind start
 	kind  *seqKind     // seqKindStart: the kind whose lines follow
+	inner string       // inner: the format of the inner pack (0.34)
+	part  bool         // inner: `partial`, bytes after the inner message are ignored (0.34)
 }
 
 // seqKindStart marks, in the lines an encode writes for a kind, where the
@@ -205,8 +209,9 @@ type seqBody struct {
 }
 
 // modelKeys reports the keys and lists the body maps, in first appearance
-// order.
-func (b *seqBody) modelKeys(add func(string), prefix string) {
+// order. inner, when not nil, is called at each `inner` line in reading
+// order with the format it names (0.34, Capability).
+func (b *seqBody) modelKeys(add func(string), prefix string, inner func(string)) {
 	var walk func(nodes []*seqNode)
 	walk = func(nodes []*seqNode) {
 		for _, n := range nodes {
@@ -224,13 +229,17 @@ func (b *seqBody) modelKeys(add func(string), prefix string) {
 				}
 			case seqGroup:
 				add(prefix + n.g.List + "[]")
-				n.g.sbody.modelKeys(add, prefix+n.g.List+"[].")
+				n.g.sbody.modelKeys(add, prefix+n.g.List+"[].", inner)
 			case seqSwitchOp:
 				for _, c := range n.sw.cases {
 					walk(c.body)
 				}
 				if n.sw.els != nil {
 					walk(n.sw.els.body)
+				}
+			case seqInner:
+				if inner != nil {
+					inner(n.inner)
 				}
 			default:
 				walk(n.body)
@@ -274,6 +283,11 @@ type seqFrame struct {
 	afterRest  bool
 	kafterRest bool
 	restCase   bool
+	// afterInner is set once an `inner` line has stood in this block, and
+	// kafterInner within the kind being read: a wire line after it in the
+	// same extent is bad-directive after the file (0.34).
+	afterInner  bool
+	kafterInner bool
 }
 
 // seqListAt is one group of a scope: its line and the `if`, `opt` and `alt` blocks
@@ -443,6 +457,11 @@ func (sp *seqParser) wireLine(kw string, n int) error {
 		if f.afterRest || f.kafterRest {
 			return sp.bad(n, "", "%s stands after a rest group of the same extent; a rest group is the last line of its extent", kw)
 		}
+		// After an `inner` line the same holds, checked after the file
+		// (0.34, "The inner line").
+		if f.afterInner || f.kafterInner {
+			sp.lateErr(sp.bad(n, "", "%s stands after an inner line of the same extent; an inner line is the last wire line of its extent", kw))
+		}
 		if f.op == seqLength || f.op == seqMsg || f.op == seqGroup {
 			break
 		}
@@ -549,7 +568,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 	switch kw {
 	// An ext reads its extension bit, so it is a wire line; a choice is one
 	// when it reads bits itself (0.21 ruling 41, checked at its line).
-	case "field", "const", "pad", "align", "presence", "opt", "fx", "length", "group", "count", "ext":
+	case "field", "const", "pad", "align", "presence", "opt", "fx", "length", "group", "count", "ext", "inner":
 		if err := sp.wireLine(kw, n); err != nil {
 			return err
 		}
@@ -769,7 +788,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		top.body.kinds = append(top.body.kinds, k)
 		top.kind, top.nodes = k, &k.nodes
 		top.kpres, top.klists, top.kmapped = map[string]*seqPresenceDef{}, map[string][]seqListAt{}, map[string]bool{}
-		top.kcnts, top.kafterRest = map[string]*seqCountDef{}, false
+		top.kcnts, top.kafterRest, top.kafterInner = map[string]*seqCountDef{}, false, false
 		if top.op == seqMsg {
 			p.Kinds = append(p.Kinds, &KindDef{Name: k.name, Line: n})
 		}
@@ -1029,6 +1048,31 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		p.keyRefs = append(p.keyRefs, keyRef{key: g.List, locator: g.Locator, line: n, group: g})
 		add(&seqNode{op: seqGroup, g: g})
 		sp.push(&seqFrame{op: seqGroup, line: n, group: g, body: g.sbody, nodes: &g.sbody.common, kindNames: map[string]int{}, lists: map[string][]seqListAt{}, mapped: map[string]bool{}})
+	case "inner":
+		// inner <format> (0.34): in the common lines, a kind or length
+		// blocks, at any depth of length blocks; under any other block it is
+		// bad-directive after the file.
+		for _, f := range sp.stack[1:] {
+			if f.op != seqLength {
+				sp.lateErr(sp.bad(n, "", "inner stands in a block opened on line %d; it stands only in the common lines, in a kind and in length blocks", f.line))
+				break
+			}
+		}
+		if len(args) == 2 && args[1] != "partial" {
+			sp.lateErr(sp.bad(n, "", "inner is `inner <format> [partial]`, got %q", args[1]))
+		}
+		add(&seqNode{op: seqInner, line: n, inner: args[0], part: len(args) == 2})
+		if p.innerLine == 0 {
+			p.innerLine = n
+		}
+		if !p.hasInnerFor(args[0]) {
+			p.innerFormats = append(p.innerFormats, args[0])
+		}
+		if top.op == seqMsg && top.kind != nil {
+			top.kafterInner = true
+		} else {
+			top.afterInner = true
+		}
 	case "count":
 		// count <name> <len> [plus <n>] (0.21)
 		name := args[0]
@@ -1377,6 +1421,23 @@ func (sp *seqParser) finish() error {
 	if b := sp.p.sbody; b.whens > 0 && len(b.kinds) == 0 {
 		return sp.bad(0, "", "a when line needs a pack with a kind line")
 	}
+	// At most one `inner` line lies on a reading path (0.34, ruling 33 of
+	// 0.21): the common lines and each kind.
+	if b := sp.p.sbody; sp.p.innerLine != 0 {
+		common := innerLines(b.common)
+		paths := []int{common}
+		if len(b.kinds) > 0 {
+			paths = paths[:0]
+			for _, k := range b.kinds {
+				paths = append(paths, common+innerLines(k.nodes))
+			}
+		}
+		for _, c := range paths {
+			if c > 1 {
+				return sp.bad(sp.p.innerLine, "", "a reading path holds %d inner lines, and holds at most one", c)
+			}
+		}
+	}
 	// Each reading path through a count's range holds exactly one group
 	// that references it (0.21 rulings 2 and 33).
 	for _, cd := range sp.counts {
@@ -1396,6 +1457,29 @@ func (sp *seqParser) finish() error {
 		}
 	}
 	return nil
+}
+
+// innerLines counts the `inner` lines along the lines of a body, through
+// length blocks; a group body is another body.
+func innerLines(nodes []*seqNode) int {
+	c := 0
+	for _, n := range nodes {
+		switch n.op {
+		case seqInner:
+			c++
+		case seqGroup:
+		case seqSwitchOp:
+			for _, cs := range n.sw.cases {
+				c += innerLines(cs.body)
+			}
+			if n.sw.els != nil {
+				c += innerLines(n.sw.els.body)
+			}
+		default:
+			c += innerLines(n.body)
+		}
+	}
+	return c
 }
 
 // countRefs returns the fewest and the most groups that reference a count

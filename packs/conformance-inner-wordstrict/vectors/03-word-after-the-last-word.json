@@ -1,0 +1,9 @@
+{
+  "name": "word-after-the-last-word",
+  "from": "conformance-inner-wordstrict",
+  "to": "conformance-inner-wordstrict",
+  "input": "0905ffeedd",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 2"
+}

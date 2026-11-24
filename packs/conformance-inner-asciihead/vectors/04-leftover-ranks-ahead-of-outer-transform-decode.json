@@ -1,0 +1,9 @@
+{
+  "name": "leftover-ranks-ahead-of-outer-transform-decode",
+  "from": "conformance-inner-asciihead",
+  "to": "conformance-inner-asciihead",
+  "input": "013507ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 17: outer ascii 01 fails, the decode goes on, inner end 2 of 3 bytes"
+}

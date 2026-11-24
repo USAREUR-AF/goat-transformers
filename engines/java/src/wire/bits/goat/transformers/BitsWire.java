@@ -14,6 +14,27 @@ abstract class BitsWire<W> extends Codec<W> {
         BitMsg(byte[] b, long bits) { this.b = b; this.bits = bits; }
     }
 
+    /** One message of an inner pack decoded (engine-spec 0.34), its transform failures not yet judged. */
+    static final class Layer {
+        final Entity entity = new Entity();
+        Failures fails;
+        /** The end of the message in bits, not rounded; and the bits it is rounded up to a multiple of. */
+        long end;
+        long unit = 8;
+        /** A transform-decode that stopped the decode (a switch on a key whose line failed), or null. */
+        GtException stopped;
+
+        /** True when {@code bytes} bytes hold one at or after the message's end (rulings 13 to 16). */
+        boolean leftOver(int bytes) {
+            long bits = (long) bytes * 8;
+            if (bits <= end) return false;
+            return bits > (end + unit - 1) / unit * unit;   // end < bits: no overflow
+        }
+    }
+
+    /** Decode {@code msg} as the inner message of another pack. An error that stops the decode is thrown, except a transform-decode. */
+    abstract Layer decodeLayer(byte[] msg);
+
     /** The bits wire's input: hex, or with {@code armor sixbit} armored text. */
     BitMsg parseBits(String text) {
         if (pack.armorSixbit) return fromArmor(text);

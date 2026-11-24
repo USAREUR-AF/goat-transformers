@@ -1052,6 +1052,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     // end of the file (ruling 10 of 0.10), as do the checks against the wire.
     std::size_t armor_line = 0;
     std::string armor_error;
+    std::size_t inner_line = 0;  // v0.34: the first `inner` line
     // v0.19: `encoding`, checked after the file is read: `encoding uper` needs
     // `layout sequential`, and `ext`, `choice` and `alt` lines are UPER lines,
     // bad-directive on any wire (rulings 9 and 21).
@@ -1573,6 +1574,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             if (!natives.insert(t[1]).second)
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": duplicate typemap code '" + t[1] + "'");
             p.typemap.emplace_back(t[1], t[2]);
+        } else if (kw == "inner") {
+            // v0.34: a line of a `layout sequential` bits pack, refused after the file is read.
+            if (inner_line == 0) inner_line = lineno;
         } else if (kw == "count") {
             // v0.21: a count line belongs to a sequential layout.
             throw Error(ErrorKind::BadDirective, p.format, "",
@@ -1605,6 +1609,10 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         throw Error(ErrorKind::BadDirective, p.format, open.back()->locator,
                     source + ":" + std::to_string(open.back()->line) + ": the group '" + open.back()->list +
                         "' has no 'end'");
+    if (inner_line != 0)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(inner_line) +
+                        ": 'inner' is a line of a 'layout sequential' pack on wire bits");
     if (encoding_line != 0 && have_wire && p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(encoding_line) + ": 'encoding' applies to wire bits only");

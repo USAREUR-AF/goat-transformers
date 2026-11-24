@@ -963,6 +963,38 @@ final class UnitTests {
         // 34: a group whose first indicator lies at the end of the extent is an absent list.
         Entity m = x.decode("m", "08aa");
         check("more group whose first indicator is at the end of the extent", m.list("probe.recs") == null && Long.valueOf(0xaa).equals(m.get("probe.x")), m.toString());
+        innerDiscardedItems();
+    }
+
+    /** engine-spec 0.34, step 4 and ruling 7: the items of a list an outer list replaces are checked, not counted. */
+    static void innerDiscardedItems() {
+        String mid = "version 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\n";
+        String outer = "format o\n" + mid + "layout sequential\nbit_order msb\ngroup probe.recs count 8\n field probe.y 8 uint\nend\ninner i\n";
+        String fixed = "format i\n" + mid + "word_bytes 1\nbit_order msb\n"
+                + "group probe.recs 0:0 item 8 count 2\n field probe.y 0:0:8 uint\nend\n"
+                + "group probe.subs 0:16 item 8 count 2\n field probe.y 0:0:8 uint\nend\n";
+        String two = "format i\n" + mid + "layout sequential\nbit_order msb\ncount a 8\ncount b 8 plus 1\n"
+                + "group probe.recs count @a @b\n field probe.y 8 uint\nend\n"
+                + "group probe.subs count 8\n field probe.y 8 uint\nend\n";
+        String[][] cases = {{"fixed layout", fixed, "0105" + "0a0b" + "0c0d"}, {"two counts", two, "0105" + "0203" + "0a0b" + "02" + "0c0d"}};
+        for (String[] c : cases) {
+            Engine e = probeEngine(outer, c[1]);
+            e.setMaxItems(3);   // the outer nums (1) and the inner deltas (2); the inner nums (2) are discarded
+            Entity got = null;
+            try {
+                got = e.decode("o", c[2]);
+            } catch (GtException ex) {
+                check("inner discarded items, " + c[0], false, ex.toString());
+            }
+            if (got != null) {
+                eq("inner discarded items, " + c[0] + ": the outer list", 1, got.list("probe.recs").size());
+                eq("inner discarded items, " + c[0] + ": the other list", 2, got.list("probe.subs").size());
+            }
+            e.setMaxItems(2);
+            errorKind("inner discarded items, " + c[0] + ": one item over", "malformed-wire", () -> e.decode("o", c[2]));
+        }
+        Engine e = probeEngine(outer, two);
+        errorKind("two counts of a discarded list that differ", "malformed-wire", () -> e.decode("o", "0105" + "0204" + "0a0b" + "02" + "0c0d"));
     }
 
     /** The packs {@link #packsOnly} loads one by one unless GOAT_SWEEP_FULL=1. */

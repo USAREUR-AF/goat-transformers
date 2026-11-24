@@ -1,0 +1,24 @@
+# Conformance probe pack whose inner line, naming a format no pack declares,
+# lies in one kind only (spec 0.34, Reaching the inner line: a line not
+# reached checks nothing). Most significant bit first. Public.
+#
+#   byte 0      the kind: 1 = good, 2 = gone
+#   kind good   n in 8 bits
+#   kind gone   w in 8 bits, then the inner message (unknown-format)
+format     conformance-inner-unreached
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind good
+when     8  1
+requires probe.n
+field    probe.n  8  uint
+kind gone
+when     8  2
+requires probe.w
+field    probe.w  8  uint
+inner    conformance-inner-not-a-format

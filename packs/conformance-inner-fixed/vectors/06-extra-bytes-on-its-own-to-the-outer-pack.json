@@ -1,0 +1,9 @@
+{
+  "name": "extra-bytes-on-its-own-to-the-outer-pack",
+  "from": "conformance-inner-fixed",
+  "to": "conformance-inner-rest",
+  "input": "3507ff",
+  "expect": "003507",
+  "source": "constructed",
+  "reference": "spec 0.34, no inner decode, so no check; fixed 3507 in the outer pack, n absent = 0"
+}

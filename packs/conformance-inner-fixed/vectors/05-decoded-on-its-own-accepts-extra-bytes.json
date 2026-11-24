@@ -1,0 +1,14 @@
+{
+  "name": "decoded-on-its-own-accepts-extra-bytes",
+  "from": "conformance-inner-fixed",
+  "to": "conformance-inner-fixed",
+  "input": "3507ff",
+  "expect": "3507",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "3",
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, Decode step 3: a message decoded on its own accepts a longer input (0.5)"
+}

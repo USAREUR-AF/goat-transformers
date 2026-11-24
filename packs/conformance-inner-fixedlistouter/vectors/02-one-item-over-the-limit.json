@@ -1,0 +1,10 @@
+{
+  "name": "one-item-over-the-limit",
+  "from": "conformance-inner-fixedlistouter",
+  "to": "conformance-inner-fixedlistouter",
+  "input": "020a0b0c0d0e0f",
+  "max_items": 3,
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 max_items: the entity would hold nums 2 and deltas 2, over the limit of 3 (7f of 0.11)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "leftover-fixed-at-message-end",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-rest",
+  "input": "093507ff0102",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end at byte 2 (z, bits 8 to 15); 3 bytes after it"
+}

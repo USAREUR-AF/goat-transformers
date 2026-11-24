@@ -1,0 +1,9 @@
+{
+  "name": "empty-inner-input-is-no-kind",
+  "from": "conformance-inner-kindspartial",
+  "to": "conformance-inner-kindspartial",
+  "input": "0705",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 16: result of ruling 6"
+}

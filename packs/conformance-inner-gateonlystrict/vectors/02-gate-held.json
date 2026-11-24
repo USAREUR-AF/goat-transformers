@@ -1,0 +1,13 @@
+{
+  "name": "gate-held",
+  "from": "conformance-inner-gateonlystrict",
+  "to": "conformance-inner-gateonlystrict",
+  "input": "090105",
+  "expect": "090105",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, end 2"
+}

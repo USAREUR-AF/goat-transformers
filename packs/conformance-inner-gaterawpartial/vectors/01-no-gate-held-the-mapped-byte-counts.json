@@ -1,0 +1,17 @@
+{
+  "name": "no-gate-held-the-mapped-byte-counts",
+  "from": "conformance-inner-gaterawpartial",
+  "to": "conformance-inner-gaterawpartial",
+  "input": "090500",
+  "expect": "090500",
+  "model": {
+    "probe.n": "9",
+    "probe.w": "0",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: w is outside any block, end 2; partial, nothing to ignore"
+}

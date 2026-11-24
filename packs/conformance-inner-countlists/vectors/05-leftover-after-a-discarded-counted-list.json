@@ -1,0 +1,9 @@
+{
+  "name": "leftover-after-a-discarded-counted-list",
+  "from": "conformance-inner-countlists",
+  "to": "conformance-inner-countlists",
+  "input": "020a0b010cff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: cursor 2 after the inner count 1 and one item, whose list is discarded"
+}

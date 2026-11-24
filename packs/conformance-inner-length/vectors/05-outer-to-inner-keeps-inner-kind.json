@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-inner-keeps-inner-kind",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-seq",
+  "input": "09030201020a",
+  "expect": "020102",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion: Entity.inner_kind (conformance-inner-seq, b) names the target and is kept; top-level encode selects by it (Entity.kind is absent: the outer pack has no kinds)"
+}

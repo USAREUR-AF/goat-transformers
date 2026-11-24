@@ -1,0 +1,12 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-asciione",
+  "to": "conformance-inner-asciione",
+  "input": "41",
+  "expect": "41",
+  "model": {
+    "probe.s1": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.5: byte 41 is the text A"
+}

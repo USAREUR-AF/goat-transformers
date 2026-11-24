@@ -1,0 +1,9 @@
+{
+  "name": "to-the-outer-pack",
+  "from": "conformance-inner-at",
+  "to": "conformance-inner-atouter",
+  "input": "0501",
+  "expect": "0002050100",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion: kind a kept; n absent 00, length 02, the inner bytes 0501, w absent 00"
+}

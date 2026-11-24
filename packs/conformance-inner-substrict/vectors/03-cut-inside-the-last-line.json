@@ -1,0 +1,9 @@
+{
+  "name": "cut-inside-the-last-line",
+  "from": "conformance-inner-substrict",
+  "to": "conformance-inner-substrict",
+  "input": "095a",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, 11 bits needed, 8 there (0.8)"
+}

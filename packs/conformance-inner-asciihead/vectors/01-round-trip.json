@@ -1,0 +1,15 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-asciihead",
+  "to": "conformance-inner-asciihead",
+  "input": "413507",
+  "expect": "413507",
+  "model": {
+    "probe.s1": "A",
+    "probe.x": "5",
+    "probe.y": "3",
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3"
+}

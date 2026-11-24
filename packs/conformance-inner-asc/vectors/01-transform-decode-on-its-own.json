@@ -1,0 +1,9 @@
+{
+  "name": "transform-decode-on-its-own",
+  "from": "conformance-inner-asc",
+  "to": "conformance-inner-asc",
+  "input": "01ff",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34, no check on its own"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "unmapped-bytes-before-the-items",
+  "from": "conformance-inner-gapstrict",
+  "to": "conformance-inner-gapstrict",
+  "input": "090501aabb07",
+  "expect": "090501000007",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 5, aabb lie before it"
+}

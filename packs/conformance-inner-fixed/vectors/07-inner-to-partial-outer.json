@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-partial-outer",
+  "from": "conformance-inner-fixed",
+  "to": "conformance-inner-restpartial",
+  "input": "3507",
+  "expect": "003507",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: same bytes as vector 02"
+}

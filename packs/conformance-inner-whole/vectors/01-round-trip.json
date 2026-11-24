@@ -1,0 +1,14 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-whole",
+  "to": "conformance-inner-whole",
+  "input": "0509020005",
+  "expect": "0509020005",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@inner_kind": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 3: the whole length 5 ends the message extent at the end of the input; inner input 020005"
+}

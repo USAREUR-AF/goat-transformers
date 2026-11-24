@@ -1,0 +1,11 @@
+# Conformance probe pack used as an inner pack (spec 0.34):
+# a pack that reads no bytes: `align` at bit 0. Public.
+format     conformance-inner-none
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+align   8

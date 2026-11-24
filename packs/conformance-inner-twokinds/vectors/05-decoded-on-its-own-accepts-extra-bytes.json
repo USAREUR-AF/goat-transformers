@@ -1,0 +1,13 @@
+{
+  "name": "decoded-on-its-own-accepts-extra-bytes",
+  "from": "conformance-inner-twokinds",
+  "to": "conformance-inner-twokinds",
+  "input": "0105ff",
+  "expect": "0105",
+  "model": {
+    "@kind": "p",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 9 of 0.8 stays"
+}

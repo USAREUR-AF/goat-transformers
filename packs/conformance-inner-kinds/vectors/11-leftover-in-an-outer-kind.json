@@ -1,0 +1,9 @@
+{
+  "name": "leftover-in-an-outer-kind",
+  "from": "conformance-inner-kinds",
+  "to": "conformance-inner-kinds",
+  "input": "0705010203ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: kind carry, inner input 010203ff, end 3"
+}

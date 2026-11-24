@@ -10,7 +10,8 @@ independently, the capability matrix, and portable engines.
 A caller brings constraints: the message standards they need to speak, the
 language, the runtime, the OS and chip architecture, and static vs dynamic
 linkage. The planner returns the smallest package: which engine, which packs
-(only the formats asked for), which wire codecs those packs use, the build target
+(only the formats asked for, and the packs their `inner` lines name, spec
+0.34), which wire codecs those packs use, the build target
 and command, and whether the requested formats actually inter-convert.
 
 ```
@@ -78,7 +79,9 @@ writes a file: `bundle` and `archive` stay on the command line.
 ## Why it is computable here
 
 - **Atomic packs.** A format is a directory of data files, loaded on its own. A
-  package includes only the formats asked for, nothing else.
+  package includes only the formats asked for, nothing else, except the packs
+  their `inner` lines name (spec 0.34): an outer format cannot decode its
+  payload without them, so they go with it.
 - **Capability matrix.** Translatability between any two formats is derived from
   their field maps (`Engine::capability`, `goat-xf matrix`), so the planner states
   up front what carries A→B and what the target cannot represent.

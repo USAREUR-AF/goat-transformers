@@ -1,0 +1,19 @@
+# Conformance probe pack (spec 0.34): `inner … partial` in a kind, most
+# significant bit first. Public.
+format     conformance-inner-kindspartial
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind carry
+when     8  7
+requires probe.n
+field    probe.n  8  uint
+inner    conformance-inner-seq  partial
+kind plain
+when     8  8
+requires probe.w
+field    probe.w  8  uint

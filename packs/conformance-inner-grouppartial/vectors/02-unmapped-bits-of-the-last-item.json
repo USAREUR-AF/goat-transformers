@@ -1,0 +1,13 @@
+{
+  "name": "unmapped-bits-of-the-last-item",
+  "from": "conformance-inner-grouppartial",
+  "to": "conformance-inner-grouppartial",
+  "input": "0905010aff",
+  "expect": "0905010a00",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: the whole item counts, end 4; partial, nothing to ignore"
+}

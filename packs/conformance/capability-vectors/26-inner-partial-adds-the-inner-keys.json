@@ -1,0 +1,13 @@
+{
+  "name": "26-inner-partial-adds-the-inner-keys",
+  "from": "conformance-inner-restpartial",
+  "to": "conformance-inner-rest",
+  "grade": "full",
+  "carried": [
+    "probe.n",
+    "probe.x",
+    "probe.y",
+    "probe.z"
+  ],
+  "dropped": []
+}

@@ -53,9 +53,10 @@ func bytesOf(t *testing.T, text, b64 *string, what string) []byte {
 // kindKey is the `model` key that holds the kind name a decode must select;
 // completeKey, set to true, moves the model checks to the completed entity.
 const (
-	kindKey     = "@kind"
-	completeKey = "@complete"
-	absentKey   = "@absent"
+	kindKey      = "@kind"
+	completeKey  = "@complete"
+	absentKey    = "@absent"
+	innerKindKey = "@inner_kind" // Version 0.34: the kind name Entity.inner_kind holds
 )
 
 // checkAbsent checks one entry of a vector's `"@absent"` list (spec 0.9,
@@ -207,7 +208,7 @@ func checkModelGrammar(eng *Engine, k, want string) string {
 		}
 		key = key[i+j+2:]
 	}
-	if key == kindKey {
+	if key == kindKey || key == innerKindKey {
 		return ""
 	}
 	if _, isCount := strings.CutSuffix(key, ".#"); isCount {
@@ -389,6 +390,12 @@ func checkVector(t *testing.T, eng *Engine, pack string, v vector) {
 					t.Errorf("model[%s]: %q is also a member of model; the vector is invalid", absentKey, key)
 					continue
 				}
+				if key == innerKindKey {
+					if ent.InnerKind != (EntityKind{}) {
+						t.Errorf("model[%s] %s: present with (%q, %q), want absent", absentKey, key, ent.InnerKind.Format, ent.InnerKind.Name)
+					}
+					continue
+				}
 				if msg := checkAbsent(ent.item(), key); msg != "" {
 					t.Errorf("model[%s] %s: %s", absentKey, key, msg)
 				}
@@ -407,6 +414,12 @@ func checkVector(t *testing.T, eng *Engine, pack string, v vector) {
 		if k == kindKey {
 			if ent.Kind.Format != v.From || ent.Kind.Name != wantS {
 				t.Errorf("decode selected kind (%q, %q), want (%q, %q)", ent.Kind.Format, ent.Kind.Name, v.From, wantS)
+			}
+			continue
+		}
+		if k == innerKindKey {
+			if ent.InnerKind.Format == "" || ent.InnerKind.Name != wantS {
+				t.Errorf("decode recorded inner kind (%q, %q), want kind %q", ent.InnerKind.Format, ent.InnerKind.Name, wantS)
 			}
 			continue
 		}

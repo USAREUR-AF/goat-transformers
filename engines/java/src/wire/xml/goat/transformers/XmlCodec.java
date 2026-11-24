@@ -124,7 +124,7 @@ final class XmlCodec extends Codec<Xml.Element> {
     @Override
     Entity decodeKind(Xml.Element root, Pack.Kind kind) {
         Entity e = new Entity();
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         Set<String> mapped = new HashSet<>();
         decodeScope(root, kind.scope, e, fails, mapped);
         // Residue: unmapped attributes on the root element. Unmapped child elements are not carried.

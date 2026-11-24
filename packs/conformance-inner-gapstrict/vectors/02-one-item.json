@@ -1,0 +1,14 @@
+{
+  "name": "one-item",
+  "from": "conformance-inner-gapstrict",
+  "to": "conformance-inner-gapstrict",
+  "input": "090501000007",
+  "expect": "090501000007",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 5"
+}

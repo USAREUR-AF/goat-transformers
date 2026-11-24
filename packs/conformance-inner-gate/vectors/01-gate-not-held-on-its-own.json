@@ -1,0 +1,15 @@
+{
+  "name": "gate-not-held-on-its-own",
+  "from": "conformance-inner-gate",
+  "to": "conformance-inner-gate",
+  "input": "0502",
+  "expect": "05",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: a block that does not hold does not count, its gate locator included; end 1; decoded on its own extra bytes are accepted"
+}

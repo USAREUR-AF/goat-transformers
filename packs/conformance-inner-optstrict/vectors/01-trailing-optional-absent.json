@@ -1,0 +1,16 @@
+{
+  "name": "trailing-optional-absent",
+  "from": "conformance-inner-optstrict",
+  "to": "conformance-inner-optstrict",
+  "input": "090005",
+  "expect": "0900050000",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, rulings 14, 15: end 4, input ends before it"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "round-trip-agreeing-values",
+  "from": "conformance-inner-after",
+  "to": "conformance-inner-after",
+  "input": "0301020302",
+  "expect": "0301020302",
+  "model": {
+    "probe.x": "2",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 4 and Encode"
+}

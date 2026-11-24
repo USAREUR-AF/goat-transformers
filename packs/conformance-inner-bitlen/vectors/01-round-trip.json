@@ -1,0 +1,17 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-bitlen",
+  "to": "conformance-inner-bitlen",
+  "input": "103507",
+  "expect": "103507",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "3",
+    "probe.z": "7",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: a length of 16 bits ends on a whole byte; inner input 3507"
+}

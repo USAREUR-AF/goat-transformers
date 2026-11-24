@@ -1,0 +1,9 @@
+{
+  "name": "failed-field-alone",
+  "from": "conformance-inner-failswitch",
+  "to": "conformance-inner-failswitch",
+  "input": "0201010107",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 19: n 1 joins, case 1 is read, and the transform-decode of s1 is reported"
+}

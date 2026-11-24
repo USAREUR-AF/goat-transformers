@@ -1,0 +1,15 @@
+{
+  "name": "shorter-block-held-longer-input-on-its-own",
+  "from": "conformance-inner-gateraw",
+  "to": "conformance-inner-gateraw",
+  "input": "05010007",
+  "expect": "050100",
+  "model": {
+    "probe.y": "0",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: the block of z does not hold and does not count, end 3; decoded on its own extra bytes are accepted"
+}

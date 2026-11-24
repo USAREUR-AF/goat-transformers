@@ -1,0 +1,17 @@
+# Conformance probe pack used as an inner pack (spec 0.34): a fixed layout,
+# least significant bit first, so its own bit order applies inside an outer
+# pack that is most significant bit first. Public. No kinds.
+#
+#   byte 0      x in the low 4 bits, y in the high 4 bits
+#   byte 1      z
+format     conformance-inner-fixed
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  lsb
+field   probe.x  0:0:4   uint
+field   probe.y  0:4:4   uint
+field   probe.z  0:8:8   uint

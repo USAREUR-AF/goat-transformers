@@ -1,0 +1,9 @@
+{
+  "name": "inner-bytes-not-read-are-malformed-wire",
+  "from": "conformance-inner-rest",
+  "to": "conformance-inner-rest",
+  "input": "093507ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, Decode step 3: the inner message ends at 2 of 3 bytes (ruling 14)"
+}

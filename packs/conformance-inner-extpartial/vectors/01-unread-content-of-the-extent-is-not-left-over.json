@@ -1,0 +1,14 @@
+{
+  "name": "unread-content-of-the-extent-is-not-left-over",
+  "from": "conformance-inner-extpartial",
+  "to": "conformance-inner-extpartial",
+  "input": "09050307aabb",
+  "expect": "09050107",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: extent of 3 bytes, aabb no line reads, end 5; partial, nothing to ignore"
+}

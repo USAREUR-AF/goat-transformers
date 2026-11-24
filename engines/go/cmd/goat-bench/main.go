@@ -151,6 +151,9 @@ func run(args []string, stdout, stderr io.Writer) int {
 		vecs = append(vecs, loaded{path: p, v: v, input: in, expect: want})
 	}
 
+	// The packs the `inner` lines of those packs name are loaded too (spec
+	// 0.34, Vectors).
+	names = goatxf.WithInnerPacks(packsDir, names)
 	start := time.Now()
 	eng, err := goatxf.LoadPacksOnly(goatxf.DefaultModelsDir(packsDir), packsDir, goatxf.DistControlled, names)
 	loadNs := time.Since(start).Nanoseconds()

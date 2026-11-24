@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-nest",
+  "to": "conformance-inner-nest",
+  "input": "01010a",
+  "expect": "01010a",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].probe.subs.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.8: one item holding one sub"
+}

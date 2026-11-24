@@ -1,0 +1,14 @@
+{
+  "name": "trailing-group",
+  "from": "conformance-inner-grouppartial",
+  "to": "conformance-inner-grouppartial",
+  "input": "0905020a000b00",
+  "expect": "0905020a000b00",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "11"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: 2 + 2 items of 16 bits, end 6; partial, nothing to ignore"
+}

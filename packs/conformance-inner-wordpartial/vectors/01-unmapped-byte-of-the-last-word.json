@@ -1,0 +1,13 @@
+{
+  "name": "unmapped-byte-of-the-last-word",
+  "from": "conformance-inner-wordpartial",
+  "to": "conformance-inner-wordpartial",
+  "input": "0905ff",
+  "expect": "090500",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: bit 8 rounded up to the word of 16 bits, end 2; partial, nothing to ignore"
+}

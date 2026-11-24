@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-inner-kind-kept-over-requires",
+  "from": "conformance-inner-pick",
+  "to": "conformance-inner-twokinds",
+  "input": "09020005",
+  "expect": "020005",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion keeps Entity.inner_kind (it names the target); top-level encode: Entity.kind is absent (no kinds in the outer pack), Entity.inner_kind names the format and selects q; requires would select p"
+}

@@ -1,0 +1,13 @@
+# Conformance probe pack used as an inner pack (spec 0.34):
+# a rest group of 12-bit items at message level. Public.
+format     conformance-inner-restsub
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.nums rest
+  field  probe.val  12  uint
+end

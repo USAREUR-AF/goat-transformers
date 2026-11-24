@@ -1,0 +1,15 @@
+{
+  "name": "no-leftover",
+  "from": "conformance-inner-restpartial",
+  "to": "conformance-inner-restpartial",
+  "input": "093507",
+  "expect": "093507",
+  "model": {
+    "probe.z": "7",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, partial with nothing to ignore"
+}

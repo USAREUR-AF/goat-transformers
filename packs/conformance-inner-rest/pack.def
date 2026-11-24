@@ -1,0 +1,15 @@
+# Conformance probe pack for an inner message filling the rest of the message
+# (spec 0.34), most significant bit first. Public. No kinds.
+#
+#   byte 0      n
+#   the rest    one conformance-inner-fixed message
+format     conformance-inner-rest
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+inner   conformance-inner-fixed

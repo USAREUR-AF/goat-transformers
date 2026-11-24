@@ -59,7 +59,7 @@ final class SeqCodec extends BitsWire<byte[]> {
         /** The item number of each count read, exact (engine-spec 0.31, ruling 5: two counts compare without wrapping). */
         final Map<Seq.Node, BigInteger> exactCounts = new IdentityHashMap<>();
         final boolean[][] presence = new boolean[pack.seqPresences][];
-        final Failures fails = new Failures();
+        final Failures fails = new Failures(pack.format);
         /** The cases read so far, in reading order (engine-spec 0.20). */
         final List<Seq.Case> casesRead = new ArrayList<>();
         /**
@@ -67,6 +67,14 @@ final class SeqCodec extends BitsWire<byte[]> {
          * {@link #casesRead} when the presence was read}. Checked when the body that read them ends (ruling 21).
          */
         final List<Object[]> pending = new ArrayList<>();
+        /** A {@code length ... whole} line was read: {@link #end} is the smallest length stated. */
+        boolean wholeRead;
+        /** The lists the inner decode gave the entity: no later outer group replaces them (engine-spec 0.34, step 4). */
+        final java.util.Set<String> innerLists = new java.util.HashSet<>();
+        /** The message's entity, whose lists an inner decode compares with the outer entity's. */
+        Entity rootEntity;
+        /** Above 0 while the items of a list that decode discards are read: they are not counted (7g of 0.11). */
+        int discarding;
 
         Reader(BitMsg in) {
             this.msg = in.b;
@@ -181,14 +189,34 @@ final class SeqCodec extends BitsWire<byte[]> {
     Entity decodeMessage(String text) {
         Reader r = new Reader(parseBits(text));
         Entity e = new Entity();
-        Seq.Kind kind = decodeBody(root, r, e);
-        checkPending(r);
+        read(r, e);
         finishDecode(e, r.fails);
-        if (root.hasKinds) e.setKind(pack.format, kind.name);
         return e;
     }
 
-    /** Decode the common lines, select the kind at the cursor, decode its lines. */
+    /** The lines of one message, into {@code e}; its transform failures are left in {@code r.fails}. */
+    private void read(Reader r, Entity e) {
+        r.rootEntity = e;
+        Seq.Kind kind = decodeBody(root, r, e);
+        checkPending(r);
+        if (root.hasKinds) e.setKind(pack.format, kind.name);
+    }
+
+    @Override
+    Layer decodeLayer(byte[] msg) {
+        Reader r = new Reader(new BitMsg(msg, (long) msg.length * 8));
+        Layer l = new Layer();
+        l.fails = r.fails;
+        try {
+            read(r, l.entity);
+        } catch (GtException ex) {
+            if (ex.code() != GtException.Code.TRANSFORM_DECODE) throw ex;
+            l.stopped = ex;
+        }
+        l.end = r.wholeRead ? r.end : r.pos;   // ruling 13 of 0.34
+        return l;
+    }
+
     /**
      * A presence bit named only inside cases is 1: some case naming it must have been read after it, anywhere later
      * in the decode, a later group item included (ruling 36 of 0.20).
@@ -385,6 +413,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     if (total < r.pos) throw malformed("the stated length of the message is shorter than what was already read");
                     if (total > r.end) throw malformed("the input is shorter than the stated length of the message");
                     r.end = total;
+                    r.wholeRead = true;
                     if (r.soft > total) r.soft = total;
                     break;
                 }
@@ -416,6 +445,9 @@ final class SeqCodec extends BitsWire<byte[]> {
                     decodeLines(n.altLines.get(at), r, e);
                     break;
                 }
+                case INNER:
+                    decodeInner(n, r, e);
+                    break;
                 case SWITCH: {
                     // a key line that failed its transform fails the decode, whatever the switch would read (ruling 35)
                     for (int i = 0; i < r.fails.fields.size(); i++) {
@@ -434,6 +466,56 @@ final class SeqCodec extends BitsWire<byte[]> {
                 default:
                     throw new IllegalStateException(n.op.name());
             }
+        }
+    }
+
+    /**
+     * An {@code inner} line (engine-spec 0.34): the bytes from the cursor to the end of the extent are one message of
+     * the inner pack, decoded by its own rules into the same entity. A key or list read earlier is kept.
+     */
+    private void decodeInner(Seq.Node n, Reader r, Entity e) {
+        BitsWire<?> inner = (BitsWire<?>) engine.innerCodec(pack, n.name);   // a bits pack, by check 2
+        if (r.pos % 8 != 0) throw malformed("the inner line of " + n.name + " is reached at bit " + r.pos + ", not on a whole byte");
+        long lim = r.limit();
+        if (lim > (long) r.msg.length * 8) throw malformed("the extent of the inner line ends beyond the input");
+        if (lim % 8 != 0) throw malformed("the length extent of the inner line of " + n.name + " does not end on a whole byte");
+        byte[] bytes = Arrays.copyOfRange(r.msg, (int) (r.pos / 8), (int) (lim / 8));
+        r.pos = lim;
+        Layer layer;
+        // the inner decode starts with the budget the outer lines have left (it shares this thread's budget); the
+        // items of a list the outer entity holds are discarded, so its counts are checked but its items not counted
+        long before = itemsLeft();
+        java.util.Set<String> was = setOuterHeld(new java.util.HashSet<>(e.lists().keySet()));
+        try {
+            layer = inner.decodeLayer(bytes);
+        } finally {
+            setOuterHeld(was);
+        }
+        // the check of step 3, before the keys join (ruling 17); a transform-decode that did not stop ranks after it
+        if (layer.stopped == null && !n.partial && layer.leftOver(bytes.length)) {
+            throw malformed("the " + bytes.length + " bytes of the inner line of " + n.name + " go on after the end of its message");
+        }
+        Entity got = layer.entity;
+        r.fails.addInner(layer.fails, got, e);
+        r.fails.joined = e;
+        for (Map.Entry<String, Object> kv : got.fields().entrySet()) {
+            if (e.get(kv.getKey()) != null) continue;
+            e.put(kv.getKey(), kv.getValue());
+            r.fails.innerKeys.add(kv.getKey());
+        }
+        long kept = 0;
+        for (Map.Entry<String, List<Entity>> l : got.lists().entrySet()) {
+            if (e.list(l.getKey()) != null) continue;   // the outer list read first is kept whole
+            e.putList(l.getKey(), l.getValue());
+            r.innerLists.add(l.getKey());
+            kept += deepCount(l.getValue());
+        }
+        // the entity holds the inner items kept and no other (7g of 0.11)
+        if (before >= 0) setItemsLeft(Math.max(0, before - kept));
+        if (got.kindFormat() != null) e.setInnerKind(got.kindFormat(), got.kindName());
+        if (layer.stopped != null) {
+            finishDecode(e, r.fails);   // the earliest transform-decode in reading order
+            throw layer.stopped;
         }
     }
 
@@ -587,13 +669,46 @@ final class SeqCodec extends BitsWire<byte[]> {
     }
 
     private void decodeGroup(Seq.Node g, Reader r, Entity e) {
+        if (e == r.rootEntity && (r.innerLists.contains(g.list) || heldByOuter(g.list))) {
+            // a list read first by the other pack of a layered decode is kept: this group's items are read and
+            // discarded (engine-spec 0.34, Decode step 4); its counts are checked, its items not counted (ruling 7)
+            r.discarding++;
+            int mark = r.fails.size();
+            try {
+                decodeGroupInto(g, r, new Entity());
+            } finally {
+                r.discarding--;
+            }
+            r.fails.dropSoft(mark);   // ruling 21
+            return;
+        }
+        decodeGroupInto(g, r, e);
+    }
+
+    /** Take {@code n} items of a count before they are read; only check them for a list decode discards. */
+    private void countItems(Reader r, long n) {
+        if (r.discarding > 0) checkItems(n);
+        else takeItems(n);
+    }
+
+    /** Take one item read without a count; nothing for a list decode discards. */
+    private void oneItem(Reader r) {
+        if (r.discarding == 0) takeItems(1);
+    }
+
+    /** Give back the items of a list a later group replaces; nothing inside a list decode discards. */
+    private void giveBack(Reader r, List<Entity> items) {
+        if (r.discarding == 0) giveBackItems(items);
+    }
+
+    private void decodeGroupInto(Seq.Node g, Reader r, Entity e) {
         List<Entity> items = new ArrayList<>();
         switch (g.repeat) {
             case COUNT: {
                 if (!r.line(g.len, "the count of " + g.list)) return;   // beyond the extent: an absent list
                 long n = r.take(g.len);
-                giveBackItems(e.list(g.list));   // a later group of the list replaces the earlier one's items
-                takeItems(n);                    // before any item is read (ruling 7d of 0.11)
+                giveBack(r, e.list(g.list));   // a later group of the list replaces the earlier one's items
+                countItems(r, n);                // before any item is read (ruling 7d of 0.11)
                 long left = r.limit() - r.pos;
                 if (n < 0 || n > left) {
                     throw malformed("the count of " + g.list + " is " + Long.toUnsignedString(n) + " and " + left + " bits are left");
@@ -604,6 +719,8 @@ final class SeqCodec extends BitsWire<byte[]> {
             case SIZE: {
                 if (!r.line(0, "the count of " + g.list)) return;   // at the end of the extent: an absent list
                 long n = g.sized ? r.constrained(g.lb, g.ub, "the count of " + g.list) : r.lengthDet(g.list);
+                giveBack(r, e.list(g.list));
+                countItems(r, n);   // before any item is read (7d of 0.11)
                 long left = r.limit() - r.pos;
                 if (n > left) throw malformed("the count of " + g.list + " is " + n + " and " + left + " bits are left");
                 for (long i = 0; i < n; i++) items.add(decodeItem(g, r));
@@ -624,6 +741,8 @@ final class SeqCodec extends BitsWire<byte[]> {
                                 + g.countRef2.name + " gives " + b);
                     }
                 }
+                giveBack(r, e.list(g.list));
+                countItems(r, c);   // before any item is read (7d of 0.11)
                 long left = r.limit() - r.pos;
                 if (c > left) throw malformed("count " + g.countRef.name + " of " + g.list + " is " + c + " and " + left + " bits are left");
                 for (long i = 0; i < c; i++) items.add(decodeItem(g, r));
@@ -632,8 +751,10 @@ final class SeqCodec extends BitsWire<byte[]> {
             case REST: {
                 // items while bits remain in the extent: 8 when it is counted in bytes, 1 when in bits; fewer are padding
                 long unit = r.soft >= 0 && r.softBits ? 1 : 8;
+                giveBack(r, e.list(g.list));
                 while (r.limit() - r.pos >= unit) {
                     long at = r.pos;
+                    oneItem(r);   // each item counts (7a of 0.11)
                     items.add(decodeItem(g, r));
                     if (r.pos == at) throw malformed("an item of " + g.list + " reads no bits (ruling 1 of 0.21)");
                 }
@@ -642,37 +763,39 @@ final class SeqCodec extends BitsWire<byte[]> {
             case LAST:
                 // the first bit at an extent's end: an absent list (ruling 34 of 0.8); a later one there is malformed (ruling 13)
                 if (r.soft >= 0 && r.pos >= r.soft) return;
+                giveBack(r, e.list(g.list));
                 while (true) {
                     r.need(1, "the bit before an item of " + g.list);
                     long last = r.take(1);
+                    oneItem(r);   // each item counts (7a of 0.11)
                     items.add(decodeItem(g, r));
                     if (last == 1) break;
                 }
                 break;
             case WHILE:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
-                giveBackItems(e.list(g.list));
+                giveBack(r, e.list(g.list));
                 while (true) {
                     if (r.indicator("the bit before an item of " + g.list) == 0) break;
-                    takeItems(1);
+                    oneItem(r);
                     items.add(decodeItem(g, r));
                 }
                 break;
             case MORE:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
-                giveBackItems(e.list(g.list));
+                giveBack(r, e.list(g.list));
                 while (true) {
                     long more = r.indicator("the bit before an item of " + g.list);
-                    takeItems(1);
+                    oneItem(r);
                     items.add(decodeItem(g, r));
                     if (more == 0) break;
                 }
                 break;
             default:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
-                giveBackItems(e.list(g.list));
+                giveBack(r, e.list(g.list));
                 while (true) {
-                    takeItems(1);
+                    oneItem(r);
                     items.add(decodeItem(g, r));
                     if (r.indicator("the bit after an item of " + g.list) == 0) break;
                 }
@@ -850,8 +973,8 @@ final class SeqCodec extends BitsWire<byte[]> {
     private static final int PASSES = 8;
 
     @Override
-    String encode(Entity e) {
-        Seq.Kind kind = selectForEncode(root, e, "the entity");
+    String encode(Entity e, boolean layer) {
+        Seq.Kind kind = selectRoot(e, layer);
         Map<Entity, Map<Seq.Node, Seq.Case>> assumed = new IdentityHashMap<>();
         for (int pass = 1; ; pass++) {
             Writer w = new Writer(assumed);
@@ -896,6 +1019,28 @@ final class SeqCodec extends BitsWire<byte[]> {
         // the counts of 0.21 are filled in first
         if (pack.armorSixbit) return toArmor(w.b, w.pos);
         return toHex(Arrays.copyOf(w.b, bytes));
+    }
+
+    /**
+     * The message's kind: by the record that names this format, in the order of {@link #recordedKind} (engine-spec
+     * 0.34), else the first kind whose {@code requires} the entity has, with the implicit term of each {@code when ... as}
+     * line (engine-spec 0.30). A named kind the pack lacks is no-kind.
+     */
+    private Seq.Kind selectRoot(Entity e, boolean layer) {
+        if (!root.hasKinds) return root.kinds.get(0);
+        String named = recordedKind(e, layer);
+        if (named != null) {
+            Seq.Kind k = root.kind(named);
+            if (k == null) {
+                throw new GtException(GtException.Code.NO_KIND, pack.format, null,
+                        "the entity names kind " + named + ", which is not a kind here");
+            }
+            return k;
+        }
+        for (Seq.Kind k : root.kinds) {
+            if (Pack.allHold(k.requires, e) && asTermsHold(k, e)) return k;   // with the as terms of 0.30
+        }
+        throw new GtException(GtException.Code.NO_KIND, pack.format, null, "the entity has the required keys of no kind");
     }
 
     /**
@@ -1150,7 +1295,7 @@ final class SeqCodec extends BitsWire<byte[]> {
         shadow.fields().putAll(st.shadowAtStart);
         if (st.failedAtStart == null) w.failed.remove(shadow);
         else w.failed.put(shadow, new java.util.HashSet<>(st.failedAtStart));
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         long pos = st.start;
         List<Seq.Node> own = kind.all.subList(st.common, kind.all.size());
         for (int i = 0; i < own.size(); i++) {
@@ -1301,6 +1446,16 @@ final class SeqCodec extends BitsWire<byte[]> {
                     encodeLines(n.altLines.get(pick), w, e, defs, shadow);
                     break;
                 }
+                case INNER: {
+                    // engine-spec 0.34: the checks, then a whole byte, then the inner pack's message of the same entity
+                    Codec<?> inner = engine.innerCodec(pack, n.name);
+                    if (w.pos % 8 != 0) throw encodeError("the inner line of " + n.name + " is reached at bit " + w.pos + ", not on a whole byte");
+                    byte[] bytes = fromHex(inner.encode(e, true));
+                    w.ensure(w.pos + 8L * bytes.length);
+                    System.arraycopy(bytes, 0, w.b, (int) (w.pos / 8), bytes.length);
+                    w.pos += 8L * bytes.length;
+                    break;
+                }
                 case SWITCH: {
                     // the case decode would select from the bits the key's line wrote (engine-spec 0.20)
                     Object v = shadow.get(n.switchKey);
@@ -1334,7 +1489,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                 for (Pack.Field k : n.keys) if (shadow.get(k.key) == null) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
                 return;
             }
-            Failures fails = new Failures();
+            Failures fails = new Failures(pack.format);
             for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
             for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
             return;
@@ -1350,7 +1505,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                 for (Pack.Field k : n.keys) if (shadow.get(k.key) == null) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
                 return;
             }
-            Failures fails = new Failures();
+            Failures fails = new Failures(pack.format);
             for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
             for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
             return;
@@ -1367,7 +1522,7 @@ final class SeqCodec extends BitsWire<byte[]> {
             for (Pack.Field k : n.keys) if (shadow.get(k.key) == null) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
             return;
         }
-        Failures fails = new Failures();
+        Failures fails = new Failures(pack.format);
         for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
         for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
     }

@@ -1,0 +1,9 @@
+{
+  "name": "leftover-in-a-bit-counted-extent",
+  "from": "conformance-inner-bitlen",
+  "to": "conformance-inner-bitlen",
+  "input": "183507ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, extent 24 bits = 3 bytes, inner end 2"
+}

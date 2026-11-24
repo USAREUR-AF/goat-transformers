@@ -344,8 +344,12 @@ bool check_rest_lines(const Pack& p, const std::vector<SeqNode>& lines, bool aft
         if (after_rest && is_wire_line(n))
             throw Error(ErrorKind::BadDirective, p.format, "",
                         source + ":" + std::to_string(n.line) +
-                            ": a line after a 'rest' group in the same extent (a 'rest' group is the last line of its extent)");
+                            ": a line after a 'rest' group or an 'inner' line in the same extent (each is the last "
+                            "line of its extent)");
         switch (n.type) {
+            // v0.34: an `inner` line is the last wire line of its extent, as a
+            // `rest` group is (rulings 11, 26 and 32 of 0.21).
+            case Type::Inner: after_rest = true; break;
             case Type::Group:
                 if (n.repeat == Repeat::Rest) {
                     if (at.in_item && !at.rest_item)
@@ -500,6 +504,37 @@ void check_as_bans(const Pack& p, const SeqBody& body, const std::string& source
     for (const SeqBody* g : groups) check_as_bans(p, *g, source);
 }
 
+// v0.34: the `inner` lines of `lines` and the `length` blocks in them (the
+// only blocks that may hold one), and the last of them.
+std::size_t count_inner(const std::vector<SeqNode>& lines, std::size_t& last) {
+    std::size_t n = 0;
+    for (const auto& l : lines) {
+        if (l.type == Type::Inner) {
+            ++n;
+            last = l.line;
+        } else if (l.type == Type::Length) {
+            n += count_inner(l.inner.lines, last);
+        }
+    }
+    return n;
+}
+
+// v0.34: at most one `inner` line on any reading path (ruling 33 of 0.21):
+// the common lines with each kind.
+void check_inner_paths(const Pack& p, const SeqBody& body, const std::string& source) {
+    std::size_t last = 0;
+    const std::size_t common = count_inner(body.lines, last);
+    auto fail = [&](std::size_t line) {
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(line) + ": a second 'inner' line on one reading path");
+    };
+    if (common > 1) fail(last);
+    for (const auto& k : body.kinds) {
+        std::size_t at = last;
+        if (common + count_inner(k.lines, at) > 1) fail(at);
+    }
+}
+
 }  // namespace
 
 bool is_sequential_pack(const std::string& text) {
@@ -581,6 +616,10 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     std::string encoding_error, uper_what;
     // v0.30: the first syntax error of a `when ... as` line (ruling 16).
     std::string as_error;
+    // v0.34: the first `inner` line, and the first one under a block other
+    // than `length`, both checked after the file is read.
+    std::size_t inner_line = 0;
+    std::string inner_block_error;
     auto note_uper = [&](std::size_t line, const std::string& what) {
         if (uper_line == 0) {
             uper_line = line;
@@ -1399,6 +1438,26 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 check_common_when(stack.back());
                 stack.pop_back();
             }
+        } else if (kw == "inner") {
+            // v0.34: `inner <format> [partial]`, in the common lines, a kind and `length`
+            // blocks only; the format is looked up when the line is reached.
+            if (t.size() != 3) arity(1);
+            if (t.size() == 3 && t[2] != "partial" && inner_block_error.empty())
+                inner_block_error = where + ": 'inner' takes a format and 'partial', got '" + t[2] + "'";
+            if (inner_block_error.empty())
+                for (std::size_t k = 1; k < stack.size(); ++k)
+                    if (stack[k].type != Type::Length) {
+                        inner_block_error = where + ": 'inner' inside " + stack[k].what +
+                                            " (it stands in the common lines, a kind or 'length' blocks only)";
+                        break;
+                    }
+            if (inner_line == 0) inner_line = lineno;
+            SeqNode n;
+            n.type = Type::Inner;
+            n.inner_format = t[1];
+            n.inner_partial = t.size() == 3;
+            p.inner_formats.push_back(t[1]);
+            add(std::move(n));
         } else if (kw == "element") {
             throw bad("'element' applies to wire xml only");
         } else {
@@ -1440,6 +1499,14 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     if (p.armor_sixbit && whole_line != 0)
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(whole_line) + ": 'length ... whole' in a pack with 'armor sixbit'");
+    // v0.34: where an `inner` line stands, and the packs that may hold one.
+    if (!inner_block_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", inner_block_error);
+    // `armor hex`, the default, is not armor in this sense.
+    if (inner_line != 0 && (p.armor_sixbit || p.uper))
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(inner_line) + ": 'inner' in a pack with " +
+                        (p.armor_sixbit ? "'armor sixbit'" : "'encoding uper'"));
+    if (inner_line != 0) check_inner_paths(p, p.seq, source);
     check_lists_once(p, p.seq, source);
     check_count_refs_body(p, p.seq, source);
     check_rest_body(p, p.seq, false, RestPlace{}, source);
@@ -1504,7 +1571,8 @@ void visit_lines(std::vector<SeqNode>& lines, const SeqVisitor& v) {
 }
 
 void keys_of_lines(const std::vector<SeqNode>& lines, const std::string& prefix,
-                   const std::function<void(const std::string&)>& add) {
+                   const std::function<void(const std::string&)>& add,
+                   const std::function<void(const std::string&)>* inner) {
     for (const auto& n : lines) {
         if (n.type == Type::Field) {
             add(prefix + n.field.key);
@@ -1513,10 +1581,12 @@ void keys_of_lines(const std::vector<SeqNode>& lines, const std::string& prefix,
             if (n.has_as) add(prefix + n.field.key);  // v0.30 ruling 5
         } else if (n.type == Type::Group) {
             add(prefix + n.list + "[]");
-            seq_model_keys(n.inner, prefix + n.list + "[].", add);
+            seq_model_keys(n.inner, prefix + n.list + "[].", add, inner);
+        } else if (n.type == Type::Inner) {
+            if (inner) (*inner)(n.inner_format);  // v0.34: at its place in reading order
         } else {
-            keys_of_lines(n.inner.lines, prefix, add);
-            for (const auto& c : n.cases) keys_of_lines(c.body.lines, prefix, add);  // 0.20 ruling 13
+            keys_of_lines(n.inner.lines, prefix, add, inner);
+            for (const auto& c : n.cases) keys_of_lines(c.body.lines, prefix, add, inner);  // 0.20 ruling 13
         }
     }
 }
@@ -1525,9 +1595,10 @@ void keys_of_lines(const std::vector<SeqNode>& lines, const std::string& prefix,
 void seq_visit(SeqBody& body, const SeqVisitor& v) { visit_body(body, v); }
 
 void seq_model_keys(const SeqBody& body, const std::string& prefix,
-                    const std::function<void(const std::string&)>& add) {
-    keys_of_lines(body.lines, prefix, add);
-    for (const auto& k : body.kinds) keys_of_lines(k.lines, prefix, add);
+                    const std::function<void(const std::string&)>& add,
+                    const std::function<void(const std::string&)>* inner) {
+    keys_of_lines(body.lines, prefix, add, inner);
+    for (const auto& k : body.kinds) keys_of_lines(k.lines, prefix, add, inner);
 }
 
 // The codec of the sequential layout is part of the bits wire (0.24 ruling 1d);
@@ -1568,6 +1639,10 @@ struct SeqIn {
     // it lay at or past the end of its extent), and the items it stated.
     std::vector<char> count_set{};
     std::vector<std::uint64_t> counts{};
+    // v0.34: what serves the `inner` lines, and the message being decoded.
+    const InnerHost* host = nullptr;
+    Entity* root = nullptr;
+    bool whole = false;  // v0.34 ruling 13: a `length ... whole` was read; `have` is what it states
 
     [[noreturn]] void malformed(const std::string& why) const {
         throw Error(ErrorKind::MalformedWire, p.format, "", why + " (at bit " + std::to_string(cur) + " of " +
@@ -1896,7 +1971,12 @@ bool stated_units(std::uint64_t field, std::int64_t plus, std::uint64_t& units) 
     return true;
 }
 
-void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
+void decode_group(SeqIn& in, const SeqNode& n, Item& target) {
+    // v0.34: a list a layered decode discards (step 4 of Decode) is read into
+    // a scratch item, and its items are not counted.
+    const DiscardGuard discarded(target, n.list);
+    Item scratch;
+    Item& out = discarded.active() ? scratch : target;
     auto item = [&](std::vector<Item>& items) {
         take_items(in.p, n.list, 1);  // 0.11 ruling 7a
         items.emplace_back();
@@ -1917,8 +1997,7 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             const bool in_length = in.ext != kNoExtent;
             const std::uint64_t end = in_length ? in.ext : in.have;
             const std::uint64_t unit = in_length && in.ext_bits ? 1 : 8;
-            std::vector<Item>& items = out.lists[n.list];
-            items.clear();
+            std::vector<Item>& items = list();
             while (in.cur <= end && end - in.cur >= unit) {
                 const std::uint64_t start = in.cur;
                 item(items);
@@ -1931,8 +2010,7 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             // first bit at the end of the extent gives an absent list (ruling
             // 34 of 0.8); a later one there is malformed-wire (ruling 13).
             if (!in.need(1, "the bit before an item")) return;
-            std::vector<Item>& items = out.lists[n.list];
-            items.clear();
+            std::vector<Item>& items = list();
             for (;;) {
                 if (!in.need(1, "the bit before an item"))
                     in.malformed("the bit before an item of the 'last' group '" + n.list +
@@ -1963,9 +2041,13 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             if (in.cur > end || count > end - in.cur)
                 in.malformed("the count " + std::to_string(count) + " of the group '" + n.list +
                              "' is larger than the bits left");
-            std::vector<Item>& items = out.lists[n.list];
-            items.clear();
-            for (std::uint64_t k = 0; k < count; ++k) item(items);
+            std::vector<Item>& items = list();
+            // 0.11 ruling 7d, as for a `count` in the group itself.
+            take_items(in.p, n.list, count, true);
+            for (std::uint64_t k = 0; k < count; ++k) {
+                items.emplace_back();
+                decode_body(in, n.inner, items.back());
+            }
             return;
         }
         case Repeat::Count: {
@@ -1979,7 +2061,7 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             std::vector<Item>& items = list();
             // The count is compared with what the limit still allows before
             // any item is read (0.11 ruling 7d).
-            take_items(in.p, n.list, count);
+            take_items(in.p, n.list, count, true);
             for (std::uint64_t k = 0; k < count; ++k) {
                 items.emplace_back();
                 decode_body(in, n.inner, items.back());
@@ -1993,8 +2075,7 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             if (count > in.left())
                 in.malformed("the count " + std::to_string(count) + " of the group '" + n.list +
                              "' is larger than the bits left");
-            std::vector<Item>& items = out.lists[n.list];
-            items.clear();
+            std::vector<Item>& items = list();
             for (std::uint64_t k = 0; k < count; ++k) item(items);
             return;
         }
@@ -2026,9 +2107,93 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
     }
 }
 
+// v0.34: an `inner` line reached by decode. The checks made where the line is
+// reached, then the inner input decoded by the inner pack, whose keys join the
+// message's: the first value read is kept, an outer list read first whole.
+void decode_inner(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
+    const Pack* inner = nullptr;
+    try {
+        if (!in.host)
+            throw Error(ErrorKind::UnknownFormat, n.inner_format, "", "no loaded pack defines this format");
+        inner = &in.host->reach(in.p, n.inner_format);
+    } catch (const Error&) {
+        // A failed check is reported ahead of a transform-decode found before it.
+        if (DecodeScope* s = current_decode()) s->has_failure_ = false;
+        in.failed = false;
+        throw;
+    }
+    if (in.cur % 8 != 0) in.malformed("the 'inner' line does not stand on a whole byte");
+    const std::uint64_t end = in.ext != kNoExtent ? in.ext : in.have;
+    if (end > in.have) in.malformed("the extent of the 'inner' line ends beyond the input");
+    if (end % 8 != 0) in.malformed("the 'length ... bits' extent of the 'inner' line does not end on a whole byte");
+    const std::string hex =
+        bytes_to_hex(in.data.substr(static_cast<std::size_t>(in.cur / 8), static_cast<std::size_t>((end - in.cur) / 8)));
+    // The lists the message holds already: the inner lists of those names are
+    // discarded, and not counted (7g).
+    DecodeScope* s = current_decode();
+    if (s) {
+        s->discard.clear();
+        for (const auto& kv : out.lists) s->discard.insert(kv.first);
+        s->discard_root = nullptr;
+        s->discard_claim = true;
+        s->inner_root = nullptr;
+        s->inner_failures.clear();
+    }
+    // Keys a table failure closed before the line: no later line is tried for them.
+    const std::vector<std::string> outer_closed = d.closed;
+    Entity e;
+    try {
+        e = in.host->decode(*inner, hex, n.inner_partial);
+    } catch (const Error& ex) {
+        if (s) {
+            s->discard_claim = false;
+            s->discard_root = nullptr;
+            s->discard.clear();
+            s->inner_root = nullptr;
+        }
+        // An error that stops the decode, in either pack, is reported ahead of
+        // a transform-decode read before it; among transform-decode errors the
+        // earliest wins (the message's failed fields are not yet recorded).
+        if (ex.kind() != ErrorKind::TransformDecode) {
+            if (s) s->has_failure_ = false;
+            in.failed = false;
+        }
+        throw;
+    }
+    in.cur = end;  // with `partial`, bytes the inner message does not read are ignored
+    // The inner message's failed fields join the message's own, under the rule
+    // of 0.6 for one key at several locators (ruling 23): a failed transform is
+    // forgiven when the key has a value, a table with no entry is not.
+    if (s) {
+        s->inner_root = nullptr;
+        for (auto& f : s->inner_failures) {
+            if (std::find(d.closed.begin(), d.closed.end(), f.key) != d.closed.end()) continue;
+            if (!f.table && out.fields.count(f.key)) continue;
+            if (f.table) d.closed.push_back(f.key);
+            d.failures.push_back(std::move(f));
+        }
+        s->inner_failures.clear();
+    }
+    for (auto& kv : e.fields)
+        if (std::find(outer_closed.begin(), outer_closed.end(), kv.first) == outer_closed.end() &&
+            out.fields.emplace(kv.first, std::move(kv.second)).second)
+            d.joined.insert(kv.first);
+    std::set<std::string> kept;
+    for (auto& kv : e.lists)
+        if (out.lists.emplace(kv.first, std::move(kv.second)).second) kept.insert(kv.first);
+    // No later line of the message replaces a list the inner message gave it.
+    if (s) {
+        s->discard_claim = false;
+        s->discard = std::move(kept);
+        s->discard_root = &out;
+    }
+    if (in.root && !e.kind.second.empty()) in.root->inner_kind = e.kind;
+}
+
 void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
     const Pack& p = in.p;
     switch (n.type) {
+        case Type::Inner: decode_inner(in, n, out, d); return;
         case Type::Field: {
             if (n.uper != SeqNode::Uper::None) {
                 decode_uper_field(in, n, d);
@@ -2181,6 +2346,7 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             if (bytes * 8 > in.have)
                 in.malformed("the input is shorter than the stated length of " + std::to_string(bytes) + " bytes");
             in.have = bytes * 8;  // input beyond it is ignored
+            in.whole = true;
             return;
         }
         case Type::Group: decode_group(in, n, out); return;
@@ -2298,7 +2464,7 @@ void decode_body(SeqIn& in, const SeqBody& body, Item& out) {
 
 }  // namespace
 
-Entity decode_seq(const Pack& p, const std::string& bytes) {
+Entity decode_seq(const Pack& p, const std::string& bytes, const InnerHost* host, bool exact) {
     // Hex text, or under `armor sixbit` six bits a character, every one checked
     // before any line is read (0.14). The armored message is any number of bits.
     std::uint64_t armored = 0;
@@ -2310,6 +2476,9 @@ Entity decode_seq(const Pack& p, const std::string& bytes) {
     in.count_set.assign(p.seq_count_lines, 0);
     in.counts.assign(p.seq_count_lines, 0);
     Entity e;
+    begin_message(e);  // v0.34: the inner message of a layered decode
+    in.host = host;
+    in.root = &e;
     decode_body(in, p.seq, e);
     // A presence bit named only inside cases none of which was read after it (0.20 ruling 21).
     for (const auto& pend : in.pending) {
@@ -2320,6 +2489,14 @@ Entity decode_seq(const Pack& p, const std::string& bytes) {
             throw Error(ErrorKind::MalformedWire, p.format, "",
                         "bit " + std::to_string(pend.bit + 1) + " of the presence '" + pr.name +
                             "' is 1 and no 'if' block of the lines read names it");
+    }
+    if (exact) {
+        // v0.34 ruling 13: the stated length, or the cursor up to a whole byte.
+        const std::uint64_t stop = in.whole ? in.have / 8 : (in.cur + 7) / 8;
+        if (data.size() > stop)
+            throw Error(ErrorKind::MalformedWire, p.format, "",
+                        "the message ends at byte " + std::to_string(stop) + " of " + std::to_string(data.size()) +
+                            " of an 'inner' line without 'partial'");
     }
     // Input beyond the last line, whole bytes included, is ignored (0.8 ruling 9).
     if (in.failed) throw Error(ErrorKind::TransformDecode, p.format, in.fail_locator, in.fail_detail);
@@ -2523,6 +2700,9 @@ struct SeqOut {
     // bits each `field` line wrote for a key the item holds (ruling 12).
     bool track_held = false;
     std::vector<std::pair<std::uint64_t, std::uint64_t>> held{};
+    // v0.34: what serves the `inner` lines, and the entity being written.
+    const InnerHost* host = nullptr;
+    const Entity* root = nullptr;
 
     void reach(std::uint64_t bits) {
         const std::size_t bytes = static_cast<std::size_t>((bits + 7) / 8);
@@ -3093,6 +3273,19 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             return;
         }
         case Type::Alt: return;  // written by its choice
+        case Type::Inner: {
+            // v0.34: the checks made where the line is reached, the cursor on a
+            // whole byte, then the inner pack's encode of the same entity.
+            if (!out.host || !out.root)
+                throw Error(ErrorKind::UnknownFormat, n.inner_format, "", "no loaded pack defines this format");
+            const Pack& inner = out.host->reach(p, n.inner_format);
+            if (out.cur % 8 != 0)
+                throw Error(ErrorKind::TransformEncode, p.format, "",
+                            "the 'inner' line does not stand on a whole byte (at bit " + std::to_string(out.cur) + ")");
+            const std::string bytes = hex_to_bytes(inner, out.host->encode(inner, *out.root));
+            for (const char c : bytes) out.put(static_cast<unsigned char>(c), 8);
+            return;
+        }
         case Type::Count:
             // v0.21: filled in when the message is finished; an absent list holds `plus`.
             out.at_count[n.count_id] = out.count_fields.size();
@@ -3266,7 +3459,7 @@ std::vector<const SeqCase*> seq_cases_by_id(const Pack& p) {
     return cases;
 }
 
-std::string encode_seq(const Pack& p, const Entity& e) {
+std::string encode_seq(const Pack& p, const Entity& e, const InnerHost* host) {
     SwitchState state;
     if (const PackPlan* plan = plan_of(p)) {
         state.cases = &plan->seq_cases;
@@ -3279,6 +3472,8 @@ std::string encode_seq(const Pack& p, const Entity& e) {
     for (int pass = 0;; ++pass) {
         SeqOut out{p, std::string(), bit_mode(p.bit_order), 0,
                    std::vector<std::vector<bool>>(p.seq_presences.size()), {}, &state};
+        out.host = host;
+        out.root = &e;
         state.used.clear();
         state.actual.clear();
         auto mispredicted = [&]() {

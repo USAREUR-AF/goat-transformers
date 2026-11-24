@@ -1,0 +1,9 @@
+{
+  "name": "not-gate-not-held",
+  "from": "conformance-inner-gatenotstrict",
+  "to": "conformance-inner-gatenotstrict",
+  "input": "090500",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: 0 is listed, not held, end 1"
+}

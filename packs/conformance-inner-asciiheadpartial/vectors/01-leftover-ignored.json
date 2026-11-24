@@ -1,0 +1,13 @@
+{
+  "name": "leftover-ignored",
+  "from": "conformance-inner-asciiheadpartial",
+  "to": "conformance-inner-asciiheadpartial",
+  "input": "413507ff",
+  "expect": "413507",
+  "model": {
+    "probe.s1": "A",
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18"
+}

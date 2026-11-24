@@ -1,0 +1,18 @@
+# Conformance probe pack whose own list is also the only list of its
+# fixed-layout inner pack (spec 0.34 ruling 7), most significant bit first.
+# Public. No kinds.
+#
+#   byte 0      a count of nums, then val in 8 bits each
+#   the rest    one conformance-inner-fixedone message
+format     conformance-inner-fixedoneouter
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.nums  count 8
+  field  probe.val  8  uint
+end
+inner   conformance-inner-fixedone

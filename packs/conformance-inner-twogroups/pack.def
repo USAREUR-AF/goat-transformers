@@ -1,0 +1,24 @@
+# Conformance probe pack with two outer groups of the list its inner pack also
+# gives (spec 0.34 ruling 20). Public. No kinds.
+format     conformance-inner-twogroups
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+presence p 8
+if p.1
+  group probe.nums count 8
+    field probe.val 8 uint
+  end
+end
+length 8
+  inner  conformance-inner-restonly
+end
+if p.2
+  group probe.nums count 8
+    field probe.val 8 uint
+  end
+end

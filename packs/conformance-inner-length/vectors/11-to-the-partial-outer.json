@@ -1,0 +1,9 @@
+{
+  "name": "to-the-partial-outer",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-lengthpartial",
+  "input": "09030201020a",
+  "expect": "09030201020a",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18: Entity.inner_kind b kept"
+}

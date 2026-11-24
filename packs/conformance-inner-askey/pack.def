@@ -1,0 +1,16 @@
+# Conformance probe pack: an outer `when … as` key that the inner pack also
+# maps (spec 0.34 ruling 8, with 0.30), most significant bit first. Public.
+#
+#   byte 0      a common when, 5 or 6, bound to x
+#   the rest    one conformance-inner-fixed message (which maps x in 4 bits)
+format     conformance-inner-askey
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+when    8  5,6  as probe.x
+kind    only
+inner   conformance-inner-fixed

@@ -1,0 +1,16 @@
+{
+  "name": "discarded-fixed-layout-items-not-counted",
+  "from": "conformance-inner-fixedlistouter",
+  "to": "conformance-inner-fixedlistouter",
+  "input": "020a0b0c0d0e0f",
+  "max_items": 4,
+  "expect": "020a0b0a0b0e0f",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "10",
+    "probe.deltas.#": "2",
+    "probe.deltas[1].probe.val": "15"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 max_items and Decode step 4: outer nums 2 items; the inner nums (0c0d) is discarded and not counted; deltas 2 items: 4 held, the limit. Encode writes nums 0a0b in both places"
+}

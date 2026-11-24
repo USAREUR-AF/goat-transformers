@@ -1,0 +1,12 @@
+{
+  "name": "whole-length-shorter-than-the-input-on-its-own",
+  "from": "conformance-inner-whl",
+  "to": "conformance-inner-whl",
+  "input": "0205ff",
+  "expect": "0205",
+  "model": {
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: stated 2 of 3 bytes; decoded on its own extra bytes are accepted"
+}

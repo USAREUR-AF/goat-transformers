@@ -1,0 +1,14 @@
+{
+  "name": "byte-after-the-const-ignored",
+  "from": "conformance-inner-kfixpartial",
+  "to": "conformance-inner-kfixpartial",
+  "input": "0905010709ff",
+  "expect": "0905010709",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "7",
+    "@inner_kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: kind a ends at 4"
+}

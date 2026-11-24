@@ -1,0 +1,13 @@
+{
+  "name": "byte-beyond-the-stated-length-after-a-rest-ignored",
+  "from": "conformance-inner-whlrestpartial",
+  "to": "conformance-inner-whlrestpartial",
+  "input": "09030506ff",
+  "expect": "09030506",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: the whole length sets the end also before a rest; stated 3 of 4"
+}

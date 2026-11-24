@@ -5,8 +5,10 @@
 %% directory above the set's own directory). Then:
 %%   1. loads into one new instance only the packs the vectors name (their
 %%      `from` and `to` formats, in order of first appearance, each from
-%%      <root>/packs/<format>/pack.def) and the model modules those packs
-%%      use (gt_engine:load_packs/4), and records the time that took;
+%%      <root>/packs/<format>/pack.def), the packs their `inner` lines name
+%%      (Version 0.34, transitively; a name with no directory is skipped)
+%%      and the model modules those packs use (gt_engine:load_packs/4), and
+%%      records the time that took;
 %%   2. for each vector in order: converts its input once and checks the
 %%      output against `expect` byte for byte (a difference fails the run:
 %%      a message on standard error, exit status 1); then converts the input
@@ -50,8 +52,10 @@ run(SetPath) ->
                 Other2 -> fail("the set's vectors is not an array: ~0p", [Other2])
             end,
     Vectors = [vector(Root, P) || P <- Paths],
-    Names = first_appearance(lists:append([[F, T] || {_, F, T, _, _, _} <- Vectors])),
     PacksDir = filename:join(Root, "packs"),
+    %% Version 0.34: with the packs named by their `inner` lines, transitively
+    Names = gt_engine:inner_names(
+              PacksDir, first_appearance(lists:append([[F, T] || {_, F, T, _, _, _} <- Vectors]))),
     ModelsDir = filename:join(Root, "model"),
     T0 = erlang:monotonic_time(nanosecond),
     Engine = gt_engine:load_packs(gt_engine:new(), PacksDir, Names, ModelsDir),

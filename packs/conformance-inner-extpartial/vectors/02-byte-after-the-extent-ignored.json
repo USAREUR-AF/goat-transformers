@@ -1,0 +1,14 @@
+{
+  "name": "byte-after-the-extent-ignored",
+  "from": "conformance-inner-extpartial",
+  "to": "conformance-inner-extpartial",
+  "input": "09050307aabbff",
+  "expect": "09050107",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: end 5, ff left"
+}

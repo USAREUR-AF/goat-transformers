@@ -1,0 +1,9 @@
+{
+  "name": "gate-not-held",
+  "from": "conformance-inner-gatestrict",
+  "to": "conformance-inner-gatestrict",
+  "input": "090502",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: a block that does not hold does not count, its gate locator included; end 1"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "byte-after-the-padding-on-its-own",
+  "from": "conformance-inner-extbits",
+  "to": "conformance-inner-extbits",
+  "input": "0c05ffff",
+  "expect": "0805",
+  "model": {
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: end 3; decoded on its own extra bytes are accepted"
+}

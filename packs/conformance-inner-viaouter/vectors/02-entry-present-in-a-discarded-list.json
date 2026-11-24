@@ -1,0 +1,9 @@
+{
+  "name": "entry-present-in-a-discarded-list",
+  "from": "conformance-inner-viaouter",
+  "to": "conformance-inner-names",
+  "input": "014101",
+  "expect": "41",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 4: the inner item 01 has an entry, its list is discarded, names A is kept; converted to another format so that only decode is tested"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "byte-after-the-last-word-on-its-own",
+  "from": "conformance-inner-word",
+  "to": "conformance-inner-word",
+  "input": "05ffee",
+  "expect": "0500",
+  "model": {
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 2; decoded on its own extra bytes are accepted"
+}

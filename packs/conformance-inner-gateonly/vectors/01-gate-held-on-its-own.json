@@ -1,0 +1,12 @@
+{
+  "name": "gate-held-on-its-own",
+  "from": "conformance-inner-gateonly",
+  "to": "conformance-inner-gateonly",
+  "input": "0105",
+  "expect": "0105",
+  "model": {
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.17: the gate byte 01 holds its block, x 05"
+}

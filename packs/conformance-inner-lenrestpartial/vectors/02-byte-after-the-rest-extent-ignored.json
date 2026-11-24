@@ -1,0 +1,14 @@
+{
+  "name": "byte-after-the-rest-extent-ignored",
+  "from": "conformance-inner-lenrestpartial",
+  "to": "conformance-inner-lenrestpartial",
+  "input": "09020506ff",
+  "expect": "09020506",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: the rest stops at its extent, end 3"
+}

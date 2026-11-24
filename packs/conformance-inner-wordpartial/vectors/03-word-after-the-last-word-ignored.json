@@ -1,0 +1,13 @@
+{
+  "name": "word-after-the-last-word-ignored",
+  "from": "conformance-inner-wordpartial",
+  "to": "conformance-inner-wordpartial",
+  "input": "0905ffeedd",
+  "expect": "090500",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: end 2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "shorter-block-held-longer-input",
+  "from": "conformance-inner-gaterawstrict",
+  "to": "conformance-inner-gaterawstrict",
+  "input": "0905010007",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: the block of z does not hold and does not count, end 3"
+}

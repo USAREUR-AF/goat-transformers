@@ -1,0 +1,12 @@
+{
+  "name": "ruling-23-failed-inner-line-before-the-outer-line",
+  "from": "conformance-inner-asciiafter",
+  "to": "conformance-inner-asciiafter",
+  "input": "010141",
+  "expect": "014141",
+  "model": {
+    "probe.s1": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 23: the inner 01 does not decode; the outer A gives the key. Encode writes A in both places"
+}

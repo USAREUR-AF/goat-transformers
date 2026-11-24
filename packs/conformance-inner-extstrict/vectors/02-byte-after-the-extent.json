@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-the-extent",
+  "from": "conformance-inner-extstrict",
+  "to": "conformance-inner-extstrict",
+  "input": "09050307aabbff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: end 5, ff left"
+}

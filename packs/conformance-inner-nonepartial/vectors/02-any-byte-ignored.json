@@ -1,0 +1,12 @@
+{
+  "name": "any-byte-ignored",
+  "from": "conformance-inner-nonepartial",
+  "to": "conformance-inner-nonepartial",
+  "input": "09ff",
+  "expect": "09",
+  "model": {
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 16: end 0"
+}

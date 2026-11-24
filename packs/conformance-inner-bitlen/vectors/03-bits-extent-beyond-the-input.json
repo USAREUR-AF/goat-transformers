@@ -1,0 +1,9 @@
+{
+  "name": "bits-extent-beyond-the-input",
+  "from": "conformance-inner-bitlen",
+  "to": "conformance-inner-bitlen",
+  "input": "183507",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 2: a length of 24 bits ends beyond the 16 bits left"
+}

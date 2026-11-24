@@ -1,0 +1,13 @@
+{
+  "name": "ruling-20-later-outer-group-replaces-the-earlier",
+  "from": "conformance-inner-twogroups",
+  "to": "conformance-inner-twogroups",
+  "input": "c0010a010b010c",
+  "expect": "c0010c010c010c",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "12"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 20: outer nums [10], inner [11] discarded, the later outer [12] replaces [10] (ruling 33 of 0.8)"
+}

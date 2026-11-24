@@ -1,0 +1,9 @@
+{
+  "name": "unknown-format-when-reached",
+  "from": "conformance-inner-asciimissing",
+  "to": "conformance-inner-asciimissing",
+  "input": "4100",
+  "expect_error": "unknown-format",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line, check 1: s1 is A; the inner format is not loaded"
+}

@@ -155,6 +155,14 @@ func decodeBits(d *decodeState, b []byte) error {
 	if err != nil {
 		return err
 	}
+	return decodeBitsData(d, data, bits)
+}
+
+// decodeBitsData decodes a message of a bits pack from its bytes: bits is
+// the number of bits the input carries. An `inner` line hands its bytes to
+// the inner pack here (spec 0.34).
+func decodeBitsData(d *decodeState, data []byte, bits int) error {
+	p := d.pack
 	d.nbits = bits
 	if p.seq {
 		return decodeSeq(d, data, bits)
@@ -192,6 +200,7 @@ func decodeBits(d *decodeState, b []byte) error {
 	if err != nil {
 		return err
 	}
+	d.end = p.wholeWords(d.end) * 8
 	// The items of the groups extend the message: whole words up to the
 	// furthest bit they reach.
 	if need := p.wholeWords(end); len(data) < need {
@@ -212,6 +221,11 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 	// A line of a gate block that does not hold sets no key: decode goes on
 	// to the key's next line (0.17, Decode).
 	holds := gateEval(data, bits, base, p.msb)
+	if d.trackEnd {
+		if e := base + scopeEnd(lay, holds); e > base && e > d.end {
+			d.end = e
+		}
+	}
 	for _, ln := range lay.lines {
 		if ln.in != nil && !holds(ln.in) {
 			continue
@@ -286,12 +300,24 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 			if count > 0 && (pos > bits || count > uint64(bits-pos)) {
 				return 0, bad(fmt.Sprintf("holds no %d item(s) from bit %d", count, pos))
 			}
-			if err := d.room(g.List, count); err != nil {
-				return 0, err
+			// A stated count is not read from the wire: on a list that is not
+			// counted it is not checked (0.34 ruling 7).
+			if g.countLoc != nil || !d.freeList(g.List) {
+				if err := d.room(g.List, count); err != nil {
+					return 0, err
+				}
+			}
+			failures, discarded := len(d.failed), d.discarded(g.List)
+			free := d.freeList(g.List)
+			if free {
+				d.free++
 			}
 			items := []*Item{}
 			for i := uint64(0); i < count; i++ {
 				if pos+g.itemBits > bits {
+					if free {
+						d.free--
+					}
 					return 0, bad(fmt.Sprintf("does not reach item %d of %d", i, count))
 				}
 				itemEnd := 0
@@ -301,6 +327,9 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 					return err
 				})
 				if err != nil {
+					if free {
+						d.free--
+					}
 					return 0, err
 				}
 				items = append(items, it)
@@ -309,6 +338,17 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 					pos = itemEnd
 				}
 			}
+			if free {
+				d.free--
+			}
+			// A group counts up to its start also with no items (0.34
+			// ruling 14).
+			if d.trackEnd && pos > d.end {
+				d.end = pos
+			}
+			if discarded {
+				d.forget(failures)
+			}
 			d.rec.SetList(g.List, items)
 			if pos > end {
 				end = pos
@@ -316,6 +356,40 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 		}
 	}
 	return end, nil
+}
+
+// scopeEnd is the furthest bit, from the scope's first, of the lines of a
+// fixed-layout scope that count toward the inner message's end (spec 0.34,
+// ruling 14), the items of its groups not included: the lines outside any
+// gate block, the count locators, and the gates and lines of the blocks that
+// hold. An `optional` line counts whether or not the input reaches it.
+func scopeEnd(lay *layout, holds func(*Gate) bool) int {
+	end := 0
+	for _, ln := range lay.lines {
+		if ln.in != nil && !holds(ln.in) {
+			continue
+		}
+		var loc locator
+		switch {
+		case ln.gt != nil:
+			if !holds(ln.gt) {
+				continue
+			}
+			loc = ln.gt.loc
+		case ln.f != nil:
+			loc = ln.f.loc
+		case ln.w != nil:
+			loc = ln.w.loc
+		case ln.g != nil && ln.g.countLoc != nil:
+			loc = *ln.g.countLoc
+		default:
+			continue
+		}
+		if e := loc.bit + loc.blen; e > end {
+			end = e
+		}
+	}
+	return end
 }
 
 // putBitsField writes the value of one field at message bit at, through the

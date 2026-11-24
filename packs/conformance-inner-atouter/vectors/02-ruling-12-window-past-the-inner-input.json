@@ -1,0 +1,19 @@
+{
+  "name": "ruling-12-window-past-the-inner-input",
+  "from": "conformance-inner-atouter",
+  "to": "conformance-inner-atouter",
+  "input": "09010501",
+  "expect": "09010501",
+  "model": {
+    "probe.n": "9",
+    "probe.z": "5",
+    "probe.w": "1",
+    "@inner_kind": "b",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 12: the inner input is the one byte 05; the window lies past its end though the outer byte that follows is 01, so kind a does not hold; kind b, z 5, w 1"
+}

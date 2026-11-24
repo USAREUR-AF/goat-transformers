@@ -1,0 +1,12 @@
+# Conformance probe pack used as an inner pack (spec 0.34):
+# a message that ends inside a byte. Public.
+format     conformance-inner-sub
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.x  4  uint
+field   probe.y  7  uint

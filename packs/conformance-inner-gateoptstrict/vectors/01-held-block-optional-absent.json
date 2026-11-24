@@ -1,0 +1,16 @@
+{
+  "name": "held-block-optional-absent",
+  "from": "conformance-inner-gateoptstrict",
+  "to": "conformance-inner-gateoptstrict",
+  "input": "090500",
+  "expect": "09050000",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, rulings 14, 15: end 3, input ends before it; encode: the zero gate bits hold the block, written with y zero"
+}

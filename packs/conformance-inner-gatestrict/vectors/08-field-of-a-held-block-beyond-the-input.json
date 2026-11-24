@@ -1,0 +1,9 @@
+{
+  "name": "field-of-a-held-block-beyond-the-input",
+  "from": "conformance-inner-gatestrict",
+  "to": "conformance-inner-gatestrict",
+  "input": "090501",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, 0.17: the inner pack's own rule"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "22-inner-line-naming-a-pack-not-loaded-adds-nothing",
+  "from": "conformance-inner-missing",
+  "to": "conformance-inner-rest",
+  "grade": "full",
+  "carried": [
+    "probe.n"
+  ],
+  "dropped": []
+}

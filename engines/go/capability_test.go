@@ -62,6 +62,8 @@ func TestCapabilityVectors(t *testing.T) {
 			if v.To != v.From {
 				formats = append(formats, v.To)
 			}
+			// With the packs their `inner` lines name (spec 0.34, Vectors).
+			formats = WithInnerPacks(packsDir, formats)
 			eng, err := LoadPacksOnly(DefaultModelsDir(packsDir), packsDir, DistControlled, formats)
 			if err != nil {
 				t.Fatalf("load: %v", err)

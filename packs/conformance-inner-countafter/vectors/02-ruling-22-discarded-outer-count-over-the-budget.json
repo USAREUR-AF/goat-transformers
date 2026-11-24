@@ -1,0 +1,10 @@
+{
+  "name": "ruling-22-discarded-outer-count-over-the-budget",
+  "from": "conformance-inner-countafter",
+  "to": "conformance-inner-countafter",
+  "input": "020a0b030c0d0e",
+  "max_items": 4,
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 22: the outer count 3 is over the 2 left"
+}

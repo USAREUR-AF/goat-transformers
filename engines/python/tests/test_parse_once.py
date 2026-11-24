@@ -73,7 +73,7 @@ def _result(engine, case):
         if op == "convert":
             return ("bytes", engine.convert(src, dst, data, ctx))
         ent = engine.decode(src, data)
-        return ("entity", ent.fields, ent.lists, ent.residue, ent.kind)
+        return ("entity", ent.fields, ent.lists, ent.residue, ent.kind, ent.inner_kind)
     except GTError as e:
         return ("error", e.code, str(e))
 
@@ -93,7 +93,7 @@ def reference():
         out = []
         for group in GROUPS:
             _, _, src, dst, _, _ = group[0]
-            engine = Engine.from_dir(PACKS, packs_only=sorted({src, dst}))
+            engine = Engine.from_dir(PACKS, packs_only=sorted({src, dst}), with_inner=True)
             out.extend(_result(engine, c) for c in group)
         _REFERENCE = out
     return _REFERENCE
@@ -107,7 +107,7 @@ class TestKeepingIsNotObservable(unittest.TestCase):
         ref = reference()
         self.assertTrue(any(r[0] == "error" for r in ref), "the cases hold no failing conversion")
         self.assertTrue(any(r[0] == "bytes" for r in ref))
-        engine = Engine.from_dir(PACKS, packs_only=NAMES)
+        engine = Engine.from_dir(PACKS, packs_only=NAMES, with_inner=True)
         order = list(range(len(CASES)))
         for _ in range(2):  # forward, then in reverse, so each case comes after every other
             for i in order:
@@ -123,7 +123,7 @@ class TestThreads(unittest.TestCase):
 
     def test_one_instance_many_threads(self):
         ref = reference()
-        engine = Engine.from_dir(PACKS, packs_only=NAMES)
+        engine = Engine.from_dir(PACKS, packs_only=NAMES, with_inner=True)
         start = threading.Barrier(THREADS)
         wrong = []
         lock = threading.Lock()
@@ -170,7 +170,7 @@ class TestLoadReadsEachFileOnce(unittest.TestCase):
 
         builtins.open = counting
         try:
-            Engine.from_dir(PACKS, packs_only=NAMES)
+            Engine.from_dir(PACKS, packs_only=NAMES, with_inner=True)
         finally:
             builtins.open = real
         self.assertTrue(opened)

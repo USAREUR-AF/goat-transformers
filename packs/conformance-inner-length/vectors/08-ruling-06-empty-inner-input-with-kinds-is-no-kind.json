@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-empty-inner-input-with-kinds-is-no-kind",
+  "from": "conformance-inner-length",
+  "to": "conformance-inner-length",
+  "input": "09000a",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 6: the length 00 gives an empty inner input; the when lines of conformance-inner-seq lie beyond it and do not hold (ruling 21 of 0.5): no-kind, before any line is read"
+}

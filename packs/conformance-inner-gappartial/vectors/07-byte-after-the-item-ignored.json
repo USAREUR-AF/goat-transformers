@@ -1,0 +1,13 @@
+{
+  "name": "byte-after-the-item-ignored",
+  "from": "conformance-inner-gappartial",
+  "to": "conformance-inner-gappartial",
+  "input": "090501000007ff",
+  "expect": "090501000007",
+  "model": {
+    "probe.n": "9",
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: end 5"
+}

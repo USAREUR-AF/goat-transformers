@@ -1,0 +1,10 @@
+{
+  "name": "max-items-over-the-limit",
+  "from": "conformance-inner-grouppartial",
+  "to": "conformance-inner-grouppartial",
+  "input": "0905020a000b00ff",
+  "max_items": 1,
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, 7d of 0.11: partial does not lift the limit"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "gate-not-held-ignored",
+  "from": "conformance-inner-gatepartial",
+  "to": "conformance-inner-gatepartial",
+  "input": "090502",
+  "expect": "0905",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 14: a block that does not hold does not count, its gate locator included; end 1"
+}

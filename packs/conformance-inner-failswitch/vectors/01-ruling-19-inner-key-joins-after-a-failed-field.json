@@ -1,0 +1,9 @@
+{
+  "name": "ruling-19-inner-key-joins-after-a-failed-field",
+  "from": "conformance-inner-failswitch",
+  "to": "conformance-inner-failswitch",
+  "input": "0201050107",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 19: s1 byte 01 is a transform-decode; n 5 still joins and is kept over the outer n 1; no case holds 5: no-kind, reported ahead"
+}

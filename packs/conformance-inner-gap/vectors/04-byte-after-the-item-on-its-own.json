@@ -1,0 +1,12 @@
+{
+  "name": "byte-after-the-item-on-its-own",
+  "from": "conformance-inner-gap",
+  "to": "conformance-inner-gap",
+  "input": "0501000007ff",
+  "expect": "0501000007",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: end 5; decoded on its own extra bytes are accepted"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-askeep",
+  "to": "conformance-inner-askeep",
+  "input": "06092307",
+  "expect": "06092307",
+  "model": {
+    "probe.n": "6",
+    "probe.w": "9",
+    "probe.x": "3",
+    "probe.y": "2",
+    "probe.z": "7",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 and 0.34: the common when reads 06 and sets n 6; w 9; the inner conformance-inner-fixed (lsb) reads 0x23 as x 3, y 2, and 0x07 as z. Encode writes n 6, w 9, then x 3 and y 2 as 0x23, z 07"
+}

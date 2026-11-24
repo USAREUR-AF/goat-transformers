@@ -1,0 +1,14 @@
+{
+  "name": "leftover-after-a-discarded-list-ignored-at-max-items",
+  "from": "conformance-inner-fixedonepartial",
+  "to": "conformance-inner-fixedonepartial",
+  "input": "020a0b0c0dff",
+  "max_items": 2,
+  "expect": "020a0b0a0b",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "10"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, rulings 14 and 18; discarded items are not counted (ruling 7), nor are ignored bytes"
+}

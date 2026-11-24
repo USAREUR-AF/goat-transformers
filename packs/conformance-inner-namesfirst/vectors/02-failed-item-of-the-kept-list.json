@@ -1,0 +1,9 @@
+{
+  "name": "failed-item-of-the-kept-list",
+  "from": "conformance-inner-namesfirst",
+  "to": "conformance-inner-namesfirst",
+  "input": "010141",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 21: the failed item is in the outer list, read first; it is an error"
+}

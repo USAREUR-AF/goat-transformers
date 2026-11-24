@@ -1,0 +1,9 @@
+{
+  "name": "inner-in-the-selected-kind",
+  "from": "conformance-inner-unreached",
+  "to": "conformance-inner-unreached",
+  "input": "0205",
+  "expect_error": "unknown-format",
+  "source": "constructed",
+  "reference": "spec 0.34 Reaching the inner line, check 1: kind gone is selected and its inner line names a format that is not loaded"
+}

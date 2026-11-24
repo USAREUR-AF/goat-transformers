@@ -1,0 +1,10 @@
+{
+  "name": "ruling-07-inner-count-over-the-remaining-budget-though-discarded",
+  "from": "conformance-inner-countlists",
+  "to": "conformance-inner-countlists",
+  "input": "020a0b030c0d0e",
+  "max_items": 4,
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 7: the outer list leaves 2 of 4; the inner count 3 is checked against it when read (7d), although step 4 would discard that list and the entity would hold only 2 items"
+}

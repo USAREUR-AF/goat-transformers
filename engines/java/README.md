@@ -29,6 +29,15 @@ capability report of a pair of formats (grade, carried and dropped keys), and
 100,000). A failure is a `GtException` (unchecked) whose `kind()` is the error
 name of the specification.
 
+An `Entity` records the kind its decode selected as `kindFormat()` and
+`kindName()` (`Entity.kind`), and, when the message held another pack's
+message through an `inner` line (spec Version 0.34), the kind the inner pack
+selected as `innerKindFormat()` and `innerKindName()` (`Entity.inner_kind`).
+The pack an `inner` line names is looked up in the same engine when decode or
+encode reaches the line, so load it too: the form
+`Engine.loadOnly(packsDir, modelsDir, limit, names, profile, true)` also
+loads the packs the `inner` lines of the named packs name, and so on.
+
 ```java
 import goat.transformers.Engine;
 import goat.transformers.GtException;

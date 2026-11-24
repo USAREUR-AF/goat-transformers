@@ -1,0 +1,9 @@
+{
+  "name": "leftover-before-an-outer-whole-length",
+  "from": "conformance-inner-whole",
+  "to": "conformance-inner-whole",
+  "input": "05090105ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, extent ends at byte 5 (stated 5); inner input 0105ff, kind p ends at 2"
+}

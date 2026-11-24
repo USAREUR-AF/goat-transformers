@@ -1,0 +1,9 @@
+{
+  "name": "count-beyond-the-input",
+  "from": "conformance-inner-groupstrict",
+  "to": "conformance-inner-groupstrict",
+  "input": "0905020a00",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, the inner pack's own rule (0.5)"
+}

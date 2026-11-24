@@ -1,0 +1,12 @@
+{
+  "name": "ruling-23-failed-inner-line-after-the-outer-line",
+  "from": "conformance-inner-asciifirst",
+  "to": "conformance-inner-asciifirst",
+  "input": "4101",
+  "expect": "4141",
+  "model": {
+    "probe.s1": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 23: s1 A; the inner 01 does not decode and is forgiven (ruling 5 of 0.6). Encode writes A in both places"
+}

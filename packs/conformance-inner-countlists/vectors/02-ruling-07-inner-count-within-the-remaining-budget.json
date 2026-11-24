@@ -1,0 +1,13 @@
+{
+  "name": "ruling-07-inner-count-within-the-remaining-budget",
+  "from": "conformance-inner-countlists",
+  "to": "conformance-inner-countlists",
+  "input": "020a0b030c0d0e",
+  "max_items": 5,
+  "expect": "020a0b020a0b",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 7: the outer list leaves 3 of 5; the inner count 3 is within it (7d); the entity holds 2 items"
+}

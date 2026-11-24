@@ -1,0 +1,9 @@
+{
+  "name": "ruling-12-to-the-inner-pack",
+  "from": "conformance-inner-atouter",
+  "to": "conformance-inner-at",
+  "input": "09010501",
+  "expect": "05",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 12 and Conversion: inner kind b kept, z 05"
+}

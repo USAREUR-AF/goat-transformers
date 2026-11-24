@@ -1,0 +1,9 @@
+{
+  "name": "outer-to-inner-first-read-value",
+  "from": "conformance-inner-shared",
+  "to": "conformance-inner-fixed",
+  "input": "0a3507",
+  "expect": "3a07",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 4: x=10 from the outer field; fixed lsb byte 0 = 0x3a, z 07"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "kind-q-round-trip",
+  "from": "conformance-inner-twokinds",
+  "to": "conformance-inner-twokinds",
+  "input": "020005",
+  "expect": "020005",
+  "model": {
+    "@kind": "q",
+    "probe.x": "5",
+    "@absent": [
+      "@inner_kind"
+    ]
+  },
+  "source": "constructed",
+  "reference": "kind byte 02 selects q, x in 16 bits = 5; ruling 5 of 0.34"
+}

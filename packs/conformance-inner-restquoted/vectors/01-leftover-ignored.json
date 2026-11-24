@@ -1,0 +1,12 @@
+{
+  "name": "leftover-ignored",
+  "from": "conformance-inner-restquoted",
+  "to": "conformance-inner-restquoted",
+  "input": "093507ff",
+  "expect": "093507",
+  "model": {
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, Load: arguments are compared after quotes are removed"
+}

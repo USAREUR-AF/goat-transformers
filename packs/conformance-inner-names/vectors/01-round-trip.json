@@ -1,0 +1,12 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-names",
+  "to": "conformance-inner-names",
+  "input": "4142",
+  "expect": "4142",
+  "model": {
+    "probe.names.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21: names A, B"
+}

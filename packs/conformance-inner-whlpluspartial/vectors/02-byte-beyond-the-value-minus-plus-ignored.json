@@ -1,0 +1,13 @@
+{
+  "name": "byte-beyond-the-value-minus-plus-ignored",
+  "from": "conformance-inner-whlpluspartial",
+  "to": "conformance-inner-whlpluspartial",
+  "input": "090405ff",
+  "expect": "090405",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 18; ruling 13: 4 - 2 = 2; the byte ff is below the value 4"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-budget",
+  "to": "conformance-inner-budget",
+  "input": "0201ff0a0b",
+  "expect": "0201ff0a0b",
+  "model": {
+    "probe.deltas.#": "2",
+    "probe.deltas[1].probe.val": "-1",
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "11"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: outer deltas (count 2: 1, -1), then inner nums 0a 0b"
+}

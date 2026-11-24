@@ -1,0 +1,12 @@
+# Conformance probe pack (spec 0.34): an outer text that can fail before
+# an `inner … partial` line. Public. No kinds.
+format     conformance-inner-asciiheadpartial
+version    0.34.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.s1  8  ascii
+inner   conformance-inner-fixed  partial

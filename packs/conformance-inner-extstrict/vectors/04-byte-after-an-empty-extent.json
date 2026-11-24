@@ -1,0 +1,9 @@
+{
+  "name": "byte-after-an-empty-extent",
+  "from": "conformance-inner-extstrict",
+  "to": "conformance-inner-extstrict",
+  "input": "090500ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 13: end 2"
+}

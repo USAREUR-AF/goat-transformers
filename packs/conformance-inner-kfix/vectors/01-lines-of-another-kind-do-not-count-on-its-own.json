@@ -1,0 +1,16 @@
+{
+  "name": "lines-of-another-kind-do-not-count-on-its-own",
+  "from": "conformance-inner-kfix",
+  "to": "conformance-inner-kfix",
+  "input": "05020709",
+  "expect": "0502",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ],
+    "@kind": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34, ruling 14: kind b ends at 2; on its own extra bytes are accepted"
+}

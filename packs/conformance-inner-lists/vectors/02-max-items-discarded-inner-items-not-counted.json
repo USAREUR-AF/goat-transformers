@@ -1,0 +1,13 @@
+{
+  "name": "max-items-discarded-inner-items-not-counted",
+  "from": "conformance-inner-lists",
+  "to": "conformance-inner-lists",
+  "input": "020a0b0c0d0e",
+  "max_items": 2,
+  "expect": "020a0b0a0b",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 max_items: items of an inner list discarded by step 4 are not counted (7g of 0.11); the entity holds 2 items"
+}
