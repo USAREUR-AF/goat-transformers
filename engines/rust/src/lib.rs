@@ -3182,7 +3182,13 @@ impl Pack {
         let sets = charset_lines.check(wire)?;
         let conf = if wire == Wire::Text { Some(&text_conf) } else { None };
         let give = |f: &mut FieldDef| charset::resolve(f, &sets, fixed_bits_len(wire, f).map(u64::from), conf);
-        fields.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.fields.iter_mut())).try_for_each(give)?;
+        fields.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.fields.iter_mut())).try_for_each(|f| {
+            // ruling 23: a coordinate is a number; in a group body the locator is a member path
+            if wire == Wire::GeoJson && f.code.is_some() && f.locator.starts_with("geometry.") {
+                return bad(f.line, format!("`codestr` and `codenum` are not valid on the coordinate `{}`", f.locator));
+            }
+            give(f)
+        })?;
         let mut given: Result<(), Error> = Ok(());
         for g in groups.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.groups.iter_mut())) {
             g.walk_mut(&mut |g| {
