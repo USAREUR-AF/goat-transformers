@@ -50,8 +50,10 @@ digits for the same reason: the `text` wire has no scale.
   written from values of another source carries no checksum unless the model has one.
   Missing addition: a TLE checksum (digits, and 1 for each minus sign, modulo 10) on the
   `text` wire.
-- **Epoch.** The epoch is a two-digit year (57 to 99 are 19xx, 00 to 56 are 20xx) and a
-  day of the year with its fraction; no transform turns these into epoch milliseconds, so
+- **Epoch.** The epoch is a two-digit year and a day of the year with its fraction. CelesTrak's
+  FAQ column (https://celestrak.org/columns/v04n03/, read 2026-11-24, SHA-256
+  `7fe716f5da8974f74768fc83fcb446db2c5fcae24e045449db662e9415ff40d0`) reports the US Space
+  Command reading: 57 to 99 are 19xx and 00 to 56 are 20xx; no transform turns these into epoch milliseconds, so
   `time_ms` is not bound.
 - **Shared keys.** None: the international designator is split into three columns without
   the century, so it is not the `uid` value the OMM packs give (`1998-067A`), and the

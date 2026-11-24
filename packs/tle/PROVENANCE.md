@@ -10,6 +10,7 @@ Hand-written (`pack.def`, `pack.md`, `model/tle.def`); the vectors are written b
 | Document | Address | Used for |
 |---|---|---|
 | CelesTrak, NORAD Two-Line Element Set Format, by T.S. Kelso (last updated 2022-07-01) | https://celestrak.org/NORAD/documentation/tle-fmt.php | the columns of lines 0, 1 and 2, the assumed decimal points and the checksum rule |
+| CelesTrak, FAQ: Two-Line Element Set Format (Satellite Times, volume 4 number 3) | https://celestrak.org/columns/v04n03/, read 2026-11-24 | the reading of the two-digit epoch year |
 | A GP response, `GROUP=stations&FORMAT=tle`, 2026-11-21 | https://celestrak.org/NORAD/elements/gp.php | the CR LF line ends and the space padding of numeric columns; not kept, and no line of it is in a vector |
 | CelesTrak, A New Way to Obtain GP Data (updated 2026-06-23) | https://celestrak.org/NORAD/documentation/gp-data-formats.php | that objects numbered 100000 and up have no TLE |
 

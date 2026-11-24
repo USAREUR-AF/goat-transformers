@@ -13,6 +13,7 @@ source is not kept in this repository. Read on 2026-11-21.
 | Document | Open-Meteo Weather Forecast API, OpenAPI 3.1.0 document, `info.version` 1.0 |
 | Repository | https://github.com/open-meteo/open-meteo, commit `7cc41ffa9a79c2e4c7ad4e18f13b51ab8df610aa`, archive SHA-256 `0c382215ffbc21c713af58498713870371ef674814cc27fbb5e2c81c59f214f7` |
 | File read | `openapi/forecast.yml`, the schema of the 200 response of `GET /v1/forecast` |
+| Page read | https://open-meteo.com/en/docs, read 2026-11-24, SHA-256 `d8436072c9587c17bc418d10a00b55307e3493999cef57eed0cee3618e086a06` of the page as served: the meaning of `latitude`, `longitude`, `elevation` and the time format |
 | Response read | one forecast for one location, 2026-11-21, to check the shape; not kept, and no value of it is in a vector |
 
 The restatement keeps member names, types and formats. Six time members typed as string or

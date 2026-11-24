@@ -37,7 +37,7 @@ carried back; arrays no group maps, and anything inside them, are not.
 
 | Kind | Path | Key | Schema type | Evidence (in this project's words; the notes name the source) |
 |---|---|---|---|---|
-| `m` | `timestamp` | `time_ms` (int, ms) | string, date-time | The document gives timestamp as the ISO 8601 time of the weather record, with a UTC offset (format date-time); it is the time the record's values hold for, the observation time for observations. iso8601_ms reads it and converts to UTC. |
+| `m` | `timestamp` | `time_ms` (int, ms) | string, date-time | The document gives timestamp as the ISO 8601 time of the weather record, with a UTC offset (format date-time); it is the time the record's values hold for. iso8601_ms reads it and converts to UTC. |
 
 Each bound path also has its raw key on a second line (ruling 16 of 0.5): the shared
 key first, so encode writes the shared value when the entity has it.
@@ -46,15 +46,15 @@ key first, so encode writes the shared value when the entity has it.
 
 Bright Sky (`https://api.brightsky.dev`) serves the open data of Deutscher Wetterdienst
 (DWD) as JSON. Each endpoint answers with one object: `/weather` hourly records and the
-sources they come from (`brightsky-weather`), `/current_weather` one record compiled from
-recent observations (`brightsky-current-weather`), `/synop` SYNOP records
+sources they come from (`brightsky-weather`), `/current_weather` one record
+of the current weather (`brightsky-current-weather`), `/synop` SYNOP records
 (`brightsky-synop`), `/sources` the sources (`brightsky-sources`), `/alerts` DWD warnings
 for a place (`brightsky-alerts`) and `/radar` radar records (`brightsky-radar`). Two packs
 read single items: `brightsky-weather-record` and `brightsky-source`.
 
 The units depend on the request's `units` parameter (`dwd`, the default, or `si`); the
-document describes the values without units, and the API documentation lists both sets.
-The packs keep the values as sent.
+document lists both sets of units at that parameter, not at the members. The packs keep
+the values as sent.
 
 ## Evidence for the shared keys
 
