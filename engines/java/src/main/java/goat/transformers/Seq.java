@@ -119,8 +119,10 @@ final class Seq {
         final List<List<Node>> altLines = new ArrayList<>();
         /** {@code choice}: alt index to its position in {@link #altLines}. */
         final Map<Integer, Integer> altAt = new HashMap<>();
-        /** {@code group ... count @<name>}: the {@code count} line it names. */
+        /** {@code group ... count @<name>} and {@code length @<name> units <u>}: the {@code count} line it names. */
         Node countRef;
+        /** {@code length @<name> units <u>} (engine-spec 0.83): the bits of one unit; 0 for a plain {@code length}. */
+        int unit;
         /** {@code group ... count @<a> @<b>} (engine-spec 0.31): the second count line it names; else null. */
         Node countRef2;
         /** {@code switch}: the key, its cases in line order, and its {@code else} (or null). */
@@ -187,6 +189,8 @@ final class Seq {
         final LinkedHashMap<String, String> defaults = new LinkedHashMap<>();
         boolean hasKinds;
         int firstCommonWhen;
+        /** A {@code length @<name> units <u>} line stands in this body, the bodies of its groups left out (engine-spec 0.83). */
+        boolean unitBlocks;
 
         Kind kind(String name) {
             for (Kind k : kinds) if (name.equals(k.name)) return k;
@@ -875,6 +879,25 @@ final class Seq {
                     break;
                 }
                 case "length": {
+                    if (!args.isEmpty() && (args.get(0).startsWith("@") || args.contains("units"))) {
+                        // engine-spec 0.83: length @<name> units <u>; every error of the form is a check after the file
+                        if (args.size() != 3 || !args.get(0).startsWith("@") || !args.get(1).equals("units")) {
+                            throw bad(format, null, where + ": a length sized by a count is length @<name> units <u>");
+                        }
+                        String name = args.get(0).substring(1);
+                        Node c = name.isEmpty() ? null : lookupCount(name);
+                        if (c == null) throw bad(format, null, where + ": length @" + name + " names no count visible here");
+                        if (c.op != Op.COUNT) throw bad(format, null, where + ": length @" + name + " names a presence, not a count");
+                        Node n = new Node(Op.LENGTH, ln);
+                        n.countRef = c;
+                        n.unit = bitLength(args.get(2), 1, 65535, "units", where, format);
+                        n.inBits = n.unit % 8 != 0;
+                        bodyFrame().body.unitBlocks = true;
+                        f.lines.add(n);
+                        n.body = new ArrayList<>();
+                        push('L', "length", ln, n, n.body);
+                        break;
+                    }
                     if (args.isEmpty()) throw bad(format, null, where + ": length is length <len> [bytes|bits] [plus <n>] [whole]");
                     int len = bitLength(args.get(0), 1, 64, "length", where, format);
                     boolean bytes = false, bits = false, whole = false;
@@ -1342,9 +1365,11 @@ final class Seq {
                 case GROUP:
                     // a reference stays in its group body (ruling 9): an item body holds none to c
                     return n.countRef == c || n.countRef2 == c ? 2 : 1;
+                case LENGTH:
+                    // length @<name> is a reference as a group is (ruling 1 of 0.83)
+                    return n.countRef == c ? combine(2, refs(n.body, 0, c)) : refs(n.body, 0, c);
                 case IF:
                 case OPT:
-                case LENGTH:
                 case EXT:   // a SEQUENCE's extension block (0.19) is read in the same path
                     return refs(n.body, 0, c);
                 case CHAIN:
@@ -1394,7 +1419,7 @@ final class Seq {
                         }
                         if (m != 2) {
                             throw bad(format, null, source + ":" + n.line + ": count " + n.name
-                                    + " must be referenced by exactly one group ... count @" + n.name + " on each reading path");
+                                    + " must be referenced by exactly one group ... count @" + n.name + " or length @" + n.name + " on each reading path");
                         }
                         break;
                     }
