@@ -3,7 +3,7 @@
   "from": "geojson",
   "to": "etsi-cam",
   "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.2]},\"properties\":{\"course\":359.96,\"speed_ms\":13.89},\"id\":\"12345\"}",
-  "expect": "0202000030390000000a4bf4b00e4492981ffffffc23b7743e00e10fc2b6febfe9ed0737feebfff600",
+  "expect": "0202000030390000000d693a403ad274803ffffffc23b7743e00e10fc2b6febfe9ed0737feebfff600",
   "model": {
     "@complete": true,
     "course": "359.96",
@@ -11,5 +11,5 @@
     "etsicam.station_id": "12345"
   },
   "source": "constructed",
-  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. course 359.96: 359.96 * 10 / 1 = 3599.6 in doubles, rounded half away from zero to 3600 (ruling 1 of 0.5), inside HeadingValue (0..3601); speed_ms 13.89: 13.89 * 100 = 1389.0000000000002, rounded to 1389. The other components as in cam-01: the pack's defaults and lower bounds. 322 bits. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine."
+  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. course 359.96: 359.96 * 10 / 1 = 3599.6 in doubles, rounded half away from zero to 3600 (ruling 1 of 0.5), inside HeadingValue (0..3601); speed_ms 13.89: 13.89 * 100 = 1389.0000000000002, rounded to 1389. The other components as in cam-01: the pack's defaults and lower bounds. 322 bits. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine.; latitude and longitude are raw keys of etsi-cam, absent here, so their unavailable values are written"
 }

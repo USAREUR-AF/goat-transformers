@@ -105,8 +105,8 @@ which places the reference position in the same WGS 84 frame.
 
 | Wire field | Model key | Evidence in the ASN.1 | Note |
 |---|---|---|---|
-| referencePosition.latitude | `lat` | `Latitude ::= INTEGER {oneMicrodegreeNorth (10), oneMicrodegreeSouth (-10), unavailable(900000001)} (-900000000..900000001)`: 10 is one microdegree, so one step is 1e-7 degree, north positive | `uscale:1/10000000` on the integer. 900000001 (unavailable) decodes as 90.0000001; the datum rests on the WGS 84 frame of `HeadingValue` above |
-| referencePosition.longitude | `lon` | `Longitude ::= INTEGER {oneMicrodegreeEast (10), oneMicrodegreeWest (-10), unavailable(1800000001)} (-1800000000..1800000001)`: 1e-7 degree, east positive | `uscale:1/10000000`. 1800000001 (unavailable) decodes as 180.0000001 |
+| referencePosition.latitude | `etsicam.latitude` | `Latitude ::= INTEGER {oneMicrodegreeNorth (10), oneMicrodegreeSouth (-10), unavailable(900000001)} (-900000000..900000001)`: 10 is one microdegree, so one step is 1e-7 degree, north positive | raw integer, not `lat`: see "Position" below |
+| referencePosition.longitude | `etsicam.longitude` | `Longitude ::= INTEGER {oneMicrodegreeEast (10), oneMicrodegreeWest (-10), unavailable(1800000001)} (-1800000000..1800000001)`: 1e-7 degree, east positive | raw integer, not `lon` |
 | heading.headingValue | `course` | `HeadingValue ::= INTEGER {wgs84North(0), wgs84East(900), wgs84South(1800), wgs84West(2700), unavailable(3601)} (0..3601)`: 900 steps to the east, so one step is 0.1 degree, clockwise from WGS 84 (true) north | `uscale:1/10`. 3601 (unavailable) decodes as 360.1. The ASN.1 calls it the heading, the orientation of the station; `course` is the direction of travel. They agree when `driveDirection` is `forward` (0); when it is `backward` (1) the direction of travel is the heading plus 180 degrees, and the pack does not correct it |
 | speed.speedValue | `speed_ms` | `SpeedValue ::= INTEGER {standstill(0), oneCentimeterPerSec(1), unavailable(16383)} (0..16383)`: one step is 0.01 m/s | `uscale:1/100`. 16383 (unavailable) decodes as 163.83; a speed above 163.82 m/s cannot be written (`transform-encode` above 163.83) |
 | header.stationID | `uid` (derived) | `StationID ::= INTEGER(0..4294967295)` | The field is the raw key `etsicam.station_id`. `model/etsicam.def` derives `uid` from it as decimal text (`text_of`), and it from a `uid` that is a decimal number (`parse_int`). A `uid` that is not a number leaves the station ID absent (written 0); a decimal `uid` outside 0..4294967295 is `transform-encode` |
@@ -115,6 +115,16 @@ which places the reference position in the same WGS 84 frame.
 `referenceEllipsoidSurface(0)` says the zero is the surface of a reference
 ellipsoid, and the ASN.1 does not say which. The unit is the centimetre
 (`oneCentimeter(1)`).
+
+## Position
+
+The position is not bound to `lat` and `lon`. The ASN.1 names 900000001 and
+1800000001 `unavailable`, and the language has no `absent` on an `int:` locator
+(0.19 ruling 22), so a station without a position converted to the point
+180.0000001, 90.0000001 in GeoJSON and CoT. A false position is worse than none:
+until the language can state it, the two integers are raw keys. A CAM carries no
+position into another format, and a message made from another format has the
+unavailable position.
 
 ## Raw keys
 
@@ -132,9 +142,9 @@ the station.
 
 The pack has a `default` for every mandatory component that the ASN.1 gives
 an `unavailable` value, set to that value, so that a message encoded from
-another format (GeoJSON with a position only, for instance) says "unavailable"
-rather than a false 0: `lat` 90.0000001 and `lon` 180.0000001 (the unavailable
-integers), `course` 360.1, `speed_ms` 163.83, and the raw keys of the
+another format (GeoJSON, for instance) says "unavailable"
+rather than a false 0: `etsicam.latitude` 900000001 and `etsicam.longitude`
+1800000001 (the unavailable integers), `course` 360.1, `speed_ms` 163.83, and the raw keys of the
 confidences, ellipse, altitude, drive direction, vehicle length and width,
 accelerations, curvature, yaw rate and their confidences. The confidences of
 the optional `steeringWheelAngle`, `lateralAcceleration` and
@@ -164,7 +174,7 @@ write every roadside-unit CAM as a vehicle container; a vector pins it.
 | Extension alternatives of HighFrequencyContainer and LowFrequencyContainer | v1.4.1 defines none; the engine skips them (0.19, CHOICE) | skipped; no key | not written |
 | Extension additions of CamParameters, BasicContainer, CenDsrcTollingZone, RSUContainerHighFrequency, ProtectedCommunicationZone | v1.4.1 defines none; the engine skips them (0.19, extension markers) | skipped; no key | not written |
 | Extension values of CurvatureCalculationMode and ProtectedZoneType | read as `n + index` (0.19) | `3` and above; `2` and above | written in the extension form |
-| `unavailable` and `outOfRange` values on `lat`, `lon`, `course`, `speed_ms` | the pack language has no way to state "this wire value means absent" | they decode as the out-of-range numbers above (for example `lat` 90.0000001) | the defaults write them |
+| `unavailable` and `outOfRange` values on `course`, `speed_ms` | the pack language cannot state that one value of an `int:` locator means absent (0.19 ruling 22) | they decode as numbers: `course` 360.1, `speed_ms` 163.83 | the defaults write them |
 | generationDeltaTime to `time_ms` | `GenerationDeltaTime` is a time modulo 65536 ms of `TimestampIts`, whose zero is `utcStartOf2004`; no derive function takes a remainder or the 2004 epoch, and the ASN.1 does not say how leap seconds are counted | raw key `etsicam.generation_delta_time` | `time_ms` is not written |
 | positionConfidenceEllipse to `ce`, altitudeConfidence to `le` | the ASN.1 gives the axes in centimetres and the confidence as classes, without the confidence level, and `ce` is a circular error | raw keys | not written |
 | altitude to `hae` | the ellipsoid is not named in the ASN.1 | raw key | `hae` is not written |
@@ -188,7 +198,7 @@ not arise here. Outside them:
 
 ## To decide
 
-- The `lat`/`lon` binding: the WGS 84 datum is not stated by the ASN.1 of
+- The `lat`/`lon` binding, if the position is bound again: the WGS 84 datum is not stated by the ASN.1 of
   `Latitude` and `Longitude`; it is taken from the WGS 84 frame of
   `HeadingValue`, which orients the position's confidence ellipse.
 - `heading` bound to `course`, which differs when the vehicle drives backwards.

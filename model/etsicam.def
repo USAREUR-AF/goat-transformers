@@ -23,6 +23,8 @@ key  station_type                          int  -        "StationType 0 to 255: 
 key  semi_major_confidence                 int  cm       "PosConfidenceEllipse semiMajorConfidence, SemiAxisLength 0 to 4095 in cm; 4094 outOfRange, 4095 unavailable"
 key  semi_minor_confidence                 int  cm       "PosConfidenceEllipse semiMinorConfidence, SemiAxisLength 0 to 4095 in cm; 4094 outOfRange, 4095 unavailable"
 key  semi_major_orientation                int  0.1deg   "PosConfidenceEllipse semiMajorOrientation, HeadingValue 0 to 3601 in 0.1 degree from wgs84North; 3601 unavailable"
+key  latitude                              int  1e-7deg  "ReferencePosition latitude, Latitude -900000000 to 900000001 in 0.1 microdegree, north positive; 900000001 = unavailable"
+key  longitude                             int  1e-7deg  "ReferencePosition longitude, Longitude -1800000000 to 1800000001 in 0.1 microdegree, east positive; 1800000001 = unavailable"
 key  altitude_value                        int  cm       "Altitude altitudeValue, AltitudeValue -100000 to 800001 in cm, 0 = referenceEllipsoidSurface; 800001 unavailable"
 key  altitude_confidence                   int  -        "Altitude altitudeConfidence, AltitudeConfidence 0 to 15 (0 alt-000-01 ... 13 alt-200-00, 14 outOfRange, 15 unavailable)"
 # BasicVehicleContainerHighFrequency, mandatory components

@@ -3,16 +3,16 @@
   "from": "etsi-cam",
   "to": "geojson",
   "input": "020200003039a028005a4bf4b00e44929803e82587084a3e4c00384120fa0402c08a9453ff61fff8c0",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.2]},\"properties\":{\"course\":90,\"speed_ms\":5},\"id\":\"12345\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"course\":90,\"speed_ms\":5},\"id\":\"12345\"}",
   "model": {
     "@complete": true,
     "uid": "12345",
-    "lat": "48.2",
-    "lon": "11.5",
+    "etsicam.latitude": "482000000",
+    "etsicam.longitude": "115000000",
     "course": "90",
     "speed_ms": "5",
     "etsicam.station_id": "12345"
   },
   "source": "constructed",
-  "reference": "Input: vector 01 (asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper). lat 482000000 * 1 / 10000000 = 48.2, lon 11.5, course 900 * 1 / 10 = 90, speed_ms 500 * 1 / 100 = 5 (ruling 1 of 0.5); uid \"12345\" derived from stationID 12345 by text_of (model/etsicam.def). The geojson pack writes geometry, then properties course and speed_ms in field-line order, then id (ruling 4 of 0.1.1); hae is absent, so coordinates are [lon, lat]; the etsicam keys have no geojson line. Derived without an engine."
+  "reference": "Input: vector 01 (asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper). lat 482000000 * 1 / 10000000 = 48.2, lon 11.5, course 900 * 1 / 10 = 90, speed_ms 500 * 1 / 100 = 5 (ruling 1 of 0.5); uid \"12345\" derived from stationID 12345 by text_of (model/etsicam.def). The geojson pack writes geometry, then properties course and speed_ms in field-line order, then id (ruling 4 of 0.1.1); hae is absent, so coordinates are [lon, lat]; the etsicam keys have no geojson line. Derived without an engine.; the position is a raw key (pack.md), so none is carried"
 }
