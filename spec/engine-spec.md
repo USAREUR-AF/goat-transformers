@@ -6430,9 +6430,12 @@ unchanged.
     lookup (0.34) keeps checks 1 to 4; the fifth belongs to each `inner` line.
     The check is not one of the pack: `model_keys` and the capability report
     of 0.34 keep checks 1 to 4, so a clashing line still adds the inner pack's
-    keys there. An `inner` line in a block that reads as absent (ruling 21 of
-    0.8) is not reached on decode, though encode may reach it; a line at the
-    end of its own extent is reached.
+    keys there. A pack that always refuses is therefore still reported as
+    carrying its inner pack's keys; `tools/model-checks.py --inner-keys`
+    refuses such a pack before it ships, in a tree that runs it. An `inner`
+    line in a block that reads as absent (ruling 21 of 0.8) is not reached on
+    decode, though encode may reach it; a line at the end of its own extent is
+    reached.
 20c. **What 0.34 says that has nothing left to apply to.** Decode step 4's
     keeping of the first value read where both packs map the key, and its
     sentence "A list is one key" on a list of both; "Items of an inner list
