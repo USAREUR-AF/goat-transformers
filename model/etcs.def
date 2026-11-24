@@ -36,6 +36,7 @@ key   n_total                      int   -  "N_TOTAL, balises in the group (the 
 key   nid_bg                       int   -  "NID_BG, balise group identity"
 key   nid_c                        int   -  "NID_C, country or region"
 key   nid_engine                   int   -  "NID_ENGINE, identity of the on-board equipment"
+key   nid_message                  int   -  "NID_MESSAGE, message identity"
 key   nid_packet                   int   -  "NID_PACKET of a packet the pack does not describe"
 key   other_packet_bit             int   -  "one bit of a packet body"
 key   p0_nid_vbcmk                 int   -  "NID_VBCMK, the virtual balise cover marker (packet 0)"

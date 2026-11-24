@@ -1,0 +1,9 @@
+{
+ "name": "to-ccsds-cfdp-pdu-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "ccsds-cfdp-pdu",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "CCSDS 727.0-B-5 table 5-1: the fixed PDU header fields; an entity with only a uid holds none of them"
+}

@@ -55,7 +55,7 @@ The data field length and the CRC are carried, not computed or checked.
 | Kind | `when` | `requires` |
 |---|---|---|
 | `file-directive` | bit 3 = 0 | `ccsdscfdp.directive_code` |
-| `file-data` | bit 3 = 1 | none |
+| `file-data` | bit 3 = 1 | every field of the fixed PDU header (table 5-1) |
 
 The directive codes (4 EOF, 5 Finished, 6 ACK, 7 Metadata, 8 NAK, 9 Prompt, 12
 Keep Alive) are not kinds: the code octet's place depends on `a` and `b`, and a

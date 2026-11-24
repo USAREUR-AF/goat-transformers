@@ -53,3 +53,4 @@ end
 
 kind     truncated                                    # end of frame primary header flag 1: 4 octets
 when     0:31:1  1
+requires ccsdsuslp.spacecraft_id ccsdsuslp.source_dest_id ccsdsuslp.virtual_channel_id ccsdsuslp.map_id

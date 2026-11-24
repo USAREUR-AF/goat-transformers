@@ -3,6 +3,7 @@ module        mbus
 version       0.1.0
 distribution  public
 source        "libmbus, https://github.com/rscada/libmbus at commit 94352715928182d9e1761959f887c6a66e70de93, mbus/mbus-protocol.h and mbus/mbus-protocol.c (Copyright (C) 2010-2012 Raditex AB and contributors; free to use with credit to rSCADA and Raditex Control); layouts restated, no code copied; EN 13757 not used"
+key   start              int     -  "the first octet: 229 (0xE5) ACK, 16 (0x10) short frame, 104 (0x68) control or long frame"
 key   control_reserved   int     -  "control field bit 7 (0)"
 key   control_prm        int     -  "control field bit 6: 1 a message from the master, 0 from a slave"
 key   control_fcb_acd    int     -  "control field bit 5: FCB from the master, ACD from a slave"

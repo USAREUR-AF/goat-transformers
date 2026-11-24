@@ -5,6 +5,7 @@ module        ccsdsprox1
 version       0.1.0
 distribution  public
 source        "CCSDS 211.0-B-6 Proximity-1 Space Link Protocol, Data Link Layer, Blue Book, July 2020 (Editorial Change 1), https://ccsds.org/Pubs/211x0b6e1.pdf, section 3.2.2; reuse with attribution under the CCSDS reproduction permission statement"
+key  pdu_type_id                 int  -  "bit 3: 0 = user data, 1 = supervisory protocol data"
 key  qos_indicator               int  -  "bit 2: 0 = sequence controlled service, 1 = expedited service"
 key  dfc_id                      int  -  "bits 4-5: data field construction (U-frame: 0 packets, 1 segment data, 2 reserved, 3 user defined; P-frame: 0)"
 key  spacecraft_id               int  -  "bits 6-15: spacecraft identifier, 10 bits"

@@ -47,3 +47,9 @@ stay raw. T_TRAIN is the RBC's clock in 10 ms units, not a UTC time, so it is no
 
 - The limits of `etcs-balise-telegram` apply to the packets (packet 3's correction factors, text
   as bytes).
+
+## Kind on encode from another format
+
+The kind is the one whose value `etcs.nid_message` holds (NID_MESSAGE, `when ... as`), and
+its `requires` line names the fields that kind always has.
+An entity that fits no kind is `no-kind`.

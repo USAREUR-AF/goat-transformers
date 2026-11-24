@@ -1,0 +1,9 @@
+{
+ "name": "to-etcs-radio-track-to-train-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "etcs-radio-track-to-train",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "SUBSET-026 3.6.0 chapter 8, 8.4.4.1 and 8.7: NID_MESSAGE, T_TRAIN, M_ACK and NID_LRBG are in every message; an entity with only a uid holds none of them"
+}

@@ -9,7 +9,8 @@ layout        sequential
 bit_order     msb
 
 kind  sr_authorisation
-when  8  2
+when  8  2  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m2_q_scale  etcs.m2_d_sr
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -906,7 +907,8 @@ group  etcs.optional_packets  rest
 end
 
 kind  movement_authority
-when  8  3
+when  8  3  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.q_dir  etcs.p15_q_scale  etcs.p15_v_ema  etcs.p15_t_ema  etcs.p15_l_endsection
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -1839,7 +1841,8 @@ group  etcs.optional_packets  rest
 end
 
 kind  exit_trip_recognition
-when  8  6
+when  8  6  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -1847,7 +1850,8 @@ field  etcs.lrbg_nid_c  10  uint
 field  etcs.lrbg_nid_bg  14  uint
 
 kind  train_data_acknowledgement
-when  8  8
+when  8  8  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m8_t_train
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -1856,7 +1860,8 @@ field  etcs.lrbg_nid_bg  14  uint
 field  etcs.m8_t_train  32  uint
 
 kind  request_to_shorten_ma
-when  8  9
+when  8  9  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.q_dir  etcs.p15_q_scale  etcs.p15_v_ema  etcs.p15_t_ema  etcs.p15_l_endsection
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -2789,7 +2794,8 @@ group  etcs.optional_packets  rest
 end
 
 kind  conditional_emergency_stop
-when  8  15
+when  8  15  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m15_nid_em  etcs.m15_q_scale  etcs.m15_d_ref  etcs.m15_q_dir  etcs.m15_d_emergencystop
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -2802,7 +2808,8 @@ field  etcs.m15_q_dir  2  uint
 field  etcs.m15_d_emergencystop  15  uint
 
 kind  unconditional_emergency_stop
-when  8  16
+when  8  16  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m16_nid_em
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -2811,7 +2818,8 @@ field  etcs.lrbg_nid_bg  14  uint
 field  etcs.m16_nid_em  4  uint
 
 kind  revocation_of_emergency_stop
-when  8  18
+when  8  18  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m18_nid_em
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -2820,7 +2828,8 @@ field  etcs.lrbg_nid_bg  14  uint
 field  etcs.m18_nid_em  4  uint
 
 kind  general_message
-when  8  24
+when  8  24  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -3715,7 +3724,8 @@ group  etcs.optional_packets  rest
 end
 
 kind  sh_refused
-when  8  27
+when  8  27  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m27_t_train
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -3724,7 +3734,8 @@ field  etcs.lrbg_nid_bg  14  uint
 field  etcs.m27_t_train  32  uint
 
 kind  sh_authorised
-when  8  28
+when  8  28  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m28_t_train
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -4620,7 +4631,8 @@ group  etcs.optional_packets  rest
 end
 
 kind  system_version
-when  8  32
+when  8  32  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m32_m_version
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -4629,7 +4641,8 @@ field  etcs.lrbg_nid_bg  14  uint
 field  etcs.m32_m_version  7  uint
 
 kind  ma_shifted_location
-when  8  33
+when  8  33  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m33_q_scale  etcs.m33_d_ref  etcs.q_dir  etcs.p15_q_scale  etcs.p15_v_ema  etcs.p15_t_ema  etcs.p15_l_endsection
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -5564,7 +5577,8 @@ group  etcs.optional_packets  rest
 end
 
 kind  track_ahead_free_request
-when  8  34
+when  8  34  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m34_q_scale  etcs.m34_d_ref  etcs.m34_q_dir  etcs.m34_d_tafdisplay  etcs.m34_l_tafdisplay
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -5577,7 +5591,8 @@ field  etcs.m34_d_tafdisplay  15  uint
 field  etcs.m34_l_tafdisplay  15  uint
 
 kind  infill_ma
-when  8  37
+when  8  37  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.optional_packets
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -6472,7 +6487,8 @@ group  etcs.optional_packets  rest
 end
 
 kind  session_termination_acknowledgement
-when  8  39
+when  8  39  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -6480,7 +6496,8 @@ field  etcs.lrbg_nid_c  10  uint
 field  etcs.lrbg_nid_bg  14  uint
 
 kind  train_rejected
-when  8  40
+when  8  40  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -6488,7 +6505,8 @@ field  etcs.lrbg_nid_c  10  uint
 field  etcs.lrbg_nid_bg  14  uint
 
 kind  train_accepted
-when  8  41
+when  8  41  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -6496,7 +6514,8 @@ field  etcs.lrbg_nid_c  10  uint
 field  etcs.lrbg_nid_bg  14  uint
 
 kind  som_position_report_confirmed
-when  8  43
+when  8  43  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint
@@ -6504,7 +6523,8 @@ field  etcs.lrbg_nid_c  10  uint
 field  etcs.lrbg_nid_bg  14  uint
 
 kind  coordinate_system_assignment
-when  8  45
+when  8  45  as  etcs.nid_message
+requires  etcs.t_train  etcs.m_ack  etcs.lrbg_nid_c  etcs.lrbg_nid_bg  etcs.m45_q_orientation
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.t_train  32  uint
 field  etcs.m_ack  1  uint

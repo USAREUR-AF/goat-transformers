@@ -36,3 +36,4 @@ field  ccsdsep.packet_length          0:8:8   uint
 
 kind     idle                                         # length of length 00: the 1-octet idle packet
 when     0:6:2  0
+requires ccsdsep.protocol_id=0

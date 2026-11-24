@@ -1,0 +1,9 @@
+{
+ "name": "to-ccsds-uslp-frame-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "ccsds-uslp-frame",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "CCSDS 732.1-B-3 4.1.2.1.2 and D1.3.1: the header fields of the two forms; an entity with only a uid holds none of them"
+}

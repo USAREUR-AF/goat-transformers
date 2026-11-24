@@ -521,3 +521,4 @@ end
 
 kind     file-data                                    # PDU type 1
 when     0:3:1  1
+requires ccsdscfdp.direction ccsdscfdp.transmission_mode ccsdscfdp.crc_flag ccsdscfdp.large_file_flag ccsdscfdp.data_field_length ccsdscfdp.segmentation_control ccsdscfdp.entity_id_length ccsdscfdp.segment_metadata_flag ccsdscfdp.tsn_length ccsdscfdp.source_entity_id ccsdscfdp.transaction_seq_num ccsdscfdp.dest_entity_id
