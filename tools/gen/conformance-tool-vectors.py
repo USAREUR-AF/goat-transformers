@@ -25,6 +25,7 @@ import json
 import os
 import shlex
 import sys
+import unicodedata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PACKS = os.path.join(ROOT, "packs")
@@ -430,11 +431,26 @@ def licence_trees():
     return files
 
 
+def file_value(data):
+    """A value of `files`: the text, or the bytes as hex where the file is not
+    UTF-8 text or holds a control character other than tab and line feed."""
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return {"hex": data.hex()}
+    if any(unicodedata.category(c) == "Cc" and c not in "\t\n" for c in text):
+        return {"hex": data.hex()}
+    return text
+
+
 def licence_vectors():
     vectors = []
 
-    def add(name, args, exit, out=None, kind=None):
-        v = {"name": name, "args": args, "exit": exit}
+    def add(name, args, exit, out=None, kind=None, tree_files=None):
+        v = {"name": name, "args": args}
+        if tree_files is not None:
+            v["files"] = {path: file_value(data) for path, data in sorted(tree_files.items())}
+        v["exit"] = exit
         if out is not None:
             v["stdout_text"] = out
         if kind is not None:
@@ -522,7 +538,259 @@ def licence_vectors():
         ("licences-with-from", ["licences"] + A + ["--from", "lic-plain"]),
     ]:
         add("usage-" + name, args, 2)
+    controlled_vectors(add)
     return vectors
+
+
+# --------------------------------------------------------------------------
+# Version 0.93: a controlled pack or module is in no profile (tool vectors
+# from 139). Every expected output below is written out literally. Each vector
+# carries its tree in `files`: no controlled file stands in the repository.
+# --------------------------------------------------------------------------
+
+PUB, CTL = "distribution public", "distribution controlled"
+
+
+def text93(kind, name, *dist, uses=(), extra=""):
+    """A module or pack with the `distribution` lines given as they stand."""
+    lines = ["%s %s" % (kind, name), "version 0.93.0"] + list(dist)
+    lines.append('source "goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)"')
+    lines += ["uses %s" % u for u in uses]
+    if kind == "format":
+        lines += ["wire json", "field lat pos.lat float"]
+    elif name == "core":
+        lines.append('key lat float - "a fixture key"')
+    return "\n".join(lines) + "\n" + extra
+
+
+# The forms of the `distribution` line of a pack.def: (directory, lines).
+# By ruling 1 a pack of the first list is not shown public; one of the second is.
+MARKED_FORMS = [
+    ("m-adjacent-quote", ['distribution"public"']),
+    ("m-alone", ["distribution"]),
+    ("m-carriage-return-before", ["\rdistribution public"]),
+    ("m-carriage-return-between", ["distribution\rpublic"]),
+    ("m-comment", ["distribution public # note"]),
+    ("m-controlled", [CTL]),
+    ("m-controlled-tabs", ["\tdistribution\tcontrolled\t"]),
+    ("m-extra-token", ["distribution public public"]),
+    ("m-no-line", []),
+    ("m-other-value", ["distribution restricted"]),
+    ("m-public-and-adjacent-quote", [PUB, 'distribution"controlled"']),
+    ("m-public-and-carriage-return", [PUB, "\rdistribution controlled"]),
+    ("m-public-and-comment", [PUB, "distribution # x"]),
+    ("m-public-and-longer-word", [PUB, "distributions controlled"]),
+    ("m-public-and-quote-inside", [PUB, 'distri"bution" controlled']),
+    ("m-public-and-quoted-line", [PUB, '"distribution public"']),
+    ("m-public-and-quoted-word", [PUB, '"distribution" controlled']),
+    ("m-quoted", ['distribution "public"']),
+    ("m-quoted-controlled", ['distribution "controlled"']),
+    ("m-quoted-word", ['"distribution" public']),
+    ("m-two-lines", [PUB, CTL]),
+    ("m-two-lines-reversed", [CTL, PUB]),
+    ("m-upper-case-value", ["distribution Public"]),
+]
+UNMARKED_FORMS = [
+    ("u-commented-out", ["# distribution controlled", PUB]),
+    ("u-plain", [PUB]),
+    ("u-source-text", [PUB, 'source "distribution controlled"']),
+    ("u-spaces-and-tabs", [" \tdistribution \t public\t "]),
+]
+
+
+def controlled_trees():
+    """{tree: {path: bytes}} of the trees of 0.93."""
+    trees = {}
+
+    def put(rel, text):
+        t, path = rel.split("/", 1)
+        trees.setdefault(t, {})[path] = text if isinstance(text, bytes) else text.encode("utf-8")
+
+    def start(t, core=PUB):
+        put(t + "/licences.toml", table_text(TABLE_ROWS))
+        put(t + "/model/core.def", text93("module", "core", core))
+
+    def pack(t, d, *dist, lid=None, uses=(), extra="", lids=()):
+        put("%s/packs/%s/pack.def" % (t, d), text93("format", "c-" + d, *dist, uses=uses, extra=extra))
+        if lid or lids:
+            put("%s/packs/%s/REUSE.toml" % (t, d), pack_reuse(*(lids or [lid])))
+
+    # packs: controlled packs under an open, a copyleft and a non-commercial
+    # licence, beside a public pack under each
+    t = "packs"
+    start(t)
+    put(t + "/model/ctl.def", text93("module", "ctl", CTL))
+    for d, dist in (("ctl", CTL), ("pub", PUB)):
+        pack(t, d + "-apache", dist)
+        pack(t, d + "-nc", dist, lid="CC-BY-NC-SA-4.0")
+        pack(t, d + "-sa", dist, lid="CC-BY-SA-4.0")
+    pack(t, "ctl-uses-ctl", CTL, uses=["ctl"])
+
+    # module: a controlled module under a public licence, used directly and through others
+    t = "module"
+    start(t)
+    put(t + "/model/ctl.def", text93("module", "ctl", CTL))
+    put(t + "/model/mid.def", text93("module", "mid", PUB, uses=["ctl"]))
+    put(t + "/model/top.def", text93("module", "top", PUB, uses=["mid"]))
+    pack(t, "direct", PUB, uses=["ctl"])
+    pack(t, "plain", PUB)
+    pack(t, "through", PUB, uses=["mid"])
+    pack(t, "through-two", PUB, uses=["top"])
+
+    # core: a controlled core; every pack uses it. The module zz is public.
+    t = "core"
+    start(t, CTL)
+    put(t + "/model/zz.def", text93("module", "zz", PUB))
+    pack(t, "ctl", CTL)
+    pack(t, "pub", PUB)
+
+    # unread: a marked pack that does not load, and one with two licence lines
+    t = "unread"
+    start(t)
+    pack(t, "broken", CTL, extra="frobnicate everything\n")
+    pack(t, "plain", PUB)
+    t = "bad-licence"
+    start(t)
+    pack(t, "plain", PUB)
+    pack(t, "two", CTL, lids=["CC-BY-SA-4.0", "CC-BY-NC-SA-4.0"])
+
+    # lines: the forms of the `distribution` line, in packs and in modules
+    t = "lines"
+    start(t)
+    put(t + "/model/mc.def", text93("module", "mc", "distribution public # note"))
+    put(t + "/model/mq.def", text93("module", "mq", 'distribution "public"'))
+    put(t + "/model/mu.def", text93("module", "mu", "distribution\tpublic"))
+    for d, lines in MARKED_FORMS + UNMARKED_FORMS:
+        pack(t, d, *lines)
+    # a byte-order mark directly before the one line
+    put(t + "/packs/m-byte-order-mark/pack.def", "\ufeffdistribution public\n" + text93("format", "c-m-byte-order-mark"))
+    # the same before `format`, with an exact line later
+    put(t + "/packs/m-byte-order-mark-first/pack.def", "\ufeff" + text93("format", "c-m-byte-order-mark-first", PUB))
+    # a byte that is not UTF-8, and a NUL byte, in a file that holds the exact line
+    put(t + "/packs/m-not-utf-8/pack.def", text93("format", "c-m-not-utf-8", PUB).encode() + b"# \xff\n")
+    pack(t, "m-nul", '"distribution" controlled', "\0", PUB)
+    pack(t, "m-nul-in-a-comment", "# \0", PUB)
+    pack(t, "m-uses-mc", PUB, uses=["mc"])
+    pack(t, "m-uses-mq", PUB, uses=["mq"])
+    pack(t, "u-uses-mu", PUB, uses=["mu"])
+
+    # twice: two lines of the exact form; quoted-uses: a `uses` that 2b of 0.29 does not read
+    t = "twice"
+    start(t)
+    pack(t, "twice", PUB, PUB)
+    # core-not-utf-8: the name of core is not read, so it adds nothing (2b), and it is not loaded
+    t = "core-not-utf-8"
+    start(t)
+    put(t + "/model/core.def", text93("module", "core", PUB).encode() + b"# \xff\n")
+    pack(t, "plain", PUB)
+    t = "quoted-uses"
+    start(t)
+    put(t + "/model/ctl.def", text93("module", "ctl", CTL))
+    pack(t, "quoted", PUB, uses=['"ctl"'])
+    return trees
+
+
+def controlled_vectors(add_vector):
+    trees = controlled_trees()
+
+    def add(name, args, exit, out=None, kind=None):
+        t, = [a[1:] for a in args if a.startswith("@")]
+        args = ["{files}/packs" if a.startswith("@") else a for a in args]
+        add_vector("controlled-" + name, args, exit, out=out, kind=kind, tree_files=trees[t])
+
+    def at(t):
+        return ["--packs", "@" + t]
+
+    P = at("packs")
+    PROFILES = ("open", "open+copyleft", "everything")
+    row = {"ctl-apache": "Apache-2.0\tnone", "ctl-nc": "CC-BY-NC-SA-4.0\tnone", "ctl-sa": "CC-BY-SA-4.0\tnone",
+           "ctl-uses-ctl": "Apache-2.0\tnone", "pub-apache": "Apache-2.0\topen",
+           "pub-nc": "CC-BY-NC-SA-4.0\teverything", "pub-sa": "CC-BY-SA-4.0\topen+copyleft"}
+    held = {"open": ["pub-apache"], "open+copyleft": ["pub-apache", "pub-sa"],
+            "everything": ["pub-apache", "pub-nc", "pub-sa"]}
+    every = ["ctl-apache", "ctl-nc", "ctl-sa", "ctl-uses-ctl", "pub-apache", "pub-nc", "pub-sa"]
+
+    def text(dirs):
+        return "".join("%s\tc-%s\t%s\n" % (d, d, row[d]) for d in dirs)
+
+    def js(dirs):
+        return '{"packs":[' + ",".join('{"pack":"%s","format":"c-%s","licence":"%s","profile":"%s"}'
+                                       % ((d, d) + tuple(row[d].split("\t"))) for d in dirs) + "]}\n"
+
+    def formats(dirs):
+        return "".join("c-%s\t0.93.0\tjson\n" % d for d in dirs)
+
+    # rulings 2 and 7: each profile, and no profile
+    add("licences-every-pack", ["licences"] + P, 0, out=text(every))
+    add("licences-json-every-pack", ["licences", "--json"] + P, 0, out=js(every))
+    add("list-formats-every-pack", ["list-formats"] + P, 0, out=formats(every))
+    for p in PROFILES:
+        add("licences-" + p.replace("+", "-"), ["licences", "--profile", p] + P, 0, out=text(held[p]))
+        add("licences-json-" + p.replace("+", "-"), ["licences", "--json", "--profile", p] + P, 0, out=js(held[p]))
+        add("list-formats-" + p.replace("+", "-"), ["list-formats", "--profile", p] + P, 0, out=formats(held[p]))
+    # rulings 4, 5 and 7: the caller's limit
+    add("limit-controlled-beside-a-profile",
+        ["list-formats", "--profile", "everything", "--max-distribution", "controlled"] + P, 0,
+        out=formats(held["everything"]))
+    add("limit-public-beside-a-profile-skips-first",
+        ["list-formats", "--profile", "everything", "--max-distribution", "public"] + P, 0,
+        out=formats(held["everything"]))
+    add("limit-public-without-a-profile", ["list-formats", "--max-distribution", "public"] + P, 1,
+        kind="distribution-refused")
+    # ruling 4: --packs-only, and a format that is as if it were not there
+    for p in PROFILES:
+        add("packs-only-" + p.replace("+", "-"), ["list-formats", "--profile", p, "--packs-only",
+            "ctl-apache,pub-apache,ctl-sa,ctl-nc"] + P, 0, out=formats(["pub-apache"]))
+    add("packs-only-a-marked-name-alone", ["list-formats", "--profile", "everything", "--packs-only", "ctl-apache"] + P,
+        0, out="")
+    add("packs-only-a-marked-name-twice",
+        ["list-formats", "--profile", "everything", "--packs-only", "ctl-apache,ctl-apache"] + P, 0, out="")
+    add("packs-only-a-marked-name-without-a-profile", ["list-formats", "--packs-only", "ctl-apache"] + P, 0,
+        out=formats(["ctl-apache"]))
+    add("convert-from-a-skipped-format", ["convert", "--from", "c-ctl-apache", "--to", "c-pub-apache", "--profile",
+                                          "everything"] + P, 1, kind="unknown-format")
+    add("matrix-without-a-skipped-format", ["matrix", "--profile", "open"] + P, 0,
+        out="from\tto\tgrade\tcarried\tdropped\nc-pub-apache\tc-pub-apache\tfull\tlat\t\n")
+    # ruling 2: through a controlled module. Without a profile the public
+    # module mid, which uses it, is distribution-violation (0.8, ruling 29).
+    for p in PROFILES:
+        add("module-" + p.replace("+", "-"), ["licences", "--profile", p] + at("module"), 0,
+            out="plain\tc-plain\tApache-2.0\topen\n")
+    add("module-without-a-profile", ["list-formats", "--packs-only", "plain"] + at("module"), 1,
+        kind="distribution-violation")
+    for p in PROFILES:
+        add("core-" + p.replace("+", "-"), ["licences", "--json", "--profile", p] + at("core"), 0,
+            out='{"packs":[]}\n')
+    add("core-without-a-profile", ["licences", "--packs-only", "ctl"] + at("core"), 0,
+        out="ctl\tc-ctl\tApache-2.0\tnone\n")
+    add("core-public-pack-without-a-profile", ["list-formats", "--packs-only", "pub"] + at("core"), 1,
+        kind="distribution-violation")
+    # rulings 3 and 4: a skipped pack is not otherwise read; its licence is read first
+    add("a-broken-marked-pack-is-skipped", ["list-formats", "--profile", "everything"] + at("unread"), 0,
+        out="c-plain\t0.93.0\tjson\n")
+    add("a-broken-marked-pack-without-a-profile", ["list-formats"] + at("unread"), 1, kind="unknown-directive")
+    add("a-marked-pack-with-a-bad-licence", ["list-formats", "--profile", "everything"] + at("bad-licence"), 1,
+        kind="bad-licence")
+    # ruling 1: the forms of the line
+    unmarked = ["u-commented-out", "u-plain", "u-source-text", "u-spaces-and-tabs", "u-uses-mu"]
+    for p in PROFILES:
+        add("lines-" + p.replace("+", "-"), ["list-formats", "--profile", p] + at("lines"), 0, out=formats(unmarked))
+    add("lines-marked-packs-that-load-without-a-profile",
+        ["licences", "--max-distribution", "public", "--packs-only", "m-comment,m-quoted,m-uses-mc,m-uses-mq,u-plain"]
+        + at("lines"), 0,
+        out="m-comment\tc-m-comment\tApache-2.0\tnone\nm-quoted\tc-m-quoted\tApache-2.0\tnone\n"
+            "m-uses-mc\tc-m-uses-mc\tApache-2.0\tnone\nm-uses-mq\tc-m-uses-mq\tApache-2.0\tnone\n"
+            "u-plain\tc-u-plain\tApache-2.0\topen\n")
+    add("no-line-without-a-profile", ["list-formats", "--packs-only", "m-no-line"] + at("lines"), 1,
+        kind="missing-distribution")
+    add("no-line-in-packs-only", ["list-formats", "--profile", "open", "--packs-only", "m-no-line,u-plain"]
+        + at("lines"), 0, out="c-u-plain\t0.93.0\tjson\n")
+    add("two-exact-lines-are-shown-public", ["list-formats", "--profile", "open"] + at("twice"), 1,
+        kind="bad-directive")
+    add("core-not-utf-8", ["list-formats", "--profile", "open"] + at("core-not-utf-8"), 1, kind="unknown-module")
+    # ruling 4: 2b does not read a quoted `uses`, so the pack is held and its module is not there
+    add("quoted-uses-of-a-skipped-module", ["list-formats", "--profile", "open"] + at("quoted-uses"), 1,
+        kind="unknown-module")
 
 
 def fixture_problems(write):

@@ -1,0 +1,23 @@
+{
+  "name": "controlled-module-everything",
+  "args": [
+    "licences",
+    "--profile",
+    "everything",
+    "--packs",
+    "{files}/packs"
+  ],
+  "files": {
+    "licences.toml": "# The flags of the fixture's licences (spec 0.29, ruling 1c).\n\n[licences.\"Apache-2.0\"]\nname = \"Apache-2.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-SA-4.0\"]\nname = \"CC-BY-SA-4.0\"\ncommercial = \"yes\"\nshare_alike\t=  true\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-NC-SA-4.0\"]\nname = \"CC-BY-NC-SA-4.0\"\ncommercial = \"no\"\nshare_alike\t=  true\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-4.0\"]\nname = \"CC-BY-4.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = [\"weapons that can harm humans\"]\ndistribution = \"public\"\n\n[licences.\"LicenseRef-unstated\"]\nname = \"LicenseRef-unstated\"\ncommercial = \"unknown\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"OGL-UK-3.0\"]\nname = \"OGL-UK-3.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"controlled\"\n",
+    "model/core.def": "module core\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nkey lat float - \"a fixture key\"\n",
+    "model/ctl.def": "module ctl\nversion 0.93.0\ndistribution controlled\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\n",
+    "model/mid.def": "module mid\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses ctl\n",
+    "model/top.def": "module top\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses mid\n",
+    "packs/direct/pack.def": "format c-direct\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses ctl\nwire json\nfield lat pos.lat float\n",
+    "packs/plain/pack.def": "format c-plain\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n",
+    "packs/through-two/pack.def": "format c-through-two\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses top\nwire json\nfield lat pos.lat float\n",
+    "packs/through/pack.def": "format c-through\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nuses mid\nwire json\nfield lat pos.lat float\n"
+  },
+  "exit": 0,
+  "stdout_text": "plain\tc-plain\tApache-2.0\topen\n"
+}

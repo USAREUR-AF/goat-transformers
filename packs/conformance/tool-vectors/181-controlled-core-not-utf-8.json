@@ -1,0 +1,19 @@
+{
+  "name": "controlled-core-not-utf-8",
+  "args": [
+    "list-formats",
+    "--profile",
+    "open",
+    "--packs",
+    "{files}/packs"
+  ],
+  "files": {
+    "licences.toml": "# The flags of the fixture's licences (spec 0.29, ruling 1c).\n\n[licences.\"Apache-2.0\"]\nname = \"Apache-2.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-SA-4.0\"]\nname = \"CC-BY-SA-4.0\"\ncommercial = \"yes\"\nshare_alike\t=  true\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-NC-SA-4.0\"]\nname = \"CC-BY-NC-SA-4.0\"\ncommercial = \"no\"\nshare_alike\t=  true\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"CC-BY-4.0\"]\nname = \"CC-BY-4.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = [\"weapons that can harm humans\"]\ndistribution = \"public\"\n\n[licences.\"LicenseRef-unstated\"]\nname = \"LicenseRef-unstated\"\ncommercial = \"unknown\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"public\"\n\n[licences.\"OGL-UK-3.0\"]\nname = \"OGL-UK-3.0\"\ncommercial = \"yes\"\nshare_alike\t=  false\nattribution = true\nfield_of_use = []\ndistribution = \"controlled\"\n",
+    "model/core.def": {
+      "hex": "6d6f64756c6520636f72650a76657273696f6e20302e39332e300a646973747269627574696f6e207075626c69630a736f757263652022676f61742d7472616e73666f726d65727320737065632f656e67696e652d737065632e6d642c2056657273696f6e20302e3933202873796e74686574696320666978747572652c206e6f2065787465726e616c207374616e6461726429220a6b6579206c617420666c6f6174202d2022612066697874757265206b6579220a2320ff0a"
+    },
+    "packs/plain/pack.def": "format c-plain\nversion 0.93.0\ndistribution public\nsource \"goat-transformers spec/engine-spec.md, Version 0.93 (synthetic fixture, no external standard)\"\nwire json\nfield lat pos.lat float\n"
+  },
+  "exit": 1,
+  "error_kind": "unknown-module"
+}

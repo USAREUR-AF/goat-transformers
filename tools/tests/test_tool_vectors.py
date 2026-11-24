@@ -111,6 +111,86 @@ class Runner(unittest.TestCase):
         v = {"name": "a", "args": ["early-exit"], "stdin_hex": "00" * 1_000_000, "exit": 2}
         self.assertIsNone(self.run_one(v))
 
+    def files_vector(self, files, args=("cat",), **kw):
+        return dict({"name": "f", "args": list(args), "files": files, "exit": 0, "stdout_text": ""}, **kw)
+
+    def test_files_are_written_and_removed(self):
+        tool = ("import os,sys; r=sys.argv[1]; open(sys.argv[2],'w').write(r); "
+                "sys.stdout.buffer.write(open(r+'/a/b.def','rb').read()+open(r+'/c','rb').read())")
+        seen = os.path.join(self.dir.name, "seen")
+        vector = self.files_vector({"a/b.def": {"hex": "ff00"}, "c": ""}, args=["{files}", seen], stdout_text="x")
+        cmd = [sys.executable, "-I", "-c", tool]
+        # bytes that are not UTF-8 reach the tool (the output differs from `x`), and
+        # the directory goes although the vector fails
+        self.assertIn("got b'\\xff\\x00'", tv.check(vector, cmd, "/abs/packs", "/abs/model"))
+        with open(seen) as fh:
+            root = fh.read()
+        self.assertTrue(os.path.isabs(root))
+        self.assertFalse(os.path.exists(root))
+        vector = self.files_vector({"a/b.def": "hi", "c": "\n"}, args=["{files}", seen], stdout_text="hi\n")
+        self.assertIsNone(tv.check(vector, cmd, "/abs/packs", "/abs/model"))
+
+    def test_files_go_when_the_tool_cannot_start_or_times_out(self):
+        made = []
+        real = tv.write_files
+
+        def spy(files, root):
+            made.append(root)
+            real(files, root)
+
+        tv.write_files = spy
+        self.addCleanup(setattr, tv, "write_files", real)
+        vector = self.files_vector({"a": "00"})
+        self.assertIn("cannot start", tv.check(vector, [os.path.join(self.dir.name, "none")], "/p", "/m"))
+        limit = tv.TIMEOUT_S
+        self.addCleanup(setattr, tv, "TIMEOUT_S", limit)
+        tv.TIMEOUT_S = 0.2
+        self.assertIn("no exit", tv.check(vector, [sys.executable, "-I", "-c", "import time; time.sleep(60)"], "/p", "/m"))
+        self.assertEqual(len(made), 2)
+        self.assertFalse([r for r in made if os.path.exists(r)])
+
+    def test_a_file_the_tool_left_behind_a_link_to_is_kept(self):
+        # removal does not follow a symbolic link the tool made
+        keep = os.path.join(self.dir.name, "keep")
+        os.mkdir(keep)
+        with open(os.path.join(keep, "x"), "w"):
+            pass
+        cmd = [sys.executable, "-I", "-c", "import os,sys; os.symlink(sys.argv[2], sys.argv[1]+'/link')"]
+        self.assertIsNone(tv.check(self.files_vector({"a": ""}, args=["{files}", keep]), cmd, "/p", "/m"))
+        self.assertTrue(os.path.exists(os.path.join(keep, "x")))
+
+    def test_write_files_never_writes_through_a_link(self):
+        outside, root = os.path.join(self.dir.name, "outside"), os.path.join(self.dir.name, "root")
+        os.mkdir(outside)
+        os.mkdir(root)
+        os.symlink(outside, os.path.join(root, "d"))
+        os.symlink(os.path.join(outside, "new"), os.path.join(root, "f"))
+        for files in ({"d/x": "00"}, {"f": "00"}):
+            with self.assertRaises(FileExistsError):
+                tv.write_files(files, root)
+        self.assertEqual(os.listdir(outside), [])
+
+    def test_files_that_are_invalid(self):
+        for files in ([], {"": "00"}, {"/a": "00"}, {"a/": "00"}, {"a//b": "00"}, {"..": "00"}, {"../a": "00"},
+                      {"a/../b": "00"}, {"./a": "00"}, {"a b": "00"}, {"a\\b": "00"}, {"a\n": "00"}, {"\u00e9": "00"},
+                      {"a": {"hex": "0"}}, {"a": {"hex": "FF"}}, {"a": {"hex": "0 0"}}, {"a": {"hex": "00\n"}},
+                      {"a": {"hex": 0}}, {"a": {}}, {"a": {"hex": "00", "x": ""}}, {"a": 0}, {"a": "\ud800"},
+                      {"a": {"hex": ""}}, {"a": {"hex": "61090a"}}, {"a": {"hex": "c3a9"}}, {"a": {"hex": "efbbbf61"}},
+                      {"a": "", "a/b": ""}):
+            self.assertIsNotNone(tv.invalid(self.files_vector(files)), files)
+        self.assertIsNone(tv.invalid(self.files_vector({"a/.b_c-D9": "t\u00e9\tx\n"})))
+        self.assertIsNone(tv.invalid(self.files_vector({})))
+        for data in ("00", "0d", "7f", "c285", "ff"):
+            self.assertIsNone(tv.invalid(self.files_vector({"a": {"hex": data}})), data)
+        vector = self.files_vector({}, args=["{files}"])
+        del vector["files"]
+        self.assertIn("{files}", tv.invalid(vector))
+
+    def test_places_are_replaced_once(self):
+        self.assertEqual(tv.expand("{packs} {models} {files} {other}", "{models}", "/m", "/{packs}"),
+                         "{models} /m /{packs} {other}")
+        self.assertEqual(tv.expand("{files}", "/p", "/m"), "{files}")
+
 
 class Invalid(unittest.TestCase):
     def test_invalid_vectors(self):

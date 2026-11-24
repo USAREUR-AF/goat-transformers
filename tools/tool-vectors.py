@@ -6,18 +6,85 @@
 Each vector under packs/conformance/tool-vectors/ (spec/vector-format.md,
 Tool vectors) gives the arguments, the input, the exit status and the output.
 The runner prints one `FAIL <file>: <why>` line per failing vector and
-`tool vectors: N/N passed` last, and exits 1 on any failure.
+`tool vectors: N/N passed` last, and exits 1 on any failure. The files a vector
+carries (`files`) are written below a new temporary directory, which is removed
+after the run, also when the run fails.
 """
 
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
+import tempfile
+import unicodedata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-KEYS = {"name", "args", "stdin_hex", "exit", "stdout_text", "stdout_any", "error_kind"}
+KEYS = {"name", "args", "stdin_hex", "files", "exit", "stdout_text", "stdout_any", "error_kind"}
 TIMEOUT_S = 120
+FILE_NAME = re.compile(r"[A-Za-z0-9._-]+")
+LOWER_HEX = re.compile(r"(?:[0-9a-f]{2})*")
+
+
+def must_be_text(data):
+    """True for the bytes of UTF-8 text with no control character but tab and
+    line feed: a vector's file that holds such bytes is a string, not hex."""
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    return not any(unicodedata.category(c) == "Cc" and c not in "\t\n" for c in text)
+
+
+def file_bytes(value):
+    """The bytes of one value of `files`; ValueError (with why) when it is none."""
+    if isinstance(value, str):
+        try:
+            return value.encode("utf-8")
+        except UnicodeEncodeError:
+            raise ValueError("the text is not UTF-8")
+    if not isinstance(value, dict) or set(value) != {"hex"}:
+        raise ValueError("neither a text nor an object with the one member hex")
+    if not isinstance(value["hex"], str) or not LOWER_HEX.fullmatch(value["hex"]):
+        raise ValueError("not lower-case hex")
+    data = bytes.fromhex(value["hex"])
+    if must_be_text(data):
+        raise ValueError("hex for a file that can be text")
+    return data
+
+
+def invalid_files(files):
+    """Why the `files` member is invalid, or None."""
+    if not isinstance(files, dict):
+        return "files is not an object"
+    for path, data in files.items():
+        names = path.split("/")
+        if not all(FILE_NAME.fullmatch(n) and n not in (".", "..") for n in names):
+            return "files: %r is not a path" % path
+        try:
+            file_bytes(data)
+        except ValueError as err:
+            return "files: %r: %s" % (path, err)
+        if any("/".join(names[:i]) in files for i in range(1, len(names))):
+            return "files: %r lies below another file" % path
+    return None
+
+
+def write_files(files, root):
+    """Write the files below `root`, a new directory. Each file and directory
+    is made here: one that is already there, a symbolic link included, is an
+    error, so nothing is written outside `root`."""
+    made = set()
+    for path, data in files.items():
+        names = path.split("/")
+        for i in range(1, len(names)):
+            folder = "/".join(names[:i])
+            if folder not in made:
+                os.mkdir(os.path.join(root, *names[:i]))
+                made.add(folder)
+        with open(os.path.join(root, *names), "xb") as fh:      # x: never through a link
+            fh.write(file_bytes(data))
 
 
 def invalid(vector):
@@ -41,6 +108,12 @@ def invalid(vector):
             return "stdin_hex is not hex"
         if vector["stdin_hex"] != vector["stdin_hex"].lower():
             return "stdin_hex is not lower case"
+    if "files" in vector:
+        why = invalid_files(vector["files"])
+        if why:
+            return why
+    elif any("{files}" in a for a in args):
+        return "{files} in args without files"
     has_text, has_any = "stdout_text" in vector, "stdout_any" in vector
     if has_text and has_any:
         return "both stdout_text and stdout_any"
@@ -61,8 +134,12 @@ def invalid(vector):
     return None
 
 
-def expand(arg, packs, models):
-    return arg.replace("{packs}", packs).replace("{models}", models)
+def expand(arg, packs, models, files=None):
+    """Replace each place once, so the text put in is never read again."""
+    to = {"{packs}": packs, "{models}": models}
+    if files is not None:
+        to["{files}"] = files
+    return re.sub("|".join(re.escape(k) for k in to), lambda m: to[m.group(0)], arg)
 
 
 def check(vector, command, packs, models):
@@ -70,7 +147,21 @@ def check(vector, command, packs, models):
     why = invalid(vector)
     if why:
         return "invalid vector: " + why
-    argv = command + [expand(a, packs, models) for a in vector["args"]]
+    if "files" not in vector:
+        return run_vector(vector, command, packs, models, None)
+    try:
+        with tempfile.TemporaryDirectory(prefix="tool-vector-") as root:
+            root = os.path.realpath(root)
+            write_files(vector["files"], root)
+            return run_vector(vector, command, packs, models, root)
+    except OSError as err:
+        return "the vector's files: %s" % err
+
+
+def run_vector(vector, command, packs, models, files):
+    """Why the run of a valid vector fails, or None. `files`: the directory of
+    its files, or None."""
+    argv = command + [expand(a, packs, models, files) for a in vector["args"]]
     data = bytes.fromhex(vector.get("stdin_hex", ""))
     try:
         run = subprocess.run(argv, input=data, capture_output=True, timeout=TIMEOUT_S, cwd=ROOT)
