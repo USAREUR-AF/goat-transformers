@@ -39,11 +39,12 @@ class Node:
               `count @<name>` (0.21) `count_node`, the `count` line, and `count_nodes`, the
               `count` lines of `count @<a> [@<b>]` (one or two, 0.31); `tail_rest`: this `rest`
               group is the last line of an item of an outer `rest` group (ruling 10 of 0.21)
-    count     `name`, `length`, `plus` (0.21)
+    count     `name`, `length`, `plus` (0.21); `size` is set when a `length @` line names it (0.83)
     inner     `name`: the format of the inner pack; `partial`: bytes after its message are ignored (0.34);
               `reach`: the mapped keys of the lines in reach of it (0.52, ruling 20)
     chain     `parts`: the lines between `fx` lines; `ends_fx`: the last line is `fx`
-    length    `length`, `unit` ("bytes" | "bits"), `plus`, `body`
+    length    `length`, `unit` ("bytes" | "bits"), `plus`, `body`; `length @<name> units <u>` (0.83):
+              `length` None, `count_node`, the `count` line, and `size`, the bits of one unit
     whole     `length`, `plus`
     ext       `body` (0.19)
     choice    `n`, `ext`, `alts`: the `alt` nodes in line order, `index`: alt index -> node (0.19)
@@ -63,7 +64,7 @@ class Node:
                  "scope", "parts", "ends_fx", "unit", "plus", "locator", "uper", "n", "ext", "alts", "index",
                  "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines",
                  "count_node", "count_nodes", "tail_rest", "until", "as_key", "at", "partial", "as_optional",
-                 "reach")
+                 "reach", "size")
 
     is_field = False
     is_const = False
@@ -82,6 +83,7 @@ class Node:
         self.as_key = None
         self.as_optional = False
         self.at = None
+        self.size = None
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -323,7 +325,7 @@ def _plus(a, b):
 
 
 def _refs(lines, count):
-    """0.21 ruling 33: the possible numbers of groups that reference `count`
+    """0.21 ruling 33: the possible numbers of groups and `length @` lines (0.83) that reference `count`
     along the reading paths of `lines` (capped at 2). Only a switch splits a
     path; group bodies are not entered (ruling 9)."""
     got = {0}
@@ -337,7 +339,10 @@ def _refs(lines, count):
             for c in switch_cases(nd):
                 sub |= _refs(c.nodes, count)
             got = _plus(got, sub)
-        else:  # `if`, `opt`, `length`, a chain, an `ext` and the `alt`s of a choice (0.19): one path
+        else:
+            if t == T_LENGTH and nd.count_node is count:  # 0.83 ruling 1: `length @` is a reference
+                got = _plus(got, {1})
+            # `if`, `opt`, `length`, a chain, an `ext` and the `alt`s of a choice (0.19): one path
             for part in children(nd):
                 got = _plus(got, _refs(part, count))
     return got
@@ -399,6 +404,33 @@ def window_fixed(kind, w):
         if total >= end:
             return True
     return False  # the window ends past the kind's last line
+
+
+def count_reference(lines, count, taken):
+    """0.83 ruling 9: what references `count` on the path read: "block" (a
+    `length @` line), "group", or None. `taken`: the case of each `switch` and
+    the `alt` of each `choice` that was reached (None: no alt). One that was
+    not stands in a part not read, and counts when any of its cases or alts
+    holds the block."""
+    for nd in lines:
+        t = nd.t
+        if t == T_GROUP:
+            if any(c is count for c in nd.count_nodes):
+                return "group"
+            continue
+        if t == T_LENGTH and nd.count_node is count:
+            return "block"
+        if (t == T_SWITCH or t == T_CHOICE) and nd in taken:
+            one = taken[nd]
+            parts = () if one is None else (one.body if t == T_CHOICE else one.nodes,)
+        else:
+            parts = children(nd)
+        some = {count_reference(part, count, taken) for part in parts}
+        if "block" in some:
+            return "block"
+        if "group" in some:
+            return "group"
+    return None
 
 
 def switch_cases(nd):
@@ -500,6 +532,30 @@ def parse_seq_pack_text(text, *, source="pack.def"):
         if msg.cur is not None and name in msg.cur.presences:
             return msg.cur.presences[name]
         return msg.presences.get(name)
+
+    def units_line(args, lineno):
+        """`length @<name> units <u>` (0.83) -> (the `count` line or None, <u>)."""
+        why = None
+        node, size = None, 8
+        if len(args) != 3 or len(args[0]) < 2 or not args[0].startswith("@") or args[1] != "units":
+            why = "a 'length' line with '@' or 'units' is: length @<name> units <u>; got %r" % " ".join(args)
+        else:
+            digits = args[2].lstrip("0")
+            if not (args[2].isascii() and args[2].isdigit() and 1 <= len(digits) <= 5 and int(digits) <= 65535):
+                why = "a unit is 1 to 65535 bits in plain digits, got %r" % args[2]
+            else:
+                size = int(digits)
+                node = find_count(args[0][1:])
+                if node is None:
+                    why = "'length %s' names no count visible in this group body" % args[0]
+                elif node.t != T_COUNT:
+                    why = "'length %s' names a presence" % args[0]
+                    node = None
+                else:
+                    node.size = size  # a count that sizes a block (ruling 9)
+        if why is not None:
+            deferred.append((lineno, bad(why, lineno, args[0])))
+        return node, size
 
     def declare(name, nd, body, lineno, what):
         """Enter a presence or count name in the table of its block (rulings 12 of 0.8, 15 of 0.21)."""
@@ -836,7 +892,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
 
     def check_count(nd, home):
         """Rulings 2 and 33 of 0.21: in each reading path of the count's scope
-        exactly one group references it."""
+        exactly one group, or `length @` (0.83), references it."""
         if home[0] == "body" and home[2] is None and home[1].kinds:
             b = home[1]
             first = _refs(b.common[_index(b.common, nd) + 1:], nd)
@@ -846,8 +902,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
         for got in paths:
             if got != {1}:
                 deferred.append((nd.lineno, bad(
-                    "count %r is referenced by %s group in a reading path; exactly one 'count @%s' is needed"
-                    % (nd.name, "no" if 0 in got else "more than one", nd.name), nd.lineno, nd.locator)))
+                    "count %r is referenced by %s line in a reading path; exactly one 'count @%s' or 'length @%s' is needed"
+                    % (nd.name, "no" if 0 in got else "more than one", nd.name, nd.name), nd.lineno, nd.locator)))
                 return
 
     def check_inners():
@@ -1217,6 +1273,14 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 fr = stack[-1]
                 fr.node.parts.append([])
                 fr.nodes = fr.node.parts[-1]
+            elif kw == "length" and (args[0].startswith("@") or "units" in args):  # 0.83
+                # every error of the form is a check after the file (ruling 13); the block is
+                # still opened, so that its `end` closes it
+                node, size = units_line(args, lineno)
+                nd = Node(T_LENGTH, lineno, unit="bits" if size % 8 else "bytes", plus=0, body=[], locator=args[0],
+                          count_node=node, size=size)
+                target(body).append(nd)
+                stack.append(_Frame("length", nd, nd.body, lineno))
             elif kw == "length":
                 length = bit_len(args[0], "a 'length'", lineno)
                 unit = None
