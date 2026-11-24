@@ -421,6 +421,12 @@ func licensedModules(tablePath string, files []*moduleFile) (licenceTable, []*li
 		if !shownPublic(f.text, f.err == nil) {
 			m.rank = rankNone
 		}
+		// A module file 2b gives no name is not loaded under any profile,
+		// also when it is shown public; what uses it is then unknown-module
+		// (spec 0.93, ruling 2). With no profile every rank is held.
+		if m.name == "" {
+			m.rank = rankNone
+		}
 		mods[i] = m
 	}
 	// The widest of each module's licence and the modules it uses, directly

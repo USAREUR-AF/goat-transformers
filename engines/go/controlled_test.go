@@ -359,3 +359,69 @@ func TestProfileThenLoadWithoutProfile(t *testing.T) {
 		t.Errorf("a controlled pack, no profile: %v, want distribution-refused", err)
 	}
 }
+
+// Spec 0.93, ruling 2 (fail closed): with a profile a module file that 2b
+// gives no name is not loaded, also when it is shown public, and a pack or
+// module that uses it is unknown-module; core is no exception. With no
+// profile nothing changes.
+func TestProfileModuleWithoutAName(t *testing.T) {
+	body := "\nversion 0.93.0\ndistribution public\n" + ctlSource + "key k int - \"a test key\"\n"
+	usesPack := "format c-uses\nversion 0.93.0\ndistribution public\nuses mx\n" + ctlSource + "wire json\nfield mx.k pos.k int\n"
+	for _, line := range []string{"module mx # note", `module "mx"`} {
+		tree := ctlTree(t, map[string]string{
+			"model/core.def":       ctlCore,
+			"model/mx.def":         line + body,
+			"packs/uses/pack.def":  usesPack,
+			"packs/plain/pack.def": ctlPack("c-plain", "public"),
+		})
+		models, packs := dirs(tree)
+		byModule := ctlTree(t, map[string]string{
+			"model/core.def": ctlCore,
+			"model/mx.def":   line + body,
+			"model/user.def": "module user\nuses mx" + body,
+			"packs/.keep":    "",
+		})
+		noteCore := ctlTree(t, map[string]string{
+			"model/core.def":       "module core # note\nversion 0.93.0\ndistribution public\n" + ctlSource + "key lat float - \"a test key\"\n",
+			"packs/plain/pack.def": ctlPack("c-plain", "public"),
+		})
+		for _, profile := range []string{"open", "open+copyleft", "everything"} {
+			if _, err := LoadToolProfile(models, packs, DistControlled, []string{"uses"}, profile); !IsKind(err, ErrUnknownModule) {
+				t.Errorf("%q, %s, a pack that uses it: %v, want unknown-module", line, profile, err)
+			}
+			if e, err := LoadToolProfile(models, packs, DistControlled, []string{"plain"}, profile); err != nil {
+				t.Errorf("%q, %s, a pack that does not use it: %v", line, profile, err)
+			} else if _, ok := e.modules["mx"]; ok {
+				t.Errorf("%q, %s: the module was loaded", line, profile)
+			}
+			if _, _, err := LoadToolLicences(models, packs, DistControlled, []string{"uses"}, profile); !IsKind(err, ErrUnknownModule) {
+				t.Errorf("%q, %s, licences: %v, want unknown-module", line, profile, err)
+			}
+			m, p := dirs(byModule)
+			if _, err := LoadToolProfile(m, p, DistControlled, nil, profile); !IsKind(err, ErrUnknownModule) {
+				t.Errorf("%q, %s, a module that uses it: %v, want unknown-module", line, profile, err)
+			}
+			m, p = dirs(noteCore)
+			if _, err := LoadToolProfile(m, p, DistControlled, nil, profile); !IsKind(err, ErrUnknownModule) {
+				t.Errorf("core with %q, %s: %v, want unknown-module", "module core # note", profile, err)
+			}
+		}
+		// No profile: everything loads, licences included.
+		if e, err := LoadToolProfile(models, packs, DistControlled, nil, ""); err != nil {
+			t.Errorf("%q, no profile: %v", line, err)
+		} else if got := formatNames(e); !reflect.DeepEqual(got, []string{"c-plain", "c-uses"}) {
+			t.Errorf("%q, no profile: formats %v", line, got)
+		}
+		if _, listed, err := LoadToolLicences(models, packs, DistControlled, nil, ""); err != nil || len(listed) != 2 {
+			t.Errorf("%q, licences with no profile: %v, %v", line, listed, err)
+		}
+		m, p := dirs(byModule)
+		if _, err := LoadToolProfile(m, p, DistControlled, nil, ""); err != nil {
+			t.Errorf("%q, no profile, a module that uses it: %v", line, err)
+		}
+		m, p = dirs(noteCore)
+		if _, err := LoadToolProfile(m, p, DistControlled, nil, ""); err != nil {
+			t.Errorf("core with a note, no profile: %v", err)
+		}
+	}
+}
