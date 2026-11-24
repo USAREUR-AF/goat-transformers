@@ -5989,8 +5989,9 @@ number in brackets).
     transform's parameters a line check; for `code`, `codestr` and `codenum`
     the table above replaces it: every error of their list, an empty list
     (`code:`) and a second colon (`code:D:x`) included, is `bad-directive`
-    after the file is read. A `charset` error is raised with the checks that
-    need the whole file, before `missing-distribution`.
+    after the file is read. The values of an `absent` option stay a line check
+    (step 10 of 5b): they need no set. A `charset` error is raised with the
+    checks that need the whole file, before `missing-distribution`.
 16. **Place of `charset`.** It stands at the top level of the pack, before the
     first message `kind`. Inside a block, a group body included, it is
     `bad-directive` after the file.
