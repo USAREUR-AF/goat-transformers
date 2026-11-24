@@ -1,0 +1,17 @@
+{
+  "name": "aprs-rt-compressed-messaging",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: compressed, data type =",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:=/4Jq9Rs(T>C1G",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:=/4Jq9Rs(T>C1G",
+  "model": {
+    "@kind": "compressed-messaging",
+    "aprs.symbol_table": "/",
+    "aprs.lat_base91": "4Jq9",
+    "aprs.lon_base91": "Rs(T",
+    "aprs.symbol_code": ">",
+    "aprs.compressed_cs": "C1",
+    "aprs.compression_type": "G"
+  }
+}
