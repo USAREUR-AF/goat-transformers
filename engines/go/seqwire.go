@@ -1839,6 +1839,15 @@ func seqRangedValue(p *Pack, f *Field, sc seqScope) (val Value, line *Field, has
 	} else {
 		refused = encodeErr(p, from, rerr)
 	}
+	// The default of the line's absent key is checked also where a held
+	// `also` key supplies the bits (0.56 ruling 9).
+	if from != f && refused == nil && f.Range != nil && !f.suppressed(sc.rec) {
+		if d := sc.defs[f.Key]; d != nil {
+			if _, rerr := f.applyRange(d.val); rerr != nil {
+				refused = encodeErr(p, f, rerr)
+			}
+		}
+	}
 	if from.Key == "type" && p.TypeMapped() && v.Kind == KindString {
 		if native, ok := p.cotToNative[v.S]; ok {
 			v.S = native

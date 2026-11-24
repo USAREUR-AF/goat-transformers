@@ -435,8 +435,10 @@ func encodeJSONScope(p *Pack, lay *layout, rec *Item, root *jnode, geo bool) err
 			if err != nil {
 				return err
 			}
-			if !n.set {
-				n.raw, n.set = raw, true
+			// A list takes the member from the null of a `null` option
+			// (0.56 ruling 1).
+			if !n.set || n.null {
+				n.raw, n.set, n.weak, n.null = raw, true, false, false
 			}
 			continue
 		}

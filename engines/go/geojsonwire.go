@@ -230,7 +230,15 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 				if err != nil {
 					return nil, err
 				}
-				put(g.loc, raw, false)
+				// A list takes the member from the null of a `null` option
+				// (0.56 ruling 1).
+				if nulls[g.Locator] {
+					put(g.loc, raw, true)
+					delete(nulls, g.Locator)
+					delete(weak, g.Locator)
+				} else {
+					put(g.loc, raw, false)
+				}
 				written[g.Locator] = true
 			}
 			continue
