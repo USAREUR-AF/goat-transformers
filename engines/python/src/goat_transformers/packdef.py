@@ -479,6 +479,7 @@ class Pack:
     uper: bool = False         # bits, sequential: `encoding uper` (0.19)
     value_checks: list = dc_field(default_factory=list)  # ValueCheck, in line order (0.20)
     _plans: dict = dc_field(default_factory=dict, repr=False)
+    _mapped: frozenset = dc_field(default=None, repr=False)
     _kind_index: dict = dc_field(default_factory=dict, repr=False)
     _kinds_by_root: dict = dc_field(default_factory=dict, repr=False)
 
@@ -525,6 +526,13 @@ class Pack:
                 )
             self._plans[key] = plan
         return plan
+
+    def mapped_set(self):
+        """`model_keys` as a set; asked for of a pack with no `inner` line (0.52, ruling 20)."""
+        got = self._mapped
+        if got is None:
+            got = self._mapped = frozenset(self.model_keys())
+        return got
 
     def model_keys(self):
         """The union of mapped keys over common and all kinds, in first
@@ -604,6 +612,13 @@ def tokenize(line, *, source="pack.def", lineno=0, error=UnterminatedQuote):
             raise error("unterminated quote at %s:%d" % (source, lineno))
         toks.append(bare if quoted is None else quoted)
         pos = m.end()
+
+
+def holds_at(rest):
+    """Whether the tokens after the values of a `when` line hold `at` (0.33).
+    The token after the first `as` is its key, whatever it is (0.52, rulings 4 and 14)."""
+    key = rest.index("as") + 1 if "as" in rest else -1
+    return any(t == "at" and i != key for i, t in enumerate(rest))
 
 
 def line_head(raw, source, lineno, seen, directives=PACK_DIRECTIVES, arg_counts=ARG_COUNTS):
@@ -2081,8 +2096,8 @@ def parse_pack_text(text, *, source="pack.def"):
                 if len(args) > 2:  # 0.30 `as`, 0.33 `at` (let through by `line_head`) need `layout sequential`
                     err = BadDirective(
                         "'%s' on a 'when' of a pack that is not 'layout sequential', at %s"
-                        % ("at" if "at" in args[2:] else "as", where), format=fmt, locator=args[0])
-                    if "at" in args[2:]:  # 0.33 ruling 30: an `at` error, raised by `Engine.add` (rulings 10, 14)
+                        % ("at" if holds_at(args[2:]) else "as", where), format=fmt, locator=args[0])
+                    if holds_at(args[2:]):  # 0.33 ruling 30: an `at` error, raised by `Engine.add` (rulings 10, 14)
                         late_errors.append(err)
                     else:
                         deferred.append((lineno, err))

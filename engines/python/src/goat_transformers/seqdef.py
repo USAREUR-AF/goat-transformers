@@ -40,7 +40,8 @@ class Node:
               `count` lines of `count @<a> [@<b>]` (one or two, 0.31); `tail_rest`: this `rest`
               group is the last line of an item of an outer `rest` group (ruling 10 of 0.21)
     count     `name`, `length`, `plus` (0.21)
-    inner     `name`: the format of the inner pack; `partial`: bytes after its message are ignored (0.34)
+    inner     `name`: the format of the inner pack; `partial`: bytes after its message are ignored (0.34);
+              `reach`: the mapped keys of the lines in reach of it (0.52, ruling 20)
     chain     `parts`: the lines between `fx` lines; `ends_fx`: the last line is `fx`
     length    `length`, `unit` ("bytes" | "bits"), `plus`, `body`
     whole     `length`, `plus`
@@ -53,7 +54,7 @@ class Node:
     the locator `until:<code>` has `until` (its UntilCharsT, 0.22); a
     `size` group has `lb` and `ub` (both None with no size constraint). A
     `when` has `ranges` (0.20) and `as_key`, the key of `when ... as <key>`
-    or None (0.30); a presence `named_static`, the bits named by an `if`
+    or None (0.30), and `as_optional` (0.52); a presence `named_static`, the bits named by an `if`
     outside any case that does not also hold the presence, and `chain`, the
     cases the presence stands in.
     """
@@ -61,7 +62,8 @@ class Node:
     __slots__ = ("t", "lineno", "length", "value", "bindings", "name", "named", "conds", "body", "list", "mode",
                  "scope", "parts", "ends_fx", "unit", "plus", "locator", "uper", "n", "ext", "alts", "index",
                  "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines",
-                 "count_node", "count_nodes", "tail_rest", "until", "as_key", "at", "partial")
+                 "count_node", "count_nodes", "tail_rest", "until", "as_key", "at", "partial", "as_optional",
+                 "reach")
 
     is_field = False
     is_const = False
@@ -78,6 +80,7 @@ class Node:
         self.count_nodes = ()
         self.tail_rest = False
         self.as_key = None
+        self.as_optional = False
         self.at = None
         for k, v in kw.items():
             setattr(self, k, v)
@@ -252,29 +255,41 @@ class Body:
     def model_keys(self, add, prefix="", inner=None):
         """`inner`, when given, maps the format of an `inner` line to the
         entries it adds at its place (0.34, Capability)."""
-        def walk(nodes):
-            for nd in nodes:
-                t = nd.t
-                if t == T_INNER:
-                    if inner is not None:
-                        for name in inner(nd.name):
-                            add(prefix + name)
-                elif t == T_FIELD:
-                    for f in nd.bindings:
-                        add(prefix + f.key)
-                elif t == T_WHEN:  # 0.30 ruling 5: a `when ... as` key at its line
-                    if nd.as_key is not None:
-                        add(prefix + nd.as_key)
-                elif t == T_GROUP:
-                    add(prefix + nd.list + "[]")
-                    nd.scope.model_keys(add, prefix + nd.list + "[].")
-                else:  # a switch: every case (0.20 ruling 13)
-                    for part in children(nd):
-                        walk(part)
-
-        walk(self.common)
+        mapped_keys(self.common, add, prefix, inner)
         for k in self.kinds:
-            walk(k.whens + k.nodes)
+            mapped_keys(k.whens + k.nodes, add, prefix, inner)
+
+    def reach(self, kind):
+        """The mapped keys of the lines in reach of an `inner` line of `kind`,
+        or of the common lines (None) (0.52, ruling 20)."""
+        out = set()
+        mapped_keys(self.common, out.add)
+        for k in self.kinds if kind is None else (kind,):
+            mapped_keys(k.whens + k.nodes, out.add)
+        return frozenset(out)
+
+
+def mapped_keys(nodes, add, prefix="", inner=None):
+    """The entries of `model_keys` the lines give, every block and case of them
+    (0.20 ruling 13), in line order. `inner` as in `Body.model_keys`."""
+    for nd in nodes:
+        t = nd.t
+        if t == T_INNER:
+            if inner is not None:
+                for name in inner(nd.name):
+                    add(prefix + name)
+        elif t == T_FIELD:
+            for f in nd.bindings:
+                add(prefix + f.key)
+        elif t == T_WHEN:  # 0.30 ruling 5: a `when ... as` key at its line
+            if nd.as_key is not None:
+                add(prefix + nd.as_key)
+        elif t == T_GROUP:
+            add(prefix + nd.list + "[]")
+            nd.scope.model_keys(add, prefix + nd.list + "[].")
+        else:
+            for part in children(nd):
+                mapped_keys(part, add, prefix, inner)
 
 
 def _index(lines, nd):
@@ -419,7 +434,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
         BIT_ORDERS, HEADER_ONCE, NEEDS_WIRE, TEXT_DIRECTIVES, Default, Field, Pack, _check_transform, _Deferred,
         set_stop,
         _LineBad, armor_line, check_armor, check_encoding, line_head, parse_absent, set_bit_order,
-        ValueCheck, requires_term, split_list, when_values,
+        ValueCheck, requires_term, holds_at, split_list, when_values,
     )
 
     seen = {}          # the header values (`line_head`)
@@ -1004,13 +1019,14 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                     raise bad("'when' inside a block", lineno, args[0])
                 nd = value_node(T_WHEN, kw, args, lineno)
                 rest = args[2:]  # `line_head` lets only `as` or `at` through as the third token
-                if "at" in rest:  # 0.33: exactly `at <n> [as <key>]`; its errors are late (rulings 10, 27, 28)
-                    form = rest[0] == "at" and len(rest) in (2, 4) and (len(rest) == 2 or rest[2] == "as") \
-                        and rest[1] not in ("at", "as") and (len(rest) == 2 or rest[3] not in ("at", "as"))
+                if holds_at(rest):  # 0.33: `at <n> [as <key> [optional]]`; its errors are late (rulings 10, 27, 28)
+                    tail = rest[2:]
+                    form = rest[0] == "at" and len(rest) > 1 and rest[1] not in ("at", "as", "optional") and (
+                        not tail or (tail[0] == "as" and len(tail) > 1 and tail[1] != "as"
+                                     and tail[2:] in ([], ["optional"])))
                     if not form:  # ruling 28: the key of a broken line is not read
                         at_form.append((lineno, bad(
-                            "'at' with no value" if rest == ["at"] else
-                            "a 'when' line with 'at' is: when <len> <values> at <n> [as <key>]; got %r"
+                            "a 'when' line with 'at' is: when <len> <values> at <n> [as <key> [optional]]; got %r"
                             % " ".join(rest), lineno, args[0])))
                         rest = []
                     else:
@@ -1023,16 +1039,20 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                         else:
                             nd.at = int(n)
                         rest = rest[2:]
-                if rest:  # 0.30: `as <key>`
+                if rest:  # 0.30: `as <key>`, 0.52: `as <key> optional`; the token after `as` is the key
                     rest = rest[1:]
                     if not rest:
                         deferred.append((lineno, bad("'as' with no key", lineno, args[0])))
-                    elif "as" in rest:  # ruling 31: any second `as` token
+                    elif "as" in rest:  # ruling 31 of 0.30: any second `as` token
                         deferred.append((lineno, bad("'as' twice on one 'when' line", lineno, args[0])))
-                    elif len(rest) > 1:
-                        deferred.append((lineno, bad("a token after the key of 'as': %r" % rest[1], lineno, args[0])))
+                    elif rest[1:] not in ([], ["optional"]):
+                        deferred.append((lineno, bad("after the key of 'as' a 'when' line takes 'optional' only, got %r"
+                                                     % " ".join(rest[1:]), lineno, args[0])))
                     else:
                         nd.as_key = rest[0]
+                        nd.as_optional = len(rest) == 2
+                        if nd.as_optional and body.cur is None and not holds_at(args[2:]):  # with `at`: a late error
+                            deferred.append((lineno, bad("'optional' on a common 'when'", lineno, args[0])))
                 if body.cur is None:  # a common `when` of 0.5
                     body.common.append(nd)
                     if body.first_when is None:
@@ -1422,6 +1442,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     )
     pack.layout = "sequential"
     pack.seq = msg
+    for nd, _, _, kind in inner_lines:
+        nd.reach = msg.reach(kind)
     late = sorted(at_form, key=lambda d: d[0])
     fixed = []
     for b in msg.bodies():  # 0.33: the fixed-window check, after the form of `at` (ruling 10)

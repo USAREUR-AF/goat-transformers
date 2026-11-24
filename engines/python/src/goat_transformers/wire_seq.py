@@ -21,7 +21,7 @@ after the last line, not rounded to a byte, zero-filled to a multiple of 6.
 """
 
 from .entity import Entity, Item, _via_decode, _via_encode, failure
-from .errors import GTError, MalformedWire, NoKind, TransformDecodeFailure, TransformEncodeFailure
+from .errors import BadDirective, GTError, MalformedWire, NoKind, TransformDecodeFailure, TransformEncodeFailure
 from .seqdef import (
     T_ALIGN, T_CHAIN, T_CHOICE, T_CONST, T_COUNT, T_EXT, T_FIELD, T_GROUP, T_IF, T_LENGTH, T_OPT, T_PAD,
     T_INNER, T_PRESENCE, T_SWITCH, T_WHEN, T_WHOLE, children, when_matches, when_value,
@@ -70,6 +70,15 @@ def _uper_absent_raw(loc):
     return bytes(loc.lb or 0)
 _MISSING = object()
 _FAILED = object()  # encode: the bits a line wrote for the key do not decode (0.20 ruling 31)
+
+
+def _check_keys(nd, ipack):
+    """The fifth check of an `inner` line (0.52, ruling 20): no key that the
+    lines in reach of it map is a mapped key of the inner pack."""
+    both = nd.reach & ipack.mapped_set()
+    if both:
+        raise BadDirective("the inner pack %s and lines of the outer pack in reach of the 'inner' line both map %s"
+                           % (nd.name, ", ".join(sorted(both))), format=nd.name, locator=nd.locator)
 
 
 def select_case(nd, value):
@@ -253,11 +262,14 @@ class _Reader:
         """0.34, Decode: the bytes from the cursor to the end of the extent are
         one message of the inner pack, decoded into the same entity; the first
         value read of a key, outer or inner, is kept."""
+        if self.units and self.units[-1] is None:
+            return  # a block that reads as absent: the line is not reached (0.52, ruling 20b)
         layer = self.layer
         if layer is None:
             from .errors import UnknownFormat
             raise UnknownFormat("no pack is loaded for the inner format %r" % nd.name, format=nd.name)
         ipack = layer._inner_pack(self.pack, nd.name)  # checks 1 to 4 of "Reaching the inner line"
+        _check_keys(nd, ipack)
         pos = self.pos
         if pos % 8:
             raise MalformedWire("the inner message %s would start inside a byte (bit %d)" % (nd.name, pos),
@@ -922,8 +934,8 @@ def select_kind(pack, body, kind_ref, fields, lists, item=False):
 
     for kind in body.kinds:
         if requires_hold(kind, fields, lists) and all(
-                w.as_key in fields and when_matches(w, fields[w.as_key]) for w in kind.as_lines):
-            return kind  # 0.30: each `when ... as` line is an implicit `requires` term
+                when_matches(w, fields[w.as_key]) if w.as_key in fields else w.as_optional for w in kind.as_lines):
+            return kind  # 0.30: each `when ... as` line is an implicit `requires` term; 0.52: `optional`
     raise NoKind("the entity has the required keys of no kind", format=pack.name)
 
 
@@ -968,11 +980,11 @@ class _Writer:
         self.rest_last = []  # per `rest` item being written: it is its list's last (ruling 10)
         # 0.33: the bits written from a key the entity holds, [start, end) of each line; the
         # windows written, (start, length, value) in order, over the bits of `ops`; the
-        # positions a written window holds; the windows of the kind being written, as
-        # [windows, kind start, ctx, the end of the last window, (start, field node) ...]
+        # windows of the kind being written, as
+        # [windows, kind start, ctx, the end of the last window, the lines that map a key as
+        # (start, node, raw value), the read-back of the common lines]
         self.held = []
         self.wins = []
-        self.cleared = set()
         self.hook = None
         self.msb_like = pack.armor == "sixbit" or pack.bit_order == "msb"
 
@@ -1058,7 +1070,8 @@ class _Writer:
         self.emit(body.common, ctx, lines)
         saved = self.hook
         start = self.pos
-        self.hook = [kind.windows, start, ctx, start + max(w.at + w.length for w in kind.windows), []]
+        self.hook = [kind.windows, start, ctx, start + max(w.at + w.length for w in kind.windows), [],
+                     dict(ctx.readback)]
         self.emit(kind.whens + kind.nodes, ctx, lines)
         if self.hook is not None:
             self.settle()
@@ -1086,16 +1099,16 @@ class _Writer:
         return out
 
     def is_held(self, p):
-        return p not in self.cleared and any(a <= p < b for a, b in self.held)
+        return any(a <= p < b for a, b in self.held)
 
     def settle(self):
         """0.33, Encode and rulings 1, 5, 12, 13 and 26: each window of the kind,
-        in line order. Its bits stand when they match the `when` and agree
+        in line order; ruling 16 of 0.52. Its bits stand when they match the `when` and agree
         with a held `as` key; otherwise it is written with the key's value, or
         the first listed value, unless that changes a bit a held key wrote
         (`transform-encode`). A switch then reads its key from the bits as they
         stand."""
-        windows, start, ctx, _, fields = self.hook
+        windows, start, ctx, _, lines, common = self.hook
         self.hook = None
         written = []
         for w in windows:
@@ -1120,23 +1133,35 @@ class _Writer:
                             "would decode a different value" % (w.at, ws + k), format=self.pack.name,
                             locator=w.locator)
                 self.wins.append((ws, wl, val))
-                self.cleared.update(range(ws, ws + wl))
                 written.append((ws, ws + wl))
+            if held:  # 0.52 ruling 16: these bits count as bits the key wrote
+                self.held.append((ws, ws + wl))
+        # What decode reads for each key once every window is written (0.33, Encode): the
+        # common lines, then the kind's, in reading order (0.6, "One key at several locators").
+        got = common
+        for w in windows:
             if w.as_key is not None:
-                ctx.readback[w.as_key] = when_value(w, val)
-        for fs, fnd in fields:  # what decode reads for a key whose bits a window changed
-            fl = fnd.length
-            first = fnd.bindings[0]
-            if fl is None or getattr(first.transform, "as_bytes", False) or getattr(first.transform, "as_sixbit",
-                                                                                     False):
-                continue
-            if any(a < fs + fl and fs < b for a, b in written):
-                raw = self.bits_at(fs, fl)
-                if first.swap:
-                    raw = _swap_int(raw, fl)
-                got = {}
-                self.read_back(fnd, raw, got)
-                ctx.readback.update(got)
+                got[w.as_key] = when_value(w, self.bits_at(start + w.at, w.length))
+        for ls, nd, raw in lines:
+            changed = any(a < ls + nd.length and ls < b for a, b in written) if nd.length is not None else False
+            if nd.t == T_WHEN:
+                got[nd.as_key] = when_value(nd, self.bits_at(ls, nd.length) if changed else raw)
+            else:
+                self.read_back(nd, self.raw_at(ls, nd) if changed else raw, got)
+        ctx.readback.clear()
+        ctx.readback.update(got)
+
+    def raw_at(self, start, nd):
+        """The raw value `_Reader.field` takes from the bits written for field line `nd`."""
+        first = nd.bindings[0]
+        n = nd.length
+        if getattr(first.transform, "as_bytes", False):
+            raw = bytes(self.bits_at(start + k, 8) for k in range(0, n, 8))
+            return raw[::-1] if first.swap else raw
+        if getattr(first.transform, "as_sixbit", False):
+            return [self.bits_at(start + k, 6) for k in range(0, n, 6)]
+        raw = self.bits_at(start, n)
+        return _swap_int(raw, n) if first.swap else raw
 
     # -- what a block would write --
 
@@ -1205,6 +1230,10 @@ class _Writer:
                 self.put(nd.length, nd.value)
             elif t == T_WHEN:  # 0.30: `when ... as <key>`
                 v = self.when_out(nd, ctx)
+                if nd.as_key in ctx.fields:  # 0.52 ruling 16: bits a held key wrote
+                    self.held.append((self.pos, self.pos + nd.length))
+                if self.hook is not None:
+                    self.hook[4].append((self.pos, nd, v))
                 self.put(nd.length, v)
                 ctx.readback[nd.as_key] = when_value(nd, v)  # the key's line for a switch (ruling 19)
             elif t == T_PAD:
@@ -1314,6 +1343,7 @@ class _Writer:
             from .errors import UnknownFormat
             raise UnknownFormat("no pack is loaded for the inner format %r" % nd.name, format=nd.name)
         ipack = layer._inner_pack(self.pack, nd.name)
+        _check_keys(nd, ipack)
         if self.pos % 8:
             raise self.fail("the inner message %s would start inside a byte (bit %d)" % (nd.name, self.pos), nd)
         data = layer._encode_layer(ipack, self.entity)
@@ -1465,7 +1495,7 @@ class _Writer:
         if any(f.key in ctx.fields for f in _live(nd.bindings, ctx)):  # 0.33: bits a held key wrote
             self.held.append((start, self.pos))
         if self.hook is not None:
-            self.hook[4].append((start, nd))
+            self.hook[4].append((start, nd, raw))
 
     def read_back(self, nd, raw, got):
         """Add to `got` the value decode reads for each key of the line from
