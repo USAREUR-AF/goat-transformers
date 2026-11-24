@@ -11130,7 +11130,8 @@ const SMode = enum { count, while_, more, fx, size_c, size_u, cref, rest, last }
 const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole, ext, choice, alt, switch_, case_, count, inner };
 
 // Version 0.21: a `count <name> <len> [plus <n>]` line.
-const SCount = struct { name: []const u8, len: usize, plus: i64, lineno: usize };
+// `sized`: a `length @<name>` line names it (Version 0.83).
+const SCount = struct { name: []const u8, len: usize, plus: i64, lineno: usize, sized: bool = false };
 
 // Version 0.19: a UPER locator. `int:<lb>:<ub>[:ext]`, `int:<lb>:`, `int::`,
 // `enum:<n>[:ext]` (lb 0, ub n - 1), `chars:<lb>:<ub>`, `chars:`,
@@ -11251,6 +11252,9 @@ const SNode = struct {
     mode: SMode = .count,
     gbody: ?*SBody = null,
     in_bits: bool = false, // length: counted in bits
+    // `length @<name> units <u>` (Version 0.83): the bits of a unit, its count
+    // in `cnt`; 0: another length
+    units: u32 = 0,
     plus: i64 = 0, // length, whole
     // Version 0.19: a field's UPER locator; `choice <n> ext` (n in `value`,
     // the alts in `body`); an `alt`'s index in `value`; `group … size
@@ -11467,6 +11471,29 @@ const SParser = struct {
         if (self.p.at_err != null) return;
         const detail = std.fmt.allocPrint(self.alloc, fmt, args) catch "an `at` error";
         self.p.at_err = std.fmt.allocPrint(self.alloc, "line {d}: {s}", .{ self.lineno, detail }) catch detail;
+    }
+
+    // length @<name> units <u> (Version 0.83). Every error is a check after
+    // the file (ruling 13); the block is opened in either case, so its lines
+    // and `end` match.
+    fn unitsLine(self: *SParser, toks: []const []const u8) !void {
+        var n = SNode{ .tag = .length, .lineno = self.lineno };
+        var pending: ?anyerror = null;
+        if (toks.len != 4 or toks[1].len == 0 or toks[1][0] != '@' or !std.mem.eql(u8, toks[2], "units")) {
+            pending = self.err(bd, "the line is not `length @<name> units <u>`", .{});
+        } else {
+            const u = if (allDigits(toks[3])) parseUnsigned(toks[3]) orelse 0 else 0;
+            if (u < 1 or u > 65535) {
+                pending = self.err(bd, "length: units {s} is not 1 to 65535", .{toks[3]});
+            } else if (self.countRef(toks[1])) |c| {
+                c.sized = true;
+                n.cnt = c;
+                n.units = @intCast(u);
+                n.in_bits = u % 8 != 0;
+            } else |e| pending = e;
+        }
+        try self.open(.length, n);
+        if (pending) |e| return e;
     }
 
     // The count a `@<name>` of a group line names: a `count` line visible
@@ -12074,6 +12101,7 @@ const SParser = struct {
         } else if (is(kw, "length")) {
             // length <len> [bytes|bits] [plus <n>] [whole]
             if (toks.len < 2) return self.err(bd, "length takes a bit length", .{});
+            if ((toks[1].len > 0 and toks[1][0] == '@') or listHolds(toks[1..], "units")) return self.unitsLine(toks);
             var n = SNode{ .tag = .length, .lineno = self.lineno, .len = try self.bitLen(toks[1], kw, 64) };
             var unit = false;
             var plus = false;
@@ -12460,6 +12488,11 @@ fn seqRefs(list: []const SNode, c: *const SCount) SRefs {
                 for (n.body) |*cn| alt = seqAlt(alt, seqRefs(cn.body, c));
                 r.add(alt orelse .{});
             },
+            .length => {
+                // `length @<name>` is a reference (ruling 1 of 0.83)
+                if (n.units > 0 and n.cnt == c) r.add(.{ .min = 1, .max = 1 });
+                r.add(seqRefs(n.body, c));
+            },
             else => r.add(seqRefs(n.body, c)),
         }
     }
@@ -12482,8 +12515,8 @@ fn seqCheckCountList(alloc: std.mem.Allocator, list: []const SNode, kinds: []con
                 var alt: ?SRefs = null;
                 for (kinds) |*k| alt = seqAlt(alt, seqRefs(k.lines, c));
                 if (alt) |a| r.add(a);
-                if (r.min == 0) return bad(diag, alloc, E.@"bad-directive", "line {d}: count {s} is not referenced by a `count @{s}` group in some reading path", .{ n.lineno, c.name, c.name });
-                if (r.max > 1) return bad(diag, alloc, E.@"bad-directive", "line {d}: count {s} is referenced by two groups in one reading path", .{ n.lineno, c.name });
+                if (r.min == 0) return bad(diag, alloc, E.@"bad-directive", "line {d}: count {s} is not referenced by a `count @{s}` group or a `length @{s}` block in some reading path", .{ n.lineno, c.name, c.name, c.name });
+                if (r.max > 1) return bad(diag, alloc, E.@"bad-directive", "line {d}: count {s} is referenced twice in one reading path", .{ n.lineno, c.name });
             },
             .group => try seqCheckCountBody(alloc, n.gbody.?, diag),
             else => try seqCheckCountList(alloc, n.body, &.{}, diag),
@@ -12711,7 +12744,9 @@ const SDec = struct {
     // the end of the input, or of the message a `length … whole` states:
     // reading beyond it is `malformed-wire`
     hard_end: usize,
-    // inside a `length` block: the end of its extent
+    // inside a `length` block: the end of its extent. It lies beyond
+    // `hard_end` when a whole length read in the block cuts it (ruling 16 of
+    // 0.83)
     soft_end: usize,
     in_extent: bool = false,
     // the first field that failed (`transform-decode`), reported at the end
@@ -12732,6 +12767,11 @@ const SDec = struct {
     // presence's block (ruling 21)
     read_cases: std.ArrayListUnmanaged(u32) = .{},
     pending: std.ArrayListUnmanaged(SPending) = .{},
+    // Version 0.83: the counts read that state units and that a `length @`
+    // block names, with whether one was read and where `read_cases` and
+    // `choices` (the choices read, with the `alt` chosen) stood
+    sized: std.ArrayListUnmanaged(SizedCount) = .{},
+    choices: std.ArrayListUnmanaged(ReadChoice) = .{},
     // the cases being read, outermost first
     open_cases: std.ArrayListUnmanaged(u32) = .{},
     // Version 0.34: the lists an inner message gave the entity
@@ -12748,6 +12788,8 @@ const SDec = struct {
 
     const mw = E.@"malformed-wire";
     const SPending = struct { pres: *const SPres, bit: usize, start: usize };
+    const SizedCount = struct { cnt: *const SCount, cases: usize, choices: usize, read: bool = false };
+    const ReadChoice = struct { choice: *const SNode, alt: ?*const SNode };
 
     // The pending bits from `mark` on: each needs a case that names it read
     // since its presence was.
@@ -12784,7 +12826,7 @@ const SDec = struct {
     // straddles it is `malformed-wire`, as is reading past the input.
     fn avail(self: *SDec, len: usize, what: []const u8) !Avail {
         if (self.in_extent) {
-            if (self.pos >= self.soft_end) return .absent;
+            if (self.atExtentEnd()) return .absent;
             if (!self.fits(len)) {
                 return bad(self.diag, self.alloc, mw, "{s}: {d} bits at bit {d} run past the end of the length extent at bit {d}", .{ what, len, self.pos, self.soft_end });
             }
@@ -12807,7 +12849,7 @@ const SDec = struct {
     // of a `length` extent it reads as 0 (ruling 21 of 0.8); past the end of
     // the input it is `malformed-wire`.
     fn indicator(self: *SDec, what: []const u8) !u64 {
-        if (self.in_extent and self.pos >= self.soft_end) return 0;
+        if (self.atExtentEnd()) return 0;
         try self.need(1, what);
         return self.take(1);
     }
@@ -12830,7 +12872,7 @@ const SDec = struct {
         const w = charWidth(c);
         const term = ln.until_code.?;
         // at or past the end of a `length` extent: absent (ruling 4)
-        if (self.in_extent and self.pos >= self.soft_end) return;
+        if (self.atExtentEnd()) return;
         const at = self.pos;
         var cnt: usize = 0;
         while (true) {
@@ -13030,6 +13072,7 @@ const SDec = struct {
             },
             .case_ => unreachable, // a case is read by its switch
             .length => {
+                if (n.units > 0) return self.unitsBlock(n, se, env.*);
                 if (try self.avail(n.len, "length") == .absent) return;
                 const stated: i128 = self.take(n.len);
                 const count = stated - n.plus;
@@ -13079,11 +13122,15 @@ const SDec = struct {
                         return bad(self.diag, alloc, E.@"transform-decode", "choice: the index of an extension alternative does not fit 64 bits", .{});
                     }
                     try self.skipOpen("choice");
+                    if (self.sized.items.len > 0) try self.choices.append(alloc, .{ .choice = n, .alt = null });
                     return;
                 }
                 const i = try self.cwn(0, @intCast(n.value - 1), "choice");
                 for (n.body) |*a| {
-                    if (a.value == @as(u64, @intCast(i))) return self.block(a.body, se, env.*);
+                    if (a.value == @as(u64, @intCast(i))) {
+                        if (self.sized.items.len > 0) try self.choices.append(alloc, .{ .choice = n, .alt = a });
+                        return self.block(a.body, se, env.*);
+                    }
                 }
                 return bad(self.diag, alloc, mw, "choice: the index {d} has no `alt`", .{i});
             },
@@ -13100,6 +13147,7 @@ const SDec = struct {
                 if (v < c.plus) return bad(self.diag, alloc, mw, "count {s}: the value {d} is below its `plus {d}`", .{ c.name, v, c.plus });
                 // kept exact, for the comparison of two counts (0.31 ruling 5)
                 try self.cvals.put(alloc, c, v - c.plus);
+                if (c.sized and v != c.plus) try self.sized.append(alloc, .{ .cnt = c, .cases = self.read_cases.items.len, .choices = self.choices.items.len });
             },
             .fx => unreachable, // an `fx` line is a line of a chain
         }
@@ -13248,6 +13296,86 @@ const SDec = struct {
         for (n.also.items) |a| try self.setKey(se, a.key, a.via, a.via_name, a.kty, mv);
     }
 
+    // Version 0.83: `length @<name> units <u>`. A line at or past the end of
+    // the enclosing extent is absent, whatever its count states; an extent
+    // beyond that end, the input, or a whole length read before is
+    // `malformed-wire` before anything in it is read (rulings 4 and 5).
+    fn unitsBlock(self: *SDec, n: *const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
+        if (self.atExtentEnd()) return;
+        // the count line lay at or past the end of its extent
+        const count = (self.cvals.get(n.cnt.?) orelse null) orelse return;
+        const stop = @as(i128, self.pos) + count * n.units;
+        if (stop > self.limit()) {
+            return bad(self.diag, self.alloc, mw, "a block of {d} units of {d} bits at bit {d} runs past the end at bit {d}", .{ count, n.units, self.pos, self.limit() });
+        }
+        // its units are read (ruling 9)
+        var i = self.sized.items.len;
+        while (i > 0) {
+            i -= 1;
+            if (self.sized.items[i].cnt != n.cnt.?) continue;
+            self.sized.items[i].read = true;
+            break;
+        }
+        const end: usize = @intCast(stop);
+        const save_end = self.soft_end;
+        const save_in = self.in_extent;
+        const save_bits = self.ext_bits;
+        self.soft_end = end;
+        self.in_extent = true;
+        self.ext_bits = n.in_bits;
+        try self.block(n.body, se, env);
+        self.pos = end;
+        self.soft_end = save_end;
+        self.in_extent = save_in;
+        self.ext_bits = save_bits;
+    }
+
+    // Ruling 9 of 0.83, when a message or an item has been read: a count that
+    // states units, and a `length @` block of it in the lines of its scope
+    // (the common ones and the selected kind's) that was not read.
+    fn checkSized(self: *SDec, mark: usize, common: []const SNode, kind: []const SNode) !void {
+        if (self.sized.items.len <= mark) return;
+        for (self.sized.items[mark..]) |x| {
+            if (!x.read and (self.holdsSized(common, x) or self.holdsSized(kind, x))) {
+                return bad(self.diag, self.alloc, mw, "count {s} states units, and no block of it is read", .{x.cnt.name});
+            }
+        }
+        self.sized.shrinkRetainingCapacity(mark);
+    }
+
+    // Do the lines hold a block of the count? A `switch` or `choice` that was
+    // read counts by its selected case or chosen `alt`, one that was not by
+    // any.
+    fn holdsSized(self: *const SDec, list: []const SNode, x: SizedCount) bool {
+        for (list) |*n| {
+            switch (n.tag) {
+                .group => {}, // a group body is another scope
+                .switch_ => {
+                    const cases = self.read_cases.items[x.cases..];
+                    const sel = for (n.body) |*cn| {
+                        if (std.mem.indexOfScalar(u32, cases, cn.cs.?.id) != null) break cn;
+                    } else null;
+                    if (sel) |cn| {
+                        if (self.holdsSized(cn.body, x)) return true;
+                    } else for (n.body) |*cn| if (self.holdsSized(cn.body, x)) return true;
+                },
+                .choice => {
+                    const read = for (self.choices.items[x.choices..]) |ch| {
+                        if (ch.choice == n) break ch;
+                    } else null;
+                    if (read) |ch| {
+                        if (ch.alt) |alt| if (self.holdsSized(alt.body, x)) return true;
+                    } else for (n.body) |*alt| if (self.holdsSized(alt.body, x)) return true;
+                },
+                else => {
+                    if (n.tag == .length and n.units > 0 and n.cnt == x.cnt) return true;
+                    if (self.holdsSized(n.body, x)) return true;
+                },
+            }
+        }
+        return false;
+    }
+
     // Version 0.34: the `inner` line. The checks of the line, then the inner
     // input (the whole bytes from the cursor to the end of the enclosing
     // extent) decoded by the inner pack; its keys join the entity, the first
@@ -13256,6 +13384,7 @@ const SDec = struct {
         const alloc = self.alloc;
         const ip = try innerLookup(alloc, self.diag, self.p, n);
         if (self.pos % 8 != 0) return bad(self.diag, alloc, mw, "inner {s}: the cursor at bit {d} is not on a whole byte", .{ ip.format, self.pos });
+        if (self.in_extent and self.soft_end > self.hard_end) return bad(self.diag, alloc, mw, "inner {s}: the enclosing extent ends beyond the input", .{ip.format});
         const end = self.limit();
         if (end % 8 != 0) return bad(self.diag, alloc, mw, "inner {s}: the enclosing extent ends at bit {d}, not on a whole byte", .{ ip.format, end });
         const at = @min(self.pos, end);
@@ -13359,7 +13488,7 @@ const SDec = struct {
                 }
             },
             .fx => {
-                if (self.in_extent and self.pos >= self.soft_end) return;
+                if (self.atExtentEnd()) return;
                 try self.replaceList(se, n.list);
                 while (true) {
                     try self.item(n, &items, env);
@@ -13381,7 +13510,7 @@ const SDec = struct {
                 const exact = (self.cvals.get(n.cnt.?) orelse null) orelse return;
                 var exact2: ?i128 = null;
                 if (n.cnt2) |c2| exact2 = (self.cvals.get(c2) orelse null) orelse return;
-                if (self.in_extent and self.pos >= self.soft_end) return;
+                if (self.atExtentEnd()) return;
                 // Version 0.31: the two numbers of items agree, compared as
                 // exact integers, before the bits left (rulings 4 and 5)
                 if (exact2) |x2| if (x2 != exact) {
@@ -13403,7 +13532,7 @@ const SDec = struct {
             .rest, .last => {
                 // the first indicator of `last` at the end of the extent: an
                 // absent list (ruling 34 of 0.8)
-                if (n.mode == .last and self.in_extent and self.pos >= self.soft_end) return;
+                if (n.mode == .last and self.atExtentEnd()) return;
                 // Two passes: the first counts the items into one reused
                 // entity, the second reads them into a list of that size, so
                 // a list of many small items is not held twice while it grows.
@@ -13449,10 +13578,10 @@ const SDec = struct {
     // entity (`slots` null), or read into `slots`.
     const Sink = struct { scratch: Entity, slots: ?[]Entity = null, n: usize = 0, failed: std.ArrayListUnmanaged([]const u8) = .{} };
 
-    const State = struct { pos: usize, hard_end: usize, soft_end: usize, in_extent: bool, ext_bits: bool, read_cases: usize, pending: usize, open_cases: usize };
+    const State = struct { pos: usize, hard_end: usize, soft_end: usize, in_extent: bool, ext_bits: bool, read_cases: usize, pending: usize, open_cases: usize, sized: usize, choices: usize };
 
     fn state(self: *const SDec) State {
-        return .{ .pos = self.pos, .hard_end = self.hard_end, .soft_end = self.soft_end, .in_extent = self.in_extent, .ext_bits = self.ext_bits, .read_cases = self.read_cases.items.len, .pending = self.pending.items.len, .open_cases = self.open_cases.items.len };
+        return .{ .pos = self.pos, .hard_end = self.hard_end, .soft_end = self.soft_end, .in_extent = self.in_extent, .ext_bits = self.ext_bits, .read_cases = self.read_cases.items.len, .pending = self.pending.items.len, .open_cases = self.open_cases.items.len, .sized = self.sized.items.len, .choices = self.choices.items.len };
     }
 
     fn restore(self: *SDec, st: State) void {
@@ -13464,6 +13593,8 @@ const SDec = struct {
         self.read_cases.shrinkRetainingCapacity(st.read_cases);
         self.pending.shrinkRetainingCapacity(st.pending);
         self.open_cases.shrinkRetainingCapacity(st.open_cases);
+        self.sized.shrinkRetainingCapacity(st.sized);
+        self.choices.shrinkRetainingCapacity(st.choices);
     }
 
     fn sinkItem(self: *SDec, n: *const SNode, sink: *Sink, env: ?*const PEnv) anyerror!void {
@@ -13494,7 +13625,9 @@ const SDec = struct {
             // items while bits remain in the extent: 8 in one counted in
             // bytes, 1 in one counted in bits; fewer are padding
             const least: usize = if (self.in_extent and self.ext_bits) 1 else 8;
-            while (self.left() >= least) {
+            // in a block to its stated end, also beyond a whole length read in
+            // it (ruling 16 of 0.83)
+            while (if (self.in_extent) self.soft_end -| self.pos >= least else self.left() >= least) {
                 const at = self.pos;
                 try self.sinkItem(n, sink, env);
                 if (self.pos == at) return bad(self.diag, self.alloc, mw, "group {s}: an item of a rest group reads no bits", .{n.list});
@@ -13505,7 +13638,7 @@ const SDec = struct {
         // is `malformed-wire` (ruling 13 of 0.21)
         var first = true;
         while (true) {
-            if (!first and self.in_extent and self.pos >= self.soft_end) {
+            if (!first and self.atExtentEnd()) {
                 return bad(self.diag, self.alloc, mw, "group {s}: the item before said another follows, and the extent ends at bit {d}", .{ n.list, self.pos });
             }
             try self.need(1, n.list);
@@ -13531,6 +13664,8 @@ const SDec = struct {
     fn body(self: *SDec, b: *const SBody, se: *SEnt, env_in: ?*const PEnv) anyerror!void {
         var env = env_in;
         const mark = self.pending.items.len;
+        const smark = self.sized.items.len;
+        var kind_lines: []const SNode = &.{};
         try self.nodes(b.common, se, &env);
         if (b.kinds.len > 0) {
             var sel: ?*const SKind = null;
@@ -13578,9 +13713,11 @@ const SDec = struct {
                     cur += w.len;
                 }
             }
+            kind_lines = k.lines;
             try self.nodes(k.lines, se, &env);
         }
         try self.checkPending(mark);
+        try self.checkSized(smark, b.common, kind_lines);
         // a failed item of a discarded list is not an error (ruling 21 of 0.34)
         if (self.diag.no_hold > 0) return;
         // an inner message's own keys: the outer decode judges them (ruling 23)
@@ -14483,9 +14620,10 @@ const SEnc = struct {
                 }
             },
             .length => {
-                // the block, then the length
+                // the block, then the length (a `length @` block has no field
+                // of its own, Version 0.83)
                 const lpos = self.pos;
-                try self.zeros(n.len);
+                if (n.units == 0) try self.zeros(n.len);
                 const start = self.pos;
                 try self.exts.append(alloc, .{ .bits = n.in_bits });
                 try self.block(n.body, ent, ds, env.*);
@@ -14495,6 +14633,13 @@ const SEnc = struct {
                 }
                 try self.checkExt(self.exts.pop(), self.pos);
                 const size = self.pos - start;
+                if (n.units > 0) {
+                    // whole units (ruling 10 of 0.83); a discarded run settles
+                    // its switches first
+                    if (size % n.units != 0 and !self.dry) return bad(self.diag, alloc, te, "a block of {d} bits is not a whole number of units of {d} bits", .{ size, n.units });
+                    if (self.ccur.get(n.cnt.?)) |ci| self.cpend.items[ci].value = @as(i128, size / n.units) + n.cnt.?.plus;
+                    return;
+                }
                 const stated: i128 = @as(i128, if (n.in_bits) size else size / 8) + n.plus;
                 if (stated < 0 or stated > std.math.maxInt(u64) or !fitsBits(@intCast(stated), n.len)) {
                     return bad(self.diag, alloc, te, "the length {d} does not fit its {d} bits", .{ stated, n.len });
