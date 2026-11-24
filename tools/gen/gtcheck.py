@@ -1147,8 +1147,8 @@ class _Loader:
                 self.bad(no, "charset name `%s` is not of letters, digits, `_` and `-`" % name)
             if name in self.charsets:
                 self.bad(no, "a second `charset %s`" % name)
-            if not characters or not printable(characters, 0x21) or '"' in characters:
-                self.bad(no, "a `charset` holds characters from 0x21 to 0x7E other than the double quote")
+            if not characters or not printable(characters, 0x21):
+                self.bad(no, "a `charset` holds one or more characters from 0x21 to 0x7E")
             if len(set(characters)) != len(characters):
                 self.bad(no, "`charset %s` repeats a character" % name)
             width = None

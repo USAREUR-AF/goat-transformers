@@ -5855,8 +5855,9 @@ field    <key> <locator> codenum:<set>,<set>,…     # bits and text wires: yiel
   - `<name>` is one or more of `A`–`Z`, `a`–`z`, `0`–`9`, `_` and `-`
     (ruling 7).
   - `<characters>` is one or more characters from 0x21 to 0x7E, all
-    distinct, in code order: the first has code 0. `"` cannot be one of
-    them. A `#` needs double quotes only at the start of the token, where it
+    distinct, in code order: the first has code 0. `"` is not for use
+    in a set: 0.11 does not rule a quote inside a token, and no vector has
+    one. A `#` needs double quotes only at the start of the token, where it
     would begin a comment (ruling 1 of 0.1.1; ruling 9).
   - `<width>`, on `bits`, is the bits per character. It defaults to
     `max(1, ⌈log2(size)⌉)`, where `size` is the number of characters; a
@@ -5928,7 +5929,7 @@ and padding is with spaces on the right (ruling 14). On `text`, a set used by
 | Error | Cause | When it is checked (ruling 5b of 0.11) |
 |---|---|---|
 | `bad-directive` | `charset` with other than two or three arguments | step 3 |
-| `bad-directive` | a `charset` name outside its grammar; a set with a repeated character, a `"`, a character outside 0x21 to 0x7E, more characters than `2^width`; on `bits`, a width outside its range (ruling 8); a second `charset` of one name; `charset` after the first `kind`; on `text`, a set used by `codestr` or `codenum` that holds the delimiter, or `*` under `checksum nmea` | after the file is read |
+| `bad-directive` | a `charset` name outside its grammar; a set with a repeated character, a character outside 0x21 to 0x7E, more characters than `2^width`; on `bits`, a width outside its range (ruling 8); a second `charset` of one name; `charset` after the first `kind`; on `text`, a set used by `codestr` or `codenum` that holds the delimiter, or `*` under `checksum nmea` | after the file is read |
 | `bad-directive` | a transform naming a set no `charset` declares, no position or more than 16; a `bits` field whose `len` is not the sum of the widths, or is above 64; `codenum` whose product of sizes is above `2^63` | after the file is read (the set names need the whole file) |
 | `bad-directive` | a transform on a wire that does not take it (above) | after the file is read, with the checks that need the wire (ruling 10 of 0.10) |
 
@@ -5968,8 +5969,8 @@ number in brackets).
    is at least that and at most 8. A one-character set takes 1 bit, and
    code 1 is then unused (`transform-decode`).
 9. **`#` and `"`** [41-3]. `#` needs quotes only at the start of the token
-   (`charset S AB#C` loads, with 4 characters). A set cannot hold `"`;
-   that is `bad-directive` after the file.
+   (`charset S AB#C` loads, with 4 characters). What a `"` inside the
+   token does is left unruled, as in 0.11.
 10. **`absent` on `text`** [41-4] stays `bad-directive` (ruling 16 of 0.10),
     `codestr` included.
 11. **`json` members** [41-5] must be strings, otherwise `transform-decode`.
@@ -6025,8 +6026,7 @@ number in brackets).
     and under `lsb`, with the same characters from the same number.
 - Load vectors:
   - [41-1] `charset A,B 0123`: `bad-directive`;
-  - [41-3] `charset S AB#C` loads with 4 characters; `charset Q A"B`:
-    `bad-directive`;
+  - [41-3] `charset S AB#C` loads with 4 characters;
   - [41-4] a `text` pack with `field k 1 codestr:L,L absent AA`:
     `bad-directive`;
   - [41-6] delimiter `,` and `charset P A,B` used by `codestr:P`:

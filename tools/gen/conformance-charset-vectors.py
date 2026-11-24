@@ -736,7 +736,7 @@ def build(sink):
     load("name-with-a-dot", bits + "charset a.b 0123\n")
     load("name-of-underscore-and-hyphen-loads", bits + "charset a_B-9 01\nfield probe.s1 0:0:1 code:a_B-9\n", None)
     load("finding-41-3-hash-inside-the-token-loads", bits + "charset S AB#C\nfield probe.s1 0:0:2 code:S\n", None)
-    load("finding-41-3-double-quote", bits + 'charset Q A"B\n')
+    lnum[0] += 1        # 4608 (`charset Q A"B`) is withdrawn: 0.11 leaves a quote inside a token unruled
     load("repeated-character", bits + "charset R AAB\n")
     load("character-outside-the-range", bits + 'charset R "A B"\n')
     load("width-below-the-default", bits + "charset D 0123456789 3\n")
