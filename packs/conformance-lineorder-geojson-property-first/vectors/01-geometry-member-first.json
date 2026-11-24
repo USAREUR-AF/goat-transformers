@@ -1,0 +1,13 @@
+{
+  "name": "geometry-member-first",
+  "from": "conformance-lineorder-geojson-property-first",
+  "to": "conformance-lineorder-geojson-property-first",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,3]},\"properties\":{\"la\":5}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,5]},\"properties\":{\"la\":5}}",
+  "model": {
+    "lon": "2",
+    "lat": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6, One key at several locators: the earliest line whose locator is present and whose transform succeeds, the property; encode writes both"
+}

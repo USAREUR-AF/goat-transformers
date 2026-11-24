@@ -27,6 +27,7 @@ SCRIPTS = (
     "conformance-held-vectors.py",
     "conformance-inner-refused-vectors.py",
     "conformance-kinds-vectors.py",
+    "conformance-lineorder-vectors.py",
     "conformance-long-vectors.py",
     "conformance-lookahead-vectors.py",
     "conformance-malformed-vectors.py",

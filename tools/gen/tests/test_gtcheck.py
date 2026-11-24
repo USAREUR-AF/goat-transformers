@@ -581,6 +581,9 @@ V011_ORDER |= {"6525", "6526", "6532", "6533"}
 # Ruling 29 of 0.64: the same order, and a `bad-locator` line check of 0.11 5a,
 # which gtcheck names `bad-directive`.
 V011_ORDER |= {"6540", "6541", "6542", "6543", "6544", "6545", "6546", "6547"}
+# A sequential-only line in a pack that is not sequential is checked after the
+# file (0.11 5b), so a later `bogus` line gives `unknown-directive`.
+V011_ORDER |= {"6548", "6549", "6550", "6551", "6552", "6553", "6554", "6555", "6556"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line

@@ -1,0 +1,12 @@
+{
+  "name": "earliest-line-fails",
+  "from": "conformance-lineorder-geojson",
+  "to": "conformance-lineorder-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"b\":4,\"a\":\"q\"}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"a\":4,\"b\":4}}",
+  "model": {
+    "probe.x": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6, One key at several locators: the earliest line whose locator is present and whose transform succeeds, the second; the failed line is forgiven (0.6 ruling 5)"
+}

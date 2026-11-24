@@ -1,0 +1,12 @@
+{
+  "name": "geometry-null",
+  "from": "conformance-lineorder-geojson-geometry-first",
+  "to": "conformance-lineorder-geojson-geometry-first",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"la\":5}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"la\":5}}",
+  "model": {
+    "lat": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6, One key at several locators: the earliest line whose locator is present and whose transform succeeds, the property"
+}
