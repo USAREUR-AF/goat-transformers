@@ -222,6 +222,22 @@ class Tree(unittest.TestCase):
         self.tree.write("packs/plain/pack.def", "format f-plain\n" + HEAD + "uses\tbook\nwire json\n")
         self.assertEqual(self.profiles()["plain"], "everything")
 
+    def test_a_module_file_without_a_name_and_what_uses_it(self):
+        """Spec 0.93 ruling 2 (fail closed): a module file 2b gives no name, and a
+        pack or module whose uses names no module file, are in no profile."""
+        for line in ("module book # note", 'module "book"'):
+            self.tree.write("model/book.def", line + "\n" + HEAD)
+            p = self.profiles()
+            self.assertEqual((p["uses-book"], p["uses-derived"], p["plain"]), ("none", "none", "open"), line)
+            s = lic.survey(self.root)
+            self.assertEqual(s["modules"]["book.def"]["profile"], "none", line)
+            self.assertIn("no module file names", s["packs"]["uses-book"]["because"])
+            self.assertTrue(any("has no module name" in x for x in lic.check(self.root)[0]), line)
+        self.tree.write("model/book.def", "module book\n" + HEAD)
+        self.tree.write("packs/plain/pack.def", "format f-plain\n" + HEAD + "uses nosuch\nwire json\n")
+        self.assertEqual(self.profiles()["plain"], "none")
+        self.assertIn("plain", lic.excluded(self.root, "everything")["packs"])
+
     def test_a_tree_without_licence_files_still_leaves_out_a_controlled_pack(self):
         for name in ("REUSE.toml", "licences.toml", "packs/copyleft/REUSE.toml", "packs/nc/REUSE.toml",
                      "packs/fou/REUSE.toml", "packs/unstated/REUSE.toml", "model/book.def.license"):

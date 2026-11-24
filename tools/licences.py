@@ -327,10 +327,19 @@ def survey(root, every_file=True):
 
     def own_profile(kind, key, lid, row):
         public, doubtful_uses = row["shown"]
-        if not public or doubtful_uses:
+        nameless = kind == "model" and row["module"] is None
+        missing = [u for u in row["uses"] if u not in by_name]
+        if not public or doubtful_uses or nameless or missing:
             # spec 0.93: in no profile, whatever the licence; never in this repository (--check)
-            why = "is not shown public" if not public else "has a doubtful uses line"
-            problems.append("%s %s %s (spec 0.93, ruling %s)" % (kind, key, why, 1 if not public else 8))
+            if not public:
+                why, ruling = "is not shown public", 1
+            elif doubtful_uses:
+                why, ruling = "has a doubtful uses line", 8
+            elif nameless:
+                why, ruling = "has no module name a loader reads", 2
+            else:
+                why, ruling = "uses module %s, which no module file names" % missing[0], 2
+            problems.append("%s %s %s (spec 0.93, ruling %s)" % (kind, key, why, ruling))
             row["not_public"] = why
             return "none"
         if lid is None:
