@@ -41,7 +41,7 @@ finding. A file it cannot read is a finding.
 
 | Check | Refuses |
 |---|---|
-| `marking` | a module or pack that is not `distribution public`, or has no `source` |
+| `marking` | a module or pack that is not `distribution public`, has no `source`, or has two `module` or `format` lines; a `.def` file that is not `model/<name>.def` or `packs/<format>/pack.def` (fixtures of the tool vectors and the generator tests excepted, which state no other marking) |
 | `closure` | a pack that uses a module not in `model/`, or maps a key its module does not declare |
 | `filetype` | any file type not on the allowlist: documents, spreadsheets, archives, binaries |
 | `phrase` | text carrying the handling marking of a restricted document |
@@ -71,8 +71,16 @@ These options cover what the tree does not show:
 - `--commits BASE..TIP` also checks every commit of the range: its message,
   author and committer, every path it changes, and every content it brings in,
   also content that a later commit removes. An empty range and a shallow
-  repository fail.
+  repository fail. The markings of the `.def` files in an earlier commit are not
+  checked, in any mode: the tree's are.
 - `--tag TAG` checks an annotated tag and `--ref-name NAME` the name of a ref.
+- `--example-overlay PREFIX --core DIR` is for the public repository that shows
+  an overlay with invented formats. A module or pack whose name is `PREFIX` or
+  `PREFIX-...` must say `distribution controlled`, every other one `distribution
+  public`, and modules may come from the goat-transformers tree `DIR`. Every
+  other check stays, and it needs a needle list. It is not for a real overlay:
+  an overlay renamed to the prefix would be stopped by its needles alone. So the
+  push path fixes `PREFIX` and `DIR`; the person who pushes does not choose them.
 - `--needles-only` runs the needle check alone on the tree of any repository
   (`--root`), binary files included. The exit status depends on needles only.
   Content that is compressed or encoded is not unpacked: the output lists each

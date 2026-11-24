@@ -10,7 +10,10 @@ with no files.
 
 Checks:
   marking     every model/*.def and packs/*/pack.def says `distribution public`
-              exactly once and has at least one `source` line
+              exactly once, has at least one `source` line and no second
+              `module` or `format` line; a .def file stands nowhere else,
+              except the fixtures in packs/conformance/tool-fixtures/ and
+              tools/gen/tests/fixtures/, which state no other marking
   closure     every `uses` names a module in model/, and every mapped key is
               declared by its module
   filetype    every file has an allowed extension (no documents, spreadsheets,
@@ -100,7 +103,11 @@ Generated packs (the needle waiver):
 Usage:
   tools/boundary-gate [--root DIR] [--needles FILE] [--require-needles]
                       [--commits BASE..TIP] [--tag TAG] [--ref-name NAME]
-                      [--needles-only]
+                      [--needles-only | --example-overlay PREFIX --core DIR]
+
+--example-overlay is for the public repository that shows an overlay with
+invented formats: the names that begin with PREFIX must be marked as an overlay
+marks them, and modules may come from the tree DIR. Nothing else is relaxed.
 
 --commits also checks what each commit of a push publishes: its message, author
 and committer, every path it changes and every content it brings in, also when
@@ -305,7 +312,42 @@ def _read_directives(root, path, findings):
         return None
 
 
-def check_modules(root, files):
+# The public example of an overlay: its formats are invented, and it marks them
+# as an overlay does to show the mechanics. prefix: what the name of each of its
+# modules and formats begins with. core: the tree whose modules it may use.
+ExampleOverlay = collections.namedtuple("ExampleOverlay", "prefix core")
+
+
+def _marking(name, example):
+    """The distribution a module or a format of this name must state."""
+    if example and re.match(re.escape(example.prefix) + r"(?![a-z0-9])", name):
+        return "controlled"
+    return "public"
+
+
+# Inputs of the tool vectors and of the generator tests: whole small trees, with
+# .def files of any shape below them. Their marking is still read.
+DEF_FIXTURES = ("packs/conformance/tool-fixtures/", FIXTURE_DIR)
+
+
+def check_def_paths(root, files):
+    """The marking check on every .def file that is not model/<name>.def or
+    packs/<format>/pack.def: there is none, so that no marking is in a place
+    the checks below do not read. A fixture states no marking but `public`."""
+    findings = []
+    for path in files:
+        if extension(path) != "def" or re.fullmatch(r"model/[^/]+\.def|packs/[^/]+/pack\.def", path):
+            continue
+        if not path.startswith(DEF_FIXTURES):
+            findings.append(Finding("marking", path, 0, "a .def file is model/<name>.def or packs/<format>/pack.def"))
+            continue
+        for number, toks in _read_directives(root, path, findings) or ():
+            if toks[0] == "distribution" and toks[1:] != ["public"]:
+                findings.append(Finding("marking", path, number, "a fixture states no distribution but `public`"))
+    return findings
+
+
+def check_modules(root, files, example=None):
     """The marking check on model/*.def. -> ({module name: its keys}, findings)"""
     modules, findings = {}, []
     for path in files:
@@ -319,18 +361,23 @@ def check_modules(root, files):
             findings.append(Finding("marking", path, 0, "model module has no `module` line"))
             continue
         name = names[0]
+        if len(names) > 1:
+            findings.append(Finding("marking", path, 0, "more than one `module` line"))
         distribution = _values(rows, "distribution")
-        if distribution != ["public"]:
+        # The file and the module must both carry the prefix.
+        markings = {_marking(n, example) for n in names + [os.path.basename(path)[:-len(".def")]]}
+        wanted = "controlled" if markings == {"controlled"} else "public"
+        if distribution != [wanted]:
             findings.append(Finding(
-                "marking", path, 0, "model module `%s` must say `distribution public` exactly once (has %s)"
-                % (name, distribution or "none")))
+                "marking", path, 0, "model module `%s` must say `distribution %s` exactly once (has %s)"
+                % (name, wanted, distribution or "none")))
         if not _values(rows, "source"):
             findings.append(Finding("marking", path, 0, "model module `%s` has no `source` line" % name))
         modules[name] = set(_values(rows, "key"))
     return modules, findings
 
 
-def check_packs(root, files, modules):
+def check_packs(root, files, modules, example=None):
     """The marking and closure checks on packs/<format>/pack.def. -> findings"""
     findings = []
     for path in files:
@@ -341,10 +388,16 @@ def check_packs(root, files, modules):
         if rows is None:
             continue
         distribution = _values(rows, "distribution")
-        if distribution != ["public"]:
+        formats = _values(rows, "format")
+        if len(formats) > 1:
+            findings.append(Finding("marking", path, 0, "more than one `format` line"))
+        # The format and the directory must both carry the prefix.
+        markings = {_marking(name, example) for name in formats + [parts[1]]}
+        wanted = "controlled" if markings == {"controlled"} else "public"
+        if distribution != [wanted]:
             findings.append(Finding(
-                "marking", path, 0, "pack must say `distribution public` exactly once (has %s)"
-                % (distribution or "none")))
+                "marking", path, 0, "pack must say `distribution %s` exactly once (has %s)"
+                % (wanted, distribution or "none")))
         if not _values(rows, "source"):
             findings.append(Finding("marking", path, 0, "pack has no `source` line"))
         used = {"core"} | set(_values(rows, "uses"))
@@ -1336,16 +1389,25 @@ def run_needles_only(root, needle_file, commits=(), tags=(), ref_names=()):
 # The gate
 # --------------------------------------------------------------------------
 
-def run(root, needle_file=None, require_needles=False, commits=(), tags=(), ref_names=()):
+def run(root, needle_file=None, require_needles=False, commits=(), tags=(), ref_names=(), example=None):
     """Every check on the tree at `root`, and on the commits of each range in `commits`. -> (findings, files, modules,
     needles, waived needle hits)"""
     files = discover(root)
     findings = []
     if not files:
         findings.append(Finding("filetype", ".", 0, "no files found: refusing to pass an empty tree"))
-    modules, module_findings = check_modules(root, files)
+    findings += check_def_paths(root, files)
+    modules, module_findings = check_modules(root, files, example)
     findings += module_findings
-    findings += check_packs(root, files, modules)
+    if example:
+        core, core_findings = check_modules(example.core, discover(example.core))
+        findings += core_findings
+        if "core" not in core:
+            findings.append(Finding("closure", "model/core.def", 0, "--core holds no model module `core`"))
+        for name in sorted(set(core) & set(modules)):
+            findings.append(Finding("closure", "model", 0, "module `%s` is in this tree and in --core" % name))
+        modules = {**core, **modules}
+    findings += check_packs(root, files, modules, example)
     for path in files:
         findings += check_filetype(path)
     needles = Needles()
@@ -1437,10 +1499,24 @@ def main(argv=None):
         "--needles-only", action="store_true",
         help="the needle check alone, for a tree of another repository: the exit status depends on needles "
              "only (a match, a list that cannot be used, or a file that could not be read). Needs --needles")
+    ap.add_argument(
+        "--example-overlay", metavar="PREFIX",
+        help="the tree is the public example of an overlay: a module or pack whose name is PREFIX, or PREFIX "
+             "and a `-` or the like, must say `distribution controlled`, and every other one `distribution "
+             "public`. Every other check is the same. Needs --core and --needles")
+    ap.add_argument(
+        "--core", metavar="DIR", help="with --example-overlay: the goat-transformers tree whose model modules may be used")
     args = ap.parse_args(argv)
+    example = None
+    if args.example_overlay is not None or args.core is not None:
+        if not args.example_overlay or not args.core or not args.needles or args.needles_only:
+            ap.error("--example-overlay needs a PREFIX, --core and --needles, and is not for --needles-only")
+        if not re.fullmatch(r"[a-z][a-z0-9]{3,}", args.example_overlay):
+            ap.error("--example-overlay: PREFIX is four or more small letters and digits")
+        example = ExampleOverlay(args.example_overlay, os.path.abspath(args.core))
     if args.needles_only:
         return report(*run_needles_only(os.path.abspath(args.root), args.needles, args.commits, args.tag, args.ref_name))
-    return report(*run(os.path.abspath(args.root), args.needles, args.require_needles, args.commits, args.tag, args.ref_name))
+    return report(*run(os.path.abspath(args.root), args.needles, args.require_needles, args.commits, args.tag, args.ref_name, example))
 
 
 if __name__ == "__main__":
