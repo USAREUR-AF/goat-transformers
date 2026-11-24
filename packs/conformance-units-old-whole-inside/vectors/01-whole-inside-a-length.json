@@ -1,0 +1,13 @@
+{
+  "name": "whole-inside-a-length",
+  "from": "conformance-units-old-whole-inside",
+  "to": "conformance-units-old-whole-inside",
+  "input": "03040506",
+  "expect": "03040506",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; 0.8 Lengths: 3 bytes in the block, 4 in the message"
+}

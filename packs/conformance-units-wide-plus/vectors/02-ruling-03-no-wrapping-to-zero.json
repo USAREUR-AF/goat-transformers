@@ -1,0 +1,9 @@
+{
+  "name": "ruling-03-no-wrapping-to-zero",
+  "from": "conformance-units-wide-plus",
+  "to": "conformance-units-json",
+  "input": "800000000000000007",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line (ruling 3: 2^63 + 2^63 = 2^64 units, 0 only modulo 2^64)"
+}

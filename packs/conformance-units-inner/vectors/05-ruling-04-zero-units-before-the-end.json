@@ -1,0 +1,13 @@
+{
+  "name": "ruling-04-zero-units-before-the-end",
+  "from": "conformance-units-inner",
+  "to": "conformance-units-inner",
+  "input": "020005aa09",
+  "expect": "01000509",
+  "model": {
+    "probe.nums.#": "0",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6: 0 units, with a byte left in the enclosing block: the block is read and nums is present and empty"
+}

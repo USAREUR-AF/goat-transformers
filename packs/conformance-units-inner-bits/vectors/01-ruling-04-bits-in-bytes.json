@@ -1,0 +1,13 @@
+{
+  "name": "ruling-04-bits-in-bytes",
+  "from": "conformance-units-inner-bits",
+  "to": "conformance-units-inner-bits",
+  "input": "03011234",
+  "expect": "03011234",
+  "model": {
+    "probe.x": "291",
+    "probe.z": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4: 12 bits of the 16 left"
+}

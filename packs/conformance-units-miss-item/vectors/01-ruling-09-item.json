@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-item",
+  "from": "conformance-units-miss-item",
+  "to": "conformance-units-miss-item",
+  "input": "020180050100",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the scope is the item: the second states 1 unit and its `if` is not read"
+}

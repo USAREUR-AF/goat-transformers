@@ -1,0 +1,15 @@
+{
+  "name": "ruling-06-switch-reads-else",
+  "from": "conformance-units-zero",
+  "to": "conformance-units-zero",
+  "input": "0009",
+  "expect": "010009",
+  "model": {
+    "probe.n": "9",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6 (0.20 ruling 14): the key is absent and else is read; encode writes x as zero bits, 1 unit"
+}

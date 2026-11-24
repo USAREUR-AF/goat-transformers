@@ -1,0 +1,13 @@
+{
+  "name": "ruling-03-not-an-item-count",
+  "from": "conformance-units-tail",
+  "to": "conformance-units-tail",
+  "input": "0107",
+  "expect": "0107",
+  "model": {
+    "probe.x": "7"
+  },
+  "max_items": 0,
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 3: the unit count is not compared with max_items"
+}

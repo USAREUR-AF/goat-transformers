@@ -1,0 +1,9 @@
+{
+  "name": "absent-list-writes-zero-units",
+  "from": "conformance-units-json",
+  "to": "conformance-units-rest",
+  "input": "{\"n\":9}",
+  "expect": "0009",
+  "source": "constructed",
+  "reference": "spec 0.83; Encode: an absent list writes no bits"
+}

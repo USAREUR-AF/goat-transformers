@@ -1,0 +1,9 @@
+{
+  "name": "empty-list-writes-zero-units",
+  "from": "conformance-units-json",
+  "to": "conformance-units-subbyte",
+  "input": "{\"nums\":[],\"n\":9}",
+  "expect": "0009",
+  "source": "constructed",
+  "reference": "spec 0.83; Encode: 0 bits are 0 units"
+}

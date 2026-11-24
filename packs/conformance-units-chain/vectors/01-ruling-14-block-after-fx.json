@@ -1,0 +1,14 @@
+{
+  "name": "ruling-14-block-after-fx",
+  "from": "conformance-units-chain",
+  "to": "conformance-units-chain",
+  "input": "010b0609",
+  "expect": "010b0609",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "6",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 14: y sets the fx bit"
+}

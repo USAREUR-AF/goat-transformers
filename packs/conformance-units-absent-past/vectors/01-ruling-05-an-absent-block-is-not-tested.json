@@ -1,0 +1,15 @@
+{
+  "name": "ruling-05-an-absent-block-is-not-tested",
+  "from": "conformance-units-absent-past",
+  "to": "conformance-units-absent-past",
+  "input": "0005040505aabb",
+  "expect": "010402060500",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; rulings 4 and 5: the block of 0 units is absent, so it is not tested against the whole of 5 it stands past; ruling 9: 0 units: no error; encode writes every line"
+}

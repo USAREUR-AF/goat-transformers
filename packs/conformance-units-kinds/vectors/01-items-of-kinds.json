@@ -1,0 +1,14 @@
+{
+  "name": "items-of-kinds",
+  "from": "conformance-units-kinds",
+  "to": "conformance-units-kinds",
+  "input": "0401050206",
+  "expect": "0401050206",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].@kind": "a",
+    "probe.items[1].@kind": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: 4 bytes hold two items of kinds"
+}

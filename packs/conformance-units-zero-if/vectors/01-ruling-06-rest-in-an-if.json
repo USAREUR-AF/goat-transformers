@@ -1,0 +1,12 @@
+{
+  "name": "ruling-06-rest-in-an-if",
+  "from": "conformance-units-zero-if",
+  "to": "conformance-units-zero-if",
+  "input": "0080",
+  "expect": "0000",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6 (0.21 ruling 31): the if is walked, rest is present and empty; an empty list sets no bit (0.8 ruling 5)"
+}

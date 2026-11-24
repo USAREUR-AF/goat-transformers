@@ -1,0 +1,13 @@
+{
+  "name": "ruling-02-empty-block-skips-the-extent",
+  "from": "conformance-units-u72",
+  "to": "conformance-units-u72",
+  "input": "0202aabbccddeeff00112209",
+  "expect": "010209",
+  "model": {
+    "@kind": "b",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 2: decode skips the 9 bytes of the extent; encode writes 0 units, so w holds its plus, 1"
+}

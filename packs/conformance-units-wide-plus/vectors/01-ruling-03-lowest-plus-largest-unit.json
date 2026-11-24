@@ -1,0 +1,9 @@
+{
+  "name": "ruling-03-lowest-plus-largest-unit",
+  "from": "conformance-units-wide-plus",
+  "to": "conformance-units-json",
+  "input": "ffffffffffffffff07",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line (ruling 3: (2^64 - 1 + 2^63) * 65535 bits, exact)"
+}

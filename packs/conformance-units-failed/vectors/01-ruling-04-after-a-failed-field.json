@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-after-a-failed-field",
+  "from": "conformance-units-failed",
+  "to": "conformance-units-failed",
+  "input": "02ff020506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4 and 0.22 ruling 5: a structural error wins over a failed field"
+}

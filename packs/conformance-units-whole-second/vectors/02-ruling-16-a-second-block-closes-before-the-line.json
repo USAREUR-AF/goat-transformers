@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-a-second-block-closes-before-the-line",
+  "from": "conformance-units-whole-second",
+  "to": "conformance-units-whole-second",
+  "input": "010405010506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: y starts at byte 5, past the whole of 5 and inside the outer block, whose end the closed blocks do not change"
+}

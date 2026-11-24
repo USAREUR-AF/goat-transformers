@@ -1,0 +1,13 @@
+{
+  "name": "ruling-16-no-items-after-the-block",
+  "from": "conformance-units-past-count",
+  "to": "conformance-units-past-count",
+  "input": "00040405aabb",
+  "expect": "00020405",
+  "model": {
+    "probe.x": "5",
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: a list of 0 items needs no bits past the whole of 4: present and empty"
+}

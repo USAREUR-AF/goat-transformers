@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-switch-not-read",
+  "from": "conformance-units-miss-switch",
+  "to": "conformance-units-miss-switch",
+  "input": "02010009",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the `if` is not read; any of the switch's cases holds the block, though x would select the list"
+}

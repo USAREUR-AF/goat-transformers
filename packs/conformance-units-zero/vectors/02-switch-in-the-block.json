@@ -1,0 +1,12 @@
+{
+  "name": "switch-in-the-block",
+  "from": "conformance-units-zero",
+  "to": "conformance-units-zero",
+  "input": "02010609",
+  "expect": "02010609",
+  "model": {
+    "probe.y": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: case 1"
+}

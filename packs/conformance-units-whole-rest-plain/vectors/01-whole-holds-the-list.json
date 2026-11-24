@@ -1,0 +1,12 @@
+{
+  "name": "whole-holds-the-list",
+  "from": "conformance-units-whole-rest-plain",
+  "to": "conformance-units-whole-rest-plain",
+  "input": "03040506",
+  "expect": "03040506",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the whole is the message's 4 bytes"
+}

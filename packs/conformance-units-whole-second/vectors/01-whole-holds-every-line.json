@@ -1,0 +1,13 @@
+{
+  "name": "whole-holds-every-line",
+  "from": "conformance-units-whole-second",
+  "to": "conformance-units-whole-second",
+  "input": "010406010506",
+  "expect": "010406010506",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the whole is the message's 6 bytes"
+}

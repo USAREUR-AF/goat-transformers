@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-beyond-with-input-left",
+  "from": "conformance-units-edge-two",
+  "to": "conformance-units-edge-two",
+  "input": "02020709",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4: 2 bytes stated, 1 left in the enclosing block, though the input holds both"
+}

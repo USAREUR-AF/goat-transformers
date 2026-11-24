@@ -1,0 +1,12 @@
+{
+  "name": "rest-inside-the-whole",
+  "from": "conformance-units-past-rest",
+  "to": "conformance-units-past-rest",
+  "input": "02040509",
+  "expect": "02040509",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: one byte remains before the whole of 4"
+}

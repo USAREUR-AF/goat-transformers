@@ -1,0 +1,9 @@
+{
+  "name": "inner-encode-whole-byte-test",
+  "from": "conformance-units-json",
+  "to": "conformance-units-inner-unaligned",
+  "input": "{\"x\":7,\"nums\":[5]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.83; 0.34 Encode: the block writes 12 bits and the cursor stands at bit 20"
+}

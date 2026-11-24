@@ -1,0 +1,15 @@
+{
+  "name": "units-of-16",
+  "from": "conformance-units-lsb",
+  "to": "conformance-units-lsb",
+  "input": "21234109",
+  "expect": "21234109",
+  "model": {
+    "probe.x": "2",
+    "probe.y": "291",
+    "probe.z": "4",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; bit_order lsb (0.2): the count and the fields have their low bit first; 1 unit is bits 8 to 24"
+}

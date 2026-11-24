@@ -1,0 +1,9 @@
+{
+  "name": "ruling-07-more-than-is-there",
+  "from": "conformance-units-inner-in-byte",
+  "to": "conformance-units-inner-in-byte",
+  "input": "020708",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 7: 0.34 step 3 refuses the byte after the inner message's end"
+}

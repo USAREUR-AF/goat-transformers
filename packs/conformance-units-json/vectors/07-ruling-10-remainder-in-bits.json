@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-remainder-in-bits",
+  "from": "conformance-units-json",
+  "to": "conformance-units-u12",
+  "input": "{\"qty\":7,\"nums\":[1],\"n\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 10: 8 bits are not whole units of 12, and a block counted in bits is not padded"
+}

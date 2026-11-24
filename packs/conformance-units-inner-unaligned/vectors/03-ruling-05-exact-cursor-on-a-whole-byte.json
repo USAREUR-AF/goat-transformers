@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-exact-cursor-on-a-whole-byte",
+  "from": "conformance-units-inner-unaligned",
+  "to": "conformance-units-json",
+  "input": "040070",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line, before the inner line"
+}

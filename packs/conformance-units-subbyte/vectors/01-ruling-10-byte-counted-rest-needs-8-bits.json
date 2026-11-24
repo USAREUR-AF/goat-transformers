@@ -1,0 +1,14 @@
+{
+  "name": "ruling-10-byte-counted-rest-needs-8-bits",
+  "from": "conformance-units-subbyte",
+  "to": "conformance-units-subbyte",
+  "input": "0110c009",
+  "expect": "0110c009",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "2",
+    "probe.nums[1].probe.val": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; units of 16 are counted in bytes: a rest item needs 8 bits (0.21); encode pads 10 bits to 16, 1 unit"
+}

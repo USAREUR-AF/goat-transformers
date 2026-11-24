@@ -363,6 +363,10 @@ class Pack:
                         and (t[2].startswith("until:") or t[3] in ("hex", "chars:ascii8") or "stop" in t[4:]))):
                 refuse("unsupported-feature", "%s: `bit_order msb-lsb`, `hex` on `bits`, `chars:ascii8`, `stop` "
                        "and `until:` (spec 0.22) are not in the device profile" % self.format)
+        for t in rows:      # spec 0.83: a length given by an earlier count is not in the device profile
+            if t[0] == "length" and len(t) > 1 and t[1].startswith("@"):
+                refuse("unsupported-feature", "%s: `length @<name> units <u>` (spec 0.83) is not in the device profile"
+                       % self.format)
         for t in rows:      # spec 0.21: sequential extents and counts are not in the device profile
             if t[0] == "count" or (t[0] == "group" and len(t) > 2
                                    and (t[2] in ("rest", "last") or (t[2] == "count" and len(t) > 3

@@ -1,0 +1,9 @@
+{
+  "name": "whole-byte-test-inside-the-input",
+  "from": "conformance-units-inner-unaligned",
+  "to": "conformance-units-inner-unaligned",
+  "input": "01007005",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; 0.34 Decode 1: the cursor stands at bit 20"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-last-item-beyond-the-input",
+  "from": "conformance-units-items",
+  "to": "conformance-units-items",
+  "input": "0205060207",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line, in the second item"
+}

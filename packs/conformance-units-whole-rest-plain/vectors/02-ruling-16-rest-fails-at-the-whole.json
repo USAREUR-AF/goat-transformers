@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-rest-fails-at-the-whole",
+  "from": "conformance-units-whole-rest-plain",
+  "to": "conformance-units-whole-rest-plain",
+  "input": "03030506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: a rest list in a plain block runs to its block's end; the second item lies past the whole of 3"
+}

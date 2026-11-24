@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-past-the-whole-after-a-skip",
+  "from": "conformance-units-whole-skip",
+  "to": "conformance-units-whole-skip",
+  "input": "06040405aabbcc",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: z starts at byte 6, past the whole of 4 and before its block's end"
+}

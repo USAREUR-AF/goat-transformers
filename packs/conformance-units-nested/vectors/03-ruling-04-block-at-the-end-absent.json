@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-block-at-the-end-absent",
+  "from": "conformance-units-nested",
+  "to": "conformance-units-nested",
+  "input": "02010509",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the count states 1 unit and its block is not read (absent by ruling 4): malformed-wire when the message has been read"
+}

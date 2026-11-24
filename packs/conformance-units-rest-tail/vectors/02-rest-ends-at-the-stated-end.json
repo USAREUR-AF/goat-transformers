@@ -1,0 +1,12 @@
+{
+  "name": "rest-ends-at-the-stated-end",
+  "from": "conformance-units-rest-tail",
+  "to": "conformance-units-rest-tail",
+  "input": "010506",
+  "expect": "0105",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: the list ends with the extent; input beyond the last line is ignored (0.8 ruling 9)"
+}

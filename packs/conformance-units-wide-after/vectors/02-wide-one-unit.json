@@ -1,0 +1,13 @@
+{
+  "name": "wide-one-unit",
+  "from": "conformance-units-wide-after",
+  "to": "conformance-units-wide-after",
+  "input": "00000000000000010709",
+  "expect": "00000000000000010709",
+  "model": {
+    "probe.x": "7",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: 1 unit of 8"
+}

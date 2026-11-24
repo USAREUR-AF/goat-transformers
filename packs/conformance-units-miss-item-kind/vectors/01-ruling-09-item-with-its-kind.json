@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-item-with-its-kind",
+  "from": "conformance-units-miss-item-kind",
+  "to": "conformance-units-miss-item-kind",
+  "input": "01010100",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the scope is the item with its kind: w in the common lines, the `if` of kind a not read"
+}

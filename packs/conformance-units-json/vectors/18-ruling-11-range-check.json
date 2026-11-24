@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-range-check",
+  "from": "conformance-units-json",
+  "to": "conformance-units-order-range",
+  "input": "{\"x\":5,\"z\":6,\"y\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 11: 2 units do not fit 1 bit"
+}

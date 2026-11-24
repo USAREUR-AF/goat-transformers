@@ -1,0 +1,9 @@
+{
+  "name": "ruling-15-one-unit-too-long",
+  "from": "conformance-units-kinds",
+  "to": "conformance-units-kinds",
+  "input": "030105",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line, before an item is read"
+}

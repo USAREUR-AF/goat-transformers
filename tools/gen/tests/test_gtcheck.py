@@ -550,6 +550,13 @@ V011_ORDER |= {"3349"}
 # Ruling 3 of 0.52: the same two orders (`unknown-directive` for a later `bogus`
 # line, `missing-version` first) for the errors of `as <key> optional`.
 V011_ORDER |= {"5256", "5258", "5259", "5261", "5262", "5264", "5265", "5267", "5283", "5289"}
+# Ruling 13 of 0.83: every error of `length @<name> units <u>` is a check after
+# the file, so a later `bogus` line gives `unknown-directive`; gtcheck refuses
+# `bogus` as `bad-directive`. `missing-wire` (ruling 13) it does not name.
+V011_ORDER |= {
+               "8305", "8307", "8309", "8311", "8313", "8315", "8317", "8319", "8321", "8323", "8325", "8327",
+               "8329", "8331", "8333", "8335", "8337", "8339", "8341", "8343", "8345", "8347", "8349", "8355",
+               "8361", "8363", "8373", "8379", "8385", "8387", "8389", "8392", "8393", "8400", "8402", "8404"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line

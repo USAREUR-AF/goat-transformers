@@ -1,0 +1,9 @@
+{
+  "name": "8331-units-ruling-13-units-with-a-minus-sign-checked-after-the-file",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nlist nums \"a list\"\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.83.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ncount w 8\nlength @w units -8\n  field probe.x 8 uint\nend\nbogus\n",
+  "expect_error": "unknown-directive"
+}

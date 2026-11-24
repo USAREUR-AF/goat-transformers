@@ -1,0 +1,15 @@
+{
+  "name": "ruling-06-indicator-group-absent",
+  "from": "conformance-units-zero-while",
+  "to": "conformance-units-zero-while",
+  "input": "0009",
+  "expect": "010009",
+  "model": {
+    "probe.n": "9",
+    "@absent": [
+      "probe.nums"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6 (0.8 ruling 34): the first indicator stands at the end; encode writes a 0 bit, padded to 1 unit"
+}

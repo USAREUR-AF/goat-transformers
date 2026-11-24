@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-beyond-a-whole-length",
+  "from": "conformance-units-whole",
+  "to": "conformance-units-whole",
+  "input": "030507aabbccdd",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the whole length read before the line: malformed-wire at the line, though x and the input fit"
+}

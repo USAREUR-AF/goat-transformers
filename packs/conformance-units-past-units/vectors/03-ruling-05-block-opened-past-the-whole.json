@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-block-opened-past-the-whole",
+  "from": "conformance-units-past-units",
+  "to": "conformance-units-past-units",
+  "input": "01040405aabb07",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; rulings 5 and 16: a block opened after the whole is tested against it"
+}

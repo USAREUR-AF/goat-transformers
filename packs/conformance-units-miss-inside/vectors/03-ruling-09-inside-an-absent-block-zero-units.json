@@ -1,0 +1,15 @@
+{
+  "name": "ruling-09-inside-an-absent-block-zero-units",
+  "from": "conformance-units-miss-inside",
+  "to": "conformance-units-miss-inside",
+  "input": "00010509",
+  "expect": "010305010009",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: 0 units: no error; encode writes every line"
+}

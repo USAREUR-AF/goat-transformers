@@ -1,0 +1,9 @@
+{
+  "name": "ruling-08-less-than-is-there",
+  "from": "conformance-units-inner-in-two",
+  "to": "conformance-units-inner-in-two",
+  "input": "010708",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 8: the inner input is 1 byte and z needs a second, though the input holds it"
+}

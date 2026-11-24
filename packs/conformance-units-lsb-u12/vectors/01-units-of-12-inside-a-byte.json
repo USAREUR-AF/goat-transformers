@@ -1,0 +1,13 @@
+{
+  "name": "units-of-12-inside-a-byte",
+  "from": "conformance-units-lsb-u12",
+  "to": "conformance-units-lsb-u12",
+  "input": "c1ab09",
+  "expect": "c1ab09",
+  "model": {
+    "probe.y": "2748",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; bit_order lsb: the block is bits 4 to 16"
+}

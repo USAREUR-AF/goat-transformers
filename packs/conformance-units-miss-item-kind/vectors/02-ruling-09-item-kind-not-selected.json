@@ -1,0 +1,14 @@
+{
+  "name": "ruling-09-item-kind-not-selected",
+  "from": "conformance-units-miss-item-kind",
+  "to": "conformance-units-miss-item-kind",
+  "input": "0201018005010207",
+  "expect": "0201018005010207",
+  "model": {
+    "probe.items[0].@kind": "a",
+    "probe.items[1].@kind": "b",
+    "probe.items[1].probe.subs.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: in the second item kind a was not selected: no error"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "kind-inside-the-whole",
+  "from": "conformance-units-when-kind-plain",
+  "to": "conformance-units-when-kind-plain",
+  "input": "0205050109",
+  "expect": "0205050109",
+  "model": {
+    "@kind": "a",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the whole is the message's 5 bytes"
+}

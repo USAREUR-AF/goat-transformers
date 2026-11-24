@@ -1,0 +1,12 @@
+{
+  "name": "ruling-14-empty-rest-is-not-content",
+  "from": "conformance-units-opt",
+  "to": "conformance-units-opt",
+  "input": "008009",
+  "expect": "000009",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; rulings 6 and 14: an empty list is not content (0.8 ruling 5, 0.21 ruling 18): the opt bit is 0 on encode"
+}

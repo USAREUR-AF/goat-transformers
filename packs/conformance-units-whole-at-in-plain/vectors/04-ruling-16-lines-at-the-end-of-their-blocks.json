@@ -1,0 +1,16 @@
+{
+  "name": "ruling-16-lines-at-the-end-of-their-blocks",
+  "from": "conformance-units-whole-at-in-plain",
+  "to": "conformance-units-whole-at-in-plain",
+  "input": "02020405",
+  "expect": "030406050000",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: each line starts at its block's end, where the whole ends too: absent; encode writes every line"
+}

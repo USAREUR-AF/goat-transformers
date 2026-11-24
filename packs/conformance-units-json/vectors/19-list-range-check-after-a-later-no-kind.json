@@ -1,0 +1,9 @@
+{
+  "name": "list-range-check-after-a-later-no-kind",
+  "from": "conformance-units-json",
+  "to": "conformance-units-old-range",
+  "input": "{\"y\":5,\"nums\":[1,2]}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 30 of 0.21: the range check runs when the message is finished; the switch is no-kind before that"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "units-of-12-on-whole-bytes",
+  "from": "conformance-units-inner-u12",
+  "to": "conformance-units-inner-u12",
+  "input": "20050607",
+  "expect": "20050607",
+  "model": {
+    "probe.nums.#": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 10: 24 bits are 2 units of 12 and 3 bytes of inner input"
+}

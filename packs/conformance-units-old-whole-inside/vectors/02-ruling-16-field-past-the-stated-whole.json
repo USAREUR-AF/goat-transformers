@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-field-past-the-stated-whole",
+  "from": "conformance-units-old-whole-inside",
+  "to": "conformance-units-old-whole-inside",
+  "input": "03030506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: (ruling 8 of 0.8): y lies past the stated whole: malformed-wire, not absent"
+}

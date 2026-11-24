@@ -1,0 +1,12 @@
+{
+  "name": "rest-after-the-block",
+  "from": "conformance-units-trail",
+  "to": "conformance-units-trail",
+  "input": "02070008",
+  "expect": "010708",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 7 (\"A count larger than the payload needs leaves the rest of the extent to the rules of its lines: an ordinary block skips it\"): 1 byte is skipped; the rest list starts after it"
+}

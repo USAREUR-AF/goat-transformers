@@ -1,0 +1,13 @@
+{
+  "name": "ruling-02-empty-block-zero-units",
+  "from": "conformance-units-u72",
+  "to": "conformance-units-u72",
+  "input": "010209",
+  "expect": "010209",
+  "model": {
+    "@kind": "b",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 2: w = 1 less plus 1 is 0 units"
+}

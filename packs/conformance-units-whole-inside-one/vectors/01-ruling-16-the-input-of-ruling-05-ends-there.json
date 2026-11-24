@@ -1,0 +1,12 @@
+{
+  "name": "ruling-16-the-input-of-ruling-05-ends-there",
+  "from": "conformance-units-whole-inside-one",
+  "to": "conformance-units-whole-inside-one",
+  "input": "050305aabbcc",
+  "expect": "020305",
+  "model": {
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the extent goes on past the whole, the end of the input: no error (ruling 5)"
+}

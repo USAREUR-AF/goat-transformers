@@ -1,0 +1,9 @@
+{
+  "name": "from-json",
+  "from": "conformance-units-json",
+  "to": "conformance-units-bytes",
+  "input": "{\"x\":5,\"y\":6,\"z\":7,\"n\":9}",
+  "expect": "0205060709",
+  "source": "constructed",
+  "reference": "spec 0.83; Encode: 16 bits are 2 units of 8"
+}

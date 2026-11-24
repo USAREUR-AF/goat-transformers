@@ -1,0 +1,9 @@
+{
+  "name": "ruling-17-plain-length-inside-the-input",
+  "from": "conformance-units-plain-inside",
+  "to": "conformance-units-plain-inside",
+  "input": "050107",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line, before the plain length is read"
+}

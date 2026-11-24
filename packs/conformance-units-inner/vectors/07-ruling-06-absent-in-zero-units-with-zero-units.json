@@ -1,0 +1,16 @@
+{
+  "name": "ruling-06-absent-in-zero-units-with-zero-units",
+  "from": "conformance-units-inner",
+  "to": "conformance-units-inner",
+  "input": "000009",
+  "expect": "01000009",
+  "model": {
+    "probe.n": "9",
+    "@absent": [
+      "probe.x",
+      "probe.nums"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; rulings 4, 6 and 9: absent, 0 units stated; encode writes x as zero bits, 1 unit"
+}

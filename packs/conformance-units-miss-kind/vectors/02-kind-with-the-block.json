@@ -1,0 +1,13 @@
+{
+  "name": "kind-with-the-block",
+  "from": "conformance-units-miss-kind",
+  "to": "conformance-units-miss-kind",
+  "input": "010105",
+  "expect": "010105",
+  "model": {
+    "@kind": "a",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: the selected kind holds the block"
+}

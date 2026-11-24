@@ -1,0 +1,9 @@
+{
+  "name": "ruling-03-wraps-in-no-enclosing-extent",
+  "from": "conformance-units-wide-nested",
+  "to": "conformance-units-wide-nested",
+  "input": "09200000000000000007",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 3: every product is exact: 2^64 bits end beyond the enclosing block (ruling 4)"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-14-block-in-an-opt",
+  "from": "conformance-units-opt",
+  "to": "conformance-units-opt",
+  "input": "01828009",
+  "expect": "01828009",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 14: the list's item is content of the opt"
+}

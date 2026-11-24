@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-range-check-last",
+  "from": "conformance-units-json",
+  "to": "conformance-units-order-range",
+  "input": "{\"x\":5,\"z\":6,\"y\":5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 11: the range of the count is checked when the message is finished (0.21 ruling 30), after the switch"
+}

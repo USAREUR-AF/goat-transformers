@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-not-written",
+  "from": "conformance-units-presence",
+  "to": "conformance-units-presence",
+  "input": "09400609",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the count states 8 units and its block is not read (in an `if` not read): malformed-wire when the message has been read"
+}

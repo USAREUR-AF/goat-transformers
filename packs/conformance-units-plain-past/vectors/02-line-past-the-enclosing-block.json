@@ -1,0 +1,9 @@
+{
+  "name": "line-past-the-enclosing-block",
+  "from": "conformance-units-plain-past",
+  "to": "conformance-units-plain-past",
+  "input": "030305000609",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 17: the plain length's extent ends beyond the block around it: malformed-wire at its line, before x or y is read, though the input holds the stated bytes (ruling 4 states the same for `length @`)"
+}

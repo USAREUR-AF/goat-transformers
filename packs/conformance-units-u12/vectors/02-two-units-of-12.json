@@ -1,0 +1,13 @@
+{
+  "name": "two-units-of-12",
+  "from": "conformance-units-u12",
+  "to": "conformance-units-u12",
+  "input": "27123459",
+  "expect": "27123459",
+  "model": {
+    "probe.nums.#": "5",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: w = 2: 24 bits"
+}

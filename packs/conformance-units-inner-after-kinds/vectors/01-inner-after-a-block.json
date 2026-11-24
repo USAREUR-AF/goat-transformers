@@ -1,0 +1,13 @@
+{
+  "name": "inner-after-a-block",
+  "from": "conformance-units-inner-after-kinds",
+  "to": "conformance-units-inner-after-kinds",
+  "input": "01070209",
+  "expect": "01070209",
+  "model": {
+    "@inner_kind": "b",
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; 0.34 Decode: the inner input is 02 09, kind b"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-empty-inner-input",
+  "from": "conformance-units-inner-past-kinds",
+  "to": "conformance-units-inner-past-kinds",
+  "input": "040305aabb0109",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the inner input is empty and no `when` holds"
+}

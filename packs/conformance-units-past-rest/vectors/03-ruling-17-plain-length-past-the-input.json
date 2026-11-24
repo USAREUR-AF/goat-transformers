@@ -1,0 +1,9 @@
+{
+  "name": "ruling-17-plain-length-past-the-input",
+  "from": "conformance-units-past-rest",
+  "to": "conformance-units-past-rest",
+  "input": "09040509",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 17: the plain length's extent ends beyond the input, also when its lines fit"
+}

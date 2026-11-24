@@ -1,0 +1,13 @@
+{
+  "name": "ruling-09-item-zero-units",
+  "from": "conformance-units-miss-item",
+  "to": "conformance-units-miss-item",
+  "input": "020180050000",
+  "expect": "020180050000",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the second item states 0 units"
+}

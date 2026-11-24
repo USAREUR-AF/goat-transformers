@@ -1,0 +1,9 @@
+{
+  "name": "ruling-15-kind-past-the-whole",
+  "from": "conformance-units-when-kind-at",
+  "to": "conformance-units-when-kind-at",
+  "input": "040305aabb0109",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 15: the `when` at byte 5 lies past the whole of 3: it does not hold, no-kind"
+}

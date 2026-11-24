@@ -1,0 +1,13 @@
+{
+  "name": "ruling-14-block-in-an-if",
+  "from": "conformance-units-presence",
+  "to": "conformance-units-presence",
+  "input": "02800509",
+  "expect": "02800509",
+  "model": {
+    "probe.x": "5",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 14: x in the block sets p.1; w = 1 unit + plus 1"
+}

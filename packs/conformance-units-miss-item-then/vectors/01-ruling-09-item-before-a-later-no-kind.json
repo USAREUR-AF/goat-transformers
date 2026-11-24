@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-item-before-a-later-no-kind",
+  "from": "conformance-units-miss-item-then",
+  "to": "conformance-units-miss-item-then",
+  "input": "01010005",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the test is made when the item has been read, before the message's switch, which is no-kind"
+}

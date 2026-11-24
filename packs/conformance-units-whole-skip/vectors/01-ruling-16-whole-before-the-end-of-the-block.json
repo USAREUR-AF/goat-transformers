@@ -1,0 +1,15 @@
+{
+  "name": "ruling-16-whole-before-the-end-of-the-block",
+  "from": "conformance-units-whole-skip",
+  "to": "conformance-units-whole-skip",
+  "input": "05040405aabb",
+  "expect": "0402050500",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: z starts at the end of its block, byte 6, and the whole ended before: absent"
+}

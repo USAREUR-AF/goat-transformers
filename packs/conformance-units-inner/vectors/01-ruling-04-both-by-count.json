@@ -1,0 +1,14 @@
+{
+  "name": "ruling-04-both-by-count",
+  "from": "conformance-units-inner",
+  "to": "conformance-units-inner",
+  "input": "030205060709",
+  "expect": "030205060709",
+  "model": {
+    "probe.x": "5",
+    "probe.nums.#": "2",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4: a = 3 bytes, b = 2 bytes in them"
+}

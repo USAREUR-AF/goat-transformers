@@ -1,0 +1,12 @@
+{
+  "name": "ruling-01-counts-a-list-in-another",
+  "from": "conformance-units-case",
+  "to": "conformance-units-case",
+  "input": "02020607",
+  "expect": "02020607",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 1: in the path of case 2 the name counts a list"
+}

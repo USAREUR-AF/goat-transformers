@@ -1,0 +1,16 @@
+{
+  "name": "ruling-04-absent-in-a-length-at-with-zero-units",
+  "from": "conformance-units-inner",
+  "to": "conformance-units-inner",
+  "input": "01000509",
+  "expect": "01000509",
+  "model": {
+    "probe.x": "5",
+    "probe.n": "9",
+    "@absent": [
+      "probe.nums"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; rulings 4 and 9: absent, 0 units stated; its rest list is not reached and stays absent (0.21 ruling 3)"
+}

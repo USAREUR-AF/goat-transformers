@@ -1,0 +1,9 @@
+{
+  "name": "ruling-03-a-later-line",
+  "from": "conformance-units-wide-after",
+  "to": "conformance-units-wide-after",
+  "input": "20000000000000000709",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line (ruling 3: 2^64 bits)"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "field-inside-the-whole",
+  "from": "conformance-units-past-field",
+  "to": "conformance-units-past-field",
+  "input": "02040509",
+  "expect": "02040509",
+  "model": {
+    "probe.x": "5",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the whole is the message's 4 bytes"
+}

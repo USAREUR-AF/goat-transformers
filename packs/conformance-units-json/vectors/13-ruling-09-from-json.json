@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-from-json",
+  "from": "conformance-units-json",
+  "to": "conformance-units-presence",
+  "input": "{\"n\":9}",
+  "expect": "010009",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: no content, w holds its plus"
+}

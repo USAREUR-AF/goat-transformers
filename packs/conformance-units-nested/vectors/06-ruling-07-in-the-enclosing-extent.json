@@ -1,0 +1,13 @@
+{
+  "name": "ruling-07-in-the-enclosing-extent",
+  "from": "conformance-units-nested",
+  "to": "conformance-units-nested",
+  "input": "05010506aabb09",
+  "expect": "0301050609",
+  "model": {
+    "probe.y": "6",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; 0.8: the enclosing extent's unread content is skipped"
+}

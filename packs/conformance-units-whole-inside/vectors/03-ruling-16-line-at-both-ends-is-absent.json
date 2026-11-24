@@ -1,0 +1,15 @@
+{
+  "name": "ruling-16-line-at-both-ends-is-absent",
+  "from": "conformance-units-whole-inside",
+  "to": "conformance-units-whole-inside",
+  "input": "02030506",
+  "expect": "03040500",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: y starts at the end of its block, where the whole length ends too: absent; encode writes every line (0.8 ruling 7)"
+}

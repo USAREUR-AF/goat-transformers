@@ -1,0 +1,13 @@
+{
+  "name": "ruling-16-empty-inner-input",
+  "from": "conformance-units-inner-past-rest",
+  "to": "conformance-units-inner-past-rest",
+  "input": "040305aabb09",
+  "expect": "020305",
+  "model": {
+    "probe.x": "5",
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the input ends at the whole of 3 and the cursor is past it: empty (0.34 ruling 3)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-beyond-a-length-at",
+  "from": "conformance-units-inner",
+  "to": "conformance-units-inner",
+  "input": "030305060708",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4: the innermost `length` block around it is a `length @` block"
+}

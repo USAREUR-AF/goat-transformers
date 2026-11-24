@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-empty-inner-input",
+  "from": "conformance-units-inner-after-byte",
+  "to": "conformance-units-inner-after-byte",
+  "input": "0507",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line, before the inner line"
+}

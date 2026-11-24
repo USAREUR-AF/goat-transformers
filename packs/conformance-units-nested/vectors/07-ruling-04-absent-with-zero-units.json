@@ -1,0 +1,16 @@
+{
+  "name": "ruling-04-absent-with-zero-units",
+  "from": "conformance-units-nested",
+  "to": "conformance-units-nested",
+  "input": "02000509",
+  "expect": "0301050009",
+  "model": {
+    "probe.x": "5",
+    "probe.n": "9",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; rulings 4 and 9: the block is absent and states 0 units: no error; encode writes every line (0.21 ruling 22)"
+}

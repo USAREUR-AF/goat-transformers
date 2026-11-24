@@ -1,0 +1,12 @@
+{
+  "name": "every-block-read",
+  "from": "conformance-units-miss-inside",
+  "to": "conformance-units-miss-inside",
+  "input": "010305010609",
+  "expect": "010305010609",
+  "model": {
+    "probe.y": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: w = 1"
+}

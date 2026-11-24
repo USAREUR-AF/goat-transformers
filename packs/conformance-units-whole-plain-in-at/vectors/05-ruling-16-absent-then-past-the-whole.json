@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-absent-then-past-the-whole",
+  "from": "conformance-units-whole-plain-in-at",
+  "to": "conformance-units-whole-plain-in-at",
+  "input": "0402040507",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: y is absent at its block's end; z lies past the whole of 4 and before its block's end"
+}

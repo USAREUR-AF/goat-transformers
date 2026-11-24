@@ -1,0 +1,9 @@
+{
+  "name": "8372-units-ruling-02-a-kind-with-no-reference",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nlist nums \"a list\"\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.83.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ncount w 8\nkind k1\nwhen 8 1\nlength @w units 8\n  field probe.x 8 uint\nend\nkind k2\nwhen 8 2\nfield probe.y 8 uint\n",
+  "expect_error": "bad-directive"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-rest-runs-to-the-stated-end",
+  "from": "conformance-units-rest-tail",
+  "to": "conformance-units-rest-tail",
+  "input": "030506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line, before an item is read"
+}

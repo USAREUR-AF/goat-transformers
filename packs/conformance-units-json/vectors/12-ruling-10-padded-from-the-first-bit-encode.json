@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-padded-from-the-first-bit-encode",
+  "from": "conformance-units-json",
+  "to": "conformance-units-pad",
+  "input": "{\"x\":5,\"y\":9}",
+  "expect": "1509",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 10: 4 bits are padded to 8, 1 unit"
+}

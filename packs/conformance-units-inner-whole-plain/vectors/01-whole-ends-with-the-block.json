@@ -1,0 +1,12 @@
+{
+  "name": "whole-ends-with-the-block",
+  "from": "conformance-units-inner-whole-plain",
+  "to": "conformance-units-inner-whole-plain",
+  "input": "0304aabb",
+  "expect": "0304aabb",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the whole of 4 and the extent of a plain block end together"
+}

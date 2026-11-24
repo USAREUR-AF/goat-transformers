@@ -1,0 +1,14 @@
+{
+  "name": "one-unit-of-12",
+  "from": "conformance-units-u12",
+  "to": "conformance-units-u12",
+  "input": "171290",
+  "expect": "171290",
+  "model": {
+    "probe.qty": "7",
+    "probe.nums.#": "2",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: w = 1: 12 bits; the block is not padded and n follows it at bit 16"
+}

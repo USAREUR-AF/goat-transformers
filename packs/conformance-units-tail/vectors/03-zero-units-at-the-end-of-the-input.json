@@ -1,0 +1,14 @@
+{
+  "name": "zero-units-at-the-end-of-the-input",
+  "from": "conformance-units-tail",
+  "to": "conformance-units-tail",
+  "input": "00",
+  "expect": "0100",
+  "model": {
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6: x stands at the end of the extent: absent; encode writes it as zero bits, 1 unit"
+}

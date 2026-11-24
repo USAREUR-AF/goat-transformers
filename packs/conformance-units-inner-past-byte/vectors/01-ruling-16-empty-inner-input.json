@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-empty-inner-input",
+  "from": "conformance-units-inner-past-byte",
+  "to": "conformance-units-inner-past-byte",
+  "input": "040305aabb09",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the inner input is empty and y needs a byte"
+}

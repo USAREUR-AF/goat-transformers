@@ -1,0 +1,15 @@
+{
+  "name": "unit-of-72-with-a-plus",
+  "from": "conformance-units-u72",
+  "to": "conformance-units-u72",
+  "input": "020105000000000000000709",
+  "expect": "020105000000000000000709",
+  "model": {
+    "@kind": "a",
+    "probe.x": "5",
+    "probe.y": "7",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: w = 2 less plus 1 is 1 unit of 72 bits; encode writes 1 + 1"
+}

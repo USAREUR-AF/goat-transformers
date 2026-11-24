@@ -1,0 +1,15 @@
+{
+  "name": "ruling-09-if-not-read-zero-units",
+  "from": "conformance-units-presence",
+  "to": "conformance-units-presence",
+  "input": "01400609",
+  "expect": "01400609",
+  "model": {
+    "probe.y": "6",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the value less its plus is 0: no error; encode: the count of a block not written holds its plus"
+}

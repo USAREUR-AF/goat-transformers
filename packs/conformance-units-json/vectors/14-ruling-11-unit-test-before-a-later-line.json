@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-unit-test-before-a-later-line",
+  "from": "conformance-units-json",
+  "to": "conformance-units-order-later",
+  "input": "{\"x\":5,\"y\":5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 11: the unit test at the block's end is ahead of the later switch, which is no-kind (0.20 ruling 12)"
+}

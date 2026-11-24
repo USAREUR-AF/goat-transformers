@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-field-after-the-block",
+  "from": "conformance-units-past-field",
+  "to": "conformance-units-past-field",
+  "input": "040305aabb09",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: after the block: n lies past the whole of 3, though the input goes on"
+}

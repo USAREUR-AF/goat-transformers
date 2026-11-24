@@ -1,0 +1,13 @@
+{
+  "name": "ruling-06-zero-units-rest-present-and-empty",
+  "from": "conformance-units-rest",
+  "to": "conformance-units-rest",
+  "input": "0009",
+  "expect": "0009",
+  "model": {
+    "probe.nums.#": "0",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6: present and empty (0.21 ruling 3)"
+}

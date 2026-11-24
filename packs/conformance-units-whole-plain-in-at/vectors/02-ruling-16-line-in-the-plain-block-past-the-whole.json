@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-line-in-the-plain-block-past-the-whole",
+  "from": "conformance-units-whole-plain-in-at",
+  "to": "conformance-units-whole-plain-in-at",
+  "input": "050304050607",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: y starts at byte 4, past the whole of 4 and inside both blocks"
+}

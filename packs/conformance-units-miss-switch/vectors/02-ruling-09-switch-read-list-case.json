@@ -1,0 +1,12 @@
+{
+  "name": "ruling-09-switch-read-list-case",
+  "from": "conformance-units-miss-switch",
+  "to": "conformance-units-miss-switch",
+  "input": "0201800509",
+  "expect": "0201800509",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: a switch that was read counts by its selected case, which holds a list"
+}

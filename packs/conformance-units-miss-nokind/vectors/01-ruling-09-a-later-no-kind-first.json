@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-a-later-no-kind-first",
+  "from": "conformance-units-miss-nokind",
+  "to": "conformance-units-miss-nokind",
+  "input": "010005",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the test is made when the message has been read; the switch is no-kind before that"
+}
