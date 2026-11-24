@@ -758,6 +758,12 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         SeqNode* const prev_field = also_target;
         also_target = nullptr;
 
+        // v0.46: its errors, its place among them, are found after the file is read.
+        if (kw == "charset") {
+            add_charset(p, t, lineno, stack.size() > 1 || !p.seq.kinds.empty());
+            continue;
+        }
+
         // v0.20 ruling 20: the lines between `switch` and its first `case`.
         if (stack.back().is_switch && kw != "case" && kw != "end")
             throw bad("'" + kw + "' between 'switch' and its first 'case'");
@@ -1582,8 +1588,11 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                         source + ":" + std::to_string(f.line) + ": 'via " + f.via + "' names a table with no 'map' line");
         f.table = it->second;
     };
+    check_charsets(p);
     auto resolve_node = [&](SeqNode& n) {
         if (n.type != Type::Field) return;
+        resolve_code_sets(p, n.field, n.uper == SeqNode::Uper::None ? &n.len : nullptr);
+        for (auto& a : n.also) resolve_code_sets(p, a, n.uper == SeqNode::Uper::None ? &n.len : nullptr);
         resolve(n.field);
         resolve_absent(p, Wire::Bits, n.field, n.len);
         for (auto& a : n.also) {

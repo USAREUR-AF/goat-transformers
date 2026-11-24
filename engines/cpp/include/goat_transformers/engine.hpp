@@ -225,7 +225,10 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Iso8601Short,                     // v0.18, xml, json and geojson
                        CharsAscii8,                      // v0.22, bits wire
                        Iso8601S,                         // v0.26, xml, json, geojson and text
-                       CborText, CborBytes, EpochS       // v0.28, cbor wire only: `text`, `bytes`, `epoch_s`
+                       CborText, CborBytes, EpochS,      // v0.28, cbor wire only: `text`, `bytes`, `epoch_s`
+                       Code,                             // v0.46, bits wire
+                       CodeStr,                          // v0.46, xml, json, geojson and text
+                       CodeNum                           // v0.46, bits and those four
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv, Cbor };
 
@@ -253,6 +256,17 @@ const char* wire_name(Wire w);
 // with `unknown-wire`, and its message says this build does not have it.
 std::vector<std::string> built_wires();
 bool wire_built(Wire w);
+
+// v0.46 `charset <name> <characters> [<width>]`: the characters in code order.
+struct CharSet {
+    std::string name;
+    std::string chars;
+    bool has_width = false;
+    std::string width_text;   // as written
+    unsigned width = 0;       // bits only: the bits per character; parse_pack settles it
+    bool misplaced = false;   // in a block or after the first message `kind` (ruling 16)
+    std::size_t line = 0;     // line number in pack.def
+};
 
 struct FieldLine {
     std::string key;      // shared-model key
@@ -282,6 +296,10 @@ struct FieldLine {
     std::int64_t exact_num = 1;
     std::int64_t exact_den = 1;
     std::int64_t exact_offset = 0;
+    // code, codestr, codenum (v0.46): the list as written, and the set of each
+    // position, first position first (parse_pack resolves it).
+    std::string code_list;
+    std::vector<std::shared_ptr<const CharSet>> code_sets;
     std::size_t line = 0;       // line number in pack.def
     // v0.6 field options.
     std::string via;            // `via <table>`: the value table's name; empty when none
@@ -608,6 +626,7 @@ struct Pack {
     std::vector<DefaultLine> defaults;                        // common `default` lines
     std::vector<GroupLine> groups;                            // common `group` blocks (v0.7)
     std::vector<MapTable> tables;                             // value tables, first appearance order
+    std::vector<std::shared_ptr<CharSet>> charsets;           // v0.46: the `charset` lines, line order
     std::vector<Kind> kinds;                                  // pack order; empty when the pack has no `kind` line
     std::vector<std::pair<std::string, std::string>> typemap; // native code -> CoT type
     std::vector<GateBlock> gates;                             // v0.17: every gate block, line order

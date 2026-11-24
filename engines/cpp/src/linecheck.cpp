@@ -53,7 +53,9 @@ const std::set<std::string>& pack_directives() {
                                          // pack that holds it are checked after the file is read.
                                          "inner",
                                          // v0.92, `framing self`
-                                         "framing"};
+                                         "framing",
+                                         // v0.46: what it holds and its place are checked after the file.
+                                         "charset"};
     return s;
 }
 
@@ -306,6 +308,7 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         // v0.34: the word after the format is checked after the file.
         else if (kw == "inner") count(nargs == 1 || nargs == 2, "one or two arguments");
         else if (kw == "map") count(nargs == 3, "three arguments");
+        else if (kw == "charset") count(nargs == 2 || nargs == 3, "two or three arguments");  // v0.46
         else if (kw == "typemap") count(nargs == 2, "two arguments");
         else if (kw == "end" || kw == "else") count(nargs == 0, "no argument");
         // v0.19 ruling 23: `ext` none, `choice` one or two, `alt` one (`encoding`

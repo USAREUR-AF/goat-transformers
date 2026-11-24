@@ -108,7 +108,10 @@ KeyType transform_yields(Transform t) {
         case Transform::Hex:
         case Transform::CborText:
         case Transform::CborBytes: return KeyType::String;
-        case Transform::EpochS: return KeyType::Int;
+        case Transform::EpochS:
+        case Transform::CodeNum: return KeyType::Int;
+        case Transform::Code:
+        case Transform::CodeStr: return KeyType::String;
         case Transform::Smscale:
         case Transform::F32scale:
         case Transform::F64scale:
@@ -928,6 +931,7 @@ void check_field(const Pack& p, const FieldLine& f, bool in_group) {
     bool matches;
     if (p.wire == Wire::Protobuf) matches = is_pb;
     else if (p.wire == Wire::Bits) matches = is_bits;
+    else if (f.transform == Transform::CodeNum) matches = true;  // v0.46: bits and the text wires
     else matches = !is_bits && !is_pb && (f.transform != Transform::Bool || p.wire == Wire::Json);
     if (!matches)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
@@ -1027,6 +1031,100 @@ void check_elements_vs_groups(const Pack& p) {
     }
 }
 
+namespace detail {
+
+void add_charset(Pack& p, const std::vector<std::string>& t, std::size_t line, bool misplaced) {
+    auto s = std::make_shared<CharSet>();
+    s->name = t[1];
+    s->chars = t[2];
+    s->has_width = t.size() > 3;
+    if (s->has_width) s->width_text = t[3];
+    s->misplaced = misplaced;
+    s->line = line;
+    p.charsets.push_back(std::move(s));
+}
+
+void check_charsets(Pack& p) {
+    std::set<std::string> names;
+    for (const auto& sp : p.charsets) {
+        CharSet& s = *sp;
+        auto bad = [&](const std::string& why) {
+            throw Error(ErrorKind::BadDirective, p.format, "",
+                        p.source + ":" + std::to_string(s.line) + ": charset '" + s.name + "': " + why);
+        };
+        if (s.misplaced) bad("it stands in a block or after the first 'kind'");
+        if (s.name.empty() || s.name.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+                                                       "0123456789_-") != std::string::npos)
+            bad("a name is one or more of A-Z, a-z, 0-9, '_' and '-'");
+        if (!names.insert(s.name).second) bad("a second charset of one name");
+        if (s.chars.empty()) bad("no characters");
+        for (std::size_t k = 0; k < s.chars.size(); ++k) {
+            const unsigned char c = static_cast<unsigned char>(s.chars[k]);
+            if (c < 0x21 || c > 0x7E) bad("a character outside 0x21 to 0x7E");
+            if (s.chars.find(s.chars[k]) != k) bad(std::string("the character '") + s.chars[k] + "' appears twice");
+        }
+        unsigned least = 1;
+        while ((std::size_t{1} << least) < s.chars.size()) ++least;
+        s.width = least;
+        if (p.wire != Wire::Bits || !s.has_width) continue;  // ignored off bits (ruling 14)
+        std::uint64_t w = 0;
+        if (!parse_u64(s.width_text, w) || w < least || w > 8)
+            bad("the width '" + s.width_text + "' is not a decimal integer from " + std::to_string(least) + " to 8");
+        s.width = static_cast<unsigned>(w);
+    }
+}
+
+void resolve_code_sets(const Pack& p, FieldLine& f, const std::uint32_t* bits_len) {
+    if (!transform_is_code(f.transform)) return;
+    auto bad = [&](const std::string& why) {
+        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                    p.source + ":" + std::to_string(f.line) + ": transform '" + transform_name(f.transform) + ":" +
+                        f.code_list + "' " + why);
+    };
+    const bool text_wire =
+        p.wire == Wire::Xml || p.wire == Wire::Json || p.wire == Wire::GeoJson || p.wire == Wire::Text;
+    const bool fits = f.transform == Transform::Code      ? p.wire == Wire::Bits
+                      : f.transform == Transform::CodeStr ? text_wire
+                                                          : text_wire || p.wire == Wire::Bits;
+    if (!fits) bad(std::string("is not valid on wire ") + wire_name(p.wire));
+    if (f.code_list.empty()) bad("names no position");
+    f.code_sets.clear();
+    std::size_t from = 0;
+    for (;;) {
+        const std::size_t comma = f.code_list.find(',', from);
+        const std::string name =
+            f.code_list.substr(from, comma == std::string::npos ? std::string::npos : comma - from);
+        const std::shared_ptr<CharSet>* found = nullptr;
+        for (const auto& s : p.charsets)
+            if (s->name == name) found = &s;
+        if (!found) bad("names the set '" + name + "', which no 'charset' declares");
+        f.code_sets.push_back(*found);
+        if (comma == std::string::npos) break;
+        from = comma + 1;
+    }
+    if (f.code_sets.size() > 16) bad("names more than 16 positions");
+    std::uint64_t width = 0, product = 1;
+    const std::uint64_t most = std::uint64_t{1} << 63;
+    for (const auto& s : f.code_sets) {
+        width += s->width;
+        if (f.transform == Transform::CodeNum) {
+            if (product > most / s->chars.size()) bad("has more than 2^63 values");
+            product *= s->chars.size();
+        }
+        if (p.wire != Wire::Text) continue;
+        // Characters the record cannot carry (ruling 12).
+        if (!p.delimiter_none && s->chars.find(p.delimiter) != std::string::npos)
+            bad("uses the set '" + s->name + "', which holds the delimiter");
+        if (p.checksum_nmea && s->chars.find('*') != std::string::npos)
+            bad("uses the set '" + s->name + "', which holds '*' under 'checksum nmea'");
+    }
+    if (p.wire == Wire::Bits && bits_len && (*bits_len != width || width > 64))
+        bad("covers " + std::to_string(width) + " bits, and its field has " + std::to_string(*bits_len) +
+            " (at most 64)");
+}
+
+}  // namespace detail
+
 Pack parse_pack(const std::string& text, const std::string& source) {
     // 0.11 ruling 5b: the line checks of every line, then missing-format,
     // missing-version and missing-wire, before any other check of the file.
@@ -1121,6 +1219,12 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 throw Error(ErrorKind::BadDirective, p.format, "",
                             where + ": '" + kw + "' is not allowed inside a group");
         };
+
+        // v0.46: its errors, its place among them, are found after the file is read.
+        if (kw == "charset") {
+            detail::add_charset(p, t, lineno, !open.empty() || !gate_open.empty() || !p.kinds.empty());
+            continue;
+        }
 
         // Inside a gate block only `field`, `const`, `default`, a nested `if` and
         // `end` are allowed (0.17).
@@ -1600,6 +1704,20 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     if (pending_transform)  // set on wire tlv (0.13 ruling 8) and cbor (0.28 ruling 25) only
         throw Error(ErrorKind::BadDirective, p.format, pending_locator,
                     pending_detail + " (on wire " + wire_name(p.wire) + ", a transform not in the wire's table)");
+    detail::check_charsets(p);
+    each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool in_group) {
+        for (auto& f : fields) {
+            // 0.46 ruling 23: a coordinate; inside a group the locator is a member path.
+            if (p.wire == Wire::GeoJson && !in_group && detail::transform_is_code(f.transform) &&
+                f.locator.compare(0, 9, "geometry.") == 0)
+                throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                            source + ":" + std::to_string(f.line) + ": transform '" + transform_name(f.transform) +
+                                "' does not apply to a geojson coordinate");
+            detail::BitsLocator loc;
+            const bool has_len = p.wire == Wire::Bits && detail::parse_bits_locator(f.locator, loc);
+            detail::resolve_code_sets(p, f, has_len ? &loc.len : nullptr);
+        }
+    });
     if (!gate_error.empty()) throw Error(ErrorKind::BadDirective, p.format, gate_error_locator, gate_error);
     if (!gate_open.empty()) {
         const GateBlock& g = p.gates[static_cast<std::size_t>(gate_open.back().first)];

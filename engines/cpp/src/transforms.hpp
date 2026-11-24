@@ -55,7 +55,10 @@ bool transform_is_cbor_only(Transform t);
 // True when the transform's wire value is text (JSON string), false for numbers.
 bool transform_is_textual(Transform t);
 
-// True for the bits-wire transforms; false for text and protobuf transforms.
+// v0.46: `code`, `codestr` and `codenum`.
+bool transform_is_code(Transform t);
+// True for the transforms valid on the bits wire (`codenum` is valid on text
+// wires too); false for text-only and protobuf transforms.
 bool transform_is_bits(Transform t);
 // True for the transforms of 0.15, which a wire they do not list makes bad-directive.
 bool transform_is_v015(Transform t);

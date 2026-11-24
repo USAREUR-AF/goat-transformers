@@ -336,6 +336,15 @@ struct EncodeSource {
 // bits wire. A transform that does not belong to the wire is left for the
 // invalid_pack check. `coordinate`: a geojson `geometry.*` slot, which takes
 // only number text (0.9 ruling 25).
+// v0.46: read a `charset` line of two or three arguments into the pack;
+// nothing is checked yet.
+void add_charset(Pack& p, const std::vector<std::string>& t, std::size_t line, bool misplaced);
+// v0.46, after the file: check every `charset` and settle its width.
+void check_charsets(Pack& p);
+// v0.46, after the file: check the wire and the list of a `code`, `codestr` or
+// `codenum` field and resolve its sets; `bits_len` is null off the bits wire
+// and for a locator with no bit length. Any other field is left as it is.
+void resolve_code_sets(const Pack& p, FieldLine& f, const std::uint32_t* bits_len);
 void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_len, bool coordinate = false);
 // Does the raw value equal one of the field's sentinels?
 bool sentinel_num(const FieldLine& f, std::uint64_t raw);
