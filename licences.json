@@ -467,6 +467,16 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "celestrak-gp-csv": {
+      "format": "celestrak-gp-csv",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "celestrak-gp-json": {
+      "format": "celestrak-gp-json",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "crsf": {
       "format": "crsf",
       "licence": "CC-BY-SA-4.0",
@@ -481,6 +491,16 @@
       "format": "davis-wll-udp",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
+    },
+    "defra-ukair-data": {
+      "format": "defra-ukair-data",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
+    },
+    "defra-ukair-timeseries": {
+      "format": "defra-ukair-timeseries",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
     },
     "dsmr-p1-line": {
       "format": "dsmr-p1-line",
@@ -1782,6 +1802,11 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "gs1-epcis-event": {
+      "format": "gs1-epcis-event",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "gtpu": {
       "format": "gtpu",
       "licence": "LicenseRef-unstated",
@@ -2389,6 +2414,11 @@
     },
     "mds": {
       "format": "mds",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "metno-locationforecast": {
+      "format": "metno-locationforecast",
       "licence": "CC-BY-4.0",
       "profile": "open"
     },
@@ -3811,6 +3841,11 @@
       "format": "openaq-sensors",
       "licence": "LicenseRef-OpenAQ",
       "profile": "everything"
+    },
+    "openmeteo-forecast": {
+      "format": "openmeteo-forecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
     },
     "opensky-states": {
       "format": "opensky-states",
@@ -5417,6 +5452,11 @@
       "licence": "CC-BY-4.0",
       "profile": "open"
     },
+    "rdp-x224-negotiation": {
+      "format": "rdp-x224-negotiation",
+      "licence": "LicenseRef-MS-OpenSpec",
+      "profile": "everything"
+    },
     "rinex-nav-line": {
       "format": "rinex-nav-line",
       "licence": "LicenseRef-unstated",
@@ -5957,6 +5997,11 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "tle": {
+      "format": "tle",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "txc": {
       "format": "txc",
       "licence": "OGL-UK-3.0",
@@ -6249,6 +6294,16 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "ckgp.def": {
+      "module": "ckgp",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ckgpcsv.def": {
+      "module": "ckgpcsv",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "crsf.def": {
       "module": "crsf",
       "licence": "CC-BY-SA-4.0",
@@ -6259,6 +6314,11 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "defraukair.def": {
+      "module": "defraukair",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
+    },
     "dsmr.def": {
       "module": "dsmr",
       "licence": "LicenseRef-unstated",
@@ -6268,6 +6328,11 @@
       "module": "eaflood",
       "licence": "OGL-UK-3.0",
       "profile": "open"
+    },
+    "epcis.def": {
+      "module": "epcis",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "etcs.def": {
       "module": "etcs",
@@ -8149,6 +8214,11 @@
       "licence": "CC-BY-4.0",
       "profile": "open"
     },
+    "metnolf.def": {
+      "module": "metnolf",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
     "modbus.def": {
       "module": "modbus",
       "licence": "LicenseRef-unstated",
@@ -9454,6 +9524,11 @@
       "licence": "LicenseRef-OGC-Software",
       "profile": "open"
     },
+    "omfc.def": {
+      "module": "omfc",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
     "omsf.def": {
       "module": "omsf",
       "licence": "LicenseRef-unstated",
@@ -9648,6 +9723,11 @@
       "module": "px4ulog",
       "licence": "CC-BY-4.0",
       "profile": "open"
+    },
+    "rdpneg.def": {
+      "module": "rdpneg",
+      "licence": "LicenseRef-MS-OpenSpec",
+      "profile": "everything"
     },
     "rinexnav.def": {
       "module": "rinexnav",
@@ -10171,6 +10251,11 @@
     },
     "tcx.def": {
       "module": "tcx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "tle.def": {
+      "module": "tle",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
