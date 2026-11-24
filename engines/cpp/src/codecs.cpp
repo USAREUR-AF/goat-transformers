@@ -664,7 +664,8 @@ void Decoder::finish() {
         throw Error(ErrorKind::TransformDecode, first_format, first_locator, d);
     }
     // Type mapping: native code -> CoT token; an unmapped code passes through.
-    if (!p.typemap.empty()) {
+    // A `type` an inner message gave is not this pack's to map (0.52 ruling 20d).
+    if (!p.typemap.empty() && !joined.count("type")) {
         auto it = out.fields.find("type");
         if (it != out.fields.end() && it->second.kind == Value::Kind::String)
             for (const auto& tm : p.typemap)
@@ -2021,6 +2022,8 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, c
             const std::uint64_t used = bits_decode_scope(in, body, g.gates, at, items.back(), item_what);
             at = std::max(at + g.item_bits, used);
         }
+        // 0.52 ruling 18: a group with no items extends the message to its start.
+        if (at > in.have) in.too_short("the start of the group '" + g.list + "'", at);
         end = std::max(end, at);
     }
 
@@ -2323,6 +2326,7 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
                 at = std::max(at + g.item_bits, used);
             }
         }
+        out.armor_end = std::max(out.armor_end, at);  // 0.52 ruling 18: at least the group's start
         end = std::max(end, at);
     }
     if (held) out.checks.push_back({base, &gates, std::move(held_store)});

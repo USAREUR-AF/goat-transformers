@@ -234,6 +234,19 @@ void check_group_locator(const LineChecker& c, Wire wire, bool in_group, const s
 
 }  // namespace
 
+bool when_holds_at(const std::vector<std::string>& t) {
+    bool seen_as = false;
+    for (std::size_t k = 3; k < t.size(); ++k) {
+        if (t[k] == "as" && !seen_as) {
+            seen_as = true;
+            ++k;  // its key
+        } else if (t[k] == "at") {
+            return true;
+        }
+    }
+    return false;
+}
+
 void check_pack_lines(const std::string& text, const std::string& source) {
     LineChecker c;
     c.source = source;

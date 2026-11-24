@@ -19,6 +19,9 @@ ErrorKind tokenize_kind(const std::string& err);
 // `distribution` values; the transform's name and parameters; the locator
 // form; the field options; the values of an `absent` option. Then
 // missing-format, missing-version and missing-wire.
+// Does a `when` line hold the word `at` (0.33 ruling 27)? The third token on; the
+// token after the first `as` is a key and not that word (0.52 rulings 4 and 14).
+bool when_holds_at(const std::vector<std::string>& t);
 void check_pack_lines(const std::string& text, const std::string& source);
 
 // A module: for each line, unterminated-quote; unknown-directive; the number
