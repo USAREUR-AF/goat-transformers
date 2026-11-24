@@ -3583,7 +3583,8 @@ xml_decode(float, S) -> {ok, F} = gt_num:num_text(S), F;
 xml_decode(int, S) -> {ok, I} = gt_num:int_text(S), I;
 xml_decode(iso8601_ms, S) -> gt_iso:decode(S);
 xml_decode(iso8601_short, S) -> gt_iso:decode(S);
-xml_decode(iso8601_s, S) -> gt_iso:decode(S).
+xml_decode(iso8601_s, S) -> gt_iso:decode(S);
+xml_decode(iso8601_si, S) -> gt_iso:decode(S).
 -endif.
 
 -if(?W_GEOJSON).
@@ -3593,10 +3594,11 @@ xml_decode(iso8601_s, S) -> gt_iso:decode(S).
 geojson_decode({scale, _, _} = Tr, V) -> json_decode(Tr, V);
 geojson_decode(string, V) when is_binary(V) -> V;
 geojson_decode(Tr, V) when is_binary(V), Tr =/= iso8601_ms, Tr =/= iso8601_short,
-                                 Tr =/= iso8601_s -> xml_decode(Tr, V);
+                                 Tr =/= iso8601_s, Tr =/= iso8601_si -> xml_decode(Tr, V);
 geojson_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
 geojson_decode(iso8601_short, V) when is_binary(V) -> gt_iso:decode(V);
 geojson_decode(iso8601_s, V) when is_binary(V) -> gt_iso:decode(V);
+geojson_decode(iso8601_si, V) when is_binary(V) -> gt_iso:decode(V);
 geojson_decode(string, V) ->
     true = gt_json:is_num(V),
     list_to_binary(gt_json:number_text(V));
@@ -3613,6 +3615,7 @@ json_decode(int, V) -> {ok, I} = gt_json:num_int(V), I;
 json_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
 json_decode(iso8601_short, V) when is_binary(V) -> gt_iso:decode(V);
 json_decode(iso8601_s, V) when is_binary(V) -> gt_iso:decode(V);
+json_decode(iso8601_si, V) when is_binary(V) -> gt_iso:decode(V);
 json_decode(bool, true) -> 1;
 json_decode(bool, false) -> 0.
 -endif.
@@ -3628,6 +3631,7 @@ text_encode(int, V) when is_integer(V) -> {int, V};
 text_encode(iso8601_ms, V) when is_integer(V) -> {str, gt_iso:encode(V)};
 text_encode(iso8601_short, V) when is_integer(V) -> {str, gt_iso:encode_short(V)};
 text_encode(iso8601_s, V) when is_integer(V) -> {str, gt_iso:encode_seconds(V)};
+text_encode(iso8601_si, V) when is_integer(V) -> {str, gt_iso:encode_si(V)};
 text_encode(bool, 1) -> {bool, <<"true">>};
 text_encode(bool, 0) -> {bool, <<"false">>}.
 -endif.
@@ -3757,9 +3761,25 @@ bits_decode(twos, U, L, _) -> to_signed(U, L);
 bits_decode({linscale, Max, Range}, U, L, _) -> (to_signed(U, L) / Max) * Range;
 bits_decode({uscale, Factor, Offset}, U, _L, _) -> scale_decode(U, Factor, Offset);
 bits_decode({sscale, Factor, Offset}, U, L, _) -> scale_decode(to_signed(U, L), Factor, Offset);
+%% <places> (Version 0.55): x as without it, then rounded to the places;
+%% a non-finite x raises in the arithmetic of scale_decode (ruling 5)
+bits_decode({uscale, Factor, Offset, Pl}, U, _L, _) -> places(scale_decode(U, Factor, Offset), Pl);
+bits_decode({sscale, Factor, Offset, Pl}, U, L, _) ->
+    places(scale_decode(to_signed(U, L), Factor, Offset), Pl);
 %% infinity and NaN do not match a float segment: a decode failure
 bits_decode(f32, U, 32, _) -> <<F:32/float>> = <<U:32>>, F;
 bits_decode(f64, U, 64, _) -> <<F:64/float>> = <<U:64>>, F;
+%% utf8 (Version 0.55): the bytes as ascii takes them, trailing NULs
+%% removed, valid UTF-8 (RFC 3629) holding no NUL. `trim` then removes the
+%% trailing spaces, which leaves valid text valid and invalid text invalid.
+bits_decode(utf8, U, L, Order) ->
+    Bytes = case Order of
+                msb -> <<U:L/big>>;
+                lsb -> <<U:L/little>>
+            end,
+    Text = strip_trailing(Bytes, 0),
+    true = utf8_text(Text),
+    Text;
 bits_decode(ascii, U, L, Order) ->
     Bytes = case Order of
                 msb -> <<U:L/big>>;
@@ -3835,6 +3855,26 @@ strip_trailing_any(Bin, Cs) ->
         false -> Bin
     end.
 
+%% Valid UTF-8 (RFC 3629: the utf8 segment refuses an overlong form, a
+%% surrogate and a code point above U+10FFFF) holding no U+0000.
+utf8_text(<<>>) -> true;
+utf8_text(<<C/utf8, R/binary>>) when C =/= 0 -> utf8_text(R);
+utf8_text(_) -> false.
+
+%% Rounding to <places> (Version 0.55): y = x * 10^places; when y is finite
+%% and |round(y)| < 10^15 the value is round(y) / 10^places, else x.
+places(X, Pl) when is_float(X) ->
+    P = float(lists:foldl(fun(_, A) -> A * 10 end, 1, lists:seq(1, Pl))),   % exact
+    try X * P of
+        Y ->
+            R = round(Y),             % half away from zero
+            case abs(R) < 1000000000000000 of
+                true -> float(R) / P;
+                false -> X
+            end
+    catch error:badarith -> X
+    end.
+
 printable(<<>>) -> true;
 printable(<<C, R/binary>>) when C >= 16#20, C =< 16#7E -> printable(R);
 printable(_) -> false.
@@ -3857,6 +3897,17 @@ bits_encode({sscale, Factor, Offset}, V, L, _) when is_number(V) ->
 %% a value outside single range does not fit a 32-bit float segment
 bits_encode(f32, V, 32, _) when is_number(V) -> <<U:32>> = single(V), U;
 bits_encode(f64, V, 64, _) when is_number(V) -> <<U:64>> = <<(float(V)):64/float>>, U;
+bits_encode({uscale, Factor, Offset, _}, V, L, O) -> bits_encode({uscale, Factor, Offset}, V, L, O);
+bits_encode({sscale, Factor, Offset, _}, V, L, O) -> bits_encode({sscale, Factor, Offset}, V, L, O);
+bits_encode(utf8, V, L, Order) when is_binary(V) ->
+    N = L div 8,
+    true = byte_size(V) =< N,
+    true = utf8_text(V),
+    Padded = <<V/binary, 0:((N - byte_size(V)) * 8)>>,
+    case Order of
+        msb -> <<U:L/big>> = Padded, U;
+        lsb -> <<U:L/little>> = Padded, U
+    end;
 bits_encode(ascii, V, L, Order) when is_binary(V) ->
     N = L div 8,
     true = byte_size(V) =< N,

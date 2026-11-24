@@ -1,7 +1,7 @@
 %% gt_iso: ISO 8601 <-> epoch milliseconds (engine-spec transform
 %% `iso8601_ms`; Version 0.6 replaces ruling 8 of 0.1.1).
 -module(gt_iso).
--export([decode/1, encode/1, encode_short/1, encode_seconds/1]).
+-export([decode/1, encode/1, encode_short/1, encode_seconds/1, encode_si/1]).
 
 -define(EPOCH_GREGORIAN_SECONDS, 62167219200).
 %% 0001-01-01T00:00:00.000Z and 9999-12-31T23:59:59.999Z (ruling 3 of 0.11)
@@ -107,6 +107,15 @@ encode_short(Ms) when is_integer(Ms), Ms >= ?MIN_SHORT_MS, Ms =< ?MAX_MS ->
     case strip_zeros(Frac) of
         <<>> -> <<Head/binary, "Z">>;
         F -> <<Head/binary, $., F/binary, "Z">>
+    end.
+
+%% epoch ms -> "YYYY-MM-DDTHH:MM:SS[.fff]Z" (`iso8601_si`, 0.55): no
+%% fraction when the milliseconds are 0, else all three digits; the years
+%% 0001 to 9999 as iso8601_ms (ruling 2 of 0.55).
+encode_si(Ms) when is_integer(Ms), Ms >= ?MIN_MS, Ms =< ?MAX_MS ->
+    case format(Ms) of
+        <<Head:19/binary, ".000Z">> -> <<Head/binary, "Z">>;
+        T -> T
     end.
 
 strip_zeros(<<>>) -> <<>>;
