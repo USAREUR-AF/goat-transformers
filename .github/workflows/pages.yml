@@ -3,12 +3,16 @@
 # site/build.sh builds the WebAssembly module and goat-xf, writes
 # site/assets/engine/ (the module is a build product and never committed), and
 # fails when site/index.html states a number or an output the tree does not
-# give. A pull request that touches the page runs the build and the check; a
-# push to main also deploys, once the repository's Pages source is set to
-# "GitHub Actions". Until then the deploy job is skipped, not failed.
+# give. A pull request that touches the page or what it quotes runs the build
+# and the check; a push to main also deploys, once the repository's Pages
+# source is set to "GitHub Actions". Until then the deploy job is skipped, not
+# failed.
 name: pages
 
 on:
+  # The same paths as a push to main: a pack, a model module or an engine
+  # change can change a line or an output the page quotes, so the check runs
+  # before the merge, not after it (fe5fc57 failed the page after merging).
   pull_request:
     paths:
       - 'site/**'
@@ -17,6 +21,10 @@ on:
       - 'tools/catalog-families/**'
       - 'docs/figures/hub-*.svg'
       - 'README.md'
+      - 'packs/**'
+      - 'model/**'
+      - 'engines/rust/**'
+      - 'bindings/wasm/**'
       - 'tools/repo-stats'
       - '.github/workflows/pages.yml'
   push:
