@@ -6554,11 +6554,11 @@ on a fixed layout or another wire.
    `malformed-wire` when the scope that holds the count line (the message, or
    the item, with its kind) has been read; a block of 0 units there is no
    error (a block of 0 units whose line stands past a whole length is
-   malformed by ruling 5). A `switch` inside such a part counts when any of
-   its cases holds the block; a `switch` that was read counts by its selected
-   case. An `alt` of a `choice` that was not chosen, and a kind or case that
-   was not selected, are no error. A count line that was itself absent states
-   nothing.
+   malformed by ruling 5). A `switch` or a `choice` inside such a part counts
+   when any of its cases or alternatives holds the block; one that was read
+   counts by its selected case or its chosen alternative. An `alt` of a
+   `choice` that was not chosen, and a kind or case that was not selected, are
+   no error. A count line that was itself absent states nothing.
 10. **Padding.** A block counted in bytes is padded to a whole byte from its
     first bit (ruling 34 of 0.21), and then tested for whole units; nothing
     pads to a unit. A block counted in bits is not padded, and a `rest` in it
