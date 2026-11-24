@@ -1,0 +1,8 @@
+{
+  "name": "met-hydro-imo289-no-position-unit-value-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "83`l7@00Gm;Jt2V`418Qew85mSGJIBURbvj>masPRM0pPR?3RK7hr1f<=RP0",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"244123456\"}",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 10860000 and 5460000: 181 and 91 degrees in the unit of 0.001 minute; no position, so geometry null"
+}

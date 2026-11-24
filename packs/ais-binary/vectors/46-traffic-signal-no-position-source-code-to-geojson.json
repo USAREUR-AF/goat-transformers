@@ -1,0 +1,8 @@
+{
+  "name": "traffic-signal-no-position-source-code-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "83`l7@00Dj6CD1D9?>00000000000000F640;6t>8r`00000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"244123456\"}",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 181000 and 91000: not available as the tables state it; no position, so geometry null"
+}

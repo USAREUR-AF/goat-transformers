@@ -1,0 +1,13 @@
+{
+  "name": "weather-observation-no-position-source-code",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@00EAQpH:Q9qh0000000000002hhP1HoP>WVP0HJ?VhTiwObDmjNr?`",
+  "expect": "83`l7@00EAQpH:Q9qh0000000000002hhP1HoP>WVP0HJ?VhTiwObDmjNr?`",
+  "model": {
+    "@kind": "weather-observation",
+    "aisbin.pos_lon_raw": "181000",
+    "aisbin.pos_lat_raw": "91000"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 181000 and 91000: not available as the tables state it; the message comes back as it was"
+}

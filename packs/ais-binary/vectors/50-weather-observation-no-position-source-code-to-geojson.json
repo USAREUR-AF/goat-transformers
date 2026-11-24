@@ -1,0 +1,8 @@
+{
+  "name": "weather-observation-no-position-source-code-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "83`l7@00EAQpH:Q9qh0000000000002hhP1HoP>WVP0HJ?VhTiwObDmjNr?`",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"244123456\"}",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 181000 and 91000: not available as the tables state it; no position, so geometry null"
+}

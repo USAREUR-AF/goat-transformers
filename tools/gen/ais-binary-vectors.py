@@ -374,6 +374,15 @@ POSITIONS = {   # kind -> (lat, lon) chosen so that the fraction of a minute is 
 }
 
 
+# kind -> first bit of its longitude (25 bits) and latitude (24 bits)
+NO_POSITION = {"clearance-time": (268, 293), "berthing-data": (311, 336), "traffic-signal": (186, 211),
+               "weather-observation": (177, 202), "met-hydro-imo289": (56, 81)}
+
+
+def unarmor(text):
+    return "".join(format(ord(c) - 0x30 if ord(c) < 0x60 else ord(c) - 0x38, "06b") for c in text)
+
+
 def vectors():
     out = []
     for row in LAYOUTS:
@@ -439,6 +448,23 @@ def vectors():
                    ref=SRC + "the same report with character 11 replaced by X (0x58), which stands for no six bits"))
     out.append(vec("type6-dac-235-fi-11-is-no-kind", armor(_aton_bits(fid=11)), error="no-kind",
                    ref=SRC + "an AtoN monitoring layout sent with FI 11: DAC 235 has no kind for it"))
+    # no position: the code the source's tables state, and the one its unit implies for 181 and 91 degrees
+    for kind in sorted(NO_POSITION):
+        base, _ = build(kind, chosen(kind), lat=10.25, lon=20.5)
+        bits = unarmor(base)
+        (lon_at, lat_at) = NO_POSITION[kind]
+        for tag, lon, lat in (("source-code", 181000, 91000), ("unit-value", 10860000, 5460000)):
+            b = bits[:lon_at] + format(lon, "025b") + bits[lon_at + 25:]
+            b = b[:lat_at] + format(lat, "024b") + b[lat_at + 24:]
+            p = armor(b)
+            name = "%s-no-position-%s" % (kind, tag)
+            ref = SRC + ("raw %d and %d: not available as the tables state it" if lon == 181000 else
+                         "raw %d and %d: 181 and 91 degrees in the unit of 0.001 minute") % (lon, lat)
+            out.append(vec(name, p, p, model={"@kind": kind, "aisbin.pos_lon_raw": str(lon), "aisbin.pos_lat_raw": str(lat)},
+                           ref=ref + "; the message comes back as it was"))
+            out.append(vec(name + "-to-geojson", p,
+                           '{"type":"Feature","geometry":null,"properties":{},"id":"244123456"}', to="geojson",
+                           ref=ref + "; no position, so geometry null"))
     return out
 
 

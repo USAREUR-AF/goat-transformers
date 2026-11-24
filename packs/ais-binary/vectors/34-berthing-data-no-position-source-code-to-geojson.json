@@ -1,0 +1,8 @@
+{
+  "name": "berthing-data-no-position-source-code-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "63`l7@0001i:05A9TKWRdjFfsfsfsfsf4:T`A0L2J:00000000000d<80F=p",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"244123456\"}",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 181000 and 91000: not available as the tables state it; no position, so geometry null"
+}

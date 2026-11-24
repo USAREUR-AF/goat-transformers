@@ -1,0 +1,13 @@
+{
+  "name": "clearance-time-no-position-unit-value",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "63`l7@0001i:0599Vbs90u9@p4lD000000000000@E=@UBng0ab100000000",
+  "expect": "63`l7@0001i:0599Vbs90u9@p4lD000000000000@E=@UBng0ab100000000",
+  "model": {
+    "@kind": "clearance-time",
+    "aisbin.pos_lon_raw": "10860000",
+    "aisbin.pos_lat_raw": "5460000"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 10860000 and 5460000: 181 and 91 degrees in the unit of 0.001 minute; the message comes back as it was"
+}

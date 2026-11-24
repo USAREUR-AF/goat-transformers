@@ -1,0 +1,13 @@
+{
+  "name": "traffic-signal-no-position-unit-value",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@00Dj6CD1D9?>0000000000000Dech:JP@>8r`00000000000000000",
+  "expect": "83`l7@00Dj6CD1D9?>0000000000000Dech:JP@>8r`00000000000000000",
+  "model": {
+    "@kind": "traffic-signal",
+    "aisbin.pos_lon_raw": "10860000",
+    "aisbin.pos_lat_raw": "5460000"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 10860000 and 5460000: 181 and 91 degrees in the unit of 0.001 minute; the message comes back as it was"
+}
