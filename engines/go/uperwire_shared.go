@@ -192,7 +192,7 @@ func resolveUperField(f *Field) (ErrorKind, error) {
 		// The value transforms of 0.15 are known transforms too: on a UPER
 		// locator they are bad-directive (0.19, Transforms on UPER locators).
 		known := isBitsTransformName(name) || isTextTransformName(name) || isPBTransformName(name) ||
-			isTLVOnlyTransform(name) || isCBOROnlyTransform(name) || isTextOnlyTransform(name) || v015Base(name) != ""
+			isTLVOnlyTransform(name) || isCBOROnlyTransform(name) || isTextOnlyTransform(name) || v015Base(name) != "" || codeBase(name) != ""
 		if known {
 			return ErrBadDirective, fmt.Errorf("transform %q is not valid on the locator %s (it takes %s)", name, f.Locator, takes)
 		}

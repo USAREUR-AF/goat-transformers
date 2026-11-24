@@ -18,6 +18,7 @@ type transform struct {
 	numOnly bool
 	decode  func(string) (Value, error)
 	encode  func(Value) (string, error)
+	strOnly bool // a json or geojson member must be a string (0.46 ruling 11)
 }
 
 var transforms = map[string]*transform{
@@ -722,6 +723,13 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 	// sixbit is valid only on the bits wire (spec 0.14).
 	if name == "sixbit" && wire != WireBits {
 		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire bits", name)
+	}
+	// The transforms of 0.46 check their wire, sets and length themselves.
+	if base := codeBase(name); base != "" {
+		if err := resolveCode(wire, base, f); err != nil {
+			return ErrBadDirective, err
+		}
+		return "", nil
 	}
 	// The value transforms of 0.15 check their wire and length themselves.
 	if base := v015Base(name); base != "" {

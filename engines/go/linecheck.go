@@ -54,6 +54,9 @@ func checkTransformName(name string) (ErrorKind, error) {
 		if err := checkV015Params(base, name); err != nil {
 			return ErrBadDirective, err
 		}
+	case "code", "codestr", "codenum":
+		// Every error of their list is a check after the file (0.46 ruling
+		// 15).
 	case "dec", "dm", "hms", "hms_dmy":
 		if _, kind, err := resolveTextTransform(name); err != nil {
 			return kind, err
@@ -178,7 +181,13 @@ func (p *Pack) checkFieldLine(f *Field, opts []string, inGroup bool) (ErrorKind,
 	}
 	tmp := *f
 	tmp.loc = loc
-	if _, err := resolveFieldTransform(p.Wire, &tmp); err != nil {
+	if base := codeBase(f.Transform); base != "" {
+		// The sets need the whole file (0.46); an `absent` value needs only
+		// the wire and the bit length.
+		if !codeOnWire(base, p.Wire) || p.Wire == WireBits && loc.blen > 64 {
+			return "", nil
+		}
+	} else if _, err := resolveFieldTransform(p.Wire, &tmp); err != nil {
 		return "", nil
 	}
 	if err := resolveSentinels(p.lineWire(inGroup), &tmp); err != nil {

@@ -92,27 +92,28 @@ type Field struct {
 	Stop      string   // `stop <code>` (0.22): the code as written; "" when the line has none
 	StopLine  bool     // the line has `stop`
 
-	absent  *sentinels // the sentinels read for the pack's wire; nil when the line has no `absent`
-	loc     locator
-	group   *Group   // the innermost group the line is in, nil outside a group
-	gate    *Gate    // the innermost gate block the line is in, nil outside a block (0.17)
-	dot     bool     // the locator is `.`: the item itself, as a scalar
-	also    []*Field // sequential layouts: the keys `also` lines bind to the same bits, in line order
-	tf      *transform
-	ttf     *textTf // text wire transform
-	xtf     *tlvTf  // tlv wire transform
-	ctf     int     // cbor wire transform (spec 0.28)
-	btf     *bitsTransform
-	uper    *uperLoc // a UPER locator (spec 0.19), nil for a bit length
-	until   bool     // the locator is `until:<code>` (0.22): characters up to a terminator
-	untilC  uint64   // the terminator code of `until:`
-	pbf     *pbTransform
-	jbool   bool // json `bool`
-	yields  Kind // the type the transform yields
-	keyType Kind // the key's declared type; set when the pack is loaded
-	table   *valueTable
-	viaDec  map[string]string // canonical native text -> model text
-	viaEnc  map[string]string // canonical model text -> native text
+	absent   *sentinels // the sentinels read for the pack's wire; nil when the line has no `absent`
+	loc      locator
+	group    *Group   // the innermost group the line is in, nil outside a group
+	gate     *Gate    // the innermost gate block the line is in, nil outside a block (0.17)
+	dot      bool     // the locator is `.`: the item itself, as a scalar
+	also     []*Field // sequential layouts: the keys `also` lines bind to the same bits, in line order
+	tf       *transform
+	ttf      *textTf // text wire transform
+	xtf      *tlvTf  // tlv wire transform
+	ctf      int     // cbor wire transform (spec 0.28)
+	btf      *bitsTransform
+	uper     *uperLoc                // a UPER locator (spec 0.19), nil for a bit length
+	charsets map[string]*packCharset // the pack's charset lines by name, for code, codestr and codenum (0.46)
+	until    bool                    // the locator is `until:<code>` (0.22): characters up to a terminator
+	untilC   uint64                  // the terminator code of `until:`
+	pbf      *pbTransform
+	jbool    bool // json `bool`
+	yields   Kind // the type the transform yields
+	keyType  Kind // the key's declared type; set when the pack is loaded
+	table    *valueTable
+	viaDec   map[string]string // canonical native text -> model text
+	viaEnc   map[string]string // canonical model text -> native text
 }
 
 // When is one `when` line (the kind applies when the wire holds Value at
@@ -411,6 +412,9 @@ func reqHolds(terms []*reqTerm, rec *Item) bool {
 
 // Pack is one parsed pack.def.
 type Pack struct {
+	charsetLines []*packCharset // the charset lines in file order (0.46)
+	charsets     map[string]*packCharset
+
 	// The `at` errors of 0.33, reported last among the load checks
 	// (rulings 10 and 25): the form, then the fixed window.
 	atErr, winErr error
@@ -750,7 +754,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
 		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1,
 		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1, "switch": 1, "case": 1, "else": 0, "count": -2,
-		"inner": -1, "framing": 1}
+		"inner": -1, "framing": 1, "charset": -2}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -814,6 +818,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			// `inner <format> [partial]` (spec 0.34): one or two arguments.
 			return nil, perr(ErrBadDirective, n, "", "inner takes 1 or 2 arguments, got %d", len(args))
 		}
+		if kw == "charset" && len(args) > 3 {
+			// `charset <name> <characters> [<width>]` (0.46).
+			return nil, perr(ErrBadDirective, n, "", "charset takes 2 or 3 arguments, got %d", len(args))
+		}
 		// `when … as <model-key>` (0.30): a line whose third token is `as`
 		// passes the argument count; its syntax, and `as` outside a
 		// sequential pack, are checked after the file (ruling 16).
@@ -853,6 +861,23 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			if len(framingLines) == 1 {
 				framingValue = args[0]
 			}
+			continue
+		}
+		if kw == "charset" {
+			// Before the first message kind, outside every block; like every
+			// other error of the line, checked after the file (0.46, rulings
+			// 15 and 16).
+			switch {
+			case len(open) > 0 || len(gates) > 0 || len(sp.stack) > 1:
+				if late == nil {
+					late = perr(ErrBadDirective, n, "", "charset is not allowed inside a block")
+				}
+			case len(p.Kinds) > 0:
+				if late == nil {
+					late = perr(ErrBadDirective, n, "", "charset stands before the first kind (line %d)", p.Kinds[0].Line)
+				}
+			}
+			p.charsetLines = append(p.charsetLines, newPackCharset(args, n))
 			continue
 		}
 		if p.seq {
@@ -1208,6 +1233,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	}
 	if late != nil {
 		return nil, late
+	}
+	// The charset lines of 0.46, whose width needs the wire.
+	if ln, err := p.resolveCharsets(); err != nil {
+		return nil, perr(ErrBadDirective, ln, "", "%v", err)
 	}
 	// The bans of 0.30 ruling 9 need only key names: they run first among
 	// the checks that need the whole file (rulings 16 and 29).

@@ -121,6 +121,12 @@ func decodeJSONValue(f *Field, v *jval) (Value, error) {
 		}
 		return Value{Kind: KindInt, I: 0}, nil
 	}
+	if f.tf.strOnly {
+		if v.k != jStr {
+			return wrong("string")
+		}
+		return f.tf.decode(v.s)
+	}
 	switch f.Transform {
 	case "string", "iso8601_ms", "iso8601_s", "iso8601_short":
 		if v.k != jStr {
@@ -165,6 +171,10 @@ func (d *decodeState) fieldJSON(f *Field, v *jval) {
 		return
 	}
 	if _, done := d.rec.Fields[f.Key]; done {
+		return
+	}
+	if f.tf.strOnly {
+		d.fail(f, "wire value is not a JSON string")
 		return
 	}
 	val, err := decodeJSONNumber(f, v.s)
