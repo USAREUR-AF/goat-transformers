@@ -2296,6 +2296,13 @@ fn sentinel_lines<'a>(sel: &Sel<'a>, ent: &Entity, skip: impl Fn(&FieldDef) -> b
         .collect()
 }
 
+/// The locators of the groups of one scope that write a list on `json` and
+/// `geojson`: those whose list the entity holds, empty or not.
+#[cfg(any(feature = "geojson", feature = "json"))]
+fn written_groups<'a>(sel: &Sel<'a>, ent: &Entity) -> Vec<&'a str> {
+    sel.groups.iter().copied().filter(|g| ent.lists.contains_key(&g.list)).map(|g| g.locator.as_str()).collect()
+}
+
 /// The `null` lines of one scope that encode writes (engine-spec v0.56): a
 /// line in force whose key is absent, on a member no line in `written`
 /// writes; of several on one member, the first.
@@ -7733,7 +7740,8 @@ pub mod geojson {
             lines.push((f.line, &f.locator, sentinel_json(sn), false));
         }
         // `null` (engine-spec v0.56) where no line writes a value or a sentinel
-        let written: Vec<&str> = lines.iter().map(|l| l.1).collect();
+        // (a group that writes its list included: ruling 1)
+        let written: Vec<&str> = lines.iter().map(|l| l.1).chain(written_groups(&sel, ent)).collect();
         for f in null_lines(&sel, ent, &written) {
             lines.push((f.line, &f.locator, Json::Null, false));
         }
@@ -8153,7 +8161,9 @@ pub mod jsonwire {
         }
         // `null` (engine-spec v0.56): an absent key writes `null` where no
         // line on the member writes a value or a sentinel (ruling 1)
-        for f in null_lines(sel, ent, &lines.iter().filter(|l| l.2.is_some()).map(|l| l.1).collect::<Vec<_>>()) {
+        // and no group there writes its list
+        let written: Vec<&str> = lines.iter().filter(|l| l.2.is_some()).map(|l| l.1).chain(written_groups(sel, ent)).collect();
+        for f in null_lines(sel, ent, &written) {
             if let Some(l) = lines.iter_mut().find(|l| l.0 == f.line) {
                 l.2 = Some(Json::Null);
             }
