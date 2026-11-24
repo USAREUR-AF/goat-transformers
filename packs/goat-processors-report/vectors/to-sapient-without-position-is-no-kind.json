@@ -1,0 +1,9 @@
+{
+  "name": "to-sapient-without-position-is-no-kind",
+  "from": "goat-processors-report",
+  "to": "sapient",
+  "input": "{\"uid\":\"x\"}",
+  "expect_error": "no-kind",
+  "source": "field numbers and mandatory options from SAPIENT-Proto-Files 244a741c13bcee628f84944aef91e4a66854bd7d, bsi_flex_335_v2_0/detection_report.proto (report_id 1 and object_id 2 are is_mandatory; location_oneof: location 6) and location.proto; worked by hand, no engine run",
+  "reference": "The entity holds uid only. detection_report requires lat lon; detection_report_other_system requires the two fields the schema makes mandatory in DetectionReport. No kind qualifies (engine-spec 0.5 Encode step 2). Before, the last kind had no requires and the result was the empty message 3a00."
+}

@@ -1,0 +1,16 @@
+{
+  "name": "to-sapient-other-system-from-context",
+  "from": "goat-processors-report",
+  "to": "sapient",
+  "input": "{\"uid\":\"x\"}",
+  "context": {
+    "sapient.detection_report_report_id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+    "sapient.detection_report_object_id": "01BX5ZZKBKACTAV9WEVGEMMVRZ",
+    "sapient.location_x": "500000.5",
+    "sapient.location_y": "4649776.25",
+    "sapient.location_coordinate_system": "5"
+  },
+  "expect": "3a4e0a1a303141525a334e44454b54535634525246465136394735464156121a30314258355a5a4b424b41435441563957455647454d4d56525a3214090000000082841e411100000010ccbc51413805",
+  "source": "field numbers and mandatory options from SAPIENT-Proto-Files 244a741c13bcee628f84944aef91e4a66854bd7d, bsi_flex_335_v2_0/detection_report.proto (report_id 1 and object_id 2 are is_mandatory; location_oneof: location 6) and location.proto; worked by hand, no engine run",
+  "reference": "With the two mandatory fields present and no lat and lon, detection_report_other_system is chosen: DetectionReport (7) holding report_id, object_id and a Location (6) with x, y as doubles and coordinate_system 5; no const is written. uid is not copied into object_id (the derive goes the other way)."
+}

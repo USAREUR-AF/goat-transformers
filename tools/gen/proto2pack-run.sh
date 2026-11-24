@@ -140,6 +140,8 @@ DETECTION=(
 # also writes 1 on encode), and the kind detection_report_other_system, last, takes a
 # detection in radians, UTM metres or no stated system with the same lines but no
 # lat, lon, hae or track.sigma_up_m: its numbers stay in the raw location keys.
+# It requires the fields the schema makes mandatory in DetectionReport (report_id,
+# object_id), so an entity no kind fits is no-kind, not an empty DetectionReport.
 python3 -I "$GEN/proto2pack.py" \
   --proto "$SRC"/sapient/bsi_flex_335_v2_0/*.proto "$SRC/sapient/proto_options.proto" \
   --envelope SapientMessage --format sapient --module sapient --out "$ROOT" \

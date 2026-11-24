@@ -2313,9 +2313,14 @@ def emit_pack(plan):
         else:
             out += kind_lines(kind, kind.name, None, None, kind.requires)
     if split:
-        # last, with no `requires`: the messages of the split kind whose PATH holds another value
+        # last: the messages of the split kind whose PATH holds another value. It requires the fields the
+        # schema makes mandatory in the message itself, which only such a message carries; with no
+        # `requires` it would take every entity no other kind fits and encode it as an empty message.
         kind = next(k for k in plan.kinds if k.name == split[0])
-        tail = kind_lines(kind, split[3], None, split[4], [])
+        need = [l.key for l in kind.leaves if l.mandatory and len(l.nums) == 2]
+        if not need:
+            raise GenError("--split-kind: %s has no mandatory field of its own for %s to require" % (split[0], split[3]))
+        tail = kind_lines(kind, split[3], None, split[4], need[:6])
         out += ["", "# %s: the %s messages whose %s is not %s; no field of %s" % (
             split[3], split[0], split[1], split[2], ", ".join(sorted(split[4])))] + tail[1:]
         plan.split_field_lines = sum(1 for ln in tail if ln.startswith("field "))
