@@ -6080,6 +6080,125 @@ format's own table stays in its pack, and a restricted format's table stays
 in its overlay. The number form serves formats that carry the same
 identifier as an integer.
 
+# Version 0.64: one text token split into coded fields
+
+Status: Written. A text place often holds one token made of parts: a type code
+whose second part is an affiliation letter and whose third is an environment
+letter. Today the whole token is one field. This version binds single parts of
+it to keys, in both directions, each through its own table.
+
+```
+field  <key> <locator> part:<sep>:<n>  [via <table>]  [unlisted]
+const  <locator> part:<sep>:<n> <text>
+```
+
+Valid on `xml`, `json`, `geojson` and `text`. The **token** is the text of the
+place, read and written as `string` reads and writes it there. Its **parts**
+are the pieces between `<sep>` characters, numbered from 0; empty parts count,
+and an empty token has one part, the empty text. The lines with one locator
+(as text) in one reading scope (common lines plus one kind; one group body
+likewise) form a **part group**, with one `<sep>`. The group may also have one
+**whole line**: `field <key> <locator> string`, without options but, on
+`text`, `optional`.
+
+`<sep>` is as for `tokens` (Version 0.18); `<n>` is 0 to 255, without leading
+zeros. `part` yields `string`, and `via` then `typemap` see its text.
+
+## Decode
+
+An absent place leaves every key of the group absent. Otherwise the whole
+line's key holds the token, and for each part line:
+
+- a `const` part that is missing or differs is `transform-decode`;
+- a field whose part is missing is `transform-decode`;
+- a part with no entry in its `via` table is `transform-decode`, or with
+  `unlisted` the line counts as one whose place is absent;
+- parts that no line names are ignored.
+
+## Encode
+
+1. When the entity holds the whole line's key, its text (after `typemap`) is
+   checked and written. Every `const` part must be there and equal. For every
+   part field whose key no other line of the scope maps: the part must decode
+   by the rules above, and when the entity holds the key, to that value; a
+   line that `unlisted` leaves absent needs the entity not to hold the key.
+   Anything else is `transform-encode`.
+2. Otherwise, when the entity holds a key of a part line, or every part field
+   has a held value or a `default`, parts 0 to the highest `<n>` are written,
+   joined by `<sep>`: each the text of its `const` or of its field (its held
+   value, or its `default`). A field with no value, a value with no table entry, and a text that holds `<sep>`,
+   are `transform-encode`.
+3. Otherwise a `default` of the whole line's key is checked and written as in
+   step 1; without one nothing is written, the `const` parts included.
+
+## Load errors
+
+`bad-directive`: a separator or `<n>` outside the rules; two part lines of one
+group for one part; a number from 0 to the highest `<n>` that no part line of
+the group names; a group with no part `field`; two separators in one group; a
+second whole line; a whole line and a part line of one key; or any other `field`, `const`, `when` (`present` included)
+or `group` on the group's locator; `unlisted` without `via`, on another
+transform, or twice; any field option but `via`, `unlisted` and, on `text`,
+`optional`; `also` after a part line; `part` on another wire, a column, a pair
+or `geometry.*`; on `text`, a `<sep>` that is the delimiter, or `*` under
+`checksum nmea`; a const text that is empty or holds `<sep>`. A key that is
+not `string` without a `via` is `key-type-mismatch`.
+
+## Rulings for 0.64
+
+1. **The whole line is how parts survive.** Without it the parts that no line
+   names are lost, and a token of which `unlisted` left a key absent cannot be
+   written again (`transform-encode`; with every key absent, nothing). A pack
+   that must carry such tokens maps the whole token too.
+2. **No silent change.** A whole text that disagrees with a held part key is
+   an error, never a choice between them. A whole key is not a private copy:
+   when another format sets it (`type`), its text must fit this pack's parts,
+   and a consumer that edits a part key must drop or edit the whole key. A
+   key that only this pack maps avoids the first. A key with another line in
+   the scope is left to the order of lines (0.6) and not checked.
+3. **Tables** (amends 0.6 for part lines): a value with no entry never passes
+   through a `via` table, in either direction, whatever the types. `typemap` on
+   the key `type` keeps its own rule, a code without an entry passing, on a
+   part line and on a whole line. `unlisted` is for decode.
+4. **`const … part`** (amends 0.6): it is checked on decode, after kind
+   selection, and its failure is never forgiven by another line of a key. A
+   place that `string` cannot read is a failure of each of its lines, the
+   const lines included. It
+   has three arguments; `const <locator> part:-:1` with two is a const of 0.6.
+   Its text follows 0.6, always written as text.
+5. **Failed lines.** A missing part is a failed transform (0.6 ruling 5), a
+   missing table entry a failed table (0.7 ruling 10).
+6. **Gaps** are checked for the common lines with each kind, or alone when
+   there are no kinds.
+7. **Empty parts** decode and encode as the empty text. An empty token is
+   written as `string` writes the empty text at that place; where the wire
+   reads that back as absent, it decodes absent.
+8. **Position.** The token is written where the group's first line stands (0.9
+   ruling 23). On `text` "every const writes" (0.10) yields to step 3.
+9. **`token` (Version 0.57)** is a one-way derive function, numbered from 0
+   too. It leaves a missing part absent, where a part line refuses it. Its
+   `*` table entries, if a table has them, are entries here; a pass-through
+   text that does not read as the key's type is `transform-decode`, with
+   `unlisted` too.
+10. **Amends 0.18 ruling 9:** the separator names apply to `part`.
+11. **When the checks run** (0.11 5b): the parameters of `part`, on `field` and
+    `const`, are a step 7 check, a repeated `unlisted` step 9; everything else
+    is a check after the file, and the key's type in the order of 0.4.
+12. **Kinds.** A kind cannot be chosen by a part on decode. On encode,
+    `requires` on a bound key or on the whole key remains.
+13. **Items.** In a group body "the entity" is the item; an item of which
+    nothing is written is an item without a value (0.7 ruling 11).
+14. **`model_keys`** lists the whole and the part keys in line order. A place
+    that a part group maps is never residue.
+15. **`optional`** on `text`: a field that a const part addresses is never
+    removed (0.10 step 5 needs every line to carry it).
+16. **`geojson`** members that are numbers are not pinned by a vector: 0.1's
+    rule for `string` there applies.
+
+## Not in this version
+
+- A table keyed on several parts, or on the longest matching prefix.
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in
