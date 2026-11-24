@@ -183,7 +183,7 @@ residue({Fields, _Base}, Lines) ->
 %% present` addresses nothing; a group addresses its index and beyond.
 addressed(Lines) ->
     lists:foldl(
-      fun({field, _, Loc, _, _, {_, _, _, Opt, _, _}}, {M, G}) -> {mark(Loc, Opt, M), G};
+      fun({field, _, Loc, _, _, {_, _, _, Opt, _, _, _}}, {M, G}) -> {mark(Loc, Opt, M), G};
          ({wh, _, present, _}, Acc) -> Acc;
          ({wh, Loc, _, _}, {M, G}) -> {mark(Loc, false, M), G};
          ({const, Loc, _, _}, {M, G}) -> {mark(Loc, false, M), G};

@@ -208,7 +208,7 @@ check_missed(#d{missed = Missed, counts = Counts} = D) ->
 
 lines(Lines, Ext, D) -> lists:foldl(fun(L, Acc) -> line(L, Ext, Acc) end, D, Lines).
 
-line({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, _With}, Ext, D) ->
+line({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, _With, _SExt}, Ext, D) ->
     case at_end(Ext, D) of
         true -> D;
         false ->
@@ -256,7 +256,7 @@ line({uchoice, N, IsExt, Alts}, Ext, D) ->
 %% no terminator before the end of the extent or input, or more than
 %% 2040 / w characters, is malformed-wire, and wins over a bad character
 %% (rulings 4, 5 and 8 of 0.22).
-line({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, _With}, Ext, D) ->
+line({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, _With, _SExt}, Ext, D) ->
     case at_end(Ext, D) of
         true -> D;
         false ->
@@ -267,7 +267,7 @@ line({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, _With}, Ext
                                              Tr, LenT, Acc)
                         end, D1, Keys)
     end;
-line({sfield, Keys, Len, Tr, LenT, Swap, Trim, Absent, _With}, Ext, #d{pos = Pos} = D) ->
+line({sfield, Keys, Len, Tr, LenT, Swap, Trim, Absent, _With, SExt}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
         absent -> D;
         ok ->
@@ -277,7 +277,7 @@ line({sfield, Keys, Len, Tr, LenT, Swap, Trim, Absent, _With}, Ext, #d{pos = Pos
                     false -> U0
                 end,
             %% a sentinel (Version 0.9): no key of the line is set
-            D1 = case Absent =/= none andalso lists:member(U, Absent) of
+            D1 = case seq_sentinel(U, Absent, SExt) of
                      true -> D;
                      false ->
                          lists:foldl(fun(KV, Acc) -> set_key(KV, U, Len, Tr, LenT, Trim, Acc) end,
@@ -1151,7 +1151,7 @@ case_index(Case, Cases) ->
         [] -> 0
     end.
 
-eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With} = L, _Rest, Src, #e{pack = Pack, wrote = Wrote} = E) ->
+eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With, SExt} = L, _Rest, Src, #e{pack = Pack, wrote = Wrote} = E) ->
     %% a line suppressed by `with` (0.18) is a line whose key is absent and
     %% has no default: it writes what ruling 1 of 0.19 states for the locator
     Pieces = case pick(candidates(Keys, With, Src), Src) of
@@ -1160,7 +1160,7 @@ eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With} = L, _Rest, Src, #e{p
                      gt_engine:guard_encode(
                        Pack, Key, LenT,
                        fun() ->
-                               W = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none, none}, Val),
+                               W = gt_engine:wire_value(Pack, Key, Tr, wopts(Keys, Key, Via, SExt), Val),
                                uenc(Loc, Tr, W)
                        end)
              end,
@@ -1203,7 +1203,7 @@ eline({sgroup, List, {size, unc}, Body}, _Rest, Src, #e{pack = Pack} = E) ->
     lists:foldl(fun(I, Acc) -> eitem(I, List, Body, Acc) end, epieces(ld(C), E), Items);
 %% `until:` (0.22): the text's codes, then the terminator; an absent key
 %% (no default) writes the terminator alone
-eline({sfield, _, {until, _}, {chars, Set}, _, _, _, _, _} = L, _Rest, Src,
+eline({sfield, _, {until, _}, {chars, Set}, _, _, _, _, _, _SExt} = L, _Rest, Src,
       #e{pack = Pack, wrote = W} = E) ->
     Codes = until_out(L, Src, Pack),
     Width = gt_engine:chars_width(Set),
@@ -1212,7 +1212,7 @@ eline({sfield, _, {until, _}, {chars, Set}, _, _, _, _, _} = L, _Rest, Src,
         true -> rb_checked(E1#e{wrote = until_read_back(L, Codes, W, Pack)});
         false -> E1
     end;
-eline({sfield, Keys, Len, _, _, _, _, _, With} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
+eline({sfield, Keys, Len, _, _, _, _, _, With, _SExt} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
     {Bits, Raw} = field_bits(L, Src, Pack),
     E1 = held(Keys, With, Src, Len, emit(Len, Bits, E)),
     case maps:get(has_switch, Pack, false) of
@@ -1527,7 +1527,7 @@ case_src(_Case, Src) -> Src.
 %% What a field line writes -> {Bits, Raw}: the bits on the wire, and the
 %% value decode reads from them before `trim`, `via` and the transform
 %% (after `swap`).
-field_bits({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent, With}, Src, Pack) ->
+field_bits({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent, With, SExt}, Src, Pack) ->
     Cands = candidates(Keys, With, Src),
     Bits = case pick(Cands, Src) of
                %% an absent key writes zero bits, or its first sentinel;
@@ -1542,7 +1542,7 @@ field_bits({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent, With}, Src, Pack) 
                    gt_engine:guard_encode(
                      Pack, Key, LenT,
                      fun() ->
-                             W = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none, none}, Val),
+                             W = gt_engine:wire_value(Pack, Key, Tr, wopts(Keys, Key, Via, SExt), Val),
                              U0 = gt_engine:bits_encode(Tr, W, Len, maps:get(bit_order, Pack)),
                              case Swap of
                                  true -> gt_engine:swap_bytes(U0, Len);
@@ -1559,8 +1559,8 @@ field_bits({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent, With}, Src, Pack) 
 %% The keys decode would set from Raw, put in Wrote where it does not hold
 %% them yet (decode keeps a key's first value): none for a sentinel, and
 %% none whose transform or table fails.
-read_back({sfield, Keys, Len, Tr, _LenT, _Swap, Trim, Absent, _With}, Raw, Wrote, Pack) ->
-    case Absent =/= none andalso lists:member(Raw, Absent) of
+read_back({sfield, Keys, Len, Tr, _LenT, _Swap, Trim, Absent, _With, SExt}, Raw, Wrote, Pack) ->
+    case seq_sentinel(Raw, Absent, SExt) of
         true -> Wrote;
         false ->
             rb_keys(Keys, fun() ->
@@ -1616,14 +1616,14 @@ rb_checked(#e{wrote = W, swkeys = Sw, pack = Pack} = E) ->
 
 %% The codes an `until:` line writes, its terminator last. More than
 %% 2040 / w characters is transform-encode.
-until_out({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, With}, Src, Pack) ->
+until_out({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, With, SExt}, Src, Pack) ->
     case pick(candidates(Keys, With, Src), Src) of
         none -> [Code];
         {Key, Via, Val} ->
             gt_engine:guard_encode(
               Pack, Key, LenT,
               fun() ->
-                      Text = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none, none}, Val),
+                      Text = gt_engine:wire_value(Pack, Key, Tr, wopts(Keys, Key, Via, SExt), Val),
                       true = is_binary(Text),
                       true = byte_size(Text) =< 2040 div gt_engine:chars_width(Set),
                       gt_engine:until_codes(Set, Code, Text)
@@ -1631,12 +1631,12 @@ until_out({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, With},
     end.
 
 %% As read_back/4 for an `until:` field: the text decode reads from Codes.
-until_read_back({sfield, Keys, {until, _}, {chars, Set} = Tr, _LenT, _, _, _, _}, Codes, Wrote, Pack) ->
+until_read_back({sfield, Keys, {until, _}, {chars, Set} = Tr, _LenT, _, _, _, _, _SExt}, Codes, Wrote, Pack) ->
     rb_keys(Keys, fun() -> gt_engine:until_text(Set, lists:droplast(Codes)) end, Tr, Wrote, Pack).
 
 %% As read_back/4 for a field on a UPER locator (0.19): the pieces written
 %% are read as decode reads them.
-uread_back({sfield, Keys, {uper, Loc}, Tr, _LenT, _, _, _, _}, Pieces, Wrote, Pack) ->
+uread_back({sfield, Keys, {uper, Loc}, Tr, _LenT, _, _, _, _, _SExt}, Pieces, Wrote, Pack) ->
     Len = lists:sum([L || {L, _} <- Pieces]),
     Pad = (8 - Len rem 8) rem 8,
     Bin = << << <<V:L>> || {L, V} <- Pieces >>/bits, 0:Pad >>,
@@ -1728,7 +1728,7 @@ ewalk(Lines, [_ | _] = Wins, KS, End, Src, #e{pos = Pos} = E, Fs) when Pos >= En
 ewalk([], [], _KS, _End, _Src, E, _Fs) -> E;
 ewalk([L | Rest], Wins, KS, End, Src, #e{pos = Pos} = E, {KW, Fs}) ->
     Fs1 = case {Wins, L} of
-              {[_ | _], {sfield, _, Len, _, _, _, _, _, _}} when is_integer(Len) -> [{Pos, L} | Fs];
+              {[_ | _], {sfield, _, Len, _, _, _, _, _, _, _SExt}} when is_integer(Len) -> [{Pos, L} | Fs];
               %% the bits an `as` line binds
               {[_ | _], {swhen, _, _, As, none, _}} when As =/= none -> [{Pos, L} | Fs];
               _ -> Fs
@@ -1745,7 +1745,7 @@ reread({KW, Fs}, #e{pack = Pack} = E) ->
         false -> E;
         true ->
             E#e{wrote = lists:foldl(
-                  fun({FP, {sfield, _, Len, _, _, Swap, _, _, _} = L}, Acc) ->
+                  fun({FP, {sfield, _, Len, _, _, Swap, _, _, _, _SExt} = L}, Acc) ->
                           Bits = win_peek(E, FP, Len, false),
                           Raw = case Swap of
                                     true -> gt_engine:swap_bytes(Bits, Len);
@@ -1856,6 +1856,16 @@ item_scope(Item, #{lines := Common, defaults := Defaults, kinds := Kinds}, Pack)
             end
     end.
 
+%% The options a value is written through: the line's `range` (0.56)
+%% belongs to the key of its field line, not to an `also` key.
+wopts([{Key, _} | _], Key, Via, SExt) -> {Via, false, false, false, none, none, SExt};
+wopts(_, _, Via, _) -> {Via, false, false, false, none, none}.
+
+%% Is the raw value a sentinel: exact (0.9) or a range (0.56)?
+seq_sentinel(U, Absent, SExt) ->
+    (Absent =/= none andalso lists:member(U, Absent)) orelse
+        gt_engine:range_sentinel(U, maps:get(absent_ranges, SExt, [])).
+
 %% The value a field line writes: that of the earliest of its keys the scope
 %% has, else the earliest `default` of one of them -> none | {Key, Via, Value}.
 pick(Keys, #{model := Model, defaults := Defaults}) ->
@@ -1885,7 +1895,7 @@ has([L | Rest], Src, Pack) ->
     has1(L, Src, Pack) orelse has(Rest, sim1(L, Src, Pack), Pack).
 
 %% In a UPER pack no default counts as content (rulings 2 and 19 of 0.19).
-has1({sfield, Keys0, _, _, _, _, _, _, With}, #{model := Model} = Src, Pack) ->
+has1({sfield, Keys0, _, _, _, _, _, _, With, _SExt}, #{model := Model} = Src, Pack) ->
     Keys = candidates(Keys0, With, Src),          % ruling 1 of 0.18
     case maps:get(encoding, Pack) of
         uper -> lists:any(fun({K, _}) -> maps:is_key(K, Model) end, Keys);
@@ -1923,14 +1933,14 @@ sim1(L, Src, Pack) ->
 
 sims(Lines, Src, Pack) -> lists:foldl(fun(L, S) -> sim(L, S, Pack) end, Src, Lines).
 
-sim({sfield, _, {until, _}, _, _, _, _, _, _} = L, Src, Pack) ->
-    try until_out(L, Src, Pack) of
+sim({sfield, _, {until, _}, _, _, _, _, _, _, _SExt} = L, Src, Pack) ->
+    try until_out(unrefused(L), Src, Pack) of
         Codes -> Src#{wrote => until_read_back(L, Codes, maps:get(wrote, Src, #{}), Pack)}
     catch
         _:_ -> Src
     end;
-sim({sfield, _, _, _, _, _, _, _, _} = L, Src, Pack) ->
-    try field_bits(L, Src, Pack) of
+sim({sfield, _, _, _, _, _, _, _, _, _SExt} = L, Src, Pack) ->
+    try field_bits(unrefused(L), Src, Pack) of
         {_, Raw} -> Src#{wrote => read_back(L, Raw, maps:get(wrote, Src, #{}), Pack)}
     catch
         _:_ -> Src
@@ -1967,6 +1977,12 @@ sim({switch, Key, Ref, Cases, Else}, Src, Pack) ->
             S1#{defaults := maps:get(defaults, Src)}
     end;
 sim(_, Src, _Pack) -> Src.
+
+%% The scan refuses nothing by `range` (ruling 9 of 0.56); a wrap stands, as
+%% the bits a switch reads are those of the wrapped value (ruling 37 of 0.20).
+unrefused({sfield, _, _, _, _, _, _, _, _, #{range := {_, _, false}} = SExt} = L) ->
+    setelement(10, L, maps:remove(range, SExt));
+unrefused(L) -> L.
 
 sim_parts([], Src, _Pack) -> Src;
 sim_parts([Part | Rest] = Parts, Src, Pack) ->
