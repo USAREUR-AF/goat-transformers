@@ -22,8 +22,7 @@ no place in 2.x.
 
 - **The CRC32, HMAC and RDP data** the flags announce are in the data octets: the CRC32 and HMAC
   are trailers after a list that runs to the end. Needed: a trailer after a `rest` list.
-- **Interface framing** (KISS, CAN fragmentation with its own CFP header, I2C, ZMQ) is below this
-  message; the little-endian 1.x header that libcsp's ZMQ fix-up option writes is not read.
+- **Interface framing** is below this message; the little-endian 1.x header that libcsp's ZMQ fix-up option writes is not read.
 
 ## Vectors
 
