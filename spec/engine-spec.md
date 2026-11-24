@@ -6249,10 +6249,15 @@ not `string` without a `via` is `key-type-mismatch`.
     `transform-decode` with `unlisted` too, and so is a table text that does
     not read as the key's type.
 
+31. **A `switch` key with several lines** (rulings 31 and 33 of 0.20). Every
+    line of the key is read back from the bits written, as decode reads them.
+    A line that fails the decode by ruling 26 makes the encode
+    `transform-encode`, whatever the first line gives.
+
 ### Stated, not yet pinned by a vector
 
-31. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
-    16, ruling 17, ruling 18 for a second part line, and ruling 13 for a
+32. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
+    16, ruling 17, the table text of ruling 30, ruling 18 for a second part line, and ruling 13 for a
     scalar item on `xml`.
 
 ## Not in this version
