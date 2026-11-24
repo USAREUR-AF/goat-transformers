@@ -1,0 +1,16 @@
+{
+ "name": "golden-00036-accelerations",
+ "from": "dbc-toyota-iq-2009-can",
+ "to": "dbc-toyota-iq-2009-can",
+ "input": "2400000008000000025a00eb00380049",
+ "expect": "2400000008000000025a00eb00380049",
+ "model": {
+  "@kind": "accelerations",
+  "dbctoyotaiq2009can.accelerations_acc_lat_clean": "602",
+  "dbctoyotaiq2009can.accelerations_acc_front_back_1": "-21",
+  "dbctoyotaiq2009can.accelerations_acc_front_back_2": "56",
+  "dbctoyotaiq2009can.accelerations_acc_lateral": "73"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/toyota_iQ_2009_can.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 46d9ffa3e00aa1e789a9486bca59358c6c485335c7aa6fd06a7760936005e34e), message ACCELERATIONS (frame id 36) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

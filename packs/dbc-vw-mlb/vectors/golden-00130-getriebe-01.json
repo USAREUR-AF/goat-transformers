@@ -1,0 +1,24 @@
+{
+ "name": "golden-00130-getriebe-01",
+ "from": "dbc-vw-mlb",
+ "to": "dbc-vw-mlb",
+ "input": "82000000080000005a6bff5bff030080",
+ "expect": "82000000080000005a6bff5bff030080",
+ "model": {
+  "@kind": "getriebe_01",
+  "dbcvwmlb.getriebe_01_getriebe_01_chk": "90",
+  "dbcvwmlb.getriebe_01_getriebe_01_bz": "11",
+  "dbcvwmlb.getriebe_01_ge_schaltvorgang": "keine Schaltung",
+  "dbcvwmlb.getriebe_01_ge_status_kupplung": "3",
+  "dbcvwmlb.getriebe_01_ge_verbot_ausblendung": "kein_Verbot",
+  "dbcvwmlb.getriebe_01_ge_mmom_soll": "1023",
+  "dbcvwmlb.getriebe_01_ge_mmom_status": "2",
+  "dbcvwmlb.getriebe_01_ge_freig_mmom_soll": "1",
+  "dbcvwmlb.getriebe_01_ge_status_schaltablauf": "2",
+  "dbcvwmlb.getriebe_01_ge_mmom_vorhalt": "1023",
+  "dbcvwmlb.getriebe_01_ge_freig_mmom_vorhalt": "nicht_freigegeben",
+  "dbcvwmlb.getriebe_01_ge_kd_fehler": "KD_Fehler"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/vw_mlb.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 88fe6bb0cf30c1e3656431ce66b43dfd9ffb34c54054a2fde0fa9c72a97fdc13), message Getriebe_01 (frame id 130) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

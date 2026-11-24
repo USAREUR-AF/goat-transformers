@@ -1,0 +1,14 @@
+{
+ "name": "golden-00066-global-pats-control-info2",
+ "from": "dbc-ford-cgea1-2-ptcan-2011",
+ "to": "dbc-ford-cgea1-2-ptcan-2011",
+ "input": "4200000008000000405ac46d23eb0000",
+ "expect": "4200000008000000405ac46d23eb0000",
+ "model": {
+  "@kind": "global_pats_control_info2",
+  "dbcfordcgea12ptcan2011.global_pats_control_info2_immocontrolcmd_t2": "2",
+  "dbcfordcgea12ptcan2011.global_pats_control_info2_immocontroldata_t2": "389842543595"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_cgea1_2_ptcan_2011.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c19767779ffbef3296b492bd43036192f2b6db5e98916f8ea7d3e32c72b07f1b), message Global_PATS_Control_Info2 (frame id 66) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

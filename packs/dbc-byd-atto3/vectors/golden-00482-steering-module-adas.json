@@ -1,0 +1,23 @@
+{
+ "name": "golden-00482-steering-module-adas",
+ "from": "dbc-byd-atto3",
+ "to": "dbc-byd-atto3",
+ "input": "e2010000080000005aae5f7c808d32b0",
+ "expect": "e2010000080000005aae5f7c808d32b0",
+ "model": {
+  "@kind": "steering_module_adas",
+  "dbcbydatto3.steering_module_adas_angle_rate_limit_upper": "-422",
+  "dbcbydatto3.steering_module_adas_angle_rate_limit_lower": "-21",
+  "dbcbydatto3.steering_module_adas_e2e_alive_1": "0",
+  "dbcbydatto3.steering_module_adas_e2e_alive_2": "1",
+  "dbcbydatto3.steering_module_adas_steer_req": "0",
+  "dbcbydatto3.steering_module_adas_steer_req_active_low": "1",
+  "dbcbydatto3.steering_module_adas_steer_angle": "-3264.4",
+  "dbcbydatto3.steering_module_adas_set_me_ff": "141",
+  "dbcbydatto3.steering_module_adas_set_me_f": "2",
+  "dbcbydatto3.steering_module_adas_counter": "3",
+  "dbcbydatto3.steering_module_adas_checksum": "176"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/byd_atto3.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 536d6c2a1805b0ead4d426892e28f66b6a43b08736b3d72db2838bb60842d012), message STEERING_MODULE_ADAS (frame id 482) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

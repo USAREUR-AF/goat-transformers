@@ -1,0 +1,17 @@
+{
+ "name": "golden-00034-active-fault-latched-2",
+ "from": "dbc-ford-cads-64",
+ "to": "dbc-ford-cads-64",
+ "input": "22000000080000000a00000000000000",
+ "expect": "22000000080000000a00000000000000",
+ "model": {
+  "@kind": "active_fault_latched_2",
+  "dbcfordcads64.active_fault_latched_2_carcfgnotconfigurederror": "No Fault",
+  "dbcfordcads64.active_fault_latched_2_modulenotconfigurederror": "Fault Present",
+  "dbcfordcads64.active_fault_latched_2_vinsignalcomparefailure": "No Fault",
+  "dbcfordcads64.active_fault_latched_2_ipma_pcan_missingmsg": "1",
+  "dbcfordcads64.active_fault_latched_2_ipma_pcan_datarangecheck": "No Fault"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/FORD_CADS_64.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 9d4b88f195953b8fbb42181c9f2e754807bda13cfb5ba43678e643d398131e3b), message Active_Fault_Latched_2 (frame id 34) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

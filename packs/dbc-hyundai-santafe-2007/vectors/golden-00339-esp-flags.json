@@ -1,0 +1,20 @@
+{
+ "name": "golden-00339-esp-flags",
+ "from": "dbc-hyundai-santafe-2007",
+ "to": "dbc-hyundai-santafe-2007",
+ "input": "530100000800000000122f7c008d0000",
+ "expect": "530100000800000000122f7c008d0000",
+ "model": {
+  "@kind": "esp_flags",
+  "dbchyundaisantafe2007.esp_flags_abd_active": "0",
+  "dbchyundaisantafe2007.esp_flags_tcs_active": "1",
+  "dbchyundaisantafe2007.esp_flags_abs_active": "0",
+  "dbchyundaisantafe2007.esp_flags_esp_off": "1",
+  "dbchyundaisantafe2007.esp_flags_esp_active": "0",
+  "dbchyundaisantafe2007.esp_flags_vehiclespeed": "47",
+  "dbchyundaisantafe2007.esp_flags_torquerequestfast": "48.4375",
+  "dbchyundaisantafe2007.esp_flags_torquerequestslow": "55.078125"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_santafe_2007.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 98dab8afe58b1816b3b5464318437bf9486f00f22a4f0d506f0395a29cb3bc03), message ESP_Flags (frame id 339) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

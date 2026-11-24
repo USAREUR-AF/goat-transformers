@@ -1,0 +1,15 @@
+{
+ "name": "golden-00496-wheelspeed-clean",
+ "from": "dbc-byd-atto3",
+ "to": "dbc-byd-atto3",
+ "input": "f0010000080000005a5a00000000b038",
+ "expect": "f0010000080000005a5a00000000b038",
+ "model": {
+  "@kind": "wheelspeed_clean",
+  "dbcbydatto3.wheelspeed_clean_wheelspeed_clean": "2313.0",
+  "dbcbydatto3.wheelspeed_clean_counter": "11",
+  "dbcbydatto3.wheelspeed_clean_checksum": "56"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/byd_atto3.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 536d6c2a1805b0ead4d426892e28f66b6a43b08736b3d72db2838bb60842d012), message WHEELSPEED_CLEAN (frame id 496) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

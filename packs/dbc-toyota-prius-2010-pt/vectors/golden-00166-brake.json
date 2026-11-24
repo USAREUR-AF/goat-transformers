@@ -1,0 +1,14 @@
+{
+ "name": "golden-00166-brake",
+ "from": "dbc-toyota-prius-2010-pt",
+ "to": "dbc-toyota-prius-2010-pt",
+ "input": "a6000000080000005a00eb0000000000",
+ "expect": "a6000000080000005a00eb0000000000",
+ "model": {
+  "@kind": "brake",
+  "dbctoyotaprius2010pt.brake_brake_amount": "90",
+  "dbctoyotaprius2010pt.brake_brake_pedal": "235"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/toyota_prius_2010_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 ebcc9c69b75241a152b3e4ae95dfc0ab7a176e9e76655090c91cff44ac637c9b), message BRAKE (frame id 166) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

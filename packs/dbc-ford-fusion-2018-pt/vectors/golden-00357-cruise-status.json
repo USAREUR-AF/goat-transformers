@@ -1,0 +1,15 @@
+{
+ "name": "golden-00357-cruise-status",
+ "from": "dbc-ford-fusion-2018-pt",
+ "to": "dbc-ford-fusion-2018-pt",
+ "input": "65010000080000000003380000000000",
+ "expect": "65010000080000000003380000000000",
+ "model": {
+  "@kind": "cruise_status",
+  "dbcfordfusion2018pt.cruise_status_brake_drv_appl": "0",
+  "dbcfordfusion2018pt.cruise_status_cruise_state": "3",
+  "dbcfordfusion2018pt.cruise_status_set_speed": "56"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_fusion_2018_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 702117aeef6128ae74664c6e46f92bdfea8613212f40fc2db195662194744764), message Cruise_Status (frame id 357) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,23 @@
+{
+ "name": "golden-00075-vehemergencydata2",
+ "from": "dbc-ford-cgea1-2-ptcan-2011",
+ "to": "dbc-ford-cgea1-2-ptcan-2011",
+ "input": "4b000000080000004c04dc944c000000",
+ "expect": "4b000000080000004c04dc944c000000",
+ "model": {
+  "@kind": "vehemergencydata2",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw1pasbckl_d_ltchd": "2",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw1drvbckl_d_ltchd": "3",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw2lbckl_d_ltchd": "0",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw1paschld_d_ltchd": "1",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw2rbckl_d_ltchd": "6",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw2mbckl_d_ltchd": "7",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw3mbckl_d_ltchd": "4",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw3lbckl_d_ltchd": "5",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw3rbckl_d_ltchd": "2",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw2lrib_d_ltchd": "3",
+  "dbcfordcgea12ptcan2011.vehemergencydata2_vedsrw2rrib_d_ltchd": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_cgea1_2_ptcan_2011.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c19767779ffbef3296b492bd43036192f2b6db5e98916f8ea7d3e32c72b07f1b), message VehEmergencyData2 (frame id 75) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

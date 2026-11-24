@@ -1,0 +1,18 @@
+{
+ "name": "golden-00186-transmissiondata",
+ "from": "dbc-bmw-e9x-e8x",
+ "to": "dbc-bmw-e9x-e8x",
+ "input": "ba000000080000001a380049379e0f00",
+ "expect": "ba000000080000001a380049379e0f00",
+ "model": {
+  "@kind": "transmissiondata",
+  "dbcbmwe9xe8x.transmissiondata_geartar": "6.0",
+  "dbcbmwe9xe8x.transmissiondata_shifting": "1",
+  "dbcbmwe9xe8x.transmissiondata_gearratio": "2.8000000000000003",
+  "dbcbmwe9xe8x.transmissiondata_outputshaftspeed": "1769.125",
+  "dbcbmwe9xe8x.transmissiondata_checksum_186": "158",
+  "dbcbmwe9xe8x.transmissiondata_counter_186": "15"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/bmw_e9x_e8x.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c238d3938e4dc461b96b5055e790ccea01d03fc8c84d44ebeb35446654988f07), message TransmissionData (frame id 186) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

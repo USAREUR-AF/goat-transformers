@@ -1,0 +1,15 @@
+{
+ "name": "golden-00291-status-msg",
+ "from": "dbc-toyota-tss2-adas",
+ "to": "dbc-toyota-tss2-adas",
+ "input": "23010000070000000000000000c93800",
+ "expect": "23010000070000000000000000c93800",
+ "model": {
+  "@kind": "status_msg",
+  "dbctoyotatss2adas.status_msg_radar_status": "0",
+  "dbctoyotatss2adas.status_msg_radar_pre_fault": "3",
+  "dbctoyotatss2adas.status_msg_invalid_counter": "2360"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/toyota_tss2_adas.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 f9edf74785f23778c389f69fe83a4fecb8af07bfa60fdd3f0824f4d236a975a9), message STATUS_MSG (frame id 291) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

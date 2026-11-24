@@ -1,0 +1,17 @@
+{
+ "name": "golden-00175-gw-hsc2-hcu-frp00",
+ "from": "dbc-mg",
+ "to": "dbc-mg",
+ "input": "af000000080000005a00028000000000",
+ "expect": "af000000080000005a00028000000000",
+ "model": {
+  "@kind": "gw_hsc2_hcu_frp00",
+  "dbcmg.gw_hsc2_hcu_frp00_eptaccelactuposhsc2": "35.294129999999996",
+  "dbcmg.gw_hsc2_hcu_frp00_eptstcmdon_h1hsc2": "1",
+  "dbcmg.gw_hsc2_hcu_frp00_eptbrkpdldscrtinptstsvhsc2": "0",
+  "dbcmg.gw_hsc2_hcu_frp00_eptbrkpdldscrtinptstshsc2": "1",
+  "dbcmg.gw_hsc2_hcu_frp00_eptaccelactuposvhsc2": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mg.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 7213db50f5400fd43ab47a11e29494507f6df13a4dbe38ffd794cb5f1dd4da49), message GW_HSC2_HCU_FrP00 (frame id 175) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

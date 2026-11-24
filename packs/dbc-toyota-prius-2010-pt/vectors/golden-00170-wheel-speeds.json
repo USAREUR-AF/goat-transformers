@@ -1,0 +1,16 @@
+{
+ "name": "golden-00170-wheel-speeds",
+ "from": "dbc-toyota-prius-2010-pt",
+ "to": "dbc-toyota-prius-2010-pt",
+ "input": "aa000000080000005a5a23eba9383749",
+ "expect": "aa000000080000005a5a23eba9383749",
+ "model": {
+  "@kind": "wheel_speeds",
+  "dbctoyotaprius2010pt.wheel_speeds_wheel_speed_fr": "75.736",
+  "dbctoyotaprius2010pt.wheel_speeds_wheel_speed_fl": "-10.661000000000001",
+  "dbctoyotaprius2010pt.wheel_speeds_wheel_speed_rr": "200.914",
+  "dbctoyotaprius2010pt.wheel_speeds_wheel_speed_rl": "20.078599999999994"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/toyota_prius_2010_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 ebcc9c69b75241a152b3e4ae95dfc0ab7a176e9e76655090c91cff44ac637c9b), message WHEEL_SPEEDS (frame id 170) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

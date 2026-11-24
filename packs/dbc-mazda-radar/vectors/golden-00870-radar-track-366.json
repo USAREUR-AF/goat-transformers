@@ -1,0 +1,15 @@
+{
+ "name": "golden-00870-radar-track-366",
+ "from": "dbc-mazda-radar",
+ "to": "dbc-mazda-radar",
+ "input": "6603000008000000a5a3eb2700000000",
+ "expect": "6603000008000000a5a3eb2700000000",
+ "model": {
+  "@kind": "radar_track_366",
+  "dbcmazdaradar.radar_track_366_dist_obj": "2650",
+  "dbcmazdaradar.radar_track_366_ang_obj": "1003",
+  "dbcmazdaradar.radar_track_366_relv_obj": "312"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mazda_radar.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 0abd6760eb21be034c7f238cd42efb3753d1182b08eb2c33fc1a3a4764bc2869), message RADAR_TRACK_366 (frame id 870) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

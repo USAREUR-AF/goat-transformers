@@ -1,0 +1,14 @@
+{
+ "name": "golden-00658-brake-controls",
+ "from": "dbc-mazda-rx8",
+ "to": "dbc-mazda-rx8",
+ "input": "92020000080000000000000000080000",
+ "expect": "92020000080000000000000000080000",
+ "model": {
+  "@kind": "brake_controls",
+  "dbcmazdarx8.brake_controls_parkingbrakeswitch": "0",
+  "dbcmazdarx8.brake_controls_brakepedalswitch": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mazda_rx8.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 3b2ba3f10e49808f6930e865fe53f93720cbd37d6e3c40242961f09432813c21), message brake_controls (frame id 658) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

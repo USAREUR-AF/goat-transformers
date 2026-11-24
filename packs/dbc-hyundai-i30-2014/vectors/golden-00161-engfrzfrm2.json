@@ -1,0 +1,18 @@
+{
+ "name": "golden-00161-engfrzfrm2",
+ "from": "dbc-hyundai-i30-2014",
+ "to": "dbc-hyundai-i30-2014",
+ "input": "a1000000080000005aeb38499e2f3a00",
+ "expect": "a1000000080000005aeb38499e2f3a00",
+ "model": {
+  "@kind": "engfrzfrm2",
+  "dbchyundaii302014.engfrzfrm2_pid_06h": "-29.6875",
+  "dbchyundaii302014.engfrzfrm2_pid_07h": "83.59375",
+  "dbchyundaii302014.engfrzfrm2_pid_08h": "-56.25",
+  "dbchyundaii302014.engfrzfrm2_pid_09h": "-42.96875",
+  "dbchyundaii302014.engfrzfrm2_pid_0bh": "158",
+  "dbchyundaii302014.engfrzfrm2_pid_23h": "148950.0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_i30_2014.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 12130a0e82f04f5bdc237fb4d9727792256e1f017b5f7fae23594eb1d0ffad16), message EngFrzFrm2 (frame id 161) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

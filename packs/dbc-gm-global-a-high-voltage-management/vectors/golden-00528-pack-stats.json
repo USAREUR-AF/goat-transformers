@@ -1,0 +1,14 @@
+{
+ "name": "golden-00528-pack-stats",
+ "from": "dbc-gm-global-a-high-voltage-management",
+ "to": "dbc-gm-global-a-high-voltage-management",
+ "input": "1002000008000000a5a0eb0000000000",
+ "expect": "1002000008000000a5a0eb0000000000",
+ "model": {
+  "@kind": "pack_stats",
+  "dbcgmglobalahighvoltagemanagement.pack_stats_pack_voltage": "331.25",
+  "dbcgmglobalahighvoltagemanagement.pack_stats_pack_current": "-2.2"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/gm_global_a_high_voltage_management.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 a6101722e9e2dbf567603f7a1aa3b6d27c654dbe086d5a38e8460dcaf8965e03), message Pack_Stats (frame id 528) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

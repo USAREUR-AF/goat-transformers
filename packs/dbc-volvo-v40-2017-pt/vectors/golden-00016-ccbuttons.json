@@ -1,0 +1,30 @@
+{
+ "name": "golden-00016-ccbuttons",
+ "from": "dbc-volvo-v40-2017-pt",
+ "to": "dbc-volvo-v40-2017-pt",
+ "input": "10000000080000005aeb38499e2fe555",
+ "expect": "10000000080000005aeb38499e2fe555",
+ "model": {
+  "@kind": "ccbuttons",
+  "dbcvolvov402017pt.ccbuttons_byte0": "90",
+  "dbcvolvov402017pt.ccbuttons_byte1": "235",
+  "dbcvolvov402017pt.ccbuttons_byte2": "56",
+  "dbcvolvov402017pt.ccbuttons_byte3": "73",
+  "dbcvolvov402017pt.ccbuttons_byte4": "158",
+  "dbcvolvov402017pt.ccbuttons_byte5": "47",
+  "dbcvolvov402017pt.ccbuttons_byte6": "28",
+  "dbcvolvov402017pt.ccbuttons_timegapdecreasebtn": "1",
+  "dbcvolvov402017pt.ccbuttons_timegapincreasebtn": "0",
+  "dbcvolvov402017pt.ccbuttons_accminusbtn": "1",
+  "dbcvolvov402017pt.ccbuttons_accsetbtn": "0",
+  "dbcvolvov402017pt.ccbuttons_b7b6": "1",
+  "dbcvolvov402017pt.ccbuttons_accresumebtn": "0",
+  "dbcvolvov402017pt.ccbuttons_accstopbtn": "1",
+  "dbcvolvov402017pt.ccbuttons_b7b3": "0",
+  "dbcvolvov402017pt.ccbuttons_acconoffbtn": "1",
+  "dbcvolvov402017pt.ccbuttons_b7b1": "0",
+  "dbcvolvov402017pt.ccbuttons_b7b0": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/volvo_v40_2017_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 e2adc539cfda8703594301a6e5ebb384d458a682ea853e29744926a70db83343), message CCButtons (frame id 16) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

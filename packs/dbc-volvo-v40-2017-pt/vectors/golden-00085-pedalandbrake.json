@@ -1,0 +1,18 @@
+{
+ "name": "golden-00085-pedalandbrake",
+ "from": "dbc-volvo-v40-2017-pt",
+ "to": "dbc-volvo-v40-2017-pt",
+ "input": "550000000800000000025a0107499e2f",
+ "expect": "550000000800000000025a0107499e2f",
+ "model": {
+  "@kind": "pedalandbrake",
+  "dbcvolvov402017pt.pedalandbrake_accpedal": "60.2",
+  "dbcvolvov402017pt.pedalandbrake_brakepedalactive2": "1",
+  "dbcvolvov402017pt.pedalandbrake_brakepedalactive": "0",
+  "dbcvolvov402017pt.pedalandbrake_new_signal_1": "1865",
+  "dbcvolvov402017pt.pedalandbrake_new_signal_3": "158",
+  "dbcvolvov402017pt.pedalandbrake_new_signal_2": "47"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/volvo_v40_2017_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 e2adc539cfda8703594301a6e5ebb384d458a682ea853e29744926a70db83343), message PedalandBrake (frame id 85) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,13 @@
+{
+ "name": "golden-00241-ebcmbrakepedalposition",
+ "from": "dbc-cadillac-ct6-powertrain",
+ "to": "dbc-cadillac-ct6-powertrain",
+ "input": "f100000006000000005a000000000000",
+ "expect": "f100000006000000005a000000000000",
+ "model": {
+  "@kind": "ebcmbrakepedalposition",
+  "dbccadillacct6powertrain.ebcmbrakepedalposition_brakepedalposition": "90"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/cadillac_ct6_powertrain.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 b3183d4341267e73c65c6e5721a3804a5ae19a30eca8841bd426474b90652eff), message EBCMBrakePedalPosition (frame id 241) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

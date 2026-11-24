@@ -1,0 +1,18 @@
+{
+ "name": "golden-00016-sas0",
+ "from": "dbc-volvo-v60-2015-pt",
+ "to": "dbc-volvo-v60-2015-pt",
+ "input": "10000000080000000eb03749bc9e3a2f",
+ "expect": "10000000080000000eb03749bc9e3a2f",
+ "model": {
+  "@kind": "sas0",
+  "dbcvolvov602015pt.sas0_steeringdirection": "0",
+  "dbcvolvov602015pt.sas0_counter0": "235",
+  "dbcvolvov602015pt.sas0_steeringpressureonit": "0",
+  "dbcvolvov602015pt.sas0_steeringrateofchange2": "14153",
+  "dbcvolvov602015pt.sas0_steeringrateofchange": "15518.0",
+  "dbcvolvov602015pt.sas0_steeringangle": "662.8275"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/volvo_v60_2015_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 dcdf7f7bd5c64d7debcf967580eb6ddf3437e29fcabc9f4b5529a15d5b17170a), message SAS0 (frame id 16) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,23 @@
+{
+ "name": "golden-00168-engineandbrake",
+ "from": "dbc-bmw-e9x-e8x",
+ "to": "dbc-bmw-e9x-e8x",
+ "input": "a8000000080000005a8b934937209340",
+ "expect": "a8000000080000005a8b934937209340",
+ "model": {
+  "@kind": "engineandbrake",
+  "dbcbmwe9xe8x.engineandbrake_checksum_engineandbrake": "90",
+  "dbcbmwe9xe8x.engineandbrake_aliv_torq_1_dme": "11",
+  "dbcbmwe9xe8x.engineandbrake_enginetorque": "-54.25",
+  "dbcbmwe9xe8x.engineandbrake_enginetorquewointerv": "442.28125",
+  "dbcbmwe9xe8x.engineandbrake_st_dmea_swo": "2",
+  "dbcbmwe9xe8x.engineandbrake_st_rcpt_eng_acc": "3",
+  "dbcbmwe9xe8x.engineandbrake_st_rcpt_eng_ars": "0",
+  "dbcbmwe9xe8x.engineandbrake_st_rcpt_eng_dsc": "1",
+  "dbcbmwe9xe8x.engineandbrake_st_rcpt_eng_egs": "2",
+  "dbcbmwe9xe8x.engineandbrake_brake_active2": "1",
+  "dbcbmwe9xe8x.engineandbrake_brakepressed": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/bmw_e9x_e8x.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c238d3938e4dc461b96b5055e790ccea01d03fc8c84d44ebeb35446654988f07), message EngineAndBrake (frame id 168) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

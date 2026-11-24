@@ -1,0 +1,26 @@
+{
+ "name": "golden-00069-driver-controls",
+ "from": "dbc-mercedes-benz-e350-2010",
+ "to": "dbc-mercedes-benz-e350-2010",
+ "input": "4500000008000000157c0a00c16060a7",
+ "expect": "4500000008000000157c0a00c16060a7",
+ "model": {
+  "@kind": "driver_controls",
+  "dbcmercedesbenze3502010.driver_controls_cruise_control_decel_low": "0",
+  "dbcmercedesbenze3502010.driver_controls_cruise_control_accel_low": "1",
+  "dbcmercedesbenze3502010.driver_controls_cruise_control_decel_high": "0",
+  "dbcmercedesbenze3502010.driver_controls_cruise_control_accel_high": "1",
+  "dbcmercedesbenze3502010.driver_controls_cruise_control_resume": "0",
+  "dbcmercedesbenze3502010.driver_controls_cruise_control_cancel": "1",
+  "dbcmercedesbenze3502010.driver_controls_set_me_xff": "124",
+  "dbcmercedesbenze3502010.driver_controls_highbeam_momentary": "1",
+  "dbcmercedesbenze3502010.driver_controls_highbeam_toggle": "0",
+  "dbcmercedesbenze3502010.driver_controls_right_blinker": "1",
+  "dbcmercedesbenze3502010.driver_controls_left_blinker": "0",
+  "dbcmercedesbenze3502010.driver_controls_steering_wheel_buttons": "24769",
+  "dbcmercedesbenze3502010.driver_controls_counter": "6",
+  "dbcmercedesbenze3502010.driver_controls_checksum": "167"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mercedes_benz_e350_2010.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 89f574ecec7e299c4cfd482b2d71cf5a97949d331a06c46c4669bf9f2a715c07), message DRIVER_CONTROLS (frame id 69) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

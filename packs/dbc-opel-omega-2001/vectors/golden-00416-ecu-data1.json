@@ -1,0 +1,17 @@
+{
+ "name": "golden-00416-ecu-data1",
+ "from": "dbc-opel-omega-2001",
+ "to": "dbc-opel-omega-2001",
+ "input": "a001000008000000005a5aeb3849009e",
+ "expect": "a001000008000000005a5aeb3849009e",
+ "model": {
+  "@kind": "ecu_data1",
+  "dbcopelomega2001.ecu_data1_rpm": "23130",
+  "dbcopelomega2001.ecu_data1_torqueresponse": "235",
+  "dbcopelomega2001.ecu_data1_torquelost": "56",
+  "dbcopelomega2001.ecu_data1_app": "73",
+  "dbcopelomega2001.ecu_data1_torquerequest": "158"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/opel_omega_2001.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 fc06200b5c9c712648281893b3e96ddd1bd2ef9315d1800a0d0713ae358c0345), message ECU_Data1 (frame id 416) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

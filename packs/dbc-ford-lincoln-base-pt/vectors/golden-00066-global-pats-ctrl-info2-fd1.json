@@ -1,0 +1,14 @@
+{
+ "name": "golden-00066-global-pats-ctrl-info2-fd1",
+ "from": "dbc-ford-lincoln-base-pt",
+ "to": "dbc-ford-lincoln-base-pt",
+ "input": "4200000008000000005ac46d23eb0000",
+ "expect": "4200000008000000005ac46d23eb0000",
+ "model": {
+  "@kind": "global_pats_ctrl_info2_fd1",
+  "dbcfordlincolnbasept.global_pats_ctrl_info2_fd1_immocontrolcmd_t2": "IDLE",
+  "dbcfordlincolnbasept.global_pats_ctrl_info2_fd1_immocontroldata_t2": "389842543595"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_lincoln_base_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 536fe325ad4be0eeb9b1704c3663bb6518290185967eb738cf2a3b20f02804eb), message Global_PATS_Ctrl_Info2_FD1 (frame id 66) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

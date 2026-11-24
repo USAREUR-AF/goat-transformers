@@ -1,0 +1,16 @@
+{
+ "name": "golden-00287-steer-module-2",
+ "from": "dbc-byd-atto3",
+ "to": "dbc-byd-atto3",
+ "input": "1f010000050000005a5aeb0089000000",
+ "expect": "1f010000050000005a5aeb0089000000",
+ "model": {
+  "@kind": "steer_module_2",
+  "dbcbydatto3.steer_module_2_steer_angle_2": "2313.0",
+  "dbcbydatto3.steer_module_2_driver_eps_torque": "235",
+  "dbcbydatto3.steer_module_2_checksum_4bit": "8",
+  "dbcbydatto3.steer_module_2_counter": "9"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/byd_atto3.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 536d6c2a1805b0ead4d426892e28f66b6a43b08736b3d72db2838bb60842d012), message STEER_MODULE_2 (frame id 287) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

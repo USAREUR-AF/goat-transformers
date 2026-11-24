@@ -1,0 +1,26 @@
+{
+ "name": "golden-00848-f-vision-environment",
+ "from": "dbc-gm-global-a-object",
+ "to": "dbc-gm-global-a-object",
+ "input": "5003000008000000aa0d52630e1677a7",
+ "expect": "5003000008000000aa0d52630e1677a7",
+ "model": {
+  "@kind": "f_vision_environment",
+  "dbcgmglobalaobject.f_vision_environment_lanesenserollingcount": "2",
+  "dbcgmglobalaobject.f_vision_environment_lanesensetimestampv": "1",
+  "dbcgmglobalaobject.f_vision_environment_lanesensesystemok": "0",
+  "dbcgmglobalaobject.f_vision_environment_lanesensesystemokv": "1",
+  "dbcgmglobalaobject.f_vision_environment_lanesnsllnposvalid": "0",
+  "dbcgmglobalaobject.f_vision_environment_lnsnstngtofhdnglnrtv": "1",
+  "dbcgmglobalaobject.f_vision_environment_lnsnsrlnposvalid": "0",
+  "dbcgmglobalaobject.f_vision_environment_lnsensedisttollnedge": "0.65",
+  "dbcgmglobalaobject.f_vision_environment_lnsnsdisttorlnedge": "4.1000000000000005",
+  "dbcgmglobalaobject.f_vision_environment_lnsnstngtofhdnglnrt": "0.198",
+  "dbcgmglobalaobject.f_vision_environment_lnsnslnchngstatus": "0",
+  "dbcgmglobalaobject.f_vision_environment_fwdvsnenvillum": "1",
+  "dbcgmglobalaobject.f_vision_environment_lanesensetimestamp": "1558",
+  "dbcgmglobalaobject.f_vision_environment_lnsnsburstchecksum": "30631"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/gm_global_a_object.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 a694b22b4a7ebbdf4a9a896525c5ff91c709655a240f3637fdbd1e4027f1c183), message F_Vision_Environment (frame id 848) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

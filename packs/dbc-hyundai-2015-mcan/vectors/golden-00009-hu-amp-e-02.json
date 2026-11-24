@@ -1,0 +1,25 @@
+{
+ "name": "golden-00009-hu-amp-e-02",
+ "from": "dbc-hyundai-2015-mcan",
+ "to": "dbc-hyundai-2015-mcan",
+ "input": "0900000008000000b19e312306000000",
+ "expect": "0900000008000000b19e312306000000",
+ "model": {
+  "@kind": "hu_amp_e_02",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_veqmode": "2",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_surroundmode": "3",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_rearspmute": "0",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_mute": "1",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_audiomode": "158",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_spdifmute": "3",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_reset": "0",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_eq": "1",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_defaultbeep2": "2",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_defaultbeep1": "3",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_qlsmode": "0",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_vipmode": "1",
+  "dbchyundai2015mcan.hu_amp_e_02_amp_beatsmode": "2"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_2015_mcan.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 b18e69bdd30e53fe689b23fbd59779095249a1bb5b2391435e814a490fa924e4), message HU_AMP_E_02 (frame id 9) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

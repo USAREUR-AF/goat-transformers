@@ -1,0 +1,21 @@
+{
+ "name": "golden-00703-das-control",
+ "from": "dbc-tesla-powertrain",
+ "to": "dbc-tesla-powertrain",
+ "input": "bf02000008000000ff3ffeffffffbfd2",
+ "expect": "bf02000008000000ff3ffeffffffbfd2",
+ "model": {
+  "@kind": "das_control",
+  "dbcteslapowertrain.das_control_das_setspeed": "409.5",
+  "dbcteslapowertrain.das_control_das_accstate": "3",
+  "dbcteslapowertrain.das_control_das_aebevent": "AEB_FAULT",
+  "dbcteslapowertrain.das_control_das_jerkmin": "0.09800000000000075",
+  "dbcteslapowertrain.das_control_das_jerkmax": "15.045",
+  "dbcteslapowertrain.das_control_das_accelmin": "5.440000000000001",
+  "dbcteslapowertrain.das_control_das_accelmax": "5.440000000000001",
+  "dbcteslapowertrain.das_control_das_controlcounter": "5",
+  "dbcteslapowertrain.das_control_das_controlchecksum": "210"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/tesla_powertrain.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 d5fe66f2c1888a769ba73fb7b6c43da62ba0789da6193b170483bbcf51967930), message DAS_control (frame id 703) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

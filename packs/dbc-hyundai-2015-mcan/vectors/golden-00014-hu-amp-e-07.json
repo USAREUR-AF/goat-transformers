@@ -1,0 +1,16 @@
+{
+ "name": "golden-00014-hu-amp-e-07",
+ "from": "dbc-hyundai-2015-mcan",
+ "to": "dbc-hyundai-2015-mcan",
+ "input": "0e000000080000005aeba93837490000",
+ "expect": "0e000000080000005aeba93837490000",
+ "model": {
+  "@kind": "hu_amp_e_07",
+  "dbchyundai2015mcan.hu_amp_e_07_amp_hfvolumestep": "90",
+  "dbchyundai2015mcan.hu_amp_e_07_amp_hfmainaudiocut": "235",
+  "dbchyundai2015mcan.hu_amp_e_07_amp_hfchanneloutputmask": "43320",
+  "dbchyundai2015mcan.hu_amp_e_07_amp_hfchannelmutemask": "14153"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_2015_mcan.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 b18e69bdd30e53fe689b23fbd59779095249a1bb5b2391435e814a490fa924e4), message HU_AMP_E_07 (frame id 14) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

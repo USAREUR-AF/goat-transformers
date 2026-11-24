@@ -1,0 +1,13 @@
+{
+ "name": "golden-00560-ebcmregen",
+ "from": "dbc-gm-global-a-chassis",
+ "to": "dbc-gm-global-a-chassis",
+ "input": "3002000006000000025a000000000000",
+ "expect": "3002000006000000025a000000000000",
+ "model": {
+  "@kind": "ebcmregen",
+  "dbcgmglobalachassis.ebcmregen_regen": "602"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/gm_global_a_chassis.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 caf7896a2ae241771562dbe6462034ab4c52e76ba31af1ed79fca6e3f55580a8), message EBCMRegen (frame id 560) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

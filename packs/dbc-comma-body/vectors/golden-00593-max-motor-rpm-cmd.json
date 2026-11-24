@@ -1,0 +1,15 @@
+{
+ "name": "golden-00593-max-motor-rpm-cmd",
+ "from": "dbc-comma-body",
+ "to": "dbc-comma-body",
+ "input": "51020000050000005a5a23eb38000000",
+ "expect": "51020000050000005a5a23eb38000000",
+ "model": {
+  "@kind": "max_motor_rpm_cmd",
+  "dbccommabody.max_motor_rpm_cmd_max_rpm_l": "23130",
+  "dbccommabody.max_motor_rpm_cmd_max_rpm_r": "9195",
+  "dbccommabody.max_motor_rpm_cmd_checksum": "56"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/comma_body.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 9040592f1138f0110224c2acd781edbfb32d032cecb86ca8ec6356ec961b35ce), message MAX_MOTOR_RPM_CMD (frame id 593) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

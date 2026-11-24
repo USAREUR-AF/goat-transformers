@@ -1,0 +1,22 @@
+{
+ "name": "golden-00257-cruise-control",
+ "from": "dbc-mercedes-benz-e350-2010",
+ "to": "dbc-mercedes-benz-e350-2010",
+ "input": "01010000080000002038802f7c8d2063",
+ "expect": "01010000080000002038802f7c8d2063",
+ "model": {
+  "@kind": "cruise_control",
+  "dbcmercedesbenze3502010.cruise_control_new_signal_1": "0",
+  "dbcmercedesbenze3502010.cruise_control_set_me_1": "1",
+  "dbcmercedesbenze3502010.cruise_control_longitudinal_accel_request": "56",
+  "dbcmercedesbenze3502010.cruise_control_cruise_disabled": "1",
+  "dbcmercedesbenze3502010.cruise_control_cruise_accelerating": "0",
+  "dbcmercedesbenze3502010.cruise_control_set_me_x00": "47",
+  "dbcmercedesbenze3502010.cruise_control_set_me_x002": "124",
+  "dbcmercedesbenze3502010.cruise_control_set_me_x003": "141",
+  "dbcmercedesbenze3502010.cruise_control_counter": "2",
+  "dbcmercedesbenze3502010.cruise_control_checksum": "99"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mercedes_benz_e350_2010.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 89f574ecec7e299c4cfd482b2d71cf5a97949d331a06c46c4669bf9f2a715c07), message CRUISE_CONTROL (frame id 257) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

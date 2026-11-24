@@ -1,0 +1,20 @@
+{
+ "name": "golden-00131-steering-buttons",
+ "from": "dbc-ford-fusion-2018-pt",
+ "to": "dbc-ford-fusion-2018-pt",
+ "input": "83000000080000001008002040000000",
+ "expect": "83000000080000001008002040000000",
+ "model": {
+  "@kind": "steering_buttons",
+  "dbcfordfusion2018pt.steering_buttons_right_turn_light": "0",
+  "dbcfordfusion2018pt.steering_buttons_left_turn_light": "1",
+  "dbcfordfusion2018pt.steering_buttons_dist_decr": "0",
+  "dbcfordfusion2018pt.steering_buttons_dist_incr": "1",
+  "dbcfordfusion2018pt.steering_buttons_cancel": "0",
+  "dbcfordfusion2018pt.steering_buttons_resume": "1",
+  "dbcfordfusion2018pt.steering_buttons_set": "0",
+  "dbcfordfusion2018pt.steering_buttons_main": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_fusion_2018_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 702117aeef6128ae74664c6e46f92bdfea8613212f40fc2db195662194744764), message Steering_Buttons (frame id 131) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

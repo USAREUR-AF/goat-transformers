@@ -1,0 +1,26 @@
+{
+ "name": "golden-00280-id118drivesystemstatus",
+ "from": "dbc-tesla-model3",
+ "to": "dbc-tesla-model3",
+ "input": "18010000080000005a2beb00ff520100",
+ "expect": "18010000080000005a2beb00ff520100",
+ "model": {
+  "@kind": "id118drivesystemstatus",
+  "dbcteslamodel3.id118drivesystemstatus_di_systemstatuschecksum": "90",
+  "dbcteslamodel3.id118drivesystemstatus_di_systemstatuscounter": "11",
+  "dbcteslamodel3.id118drivesystemstatus_di_driveblocked": "2",
+  "dbcteslamodel3.id118drivesystemstatus_di_systemstate": "3",
+  "dbcteslamodel3.id118drivesystemstatus_di_brakepedalstate": "1",
+  "dbcteslamodel3.id118drivesystemstatus_di_gear": "7",
+  "dbcteslamodel3.id118drivesystemstatus_di_regenlight": "0",
+  "dbcteslamodel3.id118drivesystemstatus_di_immobilizerstate": "0",
+  "dbcteslamodel3.id118drivesystemstatus_di_accelpedalpos": "102.0",
+  "dbcteslamodel3.id118drivesystemstatus_di_tractioncontrolmode": "2",
+  "dbcteslamodel3.id118drivesystemstatus_di_epbrequest": "1",
+  "dbcteslamodel3.id118drivesystemstatus_di_proximity": "1",
+  "dbcteslamodel3.id118drivesystemstatus_di_keepdrivepowerstaterequest": "NO_REQUEST",
+  "dbcteslamodel3.id118drivesystemstatus_di_trackmodestate": "1"
+ },
+ "source": "cantools 45.1.1: Model3CAN.dbc at c56c113c353d09b1a5dd57677461f02fe8b7c6ca (SHA-256 d54df533fc82f3dab11ddd0f5ae4d846f22c0a24b111d8cba2b93e79caf60151), message ID118DriveSystemStatus (frame id 280) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

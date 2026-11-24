@@ -1,0 +1,24 @@
+{
+ "name": "golden-00131-getriebe-02",
+ "from": "dbc-vw-mlb",
+ "to": "dbc-vw-mlb",
+ "input": "83000000080000005aebffffffffff49",
+ "expect": "83000000080000005aebffffffffff49",
+ "model": {
+  "@kind": "getriebe_02",
+  "dbcvwmlb.getriebe_02_getriebe_02_chk": "90",
+  "dbcvwmlb.getriebe_02_getriebe_02_bz": "11",
+  "dbcvwmlb.getriebe_02_ge_anf_zylabsch": "3",
+  "dbcvwmlb.getriebe_02_ge_synchro_wunschdrehz": "12775.0",
+  "dbcvwmlb.getriebe_02_ge_synchro_zeit": "5100.0",
+  "dbcvwmlb.getriebe_02_ge_mom_begr_gradient": "2550.0",
+  "dbcvwmlb.getriebe_02_ge_anheb_solldrehz_leerlauf": "2550.0",
+  "dbcvwmlb.getriebe_02_ge_vorsteuermoment": "511",
+  "dbcvwmlb.getriebe_02_ge_drehzahlmesser_daempfung": "0",
+  "dbcvwmlb.getriebe_02_ge_schubabschalt_unt": "aktiv",
+  "dbcvwmlb.getriebe_02_ge_freigabe_synchro": "inaktiv",
+  "dbcvwmlb.getriebe_02_ge_hyb_dz_eingriff": "2"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/vw_mlb.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 88fe6bb0cf30c1e3656431ce66b43dfd9ffb34c54054a2fde0fa9c72a97fdc13), message Getriebe_02 (frame id 131) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,19 @@
+{
+ "name": "golden-00066-datc12",
+ "from": "dbc-hyundai-2015-ccan",
+ "to": "dbc-hyundai-2015-ccan",
+ "input": "42000000080000005aeb3849009e2f7c",
+ "expect": "42000000080000005aeb3849009e2f7c",
+ "model": {
+  "@kind": "datc12",
+  "dbchyundai2015ccan.datc12_cr_datc_drtempdispc": "59.0",
+  "dbchyundai2015ccan.datc12_cr_datc_drtempdispf": "291.0",
+  "dbchyundai2015ccan.datc12_cr_datc_pstempdispc": "42.0",
+  "dbchyundai2015ccan.datc12_cr_datc_pstempdispf": "129.0",
+  "dbchyundai2015ccan.datc12_cr_datc_reardrtempdispc": "93.0",
+  "dbchyundai2015ccan.datc12_cr_datc_reardrtempdispf": "105.0",
+  "dbchyundai2015ccan.datc12_cf_datc_co2_warning": "124"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_2015_ccan.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 d7f822e3a8d220cfde83aec2ae4ed28ddbc44a38ff29bea2e12e3e321d73a607), message DATC12 (frame id 66) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

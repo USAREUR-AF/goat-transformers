@@ -1,0 +1,32 @@
+{
+ "name": "golden-00258-vcleft-doorstatus",
+ "from": "dbc-tesla-model3-vehicle",
+ "to": "dbc-tesla-model3-vehicle",
+ "input": "0201000008000000102a52632d4e094a",
+ "expect": "0201000008000000102a52632d4e094a",
+ "model": {
+  "@kind": "vcleft_doorstatus",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_frontlatchstatus": "0",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_rearlatchstatus": "1",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_frontlatchswitch": "0",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_rearlatchswitch": "1",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_fronthandlepulled": "0",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_rearhandlepulled": "1",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_frontrelactuatorswitch": "0",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_rearrelactuatorswitch": "1",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_fronthandlepwm": "82",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_rearhandlepwm": "99",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_frontintswitchpressed": "0",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_rearintswitchpressed": "1",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_mirrortiltxposition": "0.44",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_mirrortiltyposition": "3.34",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_mirrorstate": "4",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_mirrorfoldstate": "0",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_mirrorrecallstate": "4",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_mirrorheatstate": "2",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_mirrordipped": "0",
+  "dbcteslamodel3vehicle.vcleft_doorstatus_vcleft_fronthandlepulledpersist": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/tesla_model3_vehicle.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c5edad0acc3285be7e6c4eb24fd36717a5a27f12a915e5069b855fa5cbe0bedb), message VCLEFT_doorStatus (frame id 258) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

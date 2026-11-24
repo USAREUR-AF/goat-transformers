@@ -1,0 +1,24 @@
+{
+ "name": "golden-00257-mrr-status-radar",
+ "from": "dbc-ford-cads",
+ "to": "dbc-ford-cads",
+ "input": "01010000080000005521000000000000",
+ "expect": "01010000080000005521000000000000",
+ "model": {
+  "@kind": "mrr_status_radar",
+  "dbcfordcads.mrr_status_radar_can_xcvr_operational": "0",
+  "dbcfordcads.mrr_status_radar_can_radar_not_op": "Radar not operational",
+  "dbcfordcads.mrr_status_radar_can_blockage_mnr": "No Radar Blockage",
+  "dbcfordcads.mrr_status_radar_can_blockage_sidelobe": "Radar Blockage",
+  "dbcfordcads.mrr_status_radar_can_radar_overheat_error": "No Overheat",
+  "dbcfordcads.mrr_status_radar_can_radar_align_out_range": "Radar out of range",
+  "dbcfordcads.mrr_status_radar_can_radar_ext_cond_nok": "External conditions OK",
+  "dbcfordcads.mrr_status_radar_can_radar_align_not_start": "Radar align not started",
+  "dbcfordcads.mrr_status_radar_can_blockage_sidelobe_filter_val": "2",
+  "dbcfordcads.mrr_status_radar_can_interference_type": "0",
+  "dbcfordcads.mrr_status_radar_can_recommend_unconverge": "Not Recommended",
+  "dbcfordcads.mrr_status_radar_can_radar_align_incomplete": "Alignment Incomplete"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/FORD_CADS.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 6d254309d8d66c3fe1d56420a5880716307c3640fba5ff76fb272431df8979f9), message MRR_Status_Radar (frame id 257) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,16 @@
+{
+ "name": "golden-00452-engine",
+ "from": "dbc-toyota-iq-2009-can",
+ "to": "dbc-toyota-iq-2009-can",
+ "input": "c4010000080000005a5aeb0038000049",
+ "expect": "c4010000080000005a5aeb0038000049",
+ "model": {
+  "@kind": "engine",
+  "dbctoyotaiq2009can.engine_engine_rpm": "23130",
+  "dbctoyotaiq2009can.engine_different_each_ride": "235",
+  "dbctoyotaiq2009can.engine_a_decreasing_value": "56",
+  "dbctoyotaiq2009can.engine_checksum": "73"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/toyota_iQ_2009_can.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 46d9ffa3e00aa1e789a9486bca59358c6c485335c7aa6fd06a7760936005e34e), message ENGINE (frame id 452) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

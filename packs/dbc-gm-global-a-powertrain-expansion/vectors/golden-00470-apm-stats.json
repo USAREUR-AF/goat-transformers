@@ -1,0 +1,19 @@
+{
+ "name": "golden-00470-apm-stats",
+ "from": "dbc-gm-global-a-powertrain-expansion",
+ "to": "dbc-gm-global-a-powertrain-expansion",
+ "input": "d6010000070000005aeb38499e2f7c00",
+ "expect": "d6010000070000005aeb38499e2f7c00",
+ "model": {
+  "@kind": "apm_stats",
+  "dbcgmglobalapowertrainexpansion.apm_stats_apm_status": "90",
+  "dbcgmglobalapowertrainexpansion.apm_stats_apm_high_voltage_input_current": "-10.15",
+  "dbcgmglobalapowertrainexpansion.apm_stats_apm_low_voltage_sensed": "4.4094511999999995",
+  "dbcgmglobalapowertrainexpansion.apm_stats_apm_temperature_1": "33.0",
+  "dbcgmglobalapowertrainexpansion.apm_stats_apm_temperature_2": "118.0",
+  "dbcgmglobalapowertrainexpansion.apm_stats_apm_low_voltage_current_output": "47",
+  "dbcgmglobalapowertrainexpansion.apm_stats_apm_counter": "124"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/gm_global_a_powertrain_expansion.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c9266a82aeae8a4ae37de89f44bb337e8d93400809ad3b7b5b20136c50a0d6de), message APM_Stats (frame id 470) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

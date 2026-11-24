@@ -1,0 +1,16 @@
+{
+ "name": "golden-00880-wheel-rpm-status",
+ "from": "dbc-luxgen-s5-2015",
+ "to": "dbc-luxgen-s5-2015",
+ "input": "70030000080000005a5a23eba9383749",
+ "expect": "70030000080000005a5a23eba9383749",
+ "model": {
+  "@kind": "wheel_rpm_status",
+  "dbcluxgens52015.wheel_rpm_status_wheel_rr_speed": "23130",
+  "dbcluxgens52015.wheel_rpm_status_wheel_rl_speed": "9195",
+  "dbcluxgens52015.wheel_rpm_status_wheel_fr_speed": "43320",
+  "dbcluxgens52015.wheel_rpm_status_wheel_fl_speed": "14153"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/luxgen_s5_2015.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 2528dee924b7c0fa758d46802fd9f87ef1792c85f5ce6bf60422c1f17ec95532), message WHEEL_RPM_STATUS (frame id 880) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

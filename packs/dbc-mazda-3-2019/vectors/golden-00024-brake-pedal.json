@@ -1,0 +1,16 @@
+{
+ "name": "golden-00024-brake-pedal",
+ "from": "dbc-mazda-3-2019",
+ "to": "dbc-mazda-3-2019",
+ "input": "18000000080000004080000000000000",
+ "expect": "18000000080000004080000000000000",
+ "model": {
+  "@kind": "brake_pedal",
+  "dbcmazda32019.brake_pedal_brake_pedal_pressed": "0",
+  "dbcmazda32019.brake_pedal_not_brake_pedal_pressed": "1",
+  "dbcmazda32019.brake_pedal_brake_pedal_pressed_and_engine_on": "0",
+  "dbcmazda32019.brake_pedal_not_brake_pedal_pressed_and_engine_on": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mazda_3_2019.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 ed3e6e636ad539528b2af26f8efdd39a1d4ca63b7f975a44aa9180ae88171533), message BRAKE_PEDAL (frame id 24) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

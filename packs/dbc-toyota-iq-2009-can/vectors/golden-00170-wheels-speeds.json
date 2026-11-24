@@ -1,0 +1,16 @@
+{
+ "name": "golden-00170-wheels-speeds",
+ "from": "dbc-toyota-iq-2009-can",
+ "to": "dbc-toyota-iq-2009-can",
+ "input": "aa000000080000005a5a23eba9383749",
+ "expect": "aa000000080000005a5a23eba9383749",
+ "model": {
+  "@kind": "wheels_speeds",
+  "dbctoyotaiq2009can.wheels_speeds_front_right_wheel_speed": "163.63",
+  "dbctoyotaiq2009can.wheels_speeds_front_left_wheel_speed": "24.28",
+  "dbctoyotaiq2009can.wheels_speeds_rear_right_wheel_speed": "365.53",
+  "dbctoyotaiq2009can.wheels_speeds_rear_left_wheel_speed": "73.86"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/toyota_iQ_2009_can.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 46d9ffa3e00aa1e789a9486bca59358c6c485335c7aa6fd06a7760936005e34e), message WHEELS_SPEEDS (frame id 170) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

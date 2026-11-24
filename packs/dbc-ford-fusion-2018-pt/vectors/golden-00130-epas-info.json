@@ -1,0 +1,22 @@
+{
+ "name": "golden-00130-epas-info",
+ "from": "dbc-ford-fusion-2018-pt",
+ "to": "dbc-ford-fusion-2018-pt",
+ "input": "82000000080000005aa85f4863000000",
+ "expect": "82000000080000005aa85f4863000000",
+ "model": {
+  "@kind": "epas_info",
+  "dbcfordfusion2018pt.epas_info_steeringcolumntorque": "-2.375",
+  "dbcfordfusion2018pt.epas_info_sappanglecontrolstat6": "1",
+  "dbcfordfusion2018pt.epas_info_sappanglecontrolstat5": "0",
+  "dbcfordfusion2018pt.epas_info_sappanglecontrolstat4": "1",
+  "dbcfordfusion2018pt.epas_info_sappanglecontrolstat3": "0",
+  "dbcfordfusion2018pt.epas_info_sappanglecontrolstat2": "1",
+  "dbcfordfusion2018pt.epas_info_epas_failure": "0",
+  "dbcfordfusion2018pt.epas_info_sappanglecontrolstat1": "1",
+  "dbcfordfusion2018pt.epas_info_stemdule_i_est": "36.10000000000001",
+  "dbcfordfusion2018pt.epas_info_stemdule_u_meas": "10.95"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_fusion_2018_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 702117aeef6128ae74664c6e46f92bdfea8613212f40fc2db195662194744764), message EPAS_INFO (frame id 130) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

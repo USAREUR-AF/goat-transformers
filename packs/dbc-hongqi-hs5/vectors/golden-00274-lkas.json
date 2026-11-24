@@ -1,0 +1,20 @@
+{
+ "name": "golden-00274-lkas",
+ "from": "dbc-hongqi-hs5",
+ "to": "dbc-hongqi-hs5",
+ "input": "12010000080000005aeb0b30000000d0",
+ "expect": "12010000080000005aeb0b30000000d0",
+ "model": {
+  "@kind": "lkas",
+  "dbchongqihs5.lkas_checksum": "90",
+  "dbchongqihs5.lkas_lkas_torque": "1003",
+  "dbchongqihs5.lkas_lkas_torque_direction": "0",
+  "dbchongqihs5.lkas_lkas_torque_active": "1",
+  "dbchongqihs5.lkas_unknown_active_state": "0",
+  "dbchongqihs5.lkas_maybe_hud_lane_states": "3",
+  "dbchongqihs5.lkas_lkas_active": "0",
+  "dbchongqihs5.lkas_counter": "13"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hongqi_hs5.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 21dbaa15ad562b57ade34828e1acef9a3099a433898c4090ac7b17c93c8ffe43), message LKAS (frame id 274) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,23 @@
+{
+ "name": "golden-00278-di-torque2",
+ "from": "dbc-tesla-powertrain",
+ "to": "dbc-tesla-powertrain",
+ "input": "16010000060000000018ffcfbcb00000",
+ "expect": "16010000060000000018ffcfbcb00000",
+ "model": {
+  "@kind": "di_torque2",
+  "dbcteslapowertrain.di_torque2_di_torqueestimate": "-1024.0",
+  "dbcteslapowertrain.di_torque2_di_gear": "1",
+  "dbcteslapowertrain.di_torque2_di_brakepedal": "Not_applied",
+  "dbcteslapowertrain.di_torque2_di_vehiclespeed": "179.75",
+  "dbcteslapowertrain.di_torque2_di_gearrequest": "4",
+  "dbcteslapowertrain.di_torque2_di_torqueinterfacefailure": "TORQUE_INTERFACE_FAILED",
+  "dbcteslapowertrain.di_torque2_di_torque2counter": "12",
+  "dbcteslapowertrain.di_torque2_di_brakepedalstate": "SNA",
+  "dbcteslapowertrain.di_torque2_di_epbparkrequest": "No_request",
+  "dbcteslapowertrain.di_torque2_di_epbinterfaceready": "EPB_INTERFACE_READY",
+  "dbcteslapowertrain.di_torque2_di_torque2checksum": "176"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/tesla_powertrain.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 d5fe66f2c1888a769ba73fb7b6c43da62ba0789da6193b170483bbcf51967930), message DI_torque2 (frame id 278) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

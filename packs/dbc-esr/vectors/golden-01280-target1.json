@@ -1,0 +1,24 @@
+{
+ "name": "golden-01280-target1",
+ "from": "dbc-esr",
+ "to": "dbc-esr",
+ "input": "00050000080000006a24f22f496320c1",
+ "expect": "00050000080000006a24f22f496320c1",
+ "model": {
+  "@kind": "target1",
+  "dbcesr.target1_can_tx_track_lat_rate": "6.5",
+  "dbcesr.target1_can_tx_track_grouping_changed": "1",
+  "dbcesr.target1_can_tx_track_oncoming": "0",
+  "dbcesr.target1_can_tx_track_status": "1",
+  "dbcesr.target1_can_tx_track_angle": "15.8",
+  "dbcesr.target1_can_tx_track_range": "55.900000000000006",
+  "dbcesr.target1_can_tx_track_bridge_object": "0",
+  "dbcesr.target1_can_tx_track_rolling_count": "1",
+  "dbcesr.target1_can_tx_track_width": "1.0",
+  "dbcesr.target1_can_tx_track_range_accel": "17.75",
+  "dbcesr.target1_can_tx_track_med_range_mode": "0",
+  "dbcesr.target1_can_tx_track_range_rate": "-79.99"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ESR.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 69b5c211129e243addfa165257e47c2076ac8fc84a2e74053b4341a4f0495b36), message Target1 (frame id 1280) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

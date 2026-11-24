@@ -1,0 +1,20 @@
+{
+ "name": "golden-00265-mrr-status-temp-volt",
+ "from": "dbc-ford-cads-64",
+ "to": "dbc-ford-cads-64",
+ "input": "09010000080000005aeb38499e2f7c8d",
+ "expect": "09010000080000005aeb38499e2f7c8d",
+ "model": {
+  "@kind": "mrr_status_temp_volt",
+  "dbcfordcads64.mrr_status_temp_volt_can_processor_temp1": "40.0",
+  "dbcfordcads64.mrr_status_temp_volt_can_3_3_v_dac": "18.8",
+  "dbcfordcads64.mrr_status_temp_volt_can_processor_thermistor": "6.0",
+  "dbcfordcads64.mrr_status_temp_volt_can_3_3_v_raw": "5.84",
+  "dbcfordcads64.mrr_status_temp_volt_can_mmic_temp1": "108.0",
+  "dbcfordcads64.mrr_status_temp_volt_can_5_v": "3.7600000000000002",
+  "dbcfordcads64.mrr_status_temp_volt_can_1_25_v": "9.92",
+  "dbcfordcads64.mrr_status_temp_volt_can_batt_volts": "11.28"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/FORD_CADS_64.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 9d4b88f195953b8fbb42181c9f2e754807bda13cfb5ba43678e643d398131e3b), message MRR_Status_Temp_Volt (frame id 265) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

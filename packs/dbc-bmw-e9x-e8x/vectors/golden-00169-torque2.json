@@ -1,0 +1,20 @@
+{
+ "name": "golden-00169-torque2",
+ "from": "dbc-bmw-e9x-e8x",
+ "to": "dbc-bmw-e9x-e8x",
+ "input": "a9000000080000005a4b9efca27cd098",
+ "expect": "a9000000080000005a4b9efca27cd098",
+ "model": {
+  "@kind": "torque2",
+  "dbcbmwe9xe8x.torque2_chksm_torq_2_dme": "90",
+  "dbcbmwe9xe8x.torque2_aliv_torq_2_dme": "11",
+  "dbcbmwe9xe8x.torque2_st_sw_lev_rpm": "0",
+  "dbcbmwe9xe8x.torque2_st_infs": "1",
+  "dbcbmwe9xe8x.torque2_torq_avl_min": "-433.0",
+  "dbcbmwe9xe8x.torque2_torq_avl_max": "-744.5",
+  "dbcbmwe9xe8x.torque2_torq_avl_spar_neg": "62.0",
+  "dbcbmwe9xe8x.torque2_torq_avl_spar_pos": "-825.5"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/bmw_e9x_e8x.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c238d3938e4dc461b96b5055e790ccea01d03fc8c84d44ebeb35446654988f07), message Torque2 (frame id 169) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

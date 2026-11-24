@@ -1,0 +1,17 @@
+{
+ "name": "golden-01250-esr-sw",
+ "from": "dbc-esr",
+ "to": "dbc-esr",
+ "input": "e204000008000000ab34a938fc37499e",
+ "expect": "e204000008000000ab34a938fc37499e",
+ "model": {
+  "@kind": "esr_sw",
+  "dbcesr.esr_sw_can_tx_interface_version": "10",
+  "dbcesr.esr_sw_can_tx_hw_version": "11",
+  "dbcesr.esr_sw_can_tx_sw_version_host": "3451192",
+  "dbcesr.esr_sw_can_tx_serial_num": "16529225",
+  "dbcesr.esr_sw_can_tx_sw_version_pld": "158"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ESR.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 69b5c211129e243addfa165257e47c2076ac8fc84a2e74053b4341a4f0495b36), message ESR_SW (frame id 1250) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

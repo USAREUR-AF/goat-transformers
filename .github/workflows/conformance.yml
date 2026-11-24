@@ -83,7 +83,7 @@ jobs:
           reuse lint
   generators:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 -I -m unittest discover -s tools/gen/tests
@@ -107,6 +107,13 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/pynmea2"
           "$RUNNER_TEMP/pynmea2/bin/pip" install --quiet --disable-pip-version-check pynmea2==1.19.0
           "$RUNNER_TEMP/pynmea2/bin/python" -I tools/gen/golden-pynmea2.py --check
+      # The DBC files are fetched at the commit each pack names and refused
+      # unless their SHA-256 is the one its PROVENANCE.md records.
+      - name: CAN DBC golden vectors are what cantools writes
+        run: |
+          python3 -m venv "$RUNNER_TEMP/cantools"
+          "$RUNNER_TEMP/cantools/bin/pip" install --quiet --disable-pip-version-check cantools==45.1.1
+          "$RUNNER_TEMP/cantools/bin/python" -I tools/gen/golden-cantools.py --check --cache "$RUNNER_TEMP/dbc-cache"
   rust:
     runs-on: ubuntu-latest
     # The suite (every vector, the fuzz run, the reduced builds, the benchmark)

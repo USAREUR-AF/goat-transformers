@@ -1,0 +1,15 @@
+{
+ "name": "golden-00307-stalks",
+ "from": "dbc-byd-atto3",
+ "to": "dbc-byd-atto3",
+ "input": "33010000080000000000000020000800",
+ "expect": "33010000080000000000000020000800",
+ "model": {
+  "@kind": "stalks",
+  "dbcbydatto3.stalks_right_blinker": "0",
+  "dbcbydatto3.stalks_left_blinker": "1",
+  "dbcbydatto3.stalks_counter": "8"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/byd_atto3.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 536d6c2a1805b0ead4d426892e28f66b6a43b08736b3d72db2838bb60842d012), message STALKS (frame id 307) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,18 @@
+{
+ "name": "golden-00769-knee-motors-data",
+ "from": "dbc-comma-body",
+ "to": "dbc-comma-body",
+ "input": "01030000080000005a5a23eb38490e2f",
+ "expect": "01030000080000005a5a23eb38490e2f",
+ "model": {
+  "@kind": "knee_motors_data",
+  "dbccommabody.knee_motors_data_speed_l": "23130",
+  "dbccommabody.knee_motors_data_speed_r": "9195",
+  "dbccommabody.knee_motors_data_elec_angle_l": "56",
+  "dbccommabody.knee_motors_data_elec_angle_r": "73",
+  "dbccommabody.knee_motors_data_counter": "14",
+  "dbccommabody.knee_motors_data_checksum": "47"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/comma_body.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 9040592f1138f0110224c2acd781edbfb32d032cecb86ca8ec6356ec961b35ce), message KNEE_MOTORS_DATA (frame id 769) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

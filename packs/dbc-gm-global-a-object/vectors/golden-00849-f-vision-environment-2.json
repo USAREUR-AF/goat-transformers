@@ -1,0 +1,23 @@
+{
+ "name": "golden-00849-f-vision-environment-2",
+ "from": "dbc-gm-global-a-object",
+ "to": "dbc-gm-global-a-object",
+ "input": "5103000008000000053849bc9e3a2f4a",
+ "expect": "5103000008000000053849bc9e3a2f4a",
+ "model": {
+  "@kind": "f_vision_environment_2",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnsburstid": "2",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnslncrvtrrghtv": "1",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnslatvreltolftmrkg": "1.12",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnslatvreltorgtmrkg": "1.46",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnscrvtgrdntrt": "-0.0010280999999999999",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnslncrvtrrght": "0.014194935",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnscrvtgrdntrtv": "0",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnslnmrkgwdthrt": "1",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnsrtlnmrkgtypchgdst": "20.0",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnsrtanchrln": "1",
+  "dbcgmglobalaobject.f_vision_environment_2_lnsnsltanchrln": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/gm_global_a_object.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 a694b22b4a7ebbdf4a9a896525c5ff91c709655a240f3637fdbd1e4027f1c183), message F_Vision_Environment_2 (frame id 849) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

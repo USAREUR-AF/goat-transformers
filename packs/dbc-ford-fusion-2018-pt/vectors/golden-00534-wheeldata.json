@@ -1,0 +1,21 @@
+{
+ "name": "golden-00534-wheeldata",
+ "from": "dbc-ford-fusion-2018-pt",
+ "to": "dbc-ford-fusion-2018-pt",
+ "input": "16020000080000005aeb3849b1d20000",
+ "expect": "16020000080000005aeb3849b1d20000",
+ "model": {
+  "@kind": "wheeldata",
+  "dbcfordfusion2018pt.wheeldata_whlrotatfr_no_cnt": "90",
+  "dbcfordfusion2018pt.wheeldata_whlrotatfl_no_cnt": "235",
+  "dbcfordfusion2018pt.wheeldata_whlrotatrr_no_cnt": "56",
+  "dbcfordfusion2018pt.wheeldata_whlrotatrl_no_cnt": "73",
+  "dbcfordfusion2018pt.wheeldata_whldirrl_d_actl": "2",
+  "dbcfordfusion2018pt.wheeldata_whldirfr_d_actl": "3",
+  "dbcfordfusion2018pt.wheeldata_whldirfl_d_actl": "0",
+  "dbcfordfusion2018pt.wheeldata_whldirrr_d_actl": "1",
+  "dbcfordfusion2018pt.wheeldata_wheel_rolling_timestamp": "210"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_fusion_2018_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 702117aeef6128ae74664c6e46f92bdfea8613212f40fc2db195662194744764), message WheelData (frame id 534) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,32 @@
+{
+ "name": "golden-00080-airbag-1",
+ "from": "dbc-vw-pq",
+ "to": "dbc-vw-pq",
+ "input": "5000000004000000eaaa8a7900000000",
+ "expect": "5000000004000000eaaa8a7900000000",
+ "model": {
+  "@kind": "airbag_1",
+  "dbcvwpq.airbag_1_front_crash": "0",
+  "dbcvwpq.airbag_1_heck_crash": "1",
+  "dbcvwpq.airbag_1_seiten_crash_fahrer": "0",
+  "dbcvwpq.airbag_1_seiten_crash_beifahrer": "1",
+  "dbcvwpq.airbag_1_rollover": "0",
+  "dbcvwpq.airbag_1_crash_intensitaet": "7",
+  "dbcvwpq.airbag_1_airbag_lampe": "0",
+  "dbcvwpq.airbag_1_airbag_deaktiviert": "1",
+  "dbcvwpq.airbag_1_kindersitzerkennung": "0",
+  "dbcvwpq.airbag_1_airbag_systemfehler": "1",
+  "dbcvwpq.airbag_1_gurtschalter_fahrer": "0",
+  "dbcvwpq.airbag_1_gurtwarnung_fahrer": "1",
+  "dbcvwpq.airbag_1_gurtschalter_beifahrer": "0",
+  "dbcvwpq.airbag_1_gurtwarnung_beifahrer": "1",
+  "dbcvwpq.airbag_1_airbag_in_diagnose": "0",
+  "dbcvwpq.airbag_1_airbag_im_stellgliedtest": "1",
+  "dbcvwpq.airbag_1_frei_airbag_1_2": "0",
+  "dbcvwpq.airbag_1_fehlerspeichereintrag": "1",
+  "dbcvwpq.airbag_1_counter": "8",
+  "dbcvwpq.airbag_1_checksum": "121"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/vw_pq.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 24c1fe1b0cfbd8e9fb6d203f1ad891b93298ca74c690946f72fe571696ef1974), message Airbag_1 (frame id 80) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

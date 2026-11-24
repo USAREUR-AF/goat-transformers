@@ -1,0 +1,30 @@
+{
+ "name": "golden-01265-sensorinput",
+ "from": "dbc-esr",
+ "to": "dbc-esr",
+ "input": "f1040000080000005a5a89e28dd281a5",
+ "expect": "f1040000080000005a5a89e28dd281a5",
+ "model": {
+  "@kind": "sensorinput",
+  "dbcesr.sensorinput_can_rx_scan_index_ack": "23130",
+  "dbcesr.sensorinput_can_rx_use_angle_misalignment": "1",
+  "dbcesr.sensorinput_can_rx_clear_faults": "0",
+  "dbcesr.sensorinput_can_rx_high_yaw_angle": "9",
+  "dbcesr.sensorinput_can_rx_volvo_short_track_roc": "-1000.0",
+  "dbcesr.sensorinput_can_rx_mr_only_transmit": "1",
+  "dbcesr.sensorinput_can_rx_lr_only_transmit": "0",
+  "dbcesr.sensorinput_can_rx_angle_misalignment": "-7.1875",
+  "dbcesr.sensorinput_can_rx_lateral_mounting_offset": "-0.7189800000000001",
+  "dbcesr.sensorinput_can_rx_radar_cmd_radiate": "1",
+  "dbcesr.sensorinput_can_rx_blockage_disable": "0",
+  "dbcesr.sensorinput_can_rx_maximum_tracks": "1",
+  "dbcesr.sensorinput_can_rx_turn_signal_status": "2",
+  "dbcesr.sensorinput_can_rx_vehicle_speed_validity": "1",
+  "dbcesr.sensorinput_can_rx_mmr_upside_down": "0",
+  "dbcesr.sensorinput_can_rx_grouping_mode": "1",
+  "dbcesr.sensorinput_can_rx_wiper_status": "0",
+  "dbcesr.sensorinput_can_rx_raw_data_enable": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ESR.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 69b5c211129e243addfa165257e47c2076ac8fc84a2e74053b4341a4f0495b36), message SensorInput (frame id 1265) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

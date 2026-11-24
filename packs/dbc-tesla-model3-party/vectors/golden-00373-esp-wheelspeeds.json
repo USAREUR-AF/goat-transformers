@@ -1,0 +1,18 @@
+{
+ "name": "golden-00373-esp-wheelspeeds",
+ "from": "dbc-tesla-model3-party",
+ "to": "dbc-tesla-model3-party",
+ "input": "75010000080000005a7a7de0a4a4eb2f",
+ "expect": "75010000080000005a7a7de0a4a4eb2f",
+ "model": {
+  "@kind": "esp_wheelspeeds",
+  "dbcteslamodel3party.esp_wheelspeeds_esp_wheelspeedfrl": "269.84000000000003",
+  "dbcteslamodel3party.esp_wheelspeeds_esp_wheelspeedfrr": "40.12",
+  "dbcteslamodel3party.esp_wheelspeeds_esp_wheelspeedrel": "94.4",
+  "dbcteslamodel3party.esp_wheelspeeds_esp_wheelspeedrer": "238.44",
+  "dbcteslamodel3party.esp_wheelspeeds_esp_wheelspeedscounter": "14",
+  "dbcteslamodel3party.esp_wheelspeeds_esp_wheelspeedschecksum": "47"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/tesla_model3_party.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 efc12ca7d0d9a9b2ee4df039a9f3e2ee22e7e036ec6202af0fce19c486495749), message ESP_wheelSpeeds (frame id 373) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

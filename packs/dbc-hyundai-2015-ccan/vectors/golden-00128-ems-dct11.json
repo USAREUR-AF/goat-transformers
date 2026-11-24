@@ -1,0 +1,22 @@
+{
+ "name": "golden-00128-ems-dct11",
+ "from": "dbc-hyundai-2015-ccan",
+ "to": "dbc-hyundai-2015-ccan",
+ "input": "80000000080000005aab9ebc2f7c8d32",
+ "expect": "80000000080000005aab9ebc2f7c8d32",
+ "model": {
+  "@kind": "ems_dct11",
+  "dbchyundai2015ccan.ems_dct11_pv_av_can": "35.154",
+  "dbchyundai2015ccan.ems_dct11_tq_stnd": "430.0",
+  "dbchyundai2015ccan.ems_dct11_f_n_eng": "0",
+  "dbchyundai2015ccan.ems_dct11_f_sub_tqi": "1",
+  "dbchyundai2015ccan.ems_dct11_n": "12071.5",
+  "dbchyundai2015ccan.ems_dct11_tqi_acor": "18.359375",
+  "dbchyundai2015ccan.ems_dct11_tqfr": "48.4375",
+  "dbchyundai2015ccan.ems_dct11_tqi": "55.078125",
+  "dbchyundai2015ccan.ems_dct11_cf_ems_alive": "2",
+  "dbchyundai2015ccan.ems_dct11_cf_ems_chksum": "3"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_2015_ccan.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 d7f822e3a8d220cfde83aec2ae4ed28ddbc44a38ff29bea2e12e3e321d73a607), message EMS_DCT11 (frame id 128) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,15 @@
+{
+ "name": "golden-00513-speed",
+ "from": "dbc-mazda-rx8",
+ "to": "dbc-mazda-rx8",
+ "input": "01020000080000005a5a000023eb3800",
+ "expect": "01020000080000005a5a000023eb3800",
+ "model": {
+  "@kind": "speed",
+  "dbcmazdarx8.speed_enginerpm": "5782.5",
+  "dbcmazdarx8.speed_vehiclespeed": "-8.049999999999997",
+  "dbcmazdarx8.speed_acceleratorpos": "28.0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mazda_rx8.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 3b2ba3f10e49808f6930e865fe53f93720cbd37d6e3c40242961f09432813c21), message speed (frame id 513) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}
