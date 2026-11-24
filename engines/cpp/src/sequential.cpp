@@ -247,8 +247,9 @@ std::set<int> node_refs(const SeqNode& n, int id) {
         }
         case Type::If:
         case Type::Opt:
-        case Type::Chain:
-        case Type::Length: return ref_paths(n.inner.lines, 0, id);
+        case Type::Chain: return ref_paths(n.inner.lines, 0, id);
+        // v0.83 ruling 1: a `length @` is a reference, as a group is.
+        case Type::Length: return add_paths({n.unit_size && n.count_id == id ? 1 : 0}, ref_paths(n.inner.lines, 0, id));
         default: return {0};
     }
 }
@@ -287,7 +288,7 @@ void check_count_refs(const Pack& p, const std::vector<SeqNode>& lines, const st
                 throw Error(ErrorKind::BadDirective, p.format, "",
                             source + ":" + std::to_string(n.line) + ": the count '" + n.count_name +
                                 "' is not referenced by exactly one 'group ... count @" + n.count_name +
-                                "' in every reading path after it");
+                                "' or 'length @" + n.count_name + "' in every reading path after it");
         }
         if (n.type == Type::Group) check_count_refs_body(p, n.inner, source);
         else if (n.type == Type::Switch)
@@ -709,6 +710,23 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.line = lineno;
             f.what = what;
             stack.push_back(std::move(f));
+        };
+
+        // v0.21: the count line `name` visible here, in the same group body
+        // (rulings 9, 12, 15 and 24), as `form` (`count @`, `length @`) names it.
+        auto visible_count = [&](const std::string& name, const std::string& form) -> int {
+            if (name.empty()) throw bad("'" + form + "' names no count");
+            for (std::size_t d = stack.size(); d-- > 0;) {
+                const Frame& f = stack[d];
+                auto it = f.kind_counts.find(name);
+                if (it != f.kind_counts.end()) return it->second;
+                it = f.counts.find(name);
+                if (it != f.counts.end()) return it->second;
+                if (f.kind_names.count(name) || f.names.count(name))
+                    throw bad("'" + form + name + "' names a presence, not a count");
+                if (f.is_body) break;  // a reference stays in its group body
+            }
+            throw bad("'" + form + name + "' names no count line visible here in the same group body");
         };
 
         SeqNode* const prev_field = also_target;
@@ -1226,6 +1244,19 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (t.size() < 2) throw bad("'length' takes a bit length");
             SeqNode n;
             n.type = Type::Length;
+            if ((!t[1].empty() && t[1][0] == '@') || std::find(t.begin() + 1, t.end(), "units") != t.end()) {
+                // v0.83: `length @<name> units <u>`, sized by a count line.
+                std::uint64_t u = 0;
+                if (t.size() != 4 || t[1].empty() || t[1][0] != '@' || t[2] != "units")
+                    throw bad("a 'length' sized by a count is 'length @<name> units <u>'");
+                if (!parse_u64(t[3], u) || u < 1 || u > 65535)
+                    throw bad("'units' takes plain digits from 1 to 65535, not '" + t[3] + "'");
+                n.count_id = visible_count(t[1].substr(1), "length @");
+                n.unit_size = static_cast<std::uint32_t>(u);
+                n.unit_bits = u % 8 != 0;
+                open(std::move(n), "a 'length' block");
+                continue;
+            }
             n.len = small_len(t[1], "a length field");
             bool unit = false, plus = false, whole = false;
             for (std::size_t k = 2; k < t.size(); ++k) {
@@ -1267,30 +1298,10 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                     if (t[k].empty() || t[k][0] != '@')
                         throw bad("a token after 'count' on a group is '@<name>', not '" + t[k] + "'");
                     const std::string name = t[k].substr(1);
-                    if (name.empty()) throw bad("'count @' names no count");
                     if (std::find(names.begin(), names.end(), name) != names.end())
                         throw bad("'count @" + name + " @" + name + "' names one count twice");
                     names.push_back(name);
-                    int id = -1;
-                    for (std::size_t d = stack.size(); d-- > 0 && id < 0;) {
-                        const Frame& f = stack[d];
-                        auto it = f.kind_counts.find(name);
-                        if (it != f.kind_counts.end()) {
-                            id = it->second;
-                            break;
-                        }
-                        it = f.counts.find(name);
-                        if (it != f.counts.end()) {
-                            id = it->second;
-                            break;
-                        }
-                        if (f.kind_names.count(name) || f.names.count(name))
-                            throw bad("'count @" + name + "' names a presence, not a count");
-                        if (f.is_body) break;  // a reference stays in its group body
-                    }
-                    if (id < 0)
-                        throw bad("'count @" + name + "' names no count line visible here in the same group body");
-                    (k == 3 ? n.count_id : n.count_id2) = id;
+                    (k == 3 ? n.count_id : n.count_id2) = visible_count(name, "count @");
                 }
             } else if (t.size() == 4 && t[2] == "count") {
                 n.repeat = Repeat::Count;
@@ -1650,6 +1661,12 @@ struct SeqIn {
     // v0.34: what serves the `inner` lines, and the message being decoded.
     const InnerHost* host = nullptr;
     Entity* root = nullptr;
+    // v0.83: a `length @` block is around the line. By count line: a `length @`
+    // block of it was read, and one was passed over. The count lines read in
+    // the bodies being read, in order.
+    bool in_units = false;
+    std::vector<char> units_read{}, units_passed{};
+    std::vector<const SeqNode*> counts_read{};
     bool whole = false;  // v0.34 ruling 13: a `length ... whole` was read; `have` is what it states
 
     [[noreturn]] void malformed(const std::string& why) const {
@@ -1683,6 +1700,12 @@ struct SeqIn {
     std::uint64_t left() const {
         const std::uint64_t end = ext != kNoExtent ? std::min(ext, have) : have;
         return cur < end ? end - cur : 0;
+    }
+    // The bits a count is compared with (0.8 ruling 14): those of the extent,
+    // and of the input too inside a `length @` block, which a whole length may cut.
+    std::uint64_t bits_left() const {
+        if (ext == kNoExtent || in_units) return left();
+        return cur < ext ? ext - cur : 0;
     }
     // `len` bits (0 to 64) that the input must hold.
     std::uint64_t must(std::uint32_t len, const char* what) {
@@ -2045,8 +2068,7 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& target) {
                                  " and " + std::to_string(in.counts[id2]) + " items");
             }
             // Ruling 20: compared with the bits left at the group.
-            const std::uint64_t end = in.ext != kNoExtent ? in.ext : in.have;
-            if (in.cur > end || count > end - in.cur)
+            if (count > in.bits_left())
                 in.malformed("the count " + std::to_string(count) + " of the group '" + n.list +
                              "' is larger than the bits left");
             std::vector<Item>& items = list();
@@ -2062,8 +2084,7 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& target) {
             if (!in.need(n.len, "a count")) return;  // beyond the extent: an absent list
             const std::uint64_t count = in.take(n.len);
             // A count larger than the bits left is malformed-wire before any item is read.
-            const std::uint64_t end = in.ext != kNoExtent ? in.ext : in.have;
-            if (count > end - in.cur)
+            if (count > in.bits_left())
                 in.malformed("the count " + std::to_string(count) + " of the group '" + n.list +
                              "' is larger than the bits left");
             std::vector<Item>& items = list();
@@ -2115,6 +2136,35 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& target) {
     }
 }
 
+// v0.83 ruling 9: the counts whose `length @` block stands in `lines`, which
+// are not read; a block in any case of a switch there is one.
+std::set<int> unit_counts(const std::vector<SeqNode>& lines, std::size_t from = 0) {
+    std::set<int> out;
+    for (std::size_t k = from; k < lines.size(); ++k) {
+        const SeqNode& n = lines[k];
+        if (n.type == Type::Group) continue;  // a reference stays in its body
+        if (n.type == Type::Length && n.unit_size) out.insert(n.count_id);
+        for (const auto& c : n.cases) {
+            const std::set<int> in_case = unit_counts(c.body.lines);
+            out.insert(in_case.begin(), in_case.end());
+        }
+        const std::set<int> inner = unit_counts(n.inner.lines);
+        out.insert(inner.begin(), inner.end());
+    }
+    return out;
+}
+
+// Lines that decode does not read.
+void pass_over(SeqIn& in, const std::vector<SeqNode>& lines, std::size_t from = 0) {
+    if (in.units_passed.empty()) return;  // no count line in the pack
+    for (int id : unit_counts(lines, from)) in.units_passed[static_cast<std::size_t>(id)] = 1;
+}
+
+void pass_over_line(SeqIn& in, const SeqNode& n) {
+    in.units_passed[static_cast<std::size_t>(n.count_id)] = 1;
+    pass_over(in, n.inner.lines);
+}
+
 // Is the line among `lines`, or in a block of them?
 bool holds_line(const std::vector<SeqNode>& lines, const SeqNode& n) {
     for (const auto& l : lines)
@@ -2159,11 +2209,16 @@ void decode_inner(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
         throw;
     }
     if (in.cur % 8 != 0) in.malformed("the 'inner' line does not stand on a whole byte");
-    const std::uint64_t end = in.ext != kNoExtent ? in.ext : in.have;
-    if (end > in.have) in.malformed("the extent of the 'inner' line ends beyond the input");
+    // At message level the cursor may stand past the length a `length ... whole`
+    // states: bytes beyond it are not part of the inner input (0.34 ruling 3,
+    // 0.83 ruling 16), so it is empty.
+    const std::uint64_t end = in.ext != kNoExtent ? in.ext : std::max(in.have, in.cur);
+    if (in.ext != kNoExtent && end > in.have) in.malformed("the extent of the 'inner' line ends beyond the input");
     if (end % 8 != 0) in.malformed("the 'length ... bits' extent of the 'inner' line does not end on a whole byte");
     const std::string hex =
-        bytes_to_hex(in.data.substr(static_cast<std::size_t>(in.cur / 8), static_cast<std::size_t>((end - in.cur) / 8)));
+        end == in.cur ? std::string()
+                      : bytes_to_hex(in.data.substr(static_cast<std::size_t>(in.cur / 8),
+                                                    static_cast<std::size_t>((end - in.cur) / 8)));
     // The lists the message holds already: the inner lists of those names are
     // discarded, and not counted (7g).
     DecodeScope* s = current_decode();
@@ -2326,12 +2381,13 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
         }
         case Type::If: {
             for (const auto& c : n.conds)
-                if (in.bit(c) == c.negated) return;
+                if (in.bit(c) == c.negated) return pass_over(in, n.inner.lines);
             decode_lines(in, n.inner.lines, 0, out, d);
             return;
         }
         case Type::Opt:
             if (in.need(1, "the bit of an 'opt'") && in.take(1) == 1) decode_lines(in, n.inner.lines, 0, out, d);
+            else pass_over(in, n.inner.lines);
             return;
         case Type::Chain: {
             // At the end of a `length` extent a chain is still walked (0.21
@@ -2343,7 +2399,7 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
                     continue;
                 }
                 // A 0 bit ends the chain.
-                if (!in.need(1, "an 'fx' bit") || in.take(1) == 0) return;
+                if (!in.need(1, "an 'fx' bit") || in.take(1) == 0) return pass_over(in, lines, k + 1);
                 if (k + 1 == lines.size())
                     in.malformed("the last 'fx' bit of a chain is 1 and the chain has no further part");  // ruling 3
             }
@@ -2351,7 +2407,33 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
         }
         case Type::Fx: return;  // a line of a chain, read there
         case Type::Length: {
-            if (!in.need(n.len, "a length field")) return;
+            if (n.unit_size) {
+                // v0.83: the extent the count line states. Absent at the end of
+                // the enclosing one, whatever the count states (ruling 4).
+                const std::size_t id = static_cast<std::size_t>(n.count_id);
+                if (in.at_extent_end() || !in.count_set[id]) return pass_over_line(in, n);
+                // Within the enclosing extent and the input (rulings 4 and 5),
+                // the product exact: a count that does not fit 64 bits is held
+                // as the largest, which no input has.
+                const std::uint64_t to = in.ext != kNoExtent ? std::min(in.ext, in.have) : in.have;
+                if (in.cur > to || in.counts[id] > (to - in.cur) / n.unit_size)
+                    in.malformed("the extent of a 'length @' block of " + std::to_string(in.counts[id]) + " units of " +
+                                 std::to_string(n.unit_size) + " bits runs past the extent around it or the input");
+                in.units_read[id] = 1;
+                const std::uint64_t saved = in.ext;
+                const bool saved_bits = in.ext_bits, saved_units = in.in_units;
+                const std::uint64_t stop = in.cur + in.counts[id] * n.unit_size;
+                in.ext = stop;
+                in.ext_bits = n.unit_bits;
+                in.in_units = true;
+                decode_lines(in, n.inner.lines, 0, out, d);
+                in.cur = stop;  // content of the extent no line read is skipped
+                in.ext = saved;
+                in.ext_bits = saved_bits;
+                in.in_units = saved_units;
+                return;
+            }
+            if (!in.need(n.len, "a length field")) return pass_over(in, n.inner.lines);
             const std::uint64_t stated = in.take(n.len);
             std::uint64_t units = 0;
             if (!stated_units(stated, n.plus, units) || units > (kNoExtent >> 4))
@@ -2359,7 +2441,10 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
                              std::to_string(n.plus) + "', or too large");
             const std::uint64_t bits = n.unit_bits ? units : units * 8;
             const std::uint64_t outer = in.ext != kNoExtent ? in.ext : in.have;
-            if (bits > outer - in.cur) in.malformed("a 'length' extent of " + std::to_string(bits) + " bits runs past the input");
+            // Also against the input, which a whole length inside the block
+            // around this one may have cut (0.83 rulings 16 and 17).
+            if (bits > outer - in.cur || in.cur > in.have || bits > in.have - in.cur)
+                in.malformed("a 'length' extent of " + std::to_string(bits) + " bits runs past the input");
             const std::uint64_t saved = in.ext;
             const bool saved_bits = in.ext_bits;
             in.ext = in.cur + bits;
@@ -2429,6 +2514,8 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             }
             in.counts[id] = items;
             in.count_set[id] = 1;
+            in.units_read[id] = in.units_passed[id] = 0;
+            in.counts_read.push_back(&n);
             return;
         }
     }
@@ -2442,6 +2529,7 @@ void decode_lines(SeqIn& in, const std::vector<SeqNode>& lines, std::size_t from
 // first kind whose `when` lines all hold at the cursor.
 void decode_body(SeqIn& in, const SeqBody& body, Item& out) {
     const Pack& p = in.p;
+    const std::size_t first_count = in.counts_read.size();
     Decoder d(p, out);
     decode_lines(in, body.lines, 0, out, d);
     if (!body.kinds.empty()) {
@@ -2487,6 +2575,15 @@ void decode_body(SeqIn& in, const SeqBody& body, Item& out) {
         out.kind = {p.format, selected->name};
         decode_lines(in, selected->lines, whens, out, d);
     }
+    // 0.83 ruling 9: a count of the message, or of this item, that states units
+    // of which no block was read.
+    for (std::size_t k = first_count; k < in.counts_read.size(); ++k) {
+        const std::size_t id = static_cast<std::size_t>(in.counts_read[k]->count_id);
+        if (in.count_set[id] && in.counts[id] != 0 && in.units_passed[id] && !in.units_read[id])
+            in.malformed("the count '" + in.counts_read[k]->count_name +
+                         "' states units and no 'length @' block of it is read");
+    }
+    in.counts_read.resize(first_count);
     try {
         d.finish();
     } catch (const Error& ex) {
@@ -2511,6 +2608,8 @@ Entity decode_seq(const Pack& p, const std::string& bytes, const InnerHost* host
     in.case_read.assign(p.seq_cases.size(), 0);
     in.count_set.assign(p.seq_count_lines, 0);
     in.counts.assign(p.seq_count_lines, 0);
+    in.units_read.assign(p.seq_count_lines, 0);
+    in.units_passed.assign(p.seq_count_lines, 0);
     Entity e;
     begin_message(e);  // v0.34: the inner message of a layered decode
     in.host = host;
@@ -3280,6 +3379,20 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             if (!n.unit_bits) out.zeros((8 - (out.cur - start) % 8) % 8);
             check_rest_items(p, out.extents.back(), out.cur);
             out.extents.pop_back();
+            if (n.unit_size) {
+                // v0.83: a whole number of units, which the count line holds.
+                const std::uint64_t bits = out.cur - start;
+                if (bits % n.unit_size != 0)
+                    throw Error(ErrorKind::TransformEncode, p.format, "",
+                                "the block of " + std::to_string(bits) + " bits is not a whole number of units of " +
+                                    std::to_string(n.unit_size) + " bits");
+                auto at_count = out.at_count.find(n.count_id);
+                if (at_count == out.at_count.end())
+                    throw Error(ErrorKind::TransformEncode, p.format, "",
+                                "the count of a 'length @' block was not written before it");
+                out.count_fields[at_count->second].items = bits / n.unit_size;
+                return;
+            }
             const std::uint64_t units = n.unit_bits ? out.cur - start : (out.cur - start) / 8;
             const std::int64_t stated = static_cast<std::int64_t>(units) + n.plus;
             if (stated < 0 || (n.len < 64 && (static_cast<std::uint64_t>(stated) >> n.len) != 0))

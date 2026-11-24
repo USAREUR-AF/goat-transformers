@@ -1621,6 +1621,29 @@ int main() {
         check(false, std::string("0.34 keys of two packs threw: ") + ex.what());
     }
 
+    // 0.34 ruling 3: a plain `length` block that goes on past the stated whole
+    // leaves the cursor past it; the inner input is empty, not the bytes after it.
+    try {
+        const std::string head = "version 0.1.0\ndistribution public\nsource \"unit test\"\n"
+                                 "wire bits\nlayout sequential\nbit_order msb\n";
+        gt::Engine eng;
+        eng.load_model("module core\nversion 0.1.0\ndistribution public\nsource \"unit test\"\n"
+                       "key a int -\nkey b int -\nlist l \"unit test\"\n");
+        eng.add_pack(gt::parse_pack("format in-rest\n" + head + "group l rest\nfield b 8 uint\nend\n"));
+        eng.add_pack(gt::parse_pack("format in-field\n" + head + "field b 8 uint\n"));
+        for (const std::string& in : {std::string("in-rest"), std::string("in-field")})
+            eng.add_pack(gt::parse_pack("format out-" + in + "\n" + head +
+                                        "length 8\nlength 8 whole\nfield a 8 uint\nend\ninner " + in + "\n"));
+        // A block of 4 bytes, a whole of 3: after the block the cursor is at byte 5 of 6.
+        const gt::Entity e = eng.decode("out-in-rest", "0403090a0b0c");
+        check(e.fields.at("a").i == 9 && e.lists.count("l") == 1 && e.lists.at("l").empty(),
+              "0.34 ruling 3: no inner bytes past the stated whole, a rest list");
+        expect_error(gt::ErrorKind::MalformedWire, [&] { (void)eng.decode("out-in-field", "0403090a0b0c"); },
+                     "0.34 ruling 3: no inner bytes past the stated whole, a field");
+    } catch (const std::exception& ex) {
+        check(false, std::string("0.34 ruling 3 threw: ") + ex.what());
+    }
+
     // v0.31 in v0.34: the item limit and a list counted from one or two places.
     try {
         const std::string model = "module core\nversion 0.1.0\ndistribution public\nsource \"unit test\"\n"
