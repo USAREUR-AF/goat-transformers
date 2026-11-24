@@ -133,10 +133,12 @@ A pack whose count byte promises more messages than the input holds is
 
 The source defines a value for "invalid, no value, or unknown" in several
 fields: latitude and longitude 0, altitudes -1000 m, vertical speed 63 m/s,
-timestamp 65535. The pack passes them through as numbers. A `location`
-message with an unknown geodetic altitude reaches GeoJSON with altitude
-`-1000` (vector `location-unknown-values-to-geojson`). Addition: a transform
-argument naming the wire value that means absent.
+timestamp 65535. An altitude of raw 0 (-1000 m) in `rid.alt_baro`, `hae`,
+`rid.height` and `rid.operator_hae` is absent (`absent 0`): the message
+reaches GeoJSON without an altitude (vector
+`location-unknown-values-to-geojson`), and an absent key is written as raw 0.
+The others pass through as numbers; latitude and longitude both 0 (unknown)
+decode as the point 0, 0, since either value alone is a real coordinate.
 
 ## Cross-format encode
 

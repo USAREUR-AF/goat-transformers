@@ -117,3 +117,8 @@ transforms listed under "Kept raw".
 Vectors 01-04 were rewritten for version 0.3: letters and digits in place of
 any 6-bit numbers, parity recomputed.
 
+## Velocity subtype
+
+Each airborne velocity kind holds its subtype in `adsb.velocity_subtype` and requires that value, since
+subtypes 1 and 2, and 3 and 4, have the same fields and 2 and 4 multiply the speed by 4. A conversion between
+`adsb` and `adsb-df18` keeps the subtype; an entity with velocity fields but no subtype is `no-kind`.
