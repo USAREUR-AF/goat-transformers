@@ -1,0 +1,12 @@
+{
+  "name": "same-type-text-passes",
+  "from": "conformance-twolines-earlier-json",
+  "to": "conformance-twolines-earlier-json",
+  "input": "{\"d\":\"zz\",\"c\":\"q\"}",
+  "expect": "{\"d\":\"zz\",\"c\":\"zz\"}",
+  "model": {
+    "probe.label": "zz"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 Value tables: with no entry the value passes through when the two types are the same; the earlier line succeeds with it"
+}

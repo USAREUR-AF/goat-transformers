@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-in-the-earlier-line",
+  "from": "conformance-twolines-earlier-xml",
+  "to": "conformance-twolines-earlier-xml",
+  "input": "<e b=\"zz\" a=\"3\"/>",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.7 ruling 10: the transform succeeds and the table has no entry, so the line fails the decode; 0.6 ruling 4: later lines of the key are not tried"
+}

@@ -6220,9 +6220,17 @@ not `string` without a `via` is `key-type-mismatch`.
     `field`".
 25. **Only `field` lines** of the scope are "another line" (ruling 18).
 
+26. **A missing table entry beside another line of the key** (settles 0.7
+    ruling 10 with 0.6 ruling 4, on every wire). A line whose transform
+    succeeds and whose `via` table has no entry for the value, the two types
+    differing, fails the decode whichever line of the key succeeds, and
+    whether that line stands before or after it. Where the types are the same
+    the value passes through (0.6), so the line succeeds and the earliest
+    line's value is kept. Pinned by `conformance-twolines-*`.
+
 ### Stated, not yet pinned by a vector
 
-26. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
+27. Ruling 9 (Version 0.57 is not built), ruling 14 for `model_keys`, ruling
     16, ruling 17, ruling 18 for a second part line, and ruling 13 for a
     scalar item on `xml`.
 

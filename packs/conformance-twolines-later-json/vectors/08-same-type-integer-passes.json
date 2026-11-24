@@ -1,0 +1,12 @@
+{
+  "name": "same-type-integer-passes",
+  "from": "conformance-twolines-later-json",
+  "to": "conformance-twolines-later-json",
+  "input": "{\"e\":5,\"f\":7}",
+  "expect": "{\"e\":5,\"f\":5}",
+  "model": {
+    "probe.y": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 Value tables: with no entry the value passes through when the two types are the same; 0.6 One key at several locators: the earliest line that succeeds; encode writes both"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "same-type-text-entry",
+  "from": "conformance-twolines-later-json",
+  "to": "conformance-twolines-later-json",
+  "input": "{\"c\":\"alpha\",\"d\":\"p\"}",
+  "expect": "{\"c\":\"alpha\",\"d\":\"p\"}",
+  "model": {
+    "probe.label": "alpha"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 One key at several locators: the earliest line that succeeds; encode writes both"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "entry-in-the-later-line",
+  "from": "conformance-twolines-later-json",
+  "to": "conformance-twolines-later-json",
+  "input": "{\"a\":3,\"b\":\"h\"}",
+  "expect": "{\"a\":3,\"b\":\"f\"}",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 One key at several locators: the earliest line that succeeds; encode writes both"
+}

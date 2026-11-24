@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-and-the-later-line-absent",
+  "from": "conformance-twolines-earlier-json",
+  "to": "conformance-twolines-earlier-json",
+  "input": "{\"b\":\"zz\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.7 ruling 10: the transform succeeds and the table has no entry, so the line fails the decode; 0.6 ruling 4"
+}
