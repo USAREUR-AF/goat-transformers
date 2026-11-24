@@ -349,10 +349,48 @@ type pbTree struct {
 	subs   map[int]*pbTree
 	reps   map[int][]pbVal
 	weak   map[int]bool // leaves that hold a sentinel, which a value replaces (0.9 ruling 16)
+	// omit holds the leaves `implicit` leaves out (0.56): they hold the place
+	// of their path and are not written.
+	omit map[int]bool
+	kept bool // `when <path> present` asked for this submessage (0.5 ruling 14)
 }
 
 func newPBTree() *pbTree {
-	return &pbTree{leaves: map[int]pbVal{}, subs: map[int]*pbTree{}, reps: map[int][]pbVal{}, weak: map[int]bool{}}
+	return &pbTree{leaves: map[int]pbVal{}, subs: map[int]*pbTree{}, reps: map[int][]pbVal{}, weak: map[int]bool{}, omit: map[int]bool{}}
+}
+
+// void reports whether nothing is written in the tree: every leaf is left
+// out by `implicit`, no field repeats, every submessage is void, and no
+// `when present` asked for it.
+func (t *pbTree) void() bool {
+	if t.kept || len(t.reps) > 0 {
+		return false
+	}
+	for fn := range t.leaves {
+		if !t.omit[fn] {
+			return false
+		}
+	}
+	for _, sub := range t.subs {
+		if !sub.void() {
+			return false
+		}
+	}
+	return true
+}
+
+// setValue places a field's value at path as set does; implicit marks a
+// value at the proto3 default, which holds the place and is not written.
+func (t *pbTree) setValue(path []int, v pbVal, implicit bool) {
+	cur, fn := t.at(path), path[len(path)-1]
+	if _, has := cur.leaves[fn]; !has || cur.weak[fn] {
+		cur.leaves[fn] = v
+		delete(cur.weak, fn)
+		delete(cur.omit, fn)
+		if implicit && isProto3Default(v) {
+			cur.omit[fn] = true
+		}
+	}
 }
 
 // at returns the submessage that holds the last number of path, creating the
@@ -377,16 +415,20 @@ func (t *pbTree) set(path []int, v pbVal, force bool) {
 	if _, has := cur.leaves[fn]; !has || force || cur.weak[fn] {
 		cur.leaves[fn] = v
 		delete(cur.weak, fn)
+		delete(cur.omit, fn)
 	}
 }
 
 // setSentinel places a sentinel at path where nothing is written yet; a value
 // written there later replaces it.
-func (t *pbTree) setSentinel(path []int, v pbVal) {
+func (t *pbTree) setSentinel(path []int, v pbVal, implicit bool) {
 	cur, fn := t.at(path), path[len(path)-1]
 	if _, has := cur.leaves[fn]; !has {
 		cur.leaves[fn] = v
 		cur.weak[fn] = true
+		if implicit && isProto3Default(v) {
+			cur.omit[fn] = true
+		}
 	}
 }
 
@@ -400,7 +442,7 @@ func (t *pbTree) repeat(path []int, occs []pbVal) {
 // at or under it, it becomes an empty length-delimited field.
 func (t *pbTree) ensure(path []int) {
 	cur, fn := t.at(path), path[len(path)-1]
-	if _, has := cur.leaves[fn]; has {
+	if _, has := cur.leaves[fn]; has && !cur.omit[fn] {
 		return
 	}
 	if len(cur.reps[fn]) > 0 {
@@ -409,6 +451,7 @@ func (t *pbTree) ensure(path []int) {
 	if _, ok := cur.subs[fn]; !ok {
 		cur.subs[fn] = newPBTree()
 	}
+	cur.subs[fn].kept = true
 }
 
 // marshal serialises the tree in ascending field-number order, each submessage
@@ -436,13 +479,25 @@ func (t *pbTree) marshal() []byte {
 	var out []byte
 	for _, fn := range nums {
 		pv, leaf := t.leaves[fn]
+		if leaf && t.omit[fn] {
+			// Left out by `implicit`; a `when present` submessage at the
+			// same number is still written.
+			leaf = false
+			if sub, ok := t.subs[fn]; ok && sub.kept && len(t.reps[fn]) == 0 {
+				out = appendPBField(out, fn, pbVal{wire: pbLenDelim, b: sub.marshal()})
+			}
+			for _, o := range t.reps[fn] {
+				out = appendPBField(out, fn, o)
+			}
+			continue
+		}
 		if leaf {
 			out = appendPBField(out, fn, pv)
 		}
 		for _, o := range t.reps[fn] {
 			out = appendPBField(out, fn, o)
 		}
-		if sub, ok := t.subs[fn]; ok && !leaf && len(t.reps[fn]) == 0 {
+		if sub, ok := t.subs[fn]; ok && !leaf && len(t.reps[fn]) == 0 && !sub.void() {
 			out = appendPBField(out, fn, pbVal{wire: pbLenDelim, b: sub.marshal()})
 		}
 	}
@@ -515,8 +570,8 @@ func encodePBScope(p *Pack, lay *layout, rec *Item, tree *pbTree) error {
 				return err
 			}
 			if !ok {
-				if f.absent != nil && !f.suppressed(rec) {
-					tree.setSentinel(f.loc.pbPath, f.sentinelPB())
+				if f.hasExact() && !f.suppressed(rec) {
+					tree.setSentinel(f.loc.pbPath, f.sentinelPB(), f.Implicit)
 				}
 				continue
 			}
@@ -524,7 +579,7 @@ func encodePBScope(p *Pack, lay *layout, rec *Item, tree *pbTree) error {
 			if err != nil {
 				return encodeErr(p, f, err)
 			}
-			tree.set(f.loc.pbPath, pv, false)
+			tree.setValue(f.loc.pbPath, pv, f.Implicit)
 		case ln.g != nil:
 			g := ln.g
 			items := rec.Lists[g.List]
@@ -565,7 +620,7 @@ func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 	// `.` line whose key the item has, or has a default for, else the first
 	// sentinel of the earliest `.` line with `absent` (0.9 ruling 5).
 	dot := func(it *Item) (pbVal, bool, error) {
-		for _, f := range g.dots {
+		for i, f := range g.dots {
 			v, ok, err := fieldValue(p, g.body, f, it)
 			if err != nil {
 				return pbVal{}, false, err
@@ -577,10 +632,13 @@ func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 			if err != nil {
 				return pbVal{}, false, encodeErr(p, f, err)
 			}
+			if err := checkUnwrittenRange(p, g.body, it, g.dots[i+1:]...); err != nil {
+				return pbVal{}, false, err
+			}
 			return pv, true, nil
 		}
 		for _, f := range g.dots {
-			if f.absent != nil && !f.suppressed(it) {
+			if f.hasExact() && !f.suppressed(it) {
 				return f.sentinelPB(), true, nil
 			}
 		}

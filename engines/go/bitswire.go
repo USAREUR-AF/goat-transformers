@@ -681,7 +681,7 @@ func armorWrites(p *Pack, lay *layout, f *Field, rec *Item) (bool, error) {
 	if f.Optional && f.suppressed(rec) {
 		return false, nil
 	}
-	if !f.Optional || f.absent != nil {
+	if !f.Optional || f.hasExact() {
 		return true, nil
 	}
 	_, ok, err := fieldValue(p, lay, f, rec)

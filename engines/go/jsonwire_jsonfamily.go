@@ -274,6 +274,7 @@ type jnode struct {
 	raw      string
 	set      bool
 	weak     bool // raw is a sentinel, which a value replaces (0.9 ruling 16)
+	null     bool // raw is the null of a `null` option, which a sentinel or a value replaces (0.56)
 	children []*jnode
 }
 
@@ -448,7 +449,7 @@ func encodeJSONScope(p *Pack, lay *layout, rec *Item, root *jnode, geo bool) err
 				continue
 			}
 			n := root.at(w.loc.path)
-			n.raw, n.set, n.weak = whenJSONText(w), true, false
+			n.raw, n.set, n.weak, n.null = whenJSONText(w), true, false, false
 			continue
 		}
 		f := ln.f
@@ -460,8 +461,12 @@ func encodeJSONScope(p *Pack, lay *layout, rec *Item, root *jnode, geo bool) err
 		if !ok {
 			// An absent key writes the sentinel where nothing is written; a
 			// scalar item writes it in place of null (0.9 ruling 5).
-			if f.absent != nil && !f.suppressed(rec) && !n.set {
-				n.raw, n.set, n.weak = f.sentinelJSONText(geo), true, true
+			if f.hasExact() && !f.suppressed(rec) && (!n.set || n.null) {
+				n.raw, n.set, n.weak, n.null = f.sentinelJSONText(geo), true, true, false
+			} else if f.Null && !f.suppressed(rec) && !n.set {
+				// No line on the member writes a value: the member is null
+				// (0.56).
+				n.raw, n.set, n.weak, n.null = "null", true, true, true
 			}
 			continue
 		}
@@ -470,7 +475,7 @@ func encodeJSONScope(p *Pack, lay *layout, rec *Item, root *jnode, geo bool) err
 			return err
 		}
 		if !n.set || n.weak {
-			n.raw, n.set, n.weak = raw, true, false
+			n.raw, n.set, n.weak, n.null = raw, true, false, false
 		}
 	}
 	return nil
