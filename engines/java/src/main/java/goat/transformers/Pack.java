@@ -43,6 +43,10 @@ public final class Pack {
         CborLayout.CT cbor;
         /** Text wires: {@code scale} or {@code iscale} (engine-spec 0.15), or null; {@code transform} is then float or int. */
         TextScale scale;
+        /** {@code xml}, {@code json}, {@code geojson}: {@code codestr} or {@code codenum} (engine-spec 0.46), or null; {@code transform} is then string. */
+        CodeSeq codes;
+        /** The name of {@link #codes} as written. */
+        String codesName;
         /** The value table named by {@code via}, or null. */
         public final String via;
         /** bits: the field's bytes are reversed before the transform reads them and after it writes them. */
@@ -113,6 +117,7 @@ public final class Pack {
         /** The transform's name as written in the pack. */
         public String transformName() {
             if (scale != null) return scale.wireName();
+            if (codes != null) return codesName;
             if (cbor != null) return cbor.wireName;
             return tlv != null ? tlv.name : transform != null ? transform.wireName() : text != null ? text.name : bits != null ? bits.wireName() : pb.wireName();
         }
@@ -120,6 +125,7 @@ public final class Pack {
         /** The model type the transform yields: {@code string}, {@code float} or {@code int}. */
         public String yields() {
             if (scale != null) return scale.yields();
+            if (codes != null) return codes.yields();
             if (cbor != null) return cbor.yields;
             return tlv != null ? tlv.yields() : transform != null ? transform.yields() : text != null ? text.yields() : bits != null ? bits.yields() : pb.yields();
         }
@@ -735,7 +741,8 @@ public final class Pack {
     /** Directives that are not allowed between {@code group} and its {@code end}. */
     private static final Set<String> NOT_IN_GROUP = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap",
-            "delimiter", "start", "checksum", "tag", "key", "length", "armor", "encoding", "framing");
+            "delimiter", "start", "checksum", "tag", "key", "length", "armor", "encoding", "framing",
+            "charset");   // ruling 16 of 0.46
 
     /** The directives of a pack (ruling 5 of 0.11): any other first word is {@code unknown-directive}. */
     static final Set<String> DIRECTIVES = Set.of("format", "version", "distribution", "source", "uses", "wire", "root",
@@ -747,7 +754,8 @@ public final class Pack {
             "switch", "case", "else",   // engine-spec 0.20
             "count",    // engine-spec 0.21
             "inner",   // engine-spec 0.34
-            "framing");   // engine-spec 0.92
+            "framing",   // engine-spec 0.92
+            "charset");   // engine-spec 0.46
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
@@ -771,7 +779,9 @@ public final class Pack {
             // engine-spec 0.15
             "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale",
             // engine-spec 0.28, the cbor wire
-            "text", "bytes", "epoch_s");
+            "text", "bytes", "epoch_s",
+            // engine-spec 0.46
+            "code", "codestr", "codenum");
 
     /** Check 3 of ruling 5b: the number of arguments of the directives whose count does not depend on the layout. */
     private static void lineArity(String kw, List<String> args, String where, String format) {
@@ -786,6 +796,7 @@ public final class Pack {
             case "default":
             case "typemap": ok = n == 2; break;
             case "map": ok = n == 3; break;
+            case "charset": ok = n == 2 || n == 3; break;   // engine-spec 0.46
             case "requires": ok = n >= 1; break;
             case "group": ok = n >= 2; break;
             case "if": ok = n >= 1; break;   // ruling 13 of 0.17: an if with no argument is a line check
@@ -815,7 +826,9 @@ public final class Pack {
         if (!TRANSFORMS.contains(head)) {
             throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, locator, where + ": unknown transform \"" + name + "\"");
         }
-        if (TextTransform.isTextOnlyName(name)) {
+        if (CodeSeq.isHead(head)) {
+            return;   // the list names sets of the whole file: every error of it is after the file (ruling 15 of 0.46)
+        } else if (TextTransform.isTextOnlyName(name)) {
             TextTransform.parseTextOnly(name, format, locator, where);
         } else if (head.equals("linscale") || head.equals("uscale") || head.equals("sscale") || BitsTransform.isV015(head)) {
             BitsTransform.parse(name, format, where);
@@ -1051,6 +1064,10 @@ public final class Pack {
         long tlvChecksumTag = -1;
         boolean tlvCrc32;
         Map<String, List<String[]>> tables;
+        /** engine-spec 0.46: the pack's character sets; on text, the delimiter and whether the checksum is nmea. */
+        Map<String, CodeSeq.CharSet> charsets;
+        String delimiter;
+        boolean nmea;
         final List<Field> fields = new ArrayList<>();
         final List<Line> typed = new ArrayList<>();
         final List<Scope> bodies = new ArrayList<>();
@@ -1145,7 +1162,8 @@ public final class Pack {
         int firstGate = 0;   // the line of the first gate block, 0 when there is none
         int fixedInnerLine = 0;   // the first inner line of a pack without layout sequential (engine-spec 0.34)
         List<String[]> framingDirs = new ArrayList<>();   // framing lines {value, line, after a message kind} (0.92), checked after the file
-        boolean messageKindSeen = false;
+        List<CodeSeq.Dir> charsetDirs = new ArrayList<>();   // engine-spec 0.46, checked once the file is read
+        boolean messageKindSeen = false;   // ruling 16 of 0.46: an item kind does not count
         int firstElement = 0;   // the line of the first element line, 0 when there is none
         for (int i = 0; i < lines.length; i++) {
             int ln = i + 1;
@@ -1341,6 +1359,9 @@ public final class Pack {
                 case "framing":
                     framingDirs.add(new String[]{args.get(0), Integer.toString(ln), messageKindSeen ? "after" : null});
                     break;
+                case "charset":
+                    charsetDirs.add(new CodeSeq.Dir(new ArrayList<>(args), where, messageKindSeen));
+                    break;
                 case "encoding":
                     encodingDirs.add(new String[]{args.size() == 1 ? args.get(0) : null, Integer.toString(ln),
                             firstKindLine != 0 ? "after" : null});
@@ -1505,12 +1526,14 @@ public final class Pack {
         if (fixedInnerLine != 0) {
             throw badDirective(format, null, source + ":" + fixedInnerLine + ": inner is a line of a pack with wire bits and layout sequential");
         }
+        // engine-spec 0.46: the charset lines, before the transforms that name them (ruling 15)
+        Map<String, CodeSeq.CharSet> charsets = CodeSeq.charsets(charsetDirs, wire == Wire.BITS, format);
         Seq.Body seqRoot = null;
         if (seq != null) {
             if (wire != null && wire != Wire.BITS) {
                 throw badDirective(format, null, source + ": layout sequential is for the bits wire only");
             }
-            seqRoot = seq.finish(tables, format);
+            seqRoot = seq.finish(tables, charsets, format);
         } else if (layout != null && wire != null && wire != Wire.BITS) {
             throw badDirective(format, null, source + ": layout is for the bits wire only");
         }
@@ -1607,6 +1630,9 @@ public final class Pack {
         ctx.source = source;
         ctx.wordBytes = wb;
         ctx.tables = tables;
+        ctx.charsets = charsets;
+        ctx.delimiter = delimiterDir == null ? "," : delimiterDir[0];
+        ctx.nmea = checksumDir != null && checksumDir[0].equals("nmea");
         byte[] tlvKey = null;
         if (wire == Wire.TLV) {
             ctx.tlvTagSize = tlvSizes[0];
@@ -2167,7 +2193,14 @@ public final class Pack {
             why = null;
         } else if (wire == Wire.TEXT) {
             TextTransform tt;
-            if (TextTransform.isTextOnlyName(s.arg)) {
+            if (head.equals("codestr") || head.equals("codenum")) {
+                CodeSeq codes = CodeSeq.parse(s.arg, ctx.charsets, format, s.locator, where);
+                // ruling 12 of 0.46: characters a field of this record cannot carry
+                if ((!ctx.delimiter.equals("none") && codes.uses(ctx.delimiter.charAt(0))) || (ctx.nmea && codes.uses('*'))) {
+                    throw badDirective(format, s.locator, where + ": a set of " + s.arg + " holds the record's delimiter, or * under checksum nmea");
+                }
+                tt = TextTransform.codes(s.arg, codes);
+            } else if (TextTransform.isTextOnlyName(s.arg)) {
                 tt = TextTransform.parseTextOnly(s.arg, format, s.locator, where);
             } else {
                 Transform t = Transform.byName(s.arg);
@@ -2208,6 +2241,7 @@ public final class Pack {
                 throw badDirective(format, s.locator, where + ": until: is a locator of a pack with layout sequential (engine-spec 0.22)");
             }
             BitsTransform bt = BitsTransform.parse(s.arg, format, where);
+            bt.bindCodes(ctx.charsets, format, s.locator, where);
             if (stop != null) bt.stop = stopCode(stop, bt, format, s.locator, where);
             f = new Field(s.key, s.locator, null, bt, null, via, swap, trim, optional, s.line);
             why = Locators.bits(s.locator);
@@ -2232,6 +2266,18 @@ public final class Pack {
             }
             f = new Field(s.key, s.locator, null, null, pb, via, false, false, false, s.line);
             why = dot ? null : Locators.protobufField(s.locator);
+        } else if (head.equals("codestr") || head.equals("codenum")) {
+            f = new Field(s.key, s.locator, Transform.STRING, null, null, via, false, false, false, s.line);
+            f.codes = CodeSeq.parse(s.arg, ctx.charsets, format, s.locator, where);
+            f.codesName = s.arg;
+            if (wire == Wire.GEOJSON && !inGroup && Locators.geojsonCoord(s.locator) >= 0) {
+                // a coordinate is a number (ruling 23 of 0.46); in a group body the locator is a member path
+                throw badDirective(format, s.locator, where + ": " + s.arg + " is not valid on a geojson coordinate");
+            }
+            if (dot) why = null;
+            else if (wire == Wire.XML) why = Locators.xmlField(s.locator);
+            else if (wire == Wire.GEOJSON && !inGroup) why = Locators.geojsonField(s.locator);
+            else why = Locators.json(s.locator);
         } else if (TextScale.isName(head)) {
             TextScale ts = TextScale.parse(s.arg, format, s.locator, where);
             f = new Field(s.key, s.locator, ts.isExact() ? Transform.INT : Transform.FLOAT, null, null, via, false, false, false, s.line);
