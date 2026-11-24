@@ -1610,6 +1610,15 @@ class DeriveTest(unittest.TestCase):
         with self.assertRaises(p2p.GenError):
             p2p.split_kind(opts)
 
+    def test_the_committed_sapient_pack_has_requires_in_every_kind(self):
+        # a last kind with no `requires` takes every entity no other kind fits
+        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        with open(os.path.join(root, "packs", "sapient", "pack.def"), encoding="utf-8") as fh:
+            kinds = fh.read().split("\nkind ")[1:]
+        self.assertTrue(kinds)
+        for body in kinds:
+            self.assertIn("\nrequires ", body, body.split("\n")[0])
+
     def test_sec_of_and_nsec_of_floor_toward_negative_infinity(self):
         self.assertEqual(p2p.EXACT_DERIVES["sec_of"](-1), -1)
         self.assertEqual(p2p.EXACT_DERIVES["nsec_of"](-1), 999000000)
