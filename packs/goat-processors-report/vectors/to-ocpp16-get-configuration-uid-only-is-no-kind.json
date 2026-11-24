@@ -1,0 +1,9 @@
+{
+ "name": "to-ocpp16-get-configuration-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "ocpp16-get-configuration",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "engine-spec 0.5, Encode step 2: the entity holds the required key of no kind"
+}

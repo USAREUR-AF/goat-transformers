@@ -36,3 +36,72 @@ field  ocpp201transactioneventresponse.updated_personal_message_custom_data_vend
 field  ocpp201transactioneventresponse.updated_personal_message_format  updatedPersonalMessage.format  string
 field  ocpp201transactioneventresponse.updated_personal_message_language  updatedPersonalMessage.language  string
 field  ocpp201transactioneventresponse.updated_personal_message_content  updatedPersonalMessage.content  string
+
+kind      message
+requires  ocpp201transactioneventresponse.meant
+
+kind      message_with_custom_data_vendor_id
+requires  ocpp201transactioneventresponse.custom_data_vendor_id
+
+kind      message_with_total_cost
+requires  ocpp201transactioneventresponse.total_cost
+
+kind      message_with_charging_priority
+requires  ocpp201transactioneventresponse.charging_priority
+
+kind      message_with_id_token_info_custom_data_vendor_id
+requires  ocpp201transactioneventresponse.id_token_info_custom_data_vendor_id
+
+kind      message_with_id_token_info_status
+requires  ocpp201transactioneventresponse.id_token_info_status
+
+kind      message_with_id_token_info_cache_expiry_date_time
+requires  ocpp201transactioneventresponse.id_token_info_cache_expiry_date_time
+
+kind      message_with_id_token_info_charging_priority
+requires  ocpp201transactioneventresponse.id_token_info_charging_priority
+
+kind      message_with_id_token_info_language1
+requires  ocpp201transactioneventresponse.id_token_info_language1
+
+kind      message_with_id_token_info_evse_id
+requires  ocpp201transactioneventresponse.id_token_info_evse_id
+
+kind      message_with_id_token_info_group_id_token_custom_data_vendor_id
+requires  ocpp201transactioneventresponse.id_token_info_group_id_token_custom_data_vendor_id
+
+kind      message_with_id_token_info_group_id_token_additional_info
+requires  ocpp201transactioneventresponse.id_token_info_group_id_token_additional_info
+
+kind      message_with_id_token_info_group_id_token_id_token
+requires  ocpp201transactioneventresponse.id_token_info_group_id_token_id_token
+
+kind      message_with_id_token_info_group_id_token_type
+requires  ocpp201transactioneventresponse.id_token_info_group_id_token_type
+
+kind      message_with_id_token_info_language2
+requires  ocpp201transactioneventresponse.id_token_info_language2
+
+kind      message_with_id_token_info_personal_message_custom_data_vendor_id
+requires  ocpp201transactioneventresponse.id_token_info_personal_message_custom_data_vendor_id
+
+kind      message_with_id_token_info_personal_message_format
+requires  ocpp201transactioneventresponse.id_token_info_personal_message_format
+
+kind      message_with_id_token_info_personal_message_language
+requires  ocpp201transactioneventresponse.id_token_info_personal_message_language
+
+kind      message_with_id_token_info_personal_message_content
+requires  ocpp201transactioneventresponse.id_token_info_personal_message_content
+
+kind      message_with_updated_personal_message_custom_data_vendor_id
+requires  ocpp201transactioneventresponse.updated_personal_message_custom_data_vendor_id
+
+kind      message_with_updated_personal_message_format
+requires  ocpp201transactioneventresponse.updated_personal_message_format
+
+kind      message_with_updated_personal_message_language
+requires  ocpp201transactioneventresponse.updated_personal_message_language
+
+kind      message_with_updated_personal_message_content
+requires  ocpp201transactioneventresponse.updated_personal_message_content

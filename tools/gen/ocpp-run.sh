@@ -47,11 +47,16 @@ ocpp() {
   local pre="$1" ver="$2" dir="$3" name="$4" fmt mod
   fmt="$pre-$(printf '%s' "$name" | sed -E 's/([a-z0-9])([A-Z])/\1-\2/g; s/([A-Z]+)([A-Z][a-z])/\1-\2/g' | tr 'A-Z' 'a-z')"
   mod="$pre$(printf '%s' "$name" | tr 'A-Z' 'a-z')"
+  # a schema with no mandatory member: {} is valid, so the pack asks for a key (jsonschema2pack --opt-in)
+  local opt=""
+  if python3 -I -c 'import json,sys; sys.exit(bool(json.load(open(sys.argv[1], encoding="utf-8-sig")).get("required")))' "$dir/$name.json"; then
+    opt="--opt-in meant"
+  fi
   if ! python3 -I "$GEN/jsonschema2pack.py" --schema "$dir/$name.json" \
       --message "$name=$dir/$name.json" \
       --format "$fmt" --module "$mod" --title "OCPP $ver JSON schema $name.json (Open Charge Alliance)" \
       --license "$LICENSE" --source "$SOURCE" \
-      --out "$W" --model-dir "$W/model" --names-file "$GEN/names/$fmt.json" --notes-file "$GEN/notes/ocpp.md" \
+      --out "$W" --model-dir "$W/model" --names-file "$GEN/names/$fmt.json" --notes-file "$GEN/notes/ocpp.md" $opt \
       ${CHECK:+"$CHECK"} > /dev/null; then
     echo "ocpp-run: $fmt failed" >&2
     STATUS=1

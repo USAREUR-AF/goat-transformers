@@ -11,3 +11,9 @@ wire          json
 group  ocpp16getconfiguration.key  key
   field  ocpp16getconfiguration.key_value  .  string
 end
+
+kind      message
+requires  ocpp16getconfiguration.meant
+
+kind      message_with_key
+requires  ocpp16getconfiguration.key

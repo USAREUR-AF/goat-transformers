@@ -32,3 +32,4 @@ key   updated_personal_message_language  string  -  "member `updatedPersonalMess
 key   updated_personal_message_content  string  -  "member `updatedPersonalMessage.content` of TransactionEventResponse (JSON string)"
 list  id_token_info_evse_id  "array `idTokenInfo.evseId` of TransactionEventResponse, one item per element"
 list  id_token_info_group_id_token_additional_info  "array `idTokenInfo.groupIdToken.additionalInfo` of TransactionEventResponse, one item per element"
+key   meant  int  -  "any value: this message is meant, though it has no mandatory member; not on the wire"

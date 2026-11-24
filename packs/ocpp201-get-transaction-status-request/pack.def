@@ -10,3 +10,12 @@ uses          ocpp201gettransactionstatusrequest
 wire          json
 field  ocpp201gettransactionstatusrequest.custom_data_vendor_id  customData.vendorId  string
 field  ocpp201gettransactionstatusrequest.transaction_id  transactionId  string
+
+kind      message
+requires  ocpp201gettransactionstatusrequest.meant
+
+kind      message_with_custom_data_vendor_id
+requires  ocpp201gettransactionstatusrequest.custom_data_vendor_id
+
+kind      message_with_transaction_id
+requires  ocpp201gettransactionstatusrequest.transaction_id

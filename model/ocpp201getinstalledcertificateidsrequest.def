@@ -9,3 +9,4 @@ source        "https://github.com/mobilityhouse/ocpp at tag 2.1.0, commit 91f4f8
 key   custom_data_vendor_id  string  -  "member `customData.vendorId` of GetInstalledCertificateIdsRequest (JSON string)"
 key   certificate_type_value  string  -  "member `certificateType[]..` of GetInstalledCertificateIdsRequest (JSON string)"
 list  certificate_type  "array `certificateType` of GetInstalledCertificateIdsRequest, one item per element"
+key   meant  int  -  "any value: this message is meant, though it has no mandatory member; not on the wire"

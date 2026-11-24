@@ -9,3 +9,9 @@ source        "https://github.com/mobilityhouse/ocpp at tag 2.1.0, commit 91f4f8
 uses          ocpp201notifydisplaymessagesresponse
 wire          json
 field  ocpp201notifydisplaymessagesresponse.custom_data_vendor_id  customData.vendorId  string
+
+kind      message
+requires  ocpp201notifydisplaymessagesresponse.meant
+
+kind      message_with_custom_data_vendor_id
+requires  ocpp201notifydisplaymessagesresponse.custom_data_vendor_id

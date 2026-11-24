@@ -6,3 +6,4 @@ distribution  public
 source        "OCPP 1.6 JSON schema SecurityEventNotificationResponse.json (Open Charge Alliance): SecurityEventNotificationResponse.json sha256 27f2320c03deaf541d19e78df8bac0f463da3033eca69d86b0b994ed5a1ff296"
 source        "License: LicenseRef-unstated: Open Charge Alliance schemas, no licence stated in the files"
 source        "https://github.com/mobilityhouse/ocpp at tag 2.1.0, commit 91f4f89140a2198dc5a300cfea88d947ac91ae28 (copies of the Open Charge Alliance JSON schemas)"
+key   meant  int  -  "any value: this message is meant, though it has no mandatory member; not on the wire"

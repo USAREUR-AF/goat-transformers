@@ -9,3 +9,9 @@ source        "https://github.com/mobilityhouse/ocpp at tag 2.1.0, commit 91f4f8
 uses          ocpp16getdiagnosticsresponse
 wire          json
 field  ocpp16getdiagnosticsresponse.file_name  fileName  string
+
+kind      message
+requires  ocpp16getdiagnosticsresponse.meant
+
+kind      message_with_file_name
+requires  ocpp16getdiagnosticsresponse.file_name

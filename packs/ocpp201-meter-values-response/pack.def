@@ -9,3 +9,9 @@ source        "https://github.com/mobilityhouse/ocpp at tag 2.1.0, commit 91f4f8
 uses          ocpp201metervaluesresponse
 wire          json
 field  ocpp201metervaluesresponse.custom_data_vendor_id  customData.vendorId  string
+
+kind      message
+requires  ocpp201metervaluesresponse.meant
+
+kind      message_with_custom_data_vendor_id
+requires  ocpp201metervaluesresponse.custom_data_vendor_id
