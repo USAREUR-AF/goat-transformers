@@ -292,6 +292,7 @@ file under `packs/conformance/tool-vectors/*.json`:
 | `name` | yes | unique within the directory |
 | `args` | yes | array of strings: the arguments after the program, the subcommand first; may be empty |
 | `stdin_hex` | no | the bytes on standard input, as lower-case hex; absent means no bytes |
+| `files` | no | an object: each key a path, each value a string of lower-case hex, the bytes of that file (Version 0.93). A path is one or more names joined by `/`; a name is one or more of `A`-`Z`, `a`-`z`, `0`-`9`, `.`, `_` and `-`, and not `.` or `..` |
 | `exit` | yes | `0`, `1` or `2` |
 | `stdout_text` | with `exit` 0, unless `stdout_any` | the UTF-8 text standard output must hold, byte for byte |
 | `stdout_any` | with `exit` 0, in place of `stdout_text` | `true`: standard output must not be empty, and is not compared (the text of `help`) |
@@ -301,7 +302,10 @@ Every vector that loads packs passes `--packs {packs}`: the default of
 `--packs` is each engine's own. In `args`, the text `{packs}` stands for the
 absolute path of the repository's `packs/` directory and `{models}` for that
 of its `model/` directory; the runner replaces each occurrence before it
-starts the tool. Nothing else in a string is replaced. The runner starts the
+starts the tool. `{files}` stands for the absolute path of a
+new, empty directory in which the runner has written the vector's `files`, and
+which it removes after the run; it is valid only in a vector with `files`.
+Nothing else in a string is replaced. The runner starts the
 tool in the repository's root directory.
 
 The runner starts the tool with the arguments, writes the input and closes

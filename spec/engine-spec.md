@@ -5782,8 +5782,7 @@ that do not hold the exact line of ruling 1; in 0.23: the default of
    `uses` or `"uses"` followed by a space, a tab, a carriage return, a `"` or
    the end, and that 2b does not read. `tools/licences.py --check` refuses a
    `model/*.def` or a `packs/*/pack.def` that is not shown public or has a
-   doubtful `uses` line; fixtures below `packs/conformance/` are not such
-   files.
+   doubtful `uses` line.
 
 ## Until an engine has this version
 
@@ -5792,7 +5791,9 @@ in an engine. It does nothing for a tool that packages by profile.
 
 ## Vector additions
 
-Tool vectors from 139, with fixture trees `licences-controlled-*`: a
+Tool vectors from 139. A file that is not shown public never stands in the
+repository as a file: a vector carries it in its `files` member
+(`spec/vector-format.md`). A
 controlled pack under each of three public licences and each profile; a
 controlled module under a public licence and a public pack that uses it,
 directly and through another; a `core` that is not shown public; each form of
