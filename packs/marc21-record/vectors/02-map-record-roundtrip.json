@@ -1,0 +1,14 @@
+{
+  "name": "map-record-roundtrip",
+  "from": "marc21-record",
+  "to": "marc21-record",
+  "input": "303030373363656d206132323030303439316920343530303030313030313030303030303033343030313330303031301e6578303030303030321e31201f61611f6232343030301e1d",
+  "expect": "303030373363656d206132323030303439316920343530303030313030313030303030303033343030313330303031301e6578303030303030321e31201f61611f6232343030301e1d",
+  "model": {
+    "marc.record_status": "c",
+    "marc.type_of_record": "e",
+    "marc.encoding_level": "1",
+    "marc.directory.#": "3"
+  },
+  "source": "built by tools/gen/biblio-vectors.py from values chosen there; layout restated from the Library of Congress MARC 21 Leader, Directory and Introduction pages; a corrected cartographic record with two fields; expect derived there, no engine run"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "book-record-roundtrip",
+  "from": "marc21-record",
+  "to": "marc21-record",
+  "input": "30303135346e616d206132323030303631206120343530303030313030313030303030303030383030343130303031303234353030343130303035311e6578303030303030311e3234303131357332303234202020207878752020202020202020202020303030203020656e6720641e31301f6141207374756479206f66206578616d706c652064617461202f1f634a616e6520446f652e1e1d",
+  "expect": "30303135346e616d206132323030303631206120343530303030313030313030303030303030383030343130303031303234353030343130303035311e6578303030303030311e3234303131357332303234202020207878752020202020202020202020303030203020656e6720641e31301f6141207374756479206f66206578616d706c652064617461202f1f634a616e6520446f652e1e1d",
+  "model": {
+    "marc.record_length": "00154",
+    "marc.record_status": "n",
+    "marc.type_of_record": "a",
+    "marc.bibliographic_level": "m",
+    "marc.character_coding_scheme": "a",
+    "marc.indicator_count": "2",
+    "marc.base_address": "00061",
+    "marc.length_of_field_length": "4",
+    "marc.directory.#": "4",
+    "marc.directory[0].marc.entry_first": "48",
+    "marc.directory[0].marc.tag_rest": "01",
+    "marc.directory[0].marc.field_length": "0010",
+    "marc.directory[0].marc.starting_position": "00000",
+    "marc.directory[3].marc.entry_first": "30"
+  },
+  "source": "built by tools/gen/biblio-vectors.py from values chosen there; layout restated from the Library of Congress MARC 21 Leader, Directory and Introduction pages; an invented Unicode monograph record with fields 001, 008 and 245; lengths and positions computed; expect derived there, no engine run"
+}

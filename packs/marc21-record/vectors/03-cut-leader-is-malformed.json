@@ -1,0 +1,8 @@
+{
+  "name": "cut-leader-is-malformed",
+  "from": "marc21-record",
+  "to": "marc21-record",
+  "input": "30303135346e616d206132323030303631206120",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/biblio-vectors.py from values chosen there; layout restated from the Library of Congress MARC 21 Leader, Directory and Introduction pages; 20 of the 24 leader characters; expect derived there, no engine run"
+}
