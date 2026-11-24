@@ -1,6 +1,5 @@
 # Kinds of packs/mavlink2 with no golden vector yet: the engines do not pass
 # the vector pymavlink gives. Each is a finding for the pack, described in
 # tools/gen/notes/golden-pymavlink.md. Remove a line when the pack is fixed.
-system_time             # u64 time_unix_usec to time_ms: a round trip loses the microseconds
-camera_image_captured   # u64 time_utc (us) to time_ms: the same
-utm_global_position     # u64 time (us) to time_ms: the same
+# (Empty since 24 Nov 2026: system_time, camera_image_captured and
+# utm_global_position round-trip their microsecond times after #335/#338.)
