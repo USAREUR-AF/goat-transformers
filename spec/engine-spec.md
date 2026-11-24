@@ -6240,8 +6240,10 @@ not `string` without a `via` is `key-type-mismatch`.
     line that `with` suppresses on this encode is one; a line of another kind
     is not.
 29. **Places and locators.** A part group is by locator text: on `text`, `0`
-    and `00` are two groups. A `const` on `geometry.*` stays the `bad-locator`
-    line check of 5a of 0.11. A const part at an absent place is not checked.
+    and `00` are two groups. `part` on `geometry.lon`, `geometry.lat`
+    or `geometry.alt`, on a `field` or a `const`, is `bad-directive` after the
+    file; any other `geometry.` locator is the `bad-locator` line check of 5a
+    of 0.11. A const part at an absent place is not checked.
 30. **Step 2** takes a `default` as there whether or not its value has an
     entry; without one it is `transform-encode`. A missing part is
     `transform-decode` with `unlisted` too, and so is a table text that does
