@@ -91,6 +91,18 @@ Pack ax25-frame
   No licence stated; labelled LicenseRef-unstated. Layouts restated, no text
   copied.
 
+Packs bacnet-ip-bvlc; module bacnetip
+  bacnet-stack, https://github.com/bacnet-stack/bacnet-stack at commit
+  229ba806601d4459a2b7889ec1280cb0ed4efcb4, src/bacnet/datalink/bvlc.c,
+  bvlc.h and src/bacnet/npdu.c. Copyright Steve Karg and contributors;
+  GPL-2.0-or-later WITH GCC-exception-2.0. Layouts restated; no text copied.
+
+Packs brightsky-*; modules bs*
+  Bright Sky 2.2.12 OpenAPI document, https://api.brightsky.dev/openapi.json
+  (read 2026-11-21), repository https://github.com/jdemaeyer/brightsky
+  commit 0f5d0df8. Copyright (c) 2020 Jakob de Maeyer. MIT License; restated
+  under Apache-2.0. No descriptions or examples copied.
+
 Pack c2sim; module c2sim
   C2SIM_SMX_LOX.xsd, OpenC2SIM/C2SIMArtifacts, commit 947d8b5. Copyright (c)
   2022 OpenC2SIM Project, MIT License. Schema of SISO-STD-019-2020 (C2SIM).
@@ -161,6 +173,14 @@ ccsdscfdp, ccsdsprox1
   Statement for Publications. Field positions, widths and values only; no
   text, table or figure.
 
+Packs celestrak-gp-csv, celestrak-gp-json, tle; modules ckgp, ckgpcsv, tle
+  CelesTrak, GP data documentation (A New Way to Obtain GP Data) and NORAD
+  Two-Line Element Set Format, by T.S. Kelso, https://celestrak.org (read
+  2026-11-21). No licence stated (LicenseRef-unstated). OMM keyword meanings
+  and units from CCSDS 502.0-B-3, Orbit Data Messages,
+  https://ccsds.org/Pubs/502x0b3e1.pdf, reused with attribution under the
+  CCSDS reproduction permission statement. No text copied.
+
 Packs chirpstack-* (generated)
   From chirpstack api/proto (common, gw, integration, stream),
   https://github.com/chirpstack/chirpstack tag v4.20.0 commit 8b568858.
@@ -213,12 +233,27 @@ Packs dbc-* (90); modules dbc<file>
   Test inputs only: four DBC files of cantools, https://github.com/cantools/cantools,
   MIT License, Copyright (c) 2015-2019 Erik Moqvist.
 
+Packs defra-ukair-timeseries, defra-ukair-data; module defraukair
+  UK-AIR Sensor Observation Service REST API (52 North Timeseries API v1),
+  Department for Environment, Food and Rural Affairs (Defra).
+  https://uk-air.defra.gov.uk/data/about_sos, read 2026-11-21. Contains
+  public sector information licensed under the Open Government Licence
+  v3.0. (c) Crown 2026 copyright Defra via uk-air.defra.gov.uk. Member
+  names confirmed against 52North/sensorweb-server-helgoland commit
+  2298d1c7 (GPL-2.0); no code or comments copied.
+
 Packs dhcpv6-options, edns0-options; modules dhcpv6, edns0
   IETF RFC 9915 (DHCPv6, section 21) and RFC 6891 (EDNS(0), section 6.1.2),
   https://www.rfc-editor.org/ (IETF Trust, BCP 78). Option formats and sizes
   restated. Option codes and names from the IANA registries DHCPv6 Option
   Codes and DNS EDNS0 Option Codes (OPT), CC0 1.0 per the IANA and IETF joint
   statement of 10 November 2021.
+
+Packs dicom-part10; module dicom
+  pydicom, https://github.com/pydicom/pydicom at commit
+  6c8881341bee6b438b4cbd0e1a5391774d7919e6, src/pydicom/filereader.py and
+  valuerep.py. MIT License, Copyright (c) 2008-2020 Darcy Mason and pydicom
+  contributors. Layouts restated; no text copied.
 
 Pack dis7; module dis7
   DIS 7 (IEEE 1278.1-2012) PDU layouts of the open-dis project:
@@ -227,6 +262,30 @@ Pack dis7; module dis7
   https://github.com/open-dis/open-dis-python (opendis/dis7.py; BSD 2-Clause,
   Copyright (c) 2023, Open DIS). Names, types, lengths and type numbers only;
   no IEEE document read.
+
+Packs dlms-hdlc-frame; module dlmshdlc
+  Gurux GuruxDLMS.c, https://github.com/Gurux/GuruxDLMS.c at commit
+  e9d77f926f3d3b8d1aa1a8f3374c7259d1c39b71, development/src/dlms.c.
+  Copyright (c) Gurux Ltd; GPL-2.0. Layouts restated; no text copied.
+
+Packs dmr-data-header; module dmr
+  MMDVMHost, https://github.com/g4klx/MMDVMHost at commit
+  9589fc39fc34ebf9ded7da72a124f427457ca2ea, DMRDataHeader.cpp and DMRDefines.h.
+  Copyright (C) 2012 Ian Wraith, 2015-2025 Jonathan Naylor G4KLX, 2026 Adrian
+  Musceac YO8RZZ; GPL-2.0. Layouts restated; no text copied.
+
+Packs doip-message; module doip
+  Wireshark, https://github.com/wireshark/wireshark at commit
+  de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-doip.c.
+  Copyright 1998 Gerald Combs and contributors; GPL-2.0-or-later. Layouts
+  restated; no text copied.
+
+Packs donki-*; modules donki*
+  NASA CCMC DONKI-API 2.0, OpenAPI document,
+  https://ccmc.gsfc.nasa.gov/DONKI/api/openapi/ (read 2026-11-21). A work of
+  NASA, a United States Government agency (17 U.S.C. 105); restated under
+  Apache-2.0. Credit: NASA CCMC and the Moon to Mars Space Weather Analysis
+  Office. Not NASA material; no endorsement implied.
 
 Pack drip; module drip
   IETF RFC 9575, DRIP Entity Tag (DET) Authentication Formats and Protocols
@@ -241,6 +300,12 @@ Packs dronecan-* (133); modules dc<namespace> (41)
   MIT License, Copyright (c) 2014-2015 Pavel Kirienko. Type names, field
   names, types and array forms only.
 
+Packs dstar-radio-header; module dstar
+  ircDDBGateway, https://github.com/g4klx/ircDDBGateway at commit
+  f5ab9f7c93c6f28147b84a8f9667f6cc4c027eaa, Common/HeaderData.cpp and
+  Common/DStarDefines.h. Copyright (C) 2010-2014 Jonathan Naylor G4KLX;
+  GPL-2.0. Layouts restated; no text copied.
+
 Pack dtn-bpv7; module bpv7
   IETF RFC 9171, Bundle Protocol Version 7. Subject to BCP 78 and the IETF
   Trust Legal Provisions. Block structure, element order, code numbers and
@@ -250,6 +315,19 @@ Pack ecs-event; module ecsevent
   Elastic Common Schema v9.5.0, https://github.com/elastic/ecs tag v9.5.0.
   Copyright 2018-2021 Elasticsearch B.V. Apache License, Version 2.0. Field
   names and types only.
+
+Packs enip-encapsulation, hart-ip-message; modules enip, hartip
+  Wireshark, https://github.com/wireshark/wireshark at commit
+  de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-enip.c
+  and epan/dissectors/packet-hartip.c. Copyright Gerald Combs and the
+  authors named in each file; GPL-2.0-or-later. Layouts restated; no text
+  copied.
+
+Packs enocean-esp3; module esp3
+  kipe/enocean, https://github.com/kipe/enocean at commit
+  80a253bcea1e3cb99295f53f04c0558190dca5f3, enocean/protocol/packet.py,
+  constants.py and crc8.py. MIT License, Copyright (c) 2014-2016 Kimmo Huoman.
+  Layouts restated; no text copied.
 
 Packs esphome-* (generated)
   Field numbers, names and types from aioesphomeapi api.proto and
@@ -285,6 +363,12 @@ Pack etsi-cam; module etsicam
     LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
     OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
     OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Packs fix-message; module fix
+  simplefix, https://github.com/da4089/simplefix at commit
+  007e3d7ffe904bcb2cfbfcb7ee8a4c13c5f3ea0a, simplefix/parser.py, message.py
+  and constants.py. MIT License, Copyright (C) 2016-2026 David Arnold.
+  Layouts restated; no text copied.
 
 Pack foxglove-location-fix; module foxglove
   Foxglove schemas (LocationFix, LocationFixes, Color, KeyValuePair, Vector3), protobuf, from
@@ -352,6 +436,13 @@ Pack gpx; module gpx
   Published as an open standard; element and attribute names, types and
   ranges only.
 
+Packs gs1-epcis-event; module epcis
+  GS1 EPCIS 2.0 JSON Schema, https://github.com/gs1/EPCIS at commit
+  6f71468231838e424bb5dfa836e006e8dc69615c, JSON-Schema/schemas/*.json. GS1
+  AISBL; no licence stated (the repository LICENSE file is a disclaimer),
+  LicenseRef-unstated. GS1 is a registered trademark of GS1 AISBL. Structure
+  restated; no text copied.
+
 Packs gtfs-agency, gtfs-stops, gtfs-routes, gtfs-trips, gtfs-stop-times,
 gtfs-calendar, gtfs-calendar-dates, gtfs-shapes, gtfs-frequencies,
 gtfs-transfers, gtfs-pathways, gtfs-levels, gtfs-feed-info, gtfs-attributions;
@@ -372,6 +463,12 @@ Packs gz-msgs-*; modules gzmsgs*
   Open Source Robotics Foundation and others. Field numbers, names and types
   only.
 
+Packs hl7v2-segment; module hl7v2
+  hl7apy, https://github.com/crs4/hl7apy at commit
+  c57adca03c77e549031867b36a6d5703611af8cd, hl7apy/v2_5/fields.py and
+  segments.py. MIT License, Copyright (c) 2012-2018 CRS4. Field numbers and
+  names restated; no text copied.
+
 Packs http2-frame, http3-frame, tls-record, websocket-frame; modules h2, h3, tls13, ws
   IETF RFC 9113 (HTTP/2), RFC 9114 and RFC 9000 (HTTP/3), RFC 8446 and
   RFC 6066 (TLS 1.3) and RFC 6455 (WebSocket), https://www.rfc-editor.org/
@@ -382,6 +479,15 @@ Packs ipfix-*, netflow9-*; modules ipfixmsg, netflow9
   IETF RFC 7011 (IPFIX protocol), RFC 7012 (IPFIX information model) and
   RFC 3954 (NetFlow version 9, Informational), https://www.rfc-editor.org/
   (IETF Trust, BCP 78). Layouts restated.
+
+Packs ipp-message; module ipp
+  IETF RFC 8010, Internet Printing Protocol/1.1: Encoding and Transport
+  (January 2017), section 3, and RFC 8011, Internet Printing Protocol/1.1:
+  Model and Semantics (January 2017), section 5.1.16,
+  https://www.rfc-editor.org/rfc/rfc8010.txt and
+  https://www.rfc-editor.org/rfc/rfc8011.txt. Copyright (c) 2017 IETF Trust
+  and the persons identified as the document authors; BCP 78 and the IETF
+  Trust Legal Provisions. Layouts restated; no text copied.
 
 Packs ipv4-header, ipv6-header, udp-header, tcp-header, icmp-header,
 ntp-header, dns-header, rtp-header, rtcp-header, arp-ipv4-ethernet,
@@ -403,6 +509,22 @@ Packs isa, isa-message, isa-ipl1, isa-xml; modules isa, isa1, isaxml
   Distribution is Unlimited. The files carry no license text and no copyright
   line.
 
+Packs isotp-frame, uds-message; modules isotp, uds
+  python-can-isotp, https://github.com/pylessard/python-can-isotp at commit
+  90ebb425c2f8156f7e6db873f1e467fa410463be (isotp/protocol.py), and
+  python-udsoncan, https://github.com/pylessard/python-udsoncan at commit
+  07d7be1fcfd17e41af9a30f1c5573774e45bcdbd (udsoncan/Request.py, Response.py
+  and services). MIT License, Copyright (c) 2017 Pier-Yves Lessard. Layouts
+  restated; no text copied.
+
+Packs j1939-frame; module j1939
+  Linux kernel at commit c44104f3642da720164042623e4832836aefdd8e,
+  Documentation/networking/j1939.rst (GPL-2.0 OR MIT) and
+  include/uapi/linux/can.h (GPL-2.0-only WITH Linux-syscall-note OR
+  BSD-3-Clause); python-can-j1939, https://github.com/juergenH87/python-can-j1939
+  at commit 01aba95cca43847bc272ec7ddb12048f587e6554, MIT License, Copyright
+  (c) 2018 Frank Benkert. Layouts restated; no text copied.
+
 Pack kiss-frame
   From M. Chepponis and P. Karn, The KISS TNC: A simple Host-to-TNC
   communications protocol (1987), http://www.ka9q.net/papers/kiss.html. No
@@ -420,10 +542,33 @@ Packs kuksa-val-v1-*, kuksa-val-v2-*; modules kuksaval*
   (c) Contributors to the Eclipse Foundation. Field numbers, names and types
   only.
 
+Packs llmnr-header; module llmnr
+  IETF RFC 4795, Link-Local Multicast Name Resolution (LLMNR) (January
+  2007), section 2.1.1, https://www.rfc-editor.org/rfc/rfc4795.txt.
+  Copyright (C) The IETF Trust (2007); BCP 78 and the IETF Trust Legal
+  Provisions. Layouts restated; no text copied.
+
+Packs lorawan-phypayload; module lorawan
+  brocaar/lorawan, https://github.com/brocaar/lorawan at commit
+  4bb09b3bdacba097680894e8d35dbcbc0d260c7e (phypayload.go, fhdr.go,
+  macpayload.go, payload.go, netid.go). MIT License, Copyright (c) 2019 Orne
+  Brocaar. Layouts restated; no text copied.
+
 Packs lowpan-frame, rpl-control
   From RFC 4944, RFC 6282, RFC 7400 and RFC 6550. Copyright IETF Trust and the
   persons identified as the document authors; BCP 78 and the IETF Trust's
   Legal Provisions Relating to IETF Documents. Layouts restated, no text
+  copied.
+
+Packs lpd-command, lpd-subcommand, lpd-control-file; module lpd
+  IETF RFC 1179, Line Printer Daemon Protocol (August 1990), sections 3.1
+  and 5 to 7, https://www.rfc-editor.org/rfc/rfc1179.txt. No copyright line;
+  distribution unlimited; BCP 78. Layouts restated; no text copied.
+
+Packs m17-lsf, m17-stream-frame, m17-packet-frame; module m17
+  M17 Protocol Specification, https://github.com/M17-Project/M17_spec at commit
+  9ae2874d8bd44e2d32fae85f7650a23f6bcee5d3, M17_spec.tex. Copyright (C)
+  2023-2026 M17 Project; GNU FDL 1.3 or later. Layouts restated; no text
   copied.
 
 Packs mavlink2-ardupilotmega, mavlink2-asluav, mavlink2-avssuas,
@@ -445,6 +590,13 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
+Packs mbus-frame; module mbus
+  libmbus, https://github.com/rscada/libmbus at commit
+  94352715928182d9e1761959f887c6a66e70de93, mbus/mbus-protocol.h and
+  mbus/mbus-protocol.c. Copyright (C) 2010-2012 Raditex AB and contributors;
+  free to use with due credit to rSCADA (http://www.rSCADA.se) and Raditex
+  Control, which this entry gives. Layouts restated; no text copied.
+
 Pack mds; module mds
   Mobility Data Specification 2.0 data models, Open Mobility Foundation,
   https://github.com/openmobilityfoundation/mds-openapi. Creative Commons
@@ -464,6 +616,12 @@ Pack meshtastic; module meshtastic
   The repository's LICENSE is the GNU General Public License, Version 3; the
   .proto files carry no license or copyright header. Field numbers, names and
   types only.
+
+Pack metno-locationforecast; module metnolf
+  Locationforecast 2.0 Swagger document, The Norwegian Meteorological
+  Institute (MET Norway), https://api.met.no/weatherapi/locationforecast/2.0/
+  (read 2026-11-21). CC BY 4.0. Based on data from MET Norway. No
+  descriptions copied.
 
 Pack misb-st0102; module misb0102
   MISB ST 0102.12, Security Metadata Universal and Local Sets for Motion
@@ -520,6 +678,18 @@ Pack mvt; module mvt
   https://github.com/mapbox/vector-tile-spec. Creative Commons Attribution 3.0.
   Field numbers, names and types only.
 
+Packs nbns-message, nbdgm-message; modules nbns, nbdgm
+  IETF RFC 1002, Protocol Standard for a NetBIOS Service on a TCP/UDP
+  Transport: Detailed Specifications (March 1987), sections 4.1, 4.2 and
+  4.4, https://www.rfc-editor.org/rfc/rfc1002.txt. No copyright line;
+  distribution unlimited; BCP 78. Layouts restated; no text copied.
+
+Packs neows-*; modules neows*
+  NASA NeoWs object members as modelled by neows-ruby,
+  https://github.com/SpaceRocks/neows-ruby commit b81655f3. Copyright (c)
+  2015 Jason English. MIT License; restated under Apache-2.0. No code,
+  comments or fixture values copied.
+
 Packs netex-service-frame, netex-site-frame, netex-timetable-frame,
 netex-service-calendar-frame; modules netexservice, netexsite,
 netextimetable, netexcalendar
@@ -562,6 +732,12 @@ Packs nmea2000, nmea2000-seq; module n2k
   (C) 2009-2026, Kees Verruijt, Harlingen, The Netherlands. Apache License,
   Version 2.0.
 
+Packs novatel-oem-binary; module novatel
+  swri-robotics/novatel_gps_driver, https://github.com/swri-robotics/novatel_gps_driver
+  at commit 63e19e2e3088e80ecceaa18d86022afffb3ccaf3 (binary_header.h,
+  parsers/bestpos.cpp, parsers/bestpos.h). BSD-3-Clause, Copyright (c) 2017
+  Southwest Research Institute. Layouts restated; no text copied.
+
 Packs ntp-packet, nts-ke-records; modules ntpext, ntske
   IETF RFC 5905, RFC 7822 and RFC 8915, https://www.rfc-editor.org/ (IETF
   Trust and the persons identified as the document authors, BCP 78). Layouts
@@ -589,6 +765,12 @@ Packs ocsf-*; modules ocsf*
   Broadcom. Apache License, Version 2.0. The packs restate each event class's
   structure and are not endorsed by the OCSF project.
 
+Packs ofx-stmttrn; module ofx
+  ofxparse, https://github.com/jseutter/ofxparse at commit
+  25aa80072be71da9f4ea0924ae1d1aaea2d5820c, ofxparse/ofxparse.py and the
+  order of elements in its test fixtures. MIT License, Copyright (c) 2009
+  Jerry Seutter. Layouts restated; no text copied.
+
 Packs opamp-* (generated)
   From opamp-spec proto/opamp/v1 (opamp.proto, anyvalue.proto),
   https://github.com/open-telemetry/opamp-spec tag v0.20.0 commit b0862415.
@@ -607,6 +789,12 @@ Packs openconfig-*; modules openconfig*
   third_party/ietf. Apache License, Version 2.0; the IETF modules under
   third_party/ietf carry the IETF Trust copyright and the Simplified or Revised
   BSD License as above. Node names, types and value ranges only.
+
+Pack openmeteo-forecast; module omfc
+  Open-Meteo Weather Forecast API, openapi/forecast.yml of
+  https://github.com/open-meteo/open-meteo commit 7cc41ffa. Open-Meteo. The
+  document states CC BY 4.0 (the repository is AGPL-3.0). Names and types
+  only; no code, descriptions or examples copied.
 
 Pack openxc-vehicle-message; module openxc
   OpenXC message format openxc.proto, https://github.com/openxc/openxc-message-format.
@@ -655,10 +843,23 @@ Packs px4-ulog-*; module px4ulog
   Tools/msg uORB generator (BSD) and the ULog file format document (CC BY
   4.0), restated.
 
+Packs qif-record; module qif
+  quiffen, https://github.com/isaacharrisholt/quiffen at commit
+  29658502eb3823f2a50a3365e95bf809a4841bb4, quiffen/core/transaction.py and qif.py.
+  MIT License, Copyright (c) 2023 Isaac Harris-Holt. Layouts restated; no
+  text copied.
+
 Packs quic-frames, quic-long-header, quic-transport-parameters; modules quicfr, quiclh, quictp
   IETF RFC 9000 and RFC 9369 (QUIC), https://www.rfc-editor.org/ (IETF Trust
   and the persons identified as the document authors, BCP 78). Layouts
   restated; no text copied.
+
+Pack rdp-x224-negotiation; module rdpneg
+  Microsoft, [MS-RDPBCGR]: Remote Desktop Protocol: Basic Connectivity and
+  Graphics Remoting, Open Specifications documentation, release of 9 March
+  2026. Copyright Microsoft Corporation; used under the Open Specifications
+  copyright permission for implementations, which grants no patent licence
+  (LicenseRef-MS-OpenSpec). Layouts restated; no text copied.
 
 Packs readsb-aircraft, readsb-aircraft-json; module readsb
   The JSON output format documented in readsb README-json.md
@@ -797,6 +998,17 @@ Packs sds-*; modules sds*
   Copyright 2026 Edgesource Corporation. Apache License, Version 2.0. The
   packs restate each schema's structure and are not endorsed by the publisher.
 
+Packs seatalk1; module seatalk
+  SignalK/signalk-parser-nmea0183, https://github.com/SignalK/signalk-parser-nmea0183
+  at commit 5ab479bcfc1bec0d36f98616e5f9be96f52e3f23, src/hooks/seatalk/.
+  Apache License 2.0, Copyright Signal K and contributors. Layouts restated;
+  no text copied.
+
+Packs semtech-udp-forwarder; module semtechudp
+  Lora-net/packet_forwarder, https://github.com/Lora-net/packet_forwarder at
+  commit d0226eae6e7b6bbaec6117d0d2372bf17819c438, PROTOCOL.TXT. Copyright (C)
+  2013 Semtech S.A.; BSD-3-Clause terms. Layouts restated; no text copied.
+
 Pack sflow5-datagram; module sflow
   sFlow.org, sFlow Version 5 (July 2004), https://sflow.org/sflow_version_5.txt.
   Copyright (C) sFlow.org (2004). All Rights Reserved. sFlow(R) is a trademark
@@ -804,6 +1016,18 @@ Pack sflow5-datagram; module sflow
   http://www.inmon.com/technology/sflowlicense.txt (LICENSES/
   LicenseRef-sFlow-License.txt). Datagram layout restated; the pack implements
   part of the specification only (its pack.md lists what).
+
+Packs sirf-binary; module sirf
+  gpsd, https://gitlab.com/gpsd/gpsd at commit
+  edd38e78a875062f53add5c1ade745761240fffb, drivers/driver_sirf.c.
+  BSD-2-Clause; compilation copyright the GPSD project. Layouts restated; no
+  text copied.
+
+Packs slp-message; module slp
+  IETF RFC 2608, Service Location Protocol, Version 2 (June 1999),
+  sections 4.3, 8 and 9.2, https://www.rfc-editor.org/rfc/rfc2608.txt.
+  Copyright (C) The Internet Society (1999); BCP 78 and the IETF Trust
+  Legal Provisions. Layouts restated; no text copied.
 
 Pack smb2-message; module smb2
   Microsoft, [MS-SMB2]: Server Message Block (SMB) Protocol Versions 2 and 3,
@@ -850,6 +1074,10 @@ Pack tesla-fleet-telemetry; module teslafleet
   Tesla Fleet Telemetry vehicle_data.proto, from
   https://github.com/teslamotors/fleet-telemetry. Apache License, Version 2.0.
   Field numbers, names and types only.
+
+Pack tpkt-x224; module tpkt
+  IETF RFC 1006 (M. Rose, D. Cass, 1987) and RFC 905 (ISO DP 8073, 1984),
+  https://www.rfc-editor.org/ (BCP 78). Layouts restated; no text copied.
 
 Packs tts-* (generated)
   From The Things Stack api/ttn/lorawan/v3 (messages.proto and its imports),
@@ -915,6 +1143,12 @@ Packs waymo-frame, waymo-scenario; modules waymoframe, waymoscenario
   License, Version 2.0, Copyright Waymo LLC and The Waymo Open Dataset Authors.
   Field numbers, names and types only; no data of the dataset.
 
+Packs wmbus-frame; module wmbus
+  wmbusmeters, https://github.com/wmbusmeters/wmbusmeters at commit
+  86c46f145077f66e988c25ee04c06f89230c12e3, src/wmbus.cc. Copyright (C)
+  2017-2024 Fredrik Öhrström; GPL-3.0-or-later. Layouts restated; no text
+  copied.
+
 Packs wzdx-device, wzdx-device-4.0, wzdx-device-4.1 and the wzdx-*-feed packs; module wzdx
   Work Zone Data Exchange (WZDx) 4.0, 4.1 and 4.2 schemas (tag v4.2), U.S. Department of
   Transportation ITS JPO, https://github.com/usdot-jpo-ode/wzdx. CC0 1.0.
@@ -930,3 +1164,9 @@ Packs yang-ietf-*; modules yangietf*
   as the module states; RFC 8575 states it for ietf-ptp. Node names, types and
   value ranges only, restated under the Apache License 2.0; each pack's
   PROVENANCE.md quotes the statement of every module read.
+
+Packs zwave-serial-frame; module zwave
+  zwave-js, https://github.com/zwave-js/zwave-js at commit
+  03756e4f179a4461f85822d2e5c71b1089667a22, packages/serial/src/message/ and
+  parsers/SerialAPIParser.ts. MIT License, Copyright (c) 2018-2024 AlCalzone.
+  Layouts restated; no text copied.

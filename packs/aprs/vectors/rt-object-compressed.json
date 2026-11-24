@@ -1,0 +1,19 @@
+{
+  "name": "aprs-rt-object-compressed",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: a killed object with a compressed position; the name's padding is trimmed in the model",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:;TENT 3   _181530z/4Jq9Rs(T>C1G",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:;TENT 3   _181530z/4Jq9Rs(T>C1G",
+  "model": {
+    "@kind": "object-compressed",
+    "aprs.object_name": "TENT 3",
+    "aprs.object_state": "_",
+    "aprs.symbol_table": "/",
+    "aprs.lat_base91": "4Jq9",
+    "aprs.lon_base91": "Rs(T",
+    "aprs.symbol_code": ">",
+    "aprs.compressed_cs": "C1",
+    "aprs.compression_type": "G"
+  }
+}

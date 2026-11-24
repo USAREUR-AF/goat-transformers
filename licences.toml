@@ -192,3 +192,12 @@ share_alike = false
 attribution = true
 field_of_use = []
 distribution = "public"
+
+[licences."LicenseRef-APRS-NC"]
+name = "APRS Protocol Reference 1.0.1 permission statement (copying for non-commercial purposes only, with the copyright and trademark statements)"
+url = "http://www.aprs.org/doc/APRS101.PDF"
+commercial = "no"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"

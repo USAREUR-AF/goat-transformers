@@ -1,8 +1,41 @@
 #!/usr/bin/env bash
 # pre-push: refuse a push of this repository unless the boundary gate passes
 # with the private needle list (docs/boundary.md). Fails closed: if the needle
-# list cannot be built, the push is refused.
+# list cannot be built, the push is refused. Every commit the push would
+# publish is checked, not only the tree, with its annotated tags and the names
+# of its refs: git gives the refs on standard input.
 set -euo pipefail
+refuse() { echo "pre-push: $1; push refused" >&2; exit 1; }
+published=()
+zero='^0+$'
+if [ ! -t 0 ]; then
+  while read -r _ local_id remote_ref remote_id || [ -n "${local_id:-}" ]; do
+    [[ "$local_id" =~ $zero ]] && continue   # a deleted ref publishes nothing
+    [[ "$local_id" == "$remote_id" ]] && continue
+    published+=("--ref-name=$remote_ref")
+    git cat-file -e "$local_id^{commit}" 2>/dev/null || refuse "$local_id is not a commit or a tag of one"
+    # What the remote has: its own tip of this ref, else its main branch. When
+    # neither is known here, the whole history is checked.
+    base=""
+    if ! [[ "$remote_id" =~ $zero ]] && git cat-file -e "$remote_id^{commit}" 2>/dev/null; then
+      base="$remote_id"
+    elif [ -n "${1:-}" ]; then
+      base="$(git merge-base "refs/remotes/$1/main" "$local_id" 2>/dev/null || true)"
+    fi
+    if [ -z "$base" ]; then
+      published+=(--commits "$local_id")
+      continue
+    fi
+    new="$(git rev-list -n 1 "$local_id" "^$base" --)" || refuse "cannot list the commits of $local_id"
+    if [ -n "$new" ]; then
+      published+=(--commits "$base..$local_id")
+    else
+      # No commit the remote lacks. An annotated tag on one is still new text.
+      kind="$(git cat-file -t "$local_id")" || refuse "cannot read $local_id"
+      if [ "$kind" = tag ]; then published+=(--tag "$local_id"); fi
+    fi
+  done
+fi
 root="$(git rev-parse --show-toplevel)"
 main="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
 # GOAT_XF_OVERLAY is the path of the private overlay checkout. The default is a
@@ -18,4 +51,4 @@ if ! python3 -I "$gen" > "$tmp"; then
   echo "pre-push: could not build the needle list; push refused" >&2
   exit 1
 fi
-python3 -I "$root/tools/boundary-gate" --root "$root" --needles "$tmp" --require-needles
+python3 -I "$root/tools/boundary-gate" --root "$root" --needles "$tmp" --require-needles ${published[@]+"${published[@]}"}

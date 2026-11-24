@@ -1,0 +1,9 @@
+{
+  "name": "uat-no-position-to-geojson",
+  "from": "uat",
+  "to": "geojson",
+  "input": "00a1b2c30000000000000dd801e628e09b00",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "source": "constructed",
+  "reference": "dump978 f40aa9a0 uat_message.cc; bytes by tools/gen/uat-vectors.py; lat and lon raw 0: no position"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "UAT 978 MHz ADS-B",
+  "domain": "air",
+  "exact": [
+    "uat"
+  ]
+}

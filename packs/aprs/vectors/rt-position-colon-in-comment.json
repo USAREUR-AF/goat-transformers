@@ -1,0 +1,18 @@
+{
+  "name": "aprs-rt-position-colon-in-comment",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: a colon in a comment: aprs.info ends there and the rest is residue, written back",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:!3754.21N/12226.40W>see you at 2:15",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:!3754.21N/12226.40W>see you at 2:15",
+  "model": {
+    "@kind": "position",
+    "aprs.lat_text": "3754.21",
+    "aprs.lat_hemisphere": "N",
+    "aprs.symbol_table": "/",
+    "aprs.lon_text": "12226.40",
+    "aprs.lon_hemisphere": "W",
+    "aprs.symbol_code": ">",
+    "aprs.info": "!3754.21N/12226.40W>see you at 2"
+  }
+}

@@ -26,7 +26,7 @@ from support import REPO, TempTree, have_git, load_tool, run_main
 gate = load_tool("boundary-gate")
 
 FINDING = re.compile(r"^boundary-gate: (?P<check>[a-z]+) +(?P<where>.+?): (?P<message>.+)$")
-WAIVED_SUMMARY = re.compile(r"^boundary-gate: \d+ needle hits waived ")
+WAIVED_SUMMARY = re.compile(r"^boundary-gate: (\d+ needle hits waived |\d+ binary files: |binary   )")
 
 MODULE = 'module core\ndistribution public\nsource "an invented public document"\nkey uid string - "identifier"\n'
 PACK = 'format sample\ndistribution public\nsource "an invented public document"\nwire json\nfield uid id string\n'
@@ -90,7 +90,7 @@ class GateCase(unittest.TestCase):
         code, out, _ = run_main(gate.main, "--root", self.tree.root, *args)
         lines = out.splitlines()
         body = [line for line in lines[:-1] if not WAIVED_SUMMARY.match(line)]
-        self.waived_summary = [line for line in lines[:-1] if WAIVED_SUMMARY.match(line)]
+        self.waived_summary = [line for line in lines[:-1] if WAIVED_SUMMARY.match(line) and " waived " in line]
         rows = [m.group("check", "where", "message") for m in map(FINDING.match, body)]
         self.waived = [(where, message) for check, where, message in rows if check == "waived"]
         found = [row for row in rows if row[0] != "waived"]
@@ -152,9 +152,8 @@ class Checks(GateCase):
             'source "an invented public document"', 'source "document #7"  # distribution controlled'))
         self.assert_ok()
 
-    def test_marking_does_not_apply_outside_model_and_packs(self):
-        self.tree.write("docs/notes.def", "anything\n")
-        self.tree.write("packs/sample/extra/pack.def", "format nested\n")
+    def test_marking_does_not_apply_to_other_files_than_def(self):
+        self.tree.write("docs/notes.md", "distribution controlled\n")
         self.assert_ok()
 
     # --- closure -----------------------------------------------------------
@@ -919,6 +918,397 @@ class Extension(unittest.TestCase):
         for path, expected in cases.items():
             with self.subTest(path):
                 self.assertEqual(gate.extension(path), expected)
+
+
+# --------------------------------------------------------------------------
+# Every needle is matched
+# --------------------------------------------------------------------------
+
+class EveryNeedle(GateCase):
+    """Invented needles in the shapes a list holds. Each is planted alone and
+    must be found as itself, whatever else is in the list."""
+
+    @staticmethod
+    def invented():
+        a, b, c = "zorb", "quux", "frob"
+        out = []
+        for join in (" ", "_", "-", ".", "/", ":", " - ", "__", ", ", " (", "#"):
+            out += [a + join + b, a + join + b + join + c, a + "1" + join + b + "2"]
+        out += [a + b + "7", a + "_" + b + "-" + c, a + "-" + b + "_" + c, a + " " + b + "_" + c, a + "." + b + " " + c,
+                "(" + a + " " + b + ")", "* " + c + " 3", "dfi/" + a + " 12 345", a + "é " + b, a + "１_" + b,
+                a + "_" + b + " " + c + " x", c + b, c + "9" + b]
+        return out
+
+    def test_each_is_found_alone_in_every_order_of_the_list(self):
+        needles = self.invented()
+        for order in (needles, needles[::-1], sorted(needles)):
+            index = gate.Needles()
+            for number, needle in enumerate(order, 1):
+                self.assertIsNone(index.add(number, needle))
+            for needle in order:
+                self.assertTrue(index.finds(needle), needle)
+            self.assertEqual(gate.unmatched(index, order), [])
+
+    def test_the_gate_fails_on_each_planted_needle(self):
+        needles = self.invented()
+        args = self.needles(*needles)
+        for needle in needles:
+            for text in (needle, "x = " + needle + ";", needle.upper()):
+                self.tree.write("docs/notes.md", text + "\n")
+                self.assert_findings([("needle", "docs/notes.md:1")], *args)
+
+    def test_two_needles_that_differ_in_a_separator_are_two_needles(self):
+        one, two = "zorb_quux", "zorb-quux"
+        for args in (self.needles(one, two), self.needles(two, one)):
+            for text in (one, two, "zorb quux"):
+                self.tree.write("docs/notes.md", text + "\n")
+                self.assert_findings([("needle", "docs/notes.md:1")], *args)
+            self.tree.write("docs/notes.md", "zorb.quux\n")
+            self.assert_ok(*args)
+
+    def test_a_shorter_needle_inside_does_not_stand_in_for_the_longer(self):
+        index = gate.Needles()
+        index.add(1, "zorb quux")
+        self.assertFalse(index.finds("zorb quux frob"))
+        self.assertEqual(gate.unmatched(index, ["zorb quux", "zorb quux frob"]), [2])
+
+    def test_the_gate_refuses_a_list_its_matcher_does_not_find(self):
+        self.assert_ok(*self.needles("zorb_quux", "frobnitz9"))
+        with mock.patch.object(gate.Needles, "lines_matched", lambda self, text: {}):
+            found = self.assert_findings(
+                [("needle", "%s:%d" % (self.needles("zorb_quux", "frobnitz9")[1], n)) for n in (1, 2)],
+                *self.needles("zorb_quux", "frobnitz9"))
+        self.assertNotIn("zorb", found[0][2])
+
+
+# --------------------------------------------------------------------------
+# Commits
+# --------------------------------------------------------------------------
+
+class Commits(GateCase):
+    git = True
+
+    def setUp(self):
+        super().setUp()
+        for k, v in (("GIT_AUTHOR_NAME", "t"), ("GIT_COMMITTER_NAME", "t"), ("GIT_AUTHOR_EMAIL", "t"), ("GIT_COMMITTER_EMAIL", "t")):
+            self.tree.env[k] = v
+        self.base = self.commit("base")
+        self.args = self.needles("zorblat_q", "quuxfrob")
+
+    def commit(self, message):
+        self.tree.git("add", "-A")
+        self.tree.git("commit", "-q", "--allow-empty", "-m", message)
+        return self.tree.git("rev-parse", "HEAD").strip()
+
+    def since(self, tip="HEAD"):
+        return self.args + ["--commits", "%s..%s" % (self.base, tip)]
+
+    def test_clean(self):
+        self.tree.write("docs/a.md", "a\n")
+        self.commit("add a")
+        self.assert_ok(*self.since())
+
+    def test_content_that_a_later_commit_removes(self):
+        self.tree.write("docs/a.md", "one\nthe zorblat_q\n")
+        bad = self.commit("add")
+        self.tree.write("docs/a.md", "one\n")
+        self.commit("fix")
+        self.assert_ok(*self.args)
+        found = self.assert_findings([("needle", "docs/a.md:2")], *self.since())
+        self.assertIn(bad[:12], found[0][2])
+        self.assertNotIn("zorblat", found[0][2])
+
+    def test_a_file_that_a_later_commit_deletes_and_a_path(self):
+        self.tree.write("docs/quuxfrob.md", "a\n")
+        self.commit("add")
+        self.tree.remove("docs/quuxfrob.md")
+        self.commit("delete")
+        self.assert_findings([("needle", "docs/quuxfrob.md")], *self.since())
+
+    def test_a_path_of_content_already_published(self):
+        self.tree.write("docs/a.md", "same\n")
+        self.base = self.commit("a")
+        self.tree.write("docs/quuxfrob.md", "same\n")
+        self.commit("copy")
+        self.tree.remove("docs/quuxfrob.md")
+        self.commit("delete")
+        self.assert_findings([("needle", "docs/quuxfrob.md")], *self.since())
+
+    def test_message_author_and_tag(self):
+        tip = self.commit("subject\n\nthe quuxfrob body")
+        self.assert_findings([("needle", "commit %s:%d" % (tip[:12], n)) for n in [self.line_in(tip, "quuxfrob")]], *self.since())
+        self.base = tip
+        self.tree.env["GIT_AUTHOR_NAME"] = "Quuxfrob"
+        tip = self.commit("plain")
+        self.assertEqual(self.run_gate(*self.since())[0], 1)
+        self.base = tip
+        self.tree.env["GIT_AUTHOR_NAME"] = "t"
+        self.commit("plain")
+        self.tree.git("tag", "-a", "v1", "-m", "the quuxfrob tag")
+        self.assert_ok(*self.since())
+        self.assertEqual(self.run_gate(*self.since("v1"))[0], 1)
+
+    def test_a_tag_on_a_published_commit_and_a_ref_name(self):
+        self.tree.git("tag", "-a", "v1", "-m", "fine")
+        self.tree.git("tag", "-a", "v2", "-m", "the quuxfrob tag")
+        self.tree.git("tag", "-a", "v3", "-m", "fine", "v2")
+        self.assert_ok(*self.args, "--tag", "v1", "--ref-name=refs/heads/fine")
+        for more in ([], ["--needles-only"]):
+            for option in (["--tag", "v2"], ["--tag", "v3"], ["--ref-name=refs/heads/x-quuxfrob"], ["--ref-name=zorblat_q"]):
+                code, found, lines = self.run_gate(*self.args, *option, *more)
+                self.assertEqual((code, [c for c, _, _ in found]), (1, ["needle"]), lines)
+                self.assertNotIn("quuxfrob", "\n".join(lines))
+            self.assertEqual(self.run_gate(*self.args, "--tag", "HEAD", *more)[0], 1)
+            self.assertEqual(self.run_gate(*self.args, "--tag", "nosuch", *more)[0], 1)
+
+    def line_in(self, commit, word):
+        return 1 + [word in l for l in self.tree.git("cat-file", "commit", commit).split("\n")].index(True)
+
+    def test_what_a_merge_itself_brings_in(self):
+        self.tree.git("checkout", "-q", "-b", "side")
+        self.tree.write("docs/s.md", "s\n")
+        self.commit("side")
+        self.tree.git("checkout", "-q", "-")
+        self.tree.write("docs/m.md", "m\n")
+        self.commit("main")
+        self.tree.git("merge", "-q", "--no-commit", "--no-ff", "side")
+        self.tree.write("docs/m.md", "m quuxfrob\n")
+        self.commit("merge")
+        self.tree.write("docs/m.md", "m\n")
+        self.commit("after")
+        self.assert_findings([("needle", "docs/m.md:1")], *self.since())
+
+    def test_the_other_checks_read_a_commit_too(self):
+        self.tree.write("docs/a.md", MARKINGS[4][1] + "\n")
+        self.tree.write("docs/b.pdf", "x\n")
+        self.commit("add")
+        self.tree.remove("docs/a.md")
+        self.tree.remove("docs/b.pdf")
+        self.commit("remove")
+        self.assert_findings([("phrase", "docs/a.md:1"), ("filetype", "docs/b.pdf")], *self.since())
+
+    def test_binary_content_is_searched(self):
+        self.tree.write("docs/a.md", b"\x00\xff quuxfrob \x00")
+        self.commit("add")
+        self.tree.remove("docs/a.md")
+        self.commit("remove")
+        self.assertIn("needle", [c for c, _, _ in self.run_gate(*self.since())[1]])
+
+    def test_the_whole_history(self):
+        self.tree.write("docs/a.md", "quuxfrob\n")
+        self.commit("add")
+        self.tree.remove("docs/a.md")
+        self.commit("remove")
+        self.assertEqual(self.run_gate(*self.args, "--commits", "HEAD")[0], 1)
+
+    def test_an_empty_range_and_a_wrong_one_fail(self):
+        for spec in ("HEAD..HEAD", "nosuch..HEAD", "..HEAD", "HEAD..", "--all", "HEAD...HEAD", "-x..HEAD"):
+            code, found, lines = self.run_gate(*self.args, "--commits=" + spec)
+            self.assertEqual((code, [c for c, _, _ in found]), (1, ["commit"]), (spec, lines))
+
+    def test_a_shallow_repository_fails(self):
+        self.commit("two")
+        clone = os.path.join(self.tree.beside, "clone")
+        subprocess.run(["git", "clone", "-q", "--depth", "1", "file://" + self.tree.root, clone], check=True,
+                       capture_output=True, env=self.tree.env)
+        code, out, _ = run_main(gate.main, "--root", clone, *self.args, "--commits", "HEAD")
+        self.assertEqual(code, 1)
+        self.assertIn("shallow", out)
+
+    def test_not_a_repository_fails(self):
+        plain = os.path.join(self.tree.beside, "plain")
+        os.makedirs(plain)
+        shutil.copy(os.path.join(self.tree.root, "model", "core.def"), plain)
+        self.assertEqual(run_main(gate.main, "--root", plain, *self.args, "--commits", "HEAD")[0], 1)
+
+    def test_needles_only_reads_commits(self):
+        self.tree.write("docs/a.pdf", "quuxfrob\n")
+        self.commit("add")
+        self.tree.remove("docs/a.pdf")
+        self.commit("remove")
+        self.assert_ok(*self.args, "--needles-only")
+        self.assert_findings([("needle", "docs/a.pdf:1")], *self.since(), "--needles-only")
+
+
+# Where no marking check would read a .def file.
+DEF_ELSEWHERE = [
+    "packs/inventedo-one/sub/pack.def", "packs/inventedo-one/other.def", "packs/pack.def", "packs/inventedo-one/pack.DEF",
+    "model/sub/x.def", "model/x.Def", "layouts/secret.def", "x.def",
+]
+
+
+class DefPaths(GateCase):
+    git = True
+
+    def test_a_def_file_anywhere_else_fails(self):
+        for path in DEF_ELSEWHERE:
+            for text in ("distribution controlled\n", "distribution public\n", ""):
+                self.tree.write(path, text)
+                self.assert_findings([("marking", path)])
+            self.tree.remove(path)
+
+    def test_a_fixture_states_no_other_marking(self):
+        for base in ("packs/conformance/tool-fixtures/", "tools/gen/tests/fixtures/"):
+            path = base + "a/packs/b/pack.def"
+            self.tree.write(path, "format b\ndistribution public\n")
+            self.assert_ok()
+            self.tree.write(path, "format b\ndistribution controlled\n")
+            self.assert_findings([("marking", path + ":2")])
+            self.tree.remove(path)
+
+    def test_a_second_format_or_module_line_fails(self):
+        self.tree.write("packs/sample/pack.def", PACK + "format other\n")
+        self.assert_findings([("marking", "packs/sample/pack.def")])
+        self.tree.write("packs/sample/pack.def", PACK)
+        self.tree.write("model/core.def", MODULE + "module other\n")
+        self.assert_findings([("marking", "model/core.def")])
+
+
+class ExampleOverlay(GateCase):
+    """The public example of an overlay, beside a core tree."""
+
+    git = True
+    M = 'module inventedo\ndistribution controlled\nsource "x"\nkey a string - "a"\n'
+    P = ('format inventedo-one\ndistribution controlled\nsource "x"\nwire json\nuses inventedo\n'
+         'field uid id string\nfield inventedo.a a string\n')
+
+    def setUp(self):
+        super().setUp()
+        self.core = os.path.join(self.tree.beside, "core")
+        self.tree.write_beside("core/model/core.def", MODULE)
+        for path in ("model/core.def", "packs/sample/pack.def"):
+            self.tree.remove(path)
+        self.tree.write("model/inventedo.def", self.M)
+        self.tree.write("packs/inventedo-one/pack.def", self.P)
+        self.plain = self.needles("zorb_quux", "zorb-quux")
+        self.args = self.plain + ["--example-overlay", "inventedo", "--core", self.core]
+
+    def test_passes_only_in_its_mode(self):
+        self.assert_ok(*self.args)
+        self.assertEqual({c for c, _, _ in self.run_gate(*self.plain)[1]}, {"marking", "closure"})
+
+    def test_any_needle_still_fails(self):
+        for path, text in [("docs/a.md", "zorb-quux\n"), ("packs/inventedo-one/pack.md", "a zorb_quux\n"), ("docs/zorb_quux.md", "a\n")]:
+            self.tree.write(path, text)
+            code, found, lines = self.run_gate(*self.args)
+            self.assertEqual((code, [c for c, _, _ in found]), (1, ["needle"]), lines)
+            self.tree.remove(path)
+        self.tree.write("packs/inventedo-one/pack.def", self.P.replace('"x"', '"zorb-quux"'))
+        self.assert_findings([("needle", "packs/inventedo-one/pack.def:3")], *self.args)
+
+    def test_a_marking_on_another_name_fails(self):
+        for name, fmt in [("other", "other"), ("other", "inventedo-x"), ("inventedo-x", "other"), ("inventedox", "inventedox")]:
+            self.tree.write("packs/%s/pack.def" % name, 'format %s\ndistribution controlled\nsource "x"\nwire json\nfield uid id string\n' % fmt)
+            self.assert_findings([("marking", "packs/%s/pack.def" % name)], *self.args)
+            self.tree.remove("packs/%s/pack.def" % name)
+        self.tree.write("model/other.def", self.M.replace("inventedo", "other"))
+        self.assert_findings([("marking", "model/other.def")], *self.args)
+
+    def test_a_file_name_without_the_prefix_fails(self):
+        self.tree.write("model/plainname.def", self.M.replace("module inventedo", "module inventedo-hidden"))
+        self.assert_findings([("marking", "model/plainname.def")], *self.args)
+
+    def test_two_format_lines_fail(self):
+        self.tree.write("packs/inventedo-one/pack.def", self.P + "format secret\n")
+        self.assert_findings([("marking", "packs/inventedo-one/pack.def")] * 2, *self.args)
+        self.tree.write("packs/inventedo-one/pack.def", self.P + "format inventedo-two\n")
+        self.assert_findings([("marking", "packs/inventedo-one/pack.def")], *self.args)
+
+    def test_a_def_file_anywhere_else_fails(self):
+        for path in DEF_ELSEWHERE:
+            self.tree.write(path, "distribution controlled\n")
+            self.assert_findings([("marking", path)], *self.args)
+            self.tree.remove(path)
+
+    def test_an_example_marked_public_or_twice_fails(self):
+        for line in ("distribution public", "distribution controlled\ndistribution controlled"):
+            self.tree.write("model/inventedo.def", self.M.replace("distribution controlled", line))
+            self.assert_findings([("marking", "model/inventedo.def")], *self.args)
+
+    def test_modules_and_keys_are_checked_against_core(self):
+        self.tree.write("packs/inventedo-one/pack.def", self.P + "uses nosuch\nfield nokey b string\n")
+        self.assert_findings([("closure", "packs/inventedo-one/pack.def"), ("closure", "packs/inventedo-one/pack.def:9")], *self.args)
+
+    def test_the_other_checks_stay(self):
+        self.tree.write("docs/a.md", MARKINGS[4][1] + "\n")
+        self.tree.write("docs/b.pdf", "x\n")
+        self.tree.write("docs/c.md", HYGIENE[3][1] + "\n")
+        self.assert_findings([("phrase", "docs/a.md:1"), ("filetype", "docs/b.pdf"), ("hygiene", "docs/c.md:1")], *self.args)
+
+    def test_a_core_that_is_not_one_fails(self):
+        self.tree.write_beside("core/model/core.def", MODULE.replace("public\n", "controlled\n", 1))
+        self.assertEqual(self.run_gate(*self.args)[0], 1)
+        os.makedirs(os.path.join(self.tree.beside, "empty"))
+        self.assertEqual(self.run_gate(*self.args[:-1], os.path.join(self.tree.beside, "empty"))[0], 1)
+        self.assertEqual(self.run_gate(*self.args[:-1], self.tree.root)[0], 1)
+
+    def test_a_wrong_command_line_is_status_2(self):
+        over = ["--example-overlay", "inventedo", "--core", self.core]
+        for args in (over, self.plain + over[:2], self.plain + over[2:], self.args + ["--needles-only"],
+                     self.plain + ["--example-overlay", "", "--core", self.core],
+                     self.plain + ["--example-overlay", "abc", "--core", self.core],
+                     self.plain + ["--example-overlay", ".*aa", "--core", self.core]):
+            self.assertEqual(run_main(gate.main, "--root", self.tree.root, *args)[0], 2, args)
+
+
+class NeedlesOnly(GateCase):
+    """The tree of another repository: only needles count."""
+
+    git = True
+
+    def setUp(self):
+        super().setUp()
+        self.args = self.needles("zorblat", "quux_frob") + ["--needles-only"]
+
+    def test_other_findings_do_not_count(self):
+        self.tree.write("docs/standard.pdf", b"\x00\xff")
+        self.tree.write("model/bad.def", "module bad\n")
+        self.tree.write("docs/a.md", MARKINGS[4][1] + " " + HYGIENE[3][1] + "\n")
+        self.assertEqual(self.run_gate(*self.args[:2])[0], 1)
+        self.assert_ok(*self.args)
+
+    def test_a_needle_in_text_a_path_binary_and_utf_16_counts(self):
+        for path, data in [("a.swift", "let quux_frob = 1\n"), ("zorblat.png", "x"), ("b.bin", b"\x00\xff zorblat \x00"),
+                           ("c.txt", "zorblat".encode("utf-16")), ("d.txt", b"\x00" + "zorblat".encode("utf-16-be"))]:
+            self.tree.write(path, data)
+            code, found, lines = self.run_gate(*self.args)
+            self.assertEqual((code, {c for c, _, _ in found}), (1, {"needle"}), (path, lines))
+            self.tree.remove(path)
+        self.assert_ok(*self.args)
+
+    def test_binary_files_are_listed_and_do_not_fail(self):
+        self.tree.write("a.zip", b"PK\x03\x04\x00\xff")
+        self.tree.write("b.pdf", b"%PDF-1.4 text")
+        self.tree.write("c.md", "text\n")
+        code, out, _ = run_main(gate.main, "--root", self.tree.root, *self.args)
+        self.assertEqual(code, 0, out)
+        self.assertEqual([l for l in out.splitlines() if l.startswith("boundary-gate: binary ")],
+                         ["boundary-gate: binary   a.zip", "boundary-gate: binary   b.pdf"])
+
+    def test_a_link_is_its_target_and_a_file_that_cannot_be_read_fails(self):
+        os.symlink("zorblat", os.path.join(self.tree.root, "link"))
+        self.assertEqual(self.run_gate(*self.args)[0], 1)
+        self.tree.remove("link")
+        os.symlink("nowhere", os.path.join(self.tree.root, "link"))
+        self.assert_ok(*self.args)
+        path = self.tree.write("a.md", "a\n")
+        real = open
+        def refuse(name, *a, **k):
+            if name == path:
+                raise PermissionError
+            return real(name, *a, **k)
+        with mock.patch("builtins.open", refuse):
+            self.assert_findings([("needle", "a.md")], *self.args)
+
+    def test_without_a_usable_list_it_fails(self):
+        self.assertEqual(self.run_gate("--needles-only")[0], 1)
+        self.assertEqual(self.run_gate(*self.needles("", ""), "--needles-only")[0], 1)
+        self.assertEqual(self.run_gate(*self.needles("ab", "zorblat"), "--needles-only")[0], 1)
+
+    def test_an_empty_tree_fails(self):
+        for path in ("model/core.def", "packs/sample/pack.def"):
+            self.tree.remove(path)
+        self.assertEqual(self.run_gate(*self.args)[0], 1)
 
 
 # --------------------------------------------------------------------------

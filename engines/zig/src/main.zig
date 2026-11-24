@@ -8680,6 +8680,11 @@ fn textAddresses(ln: *const Line, idx: usize) bool {
     return ln.ti == idx or (ln.tloc == .pair and ln.tj == idx);
 }
 
+fn textAddressed(lines: []const Line, idx: usize) bool {
+    for (lines) |*ln| if (textAddresses(ln, idx)) return true;
+    return false;
+}
+
 fn textGroup(lines: []const Line) ?*const Group {
     for (lines) |*ln| if (ln.tag == .group) return ln.grp.?;
     return null;
@@ -8687,17 +8692,16 @@ fn textGroup(lines: []const Line) ?*const Group {
 
 fn textResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, td: TextDoc, e: *Entity) anyerror!void {
     const g = textGroup(lines);
-    for (td.fields, 0..) |f, idx| {
-        if (f.len == 0) continue;
-        if (g) |gr| if (idx >= gr.tstart) break;
-        var addressed = false;
-        for (lines) |*ln| {
-            if (textAddresses(ln, idx)) {
-                addressed = true;
-                break;
-            }
-        }
-        if (addressed) continue;
+    const end = if (g) |gr| @min(gr.tstart, td.fields.len) else td.fields.len;
+    // A record may hold a field per input byte: the room is taken once, as
+    // a list grown in an arena leaves every smaller copy behind.
+    var count: usize = 0;
+    for (td.fields[0..end], 0..) |f, idx| {
+        if (f.len > 0 and !textAddressed(lines, idx)) count += 1;
+    }
+    try e.residue.ensureTotalCapacityPrecise(e.alloc, e.residue.items.len + count);
+    for (td.fields[0..end], 0..) |f, idx| {
+        if (f.len == 0 or textAddressed(lines, idx)) continue;
         try e.addResidue(.{ .fmt = p.format, .locator = try intToStr(alloc, @intCast(idx)), .value = f });
     }
 }
@@ -8801,14 +8805,38 @@ fn hmsText(buf: *std.ArrayList(u8), secs: u64, frac: u64, f: usize) !void {
 
 // One field of the record being written: the text of the first whole-field
 // line that writes it, the columns field lines write (the earlier line's
-// characters stand), then `when` and `const` values over both.
+// characters stand), then `when` and `const` values over both. A record may
+// have a field per input byte, so a field costs three words; what only
+// columns and fixed values need is held apart, for the fields that have them.
 const TField = struct {
-    whole: ?[]const u8 = null,
+    whole_ptr: ?[*]const u8 = null,
+    whole_len: usize = 0,
+    over: ?*TOver = null,
+
+    // The text, after `compose` and before it where no fixed value is written.
+    fn result(self: *const TField) []const u8 {
+        if (self.over) |o| if (o.composed) return o.text.items;
+        if (self.whole_ptr) |w| return w[0..self.whole_len];
+        return if (self.over) |o| o.cols.items else "";
+    }
+    fn overlay(self: *TField, alloc: std.mem.Allocator) !*TOver {
+        if (self.over == null) {
+            const o = try alloc.create(TOver);
+            o.* = .{};
+            self.over = o;
+        }
+        return self.over.?;
+    }
+};
+
+const TOver = struct {
     cols: std.ArrayListUnmanaged(u8) = .{},
     cmask: std.ArrayListUnmanaged(bool) = .{},
     text: std.ArrayListUnmanaged(u8) = .{},
     fmask: std.ArrayListUnmanaged(bool) = .{},
     fixed_whole: bool = false,
+    // `text` and `fmask` are in use: a fixed value is written over the field
+    composed: bool = false,
 };
 
 const TextEnc = struct {
@@ -8824,6 +8852,18 @@ const TextEnc = struct {
         return &self.fields.items[idx];
     }
 
+    // Room for every field the residue and the items write, taken once.
+    fn reserve(self: *TextEnc, sc: *const Scope, e: *const Entity, g: ?*const Group) !void {
+        var n: usize = 0;
+        for (e.residue.items) |r| {
+            if (textResidueField(self.p, sc, g, r)) |idx| n = @max(n, idx + 1);
+        }
+        if (g) |gr| if (e.lists.get(gr.list)) |items| {
+            if (items.len > 0) n = @max(n, gr.tstart + items.len * gr.titem);
+        };
+        try self.fields.ensureTotalCapacityPrecise(self.alloc, n);
+    }
+
     // Text a transform wrote: no delimiter, no `*` under nmea, 0x20 to 0x7E.
     fn check(self: *TextEnc, ln: *const Line, s: []const u8) !void {
         const te = E.@"transform-encode";
@@ -8834,7 +8874,9 @@ const TextEnc = struct {
 
     fn whole(self: *TextEnc, idx: usize, s: []const u8) !void {
         const f = try self.field(idx);
-        if (f.whole == null) f.whole = s;
+        if (f.whole_ptr != null) return;
+        f.whole_ptr = s.ptr;
+        f.whole_len = s.len;
     }
 
     fn column(self: *TextEnc, ln: *const Line, idx: usize, s: []const u8) !void {
@@ -8851,7 +8893,7 @@ const TextEnc = struct {
             try padded.appendSlice(s);
             try padded.appendNTimes(' ', ln.tlen - s.len);
         }
-        const f = try self.field(idx);
+        const f = try (try self.field(idx)).overlay(self.alloc);
         const end = ln.tfrom + ln.tlen;
         while (f.cols.items.len < end) {
             try f.cols.append(self.alloc, ' ');
@@ -8905,14 +8947,17 @@ const TextEnc = struct {
     // The text of each field from its lines, then the `when` and `const`
     // values over it.
     fn compose(self: *TextEnc) !void {
-        for (self.fields.items) |*f| {
-            try f.text.appendSlice(self.alloc, f.whole orelse f.cols.items);
-            try f.fmask.appendNTimes(self.alloc, false, f.text.items.len);
-        }
         for (self.fixed.items) |fx| {
             const ln = fx.ln;
             if (ln.wpresent) continue;
-            const f = try self.field(fx.base + ln.ti);
+            const tf = try self.field(fx.base + ln.ti);
+            const f = try tf.overlay(self.alloc);
+            if (!f.composed) {
+                const from_lines = tf.result();
+                try f.text.appendSlice(self.alloc, from_lines);
+                try f.fmask.appendNTimes(self.alloc, false, from_lines.len);
+                f.composed = true;
+            }
             if (f.fixed_whole) continue; // the earlier line's characters stand
             if (ln.tloc == .whole) {
                 if (std.mem.indexOfScalar(bool, f.fmask.items, true) != null) continue;
@@ -8938,10 +8983,19 @@ const TextEnc = struct {
     }
 };
 
+// The field a residue entry is written at; null: it is not written.
+fn textResidueField(p: *const Pack, sc: *const Scope, g: ?*const Group, r: Residue) ?usize {
+    if (!std.mem.eql(u8, r.fmt, p.format)) return null;
+    const idx = parseIdx(r.locator) orelse return null;
+    if (g) |gr| if (idx >= gr.tstart) return null;
+    return if (textAddressed(sc.lines, idx)) null else idx;
+}
+
 fn textEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *const Entity, diag: *Diag) anyerror![]u8 {
     var enc = TextEnc{ .alloc = alloc, .p = p, .diag = diag };
-    try enc.scope(sc, e, 0);
     const g = textGroup(sc.lines);
+    try enc.reserve(sc, e, g);
+    try enc.scope(sc, e, 0);
     // the record's length: the fields the lines address, the items wrote,
     // and the residue written
     var n: usize = enc.fields.items.len;
@@ -8951,14 +9005,7 @@ fn textEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *co
         if (ln.tloc == .pair) n = @max(n, ln.tj + 1);
     }
     for (e.residue.items) |r| {
-        if (!std.mem.eql(u8, r.fmt, p.format)) continue;
-        const idx = parseIdx(r.locator) orelse continue;
-        if (g) |gr| if (idx >= gr.tstart) continue;
-        var addressed = false;
-        for (sc.lines) |*ln| {
-            if (textAddresses(ln, idx)) addressed = true;
-        }
-        if (addressed) continue;
+        const idx = textResidueField(p, sc, g, r) orelse continue;
         try enc.whole(idx, r.value);
         n = @max(n, idx + 1);
     }
@@ -8967,7 +9014,7 @@ fn textEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *co
     // trailing empty fields that only `optional` lines address are removed
     while (n > 0) {
         const last = n - 1;
-        if (enc.fields.items[last].text.items.len > 0) break;
+        if (enc.fields.items[last].result().len > 0) break;
         if (g) |gr| if (last >= gr.tstart) break;
         var any = false;
         var all_optional = true;
@@ -8979,13 +9026,15 @@ fn textEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *co
         if (!any or !all_optional) break;
         n -= 1;
     }
-    var buf = std.ArrayList(u8).init(alloc);
+    const count = if (p.delim == null) @min(n, 1) else n;
+    var size: usize = p.start.len + count + 3; // delimiters, and `*hh`
+    for (enc.fields.items[0..count]) |*f| size += f.result().len;
+    var buf = try std.ArrayList(u8).initCapacity(alloc, size);
     try buf.appendSlice(p.start);
     const body_at = buf.items.len;
-    const count = if (p.delim == null) @min(n, 1) else n;
     for (enc.fields.items[0..count], 0..) |*f, i| {
         if (i > 0) try buf.append(p.delim.?);
-        try buf.appendSlice(f.text.items);
+        try buf.appendSlice(f.result());
     }
     if (p.nmea) {
         var x: u8 = 0;

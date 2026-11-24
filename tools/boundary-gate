@@ -10,7 +10,10 @@ with no files.
 
 Checks:
   marking     every model/*.def and packs/*/pack.def says `distribution public`
-              exactly once and has at least one `source` line
+              exactly once, has at least one `source` line and no second
+              `module` or `format` line; a .def file stands nowhere else,
+              except the fixtures in packs/conformance/tool-fixtures/ and
+              tools/gen/tests/fixtures/, which state no other marking
   closure     every `uses` names a module in model/, and every mapped key is
               declared by its module
   filetype    every file has an allowed extension (no documents, spreadsheets,
@@ -48,6 +51,10 @@ How text is matched (phrase and needle):
   - The words of a marking may be separated by spaces, hyphens, underscores
     and line breaks, and by the comment or quote mark that starts a wrapped
     line.
+
+  - Two needles that differ only in what stands between their words (`a_b`,
+    `a-b`) are two needles. When the list is loaded, each needle is matched
+    against itself alone on a line, and one that is not found is a finding.
 
 The needle file holds one needle per line; blank lines are ignored. A needle
 shorter than 4 characters, or with no letter or digit, is a finding that names
@@ -95,6 +102,18 @@ Generated packs (the needle waiver):
 
 Usage:
   tools/boundary-gate [--root DIR] [--needles FILE] [--require-needles]
+                      [--commits BASE..TIP] [--tag TAG] [--ref-name NAME]
+                      [--needles-only | --example-overlay PREFIX --core DIR]
+
+--example-overlay is for the public repository that shows an overlay with
+invented formats: the names that begin with PREFIX must be marked as an overlay
+marks them, and modules may come from the tree DIR. Nothing else is relaxed.
+
+--commits also checks what each commit of a push publishes: its message, author
+and committer, every path it changes and every content it brings in, also when
+a later commit removes it. --tag checks an annotated tag, and --ref-name the
+name of a ref. --needles-only runs the needle check alone, on the
+tree of any repository.
 
 After the findings, a line counts the waived hits, and one line for each
 names the file, the line, and the needle's line number and length.
@@ -293,7 +312,42 @@ def _read_directives(root, path, findings):
         return None
 
 
-def check_modules(root, files):
+# The public example of an overlay: its formats are invented, and it marks them
+# as an overlay does to show the mechanics. prefix: what the name of each of its
+# modules and formats begins with. core: the tree whose modules it may use.
+ExampleOverlay = collections.namedtuple("ExampleOverlay", "prefix core")
+
+
+def _marking(name, example):
+    """The distribution a module or a format of this name must state."""
+    if example and re.match(re.escape(example.prefix) + r"(?![a-z0-9])", name):
+        return "controlled"
+    return "public"
+
+
+# Inputs of the tool vectors and of the generator tests: whole small trees, with
+# .def files of any shape below them. Their marking is still read.
+DEF_FIXTURES = ("packs/conformance/tool-fixtures/", FIXTURE_DIR)
+
+
+def check_def_paths(root, files):
+    """The marking check on every .def file that is not model/<name>.def or
+    packs/<format>/pack.def: there is none, so that no marking is in a place
+    the checks below do not read. A fixture states no marking but `public`."""
+    findings = []
+    for path in files:
+        if extension(path) != "def" or re.fullmatch(r"model/[^/]+\.def|packs/[^/]+/pack\.def", path):
+            continue
+        if not path.startswith(DEF_FIXTURES):
+            findings.append(Finding("marking", path, 0, "a .def file is model/<name>.def or packs/<format>/pack.def"))
+            continue
+        for number, toks in _read_directives(root, path, findings) or ():
+            if toks[0] == "distribution" and toks[1:] != ["public"]:
+                findings.append(Finding("marking", path, number, "a fixture states no distribution but `public`"))
+    return findings
+
+
+def check_modules(root, files, example=None):
     """The marking check on model/*.def. -> ({module name: its keys}, findings)"""
     modules, findings = {}, []
     for path in files:
@@ -307,18 +361,23 @@ def check_modules(root, files):
             findings.append(Finding("marking", path, 0, "model module has no `module` line"))
             continue
         name = names[0]
+        if len(names) > 1:
+            findings.append(Finding("marking", path, 0, "more than one `module` line"))
         distribution = _values(rows, "distribution")
-        if distribution != ["public"]:
+        # The file and the module must both carry the prefix.
+        markings = {_marking(n, example) for n in names + [os.path.basename(path)[:-len(".def")]]}
+        wanted = "controlled" if markings == {"controlled"} else "public"
+        if distribution != [wanted]:
             findings.append(Finding(
-                "marking", path, 0, "model module `%s` must say `distribution public` exactly once (has %s)"
-                % (name, distribution or "none")))
+                "marking", path, 0, "model module `%s` must say `distribution %s` exactly once (has %s)"
+                % (name, wanted, distribution or "none")))
         if not _values(rows, "source"):
             findings.append(Finding("marking", path, 0, "model module `%s` has no `source` line" % name))
         modules[name] = set(_values(rows, "key"))
     return modules, findings
 
 
-def check_packs(root, files, modules):
+def check_packs(root, files, modules, example=None):
     """The marking and closure checks on packs/<format>/pack.def. -> findings"""
     findings = []
     for path in files:
@@ -329,10 +388,16 @@ def check_packs(root, files, modules):
         if rows is None:
             continue
         distribution = _values(rows, "distribution")
-        if distribution != ["public"]:
+        formats = _values(rows, "format")
+        if len(formats) > 1:
+            findings.append(Finding("marking", path, 0, "more than one `format` line"))
+        # The format and the directory must both carry the prefix.
+        markings = {_marking(name, example) for name in formats + [parts[1]]}
+        wanted = "controlled" if markings == {"controlled"} else "public"
+        if distribution != [wanted]:
             findings.append(Finding(
-                "marking", path, 0, "pack must say `distribution public` exactly once (has %s)"
-                % (distribution or "none")))
+                "marking", path, 0, "pack must say `distribution %s` exactly once (has %s)"
+                % (wanted, distribution or "none")))
         if not _values(rows, "source"):
             findings.append(Finding("marking", path, 0, "pack has no `source` line"))
         used = {"core"} | set(_values(rows, "uses"))
@@ -485,7 +550,7 @@ class Needles:
         self.single = {}    # word -> needle line, for needles of one word
         self.phrases = {}   # longest word -> [(words, set of words, needle line)], for the others
         self.length = {}    # needle line -> characters in the needle
-        self._seen = set()
+        self._owner = {}  # (form, the text between its words) -> the needle line it is indexed under
         # The keys of the two indexes as sets: a set meets a set in the time
         # of the smaller, and a file has far fewer distinct words than the list.
         self._single_words = set()
@@ -498,30 +563,48 @@ class Needles:
         """Index the needle on line `number`. -> why it cannot be used, or None"""
         if len(needle) < MIN_NEEDLE_CHARS:
             return "needle is shorter than %d characters" % MIN_NEEDLE_CHARS
-        text = plain(needle)
-        gaps = {}  # form -> {(the text between word i and word i + 1, ...)}
-        for tokenizer in tokenizers(text):
-            found = list(tokenizer.finditer(text))
-            form = tuple(fold_words(m.group(0) for m in found))
-            gaps.setdefault(form, set()).add(
-                tuple(text[found[i].end():found[i + 1].start()] for i in range(len(found) - 1)))
+        gaps = self._gaps(needle)
         forms = set(gaps)
         if () in forms:
             return "needle holds no letter or digit"
-        if forms <= self._seen:
+        # Two needles are the same only when their words AND what stands between
+        # the words agree: `a_b` and `a-b` are two needles, matched separately.
+        new = {form: {g for g in gaps[form] if (form, g) not in self._owner} for form in forms}
+        if not any(new.values()):
             return None  # the same needle as an earlier line
         self.length[number] = len(needle)
-        for form in forms - self._seen:
-            self._seen.add(form)
+        for form in sorted(forms):
+            if not new[form]:
+                continue
+            self._owner.update(((form, g), number) for g in new[form])
             if len(form) == 1:
                 self.single[form[0]] = number
                 self._single_words.add(form[0])
             else:
                 # Filed under its longest word, the one fewest files hold.
                 key = max(form, key=len)
-                self.phrases.setdefault(key, []).append((list(form), frozenset(form), number, gaps[form]))
+                self.phrases.setdefault(key, []).append((list(form), frozenset(form), number, new[form]))
                 self._phrase_keys.add(key)
         return None
+
+    @staticmethod
+    def _gaps(needle):
+        """-> {form: {(the text between word i and word i + 1, ...)}}: the
+        words of a needle, and what stands between them"""
+        text, gaps = plain(needle), {}
+        for tokenizer in tokenizers(text):
+            found = list(tokenizer.finditer(text))
+            form = tuple(fold_words(m.group(0) for m in found))
+            gaps.setdefault(form, set()).add(
+                tuple(text[found[i].end():found[i + 1].start()] for i in range(len(found) - 1)))
+        return gaps
+
+    def finds(self, needle):
+        """True when `needle`, alone on a line of text, is matched as itself:
+        as the needle it is indexed under, not by a shorter needle it holds."""
+        owners = {self._owner.get((form, g)) for form, seen in self._gaps(needle).items() for g in seen}
+        hits = set().union(*self.lines_matched(plain(needle)).values())
+        return None not in owners and bool(hits & owners)
 
     def _candidates(self, text):
         """The needles that may occur in `text`, judged from the set of its
@@ -603,7 +686,22 @@ def load_needles(path):
                 findings.append(Finding("needle", path, number, problem))
     if not needles and not findings:
         findings.append(Finding("needle", path, 0, "needle file is empty: refusing to pass"))
+    for number in unmatched(needles, lines):
+        findings.append(Finding(
+            "needle", path, number, "the matcher does not find this needle where it stands alone: refusing to pass"))
     return needles, findings
+
+
+def unmatched(needles, lines):
+    """The self-check of the matcher: each needle of the file, alone on a line
+    of text, must be found as itself. -> the numbers of the lines that are
+    not. A needle that cannot be used is a finding already."""
+    missed = []
+    for number, line in enumerate(lines, 1):
+        needle = line.strip()
+        if len(needle) >= MIN_NEEDLE_CHARS and () not in needles._gaps(needle) and not needles.finds(needle):
+            missed.append(number)
+    return missed
 
 
 def check_needles(path, text, needles, in_text=True, waiver=None, waived=None):
@@ -1016,8 +1114,17 @@ def read_text(full):
     """-> (text, None), or (None, why the file is not text)."""
     try:
         with open(full, "rb") as fh:
-            text = fh.read().decode("utf-8")
-    except (OSError, UnicodeDecodeError) as e:
+            data = fh.read()
+    except OSError as e:
+        return None, "not readable as UTF-8 text: %s" % type(e).__name__
+    return decode_text(data)
+
+
+def decode_text(data):
+    """-> (text, None), or (None, why the bytes are not text)."""
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError as e:
         return None, "not readable as UTF-8 text: %s" % type(e).__name__
     if "\0" in text:
         return None, "binary content"
@@ -1049,6 +1156,20 @@ def check_content(root, path, needles, waiver=None, waived=None):
     text, problem = read_text(os.path.join(root, path))
     if problem:
         return [Finding("filetype", path, 0, problem)]
+    return check_text(path, text, needles, waiver, waived)
+
+
+def check_data(path, data, needles, waiver=None, waived=None):
+    """check_content on bytes that git holds. Bytes that are not text are a
+    finding, and their needles are findings too."""
+    text, problem = decode_text(data)
+    if problem:
+        return [Finding("filetype", path, 0, problem)] + (check_bytes(path, data, needles, waiver, waived) if needles else [])
+    return check_text(path, text, needles, waiver, waived)
+
+
+def check_text(path, text, needles, waiver=None, waived=None):
+    """The checks on the text of a file. -> findings"""
     exempt = frozenset()
     if ALLOW_TAG in text:
         exempt = frozenset(n for n, line in enumerate(text.split("\n"), 1) if ALLOW_TAG in line)
@@ -1063,19 +1184,230 @@ def check_content(root, path, needles, waiver=None, waived=None):
 
 
 # --------------------------------------------------------------------------
+# Commits: what a push publishes besides the tree at its tip
+# --------------------------------------------------------------------------
+
+def _git(root, *args, stdin=None):
+    # Replacement objects and grafts would show another history than the one pushed.
+    env = dict(os.environ, GIT_NO_REPLACE_OBJECTS="1")
+    return subprocess.run(["git", "-C", root, *args], check=True, capture_output=True, input=stdin, env=env).stdout
+
+
+def _objects(root, ids):
+    """-> an iterator of (id, type, bytes) for each object id."""
+    data = _git(root, "cat-file", "--batch", stdin="".join(i + "\n" for i in ids).encode())
+    at = 0
+    for wanted in ids:
+        end = data.index(b"\n", at)
+        head = data[at:end].decode("ascii", "replace").split(" ")
+        if len(head) != 3:
+            raise ValueError("object %s is missing" % wanted)
+        size = int(head[2])
+        yield head[0], head[1], data[end + 1:end + 1 + size]
+        at = end + 1 + size + 1
+
+
+def commits_of(root, spec):
+    """The commits of `spec`: `BASE..TIP`, or `TIP` for its whole history.
+    -> (the rev-list arguments, [commit ids])"""
+    base, dots, tip = spec.partition("..")
+    revs = [tip, "^" + base] if dots else [spec]
+    if any(not r.lstrip("^") or r.lstrip("^").startswith("-") or ".." in r for r in revs):
+        raise ValueError("not BASE..TIP or a commit")
+    for r in revs:
+        _git(root, "rev-parse", "--verify", "--quiet", "--end-of-options", r.lstrip("^") + "^{commit}")
+    if _git(root, "rev-parse", "--is-shallow-repository").strip() != b"false":
+        raise ValueError("the repository is shallow, so its history is not all here")
+    return revs, _git(root, "rev-list", *revs, "--").decode().split()
+
+
+def tag_texts(root, rev):
+    """-> [(name, bytes)]: the annotated tag `rev` names and the tags it
+    points to, or [] when `rev` is no tag object"""
+    texts = []
+    while _git(root, "cat-file", "-t", "--end-of-options", rev).decode().strip() == "tag":
+        data = _git(root, "cat-file", "tag", rev)
+        texts.append(("tag %s" % _git(root, "rev-parse", rev).decode().strip()[:12], data))
+        rev = data.split(b"\n", 1)[0].split(b" ")[1].decode()
+    return texts
+
+
+def check_object_texts(texts, needles, needles_only=False):
+    """The phrase and needle checks on commit and tag objects. -> findings"""
+    findings = []
+    for where, data in texts:
+        text = plain(data.decode("utf-8", "replace").replace("\0", " "))
+        if not needles_only:
+            findings += check_phrases(where, View(fold(text)))
+        if needles:
+            findings += check_needles(where, text, needles)
+    return findings
+
+
+def check_refs(root, tags, names, needles, needles_only=False):
+    """The checks on what a push publishes besides commits: annotated tags
+    (each of `tags` must name one) and the names of the refs. -> findings"""
+    findings = []
+    for tag in tags:
+        try:
+            texts = tag_texts(root, tag)
+            if not texts:
+                raise ValueError("not an annotated tag")
+            findings += check_object_texts(texts, needles, needles_only)
+        except (OSError, ValueError, subprocess.CalledProcessError) as e:
+            why = str(e) if isinstance(e, ValueError) else type(e).__name__
+            findings.append(Finding("commit", "tag %s" % tag[:12], 0, "cannot read the tag: %s" % why))
+    # A ref name with a needle is not printed: the finding names its place in the arguments.
+    for number, name in enumerate(names, 1):
+        where = "ref name %d" % number
+        text = plain(name.encode("utf-8", "surrogateescape").decode("utf-8", "replace"))
+        if not needles_only:
+            findings += check_phrases(where, View(fold(text)), in_text=False)
+        if needles:
+            findings += [f._replace(message=f.message.replace("file path", "ref name", 1))
+                         for f in check_needles(where, text, needles, in_text=False)]
+    return findings
+
+
+def check_commits(root, spec, needles, waiver=None, waived=None, needles_only=False, unpacked=None):
+    """The checks on every commit of `spec`: its message, author and committer
+    and the header lines of the commit, the path of every file it changes, and
+    the content of every file that is not in BASE's history. Also the message
+    of an annotated tag that TIP names. -> (findings, number of commits). The
+    working tree plays no part, except that a waiver reads it."""
+    findings = []
+    try:
+        revs, commits = commits_of(root, spec)
+        if not commits:
+            return [Finding("commit", spec, 0, "no commits in the range: refusing to pass")], 0
+        blobs, texts, paths = {}, [], {}
+        for commit in commits:
+            # -m: a merge is compared with each of its parents, so what the
+            # merge itself brought in is seen. -c core.quotePath has no effect with -z.
+            raw = _git(root, "diff-tree", "-r", "-m", "--root", "--no-commit-id", "--no-renames", "-z", commit)
+            fields = raw.decode("utf-8", "surrogateescape").split("\0")
+            for meta, path in zip(fields[0::2], fields[1::2]):
+                _, mode, _, blob, status = meta.lstrip(":").split(" ")
+                paths.setdefault(path, commit)
+                if status != "D" and mode != "160000":
+                    blobs.setdefault(blob, {}).setdefault(path, commit)
+        # A blob already in BASE's history is published already.
+        known = set()
+        for line in _git(root, "rev-list", "--objects", "--no-object-names", *revs, "--").decode().split():
+            known.add(line)
+        fresh = {b: where for b, where in blobs.items() if b in known}
+        for oid, kind, data in _objects(root, commits):
+            texts.append(("commit %s" % oid[:12], data))
+        texts += tag_texts(root, revs[0])
+        findings += check_object_texts(texts, needles, needles_only)
+        for path, commit in sorted(paths.items()):
+            if not is_utf8(path):
+                if not needles_only:
+                    findings.append(Finding("filetype", path, 0, "file name is not UTF-8 (commit %s)" % commit[:12]))
+                path = path.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
+            for f in check_path(path, needles):
+                if f.check == "needle" or not needles_only:
+                    findings.append(f._replace(message=f.message + " (commit %s)" % commit[:12]))
+        order = sorted(fresh)
+        for start in range(0, len(order), 500):
+            for oid, kind, data in _objects(root, order[start:start + 500]):
+                for path, commit in sorted(fresh[oid].items()):
+                    if needles_only:
+                        if unpacked is not None and is_binary(data):
+                            unpacked.append("%s (commit %s)" % (path, commit[:12]))
+                        found = check_bytes(path, data, needles, waiver, waived)
+                    else:
+                        found = check_filetype(path) + check_data(path, data, needles, waiver, waived)
+                    findings += [f._replace(message=f.message + " (commit %s)" % commit[:12]) for f in found]
+    except (OSError, ValueError, subprocess.CalledProcessError) as e:
+        why = str(e) if isinstance(e, ValueError) else type(e).__name__
+        findings.append(Finding("commit", spec, 0, "cannot read the commits: %s" % why))
+        return findings, 0
+    return findings, len(commits)
+
+
+def is_binary(data):
+    """True for content that is not plain text: an archive, an image, a
+    document. Its bytes are searched; what is packed inside it is not."""
+    return decode_text(data)[1] is not None or data.startswith(b"%PDF")
+
+
+def check_bytes(path, data, needles, waiver=None, waived=None):
+    """The needle check on content of any kind (needles-only mode). Bytes that
+    are not UTF-8 are read with each wrong byte as a separator, and content
+    with a NUL byte also as UTF-16, so a needle in either is seen. Compressed
+    or encoded content (an archive, an image) is not unpacked."""
+    texts = [data.decode("utf-8", "replace").replace("\0", " ")]
+    if b"\0" in data:
+        texts += [data[skip:].decode(codec, "replace") for codec in ("utf-16-le", "utf-16-be") for skip in (0, 1)]
+    findings = []
+    for text in texts:
+        findings += check_needles(path, plain(text), needles, waiver=waiver, waived=waived)
+    return list(dict.fromkeys(findings))
+
+
+def run_needles_only(root, needle_file, commits=(), tags=(), ref_names=()):
+    """The needle check alone, on a tree of any kind, such as a repository
+    that uses this one -> as `run`, and the binary files, for a person: every file's content and path, and with `commits` the
+    commits. Every finding is about needles: one that
+    matches, a needle list that cannot be used, or content that could not be
+    read and so was not checked."""
+    files = discover(root)
+    findings, waived, unpacked = [], [], []
+    if not files:
+        findings.append(Finding("needle", ".", 0, "no files found: refusing to pass an empty tree"))
+    needles, needle_findings = load_needles(needle_file) if needle_file else (Needles(), [
+        Finding("needle", "-", 0, "--needles-only set and no --needles given")])
+    findings += needle_findings
+    waiver = Waiver(root, files, needles) if needles else None
+    for path in files if needles else ():
+        name = path.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
+        findings += check_needles(name, plain(name), needles, in_text=False)
+        full = os.path.join(root, path)
+        try:
+            if os.path.islink(full):
+                data = os.fsencode(os.readlink(full))  # what git commits is the link's target
+            elif os.path.isdir(full):
+                continue  # a submodule: git commits its commit id only
+            else:
+                with open(full, "rb") as fh:
+                    data = fh.read()
+        except OSError as e:
+            findings.append(Finding("needle", name, 0, "not checked, cannot be read: %s" % type(e).__name__))
+            continue
+        if is_binary(data):
+            unpacked.append(name)
+        findings += check_bytes(name, data, needles, waiver, waived)
+    for spec in commits if needles else ():
+        findings += check_commits(root, spec, needles, waiver, waived, needles_only=True, unpacked=unpacked)[0]
+    if needles:
+        findings += check_refs(root, tags, ref_names, needles, needles_only=True)
+    return findings, files, {}, needles, waived, unpacked
+
+
+# --------------------------------------------------------------------------
 # The gate
 # --------------------------------------------------------------------------
 
-def run(root, needle_file=None, require_needles=False):
-    """Every check on the tree at `root`. -> (findings, files, modules,
+def run(root, needle_file=None, require_needles=False, commits=(), tags=(), ref_names=(), example=None):
+    """Every check on the tree at `root`, and on the commits of each range in `commits`. -> (findings, files, modules,
     needles, waived needle hits)"""
     files = discover(root)
     findings = []
     if not files:
         findings.append(Finding("filetype", ".", 0, "no files found: refusing to pass an empty tree"))
-    modules, module_findings = check_modules(root, files)
+    findings += check_def_paths(root, files)
+    modules, module_findings = check_modules(root, files, example)
     findings += module_findings
-    findings += check_packs(root, files, modules)
+    if example:
+        core, core_findings = check_modules(example.core, discover(example.core))
+        findings += core_findings
+        if "core" not in core:
+            findings.append(Finding("closure", "model/core.def", 0, "--core holds no model module `core`"))
+        for name in sorted(set(core) & set(modules)):
+            findings.append(Finding("closure", "model", 0, "module `%s` is in this tree and in --core" % name))
+        modules = {**core, **modules}
+    findings += check_packs(root, files, modules, example)
     for path in files:
         findings += check_filetype(path)
     needles = Needles()
@@ -1092,6 +1424,9 @@ def run(root, needle_file=None, require_needles=False):
             continue
         findings += check_path(path, needles)
         findings += check_content(root, path, needles, waiver, waived)
+    for spec in commits:
+        findings += check_commits(root, spec, needles, waiver, waived)[0]
+    findings += check_refs(root, tags, ref_names, needles)
     return findings, files, modules, needles, waived
 
 
@@ -1100,7 +1435,7 @@ def _where(path, line):
     return "%s:%d" % (path, line) if line else path
 
 
-def report(findings, files, modules, needles, waived=(), out=None):
+def report(findings, files, modules, needles, waived=(), unpacked=(), out=None):
     """Print one line for each finding, the waived needle hits and the
     verdict. -> the exit status, which waived hits do not change"""
     out = out or sys.stdout
@@ -1113,6 +1448,11 @@ def report(findings, files, modules, needles, waived=(), out=None):
         for w in waived:
             print("boundary-gate: %-8s %s: text matches the needle on line %d of the needle file "
                   "(%d characters)" % ("waived", _where(w.path, w.line), w.needle, w.length), file=out)
+    if unpacked:
+        print("boundary-gate: %d binary files: their bytes are searched, what is packed inside them is not; "
+              "look at each" % len(unpacked), file=out)
+        for path in unpacked:
+            print("boundary-gate: binary   %s" % _where(path, 0), file=out)
     if findings:
         print("boundary-gate: FAIL, %d finding(s) in %d files" % (len(findings), len(files)), file=out)
         return 1
@@ -1143,8 +1483,40 @@ def main(argv=None):
     ap.add_argument(
         "--require-needles", action="store_true",
         help="fail when --needles is not given (the pre-push hook passes this)")
+    ap.add_argument(
+        "--commits", metavar="BASE..TIP", action="append", default=[],
+        help="also check every commit of the range (or of TIP's whole history): its message, author and "
+             "committer, the path of every file it changes and every content it brings in, also content a "
+             "later commit removes. May be given more than once. An empty range, or a shallow repository, fails")
+    ap.add_argument(
+        "--tag", metavar="TAG", action="append", default=[],
+        help="also check an annotated tag: its message and tagger. Given for a tag on a commit that is "
+             "published already; --commits checks the tag its TIP names")
+    ap.add_argument(
+        "--ref-name", metavar="NAME", action="append", default=[],
+        help="also check the name of a branch or tag that a push would publish")
+    ap.add_argument(
+        "--needles-only", action="store_true",
+        help="the needle check alone, for a tree of another repository: the exit status depends on needles "
+             "only (a match, a list that cannot be used, or a file that could not be read). Needs --needles")
+    ap.add_argument(
+        "--example-overlay", metavar="PREFIX",
+        help="the tree is the public example of an overlay: a module or pack whose name is PREFIX, or PREFIX "
+             "and a `-` or the like, must say `distribution controlled`, and every other one `distribution "
+             "public`. Every other check is the same. Needs --core and --needles")
+    ap.add_argument(
+        "--core", metavar="DIR", help="with --example-overlay: the goat-transformers tree whose model modules may be used")
     args = ap.parse_args(argv)
-    return report(*run(os.path.abspath(args.root), args.needles, args.require_needles))
+    example = None
+    if args.example_overlay is not None or args.core is not None:
+        if not args.example_overlay or not args.core or not args.needles or args.needles_only:
+            ap.error("--example-overlay needs a PREFIX, --core and --needles, and is not for --needles-only")
+        if not re.fullmatch(r"[a-z][a-z0-9]{3,}", args.example_overlay):
+            ap.error("--example-overlay: PREFIX is four or more small letters and digits")
+        example = ExampleOverlay(args.example_overlay, os.path.abspath(args.core))
+    if args.needles_only:
+        return report(*run_needles_only(os.path.abspath(args.root), args.needles, args.commits, args.tag, args.ref_name))
+    return report(*run(os.path.abspath(args.root), args.needles, args.require_needles, args.commits, args.tag, args.ref_name, example))
 
 
 if __name__ == "__main__":
