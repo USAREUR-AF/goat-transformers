@@ -31,7 +31,7 @@ None.
 
 - **The checksum computed**: kept as sent; a changed frame is not re-checksummed.
 - **The repeated length checked**: kept as sent.
-- **Values decoded**: integers are unsigned here (EN 13757-3 type B is signed), BCD stays as its octets
+- **Values decoded**: integers are unsigned here (the source decodes them as signed), BCD stays as its octets
   in hex (low octet first), the VIF's unit and multiplier are not applied, the manufacturer code is not
   turned into its three letters, and the identification number is its octets in hex, low octet first.
 - **LVAR above 0xBF** (BCD, binary and other variable codings): read as a character count, so wrong.

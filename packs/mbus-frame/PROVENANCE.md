@@ -22,7 +22,7 @@ given below and in `tools/notice/entries/mbus-frame.txt`.
 
 This pack restates the layouts (field order, sizes, bit positions, codes) in its own words; no code,
 comment or table of the source is copied. Under this project's rule for code sources the pack keeps the
-default Apache-2.0 label. EN 13757-2 and -3, paid documents, were not used. The vectors are built by `tools/gen/meter2-vectors.py` from values chosen
+default Apache-2.0 label. EN 13757-2 and -3 and their terms: not read. The vectors are built by `tools/gen/meter2-vectors.py` from values chosen
 there; their expected bytes are derived there, without an engine.
 
 ## Attribution

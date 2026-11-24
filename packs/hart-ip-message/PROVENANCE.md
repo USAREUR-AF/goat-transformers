@@ -17,7 +17,7 @@ COPYING is the GNU GPL version 2).
 
 This pack restates the layouts (field order, sizes, codes) in its own words; no code, comment or table
 of the source is copied. Under this project's rule for code sources, layouts restated from GPL code are
-facts and the pack keeps the default Apache-2.0 label. The FieldComm Group HART-IP specification, a paid document, was not used. The vectors are built by
+facts and the pack keeps the default Apache-2.0 label. The FieldComm Group HART-IP specification and its terms: not read. The vectors are built by
 `tools/gen/indauto2-vectors.py` from values chosen there; their expected bytes are derived there, without
 an engine.
 

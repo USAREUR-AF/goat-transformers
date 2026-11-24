@@ -133,27 +133,27 @@ def mbus_pack():
 MBUS_KEYS = [
     ("int", "control_reserved", "control field bit 7 (0)"),
     ("int", "control_prm", "control field bit 6: 1 a message from the master, 0 from a slave"),
-    ("int", "control_fcb_acd", "control field bit 5: FCB (frame count bit) from the master, ACD from a slave"),
-    ("int", "control_fcv_dfc", "control field bit 4: FCV (frame count valid) from the master, DFC from a slave"),
+    ("int", "control_fcb_acd", "control field bit 5: FCB from the master, ACD from a slave"),
+    ("int", "control_fcv_dfc", "control field bit 4: FCV from the master, DFC from a slave"),
     ("int", "control_function", "control field bits 3-0: function (SND_NKE 0x40, SND_UD 0x53, REQ_UD2 0x5B, REQ_UD1 0x5A, RSP_UD 0x08 as whole bytes)"),
-    ("int", "address", "primary address (253 secondary addressing, 254 and 255 broadcast)"),
+    ("int", "address", "address (0xFD network layer, 0xFE broadcast with reply, 0xFF broadcast without reply)"),
     ("int", "checksum", "the checksum octet, as sent (the sum of the control field to the last data octet, modulo 256; not computed)"),
     ("int", "length_repeat", "long and control frame: the second length octet, as sent (equal to the first)"),
     ("int", "ci", "control information field (0x72/0x76 variable data response, 0x73/0x77 fixed data response, 0x51 data send, 0x52 select slave, 0x50 application reset ...)"),
     ("string", "identification", "identification number: the 4 octets as sent, as hexadecimal digits (BCD, low octet first: 78563412 is 12345678)"),
     ("int", "manufacturer", "manufacturer code, the 16-bit value of three 5-bit letters"),
     ("int", "version", "version"), ("int", "medium", "medium (device type)"), ("int", "access_number", "access number (fixed data: transmission counter)"),
-    ("int", "status", "status"), ("int", "signature", "signature (0)"),
+    ("int", "status", "status"), ("int", "signature", "signature"),
     ("list", "records", "the data records of the variable data structure"),
     ("int", "dif_extension", "DIF bit 7: a DIFE follows"), ("int", "storage_lsb", "DIF bit 6: storage number, least significant bit"),
     ("int", "function_field", "DIF bits 5-4: 0 instantaneous, 1 maximum, 2 minimum, 3 error state"),
-    ("int", "data_field", "DIF bits 3-0: the data coding (0 none, 1-4 integer of 1-4 octets, 5 real, 6 integer of 6, 7 of 8, 8 selection for readout, 9-12 BCD of 2-8 digits, 13 variable length, 14 BCD of 12 digits, 15 special)"),
+    ("int", "data_field", "DIF bits 3-0: the data coding (0 none, 1-4 integer of 1-4 octets, 5 real, 6 integer of 6, 7 of 8, 8 no data, 9-12 BCD of 2-8 digits, 13 variable length, 14 BCD of 12 digits, 15 special)"),
     ("list", "difes", "the DIF extensions"), ("int", "dife_unit", "DIFE bit 6: device unit"), ("int", "dife_tariff", "DIFE bits 5-4: tariff"),
     ("int", "dife_storage", "DIFE bits 3-0: storage number"),
     ("int", "vif_extension", "VIF bit 7: a VIFE follows"), ("int", "vif", "VIF bits 6-0: the value information (unit and multiplier)"),
     ("list", "vifes", "the VIF extensions"), ("int", "vife", "VIFE bits 6-0"),
     ("list", "vif_text", "plain-text VIF (0x7C, 0xFC): the unit text, as octets"),
-    ("int", "value", "an integer value, as an unsigned integer of its octets (EN 13757-3 reads types B as two's complement)"),
+    ("int", "value", "an integer value, as an unsigned integer of its octets"),
     ("float", "value_real", "a 32-bit real value"), ("string", "value_bcd", "a BCD value: its octets as sent, as hexadecimal digits (low octet first)"),
     ("list", "value_lvar", "a variable-length value (LVAR 0x00-0xBF: that many characters), as octets"),
     ("list", "manufacturer_data", "DIF 0x0F or 0x1F: the manufacturer-specific data to the end, as octets"),
@@ -189,7 +189,7 @@ def wmbus_pack():
 
 
 WMBUS_KEYS = [
-    ("int", "control", "C field (0x44 SND_NR, 0x46 SND_IR, 0x08 RSP_UD ...)"),
+    ("int", "control", "C field (0x44 SND_NR, 0x46 SND_IR, 0x08 RSP_UD2; others as sent)"),
     ("int", "manufacturer", "link-layer manufacturer code (three 5-bit letters)"),
     ("string", "identification", "link-layer identification number: the 4 octets as sent, as hexadecimal digits (BCD, low octet first)"),
     ("int", "version", "link-layer version"), ("int", "device_type", "link-layer device type (medium)"),
@@ -225,12 +225,12 @@ def dlms_pack():
 
 
 def dlms_keys():
-    keys = [("int", "frame_type", "frame format type, 0xA (type 3)"), ("int", "segmentation", "segmentation bit: more segments follow")]
+    keys = [("int", "frame_type", "frame format type, 0xA"), ("int", "segmentation", "segmentation bit: more segments follow")]
     for p in ("destination", "source"):
         for n in range(1, 5):
             keys.append(("int", "%s_part%d" % (p, n), "%s address octet %d: its upper 7 bits" % (p, n)))
             keys.append(("int", "%s_last%d" % (p, n), "%s address octet %d: the low bit, 1 on the last octet (1, 2 or 4 octets)" % (p, n)))
-    keys += [("int", "control", "control field (I, S or U frame: send and receive sequence numbers, poll/final bit, frame kind)"),
+    keys += [("int", "control", "control field, as sent"),
              ("string", "header_check", "the 16-bit check after the control field, as sent (the header check when an information field follows; in a frame without one, the frame check)"),
              ("list", "information_and_fcs", "the information field (the LLC header and the COSEM APDU) and the 16-bit frame check, as octets (empty in a frame without information)"),
              ("int", "octet", "one octet")]

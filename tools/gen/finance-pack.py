@@ -90,17 +90,17 @@ def qif_pack():
 
 
 QIF_DESC = {
-    "date": "D: the date, as written (formats vary: 01/31/2025, 31/01'25 ...)",
-    "amount": "T: the amount, as written", "amount_u": "U: the amount (a second form some exporters write), as written",
-    "memo": "M: the memo", "cleared": "C: the cleared status (*, c, X, R or empty)", "payee": "P: the payee",
+    "date": "D: the date, as written",
+    "amount": "T: the amount, as written", "amount_u": "U: the amount, as written",
+    "memo": "M: the memo", "cleared": "C: the cleared status, as sent", "payee": "P: the payee",
     "payee_address": "A: a line of the payee's address", "category": "L: the category, or [account] for a transfer",
     "number": "N: the check number or reference", "split_category": "S: a split's category or [account]",
     "split_memo": "E: a split's memo", "split_amount": "$: a split's amount", "split_percent": "%: a split's percentage",
-    "reimbursable": "F: reimbursable business expense flag", "first_payment_date": "1: loan first payment date",
+    "reimbursable": "F: reimbursable business expense flag", "first_payment_date": "1: first payment date",
     "loan_length": "2: loan length", "num_payments": "3: number of payments", "periods_per_annum": "4: periods per annum",
     "interest_rate": "5: interest rate", "current_loan_balance": "6: current loan balance", "original_loan_amount": "7: original loan amount",
-    "invoice": "X: an invoice line (Quicken business versions)", "header": "!: a header line (Type:Bank, Type:Cash, Account ...), after the '!'",
-    "end": "^: the end of the record (normally empty after the '^')",
+    "invoice": "X: an invoice line (Quicken business versions)", "header": "!: a header line, after the '!'",
+    "end": "^: the end of the record",
 }
 QIF_KEYS = ([("list", "lines", "the record's lines, in order"), ("int", "code", "a line's code character, its ASCII code (68 D, 84 T, 94 ^ ...)")] +
             [("string", key, QIF_DESC[key]) for _, key in QIF_CODES] + [("string", "other", "a line with another code: its value")])
@@ -108,10 +108,10 @@ QIF_KEYS = ([("list", "lines", "the record's lines, in order"), ("int", "code", 
 
 # ---------------------------------------------------------------- OFX
 
-OFX = [("TRNTYPE", "trntype", "transaction type (CREDIT, DEBIT, CHECK, INT, DIV, FEE, SRVCHG, DEP, ATM, POS, XFER, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, OTHER)"),
-       ("DTPOSTED", "dtposted", "date posted, OFX date-time text (YYYYMMDDHHMMSS.XXX[gmt offset:tz])"),
-       ("DTUSER", "dtuser", "date the user initiated the transaction, OFX date-time text"),
-       ("TRNAMT", "trnamt", "amount, decimal text (negative for debits)"),
+OFX = [("TRNTYPE", "trntype", "transaction type, code as sent"),
+       ("DTPOSTED", "dtposted", "date posted, as sent"),
+       ("DTUSER", "dtuser", "user date, as sent"),
+       ("TRNAMT", "trnamt", "amount, as sent"),
        ("FITID", "fitid", "financial institution transaction ID"),
        ("CHECKNUM", "checknum", "check number"), ("NAME", "name", "payee name"), ("MEMO", "memo", "memo")]
 

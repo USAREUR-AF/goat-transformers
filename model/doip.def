@@ -23,7 +23,7 @@ key   response_code     int     -  "routing activation response: the code (0x10 
 key   node_type         int     -  "entity status response: node type (0 gateway, 1 node)"
 key   max_sockets       int     -  "entity status response: maximum concurrent TCP sockets"
 key   current_sockets   int     -  "entity status response: currently open TCP sockets"
-key   max_data_size     int     -  "entity status response: maximum data size (from version 2, optional)"
+key   max_data_size     int     -  "entity status response: maximum data size (optional)"
 key   power_mode        int     -  "power mode information response: the power mode"
 list  user_data         "diagnostic message: the user data (a UDS message), as octets"
 key   ack_code          int     -  "diagnostic message ACK: the code"

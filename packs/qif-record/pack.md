@@ -9,7 +9,7 @@ to LF (`until:10 chars:ascii8`), the value's key chosen by the code. Written by 
 
 D date, T and U amount, M memo, C cleared, P payee, A address line, L category or transfer account, N
 number, S split category, E split memo, $ split amount, % split percent, F reimbursable flag, 1 to 7 the
-loan fields, X invoice, `!` header (Type:Bank and the others), `^` end; any other code to `other`.
+loan fields, X invoice, `!` header, `^` end; any other code to `other`.
 
 ## Shared keys
 

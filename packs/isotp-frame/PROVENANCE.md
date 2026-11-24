@@ -17,7 +17,7 @@ Read on 2026-11-21. No source file is copied into this tree.
 project's rule for code sources the restated layouts carry the default Apache-2.0 label.
 
 This pack restates the layouts (field order, sizes, codes) in its own words; no code, comment or table
-of the source is copied. ISO 15765-2, a paid document, was not used. The vectors are built by `tools/gen/vehnet-vectors.py` from values chosen
+of the source is copied. ISO 15765-2 and its terms: not read. The vectors are built by `tools/gen/vehnet-vectors.py` from values chosen
 there; their expected bytes are derived there, without an engine.
 
 ## Attribution

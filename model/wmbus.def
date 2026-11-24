@@ -3,7 +3,7 @@ module        wmbus
 version       0.1.0
 distribution  public
 source        "wmbusmeters, https://github.com/wmbusmeters/wmbusmeters at commit 86c46f145077f66e988c25ee04c06f89230c12e3, src/wmbus.cc (GPL-3.0-or-later, Copyright (C) 2017-2024 Fredrik Oehrstroem); layouts restated, no code copied; EN 13757-4 not used"
-key   control             int     -  "C field (0x44 SND_NR, 0x46 SND_IR, 0x08 RSP_UD ...)"
+key   control             int     -  "C field (0x44 SND_NR, 0x46 SND_IR, 0x08 RSP_UD2; others as sent)"
 key   manufacturer        int     -  "link-layer manufacturer code (three 5-bit letters)"
 key   identification      string  -  "link-layer identification number: the 4 octets as sent, as hexadecimal digits (BCD, low octet first)"
 key   version             int     -  "link-layer version"

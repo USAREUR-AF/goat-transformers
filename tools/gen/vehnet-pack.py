@@ -105,7 +105,7 @@ ISOTP_KEYS = [
     ("int", "message_length", "first frame: the length of the whole message in octets (12 bits, or 32 bits after the escape value 0)"),
     ("int", "sequence_number", "consecutive frame: the sequence number, 0 to 15"),
     ("int", "flow_status", "flow control: 0 continue to send, 1 wait, 2 overflow"),
-    ("int", "block_size", "flow control: consecutive frames to send before the next flow control (0: no limit)"),
+    ("int", "block_size", "flow control: block size, as sent"),
     ("int", "st_min", "flow control: minimum separation time, 0x00-0x7F milliseconds, 0xF1-0xF9 100 to 900 microseconds"),
     ("int", "octet", "one octet"),
 ]
@@ -209,7 +209,7 @@ DOIP_KEYS = [
     ("int", "node_type", "entity status response: node type (0 gateway, 1 node)"),
     ("int", "max_sockets", "entity status response: maximum concurrent TCP sockets"),
     ("int", "current_sockets", "entity status response: currently open TCP sockets"),
-    ("int", "max_data_size", "entity status response: maximum data size (from version 2, optional)"),
+    ("int", "max_data_size", "entity status response: maximum data size (optional)"),
     ("int", "power_mode", "power mode information response: the power mode"),
     ("list", "user_data", "diagnostic message: the user data (a UDS message), as octets"),
     ("int", "ack_code", "diagnostic message ACK: the code"),
