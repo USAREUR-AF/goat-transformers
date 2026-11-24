@@ -5994,7 +5994,8 @@ number in brackets).
 16. **Place of `charset`.** It stands at the top level of the pack, before the
     first message `kind`. Inside a block, a group body included, it is
     `bad-directive` after the file.
-17. **Width** is plain digits; `+4` is `bad-directive`.
+17. **Width** on `bits` is plain digits; `+4` is `bad-directive`. On another
+    wire any third token is ignored (ruling 14).
 18. **`cbor` (Version 0.28)** takes none of the three: `bad-directive`.
 19. **`absent` and `codenum`.** The sentinel is the raw number, not the
     `codenum` value. A held value whose bits equal the sentinel is written
@@ -6004,8 +6005,10 @@ number in brackets).
 
 21. **A bare `code`, `codestr` or `codenum`** without a colon is an empty list
     (ruling 15): `bad-directive` after the file.
-22. **`absent` on `json`** keeps the forms of 0.9: `absent 5` is the number 5
-    and does not match the member `"5"`; `absent =5` is the text.
+22. **`absent` on `json` and `geojson`** keeps 0.9 unchanged. The sentinel is
+    compared as text before ruling 11's check, so `absent 5` matches the
+    member `"5"` and the number 5, and `absent =5` both too. An absent key
+    writes the number 5 for `absent 5` and `"5"` for `absent =5`.
 23. **`geojson` coordinates.** `codestr` and `codenum` on a `geometry.*`
     locator are `bad-directive` after the file. Inside a group body such a
     locator is a member path (0.9 ruling 25) and loads.
@@ -6016,7 +6019,8 @@ number in brackets).
 
 ### Stated, not yet pinned by a vector
 
-25. `code` under `msb-lsb` with a `len` that is not a multiple of 8, for
+25. `null` as a `geojson` member under `codestr` or `codenum`: 0.1 has no rule
+    for it, and this version adds none. `code` under `msb-lsb` with a `len` that is not a multiple of 8, for
     conversion; `stop` and `until:` with `code` (`bad-directive`, 0.22).
 
 ## Vector additions
