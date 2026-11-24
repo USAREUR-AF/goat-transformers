@@ -687,6 +687,21 @@ def controlled_trees():
     start(t)
     put(t + "/model/ctl.def", text93("module", "ctl", CTL))
     pack(t, "quoted", PUB, uses=['"ctl"'])
+    # a module shown public whose `module` line 2b does not read: a comment, a
+    # quoted name; used by a pack, and by another module
+    t = "noted-name"
+    start(t)
+    put(t + "/model/mx.def", text93("module", "mx # note", PUB))
+    pack(t, "uses-mx", PUB, uses=["mx"])
+    t = "noted-name-module"
+    start(t)
+    put(t + "/model/mid.def", text93("module", "mid", PUB, uses=["mx"]))
+    put(t + "/model/mx.def", text93("module", "mx # note", PUB))
+    pack(t, "plain", PUB)
+    t = "quoted-name"
+    start(t)
+    put(t + "/model/mx.def", text93("module", '"mx"', PUB))
+    pack(t, "uses-mx", PUB, uses=["mx"])
     return trees
 
 
@@ -791,6 +806,12 @@ def controlled_vectors(add_vector):
     # ruling 4: 2b does not read a quoted `uses`, so the pack is held and its module is not there
     add("quoted-uses-of-a-skipped-module", ["list-formats", "--profile", "open"] + at("quoted-uses"), 1,
         kind="unknown-module")
+    # ruling 2: a module that 2b gives no name is not loaded, also when it is shown public
+    add("noted-module-name", ["list-formats", "--profile", "open"] + at("noted-name"), 1, kind="unknown-module")
+    add("noted-module-name-without-a-profile", ["list-formats"] + at("noted-name"), 0, out="c-uses-mx\t0.93.0\tjson\n")
+    add("noted-module-name-used-by-a-module", ["list-formats", "--profile", "open"] + at("noted-name-module"), 1,
+        kind="unknown-module")
+    add("quoted-module-name", ["list-formats", "--profile", "open"] + at("quoted-name"), 1, kind="unknown-module")
 
 
 def fixture_problems(write):
