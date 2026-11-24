@@ -335,10 +335,17 @@ func (p *Pack) resolveText(whens []*When, perr perrFunc, note func(error) error)
 		}
 		var tf *textTf
 		var kind ErrorKind
-		if codeBase(f.Transform) != "" {
+		switch {
+		case codeBase(f.Transform) != "":
 			kind = ErrBadDirective
 			tf, err = p.resolveCodeText(f)
-		} else {
+		case isPartName(f.Transform):
+			// The token is read and written as `string` does (0.64).
+			if err := bindPart(WireText, f); err != nil {
+				return perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
+			}
+			tf, kind, err = resolveTextTransform("string")
+		default:
 			tf, kind, err = resolveTextTransform(f.Transform)
 		}
 		if err != nil {

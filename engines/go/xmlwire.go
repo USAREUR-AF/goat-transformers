@@ -96,6 +96,19 @@ func decodeXML(d *decodeState, b []byte) error {
 func (d *decodeState) xmlScope(lay *layout, node *xnode) error {
 	for _, ln := range lay.lines {
 		switch {
+		case isPartLine(ln):
+			l := lineLoc(ln)
+			n := node.find(l.path)
+			if n == nil {
+				continue
+			}
+			if l.kind == locAttr {
+				if v, ok := n.attr(l.name); ok {
+					d.part(ln, v, true)
+				}
+			} else if text := n.text.String(); text != "" {
+				d.part(ln, text, true)
+			}
 		case ln.f != nil:
 			f := ln.f
 			n := node.find(f.loc.path)
@@ -220,6 +233,20 @@ func encodeXMLScope(p *Pack, lay *layout, rec *Item, root *xnode, written map[st
 			}
 		}
 		if ln.el != nil {
+			continue
+		}
+		if pg := lay.parts[lineLocator(ln)]; pg != nil {
+			if !pg.isFirst(ln) {
+				continue
+			}
+			tok, ok, err := pg.token(p, lay, rec)
+			if err != nil {
+				return err
+			}
+			if ok {
+				place(root, pg.fields[0].loc, tok, false)
+				written[pg.fields[0].Locator] = true
+			}
 			continue
 		}
 		if g := ln.g; g != nil {

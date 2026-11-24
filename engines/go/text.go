@@ -450,9 +450,6 @@ func (d *decodeState) textScope(lay *layout, fields []string, base int) error {
 		switch {
 		case ln.f != nil:
 			f := ln.f
-			if _, done := d.rec.Fields[f.Key]; done {
-				continue
-			}
 			var a, b string
 			var ok bool
 			switch f.loc.kind {
@@ -469,12 +466,20 @@ func (d *decodeState) textScope(lay *layout, fields []string, base int) error {
 			if !ok {
 				continue
 			}
+			if f.part != nil {
+				d.part(ln, a, true)
+				continue
+			}
 			v, err := f.ttf.decode(a, b)
 			if err != nil {
 				d.fail(f, err.Error())
 				continue
 			}
 			d.store(f, v)
+		case ln.w != nil && ln.w.part != nil:
+			if a, ok := textField(fields, base+ln.w.loc.ti); ok {
+				d.part(ln, a, true)
+			}
 		case ln.g != nil:
 			g := ln.g
 			if len(fields) <= g.tstart {
@@ -557,6 +562,25 @@ func (w *textWriter) checkOut(f *Field, s string) error {
 func (w *textWriter) scope(lay *layout, rec *Item, base int) error {
 	p := w.p
 	for _, ln := range lay.lines {
+		if pg := lay.parts[lineLocator(ln)]; pg != nil {
+			if !pg.isFirst(ln) {
+				continue
+			}
+			tok, ok, err := pg.token(p, lay, rec)
+			if err != nil {
+				return err
+			}
+			if !ok {
+				continue
+			}
+			if err := w.checkOut(pg.fields[0], tok); err != nil {
+				return err
+			}
+			if t := w.at(base + pg.fields[0].loc.ti); !t.hasWhole {
+				t.whole, t.hasWhole = tok, true
+			}
+			continue
+		}
 		switch {
 		case ln.g != nil:
 			g := ln.g

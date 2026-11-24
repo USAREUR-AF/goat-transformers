@@ -57,6 +57,11 @@ func checkTransformName(name string) (ErrorKind, error) {
 	case "code", "codestr", "codenum":
 		// Every error of their list is a check after the file (0.46 ruling
 		// 15).
+	case "part":
+		// 0.64 ruling 11.
+		if _, err := parsePart(name); err != nil {
+			return ErrBadDirective, err
+		}
 	case "dec", "dm", "hms", "hms_dmy":
 		if _, kind, err := resolveTextTransform(name); err != nil {
 			return kind, err

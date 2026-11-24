@@ -95,6 +95,9 @@ func transformYields(name string) (Kind, bool) {
 	if strings.HasPrefix(name, "linscale:") || strings.HasPrefix(name, "uscale:") || strings.HasPrefix(name, "sscale:") {
 		return KindFloat, true
 	}
+	if isPartName(name) {
+		return KindString, true
+	}
 	switch codeBase(name) {
 	case "code", "codestr":
 		return KindString, true

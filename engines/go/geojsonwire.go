@@ -76,6 +76,7 @@ func decodeGeoJSON(d *decodeState, b []byte) error {
 	}
 	// value maps one wire member to its group, its mapped fields or residue.
 	var groupErr error
+	members := map[string]*jval{}
 	value := func(loc string, v *jval) {
 		if g := lay.groupAt[loc]; g != nil {
 			if err := d.jsonGroup(g, v, true); err != nil && groupErr == nil {
@@ -83,24 +84,8 @@ func decodeGeoJSON(d *decodeState, b []byte) error {
 			}
 			return
 		}
-		if fs := lay.fieldsAt[loc]; len(fs) > 0 {
-			for _, f := range fs {
-				if v.k != jNull && f.sentinelJSON(v) {
-					continue
-				}
-				switch v.k {
-				case jNull:
-				case jStr, jNum:
-					if v.k == jStr && f.tf != nil && f.tf.numOnly {
-						// scale and iscale refuse a string member (0.15 ruling 23).
-						d.fail(f, "wire value is not a JSON number")
-						continue
-					}
-					d.fieldJSON(f, v)
-				default:
-					d.fail(f, "wire value is not a JSON string or number")
-				}
-			}
+		if len(lay.fieldsAt[loc]) > 0 || lay.parts[loc] != nil {
+			members[loc] = v
 			return
 		}
 		if lay.whenAt[loc] {
@@ -155,6 +140,33 @@ func decodeGeoJSON(d *decodeState, b []byte) error {
 			value(key, v)
 		}
 	}
+	// The fields, in line order: the earliest line of a key gives its value
+	// (0.6, One key at several locators).
+	for _, ln := range lay.lines {
+		v := members[lineLocator(ln)]
+		if v == nil || v.k == jNull {
+			continue
+		}
+		if isPartLine(ln) {
+			d.partJSON(ln, v, true)
+			continue
+		}
+		f := ln.f
+		if f == nil || f.sentinelJSON(v) {
+			continue
+		}
+		switch v.k {
+		case jStr, jNum:
+			if v.k == jStr && f.tf != nil && f.tf.numOnly {
+				// scale and iscale refuse a string member (0.15 ruling 23).
+				d.fail(f, "wire value is not a JSON number")
+				continue
+			}
+			d.fieldJSON(f, v)
+		default:
+			d.fail(f, "wire value is not a JSON string or number")
+		}
+	}
 	return groupErr
 }
 
@@ -196,6 +208,20 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 		}
 	}
 	for _, ln := range lay.lines {
+		if pg := lay.parts[lineLocator(ln)]; pg != nil {
+			if !pg.isFirst(ln) {
+				continue
+			}
+			tok, ok, err := pg.token(p, lay, rec)
+			if err != nil {
+				return nil, err
+			}
+			if ok {
+				put(pg.fields[0].loc, jsonString(tok), false)
+				written[pg.fields[0].Locator] = true
+			}
+			continue
+		}
 		if g := ln.g; g != nil {
 			// A group writes an array at its member when the list is present.
 			if items, ok := rec.Lists[g.List]; ok {

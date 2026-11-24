@@ -731,6 +731,12 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 		}
 		return "", nil
 	}
+	if isPartName(name) {
+		if err := bindPart(wire, f); err != nil {
+			return ErrBadDirective, err
+		}
+		return "", nil
+	}
 	// The value transforms of 0.15 check their wire and length themselves.
 	if base := v015Base(name); base != "" {
 		if err := resolveV015(wire, base, f); err != nil {
