@@ -11,5 +11,8 @@ uses          dccomhobbywingesc
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dccomhobbywingesc.set_id_request_node_id  dccomhobbywingesc.set_id_request_throttle_channel
 field  dccomhobbywingesc.set_id_request_node_id  8  uint
 field  dccomhobbywingesc.set_id_request_throttle_channel  8  uint

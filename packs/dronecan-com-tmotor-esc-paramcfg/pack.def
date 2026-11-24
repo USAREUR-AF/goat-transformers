@@ -11,6 +11,9 @@ uses          dccomtmotoresc
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dccomtmotoresc.param_cfg_esc_index  dccomtmotoresc.param_cfg_esc_uuid  dccomtmotoresc.param_cfg_esc_id_set  dccomtmotoresc.param_cfg_esc_ov_threshold  dccomtmotoresc.param_cfg_esc_oc_threshold  dccomtmotoresc.param_cfg_esc_ot_threshold  dccomtmotoresc.param_cfg_esc_acc_threshold  dccomtmotoresc.param_cfg_esc_dacc_threshold  dccomtmotoresc.param_cfg_esc_rotate_dir  dccomtmotoresc.param_cfg_esc_timing  dccomtmotoresc.param_cfg_esc_signal_priority  dccomtmotoresc.param_cfg_esc_led_mode  dccomtmotoresc.param_cfg_esc_can_rate  dccomtmotoresc.param_cfg_esc_fdb_rate  dccomtmotoresc.param_cfg_esc_save_option
 field  dccomtmotoresc.param_cfg_esc_index  8  uint
 field  dccomtmotoresc.param_cfg_esc_uuid  32  uint  swap
 field  dccomtmotoresc.param_cfg_esc_id_set  16  uint  swap

@@ -11,5 +11,8 @@ uses          dcuavcanprotocolparam
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dcuavcanprotocolparam.execute_opcode_request_opcode  dcuavcanprotocolparam.execute_opcode_request_argument
 field  dcuavcanprotocolparam.execute_opcode_request_opcode  8  uint
 field  dcuavcanprotocolparam.execute_opcode_request_argument  48  twos  swap

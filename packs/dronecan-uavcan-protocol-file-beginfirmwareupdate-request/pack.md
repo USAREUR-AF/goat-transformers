@@ -14,6 +14,10 @@ payload as the receiver reassembles it: for a single-frame transfer the frame
 data without its tail byte, for a multi-frame transfer the data of all frames
 without the tail bytes and without the transfer CRC. Hex text.
 
+On encode from another format the one kind requires the top-level fields; an
+entity without them is `no-kind`, not a payload of zeros. `Entity.kind` is now
+recorded (`message`); same-format bytes do not change.
+
 **Which type a payload is.** The data type ID (40) travels in the 29-bit CAN
 identifier, with the request/response bit, not in the payload, and
 the payload has no field that tells the types apart. So each data type is its

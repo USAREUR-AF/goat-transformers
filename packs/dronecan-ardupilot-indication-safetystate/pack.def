@@ -11,4 +11,7 @@ uses          dcardupilotindication
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dcardupilotindication.safety_state_status
 field  dcardupilotindication.safety_state_status  8  uint

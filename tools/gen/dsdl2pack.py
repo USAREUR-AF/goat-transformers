@@ -663,6 +663,46 @@ def collect_stops(lines):
     return out
 
 
+# Data types whose all-zero payload is a command or a state by their definition (a hardpoint release, a
+# parameter save, GOOD_TO_ARM ...), or a message that sets something. Their pack has one kind that requires
+# every top-level field, so that a conversion from a format with none of them is no-kind and not zeros.
+REQUIRE_ALL = {
+    "dronecan-uavcan-equipment-hardpoint-command", "dronecan-uavcan-equipment-safety-armingstatus",
+    "dronecan-uavcan-equipment-camera-gimbal-angularcommand", "dronecan-ardupilot-indication-safetystate",
+    "dronecan-dronecan-remoteid-armstatus", "dronecan-uavcan-protocol-param-executeopcode-request",
+    "dronecan-uavcan-protocol-file-beginfirmwareupdate-request", "dronecan-uavcan-protocol-file-write-request",
+    "dronecan-uavcan-protocol-enumeration-begin-request", "dronecan-com-hobbywing-esc-setbaud-request",
+    "dronecan-com-hobbywing-esc-setdirection-request", "dronecan-com-hobbywing-esc-setthrottlesource-request",
+    "dronecan-com-hobbywing-esc-setid-request", "dronecan-com-hobbywing-esc-setangle-request",
+    "dronecan-com-hobbywing-esc-setled-request", "dronecan-com-tmotor-esc-focctrl",
+    "dronecan-com-tmotor-esc-paramcfg",
+    "cyphal-uavcan-node-executecommand-1-0-request", "cyphal-uavcan-node-executecommand-1-1-request",
+    "cyphal-uavcan-node-executecommand-1-2-request", "cyphal-uavcan-node-executecommand-1-3-request",
+    "cyphal-uavcan-file-write-1-0-request", "cyphal-uavcan-file-write-1-1-request",
+    "cyphal-uavcan-file-modify-1-0-request", "cyphal-uavcan-file-modify-1-1-request",
+}
+
+
+def with_required(fmt, lines):
+    """The lines of a pack without kinds, under one kind that requires its top-level fields."""
+    if fmt not in REQUIRE_ALL:
+        return lines
+    need, depth = [], 0
+    for line in lines:
+        t = line.split()
+        if t and t[0] in ("group", "switch", "length", "if"):
+            depth += 1
+        elif t and t[0] == "end":
+            depth -= 1
+        elif t and t[0] == "field" and depth == 0:
+            need.append(t[1])
+        elif t and t[0] == "kind" and depth == 0:
+            raise GenError(fmt + " has kinds already")
+    if not need:
+        raise GenError(fmt + " has no top-level field to require")
+    return ["", "kind  message", "requires  " + "  ".join(need)] + [x for x in lines if x]
+
+
 def pack_text(ps, sha):
     t = ps.t
     o = ["# DroneCAN (UAVCAN v0) data type %s%s, default data type ID %d." % (
@@ -679,7 +719,7 @@ def pack_text(ps, sha):
          "wire          bits",
          "layout        sequential",
          "bit_order     msb"]
-    return "\n".join(o + ps.lines_text) + "\n"
+    return "\n".join(o + with_required(ps.format, ps.lines_text)) + "\n"
 
 
 def module_text(ns, packs, sha):
@@ -1382,6 +1422,11 @@ def pack_md(ps, sha, nvec):
     a("payload as the receiver reassembles it: for a single-frame transfer the frame")
     a("data without its tail byte, for a multi-frame transfer the data of all frames")
     a("without the tail bytes and without the transfer CRC. Hex text.")
+    if ps.format in REQUIRE_ALL:
+        a("")
+        a("On encode from another format the one kind requires the top-level fields; an")
+        a("entity without them is `no-kind`, not a payload of zeros. `Entity.kind` is now")
+        a("recorded (`message`); same-format bytes do not change.")
     a("")
     a("**Which type a payload is.** The data type ID (%d) travels in the 29-bit CAN" % t.dtid)
     a("identifier%s, not in the payload, and" % (
@@ -2139,7 +2184,7 @@ def cy_pack_text(ps, sha):
          "wire          bits",
          "layout        sequential",
          "bit_order     lsb"]
-    return "\n".join(o + ps.lines_text) + "\n"
+    return "\n".join(o + with_required(ps.format, ps.lines_text)) + "\n"
 
 
 def cy_module_text(ns, packs, sha):
@@ -2618,6 +2663,11 @@ def cy_pack_md(ps, sha, nvec):
     a("`wire bits`, `layout sequential`, `bit_order lsb`. The input is the transfer")
     a("payload: the bytes the transport delivers for one transfer, without transport")
     a("headers, tail bytes or transfer CRC. Hex text.")
+    if ps.format in REQUIRE_ALL:
+        a("")
+        a("On encode from another format the one kind requires the top-level fields; an")
+        a("entity without them is `no-kind`, not a payload of zeros. `Entity.kind` is now")
+        a("recorded (`message`); same-format bytes do not change.")
     a("")
     if t.port is not None:
         a("**Port-ID.** The type has the fixed %s-ID %d. The port-ID travels in the" % (

@@ -11,6 +11,9 @@ uses          dcuavcanprotocolfile
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dcuavcanprotocolfile.write_request_offset
 field  dcuavcanprotocolfile.write_request_offset  40  uint  swap
 group  dcuavcanprotocolfile.write_request_path_path  count 8
   field  dcuavcanprotocolfile.write_request_path_path_item  8  uint

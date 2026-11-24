@@ -11,6 +11,9 @@ uses          cyuavcanfile
 wire          bits
 layout        sequential
 bit_order     lsb
+
+kind  message
+requires  cyuavcanfile.modify_1_1_request_preserve_source  cyuavcanfile.modify_1_1_request_overwrite_destination
 field  cyuavcanfile.modify_1_1_request_preserve_source  1  uint
 field  cyuavcanfile.modify_1_1_request_overwrite_destination  1  uint
 pad    30

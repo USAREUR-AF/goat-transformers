@@ -11,6 +11,9 @@ uses          cyuavcanfile
 wire          bits
 layout        sequential
 bit_order     lsb
+
+kind  message
+requires  cyuavcanfile.write_1_1_request_offset
 field  cyuavcanfile.write_1_1_request_offset  40  uint
 align  8
 group  cyuavcanfile.write_1_1_request_path_path  count 8

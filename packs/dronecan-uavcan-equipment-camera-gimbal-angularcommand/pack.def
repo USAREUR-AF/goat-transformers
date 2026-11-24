@@ -11,6 +11,9 @@ uses          dcuavcanequipmentcameragimbal
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dcuavcanequipmentcameragimbal.angular_command_gimbal_id  dcuavcanequipmentcameragimbal.angular_command_mode_command_mode
 field  dcuavcanequipmentcameragimbal.angular_command_gimbal_id  8  uint
 field  dcuavcanequipmentcameragimbal.angular_command_mode_command_mode  8  uint
 pad    16

@@ -11,4 +11,7 @@ uses          dccomhobbywingesc
 wire          bits
 layout        sequential
 bit_order     msb
+
+kind  message
+requires  dccomhobbywingesc.set_baud_request_baud
 field  dccomhobbywingesc.set_baud_request_baud  8  uint
