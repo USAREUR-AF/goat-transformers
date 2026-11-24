@@ -392,7 +392,7 @@ named_scope(Lines, Defaults) ->
            {sfield, Keys, _, Tr, _, _, _, _, With} ->
                [{K, {field, Tr, Via}} || {K, Via} <- Keys] ++ with_named(With);
            %% the key of `when ... as` (0.30), declared int
-           {swhen, _, _, K, _} when K =/= none -> [{K, as}];
+           {swhen, _, _, K, _, _} when K =/= none -> [{K, as}];
            {sgroup, List, _, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
                [{List, list} | named_scope(Ls, Ds)] ++
                    lists:append([named_scope(maps:get(lines, K), maps:get(defaults, K))
@@ -448,7 +448,7 @@ key_names_marked(#{common := Common, kinds := Kinds}) ->
 key_names(Lines, Prefix) ->
     lists:append(
       [case L of
-           {inner, F, _Partial} -> [{inner, F}];
+           {inner, F, _Partial, _Reach} -> [{inner, F}];
            {field, K, _, _, _, _} -> [<<Prefix/binary, K/binary>>];
            {group, List, _, _, #{lines := Ls}, _} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
@@ -456,7 +456,7 @@ key_names(Lines, Prefix) ->
            {gate, _, _, _, #{lines := Ls}, _} -> key_names(Ls, Prefix);
            {sfield, Keys, _, _, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
            %% a `when ... as` key, at its line (ruling 5 of 0.30)
-           {swhen, _, _, K, _} when K =/= none -> [<<Prefix/binary, K/binary>>];
+           {swhen, _, _, K, _, _} when K =/= none -> [<<Prefix/binary, K/binary>>];
            {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls ++ lists:append([maps:get(lines, K) || K <- Ks]),
@@ -494,9 +494,9 @@ line(Tokens, P0) ->
     Tokens1 = case Tokens of
                   [<<"when">>, L, V, _ | _] = [_ | Args] ->
                       case when_form(Args, P) of
-                          {as, {ok, _}} -> Tokens;
+                          {as, {ok, Key, Opt}} -> [<<"when">>, L, V, {as, Key, Opt}];
                           %% `when <len> <values> at <offset> [as <key>]` (0.33)
-                          {at, Off, Key} -> [<<"when">>, L, V, {at, Off, Key}];
+                          {at, Off, Key, Opt} -> [<<"when">>, L, V, {at, Off, Key, Opt}];
                           %% refused after the file, or after the module checks
                           _ -> [<<"when">>, L, V]
                       end;
@@ -655,7 +655,7 @@ pre_line([Dir | Args], P0) ->
             case when_form(Args, P3) of
                 {as, {bad, Fmt, FArgs}} -> late({bad, Fmt, FArgs}, P3);
                 {at_bad, Fmt, FArgs} -> at_error(Fmt, FArgs, P3);
-                {at, bad, _} -> at_error("when ... at ~s: the offset is not plain digits within 64 bits",
+                {at, bad, _, _} -> at_error("when ... at ~s: the offset is not plain digits within 64 bits",
                                          [at_offset_text(Args)], P3);
                 _ -> P3
             end;
@@ -672,27 +672,40 @@ at_offset_text(_) -> <<>>.
 %% The arguments of a `when` line after its values (0.30, 0.33) ->
 %%   plain                 none
 %%   {as, AsResult}        `as` without `at`: 0.30's checks (when_as/3)
-%%   {at, Off, Key}        `at <n> [as <k>]` in that order on a sequential
+%%   {at, Off, Key, Opt}   `at <n> [as <k> [optional]]` in that order on a sequential
 %%                         pack; Off = integer() | bad (the key is read)
 %%   {at_bad, Fmt, Args}   any other line holding `at`: the `at` form error,
 %%                         its key not read (rulings 27 and 28)
 when_form([_, _], _P) -> plain;
 when_form([_, _ | Rest] = Args, P) ->
     Seq = maps:get(layout, P) =:= sequential andalso maps:get(wire, P) =:= bits,
-    HasAt = lists:member(<<"at">>, Rest),
+    HasAt = holds_at(Rest),
     case Rest of
         _ when HasAt, not Seq ->
             {at_bad, "when ... at: at on a pack that is not layout sequential", []};
         [<<"at">>] -> {at_bad, "when ... at gives no offset", []};
         [<<"at">>, _, <<"at">> | _] -> {at_bad, "when ... at: at twice on one line", []};
-        [<<"at">>, N] -> {at, at_offset(N), none};
-        [<<"at">>, N, <<"as">>, K] when K =/= <<"as">>, K =/= <<"at">> -> {at, at_offset(N), K};
+        [<<"at">>, N] -> {at, at_offset(N), none, false};
+        %% a word of the form in the offset's place is the broken order (0.52,
+        %% rulings 3 and 15)
+        [<<"at">>, N | _] when N =:= <<"as">>; N =:= <<"at">>; N =:= <<"optional">> ->
+            {at_bad, "when ... at ~s: a misplaced token", [N]};
+        [<<"at">>, N, <<"as">>, K] when K =/= <<"as">> -> {at, at_offset(N), K, false};
+        [<<"at">>, N, <<"as">>, K, <<"optional">>] when K =/= <<"as">> ->
+            {at, at_offset(N), K, true};
         _ when HasAt ->
-            {at_bad, "when ... at: the tokens are not when <len> <values> [at <n>] [as <k>]", []};
+            {at_bad, "when ... at: the tokens are not when <len> <values> [at <n>] [as <k> [optional]]", []};
         [<<"as">> | _] -> {as, when_as(<<"when">>, Args, P)};
         _ -> plain
     end;
 when_form(_, _P) -> plain.
+
+%% Does a line hold `at`? The token after the first `as` is its key (0.52,
+%% rulings 4, 11 and 14).
+holds_at([<<"as">>, _ | Rest]) -> lists:member(<<"at">>, Rest);
+holds_at([<<"at">> | _]) -> true;
+holds_at([_ | Rest]) -> holds_at(Rest);
+holds_at([]) -> false.
 
 %% An offset of `at`: plain digits (leading zeros allowed) within 64 bits.
 at_offset(S) ->
@@ -706,7 +719,7 @@ at_offset(S) ->
     end.
 
 %% `as <key>` after the values of a `when` (0.30) -> none (no `as`) |
-%% {ok, Key} | {bad, Fmt, Args}: `as` on a pack that is not `layout
+%% {ok, Key, Optional} | {bad, Fmt, Args}: `as` on a pack that is not `layout
 %% sequential`, with no key, twice, or with a token after the key, each a
 %% check after the file (ruling 16). Any second `as` is `as` twice
 %% (ruling 31).
@@ -717,7 +730,8 @@ when_as(<<"when">>, [_, _, <<"as">> | Rest], P) ->
             {bad, "when ... as: as on a pack that is not layout sequential", []};
         [] -> {bad, "when ... as names no key", []};
         [<<"as">> | _] -> {bad, "when ... as as: as twice on one line", []};
-        [Key] -> {ok, Key};
+        [Key] -> {ok, Key, false};
+        [Key, <<"optional">>] -> {ok, Key, true};              % 0.52
         [_ | More] ->
             case lists:member(<<"as">>, More) of
                 true -> {bad, "when ... as: as twice on one line", []};
@@ -1842,12 +1856,13 @@ when_match(_V, _Val) -> false.
 %% The implicit `requires` term of each `when ... as <key>` line of a kind
 %% (0.30): the entity holds the key and the `when` matches its value. The
 %% `when` lines are the first lines of a kind.
-as_holds([{swhen, _, Val, Key, _} | Rest], Model) when Key =/= none ->
+%% (0.52) an `optional` one also holds when the entity does not hold the key.
+as_holds([{swhen, _, Val, Key, _, Opt} | Rest], Model) when Key =/= none ->
     case maps:find(Key, Model) of
         {ok, V} -> as_match(V, Val) =/= false andalso as_holds(Rest, Model);
-        error -> false
+        error -> Opt andalso as_holds(Rest, Model)
     end;
-as_holds([{swhen, _, _, none, _} | Rest], Model) -> as_holds(Rest, Model);
+as_holds([{swhen, _, _, none, _, _} | Rest], Model) -> as_holds(Rest, Model);
 as_holds(_, _Model) -> true.
 
 %% Does a `when` match an entity's value? The value is read as an unsigned
@@ -2225,7 +2240,8 @@ scan_bare(Bin, 0) ->
 %%     candidates when the line is suppressed
 %%        the first key is the `field` line's, the others those of the `also`
 %%        lines after it
-%%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value, As, At}
+%%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value, As, At, Opt}
+%%     Opt (0.52): `as <key> optional`
 %%     At (0.33) = none | Offset: a look-ahead `when ... at <offset>`, read
 %%     at the kind start plus Offset without moving the cursor
 %%     As (0.30) = none | Key: the key `as <key>` binds the bits to
@@ -2314,11 +2330,11 @@ seq_apply([<<"const">>, LenS, ValS], P) ->
     seq_add({sconst, Len, seq_value(ValS, Len)}, P);
 seq_apply([<<"pad">>, LenS], P) -> seq_add({pad, seq_len(LenS, 0, infinity)}, P);
 seq_apply([<<"align">>, NS], P) -> seq_add({align, seq_len(NS, 1, infinity)}, P);
-seq_apply([<<"when">>, LenS, ValS, <<"as">>, Key], P) -> seq_when(LenS, ValS, Key, none, P);
-seq_apply([<<"when">>, LenS, ValS, {at, Off, Key}], P) ->
+seq_apply([<<"when">>, LenS, ValS, {as, Key, Opt}], P) -> seq_when(LenS, ValS, Key, none, Opt, P);
+seq_apply([<<"when">>, LenS, ValS, {at, Off, Key, Opt}], P) ->
     %% a bad offset is reported after the module checks (when_form/2)
-    seq_when(LenS, ValS, Key, case Off of bad -> 0; _ -> Off end, P);
-seq_apply([<<"when">>, LenS, ValS], P) -> seq_when(LenS, ValS, none, none, P);
+    seq_when(LenS, ValS, Key, case Off of bad -> 0; _ -> Off end, Opt, P);
+seq_apply([<<"when">>, LenS, ValS], P) -> seq_when(LenS, ValS, none, none, false, P);
 seq_apply([<<"presence">>, Name, SizeS], P) ->
     Size = case SizeS of
                <<"fx">> -> fx;
@@ -2438,7 +2454,8 @@ seq_apply([<<"inner">>, Format | Word], #{sstack := Stack} = P) ->
         [] -> ok;
         [T | _] -> load_error('bad-directive', "inner ~s stands in a ~s block", [Format, T])
     end,
-    seq_add({inner, Format, Partial}, late(inner_header, P));
+    %% the keys in reach are known when the file is read (inner_reach/2)
+    seq_add({inner, Format, Partial, #{}}, late(inner_header, P));
 %% `switch <key>` / `case <value>[,...]` / `else` / `end` (0.20)
 seq_apply([<<"switch">> | Args], #{switch_n := N} = P) ->
     Key = case Args of
@@ -2531,7 +2548,7 @@ seq_apply([Dir | Args], _P) ->
 
 %% A `when` line of a sequential pack; As is the key of `as <key>` (0.30)
 %% or none.
-seq_when(LenS, ValS, As, At, #{sstack := Stack} = P0) ->
+seq_when(LenS, ValS, As, At, Opt, #{sstack := Stack} = P0) ->
     Len = seq_loc(LenS, 64),
     %% `at` stands on a `when` of a kind, not on a common `when` (0.33)
     Common = case Stack of
@@ -2541,6 +2558,9 @@ seq_when(LenS, ValS, As, At, #{sstack := Stack} = P0) ->
              end,
     P = case At =/= none andalso Common of
             true -> at_error("when ~s ~s at: at on a common when", [LenS, ValS], P0);
+            %% with the `as` syntax checks (ruling 3 of 0.52)
+            false when Opt, Common ->
+                late({bad, "when ~s ~s as ~s optional: optional on a common when", [LenS, ValS, As]}, P0);
             false -> P0
         end,
     %% a `when` stands among the common lines, or first in its kind
@@ -2552,7 +2572,7 @@ seq_when(LenS, ValS, As, At, #{sstack := Stack} = P0) ->
              _ -> false
          end,
     case Ok of
-        true -> seq_add({swhen, Len, seq_when_value(ValS, Len), As, At}, P);
+        true -> seq_add({swhen, Len, seq_when_value(ValS, Len), As, At, Opt}, P);
         false -> load_error('bad-directive',
                             "when ~s ~s stands after another line of its kind or inside a block",
                             [LenS, ValS])
@@ -2761,7 +2781,7 @@ scope_keys(#{sstack := Stack} = P) ->
                           end || #{lines := Ls} = F <- Inner]).
 
 %% The keys the `when ... as` lines among Lines bind (0.30), in line order.
-as_keys(Lines) -> [K || {swhen, _, _, K, _} <- Lines, K =/= none].
+as_keys(Lines) -> [K || {swhen, _, _, K, _, _} <- Lines, K =/= none].
 
 deep_keys(Lines) ->
     lists:append([case L of
@@ -2785,7 +2805,7 @@ seq_parts([L | Rest], Cur, Acc) -> seq_parts(Rest, [L | Cur], Acc).
 window_errors(Common, Kinds) ->
     [{"when ... at ~p: the look-ahead window of ~p bits is not fixed in kind ~s",
       [Off, Len, maps:get(name, K)]}
-     || #{lines := Ls} = K <- Kinds, {swhen, Len, _, _, Off} <- Ls, Off =/= none,
+     || #{lines := Ls} = K <- Kinds, {swhen, Len, _, _, Off, _} <- Ls, Off =/= none,
         not window_fixed(Ls, Off + Len, 0)]
         ++ lists:append(
              [window_errors(GLs, GKs)
@@ -2794,10 +2814,10 @@ window_errors(Common, Kinds) ->
 
 window_fixed(_Lines, End, Sum) when Sum >= End -> true;
 window_fixed([], _End, _Sum) -> false;
-window_fixed([{swhen, _, _, _, Off} | Rest], End, Sum) when Off =/= none -> window_fixed(Rest, End, Sum);
+window_fixed([{swhen, _, _, _, Off, _} | Rest], End, Sum) when Off =/= none -> window_fixed(Rest, End, Sum);
 window_fixed([L | Rest], End, Sum) ->
     case L of
-        {swhen, Len, _, _, none} -> window_fixed(Rest, End, Sum + Len);
+        {swhen, Len, _, _, none, _} -> window_fixed(Rest, End, Sum + Len);
         {sconst, Len, _} -> window_fixed(Rest, End, Sum + Len);
         {pad, Len} -> window_fixed(Rest, End, Sum + Len);
         {sfield, _, Len, _, _, _, _, _, _} when is_integer(Len) -> window_fixed(Rest, End, Sum + Len);
@@ -2850,7 +2870,8 @@ seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
     seq_check_counts(Common1, Kinds1),
     rest_scope(Common1, Kinds1, false, top),
     inner_paths(Common1, Kinds1),
-    P#{common := Common1, kinds := Kinds1, presence_named => element(2, St),
+    {Common2, Kinds2} = inner_reach(Common1, Kinds1),
+    P#{common := Common2, kinds := Kinds2, presence_named => element(2, St),
        presence_static => element(3, St),
        inner_formats => lists:usort(inner_lines(Common1 ++ lists:append([maps:get(lines, K) || K <- Kinds1])))}.
 
@@ -2859,10 +2880,31 @@ seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
 %% (the only blocks an `inner` line may stand in).
 inner_lines(Lines) ->
     lists:append([case L of
-                      {inner, F, _} -> [F];
+                      {inner, F, _, _} -> [F];
                       {len, _, _, _, Body} -> inner_lines(Body);
                       _ -> []
                   end || L <- Lines]).
+
+%% Every `inner` line with the keys the lines in its reach map, as entries of
+%% model_keys (ruling 20 of 0.52): for a line in a kind the common lines and
+%% that kind's, for one in the common lines the common lines and every kind's.
+inner_reach(Common, Kinds) ->
+    Reach = fun(Lines) -> maps:from_list([{K, true} || K <- key_names(Lines, <<>>), is_binary(K)]) end,
+    Set = fun Set(Lines, Keys) ->
+                  [case L of
+                       {inner, F, Partial, _} -> {inner, F, Partial, Keys};
+                       {len, Len, Unit, Plus, Body} -> {len, Len, Unit, Plus, Set(Body, Keys)};
+                       _ -> L
+                   end || L <- Lines]
+          end,
+    Reached = fun(Lines, InReach) ->
+                      case inner_lines(Lines) of
+                          [] -> Lines;
+                          _ -> Set(Lines, Reach(InReach))
+                      end
+              end,
+    {Reached(Common, Common ++ lists:append([maps:get(lines, K) || K <- Kinds])),
+     [K#{lines := Reached(Ls, Common ++ Ls)} || #{lines := Ls} = K <- Kinds]}.
 
 %% At most one `inner` line on any reading path (ruling 33 of 0.21 as 0.34
 %% applies it): the common lines with each kind's.
@@ -3626,7 +3668,7 @@ rest_block([L | Rest], After0, Ctx) ->
         {sgroup, _, _, #{lines := Ls, kinds := Ks}} -> rest_scope(Ls, Ks, true, item);
         %% an `inner` line is the last wire line of its extent as a `rest`
         %% group is (0.34)
-        {inner, Format, _} when After ->
+        {inner, Format, _, _} when After ->
             load_error('bad-directive', "inner ~s is not the last line of its extent", [Format]);
         {len, _, _, _, Body} -> rest_block(Body, false, top);
         {chain, First, Parts, EndsFx} ->

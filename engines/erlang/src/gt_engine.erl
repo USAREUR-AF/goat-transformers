@@ -48,7 +48,7 @@
          record_failure_msg/1,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4,
          holds/3, line_value/3, req_holds/3,
-         inner_pack/2, decode_inner/2, encode_inner/2, pass/1, inner_end/3]).
+         inner_pack/2, inner_apart/3, decode_inner/2, encode_inner/2, pass/1, inner_end/3]).
 %% the transforms of the bits wire, which the tlv wire uses too
 -if(?W_BITS orelse ?W_TLV).
 -export([bits_decode/4, bits_encode/4]).
@@ -165,6 +165,16 @@ inner_pack(#{name := OuterName} = Outer, Format) ->
 pass({convert_error, _, _} = Err) ->
     put(?PASS, true),
     erlang:error(Err).
+
+%% The fifth check at an `inner` line (ruling 20 of 0.52): no key the outer
+%% pack's lines in reach of it map is a mapped key of the inner pack. It is the
+%% line's own, not the pack's: model_keys and capability do not make it.
+inner_apart(Outer, #{name := Format, mapped_keys := Mapped}, Reach) ->
+    case maps:keys(maps:with(maps:keys(Reach), Mapped)) of
+        [] -> ok;
+        [K | _] -> conv_error('bad-directive', Outer,
+                              "~s is mapped by the pack and by the inner pack ~s", [K, Format])
+    end.
 
 %% The end of an inner message (Version 0.34, Decode step 3): bytes of its
 %% input at or after it are malformed-wire, unless the line is `partial`.
@@ -446,7 +456,12 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
                   Scope = Common ++ Ls,
                   K#{scope => Scope, plan => scope_plan(Wire, Scope)}
               end || #{lines := Ls} = K <- Kinds],
-    P1 = gt_pack:index(P#{defaults := CommonDefaults, kinds := Kinds1, key_types => KeyTypes,
+    %% what a pack may be as an inner pack (ruling 20 of 0.52)
+    MappedKeys = case Wire of
+                     bits -> maps:from_list([{K, true} || K <- gt_pack:model_keys(P), is_binary(K)]);
+                     _ -> #{}
+                 end,
+    P1 = gt_pack:index(P#{mapped_keys => MappedKeys, defaults := CommonDefaults, kinds := Kinds1, key_types => KeyTypes,
                           typemap_dec => maps:from_list(lists:reverse(Typemap)),
                           typemap_enc => maps:from_list([{C, N} || {N, C} <- lists:reverse(Typemap)]),
                           common := Common, plan => scope_plan(Wire, Common)}),
