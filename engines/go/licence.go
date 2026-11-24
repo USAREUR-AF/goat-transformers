@@ -416,6 +416,11 @@ func licensedModules(tablePath string, files []*moduleFile) (licenceTable, []*li
 		if f.err == nil {
 			m.name, m.uses = profileHeader(f.text)
 		}
+		// A file that is not shown public is in no profile, whatever its
+		// licence (spec 0.93, ruling 2).
+		if !shownPublic(f.text, f.err == nil) {
+			m.rank = rankNone
+		}
 		mods[i] = m
 	}
 	// The widest of each module's licence and the modules it uses, directly
@@ -444,9 +449,13 @@ func licensedModules(tablePath string, files []*moduleFile) (licenceTable, []*li
 }
 
 // packRank is the profile of a pack (ruling 2c): the widest of its licence,
-// the module named core and the modules its `uses` lines name.
-func packRank(table licenceTable, byName map[string]int, licence string, uses []string) int {
+// the module named core and the modules its `uses` lines name; none when its
+// pack.def is not shown public (spec 0.93, ruling 2).
+func packRank(table licenceTable, byName map[string]int, licence string, uses []string, public bool) int {
 	r := table.rank(licence)
+	if !public {
+		return rankNone
+	}
 	for _, u := range append([]string{CoreModule}, uses...) {
 		if ur, ok := byName[u]; ok && ur > r {
 			r = ur
@@ -463,4 +472,59 @@ type PackLicence struct {
 	Format  string
 	Licence string
 	Profile string
+}
+
+// publicLine reports whether a line, cut and trimmed as ruling 1 of 0.29
+// says, is exactly `distribution`, one or more spaces or tabs, and `public`
+// (spec 0.93, ruling 1).
+func publicLine(ln string) bool {
+	const word = "distribution"
+	if !strings.HasPrefix(ln, word) {
+		return false
+	}
+	rest := ln[len(word):]
+	v := strings.TrimLeft(rest, " \t")
+	return len(v) < len(rest) && v == DistPublic
+}
+
+// doubtfulLine reports whether a line is doubtful (spec 0.93, ruling 1):
+// with every double quote removed and then spaces, tabs and carriage
+// returns removed at its ends, it begins with `distribution`, and it is not
+// the exact line of publicLine.
+func doubtfulLine(ln string) bool {
+	s := strings.Trim(strings.ReplaceAll(ln, `"`, ""), " \t\r")
+	return strings.HasPrefix(s, "distribution") && !publicLine(ln)
+}
+
+// shownPublic reports whether a module file or pack.def, read without
+// failure, is shown public (spec 0.93, ruling 1): valid UTF-8, no NUL byte,
+// no U+FEFF, no carriage return other than one directly before a line feed
+// or at the end of the file, at least one exact `distribution public` line
+// and no doubtful line. A file that cannot be read is not shown public; the
+// caller passes it as not read.
+func shownPublic(text []byte, read bool) bool {
+	if !read || !utf8.Valid(text) {
+		return false
+	}
+	for i, c := range text {
+		switch {
+		case c == 0:
+			return false
+		case c == '\r' && i+1 < len(text) && text[i+1] != '\n':
+			return false
+		}
+	}
+	s := string(text)
+	if strings.Contains(s, "\xef\xbb\xbf") {
+		return false
+	}
+	found := false
+	for _, ln := range licenceLines(s) {
+		if publicLine(ln) {
+			found = true
+		} else if doubtfulLine(ln) {
+			return false
+		}
+	}
+	return found
 }

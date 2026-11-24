@@ -77,6 +77,21 @@ loads as `LoadTool` does. `LoadToolLicences` takes the same arguments, always
 reads the licence files, and also returns each loaded pack's directory,
 format, licence and own profile (`none` when it is in no profile).
 
+A module file or `pack.def` is in a profile only when it is shown public
+(spec 0.93, ruling 1): it holds the exact line `distribution public` and no
+other line that begins with `distribution`, quotes removed, and no NUL byte,
+byte-order mark or stray carriage return. Every other file is in no profile,
+whatever its licence, and so is every module and pack that uses it. With a
+profile the distribution limit is `public`, whatever `maxDistribution` says,
+so a file that reads as controlled when it is loaded is
+`distribution-refused`. `Engine.LoadTool(models, packs, only, profile)` and
+`Engine.LoadToolLicences` load into an existing instance: with a profile they
+refuse an instance that already holds a controlled module or pack
+(`distribution-refused`, before any file is read), and the instance's limit
+then stays `public` for its life, also when the load fails later; a later
+`SetMaxDistribution("controlled")` is no error and has no effect (spec 0.93,
+rulings 5 and 6).
+
 ## Command-line tool
 
 The tool `goat-xf` follows the command-line contract of
@@ -104,8 +119,8 @@ cd engines/go && go build -o goat-xf ./cmd/goat-xf
 | `--models DIR` | the directory of model modules (default the `--packs` text followed by `/../model`) |
 | `--packs-only A,B` | load only these subdirectories of `--packs`, in the order given; every module of `--models` still loads |
 | `--max-items N` | the limit on list items one decode holds (default 100000) |
-| `--max-distribution public\|controlled` | refuse modules and packs above this marking (default `controlled`) |
-| `--profile open\|open+copyleft\|everything` | load only the modules and packs this licence profile holds (default none: no licence file is read, every module and pack loads) |
+| `--max-distribution public\|controlled` | refuse modules and packs above this marking (default `controlled`; beside `--profile` the limit is `public` whatever is given) |
+| `--profile open\|open+copyleft\|everything` | load only the modules and packs this licence profile holds, a file that is not shown public never among them (default none: no licence file is read, every module and pack loads) |
 | `--json` | `licences` only, and the one option that takes no value |
 | `--set KEY=VALUE` | `convert` only, repeatable: the context, its keys checked in the order given |
 
@@ -138,17 +153,18 @@ go test -v ./...
 ```
 
 `AGENTS.md` adds `go vet ./...` before it. Measured with Go 1.26 on Linux
-x86_64, 36 top-level tests and examples, none failing:
+x86_64, 62 top-level tests and examples, none failing (one skipped, below):
 
 | Test | Covers | Measured |
 |---|---|---|
-| `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 23610 run, 23610 passed (4528 packs loaded; 2026-11-21) |
-| `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 1399 run, 1399 passed |
-| `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 99729 inputs fed, 0 failed |
-| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 23580 vectors (1506 failing conversions), 0 outcomes differ |
+| `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 24274 run, 24274 passed (4543 packs loaded; 2026-11-24) |
+| `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 1402 run, 1402 passed |
+| `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 102385 inputs fed, 0 failed |
+| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 24244 vectors (1514 failing conversions), 0 outcomes differ |
 | `TestMalformedRulings` | the malformed-input rulings of the specification, such as nesting depth and bytes that are not UTF-8 | pass |
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 135 run, 135 passed (2026-11-21) |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 179 run, 179 passed (2026-11-24) |
 | `TestLoadToolProfile`, `TestLoadToolLicences`, `TestLicenceFiles`, `TestLicenceTable`, `TestProfileHeader`, `TestDefFilesRegularOnly` | spec 0.29: the library loader with each profile and none, the fixture trees of `packs/conformance/tool-fixtures/licences-*`, the line forms of `REUSE.toml`, `.def.license` and `licences.toml`, the `module` and `uses` lines the profiles read, and the module files of 0.23 Loading 1 (regular files or links to one) | pass |
+| `TestProfileSetsLimitPublic`, `TestProfileSkipsBeforeTheLimit`, `TestProfileRefusesAFileThatChanged`, `TestProfileLimitIsTheInstances`, `TestProfileThenDirectLoad`, `TestProfileOnAnInstanceHoldingControlled`, `TestProfileLoadOrder`, `TestProfileThenLoadWithoutProfile` | spec 0.93, rulings 5 and 6: the limit is `public` with a profile, a file that reads as controlled when loaded (a test hook stands for a file that changed after its profile was read), the instance's limit before and after, a later direct load, an instance that already holds a controlled module or pack, the order of the errors, a later load with no profile | pass |
 | `TestHeapPerListItem` | the heap a decode takes per item of a long list; runs only with `GOAT_XF_HEAP=1` | skipped in CI |
 | the other tests and `ExampleLoadPacksOnly`, `ExampleEngine_LoadFS` | the tokenizer, float and time formatting, wire errors, kinds, groups, sequential wires, derive functions, the directory and `fs.FS` loaders | pass |
 

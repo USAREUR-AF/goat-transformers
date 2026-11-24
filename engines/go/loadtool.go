@@ -57,17 +57,64 @@ func LoadToolLicences(modelsDir, packsDir, maxDistribution string, only []string
 }
 
 func loadTool(modelsDir, packsDir, maxDistribution string, only []string, profile string, licences bool) (*Engine, []PackLicence, error) {
-	held := rankNone // with no profile every rank is held
-	if profile != "" {
-		r, ok := profileRank(profile)
-		if !ok {
-			return nil, nil, &Error{Kind: ErrBadLicence, Detail: fmt.Sprintf("%q is not a profile: open, open+copyleft or everything", profile)}
-		}
-		held = r
+	if profile != "" && !ValidProfile(profile) {
+		return nil, nil, notAProfile(profile)
 	}
 	e := New()
 	if err := e.SetMaxDistribution(maxDistribution); err != nil {
 		return nil, nil, err
+	}
+	listed, err := e.loadTool(modelsDir, packsDir, only, profile, licences)
+	if err != nil {
+		return nil, nil, err
+	}
+	return e, listed, nil
+}
+
+func notAProfile(profile string) error {
+	return &Error{Kind: ErrBadLicence, Detail: fmt.Sprintf("%q is not a profile: open, open+copyleft or everything", profile)}
+}
+
+// LoadTool loads into e as the package function LoadToolProfile does, with
+// e's own limits, stopping at the first failure; what loaded before a
+// failure stays loaded. With a profile (spec/engine-spec.md, Version 0.93,
+// ruling 6): a name that is not one of the three is bad-licence and changes
+// nothing; then, when e already holds a module or pack marked other than
+// public, the load is distribution-refused before any file is read; then e's
+// distribution limit becomes public for the rest of its life, also when the
+// load fails later, whatever SetMaxDistribution is given before or after. A
+// later load without a profile is bounded by that limit, not by the profile.
+// With profile "" it reads no licence file and changes no limit.
+func (e *Engine) LoadTool(modelsDir, packsDir string, only []string, profile string) error {
+	_, err := e.loadTool(modelsDir, packsDir, only, profile, profile != "")
+	return err
+}
+
+// LoadToolLicences is LoadTool that always reads the licence files and also
+// returns each pack it loaded, as the package function LoadToolLicences does.
+func (e *Engine) LoadToolLicences(modelsDir, packsDir string, only []string, profile string) ([]PackLicence, error) {
+	return e.loadTool(modelsDir, packsDir, only, profile, true)
+}
+
+// beforeProfileLoad, when set (only by tests), is given the text of each
+// module file and pack.def after its profile was read and returns the text
+// that is loaded: it stands for a file that changed between the two reads
+// (spec 0.93, ruling 5). This engine reads each file once.
+var beforeProfileLoad func(path string, text []byte) []byte
+
+func (e *Engine) loadTool(modelsDir, packsDir string, only []string, profile string, licences bool) ([]PackLicence, error) {
+	held := rankNone // with no profile every rank is held
+	if profile != "" {
+		r, ok := profileRank(profile)
+		if !ok {
+			return nil, notAProfile(profile)
+		}
+		if e.holdsControlled() {
+			return nil, &Error{Kind: ErrDistributionRefused, Source: packsDir,
+				Detail: "a load with a licence profile on an engine that already holds a controlled module or pack"}
+		}
+		e.profiled = true
+		held = r
 	}
 	files := listModuleFiles(modelsDir)
 	var table licenceTable
@@ -75,7 +122,7 @@ func loadTool(modelsDir, packsDir, maxDistribution string, only []string, profil
 	if licences {
 		t, mods, names, err := licensedModules(packsDir+"/../licences.toml", files)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 		table, byName = t, names
 		files = files[:0:0]
@@ -87,11 +134,14 @@ func loadTool(modelsDir, packsDir, maxDistribution string, only []string, profil
 	}
 	ordered, err := orderModuleFiles(files)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	for _, f := range ordered {
+		if beforeProfileLoad != nil && licences && f.err == nil {
+			f = &moduleFile{path: f.path, text: beforeProfileLoad(f.path, f.text), name: f.name, uses: f.uses}
+		}
 		if err := f.load(e); err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	}
 	var listed []PackLicence
@@ -109,8 +159,11 @@ func loadTool(modelsDir, packsDir, maxDistribution string, only []string, profil
 			if rerr == nil {
 				_, uses = profileHeader(text)
 			}
-			if rank = packRank(table, byName, lic, uses); rank > held {
+			if rank = packRank(table, byName, lic, uses, shownPublic(text, rerr == nil)); rank > held {
 				return nil // skipped: not otherwise read or checked
+			}
+			if beforeProfileLoad != nil && rerr == nil {
+				text = beforeProfileLoad(path, text)
 			}
 		}
 		if rerr != nil {
@@ -131,17 +184,17 @@ func loadTool(modelsDir, packsDir, maxDistribution string, only []string, profil
 	if only != nil {
 		for _, name := range only {
 			if !holdsPack(packsDir, name) {
-				return nil, nil, &Error{Kind: ErrUnknownFormat, Format: name, Source: packsDir,
+				return nil, &Error{Kind: ErrUnknownFormat, Format: name, Source: packsDir,
 					Detail: fmt.Sprintf("%q is not a subdirectory of the packs directory holding pack.def", name)}
 			}
 			if err := load(name); err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 		}
 	} else {
 		entries, err := os.ReadDir(packsDir)
 		if err != nil {
-			return nil, nil, fmt.Errorf("cannot read the packs directory %s: %v", packsDir, err)
+			return nil, fmt.Errorf("cannot read the packs directory %s: %v", packsDir, err)
 		}
 		for _, ent := range entries { // os.ReadDir sorts by name, byte order
 			name := ent.Name()
@@ -149,12 +202,12 @@ func loadTool(modelsDir, packsDir, maxDistribution string, only []string, profil
 				continue
 			}
 			if err := load(name); err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 		}
 	}
 	sort.SliceStable(listed, func(i, j int) bool { return listed[i].Dir < listed[j].Dir })
-	return e, listed, nil
+	return listed, nil
 }
 
 // holdsPack reports whether name is one path component naming a directory of

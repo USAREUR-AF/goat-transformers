@@ -16,7 +16,10 @@ import (
 type Engine struct {
 	modules map[string]*Module
 	packs   map[string]*Pack
-	maxDist string
+	maxDist string // the limit the caller set
+	// profiled is set by the first load with a licence profile (spec 0.93,
+	// ruling 6): from then on the limit is the lower of public and maxDist.
+	profiled bool
 	// Kept for the life of the instance (spec 0.25, ruling 1): every derive
 	// line in application order, rebuilt when a module with derive lines
 	// loads, never during a conversion; and the modules that have them, in
@@ -51,7 +54,9 @@ func (e *Engine) SetMaxItems(n int64) {
 func (e *Engine) MaxItems() int64 { return e.maxItems }
 
 // SetMaxDistribution sets the distribution limit, public or controlled. It
-// governs what is loaded afterwards.
+// governs what is loaded afterwards. After a load with a licence profile the
+// limit stays public: controlled is then accepted and has no effect (spec
+// 0.93, ruling 6).
 func (e *Engine) SetMaxDistribution(d string) error {
 	if !validDistribution(d) {
 		return &Error{Kind: ErrBadDirective, Detail: fmt.Sprintf("max distribution must be public or controlled, got %q", d)}
@@ -60,12 +65,34 @@ func (e *Engine) SetMaxDistribution(d string) error {
 	return nil
 }
 
-// MaxDistribution returns the distribution limit.
-func (e *Engine) MaxDistribution() string { return e.maxDist }
+// MaxDistribution returns the distribution limit: the one the caller set, or
+// public after a load with a licence profile (spec 0.93, rulings 5 and 6).
+func (e *Engine) MaxDistribution() string {
+	if e.profiled {
+		return DistPublic
+	}
+	return e.maxDist
+}
 
 // refused reports whether a marking is above the engine's limit.
 func (e *Engine) refused(dist string) bool {
-	return e.maxDist == DistPublic && dist != DistPublic
+	return e.MaxDistribution() == DistPublic && dist != DistPublic
+}
+
+// holdsControlled reports whether a loaded module or pack is marked other
+// than public (spec 0.93, ruling 6).
+func (e *Engine) holdsControlled() bool {
+	for _, m := range e.modules {
+		if m.Distribution != DistPublic {
+			return true
+		}
+	}
+	for _, p := range e.packs {
+		if p.Distribution != DistPublic {
+			return true
+		}
+	}
+	return false
 }
 
 // LoadModel parses one model module and loads it. source names the text in
@@ -84,7 +111,7 @@ func (e *Engine) LoadModel(text []byte, source string) error {
 // checks, duplicate-module.
 func (e *Engine) AddModule(m *Module) error {
 	if e.refused(m.Distribution) {
-		return &Error{Kind: ErrDistributionRefused, Module: m.Name, Source: m.Source, Detail: fmt.Sprintf("module %s is %s and the engine limit is %s", m.Name, m.Distribution, e.maxDist)}
+		return &Error{Kind: ErrDistributionRefused, Module: m.Name, Source: m.Source, Detail: fmt.Sprintf("module %s is %s and the engine limit is %s", m.Name, m.Distribution, e.MaxDistribution())}
 	}
 	// A module is loaded after the modules it uses, and a public module uses
 	// only public modules (spec 0.8, "Model additions").
@@ -131,7 +158,7 @@ func (e *Engine) AddPack(p *Pack) error {
 		return err
 	}
 	if e.refused(p.Distribution) {
-		return lerr(ErrDistributionRefused, "", nil, "pack %s is %s and the engine limit is %s", p.Format, p.Distribution, e.maxDist)
+		return lerr(ErrDistributionRefused, "", nil, "pack %s is %s and the engine limit is %s", p.Format, p.Distribution, e.MaxDistribution())
 	}
 	used := append([]string{CoreModule}, p.Uses...)
 	for _, name := range used {
