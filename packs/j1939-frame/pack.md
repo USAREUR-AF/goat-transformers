@@ -51,7 +51,7 @@ None. Nothing has a `core` or `track` meaning; the PGN-numbered fields of `nmea2
   bits are 0xFFFF would be read the same way, with the rest of its octets as the next item.
 - **The older SPN conversion methods** (the conversion bit set): the bits are read in the current layout
   only.
-- **Transport reassembly**, other PGNs (the J1939-71 parameters), the other DMs, and J1939-22 (CAN FD).
+- **Transport reassembly**, other PGNs and the other DMs.
 
 ## Vectors
 

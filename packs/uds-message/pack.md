@@ -23,13 +23,13 @@ None.
 
 ## Not mapped
 
-- **P2 and P2\* as numbers**: the session parameter record is octets, because messages from before the
-  2013 edition carry none and a field there would re-encode as zeros.
+- **P2 and P2\* as numbers**: the session parameter record is octets, because the source reads
+  the timings only for the 2013 edition and later, and a field there would re-encode as zeros in a message
+  without them.
 - **Several identifiers in one read response**: the length of each value comes from the data
   identifier definitions, which are not part of the message; the first identifier is read and the rest
   is the data record.
-- **The other services** (0x14, 0x19, 0x23, 0x28, 0x2C, 0x2F, 0x34-0x37, 0x3D, 0x85, 0x87 ...):
-  octets.
+- **The other services**: octets.
 - **Request or response**: decided by the identifier, as on the wire; there is no direction key.
 
 ## Message convention

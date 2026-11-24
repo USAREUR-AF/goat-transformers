@@ -1,6 +1,6 @@
 # Pack: isotp-frame
 
-One ISO-TP (ISO 15765-2) frame: the data field of one CAN frame (8 octets) or CAN FD frame (up to 64),
+One ISO-TP (ISO 15765-2) frame: the data field of one CAN frame (8 octets, or up to 64 in the source's longer frames),
 with normal addressing (no address extension octet). Wire `bits`, `layout sequential`, `bit_order msb`.
 Kinds by the protocol control information, in this order: `single-frame-escape` (first octet 0x00),
 `single-frame` (high half 0), `first-frame-escape` (first two octets 0x1000), `first-frame` (high half

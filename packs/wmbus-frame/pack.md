@@ -1,7 +1,7 @@
 # Pack: wmbus-frame
 
-A wireless M-Bus link-layer frame (EN 13757-4), with the CRC blocks removed, as wmbusmeters and most
-receivers deliver it. Wire `bits`, `layout sequential`, `bit_order msb`; multi-octet values little-endian.
+A wireless M-Bus link-layer frame, with the CRC blocks removed, as wmbusmeters
+parses it. Wire `bits`, `layout sequential`, `bit_order msb`; multi-octet values little-endian.
 No kinds. Written by `tools/gen/meter2-pack.py`.
 
 ## What is mapped
@@ -20,9 +20,8 @@ None.
 
 ## Not mapped
 
-- **Frame format A and B CRCs**: removed before the frame reaches the pack (format A has one per block,
-  format B one or two at the end); a frame with them in place is not read correctly.
-- **The application data**: octets, because it is often encrypted (the configuration's security mode);
+- **The link-layer CRCs**: removed before the frame reaches the pack; a frame with them in place is not read correctly.
+- **The application data**: octets, because it may be encrypted (the configuration's security mode);
   unencrypted records have the layout `mbus-frame` reads.
 - **Configuration extensions** of security modes 7 and 10 (they are at the start of the application data).
 - **ELL II to V and AFL** headers.

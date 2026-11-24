@@ -39,8 +39,8 @@ Read on 2026-11-21. No source file is copied into this tree.
 "Copyright 2016 Signal K and contributors"). The pack keeps the default Apache-2.0 label.
 
 The hook files' comments cite Thomas Knauf's SeaTalk Technical Reference and the marnav project; those
-were not read for this pack, and no comment text is copied. Raymarine's own SeaTalk documentation is not
-public and was not used.
+were not read for this pack, and no comment text is copied. Raymarine's own SeaTalk documentation:
+not read.
 
 This pack restates the layouts (octet order, nibbles, bits, scale factors) in its own words. The vectors
 are built by `tools/gen/seatalk-vectors.py` from values chosen there; their expected bytes are derived

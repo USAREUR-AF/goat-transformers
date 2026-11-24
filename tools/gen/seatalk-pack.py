@@ -111,7 +111,7 @@ KEYS = [
     ("int", "autopilot_course_xy", "0x84: XY octet of the autopilot course (with the two high bits of V)"),
     ("int", "autopilot_pad", "0x84: high nibble of octet 4"), ("int", "autopilot_mode", "0x84: Z (bit 1 auto, bit 2 vane, bit 3 track)"),
     ("int", "alarm_pad", "0x84: high nibble of octet 5"), ("int", "alarms", "0x84: M (bit 2 off course, bit 3 wind shift)"),
-    ("int", "rudder_position", "0x84, 0x9C: rudder position, degrees (positive to starboard)"),
+    ("int", "rudder_position", "0x84, 0x9C: rudder position, degrees (positive steers right)"),
     ("int", "autopilot_ss", "0x84: SS display flags"), ("int", "autopilot_tt", "0x84: TT"),
     ("int", "xte_low", "0x85: XX, the low octet of the cross-track error in hundredths of a nautical mile"),
     ("int", "nav_v", "0x85: V"), ("int", "nav_u", "0x85: U (bits 1-0 bearing quadrant, bit 3 true)"), ("int", "nav_z", "0x85: Z"),

@@ -1,6 +1,6 @@
 # Pack: dlms-hdlc-frame
 
-A DLMS/COSEM HDLC frame (IEC 62056-46), as on an optical or RS-485 meter port. Wire `bits`, `layout
+A DLMS/COSEM HDLC frame. Wire `bits`, `layout
 sequential`, `bit_order msb`. One kind, `hdlc`, chosen by the opening flag. HDLC framing only: the COSEM
 APDU stays octets. Written by `tools/gen/meter2-pack.py`.
 
@@ -20,16 +20,14 @@ None.
 
 ## Not mapped
 
-- **The header and frame checks computed** (CRC-16): kept as sent.
+- **The header and frame checks computed**: kept as sent.
 - **The header check told from the frame check**: a frame with an information field carries the header
   check after the control field and the frame check at the end; a frame without one carries only the
   frame check there. The pack reads the 16 bits after the control field as `header_check` either way
   and leaves the information with the final check as octets; the end of the information is not stated
   apart from its last two octets.
-- **The address value**: the parts are kept; the source combines them (for four octets, the upper and
-  lower server addresses).
+- **The address value**: the parts are kept; the source combines them into one number.
 - **The control field decoded** (sequence numbers, poll/final, frame kind), the LLC header and the APDU.
-- **Byte stuffing**: none in DLMS HDLC (the length makes it unnecessary).
 
 ## Message convention
 

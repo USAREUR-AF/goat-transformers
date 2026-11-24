@@ -1,6 +1,6 @@
 # Pack: bacnet-ip-bvlc
 
-A BACnet/IPv4 virtual link layer message (BVLC), as sent over UDP port 47808, with the BACnet NPDU
+A BACnet/IPv4 virtual link layer message (BVLC), with the BACnet NPDU
 header where the function carries an NPDU. Wire `bits`, `layout sequential`, `bit_order msb`. One kind,
 `bvlc`, chosen by the type octet 0x81. Written by `tools/gen/indauto2-pack.py`.
 
@@ -24,9 +24,9 @@ None. Addresses are IPv4 integers of this module; nothing has a `core` or `track
 ## Not mapped
 
 - **The APDU** (confirmed and unconfirmed requests, ACKs, the BACnet services and their tagged
-  application data): octets. The tags are a variable-length encoding of their own.
-- **Network layer message bodies** (Who-Is-Router, I-Am-Router and the others): octets.
-- **BACnet/IPv6 (BVLC6)**, BACnet/SC and MS/TP framing.
+  application data): octets.
+- **Network layer message bodies** (I-Am-Router-To-Network and the others): octets.
+- Other BACnet data links.
 
 ## Message convention
 

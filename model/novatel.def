@@ -5,7 +5,7 @@ distribution  public
 source        "swri-robotics/novatel_gps_driver, https://github.com/swri-robotics/novatel_gps_driver at commit 63e19e2e3088e80ecceaa18d86022afffb3ccaf3, novatel_gps_driver/include/novatel_gps_driver/binary_header.h, src/parsers/bestpos.cpp, include/.../parsers/bestpos.h (BSD-3-Clause, Copyright (c) 2017 Southwest Research Institute); layout restated, no code copied; NovAtel documentation not used"
 key   header_length               int     -     "header length in octets (28)"
 key   message_id                  int     -     "message ID (42 BESTPOS ...)"
-key   message_type                int     -     "message type octet (format and response bits)"
+key   message_type                int     -     "message type octet, as sent"
 key   port_address                int     -     "port address"
 key   message_length              int     -     "length of the data after the header, octets, as sent"
 key   sequence                    int     -     "sequence number"

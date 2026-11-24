@@ -1,6 +1,6 @@
 # Pack: novatel-oem-binary
 
-A NovAtel OEM binary log (OEM4 to OEM7 framing): the 28-octet header and, for BESTPOS (message ID 42),
+A NovAtel OEM binary log: the 28-octet header and, for BESTPOS (message ID 42),
 the 72-octet body and the CRC. Wire `bits`, `layout sequential`, `bit_order lsb` (little-endian). One
 kind, `oem-binary`, chosen by the sync octets AA 44 12. Written by `tools/gen/gnssbin-pack.py`.
 
@@ -29,10 +29,10 @@ None, on purpose:
 ## Not mapped
 
 - **The CRC computed** (CRC-32): kept as sent.
-- **Other logs** (BESTVEL, BESTXYZ, INSPVA, RANGE ...): octets; the source has parsers for several.
+- **Other logs**: octets.
 - **Data and CRC apart** for other logs: the CRC is the last four octets (the "all but the last N" gap);
   the message length is kept as sent.
-- The short-header (AA 44 13) and ASCII forms.
+- The ASCII form, which the source also reads.
 
 ## Message convention
 

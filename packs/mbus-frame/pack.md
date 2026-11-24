@@ -1,6 +1,6 @@
 # Pack: mbus-frame
 
-A wired M-Bus frame (EN 13757-2 link layer, EN 13757-3 application layer). Wire `bits`, `layout
+A wired M-Bus frame. Wire `bits`, `layout
 sequential`, `bit_order msb`; multi-octet values are little-endian (`swap`). Kinds by the start
 character: `ack` (0xE5), `short` (0x10), `long` (0x68, the control and long frames). Written by
 `tools/gen/meter2-pack.py`.
@@ -34,8 +34,8 @@ None.
 - **Values decoded**: integers are unsigned here (the source decodes them as signed), BCD stays as its octets
   in hex (low octet first), the VIF's unit and multiplier are not applied, the manufacturer code is not
   turned into its three letters, and the identification number is its octets in hex, low octet first.
-- **LVAR above 0xBF** (BCD, binary and other variable codings): read as a character count, so wrong.
-- **DIF data coding 8** (selection for readout): no value, as in the source.
+- **LVAR above 0xBF**: read as an octet count, where the source gives those values other lengths, so wrong.
+- **DIF data coding 8** (selection for readout): no value.
 - **More than one frame of records** (DIF 0x1F): the frames are separate messages.
 
 ## Message convention
