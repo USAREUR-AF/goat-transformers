@@ -7624,7 +7624,9 @@ there. A field that `implicit` leaves out writes nothing, so a submessage that
 holds only such fields is not written unless a `when <path> present` asks
 for it; such a field counts as not written for ruling 14
 of 0.5 (a `when <path> present` writes an empty submessage when nothing under
-the path is written). The key still counts as held for `requires` and `with`
+the path is written). A `when
+<path> <value>` on the path of a field that `implicit` leaves out still writes
+its own value. The key still counts as held for `requires` and `with`
 (Version 0.18): only the wire omits it.
 
 ## `range`: a value refused outside a range, or wrapped
