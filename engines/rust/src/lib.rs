@@ -4319,6 +4319,9 @@ pub struct Engine {
     max_distribution: Distribution,
     /// the limit on list items of one decode (ruling 7 of 0.11)
     max_items: usize,
+    /// a load with a licence profile has begun on this instance: its limit
+    /// is `public` from then on, whatever a caller sets (0.93, ruling 6)
+    profile_limit: bool,
 }
 
 impl Default for Engine {
@@ -4331,6 +4334,7 @@ impl Default for Engine {
             list_index: HashMap::new(),
             max_distribution: Distribution::Controlled,
             max_items: DEFAULT_MAX_ITEMS,
+            profile_limit: false,
         }
     }
 }
@@ -4342,8 +4346,30 @@ impl Engine {
 
     /// Limit what this engine will load. With `Distribution::Public`, a
     /// controlled module or pack is refused with `distribution-refused`.
+    /// After a load with a licence profile the limit is the lower of
+    /// `public` and `d` (engine-spec 0.93, ruling 6): setting `controlled`
+    /// then is no error and has no effect.
     pub fn set_max_distribution(&mut self, d: Distribution) {
-        self.max_distribution = d;
+        self.max_distribution = if self.profile_limit && d > Distribution::Public { Distribution::Public } else { d };
+    }
+
+    /// 0.93, rulings 5 and 6: from a load with a profile on, the limit is
+    /// `public`.
+    pub(crate) fn limit_by_profile(&mut self) {
+        self.profile_limit = true;
+        self.max_distribution = Distribution::Public;
+    }
+
+    /// What controlled module or pack this instance holds, if any (0.93,
+    /// ruling 6).
+    pub(crate) fn holds_controlled(&self) -> Option<String> {
+        if let Some(m) = self.modules.values().find(|m| m.distribution == Distribution::Controlled) {
+            return Some(format!("model module `{}`", m.name));
+        }
+        self.packs
+            .values()
+            .find(|p| p.distribution == Distribution::Controlled)
+            .map(|p| format!("pack `{}`", p.format))
     }
 
     /// Load one model module (the text of a `model/<module>.def`). Modules are
