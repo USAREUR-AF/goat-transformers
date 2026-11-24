@@ -1821,6 +1821,105 @@ int main() {
         fs::remove_all(dir, ec);
     }
 
+    // 0.93 with 0.34: a controlled inner pack never loads. The inner pack is
+    // an ordinary pack of the load (this engine follows no `inner` line when
+    // loading), so the profile and the limit reach it as any pack; the outer
+    // pack then fails check 1 of 0.34 where the line is reached.
+    {
+        namespace fs = std::filesystem;
+        const fs::path dir = fs::temp_directory_path() /
+                             ("goat-transformers-unit-093-inner-" +
+                              std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+        try {
+            auto put = [&](const fs::path& rel, const std::string& text) {
+                fs::create_directories((dir / rel).parent_path());
+                std::ofstream out(dir / rel, std::ios::binary);
+                out << text;
+            };
+            const std::string seq = "wire bits\nlayout sequential\nbit_order msb\n";
+            auto pack = [](const std::string& format, const std::string& dist, const std::string& body) {
+                return "format " + format + "\nversion 0.1.0\ndistribution " + dist + "\nsource s\n" + body;
+            };
+            put("model/core.def", "module core\nversion 0.1.0\ndistribution public\nsource s\nkey a int -\nkey b int -\n");
+            put("packs/out/pack.def", pack("f-out", "public", seq + "field a 8 uint\ninner f-in\n"));
+            const std::string packs = (dir / "packs").string(), models = (dir / "model").string();
+            const auto P = gt::Distribution::Public, C = gt::Distribution::Controlled;
+            const std::vector<std::string> both{"out", "in"};
+            gt::Entity ent;
+            ent.fields["a"] = gt::Value::of_int(1);
+            ent.fields["b"] = gt::Value::of_int(2);
+            const struct {
+                const char* what;
+                std::string def;
+            } inners[] = {
+                {"(a) an inner pack that is not shown public", pack("f-in", "controlled", seq + "field b 8 uint\n")},
+                {"(b) a public inner pack that uses a controlled module",
+                 pack("f-in", "public", "uses cm\n" + seq + "field b 8 uint\n")},
+            };
+            for (const auto& in : inners) {
+                put("packs/in/pack.def", in.def);
+                // The controlled module stands only for (b), so (c) of (a) is refused at the inner pack itself.
+                const bool uses_cm = in.def.find("uses cm") != std::string::npos;
+                if (uses_cm) put("model/cm.def", "module cm\nversion 0.1.0\ndistribution controlled\nsource s\nkey k int -\n");
+                else fs::remove(dir / "model/cm.def");
+                const std::string w = std::string("0.93 inner ") + in.what;
+                for (const char* profile : {"open", "open+copyleft", "everything"}) {
+                    for (const std::vector<std::string>* names : {static_cast<const std::vector<std::string>*>(nullptr), &both}) {
+                        const std::string ww = w + ", profile " + profile + (names ? ", both named" : ", every pack");
+                        gt::Engine e = gt::Engine::load_tool(packs, models, names, C, std::string(profile));
+                        check(e.formats() == std::vector<std::string>({"f-out"}), ww + ": only the outer pack loads");
+                        expect_error(gt::ErrorKind::UnknownFormat, [&] { (void)e.decode("f-out", "0102"); },
+                                     ww + ": decode through the outer pack");
+                        expect_error(gt::ErrorKind::UnknownFormat, [&] { (void)e.encode("f-out", ent); },
+                                     ww + ": encode through the outer pack");
+                        expect_error(gt::ErrorKind::UnknownFormat, [&] { (void)e.decode("f-in", "02"); },
+                                     ww + ": decode of the inner format");
+                        expect_error(gt::ErrorKind::UnknownFormat, [&] { (void)e.encode("f-in", ent); },
+                                     ww + ": encode of the inner format");
+                        try {
+                            check(e.model_keys("f-out") == std::vector<std::string>({"a"}),
+                                  ww + ": model_keys of the outer pack adds nothing for the inner line");
+                        } catch (const std::exception& ex) {
+                            check(false, ww + ": model_keys of the outer pack failed: " + ex.what());
+                        }
+                    }
+                }
+                // (c) No profile, limit public, the inner pack in the load.
+                for (const std::vector<std::string>* names : {static_cast<const std::vector<std::string>*>(nullptr), &both}) {
+                    const std::string ww = w + ", no profile, limit public" + (names ? ", both named" : ", every pack");
+                    bool returned = false;
+                    expect_error(gt::ErrorKind::DistributionRefused,
+                                 [&] {
+                                     gt::Engine e = gt::Engine::load_tool(packs, models, names, P);
+                                     returned = true;
+                                 },
+                                 ww + ": distribution-refused");
+                    check(!returned, ww + ": nothing loaded (no engine is returned)");
+                    // Which file is refused: the inner pack for (a), the controlled module it uses for (b).
+                    try {
+                        (void)gt::Engine::load_tool(packs, models, names, P);
+                    } catch (const gt::Error& ex) {
+                        const std::string msg = ex.what();
+                        check(uses_cm ? msg.find("module 'cm'") != std::string::npos : ex.format() == "f-in",
+                              ww + ": the refused file is " + (uses_cm ? "module cm" : "pack f-in") + ", got " + msg);
+                    }
+                    // On an instance, the inner format is never loaded.
+                    gt::Engine i;
+                    i.set_max_distribution(P);
+                    try {
+                        i.load_tool_into(packs, models, names);
+                    } catch (const gt::Error&) {
+                    }
+                    check(!i.has_format("f-in") && !i.has_module("cm"), ww + ": the inner pack is not loaded on an instance");
+                }
+            }
+        } catch (const std::exception& ex) {
+            check(false, std::string("0.93 inner packs threw: ") + ex.what());
+        }
+        std::error_code ec;
+        fs::remove_all(dir, ec);
+    }
+
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";
     return failures == 0 ? 0 : 1;
 }
