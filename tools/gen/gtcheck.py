@@ -2590,11 +2590,59 @@ def load_pack_file(path, model):
         return load_pack(fh.read(), model, path)
 
 
+def mapped_keys(pack):
+    """The message keys a pack maps (`field`, `also`, `when ... as`) and its
+    lists, as `<list>[]`; the keys of list items are judged with their list."""
+    keys = set()
+
+    def collect(lines):
+        for node in lines:
+            if node.d == "group":
+                keys.add(node.args[0] + "[]")
+                continue
+            if node.d == "field":
+                keys.update(keys_of(node))
+            elif node.d == "when" and _as_of(node):
+                keys.add(_as_of(node))
+            if node.body:
+                collect(node.body)
+            for kind in node.kinds or ():
+                collect(kind.lines)
+
+    for _, lines in pack.scopes():
+        collect(lines)
+    return keys
+
+
+def check_inner_keys(packs):
+    """A pack with an `inner` line (spec 0.34) maps no key its inner pack maps:
+    decode keeps one of the two values and encode writes that one in both
+    places, with no error. A pack whose inner pack is not among `packs` is
+    refused as well: its keys cannot be compared. Not a rule of the engines;
+    packs named `conformance-*` are not checked."""
+    by_format = {p.format: p for p in packs}
+    for pack in packs:
+        if pack.format.startswith("conformance-"):
+            continue
+        own = mapped_keys(pack)
+        for node in (n for _, lines in pack.scopes() for n in walk(lines, "inner")):
+            inner = by_format.get(node.name)
+            if inner is None:
+                raise CheckError("inner-keys", "`inner %s`: that pack is not among the files checked, so its keys"
+                                 " cannot be compared" % node.name, node.line, pack.label)
+            shared = sorted(own & mapped_keys(inner))
+            if shared:
+                raise CheckError("inner-keys", "`inner %s`: both packs map %s" % (node.name, ", ".join(shared)),
+                                 node.line, pack.label)
+
+
 def check_output(model_dir, pack_paths, max_distribution="controlled"):
     """Load a model directory and then each pack file; the packs, in order.
     This is the whole of a generator's check of what it wrote."""
     model = Model(max_distribution).load_dir(model_dir)
-    return model, [load_pack_file(path, model) for path in pack_paths]
+    packs = [load_pack_file(path, model) for path in pack_paths]
+    check_inner_keys(packs)
+    return model, packs
 
 
 def main(argv=None):
@@ -2611,11 +2659,17 @@ def main(argv=None):
     except (CheckError, OSError) as e:
         print("gtcheck: %s" % e, file=sys.stderr)
         return 1
-    failed = 0
+    failed, packs = 0, []
     for path in args.packs:
         try:
-            load_pack_file(path, model)
+            packs.append(load_pack_file(path, model))
         except (CheckError, OSError) as e:
+            print("gtcheck: %s" % e, file=sys.stderr)
+            failed += 1
+    if not failed:
+        try:
+            check_inner_keys(packs)
+        except CheckError as e:
             print("gtcheck: %s" % e, file=sys.stderr)
             failed += 1
     if not failed:
