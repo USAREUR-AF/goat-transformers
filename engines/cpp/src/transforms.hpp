@@ -53,8 +53,6 @@ Value decode_json_number(const FieldLine& f, const std::string& text);
 // Throws std::invalid_argument on failure.
 std::string encode_value(const FieldLine& f, const Value& v);
 
-// True for the transforms valid only on the tlv wire (v0.13): utf8 and hex.
-bool transform_is_tlv_only(Transform t);
 // True for the transforms valid only on the cbor wire (v0.28): text, bytes and epoch_s.
 bool transform_is_cbor_only(Transform t);
 

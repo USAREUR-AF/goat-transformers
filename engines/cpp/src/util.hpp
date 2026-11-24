@@ -54,6 +54,9 @@ std::string format_iso8601_short(std::int64_t ms);
 // v0.26 `iso8601_s`: YYYY-MM-DDTHH:MM:SSZ, the second holding the instant.
 // Range and refusal as format_iso8601_ms.
 std::string format_iso8601_s(std::int64_t ms);
+// v0.55 `iso8601_si`: no fraction when the milliseconds are 0, otherwise all
+// three digits; years 0001 to 9999 (throws std::domain_error outside them).
+std::string format_iso8601_si(std::int64_t ms);
 
 void append_utf8(std::string& out, std::uint32_t cp);
 

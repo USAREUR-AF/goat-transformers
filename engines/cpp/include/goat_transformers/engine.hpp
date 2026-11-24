@@ -216,7 +216,7 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Bool,                             // v0.5, json wire only
                        Uscale, Sscale, F32, F64, Ascii,  // v0.5, bits wire
                        IntW, Dec, Dm, Hms, HmsDmy,       // v0.10, text wire only
-                       Utf8, Hex,                        // v0.13, tlv wire only
+                       Utf8, Hex,                        // v0.13, tlv wire; utf8 also bits (0.55)
                        Sixbit,                           // v0.14, bits wire
                        // v0.15, bits wire
                        Uiscale, Siscale, Smag, Smscale, F32scale, F64scale,
@@ -229,7 +229,8 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Code,                             // v0.46, bits wire
                        CodeStr,                          // v0.46, xml, json, geojson and text
                        CodeNum,                          // v0.46, bits and those four
-                       Part                              // v0.64, xml, json, geojson and text
+                       Part,                             // v0.64, xml, json, geojson and text
+                       Iso8601Si                         // v0.55, xml, json and geojson
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv, Cbor };
 
@@ -281,6 +282,8 @@ struct FieldLine {
     double scale_num = 1.0;
     double scale_den = 1.0;
     double scale_offset = 0.0;
+    // v0.55: the <places> of uscale / sscale, 0 to 15; -1 when not given.
+    int scale_places = -1;
     // v0.10 text transforms: `int:<w>`, `dec:<f>[:<w>]`, `dm:<d>:<f>:<PN>`,
     // `hms:<f>`, `hms_dmy:<f>`. `text_w` is 0 when no width is given.
     int text_w = 0;
