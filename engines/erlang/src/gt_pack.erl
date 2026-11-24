@@ -106,7 +106,7 @@ parse(Bin) ->
              encoding => none, encoding_seen => false,
              cur => common, late => [], gstack => [], sstack => [], bstack => [],
              vchecks => [], has_switch => false, switch_n => 0, at_errs => [],
-             headers => #{}, listed_seen => false},
+             headers => #{}, listed_seen => false, charsets => []},
     P0 = lists:foldl(fun(L, P) ->
                              case tokens(L) of
                                  [] -> P;
@@ -205,6 +205,16 @@ parse(Bin) ->
                   uper -> ok;
                   _ -> load_error('bad-directive', "~s outside a pack with encoding uper", [What])
               end;
+         %% a width is read on bits only (rulings 8, 14 and 17 of 0.46)
+         ({charset_width, Name, Size, WidthS}) when Wire =:= bits ->
+              case uint(WidthS) of
+                  W when is_integer(W), W =< 8, 1 bsl W >= Size, W >= 1 -> ok;
+                  _ -> load_error('bad-directive',
+                                  "charset ~s: the width ~s is not one its ~p characters allow",
+                                  [Name, WidthS, Size])
+              end;
+         ({charset_width, _, _, _}) -> ok;
+         ({charcode, Tr, TrS, Len}) -> charcode_check(Tr, TrS, Len, P1);
          ({via, Table}) ->
               case maps:is_key(Table, Tables) of
                   true -> ok;
@@ -233,8 +243,8 @@ parse(Bin) ->
         [#{type := Type} | _] ->
             load_error('bad-directive', "a ~s block has no end line", [Type])
     end,
-    P2 = P1#{common := lists:reverse(maps:get(common, P1)),
-             kinds := lists:reverse(maps:get(kinds, P1))},
+    P2 = charcode_lines(P1#{common := lists:reverse(maps:get(common, P1)),
+                            kinds := lists:reverse(maps:get(kinds, P1))}),
     case Wire of
         xml -> check_roots(P2);
         _ -> ok
@@ -261,7 +271,7 @@ parse(Bin) ->
          end,
     P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen, tlv_seen,
                       headers, listed_seen, armor_seen, body_kind_seen, bstack,
-                      encoding_seen],
+                      encoding_seen, charsets],
                      P3#{vchecks := lists:reverse(maps:get(vchecks, P1)),
                          defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
@@ -350,6 +360,8 @@ yields({scale, _, _}) -> float;
 yields({chars, _}) -> string;
 yields({chars_stop, _, _}) -> string;
 yields(octal) -> string;
+yields({charcode, codenum, _}) -> int;       % 0.46
+yields({charcode, _, _}) -> string;
 yields(f64)     -> float;
 yields(utf8)    -> string;
 yields(text)    -> string;
@@ -543,7 +555,9 @@ pack_directives() ->
      %% a message of another pack inside a field (Version 0.34)
      <<"inner">>,
      %% a pack whose messages end by themselves (0.92)
-     <<"framing">>].
+     <<"framing">>,
+     %% a character set (Version 0.46)
+     <<"charset">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
@@ -591,6 +605,8 @@ arg_count_ok(Dir, N) ->
                 %% `ext` and `choice <n> [ext]` (0.19)
                 <<"ext">> -> N =:= 0;
                 <<"choice">> -> N =:= 1 orelse N =:= 2;
+                %% `charset <name> <characters> [<width>]` (0.46)
+                <<"charset">> -> N =:= 2 orelse N =:= 3;
                 %% a switch block (ruling 39 of 0.20)
                 <<"switch">> -> N =:= 1;
                 <<"case">> -> N =:= 1;
@@ -780,7 +796,7 @@ known_directives() ->
      <<"element">>,
      <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>,
      <<"switch">>, <<"case">>, <<"else">>,
-     <<"count">>, <<"inner">>, <<"framing">>].
+     <<"count">>, <<"inner">>, <<"framing">>, <<"charset">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -808,6 +824,7 @@ apply_line([<<"checksum">>, <<"crc32">>, _] = Args, P) ->
 apply_line([<<"armor">>, V], P) -> armor_directive(V, P);
 apply_line([<<"encoding">>, V], P) -> encoding_directive(V, P);
 apply_line([<<"framing">>, V], P) -> framing_directive(V, P);
+apply_line([<<"charset">>, Name, Chars | Width], P) -> charset_directive(Name, Chars, Width, P);
 apply_line([Dir | _], _P) when Dir =:= <<"ext">>; Dir =:= <<"choice">>; Dir =:= <<"alt">> ->
     load_error('bad-directive', "~s is a line of a sequential pack with encoding uper", [Dir]);
 apply_line([Dir, V], P) when Dir =:= <<"delimiter">>; Dir =:= <<"start">>;
@@ -1017,6 +1034,11 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
          || Optional, Wire =/= bits, Wire =/= text] ++
         [{via, T} || T <- [element(1, Opts)], T =/= none] ++
         AbsentChecks ++
+        %% a coordinate is a number (ruling 23 of 0.46)
+        [{bad, "~s on the coordinate ~s", [TrS, LocS]}
+         || is_charcode(Tr), Wire =:= geojson, is_tuple(Loc), element(1, Loc) =:= geom] ++
+        [{charcode, Tr, TrS, case Wire of bits -> Len; _ -> none end}
+         || is_charcode(Tr)] ++
         [{bad, "~s on ~s: ~s", [TrS, LocS, Why]}
          || Wire =:= tlv, Why <- [tlv_size_check(Tr, Loc)], Why =/= ok],
     P1 = lists:foldl(fun late/2, P0, Checks),
@@ -1940,6 +1962,14 @@ parse_transform1(Wire, S) ->
                      true -> true;
                      false -> late
                  end;
+             %% 0.46: its own table of wires
+             {charcode, Cw} ->
+                 {charcode, Kind, _} = Tr,
+                 case Cw of
+                     bits -> Kind =/= codestr;
+                     _ when Cw =:= xml; Cw =:= json; Cw =:= geojson; Cw =:= text -> Kind =/= code;
+                     _ -> false
+                 end;
              {bits15, bits} -> true;
              {text15, Tw} when Tw =/= tlv -> true;
              {text26, Tw} when Tw =/= tlv -> true;
@@ -2018,6 +2048,14 @@ transform(<<"smscale:", Rest/binary>> = S) -> {bits15, float_scale(smscale, Rest
 transform(<<"f32scale:", Rest/binary>> = S) -> {bits15, float_scale(f32scale, Rest, S)};
 transform(<<"f64scale:", Rest/binary>> = S) -> {bits15, float_scale(f64scale, Rest, S)};
 transform(<<"scale:", Rest/binary>> = S) -> {text15, float_scale(scale, Rest, S)};
+%% code, codestr and codenum (0.46): {charcode, Kind, ListText} until the
+%% file is read (ruling 15), then {charcode, Kind, [{Characters, Size, Width}]}
+transform(<<"code:", L/binary>>) -> {charcode, {charcode, code, L}};
+transform(<<"codestr:", L/binary>>) -> {charcode, {charcode, codestr, L}};
+transform(<<"codenum:", L/binary>>) -> {charcode, {charcode, codenum, L}};
+transform(<<"code">>) -> {charcode, {charcode, code, <<>>}};
+transform(<<"codestr">>) -> {charcode, {charcode, codestr, <<>>}};
+transform(<<"codenum">>) -> {charcode, {charcode, codenum, <<>>}};
 transform(<<"chars:icao6">>) -> {bits15, {chars, icao6}};
 transform(<<"chars:ais6">>) -> {bits15, {chars, ais6}};
 transform(<<"chars:ascii7">>) -> {bits15, {chars, ascii7}};
@@ -2278,7 +2316,7 @@ scan_bare(Bin, 0) ->
 %% the bits some `if` names in `presence_named`.
 seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
     PackLevel = [<<"format">>, <<"version">>, <<"wire">>, <<"layout">>, <<"bit_order">>,
-                 <<"armor">>, <<"encoding">>, <<"framing">>,
+                 <<"armor">>, <<"encoding">>, <<"framing">>, <<"charset">>,
                  <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>,
                  <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>, <<"map">>,
                  <<"root">>, <<"word_bytes">>],
@@ -2320,6 +2358,7 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks0], P0) ->
         [{bad, "swap with ~s", [TrS]} || Swap, not swap_ok(Tr)] ++
         [{bad, "trim on a field of ~s bits: valid only with ascii or sixbit", [LenS]}
          || Trim, Tr =/= ascii, Tr =/= sixbit] ++
+        [{charcode, Tr, TrS, Len} || is_charcode(Tr)] ++
         [{via, Via} || Via =/= none] ++
         AbsentChecks,
     P1 = lists:foldl(fun late/2, P0, Checks),
@@ -3808,6 +3847,81 @@ wire_line({chain, First, Parts, EndsFx}) -> Parts =/= [] orelse EndsFx orelse wi
 wire_line({uchoice, N, IsExt, Alts}) ->
     IsExt orelse N > 1 orelse lists:any(fun({_, B}) -> wire_any(B) end, Alts);
 wire_line(_) -> true.
+
+%% ===================================================================
+%% character codes (Version 0.46)
+%% ===================================================================
+%% `charset <name> <characters> [<width>]`: every failure is checked after
+%% the file (ruling 15).
+charset_directive(Name, Chars, Width, #{cur := Cur, charsets := Sets} = P) ->
+    Cs = binary_to_list(Chars),
+    Ok = fun(true, _) -> ok;
+            (false, Why) -> load_error('bad-directive', "charset ~s: ~s", [Name, Why])
+         end,
+    Ok(Cur =:= common, "it stands after the first kind"),
+    Ok(Name =/= <<>> andalso lists:all(fun charset_name_char/1, binary_to_list(Name)),
+       "the name is not A-Z, a-z, 0-9, _ and -"),
+    Ok(Cs =/= [] andalso lists:all(fun(C) -> C >= 16#21 andalso C =< 16#7E end, Cs),
+       "a character outside 0x21 to 0x7E, or none"),
+    Ok(length(lists:usort(Cs)) =:= length(Cs), "a repeated character"),
+    Ok(not lists:keymember(Name, 1, Sets), "a second charset of that name"),
+    Size = length(Cs),
+    P1 = lists:foldl(fun(W, Acc) -> late({charset_width, Name, Size, W}, Acc) end, P, Width),
+    P1#{charsets := [{Name, Chars, Size, Width} | Sets]}.
+
+charset_name_char(C) ->
+    (C >= $A andalso C =< $Z) orelse (C >= $a andalso C =< $z) orelse
+        (C >= $0 andalso C =< $9) orelse C =:= $_ orelse C =:= $-.
+
+is_charcode({charcode, _, _}) -> true;
+is_charcode(_) -> false.
+
+%% The sets of a list, first position first -> [{Characters, Size, Width}].
+charcode_sets(List, TrS, #{charsets := Sets, wire := Wire}) ->
+    [case lists:keyfind(Name, 1, Sets) of
+         {_, Chars, Size, [WidthS]} when Wire =:= bits ->
+             case uint(WidthS) of
+                 W when is_integer(W) -> {Chars, Size, W};
+                 %% its charset line is refused too
+                 _ -> load_error('bad-directive', "~s: the width of charset ~s", [TrS, Name])
+             end;
+         {_, Chars, Size, _} -> {Chars, Size, charset_width(Size, 1)};
+         false -> load_error('bad-directive', "~s: no charset line declares the set '~s'", [TrS, Name])
+     end || Name <- binary:split(List, <<",">>, [global])].
+
+%% max(1, the least W with 2^W >= Size)
+charset_width(Size, W) when 1 bsl W >= Size -> W;
+charset_width(Size, W) -> charset_width(Size, W + 1).
+
+%% The checks of a transform's list that need the whole file. Len: the bit
+%% length of a `bits` field, else none.
+charcode_check({charcode, Kind, List}, TrS, Len, #{wire := Wire, delimiter := Delim, checksum := Sum} = P) ->
+    Sets = charcode_sets(List, TrS, P),
+    Bad = fun(true, Why) -> load_error('bad-directive', "~s: ~s", [TrS, Why]);
+             (false, _) -> ok
+          end,
+    Bad(length(Sets) > 16, "more than 16 positions"),
+    Bad(Len =/= none andalso (Len > 64 orelse Len =/= lists:sum([W || {_, _, W} <- Sets])),
+        "the bit length is not the sum of the widths, at most 64"),
+    Bad(Kind =:= codenum andalso lists:foldl(fun({_, N, _}, A) -> A * N end, 1, Sets) > 1 bsl 63,
+        "the product of the sizes is above 2^63"),
+    Holds = fun(C) -> lists:any(fun({Cs, _, _}) -> binary:match(Cs, C) =/= nomatch end, Sets) end,
+    Bad(Wire =:= text andalso Delim =/= none andalso Holds(Delim), "a set holds the delimiter"),
+    Bad(Wire =:= text andalso Sum =:= nmea andalso Holds(<<"*">>), "a set holds * under checksum nmea").
+
+%% Every transform of the pack's lines with its sets in place of their names
+%% (a pack with none declares no charset).
+charcode_lines(#{charsets := []} = P) -> P;
+charcode_lines(#{common := Common, kinds := Kinds} = P) ->
+    P#{common := charcode_term(Common, P), kinds := charcode_term(Kinds, P)}.
+
+charcode_term({charcode, Kind, List}, P) when is_binary(List) ->
+    {charcode, Kind, charcode_sets(List, List, P)};
+charcode_term(T, P) when is_tuple(T) ->
+    list_to_tuple([charcode_term(E, P) || E <- tuple_to_list(T)]);
+charcode_term([H | T], P) -> [charcode_term(H, P) | charcode_term(T, P)];
+charcode_term(M, P) when is_map(M) -> maps:map(fun(_, V) -> charcode_term(V, P) end, M);
+charcode_term(X, _P) -> X.
 
 %% ===================================================================
 %% long and terminated fields (Version 0.22)

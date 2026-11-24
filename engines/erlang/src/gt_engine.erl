@@ -3411,6 +3411,7 @@ typemap_encode(_, V, _) -> V.
 -if(?W_XML orelse ?W_GEOJSON).
 xml_decode({iscale, N, D, Off}, S) -> iscale_decode(S, N, D, Off);
 xml_decode({scale, F, O}, S) -> scale_decode(xml_decode(float, S), F, O);
+xml_decode({charcode, Kind, Sets}, S) -> gt_num:charcode_decode(Kind, Sets, S);   % 0.46
 xml_decode(string, S) -> S;
 xml_decode(float, S) -> {ok, F} = gt_num:num_text(S), F;
 xml_decode(int, S) -> {ok, I} = gt_num:int_text(S), I;
@@ -3439,6 +3440,7 @@ geojson_decode(Tr, V) -> json_decode(Tr, V).
 -if(?W_JSON orelse ?W_GEOJSON).
 %% json (Version 0.5): a value of the wrong JSON type is a decode failure
 json_decode({scale, F, O}, V) -> scale_decode(json_decode(float, V), F, O);
+json_decode({charcode, Kind, Sets}, V) when is_binary(V) -> gt_num:charcode_decode(Kind, Sets, V);
 json_decode(string, V) when is_binary(V) -> V;
 json_decode(float, V) -> {ok, F} = gt_json:num_float(V), F;
 json_decode(int, V) -> {ok, I} = gt_json:num_int(V), I;
@@ -3453,6 +3455,7 @@ json_decode(bool, false) -> 0.
 %% model value -> a tagged value a text wire renders
 text_encode({scale, F, O}, V) when is_number(V) -> {float, scale_encode(float(V), F, O)};
 text_encode({iscale, N, D, Off}, V) when is_integer(V) -> {num, iscale_encode(V, N, D, Off)};
+text_encode({charcode, Kind, Sets}, V) -> {str, gt_num:charcode_encode(Kind, Sets, V)};
 text_encode(string, V) -> {str, to_str(V)};
 text_encode(float, V) when is_number(V) -> {float, float(V)};
 text_encode(int, V) when is_integer(V) -> {int, V};
@@ -3635,6 +3638,9 @@ bits_decode({chars_stop, Set, Stop}, U, L, Order) ->
 %% read as uint reads it in the pack's bit order
 bits_decode(hex, U, L, Order) ->
     << <<(hexdigit(char_code(U, L, 4, I, Order)))>> || I <- lists:seq(0, L div 4 - 1) >>;
+%% 0.46: position 0 is the top of the number in every bit order
+bits_decode({charcode, Kind, Sets}, U, _L, _) ->
+    gt_num:charcode_from(Kind, Sets, gt_num:charcode_split(Sets, U));
 bits_decode(octal, U, L, _) ->
     N = L div 3,
     list_to_binary(io_lib:format("~*.8.0b", [N, U])).
@@ -3744,6 +3750,8 @@ bits_encode({chars_stop, Set, Stop}, V, L, Order) when is_binary(V) ->
 bits_encode(hex, V, L, Order) when is_binary(V) ->
     true = byte_size(V) =:= L div 4,
     pack_codes([binary_to_integer(<<C>>, 16) || <<C>> <= V], L, 4, Order);
+bits_encode({charcode, Kind, Sets}, V, _L, _) ->
+    gt_num:charcode_join(Sets, gt_num:charcode_codes(Kind, Sets, V));
 bits_encode(octal, V, L, _) when is_binary(V) ->
     true = byte_size(V) =:= L div 3,
     true = lists:all(fun(C) -> C >= $0 andalso C =< $7 end, binary_to_list(V)),

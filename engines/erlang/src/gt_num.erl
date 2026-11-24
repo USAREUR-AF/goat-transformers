@@ -1,5 +1,7 @@
 %% gt_num: number parsing and canonical number text (engine-spec ruling 3).
 -module(gt_num).
+-export([charcode_decode/3, charcode_encode/3, charcode_codes/3, charcode_from/3,
+         charcode_split/2, charcode_join/2]).
 -export([to_float/1, to_int/1, fmt_float/1, fmt_int/1, dec_to_float/1, wrap64/1,
          canon/1, read_as/2, int_text/1, uint_text/1, num_text/1, exact_int/1]).
 
@@ -309,3 +311,43 @@ strip_trailing(S) ->
 re_strip(S) ->
     S1 = string:trim(S, trailing, "0"),
     string:trim(S1, trailing, ".").
+
+%% ---- character codes (Version 0.46) ----
+%% Sets: [{Characters, Size, Width}], first position first. Any failure
+%% raises; the caller names it.
+%% the text of a text wire <-> the model value
+charcode_decode(Kind, Sets, Text) -> charcode_from(Kind, Sets, charcode_text(Sets, Text)).
+
+charcode_encode(Kind, Sets, V) -> charcode_from(codestr, Sets, charcode_codes(Kind, Sets, V)).
+
+%% the codes of a text, one character per position
+charcode_text([{Chars, _, _} | Sets], <<C, Rest/binary>>) ->
+    {I, 1} = binary:match(Chars, <<C>>),
+    [I | charcode_text(Sets, Rest)];
+charcode_text([], <<>>) -> [].
+
+%% the codes of a model value: a text, or a mixed-radix number
+charcode_codes(codenum, Sets, X) when is_integer(X), X >= 0 ->
+    {0, Codes} = lists:foldr(fun({_, N, _}, {Q, Acc}) -> {Q div N, [Q rem N | Acc]} end,
+                             {X, []}, Sets),
+    Codes;
+charcode_codes(Kind, Sets, Text) when Kind =/= codenum, is_binary(Text) -> charcode_text(Sets, Text).
+
+%% the model value of codes, each within its set
+charcode_from(Kind, Sets, Codes) ->
+    Pairs = lists:zip(Sets, Codes),
+    true = lists:all(fun({{_, N, _}, C}) -> C < N end, Pairs),
+    case Kind of
+        codenum -> lists:foldl(fun({{_, N, _}, C}, V) -> V * N + C end, 0, Pairs);
+        _ -> << <<(binary:at(Chars, C))>> || {{Chars, _, _}, C} <- Pairs >>
+    end.
+
+%% the bits of a field <-> its codes, the last position least significant
+charcode_split(Sets, U) ->
+    {_, Codes} = lists:foldr(fun({_, _, W}, {R, Acc}) ->
+                                     {R bsr W, [R band ((1 bsl W) - 1) | Acc]}
+                             end, {U, []}, Sets),
+    Codes.
+
+charcode_join(Sets, Codes) ->
+    lists:foldl(fun({{_, _, W}, C}, U) -> (U bsl W) bor C end, 0, lists:zip(Sets, Codes)).
