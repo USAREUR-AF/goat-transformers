@@ -1,0 +1,9 @@
+{
+  "name": "ruling-1-no-list-writes-null",
+  "from": "conformance-null-json",
+  "to": "conformance-null-056-2",
+  "input": "{\"id\":\"u1\"}",
+  "expect": "{\"m\":null}",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 1: probe.s1 and the list are absent, so nothing writes m and null is written."
+}

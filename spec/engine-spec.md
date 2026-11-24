@@ -7732,7 +7732,9 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
 
 1. **`null` and the other lines on its member.** `null` is written only
    when no line on the member writes a value: a `default`, a sentinel or a
-   held key of any line on that locator (ruling 16 of 0.5) comes first.
+   held key of any line on that locator (ruling 16 of 0.5), or a `group` on
+   the member's locator that writes its list, comes first, whichever line the
+   pack has first.
 2. **`null` and `with`.** A line that `with` (Version 0.18) suppresses
    writes nothing: no `null`.
 3. **`null` inside a group** writes the member `null` in the item, as for a
@@ -7751,7 +7753,9 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
 9. **The lines `range` is checked on.** `range` is checked, and a wrap made,
    on the lines the final encode reaches: every reached line whose key is
    held, whatever its locator, and every reached line whose absent key a
-   `default` fills, whether or not another line's value stands there. A held
+   `default` fills, whether or not another line's value stands there: a
+   default outside its range is refused also where a held `also` key (0.8)
+   supplies the bits. A held
    or default value outside its range is `transform-encode`; a line with
    `wrap` wraps instead. A line of a block of 0.17 that is not held (its ruling
    10), of an `if`, `opt` or `chain` block that is not written, of a case not
@@ -7785,5 +7789,4 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    written for an absent key is not held bits (0.33 ruling 12).
 
 Stated, not yet pinned by a vector: a submessage holding only fields that
-`implicit` leaves out, without a `when … present`; `range` on a sequential field with `also`
-keys.
+`implicit` leaves out, without a `when … present`.

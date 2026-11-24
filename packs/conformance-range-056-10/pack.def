@@ -1,0 +1,14 @@
+# Conformance probe pack for ruling 9 of 0.56: a default is checked against
+# `range` also where a held `also` key supplies the bits. Public. No kinds.
+#   x 8 (also y), default x 99
+format  conformance-range-056-10
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    bits
+layout  sequential
+bit_order msb
+field   probe.x  8  uint  range 0 10
+also    probe.y
+default probe.x  99

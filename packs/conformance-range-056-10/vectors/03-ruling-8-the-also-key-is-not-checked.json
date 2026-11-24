@@ -1,0 +1,9 @@
+{
+  "name": "ruling-8-the-also-key-is-not-checked",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-10",
+  "input": "{\"x\":5,\"y\":200}",
+  "expect": "05",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 8: range applies to probe.x only, so probe.y 200 is not checked; ruling 16 of 0.8: the earliest held key, probe.x, is written, 05."
+}

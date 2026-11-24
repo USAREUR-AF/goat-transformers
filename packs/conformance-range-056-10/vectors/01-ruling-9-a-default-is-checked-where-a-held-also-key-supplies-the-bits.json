@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-default-is-checked-where-a-held-also-key-supplies-the-bits",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-10",
+  "input": "{\"y\":5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9: probe.x is absent and its default 99 is outside 0..10, on a reached line; that probe.y (also) is held and supplies 5 does not stop the check."
+}
