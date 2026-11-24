@@ -322,3 +322,166 @@ fn reading_licences_without_a_profile_keeps_the_limit() {
     assert_eq!(loaded[0].licence.as_ref().unwrap().profile, None);
     e.load_def(&pack("c-ctl-2", "controlled")).unwrap();
 }
+
+/// 0.93 with 0.34: an `inner` pack whose own `pack.def` is controlled is in
+/// no profile, so a load with a profile skips it and the outer pack's decode
+/// is `unknown-format` at the `inner` line ("a pack refused at load ... by a
+/// licence profile (0.29), is not loaded"); with no profile it loads and the
+/// public outer pack is `distribution-violation` there; a public inner pack
+/// is loaded by the profile and decodes.
+#[cfg(feature = "bits")]
+#[test]
+fn a_profile_load_with_inner_packs() {
+    let core = "module core\nversion 1.0.0\ndistribution public\nsource \"t\"\nkey n int -\n";
+    let head = |f: &str, d: &str| format!("format {}\nversion 1.0.0\ndistribution {}\nsource \"t\"\nwire bits\nlayout sequential\nbit_order msb\n", f, d);
+    let outer = format!("{}inner c-in\n", head("c-out", "public"));
+    let tree = |tag: &str, d: &str| {
+        Tree::new(
+            tag,
+            &[("model/core.def", core), ("packs/in/pack.def", &format!("{}field n 8 uint\n", head("c-in", d))), ("packs/out/pack.def", &outer)],
+        )
+    };
+    let t = tree("inner-ctl", "controlled");
+    let mut e = Engine::new();
+    e.load_tree(&t.packs(), &with(Some("open"))).unwrap();
+    assert_eq!(e.formats(), vec!["c-out"]);
+    let err = e.decode("c-out", "07").unwrap_err();
+    assert!(err.msg.starts_with("unknown-format:"), "{}", err.msg);
+
+    let mut e = Engine::new();
+    e.load_tree(&t.packs(), &with(None)).unwrap();
+    let err = e.decode("c-out", "07").unwrap_err();
+    assert!(err.msg.starts_with("distribution-violation:"), "{}", err.msg);
+
+    let t = tree("inner-pub", "public");
+    let mut e = Engine::new();
+    e.load_tree(&t.packs(), &with(Some("open"))).unwrap();
+    let ent = e.decode("c-out", "07").unwrap();
+    assert_eq!(ent.fields.get("n"), Some(&goat_transformers::Value::I64(7)));
+}
+
+// ---------------------------------------------------------------------------
+// A controlled inner pack (engine-spec 0.34) never loads. The outer pack is
+// public and loads alone (0.34: "Nothing about the inner pack is checked at
+// load: packs load in any order, and each loads alone."); the inner pack is
+// not loaded, so decode and encode of the outer pack are `unknown-format` at
+// the `inner` line (0.34, Reaching the `inner` line, 1: "the inner format is
+// loaded: otherwise `unknown-format` (a pack refused at load, by a build
+// without its wire (0.24), a distribution limit or a licence profile (0.29),
+// is not loaded)"), and `model_keys` gives the outer pack's own keys only
+// (0.34, Capability: "An `inner` line whose pack does not pass the checks
+// adds nothing, and `model_keys` and the capability report do not fail
+// because of it").
+// ---------------------------------------------------------------------------
+
+#[cfg(feature = "bits")]
+mod controlled_inner {
+    use super::*;
+    use goat_transformers::{Entity, Value};
+
+    const CORE: &str = "module core\nversion 1.0.0\ndistribution public\nsource \"t\"\nkey m int -\nkey n int -\n";
+    const CTL: &str = "module ctl\nversion 1.0.0\ndistribution controlled\nsource \"t\"\nkey k int -\n";
+
+    fn head(format: &str, distribution: &str, uses: &str) -> String {
+        format!(
+            "format {}\nversion 1.0.0\ndistribution {}\nsource \"t\"\n{}wire bits\nlayout sequential\nbit_order msb\n",
+            format, distribution, uses
+        )
+    }
+    fn outer() -> String {
+        format!("{}field m 8 uint\ninner c-in\n", head("c-out", "public", ""))
+    }
+
+    /// What every case shares: the outer pack is loaded, the inner is not,
+    /// and the outer pack's use fails at its `inner` line.
+    fn outer_alone(e: &Engine) {
+        assert_eq!(e.formats(), vec!["c-out"]);
+        let err = e.decode("c-out", "0107").unwrap_err();
+        assert!(err.msg.starts_with("unknown-format:"), "decode: {}", err.msg);
+        let mut ent = Entity::default();
+        ent.fields.insert("m".to_string(), Value::I64(1));
+        ent.fields.insert("n".to_string(), Value::I64(7));
+        let err = e.encode("c-out", &ent).unwrap_err();
+        assert!(err.msg.starts_with("unknown-format:"), "encode: {}", err.msg);
+        assert_eq!(e.model_keys("c-out"), vec!["m"]);
+        let err = e.decode("c-in", "07").unwrap_err();
+        assert!(err.msg.starts_with("unknown-format:"), "{}", err.msg);
+    }
+
+    /// (1) A load with a profile; the inner `pack.def` is not shown public
+    /// (it says `distribution controlled`), so its profile is none (0.93,
+    /// ruling 2) and it is skipped (0.29, 3d and 3e).
+    #[test]
+    fn an_inner_pack_not_shown_public_is_skipped_by_a_profile() {
+        for profile in ["open", "open+copyleft", "everything"] {
+            let t = Tree::new(
+                "inner-1",
+                &[
+                    ("model/core.def", CORE),
+                    ("packs/a-out/pack.def", &outer()),
+                    ("packs/b-in/pack.def", &format!("{}field n 8 uint\n", head("c-in", "controlled", ""))),
+                ],
+            );
+            let mut e = Engine::new();
+            let loaded = e.load_tree(&t.packs(), &with(Some(profile))).unwrap();
+            assert_eq!(loaded.len(), 1, "{}", profile);
+            outer_alone(&e);
+        }
+    }
+
+    /// (2) A load with a profile; the inner `pack.def` is shown public but
+    /// uses a module whose file says `distribution controlled`: that module
+    /// is in none (0.93, ruling 2) and not loaded, and "through 2b and 2c of
+    /// 0.29, so has every module and pack that uses it": the inner pack is
+    /// skipped too.
+    #[test]
+    fn an_inner_pack_using_a_controlled_module_is_skipped_by_a_profile() {
+        for profile in ["open", "open+copyleft", "everything"] {
+            let t = Tree::new(
+                "inner-2",
+                &[
+                    ("model/core.def", CORE),
+                    ("model/ctl.def", CTL),
+                    ("packs/a-out/pack.def", &outer()),
+                    ("packs/b-in/pack.def", &format!("{}field n 8 uint\n", head("c-in", "public", "uses ctl\n"))),
+                ],
+            );
+            let mut e = Engine::new();
+            let loaded = e.load_tree(&t.packs(), &with(Some(profile))).unwrap();
+            assert_eq!(loaded.len(), 1, "{}", profile);
+            assert_eq!(e.modules(), vec!["core"]);
+            outer_alone(&e);
+        }
+    }
+
+    /// (3) No profile, a limit of `public`: the inner pack is refused at
+    /// load ("the module or pack is within the engine's limit" else
+    /// `distribution-refused`, 0.4), the outer pack, loaded alone, stays
+    /// loaded and is `unknown-format` at its `inner` line. In either load
+    /// order.
+    #[test]
+    fn an_inner_pack_refused_by_a_public_limit() {
+        let inner = format!("{}field n 8 uint\n", head("c-in", "controlled", ""));
+        for inner_first in [false, true] {
+            let mut e = Engine::new();
+            e.set_max_distribution(Distribution::Public);
+            e.load_model(CORE).unwrap();
+            if inner_first {
+                refused(e.load_def(&inner));
+                e.load_def(&outer()).unwrap();
+            } else {
+                e.load_def(&outer()).unwrap();
+                refused(e.load_def(&inner));
+            }
+            outer_alone(&e);
+        }
+        // the directory loader: the load fails at the inner pack, with the
+        // inner pack not loaded
+        let t = Tree::new("inner-3", &[("model/core.def", CORE), ("packs/b-in/pack.def", &inner)]);
+        let mut e = Engine::new();
+        e.set_max_distribution(Distribution::Public);
+        let err = e.load_tree(&t.packs(), &with(None)).unwrap_err();
+        assert!(err.msg.starts_with("distribution-refused:"), "{}", err.msg);
+        assert!(e.formats().is_empty());
+    }
+}
