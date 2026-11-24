@@ -1,0 +1,21 @@
+{
+ "name": "golden-00016-steer-torque",
+ "from": "dbc-mazda-3-2019",
+ "to": "dbc-mazda-3-2019",
+ "input": "100000000800000087d6938749efcdd2",
+ "expect": "100000000800000087d6938749efcdd2",
+ "model": {
+  "@kind": "steer_torque",
+  "dbcmazda32019.steer_torque_new_signal_12": "2",
+  "dbcmazda32019.steer_torque_steer_torque_sensor": "-2997.0",
+  "dbcmazda32019.steer_torque_steer_torque_motor": "-87.0",
+  "dbcmazda32019.steer_torque_brake_preasure": "1865",
+  "dbcmazda32019.steer_torque_new_signal_5": "14",
+  "dbcmazda32019.steer_torque_new_signal_1": "15",
+  "dbcmazda32019.steer_torque_new_signal_4": "12",
+  "dbcmazda32019.steer_torque_new_signal_3": "13",
+  "dbcmazda32019.steer_torque_chksum": "-46"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mazda_3_2019.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 ed3e6e636ad539528b2af26f8efdd39a1d4ca63b7f975a44aa9180ae88171533), message STEER_TORQUE (frame id 16) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

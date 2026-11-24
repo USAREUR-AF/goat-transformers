@@ -1,0 +1,14 @@
+{
+ "name": "golden-00181-torque-request-egs",
+ "from": "dbc-bmw-e9x-e8x",
+ "to": "dbc-bmw-e9x-e8x",
+ "input": "b5000000080000005a000000000000eb",
+ "expect": "b5000000080000005a000000000000eb",
+ "model": {
+  "@kind": "torque_request_egs",
+  "dbcbmwe9xe8x.torque_request_egs_checksum_torque_request_egs": "90",
+  "dbcbmwe9xe8x.torque_request_egs_gearbox_temperature": "235"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/bmw_e9x_e8x.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c238d3938e4dc461b96b5055e790ccea01d03fc8c84d44ebeb35446654988f07), message Torque_request_EGS (frame id 181) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

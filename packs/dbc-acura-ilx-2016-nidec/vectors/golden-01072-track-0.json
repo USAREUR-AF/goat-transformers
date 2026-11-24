@@ -1,0 +1,16 @@
+{
+ "name": "golden-01072-track-0",
+ "from": "dbc-acura-ilx-2016-nidec",
+ "to": "dbc-acura-ilx-2016-nidec",
+ "input": "3004000008000000a5a9387490000000",
+ "expect": "3004000008000000a5a9387490000000",
+ "model": {
+  "@kind": "track_0",
+  "dbcacurailx2016nidec.track_0_long_dist": "165.625",
+  "dbcacurailx2016nidec.track_0_new_track": "1",
+  "dbcacurailx2016nidec.track_0_lat_dist": "19.5",
+  "dbcacurailx2016nidec.track_0_rel_speed": "58.28125"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/acura_ilx_2016_nidec.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 7b6b4832461572d29c31c882cf4be913735cf98bc2848d1a16090ea6454d297f), message TRACK_0 (frame id 1072) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

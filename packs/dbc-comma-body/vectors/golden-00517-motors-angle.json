@@ -1,0 +1,16 @@
+{
+ "name": "golden-00517-motors-angle",
+ "from": "dbc-comma-body",
+ "to": "dbc-comma-body",
+ "input": "05020000080000005a5a23eba9383749",
+ "expect": "05020000080000005a5a23eba9383749",
+ "model": {
+  "@kind": "motors_angle",
+  "dbccommabody.motors_angle_left_angle_sensor": "23130",
+  "dbccommabody.motors_angle_right_angle_sensor": "9195",
+  "dbccommabody.motors_angle_left_hall_sensor": "43320",
+  "dbccommabody.motors_angle_right_hall_sensor": "14153"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/comma_body.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 9040592f1138f0110224c2acd781edbfb32d032cecb86ca8ec6356ec961b35ce), message MOTORS_ANGLE (frame id 517) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

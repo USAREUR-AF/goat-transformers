@@ -1,0 +1,23 @@
+{
+ "name": "golden-00481-gw-hsc2-frp04",
+ "from": "dbc-mg",
+ "to": "dbc-mg",
+ "input": "e101000007000000568d040000000000",
+ "expect": "e101000007000000568d040000000000",
+ "model": {
+  "@kind": "gw_hsc2_frp04",
+  "dbcmg.gw_hsc2_frp04_ccswstscanclswa_h2hsc2": "False",
+  "dbcmg.gw_hsc2_frp04_ccswstsonswa_h2hsc2": "True",
+  "dbcmg.gw_hsc2_frp04_ccswstsrsmswa_h2hsc2": "False",
+  "dbcmg.gw_hsc2_frp04_ccswstssetswa_h2hsc2": "True",
+  "dbcmg.gw_hsc2_frp04_ccswstsspdincswa_h2hsc2": "False",
+  "dbcmg.gw_hsc2_frp04_ccswstsspddecswa_h2hsc2": "True",
+  "dbcmg.gw_hsc2_frp04_ccswstsswdataintgty_h2hsc2": "Failure Detected",
+  "dbcmg.gw_hsc2_frp04_ccswstspv_h2hsc2": "141",
+  "dbcmg.gw_hsc2_frp04_ccswstsdistincswa_h2hsc2": "False",
+  "dbcmg.gw_hsc2_frp04_ccswstsdistdecswa_h2hsc2": "True",
+  "dbcmg.gw_hsc2_frp04_ccswstsalvrc_h2hsc2": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mg.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 7213db50f5400fd43ab47a11e29494507f6df13a4dbe38ffd794cb5f1dd4da49), message GW_HSC2_FrP04 (frame id 481) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

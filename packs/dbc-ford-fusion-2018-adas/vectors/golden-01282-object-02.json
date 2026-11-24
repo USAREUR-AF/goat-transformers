@@ -1,0 +1,16 @@
+{
+ "name": "golden-01282-object-02",
+ "from": "dbc-ford-fusion-2018-adas",
+ "to": "dbc-ford-fusion-2018-adas",
+ "input": "02050000080000000012d3eb01381749",
+ "expect": "02050000080000000012d3eb01381749",
+ "model": {
+  "@kind": "object_02",
+  "dbcfordfusion2018adas.object_02_angle": "42.2",
+  "dbcfordfusion2018adas.object_02_x_rel": "100.30000000000001",
+  "dbcfordfusion2018adas.object_02_a_rel": "15.600000000000001",
+  "dbcfordfusion2018adas.object_02_v_rel": "-22.31"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_fusion_2018_adas.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 34de8c6a13ad06318774fe99811b60606ab24669a372aeccc778af391e5aa078), message Object_02 (frame id 1282) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

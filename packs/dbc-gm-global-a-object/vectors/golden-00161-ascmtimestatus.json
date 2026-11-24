@@ -1,0 +1,14 @@
+{
+ "name": "golden-00161-ascmtimestatus",
+ "from": "dbc-gm-global-a-object",
+ "to": "dbc-gm-global-a-object",
+ "input": "a100000007000000a5a5a5ac00000000",
+ "expect": "a100000007000000a5a5a5ac00000000",
+ "model": {
+  "@kind": "ascmtimestatus",
+  "dbcgmglobalaobject.ascmtimestatus_timestatus": "173693530",
+  "dbcgmglobalaobject.ascmtimestatus_rollingcounter": "3"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/gm_global_a_object.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 a694b22b4a7ebbdf4a9a896525c5ff91c709655a240f3637fdbd1e4027f1c183), message ASCMTimeStatus (frame id 161) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

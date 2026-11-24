@@ -1,0 +1,18 @@
+{
+ "name": "golden-00608-ecu-data1",
+ "from": "dbc-hyundai-santafe-2007",
+ "to": "dbc-hyundai-santafe-2007",
+ "input": "60020000080000005aeb3802002f0000",
+ "expect": "60020000080000005aeb3802002f0000",
+ "model": {
+  "@kind": "ecu_data1",
+  "dbchyundaisantafe2007.ecu_data1_torquemin": "35.15625",
+  "dbchyundaisantafe2007.ecu_data1_torque": "91.796875",
+  "dbchyundaisantafe2007.ecu_data1_torquetarget": "21.875",
+  "dbchyundaisantafe2007.ecu_data1_cruiseenabled": "1",
+  "dbchyundaisantafe2007.ecu_data1_cruiseactive": "0",
+  "dbchyundaisantafe2007.ecu_data1_torquemax": "18.359375"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_santafe_2007.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 98dab8afe58b1816b3b5464318437bf9486f00f22a4f0d506f0395a29cb3bc03), message ECU_Data1 (frame id 608) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,20 @@
+{
+ "name": "golden-00304-inertial1-accel1-fo",
+ "from": "dbc-cadillac-ct6-object",
+ "to": "dbc-cadillac-ct6-object",
+ "input": "3001000008000000d538049e047c018d",
+ "expect": "3001000008000000d538049e047c018d",
+ "model": {
+  "@kind": "inertial1_accel1_fo",
+  "dbccadillacct6object.inertial1_accel1_fo_mstrtrigsyncinrtl11": "26",
+  "dbccadillacct6object.inertial1_accel1_fo_inrtlsnsr1lonaccv": "1",
+  "dbccadillacct6object.inertial1_accel1_fo_inrtlsnsr1lonacc": "19.5",
+  "dbccadillacct6object.inertial1_accel1_fo_inrtlsnsr1lataccv": "1",
+  "dbccadillacct6object.inertial1_accel1_fo_inrtlsnsr1latacc": "9.875",
+  "dbccadillacct6object.inertial1_accel1_fo_inrtlsnsr1vertaccv": "1",
+  "dbccadillacct6object.inertial1_accel1_fo_inrtlsnsr1vertacc": "7.75",
+  "dbccadillacct6object.inertial1_accel1_fo_intlsnsr1acelfm1chksm": "397"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/cadillac_ct6_object.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 df8a252302b54dbbdad9fa4cd497bd72dd7552cfaef1528d1bdbe8faac3383c2), message Inertial1_Accel1_FO (frame id 304) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

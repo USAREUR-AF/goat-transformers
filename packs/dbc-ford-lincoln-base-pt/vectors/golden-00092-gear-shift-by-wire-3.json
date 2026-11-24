@@ -1,0 +1,27 @@
+{
+ "name": "golden-00092-gear-shift-by-wire-3",
+ "from": "dbc-ford-lincoln-base-pt",
+ "to": "dbc-ford-lincoln-base-pt",
+ "input": "5c000000080000002be7ff8d2ac60000",
+ "expect": "5c000000080000002be7ff8d2ac60000",
+ "model": {
+  "@kind": "gear_shift_by_wire_3",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trncmdcnt_b_actl": "0",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trnntrltowcmd_d_actl": "Car_Wash_Mode",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trngear_d_rqpt": "Reverse",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trnsbwsyshlth_d_actl": "OK",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trngearcmd_no_cnt": "14",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trnvalidgear_d_cnfm": "Internal_Request",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trngearcmd_pc_actlpt": "102.30000000000001",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trngearcmd_no_cs": "141",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trncmdstate_b_actl": "No",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_prkbrkactv_d_rqtrngear": "NoRequest",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trngearmsgtxt_d_rq": "10",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trngearntmallow_b_stat": "Yes",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trndtpcmd_d_actl": "Relatch",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_trnlvrv_d_rq": "Normal",
+  "dbcfordlincolnbasept.gear_shift_by_wire_3_gearsellck_d_rq": "Unlock"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_lincoln_base_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 536fe325ad4be0eeb9b1704c3663bb6518290185967eb738cf2a3b20f02804eb), message Gear_Shift_by_Wire_3 (frame id 92) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

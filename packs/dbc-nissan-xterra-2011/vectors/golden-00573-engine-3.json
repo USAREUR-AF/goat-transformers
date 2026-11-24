@@ -1,0 +1,16 @@
+{
+ "name": "golden-00573-engine-3",
+ "from": "dbc-nissan-xterra-2011",
+ "to": "dbc-nissan-xterra-2011",
+ "input": "3d02000008000000005aeb38a9000049",
+ "expect": "3d02000008000000005aeb38a9000049",
+ "model": {
+  "@kind": "engine_3",
+  "dbcnissanxterra2011.engine_3_pedal_position": "35.28",
+  "dbcnissanxterra2011.engine_3_throttle_position_capped": "92.12",
+  "dbcnissanxterra2011.engine_3_rpm": "136458.0",
+  "dbcnissanxterra2011.engine_3_clt": "26.766618"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/nissan_xterra_2011.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 adc1ff094f3e703cfe3fa47ead5533f00af0d460fb8e51459e76d026f7f83efc), message ENGINE_3 (frame id 573) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

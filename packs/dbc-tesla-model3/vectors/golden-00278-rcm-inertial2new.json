@@ -1,0 +1,20 @@
+{
+ "name": "golden-00278-rcm-inertial2new",
+ "from": "dbc-tesla-model3",
+ "to": "dbc-tesla-model3",
+ "input": "16010000080000005a5aeb2338a9c58d",
+ "expect": "16010000080000005a5aeb2338a9c58d",
+ "model": {
+  "@kind": "rcm_inertial2new",
+  "dbcteslamodel3.rcm_inertial2new_rcm_longitudinalaccel": "28.9125",
+  "dbcteslamodel3.rcm_inertial2new_rcm_lateralaccel": "11.49375",
+  "dbcteslamodel3.rcm_inertial2new_rcm_verticalaccel": "-27.77",
+  "dbcteslamodel3.rcm_inertial2new_rcm_longitudinalaccelqf": "1",
+  "dbcteslamodel3.rcm_inertial2new_rcm_lateralaccelqf": "0",
+  "dbcteslamodel3.rcm_inertial2new_rcm_verticalaccelqf": "1",
+  "dbcteslamodel3.rcm_inertial2new_rcm_inertial2counter": "12",
+  "dbcteslamodel3.rcm_inertial2new_rcm_inertial2checksum": "141"
+ },
+ "source": "cantools 45.1.1: Model3CAN.dbc at c56c113c353d09b1a5dd57677461f02fe8b7c6ca (SHA-256 d54df533fc82f3dab11ddd0f5ae4d846f22c0a24b111d8cba2b93e79caf60151), message RCM_inertial2New (frame id 278) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

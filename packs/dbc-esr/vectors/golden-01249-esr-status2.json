@@ -1,0 +1,25 @@
+{
+ "name": "golden-01249-esr-status2",
+ "from": "dbc-esr",
+ "to": "dbc-esr",
+ "input": "e1040000080000006b518dd28cc1ee16",
+ "expect": "e1040000080000006b518dd28cc1ee16",
+ "model": {
+  "@kind": "esr_status2",
+  "dbcesr.esr_status2_can_tx_maximum_tracks_ack": "27.0",
+  "dbcesr.esr_status2_can_tx_rolling_count_2": "3",
+  "dbcesr.esr_status2_can_tx_overheat_error": "0",
+  "dbcesr.esr_status2_can_tx_range_perf_error": "1",
+  "dbcesr.esr_status2_can_tx_internal_error": "0",
+  "dbcesr.esr_status2_can_tx_xcvr_operational": "1",
+  "dbcesr.esr_status2_can_tx_raw_data_mode": "0",
+  "dbcesr.esr_status2_can_tx_steering_angle_ack": "397",
+  "dbcesr.esr_status2_can_tx_temperature": "-46",
+  "dbcesr.esr_status2_can_tx_veh_spd_comp_factor": "0.94345",
+  "dbcesr.esr_status2_can_tx_grouping_mode": "0",
+  "dbcesr.esr_status2_can_tx_yaw_rate_bias": "-7.875",
+  "dbcesr.esr_status2_can_tx_sw_version_dsp": "60950"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ESR.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 69b5c211129e243addfa165257e47c2076ac8fc84a2e74053b4341a4f0495b36), message ESR_Status2 (frame id 1249) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,18 @@
+{
+ "name": "golden-00264-mrr-status-swversion",
+ "from": "dbc-ford-cads-64",
+ "to": "dbc-ford-cads-64",
+ "input": "08010000080000005aeb38499e2f0000",
+ "expect": "08010000080000005aeb38499e2f0000",
+ "model": {
+  "@kind": "mrr_status_swversion",
+  "dbcfordcads64.mrr_status_swversion_can_sw_release_revision": "90",
+  "dbcfordcads64.mrr_status_swversion_can_sw_promote_revision": "235",
+  "dbcfordcads64.mrr_status_swversion_can_sw_field_revision": "56",
+  "dbcfordcads64.mrr_status_swversion_can_pbl_release_revision": "73",
+  "dbcfordcads64.mrr_status_swversion_can_pbl_promote_revision": "158",
+  "dbcfordcads64.mrr_status_swversion_can_pbl_field_revision": "47"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/FORD_CADS_64.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 9d4b88f195953b8fbb42181c9f2e754807bda13cfb5ba43678e643d398131e3b), message MRR_Status_SwVersion (frame id 264) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

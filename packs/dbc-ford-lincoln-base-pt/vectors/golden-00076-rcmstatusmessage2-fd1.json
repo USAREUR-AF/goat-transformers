@@ -1,0 +1,23 @@
+{
+ "name": "golden-00076-rcmstatusmessage2-fd1",
+ "from": "dbc-ford-lincoln-base-pt",
+ "to": "dbc-ford-lincoln-base-pt",
+ "input": "4c0000000800000014c6c03000000000",
+ "expect": "4c0000000800000014c6c03000000000",
+ "model": {
+  "@kind": "rcmstatusmessage2_fd1",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_rilreq": "Off",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_psngrfrntdetct_d_actl": "Occupied",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_rstrnimpactevntstatus": "Not_Used_2",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_firstrowbuckledriver": "Unknown",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_firstrowbucklepsngr": "Faulty",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_secondrowbuckledriver": "Belted",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_secondrowbucklemid": "Unbelted",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_secondrowbucklepsngr": "Unknown",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_passrstrnind_req": "AirbagOn_Illum_Off_Illum",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_edrtriggerevntsync": "Threshold_Exceeded",
+  "dbcfordlincolnbasept.rcmstatusmessage2_fd1_firstrowbucklemid": "Unbelted"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_lincoln_base_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 536fe325ad4be0eeb9b1704c3663bb6518290185967eb738cf2a3b20f02804eb), message RCMStatusMessage2_FD1 (frame id 76) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

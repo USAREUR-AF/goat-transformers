@@ -1,0 +1,20 @@
+{
+ "name": "golden-00768-abs-wheelspeed",
+ "from": "dbc-opel-omega-2001",
+ "to": "dbc-opel-omega-2001",
+ "input": "000300000800000023eb37493a2f098d",
+ "expect": "000300000800000023eb37493a2f098d",
+ "model": {
+  "@kind": "abs_wheelspeed",
+  "dbcopelomega2001.abs_wheelspeed_frontleftwheelerrorflag": "0",
+  "dbcopelomega2001.abs_wheelspeed_frontleftwheelspeed": "1029.84",
+  "dbcopelomega2001.abs_wheelspeed_frontrightwheelerrorflag": "0",
+  "dbcopelomega2001.abs_wheelspeed_frontrightwheelspeed": "1585.136",
+  "dbcopelomega2001.abs_wheelspeed_rearleftwheelerrorflag": "0",
+  "dbcopelomega2001.abs_wheelspeed_rearleftwheelspeed": "1668.24",
+  "dbcopelomega2001.abs_wheelspeed_rearrightwheelerrorflag": "0",
+  "dbcopelomega2001.abs_wheelspeed_rearrightwheelspeed": "273.84000000000003"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/opel_omega_2001.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 fc06200b5c9c712648281893b3e96ddd1bd2ef9315d1800a0d0713ae358c0345), message ABS_WheelSpeed (frame id 768) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

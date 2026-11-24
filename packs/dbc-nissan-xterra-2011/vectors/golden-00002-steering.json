@@ -1,0 +1,15 @@
+{
+ "name": "golden-00002-steering",
+ "from": "dbc-nissan-xterra-2011",
+ "to": "dbc-nissan-xterra-2011",
+ "input": "02000000050000005a5aeb0008000000",
+ "expect": "02000000050000005a5aeb0008000000",
+ "model": {
+  "@kind": "steering",
+  "dbcnissanxterra2011.steering_steering_angle": "2313.0",
+  "dbcnissanxterra2011.steering_power_steer_rate": "235",
+  "dbcnissanxterra2011.steering_counter": "8"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/nissan_xterra_2011.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 adc1ff094f3e703cfe3fa47ead5533f00af0d460fb8e51459e76d026f7f83efc), message STEERING (frame id 2) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,22 @@
+{
+ "name": "golden-00275-id113gtw-bmpdebug",
+ "from": "dbc-tesla-model3",
+ "to": "dbc-tesla-model3",
+ "input": "13010000030000000055010000000000",
+ "expect": "13010000030000000055010000000000",
+ "model": {
+  "@kind": "id113gtw_bmpdebug",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmpstate": "0",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_awake_pin": "1",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_pgood_pin": "0",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_periph_nrst_3v3_pin": "1",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_gtw_pmic_thermtrip": "0",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_gtw_soc_pwrok": "1",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_gtw_pmic_error": "0",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_gtw_nsuspwr": "1",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_pmic_pwr_on": "0",
+  "dbcteslamodel3.id113gtw_bmpdebug_gtw_bmp_gtw_pmic_on": "1"
+ },
+ "source": "cantools 45.1.1: Model3CAN.dbc at c56c113c353d09b1a5dd57677461f02fe8b7c6ca (SHA-256 d54df533fc82f3dab11ddd0f5ae4d846f22c0a24b111d8cba2b93e79caf60151), message ID113GTW_bmpDebug (frame id 275) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

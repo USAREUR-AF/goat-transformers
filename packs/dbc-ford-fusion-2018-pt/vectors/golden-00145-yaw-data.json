@@ -1,0 +1,15 @@
+{
+ "name": "golden-00145-yaw-data",
+ "from": "dbc-ford-fusion-2018-pt",
+ "to": "dbc-ford-fusion-2018-pt",
+ "input": "91000000080000005a5a23eba9380000",
+ "expect": "91000000080000005a5a23eba9380000",
+ "model": {
+  "@kind": "yaw_data",
+  "dbcfordfusion2018pt.yaw_data_vehptch_w_actl": "-1.8739999999999997",
+  "dbcfordfusion2018pt.yaw_data_vehrol_w_actl": "-4.661",
+  "dbcfordfusion2018pt.yaw_data_vehyaw_w_actl": "2.1639999999999997"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_fusion_2018_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 702117aeef6128ae74664c6e46f92bdfea8613212f40fc2db195662194744764), message Yaw_Data (frame id 145) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

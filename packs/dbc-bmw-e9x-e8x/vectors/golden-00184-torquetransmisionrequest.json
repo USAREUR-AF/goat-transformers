@@ -1,0 +1,14 @@
+{
+ "name": "golden-00184-torquetransmisionrequest",
+ "from": "dbc-bmw-e9x-e8x",
+ "to": "dbc-bmw-e9x-e8x",
+ "input": "b8000000080000005a0b000000000000",
+ "expect": "b8000000080000005a0b000000000000",
+ "model": {
+  "@kind": "torquetransmisionrequest",
+  "dbcbmwe9xe8x.torquetransmisionrequest_checksum_184": "90",
+  "dbcbmwe9xe8x.torquetransmisionrequest_counter_184": "11"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/bmw_e9x_e8x.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c238d3938e4dc461b96b5055e790ccea01d03fc8c84d44ebeb35446654988f07), message TorqueTransmisionRequest (frame id 184) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

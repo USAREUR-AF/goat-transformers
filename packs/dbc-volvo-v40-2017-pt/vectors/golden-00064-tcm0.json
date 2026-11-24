@@ -1,0 +1,14 @@
+{
+ "name": "golden-00064-tcm0",
+ "from": "dbc-volvo-v40-2017-pt",
+ "to": "dbc-volvo-v40-2017-pt",
+ "input": "4000000008000000000000000003eb00",
+ "expect": "4000000008000000000000000003eb00",
+ "model": {
+  "@kind": "tcm0",
+  "dbcvolvov402017pt.tcm0_gearshifter": "P",
+  "dbcvolvov402017pt.tcm0_rpmsomething": "1003"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/volvo_v40_2017_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 e2adc539cfda8703594301a6e5ebb384d458a682ea853e29744926a70db83343), message TCM0 (frame id 64) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,19 @@
+{
+ "name": "golden-00260-cruise-control2",
+ "from": "dbc-mercedes-benz-e350-2010",
+ "to": "dbc-mercedes-benz-e350-2010",
+ "input": "0401000008000000a000eb38499ef07c",
+ "expect": "0401000008000000a000eb38499ef07c",
+ "model": {
+  "@kind": "cruise_control2",
+  "dbcmercedesbenze3502010.cruise_control2_new_signal_1": "10",
+  "dbcmercedesbenze3502010.cruise_control2_set_me_x02": "235",
+  "dbcmercedesbenze3502010.cruise_control2_set_me_xff": "56",
+  "dbcmercedesbenze3502010.cruise_control2_set_me_xff2": "73",
+  "dbcmercedesbenze3502010.cruise_control2_set_me_x00": "158",
+  "dbcmercedesbenze3502010.cruise_control2_counter": "15",
+  "dbcmercedesbenze3502010.cruise_control2_checksum": "124"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mercedes_benz_e350_2010.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 89f574ecec7e299c4cfd482b2d71cf5a97949d331a06c46c4669bf9f2a715c07), message CRUISE_CONTROL2 (frame id 260) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

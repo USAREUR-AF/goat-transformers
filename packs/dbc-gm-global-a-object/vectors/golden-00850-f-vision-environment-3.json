@@ -1,0 +1,28 @@
+{
+ "name": "golden-00850-f-vision-environment-3",
+ "from": "dbc-gm-global-a-object",
+ "to": "dbc-gm-global-a-object",
+ "input": "5203000008000000989efc8d97d28ea5",
+ "expect": "5203000008000000989efc8d97d28ea5",
+ "model": {
+  "@kind": "f_vision_environment_3",
+  "dbcgmglobalaobject.f_vision_environment_3_lnsnsburstid1": "2",
+  "dbcgmglobalaobject.f_vision_environment_3_lnprvwdstnclft": "30.0",
+  "dbcgmglobalaobject.f_vision_environment_3_lnprvwdstncrght": "0.0",
+  "dbcgmglobalaobject.f_vision_environment_3_lnsnslncrvtrlftv": "1",
+  "dbcgmglobalaobject.f_vision_environment_3_lnqltycnfdnclvllft": "23.622048",
+  "dbcgmglobalaobject.f_vision_environment_3_lnsnstngtofhdnglnlftv": "1",
+  "dbcgmglobalaobject.f_vision_environment_3_lnqltycnfdnclvlrght": "97.63779840000001",
+  "dbcgmglobalaobject.f_vision_environment_3_lnsnstngtofhdnglnlft": "-0.23",
+  "dbcgmglobalaobject.f_vision_environment_3_lnsnslncrvtrlft": "-0.02541651",
+  "dbcgmglobalaobject.f_vision_environment_3_lnmrkrelvtdlft": "1",
+  "dbcgmglobalaobject.f_vision_environment_3_lnmrkrelvtdrght": "0",
+  "dbcgmglobalaobject.f_vision_environment_3_lnmrkrtyplft": "1",
+  "dbcgmglobalaobject.f_vision_environment_3_lnmrkrtyprght": "6",
+  "dbcgmglobalaobject.f_vision_environment_3_lnsnsltlnmrkgwdth": "1",
+  "dbcgmglobalaobject.f_vision_environment_3_lnsnsltlnmrkgtypchgdst": "40.0",
+  "dbcgmglobalaobject.f_vision_environment_3_lnsnsttlnmlnmrkgdetlt": "5"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/gm_global_a_object.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 a694b22b4a7ebbdf4a9a896525c5ff91c709655a240f3637fdbd1e4027f1c183), message F_Vision_Environment_3 (frame id 850) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

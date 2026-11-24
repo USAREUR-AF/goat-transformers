@@ -1,0 +1,14 @@
+{
+ "name": "golden-00261-mrr-status-serialnumber",
+ "from": "dbc-ford-cads-64",
+ "to": "dbc-ford-cads-64",
+ "input": "05010000080000005a5a5a5a5a0023eb",
+ "expect": "05010000080000005a5a5a5a5a0023eb",
+ "model": {
+  "@kind": "mrr_status_serialnumber",
+  "dbcfordcads64.mrr_status_serialnumber_can_serial_number": "388062927450",
+  "dbcfordcads64.mrr_status_serialnumber_can_sequence_number": "9195"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/FORD_CADS_64.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 9d4b88f195953b8fbb42181c9f2e754807bda13cfb5ba43678e643d398131e3b), message MRR_Status_SerialNumber (frame id 261) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

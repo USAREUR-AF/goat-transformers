@@ -1,0 +1,15 @@
+{
+ "name": "golden-00906-wheel-speeds",
+ "from": "dbc-luxgen-s5-2015",
+ "to": "dbc-luxgen-s5-2015",
+ "input": "8a030000080000005a0000eb38000000",
+ "expect": "8a030000080000005a0000eb38000000",
+ "model": {
+  "@kind": "wheel_speeds",
+  "dbcluxgens52015.wheel_speeds_speed_fl": "90",
+  "dbcluxgens52015.wheel_speeds_speed_fr": "235",
+  "dbcluxgens52015.wheel_speeds_abs_undef1": "56"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/luxgen_s5_2015.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 2528dee924b7c0fa758d46802fd9f87ef1792c85f5ce6bf60422c1f17ec95532), message WHEEL_SPEEDS (frame id 906) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

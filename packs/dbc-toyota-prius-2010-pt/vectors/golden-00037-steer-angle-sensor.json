@@ -1,0 +1,15 @@
+{
+ "name": "golden-00037-steer-angle-sensor",
+ "from": "dbc-toyota-prius-2010-pt",
+ "to": "dbc-toyota-prius-2010-pt",
+ "input": "25000000080000000a5a0000b9380000",
+ "expect": "25000000080000000a5a0000b9380000",
+ "model": {
+  "@kind": "steer_angle_sensor",
+  "dbctoyotaprius2010pt.steer_angle_sensor_steer_angle": "-2169.0",
+  "dbctoyotaprius2010pt.steer_angle_sensor_steer_fraction": "-0.5",
+  "dbctoyotaprius2010pt.steer_angle_sensor_steer_rate": "-1736"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/toyota_prius_2010_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 ebcc9c69b75241a152b3e4ae95dfc0ab7a176e9e76655090c91cff44ac637c9b), message STEER_ANGLE_SENSOR (frame id 37) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

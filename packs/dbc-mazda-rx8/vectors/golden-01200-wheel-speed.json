@@ -1,0 +1,16 @@
+{
+ "name": "golden-01200-wheel-speed",
+ "from": "dbc-mazda-rx8",
+ "to": "dbc-mazda-rx8",
+ "input": "b0040000080000005a5a23eba9383749",
+ "expect": "b0040000080000005a5a23eba9383749",
+ "model": {
+  "@kind": "wheel_speed",
+  "dbcmazdarx8.wheel_speed_wheelspeedfl": "131.3",
+  "dbcmazdarx8.wheel_speed_wheelspeedfr": "-8.049999999999997",
+  "dbcmazdarx8.wheel_speed_wheelspeedrl": "333.2",
+  "dbcmazdarx8.wheel_speed_wheelspeedrr": "41.53"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mazda_rx8.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 3b2ba3f10e49808f6930e865fe53f93720cbd37d6e3c40242961f09432813c21), message wheel_speed (frame id 1200) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

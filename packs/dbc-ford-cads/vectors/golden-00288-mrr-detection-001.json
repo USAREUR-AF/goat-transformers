@@ -1,0 +1,22 @@
+{
+ "name": "golden-00288-mrr-detection-001",
+ "from": "dbc-ford-cads",
+ "to": "dbc-ford-cads",
+ "input": "2001000008000000b5a4e1f27901f201",
+ "expect": "2001000008000000b5a4e1f27901f201",
+ "model": {
+  "@kind": "mrr_detection_001",
+  "dbcfordcads.mrr_detection_001_can_det_amplitude_01": "26.0",
+  "dbcfordcads.mrr_detection_001_can_det_valid_level_01": "1",
+  "dbcfordcads.mrr_detection_001_can_det_range_rate_01": "36.875",
+  "dbcfordcads.mrr_detection_001_can_scan_index_2lsb_01": "1",
+  "dbcfordcads.mrr_detection_001_can_det_range_01": "242.46875",
+  "dbcfordcads.mrr_detection_001_can_det_confid_azimuth_01": "Medium_High",
+  "dbcfordcads.mrr_detection_001_can_det_azimuth_01": "-3.0940583999999998",
+  "dbcfordcads.mrr_detection_001_can_det_host_veh_clutter_01": "1",
+  "dbcfordcads.mrr_detection_001_can_det_nd_target_01": "0",
+  "dbcfordcads.mrr_detection_001_can_det_super_res_target_01": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/FORD_CADS.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 6d254309d8d66c3fe1d56420a5880716307c3640fba5ff76fb272431df8979f9), message MRR_Detection_001 (frame id 288) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

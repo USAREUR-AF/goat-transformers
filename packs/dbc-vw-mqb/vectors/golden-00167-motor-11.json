@@ -1,0 +1,22 @@
+{
+ "name": "golden-00167-motor-11",
+ "from": "dbc-vw-mqb",
+ "to": "dbc-vw-mqb",
+ "input": "a7000000080000005a8b53d29ebcc8a7",
+ "expect": "a7000000080000005a8b53d29ebcc8a7",
+ "model": {
+  "@kind": "motor_11",
+  "dbcvwmqb.motor_11_motor_11_crc": "90",
+  "dbcvwmqb.motor_11_motor_11_bz": "11",
+  "dbcvwmqb.motor_11_mo_mom_soll_roh": "-197.0",
+  "dbcvwmqb.motor_11_mo_mom_ist_summe": "332.0",
+  "dbcvwmqb.motor_11_mo_mom_traegheit_summe": "-351.0",
+  "dbcvwmqb.motor_11_mo_mom_soll_gefiltert": "50.0",
+  "dbcvwmqb.motor_11_mo_mom_schub": "-385.0",
+  "dbcvwmqb.motor_11_mo_status_normalbetrieb_01": "1",
+  "dbcvwmqb.motor_11_mo_erste_ungenauschwelle": "0",
+  "dbcvwmqb.motor_11_mo_qbit_motormomente": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/vw_mqb.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 863f8e4b1bd26b4006f43f186e42f398bc7537fbfadf0b55d0edbe5ab50c2f67), message Motor_11 (frame id 167) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,25 @@
+{
+ "name": "golden-01251-esr-output-inpath",
+ "from": "dbc-esr",
+ "to": "dbc-esr",
+ "input": "e3040000080000005b7c8dd263b0c116",
+ "expect": "e3040000080000005b7c8dd263b0c116",
+ "model": {
+  "@kind": "esr_output_inpath",
+  "dbcesr.esr_output_inpath_can_tx_truck_target_det": "0",
+  "dbcesr.esr_output_inpath_can_tx_lr_only_grating_lobe_det": "1",
+  "dbcesr.esr_output_inpath_can_tx_sidelobe_blockate": "0",
+  "dbcesr.esr_output_inpath_can_tx_partial_blockage": "1",
+  "dbcesr.esr_output_inpath_can_tx_lmr_lr_mode": "2",
+  "dbcesr.esr_output_inpath_can_tx_rolling_count_3": "3",
+  "dbcesr.esr_output_inpath_can_tx_path_id_acc_move": "124",
+  "dbcesr.esr_output_inpath_can_tx_path_id_cmbb_move": "141",
+  "dbcesr.esr_output_inpath_can_tx_path_id_cmbb_stat": "210",
+  "dbcesr.esr_output_inpath_can_tx_path_id_fcw_move": "99",
+  "dbcesr.esr_output_inpath_can_tx_path_id_fcw_stat": "176",
+  "dbcesr.esr_output_inpath_can_tx_auto_align_angle": "-3.9375",
+  "dbcesr.esr_output_inpath_can_tx_path_id_acc_stat": "22"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ESR.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 69b5c211129e243addfa165257e47c2076ac8fc84a2e74053b4341a4f0495b36), message ESR_Output_InPath (frame id 1251) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,17 @@
+{
+ "name": "golden-00048-fsm0",
+ "from": "dbc-volvo-v40-2017-pt",
+ "to": "dbc-volvo-v40-2017-pt",
+ "input": "3000000008000000000000010000eb02",
+ "expect": "3000000008000000000000010000eb02",
+ "model": {
+  "@kind": "fsm0",
+  "dbcvolvov402017pt.fsm0_fcwsomething": "2",
+  "dbcvolvov402017pt.fsm0_statussomething": "235",
+  "dbcvolvov402017pt.fsm0_accstatusactive": "0",
+  "dbcvolvov402017pt.fsm0_accstatusonoff": "1",
+  "dbcvolvov402017pt.fsm0_accstatustracking": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/volvo_v40_2017_pt.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 e2adc539cfda8703594301a6e5ebb384d458a682ea853e29744926a70db83343), message FSM0 (frame id 48) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

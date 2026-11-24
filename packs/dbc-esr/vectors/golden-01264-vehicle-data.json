@@ -1,0 +1,22 @@
+{
+ "name": "golden-01264-vehicle-data",
+ "from": "dbc-esr",
+ "to": "dbc-esr",
+ "input": "f0040000080000004b5938ba2f7e9563",
+ "expect": "f0040000080000004b5938ba2f7e9563",
+ "model": {
+  "@kind": "vehicle_data",
+  "dbcesr.vehicle_data_can_rx_vehicle_speed": "37.625",
+  "dbcesr.vehicle_data_can_rx_vehicle_speed_direction": "Reverse",
+  "dbcesr.vehicle_data_can_rx_yaw_rate": "-108.5",
+  "dbcesr.vehicle_data_can_rx_yaw_rate_validity": "Valid",
+  "dbcesr.vehicle_data_can_rx_steering_angle_rate_sign": "Left CounterClockwise",
+  "dbcesr.vehicle_data_can_rx_radius_curvature": "-1489",
+  "dbcesr.vehicle_data_can_rx_steering_validity": "False",
+  "dbcesr.vehicle_data_can_rx_steering_angle_sign": "Right Clockwise",
+  "dbcesr.vehicle_data_can_rx_steering_angle": "2002",
+  "dbcesr.vehicle_data_can_rx_steering_angle_rate": "1379"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ESR.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 69b5c211129e243addfa165257e47c2076ac8fc84a2e74053b4341a4f0495b36), message Vehicle_Data (frame id 1264) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

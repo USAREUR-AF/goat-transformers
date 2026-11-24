@@ -1,0 +1,19 @@
+{
+ "name": "golden-00338-ascmlkasteeringcmd",
+ "from": "dbc-cadillac-ct6-chassis",
+ "to": "dbc-cadillac-ct6-chassis",
+ "input": "520100000600000023eb3c9e107c0000",
+ "expect": "520100000600000023eb3c9e107c0000",
+ "model": {
+  "@kind": "ascmlkasteeringcmd",
+  "dbccadillacct6chassis.ascmlkasteeringcmd_lkasteeringcmdactive": "Inactive",
+  "dbccadillacct6chassis.ascmlkasteeringcmd_lkasteeringcmd": "-7189",
+  "dbccadillacct6chassis.ascmlkasteeringcmd_rollingcounter": "0",
+  "dbccadillacct6chassis.ascmlkasteeringcmd_setme1": "1",
+  "dbccadillacct6chassis.ascmlkasteeringcmd_lkasvehiclespeed": "1611.72",
+  "dbccadillacct6chassis.ascmlkasteeringcmd_lkasmode": "2",
+  "dbccadillacct6chassis.ascmlkasteeringcmd_lkasteeringcmdchecksum": "124"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/cadillac_ct6_chassis.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 15156e370b26e7993d8f76225f69544ce90a59f822ed36c5e8dd34a1c86f2b47), message ASCMLKASteeringCmd (frame id 338) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

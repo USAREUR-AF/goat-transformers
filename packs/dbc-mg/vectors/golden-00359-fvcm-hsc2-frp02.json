@@ -1,0 +1,27 @@
+{
+ "name": "golden-00359-fvcm-hsc2-frp02",
+ "from": "dbc-mg",
+ "to": "dbc-mg",
+ "input": "67010000080000005ac03749dc0ac1bc",
+ "expect": "67010000080000005ac03749dc0ac1bc",
+ "model": {
+  "@kind": "fvcm_hsc2_frp02",
+  "dbcmg.fvcm_hsc2_frp02_distsincetrgtcamrhsc2": "641.15",
+  "dbcmg.fvcm_hsc2_frp02_automainbeamlghtreqhsc2": "3",
+  "dbcmg.fvcm_hsc2_frp02_spdastreqstscamrhsc2": "0",
+  "dbcmg.fvcm_hsc2_frp02_trgtspdreqcamrhsc2": "221.140625",
+  "dbcmg.fvcm_hsc2_frp02_ldwsysfltstshsc2": "6",
+  "dbcmg.fvcm_hsc2_frp02_fvcmcalprgsreqhsc2": "7",
+  "dbcmg.fvcm_hsc2_frp02_handoffstrgwhldetnstavhsc2": "0",
+  "dbcmg.fvcm_hsc2_frp02_handoffstrgwhldetnstahsc2": "1",
+  "dbcmg.fvcm_hsc2_frp02_ldwlkarvsulznreqhsc2": "2",
+  "dbcmg.fvcm_hsc2_frp02_tjaicadspcmdhsc2": "3",
+  "dbcmg.fvcm_hsc2_frp02_ldwlkalvsulznreqhsc2": "0",
+  "dbcmg.fvcm_hsc2_frp02_ldwlkadspcmdhsc2": "1",
+  "dbcmg.fvcm_hsc2_frp02_ldwlkahapticwrnngdspcmdhsc2": "2",
+  "dbcmg.fvcm_hsc2_frp02_tjaicasysfltstshsc2": "7",
+  "dbcmg.fvcm_hsc2_frp02_tjaicasysstshsc2": "4"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/mg.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 7213db50f5400fd43ab47a11e29494507f6df13a4dbe38ffd794cb5f1dd4da49), message FVCM_HSC2_FrP02 (frame id 359) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

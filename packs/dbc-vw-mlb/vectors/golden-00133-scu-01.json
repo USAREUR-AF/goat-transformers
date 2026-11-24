@@ -1,0 +1,22 @@
+{
+ "name": "golden-00133-scu-01",
+ "from": "dbc-vw-mlb",
+ "to": "dbc-vw-mlb",
+ "input": "85000000080000005a0bfedfffff0963",
+ "expect": "85000000080000005a0bfedfffff0963",
+ "model": {
+  "@kind": "scu_01",
+  "dbcvwmlb.scu_01_scu_01_chk": "90",
+  "dbcvwmlb.scu_01_scu_01_bz": "11",
+  "dbcvwmlb.scu_01_scu_ue_winkel_ads": "409.40000000000003",
+  "dbcvwmlb.scu_01_scu_vz_ue_winkel_ads": "negativ",
+  "dbcvwmlb.scu_01_scu_soll_ue_winkel": "204.60000000000002",
+  "dbcvwmlb.scu_01_scu_max_gradient": "511",
+  "dbcvwmlb.scu_01_scu_vz_soll_ue_winkel": "positiv",
+  "dbcvwmlb.scu_01_scu_status": "2",
+  "dbcvwmlb.scu_01_scu_kd_fehler": "kein_KD_Fehler",
+  "dbcvwmlb.scu_01_scu_01_crc": "99"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/vw_mlb.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 88fe6bb0cf30c1e3656431ce66b43dfd9ffb34c54054a2fde0fa9c72a97fdc13), message SCU_01 (frame id 133) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

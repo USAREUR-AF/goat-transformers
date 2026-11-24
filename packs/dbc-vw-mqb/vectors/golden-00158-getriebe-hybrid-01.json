@@ -1,0 +1,28 @@
+{
+ "name": "golden-00158-getriebe-hybrid-01",
+ "from": "dbc-vw-mqb",
+ "to": "dbc-vw-mqb",
+ "input": "9e000000080000005a0b5563700000a6",
+ "expect": "9e000000080000005a0b5563700000a6",
+ "model": {
+  "@kind": "getriebe_hybrid_01",
+  "dbcvwmqb.getriebe_hybrid_01_getriebe_hybrid_01_crc": "90",
+  "dbcvwmqb.getriebe_hybrid_01_getriebe_hybrid_01_bz": "11",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_fehlerstatus": "0",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_freigabe_k0": "1",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_freigabe_ll_reg": "0",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_freig_sschl_k0": "1",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_freig_vm_em_stop": "0",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_wiederstart": "1",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_filt_momaufbau": "2",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_nk0": "2475.0",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_momeingriff_em": "24.0",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_vz_momeingriff_em": "1",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_sportfaktor": "6",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_vm_akt_halten": "1",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_startanf": "0",
+  "dbcvwmqb.getriebe_hybrid_01_ge_hyb_vm_startkontr": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/vw_mqb.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 863f8e4b1bd26b4006f43f186e42f398bc7537fbfadf0b55d0edbe5ab50c2f67), message Getriebe_Hybrid_01 (frame id 158) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

@@ -1,0 +1,20 @@
+{
+ "name": "golden-00272-keyfob-pad-stat",
+ "from": "dbc-ford-cgea1-2-bodycan-2011",
+ "to": "dbc-ford-cgea1-2-bodycan-2011",
+ "input": "10010000080000005aeb38ae098d0000",
+ "expect": "10010000080000005aeb38ae098d0000",
+ "model": {
+  "@kind": "keyfob_pad_stat",
+  "dbcfordcgea12bodycan2011.keyfob_pad_stat_keyfob_pad_button_pressed": "90",
+  "dbcfordcgea12bodycan2011.keyfob_pad_stat_keyfob_pad_id_number": "235",
+  "dbcfordcgea12bodycan2011.keyfob_pad_stat_keyfob_pad_msg_count": "56",
+  "dbcfordcgea12bodycan2011.keyfob_pad_stat_power_decklid_rqst": "1",
+  "dbcfordcgea12bodycan2011.keyfob_pad_stat_power_liftgate_rqst": "0",
+  "dbcfordcgea12bodycan2011.keyfob_pad_stat_r_pwr_sliding_dr_rqst": "1",
+  "dbcfordcgea12bodycan2011.keyfob_pad_stat_l_pwr_sliding_dr_rqst": "0",
+  "dbcfordcgea12bodycan2011.keyfob_pad_stat_keycode_status": "919949"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_cgea1_2_bodycan_2011.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 f7964196aea3688ed76d38316d9a9c4b65fa0161daf3e7089073a1e0789257e0), message Keyfob_Pad_Stat (frame id 272) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

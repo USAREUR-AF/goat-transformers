@@ -1,0 +1,18 @@
+{
+ "name": "golden-00161-f-master-time-sync",
+ "from": "dbc-cadillac-ct6-object",
+ "to": "dbc-cadillac-ct6-object",
+ "input": "a1000000070000005a5a5a5a67493700",
+ "expect": "a1000000070000005a5a5a5a67493700",
+ "model": {
+  "@kind": "f_master_time_sync",
+  "dbccadillacct6object.f_master_time_sync_ftimesyncmstrclock": "1515870810",
+  "dbccadillacct6object.f_master_time_sync_sensormodecmdlrr": "3",
+  "dbccadillacct6object.f_master_time_sync_ftimesyncmstrclockv": "0",
+  "dbccadillacct6object.f_master_time_sync_ftimesyncmstrchksm": "1865",
+  "dbccadillacct6object.f_master_time_sync_sensormodecmdfcamera": "6",
+  "dbccadillacct6object.f_master_time_sync_sensormodecmdsrr": "7"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/cadillac_ct6_object.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 df8a252302b54dbbdad9fa4cd497bd72dd7552cfaef1528d1bdbe8faac3383c2), message F_Master_Time_Sync (frame id 161) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

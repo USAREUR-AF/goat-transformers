@@ -1,0 +1,33 @@
+{
+ "name": "golden-00259-vcright-doorstatus",
+ "from": "dbc-tesla-model3-vehicle",
+ "to": "dbc-tesla-model3-vehicle",
+ "input": "030100000800000010aa744ce90b2210",
+ "expect": "030100000800000010aa744ce90b2210",
+ "model": {
+  "@kind": "vcright_doorstatus",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_frontlatchstatus": "0",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_rearlatchstatus": "1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_frontlatchswitch": "0",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_rearlatchswitch": "1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_fronthandlepulled": "0",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_rearhandlepulled": "1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_frontrelactuatorswitch": "0",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_rearrelactuatorswitch": "1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_fronthandlepwm": "82",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_rearhandlepwm": "99",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_reservedforbackcompat": "0",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_fronthandlepulledpersist": "1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_frontintswitchpressed": "0",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_rearintswitchpressed": "1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_mirrortiltxposition": "4.88",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_mirrortiltyposition": "0.1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_mirrorstate": "1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_mirrorfoldstate": "2",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_trunklatchstatus": "0",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_mirrorrecallstate": "1",
+  "dbcteslamodel3vehicle.vcright_doorstatus_vcright_mirrordipped": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/tesla_model3_vehicle.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 c5edad0acc3285be7e6c4eb24fd36717a5a27f12a915e5069b855fa5cbe0bedb), message VCRIGHT_doorStatus (frame id 259) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

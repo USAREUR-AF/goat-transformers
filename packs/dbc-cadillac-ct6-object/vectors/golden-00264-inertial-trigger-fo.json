@@ -1,0 +1,13 @@
+{
+ "name": "golden-00264-inertial-trigger-fo",
+ "from": "dbc-cadillac-ct6-object",
+ "to": "dbc-cadillac-ct6-object",
+ "input": "0801000001000000d000000000000000",
+ "expect": "0801000001000000d000000000000000",
+ "model": {
+  "@kind": "inertial_trigger_fo",
+  "dbccadillacct6object.inertial_trigger_fo_inrtlsnsrmstrtrgrsync": "26"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/cadillac_ct6_object.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 df8a252302b54dbbdad9fa4cd497bd72dd7552cfaef1528d1bdbe8faac3383c2), message Inertial_Trigger_FO (frame id 264) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

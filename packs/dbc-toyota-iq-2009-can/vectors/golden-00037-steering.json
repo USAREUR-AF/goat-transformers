@@ -1,0 +1,18 @@
+{
+ "name": "golden-00037-steering",
+ "from": "dbc-toyota-iq-2009-can",
+ "to": "dbc-toyota-iq-2009-can",
+ "input": "250000000800000003eb000038360000",
+ "expect": "250000000800000003eb000038360000",
+ "model": {
+  "@kind": "steering",
+  "dbctoyotaiq2009can.steering_steer_direction": "0",
+  "dbctoyotaiq2009can.steering_steer_angle": "1003",
+  "dbctoyotaiq2009can.steering_new_signal_1": "56",
+  "dbctoyotaiq2009can.steering_new_signal_3": "1",
+  "dbctoyotaiq2009can.steering_new_signal_2": "-2",
+  "dbctoyotaiq2009can.steering_new_signal_4": "-1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/toyota_iQ_2009_can.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 46d9ffa3e00aa1e789a9486bca59358c6c485335c7aa6fd06a7760936005e34e), message STEERING (frame id 37) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

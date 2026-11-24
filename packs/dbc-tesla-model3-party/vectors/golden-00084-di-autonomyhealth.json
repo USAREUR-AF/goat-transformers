@@ -1,0 +1,26 @@
+{
+ "name": "golden-00084-di-autonomyhealth",
+ "from": "dbc-tesla-model3-party",
+ "to": "dbc-tesla-model3-party",
+ "input": "5400000008000000ff17499e5e54a100",
+ "expect": "5400000008000000ff17499e5e54a100",
+ "model": {
+  "@kind": "di_autonomyhealth",
+  "dbcteslamodel3party.di_autonomyhealth_di_ah_vehiclespeedlimit": "511",
+  "dbcteslamodel3party.di_autonomyhealth_di_ah_vehiclereversespeedlimit": "11",
+  "dbcteslamodel3party.di_autonomyhealth_di_autonomybehavior": "0",
+  "dbcteslamodel3party.di_autonomyhealth_di_ah_vehiclenogradeaccelmax": "2.92",
+  "dbcteslamodel3party.di_autonomyhealth_di_ah_vehiclenogradedecelmax": "6.32",
+  "dbcteslamodel3party.di_autonomyhealth_di_ah_timetonopropulsion": "2607",
+  "dbcteslamodel3party.di_autonomyhealth_di_ah_dgearavailable": "0",
+  "dbcteslamodel3party.di_autonomyhealth_di_ah_rgearavailable": "1",
+  "dbcteslamodel3party.di_autonomyhealth_di_ah_pgearavailable": "0",
+  "dbcteslamodel3party.di_autonomyhealth_di_loncdegradedavailable": "1",
+  "dbcteslamodel3party.di_autonomyhealth_di_loncdegradedreason": "0",
+  "dbcteslamodel3party.di_autonomyhealth_di_epbunavailable": "1",
+  "dbcteslamodel3party.di_autonomyhealth_di_opdavailableforpedalinterface": "0",
+  "dbcteslamodel3party.di_autonomyhealth_di_loncinprefaultstopping": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/tesla_model3_party.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 efc12ca7d0d9a9b2ee4df039a9f3e2ee22e7e036ec6202af0fce19c486495749), message DI_autonomyHealth (frame id 84) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

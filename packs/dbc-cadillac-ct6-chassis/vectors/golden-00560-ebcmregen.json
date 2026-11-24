@@ -1,0 +1,13 @@
+{
+ "name": "golden-00560-ebcmregen",
+ "from": "dbc-cadillac-ct6-chassis",
+ "to": "dbc-cadillac-ct6-chassis",
+ "input": "3002000006000000025a000000000000",
+ "expect": "3002000006000000025a000000000000",
+ "model": {
+  "@kind": "ebcmregen",
+  "dbccadillacct6chassis.ebcmregen_regen": "602"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/cadillac_ct6_chassis.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 15156e370b26e7993d8f76225f69544ce90a59f822ed36c5e8dd34a1c86f2b47), message EBCMRegen (frame id 560) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

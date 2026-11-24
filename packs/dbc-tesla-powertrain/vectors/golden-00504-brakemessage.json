@@ -1,0 +1,13 @@
+{
+ "name": "golden-00504-brakemessage",
+ "from": "dbc-tesla-powertrain",
+ "to": "dbc-tesla-powertrain",
+ "input": "f8010000080000000400000000000000",
+ "expect": "f8010000080000000400000000000000",
+ "model": {
+  "@kind": "brakemessage",
+  "dbcteslapowertrain.brakemessage_driverbrakestatus": "1"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/tesla_powertrain.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 d5fe66f2c1888a769ba73fb7b6c43da62ba0789da6193b170483bbcf51967930), message BrakeMessage (frame id 504) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

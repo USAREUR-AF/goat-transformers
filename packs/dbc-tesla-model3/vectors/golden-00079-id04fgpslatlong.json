@@ -1,0 +1,15 @@
+{
+ "name": "golden-00079-id04fgpslatlong",
+ "from": "dbc-tesla-model3",
+ "to": "dbc-tesla-model3",
+ "input": "4f00000008000000401f0c0ee883c170",
+ "expect": "4f00000008000000401f0c0ee883c170",
+ "model": {
+  "@kind": "id04fgpslatlong",
+  "lat": "-32.76",
+  "lon": "-65.52",
+  "dbcteslamodel3.id04fgpslatlong_gpsaccuracy04f": "11.200000000000001"
+ },
+ "source": "cantools 45.1.1: Model3CAN.dbc at c56c113c353d09b1a5dd57677461f02fe8b7c6ca (SHA-256 d54df533fc82f3dab11ddd0f5ae4d846f22c0a24b111d8cba2b93e79caf60151), message ID04FGPSLatLong (frame id 79) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

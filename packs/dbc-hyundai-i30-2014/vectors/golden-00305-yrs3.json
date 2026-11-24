@@ -1,0 +1,18 @@
+{
+ "name": "golden-00305-yrs3",
+ "from": "dbc-hyundai-i30-2014",
+ "to": "dbc-hyundai-i30-2014",
+ "input": "31010000080000005a5ab00038a9e92f",
+ "expect": "31010000080000005a5ab00038a9e92f",
+ "model": {
+  "@kind": "yrs3",
+  "dbchyundaii302014.yrs3_cr_yrs_yawacc": "-1204.75",
+  "dbchyundaii302014.yrs3_cf_yrs_yawaccstat": "11",
+  "dbchyundaii302014.yrs3_cr_yrs_ax": "1.3450137999999994",
+  "dbchyundaii302014.yrs3_cr_yrs_msgcnt3": "9",
+  "dbchyundaii302014.yrs3_cf_yrs_axstat": "14",
+  "dbchyundaii302014.yrs3_cr_yrs_crc3": "47"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_i30_2014.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 12130a0e82f04f5bdc237fb4d9727792256e1f017b5f7fae23594eb1d0ffad16), message YRS3 (frame id 305) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

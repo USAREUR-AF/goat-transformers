@@ -1,0 +1,14 @@
+{
+ "name": "golden-00275-power-liftgate-mode-statm",
+ "from": "dbc-ford-cgea1-2-bodycan-2011",
+ "to": "dbc-ford-cgea1-2-bodycan-2011",
+ "input": "1301000008000000b000000000000000",
+ "expect": "1301000008000000b000000000000000",
+ "model": {
+  "@kind": "power_liftgate_mode_statm",
+  "dbcfordcgea12bodycan2011.power_liftgate_mode_statm_power_liftgate_mode_stat": "2",
+  "dbcfordcgea12bodycan2011.power_liftgate_mode_statm_drtgatechime_d_rq": "3"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/ford_cgea1_2_bodycan_2011.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 f7964196aea3688ed76d38316d9a9c4b65fa0161daf3e7089073a1e0789257e0), message Power_Liftgate_Mode_StatM (frame id 275) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

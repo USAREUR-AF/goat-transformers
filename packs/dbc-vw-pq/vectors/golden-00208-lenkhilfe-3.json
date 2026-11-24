@@ -1,0 +1,23 @@
+{
+ "name": "golden-00208-lenkhilfe-3",
+ "from": "dbc-vw-pq",
+ "to": "dbc-vw-pq",
+ "input": "d0000000060000005a8b49cb8d290000",
+ "expect": "d0000000060000005a8b49cb8d290000",
+ "model": {
+  "@kind": "lenkhilfe_3",
+  "dbcvwpq.lenkhilfe_3_checksum": "90",
+  "dbcvwpq.lenkhilfe_3_lh3_bs_spiegel": "11",
+  "dbcvwpq.lenkhilfe_3_counter": "8",
+  "dbcvwpq.lenkhilfe_3_lh3_lm": "841",
+  "dbcvwpq.lenkhilfe_3_lh3_lmsign": "0",
+  "dbcvwpq.lenkhilfe_3_lh3_lmvalid": "1",
+  "dbcvwpq.lenkhilfe_3_lh3_sta_dsr": "12",
+  "dbcvwpq.lenkhilfe_3_lh3_blw": "366.75",
+  "dbcvwpq.lenkhilfe_3_lh3_blwsign": "0",
+  "dbcvwpq.lenkhilfe_3_lh3_blwvalid": "1",
+  "dbcvwpq.lenkhilfe_3_lh3_lenkungstyp": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/vw_pq.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 24c1fe1b0cfbd8e9fb6d203f1ad891b93298ca74c690946f72fe571696ef1974), message Lenkhilfe_3 (frame id 208) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

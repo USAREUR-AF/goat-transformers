@@ -1,0 +1,13 @@
+{
+ "name": "golden-02032-ccp-command-receive-object-ls",
+ "from": "dbc-gm-global-a-lowspeed-1818125",
+ "to": "dbc-gm-global-a-lowspeed-1818125",
+ "input": "f0070000080000005a5a5a5a5a5a5a5a",
+ "expect": "f0070000080000005a5a5a5a5a5a5a5a",
+ "model": {
+  "@kind": "ccp_command_receive_object_ls",
+  "dbcgmglobalalowspeed1818125.ccp_command_receive_object_ls_dgninf": "6510615555426900570"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/gm_global_a_lowspeed_1818125.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 afccd2c0ca09543c025ce830500b4c72c3dd14dd7debdc979e82bea19fe8d9c7), message CCP_Command_Receive_Object_LS (frame id 2032) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

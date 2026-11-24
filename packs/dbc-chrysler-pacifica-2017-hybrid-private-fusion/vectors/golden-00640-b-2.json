@@ -1,0 +1,18 @@
+{
+ "name": "golden-00640-b-2",
+ "from": "dbc-chrysler-pacifica-2017-hybrid-private-fusion",
+ "to": "dbc-chrysler-pacifica-2017-hybrid-private-fusion",
+ "input": "80020000080000005a23eba938749e2f",
+ "expect": "80020000080000005a23eba938749e2f",
+ "model": {
+  "@kind": "b_2",
+  "dbcchryslerpacifica2017hybridprivatefusion.b_2_sig0": "90",
+  "dbcchryslerpacifica2017hybridprivatefusion.b_2_sig1": "9195",
+  "dbcchryslerpacifica2017hybridprivatefusion.b_2_sig2": "43320",
+  "dbcchryslerpacifica2017hybridprivatefusion.b_2_zeros": "1865",
+  "dbcchryslerpacifica2017hybridprivatefusion.b_2_counter": "14",
+  "dbcchryslerpacifica2017hybridprivatefusion.b_2_checksum": "47"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/chrysler_pacifica_2017_hybrid_private_fusion.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 1fbba64fcdbcf06278c25cbb137df531731254b5e42631bd4a24305bf8096a3a), message b_2 (frame id 640) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

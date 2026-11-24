@@ -1,0 +1,13 @@
+{
+ "name": "golden-00016-acu13",
+ "from": "dbc-hyundai-2015-ccan",
+ "to": "dbc-hyundai-2015-ccan",
+ "input": "10000000080000000000000000000000",
+ "expect": "10000000080000000000000000000000",
+ "model": {
+  "@kind": "acu13",
+  "dbchyundai2015ccan.acu13_cf_acu_cshact": "0"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hyundai_2015_ccan.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 d7f822e3a8d220cfde83aec2ae4ed28ddbc44a38ff29bea2e12e3e321d73a607), message ACU13 (frame id 16) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

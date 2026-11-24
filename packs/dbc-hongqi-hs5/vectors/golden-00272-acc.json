@@ -1,0 +1,19 @@
+{
+ "name": "golden-00272-acc",
+ "from": "dbc-hongqi-hs5",
+ "to": "dbc-hongqi-hs5",
+ "input": "10010000080000005aeb8349e74000c0",
+ "expect": "10010000080000005aeb8349e74000c0",
+ "model": {
+  "@kind": "acc",
+  "dbchongqihs5.acc_checksum": "90",
+  "dbchongqihs5.acc_unknown_1": "1003",
+  "dbchongqihs5.acc_unknown_2": "8",
+  "dbchongqihs5.acc_acceleration": "1565.0",
+  "dbchongqihs5.acc_status": "14",
+  "dbchongqihs5.acc_unknown_3": "1",
+  "dbchongqihs5.acc_counter": "12"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/hongqi_hs5.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 21dbaa15ad562b57ade34828e1acef9a3099a433898c4090ac7b17c93c8ffe43), message ACC (frame id 272) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}

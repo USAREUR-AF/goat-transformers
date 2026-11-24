@@ -1,0 +1,14 @@
+{
+ "name": "golden-00736-tcu-data2",
+ "from": "dbc-opel-omega-2001",
+ "to": "dbc-opel-omega-2001",
+ "input": "e0020000080000000000005a0023eb00",
+ "expect": "e0020000080000000000005a0023eb00",
+ "model": {
+  "@kind": "tcu_data2",
+  "dbcopelomega2001.tcu_data2_tot": "50.0",
+  "dbcopelomega2001.tcu_data2_inputshaftspeed": "9195"
+ },
+ "source": "cantools 45.1.1: opendbc/dbc/opel_omega_2001.dbc at 79ddcc7bb72d557fc5b20d038c0fad9c9d423446 (SHA-256 fc06200b5c9c712648281893b3e96ddd1bd2ef9315d1800a0d0713ae358c0345), message TCU_Data2 (frame id 736) encoded from raw signal values and decoded with scaling and value tables. Written by tools/gen/golden-cantools.py; no engine is run.",
+ "reference": "The frame is a Linux struct can_frame (can_id little-endian, len, three zero bytes, eight data bytes, the unused ones zero); model values are cantools' physical values (raw x scale + offset) or the DBC value table's text, under the pack's keys."
+}
