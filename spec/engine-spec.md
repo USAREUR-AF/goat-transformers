@@ -6002,9 +6002,21 @@ number in brackets).
 20. **The largest product** is 2^63: the greatest `codenum` value is then
     2^63 − 1.
 
+21. **A bare `code`, `codestr` or `codenum`** without a colon is an empty list
+    (ruling 15): `bad-directive` after the file.
+22. **`absent` on `json`** keeps the forms of 0.9: `absent 5` is the number 5
+    and does not match the member `"5"`; `absent =5` is the text.
+23. **`geojson` coordinates.** `codestr` and `codenum` on a `geometry.*`
+    locator are `bad-directive` after the file. Inside a group body such a
+    locator is a member path (0.9 ruling 25) and loads.
+24. **Widths and places.** A width may have leading zeros (0.11 ruling 2b). The
+    `2^width` limit on the number of characters applies on `bits` only (ruling
+    14). A `charset` after a group with item kinds, before the first message
+    `kind`, loads. The limit of 2^63 applies on every wire.
+
 ### Stated, not yet pinned by a vector
 
-21. `code` under `msb-lsb` with a `len` that is not a multiple of 8, for
+25. `code` under `msb-lsb` with a `len` that is not a multiple of 8, for
     conversion; `stop` and `until:` with `code` (`bad-directive`, 0.22).
 
 ## Vector additions
