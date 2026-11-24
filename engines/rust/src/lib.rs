@@ -8,6 +8,8 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt;
 
+mod charset;
+pub use charset::CodeSeq;
 #[cfg(test)]
 mod cpu_clock;
 mod exact;
@@ -173,6 +175,14 @@ pub enum Transform {
     CborBytes,
     /// cbor: an integer of seconds since 1970 as `time_ms`
     EpochS,
+    // engine-spec v0.46: a sequence of the pack's character sets, which the
+    // field line holds (`FieldDef::code`)
+    /// bits: the codes as text
+    Code,
+    /// xml, json, geojson, text: the characters as text
+    Codestr,
+    /// bits, xml, json, geojson, text: the mixed-radix number of the codes
+    Codenum,
 }
 
 /// The character set of `chars:<set>` (engine-spec v0.15).
@@ -306,9 +316,18 @@ impl Transform {
             "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale",
             // engine-spec v0.28
             "text", "bytes", "epoch_s",
+            // engine-spec v0.46
+            "code", "codestr", "codenum",
         ];
         if !NAMES.contains(&head) {
             return err(format!("unknown-transform: `{}` is not a transform", head));
+        }
+        // every check of their list is after the file (ruling 15 of 0.46)
+        match head {
+            "code" => return Ok(Transform::Code),
+            "codestr" => return Ok(Transform::Codestr),
+            "codenum" => return Ok(Transform::Codenum),
+            _ => {}
         }
         let params = |what: &str| err(format!("bad-directive: the parameters of transform `{}` are not valid: {}", name, what));
         if head == "linscale" {
@@ -452,7 +471,9 @@ impl Transform {
             | Transform::Chars(_)
             | Transform::Octal
             | Transform::CborText
-            | Transform::CborBytes => KeyType::Str,
+            | Transform::CborBytes
+            | Transform::Code
+            | Transform::Codestr => KeyType::Str,
             Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => KeyType::Float,
             Transform::IntW(_) | Transform::HmsDmy(_) => KeyType::Int,
             Transform::Float
@@ -480,7 +501,8 @@ impl Transform {
             | Transform::Siscale(_)
             | Transform::Smag
             | Transform::TextIscale(_)
-            | Transform::EpochS => KeyType::Int,
+            | Transform::EpochS
+            | Transform::Codenum => KeyType::Int,
         }
     }
 
@@ -506,6 +528,8 @@ impl Transform {
                 | Transform::Chars(_)
                 | Transform::Octal
                 | Transform::Hex
+                | Transform::Code
+                | Transform::Codenum
         )
     }
 
@@ -747,7 +771,11 @@ impl Transform {
             | Transform::Chars(_)
             | Transform::Octal
             | Transform::CborText
-            | Transform::CborBytes => JsonKind::StringK,
+            | Transform::CborBytes
+            // a string, `codenum` included (ruling 11 of 0.46)
+            | Transform::Code
+            | Transform::Codestr
+            | Transform::Codenum => JsonKind::StringK,
             Transform::TextIscale(_) => JsonKind::ExactK,
             Transform::Float
             | Transform::TextScale(_)
@@ -1728,6 +1756,9 @@ pub struct FieldDef {
     /// `stop <code>` (engine-spec v0.22): the text of a fixed-size `chars`
     /// field ends at the first character of this code
     pub stop: Option<u32>,
+    /// `code`, `codestr`, `codenum` (engine-spec v0.46): the character sets,
+    /// one per position
+    pub code: Option<std::sync::Arc<CodeSeq>>,
 }
 
 /// One gate block `if [!]<locator> <value>[,…]` … `end` of a fixed-layout
@@ -2506,6 +2537,8 @@ impl Pack {
         // hold, and the `ext` and `choice` blocks open (all refused once the
         // file is read: this pack is not sequential)
         let mut encoding_lines = uper::EncodingLines::default();
+        // engine-spec v0.46: `charset`
+        let mut charset_lines = charset::CharsetLines::default();
         let mut uper_line: Option<usize> = None;
         let mut uper_open = 0usize;
         for (lineno, raw) in text.lines().enumerate() {
@@ -2575,6 +2608,7 @@ impl Pack {
                 }
                 "armor" => armor_lines.record(&toks, ln, !kinds.is_empty()),
                 "encoding" => encoding_lines.record(&toks, ln, !kinds.is_empty()),
+                "charset" => charset_lines.record(&toks, ln, !kinds.is_empty()),
                 d @ ("ext" | "choice" | "alt") => {
                     uper_line.get_or_insert(ln);
                     if d != "alt" {
@@ -2876,6 +2910,7 @@ impl Pack {
                         with: None,
                         until: None,
                         stop: None,
+                        code: CodeSeq::of(&toks[3]),
                     };
                     // options after the transform, in any order (engine-spec v0.6)
                     field_options(&mut f, &toks, ln, true)?;
@@ -3143,6 +3178,20 @@ impl Pack {
         if let Some(ln) = uper_line {
             return bad(ln, "`ext`, `choice` and `alt` are lines of a pack with `encoding uper`");
         }
+        // engine-spec v0.46: the sets, then the transforms that name them
+        let sets = charset_lines.check(wire)?;
+        let conf = if wire == Wire::Text { Some(&text_conf) } else { None };
+        let give = |f: &mut FieldDef| charset::resolve(f, &sets, fixed_bits_len(wire, f).map(u64::from), conf);
+        fields.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.fields.iter_mut())).try_for_each(give)?;
+        let mut given: Result<(), Error> = Ok(());
+        for g in groups.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.groups.iter_mut())) {
+            g.walk_mut(&mut |g| {
+                if given.is_ok() {
+                    given = g.fields.iter_mut().try_for_each(give);
+                }
+            });
+        }
+        given?;
         let distribution = distribution.ok_or(Error {
             msg: format!("missing-distribution: pack `{}` has no `distribution`", format),
         })?;
@@ -3888,6 +3937,8 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                 | Transform::Sixbit
                 // `hex` is a tlv transform too (engine-spec v0.13, v0.22)
                 | Transform::Hex
+                // a transform of the text wires too (engine-spec v0.46)
+                | Transform::Codenum
         );
     if v015_bits && wire != Wire::Bits {
         return bad(f.line, format!("the transform of `{}` is valid only on a bits wire", f.model_key));
@@ -3911,6 +3962,8 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                     | Transform::Iso8601S
                     | Transform::TextScale(_)
                     | Transform::TextIscale(_)
+                    | Transform::Codestr
+                    | Transform::Codenum
             )
         }
         Wire::Bits => t.is_bits(),
@@ -3941,6 +3994,8 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                     | Transform::Bool
                     | Transform::TextScale(_)
                     | Transform::TextIscale(_)
+                    | Transform::Codestr
+                    | Transform::Codenum
             ) {
                 return bad(f.line, format!("transform of `{}` is not valid on the json wire", f.model_key));
             }
@@ -5824,7 +5879,7 @@ pub mod xml {
                     Loc::Text => n.text.clone(),
                 };
                 if let Some(r) = raw {
-                    d.put(p, f, f.transform.decode(&r));
+                    d.put(p, f, charset::decode_field(f, &r));
                 }
             }
         }
@@ -5946,7 +6001,7 @@ pub mod xml {
             };
             let raw = p
                 .to_wire(f, v)
-                .and_then(|w| f.transform.encode(&w))
+                .and_then(|w| charset::encode_field(f, &w))
                 .map_err(|e| transform_encode_err(p, f, e))?;
             lines.push((f.line, Line::Value(&f.locator, raw, false)));
         }
@@ -7131,13 +7186,18 @@ pub mod geojson {
                 continue;
             }
             if let Some(j) = member {
+                // engine-spec v0.46, ruling 11: the member must be a string
+                if let Some(r) = charset::decode_json(f, j) {
+                    d.put(p, f, r);
+                    continue;
+                }
                 if let Some(r) = json::decode_scale(&f.transform, j, &texts) {
                     d.put(p, f, r);
                     continue;
                 }
             }
             if let Some(r) = member.map(json_scalar_string) {
-                d.put(p, f, f.transform.decode(&r));
+                d.put(p, f, charset::decode_field(f, &r));
             }
         }
         // groups: a `properties.<name>` or top-level member whose value is an array
@@ -7222,7 +7282,7 @@ pub mod geojson {
             };
             let jv = p
                 .to_wire(f, v)
-                .and_then(|w| value_to_json(&f.transform, &w))
+                .and_then(|w| charset::encode_json(f, &w).unwrap_or_else(|| value_to_json(&f.transform, &w)))
                 .map_err(|e| transform_encode_err(p, f, e))?;
             lines.push((f.line, &f.locator, jv, false));
         }
@@ -7416,7 +7476,7 @@ pub mod jsonwire {
                 Some(j) if json_absent(f, j) => texts.mark(j),
                 Some(j) => {
                     texts.mark(j);
-                    d.put(p, f, dec(&f.transform, j, texts))
+                    d.put(p, f, charset::decode_json(f, j).unwrap_or_else(|| dec(&f.transform, j, texts)))
                 }
             }
         }
@@ -7570,7 +7630,7 @@ pub mod jsonwire {
             let scalar = body.fields.iter().filter(|f| f.locator == ".").find_map(|f| body.value_of(item, f).map(|v| (f, v)));
             out.push(match scalar {
                 Some((f, v)) => {
-                    p.to_wire(f, v).and_then(|w| enc(&f.transform, &w)).map_err(|e| transform_encode_err(p, f, e))?
+                    p.to_wire(f, v).and_then(|w| charset::encode_json(f, &w).unwrap_or_else(|| enc(&f.transform, &w))).map_err(|e| transform_encode_err(p, f, e))?
                 }
                 None => {
                     // an item with no members written is `{}`
@@ -7603,7 +7663,7 @@ pub mod jsonwire {
                 None => None,
                 Some(v) => Some(
                     p.to_wire(f, v)
-                        .and_then(|w| enc(&f.transform, &w))
+                        .and_then(|w| charset::encode_json(f, &w).unwrap_or_else(|| enc(&f.transform, &w)))
                         .map_err(|e| transform_encode_err(p, f, e))?,
                 ),
             };
@@ -7920,6 +7980,9 @@ pub mod bits {
             if f.swap {
                 rawv = swap_bytes(rawv, len);
             }
+            if let Some(q) = &f.code {
+                return q.decode_raw(f.transform, rawv);
+            }
             f.transform.decode_bits(rawv, len)
         }
     }
@@ -8008,7 +8071,11 @@ pub mod bits {
                 _ => return Err(fail(format!("`{}` is not {} hex digits", text, digits))),
             }
         } else {
-            let mut rawv = f.transform.encode_bits(v, len).map_err(|e| transform_encode_err(p, f, e))?;
+            let mut rawv = match &f.code {
+                Some(q) => q.encode_raw(f.transform, v),
+                None => f.transform.encode_bits(v, len),
+            }
+            .map_err(|e| transform_encode_err(p, f, e))?;
             if f.swap {
                 rawv = swap_bytes(rawv, len);
             }
@@ -9378,6 +9445,9 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     // line check; the rest of the line is checked after the file is read, and
     // it may stand before the `wire` line
     ("armor", 1, 1),
+    // engine-spec v0.46: `charset <name> <characters> [<width>]`; the rest of
+    // the line is checked after the file is read
+    ("charset", 2, 3),
     // engine-spec v0.18: `element <path>`; its wire and its path are checked
     // after the file is read
     ("element", 1, 1),
@@ -9539,6 +9609,7 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     with: None,
                     until: None,
                     stop: None,
+                    code: CodeSeq::of(&toks[3]),
                 };
                 field_options_at(&mut f, &toks, ln, true, false)?;
                 if let Some(w) = wire {
