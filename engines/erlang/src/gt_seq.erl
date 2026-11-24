@@ -1154,6 +1154,7 @@ case_index(Case, Cases) ->
 eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With, SExt} = L, _Rest, Src, #e{pack = Pack, wrote = Wrote} = E) ->
     %% a line suppressed by `with` (0.18) is a line whose key is absent and
     %% has no default: it writes what ruling 1 of 0.19 states for the locator
+    default_check(L, Src, Pack),
     Pieces = case pick(candidates(Keys, With, Src), Src) of
                  none -> uabsent(Loc);          % ruling 1 of 0.19
                  {Key, Via, Val} ->
@@ -1213,6 +1214,7 @@ eline({sfield, _, {until, _}, {chars, Set}, _, _, _, _, _, _SExt} = L, _Rest, Sr
         false -> E1
     end;
 eline({sfield, Keys, Len, _, _, _, _, _, With, _SExt} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
+    default_check(L, Src, Pack),
     {Bits, Raw} = field_bits(L, Src, Pack),
     E1 = held(Keys, With, Src, Len, emit(Len, Bits, E)),
     case maps:get(has_switch, Pack, false) of
@@ -1860,6 +1862,18 @@ item_scope(Item, #{lines := Common, defaults := Defaults, kinds := Kinds}, Pack)
 %% belongs to the key of its field line, not to an `also` key.
 wopts([{Key, _} | _], Key, Via, SExt) -> {Via, false, false, false, none, none, SExt};
 wopts(_, _, Via, _) -> {Via, false, false, false, none, none}.
+
+%% Ruling 9 of 0.56: the default of a line's own key, when the scope does
+%% not hold the key, is checked against the line's `range` also where a held
+%% `also` key supplies the bits. A line `with` suppresses is not checked.
+default_check({sfield, [{Key, _} = Own | _] = Keys, _, _, LenT, _, _, _, With, #{range := _} = SExt},
+              #{model := Model, defaults := Defaults} = Src, Pack) ->
+    case {maps:is_key(Key, Model), maps:find(Key, Defaults), candidates(Keys, With, Src)} of
+        {false, {ok, V}, [Own | _]} ->
+            gt_engine:range_check(Pack, Key, LenT, wopts(Keys, Key, none, SExt), V);
+        _ -> ok
+    end;
+default_check(_, _, _) -> ok.
 
 %% Is the raw value a sentinel: exact (0.9) or a range (0.56)?
 seq_sentinel(U, Absent, SExt) ->

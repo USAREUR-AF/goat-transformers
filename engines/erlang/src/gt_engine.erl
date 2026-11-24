@@ -49,7 +49,7 @@
          key_value/6, part_groups/1, part_token/3,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4,
          holds/3, line_value/3, req_holds/3,
-         inner_pack/3, inner_apart/4, run_mode/0, run_passed/0, run_messages/3, decode_inner/2, encode_inner/2, pass/1, inner_end/3, range_sentinel/2]).
+         inner_pack/3, inner_apart/4, run_mode/0, run_passed/0, run_messages/3, decode_inner/2, encode_inner/2, pass/1, inner_end/3, range_sentinel/2, range_check/5]).
 %% the transforms of the bits wire, which the tlv wire uses too
 -if(?W_BITS orelse ?W_TLV).
 -export([bits_decode/4, bits_encode/4]).
@@ -843,6 +843,16 @@ range_of(Opts, Key, #{key_types := KeyTypes}) when tuple_size(Opts) >= 7 ->
         _ -> none
     end;
 range_of(_, _, _) -> none.
+
+%% Refuse a value outside the `range` of a line (0.56) whose bits another
+%% key's value stands in.
+range_check(Pack, Key, LocT, Opts, V) ->
+    case range_of(Opts, Key, Pack) of
+        none -> ok;
+        Range ->
+            _ = guard_encode(Pack, Key, LocT, fun() -> range_value(Range, V, Pack, Key) end),
+            ok
+    end.
 
 %% A held value through the field's `range` (0.56), before `via` and the
 %% transform: refused outside [min, max], or wrapped into [min, max).
@@ -3348,8 +3358,12 @@ text_plan(Lines0, Fixed, Parts, {Value, Lists, Held} = Src, Pack, RenderField, R
     %% value: a held key, a default or a sentinel (ruling 1)
     Sentineled = maps:from_list([{Loc, true} || {field, K, Loc, _, _, {_, _, _, _, [_ | _], _, _}} <- Lines,
                                                 Value(K) =:= error]),
+    %% or a group that writes its list, whichever line comes first
+    Grouped = maps:from_list([{Loc, true} || {group, List, Loc, _, _, _} <- Lines,
+                                             maps:is_key(List, Lists)]),
     NullOk = fun(Loc, Opts) ->
                      maps:is_key(null, element(7, Opts)) andalso not maps:is_key(Loc, Valued)
+                         andalso not maps:is_key(Loc, Grouped)
                          andalso not maps:is_key(Loc, Sentineled)
              end,
     {Ops, _} =
