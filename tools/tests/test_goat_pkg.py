@@ -276,9 +276,17 @@ class Plan(PkgCase):
                         self.assertNotIn("darwin-musl", command)
 
     def test_a_named_pack_that_does_not_load_with_its_modules_is_refused(self):
-        self.tree.write("packs/alpha/pack.def", FILES["packs/alpha/pack.def"] + "uses absent\n")
+        # a key its modules do not declare: the pack is in a profile, and fails at load
+        self.tree.write("packs/alpha/pack.def", FILES["packs/alpha/pack.def"] + "field nosuchkey k string\n")
         err = self.refused("plan", "--formats", "alpha")
-        self.assertIn("error: the named packs do not load: unknown-module", err)
+        self.assertIn("error: the named packs do not load: undeclared-key", err)
+
+    def test_a_named_pack_that_uses_a_missing_module_is_in_no_profile(self):
+        # spec 0.93 ruling 2: for a tool, a pack whose uses names no module file has the profile none
+        self.tree.write("packs/alpha/pack.def", FILES["packs/alpha/pack.def"] + "uses absent\n")
+        for profile in ("open", "everything"):
+            err = self.refused("plan", "--formats", "alpha", "--profile", profile)
+            self.assertIn("packs/alpha, uses module absent, which no module file names", err)
 
     def test_a_pack_that_does_not_parse_is_not_available(self):
         self.tree.write("packs/alpha/pack.def", "format alpha\nno-such-directive 1\n")
