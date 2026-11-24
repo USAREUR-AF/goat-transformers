@@ -2396,8 +2396,9 @@ end
     load("ruling-13-before-the-wire-line-a-line-check", head + "length @w units 8\nend\nwire bits\n"
          "layout sequential\nbogus\n", "missing-wire")
     load("ruling-13-before-the-layout-line", head + "wire bits\nlength @w units 8\nend\nlayout sequential\n")
-    load("ruling-13-before-the-layout-line-a-line-check", head + "wire bits\nlength @w units 8\nend\n"
-         "layout sequential\nbogus\n")
+    # 8395 is taken out and its number is not reused: the text does not pin whether a line
+    # before `layout sequential` is refused as it is read or after the file (0.11 5b)
+    lnum[0] += 1
     # 0.21 ruling 9: the outer reference is complete, so only the boundary is wrong
     load("across-a-group-body-beside-a-reference", seq + at + "group probe.recs count 8\n  length @w units 8\n"
          "    field probe.y 8 uint\n  end\nend\n")
