@@ -1,0 +1,20 @@
+{
+ "name": "golden-gga-3",
+ "from": "nmea0183",
+ "to": "nmea0183",
+ "input": "$GPGGA,000000.00,4042.76652,N,07400.35837,W,2,09,1.50,234.4,M,-12.5,M,,*61",
+ "expect": "$GPGGA,000000.00,4042.76652,N,07400.35837,W,2,09,1.50,234.4,M,-12.5,M,,*61",
+ "model": {
+  "@kind": "gga",
+  "nmea0183.talker": "GP",
+  "lat": "40.71277533333333",
+  "lon": "-74.00597283333333",
+  "nmea0183.quality": "2",
+  "nmea0183.sats_used": "9",
+  "nmea0183.hdop": "1.5",
+  "nmea0183.alt_msl_m": "234.4",
+  "nmea0183.geoid_sep_m": "-12.5"
+ },
+ "source": "pynmea2 1.19.0: pynmea2.GGA('GP', 'GGA', fields).render, then pynmea2.parse of that sentence for the model values. Written by tools/gen/golden-pynmea2.py; no engine is run.",
+ "reference": "NMEA 0183 GGA as pynmea2 reads it: latitude and longitude from ddmm.mmmmm and dddmm.mmmmm with the hemisphere, time from hhmmss.ss. Field text is written in the pack's canonical forms (packs/nmea0183/pack.def), so the sentence round-trips unchanged."
+}

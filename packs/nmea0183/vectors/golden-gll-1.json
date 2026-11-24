@@ -1,0 +1,17 @@
+{
+ "name": "golden-gll-1",
+ "from": "nmea0183",
+ "to": "nmea0183",
+ "input": "$GPGLL,4807.50740,N,01134.94074,E,094512.50,A,D*66",
+ "expect": "$GPGLL,4807.50740,N,01134.94074,E,094512.50,A,D*66",
+ "model": {
+  "@kind": "gll",
+  "nmea0183.talker": "GP",
+  "lat": "48.125123333333335",
+  "lon": "11.582345666666667",
+  "nmea0183.status": "A",
+  "nmea0183.faa_mode": "D"
+ },
+ "source": "pynmea2 1.19.0: pynmea2.GLL('GP', 'GLL', fields).render, then pynmea2.parse of that sentence for the model values. Written by tools/gen/golden-pynmea2.py; no engine is run.",
+ "reference": "NMEA 0183 GLL as pynmea2 reads it: latitude and longitude from ddmm.mmmmm and dddmm.mmmmm with the hemisphere, time from hhmmss.ss. Field text is written in the pack's canonical forms (packs/nmea0183/pack.def), so the sentence round-trips unchanged."
+}

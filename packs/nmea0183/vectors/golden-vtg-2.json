@@ -1,0 +1,18 @@
+{
+ "name": "golden-vtg-2",
+ "from": "nmea0183",
+ "to": "nmea0183",
+ "input": "$GNVTG,160.00,T,155.75,M,14.625,N,27.085,K,A*35",
+ "expect": "$GNVTG,160.00,T,155.75,M,14.625,N,27.085,K,A*35",
+ "model": {
+  "@kind": "vtg",
+  "nmea0183.talker": "GN",
+  "course": "160.0",
+  "nmea0183.course_mag_deg": "155.75",
+  "nmea0183.sog_kn": "14.625",
+  "nmea0183.sog_kmh": "27.085",
+  "nmea0183.faa_mode": "A"
+ },
+ "source": "pynmea2 1.19.0: pynmea2.VTG('GN', 'VTG', fields).render, then pynmea2.parse of that sentence for the model values. Written by tools/gen/golden-pynmea2.py; no engine is run.",
+ "reference": "NMEA 0183 VTG as pynmea2 reads it: latitude and longitude from ddmm.mmmmm and dddmm.mmmmm with the hemisphere, time from hhmmss.ss. Field text is written in the pack's canonical forms (packs/nmea0183/pack.def), so the sentence round-trips unchanged."
+}

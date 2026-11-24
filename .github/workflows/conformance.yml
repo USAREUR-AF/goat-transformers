@@ -102,6 +102,11 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/pymavlink"
           "$RUNNER_TEMP/pymavlink/bin/pip" install --quiet --disable-pip-version-check pymavlink==2.4.50
           "$RUNNER_TEMP/pymavlink/bin/python" -I tools/gen/golden-pymavlink.py --check
+      - name: NMEA 0183 golden vectors are what pynmea2 writes
+        run: |
+          python3 -m venv "$RUNNER_TEMP/pynmea2"
+          "$RUNNER_TEMP/pynmea2/bin/pip" install --quiet --disable-pip-version-check pynmea2==1.19.0
+          "$RUNNER_TEMP/pynmea2/bin/python" -I tools/gen/golden-pynmea2.py --check
   rust:
     runs-on: ubuntu-latest
     # The suite (every vector, the fuzz run, the reduced builds, the benchmark)
