@@ -1,0 +1,16 @@
+{
+ "name": "golden-auth-page-2",
+ "from": "remote-id",
+ "to": "remote-id",
+ "input": "223f0000000000000000000000000000000000000000000001",
+ "expect": "223f0000000000000000000000000000000000000000000001",
+ "model": {
+  "@kind": "auth-page",
+  "rid.msg_type": "2",
+  "rid.auth_type": "3",
+  "rid.auth_data_page": "15",
+  "rid.auth_data_last": "1"
+ },
+ "source": "opendroneid-core-c commit 849c03adbe0cdd68997a462fafab397edcfe53f3, libopendroneid/opendroneid.c: encoded and then decoded by the library. Written by tools/gen/golden-opendroneid.py; no engine is run.",
+ "reference": "The bytes are the library's encoder's and the values its decoder's. Only the last data byte is set, the one the pack maps."
+}

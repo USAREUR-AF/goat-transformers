@@ -1,0 +1,31 @@
+{
+ "name": "golden-location-4",
+ "from": "remote-id",
+ "to": "remote-id",
+ "input": "121600ff854fe455dff9cb49d7af040308bb07551150460500",
+ "expect": "121600ff854fe455dff9cb49d7af040308bb07551150460500",
+ "model": {
+  "@kind": "location",
+  "rid.msg_type": "1",
+  "rid.status": "1",
+  "rid.direction_raw": "0",
+  "rid.ew_direction": "1",
+  "rid.speed_h_raw": "255",
+  "rid.speed_mult": "0",
+  "rid.speed_v": "-61.5",
+  "lat": "-54.8019121",
+  "lon": "-68.3029511",
+  "rid.alt_baro": "-400.5",
+  "hae": "25.5",
+  "rid.height_type": "1",
+  "rid.height": "-10.5",
+  "rid.horiz_acc": "5",
+  "rid.vert_acc": "5",
+  "rid.baro_acc": "1",
+  "rid.speed_acc": "1",
+  "rid.ts_acc": "5",
+  "rid.timestamp_ds": "18000"
+ },
+ "source": "opendroneid-core-c commit 849c03adbe0cdd68997a462fafab397edcfe53f3, libopendroneid/opendroneid.c: encoded and then decoded by the library. Written by tools/gen/golden-opendroneid.py; no engine is run.",
+ "reference": "The bytes are the library's encoder's and the values its decoder's. The integers direction_raw, ew_direction, speed_h_raw, speed_mult and timestamp_ds are the fields of its encoded struct."
+}

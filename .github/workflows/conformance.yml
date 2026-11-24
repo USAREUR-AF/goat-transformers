@@ -114,6 +114,10 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/cantools"
           "$RUNNER_TEMP/cantools/bin/pip" install --quiet --disable-pip-version-check cantools==45.1.1
           "$RUNNER_TEMP/cantools/bin/python" -I tools/gen/golden-cantools.py --check --cache "$RUNNER_TEMP/dbc-cache"
+      # opendroneid.c and .h are fetched at the commit the remote-id pack names
+      # and refused unless their SHA-256 is the one its PROVENANCE.md records.
+      - name: Remote ID golden vectors are what opendroneid-core-c writes
+        run: python3 -I tools/gen/golden-opendroneid.py --check
   rust:
     runs-on: ubuntu-latest
     # The suite (every vector, the fuzz run, the reduced builds, the benchmark)

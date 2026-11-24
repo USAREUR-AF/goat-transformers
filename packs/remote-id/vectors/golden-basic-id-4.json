@@ -1,0 +1,17 @@
+{
+ "name": "golden-basic-id-4",
+ "from": "remote-id",
+ "to": "remote-id",
+ "input": "02163141000000000000000000000000000000000000000000",
+ "expect": "02163141000000000000000000000000000000000000000000",
+ "model": {
+  "@kind": "basic-id",
+  "rid.msg_type": "0",
+  "rid.proto_version": "2",
+  "rid.ua_type": "6",
+  "rid.id_type": "1",
+  "uid": "1A"
+ },
+ "source": "opendroneid-core-c commit 849c03adbe0cdd68997a462fafab397edcfe53f3, libopendroneid/opendroneid.c: encoded and then decoded by the library. Written by tools/gen/golden-opendroneid.py; no engine is run.",
+ "reference": "The bytes are the library's encoder's and the values its decoder's."
+}
