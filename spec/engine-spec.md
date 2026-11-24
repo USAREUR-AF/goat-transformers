@@ -7761,7 +7761,9 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    10), of an `if`, `opt` or `chain` block that is not written, of a case not
    selected or of a kind not selected is not reached: no error, no wrap. A
    pass that ruling 34 of 0.20 discards reports nothing. Presence bits (0.8)
-   and opened blocks (0.17) are computed as if there were no `range`. A held
+   and opened blocks (0.17) are computed as if there were no `range`. A
+   `switch` key (0.20) that wraps is predicted (its ruling 37) and read back as
+   wrapped. A held
    key mapped only in blocks not held stays step 6 of 0.17.
 10. **A wrap whose arithmetic does not land in the interval.** A value inside
    the interval is unchanged and no arithmetic is done. For a value outside

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-switch-key-is-predicted-as-wrapped",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-11",
+  "input": "{\"y\":7}",
+  "expect": "800207",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9; 0.20 rulings 33 and 37: probe.x is absent, its line would write its default 12, wrapped to 2, so case 2 is predicted; probe.y is held under if p.1, so p.1 is 1 (80), x is written 02, which selects case 2, and y is 07. Predicting 12 would settle on else and 00."
+}
