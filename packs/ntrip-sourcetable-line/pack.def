@@ -10,6 +10,7 @@ delimiter     ";"
 
 kind  str
 when  0  STR
+requires  ntrip.mountpoint
 field  ntrip.mountpoint  1  string
 field  ntrip.str_identifier  2  string
 field  ntrip.format  3  string
@@ -31,6 +32,7 @@ field  ntrip.str_misc  18  string
 
 kind  cas
 when  0  CAS
+requires  ntrip.host  ntrip.port
 field  ntrip.host  1  string
 field  ntrip.port  2  int
 field  ntrip.cas_identifier  3  string
@@ -45,6 +47,7 @@ field  ntrip.cas_misc  11  string
 
 kind  net
 when  0  NET
+requires  ntrip.net_identifier
 field  ntrip.net_identifier  1  string
 field  ntrip.net_operator  2  string
 field  ntrip.net_authentication  3  string
@@ -56,3 +59,5 @@ field  ntrip.net_misc  8  string
 
 kind  end
 when  0  ENDSOURCETABLE
+requires  ntrip.record_type=ENDSOURCETABLE
+field  ntrip.record_type  0  string

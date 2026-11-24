@@ -1,0 +1,9 @@
+{
+ "name": "to-rtcp-header-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "rtcp-header",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "RFC 3550 section 6: the packet type is in every packet; an entity with only a uid holds none of them"
+}

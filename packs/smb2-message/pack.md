@@ -55,3 +55,8 @@ more processing required; TREE_CONNECT request and response; CREATE request and 
 an async pending response; a signed LOGOFF; a READ as octets; a transform header; SMB1 (`no-kind`); a cut
 header (`malformed-wire`); READ, QUERY_INFO and IOCTL responses with STATUS_BUFFER_OVERFLOW; a CHANGE_NOTIFY response
 with STATUS_NOTIFY_ENUM_DIR; and two responses with those statuses for other commands, read as errors.
+
+## Kind on encode from another format
+
+Each kind requires the header fields it always has.
+An entity that fits no kind is `no-kind`.

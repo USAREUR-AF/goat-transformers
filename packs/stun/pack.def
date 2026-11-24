@@ -13,6 +13,7 @@ bit_order     msb
 
 kind    message
 when    2  0
+requires  stun.message_type  stun.magic_cookie  stun.transaction_id
 field  stun.message_type  14  uint
 length  16  bytes  plus  -16
   field  stun.magic_cookie  32  uint
@@ -92,6 +93,7 @@ end
 
 kind    channel_data
 when    2  1
+requires  stun.channel_low
 field  stun.channel_low  14  uint
 length  16  bytes
   group  stun.data  rest

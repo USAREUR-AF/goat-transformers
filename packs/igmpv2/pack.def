@@ -17,15 +17,23 @@ field  inet.igmp_group_addr         0:32:32    uint
 
 kind      membership-query
 when      0:0:8  17
+requires  inet.igmp_type=17 inet.igmp_max_resp_time inet.igmp_checksum inet.igmp_group_addr
+field  inet.igmp_type               0:0:8      uint
 
 kind      v2-membership-report
 when      0:0:8  22
+requires  inet.igmp_type=22 inet.igmp_max_resp_time inet.igmp_checksum inet.igmp_group_addr
+field  inet.igmp_type               0:0:8      uint
 
 kind      leave-group
 when      0:0:8  23
+requires  inet.igmp_type=23 inet.igmp_max_resp_time inet.igmp_checksum inet.igmp_group_addr
+field  inet.igmp_type               0:0:8      uint
 
 kind      v1-membership-report
 when      0:0:8  18
+requires  inet.igmp_type=18 inet.igmp_max_resp_time inet.igmp_checksum inet.igmp_group_addr
+field  inet.igmp_type               0:0:8      uint
 
 kind      other
 requires  inet.igmp_type

@@ -40,3 +40,8 @@ None. The timestamp counts microseconds from the socket's creation, not a date.
 `tools/gen/media-vectors.py`, without an engine: data; an induction handshake; a conclusion
 handshake with HSREQ and a stream ID; ACK; NAK; ACKACK; drop request; keep-alive; a cut handshake
 (`malformed-wire`).
+
+## Kind on encode from another format
+
+Each kind requires the header fields it always has.
+An entity that fits no kind is `no-kind`.

@@ -27,3 +27,9 @@ None.
 `tools/gen/media-vectors.py`, without an engine: an open of a reliable channel, an open of a
 partially reliable unordered channel, an ack, an unknown type (`no-kind`), a cut label
 (`malformed-wire`).
+
+## Kind on encode from another format
+
+The kind is the one whose value `dcep.message_type` holds (the message type, `when ... as`), and
+its `requires` line names the fields that kind always has.
+An entity that fits no kind is `no-kind`.

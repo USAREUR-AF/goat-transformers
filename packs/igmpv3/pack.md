@@ -73,13 +73,14 @@ the meaning RFC 2236 gives them.
 | Kind | `when` | Requires |
 |---|---|---|
 | `v3-membership-report` | type 0x22 | `inet.igmp3_group_records` |
-| `membership-query` | type 0x11 | |
+| `membership-query` | type 0x11 | `inet.igmp_type=17` and the fixed fields of the query |
 
 The version 1 and 2 messages (0x12, 0x16, 0x17) are `no-kind` here (vector 09);
 the `igmpv2` pack maps them. A version 2 query (8 octets) is `malformed-wire`
 here (vector 08): the version 3 fields do not fit. On encode from another
 format a report is written when the entity has a group record list with at
-least one item, and a query otherwise.
+least one item, a query when it has type 17 and the fixed fields of a query,
+and any other entity is `no-kind`.
 
 ## Shared keys
 

@@ -219,10 +219,10 @@ def smb2_pack():
                               "NEGOTIATE, SESSION_SETUP, LOGOFF, TREE_CONNECT, TREE_DISCONNECT and CREATE requests and responses and the",
                               "error response; the SMB3 transform and compression transform headers. Little-endian. Written by",
                               "tools/gen/remote-pack.py; do not edit by hand."], "smb2", [S], order="lsb")
-    L += ["kind  smb2", "when  32  %d" % 0x424D53FE] + hdr + smb2_body() + [""]
-    L += ["kind  transform", "when  32  %d" % 0x424D53FD, F(S, "signature", 128, "hex"), F(S, "nonce", 128, "hex"), F(S, "original_message_size", 32),
+    L += ["kind  smb2", "when  32  %d" % 0x424D53FE, "requires  smb2.structure_size_header  smb2.credit_charge  smb2.status  smb2.command  smb2.credits  smb2.response  smb2.async  smb2.next_command  smb2.message_id  smb2.session_id  smb2.signature"] + hdr + smb2_body() + [""]
+    L += ["kind  transform", "when  32  %d" % 0x424D53FD, "requires  smb2.signature  smb2.nonce  smb2.original_message_size  smb2.encryption_flags  smb2.session_id", F(S, "signature", 128, "hex"), F(S, "nonce", 128, "hex"), F(S, "original_message_size", 32),
           F(S, "reserved16", 16), F(S, "encryption_flags", 16), F(S, "session_id", 64)] + octets(S, "body") + [""]
-    L += ["kind  compression-transform", "when  32  %d" % 0x424D53FC, F(S, "original_compressed_segment_size", 32),
+    L += ["kind  compression-transform", "when  32  %d" % 0x424D53FC, "requires  smb2.original_compressed_segment_size  smb2.compression_algorithm  smb2.compression_flags  smb2.offset_or_length", F(S, "original_compressed_segment_size", 32),
           F(S, "compression_algorithm", 16), F(S, "compression_flags", 16), F(S, "offset_or_length", 32)] + octets(S, "body")
     return text(L)
 

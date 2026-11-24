@@ -39,8 +39,9 @@ records are protected (TLS 1.3 section 5.2), every record has the outer type
 handshake messages, or part of one; the pack reads the header of the first.
 
 On encode from another format, the first kind whose `requires` holds is
-written: change cipher spec, alert or handshake by their keys, else
-application data.
+written: change cipher spec, alert or handshake by their keys, application
+data by content type 23, else `other`. The last two need the content type,
+version and length; an entity without them is `no-kind`.
 
 ## Shared keys
 

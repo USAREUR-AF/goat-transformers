@@ -1,0 +1,9 @@
+{
+ "name": "to-zwave-serial-frame-uid-only-is-no-kind",
+ "from": "goat-processors-report",
+ "to": "zwave-serial-frame",
+ "input": "{\"uid\":\"x\"}",
+ "expect_error": "no-kind",
+ "source": "constructed",
+ "reference": "the source pack.def names: every frame starts with its first octet; an entity with only a uid holds none of them"
+}

@@ -10,21 +10,26 @@ layout        sequential
 bit_order     msb
 
 kind  print-waiting-jobs
-when  8  1
+when  8  1  as  lpd.command_code
+requires  lpd.queue
 field  lpd.queue  until:10  chars:ascii8
 
 kind  receive-job
-when  8  2
+when  8  2  as  lpd.command_code
+requires  lpd.queue
 field  lpd.queue  until:10  chars:ascii8
 
 kind  send-queue-state-short
-when  8  3
+when  8  3  as  lpd.command_code
+requires  lpd.operands
 field  lpd.operands  until:10  chars:ascii8
 
 kind  send-queue-state-long
-when  8  4
+when  8  4  as  lpd.command_code
+requires  lpd.operands
 field  lpd.operands  until:10  chars:ascii8
 
 kind  remove-jobs
-when  8  5
+when  8  5  as  lpd.command_code
+requires  lpd.operands
 field  lpd.operands  until:10  chars:ascii8

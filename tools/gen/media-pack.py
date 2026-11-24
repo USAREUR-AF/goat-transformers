@@ -137,10 +137,10 @@ def srt_pack():
     L = head("srt-packet", ["SRT packet (draft-sharabayko-srt-01): the data packet and the control packets with the handshake",
                             "and its extensions. Public. Written by tools/gen/media-pack.py; do not edit by hand."],
              ["srt"], [s])
-    L += ["kind    data", "when    1  0", F(s, "packet_seq", 31), F(s, "position", 2), F(s, "in_order", 1),
+    L += ["kind    data", "when    1  0", "requires  srt.packet_seq  srt.position  srt.in_order  srt.key_flags  srt.retransmitted  srt.message_number  srt.timestamp  srt.dest_socket_id", F(s, "packet_seq", 31), F(s, "position", 2), F(s, "in_order", 1),
           F(s, "key_flags", 2), F(s, "retransmitted", 1), F(s, "message_number", 26), F(s, "timestamp", 32),
           F(s, "dest_socket_id", 32)] + octets(s, "payload")
-    L += ["", "kind    control", "when    1  1", F(s, "control_type", 15), F(s, "subtype", 16),
+    L += ["", "kind    control", "when    1  1", "requires  srt.control_type  srt.subtype  srt.type_specific  srt.timestamp  srt.dest_socket_id", F(s, "control_type", 15), F(s, "subtype", 16),
           F(s, "type_specific", 32), F(s, "timestamp", 32), F(s, "dest_socket_id", 32), "switch  srt.control_type",
           "  case  0                       # HANDSHAKE"] + ind(2, hs) + [
           "  case  2,3                     # ACK, NAK: 32-bit words"] + ind(2, words("cif_words")) + [
@@ -252,14 +252,15 @@ def dcep_pack():
     d = "dcep"
     L = head("dcep", ["WebRTC Data Channel Establishment Protocol message (RFC 8832): DATA_CHANNEL_OPEN and",
                       "DATA_CHANNEL_ACK. Public. Written by tools/gen/media-pack.py; do not edit by hand."], ["dcep"], [d])
-    L += ["kind    open", "when    8  3", F(d, "channel_type", 8), F(d, "priority", 16), F(d, "reliability", 32),
+    L += ["kind    open", "when    8  3  as  dcep.message_type", "requires  dcep.channel_type  dcep.priority  dcep.reliability", F(d, "channel_type", 8), F(d, "priority", 16), F(d, "reliability", 32),
           "count  label_length  16", "count  protocol_length  16", "group  dcep.label  count  @label_length",
           "  " + F(d, "octet", 8), "end", "group  dcep.protocol  count  @protocol_length", "  " + F(d, "octet", 8), "end",
-          "", "kind    ack", "when    8  2"]
+          "", "kind    ack", "when    8  2  as  dcep.message_type"]
     return "\n".join(L) + "\n"
 
 
 DCEP_KEYS = [
+    ("key", "message_type", "message type: 3 DATA_CHANNEL_OPEN, 2 DATA_CHANNEL_ACK"),
     ("key", "channel_type", "channel type: 0x00 reliable, 0x80 reliable unordered, 0x01 / 0x81 partial reliable by retransmissions, 0x02 / 0x82 partial reliable by time"),
     ("key", "priority", "priority of the channel (128 below normal, 256 normal, 512 high, 1024 extra high)"),
     ("key", "reliability", "reliability parameter: the number of retransmissions or the lifetime in milliseconds, by the channel type"),

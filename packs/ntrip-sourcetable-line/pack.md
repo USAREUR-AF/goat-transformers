@@ -38,3 +38,9 @@ None. The latitude and longitude are a stream's or caster's approximate position
 
 `tools/gen/gnss-time-vectors.py`, without an engine: a stream; a network stream that needs NMEA; a
 caster; a network; the end line; an unknown record type (`no-kind`).
+
+## Kind on encode from another format
+
+STR requires the mountpoint, CAS the host and port, NET the identifier, and the
+closing record requires `ntrip.record_type`.
+An entity that fits no kind is `no-kind`.

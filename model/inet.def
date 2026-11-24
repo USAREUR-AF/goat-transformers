@@ -138,6 +138,7 @@ key  rtp_timestamp             int     -     "sampling instant of the first payl
 key  rtp_ssrc                  int     -     "synchronization source identifier, 32 bits"
 
 # RTCP sender and receiver reports, RFC 3550 sections 6.4.1 and 6.4.2
+key  rtcp_packet_type          int     -     "packet type, in packets other than a sender report (201 to 204)"
 key  rtcp_version              int     -     "RTP version, 2"
 key  rtcp_padding              int     -     "flag: 1 = padding octets end this RTCP packet"
 key  rtcp_report_count         int     -     "number of reception report blocks in the packet, 0-31"
@@ -150,6 +151,7 @@ key  rtcp_packet_count         int     -     "sender report: RTP data packets se
 key  rtcp_octet_count          int     -     "sender report: payload octets sent since the start of transmission"
 
 # ARP for IPv4 over Ethernet, RFC 826 (and RFC 894 for the IPv4 type)
+key  arp_operation             int     -     "operation, 1 request or 2 reply"
 key  arp_sender_hw_addr        int     -     "Ethernet address of the sender, the 48-bit integer"
 key  arp_sender_ip_addr        int     -     "IPv4 address of the sender, the 32-bit integer"
 key  arp_target_hw_addr        int     -     "Ethernet address of the target, the 48-bit integer (0 when not known)"
@@ -178,7 +180,7 @@ key  mpls_bottom_of_stack      int     -     "flag: 1 = the last entry of the la
 key  mpls_ttl                  int     -     "time to live"
 
 # IGMPv2, RFC 2236 section 2
-key  igmp_type                 int     -     "message type, when it is not one of the four RFC 2236 types"
+key  igmp_type                 int     -     "message type; in IGMPv3 of a membership query"
 key  igmp_max_resp_time        int     -     "membership query: longest time before a report is sent, in tenths of a second; 0 in other messages"
 key  igmp_checksum             int     -     "ones' complement checksum of the IGMP message"
 key  igmp_group_addr           int     -     "multicast group address, the 32-bit integer (0 in a general query)"
@@ -290,6 +292,7 @@ key  dtls_seq_low              int     -     "DTLS unified header: the low 8 or 
 
 # BGP-4, RFC 4271 section 4
 key  bgp_length                int     -     "total length of the message in octets, header included, 19-4096"
+key  bgp_type                  int     -     "message type, in a KEEPALIVE (4)"
 key  bgp_version               int     -     "OPEN: BGP version, 4"
 key  bgp_my_as                 int     -     "OPEN: autonomous system number of the sender, 16 bits"
 key  bgp_hold_time             int     s     "OPEN: proposed hold time, seconds (0, or at least 3)"
@@ -300,6 +303,7 @@ key  bgp_error_code            int     -     "NOTIFICATION: error code"
 key  bgp_error_subcode         int     -     "NOTIFICATION: error subcode"
 
 # OSPFv2, RFC 2328 appendix A.3
+key  ospf_type                 int     -     "packet type, in a link state request (3) and a link state acknowledgment (5)"
 key  ospf_version              int     -     "OSPF version, 2"
 key  ospf_packet_length        int     -     "length of the packet in octets, header included"
 key  ospf_router_id            int     -     "router ID of the source, the 32-bit integer"

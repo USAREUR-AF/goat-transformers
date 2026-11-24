@@ -28,3 +28,9 @@ None.
 
 `tools/gen/printing-vectors.py`, without an engine: abort; receive control file; receive data file with a
 zero count; code 4 (`no-kind`); a control file subcommand without its name (`malformed-wire`).
+
+## Kind on encode from another format
+
+The kind is the one whose value `lpd.subcommand_code` holds (the code octet, `when ... as`), and
+its `requires` line names the fields that kind always has.
+An entity that fits no kind is `no-kind`.

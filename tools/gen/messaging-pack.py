@@ -318,7 +318,30 @@ def mqtt_pack(v5):
         ack_tail(w, short=((0, None), (1, True)))
         kind("auth", 15)
         ack_tail(w, short=((0, None), (1, True)))
-    return "\n".join(w.lines) + "\n"
+    return "\n".join(with_requires(w.lines, "mqtt.packet_type")) + "\n"
+
+
+def with_requires(lines, key):
+    """Each kind's `when` held as `key`, and `requires` with the fields the kind always has:
+    those outside every group and switch."""
+    out, at, nest = [], None, []
+    for line in lines:
+        t = line.split()
+        if line.startswith("kind"):
+            at, nest = None, []
+        out.append(line)
+        if line.startswith("when") and at is None:
+            out[-1] = line + "  as  " + key
+            out.append("requires")
+            at = len(out) - 1
+        elif t and at is not None:
+            if t[0] in ("group", "switch", "length", "if"):
+                nest.append(t[0])
+            elif t[0] == "end":
+                nest.pop()
+            elif t[0] == "field" and not nest:
+                out[at] += "  " + t[1]
+    return out
 
 
 def ack_tail(w, short):
@@ -347,6 +370,7 @@ def ack_tail(w, short):
 
 
 MQTT_KEYS = [
+    ("key", "packet_type", "int", "-", "the control packet type, 1 to 15"),
     ("key", "flags", "int", "-", "the four flag bits of the fixed header (0 or 2 by packet type; PUBLISH has its own)"),
 ] + [("key", "remaining_length_c%d" % i, "int", "-", "Remaining Length: continuation bit of octet %d (1 when another octet follows)" % i)
      for i in (1, 2, 3)] + [
@@ -497,7 +521,7 @@ def stun_pack():
                  'source        "IETF RFC 8489, Session Traversal Utilities for NAT (STUN), February 2020, https://www.rfc-editor.org/rfc/rfc8489.txt (sha256 %s); layout restated"' % SHA["rfc8489"],
                  'source        "IETF RFC 8656, Traversal Using Relays around NAT (TURN), February 2020, https://www.rfc-editor.org/rfc/rfc8656.txt (sha256 %s); layout restated"' % SHA["rfc8656"],
                  "uses          stun", "wire          bits", "layout        sequential", "bit_order     msb", "",
-                 "kind    message", "when    2  0", "field  stun.message_type  14  uint",
+                 "kind    message", "when    2  0", "requires  stun.message_type  stun.magic_cookie  stun.transaction_id", "field  stun.message_type  14  uint",
                  "length  16  bytes  plus  -16", "  field  stun.magic_cookie  32  uint",
                  "  field  stun.transaction_id  96  hex", "  group  stun.attributes  rest"]:
         w(line)
@@ -536,7 +560,7 @@ def stun_pack():
     w("end")
     w.ind = 0
     w("end")
-    for line in ["", "kind    channel_data", "when    2  1", "field  stun.channel_low  14  uint",
+    for line in ["", "kind    channel_data", "when    2  1", "requires  stun.channel_low", "field  stun.channel_low  14  uint",
                  "length  16  bytes", "  group  stun.data  rest", "    field  stun.octet  8  uint", "  end", "end"]:
         w(line)
     return "\n".join(w.lines) + "\n"

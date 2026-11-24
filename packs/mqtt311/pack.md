@@ -53,3 +53,9 @@ None: MQTT carries application messages whose content the protocol does not defi
 derives `expect` without an engine: one round trip per packet type (CONNECT with a will, user name
 and password; PUBLISH at QoS 1 and at QoS 0 with a two-octet Remaining Length; ...), packet type 0
 (`no-kind`) and a truncated PUBACK (`malformed-wire`).
+
+## Kind on encode from another format
+
+The kind is the one whose value `mqtt.packet_type` holds (the packet type, `when ... as`), and
+its `requires` line names the fields that kind always has.
+An entity that fits no kind is `no-kind`.

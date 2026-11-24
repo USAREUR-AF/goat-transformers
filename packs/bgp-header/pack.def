@@ -42,3 +42,5 @@ field  inet.bgp_error_subcode       0:160:8    uint
 
 kind      keepalive
 when      0:144:8  4
+requires  inet.bgp_type=4 inet.bgp_length
+field  inet.bgp_type               0:144:8    uint

@@ -23,7 +23,7 @@ read over and not written.
 | `open` | type 1 | 19 version, 20-21 my AS, 22-23 hold time, 24-27 BGP identifier, 28 optional parameters length | `inet.bgp_version`, `inet.bgp_my_as`, `inet.bgp_hold_time`, `inet.bgp_identifier`, `inet.bgp_opt_param_length` |
 | `update` | type 2 | 19-20 withdrawn routes length | `inet.bgp_withdrawn_routes_length` |
 | `notification` | type 3 | 19 error code, 20 error subcode | `inet.bgp_error_code`, `inet.bgp_error_subcode` |
-| `keepalive` | type 4 | none | |
+| `keepalive` | type 4 | none | `inet.bgp_type` (octet 18); `requires inet.bgp_type=4 inet.bgp_length` |
 
 `word_bytes 1`, `bit_order msb`; the fields are big-endian. The marker is four
 `when` lines because RFC 4271 requires it to be all ones; a message with

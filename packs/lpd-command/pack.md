@@ -32,3 +32,9 @@ None.
 
 `tools/gen/printing-vectors.py`, without an engine: each of the five commands (3 with a list, 4 without);
 code 6 (`no-kind`); a command without its LF (`malformed-wire`).
+
+## Kind on encode from another format
+
+The kind is the one whose value `lpd.command_code` holds (the code octet, `when ... as`), and
+its `requires` line names the fields that kind always has.
+An entity that fits no kind is `no-kind`.

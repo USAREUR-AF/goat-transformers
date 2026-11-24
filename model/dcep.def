@@ -3,6 +3,7 @@ module        dcep
 version       0.1.0
 distribution  public
 source        "IETF RFC 8832; restated by goat-transformers"
+key   message_type  int     -  "message type: 3 DATA_CHANNEL_OPEN, 2 DATA_CHANNEL_ACK"
 key   channel_type  int     -  "channel type: 0x00 reliable, 0x80 reliable unordered, 0x01 / 0x81 partial reliable by retransmissions, 0x02 / 0x82 partial reliable by time"
 key   priority      int     -  "priority of the channel (128 below normal, 256 normal, 512 high, 1024 extra high)"
 key   reliability   int     -  "reliability parameter: the number of retransmissions or the lifetime in milliseconds, by the channel type"
