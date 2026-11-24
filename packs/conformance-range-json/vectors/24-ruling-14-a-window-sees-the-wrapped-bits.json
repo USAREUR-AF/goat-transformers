@@ -1,0 +1,9 @@
+{
+  "name": "ruling-14-a-window-sees-the-wrapped-bits",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-8",
+  "input": "{\"x\":11}",
+  "expect": "01",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 14: 11 wraps to 1, written 01; the window at 0 holds 1. (Loading the pack also shows the field is fixed.)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-14-wrapped-bits-that-differ-from-the-window",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-8",
+  "input": "{\"x\":12}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 14, 0.33 Encode: 12 wraps to 2; a held key wrote bits that differ from the window value 1."
+}

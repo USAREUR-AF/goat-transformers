@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-held-block-is-checked",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-7",
+  "input": "{\"x\":50,\"y\":0}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9: probe.y 0, so the first block is held and 50 is outside 0..10."
+}

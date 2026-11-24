@@ -7650,8 +7650,8 @@ encode, the model value is checked before `via` and the transform (a value a
   `implicit` then see. For an `int` key this is exact integer arithmetic,
   without overflow (`<max> − <min>` may exceed 2^63); for
   a `float` key it is `r = x − (<max> − <min>) × floor((x − <min>) /
-  (<max> − <min>))` in doubles, and a result `r` that equals `<max>` (or is
-  below `<min>`) after rounding becomes `<min>`. A longitude of 180 in
+  (<max> − <min>))` in doubles, and a result `r` that equals `<max>` becomes
+  `<min>` (ruling 10 has the other cases). A longitude of 180 in
   `range -180 180 wrap` is −180; 540 is −180; −181 is 179.
 
 Decode is unchanged.
@@ -7748,22 +7748,23 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    <min>) / (<max> − <min>))` exactly: −181 in `range -180 180 wrap` is 179.
 8. **`range` and `also` keys** (Version 0.8): `range` applies to the field
    line's own key only, never to its `also` keys.
-9. **`range` and the lines of one locator.** Every line whose key is held is
-   checked against its `range`, including a later line on the same locator
-   whose value ruling 16 of 0.5 does not write: a held value outside its range
-   refuses the encode (`transform-encode`), in the strict direction of 0.11.
-   A line with `wrap` wraps instead; where it is not written it refuses only
-   under ruling 10.
-   A key that only a `default` would fill is not held: its `default` is checked
-   wherever the line would write it, and is not checked when an earlier line
-   on the same locator, compared as text, is the one written. Bits that a
-   `when`, a `const` or an overlapping line covers change nothing here.
-10. **A wrap whose arithmetic is not finite.** A value inside the interval
-   is unchanged and no arithmetic is done. For a value outside it, when `<max> − <min>` or any
-   step of the `float` formula is not finite, or the result is above `<max>`,
-   the encode is `transform-encode`: no value is substituted (the strict
-   direction of 0.11). The result that equals `<max>` or falls below `<min>`
-   by rounding still becomes `<min>`.
+9. **The lines `range` is checked on.** `range` is checked, and a wrap made,
+   on the lines the final encode reaches: every reached line whose key is
+   held, whatever its locator, and every reached line whose absent key a
+   `default` fills, whether or not another line's value stands there. A held
+   or default value outside its range is `transform-encode`; a line with
+   `wrap` wraps instead. A line of a block of 0.17 that is not held (its ruling
+   10), of an `if`, `opt` or `chain` block that is not written, of a case not
+   selected or of a kind not selected is not reached: no error, no wrap. A
+   pass that ruling 34 of 0.20 discards reports nothing. Presence bits (0.8)
+   and opened blocks (0.17) are computed as if there were no `range`. A held
+   key mapped only in blocks not held stays step 6 of 0.17.
+10. **A wrap whose arithmetic does not land in the interval.** A value inside
+   the interval is unchanged and no arithmetic is done. For a value outside
+   it, `r` equal to `<max>` becomes `<min>` (the same point of the circle);
+   any step that is not finite, `r` below `<min>` and `r` above `<max>` are
+   `transform-encode`: no value is substituted. A NaN is outside every
+   interval, with or without `wrap`.
 11. **The steps of the `float` formula** are five operations on doubles, each
    rounded to nearest, ties to even, with none fused: `d = <max> − <min>`,
    `q = (x − <min>) / d`, `f = floor(q)`, `m = d × f`, `r = x − m`; `x − <min>`
@@ -7773,8 +7774,16 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
 13. **`range` on `cbor`** is refused after the file, but the form of the option
    is checked as the line is read there too: `range 5` on `cbor` is
    `bad-directive` at step 9.
+14. **`range` and a look-ahead window** (0.33). `range`, with or without
+   `wrap`, and range sentinels keep the width, so a field that has them is
+   fixed in the kind: this adds them to the options 0.33 lists. `range` is
+   checked and a wrap made before the bits are written, so a window sees the
+   wrapped value's bits, and a key whose wrapped bits differ from the window
+   is `transform-encode` as 0.33 states. A held `as` key of the window (0.30,
+   0.33) is compared with the bits after the wrap, so where that same key
+   wraps on its field line the two differ: `transform-encode`. A sentinel
+   written for an absent key is not held bits (0.33 ruling 12).
 
 Stated, not yet pinned by a vector: a submessage holding only fields that
-`implicit` leaves out, without a `when … present`; a wrapped `float` above
-`<max>` after finite double arithmetic; `range` on a sequential field with `also`
-keys; the `default` of a line that is not written (ruling 9).
+`implicit` leaves out, without a `when … present`; `range` on a sequential field with `also`
+keys.

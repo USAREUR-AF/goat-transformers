@@ -1,0 +1,14 @@
+# Conformance probe pack for ruling 14 of 0.56: a wrapped field under a look-ahead
+# window (0.33). Most significant bit first. Public. One kind.
+format  conformance-range-056-8
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind    a
+requires probe.x
+when    8  1  at 0
+field   probe.x  8  uint  range 0 10 wrap
