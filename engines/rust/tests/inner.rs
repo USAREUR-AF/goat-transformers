@@ -1,5 +1,5 @@
-//! Engine-spec 0.34, Decode step 4 and ruling 7: lists that the outer and the
-//! inner message both hold, where no vector reaches.
+//! Engine-spec 0.34 (an `inner` message) with ruling 20 of 0.52 (no key is
+//! mapped by both packs), where no vector reaches.
 #![cfg(feature = "bits")]
 
 use goat_transformers::{Engine, Entity, Value};
@@ -38,43 +38,6 @@ fn a_list_of_an_item_is_not_the_inner_list() {
     assert_eq!(vals(&ent.lists["probe.items"][0], "probe.subs"), [9]);
 }
 
-/// A `rest` group past the end of its extent is an empty list, which does not
-/// replace the inner list read first.
-#[test]
-fn an_empty_rest_keeps_the_inner_list() {
-    let e = engine(&[
-        ("in", NUMS),
-        ("out", "length 8 bytes\ninner in\nend\nlength 8 bytes\ngroup probe.nums rest\nfield probe.val 8 uint\nend\nend"),
-    ]);
-    assert_eq!(vals(&e.decode("out", "02010700").unwrap(), "probe.nums"), [7]);
-    assert_eq!(vals(&e.decode("out", "0201070109").unwrap(), "probe.nums"), [7]);
-}
-
-/// Ruling 7: the two counts (0.31) of a discarded inner list are checked
-/// against the budget left; its items are not counted.
-#[test]
-fn counts_of_a_discarded_list() {
-    let e = engine(&[
-        ("in", "count a 8\ncount b 8\ngroup probe.nums count @a @b\nfield probe.val 8 uint\nend"),
-        ("out", &format!("{}\ninner in", NUMS)),
-    ]);
-    let input = "010702020809";
-    assert_eq!(vals(&e.decode_limited("out", input, 3).unwrap(), "probe.nums"), [7]);
-    let err = e.decode_limited("out", input, 2).unwrap_err();
-    assert!(err.msg.starts_with("malformed-wire:"), "{}", err.msg);
-}
-
-/// 7g: the items of an outer list that the inner list read first discards are
-/// not items the decoded entity holds.
-#[test]
-fn items_of_a_discarded_outer_list_are_not_counted() {
-    let e = engine(&[
-        ("in", NUMS),
-        ("out", "length 8 bytes\ninner in\nend\ngroup probe.nums rest\nfield probe.val 8 uint\nend"),
-    ]);
-    assert_eq!(vals(&e.decode_limited("out", "0302070809", 2).unwrap(), "probe.nums"), [7, 8]);
-}
-
 /// Ruling 17: a `switch` on a key whose line failed stops the decode, in the
 /// inner message too; an outer failure of the wire after it is not reached.
 #[test]
@@ -87,60 +50,54 @@ fn a_switch_on_a_failed_inner_key_stops_the_decode() {
     assert!(err.msg.starts_with("transform-decode:"), "{}", err.msg);
 }
 
-/// Decode step 4 and ruling 19: a failed inner line whose key another line
-/// gives is forgiven (0.6), read before it or after it.
+/// Ruling 7, the part ruling 20c of 0.52 keeps: the counts (0.31) of an inner
+/// list are checked against the budget the outer items left.
 #[test]
-fn a_failed_inner_line_whose_key_has_a_value() {
+fn counts_of_an_inner_list() {
     let e = engine(&[
-        ("in", "field probe.s1 8 ascii"),
-        ("after", "length 8 bytes\ninner in\nend\nfield probe.s1 8 ascii"),
-        ("before", "field probe.s1 8 ascii\ninner in"),
+        ("in", "count a 8\ncount b 8\ngroup probe.subs count @a @b\nfield probe.val 8 uint\nend"),
+        ("out", &format!("{}\ninner in", NUMS)),
     ]);
-    let s1 = |ent: &Entity| matches!(ent.fields.get("probe.s1"), Some(Value::Str(s)) if s == "A");
-    assert!(s1(&e.decode("after", "010141").unwrap()));
-    assert!(s1(&e.decode("before", "4101").unwrap()));
-    assert!(e.decode("after", "010101").is_err());
+    let input = "010702020809";
+    let ent = e.decode_limited("out", input, 3).unwrap();
+    assert_eq!(vals(&ent, "probe.nums"), [7]);
+    assert_eq!(vals(&ent, "probe.subs"), [8, 9]);
+    let err = e.decode_limited("out", input, 2).unwrap_err();
+    assert!(err.msg.starts_with("malformed-wire:"), "{}", err.msg);
 }
 
-/// Ruling 22: two groups of one nested list in an item of a discarded list
-/// release nothing from the budget.
+/// Ruling 20 of 0.52: a key or a list both packs map is `bad-directive` at the
+/// `inner` line, on decode and on encode, wherever the outer line stands.
 #[test]
-fn a_discarded_list_releases_no_budget() {
+fn a_key_both_packs_map_is_refused() {
+    let refused = |inner: &str, outer: &str, hex: &str, key: &str| {
+        let e = engine(&[("in", inner), ("out", outer)]);
+        for err in [e.decode("out", hex).unwrap_err(), e.encode("out", &Entity::default()).unwrap_err()] {
+            assert!(err.msg.starts_with("bad-directive:") && err.msg.contains(key), "{}: {}", outer, err.msg);
+            assert!(err.msg.contains("`in`"), "{}", err.msg);
+        }
+    };
+    let block = "length 8 bytes\ninner in\nend\n";
+    let rest = "group probe.nums rest\nfield probe.val 8 uint\nend";
+    let ascii = "field probe.s1 8 ascii";
+    let via = "map t 1 one\nfield probe.s1 8 uint via t";
+    // a list: counted before the inner line, `rest` after it, and in a block
+    let counts = "count a 8\ncount b 8\ngroup probe.nums count @a @b\nfield probe.val 8 uint\nend";
+    refused(counts, &format!("{}\ninner in", NUMS), "010702020809", "probe.nums[]");
+    refused(NUMS, &format!("{}{}", block, rest), "0302070809", "probe.nums[]");
+    refused(NUMS, &format!("{}length 8 bytes\n{}\nend", block, rest), "02010700", "probe.nums[]");
+    // a list with a list in its items
     let sub = "group probe.subs count 8\nfield probe.val 8 uint\nend\n";
     let items = format!("group probe.items count 8\npresence p 8\nif p.1\n{}end\nif p.2\n{}end\nend\n", sub, sub);
-    let e = engine(&[
-        ("in", "group probe.items count 8\ngroup probe.subs count 8\nfield probe.val 8 uint\nend\nend"),
-        ("out", &format!("length 8 bytes\ninner in\nend\n{}group probe.nums count 8\nfield probe.val 8 uint\nend", items)),
-    ]);
-    // kept: 1 item, 1 sub; discarded: 1 item of two lists of 1; then nums of 1
-    let input = "03010107".to_string() + "01c001080109" + "010a";
-    assert!(e.decode_limited("out", &input, 3).is_ok());
-    assert!(e.decode_limited("out", &input, 2).is_err());
-}
-
-/// Ruling 23: a line whose transform succeeds and whose table has no entry
-/// fails the decode also when the other pack gave the key, read before it or
-/// after it; a hit of the table leaves the first value in place.
-#[test]
-fn a_table_miss_whose_key_the_other_pack_gave() {
-    let via = "map t 1 one\nfield probe.s1 8 uint via t";
-    let plain = "field probe.s1 8 ascii";
-    let e = engine(&[
-        ("in", via),
-        ("plain", plain),
-        ("before", &format!("{}\ninner in", plain)),
-        ("after", &format!("length 8 bytes\ninner in\nend\n{}", plain)),
-        ("outer", &format!("length 8 bytes\ninner plain\nend\n{}", via)),
-    ]);
-    let s1 = |ent: &Entity| match ent.fields.get("probe.s1") {
-        Some(Value::Str(s)) => s.clone(),
-        v => panic!("{:?}", v),
-    };
-    assert_eq!(s1(&e.decode("before", "4101").unwrap()), "A");
-    assert_eq!(s1(&e.decode("after", "010141").unwrap()), "one");
-    assert_eq!(s1(&e.decode("outer", "014101").unwrap()), "A");
-    for (f, hex) in [("before", "4102"), ("after", "010241"), ("outer", "014102")] {
-        let err = e.decode(f, hex).unwrap_err();
-        assert!(err.msg.starts_with("transform-decode:"), "{}: {}", f, err.msg);
+    let inner = format!("group probe.items count 8\n{}end", sub);
+    refused(&inner, &format!("{}{}group probe.nums count 8\nfield probe.val 8 uint\nend", block, items), "0301010701c001080109010a", "probe.items[]");
+    // a field, also when the inner line of it fails its transform
+    refused(ascii, &format!("{}{}", block, ascii), "010141", "probe.s1");
+    refused(ascii, &format!("{}\ninner in", ascii), "4101", "probe.s1");
+    // a line with a table, in either pack, hit or missed
+    for value in ["01", "02"] {
+        refused(via, &format!("{}\ninner in", ascii), &format!("41{}", value), "probe.s1");
+        refused(via, &format!("{}{}", block, ascii), &format!("01{}41", value), "probe.s1");
+        refused(ascii, &format!("{}{}", block, via), &format!("0141{}", value), "probe.s1");
     }
 }

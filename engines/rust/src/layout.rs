@@ -101,6 +101,10 @@ pub(crate) struct XmlScope {
 
 #[derive(Default, Debug)]
 pub(crate) struct Layout {
+    /// the entries of `model_keys`, when the pack is first reached as an
+    /// `inner` one (ruling 20 of 0.52)
+    #[cfg(feature = "bits")]
+    pub keys: std::sync::OnceLock<std::collections::HashSet<String>>,
     /// protobuf: the field-number path of every locator
     #[cfg(feature = "protobuf")]
     pub pb_paths: Map<(usize, usize), Vec<u32>>,

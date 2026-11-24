@@ -2429,6 +2429,13 @@ fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
     err(format!("bad-directive: line {}: {}", ln, m.as_ref()))
 }
 
+/// Does a `when` line hold `at` (engine-spec v0.33)? `args`: its tokens after
+/// the values. The token after the first `as` is a key (ruling 4 of 0.52).
+fn when_holds_at(args: &[String]) -> bool {
+    let key = args.iter().position(|t| t == "as").map(|a| a + 1);
+    args.iter().enumerate().any(|(n, t)| t == "at" && Some(n) != key)
+}
+
 impl Pack {
     pub fn parse(text: &str) -> Result<Pack, Error> {
         pack_line_checks(text)?;
@@ -2446,6 +2453,8 @@ impl Pack {
         let mut at_err: Option<Error> = None;
         // engine-spec v0.34: the first `inner` line, refused after the file is read
         let mut inner_line: Option<usize> = None;
+        // engine-spec v0.30: the first `when … as`, raised after `missing-wire`
+        let mut as_err: Option<Error> = None;
         let mut format = None;
         let mut version = None;
         let mut wire = None;
@@ -2779,11 +2788,17 @@ impl Pack {
                 }
                 "when" => {
                     // engine-spec v0.30: `as` is valid only in a `layout sequential` pack
-                    if toks.len() > 3 && toks[3] == "as" {
-                        return bad(ln, "`as` on a `when` is valid only in a `layout sequential` pack");
-                    }
-                    // engine-spec v0.33: so is `at`
-                    let toks = if toks.len() > 3 && toks[3] == "at" {
+                    // raised after `missing-wire` (ruling 29 of 0.30)
+                    // engine-spec v0.33: so is `at`, raised after the key passes; a
+                    // line that holds both is an `at` error (ruling 27)
+                    let toks = if toks.len() > 3 && toks[3] == "as" && !when_holds_at(&toks[3..]) {
+                        if as_err.is_none() {
+                            as_err = Some(Error {
+                                msg: format!("bad-directive: line {}: `as` on a `when` is valid only in a `layout sequential` pack", ln),
+                            });
+                        }
+                        &toks[..3]
+                    } else if toks.len() > 3 && (toks[3] == "as" || toks[3] == "at") {
                         if at_err.is_none() {
                             at_err = Some(Error {
                                 msg: format!("bad-directive: line {}: `at` on a `when` is valid only in a `layout sequential` pack", ln),
@@ -2907,6 +2922,9 @@ impl Pack {
             return err("missing-version: the pack has no `version` line");
         }
         let wire = wire.ok_or(Error { msg: "missing-wire: the pack has no `wire` line".into() })?;
+        if let Some(e) = as_err {
+            return Err(e);
+        }
         if let Some(ln) = inner_line {
             return bad(ln, "`inner` is a line of a `layout sequential` `bits` pack");
         }
@@ -3638,6 +3656,7 @@ pub(crate) mod limit {
 /// whose transform succeeds and whose table refuses the value fails the decode
 /// whatever the other lines of the key do (ruling 4 of 0.6).
 #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
+#[derive(Clone)]
 struct Decoded {
     ent: Entity,
     /// (key, message): a transform failed; an error unless the key gets a value
@@ -5184,7 +5203,7 @@ impl seq::InnerHost for Engine {
         let total = bytes.len() as u64 * 8;
         let (d, end) = match &p.seq {
             Some(body) => seq::decode_parts(p, body, bytes, total, Some(self))?,
-            None => bits::decode_parts(p, self.layout(format), bytes, total, true)?,
+            None => bits::decode_parts(p, self.layout(format), bytes, total)?,
         };
         // Decode step 3: bytes at or after the inner message's end
         if !partial && total > end {
@@ -5212,6 +5231,13 @@ impl seq::InnerHost for Engine {
         };
         let hex = bits::encode_host(p, self.layout(format), ent, Some(self))?;
         bits::from_hex(&hex)
+    }
+
+    fn inner_clash<'k>(&self, format: &str, reach: &'k [String]) -> Option<&'k String> {
+        let p = self.pack(format).ok()?;
+        // the inner pack's keys do not change once it is loaded
+        let keys = self.layout(format).keys.get_or_init(|| p.model_keys().into_iter().collect());
+        reach.iter().find(|k| keys.contains(*k))
     }
 }
 
@@ -7324,8 +7350,8 @@ pub mod bits {
     #[cfg(feature = "bits")]
     fn message_bytes(p: &Pack, lay: &Layout, sel: &Sel, all: bool) -> Result<usize, Error> {
         let end = message_end(p, lay, sel, all)?;
-        // at least one word
-        Ok(whole_words(p, end).max(p.word_bytes))
+        // no counted bit, no word (ruling 19 of 0.52)
+        Ok(whole_words(p, end))
     }
 
     /// The bytes of the whole words that hold `end` bits.
@@ -7887,14 +7913,13 @@ pub mod bits {
         if let Some(body) = &p.seq {
             return super::seq::decode_host(p, body, &raw, total, host);
         }
-        decode_parts(p, lay, &raw, total, false)?.0.finish_kind(p)
+        decode_parts(p, lay, &raw, total)?.0.finish_kind(p)
     }
 
     /// The decode of a fixed layout, its failed lines not yet judged, and the
-    /// bit the message ends at (ruling 14 of 0.34). As a layer (`inner`) a
-    /// pack that reads no bits needs no word (rulings 2 and 16 of 0.34).
+    /// bit the message ends at (ruling 14 of 0.34).
     #[cfg(feature = "bits")]
-    pub(crate) fn decode_parts(p: &Pack, lay: &Layout, raw: &[u8], total: u64, inner: bool) -> Result<(Decoded, u64), Error> {
+    pub(crate) fn decode_parts(p: &Pack, lay: &Layout, raw: &[u8], total: u64) -> Result<(Decoded, u64), Error> {
         let sixbit = p.armor == armor::Armor::Sixbit;
         // a `when` whose bits lie beyond the input does not hold
         let sel = p.select_decode(None, |w| match span(p, lay, &w.locator) {
@@ -7919,7 +7944,7 @@ pub mod bits {
         let words = |need: usize| {
             format!("input is {} bytes, need {} ({} words of {})", raw.len(), need, need / p.word_bytes, p.word_bytes)
         };
-        let need = if inner { whole_words(p, message_end(p, lay, &sel, false)?) } else { message_bytes(p, lay, &sel, false)? };
+        let need = message_bytes(p, lay, &sel, false)?;
         if raw.len() < need {
             return Err(short(p, words(need)));
         }
@@ -7946,8 +7971,8 @@ pub mod bits {
         Ok(item_bits.max(group_reach(p, lay, &g.body(), item, 0)?))
     }
 
-    /// The furthest bit the groups of a scope write: each count locator, and
-    /// the items of each list the entity has.
+    /// The furthest bit the groups of a scope reach: each count locator, each
+    /// group's start, and the items of each list the entity has.
     #[cfg(feature = "bits")]
     pub(crate) fn group_reach(p: &Pack, lay: &Layout, sel: &Sel, ent: &Entity, base: u64) -> Result<u64, Error> {
         let mut end = 0u64;
@@ -7956,14 +7981,14 @@ pub mod bits {
                 let (off, len) = span(p, lay, l)?;
                 end = end.max(base + off + len as u64);
             }
-            if let Some(items) = ent.lists.get(&g.list) {
-                let (off, _) = group_span(p, lay, g)?;
-                let mut at = base + off;
-                for item in items {
-                    at += item_len(p, lay, g, item)?;
-                }
-                end = end.max(at);
+            // at least to the group's start, an empty or absent list included
+            // (ruling 18 of 0.52)
+            let (off, _) = group_span(p, lay, g)?;
+            let mut at = base + off;
+            for item in ent.lists.get(&g.list).into_iter().flatten() {
+                at += item_len(p, lay, g, item)?;
             }
+            end = end.max(at);
         }
         Ok(end)
     }
