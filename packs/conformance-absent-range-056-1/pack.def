@@ -1,0 +1,15 @@
+# Conformance probe pack for range sentinels in `absent` (spec 0.56) on `xml`:
+# a leading `=` before `>=`. Public. No kinds. Added because the 0.56 probe
+# packs have no wire that strips `=`: `absent =>=5` on a string key is the
+# exact text `>=5` (Version 0.56, "absent by range", the sentence on `=>=5`),
+# so the text `>=5` is absent, the number text 7 is present, and an absent
+# key writes `>=5`.
+format  conformance-absent-range-056-1
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+field   uid          @uid    string
+field   probe.label  @label  string  absent =>=5

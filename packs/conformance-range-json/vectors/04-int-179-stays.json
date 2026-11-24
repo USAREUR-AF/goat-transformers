@@ -1,0 +1,12 @@
+{
+  "name": "int-179-stays",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"x\":179}",
+  "expect": "{\"x\":179}",
+  "model": {
+    "probe.x": "179"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` wrap and ruling 7, int key, range -180 180 wrap: r = x - 360 * floor((x + 180) / 360) exactly = 179 - 360 * 0 = 179. Decode is unchanged (probe.x = 179). Derived by hand."
+}

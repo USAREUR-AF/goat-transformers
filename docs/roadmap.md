@@ -56,6 +56,7 @@ vectors, and the same change in the other six engines.
 | Conditional output and flag tokens | a value written only when another exists; several flags joined into one token list | Built, seven engines (spec 0.18) |
 | XML namespaces and prefixes | documents whose elements carry a prefix | Designed |
 | Text and value forms | a time with no fraction at a whole second and three digits otherwise; a scaled value rounded to the decimal places its source states; UTF-8 text in a binary field | Built, seven engines (spec 0.55) |
+| Output conditions | a JSON member written as `null` when its key is absent; a protobuf scalar left out at its proto3 default; a value refused outside a range, or wrapped into it; an absent-value sentinel given as a range | Built, seven engines (spec 0.56) |
 
 The Designed rows come from generating packs for whole public catalogs
 (MAVLink, NMEA 2000, Mode S, Remote ID) and from the comparisons in

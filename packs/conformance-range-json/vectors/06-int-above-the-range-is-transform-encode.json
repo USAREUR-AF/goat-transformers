@@ -1,0 +1,9 @@
+{
+  "name": "int-above-the-range-is-transform-encode",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"y\":4096}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` without wrap: 4096 is above <max> 4095, transform-encode on encode (decode accepts it, Decode is unchanged). Derived by hand."
+}

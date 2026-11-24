@@ -1,0 +1,12 @@
+{
+  "name": "int-wrap-180-becomes-minus-180",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"x\":180}",
+  "expect": "{\"x\":-180}",
+  "model": {
+    "probe.x": "180"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` wrap and ruling 7, int key, range -180 180 wrap: r = x - 360 * floor((x + 180) / 360) exactly = 180 - 360 * 1 = -180. Decode is unchanged (probe.x = 180). Derived by hand."
+}

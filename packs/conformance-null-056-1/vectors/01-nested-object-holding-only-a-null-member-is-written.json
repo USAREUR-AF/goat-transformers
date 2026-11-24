@@ -1,0 +1,15 @@
+{
+  "name": "nested-object-holding-only-a-null-member-is-written",
+  "from": "conformance-null-056-1",
+  "to": "conformance-null-056-1",
+  "input": "{\"id\":\"u1\"}",
+  "expect": "{\"id\":\"u1\",\"a\":{\"b\":null}}",
+  "model": {
+    "uid": "u1",
+    "@absent": [
+      "probe.a"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null`: \"A null member is a member: a nested object that holds only null members is written (field x a.b float null with no value writes {\\\"a\\\":{\\\"b\\\":null}})\", in place of the 0.5 rule that leaves out a nested object with no members. Derived by hand."
+}

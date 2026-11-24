@@ -1,0 +1,13 @@
+# Conformance probe pack for the field option `null` (spec 0.56) on `json`,
+# for a nested member. Public. No kinds. Added because none of the 0.56 probe
+# packs maps a member inside a nested object: `a.b` with `null` pins the
+# sentence that a nested object holding only `null` members is written, where
+# Version 0.5 leaves out a nested object with no members.
+format  conformance-null-056-1
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   uid      id   string
+field   probe.a  a.b  float  null

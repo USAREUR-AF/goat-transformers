@@ -1,0 +1,12 @@
+{
+  "name": "float-wrap-180-becomes-minus-180",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"a\":180}",
+  "expect": "{\"a\":-180}",
+  "model": {
+    "probe.a": "180"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` wrap, float key, range -180 180 wrap: r = x - 360 * floor((x + 180) / 360) in doubles; (x+180)/360 = 1.0, floor 1, r = -180. Derived by hand and with a standalone Python program (float arithmetic, repr for the shortest digits)."
+}

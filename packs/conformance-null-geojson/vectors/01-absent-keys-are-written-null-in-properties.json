@@ -1,0 +1,16 @@
+{
+  "name": "absent-keys-are-written-null-in-properties",
+  "from": "conformance-null-geojson",
+  "to": "conformance-null-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"u1\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"label\":null,\"q\":null},\"id\":\"u1\"}",
+  "model": {
+    "uid": "u1",
+    "@absent": [
+      "probe.label",
+      "probe.qty"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null` on geojson: label and q are absent and each line names null, so each is written null inside properties in field-line order. Member order type, geometry, properties, id (ruling 4 of 0.1.1); geometry is null since lon and lat are not mapped (ruling 5 of 0.1.1). Derived by hand."
+}

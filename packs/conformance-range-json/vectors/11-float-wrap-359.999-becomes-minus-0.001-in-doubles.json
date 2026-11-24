@@ -1,0 +1,12 @@
+{
+  "name": "float-wrap-359.999-becomes-minus-0.001-in-doubles",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"a\":359.999}",
+  "expect": "{\"a\":-0.0009999999999763531}",
+  "model": {
+    "probe.a": "359.999"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` wrap, float key, range -180 180 wrap: r = x - 360 * floor((x + 180) / 360) in doubles; (x+180)/360 = 1.4999972222222222, floor 1, r = -0.0009999999999763531. 359.999 reads as the double 1583292345950929/2^42 (exactly 359.999000000000023646862246096134185791015625). (x+180)/360 rounds to 1.4999972222222222, floor 1; 360*1 = 360; x - 360 is exact (Sterbenz: 180 <= x <= 720) = -0.000999999999976353137753903865814208984375 exactly; the shortest decimal that reads back as this double is -0.0009999999999763531 (2f of 0.11), not -0.001. It lies in [-180, 180). Derived by hand and with a standalone Python program (float arithmetic, repr for the shortest digits)."
+}

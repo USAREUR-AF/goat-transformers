@@ -1,0 +1,16 @@
+{
+  "name": "member-of-two-keys-both-absent-writes-null",
+  "from": "conformance-null-json",
+  "to": "conformance-null-json",
+  "input": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":1,\"code\":\"c\",\"s\":null}",
+  "expect": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":1,\"code\":\"c\",\"s\":null}",
+  "model": {
+    "probe.tag": "c",
+    "@absent": [
+      "probe.s1",
+      "probe.s2"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null` Decode and 0.5 (a null member is absent): s decodes to neither key. Encode: no line on `s` writes a value, and the first line names `null`, so `s` is written null. Derived by hand."
+}

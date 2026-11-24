@@ -1,0 +1,12 @@
+{
+  "name": "int-upper-end-is-accepted",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"y\":4095}",
+  "expect": "{\"y\":4095}",
+  "model": {
+    "probe.y": "4095"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` without wrap: the interval [0, 4095] accepts both ends. Derived by hand."
+}

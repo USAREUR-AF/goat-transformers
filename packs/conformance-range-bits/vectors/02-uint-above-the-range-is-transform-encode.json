@@ -1,0 +1,9 @@
+{
+  "name": "uint-above-the-range-is-transform-encode",
+  "from": "conformance-range-bits",
+  "to": "conformance-range-bits",
+  "input": "000000001000",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` without wrap: n raw 0x1000 = 4096 fits 16 bits and decodes (Decode is unchanged), but 4096 > 4095 on encode is transform-encode, before uint (which would accept it). Derived by hand."
+}

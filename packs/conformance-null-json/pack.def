@@ -1,0 +1,22 @@
+# Conformance probe pack for the field option `null` (spec 0.56) on `json`.
+# Public. No kinds. `x` has a default and `code` a sentinel, which come
+# before `null`; `s` is one member bound to two keys (ruling 16 of 0.5), so
+# `null` is written only when neither writes a value.
+format  conformance-null-json
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   uid          id     string
+field   probe.label  label  string  null
+field   probe.qty    q      int     null
+field   probe.x      x      int     null
+default probe.x      7
+field   probe.tag    code   string  absent N/A  null
+field   probe.s1     s      string  null
+field   probe.s2     s      string
+group   probe.items  items
+  field  probe.label  name  string  null
+  field  probe.qty    q     int
+end

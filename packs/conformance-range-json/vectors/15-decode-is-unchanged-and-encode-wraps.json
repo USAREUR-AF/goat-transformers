@@ -1,0 +1,12 @@
+{
+  "name": "decode-is-unchanged-and-encode-wraps",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"x\":500}",
+  "expect": "{\"x\":140}",
+  "model": {
+    "probe.x": "500"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range`, \"Decode is unchanged\": x 500 decodes to 500; encode wraps: 500 - 360 * floor(680/360 = 1) = 140. Derived by hand."
+}

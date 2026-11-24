@@ -1,0 +1,14 @@
+# Conformance probe pack for the field option `implicit` (spec 0.56) on
+# `protobuf`, with two keys on one path. Public. No kinds. Added because
+# conformance-implicit binds each path to one key: here the first line on
+# path 1 is implicit and the second is not, so a held 0 on the first line,
+# left out by `implicit`, still holds the place for ruling 16 of 0.5 and the
+# second line's value is not written.
+format  conformance-implicit-056-1
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    protobuf
+field   probe.n  1  pvarint  implicit
+field   probe.x  1  pvarint

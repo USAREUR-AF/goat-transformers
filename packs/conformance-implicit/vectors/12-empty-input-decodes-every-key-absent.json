@@ -1,0 +1,21 @@
+{
+  "name": "empty-input-decodes-every-key-absent",
+  "from": "conformance-implicit",
+  "to": "conformance-implicit",
+  "input": "",
+  "expect": "",
+  "model": {
+    "@kind": "plain",
+    "@absent": [
+      "probe.n",
+      "probe.x",
+      "probe.a",
+      "probe.ratio",
+      "probe.label",
+      "probe.qty",
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`; protobuf encoding of 0.3/0.5 (tag = field<<3 | wire type, varint base 128 low group first, fields in ascending number). \"Decode is unchanged: ... the proto3 default is not supplied\": no field is on the wire, kind plain (sub needs field 9), every key absent (a default never changes the entity, 0.6). Encode: only qty's default 0, left out. Output empty. Derived by hand."
+}

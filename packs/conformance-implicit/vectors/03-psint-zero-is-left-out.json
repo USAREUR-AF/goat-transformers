@@ -1,0 +1,13 @@
+{
+  "name": "psint-zero-is-left-out",
+  "from": "conformance-implicit",
+  "to": "conformance-implicit",
+  "input": "1000",
+  "expect": "",
+  "model": {
+    "@kind": "plain",
+    "probe.x": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`; protobuf encoding of 0.3/0.5 (tag = field<<3 | wire type, varint base 128 low group first, fields in ascending number). Input 10 00: field 2 varint 0, zig-zag 0 is x = 0, the psint default; not written. Derived by hand."
+}

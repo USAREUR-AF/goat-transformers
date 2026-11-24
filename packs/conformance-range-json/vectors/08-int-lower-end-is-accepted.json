@@ -1,0 +1,12 @@
+{
+  "name": "int-lower-end-is-accepted",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"y\":0}",
+  "expect": "{\"y\":0}",
+  "model": {
+    "probe.y": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` without wrap: 0 is <min>, accepted. Derived by hand."
+}

@@ -1,0 +1,15 @@
+{
+  "name": "sentinel-comes-before-null",
+  "from": "conformance-null-json",
+  "to": "conformance-null-json",
+  "input": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":1,\"s\":\"v\"}",
+  "expect": "{\"id\":\"u1\",\"label\":\"L\",\"q\":3,\"x\":1,\"code\":\"N/A\",\"s\":\"v\"}",
+  "model": {
+    "probe.x": "1",
+    "@absent": [
+      "probe.tag"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null` (order: default, first exact sentinel, null) and 0.9 Encode: probe.tag is absent, has no default, and its first sentinel N/A is written as the string \"N/A\" at code, not null. Derived by hand."
+}

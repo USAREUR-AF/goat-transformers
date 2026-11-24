@@ -1,0 +1,15 @@
+{
+  "name": "null-number-member-with-the-option-decodes-absent",
+  "from": "conformance-null-geojson",
+  "to": "conformance-null-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"label\":\"L\",\"q\":null},\"id\":\"u1\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"label\":\"L\",\"q\":null},\"id\":\"u1\"}",
+  "model": {
+    "probe.label": "L",
+    "@absent": [
+      "probe.qty"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null` Decode on geojson, for an int field: q null yields no value (not a transform-decode of a null number); encode writes it null. Derived by hand."
+}

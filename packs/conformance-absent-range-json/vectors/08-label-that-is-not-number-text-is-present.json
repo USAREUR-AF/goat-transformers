@@ -1,0 +1,16 @@
+{
+  "name": "label-that-is-not-number-text-is-present",
+  "from": "conformance-absent-range-json",
+  "to": "conformance-absent-range-json",
+  "input": "{\"label\":\"abc\"}",
+  "expect": "{\"label\":\"abc\"}",
+  "model": {
+    "probe.label": "abc",
+    "@absent": [
+      "probe.qty",
+      "probe.a"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range and 0.9. abc is not number text (2b of 0.11), so >=100 does not match; not N/A: present. Derived by hand."
+}

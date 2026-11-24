@@ -1,0 +1,13 @@
+{
+  "name": "number-text-at-or-above-5-is-present",
+  "from": "conformance-absent-range-056-1",
+  "to": "conformance-absent-range-056-1",
+  "input": "<msg uid=\"u1\" label=\"7\"/>",
+  "expect": "<msg uid=\"u1\" label=\"7\"/>",
+  "model": {
+    "uid": "u1",
+    "probe.label": "7"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range: on xml one leading `=` is stripped (0.9 ruling 12) and \"=>=5 is the exact text >=5\", so the sentinel is exact, not a range. 7 is not the text >=5; with the exact reading there is no range, so label holds 7 and is written. Derived by hand."
+}
