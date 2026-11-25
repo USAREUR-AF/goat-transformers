@@ -1,0 +1,13 @@
+{
+  "name": "ruling-07-count-sized-too-large",
+  "from": "conformance-units-bytes",
+  "to": "conformance-units-bytes",
+  "input": "04050607aabb09",
+  "expect": "0205060709",
+  "model": {
+    "probe.z": "7",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 7 (\"A count larger than the payload needs leaves the rest of the extent to the rules of its lines: an ordinary block skips it\"): n follows the extent; encode writes the length of what it writes"
+}

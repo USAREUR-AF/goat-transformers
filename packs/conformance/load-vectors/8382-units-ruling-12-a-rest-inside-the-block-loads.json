@@ -1,0 +1,8 @@
+{
+  "name": "8382-units-ruling-12-a-rest-inside-the-block-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nlist nums \"a list\"\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.83.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ncount w 8\nlength @w units 8\n  group probe.nums rest\n    field probe.val 8 uint\n  end\nend\nfield probe.x 8 uint\n"
+}

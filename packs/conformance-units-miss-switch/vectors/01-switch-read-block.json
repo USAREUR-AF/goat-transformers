@@ -1,0 +1,12 @@
+{
+  "name": "switch-read-block",
+  "from": "conformance-units-miss-switch",
+  "to": "conformance-units-miss-switch",
+  "input": "0101800509",
+  "expect": "0101800509",
+  "model": {
+    "probe.y": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: case 1 is read and its block is"
+}

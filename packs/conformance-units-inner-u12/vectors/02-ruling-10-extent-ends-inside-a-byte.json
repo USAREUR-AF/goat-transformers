@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-extent-ends-inside-a-byte",
+  "from": "conformance-units-inner-u12",
+  "to": "conformance-units-inner-u12",
+  "input": "100506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 10: 12 bits end at bit 20; a `length ... bits` extent in 0.34 step 2 includes this block"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ruling-04-count-not-read",
+  "from": "conformance-units-nested",
+  "to": "conformance-units-nested",
+  "input": "0009",
+  "expect": "0301000009",
+  "model": {
+    "probe.n": "9",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4: the count, x and the block all stand at the end of the enclosing block"
+}

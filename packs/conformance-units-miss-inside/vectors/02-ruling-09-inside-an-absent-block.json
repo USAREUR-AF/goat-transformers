@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-inside-an-absent-block",
+  "from": "conformance-units-miss-inside",
+  "to": "conformance-units-miss-inside",
+  "input": "01010509",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the plain block is absent (0.8 ruling 21), so the block inside it is not read: 1 unit stated"
+}

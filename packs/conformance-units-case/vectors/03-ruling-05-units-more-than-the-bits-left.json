@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-units-more-than-the-bits-left",
+  "from": "conformance-units-case",
+  "to": "conformance-units-case",
+  "input": "01ff06",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line (255 units of 8, 8 bits left)"
+}

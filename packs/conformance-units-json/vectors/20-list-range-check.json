@@ -1,0 +1,9 @@
+{
+  "name": "list-range-check",
+  "from": "conformance-units-json",
+  "to": "conformance-units-old-range",
+  "input": "{\"y\":1,\"nums\":[1,2]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 30 of 0.21: 2 does not fit 1 bit"
+}

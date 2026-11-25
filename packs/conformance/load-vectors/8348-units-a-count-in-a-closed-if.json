@@ -1,0 +1,9 @@
+{
+  "name": "8348-units-a-count-in-a-closed-if",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nlist nums \"a list\"\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.83.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\npresence p 1\nif p.1\n  count w 8\nend\nlength @w units 8\n  field probe.x 8 uint\nend\n",
+  "expect_error": "bad-directive"
+}

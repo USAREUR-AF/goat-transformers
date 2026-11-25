@@ -1,0 +1,17 @@
+{
+  "name": "ruling-06-zero-units-fields-absent",
+  "from": "conformance-units-bytes",
+  "to": "conformance-units-bytes",
+  "input": "000509",
+  "expect": "0205000009",
+  "model": {
+    "probe.x": "5",
+    "probe.n": "9",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6: the lines are read as at the end of an extent; encode writes every line (0.8 ruling 7)"
+}

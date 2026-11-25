@@ -107,62 +107,88 @@ def stack_bound(path, entry, depth):
     # Calls through a register: opt-level z calls one routine many times through
     # a register that an unconditional `ldr rN, [pc, #...]` loaded from the
     # literal pool. Such a call is followed when the register's value is known
-    # along one straight-line run of instructions: what is known is forgotten
-    # at every address some branch of the function goes to, after every branch
-    # or write to pc, at every write to the register, and in a function with a
-    # table branch whose table cannot be read altogether. A call clobbers r0-r3, ip and lr and keeps
-    # r4-r11, as the procedure call standard requires of every callee.
+    # on every path to it: a forward dataflow over the function's instructions,
+    # where an instruction knows a register only when every instruction that
+    # can come before it (the one above, unless that one always branches away
+    # or writes pc, and every branch or table branch of the function to it)
+    # leaves the same value there. A write to a register forgets it. A
+    # function with a table branch whose table cannot be read knows nothing.
+    # A call clobbers r0-r3, ip and lr and keeps r4-r11, as the procedure call
+    # standard requires of every callee.
     branch = re.compile(r"^(b|b(eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al))(\.w|\.n)?$")
+    clobbered = ("r0", "r1", "r2", "r3", "ip", "lr")
+
+    def writes_pc(op, args):
+        return op.startswith("bx") or re.match(r"pc\b", args) or (
+            op.startswith(("pop", "ldm")) and re.search(r"\bpc\b", args))
+
+    def after(held, op, args):
+        """What is known of the registers after one instruction."""
+        held = dict(held)
+        lit = re.match(r"(r\d+),\s*\[pc,\s*#(?:0x[0-9a-f]+|\d+)\]\s*@\s*0x([0-9a-f]+)(\s*<[^>]*>)?$", args)
+        mov = re.match(r"(r\d+),\s*(r\d+)$", args)
+        if op in ("ldr", "ldr.w") and lit:
+            w = word_at(image, int(lit.group(2), 16))
+            fn = starts.get(w & ~1) if w is not None else None
+            held.pop(lit.group(1), None)
+            if fn is not None:
+                held[lit.group(1)] = fn
+        elif op == "mov" and mov:
+            if mov.group(2) in held:
+                held[mov.group(1)] = held[mov.group(2)]
+            else:
+                held.pop(mov.group(1), None)
+        elif branch.match(op) or op.startswith(("cbz", "cbnz", "tbb", "tbh")):
+            pass
+        elif op.startswith("bl"):
+            for r in clobbered:
+                held.pop(r, None)
+        else:
+            # any register an instruction names may be written by it
+            for r in re.findall(r"\b(r\d+|lr|ip|sb|sl|fp)\b", args):
+                held.pop(r, None)
+        return held
+
     for _, cur in order:
         frames[cur], calls[cur] = 0, set()
-        targets, tables = set(), False
-        for _, op, args in body[cur]:
+        ins = body[cur]
+        index_of = {addr: i for i, (addr, _, _) in enumerate(ins)}
+        succ, tables = [], False
+        for i, (addr, op, args) in enumerate(ins):
+            s = []
             if branch.match(op) or op.startswith(("cbz", "cbnz")):
                 t = re.search(r"(?:^|,\s*)(?:0x)?([0-9a-f]+)\s*<", args)
-                if t:
-                    targets.add(int(t.group(1), 16))
-            if op.startswith(("tbb", "tbh")):
+                if t and int(t.group(1), 16) in index_of:
+                    s.append(index_of[int(t.group(1), 16)])
+                if op not in ("b", "b.w", "b.n"):
+                    s.append(i + 1)
+            elif op.startswith(("tbb", "tbh")):
                 # a table branch goes to every address its table holds
                 t = table_targets(image, addr, op.startswith("tbh"))
                 if t is None:
                     tables = True
                 else:
-                    targets |= t
-        held = {}
-        for addr, op, args in body[cur]:
-            if tables or addr in targets:
-                held = {}
-            lit = re.match(r"(r\d+),\s*\[pc,\s*#(?:0x[0-9a-f]+|\d+)\]\s*@\s*0x([0-9a-f]+)(\s*<[^>]*>)?$", args)
-            mov = re.match(r"(r\d+),\s*(r\d+)$", args)
-            if op in ("ldr", "ldr.w") and lit:
-                w = word_at(image, int(lit.group(2), 16))
-                fn = starts.get(w & ~1) if w is not None else None
-                held.pop(lit.group(1), None)
-                if fn is not None:
-                    held[lit.group(1)] = fn
-                continue
-            if op == "mov" and mov:
-                if mov.group(2) in held:
-                    held[mov.group(1)] = held[mov.group(2)]
-                else:
-                    held.pop(mov.group(1), None)
-                continue
+                    s.extend(index_of[x] for x in t if x in index_of)
+            elif not (writes_pc(op, args) and op in ("bx", "pop", "pop.w", "ldm", "ldm.w", "mov")):
+                # a write to pc that is conditional (inside an IT block) may fall through
+                s.append(i + 1)
+            succ.append([j for j in s if j < len(ins)])
+        known = [None] * len(ins)
+        if ins and not tables:
+            known[0], work = {}, [0]
+            while work:
+                i = work.pop()
+                out = after(known[i], ins[i][1], ins[i][2])
+                for j in succ[i]:
+                    new = out if known[j] is None else {r: f for r, f in known[j].items() if out.get(r) == f}
+                    if new != known[j]:
+                        known[j] = new
+                        work.append(j)
+        for i, (addr, op, args) in enumerate(ins):
+            held = known[i] or {}
             if op in ("blx", "blx.w") and "<" not in args and args.strip() in held:
                 calls[cur].add(held[args.strip()])
-                for r in ("r0", "r1", "r2", "r3", "ip", "lr"):
-                    held.pop(r, None)
                 continue
-            writes_pc = op.startswith("bx") or re.match(r"pc\b", args) or (
-                op.startswith(("pop", "ldm")) and re.search(r"\bpc\b", args))
-            if branch.match(op) or op.startswith(("cbz", "cbnz", "tbb", "tbh")) or writes_pc:
-                held = {}
-            elif op.startswith("bl"):
-                for r in ("r0", "r1", "r2", "r3", "ip", "lr"):
-                    held.pop(r, None)
-            else:
-                # any register an instruction names may be written by it
-                for r in re.findall(r"\b(r\d+|lr|ip|sb|sl|fp)\b", args):
-                    held.pop(r, None)
             if op.startswith("push") or (op.startswith("stmdb") and args.startswith("sp!")):
                 frames[cur] += 4 * len(re.findall(r"\b(r\d+|lr|pc|sb|sl|fp|ip)\b", args[args.find("{"):]))
             elif op.startswith("vpush"):

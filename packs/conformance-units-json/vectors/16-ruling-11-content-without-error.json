@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-content-without-error",
+  "from": "conformance-units-json",
+  "to": "conformance-units-order-content",
+  "input": "{\"y\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 11: 8 bits are not whole units of 16"
+}

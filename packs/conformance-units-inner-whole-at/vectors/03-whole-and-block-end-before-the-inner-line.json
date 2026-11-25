@@ -1,0 +1,12 @@
+{
+  "name": "whole-and-block-end-before-the-inner-line",
+  "from": "conformance-units-inner-whole-at",
+  "to": "conformance-units-inner-whole-at",
+  "input": "0102",
+  "expect": "0102",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the extent of a `length @` block and the whole both end at byte 2: `inner` is reached with an empty input"
+}

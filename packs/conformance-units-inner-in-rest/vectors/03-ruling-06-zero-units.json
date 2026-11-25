@@ -1,0 +1,12 @@
+{
+  "name": "ruling-06-zero-units",
+  "from": "conformance-units-inner-in-rest",
+  "to": "conformance-units-inner-in-rest",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6: `inner` is reached with an empty input"
+}

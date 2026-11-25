@@ -1,0 +1,9 @@
+{
+  "name": "ruling-03-2-to-the-61-units-of-8",
+  "from": "conformance-units-wide",
+  "to": "conformance-units-wide",
+  "input": "200000000000000007",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line (ruling 3: 2^61 * 8 = 2^64 bits, exact, not 0)"
+}

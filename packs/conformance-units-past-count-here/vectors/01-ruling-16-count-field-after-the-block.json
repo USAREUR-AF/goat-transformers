@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-count-field-after-the-block",
+  "from": "conformance-units-past-count-here",
+  "to": "conformance-units-past-count-here",
+  "input": "040305aabb00",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the count field itself needs bits past the whole of 3"
+}

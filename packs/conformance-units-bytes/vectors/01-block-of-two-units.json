@@ -1,0 +1,15 @@
+{
+  "name": "block-of-two-units",
+  "from": "conformance-units-bytes",
+  "to": "conformance-units-bytes",
+  "input": "0205060709",
+  "expect": "0205060709",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "6",
+    "probe.z": "7",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: w = 2, the extent is 2 * 8 bits, counted from the length line, not from the count"
+}

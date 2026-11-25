@@ -1,0 +1,12 @@
+{
+  "name": "ruling-07-partial",
+  "from": "conformance-units-inner-in-partial",
+  "to": "conformance-units-inner-in-partial",
+  "input": "020708",
+  "expect": "0107",
+  "model": {
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 7: `partial` ignores the byte; encode writes the length of what it writes"
+}

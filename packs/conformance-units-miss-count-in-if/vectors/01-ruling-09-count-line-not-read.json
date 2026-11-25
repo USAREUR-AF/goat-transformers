@@ -1,0 +1,13 @@
+{
+  "name": "ruling-09-count-line-not-read",
+  "from": "conformance-units-miss-count-in-if",
+  "to": "conformance-units-miss-count-in-if",
+  "input": "0280010500",
+  "expect": "0280010500",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: in the second item the count line is not read and states nothing"
+}

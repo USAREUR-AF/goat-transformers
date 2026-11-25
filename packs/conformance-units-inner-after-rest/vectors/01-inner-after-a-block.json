@@ -1,0 +1,13 @@
+{
+  "name": "inner-after-a-block",
+  "from": "conformance-units-inner-after-rest",
+  "to": "conformance-units-inner-after-rest",
+  "input": "01070506",
+  "expect": "01070506",
+  "model": {
+    "probe.x": "7",
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; 0.34 Decode: the inner input is 05 06"
+}

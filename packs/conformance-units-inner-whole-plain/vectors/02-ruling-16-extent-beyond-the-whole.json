@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-extent-beyond-the-whole",
+  "from": "conformance-units-inner-whole-plain",
+  "to": "conformance-units-inner-whole-plain",
+  "input": "0302aabb",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the extent of a plain block ends beyond the whole of 2: 0.34 step 2, though the inner message could be empty"
+}

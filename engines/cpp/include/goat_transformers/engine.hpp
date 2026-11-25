@@ -550,6 +550,10 @@ struct SeqNode {
     int count_id = -1;
     // v0.31: a group with `count @<a> @<b>`: the second count line's index; -1 when none.
     int count_id2 = -1;
+    // v0.83. length: `length @<name> units <u>`, sized by the count line
+    // `count_id`; 0 for every other line. `unit_bits` is set when <u> is not a
+    // multiple of 8.
+    std::uint32_t unit_size = 0;
     // v0.34. inner: the format named, looked up when decode or encode reaches the line.
     std::string inner_format;
     // `partial`: bytes of the inner input after the inner message's end are ignored.

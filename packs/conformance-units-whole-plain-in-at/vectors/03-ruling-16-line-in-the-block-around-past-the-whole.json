@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-line-in-the-block-around-past-the-whole",
+  "from": "conformance-units-whole-plain-in-at",
+  "to": "conformance-units-whole-plain-in-at",
+  "input": "050305050607",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: z starts at byte 5, past the whole of 5, in the `length @` block around the plain one"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-04-ends-with-the-enclosing-extent",
+  "from": "conformance-units-nested",
+  "to": "conformance-units-nested",
+  "input": "0301050609",
+  "expect": "0301050609",
+  "model": {
+    "probe.y": "6",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4: the two extents end together"
+}

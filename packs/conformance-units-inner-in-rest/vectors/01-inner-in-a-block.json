@@ -1,0 +1,12 @@
+{
+  "name": "inner-in-a-block",
+  "from": "conformance-units-inner-in-rest",
+  "to": "conformance-units-inner-in-rest",
+  "input": "020506",
+  "expect": "020506",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: the inner input is the 2 bytes of the extent"
+}

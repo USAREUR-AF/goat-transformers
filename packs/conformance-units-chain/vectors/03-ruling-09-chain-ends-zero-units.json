@@ -1,0 +1,16 @@
+{
+  "name": "ruling-09-chain-ends-zero-units",
+  "from": "conformance-units-chain",
+  "to": "conformance-units-chain",
+  "input": "000a09",
+  "expect": "000a09",
+  "model": {
+    "probe.x": "5",
+    "probe.n": "9",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: 0 units: no error; encode writes 0"
+}

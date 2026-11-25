@@ -1,0 +1,12 @@
+{
+  "name": "inner-inside-the-whole",
+  "from": "conformance-units-inner-past-byte",
+  "to": "conformance-units-inner-past-byte",
+  "input": "02040509",
+  "expect": "02040509",
+  "model": {
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; 0.34 ruling 3: the inner input is 09"
+}

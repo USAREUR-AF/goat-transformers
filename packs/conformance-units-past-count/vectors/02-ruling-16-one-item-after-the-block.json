@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-one-item-after-the-block",
+  "from": "conformance-units-past-count",
+  "to": "conformance-units-past-count",
+  "input": "01040405aabb07",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the item needs bits past the whole of 4 (and no bits are left, ruling 14 of 0.8)"
+}

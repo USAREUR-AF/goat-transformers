@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-absent-block-units-stated",
+  "from": "conformance-units-edge",
+  "to": "conformance-units-edge",
+  "input": "0105",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the count states 5 units and its block is not read (absent by ruling 4, and not tested by ruling 5): malformed-wire when the message has been read"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "block-inside-the-whole",
+  "from": "conformance-units-past-units",
+  "to": "conformance-units-past-units",
+  "input": "020206050708",
+  "expect": "020206050708",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the whole is the message's 6 bytes"
+}

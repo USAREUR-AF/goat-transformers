@@ -1,0 +1,13 @@
+{
+  "name": "two-counts-two-blocks",
+  "from": "conformance-units-after",
+  "to": "conformance-units-after",
+  "input": "01020708ff",
+  "expect": "01010708",
+  "model": {
+    "probe.x": "7",
+    "probe.y": "8"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: each count sizes its own block"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-absent-in-a-length-at",
+  "from": "conformance-units-inner",
+  "to": "conformance-units-inner",
+  "input": "01020509",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the count states 2 units and its block is not read (absent by ruling 4 in a `length @` block): malformed-wire when the message has been read"
+}

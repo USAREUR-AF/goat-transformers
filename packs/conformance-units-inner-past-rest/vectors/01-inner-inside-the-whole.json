@@ -1,0 +1,13 @@
+{
+  "name": "inner-inside-the-whole",
+  "from": "conformance-units-inner-past-rest",
+  "to": "conformance-units-inner-past-rest",
+  "input": "0205050607",
+  "expect": "0205050607",
+  "model": {
+    "probe.x": "5",
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; 0.34 ruling 3: the inner input is 06 07, to the whole of 5"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "two-plain-items",
+  "from": "conformance-units-plain-items",
+  "to": "conformance-units-plain-items",
+  "input": "0401050206",
+  "expect": "0401050206",
+  "model": {
+    "probe.items.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: 4 bytes hold two items"
+}

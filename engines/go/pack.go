@@ -470,6 +470,8 @@ type Pack struct {
 	// order, and the line of the first.
 	innerFormats []string
 	innerLine    int
+
+	units bool // the pack has a `length @<name> units <u>` line (0.83)
 }
 
 // InnerFormats returns the formats the pack's `inner` lines name, each once,
@@ -855,6 +857,13 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			// file (spec 0.34, "The inner line").
 			if late == nil {
 				late = perr(ErrBadDirective, n, "", "inner is valid only in a pack on wire bits with layout sequential")
+			}
+			continue
+		} else if unitsForm(kw, args) {
+			// `length @<name> units <u>` on a fixed layout or another wire,
+			// after the file (0.83 ruling 13).
+			if late == nil {
+				late = perr(ErrBadDirective, n, "", "length @<name> units <u> is valid only in a pack with `layout sequential`")
 			}
 			continue
 		} else if seqOnly[kw] && kw != "if" && !(kw == "length" && len(args) == 1) {

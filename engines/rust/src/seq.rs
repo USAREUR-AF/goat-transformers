@@ -69,7 +69,9 @@ pub enum SeqLine {
     Group(SeqGroup),
     /// the parts between `fx` lines; `ends_fx`: the last line of the chain is `fx`
     Chain { parts: Vec<Vec<SeqLine>>, ends_fx: bool },
-    Length { len: u32, in_bits: bool, plus: i64, body: Vec<SeqLine> },
+    /// `units`: `length @<name> units <u>` (engine-spec v0.83), the id of its
+    /// `count` line and the bits of one unit; `len` and `plus` are then 0
+    Length { len: u32, in_bits: bool, plus: i64, body: Vec<SeqLine>, units: Option<(usize, u32)> },
     /// `length ... whole`: the length of the whole message in bytes plus `plus`
     Whole { len: u32, plus: i64 },
     /// `ext` (engine-spec v0.19): a SEQUENCE with an extension marker
@@ -826,6 +828,17 @@ impl<'a> Parser<'a> {
         Ok(out)
     }
 
+    /// The id of the `count` line a reference `text` (`@<name>`) names: visible
+    /// here, and of this group body (rulings 9 and 12 of 0.21).
+    fn count_ref(&self, text: &str, name: &str, ln: usize) -> Result<usize, Error> {
+        match self.names.iter().rev().find(|(n, _, _)| n == name) {
+            Some((_, id, Named::Count(depth))) if *depth == self.body_depth => Ok(*id),
+            Some((_, _, Named::Count(_))) => bad(ln, format!("`{}` names a count of another group body (ruling 9 of 0.21)", text)),
+            Some((_, _, Named::Presence(_))) => bad(ln, format!("`{}` names a presence, not a count", text)),
+            None => bad(ln, format!("`{}` names a count that is not visible here", text)),
+        }
+    }
+
     /// The lines of one `alt`, up to the next `alt` or the `end` of the
     /// `choice`, which are not taken.
     fn alt_block(&mut self) -> Result<Vec<SeqLine>, Error> {
@@ -1197,6 +1210,20 @@ impl<'a> Parser<'a> {
                 if toks.len() < 2 {
                     return bad(ln, "length needs <len> [bytes|bits] [plus <n>] [whole]");
                 }
+                // `length @<name> units <u>` (engine-spec v0.83)
+                if toks[1].starts_with('@') {
+                    let u = match toks.as_slice() {
+                        [_, _, word, u] if word == "units" && u.bytes().all(|b| b.is_ascii_digit()) => u.parse::<u32>().ok(),
+                        _ => return bad(ln, "a length given by a count is `length @<name> units <u>`"),
+                    };
+                    let u = match u.filter(|u| (1..=65535).contains(u)) {
+                        Some(u) => u,
+                        None => return bad(ln, "the size of a unit is 1 to 65535 bits"),
+                    };
+                    let id = self.count_ref(&toks[1], &toks[1][1..], ln)?;
+                    let body = self.block(ln, "length")?;
+                    return Ok(Some(SeqLine::Length { len: 0, in_bits: u % 8 != 0, plus: 0, body, units: Some((id, u)) }));
+                }
                 let len = value_len(&toks[1], ln)?;
                 let (mut unit, mut plus, mut whole): (Option<bool>, Option<i64>, bool) = (None, None, false);
                 let mut i = 2;
@@ -1224,7 +1251,7 @@ impl<'a> Parser<'a> {
                     }
                     SeqLine::Whole { len, plus }
                 } else {
-                    SeqLine::Length { len, in_bits, plus, body: self.block(ln, "length")? }
+                    SeqLine::Length { len, in_bits, plus, body: self.block(ln, "length")?, units: None }
                 }
             }
             "group" => {
@@ -1245,14 +1272,7 @@ impl<'a> Parser<'a> {
                             if refs.iter().filter(|o| *o == t).count() > 1 {
                                 return bad(ln, format!("`{}` is named twice on one group", t));
                             }
-                            match self.names.iter().rev().find(|(n, _, _)| n == name) {
-                                Some((_, id, Named::Count(depth))) if *depth == self.body_depth => ids.push(*id),
-                                Some((_, _, Named::Count(_))) => {
-                                    return bad(ln, format!("`count {}` names a count of another group body (ruling 9 of 0.21)", t));
-                                }
-                                Some((_, _, Named::Presence(_))) => return bad(ln, format!("`count {}` names a presence, not a count", t)),
-                                None => return bad(ln, format!("`count {}` names a count that is not visible here", t)),
-                            }
+                            ids.push(self.count_ref(t, name, ln)?);
                         }
                         Rep::Named(ids)
                     }
@@ -1480,6 +1500,10 @@ fn count_refs(lines: &[SeqLine], id: usize) -> (usize, usize) {
         match l {
             SeqLine::Group(g) if matches!(&g.rep, Rep::Named(ids) if ids.contains(&id)) => add(&mut at, (1, 1)),
             SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                // `length @` is a reference as a group is (ruling 1 of 0.83)
+                if matches!(l, SeqLine::Length { units: Some((u, _)), .. } if *u == id) {
+                    add(&mut at, (1, 1));
+                }
                 add(&mut at, count_refs(body, id))
             }
             SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| add(&mut at, count_refs(p, id))),
@@ -1509,10 +1533,10 @@ fn check_counts_lines(lines: &[SeqLine], tail: &dyn Fn(usize) -> (usize, usize))
                 let (c, d) = tail(*id);
                 let (lo, hi) = (a + c, b + d);
                 if lo == 0 {
-                    return bad(*line, "the count is not referenced by a `group … count @` line on every reading path");
+                    return bad(*line, "the count is not referenced by a `group … count @` or `length @` line on every reading path");
                 }
                 if hi > 1 {
-                    return bad(*line, "the count is referenced by two groups on one reading path");
+                    return bad(*line, "the count is referenced twice on one reading path");
                 }
             }
             SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
@@ -2059,7 +2083,7 @@ pub(crate) struct Reader<'a> {
     unit: u64,
     /// per `count` line id: the number of items it states, None when the
     /// line lay at or past the end of a `length` extent (engine-spec v0.21)
-    counts: HashMap<usize, Option<u64>>,
+    counts: HashMap<usize, Option<i128>>,
     /// the engine that finds the pack of an `inner` line (engine-spec v0.34);
     /// None: a codec called without an engine, where no format is loaded
     host: Option<&'a dyn InnerHost>,
@@ -2068,6 +2092,9 @@ pub(crate) struct Reader<'a> {
     /// the length the message states in bits, the smallest of several
     /// `length ... whole` lines (ruling 13 of 0.34)
     stated: Option<u64>,
+    /// counts that state units whose `length @` block was not read, in the
+    /// scopes being read (ruling 9 of 0.83)
+    unread: Vec<usize>,
 }
 
 /// What a sequential layout needs of the engine for an `inner` line
@@ -2117,11 +2144,82 @@ impl<'a> Reader<'a> {
     #[cfg(feature = "bits")]
     fn need(&self, len: u64, what: &str) -> Result<(), Error> {
         // `pos` may stand past `end` after a `length` block; nothing overflows
-        if self.end.saturating_sub(self.pos) < len {
-            let place = if self.depth > 0 { "the `length` extent" } else { "the input" };
+        if self.left() < len {
+            let place = if self.depth > 0 && self.end <= self.whole { "the `length` extent" } else { "the input" };
             return Err(self.short(format!("{} ends before {} at bit {}", place, what, self.pos)));
         }
         Ok(())
+    }
+    /// The first bit no line may read: the end of the extent or of the
+    /// message, whichever comes first (ruling 16 of 0.83).
+    #[cfg(feature = "bits")]
+    fn limit(&self) -> u64 {
+        self.end.min(self.whole)
+    }
+    /// The bits of the message left at the cursor in its extent.
+    #[cfg(feature = "bits")]
+    pub(crate) fn left(&self) -> u64 {
+        self.limit().saturating_sub(self.pos)
+    }
+    /// Does the cursor stand at or past the end of a `length` extent?
+    #[cfg(feature = "bits")]
+    fn past_extent(&self) -> bool {
+        self.depth > 0 && self.pos >= self.end
+    }
+    /// The bits of the innermost extent after the cursor, past a `length …
+    /// whole` read in it or not (ruling 16 of 0.83).
+    #[cfg(feature = "bits")]
+    fn stated_left(&self) -> u64 {
+        if self.depth > 0 {
+            self.end.saturating_sub(self.pos)
+        } else {
+            self.left()
+        }
+    }
+    /// Read `body` in an extent that ends at `stop`, counted in units of
+    /// `unit` bits; content of it no line reads is skipped.
+    #[cfg(feature = "bits")]
+    fn block(&mut self, body: &[SeqLine], stop: u64, unit: u64, d: &mut Decoded) -> Result<(), Error> {
+        let outer = (self.end, self.unit);
+        self.end = stop;
+        self.unit = unit;
+        self.depth += 1;
+        let res = decode_lines(body, self, d);
+        self.depth -= 1;
+        self.pos = stop;
+        (self.end, self.unit) = outer;
+        if self.depth == 0 {
+            // a `length … whole` read in the block ends the message
+            self.end = self.end.min(self.whole);
+        }
+        res
+    }
+    /// These lines are not read: a count that states units and whose `length
+    /// @` block is one of them is an error once its scope is read (ruling 9 of
+    /// 0.83). Group bodies have counts of their own.
+    #[cfg(feature = "bits")]
+    fn skip_blocks(&mut self, lines: &[SeqLine]) {
+        for l in lines {
+            match l {
+                SeqLine::Length { body, units, .. } => {
+                    if let Some((id, _)) = units {
+                        if self.counts.get(id).copied().flatten().map_or(false, |n| n != 0) {
+                            self.unread.push(*id);
+                        }
+                    }
+                    self.skip_blocks(body);
+                }
+                // a count line not read states nothing, an earlier item's value included
+                SeqLine::Count { id, .. } => {
+                    self.counts.insert(*id, None);
+                }
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Ext { body } => self.skip_blocks(body),
+                SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| self.skip_blocks(p)),
+                SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| self.skip_blocks(p)),
+                SeqLine::Switch(sw) => sw.bodies().for_each(|c| self.skip_blocks(&c.lines)),
+                _ => {}
+            }
+        }
     }
     /// `len` (1..=64) bits at the cursor as an unsigned value.
     #[cfg(feature = "bits")]
@@ -2141,7 +2239,7 @@ impl<'a> Reader<'a> {
     /// (ruling 21 of 0.8); past the end of the input it is `malformed-wire`.
     #[cfg(feature = "bits")]
     fn indicator(&mut self, what: &str) -> Result<u64, Error> {
-        if self.depth > 0 && self.pos >= self.end {
+        if self.past_extent() {
             return Ok(0);
         }
         self.read(1, what)
@@ -2152,7 +2250,12 @@ impl<'a> Reader<'a> {
 /// whose `when` lines all hold, read from the cursor.
 #[cfg(feature = "bits")]
 fn decode_body<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result<Option<&'a SeqKind>, Error> {
-    decode_kind(body, r, d)
+    let unread = r.unread.len();
+    let kind = decode_kind(body, r, d)?;
+    if r.unread.len() > unread {
+        return Err(r.short("a count states units and its `length @` block is not read (ruling 9 of 0.83)"));
+    }
+    Ok(kind)
 }
 
 #[cfg(feature = "bits")]
@@ -2174,7 +2277,7 @@ fn decode_kind<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
                 None => Some(at),
             };
             let v = pos
-                .filter(|pos| r.end.saturating_sub(*pos) >= w.len as u64)
+                .filter(|pos| r.limit().saturating_sub(*pos) >= w.len as u64)
                 .and_then(|pos| get_bits(r.raw, pos, w.len, r.p.order))
                 .filter(|v| in_list(&w.values, *v));
             if w.at.is_none() {
@@ -2219,8 +2322,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
         // in it is present and empty (ruling 3 of 0.21)
         // an `inner` line there is still read: its pack is called for no bytes
         // (engine-spec v0.34, Decode step 3)
-        if r.depth > 0
-            && r.pos >= r.end
+        if r.past_extent()
             && !matches!(line, SeqLine::Switch(_) | SeqLine::If { .. } | SeqLine::Chain { .. } | SeqLine::Inner { .. })
         {
             match line {
@@ -2232,13 +2334,13 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 }
                 // a list an inner message gave the entity is kept (engine-spec v0.34)
                 SeqLine::Group(g) if g.rep == Rep::Rest && !r.inner_lists.contains(&g.list) => d.put_list(&g.list, Vec::new()),
-                _ => {}
+                absent => r.skip_blocks(std::slice::from_ref(absent)),
             }
             continue;
         }
         match line {
             SeqLine::Field { f, also, .. } if f.until.is_some() => {
-                let (bits, v) = read_until(r.p, f, r.raw, r.pos, r.end).map_err(|e| r.short(e.msg))?;
+                let (bits, v) = read_until(r.p, f, r.raw, r.pos, r.limit()).map_err(|e| r.short(e.msg))?;
                 r.pos += bits;
                 for a in also {
                     d.put(r.p, a, v.clone());
@@ -2277,10 +2379,10 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
             SeqLine::Align { n } => {
                 // stops at the end of the input or extent without error (ruling 20 of 0.8)
                 let skip = (n - r.pos % n) % n;
-                r.pos = (r.pos + skip).min(r.end.max(r.pos));
+                r.pos = (r.pos + skip).min(r.limit().max(r.pos));
             }
             SeqLine::When(w) => {
-                let v = if r.end.saturating_sub(r.pos) < w.len as u64 { None } else { Some(r.read(w.len, "a `when`")?) };
+                let v = if r.left() < w.len as u64 { None } else { Some(r.read(w.len, "a `when`")?) };
                 match v {
                     Some(v) if in_list(&w.values, v) => {
                         if let Some(key) = &w.key {
@@ -2327,17 +2429,22 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
             SeqLine::If { conds, body } => {
                 if conds.iter().all(|c| r.bit(c)) {
                     decode_lines(body, r, d)?;
+                } else {
+                    r.skip_blocks(body);
                 }
             }
             SeqLine::Opt { body } => {
                 if r.read(1, "the bit of an `opt`")? == 1 {
                     decode_lines(body, r, d)?;
+                } else {
+                    r.skip_blocks(body);
                 }
             }
             SeqLine::Chain { parts, ends_fx } => {
                 let mut whole = true;
                 for (i, part) in parts.iter().enumerate() {
                     if i > 0 && r.indicator("an `fx` bit")? == 0 {
+                        parts[i..].iter().for_each(|p| r.skip_blocks(p));
                         whole = false;
                         break;
                     }
@@ -2348,24 +2455,29 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                     return Err(r.short("the last `fx` bit of a chain is 1: the item extends past what the pack describes"));
                 }
             }
-            SeqLine::Length { len, in_bits, plus, body } => {
+            // engine-spec v0.83: the extent an earlier count states
+            SeqLine::Length { body, units: Some((id, u)), in_bits, .. } => {
+                let n = match r.counts.get(id).copied().flatten() {
+                    Some(n) => n,
+                    // the count line lay past the end of its extent
+                    None => continue,
+                };
+                let stop = r.pos as i128 + n * *u as i128;
+                // beyond the extent around it, the input or a whole length read
+                // before (rulings 4 and 5)
+                if stop > r.limit() as i128 {
+                    return Err(r.short(format!("a block of {} units of {} bits does not fit", n, u)));
+                }
+                r.block(body, stop as u64, if *in_bits { 1 } else { 8 }, d)?;
+            }
+            SeqLine::Length { len, in_bits, plus, body, units: None } => {
                 let stated = r.read(*len, "a `length`")? as i128 - *plus as i128;
                 let unit: i128 = if *in_bits { 1 } else { 8 };
-                let extent = stated * unit;
-                if stated < 0 || r.pos as i128 + extent > r.end as i128 {
+                let stop = r.pos as i128 + stated * unit;
+                if stated < 0 || stop > r.limit() as i128 {
                     return Err(r.short(format!("a `length` of {} {} does not fit", stated, if *in_bits { "bits" } else { "bytes" })));
                 }
-                let stop = r.pos + extent as u64;
-                let outer = std::mem::replace(&mut r.end, stop);
-                let outer_unit = std::mem::replace(&mut r.unit, if *in_bits { 1 } else { 8 });
-                r.depth += 1;
-                let res = decode_lines(body, r, d);
-                r.depth -= 1;
-                r.unit = outer_unit;
-                // content of the extent no line reads is skipped
-                r.pos = stop;
-                r.end = outer.min(r.whole);
-                res?;
+                r.block(body, stop as u64, unit as u64, d)?;
             }
             SeqLine::Whole { len, plus } => {
                 let stated = r.read(*len, "a `length`")? as i128 - *plus as i128;
@@ -2376,9 +2488,12 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 if bits < r.pos as i128 {
                     return Err(r.short(format!("the message states {} bytes, fewer than its lines so far", stated)));
                 }
+                // the end of the input, not of an extent (ruling 8 of 0.8)
                 r.whole = bits as u64;
                 r.stated = Some(r.stated.map_or(r.whole, |s| s.min(r.whole)));
-                r.end = r.end.min(r.whole);
+                if r.depth == 0 {
+                    r.end = r.end.min(r.whole);
+                }
             }
             SeqLine::Ext { body } => {
                 let more = r.read(1, "the extension bit of an `ext`")?;
@@ -2427,7 +2542,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                     Rep::Count(len) => {
                         let n = r.read(*len, "the count of a group")?;
                         limit::take_count(&format, &g.list, n)?;
-                        if n > r.end.saturating_sub(r.pos) {
+                        if n > r.left() {
                             return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
                         }
                         for _ in 0..n {
@@ -2436,7 +2551,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                     }
                     Rep::Size(size) => {
                         let n = crate::uper::read_count(r, *size, "the count of a group")?;
-                        if n > r.end.saturating_sub(r.pos) {
+                        if n > r.left() {
                             return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
                         }
                         for _ in 0..n {
@@ -2463,7 +2578,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                     },
                     // items while a whole unit of the extent remains; fewer bits are padding
                     Rep::Rest => {
-                        while r.end.saturating_sub(r.pos) >= r.unit {
+                        while r.stated_left() >= r.unit {
                             let start = r.pos;
                             item(r, &mut items)?;
                             if r.pos == start {
@@ -2472,7 +2587,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                         }
                     }
                     Rep::Named(ids) => {
-                        let ns: Option<Vec<u64>> = ids.iter().map(|id| r.counts.get(id).copied().flatten()).collect();
+                        let ns: Option<Vec<i128>> = ids.iter().map(|id| r.counts.get(id).copied().flatten()).collect();
                         let n = match ns {
                             // two counts agree, as exact integers (rulings 4 and 5 of 0.31)
                             Some(ns) if ns.iter().any(|m| *m != ns[0]) => {
@@ -2483,9 +2598,9 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                             None => continue,
                         };
                         // 7d of 0.11, also for a list that is discarded (ruling 7 of 0.34)
-                        limit::take_count(&format, &g.list, n)?;
+                        limit::take_count(&format, &g.list, u64::try_from(n).unwrap_or(u64::MAX))?;
                         // the bits left at the group (ruling 20 of 0.21)
-                        if n > r.end.saturating_sub(r.pos) {
+                        if n > r.left() as i128 {
                             return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
                         }
                         for _ in 0..n {
@@ -2539,7 +2654,9 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 if r.pos % 8 != 0 {
                     return Err(r.short(format!("the `inner {}` message starts at bit {}, inside a byte", format, r.pos)));
                 }
-                if r.end > r.raw.len() as u64 * 8 || r.end % 8 != 0 {
+                // the input ends at a `length … whole`, also one read inside the
+                // block (ruling 16 of 0.83)
+                if r.end > r.whole || r.end % 8 != 0 {
                     return Err(r.short(format!("the extent of the `inner {}` message ends at bit {}, not on a whole byte of the input", format, r.end)));
                 }
                 let start = r.pos.min(r.end);
@@ -2564,8 +2681,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 if n < 0 {
                     return Err(r.short(format!("a count of {} is below its `plus {}`", v, plus)));
                 }
-                // more items than u64 holds are more than any input's bits
-                r.counts.insert(*id, Some(u64::try_from(n).unwrap_or(u64::MAX)));
+                r.counts.insert(*id, Some(n));
             }
         }
     }
@@ -2604,6 +2720,7 @@ pub(crate) fn decode_parts(p: &Pack, body: &SeqBody, raw: &[u8], total: u64, hos
         clock: 0,
         unit: 8,
         counts: HashMap::new(),
+        unread: Vec::new(),
     };
     let mut d = Decoded::new();
     let kind = decode_body(body, &mut r, &mut d)?;
@@ -3105,6 +3222,7 @@ fn read_back_uper(p: &Pack, f: &FieldDef, loc: &crate::uper::Loc, also: &[FieldD
         clock: 0,
         unit: 8,
         counts: HashMap::new(),
+        unread: Vec::new(),
     };
     if let Ok(v) = crate::uper::read_field(&mut r, f, loc) {
         for a in also {
@@ -3142,9 +3260,10 @@ pub(crate) struct Writer<'a> {
     /// scope being written, innermost last: a switch selects from it
     back: Vec<Decoded>,
     look: &'a Look<'a>,
-    /// every `count` field written: (bit, len, plus, filled by its group),
-    /// filled in once the group is laid out (engine-spec v0.21)
-    count_fields: Vec<(u64, u32, i64, bool)>,
+    /// every `count` field written: (bit, len, plus, what its group or block
+    /// counts), filled in and checked when the message is finished (ruling 30
+    /// of 0.21)
+    count_fields: Vec<(u64, u32, i64, Option<u64>)>,
     /// per `count` line id: its latest field in `count_fields`
     counts: HashMap<usize, usize>,
     /// the extents being written, innermost last: (first bit, counted in bits)
@@ -3400,7 +3519,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                     w.put(1, 0);
                 }
             }
-            SeqLine::Length { len, in_bits, plus, body } => {
+            SeqLine::Length { len, in_bits, plus, body, units } => {
                 let at = w.pos;
                 w.zeros(*len as u64);
                 let start = w.pos;
@@ -3413,6 +3532,16 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 // a block counted in bytes is padded with zero bits to a whole byte
                 if !*in_bits {
                     w.zeros((8 - (w.pos - start) % 8) % 8);
+                }
+                // the count an earlier line wrote (engine-spec v0.83)
+                if let Some((id, u)) = units {
+                    let bits = w.pos - start;
+                    if bits % *u as u64 != 0 {
+                        return Err(w.fail(format!("a block of {} bits is not a whole number of units of {} bits", bits, u)));
+                    }
+                    let k = *w.counts.get(id).expect("the count line is written before its block");
+                    w.count_fields[k].3 = Some(bits / *u as u64);
+                    continue;
                 }
                 let size = (w.pos - start) / if *in_bits { 1 } else { 8 };
                 let stated = size as i128 + *plus as i128;
@@ -3517,16 +3646,10 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                         for item in items {
                             encode_body(&g.body, item, true, w)?;
                         }
-                        // each count is written at its own place now the group is laid out
+                        // each count is written at its own place when the message is finished
                         for id in ids {
                             let k = *w.counts.get(id).expect("the count line is written before its group");
-                            w.count_fields[k].3 = true;
-                            let (at, len, plus, _) = w.count_fields[k];
-                            let v = n as i128 + plus as i128;
-                            if v < 0 || (len < 64 && v >> len != 0) || v > u64::MAX as i128 {
-                                return Err(w.fail(format!("list `{}`: a count of {} does not fit its {} bits", g.list, v, len)));
-                            }
-                            set_bits(&mut w.buf, at, len, v as u64, p.order);
+                            w.count_fields[k].3 = Some(n as u64);
                         }
                     }
                     Rep::Last => {
@@ -3582,9 +3705,6 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 };
                 encode_lines(&c.lines, &[], ent, defs.inside(c), w)?;
             }
-            // the field holds `n` until its group is laid out: a group not
-            // reached leaves it so (ruling 6 of 0.21)
-            // (checked in `encode` once every group is written)
             // engine-spec v0.34: the checks, a whole byte, then the inner message
             SeqLine::Inner { format, reach, .. } => {
                 let h = inner_host(w.look.host, p, format, reach)?;
@@ -3596,9 +3716,11 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 w.zeros(bytes.len() as u64 * 8);
                 w.buf[at..at + bytes.len()].copy_from_slice(&bytes);
             }
+            // a group or block not reached leaves the field its `plus`
+            // (ruling 6 of 0.21)
             SeqLine::Count { id, len, plus, .. } => {
                 w.counts.insert(*id, w.count_fields.len());
-                w.count_fields.push((w.pos, *len, *plus, false));
+                w.count_fields.push((w.pos, *len, *plus, None));
                 w.zeros(*len as u64);
             }
         }
@@ -3639,14 +3761,14 @@ pub(crate) fn encode_host(p: &Pack, body: &SeqBody, ent: &Entity, host: Option<&
             ));
         }
     };
-    // a count whose group was not written holds `n` (ruling 6 of 0.21)
-    for (at, len, plus, filled) in std::mem::take(&mut w.count_fields) {
-        if !filled {
-            if plus < 0 || (len < 64 && (plus as u64) >> len != 0) {
-                return Err(w.fail(format!("an absent list writes a count of {}, which does not fit its {} bits", plus, len)));
-            }
-            set_bits(&mut w.buf, at, len, plus as u64, p.order);
+    // each count, range-checked now (ruling 30 of 0.21); one whose group or
+    // block was not written holds its `plus` (ruling 6 of 0.21)
+    for (at, len, plus, n) in std::mem::take(&mut w.count_fields) {
+        let v = n.unwrap_or(0) as i128 + plus as i128;
+        if v < 0 || v >> len != 0 {
+            return Err(w.fail(format!("a count of {} does not fit its {} bits", v, len)));
         }
+        set_bits(&mut w.buf, at, len, v as u64, p.order);
     }
     // an encoding of no bits is one octet `00` (engine-spec v0.19, X.691 10.1.3)
     if p.uper && w.buf.is_empty() {

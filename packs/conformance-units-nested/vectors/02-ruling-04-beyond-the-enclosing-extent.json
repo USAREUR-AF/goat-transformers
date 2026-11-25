@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-beyond-the-enclosing-extent",
+  "from": "conformance-units-nested",
+  "to": "conformance-units-nested",
+  "input": "0302050609",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4: the block ends beyond the `length` block around it, though the input goes on"
+}

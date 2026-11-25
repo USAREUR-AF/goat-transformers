@@ -1,0 +1,10 @@
+{
+  "name": "ruling-03-items-are-limited-units-are-not",
+  "from": "conformance-units-rest-tail",
+  "to": "conformance-units-rest-tail",
+  "input": "0105",
+  "expect_error": "malformed-wire",
+  "max_items": 0,
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 3: the one item of the rest list is over max_items 0 (0.11 ruling 7a)"
+}

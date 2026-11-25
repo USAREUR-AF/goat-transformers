@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-bit-counted-rest-needs-1-bit",
+  "from": "conformance-units-u12-five",
+  "to": "conformance-units-u12-five",
+  "input": "1108",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 10: a rest counted in bits needs 1 bit for an item; the third item straddles the end (0.8 ruling 7)"
+}

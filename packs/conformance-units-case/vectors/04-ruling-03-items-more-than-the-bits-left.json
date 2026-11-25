@@ -1,0 +1,9 @@
+{
+  "name": "ruling-03-items-more-than-the-bits-left",
+  "from": "conformance-units-case",
+  "to": "conformance-units-case",
+  "input": "02ff06",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 14 of 0.8, for a list only"
+}

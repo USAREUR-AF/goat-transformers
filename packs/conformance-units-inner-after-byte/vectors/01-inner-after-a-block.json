@@ -1,0 +1,13 @@
+{
+  "name": "inner-after-a-block",
+  "from": "conformance-units-inner-after-byte",
+  "to": "conformance-units-inner-after-byte",
+  "input": "010709",
+  "expect": "010709",
+  "model": {
+    "probe.x": "7",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; 0.34 Decode: the inner input is 09"
+}

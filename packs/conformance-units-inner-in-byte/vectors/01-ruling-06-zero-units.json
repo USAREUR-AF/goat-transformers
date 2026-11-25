@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-zero-units",
+  "from": "conformance-units-inner-in-byte",
+  "to": "conformance-units-inner-in-byte",
+  "input": "00",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6: the inner message needs a byte (0.34 ruling 2)"
+}

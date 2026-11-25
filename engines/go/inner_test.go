@@ -175,3 +175,41 @@ func TestInnerClashReach(t *testing.T) {
 		t.Errorf("inner in the common lines, key of a kind: %q, want bad-directive", k)
 	}
 }
+
+// A whole length read in a length block ends the input for every block around
+// it and for the message after them: a line that needs bits past it is
+// malformed-wire, a rest list at message level is empty, and an inner line
+// there has an empty input (0.8 ruling 8, 0.83 ruling 16, 0.34 ruling 3).
+func TestWholeInBlockEndsInput(t *testing.T) {
+	const block = "length 8\n  length 8 whole\nend\n"
+	const rest = "group g.items rest\n  field g.n 8 uint\nend\n"
+	const field = "field g.n 8 uint\n"
+	for _, c := range []struct {
+		name, outer, inner, msg string
+		want                    ErrorKind
+	}{
+		{"line within a whole beyond the block", block + field, rest, "01" + "03" + "07", ""},
+		{"inner within a whole beyond the block", block + "inner i\n", field, "01" + "03" + "07", ""},
+		{"line past the whole in the block", "length 8\n  length 8 whole\n  field g.n 8 uint\nend\n", rest, "02" + "02" + "07", ErrMalformedWire},
+		{"inner in a block that ends beyond the whole", "length 8\n  length 8 whole\n  inner i\nend\n", rest, "02" + "02" + "07", ErrMalformedWire},
+		{"line past the whole", block + field, rest, "01" + "02" + "07", ErrMalformedWire},
+		{"line past a block that runs past the whole", block + field, rest, "02" + "02" + "00" + "07", ErrMalformedWire},
+		{"inner past the whole", block + "inner i\n", field, "01" + "02" + "07", ErrMalformedWire},
+		{"inner past the whole reads no bytes", block + "inner i\n", rest, "02" + "02" + "00" + "0708", ""},
+		{"nothing after the block", block, rest, "02" + "02" + "00" + "07", ""},
+		{"whole in a block of a block", "length 8\n  " + block + "end\n" + field, rest, "02" + "01" + "03" + "07", ErrMalformedWire},
+	} {
+		if k := innerBudgetKindOf(t, c.outer, c.inner, c.msg, 100); k != c.want {
+			t.Errorf("%s: %q, want %q", c.name, k, c.want)
+		}
+	}
+	for _, outer := range []string{block + rest, block + "inner i\n"} {
+		e := innerEngine(t, outer, rest)
+		ent, err := e.Decode("o", []byte("02"+"02"+"00"+"0708"))
+		if err != nil {
+			t.Errorf("%q: %v", outer, err)
+		} else if items, ok := ent.Lists["g.items"]; !ok || len(items) != 0 {
+			t.Errorf("%q: the list holds %d item(s), present %v; want present and empty", outer, len(items), ok)
+		}
+	}
+}

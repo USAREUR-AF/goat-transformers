@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-opt-not-read",
+  "from": "conformance-units-opt",
+  "to": "conformance-units-opt",
+  "input": "070009",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the count states 7 units and its block is not read (in an `opt` not read): malformed-wire when the message has been read"
+}

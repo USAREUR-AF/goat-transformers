@@ -180,6 +180,7 @@ type seqNode struct {
 	kind  *seqKind        // seqKindStart: the kind whose lines follow
 	inner string          // inner: the format of the inner pack (0.34)
 	reach map[string]bool // inner: the entries the pack's lines in reach map (0.52 ruling 20)
+	units int             // length: the unit of `length @<name> units <u>` in bits, 0 for another length (0.83)
 	part  bool            // inner: `partial`, bytes after the inner message are ignored (0.34)
 }
 
@@ -554,6 +555,11 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		sp.lateErr(sp.bad(n, "", "a %s line stands between choice (line %d) and its first alt", kw, top.line))
 	}
 	// Between `switch` and its first `case` no line stands (0.20 ruling 20).
+	if top.op == seqSwitchOp && unitsForm(kw, args) {
+		sp.lateErr(sp.bad(n, "", "%s stands between the switch on line %d and its first case", kw, top.line))
+		sp.unitsLine(args, n, &[]*seqNode{})
+		return nil
+	}
 	if top.op == seqSwitchOp && kw != "case" && kw != "else" && kw != "end" {
 		return sp.bad(n, "", "%s stands between the switch on line %d and its first case", kw, top.line)
 	}
@@ -572,7 +578,12 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 	// when it reads bits itself (0.21 ruling 41, checked at its line).
 	case "field", "const", "pad", "align", "presence", "opt", "fx", "length", "group", "count", "ext", "inner":
 		if err := sp.wireLine(kw, n); err != nil {
-			return err
+			if !unitsForm(kw, args) {
+				return err
+			}
+			// Every error of the form is a check after the file (0.83
+			// ruling 13).
+			sp.lateErr(err)
 		}
 	case "when":
 		if top.kind != nil || top.op == seqMsg || top.op == seqGroup {
@@ -911,6 +922,10 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		}
 		add(&seqNode{op: seqFx})
 	case "length":
+		if unitsForm(kw, args) {
+			sp.unitsLine(args, n, top.nodes)
+			break
+		}
 		// length <len> [bytes|bits] [plus <n>] [whole], the words after the
 		// length in any order (0.8 ruling 8).
 		ln, err := sp.bitLen(kw, args[0], 64, n)
@@ -1350,6 +1365,40 @@ func (sp *seqParser) twoCounts(g *Group, toks []string) error {
 	return nil
 }
 
+// unitsForm reports whether a line has the form of 0.83: a `length` whose
+// first argument starts with `@`, or that holds `units`.
+func unitsForm(kw string, args []string) bool {
+	return kw == "length" && (strings.HasPrefix(args[0], "@") || hasToken(args, "units"))
+}
+
+// unitsLine reads `length @<name> units <u>` (0.83) into a list of lines.
+// Every error is a check after the file (ruling 13); the block is opened all
+// the same, so that its end closes it.
+func (sp *seqParser) unitsLine(args []string, n int, nodes *[]*seqNode) {
+	sp.p.units = true
+	node := &seqNode{op: seqLength, line: n, units: 8}
+	u, ok := uint64(0), false
+	if len(args) == 3 {
+		u, ok = parsePlainUint64(args[2])
+	}
+	switch {
+	case len(args) != 3 || len(args[0]) < 2 || args[0][0] != '@' || args[1] != "units":
+		sp.lateErr(sp.bad(n, "", "a length given by a count is `length @<name> units <u>`"))
+	case !ok || u < 1 || u > 65535:
+		sp.lateErr(sp.bad(n, "", "length: `units` takes plain digits from 1 to 65535, got %q", args[2]))
+	case u <= 65535: // always, past the case above; stated so the conversion is bounded where it is made
+		node.units = int(u)
+		node.bits = u%8 != 0
+		cd, err := sp.lookupCount(args[0][1:])
+		if err != nil {
+			sp.lateErr(sp.bad(n, "", "length: %v", err))
+		}
+		node.cnt = cd
+	}
+	*nodes = append(*nodes, node)
+	sp.push(&seqFrame{op: seqLength, line: n, node: node, nodes: &node.body})
+}
+
 // hasToken reports whether toks holds t.
 func hasToken(toks []string, t string) bool {
 	for _, x := range toks {
@@ -1535,6 +1584,15 @@ func countRefs(nodes []*seqNode, cd *seqCountDef) (lo, hi int) {
 				lo++
 				hi++
 			}
+		case seqLength:
+			// A `length @` is a reference as a group is (0.83 ruling 1).
+			if n.cnt == cd {
+				lo++
+				hi++
+			}
+			a, b := countRefs(n.body, cd)
+			lo += a
+			hi += b
 		case seqSwitchOp:
 			cases := append([]*seqCase(nil), n.sw.cases...)
 			if n.sw.els != nil {

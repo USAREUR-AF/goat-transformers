@@ -1,0 +1,13 @@
+{
+  "name": "ruling-16-rest-after-the-block",
+  "from": "conformance-units-past-rest",
+  "to": "conformance-units-past-rest",
+  "input": "040305aabb09",
+  "expect": "020305",
+  "model": {
+    "probe.x": "5",
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the message ends at the whole (0.21 ruling 14), where the cursor is past: no bits remain, the list is present and empty"
+}

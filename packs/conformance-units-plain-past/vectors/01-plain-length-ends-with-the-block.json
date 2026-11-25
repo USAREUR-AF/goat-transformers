@@ -1,0 +1,13 @@
+{
+  "name": "plain-length-ends-with-the-block",
+  "from": "conformance-units-plain-past",
+  "to": "conformance-units-plain-past",
+  "input": "040305000609",
+  "expect": "040305000609",
+  "model": {
+    "probe.y": "6",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 17: the two extents end together"
+}

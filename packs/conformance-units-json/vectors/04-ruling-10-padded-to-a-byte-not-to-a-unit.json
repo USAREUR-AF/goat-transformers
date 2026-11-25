@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-padded-to-a-byte-not-to-a-unit",
+  "from": "conformance-units-json",
+  "to": "conformance-units-subbyte",
+  "input": "{\"nums\":[2],\"n\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 10: 5 bits are padded to 8, which are not whole units of 16"
+}

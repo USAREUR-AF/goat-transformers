@@ -707,7 +707,9 @@ class Node:
         self.as_key = None          # spec 0.30: the key of `when ... as <key>`
         self.optional = False       # spec 0.52: `as <key> optional`
         self.at = None              # spec 0.33: the offset of `when ... at <offset>`
-        self.names = None           # spec 0.31: the count names of `group <list> count @<a> [@<b>]`
+        # spec 0.31: the count names of `group <list> count @<a> [@<b>]`;
+        # spec 0.83: the one of `length @<name> units <u>` (u is `count`)
+        self.names = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -1325,6 +1327,8 @@ class _Loader:
                 self._block(node.body, group, visible + [{}], set(), in_kind, top=False, chain=True)
             elif d == "length":
                 self._length(node)
+                if node.names is not None:      # spec 0.83: a reference, as `count @<name>` is
+                    self._count_ref(node, visible)
                 if node.body is not None:
                     self._block(node.body, group, visible + [{}], set(), in_kind, top=False)
             elif d == "ext":
@@ -1894,16 +1898,16 @@ class _Loader:
         self.counts.append(node)
 
     def _count_ref(self, node, visible):
-        """`group <list> count @<name>` (spec 0.21): the name is a count
-        visible here, declared in the same group body (ruling 9), not a
+        """`group <list> count @<name>` (spec 0.21), or `length @<name>`
+        (spec 0.83): the name is a count visible here, declared in the same group body (ruling 9), not a
         presence (ruling 15). With two names (spec 0.31) each is checked so."""
         frames = visible[self._body_base:]
         for name in node.names:
             size = next((frame[name] for frame in reversed(frames) if name in frame), None)
             if size is None:
-                self.bad(node, "`count @%s`: no count of that name is visible in this group body" % name)
+                self.bad(node, "`@%s`: no count of that name is visible in this group body" % name)
             if size != "count":
-                self.bad(node, "`count @%s` names a presence (0.21 ruling 15)" % name)
+                self.bad(node, "`@%s` names a presence (0.21 ruling 15)" % name)
 
     def _if(self, node, visible):
         if not node.args:
@@ -1982,6 +1986,16 @@ class _Loader:
 
     def _length(self, node):
         a = node.args
+        if a and a[0].startswith("@"):
+            # spec 0.83: exactly `length @<name> units <u>`, u plain digits 1 to
+            # 65535; counted in bytes when u is a multiple of 8, else in bits
+            if len(a) != 3 or a[1] != "units" or not _COUNT_NAME.match(a[0][1:]) \
+                    or not _UINT.match(a[2]) or not 1 <= int(a[2].lstrip("0")[:6] or "0") <= 65535:
+                self.bad(node, "`length @<name> units <u>` with u from 1 to 65535 (spec 0.83)")
+            node.names, node.name, node.whole, node.plus = (a[0][1:],), a[0][1:], False, 0
+            node.count = int(a[2])
+            node.unit = "bits" if node.count % 8 else "bytes"
+            return
         if not a or not _UINT.match(a[0]) or not 1 <= int(a[0]) <= 64:
             self.bad(node, "`length` takes a field length of 1 to 64 bits")
         node.bits, node.unit, node.plus, node.whole = int(a[0]), None, None, False
@@ -2111,7 +2125,7 @@ class _Loader:
                     for path in ([tail + alt for alt in alternatives] if alternatives else [tail]):
                         found = self._refs(path, node.name)
                         if found != {1}:
-                            self.bad(node, "count `%s` is referenced by %s group in a reading path "
+                            self.bad(node, "count `%s` is referenced by %s group or `length @` in a reading path "
                                            "(0.21 ruling 2)" % (node.name, "no" if 0 in found else "more than one"))
                 if node.d == "group":
                     visit(node.body, [k.lines for k in node.kinds or ()])
@@ -2130,7 +2144,8 @@ class _Loader:
         """The numbers of `count @<name>` groups over the reading paths of
         `lines` (2 standing for two or more); a group body is not entered and a
         nested block that declares the name again hides it to its end. A group
-        with two names (spec 0.31 ruling 3) is one reference to each."""
+        with two names (spec 0.31 ruling 3) is one reference to each, and a
+        `length @<name>` (spec 0.83 ruling 1) is one besides those in its body."""
         got = {0}
         for node in lines:
             if node.d in ("count", "presence") and node.name == name:
@@ -2139,8 +2154,9 @@ class _Loader:
                 add = {1} if node.mode == "ref" and name in node.names else {0}
             elif node.d == "switch":
                 add = set().union(*(self._refs(arm.body, name) for arm in node.body))
-            elif node.body:
-                add = self._refs(node.body, name)
+            elif node.body is not None:
+                own = 1 if node.d == "length" and node.names and name in node.names else 0
+                add = {min(own + n, 2) for n in self._refs(node.body, name)}
             else:
                 continue
             got = {min(a + b, 2) for a in got for b in add}

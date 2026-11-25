@@ -1,0 +1,9 @@
+{
+  "name": "ruling-17-plain-length-past-the-block-its-line-fits",
+  "from": "conformance-units-plain-inside",
+  "to": "conformance-units-plain-inside",
+  "input": "0203050607",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 17: the plain length's extent ends beyond the block around it: malformed-wire at its line, though x fits both and the input holds the stated bytes"
+}

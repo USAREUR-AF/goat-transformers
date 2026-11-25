@@ -210,7 +210,7 @@ fn read_len(r: &mut Reader, what: &str) -> Result<u64, Error> {
 /// `n` units of `unit` bits must lie in the input, before any is read.
 #[cfg(feature = "bits")]
 fn hold(r: &Reader, n: u64, unit: u64, what: &str) -> Result<(), Error> {
-    let left = r.end.saturating_sub(r.pos);
+    let left = r.left();
     if n.checked_mul(unit).map_or(true, |b| b > left) {
         return Err(r.short(format!("{}: {} at bit {} is more than the input holds", what, n, r.pos)));
     }

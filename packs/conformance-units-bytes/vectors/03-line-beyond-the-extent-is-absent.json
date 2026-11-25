@@ -1,0 +1,16 @@
+{
+  "name": "line-beyond-the-extent-is-absent",
+  "from": "conformance-units-bytes",
+  "to": "conformance-units-bytes",
+  "input": "01050609",
+  "expect": "0205060009",
+  "model": {
+    "probe.y": "6",
+    "probe.n": "9",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: lines beyond the extent read as absent; encode writes every line (0.8 ruling 7)"
+}

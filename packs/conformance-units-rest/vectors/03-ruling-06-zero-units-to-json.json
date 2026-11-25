@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-zero-units-to-json",
+  "from": "conformance-units-rest",
+  "to": "conformance-units-json",
+  "input": "0009",
+  "expect": "{\"n\":9,\"nums\":[]}",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 6: present and empty"
+}

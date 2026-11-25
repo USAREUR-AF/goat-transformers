@@ -1,0 +1,13 @@
+{
+  "name": "rest-fills-the-extent",
+  "from": "conformance-units-rest",
+  "to": "conformance-units-rest",
+  "input": "02050609",
+  "expect": "02050609",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: a rest list ends the extent; n is after it"
+}

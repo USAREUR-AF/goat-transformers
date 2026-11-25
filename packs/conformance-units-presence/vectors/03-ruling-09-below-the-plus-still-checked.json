@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-below-the-plus-still-checked",
+  "from": "conformance-units-presence",
+  "to": "conformance-units-presence",
+  "input": "00400609",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9 (0.21 ruling 6): the below-plus check is at the count line"
+}

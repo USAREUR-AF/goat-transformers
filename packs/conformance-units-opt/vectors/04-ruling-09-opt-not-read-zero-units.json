@@ -1,0 +1,15 @@
+{
+  "name": "ruling-09-opt-not-read-zero-units",
+  "from": "conformance-units-opt",
+  "to": "conformance-units-opt",
+  "input": "000009",
+  "expect": "000009",
+  "model": {
+    "probe.n": "9",
+    "@absent": [
+      "probe.nums"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: 0 units: no error; encode writes 0"
+}

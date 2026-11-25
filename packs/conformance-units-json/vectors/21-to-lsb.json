@@ -1,0 +1,9 @@
+{
+  "name": "to-lsb",
+  "from": "conformance-units-json",
+  "to": "conformance-units-lsb",
+  "input": "{\"x\":2,\"y\":291,\"z\":4,\"n\":9}",
+  "expect": "21234109",
+  "source": "constructed",
+  "reference": "spec 0.83; Encode: the count is filled low bit first"
+}

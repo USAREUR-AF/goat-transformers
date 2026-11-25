@@ -1,0 +1,9 @@
+{
+  "name": "whole-units",
+  "from": "conformance-units-json",
+  "to": "conformance-units-words",
+  "input": "{\"x\":1,\"y\":6,\"qty\":7,\"nums\":[1],\"n\":9}",
+  "expect": "1106070109",
+  "source": "constructed",
+  "reference": "spec 0.83; Encode: 16 bits are 1 unit"
+}

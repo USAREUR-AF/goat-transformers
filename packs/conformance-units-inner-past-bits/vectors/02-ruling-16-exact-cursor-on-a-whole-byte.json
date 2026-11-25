@@ -1,0 +1,13 @@
+{
+  "name": "ruling-16-exact-cursor-on-a-whole-byte",
+  "from": "conformance-units-inner-past-bits",
+  "to": "conformance-units-inner-past-bits",
+  "input": "18030500",
+  "expect": "100305",
+  "model": {
+    "probe.x": "5",
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the cursor stands at bit 32: the inner input is empty"
+}

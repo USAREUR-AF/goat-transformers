@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-bits-beyond-bytes",
+  "from": "conformance-units-inner-bits",
+  "to": "conformance-units-inner-bits",
+  "input": "0302123456",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 4: 24 bits of the 16 left"
+}

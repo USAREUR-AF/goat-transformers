@@ -38,6 +38,7 @@ SCRIPTS = (
     "conformance-tool-vectors.py",
     "conformance-transforms-vectors.py",
     "conformance-twocount-vectors.py",
+    "conformance-units-vectors.py",
     "conformance-whenas-vectors.py",
 )
 

@@ -1,0 +1,16 @@
+{
+  "name": "a-block-in-each-item",
+  "from": "conformance-units-items",
+  "to": "conformance-units-items",
+  "input": "020506010703080102",
+  "expect": "020506010703080102",
+  "model": {
+    "probe.items.#": "3",
+    "probe.items[0].probe.subs.#": "1",
+    "probe.items[1].probe.subs.#": "0",
+    "probe.items[2].probe.subs.#": "2",
+    "probe.items[2].probe.qty": "8"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: each item's count sizes its own block; a rest list may end it (0.21 ruling 10)"
+}

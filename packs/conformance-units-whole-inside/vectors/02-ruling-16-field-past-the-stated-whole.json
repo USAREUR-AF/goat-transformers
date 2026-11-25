@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-field-past-the-stated-whole",
+  "from": "conformance-units-whole-inside",
+  "to": "conformance-units-whole-inside",
+  "input": "03030506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: y lies past the stated whole of 3 bytes and inside the block: malformed-wire, not absent"
+}

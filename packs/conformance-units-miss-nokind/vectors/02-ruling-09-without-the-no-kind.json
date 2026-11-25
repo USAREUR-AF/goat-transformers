@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-without-the-no-kind",
+  "from": "conformance-units-miss-nokind",
+  "to": "conformance-units-miss-nokind",
+  "input": "010001",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the message has been read; 1 unit stated and the `if` was not read"
+}

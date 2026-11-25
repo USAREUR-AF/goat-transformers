@@ -1,0 +1,15 @@
+{
+  "name": "zero-units",
+  "from": "conformance-units-miss-nokind",
+  "to": "conformance-units-miss-nokind",
+  "input": "000001",
+  "expect": "000001",
+  "model": {
+    "probe.y": "1",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: 0 units: no error"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-03-the-largest-count",
+  "from": "conformance-units-wide",
+  "to": "conformance-units-wide",
+  "input": "ffffffffffffffff07",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 5: the extent ends beyond the input: malformed-wire at the line (ruling 3: (2^64 - 1) * 8 bits, exact)"
+}

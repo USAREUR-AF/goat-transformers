@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -74,6 +75,55 @@ final class SeqCodec extends BitsWire<byte[]> {
 
     // ---- decode ----
 
+    /** Ruling 9 of 0.83: the counts of one scope that state units, the blocks, cases and alts read in it. */
+    private static final class UnitScope {
+        final java.util.Set<Seq.Node> counts = Collections.newSetFromMap(new IdentityHashMap<>());
+        final java.util.Set<Seq.Node> blocks = Collections.newSetFromMap(new IdentityHashMap<>());
+        final Map<Seq.Node, Seq.Case> cases = new IdentityHashMap<>();
+        /** The position of the alternative chosen, or -1 for an extension alternative. */
+        final Map<Seq.Node, Integer> alts = new IdentityHashMap<>();
+
+        /** True when {@code lines} hold a block of count {@code c} that was not read and is not left out by a choice made. */
+        boolean unread(List<Seq.Node> lines, Seq.Node c) {
+            for (Seq.Node n : lines) {
+                switch (n.op) {
+                    case LENGTH:
+                        if (n.countRef == c && !blocks.contains(n)) return true;
+                        if (unread(n.body, c)) return true;
+                        break;
+                    case IF:
+                    case OPT:
+                    case EXT:
+                        if (unread(n.body, c)) return true;
+                        break;
+                    case CHAIN:
+                        for (List<Seq.Node> part : n.parts) if (unread(part, c)) return true;
+                        break;
+                    case CHOICE:
+                        // one that was read counts by its chosen alternative, one that was not by any
+                        if (alts.containsKey(n)) {
+                            int at = alts.get(n);
+                            if (at >= 0 && unread(n.altLines.get(at), c)) return true;
+                            break;
+                        }
+                        for (List<Seq.Node> alt : n.altLines) if (unread(alt, c)) return true;
+                        break;
+                    case SWITCH:
+                        if (cases.containsKey(n)) {
+                            if (unread(cases.get(n).body, c)) return true;
+                            break;
+                        }
+                        for (Seq.Case k : n.cases) if (unread(k.body, c)) return true;
+                        if (n.elseCase != null && unread(n.elseCase.body, c)) return true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return false;
+        }
+    }
+
     /** One decode: the input, the cursor, the end of the input and of the innermost {@code length} extent. */
     private final class Reader {
         final byte[] msg;
@@ -111,7 +161,11 @@ final class SeqCodec extends BitsWire<byte[]> {
             this.end = in.bits;
         }
 
-        long limit() { return soft >= 0 ? soft : end; }
+        /** The bits that may be read: those before the end of the innermost extent and of the input (ruling 16 of 0.83). */
+        long limit() { return soft >= 0 ? Math.min(soft, end) : end; }
+
+        /** What the scope being read (the message, or an item) has read; null in a body without unit blocks. */
+        UnitScope units;
 
         /**
          * True when a line of {@code len} bits can be read at the cursor. Inside a {@code length} extent a line that
@@ -122,6 +176,8 @@ final class SeqCodec extends BitsWire<byte[]> {
             if (soft >= 0) {
                 if (pos >= soft) return false;
                 if (pos + len > soft) throw malformed(what + " runs past the end of its length extent");
+                // a whole length read in the block ends the input, not the block (ruling 16 of 0.83)
+                if (pos + len > end) throw malformed("the input ends before " + what);
                 return true;
             }
             if (pos + len > end) throw malformed("the input ends before " + what);
@@ -266,6 +322,20 @@ final class SeqCodec extends BitsWire<byte[]> {
     }
 
     private Seq.Kind decodeBody(Seq.Body body, Reader r, Entity e) {
+        UnitScope outer = r.units;
+        r.units = body.unitBlocks ? new UnitScope() : null;
+        Seq.Kind kind = decodeScope(body, r, e);
+        if (r.units != null) {
+            // ruling 9 of 0.83: a count that states units of which no block is read
+            for (Seq.Node c : r.units.counts) {
+                if (r.units.unread(kind.all, c)) throw malformed("count " + c.name + " states units and no length @" + c.name + " block is read");
+            }
+        }
+        r.units = outer;
+        return kind;
+    }
+
+    private Seq.Kind decodeScope(Seq.Body body, Reader r, Entity e) {
         decodeLines(body.common, r, e);
         Seq.Kind kind = body.kinds.get(0);
         if (body.hasKinds) {
@@ -405,9 +475,23 @@ final class SeqCodec extends BitsWire<byte[]> {
                     break;
                 }
                 case LENGTH: {
-                    if (!r.line(n.len, "a length")) break;
-                    long units = r.take(n.len);
-                    long bits = extent(units, n, r.limit() - r.pos);
+                    long bits;
+                    if (n.countRef != null) {
+                        // engine-spec 0.83: at or past the end of the enclosing block it is absent (ruling 4)
+                        if (r.soft >= 0 && r.pos >= r.soft) break;
+                        BigInteger count = r.exactCounts.get(n.countRef);
+                        if (count == null || r.counts.get(n.countRef) < 0) break;   // the count line was absent: it states nothing
+                        BigInteger size = count.multiply(BigInteger.valueOf(n.unit));
+                        if (size.compareTo(BigInteger.valueOf(r.limit() - r.pos)) > 0) {
+                            throw malformed(count + " units of " + n.unit + " bits (count " + n.countRef.name + ") run past the end of the input or extent");
+                        }
+                        bits = size.longValue();
+                        if (r.units != null) r.units.blocks.add(n);
+                    } else {
+                        if (!r.line(n.len, "a length")) break;
+                        long units = r.take(n.len);
+                        bits = extent(units, n, r.limit() - r.pos);
+                    }
                     long outer = r.soft;
                     boolean outerBits = r.softBits;
                     r.soft = r.pos + bits;
@@ -428,6 +512,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     if (items.signum() < 0) {
                         throw malformed("count " + n.name + " holds " + items.add(BigInteger.valueOf(n.plus)) + ", below its plus " + n.plus);
                     }
+                    if (r.units != null && items.signum() > 0) r.units.counts.add(n);
                     r.counts.put(n, items.bitLength() > 63 ? Long.MAX_VALUE : items.longValue());
                     r.exactCounts.put(n, items);
                     break;
@@ -443,8 +528,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     if (total < r.pos) throw malformed("the stated length of the message is shorter than what was already read");
                     if (total > r.end) throw malformed("the input is shorter than the stated length of the message");
                     r.end = total;
-                    r.wholeRead = true;
-                    if (r.soft > total) r.soft = total;
+                    r.wholeRead = true;   // the blocks around it keep their ends (ruling 16 of 0.83)
                     break;
                 }
                 case GROUP:
@@ -461,6 +545,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     if (!r.line(n.ext ? 1 : 0, "a choice")) break;
                     if (n.ext && r.take(1) == 1) {
                         // an extension alternative: its index and its open type are skipped
+                        if (r.units != null) r.units.alts.put(n, -1);
                         try {
                             r.normallySmall("the index of an extension alternative");
                         } catch (IllegalArgumentException ex) {
@@ -472,6 +557,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     long i = r.constrained(0, n.alts - 1, "the index of a choice");
                     Integer at = n.altAt.get((int) i);
                     if (at == null) throw malformed("the choice index " + i + " has no alt");
+                    if (r.units != null) r.units.alts.put(n, at);
                     decodeLines(n.altLines.get(at), r, e);
                     break;
                 }
@@ -490,6 +576,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     Seq.Case c = Seq.select(n, e.get(n.switchKey));
                     if (c == null) throw noCase(n, e.get(n.switchKey));
                     r.casesRead.add(c);
+                    if (r.units != null) r.units.cases.put(n, c);
                     decodeLines(c.body, r, e);
                     break;
                 }
@@ -506,9 +593,10 @@ final class SeqCodec extends BitsWire<byte[]> {
     private void decodeInner(Seq.Node n, Reader r, Entity e) {
         BitsWire<?> inner = reachInner(n);
         if (r.pos % 8 != 0) throw malformed("the inner line of " + n.name + " is reached at bit " + r.pos + ", not on a whole byte");
-        long lim = r.limit();
-        if (lim > (long) r.msg.length * 8) throw malformed("the extent of the inner line ends beyond the input");
+        long lim = r.soft >= 0 ? r.soft : r.end;
+        if (lim > r.end) throw malformed("the extent of the inner line ends beyond the input");
         if (lim % 8 != 0) throw malformed("the length extent of the inner line of " + n.name + " does not end on a whole byte");
+        lim = Math.max(lim, r.pos);   // past a whole length the inner input is empty (ruling 16 of 0.83)
         byte[] bytes = Arrays.copyOfRange(r.msg, (int) (r.pos / 8), (int) (lim / 8));
         r.pos = lim;
         Layer layer;
@@ -773,7 +861,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                 }
                 giveBack(r, e.list(g.list));
                 countItems(r, c);   // before any item is read (7d of 0.11)
-                long left = r.limit() - r.pos;
+                long left = Math.max(0, r.limit() - r.pos);   // past a whole length none are left (ruling 16 of 0.83)
                 if (c > left) throw malformed("count " + g.countRef.name + " of " + g.list + " is " + c + " and " + left + " bits are left");
                 for (long i = 0; i < c; i++) items.add(decodeItem(g, r));
                 break;
@@ -782,7 +870,8 @@ final class SeqCodec extends BitsWire<byte[]> {
                 // items while bits remain in the extent: 8 when it is counted in bytes, 1 when in bits; fewer are padding
                 long unit = r.soft >= 0 && r.softBits ? 1 : 8;
                 giveBack(r, e.list(g.list));
-                while (r.limit() - r.pos >= unit) {
+                // a rest runs to its block's end and fails at a whole length that cuts it (ruling 16 of 0.83)
+                while ((r.soft >= 0 ? r.soft : r.end) - r.pos >= unit) {
                     long at = r.pos;
                     oneItem(r);   // each item counts (7a of 0.11)
                     items.add(decodeItem(g, r));
@@ -1431,7 +1520,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                 }
                 case LENGTH: {
                     long at = w.pos;
-                    w.skip(n.len);
+                    w.skip(n.len);   // 0 for length @<name>, whose count stands earlier
                     long start = w.pos;
                     Extent x = new Extent(start, n.inBits);
                     w.extents.push(x);
@@ -1442,6 +1531,16 @@ final class SeqCodec extends BitsWire<byte[]> {
                         units = (units + 7) / 8;
                         w.skip(start + units * 8 - w.pos);   // a block counted in bytes is padded to a whole byte
                         checkRestItems(x, w.pos);
+                    }
+                    if (n.countRef != null) {
+                        // engine-spec 0.83: a whole number of units, which the count field then holds with its plus
+                        long size = w.pos - start;
+                        if (size % n.unit != 0) {
+                            throw encodeError("the block of length @" + n.countRef.name + " is " + size + " bits, not a whole number of units of " + n.unit);
+                        }
+                        CountSlot c = w.slotOf.get(n.countRef);
+                        if (c != null) c.value = BigInteger.valueOf(size / n.unit).add(BigInteger.valueOf(n.countRef.plus));
+                        break;
                     }
                     long value = units + n.plus;
                     if (value < 0 || (n.len < 63 && value > BitsTransform.mask(n.len))) {

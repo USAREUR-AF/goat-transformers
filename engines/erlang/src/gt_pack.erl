@@ -69,7 +69,7 @@
 -export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
          require_marking/2, yields/1, model_keys/1, key_names_marked/1, named/1,
          index/1, factor/1, number/1, when_match/2, when_first/1, req_key/1,
-         as_holds/2, as_match/2]).
+         as_holds/2, as_match/2, lenrefs/1]).
 %% for gt_text
 -export([text_loc_indexes/1]).
 
@@ -417,6 +417,7 @@ with_named(K) -> [{K, requires}].
 seq_bodies({ifb, _, Body}) -> [Body];
 seq_bodies({opt, Body}) -> [Body];
 seq_bodies({len, _, _, _, Body}) -> [Body];
+seq_bodies({lenref, _, _, Body}) -> [Body];
 seq_bodies({chain, First, Rest, _}) -> [First | Rest];
 seq_bodies({uext, Body}) -> [Body];
 seq_bodies({uchoice, _, _, Alts}) -> [Body || {_, Body} <- Alts];
@@ -2249,6 +2250,8 @@ scan_bare(Bin, 0) ->
 %%   {ifb, [{Id, Bit, Negated}], Body} | {opt, Body}
 %%   {chain, FirstPart, [Part], EndsWithFx}   each later part follows an fx bit
 %%   {len, Len, bytes | bits, Plus, Body} | {lenwhole, Len, Plus}
+%%   {lenref, Count, Units, Body}   (0.83) a block of a count's units of Units
+%%        bits; Count its name, the count's id once resolved
 %%   {sgroup, List, {count, Len} | while | more | fx,
 %%            #{lines, defaults, kinds => [Kind]}}
 %%   {switch, Key, Ref, [Case], none | Case}   (0.20) Case = #{vals, lines,
@@ -2349,6 +2352,18 @@ seq_apply([<<"fx">>], #{sstack := Stack} = P) ->
     case Stack of
         [#{type := chain} | _] -> seq_add(fx, P);
         _ -> load_error('bad-directive', "fx is a line of a chain", [])
+    end;
+%% `length @<name> units <u>` (0.83); a line with `units` and no `@` is refused
+%% below
+seq_apply([<<"length">>, <<"@", Name/binary>> | Rest], P) ->
+    U = case Rest of
+            [<<"units">>, US] when Name =/= <<>> -> uint(US);
+            _ -> error
+        end,
+    case is_integer(U) andalso U >= 1 andalso U =< 65535 of
+        true -> seq_push(#{type => length, hdr => {ref, Name, U}}, P#{has_lenref => true});
+        false -> load_error('bad-directive', "length @~s is not `length @<name> units <u>`, u from 1 to 65535",
+                            [Name])
     end;
 seq_apply([<<"length">>, LenS | Rest], P) ->
     Len = seq_len(LenS, 1, 64),
@@ -2712,6 +2727,8 @@ seq_close(#{type := choice, hdr := {N, Ext}} = F0) ->
         #{alts := []} -> load_error('bad-directive', "choice has no alt line", []);
         #{alts := Alts} -> {uchoice, N, Ext, lists:reverse(Alts)}
     end;
+seq_close(#{type := length, hdr := {ref, Name, U}, lines := Ls}) ->
+    {lenref, Name, U, lists:reverse(Ls)};
 seq_close(#{type := length, hdr := {Len, Unit, Plus}, lines := Ls}) ->
     {len, Len, Unit, Plus, lists:reverse(Ls)};
 seq_close(#{type := chain, lines := Ls}) ->
@@ -2882,6 +2899,7 @@ inner_lines(Lines) ->
     lists:append([case L of
                       {inner, F, _, _} -> [F];
                       {len, _, _, _, Body} -> inner_lines(Body);
+                      {lenref, _, _, Body} -> inner_lines(Body);
                       _ -> []
                   end || L <- Lines]).
 
@@ -2894,6 +2912,7 @@ inner_reach(Common, Kinds) ->
                   [case L of
                        {inner, F, Partial, _} -> {inner, F, Partial, Keys};
                        {len, Len, Unit, Plus, Body} -> {len, Len, Unit, Plus, Set(Body, Keys)};
+                       {lenref, Id, U, Body} -> {lenref, Id, U, Set(Body, Keys)};
                        _ -> L
                    end || L <- Lines]
           end,
@@ -3075,6 +3094,11 @@ seq_res([{uchoice, N, Ext, Alts} | Rest], Env, Decl, St, Acc) ->
 seq_res([{len, Len, Unit, Plus, Body} | Rest], Env, Decl, St, Acc) ->
     {Body1, St1} = seq_res_block(Body, Env, St),
     seq_res(Rest, Env, Decl, St1, [{len, Len, Unit, Plus, Body1} | Acc]);
+%% a `length @` names a count as a group does (ruling 1 of 0.83)
+seq_res([{lenref, Name, U, Body} | Rest], Env, Decl, St, Acc) ->
+    Id = count_id("length", Name, Env),
+    {Body1, St1} = seq_res_block(Body, Env, St),
+    seq_res(Rest, Env, Decl, St1, [{lenref, Id, U, Body1} | Acc]);
 seq_res([{chain, First, Parts, EndsFx} | Rest], Env, Decl, St, Acc) ->
     %% the parts of a chain are one block
     {[First1 | Parts1], {_, _, St1}} =
@@ -3610,7 +3634,7 @@ count_lines([L | Rest], Kinds) ->
                     case Paths of
                         [1] -> ok;
                         _ -> load_error('bad-directive',
-                                        "a count is not referenced by exactly one count @ group in each reading path", [])
+                                        "a count is not referenced by exactly one count @ group or length @ block in each reading path", [])
                     end;
         {sgroup, _, _, #{lines := Ls, kinds := Ks}} -> count_block(Ls, Ks);
         %% the parts of a chain are one block
@@ -3620,6 +3644,14 @@ count_lines([L | Rest], Kinds) ->
     end,
     count_lines(Rest, Kinds).
 
+%% The counts whose `length @` blocks stand in Lines, in any block of the scope,
+%% every case and alternative included (ruling 9 of 0.83).
+lenrefs(Lines) ->
+    lists:append([case L of
+                      {lenref, Id, _, Body} -> [Id | lenrefs(Body)];
+                      _ -> lenrefs(lists:append(seq_bodies(L)))
+                  end || L <- Lines]).
+
 %% The numbers of references to count Id over the reading paths through
 %% Lines, as an ordset of 0, 1 and 2 (2 standing for two or more).
 count_refs(Id, Lines) -> lists:foldl(fun(L, S) -> count_add(S, count_refs1(Id, L)) end, [0], Lines).
@@ -3627,6 +3659,7 @@ count_refs(Id, Lines) -> lists:foldl(fun(L, S) -> count_add(S, count_refs1(Id, L
 count_refs1(Id, {sgroup, _, {countref, Id}, _}) -> [1];
 count_refs1(Id, {sgroup, _, {countref2, A, B}, _}) when Id =:= A; Id =:= B -> [1];
 count_refs1(_Id, {sgroup, _, _, _}) -> [0];
+count_refs1(Id, {lenref, Id, _, Body}) -> count_add([1], count_refs(Id, Body));
 count_refs1(Id, {switch, _, _, Cases, Else}) ->
     lists:usort(lists:append([count_refs(Id, maps:get(lines, C)) || C <- switch_bodies(Cases, Else)]));
 count_refs1(Id, L) when is_tuple(L) -> count_refs(Id, lists:append(seq_bodies(L)));
@@ -3671,6 +3704,7 @@ rest_block([L | Rest], After0, Ctx) ->
         {inner, Format, _, _} when After ->
             load_error('bad-directive', "inner ~s is not the last line of its extent", [Format]);
         {len, _, _, _, Body} -> rest_block(Body, false, top);
+        {lenref, _, _, Body} -> rest_block(Body, false, top);
         {chain, First, Parts, EndsFx} ->
             N = length(Parts),
             lists:foreach(fun({I, Part}) -> rest_block(Part, After orelse I < N orelse EndsFx, Ctx) end,

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-15-item-past-the-whole",
+  "from": "conformance-units-when-item-at",
+  "to": "conformance-units-when-item-at",
+  "input": "050401050206",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 15: the second item's `when` at byte 4 lies past the whole of 4 and inside the block: no-kind"
+}

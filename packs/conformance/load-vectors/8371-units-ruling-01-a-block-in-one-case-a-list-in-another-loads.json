@@ -1,0 +1,8 @@
+{
+  "name": "8371-units-ruling-01-a-block-in-one-case-a-list-in-another-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nlist nums \"a list\"\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.83.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.x 8 uint\ncount w 8\nswitch probe.x\n  case 1\n    length @w units 8\n      field probe.y 8 uint\n    end\n  case 2\n    group probe.nums count @w\n      field probe.val 8 uint\n    end\nend\n"
+}

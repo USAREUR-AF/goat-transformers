@@ -1,0 +1,13 @@
+{
+  "name": "ruling-10-padded-from-the-first-bit",
+  "from": "conformance-units-pad",
+  "to": "conformance-units-pad",
+  "input": "1509",
+  "expect": "1509",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 10: the block starts at bit 4 and is padded to bit 12, where y stands"
+}

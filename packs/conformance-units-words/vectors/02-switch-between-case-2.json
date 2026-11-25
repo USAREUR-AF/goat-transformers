@@ -1,0 +1,14 @@
+{
+  "name": "switch-between-case-2",
+  "from": "conformance-units-words",
+  "to": "conformance-units-words",
+  "input": "120006070109",
+  "expect": "120006070109",
+  "model": {
+    "probe.z": "6",
+    "probe.qty": "7",
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: w = 1: 2 bytes, after the case's 16 bits"
+}

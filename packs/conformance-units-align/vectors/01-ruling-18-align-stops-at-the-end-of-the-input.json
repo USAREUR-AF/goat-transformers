@@ -1,0 +1,13 @@
+{
+  "name": "ruling-18-align-stops-at-the-end-of-the-input",
+  "from": "conformance-units-align",
+  "to": "conformance-units-align",
+  "input": "04000407aabb",
+  "expect": "0600080700000000",
+  "model": {
+    "probe.x": "7",
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 18: the cursor stands at bit 32, the whole, not at the end of the extent, so the block of 0 units is read and nums is present and empty"
+}

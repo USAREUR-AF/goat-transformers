@@ -1,0 +1,13 @@
+{
+  "name": "ruling-10-padded-from-the-first-bit",
+  "from": "conformance-units-lsb-pad",
+  "to": "conformance-units-lsb-pad",
+  "input": "5190",
+  "expect": "5190",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 10 under lsb: the block is padded from bit 4 to bit 12"
+}

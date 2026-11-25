@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-switch-not-read-key-in-no-case",
+  "from": "conformance-units-miss-switch",
+  "to": "conformance-units-miss-switch",
+  "input": "03010009",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the switch is not read; its case 1 holds the block"
+}

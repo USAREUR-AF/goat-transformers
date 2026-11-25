@@ -24,7 +24,7 @@ from .entity import Entity, Item, _via_decode, _via_encode, failure
 from .errors import BadDirective, GTError, MalformedWire, NoKind, TransformDecodeFailure, TransformEncodeFailure
 from .seqdef import (
     T_ALIGN, T_CHAIN, T_CHOICE, T_CONST, T_COUNT, T_EXT, T_FIELD, T_GROUP, T_IF, T_LENGTH, T_OPT, T_PAD,
-    T_INNER, T_PRESENCE, T_SWITCH, T_WHEN, T_WHOLE, children, when_matches, when_value,
+    T_INNER, T_PRESENCE, T_SWITCH, T_WHEN, T_WHOLE, children, count_reference, when_matches, when_value,
 )
 from .transforms import value_canon
 from .uper import INT64_MAX, twos_octets, uint_octets
@@ -156,10 +156,14 @@ class _Reader:
         self.pos = 0
         self.hard = self.msg.nbits
         self.stated = False  # a `length ... whole` was read: `hard` is the length it states
-        self.soft = []      # the ends of the open `length` blocks, outermost first
+        # the ends of the open `length` blocks, outermost first; that of a block in which a whole
+        # length ended the input may lie beyond it (0.83 ruling 16)
+        self.soft = []
         # 0.21: the unit of each open `length` block ("bytes" | "bits"), None for a
         # block that starts at or past the end of its enclosing extent (not read)
         self.units = []
+        self.stating = {}   # 0.83: the counts of this scope that state units of a block not read so far
+        self.taken = {}     # the case of each `switch` and the `alt` of each `choice` reached in this scope
         self.counts = {}    # 0.21: count node -> the number of items it states, None when not read
         self.env = {}       # presence node -> the set of its bits that are 1
         self.failures = []  # (key, locator, reason)
@@ -172,7 +176,8 @@ class _Reader:
         return MalformedWire("the input, or a length extent, ends before %s" % what, format=self.pack.name)
 
     def limit(self):
-        return self.soft[-1] if self.soft else self.hard
+        """The end of the extent, or of the input when that comes first."""
+        return min(self.soft[-1], self.hard) if self.soft else self.hard
 
     def take(self, n, what):
         """-> the first bit of the next `n` bits, the cursor moved past them;
@@ -251,6 +256,7 @@ class _Reader:
                 if case is None:
                     raise _no_case(self.pack, nd, sc.prefix)
                 pending = self.pending
+                self.taken[nd] = case
                 for p, bit in case.if_names:  # ruling 36: every earlier reading of the presence
                     for rest in pending.get(p, ()):
                         rest.discard(bit)
@@ -274,7 +280,7 @@ class _Reader:
         if pos % 8:
             raise MalformedWire("the inner message %s would start inside a byte (bit %d)" % (nd.name, pos),
                                 format=self.pack.name)
-        end = self.limit()
+        end = self.soft[-1] if self.soft else self.hard  # it may lie beyond a whole length (ruling 16 of 0.83)
         if end > self.hard or end > self.msg.nbits:
             raise self.short("the inner message %s" % nd.name)
         if end % 8:
@@ -305,7 +311,7 @@ class _Reader:
         if self.left is not None:
             self.left -= kept  # the discarded items are not counted (7g)
         self.inner_kind = ient.kind
-        self.pos = end
+        self.pos = max(self.pos, end)
 
     def when_read(self, nd):
         """-> the bits of a `when` read as an unsigned integer when it holds,
@@ -439,6 +445,7 @@ class _Reader:
 
     def choice(self, nd, sc):
         what = "the index of a 'choice'"
+        self.taken[nd] = None
         if nd.ext:
             start = self.take(1, "the extension bit of a 'choice'")
             if start is None:
@@ -456,6 +463,7 @@ class _Reader:
         alt = nd.index.get(i)
         if alt is None:
             raise MalformedWire("the 'choice' index %d has no 'alt'" % i, format=self.pack.name)
+        self.taken[nd] = alt
         self.run(alt.body, sc)
 
     def field(self, nd, sc):
@@ -631,6 +639,9 @@ class _Reader:
         )
 
     def length(self, nd, sc):
+        if nd.count_node is not None:
+            self.sized_block(nd, sc)
+            return
         start = self.take(nd.length, "a length of %d bit(s)" % nd.length)
         if start is None:
             end = self.pos  # the block is beyond its enclosing extent: every line of it reads as absent
@@ -643,14 +654,36 @@ class _Reader:
             end = self.pos + (count * 8 if nd.unit == "bytes" else count)
             if end > self.limit():
                 raise self.short("the block a length states")
+        self.block(nd, sc, end, None if start is None else nd.unit)
+
+    def sized_block(self, nd, sc):
+        """`length @<name> units <u>` (0.83): absent when it stands at or past
+        the end of the block around it, whatever its count states; otherwise
+        its extent ends within that block and the input (rulings 4 and 5)."""
+        count = self.counts.get(nd.count_node)
+        if count is None or self.at_soft_end():
+            self.block(nd, sc, self.pos, None)
+            return
+        end = self.pos + count * nd.size
+        if end > self.limit():
+            raise self.short("the block a count of units states")
+        self.stating.pop(nd.count_node, None)
+        self.block(nd, sc, end, nd.unit)
+
+    def block(self, nd, sc, end, unit):
         self.soft.append(end)
-        self.units.append(None if start is None else nd.unit)
+        self.units.append(unit)
         try:
             self.run(nd.body, sc)
         finally:
             self.soft.pop()
             self.units.pop()
         self.pos = end  # content of the extent no line reads is skipped
+
+    def bits_left(self):
+        """Never below 0: after a block that went past a whole length read in
+        it, a list of no items needs no bits (0.83 ruling 16)."""
+        return max(0, self.limit() - self.pos)
 
     def whole(self, nd):
         start = self.take(nd.length, "the length of the message")
@@ -663,10 +696,7 @@ class _Reader:
             raise MalformedWire("the stated length is shorter than what was already read", format=self.pack.name)
         self.hard = total  # of several, the smallest: one above it is malformed
         self.stated = True
-        soft = self.soft
-        for i in range(len(soft)):
-            if soft[i] > total:
-                soft[i] = total
+        # it ends the input, not the blocks around it (0.8 ruling 8; 0.83 ruling 16)
 
     def over(self, nd, n):
         return MalformedWire(
@@ -692,6 +722,8 @@ class _Reader:
             raise MalformedWire("count %s states %d, less than its 'plus %d'" % (nd.name, v, nd.plus),
                                 format=self.pack.name)
         self.counts[nd] = v - nd.plus
+        if nd.size is not None and v != nd.plus:
+            self.stating[nd] = v - nd.plus
 
     def group(self, nd, sc):
         if self.discard and not sc.prefix and nd.list in self.discard:
@@ -730,7 +762,7 @@ class _Reader:
             self.replaces(nd, sc)
             if self.left is not None and n > self.left:  # before any item is read (ruling 7d of 0.11)
                 raise self.over(nd, n)
-            if n > self.limit() - self.pos:  # ruling 20: the bits left at the group
+            if n > self.bits_left():  # ruling 20: the bits left at the group
                 raise self.short("the %d item(s) of group %s" % (n, nd.list))
             for i in range(n):
                 items.append(self.item(nd, sc, i))
@@ -738,7 +770,7 @@ class _Reader:
             if self.units and self.units[-1] is None:
                 return  # the block is not read: the list stays absent (ruling 3)
             self.replaces(nd, sc)
-            end = self.limit()
+            end = self.soft[-1] if self.soft else self.hard  # the stated end (ruling 16 of 0.83)
             least = 1 if self.units and self.units[-1] == "bits" else 8
             while end - self.pos >= least:
                 at = self.pos
@@ -773,7 +805,7 @@ class _Reader:
             self.replaces(nd, sc)
             if self.left is not None and n > self.left:  # before any item is read (ruling 7d of 0.11)
                 raise self.over(nd, n)
-            if n > self.limit() - self.pos:  # ruling 14 of 0.8
+            if n > self.bits_left():  # ruling 14 of 0.8
                 raise self.short("the %d item(s) of group %s" % (n, nd.list))
             for i in range(n):
                 items.append(self.item(nd, sc, i))
@@ -828,6 +860,9 @@ class _Reader:
         """Decode one message or one item: the common lines, then the first
         kind whose `when` lines, read where the common lines ended, all hold.
         -> the kind selected, or None for a body with no kinds."""
+        # a count is referenced in its own body only (ruling 9 of 0.21), so nothing of one item is left for the next
+        outer = self.stating, self.taken, self.counts
+        self.stating, self.taken, self.counts = {}, {}, {}
         self.run(body.common, sc)
         selected = None
         if body.kinds:
@@ -849,6 +884,12 @@ class _Reader:
             else:
                 raise NoKind("the %s matches no kind" % ("item" if sc.prefix else "message"), format=self.pack.name)
             self.run(selected.nodes, sc)
+        for nd, n in self.stating.items():  # 0.83 ruling 9
+            lines = body.common + selected.nodes if selected is not None else body.common
+            if count_reference(lines, nd, self.taken) == "block":
+                raise MalformedWire("count %s states %d unit(s) of a block that is not read" % (nd.name, n),
+                                    format=self.pack.name)
+        self.stating, self.taken, self.counts = outer
         self.settle(sc)
         return selected
 
@@ -1288,6 +1329,20 @@ class _Writer:
                         self.pos += 1
                         break
                     self.put(1, 1)
+            elif t == T_LENGTH and nd.count_node is not None:  # 0.83
+                start = self.pos
+                self.extents.append([start, nd.unit, []])
+                self.emit(nd.body, ctx)
+                if nd.unit == "bytes":  # padded with zero bits to a whole byte; nothing pads to a unit (ruling 10)
+                    self.pos += (start - self.pos) % 8
+                self.check_extent(self.extents.pop(), self.pos)
+                n, rest = divmod(self.pos - start, nd.size)
+                if rest:
+                    raise self.fail("a block of %d bit(s) is not a whole number of units of %d bit(s)"
+                                    % (self.pos - start, nd.size), nd)
+                rec = self.count_cur.get(nd.count_node)
+                if rec is not None:
+                    rec[2] = n + nd.count_node.plus
             elif t == T_LENGTH:
                 at = self.pos
                 self.pos += nd.length

@@ -6468,3 +6468,152 @@ unchanged.
 ## Not in this version
 
 - `optional` on a `requires` line.
+
+# Version 0.83: a length given by an earlier count
+
+Status: Written. A transport header often states how many words of a fixed
+size its payload has, with other header fields between that number and the
+payload. Version 0.8's `length` is followed at once by the block it counts, in
+bytes or bits. Version 0.21's `count` may stand earlier, but it counts items
+of a list, not an extent. This version lets an earlier count size a block.
+
+```
+count <name> <len> [plus <n>]
+…
+length @<name> units <u>
+  …
+end
+```
+
+A line of a `layout sequential` `bits` pack. `<name>` is a `count` line of
+Version 0.21, visible at the `length` line as rulings 9 and 12 of 0.21 state.
+`<u>` is the size of one unit in bits, 1 to 65535. The block is a `length`
+extent (Version 0.8) of (value − `plus`) × `<u>` bits. It is counted in bytes
+when `<u>` is a multiple of 8, and otherwise in bits.
+
+## Decode
+
+When the line is reached, the block is read within that extent under the
+rules of a `length` block of that size: lines beyond it read as absent, and
+content of the extent that no line reads is skipped. `inner` (Version 0.34)
+and a `rest` list may end it. A value below the `plus` is `malformed-wire` at
+the count line, as in 0.21.
+
+## Encode
+
+The block is written. Its length must be a whole number of units (ruling 10),
+otherwise `transform-encode`.
+The count field holds that number plus its `plus`, filled in as 0.21 fills a
+count. A value outside `0 … 2^len − 1` is `transform-encode`.
+
+## Load errors
+
+`bad-directive`: a line that is not exactly `length @<name> units <u>` while
+its first argument starts with `@`, or that holds `units` without it (`length
+8 units 8`, `length units 8 @a`); a `<u>` that is not plain digits from 1 to
+65535 (leading zeros allowed); a name not visible or not a `count`; `length @`
+on a fixed layout or another wire.
+
+## Rulings for 0.83
+
+1. **Amended rules.** The `length` line of 0.8 (grammar and ruling 8) gains
+   this form. Rulings 2 of 0.21 and 3 of 0.31: a `length @<name>` is a
+   reference as a group is, counted statically, and "group" there reads
+   "group or `length @`". A name sizes a block or counts a list in one path,
+   never both.
+2. **A path with nothing to size.** A kind with no payload has an empty block:
+   `length @w units 72`, then `end`. It loads. Decode skips the extent; encode
+   writes 0 units.
+3. **The unit count is not an item count.** It is not compared with
+   `max_items` (7d of 0.11) or with the bits left (ruling 14 of 0.8). Every
+   product is exact.
+4. **Enclosing extents.** A block whose extent ends beyond the innermost
+   `length` block around it is `malformed-wire` at the line. A block whose
+   line stands at or past the end of that enclosing block is absent, and
+   nothing in it is reached (ruling 21 of 0.8). This comes first: such a
+   block is absent whatever its count states. Ruling 4 is about `length @`
+   only.
+5. **Beyond the input.** An extent that ends beyond the input, or beyond a
+   whole length read before the line, is `malformed-wire` at the line, before
+   anything in the block is read, as for a plain `length` (ruling 17), also
+   when all its lines would fit. An absent block (ruling 4) is not tested.
+6. **Zero units.** The block's lines are read as at the end of any `length`
+   extent (rulings 7, 21 and 34 of 0.8, ruling 14 of 0.20, rulings 3 and 31
+   of 0.21): a `rest` list is present and empty. `inner` is reached with an
+   empty input (0.34).
+7. **More than is there.** A count larger than the payload needs leaves the
+   rest of the extent to the rules of its lines: an ordinary block skips it,
+   and what follows an inner message is for `inner` (0.34) to rule. Encode
+   writes the length of what it writes.
+8. **Less than is there** is the inner message's own error.
+9. **Not written.** When the line is in a block not written, the count holds
+   its `plus` (ruling 6 of 0.21). On decode a count that states units (its
+   value minus its `plus` is not 0) of which no `length @` block is read,
+   because it stands in an `if`, `opt` or `chain` part that is not read, is
+   absent by ruling 4, or is inside a block that is absent, is
+   `malformed-wire` when the scope that holds the count line (the message, or
+   the item, with its kind) has been read; a block of 0 units there is no
+   error (a block of 0 units whose line stands past a whole length is
+   malformed by ruling 5). A `switch` or a `choice` inside such a part counts
+   when any of its cases or alternatives holds the block; one that was read
+   counts by its selected case or its chosen alternative. An `alt` of a
+   `choice` that was not chosen, and a kind or case that was not selected, are
+   no error. A count line that was itself absent states nothing.
+10. **Padding.** A block counted in bytes is padded to a whole byte from its
+    first bit (ruling 34 of 0.21), and then tested for whole units; nothing
+    pads to a unit. A block counted in bits is not padded, and a `rest` in it
+    needs 1 bit for an item. "A `length … bits` extent" in 0.34 includes it.
+11. **Encode errors.** An error in the contents first, then the unit test at
+    the block's `end`, in reading order ahead of later lines. The range of the
+    count is checked as in ruling 30 of 0.21.
+12. **A wire line.** `length @` is one, for rulings 11 and 32 of 0.21.
+13. **When the checks run.** Every error of this form, its number of arguments
+    included, is a check after the file. `length` before `wire` or before
+    `layout` stays as 0.11 ruling 5b has it.
+14. **Presence, `opt` and `fx` bits, and predictions** (0.20 ruling 33) see the
+    block as any `length` block.
+
+15. **Kinds past the input.** A `when` whose bits lie past the input, or past
+    a whole length, does not hold (ruling 6 of 0.33): an item of kinds there
+    is `no-kind`, any other line `malformed-wire`.
+16. **A whole length inside a block**, a plain `length` or a `length @`, at
+    any depth, ends the input and not the block (ruling 8 of 0.8; ruling 14 of
+    0.21): from then on, in that block, in the blocks around it and after
+    them, a line that needs bits past the stated whole is `malformed-wire`,
+    and is not read as absent because a block goes on (ruling 15 stands for
+    `when` lines: one past the whole does not hold). A block opened after it
+    is tested against it (ruling 5). A `rest` list runs to its block's end and
+    so fails at the whole; an `inner` whose enclosing extent ends beyond the
+    whole is `malformed-wire` by step 2 of 0.34, and at message level its
+    input ends at the whole (0.34 ruling 3), empty when the cursor is past it,
+    after the whole-byte test on the exact cursor. A line that starts at or
+    after the end of its block is absent (ruling 7 of 0.8), also when the
+    whole length ends at the same place or before. After the block the cursor
+    stands at its stated end, also beyond the whole: there, at message level,
+    a line that needs bits is `malformed-wire`, a `rest` list and a list whose
+    `count @` is 0 are present and empty, and an `inner` line has an empty
+    input.
+17. **A plain `length`** inside a `length @` block, or anywhere, is tested as
+    ruling 5 says: an extent that ends beyond the input, a whole length read
+    before the line, or any extent around it, is `malformed-wire` at its line,
+    before anything in it is read (0.52 ruling 20b), also when all its lines
+    would fit. Ruling 4 is about `length @` only; a plain `length` whose line
+    stands at or past the end of its enclosing block keeps 0.8 ruling 21.
+18. **`align`** in a block that a whole length read in it cuts stops at the
+    end of the input (ruling 20 of 0.8).
+
+## Stated limits
+
+A block behaves as a plain `length` block in what comes back: units that no line reads are skipped on decode and not
+written back, so the count is written anew; and a block of fewer units than its
+lines write grows on encode, the missing fields as zero bits that then decode
+as values. A pack that must keep them maps every unit, by a closing `rest` of
+raw units or by a kind for each size.
+
+## Not in this version
+
+- A unit that is not stated in the pack.
+- `units` on a `length` whose field stands at the block.
+- Header bytes inside the stated length that stand before the block.
+- A message that states 0 units and has no inner message, in a pack whose
+  block holds `inner`: a kind with an empty block is needed.

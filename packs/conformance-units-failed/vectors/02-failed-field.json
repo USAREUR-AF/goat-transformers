@@ -1,0 +1,9 @@
+{
+  "name": "failed-field",
+  "from": "conformance-units-failed",
+  "to": "conformance-units-failed",
+  "input": "01ff020506",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.83; 0.1.1 ruling 9: the label does not decode"
+}

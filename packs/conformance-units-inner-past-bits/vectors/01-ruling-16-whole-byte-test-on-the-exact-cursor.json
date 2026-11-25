@@ -1,0 +1,9 @@
+{
+  "name": "ruling-16-whole-byte-test-on-the-exact-cursor",
+  "from": "conformance-units-inner-past-bits",
+  "to": "conformance-units-inner-past-bits",
+  "input": "14030500",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the cursor stands at bit 28, not at the whole (bit 24): 0.34 step 1"
+}

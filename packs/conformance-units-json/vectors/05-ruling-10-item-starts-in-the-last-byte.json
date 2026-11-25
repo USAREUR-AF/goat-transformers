@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-item-starts-in-the-last-byte",
+  "from": "conformance-units-json",
+  "to": "conformance-units-subbyte",
+  "input": "{\"nums\":[2,3,4],\"n\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.83; 0.21 rulings 4 and 34: the third item starts with 6 bits before the byte-padded end"
+}

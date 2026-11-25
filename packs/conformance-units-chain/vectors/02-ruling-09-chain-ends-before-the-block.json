@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-chain-ends-before-the-block",
+  "from": "conformance-units-chain",
+  "to": "conformance-units-chain",
+  "input": "030a09",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: the count states 3 units and its block is not read (in a chain part not read): malformed-wire when the message has been read"
+}

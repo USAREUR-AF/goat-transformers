@@ -1,0 +1,9 @@
+{
+  "name": "ruling-09-zero-units-past-the-whole",
+  "from": "conformance-units-past-units",
+  "to": "conformance-units-past-units",
+  "input": "00040405aabb",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: a block of 0 units whose line stands past a whole length is malformed by ruling 5"
+}

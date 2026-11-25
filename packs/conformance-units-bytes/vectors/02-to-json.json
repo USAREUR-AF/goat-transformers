@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-units-bytes",
+  "to": "conformance-units-json",
+  "input": "0205060709",
+  "expect": "{\"x\":5,\"y\":6,\"z\":7,\"n\":9}",
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: the same message"
+}

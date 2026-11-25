@@ -1,0 +1,9 @@
+{
+  "name": "below-the-plus",
+  "from": "conformance-units-u72",
+  "to": "conformance-units-u72",
+  "input": "000209",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83; Decode: a value below the plus is malformed-wire at the count line"
+}

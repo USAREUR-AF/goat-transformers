@@ -1,0 +1,13 @@
+{
+  "name": "items-inside-the-whole",
+  "from": "conformance-units-when-item-at",
+  "to": "conformance-units-when-item-at",
+  "input": "050601050206",
+  "expect": "050601050206",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[1].@kind": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 16: the whole is the message's 6 bytes"
+}

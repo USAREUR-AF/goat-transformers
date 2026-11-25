@@ -24,10 +24,10 @@ func constrainedBits(r uint64) int { return bits.Len64(r) }
 
 // left is the number of bits the lines may still read.
 func (r *seqReader) left() uint64 {
-	if r.pos >= r.limit {
+	if r.pos >= r.limit() {
 		return 0
 	}
-	return uint64(r.limit - r.pos)
+	return uint64(r.limit() - r.pos)
 }
 
 // u reads n (0..64) bits at the cursor; running past the input or the
@@ -281,6 +281,7 @@ func (r *seqReader) uperField(f *Field) error {
 // SEQUENCE").
 func (r *seqReader) extBlock(n *seqNode) error {
 	if r.beyond() {
+		r.skipped(n.body)
 		return nil
 	}
 	bit, err := r.u(1, "the extension bit")
@@ -335,6 +336,7 @@ func (r *seqReader) extBlock(n *seqNode) error {
 // lines of its `alt`, or with the bit 1 an extension alternative, skipped.
 func (r *seqReader) choice(n *seqNode) error {
 	if r.beyond() {
+		r.skipped(n.body)
 		return nil
 	}
 	if n.ext {
@@ -641,7 +643,7 @@ func uperReadBack(w *seqWriter, f *Field, sc seqScope) {
 	}
 	tmp.buf.need(tmp.pos + 8)
 	d := &decodeState{pack: w.p, ent: NewEntity(), rec: NewItem(), nbits: tmp.pos}
-	r := &seqReader{d: d, p: w.p, data: tmp.buf.data, limit: tmp.pos, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}}
+	r := &seqReader{d: d, p: w.p, data: tmp.buf.data, input: tmp.pos, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}}
 	if err := r.uperField(f); err != nil || len(d.failed) > 0 {
 		bad()
 		return

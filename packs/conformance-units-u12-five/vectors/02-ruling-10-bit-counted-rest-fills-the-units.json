@@ -1,0 +1,13 @@
+{
+  "name": "ruling-10-bit-counted-rest-fills-the-units",
+  "from": "conformance-units-u12-five",
+  "to": "conformance-units-u12-five",
+  "input": "5084210842108421",
+  "expect": "5084210842108421",
+  "model": {
+    "probe.nums.#": "12",
+    "probe.nums[11].probe.val": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.83; 60 bits are 5 units of 12 and 12 items of 5 bits"
+}

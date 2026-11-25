@@ -1,0 +1,9 @@
+{
+  "name": "zero-units-then-no-kind",
+  "from": "conformance-units-miss-item-then",
+  "to": "conformance-units-miss-item-then",
+  "input": "01000005",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.83; ruling 9: 0 units: no error; the switch is no-kind"
+}
