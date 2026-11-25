@@ -662,13 +662,13 @@ def emit_pack_md(p, items, units, mults, n_vec, cross_from, same_name):
                   "or a planned point), so they are not bound to `lat` and `lon`."]
     a += ["", "## Not mapped, and why", "", "| What | Why |", "|---|---|",
           "| The 3-byte record header | it belongs to the log, not the message; the type id differs per log |",
-          "| Units and multipliers | they are stated in the key meanings of `model/aplog.def`; the raw "
-          "keys keep the wire integer, as DataFlash readers before scaling do |",
-          "| Bytes of a text field after its first NUL | `ascii` removes trailing NULs and refuses other "
-          "bytes outside 0x20-0x7E (`transform-decode`) |",
+          ("| Units and multipliers | they are stated in the key meanings of `model/aplog.def`; the raw "
+           "keys keep the wire integer, as DataFlash readers before scaling do |"),
+          ("| Bytes of a text field after its first NUL | `ascii` removes trailing NULs and refuses other "
+           "bytes outside 0x20-0x7E (`transform-decode`) |"),
           "| NaN and infinite floats | the `f32` and `f64` transforms refuse them on decode |",
-          "| FMT, FMTU, UNIT and MULT records | they describe the other records of a log and are not "
-          "messages of this format |"]
+          ("| FMT, FMTU, UNIT and MULT records | they describe the other records of a log and are not "
+           "messages of this format |")]
     a += ["", "## Vectors", "",
           "`vectors/gen-rt.json` is a round trip with every field set: values chosen by the generator,",
           "packed by its own serializer from the format string. Other `gen-*` files are edge and",

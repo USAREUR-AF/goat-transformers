@@ -983,10 +983,10 @@ def build(sink):
     # load vectors from 640
     # ==========================================================================
     models = [
-        "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\n"
-        "key lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
-        "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey qty int -\n"
-        "key x int -\nkey y int -\nkey a float -\nlist items \"a list\"\nlist subs \"a nested list\"\n",
+        ("module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\n"
+         "key lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n"),
+        ("module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey qty int -\n"
+         "key x int -\nkey y int -\nkey a float -\nlist items \"a list\"\nlist subs \"a nested list\"\n"),
     ]
     head = 'format probe\nversion 0.17.0\ndistribution public\nsource "probe"\nuses probe\n'
     bits, seq, js = head + "wire bits\nword_bytes 1\n", head + "wire bits\nlayout sequential\n", head + "wire json\n"

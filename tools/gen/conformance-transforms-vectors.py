@@ -1033,10 +1033,10 @@ def build(sink):
     # load vectors from 500
     # ==========================================================================
     MODELS = [
-        "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\n"
-        "key callsign string -\nkey time_ms int ms\n",
-        "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey x int -\n"
-        "key n int -\nkey a float -\nkey s1 string -\n",
+        ("module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\n"
+         "key callsign string -\nkey time_ms int ms\n"),
+        ("module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey x int -\n"
+         "key n int -\nkey a float -\nkey s1 string -\n"),
     ]
     HEAD = 'format probe\nversion 0.15.0\ndistribution public\nsource "probe"\nuses probe\n'
     BITS = HEAD + "wire bits\nword_bytes 1\n"

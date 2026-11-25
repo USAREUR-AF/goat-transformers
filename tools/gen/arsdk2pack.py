@@ -447,16 +447,16 @@ def pack_md(ftr, built, skipped, commit):
                         c.kind, a.name, key, tr, "500" if s in (F64_500, F32_500) else ("-1" if s == 255 else "")))
         shared += [""] + ["- `%s`: %s." % (c.kind, EVIDENCE[(ftr.name, c.cls, c.name)]) for c, _b in bound]
         shared += ["",
-                   "The schema gives latitude and longitude in degrees from a GPS receiver but, apart from "
-                   "`controller_info` `gps_v2` (whose other altitude is above the WGS 84 ellipsoid), names no "
-                   "datum. The binding to `lat` and `lon`, which are WGS 84, rests on the reading that a GPS "
-                   "receiver reports WGS 84; a reviewer who does not accept it removes the entries of `BIND` in "
-                   "`tools/gen/arsdk2pack.py` and runs it again, and the raw keys, which stand on the same bits in "
-                   "every case, remain.",
+                   ("The schema gives latitude and longitude in degrees from a GPS receiver but, apart from "
+                    "`controller_info` `gps_v2` (whose other altitude is above the WGS 84 ellipsoid), names no "
+                    "datum. The binding to `lat` and `lon`, which are WGS 84, rests on the reading that a GPS "
+                    "receiver reports WGS 84; a reviewer who does not accept it removes the entries of `BIND` in "
+                    "`tools/gen/arsdk2pack.py` and runs it again, and the raw keys, which stand on the same bits in "
+                    "every case, remain."),
                    "",
-                   "Other commands carry a latitude and longitude that are not the position of the reporting thing "
-                   "(a move target, a point of interest, a home, take-off or return location, a geofence centre, a "
-                   "followed target's trajectory): they are raw keys."]
+                   ("Other commands carry a latitude and longitude that are not the position of the reporting thing "
+                    "(a move target, a point of interest, a home, take-off or return location, a geofence centre, a "
+                    "followed target's trajectory): they are raw keys.")]
         if d:
             shared += ["", "An entity from another format encodes as `%s` (it requires `lat` and `lon`); every "
                            "other kind requires the raw `%s.feature_id`, which only a decoded ARSDK command holds."
