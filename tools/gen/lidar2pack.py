@@ -31,6 +31,7 @@ import argparse
 import collections
 import hashlib
 import json
+import math
 import os
 import re
 import struct
@@ -453,7 +454,7 @@ def dec(nodes, whole, base):
             raw = (whole >> (base + n[2])) & ((1 << n[3]) - 1)
             if n[4] == "f32":
                 v = struct.unpack("<f", raw.to_bytes(4, "little"))[0]
-                if v != v or v in (float("inf"), float("-inf")):
+                if math.isnan(v) or v in (float("inf"), float("-inf")):
                     raise Fail("transform-decode")
                 ent[n[1]] = v
             else:

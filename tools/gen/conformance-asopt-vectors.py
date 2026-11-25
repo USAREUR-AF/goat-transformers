@@ -621,7 +621,6 @@ def enc_body(out, body, ent, same):
             w = todo.pop(0)
             s, e = start + w["at"], start + w["at"] + w["n"]
             now, key = int("".join(out.bits[s:e]), 2), w["as"]
-            want = now
             if not matches(now, w) or (key in ent and ent[key] & M64 != now):
                 want = ent[key] & M64 if key in ent else w["ranges"][0][0]
                 new = format(want, "0%db" % w["n"])

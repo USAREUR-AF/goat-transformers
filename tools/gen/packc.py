@@ -32,6 +32,7 @@ Python 3 standard library only. The same inputs give the same bytes.
 """
 import argparse
 import json
+import math
 import os
 import re
 import struct
@@ -157,7 +158,7 @@ def read_float(text):
         v = float(text)
     except ValueError:
         return None
-    return v if v == v and v not in (float("inf"), float("-inf")) else None
+    return v if not math.isnan(v) and v not in (float("inf"), float("-inf")) else None
 
 
 def read_as(ty, text):

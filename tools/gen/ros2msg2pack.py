@@ -36,6 +36,7 @@ import collections
 import glob
 import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -480,7 +481,7 @@ def emit_pack(fmt, module, pkg, kinds, sources):
 
 def fmt_float(x):
     x = float(x)
-    if x != x or x in (float("inf"), float("-inf")):
+    if math.isnan(x) or x in (float("inf"), float("-inf")):
         fail("not finite: %r" % x)
     if x == 0:
         return "0"
@@ -1187,7 +1188,7 @@ def json_encode(pack, ent):
     for ln in order:
         if ln[0] == "when":
             if ln[2] != "present":
-                par, m = place(obj, ln[1])
+                place(obj, ln[1])       # makes the slot here, so the member keeps its line order
         else:
             encode_lines(obj, [ln], ent.keys, ent.lists)
     for ln in whens:                    # when values are written over any field

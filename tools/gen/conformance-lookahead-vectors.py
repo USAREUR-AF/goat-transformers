@@ -1153,12 +1153,13 @@ def expected_load(text, models):
 def build(sink):
     written = {}
     model = gtcheck.Model().load_dir(sink.path("model"))
+    model_texts = [open(os.path.join(sink.path("model"), f), encoding="utf-8").read()
+                   for f in ("core.def", "probe.def")]
     for name, text in PACKS.items():
         rel = "packs/%s%s/pack.def" % (PREFIX, name)
         sink.write(rel, text)
         gtcheck.load_pack(strip_when(text), model, label=rel)
-        assert at_errors(text, [open(os.path.join(sink.path("model"), f), encoding="utf-8").read()
-                                for f in ("core.def", "probe.def")]) is None, name
+        assert at_errors(text, model_texts) is None, name
         written[PREFIX + name] = 0
     nums = {}
 

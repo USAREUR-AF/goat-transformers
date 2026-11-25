@@ -44,6 +44,7 @@ import decimal
 import fractions
 import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -811,7 +812,7 @@ def assign(lines, names, module, scope, wire):
 def fmt_float(x):
     if x == 0:
         return "0"
-    if x != x or x in (float("inf"), float("-inf")):
+    if math.isnan(x) or x in (float("inf"), float("-inf")):
         raise GenError("not a finite float")
     r = repr(float(x))
     d = decimal.Decimal(r)

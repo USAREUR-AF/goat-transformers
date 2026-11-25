@@ -20,6 +20,7 @@ status is 1 when a committed file differs from what this script writes.
 Usage: python3 -I tools/gen/conformance-transforms-vectors.py [--out DIR] [--check]
 """
 import json
+import math
 import os
 import re
 import struct
@@ -105,7 +106,7 @@ def f32_bits(x):
 
 def f32_val(b):
     v = struct.unpack(">f", struct.pack(">I", b))[0]
-    if v != v or v in (float("inf"), float("-inf")):
+    if math.isnan(v) or v in (float("inf"), float("-inf")):
         raise Fail(TD)
     return v
 
@@ -116,13 +117,13 @@ def f64_bits(x):
 
 def f64_val(b):
     v = struct.unpack(">d", struct.pack(">Q", b))[0]
-    if v != v or v in (float("inf"), float("-inf")):
+    if math.isnan(v) or v in (float("inf"), float("-inf")):
         raise Fail(TD)
     return v
 
 
 def finite(v, kind):
-    if v != v or v in (float("inf"), float("-inf")):
+    if math.isnan(v) or v in (float("inf"), float("-inf")):
         raise Fail(kind)
     return v
 
