@@ -77,10 +77,9 @@ final class TlvLayout {
      * {@code bad-directive}.
      */
     static void checkScope(List<Pack.Line> lines, String format, String source) {
-        Map<String, Pack.Line> ends = new HashMap<>(), through = new HashMap<>();
+        Map<String, Pack.Line> through = new HashMap<>();
         for (Pack.Line l : lines) {
             Loc loc = (Loc) l.loc;
-            ends.putIfAbsent(loc.path, l);
             StringBuilder p = new StringBuilder();
             for (int i = 0; i < loc.tags.length - 1; i++) {
                 if (i > 0) p.append('.');
