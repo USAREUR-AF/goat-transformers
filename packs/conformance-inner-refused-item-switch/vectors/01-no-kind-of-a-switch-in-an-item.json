@@ -1,0 +1,9 @@
+{
+  "name": "no-kind-of-a-switch-in-an-item",
+  "from": "conformance-inner-refused-item-switch",
+  "to": "conformance-inner-refused-item-switch",
+  "input": "01090102",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: an item that is no-kind (ruling 11 of 0.20) before the line wins"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "both-values",
+  "from": "conformance-inner-refused-works-lat-core",
+  "to": "conformance-inner-refused-json-lat",
+  "input": "0305",
+  "expect": "{\"lat\":1.5,\"corelat\":2.5}",
+  "source": "constructed",
+  "reference": "spec 0.4 ruling 2 and 0.52 ruling 20: the entity key is the literal text, so core.lat and lat are two entries; 1.5 outside, 2.5 inside"
+}

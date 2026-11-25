@@ -1,0 +1,9 @@
+{
+  "name": "empty-inner-input",
+  "from": "conformance-inner-refused-before",
+  "to": "conformance-inner-refused-before",
+  "input": "01",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; 20b: also when the inner input is empty"
+}

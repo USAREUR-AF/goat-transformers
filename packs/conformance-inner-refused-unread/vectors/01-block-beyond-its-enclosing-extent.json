@@ -1,0 +1,9 @@
+{
+  "name": "block-beyond-its-enclosing-extent",
+  "from": "conformance-inner-refused-unread",
+  "to": "conformance-inner-refused-unread",
+  "input": "02050107",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: a `length` block whose extent ends beyond the input or its enclosing extent is malformed-wire at its `length` line; the nested extent of 1 byte starts at the end of the enclosing one, after its `length` field; the input has the byte"
+}

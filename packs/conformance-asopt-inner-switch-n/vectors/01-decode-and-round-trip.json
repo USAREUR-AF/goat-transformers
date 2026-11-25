@@ -1,0 +1,16 @@
+{
+  "name": "decode-and-round-trip",
+  "from": "conformance-asopt-inner-switch-n",
+  "to": "conformance-asopt-inner-switch-n",
+  "input": "020609",
+  "expect": "020609",
+  "model": {
+    "@kind": "a",
+    "probe.x": "2",
+    "probe.w": "2",
+    "probe.z": "6",
+    "probe.n": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 and 0.34 Decode: the bytes after the switch are the inner input"
+}

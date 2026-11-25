@@ -1,0 +1,9 @@
+{
+  "name": "start-inside-a-byte-input-ends-before-it",
+  "from": "conformance-emptygroup-bit",
+  "to": "conformance-emptygroup-bit",
+  "input": "05000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the start is bit 36: 5 bytes (0.5 whole words)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "default-ruling-07-key-held",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-default",
+  "input": "{\"x\":3,\"y\":4}",
+  "expect": "0304",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: the implicit term fails only when the entity holds the key with a value the `when` does not match; x = 3"
+}

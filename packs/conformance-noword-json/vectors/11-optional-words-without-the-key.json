@@ -1,0 +1,9 @@
+{
+  "name": "optional-words-without-the-key",
+  "from": "conformance-noword-json",
+  "to": "conformance-noword-optional-words",
+  "input": "{}",
+  "expect": "00000000",
+  "source": "constructed",
+  "reference": "spec 0.6: `optional`: a field beyond the input is absent, encode is unchanged; ruling 14: decode requires words up to the furthest bit that is not optional, here none; encode: one whole word"
+}

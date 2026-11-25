@@ -1,0 +1,14 @@
+{
+  "name": "selected-kind-empty-list",
+  "from": "conformance-emptygroup-kinds",
+  "to": "conformance-emptygroup-kinds",
+  "input": "0100070000",
+  "expect": "0100070000",
+  "model": {
+    "probe.items.#": "0",
+    "@kind": "a",
+    "probe.x": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: in the selected kind"
+}

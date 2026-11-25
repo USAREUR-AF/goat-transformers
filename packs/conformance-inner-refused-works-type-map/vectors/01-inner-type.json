@@ -1,0 +1,13 @@
+{
+  "name": "inner-type",
+  "from": "conformance-inner-refused-works-type-map",
+  "to": "conformance-inner-refused-json",
+  "input": "020541",
+  "expect": "{\"w\":5,\"type\":\"a-g\"}",
+  "model": {
+    "@kind": "b",
+    "type": "a-g"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20d: the inner pack's typemap gives a-g, not the outer a-f"
+}

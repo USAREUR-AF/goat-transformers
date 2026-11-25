@@ -1,0 +1,14 @@
+{
+  "name": "decode-of-the-settled-bits",
+  "from": "conformance-asopt-under",
+  "to": "conformance-asopt-under",
+  "input": "1509",
+  "expect": "1509",
+  "model": {
+    "@kind": "a",
+    "probe.x": "21",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 and 0.33 Decode: x = 0x15"
+}

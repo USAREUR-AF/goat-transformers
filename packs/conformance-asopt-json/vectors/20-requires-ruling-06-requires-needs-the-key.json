@@ -1,0 +1,9 @@
+{
+  "name": "requires-ruling-06-requires-needs-the-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-requires",
+  "input": "{\"y\":9}",
+  "expect": "0309",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 6: plain `requires` terms still apply; x is absent: a and b fail their `requires`; c"
+}

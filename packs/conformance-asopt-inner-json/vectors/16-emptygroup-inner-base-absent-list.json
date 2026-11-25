@@ -1,0 +1,9 @@
+{
+  "name": "emptygroup-inner-base-absent-list",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-emptygroup-inner-base",
+  "input": "{\"x\":7,\"n\":5}",
+  "expect": "0705000000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18 and 0.34 ruling 14: the empty group of the inner pack counts up to its start, byte 4; encode writes up to the start"
+}

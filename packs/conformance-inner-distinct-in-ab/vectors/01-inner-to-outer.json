@@ -1,0 +1,9 @@
+{
+  "name": "inner-to-outer",
+  "from": "conformance-inner-distinct-in-ab",
+  "to": "conformance-inner-distinct-around",
+  "input": "020005",
+  "expect": "0302000500",
+  "source": "constructed",
+  "reference": "spec 0.34 Conversion: the kind of the inner format is kept; w writes zero bits"
+}

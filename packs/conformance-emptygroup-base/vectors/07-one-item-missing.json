@@ -1,0 +1,9 @@
+{
+  "name": "one-item-missing",
+  "from": "conformance-emptygroup-base",
+  "to": "conformance-emptygroup-base",
+  "input": "05010000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.7: the message is extended by the item; byte 4 is missing"
+}

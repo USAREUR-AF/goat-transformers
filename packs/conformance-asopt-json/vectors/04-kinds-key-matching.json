@@ -1,0 +1,9 @@
+{
+  "name": "kinds-key-matching",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-kinds",
+  "input": "{\"x\":1,\"y\":5}",
+  "expect": "0105",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind: the implicit term fails only when the entity holds the key with a value the `when` does not match; x = 1 matches one"
+}

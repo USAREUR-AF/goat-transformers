@@ -1,0 +1,12 @@
+{
+  "name": "empty-list-reaches-two-words",
+  "from": "conformance-emptygroup-words-edge",
+  "to": "conformance-emptygroup-words-edge",
+  "input": "0500000000000000",
+  "expect": "0500000000000000",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: up to the start, bit 64, and no word of the items"
+}

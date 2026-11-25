@@ -1,0 +1,13 @@
+{
+  "name": "two-items-of-item-bits-each",
+  "from": "conformance-emptygroup-nested-in",
+  "to": "conformance-emptygroup-nested-in",
+  "input": "0502070000080000",
+  "expect": "0502070000080000",
+  "model": {
+    "probe.items[1].probe.qty": "8",
+    "probe.items[1].probe.subs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.7: consecutive runs of 24 bits; spec 0.52 ruling 18: nothing changes"
+}

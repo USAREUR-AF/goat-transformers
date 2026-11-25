@@ -1,0 +1,10 @@
+{
+  "name": "nested-count-over-the-limit",
+  "from": "conformance-inner-distinct-two-groups-nested",
+  "to": "conformance-inner-distinct-two-groups-nested",
+  "input": "c001010501090103060708",
+  "expect_error": "malformed-wire",
+  "max_items": 3,
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 20, first sentence, with 7g of 0.11: the later group holds 1 item, and its nested count of 3 goes over the limit of 3 whether or not the earlier items still count"
+}

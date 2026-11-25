@@ -1,0 +1,15 @@
+{
+  "name": "decode-sets-the-key-from-the-window",
+  "from": "conformance-asopt-at",
+  "to": "conformance-asopt-at",
+  "input": "0507",
+  "expect": "0507",
+  "model": {
+    "@kind": "b",
+    "probe.x": "7",
+    "probe.y": "5",
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 Decode: the window is z's bits"
+}

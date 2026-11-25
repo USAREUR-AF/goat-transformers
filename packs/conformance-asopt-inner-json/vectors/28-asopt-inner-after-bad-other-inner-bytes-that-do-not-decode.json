@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-after-bad-other-inner-bytes-that-do-not-decode",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-after-bad-other",
+  "input": "{\"y\":17}",
+  "expect": "0237000011",
+  "source": "constructed",
+  "reference": "spec 0.20 Encode: the outer bits of w select, the inner pack does not map it; the inner message is 0x37 and x, which no inner kind holds on decode (0.33 ruling 5); encode does not read it back: 0, y"
+}

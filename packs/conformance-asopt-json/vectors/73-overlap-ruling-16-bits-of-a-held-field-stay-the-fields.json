@@ -1,0 +1,9 @@
+{
+  "name": "overlap-ruling-16-bits-of-a-held-field-stay-the-fields",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-overlap",
+  "input": "{\"w\":26,\"z\":2}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16 and ruling 26 of 0.33: x is not held and the first window stands on w = 0x1a, so its bits stay w's; the second window would change the low nibble 0xa to 5"
+}

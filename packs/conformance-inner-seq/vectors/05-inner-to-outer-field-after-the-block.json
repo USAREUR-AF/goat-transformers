@@ -3,7 +3,7 @@
   "from": "conformance-inner-seq",
   "to": "conformance-inner-after",
   "input": "010203",
-  "expect": "0301020302",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 Conversion and Encode: kind a kept; block 010203 counted 03; the outer x after the block writes the one value the entity holds, 02"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-after and its inner pack conformance-inner-seq both map probe.x, so the `inner` line is bad-directive when encode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

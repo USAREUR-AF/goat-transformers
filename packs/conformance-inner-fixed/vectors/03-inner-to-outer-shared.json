@@ -3,7 +3,7 @@
   "from": "conformance-inner-fixed",
   "to": "conformance-inner-shared",
   "input": "3507",
-  "expect": "053507",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 Encode: a key mapped by both packs is written by both from the one value: outer x 05, inner 3507"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-shared and its inner pack conformance-inner-fixed both map probe.x, so the `inner` line is bad-directive when encode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

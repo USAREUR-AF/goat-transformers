@@ -1,0 +1,9 @@
+{
+  "name": "order-ruling-08-no-other-terms-sends-it-to-the-first-kind",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-order",
+  "input": "{\"z\":3}",
+  "expect": "0500",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 8: the order of kinds decides for an entity without the key; first takes it although it holds only z; y writes zero bits"
+}

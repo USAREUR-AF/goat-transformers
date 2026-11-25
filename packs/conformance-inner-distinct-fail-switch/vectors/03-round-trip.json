@@ -1,0 +1,14 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-distinct-fail-switch",
+  "to": "conformance-inner-distinct-fail-switch",
+  "input": "0241050107",
+  "expect": "0241050107",
+  "model": {
+    "probe.label": "A",
+    "probe.y": "5",
+    "probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode"
+}

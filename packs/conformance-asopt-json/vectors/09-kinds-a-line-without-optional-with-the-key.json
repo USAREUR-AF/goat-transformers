@@ -1,0 +1,9 @@
+{
+  "name": "kinds-a-line-without-optional-with-the-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-kinds",
+  "input": "{\"x\":200}",
+  "expect": "c8",
+  "source": "constructed",
+  "reference": "spec 0.30 Choosing the kind: 200 lies in 200..255"
+}

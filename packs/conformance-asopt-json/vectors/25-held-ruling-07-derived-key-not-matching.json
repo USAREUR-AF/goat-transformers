@@ -1,0 +1,9 @@
+{
+  "name": "held-ruling-07-derived-key-not-matching",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-held",
+  "input": "{\"n\":50,\"y\":5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 7: what an entity holds includes keys from the context and from derivations; n_copy = 50 matches no kind"
+}

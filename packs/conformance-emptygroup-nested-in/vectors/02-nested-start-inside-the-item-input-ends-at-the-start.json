@@ -1,0 +1,9 @@
+{
+  "name": "nested-start-inside-the-item-input-ends-at-the-start",
+  "from": "conformance-emptygroup-nested-in",
+  "to": "conformance-emptygroup-nested-in",
+  "input": "05010700",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.7 rulings 4 and 17: the item lies wholly inside the input; its third byte is missing"
+}

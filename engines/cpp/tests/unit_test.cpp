@@ -1566,32 +1566,49 @@ int main() {
         check(false, std::string("0.34 inner lines threw: ") + ex.what());
     }
 
-    // v0.34: one key at several locators (0.6) across the two packs, and the
-    // order of errors around an inner transform-decode.
+    // v0.34: the order of errors around an inner transform-decode; 0.52 ruling
+    // 20: a key both packs map is refused where the `inner` line is reached.
     try {
         const std::string head = "version 0.1.0\ndistribution public\nsource \"unit test\"\n"
                                  "wire bits\nlayout sequential\nbit_order msb\n";
         gt::Engine eng;
         eng.load_model("module core\nversion 0.1.0\ndistribution public\nsource \"unit test\"\n"
-                       "key a int -\nkey s string -\n");
+                       "key a int -\nkey s string -\nkey r string -\n");
         const std::string in = "length 8\ninner in-s\nend\n";
         eng.add_pack(gt::parse_pack("format in-s\n" + head + "field s 8 ascii\n"));
-        eng.add_pack(gt::parse_pack("format before\n" + head + "field s 8 ascii\n" + in));
-        eng.add_pack(gt::parse_pack("format after\n" + head + in + "field s 8 ascii\n"));
+        // The outer line maps a key of its own (r), or the inner pack's (the same pack, "-s").
+        for (const std::string& k : {std::string("r"), std::string("s")}) {
+            const std::string as = k == "r" ? "\n" : "-s\n";
+            eng.add_pack(gt::parse_pack("format before" + as + head + "field " + k + " 8 ascii\n" + in));
+            eng.add_pack(gt::parse_pack("format after" + as + head + in + "field " + k + " 8 ascii\n"));
+            eng.add_pack(gt::parse_pack("format via" + as + head + "map t 1 one\n" + in + "field " + k + " 8 uint via t\n"));
+            eng.add_pack(gt::parse_pack("format via-out" + as + head + "field " + k + " 8 ascii\ninner via-in\n"));
+        }
         eng.add_pack(gt::parse_pack("format kinds\n" + head + in + "kind k\nwhen 8 1\nfield a 8 uint\n"));
         eng.add_pack(gt::parse_pack("format part\n" + head + "length 8\ninner in-s partial\nend\n"));
-        eng.add_pack(gt::parse_pack("format via\n" + head + "map t 1 one\n" + in + "field s 8 uint via t\n"));
         eng.add_pack(gt::parse_pack("format via-in\n" + head + "map t 1 one\nfield s 8 uint via t\n"));
-        eng.add_pack(gt::parse_pack("format via-out\n" + head + "field s 8 ascii\ninner via-in\n"));
-        check(eng.decode("via", "014101").fields.at("s").s == "A", "0.34 ruling 23: an outer line with a table entry");
+        gt::Entity held;
+        held.fields["s"] = gt::Value::of_string("A");
+        const std::pair<const char*, const char*> shared[] = {
+            {"before-s", "410141"}, {"after-s", "014141"}, {"via-s", "014101"}, {"via-out-s", "4101"}};
+        for (const auto& c : shared) {
+            expect_error(gt::ErrorKind::BadDirective, [&] { (void)eng.decode(c.first, c.second); },
+                         std::string("0.52 ruling 20: a key both packs map, decode, ") + c.first);
+            expect_error(gt::ErrorKind::BadDirective, [&] { (void)eng.encode(c.first, held); },
+                         std::string("0.52 ruling 20: a key both packs map, encode, ") + c.first);
+        }
+        const gt::Entity via = eng.decode("via", "014101");
+        check(via.fields.at("s").s == "A" && via.fields.at("r").s == "one", "0.34: an outer line with a table entry");
         expect_error(gt::ErrorKind::TransformDecode, [&] { (void)eng.decode("via", "014102"); },
-                     "0.34 ruling 23: an outer line with no table entry, after the inner line gave the key");
+                     "0.34: an outer line with no table entry, after the inner line");
         expect_error(gt::ErrorKind::TransformDecode, [&] { (void)eng.decode("via-out", "4102"); },
-                     "0.34 ruling 23: an inner line with no table entry, after the outer line gave the key");
-        check(eng.decode("before", "410101").fields.at("s").s == "A", "0.34: a failed inner line of a key already read");
-        check(eng.decode("after", "010141").fields.at("s").s == "A", "0.34: a later outer line of a key the inner line failed");
+                     "0.34: an inner line with no table entry, after the outer line");
+        expect_error(gt::ErrorKind::TransformDecode, [&] { (void)eng.decode("before", "410101"); },
+                     "0.34: a failed inner line after an outer line that reads");
+        expect_error(gt::ErrorKind::TransformDecode, [&] { (void)eng.decode("after", "010141"); },
+                     "0.34: a failed inner line before an outer line that reads");
         expect_error(gt::ErrorKind::TransformDecode, [&] { (void)eng.decode("after", "010101"); },
-                     "0.34: every line of the key failed");
+                     "0.34: every line failed");
         expect_error(gt::ErrorKind::NoKind, [&] { (void)eng.decode("kinds", "010102"); },
                      "0.34: an outer no-kind ahead of an inner transform-decode");
         expect_error(gt::ErrorKind::TransformDecode, [&] { (void)eng.decode("kinds", "01010105"); },
@@ -1607,7 +1624,7 @@ int main() {
     // v0.31 in v0.34: the item limit and a list counted from one or two places.
     try {
         const std::string model = "module core\nversion 0.1.0\ndistribution public\nsource \"unit test\"\n"
-                                  "key v int -\nlist l \"unit test\"\n";
+                                  "key v int -\nlist l \"unit test\"\nlist m \"unit test\"\n";
         const std::string head = "version 0.1.0\ndistribution public\nsource \"unit test\"\n"
                                  "wire bits\nlayout sequential\nbit_order msb\n";
         // An item whose first byte is not 1 is no-kind, so the limit must be checked before it.
@@ -1617,7 +1634,8 @@ int main() {
             gt::Engine eng;
             eng.load_model(model);
             eng.add_pack(gt::parse_pack("format in-n\n" + head + "count c 8\n" + second + "group l count " + names + "\n" + item));
-            eng.add_pack(gt::parse_pack("format out-n\n" + head + "group l count 8\nfield v 8 uint\nend\ninner in-n\n"));
+            eng.add_pack(gt::parse_pack("format out-n\n" + head + "group m count 8\nfield v 8 uint\nend\ninner in-n\n"));
+            eng.add_pack(gt::parse_pack("format out-s\n" + head + "group l count 8\nfield v 8 uint\nend\ninner in-n\n"));
             eng.add_pack(gt::parse_pack("format two-n\n" + head + "presence m 2\ncount c 6\nif m.1\ngroup l count 8\n"
                                         "field v 8 uint\nend\nend\nif m.2\ngroup l count @c\nfield v 8 uint\nend\nend\n"));
             const std::string d = names == "@c" ? "" : "03";
@@ -1625,16 +1643,21 @@ int main() {
             expect_error(gt::ErrorKind::MalformedWire, [&] { (void)eng.decode("in-n", "02" + d + "09090909"); },
                          "0.11 ruling 7d: group count " + names + " over the limit, before any item");
             expect_error(gt::ErrorKind::MalformedWire, [&] { (void)eng.decode("out-n", "010702" + d + "01050106"); },
-                         "0.34 ruling 7: the count of a discarded list, group count " + names);
+                         "0.34 ruling 7: an inner count against the remaining budget, group count " + names);
             eng.set_max_items(3);
             const gt::Entity e = eng.decode("out-n", "010702" + d + "01050106");
-            check(e.lists.at("l").size() == 1, "0.34: an outer list read first is kept, group count " + names);
+            check(e.lists.at("m").size() == 1 && e.lists.at("l").size() == 2,
+                  "0.34: the outer list and the inner one within the limit, group count " + names);
+            expect_error(gt::ErrorKind::BadDirective, [&] { (void)eng.decode("out-s", "010702" + d + "01050106"); },
+                         "0.52 ruling 20: a list both packs map, decode, group count " + names);
+            expect_error(gt::ErrorKind::BadDirective, [&] { (void)eng.encode("out-s", e); },
+                         "0.52 ruling 20: a list both packs map, encode, group count " + names);
             eng.set_max_items(2);
             check(eng.decode("two-n", "c20207080506").lists.at("l").size() >= 2,
                   "0.11 ruling 7g: a later group count @c replaces the earlier items");
         }
-        // A count the pack states is not read (7d): a discarded list of a fixed
-        // layout takes nothing of the limit; one whose count is read is compared.
+        // A fixed layout as the inner pack, its count stated by the pack or read:
+        // the items of both packs count against the limit (7a).
         {
             const std::string fixed = "version 0.1.0\ndistribution public\nsource \"unit test\"\nwire bits\nword_bytes 1\n";
             gt::Engine eng;
@@ -1642,15 +1665,23 @@ int main() {
             eng.add_pack(gt::parse_pack("format in-f\n" + fixed + "group l 0:0 item 8 count 2\nfield v 0:0:8 uint\nend\n"));
             eng.add_pack(gt::parse_pack("format in-r\n" + fixed + "group l 0:8 item 8 count 0:0:8\nfield v 0:0:8 uint\nend\n"));
             for (const std::string& in : {std::string("in-f"), std::string("in-r")})
-                eng.add_pack(gt::parse_pack("format out-" + in + "\n" + head + "group l count 8\nfield v 8 uint\nend\ninner " + in + "\n"));
+                for (const std::string& l : {std::string("m"), std::string("l")})
+                    eng.add_pack(gt::parse_pack("format out-" + in + (l == "m" ? "\n" : "-s\n") + head + "group " + l +
+                                                " count 8\nfield v 8 uint\nend\ninner " + in + "\n"));
             eng.set_max_items(2);
-            check(eng.decode("out-in-f", "020a0b0c0d").lists.at("l").size() == 2,
-                  "0.34 ruling 7: a discarded list whose count the pack states is not counted");
+            expect_error(gt::ErrorKind::MalformedWire, [&] { (void)eng.decode("out-in-f", "020a0b0c0d"); },
+                         "0.11 ruling 7a: the items of an inner list whose count the pack states");
             expect_error(gt::ErrorKind::MalformedWire, [&] { (void)eng.decode("out-in-r", "020a0b020c0d"); },
-                         "0.34 ruling 7: the count a fixed layout reads for a discarded list");
+                         "0.34 ruling 7: the count a fixed inner layout reads");
             eng.set_max_items(4);
-            check(eng.decode("out-in-r", "020a0b020c0d").lists.at("l").size() == 2,
-                  "0.34: a discarded list of a fixed layout is not counted");
+            for (const std::pair<const char*, const char*>& c :
+                 {std::pair<const char*, const char*>{"out-in-f", "020a0b0c0d"}, {"out-in-r", "020a0b020c0d"}}) {
+                const gt::Entity e = eng.decode(c.first, c.second);
+                check(e.lists.at("m").size() == 2 && e.lists.at("l").size() == 2,
+                      std::string("0.34: both lists at the limit, ") + c.first);
+                expect_error(gt::ErrorKind::BadDirective, [&] { (void)eng.decode(std::string(c.first) + "-s", c.second); },
+                             std::string("0.52 ruling 20: a list both packs map, ") + c.first);
+            }
         }
     } catch (const std::exception& ex) {
         check(false, std::string("0.31 counts and the item limit threw: ") + ex.what());

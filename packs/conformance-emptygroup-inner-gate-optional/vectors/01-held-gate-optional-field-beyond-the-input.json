@@ -1,0 +1,15 @@
+{
+  "name": "held-gate-optional-field-beyond-the-input",
+  "from": "conformance-emptygroup-inner-gate-optional",
+  "to": "conformance-emptygroup-inner-gate-optional",
+  "input": "0701",
+  "expect": "07",
+  "model": {
+    "probe.x": "7",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 rulings 14 and 15: the held block's optional y counts, the end is 2 and nothing is left over; y is absent, so encode opens no block: spec 0.52 ruling 19 and 0.34 ruling 14: no counted bit, the end is 0; "
+}

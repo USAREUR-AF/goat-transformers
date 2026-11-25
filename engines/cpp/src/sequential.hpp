@@ -51,6 +51,8 @@ public:
     // an `inner` line of its own, or the outer pack itself), and
     // distribution-violation.
     virtual const Pack& reach(const Pack& outer, const std::string& format) const = 0;
+    // model_keys(<format>) of the inner pack, for the fifth check (0.52 ruling 20).
+    virtual std::vector<std::string> model_keys(const Pack& inner) const = 0;
     // decode(<format>, hex) by the inner pack's rules, within the decode that
     // is running (its limit on list items and its failed fields).
     // Unless `partial`, bytes at or after the inner

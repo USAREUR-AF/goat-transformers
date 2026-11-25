@@ -1,0 +1,9 @@
+{
+  "name": "overlong-block",
+  "from": "conformance-inner-refused-overlong-unloaded",
+  "to": "conformance-inner-refused-overlong-unloaded",
+  "input": "0502",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: a `length` block whose extent ends beyond the input or its enclosing extent is malformed-wire at its `length` line; also when the format of the `inner` line in it is not loaded"
+}

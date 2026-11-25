@@ -1,0 +1,9 @@
+{
+  "name": "state-window-key-absent-y",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-state-window",
+  "input": "{\"y\":5}",
+  "expect": "0205",
+  "source": "constructed",
+  "reference": "spec 0.33 Encode and ruling 12: the plain `when` writes 01, bits of no held key, and windows settle before a switch reads its key back; ruling 9 of 0.52; x is absent: 01 does not match, so the window writes its first value 2: case 2, y"
+}

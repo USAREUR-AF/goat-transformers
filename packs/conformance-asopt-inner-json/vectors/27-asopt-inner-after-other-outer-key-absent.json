@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-after-other-outer-key-absent",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-after-other",
+  "input": "{\"n\":9,\"y\":17}",
+  "expect": "01090011",
+  "source": "constructed",
+  "reference": "spec 0.20 Encode: the outer bits of w select, the inner pack does not map it; zero bits: 0, y"
+}

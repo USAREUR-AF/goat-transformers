@@ -1,0 +1,12 @@
+{
+  "name": "one-item",
+  "from": "conformance-emptygroup-armor",
+  "to": "conformance-emptygroup-armor",
+  "input": "5100@",
+  "expect": "5100@",
+  "model": {
+    "probe.items[0].probe.qty": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.14: the item is bits 20 to 25; 000101 000001 000000 000000 010000"
+}

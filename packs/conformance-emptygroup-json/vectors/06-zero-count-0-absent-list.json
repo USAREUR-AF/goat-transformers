@@ -1,0 +1,9 @@
+{
+  "name": "zero-count-0-absent-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-zero",
+  "input": "{\"n\":5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.7 ruling 5: an absent list under a fixed count"
+}

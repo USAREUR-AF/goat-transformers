@@ -1,0 +1,12 @@
+{
+  "name": "longer-input",
+  "from": "conformance-noword-group",
+  "to": "conformance-noword-group",
+  "input": "aa",
+  "expect": "",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 rulings 18 and 19: a group that starts at bit 0 with no items reaches bit 0: zero words; the extra byte is ignored"
+}

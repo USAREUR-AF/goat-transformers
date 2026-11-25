@@ -1,0 +1,9 @@
+{
+  "name": "gate-without-the-key",
+  "from": "conformance-noword-json",
+  "to": "conformance-noword-gate",
+  "input": "{}",
+  "expect": "",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: the one line is in a block that does not hold: zero words; encode writes none"
+}

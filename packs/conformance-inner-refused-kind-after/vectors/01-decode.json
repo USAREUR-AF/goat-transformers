@@ -1,0 +1,9 @@
+{
+  "name": "decode",
+  "from": "conformance-inner-refused-kind-after",
+  "to": "conformance-inner-refused-kind-after",
+  "input": "01010203",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; x is in the selected kind, after the line"
+}

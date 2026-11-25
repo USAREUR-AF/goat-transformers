@@ -84,7 +84,8 @@ pub enum SeqLine {
     /// `inner <format> [partial]` (engine-spec v0.34): the bytes to the end of the
     /// enclosing extent are one message of another loaded pack
     /// `bad_arg`: a second argument other than `partial`, refused after the file
-    Inner { format: String, partial: bool, bad_arg: bool, line: usize },
+    /// `reach`: the keys the outer pack's lines in reach map (ruling 20 of 0.52)
+    Inner { format: String, partial: bool, bad_arg: bool, line: usize, reach: Vec<String> },
 }
 
 /// One `when` line of a sequential pack. `values`: every listed value and
@@ -100,6 +101,9 @@ pub struct SeqWhen {
     /// `at <offset>`: read at kind start plus the offset, the cursor kept
     /// (engine-spec v0.33)
     pub at: Option<u64>,
+    /// `optional` after the key of `as`: the line's implicit `requires` term
+    /// holds when the entity does not hold the key (engine-spec v0.52)
+    pub optional: bool,
 }
 
 /// The first line of a scope that maps a key a `switch` names: a `field` or
@@ -646,10 +650,12 @@ impl<'a> Parser<'a> {
                         }
                     };
                     // `at <offset>` before it (engine-spec v0.33): `when <len> <values>
-                    // [at <n>] [as <k>]`. A line that holds `at` is checked with the
+                    // [at <n>] [as <k> [optional]]` (0.52). A line that holds `at` is checked with the
                     // `at` checks, after the key passes (rulings 10 and 14 of 0.33)
                     let args = &toks[3..];
-                    let has_at = args.iter().any(|t| t == "at");
+                    // the token after `as` is the key, `at` included (ruling 4 of 0.52)
+                    let has_at = when_holds_at(args);
+                    let mut optional = false;
                     let at_err = |p: &mut Self, why: &str| {
                         if p.at_form.is_none() {
                             p.at_form = Some(Error { msg: format!("bad-directive: line {}: {}", ln, why) });
@@ -669,6 +675,9 @@ impl<'a> Parser<'a> {
                                 Ok(v) => offset = Some(v),
                                 Err(_) => bad_offset = Some("the offset of `at` does not fit in 64 bits"),
                             },
+                            // a keyword in the offset's place is the broken order,
+                            // never an offset alone bad (ruling 15 of 0.52)
+                            Some(n) if matches!(n.as_str(), "at" | "as" | "optional") => form = Some("a keyword in the place of the offset of `at`"),
                             Some(_) => bad_offset = Some("the offset of `at` is not plain digits"),
                         }
                         i = 2;
@@ -678,7 +687,6 @@ impl<'a> Parser<'a> {
                             match args.get(i + 1) {
                                 None => form = Some("`as` needs a <model-key>"),
                                 Some(k) if k == "as" => form = Some("`as` given twice on one `when` line"),
-                                Some(k) if k == "at" && has_at => form = Some("`at` after `as`"),
                                 Some(k) => key = Some(k.clone()),
                             }
                             if form.is_none() {
@@ -687,6 +695,12 @@ impl<'a> Parser<'a> {
                                     form = Some("`as` given twice on one `when` line");
                                 } else if rest.iter().any(|t| t == "at") {
                                     form = Some("`at` after `as`, or twice");
+                                } else if rest.first().map(|t| t.as_str()) == Some("optional") {
+                                    match rest.get(1).map(|t| t.as_str()) {
+                                        None => optional = true,
+                                        Some("optional") => form = Some("`optional` given twice on one `when` line"),
+                                        Some(_) => form = Some("a token after `optional`"),
+                                    }
                                 } else if !rest.is_empty() {
                                     form = Some("a token after the key of `as`");
                                 }
@@ -715,6 +729,11 @@ impl<'a> Parser<'a> {
                         offset = None;
                     }
                     // `at` only on a kind's `when` (engine-spec v0.33)
+                    // engine-spec v0.52: `optional` only on a kind's `when`. With `at`,
+                    // the line is a late `at` form error whose key is read (ruling 3)
+                    if optional && out.kinds.is_empty() && !has_at {
+                        as_err(self, "`optional` on a common `when`");
+                    }
                     if offset.is_some() && out.kinds.is_empty() {
                         at_err(self, "`at` on a common `when`");
                         offset = None;
@@ -727,7 +746,7 @@ impl<'a> Parser<'a> {
                     let values = num_list(&toks[2], Some(len), ln)?;
                     let value = values[0].0;
                     when_line.get_or_insert(ln);
-                    let w = SeqWhen { len, value, values, key, line: ln, at: offset };
+                    let w = SeqWhen { len, value, values, key, line: ln, at: offset, optional };
                     // a `switch` may name the key from here on (ruling 2 of 0.30)
                     if let Some(k) = &w.key {
                         self.mapped.push((k.clone(), First::When(w.clone())));
@@ -1355,7 +1374,7 @@ impl<'a> Parser<'a> {
                     return bad(ln, "inner needs <format> [partial]");
                 }
                 let partial = toks.get(2).is_some_and(|t| t == "partial");
-                SeqLine::Inner { format: toks[1].clone(), partial, bad_arg: toks.len() == 3 && !partial, line: ln }
+                SeqLine::Inner { format: toks[1].clone(), partial, bad_arg: toks.len() == 3 && !partial, line: ln, reach: Vec::new() }
             }
             "case" | "else" => return bad(ln, format!("`{}` outside a `switch`", toks[0])),
             "fx" => return bad(ln, "`fx` outside a `chain`"),
@@ -1805,6 +1824,40 @@ fn check_inner(body: &SeqBody) -> Result<(), Error> {
     Ok(())
 }
 
+/// Set the lines in reach of each `inner` line (ruling 20 of 0.52): of one in
+/// a kind the common lines and that kind's; of one in the common lines, these
+/// and the lines of every kind. Run on a pack `check_inner` accepted.
+fn set_reach(body: &mut SeqBody) {
+    fn set(lines: &mut [SeqLine], keys: &[String]) {
+        for l in lines {
+            match l {
+                SeqLine::Inner { reach, .. } => *reach = keys.to_vec(),
+                SeqLine::Length { body, .. } => set(body, keys),
+                _ => {}
+            }
+        }
+    }
+    fn holds(lines: &[SeqLine]) -> bool {
+        lines.iter().any(|l| match l {
+            SeqLine::Inner { .. } => true,
+            SeqLine::Length { body, .. } => holds(body),
+            _ => false,
+        })
+    }
+    if holds(&body.common) {
+        let mut keys = Vec::new();
+        body.model_keys("", &mut keys);
+        set(&mut body.common, &keys);
+    }
+    let common = &body.common;
+    for k in body.kinds.iter_mut().filter(|k| holds(&k.lines)) {
+        let path = SeqBody { common: common.clone(), kinds: vec![k.clone()], ..Default::default() };
+        let mut keys = Vec::new();
+        path.model_keys("", &mut keys);
+        set(&mut k.lines, &keys);
+    }
+}
+
 /// Every `inner` line of a body: (format, line), in line order.
 pub(crate) fn inner_lines(body: &SeqBody) -> Vec<(&str, usize)> {
     fn walk<'a>(lines: &'a [SeqLine], out: &mut Vec<(&'a str, usize)>) {
@@ -1906,6 +1959,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
     check_counts(&body)?;
     // engine-spec v0.34: the block and path checks of `inner`, then its last-line check
     check_inner(&body)?;
+    set_reach(&mut body);
     check_rest_body(&body, false, true)?;
     match p.wire.as_deref() {
         Some("bits") => {}
@@ -2030,14 +2084,21 @@ pub(crate) trait InnerHost {
     /// `encode(<format>, entity)` as a layer: the inner kind chosen by
     /// `Entity.inner_kind`, then `Entity.kind`, then `requires`.
     fn inner_encode(&self, format: &str, ent: &Entity) -> Result<Vec<u8>, Error>;
+    /// The fifth check (ruling 20 of 0.52): the first of `reach`, entries as
+    /// `model_keys` gives them, that the inner pack maps too.
+    fn inner_clash<'k>(&self, format: &str, reach: &'k [String]) -> Option<&'k String>;
 }
 
 /// The checks made when decode or encode reaches an `inner` line: with no
 /// engine, no format is loaded.
 #[cfg(feature = "bits")]
-fn inner_host<'h>(host: Option<&'h dyn InnerHost>, outer: &Pack, format: &str) -> Result<&'h dyn InnerHost, Error> {
+fn inner_host<'h>(host: Option<&'h dyn InnerHost>, outer: &Pack, format: &str, reach: &[String]) -> Result<&'h dyn InnerHost, Error> {
     let h = host.ok_or_else(|| Error { msg: format!("unknown-format: no pack loaded for format `{}`", format) })?;
     h.inner_check(outer, format)?;
+    // 5. no key of the lines in reach is a key of the inner pack
+    if let Some(k) = h.inner_clash(format, reach) {
+        return err(format!("bad-directive: format `{}`: `{}` is mapped by this pack and by the `inner` pack `{}`", outer.format, k, format));
+    }
     Ok(h)
 }
 
@@ -2472,8 +2533,8 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 }
                 decode_lines(&case.lines, r, d)?;
             }
-            SeqLine::Inner { format, partial, .. } => {
-                let h = inner_host(r.host, r.p, format)?;
+            SeqLine::Inner { format, partial, reach, .. } => {
+                let h = inner_host(r.host, r.p, format, reach)?;
                 // Decode steps 1 and 2: whole bytes from the start of the message
                 if r.pos % 8 != 0 {
                     return Err(r.short(format!("the `inner {}` message starts at bit {}, inside a byte", format, r.pos)));
@@ -2583,19 +2644,24 @@ fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity, item: bool) -> Result<O
         }
     }
     // a `when … as <k>` line is an implicit `requires` term (engine-spec v0.30)
-    let qualifies = |k: &SeqKind| k.requires.iter().all(|r| r.holds(ent)) && k.whens.iter().all(|w| w.key.is_none() || when_matches(w, ent));
+    let qualifies = |k: &SeqKind| k.requires.iter().all(|r| r.holds(ent)) && k.whens.iter().all(|w| when_qualifies(w, ent));
     match body.kinds.iter().find(|k| qualifies(k)) {
         Some(k) => Ok(Some(k)),
         None => err(format!("no-kind: format `{}`: the entity has the required keys of no kind", p.format)),
     }
 }
 
-/// Does the entity hold the key of a `when … as` line with a value the line
-/// matches? The value is read as an unsigned 64-bit pattern (ruling 7 of
-/// 0.30); a `default` does not count (ruling 6).
+/// The implicit `requires` term of a `when` line: none without `as`; else the
+/// entity holds the key with a value the line matches, or, on an `optional`
+/// line (engine-spec v0.52), does not hold it. The value is read as an
+/// unsigned 64-bit pattern (ruling 7 of 0.30); a `default` does not count.
 #[cfg(feature = "bits")]
-fn when_matches(w: &SeqWhen, ent: &Entity) -> bool {
-    w.key.as_ref().and_then(|k| ent.fields.get(k)).and_then(as_bits).map_or(false, |v| in_list(&w.values, v))
+fn when_qualifies(w: &SeqWhen, ent: &Entity) -> bool {
+    match w.key.as_ref().map(|k| ent.fields.get(k)) {
+        None => true,
+        Some(None) => w.optional,
+        Some(Some(v)) => as_bits(v).map_or(false, |b| in_list(&w.values, b)),
+    }
 }
 
 /// An entity value of an `int` key as the unsigned bits a `when` compares.
@@ -3125,14 +3191,17 @@ fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Resu
     encode_lines(&body.common, kind_lines, ent, defs, w)?;
     if let Some(k) = kind {
         let start = w.pos;
+        // what decode holds where the common lines end
+        let windows = k.whens.iter().any(|l| l.at.is_some());
+        let before = if windows { w.back.last().cloned() } else { None };
         // a `when … at` occupies no bits: its window is settled once the
         // lines it covers are written (engine-spec v0.33)
         for line in k.whens.iter().filter(|l| l.at.is_none()) {
             write_when(w, line, ent)?;
         }
-        if k.whens.iter().any(|l| l.at.is_some()) {
+        if let Some(before) = before {
             encode_lines(&kind_lines[..k.prefix], &[], ent, defs, w)?;
-            settle_windows(k, start, ent, w)?;
+            settle_windows(k, start, before, ent, w)?;
             encode_lines(&kind_lines[k.prefix..], &[], ent, defs, w)?;
         } else {
             encode_lines(kind_lines, &[], ent, defs, w)?;
@@ -3143,33 +3212,40 @@ fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Resu
 }
 
 /// Settle the windows of the `when … at` lines of kind `k`, whose kind start
-/// is `start`, in line order (engine-spec v0.33, Encode, rulings 1, 5, 12
+/// is `start` and where decode held `before`, in line order (engine-spec v0.33, Encode, rulings 1, 5, 12
 /// and 13). The lines the windows cover are written; what decode reads back
 /// from them is read again from the bits as they stand after.
 #[cfg(feature = "bits")]
-fn settle_windows(k: &SeqKind, start: u64, ent: &Entity, w: &mut Writer) -> Result<(), Error> {
+fn settle_windows(k: &SeqKind, start: u64, before: Decoded, ent: &Entity, w: &mut Writer) -> Result<(), Error> {
     let p = w.p;
     let order = p.order;
     // the bits a held key wrote (ruling 12), from kind start
     let span = (w.pos - start) as usize;
     let mut held = vec![false; span];
+    let mark = |held: &mut Vec<bool>, at: u64, len: u32| {
+        for q in at..at + len as u64 {
+            if let Some(b) = held.get_mut((q - start) as usize) {
+                *b = true;
+            }
+        }
+    };
     // (bit, line) of each line the windows may cover
     let mut fields: Vec<(u64, &SeqLine)> = Vec::new();
     let mut plain: Vec<(u64, &SeqWhen)> = Vec::new();
     let mut pos = start;
     for l in k.whens.iter().filter(|l| l.at.is_none()) {
         plain.push((pos, l));
+        // the line's held key wrote them (ruling 16 of 0.52)
+        if l.key.as_ref().map_or(false, |key| ent.fields.contains_key(key)) {
+            mark(&mut held, pos, l.len);
+        }
         pos += l.len as u64;
     }
     for line in &k.lines[..k.prefix] {
         match line {
             SeqLine::Field { f, len, also, .. } => {
                 if std::iter::once(f).chain(also.iter()).any(|x| has_key(ent, x)) {
-                    for q in pos..pos + *len as u64 {
-                        if let Some(b) = held.get_mut((q - start) as usize) {
-                            *b = true;
-                        }
-                    }
+                    mark(&mut held, pos, *len);
                 }
                 fields.push((pos, line));
                 pos += *len as u64;
@@ -3179,17 +3255,15 @@ fn settle_windows(k: &SeqKind, start: u64, ent: &Entity, w: &mut Writer) -> Resu
             _ => {}
         }
     }
-    let mut windows: Vec<(u64, u64)> = Vec::new();
+    let mut looks: Vec<(u64, &SeqWhen)> = Vec::new();
     for line in k.whens.iter().filter(|l| l.at.is_some()) {
         let at = start + line.at.unwrap_or(0);
         let len = line.len;
-        windows.push((at, len as u64));
+        looks.push((at, line));
         let cur = get_bits(&w.buf, at, len, order).unwrap_or(0);
         let held_as = line.key.as_ref().and_then(|key| ent.fields.get(key));
         let stands = in_list(&line.values, cur) && held_as.map_or(true, |v| as_bits(v) == Some(cur));
-        let value = if stands {
-            cur
-        } else {
+        if !stands {
             let v = when_bits(p, line, ent)?;
             let mut next = w.buf.clone();
             set_bits(&mut next, at, len, v, order);
@@ -3205,43 +3279,28 @@ fn settle_windows(k: &SeqKind, start: u64, ent: &Entity, w: &mut Writer) -> Resu
                 }
             }
             w.buf = next;
-            // bits of an earlier window are not bits a held key wrote (ruling 12)
-            for q in at..at + len as u64 {
-                if let Some(b) = held.get_mut((q - start) as usize) {
-                    *b = false;
-                }
-            }
-            v
-        };
-        if let Some(key) = &line.key {
-            let back = w.back.last_mut().expect("a scope");
-            back.ent.fields.remove(key);
-            set_as(back, key, value);
+        }
+        // the bits of a window whose key is held are that key's; those of
+        // another window stay whose they were (ruling 16 of 0.52)
+        if held_as.is_some() {
+            mark(&mut held, at, len);
         }
     }
-    // what decode reads from the covered lines, from the bits as they stand
-    let overlaps = |at: u64, len: u64| windows.iter().any(|(wa, wl)| at < wa + wl && *wa < at + len);
-    let back = w.back.last_mut().expect("a scope");
+    // what decode reads from the kind's `when` lines, then from the covered
+    // lines, from the bits as they stand after every window; a key the common
+    // lines set keeps its value
+    let mut back = before;
+    for (at, line) in plain.iter().map(|(at, l)| (*at, *l)).chain(looks) {
+        if let (Some(key), Some(v)) = (&line.key, get_bits(&w.buf, at, line.len, order)) {
+            set_as(&mut back, key, v);
+        }
+    }
     for (at, line) in fields {
         if let SeqLine::Field { f, len, also, .. } = line {
-            if overlaps(at, *len as u64) {
-                for x in std::iter::once(f).chain(also.iter()) {
-                    back.ent.fields.remove(&x.model_key);
-                    back.soft.retain(|(key, _)| key != &x.model_key);
-                    back.hard_keys.retain(|key| key != &x.model_key);
-                }
-                read_back(p, f, *len, also, &w.buf, at, back);
-            }
+            read_back(p, f, *len, also, &w.buf, at, &mut back);
         }
     }
-    for (at, line) in plain {
-        if let (Some(key), true) = (&line.key, overlaps(at, line.len as u64)) {
-            if let Some(v) = get_bits(&w.buf, at, line.len, order) {
-                back.ent.fields.remove(key);
-                set_as(back, key, v);
-            }
-        }
-    }
+    *w.back.last_mut().expect("a scope") = back;
     Ok(())
 }
 
@@ -3527,8 +3586,8 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
             // reached leaves it so (ruling 6 of 0.21)
             // (checked in `encode` once every group is written)
             // engine-spec v0.34: the checks, a whole byte, then the inner message
-            SeqLine::Inner { format, .. } => {
-                let h = inner_host(w.look.host, p, format)?;
+            SeqLine::Inner { format, reach, .. } => {
+                let h = inner_host(w.look.host, p, format, reach)?;
                 if w.pos % 8 != 0 {
                     return Err(w.fail(format!("the `inner {}` message would start at bit {}, inside a byte", format, w.pos)));
                 }

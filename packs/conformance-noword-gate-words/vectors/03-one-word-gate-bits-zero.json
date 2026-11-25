@@ -1,0 +1,14 @@
+{
+  "name": "one-word-gate-bits-zero",
+  "from": "conformance-noword-gate-words",
+  "to": "conformance-noword-gate-words",
+  "input": "00070000",
+  "expect": "",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: the one line is in a block that does not hold: zero words; the word is ignored; encode writes none"
+}

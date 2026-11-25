@@ -3,7 +3,7 @@
   "from": "conformance-inner-fixedoneouter",
   "to": "conformance-inner-fixedoneouter",
   "input": "020a0b0c0dff",
-  "expect_error": "malformed-wire",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34, ruling 14: items of the list count though step 4 discards it: end 2, ff left"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-fixedoneouter and its inner pack conformance-inner-fixedone both map probe.nums[], probe.nums[].probe.val, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

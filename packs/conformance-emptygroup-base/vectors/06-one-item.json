@@ -1,0 +1,13 @@
+{
+  "name": "one-item",
+  "from": "conformance-emptygroup-base",
+  "to": "conformance-emptygroup-base",
+  "input": "05010000aa",
+  "expect": "05010000aa",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].probe.qty": "170"
+  },
+  "source": "constructed",
+  "reference": "spec 0.7: the item at byte 4"
+}

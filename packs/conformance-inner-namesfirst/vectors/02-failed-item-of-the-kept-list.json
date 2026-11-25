@@ -3,7 +3,7 @@
   "from": "conformance-inner-namesfirst",
   "to": "conformance-inner-namesfirst",
   "input": "010141",
-  "expect_error": "transform-decode",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 21: the failed item is in the outer list, read first; it is an error"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-namesfirst and its inner pack conformance-inner-names both map probe.names[], probe.names[].probe.tag, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

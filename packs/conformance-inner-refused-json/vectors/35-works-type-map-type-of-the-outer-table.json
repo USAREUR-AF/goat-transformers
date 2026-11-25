@@ -1,0 +1,9 @@
+{
+  "name": "works-type-map-type-of-the-outer-table",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-works-type-map",
+  "input": "{\"w\":5,\"type\":\"a-f\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20d: the outer typemap does not change it; the inner pack has no entry for a-f, and three characters do not fit its field"
+}

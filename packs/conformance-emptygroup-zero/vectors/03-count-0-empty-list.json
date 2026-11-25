@@ -1,0 +1,13 @@
+{
+  "name": "count-0-empty-list",
+  "from": "conformance-emptygroup-zero",
+  "to": "conformance-emptygroup-zero",
+  "input": "050000",
+  "expect": "050000",
+  "model": {
+    "probe.items.#": "0",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: `count 0`: 3 bytes reach the start"
+}

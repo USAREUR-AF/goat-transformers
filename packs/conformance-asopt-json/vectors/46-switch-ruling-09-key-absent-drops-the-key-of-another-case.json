@@ -1,0 +1,9 @@
+{
+  "name": "switch-ruling-09-key-absent-drops-the-key-of-another-case",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-switch",
+  "input": "{\"z\":6}",
+  "expect": "0300",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 9: a `switch` on the key selects by the bits written; 03: case 3; y writes zero bits"
+}

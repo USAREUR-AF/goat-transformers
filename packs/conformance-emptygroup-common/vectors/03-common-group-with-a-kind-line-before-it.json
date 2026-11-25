@@ -1,0 +1,14 @@
+{
+  "name": "common-group-with-a-kind-line-before-it",
+  "from": "conformance-emptygroup-common",
+  "to": "conformance-emptygroup-common",
+  "input": "02000500",
+  "expect": "02000500",
+  "model": {
+    "probe.items.#": "0",
+    "@kind": "b",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: kind b's n at byte 2 ends before the start, byte 4"
+}

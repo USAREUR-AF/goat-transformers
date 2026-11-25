@@ -1,0 +1,13 @@
+{
+  "name": "nested-start-beyond-the-item-empty",
+  "from": "conformance-emptygroup-nested-out",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "050107000000",
+  "expect": "050107000000",
+  "model": {
+    "probe.items[0].probe.qty": "7",
+    "probe.items[0].probe.subs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 6 bytes reach the start of subs"
+}

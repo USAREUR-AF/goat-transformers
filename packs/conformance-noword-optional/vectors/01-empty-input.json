@@ -1,0 +1,14 @@
+{
+  "name": "empty-input",
+  "from": "conformance-noword-optional",
+  "to": "conformance-noword-optional",
+  "input": "",
+  "expect": "00",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.6: `optional`: a field beyond the input is absent, encode is unchanged; ruling 14: decode requires words up to the furthest bit that is not optional, here none; encode counts the line: one byte"
+}

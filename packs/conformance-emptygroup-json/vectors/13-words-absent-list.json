@@ -1,0 +1,9 @@
+{
+  "name": "words-absent-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-words",
+  "input": "{\"n\":5}",
+  "expect": "0500000000000000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 2 whole words"
+}

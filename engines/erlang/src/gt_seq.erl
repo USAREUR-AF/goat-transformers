@@ -107,7 +107,7 @@ whens([], Pos, _Ext, _D, Sets) -> {Pos, lists:reverse(Sets)};
 %% A `when ... at <offset>` (0.33) reads at the kind start plus the offset
 %% and does not move the cursor; past the input or the extent it does not
 %% hold (rulings 6 and 7).
-whens([{swhen, Len, Val, As, At} | Rest], Pos, Ext, D, Sets) ->
+whens([{swhen, Len, Val, As, At, _} | Rest], Pos, Ext, D, Sets) ->
     {From, Next} = case At of
                        none -> {Pos, Pos + Len};
                        Off -> {D#d.kstart + Off, Pos}
@@ -240,7 +240,7 @@ line({pad, Len}, Ext, D) -> skip(Len, Ext, D);
 %% `align` stops at the end of the input or extent without error
 line({align, N}, Ext, #d{pos = Pos} = D) ->
     D#d{pos = max(Pos, min(Pos + (N - Pos rem N) rem N, limit(Ext, D)))};
-line({swhen, _, _, _, _} = L, Ext, #d{pos = Pos, pack = Pack} = D) ->
+line({swhen, _, _, _, _, _} = L, Ext, #d{pos = Pos, pack = Pack} = D) ->
     case whens([L], Pos, Ext, D, []) of
         false -> gt_engine:conv_error('no-kind', Pack, "a common when does not hold", []);
         {Pos1, Sets} -> set_as(Sets, D#d{pos = Pos1})
@@ -348,8 +348,11 @@ line({sgroup, List, Mode, Body}, Ext, #d{top = true, taken = Taken} = D)
     end;
 %% `inner <format>` (0.34): the bytes from the cursor to the end of the
 %% extent are one message of the inner pack, decoded into this entity
-line({inner, Format, Partial}, Ext, #d{pos = Pos, pack = Pack} = D) ->
-    Inner = try gt_engine:inner_pack(Pack, Format)
+line({inner, Format, Partial, Reach}, Ext, #d{pos = Pos, pack = Pack} = D) ->
+    Inner = try
+                I = gt_engine:inner_pack(Pack, Format),
+                gt_engine:inner_apart(Pack, I, Reach),          % ruling 20 of 0.52
+                I
             catch error:{convert_error, _, _} = Err -> gt_engine:pass(Err)
             end,
     case Pos rem 8 of
@@ -1095,8 +1098,9 @@ eline({sfield, Keys, Len, _, _, _, _, _, With} = L, _Rest, Src, #e{pack = Pack, 
     end;
 %% `inner <format>` (0.34): encode(<format>, entity) written at the cursor,
 %% which stands on a whole byte
-eline({inner, Format, _Partial}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) ->
+eline({inner, Format, _Partial, Reach}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) ->
     Inner = gt_engine:inner_pack(Pack, Format),
+    gt_engine:inner_apart(Pack, Inner, Reach),                  % ruling 20 of 0.52
     case Pos rem 8 of
         0 -> ok;
         _ -> gt_engine:conv_error('transform-encode', Pack,
@@ -1108,11 +1112,11 @@ eline({inner, Format, _Partial}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) ->
                 binary_to_list(Bytes));
 eline({sconst, Len, Val}, _Rest, _Src, E) -> emit(Len, Val, E);
 %% a `when ... at` occupies no bits; its window is settled by ewalk/7
-eline({swhen, _, _, _, At}, _Rest, _Src, E) when At =/= none -> E;
-eline({swhen, Len, Val, none, none}, _Rest, _Src, E) -> emit(Len, gt_pack:when_first(Val), E);
-eline({swhen, Len, _, Key, none} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
+eline({swhen, _, _, _, At, _}, _Rest, _Src, E) when At =/= none -> E;
+eline({swhen, Len, Val, none, none, _}, _Rest, _Src, E) -> emit(Len, gt_pack:when_first(Val), E);
+eline({swhen, Len, _, Key, none, _} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
     U = as_bits(L, Src, Pack),
-    E1 = emit(Len, U, E),
+    E1 = held_as(Key, Src, E#e.pos, Len, emit(Len, U, E)),
     case maps:get(has_switch, Pack, false) of
         true -> E1#e{wrote = W#{Key => as_read_back(U, Len)}};
         false -> E1
@@ -1520,7 +1524,7 @@ eitem(Item, List, Body, #e{pack = Pack, wrote = W, path = Path, icount = IC} = E
 %% when the scope holds it and the `when` matches it, the first listed value
 %% when the scope does not hold it (a default does not count, ruling 6); a
 %% held value the `when` does not match is transform-encode.
-as_bits({swhen, Len, Val, Key, _}, #{model := Model}, Pack) ->
+as_bits({swhen, Len, Val, Key, _, _}, #{model := Model}, Pack) ->
     case maps:find(Key, Model) of
         error -> gt_pack:when_first(Val);
         {ok, V} ->
@@ -1545,56 +1549,64 @@ escope(Lines, infinity, Src, E) -> elines(Lines, Src, E);
 escope(Lines, N, Src, E) when N >= length(Lines) -> elines(Lines, Src, E);
 escope(Lines, N, Src, E) ->
     Kind = lists:nthtail(N, Lines),
-    case [W || {swhen, _, _, _, At} = W <- Kind, At =/= none] of
+    case [W || {swhen, _, _, _, At, _} = W <- Kind, At =/= none] of
         [] -> elines(Lines, Src, E);
         Wins -> ecommon(Lines, N, Wins, Src, E)
     end.
 
 ecommon(Lines, 0, Wins, Src, #e{pos = KS} = E) ->
     %% the kind start: where the common lines ended
-    ewalk(Lines, Wins, KS, KS + lists:max([At + Len || {swhen, Len, _, _, At} <- Wins]), Src, E, []);
+    ewalk(Lines, Wins, KS, KS + lists:max([At + Len || {swhen, Len, _, _, At, _} <- Wins]), Src, E, {E#e.wrote, []});
 ecommon([L | Rest], N, Wins, Src, E) -> ecommon(Rest, N - 1, Wins, Src, eline(L, Rest, Src, E)).
 
-%% Fs: the field lines of a bit length written so far, with their first bit.
+%% {KW, Fs}: what the common lines gave (`wrote`), and the field lines of a bit
+%% length and the `as` lines of the kind so far, with their first bit.
 ewalk(Lines, [_ | _] = Wins, KS, End, Src, #e{pos = Pos} = E, Fs) when Pos >= End; Lines =:= [] ->
     E1 = lists:foldl(fun(W, Acc) -> settle_win(W, KS, Src, Acc) end, E, Wins),
-    ewalk(Lines, [], KS, End, Src, reread(Fs, E1), []);
+    %% every window, also one whose line is still to come (`when` lines under a
+    %% window may stand before it)
+    {KW, Fs0} = Fs,
+    Fs1 = [{KS + At, W} || {swhen, _, _, As, At, _} = W <- Wins, As =/= none] ++ Fs0,
+    ewalk(Lines, [], KS, End, Src, reread({KW, Fs1}, E1), Fs);
 ewalk([], [], _KS, _End, _Src, E, _Fs) -> E;
-ewalk([L | Rest], Wins, KS, End, Src, #e{pos = Pos} = E, Fs) ->
+ewalk([L | Rest], Wins, KS, End, Src, #e{pos = Pos} = E, {KW, Fs}) ->
     Fs1 = case {Wins, L} of
               {[_ | _], {sfield, _, Len, _, _, _, _, _, _}} when is_integer(Len) -> [{Pos, L} | Fs];
+              %% the bits an `as` line binds
+              {[_ | _], {swhen, _, _, As, none, _}} when As =/= none -> [{Pos, L} | Fs];
               _ -> Fs
           end,
-    ewalk(Rest, Wins, KS, End, Src, eline(L, Rest, Src, E), Fs1).
+    ewalk(Rest, Wins, KS, End, Src, eline(L, Rest, Src, E), {KW, Fs1}).
 
 %% A switch reads its key from the bits as they stand after the windows are
-%% written (Encode of 0.33): what decode reads back from a field line a
-%% window wrote over is read again from those bits.
-reread(Fs, #e{pack = Pack, wins = Wins, wrote = W0} = E) ->
-    case maps:get(has_switch, Pack, false) andalso Wins =/= [] of
+%% written (Encode of 0.33): what decode reads back from the kind's field and
+%% `as` lines under the windows is read again from those bits, in line order,
+%% over what the common lines gave (KW), the earliest line of a key standing
+%% (0.6).
+reread({KW, Fs}, #e{pack = Pack} = E) ->
+    case maps:get(has_switch, Pack, false) of
         false -> E;
         true ->
-            W = lists:foldl(
-                  fun({FP, {sfield, Keys, Len, _, _, Swap, _, _, _} = L}, Acc) ->
-                          case lists:any(fun({WP, WL, _}) -> WP < FP + Len andalso FP < WP + WL end, Wins) of
-                              false -> Acc;
-                              true ->
-                                  Bits = win_peek(E, FP, Len, false),
-                                  Raw = case Swap of
-                                            true -> gt_engine:swap_bytes(Bits, Len);
-                                            false -> Bits
-                                        end,
-                                  read_back(L, Raw, maps:without([K || {K, _} <- Keys], Acc), Pack)
-                          end
-                  end, W0, lists:reverse(Fs)),
-            E#e{wrote = W}
+            E#e{wrote = lists:foldl(
+                  fun({FP, {sfield, _, Len, _, _, Swap, _, _, _} = L}, Acc) ->
+                          Bits = win_peek(E, FP, Len, false),
+                          Raw = case Swap of
+                                    true -> gt_engine:swap_bytes(Bits, Len);
+                                    false -> Bits
+                                end,
+                          read_back(L, Raw, Acc, Pack);
+                     ({FP, {swhen, Len, _, As, _, _}}, Acc) ->
+                          Acc#{As => as_read_back(win_peek(E, FP, Len, false), Len)}
+                  end, KW, lists:reverse(Fs))}
     end.
 
 %% One window (Encode of 0.33): the bits as written stand when they match the
 %% `when` and agree with a held `as` key; else the window takes the key's
 %% value or the first listed value, and a bit that differs from a bit a held
-%% key wrote is transform-encode (rulings 1, 12, 13 and 26).
-settle_win({swhen, Len, Val, As, At} = L, KS, #{model := Model} = Src, #e{pack = Pack, wrote = W} = E) ->
+%% key wrote is transform-encode (rulings 1, 12, 13 and 26). The window's own
+%% bits are a held key's when its `as` key is held, and no window takes a bit
+%% from a held key (ruling 16 of 0.52).
+settle_win({swhen, Len, Val, As, At, _} = L, KS, #{model := Model} = Src, #e{pack = Pack} = E) ->
     P = KS + At,
     Cur = win_peek(E, P, Len, false),
     Agrees = case As of
@@ -1609,7 +1621,8 @@ settle_win({swhen, Len, Val, As, At} = L, KS, #{model := Model} = Src, #e{pack =
                 true -> Cur;
                 false -> as_bits(L, Src, Pack)
             end,
-    E1 = case Value =:= Cur of
+    held_as(As, Src, P, Len,
+         case Value =:= Cur of
              true -> E;
              false ->
                  case (Value bxor Cur) band win_peek(E, P, Len, true) of
@@ -1618,15 +1631,10 @@ settle_win({swhen, Len, Val, As, At} = L, KS, #{model := Model} = Src, #e{pack =
                                                "the window of when ... at ~p would change bits a held key wrote",
                                                [At])
                  end
-         end,
-    case As =/= none andalso maps:get(has_switch, Pack, false) of
-        true -> E1#e{wrote = W#{As => as_read_back(Value, Len)}};
-        false -> E1
-    end.
+         end).
 
 %% The Len bits at P as written so far (raw stream bits in the pack's bit
-%% order, ruling 8), or with Held the mask of the bits a held key wrote that
-%% no window has written over.
+%% order, ruling 8), or with IsMask the mask of the bits a held key wrote.
 win_peek(#e{pack = Pack, pos = Pos, segs = Segs, held = Held, wins = Wins}, P, Len, IsMask) ->
     Size = max(Pos, P + Len),
     M0 = gt_bits:new_bits(Size, maps:get(bit_order, Pack)),
@@ -1637,10 +1645,20 @@ win_peek(#e{pack = Pack, pos = Pos, segs = Segs, held = Held, wins = Wins}, P, L
              true -> lists:foldl(fun({HP, HL}, A) -> gt_bits:overwrite(A, HP, HL, (1 bsl HL) - 1) end,
                                  M0, Held)
          end,
-    M2 = lists:foldl(fun({WP, WL, WV}, A) ->
-                             gt_bits:overwrite(A, WP, WL, case IsMask of true -> 0; false -> WV end)
-                     end, M1, lists:reverse(Wins)),
+    M2 = case IsMask of
+             false -> lists:foldl(fun({WP, WL, WV}, A) -> gt_bits:overwrite(A, WP, WL, WV) end,
+                                  M1, lists:reverse(Wins));
+             true -> M1
+         end,
     gt_bits:peek(M2, P, Len).
+
+%% Record the bits of a `when ... as` line whose key the scope holds.
+held_as(none, _Src, _P, _Len, E) -> E;
+held_as(Key, #{model := Model}, P, Len, #e{held = H} = E) ->
+    case maps:is_key(Key, Model) of
+        true -> E#e{held = [{P, Len} | H]};
+        false -> E
+    end.
 
 %% Record the bits of a field line that wrote a key the scope holds.
 held(Keys, With, #{model := Model} = Src, Len, #e{pos = Pos, held = H} = E) ->
@@ -1757,7 +1775,7 @@ sim({sfield, _, _, _, _, _, _, _, _} = L, Src, Pack) ->
     catch
         _:_ -> Src
     end;
-sim({swhen, Len, _, Key, none} = L, Src, Pack) when Key =/= none ->
+sim({swhen, Len, _, Key, none, _} = L, Src, Pack) when Key =/= none ->
     try as_bits(L, Src, Pack) of
         U -> Src#{wrote => (maps:get(wrote, Src, #{}))#{Key => as_read_back(U, Len)}}
     catch

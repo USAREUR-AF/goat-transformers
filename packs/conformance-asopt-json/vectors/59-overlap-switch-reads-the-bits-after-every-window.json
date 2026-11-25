@@ -1,0 +1,9 @@
+{
+  "name": "overlap-switch-reads-the-bits-after-every-window",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-overlap",
+  "input": "{\"y\":1,\"z\":2}",
+  "expect": "1502",
+  "source": "constructed",
+  "reference": "spec 0.33 Encode: windows are settled in line order before any switch reads its key back. The first window writes 0x10, the second its low nibble 5 over it (rulings 5 and 12): 0x15. The switch reads x = 21, as decode does, not 16: z"
+}

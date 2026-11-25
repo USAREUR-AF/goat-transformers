@@ -1,0 +1,9 @@
+{
+  "name": "specific-ruling-08-the-less-specific-kind",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-specific",
+  "input": "{\"y\":1}",
+  "expect": "0101",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 8: the order of kinds decides for an entity without the key; both requires z; one: label 1"
+}

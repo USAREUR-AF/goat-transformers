@@ -1,0 +1,13 @@
+{
+  "name": "empty-list",
+  "from": "conformance-emptygroup-armor",
+  "to": "conformance-emptygroup-armor",
+  "input": "5000",
+  "expect": "5000",
+  "model": {
+    "probe.items.#": "0",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: L is 20: 4 characters"
+}

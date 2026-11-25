@@ -1,0 +1,9 @@
+{
+  "name": "decode",
+  "from": "conformance-inner-refused-misaligned",
+  "to": "conformance-inner-refused-misaligned",
+  "input": "12",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; 20b: before the whole-byte test of the cursor (malformed-wire, transform-encode)"
+}

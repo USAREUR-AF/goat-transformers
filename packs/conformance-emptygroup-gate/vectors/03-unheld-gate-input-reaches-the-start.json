@@ -1,0 +1,16 @@
+{
+  "name": "unheld-gate-input-reaches-the-start",
+  "from": "conformance-emptygroup-gate",
+  "to": "conformance-emptygroup-gate",
+  "input": "05000900",
+  "expect": "05000000",
+  "model": {
+    "probe.items.#": "0",
+    "probe.n": "5",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the required length is the greater of the start and what the other lines require; x is absent (0.17) and its bits are no line's on encode"
+}

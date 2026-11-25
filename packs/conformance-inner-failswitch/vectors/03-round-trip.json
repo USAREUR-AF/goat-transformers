@@ -3,12 +3,7 @@
   "from": "conformance-inner-failswitch",
   "to": "conformance-inner-failswitch",
   "input": "0241010107",
-  "expect": "0241010107",
-  "model": {
-    "probe.s1": "A",
-    "probe.n": "1",
-    "probe.x": "7"
-  },
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 Decode step 4: s1 A, n 1 from the inner message, x 7"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-failswitch and its inner pack conformance-inner-failjoin both map probe.n, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

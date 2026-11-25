@@ -1,0 +1,13 @@
+{
+  "name": "nested-start-inside-the-item",
+  "from": "conformance-emptygroup-nested-in",
+  "to": "conformance-emptygroup-nested-in",
+  "input": "0501070000",
+  "expect": "0501070000",
+  "model": {
+    "probe.items[0].probe.qty": "7",
+    "probe.items[0].probe.subs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: subs start at bit 16 of `item 24`: nothing changes, the item is 3 bytes"
+}

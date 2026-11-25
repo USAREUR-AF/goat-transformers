@@ -1,0 +1,10 @@
+{
+  "name": "over-the-budget",
+  "from": "conformance-inner-distinct-count-after",
+  "to": "conformance-inner-distinct-count-after",
+  "input": "030206070105",
+  "expect_error": "malformed-wire",
+  "max_items": 2,
+  "source": "constructed",
+  "reference": "spec 0.34, `max_items`: the inner counts are checked against the budget the outer lines left (ruling 7); the outer count of 1 with 0 left"
+}

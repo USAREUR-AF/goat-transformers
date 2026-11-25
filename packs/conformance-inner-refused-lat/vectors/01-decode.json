@@ -1,0 +1,9 @@
+{
+  "name": "decode",
+  "from": "conformance-inner-refused-lat",
+  "to": "conformance-inner-refused-lat",
+  "input": "0305",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; lat and lat are one entry"
+}

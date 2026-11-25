@@ -1,0 +1,13 @@
+{
+  "name": "input-reaches-the-start",
+  "from": "conformance-emptygroup-optional",
+  "to": "conformance-emptygroup-optional",
+  "input": "05000700",
+  "expect": "05000700",
+  "model": {
+    "probe.items.#": "0",
+    "probe.x": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the required length is the greater of the start and what the other lines require; 4 bytes; x is inside the input"
+}

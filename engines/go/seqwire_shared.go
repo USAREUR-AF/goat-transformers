@@ -167,18 +167,20 @@ type seqNode struct {
 	conds []seqCond
 	body  []*seqNode
 	g     *Group
-	bits  bool         // length: the block is counted in bits
-	plus  int64        // length, whole: what the field holds beyond the length
-	ext   bool         // choice: extensible
-	rng   []numRange   // when: the listed values and ranges (0.20)
-	sw    *seqSwitch   // switch
-	cnt   *seqCountDef // count
-	key   string       // when: the key `as` binds the bits to, "" for none (0.30)
-	at    bool         // when: a look-ahead `when … at <off>` (0.33)
-	off   uint64       // when … at: the offset in bits from kind start
-	kind  *seqKind     // seqKindStart: the kind whose lines follow
-	inner string       // inner: the format of the inner pack (0.34)
-	part  bool         // inner: `partial`, bytes after the inner message are ignored (0.34)
+	bits  bool            // length: the block is counted in bits
+	plus  int64           // length, whole: what the field holds beyond the length
+	ext   bool            // choice: extensible
+	rng   []numRange      // when: the listed values and ranges (0.20)
+	sw    *seqSwitch      // switch
+	cnt   *seqCountDef    // count
+	key   string          // when: the key `as` binds the bits to, "" for none (0.30)
+	opt   bool            // when: `as <key> optional` (0.52)
+	at    bool            // when: a look-ahead `when … at <off>` (0.33)
+	off   uint64          // when … at: the offset in bits from kind start
+	kind  *seqKind        // seqKindStart: the kind whose lines follow
+	inner string          // inner: the format of the inner pack (0.34)
+	reach map[string]bool // inner: the entries the pack's lines in reach map (0.52 ruling 20)
+	part  bool            // inner: `partial`, bytes after the inner message are ignored (0.34)
 }
 
 // seqKindStart marks, in the lines an encode writes for a kind, where the
@@ -723,43 +725,44 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			rs = []numRange{{}}
 		}
 		node := &seqNode{op: seqWhen, n: ln, num: rs[0].lo, rng: rs, line: n}
-		if hasToken(args[2:], "at") {
-			// `when <len> <values> at <n> [as <k>]` (0.33): every `at`
-			// error is a check after the file, reported after the key and
-			// value checks (rulings 10 and 25).
-			rest := args[2:]
-			form := rest[0] == "at" && (len(rest) == 2 || len(rest) == 4 && rest[2] == "as" && rest[3] != "as" && rest[3] != "at")
-			switch {
-			case !form:
-				p.atLater(sp.bad(n, "", "a when line is `when <len> <values> [at <n>] [as <model-key>]`, in that order"))
-			case top.kind == nil:
-				p.atLater(sp.bad(n, "", "at stands on a common when; a look-ahead is valid only on a when of a kind"))
-			default:
+		if rest := args[2:]; whenHoldsAt(rest) {
+			// `when <len> <values> at <n> [as <k> [optional]]` (0.33, 0.52):
+			// every `at` error is a check after the file, reported after the
+			// key and value checks (0.33 rulings 10 and 25). On a line whose
+			// tokens are out of order the key is not read (0.33 ruling 28).
+			if !whenAtForm(rest) {
+				p.atLater(sp.bad(n, "", "a when line is `when <len> <values> [at <n>] [as <model-key> [optional]]`, in that order"))
+			} else {
+				if top.kind == nil {
+					p.atLater(sp.bad(n, "", "at stands on a common when; a look-ahead is valid only on a when of a kind"))
+				}
 				off, ok := parsePlainUint64(rest[1])
 				if !ok {
 					p.atLater(sp.bad(n, "", "at takes plain digits that fit in 64 bits, got %q", rest[1]))
 				}
 				node.at, node.off = true, off
-				if len(rest) == 4 {
-					node.key = rest[3]
+				if len(rest) > 2 {
+					node.key, node.opt = rest[3], len(rest) == 5
 					p.keyRefs = append(p.keyRefs, keyRef{key: node.key, line: n, as: true})
 					mark(node.key)
 				}
 			}
-		} else if len(args) > 2 {
-			// `as <model-key>` after the values (0.30). Its syntax is
-			// checked after the file (ruling 16); ParsePack lets a line
-			// through the argument count only when its third token is `as`
-			// or `at`.
+		} else if len(rest) > 0 {
+			// `as <model-key> [optional]` after the values (0.30, 0.52). Its
+			// syntax is checked after the file (0.30 ruling 16); ParsePack
+			// lets a line through the argument count only when its third
+			// token is `as` or `at`.
 			switch {
-			case len(args) == 3:
+			case len(rest) == 1:
 				sp.lateErr(sp.bad(n, "", "when … as needs a model key after as"))
-			case args[3] == "as" || hasToken(args[4:], "as"):
+			case rest[1] == "as" || hasToken(rest[2:], "as"):
 				sp.lateErr(sp.bad(n, "", "as stands twice on one when line"))
-			case len(args) > 4:
-				sp.lateErr(sp.bad(n, "", "when … as <model-key> takes no token after the key, got %q", args[4]))
+			case len(rest) > 3 || len(rest) == 3 && rest[2] != "optional":
+				sp.lateErr(sp.bad(n, "", "when … as <model-key> takes only `optional` after the key, got %q", strings.Join(rest[2:], " ")))
+			case len(rest) == 3 && top.kind == nil:
+				sp.lateErr(sp.bad(n, "", "optional stands on a common when; it is valid only on a when of a kind"))
 			default:
-				node.key = args[3]
+				node.key, node.opt = rest[1], len(rest) == 3
 				p.keyRefs = append(p.keyRefs, keyRef{key: node.key, line: n, as: true})
 				// A kind's `as` key counts as mapped from the start of its
 				// kind, a common one from its own line (ruling 2); a kind's
@@ -1203,6 +1206,45 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 	return nil
 }
 
+// whenHoldsAt reports whether the tokens after the values of a `when` hold
+// `at`. The token after the first `as` is its key and does not count (0.52
+// rulings 4, 11 and 14).
+func whenHoldsAt(rest []string) bool {
+	seenAs := false
+	for i := 0; i < len(rest); i++ {
+		switch {
+		case rest[i] == "at":
+			return true
+		case rest[i] == "as" && !seenAs:
+			seenAs = true
+			i++
+		}
+	}
+	return false
+}
+
+// whenAtForm reports whether the tokens of a line that holds `at` are in the
+// order `at <n> [as <key> [optional]]`. One of the words of the form in the
+// place of the offset is out of order (0.52 ruling 15).
+func whenAtForm(rest []string) bool {
+	if rest[0] != "at" || len(rest) < 2 {
+		return false
+	}
+	switch rest[1] {
+	case "at", "as", "optional":
+		return false
+	}
+	switch len(rest) {
+	case 2:
+		return true
+	case 4:
+		return rest[2] == "as" && rest[3] != "as"
+	case 5:
+		return rest[2] == "as" && rest[3] != "as" && rest[4] == "optional"
+	}
+	return false
+}
+
 // parsePlainUint64 reads plain decimal digits, leading zeros allowed, that
 // fit in 64 bits.
 func parsePlainUint64(s string) (uint64, bool) {
@@ -1531,9 +1573,39 @@ func parsePlus(s string) (int64, bool) {
 	return v, err == nil
 }
 
+// innerReach gives each `inner` line among lines the entries the lines in its
+// reach map (0.52 ruling 20).
+func innerReach(lines []*seqNode, reach map[string]bool) {
+	for _, n := range lines {
+		if n.op == seqInner {
+			n.reach = reach
+		}
+		innerReach(n.body, reach)
+	}
+}
+
+// bindInner computes the reach of the `inner` lines: of one in a kind the
+// common lines and that kind's, of one in the common lines every line.
+func (sp *seqParser) bindInner() {
+	b := sp.p.sbody
+	mapped := func(kinds []*seqKind) map[string]bool {
+		out := map[string]bool{}
+		part := &seqBody{common: b.common, kinds: kinds}
+		part.modelKeys(func(k string) { out[k] = true }, "", nil)
+		return out
+	}
+	innerReach(b.common, mapped(b.kinds))
+	for _, k := range b.kinds {
+		innerReach(k.nodes, mapped([]*seqKind{k}))
+	}
+}
+
 // bind indexes each body once the pack has loaded: the defaults in scope of
 // each kind and the lines an encode writes for it.
 func (sp *seqParser) bind() {
+	if sp.p.innerLine != 0 {
+		sp.bindInner()
+	}
 	for _, b := range sp.bodies {
 		b.defs = map[string]*Default{}
 		for _, d := range b.defaults {

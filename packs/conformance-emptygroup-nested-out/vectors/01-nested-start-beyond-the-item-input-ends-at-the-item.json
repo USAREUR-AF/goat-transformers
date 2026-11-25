@@ -1,0 +1,9 @@
+{
+  "name": "nested-start-beyond-the-item-input-ends-at-the-item",
+  "from": "conformance-emptygroup-nested-out",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "05010700",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: a group nested in an item: subs start at byte 4 of the item, byte 6 of the message"
+}

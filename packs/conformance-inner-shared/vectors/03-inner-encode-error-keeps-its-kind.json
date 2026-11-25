@@ -3,7 +3,7 @@
   "from": "conformance-inner-shared",
   "to": "conformance-inner-shared",
   "input": "1f3507",
-  "expect_error": "transform-encode",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 Encode: x=31 fits the outer 8 bits but not the inner 4-bit uint (ruling 4b of 0.11); the inner encode error keeps its kind"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-shared and its inner pack conformance-inner-fixed both map probe.x, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

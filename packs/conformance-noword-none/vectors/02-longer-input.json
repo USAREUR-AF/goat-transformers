@@ -1,0 +1,9 @@
+{
+  "name": "longer-input",
+  "from": "conformance-noword-none",
+  "to": "conformance-noword-none",
+  "input": "aabb",
+  "expect": "",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: no line with a bit: zero words; the extra bytes are ignored (0.5)"
+}

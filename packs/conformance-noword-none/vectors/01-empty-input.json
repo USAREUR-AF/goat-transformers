@@ -1,0 +1,14 @@
+{
+  "name": "empty-input",
+  "from": "conformance-noword-none",
+  "to": "conformance-noword-none",
+  "input": "",
+  "expect": "",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: no line with a bit: zero words; decode needs no byte, encode writes none"
+}

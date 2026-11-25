@@ -1,0 +1,9 @@
+{
+  "name": "no-kind-of-a-switch-before-the-line",
+  "from": "conformance-inner-refused-switch-before",
+  "to": "conformance-inner-refused-switch-before",
+  "input": "050102",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: a no-kind of a `switch` before the line wins"
+}

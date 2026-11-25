@@ -1,0 +1,9 @@
+{
+  "name": "zero-count-0-empty-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-zero",
+  "input": "{\"n\":5,\"items\":[]}",
+  "expect": "050000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: `count 0` with no items, up to the start"
+}

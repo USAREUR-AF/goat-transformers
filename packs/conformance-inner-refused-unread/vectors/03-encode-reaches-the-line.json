@@ -1,0 +1,9 @@
+{
+  "name": "encode-reaches-the-line",
+  "from": "conformance-inner-refused-unread",
+  "to": "conformance-inner-refused-unread",
+  "input": "010507",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: decode does not reach the line, encode does: it writes every line (ruling 7 of 0.8)"
+}

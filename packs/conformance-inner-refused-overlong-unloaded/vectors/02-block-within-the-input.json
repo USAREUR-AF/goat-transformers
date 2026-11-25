@@ -1,0 +1,9 @@
+{
+  "name": "block-within-the-input",
+  "from": "conformance-inner-refused-overlong-unloaded",
+  "to": "conformance-inner-refused-overlong-unloaded",
+  "input": "010203",
+  "expect_error": "unknown-format",
+  "source": "constructed",
+  "reference": "spec 0.34, check 1: the line is reached"
+}

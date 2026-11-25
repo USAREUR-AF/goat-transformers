@@ -1,0 +1,9 @@
+{
+  "name": "nested-start-beyond-the-item-one-byte-short",
+  "from": "conformance-emptygroup-nested-out",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "0501070000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 5 bytes of 6"
+}

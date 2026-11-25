@@ -1,0 +1,11 @@
+{
+  "name": "5304-inner-refused-a-clashing-pair-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\n"
+  ],
+  "packs": [
+    "format probe-in\nversion 0.52.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.x 8 uint\n",
+    "format probe\nversion 0.52.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nwhen 8 1 as probe.x\nkind k\ninner probe-in\n"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "at-key-absent-matching-bits-stand",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-at",
+  "input": "{\"y\":5,\"z\":2}",
+  "expect": "0502",
+  "source": "constructed",
+  "reference": "spec 0.52 The bits written, with `at` (0.33 alone): the bits 02 match 1,2 and stand; the first value 1 is not written"
+}

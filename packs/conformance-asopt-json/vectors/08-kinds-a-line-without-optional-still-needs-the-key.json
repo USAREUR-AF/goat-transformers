@@ -1,0 +1,9 @@
+{
+  "name": "kinds-a-line-without-optional-still-needs-the-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-kinds",
+  "input": "{\"n\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 1: a line without `optional` keeps 0.30; one requires y, two z, and any needs x"
+}

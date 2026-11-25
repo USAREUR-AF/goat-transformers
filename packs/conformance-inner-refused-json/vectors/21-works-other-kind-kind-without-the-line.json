@@ -1,0 +1,9 @@
+{
+  "name": "works-other-kind-kind-without-the-line",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-works-other-kind",
+  "input": "{\"x\":5}",
+  "expect": "0105",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: kind a requires x; the line is not reached"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "input-ends-before-the-nested-start",
+  "from": "conformance-emptygroup-armor-nested",
+  "to": "conformance-emptygroup-armor-nested",
+  "input": "51700",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: an item ends at the start of its empty nested group, and the next item begins there; ruling 10 of 0.14; bit 12 + 20 = 32; 30 bits are there"
+}

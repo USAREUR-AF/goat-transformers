@@ -1409,7 +1409,7 @@ public final class Pack {
                 case "when": {
                     // `at` on a when of a pack that is not layout sequential (engine-spec 0.33): refused after the
                     // module checks (ruling 10); the line is read as a when of its first two tokens meanwhile
-                    if (args.size() > 2 && args.subList(2, args.size()).contains("at")) {
+                    if (args.size() > 2 && Seq.holdsAt(args.subList(2, args.size()))) {
                         if (lateAt == null) lateAt = badDirective(format, null, where + ": at on a when is for a pack with layout sequential only");
                         body.lines.add(new LineSpec(null, args.get(0), args.get(1), null, false, ln));
                         break;

@@ -1,0 +1,9 @@
+{
+  "name": "items-at-key-held",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-items-at",
+  "input": "{\"recs\":[{\"x\":3}]}",
+  "expect": "0103",
+  "source": "constructed",
+  "reference": "spec 0.52 with `at` in an item kind, 0.33 Encode: x = 3 is written over the zero bits"
+}

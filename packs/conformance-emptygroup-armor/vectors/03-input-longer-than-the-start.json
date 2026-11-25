@@ -1,0 +1,12 @@
+{
+  "name": "input-longer-than-the-start",
+  "from": "conformance-emptygroup-armor",
+  "to": "conformance-emptygroup-armor",
+  "input": "5000ww",
+  "expect": "5000",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.14 ruling 2: bits past the lines are ignored; L is 20"
+}

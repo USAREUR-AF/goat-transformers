@@ -1,0 +1,12 @@
+{
+  "name": "any-byte-is-left-over",
+  "from": "conformance-emptygroup-inner-count-0-partial",
+  "to": "conformance-emptygroup-inner-count-0-partial",
+  "input": "07aa",
+  "expect": "07",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19 and 0.34 ruling 14: no counted bit, the end is 0; spec 0.34 ruling 18: `partial` ignores them, and they do not come back; "
+}

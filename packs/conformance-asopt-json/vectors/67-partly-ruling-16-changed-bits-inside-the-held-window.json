@@ -1,0 +1,9 @@
+{
+  "name": "partly-ruling-16-changed-bits-inside-the-held-window",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-partly",
+  "input": "{\"x\":2,\"z\":6}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: the bits of a `when ... as <k>` line whose key the entity holds count as bits that key wrote; 0x15 would change the high nibble 2 that x wrote to 1"
+}

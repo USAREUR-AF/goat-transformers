@@ -211,7 +211,8 @@ func decodeBitsData(d *decodeState, data []byte, bits int) error {
 
 // bitsScope decodes the lines of one scope whose first bit is message bit
 // base: the message (base 0), or one item of a group. It returns the furthest
-// bit the items of the scope's groups reach. A group has `count` items, read
+// bit the items of the scope's groups and the lines of its held gate blocks
+// reach (an optional field aside). A group has `count` items, read
 // back to back from its start; an item is `item <bits>` long, or ends where a
 // nested group counted by a locator ends when that is further (0.7 ruling 4).
 func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error) {
@@ -235,6 +236,8 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 			// A held block's const counts toward the length.
 			if w := ln.w; base+w.loc.bit+w.loc.blen > bits {
 				return 0, &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: w.Locator, Detail: fmt.Sprintf("message is %d byte(s) and does not reach the const of a held gate block (line %d)", len(data), w.Line)}
+			} else if e := base + w.loc.bit + w.loc.blen; e > end {
+				end = e
 			}
 		case ln.f != nil:
 			f := ln.f
@@ -244,6 +247,11 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 					continue
 				}
 				return 0, &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: f.Locator, Detail: fmt.Sprintf("message is %d bit(s) and does not reach field %s", bits, f.Key)}
+			}
+			// A field of a held block counts toward the whole words decode
+			// requires (0.17, with 0.5).
+			if ln.in != nil && !f.Optional && at+f.loc.blen > end {
+				end = at + f.loc.blen
 			}
 			// A sentinel is read before any transform, `sixbit` and `ascii`
 			// included (0.9 ruling 2, 0.14 ruling 12).
@@ -295,6 +303,11 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 				count = getBits(data, base+c.bit, c.blen, p.msb)
 			}
 			pos := base + g.start
+			// A group that is reached extends the message to its start,
+			// also when it has no items (0.52 ruling 18).
+			if pos > bits {
+				return 0, bad(fmt.Sprintf("does not reach its start, bit %d", pos))
+			}
 			// A count larger than the bits left is refused before any item
 			// is read (0.8 ruling 14).
 			if count > 0 && (pos > bits || count > uint64(bits-pos)) {

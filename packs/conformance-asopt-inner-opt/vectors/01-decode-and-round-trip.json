@@ -1,0 +1,16 @@
+{
+  "name": "decode-and-round-trip",
+  "from": "conformance-asopt-inner-opt",
+  "to": "conformance-asopt-inner-opt",
+  "input": "050107",
+  "expect": "050107",
+  "model": {
+    "@kind": "only",
+    "@inner_kind": "p",
+    "probe.w": "5",
+    "probe.x": "1",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 Decode: each label sets its own key"
+}

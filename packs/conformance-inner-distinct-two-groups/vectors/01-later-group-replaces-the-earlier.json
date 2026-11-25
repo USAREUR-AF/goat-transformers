@@ -1,0 +1,14 @@
+{
+  "name": "later-group-replaces-the-earlier",
+  "from": "conformance-inner-distinct-two-groups",
+  "to": "conformance-inner-distinct-two-groups",
+  "input": "c001050109020607",
+  "expect": "c00206070109020607",
+  "model": {
+    "probe.recs.#": "2",
+    "probe.recs[0].probe.y": "6",
+    "probe.x": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 20, first sentence, with 7g of 0.11: the later group's items are kept and written in both blocks"
+}

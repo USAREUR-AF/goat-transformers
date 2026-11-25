@@ -1,0 +1,9 @@
+{
+  "name": "at-key-held-field-absent",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-at",
+  "input": "{\"x\":2,\"y\":5}",
+  "expect": "0502",
+  "source": "constructed",
+  "reference": "spec 0.52 The bits written, with `at` (0.33 alone): x = 2 is written over z's zero bits"
+}

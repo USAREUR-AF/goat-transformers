@@ -3,7 +3,7 @@
   "from": "conformance-inner-fixedlistouter",
   "to": "conformance-inner-fixedlistouter",
   "input": "020a0b0c0d0e0fff",
-  "expect_error": "malformed-wire",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34, ruling 14: two groups of two 8-bit items, end 4"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-fixedlistouter and its inner pack conformance-inner-fixedlists both map probe.nums[], probe.nums[].probe.val, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

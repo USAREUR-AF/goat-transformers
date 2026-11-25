@@ -1,0 +1,9 @@
+{
+  "name": "leftover",
+  "from": "conformance-inner-distinct-count",
+  "to": "conformance-inner-distinct-count",
+  "input": "01050106ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 Decode step 3: a byte after the inner message's end"
+}

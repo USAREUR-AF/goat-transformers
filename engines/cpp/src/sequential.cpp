@@ -839,7 +839,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             // 16; 0.33 ruling 10: the `at` form after the module checks); any
             // other third token is bad-directive here (0.20 ruling 23).
             std::string as_key;
-            bool has_at = false;
+            bool has_at = false, as_optional = false;
             std::uint64_t at_off = 0;
             auto at_form = [&](const std::string& why) {
                 if (p.at_error.empty()) p.at_error = where + ": " + why;
@@ -847,29 +847,36 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (t.size() > 3) {
                 if (t[3] != "as" && t[3] != "at")
                     throw bad("'when' takes a bit length and one value list; a list has no spaces");
-                bool at_token = false;
-                for (std::size_t k = 3; k < t.size(); ++k) at_token = at_token || t[k] == "at";
-                if (at_token) {
-                    // v0.33: exactly `at <n> [as <k>]`. Any other order is an `at`
-                    // form error and its key is not read (rulings 27 and 28).
-                    const bool ordered = t[3] == "at" && t.size() >= 5 && t[4] != "at" && t[4] != "as" &&
-                                         (t.size() == 5 || (t.size() == 7 && t[5] == "as" && t[6] != "as" && t[6] != "at"));
+                if (when_holds_at(t)) {
+                    // v0.33, v0.52: exactly `at <n> [as <k> [optional]]`. Any other
+                    // order is an `at` form error and its key is not read (0.33
+                    // rulings 27 and 28, 0.52 rulings 3 and 15).
+                    const std::size_t n = t.size();
+                    const bool ordered =
+                        t[3] == "at" && n >= 5 && t[4] != "at" && t[4] != "as" && t[4] != "optional" &&
+                        (n == 5 || ((n == 7 || (n == 8 && t[7] == "optional")) && t[5] == "as" && t[6] != "as"));
                     if (!ordered) {
-                        at_form("the tokens of a 'when' line with 'at' are not 'when <len> <values> at <n> [as <key>]'");
+                        at_form("the tokens of a 'when' line with 'at' are not "
+                                "'when <len> <values> at <n> [as <key> [optional]]'");
                     } else {
                         has_at = true;
                         if (!parse_u64(t[4], at_off))
                             at_form("'at " + t[4] + "' is not plain decimal digits that fit 64 bits");
                         if (f.body->kinds.empty()) at_form("'when ... at' on a common 'when'");
-                        if (t.size() == 7) as_key = t[6];  // read and checked even when the offset is bad
+                        if (n >= 7) as_key = t[6];  // read and checked even when the offset is bad
+                        as_optional = n == 8;
                     }
                 } else {
-                    // v0.30: `as <model-key>`.
+                    // v0.30: `as <model-key>`, v0.52: `[optional]`.
                     std::string why;
                     if (t.size() == 4) why = "'as' takes a model key";
                     for (std::size_t k = 4; k < t.size() && why.empty(); ++k)
                         if (t[k] == "as") why = "'as' twice on one 'when' line";  // 0.30 ruling 31
-                    if (why.empty() && t.size() > 5) why = "a token after the key of 'as': '" + t[5] + "'";
+                    as_optional = t.size() > 5 && t[5] == "optional";
+                    const std::size_t most = as_optional ? 6 : 5;
+                    if (why.empty() && t.size() > most) why = "a token after the key of 'as': '" + t[most] + "'";
+                    if (why.empty() && as_optional && f.body->kinds.empty())
+                        why = "'optional' on a common 'when'";
                     if (why.empty()) as_key = t[4];
                     else if (as_error.empty()) as_error = where + ": " + why;
                 }
@@ -890,6 +897,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             n.at = at_off;
             if (!as_key.empty()) {
                 n.has_as = true;
+                n.as_optional = as_optional;
                 n.field.key = as_key;
                 n.field.locator = t[1];
                 n.field.line = lineno;
@@ -2107,6 +2115,33 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& target) {
     }
 }
 
+// Is the line among `lines`, or in a block of them?
+bool holds_line(const std::vector<SeqNode>& lines, const SeqNode& n) {
+    for (const auto& l : lines)
+        if (&l == &n || holds_line(l.inner.lines, n)) return true;
+    return false;
+}
+
+// 0.52 ruling 20, the fifth check where an `inner` line is reached: no key that
+// the lines in reach map is a mapped key of the inner pack. The lines in reach
+// of a line in a kind are the common lines and the kind's; of one in the common
+// lines, the common lines and those of every kind.
+void check_shared_keys(const InnerHost& host, const Pack& outer, const Pack& inner, const SeqNode& n) {
+    const std::vector<std::string> keys = host.model_keys(inner);
+    const std::set<std::string> theirs(keys.begin(), keys.end());
+    auto check = [&](const std::string& key) {
+        if (theirs.count(key))
+            throw Error(ErrorKind::BadDirective, outer.format, "",
+                        outer.source + ":" + std::to_string(n.line) + ": the key '" + key +
+                            "' is mapped by the outer pack and by the inner pack " + inner.format +
+                            " of an 'inner' line");
+    };
+    const bool common = holds_line(outer.seq.lines, n);
+    keys_of_lines(outer.seq.lines, "", check, nullptr);
+    for (const auto& k : outer.seq.kinds)
+        if (common || holds_line(k.lines, n)) keys_of_lines(k.lines, "", check, nullptr);
+}
+
 // v0.34: an `inner` line reached by decode. The checks made where the line is
 // reached, then the inner input decoded by the inner pack, whose keys join the
 // message's: the first value read is kept, an outer list read first whole.
@@ -2116,6 +2151,7 @@ void decode_inner(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
         if (!in.host)
             throw Error(ErrorKind::UnknownFormat, n.inner_format, "", "no loaded pack defines this format");
         inner = &in.host->reach(in.p, n.inner_format);
+        check_shared_keys(*in.host, in.p, *inner, n);
     } catch (const Error&) {
         // A failed check is reported ahead of a transform-decode found before it.
         if (DecodeScope* s = current_decode()) s->has_failure_ = false;
@@ -2603,6 +2639,7 @@ bool as_terms_hold(const SeqKind& k, const Item& item) {
         if (!n.has_as) continue;
         auto it = item.fields.find(n.field.key);
         std::uint64_t u = 0;
+        if (it == item.fields.end() && n.as_optional) continue;  // v0.52
         if (it == item.fields.end() || !as_pattern(it->second, u) || !n.holds(u)) return false;
     }
     return true;
@@ -3172,6 +3209,8 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             // v0.30: the bits are read back for a switch on the key (ruling 19).
             const std::uint64_t start = out.cur;
             encode_when(out, n, s);
+            // 0.52 ruling 16: bits of a held key, for the windows.
+            if (out.track_held && s.item.fields.count(n.field.key)) out.held.emplace_back(start, out.cur);
             read_back(p, out.data, start, out.cur, n, out.msb, s.shadow_d);
             return;
         }
@@ -3279,6 +3318,7 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             if (!out.host || !out.root)
                 throw Error(ErrorKind::UnknownFormat, n.inner_format, "", "no loaded pack defines this format");
             const Pack& inner = out.host->reach(p, n.inner_format);
+            check_shared_keys(*out.host, p, inner, n);
             if (out.cur % 8 != 0)
                 throw Error(ErrorKind::TransformEncode, p.format, "",
                             "the 'inner' line does not stand on a whole byte (at bit " + std::to_string(out.cur) + ")");
@@ -3367,7 +3407,12 @@ void settle_windows(SeqOut& out, const Scope& s, const SeqKind& k, std::uint64_t
                 held_as = true;
             }
         }
-        if (w.holds(bits) && (!held_as || bits == u)) continue;  // the bits stand
+        // 0.52 ruling 16: bits of a held key for the later windows, whether
+        // they stand or are written; a window takes no bit away from a held key.
+        if (w.holds(bits) && (!held_as || bits == u)) {  // the bits stand
+            if (held_as) out.held.emplace_back(pos, end);
+            continue;
+        }
         const std::uint64_t value = held_as ? u : w.number;
         // Only the bits a held key wrote are compared with the window's value.
         std::string written = out.data;
@@ -3383,13 +3428,7 @@ void settle_windows(SeqOut& out, const Scope& s, const SeqKind& k, std::uint64_t
                                     "another value");
         }
         out.data.swap(written);
-        // Ruling 26: the window's bits are now bits of an earlier window.
-        std::vector<std::pair<std::uint64_t, std::uint64_t>> rest;
-        for (const auto& h : out.held) {
-            if (h.first < pos) rest.emplace_back(h.first, std::min(h.second, pos));
-            if (h.second > end) rest.emplace_back(std::max(h.first, end), h.second);
-        }
-        out.held.swap(rest);
+        if (held_as) out.held.emplace_back(pos, end);
     }
 }
 
@@ -3407,6 +3446,9 @@ void encode_body(SeqOut& out, const SeqBody& body, const Item& item) {
     const std::uint64_t kind_start = out.cur;
     out.held.clear();
     out.track_held = true;
+    // What the common lines read back as: an earlier line of a key keeps it.
+    const std::map<std::string, Value> common_fields = s.shadow.fields;
+    const std::size_t common_failures = s.shadow_d.failures.size(), common_closed = s.shadow_d.closed.size();
     std::vector<std::uint64_t> starts;
     for (std::size_t i = 0; i < k.window_lines; ++i) {
         starts.push_back(out.cur);
@@ -3417,17 +3459,13 @@ void encode_body(SeqOut& out, const SeqBody& body, const Item& item) {
     settle_windows(out, s, k, kind_start);
     out.held.clear();
     // The keys of those lines read back again from the settled bits.
-    for (std::size_t i = 0; i < k.window_lines; ++i) {
+    s.shadow.fields = common_fields;
+    s.shadow_d.failures.resize(common_failures);
+    s.shadow_d.closed.resize(common_closed);
+    // A window's line may stand after the lines its window covers.
+    for (std::size_t i = 0; i < k.lines.size() && (i < k.window_lines || k.lines[i].type == Type::When); ++i) {
         const SeqNode& n = k.lines[i];
-        if (n.type == Type::Field) {
-            s.shadow.fields.erase(n.field.key);
-            for (const auto& a : n.also) s.shadow.fields.erase(a.key);
-        } else if (n.type == Type::When && n.has_as) {
-            s.shadow.fields.erase(n.field.key);
-        }
-    }
-    for (std::size_t i = 0; i < k.window_lines; ++i) {
-        const SeqNode& n = k.lines[i];
+        if (i >= k.window_lines && !n.has_at) continue;
         if (n.type == Type::Field || (n.type == Type::When && n.has_as && !n.has_at))
             read_back(out.p, out.data, starts[i], starts[i + 1], n, out.msb, s.shadow_d);
         else if (n.type == Type::When && n.has_as)

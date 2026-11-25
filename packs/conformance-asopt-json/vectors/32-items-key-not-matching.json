@@ -1,0 +1,9 @@
+{
+  "name": "items-key-not-matching",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-items",
+  "input": "{\"recs\":[{\"x\":9,\"y\":1}]}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 7: for an item kind, the entity is the item; x = 9 matches neither"
+}

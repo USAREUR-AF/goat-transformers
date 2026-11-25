@@ -1,0 +1,9 @@
+{
+  "name": "items-ruling-07-the-message-key-is-not-the-items",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-items",
+  "input": "{\"x\":6,\"recs\":[{\"y\":7}]}",
+  "expect": "0117",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 7: for an item kind, the entity is the item; the message holds x = 6; the item does not hold x: p with its first value"
+}

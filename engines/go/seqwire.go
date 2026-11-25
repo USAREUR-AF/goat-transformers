@@ -444,6 +444,10 @@ func asHolds(whens []*seqNode, rec *Item) bool {
 		}
 		v, held := rec.Fields[w.key]
 		if !held {
+			// `optional` relaxes the term for an absent key (0.52).
+			if w.opt {
+				continue
+			}
 			return false
 		}
 		if _, ok := asMatch(w, v); !ok {
@@ -461,15 +465,15 @@ type seqKindWrite struct {
 	start  int
 	end    int
 	fields []seqFieldAt
+	before seqScope // the decoded values where the kind starts
 	done   bool
 }
 
 // seqFieldAt is one field line written in a kind before its windows are
-// settled; fresh is set when the line gave its key its decoded value.
+// settled.
 type seqFieldAt struct {
-	f     *Field
-	at    int
-	fresh bool
+	f  *Field
+	at int
 }
 
 // newKindWrite returns the pending windows of a kind that starts at bit
@@ -547,23 +551,40 @@ func (w *seqWriter) settle(ks *seqKindWrite, sc seqScope) error {
 				}
 			}
 			putBits(data, start, wn.n, val, msb)
-			// The bits are now an earlier window's (ruling 26).
-			for i := 0; i < wn.n; i++ {
-				delete(w.held, start+i)
-			}
+		}
+		// The bits of a held `as` key count as bits that key wrote; a window
+		// takes no bit away from a held key (0.52 ruling 16).
+		if held {
+			w.markHeld(start, wn.n)
+		}
+	}
+	// What decode reads for the `as` keys is in the settled bits (0.52 ruling
+	// 9): a window may have been written over a plain `when` or over an
+	// earlier window.
+	pos := ks.start
+	for _, wn := range ks.k.whens {
+		at := pos
+		if wn.at {
+			at = ks.start + int(wn.off)
+		} else {
+			pos += wn.n
 		}
 		if wn.key != "" {
-			sc.vals[wn.key] = Value{Kind: KindInt, I: int64(val)}
+			sc.vals[wn.key] = Value{Kind: KindInt, I: int64(getBits(data, at, wn.n, msb))}
+		}
+	}
+	// The keys of the field lines are put back as they were before the kind's
+	// lines, then every line is read back in order from the settled bits.
+	for _, fa := range ks.fields {
+		for _, f := range append([]*Field{fa.f}, fa.f.also...) {
+			delete(sc.vals, f.Key)
+			if v, ok := ks.before.vals[f.Key]; ok {
+				sc.vals[f.Key] = v
+			}
+			sc.bad[f.Key] = ks.before.bad[f.Key]
 		}
 	}
 	for _, fa := range ks.fields {
-		if !fa.fresh {
-			continue
-		}
-		for _, f := range append([]*Field{fa.f}, fa.f.also...) {
-			delete(sc.vals, f.Key)
-			delete(sc.bad, f.Key)
-		}
 		readBack(w.p, fa.f, sc, data, fa.at)
 	}
 	return nil
@@ -580,6 +601,9 @@ func (r *seqReader) inner(n *seqNode) error {
 	}
 	in, err := d.eng.innerPack(r.p, n.inner)
 	if err != nil {
+		return err
+	}
+	if err := n.innerClash(r.p, in); err != nil {
 		return err
 	}
 	if r.pos%8 != 0 {
@@ -911,6 +935,18 @@ func (sc seqScope) withVals() seqScope {
 	sc.vals = vals
 	sc.bad = map[string]bool{}
 	return sc
+}
+
+// snapshot returns a copy of the scope's decoded values and marks.
+func (sc seqScope) snapshot() seqScope {
+	out := seqScope{vals: map[string]Value{}, bad: map[string]bool{}}
+	for k, v := range sc.vals {
+		out.vals[k] = v
+	}
+	for k, v := range sc.bad {
+		out.bad[k] = v
+	}
+	return out
 }
 
 // newScope is the scope of a message or an item with nothing written yet.
@@ -1498,7 +1534,9 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 		}
 		switch n.op {
 		case seqKindStart:
-			ks = newKindWrite(n.kind, w.pos)
+			if ks = newKindWrite(n.kind, w.pos); ks != nil {
+				ks.before = sc.snapshot()
+			}
 		case seqField:
 			f := n.f
 			if f.uper != nil {
@@ -1533,8 +1571,7 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 				if _, held := sc.rec.Fields[from.keyOrNil()]; ok && held {
 					w.markHeld(at, f.loc.blen)
 				}
-				_, done := sc.vals[f.Key]
-				ks.fields = append(ks.fields, seqFieldAt{f: f, at: at, fresh: !done})
+				ks.fields = append(ks.fields, seqFieldAt{f: f, at: at})
 			}
 			// What a decode would read back from the bits (0.20).
 			readBack(p, f, sc, w.buf.data, at)
@@ -1559,7 +1596,11 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 					sc.vals[n.key] = Value{Kind: KindInt, I: int64(v)}
 				}
 			}
-			w.put(w.alloc(n.n), n.n, v)
+			at := w.alloc(n.n)
+			w.put(at, n.n, v)
+			if _, held := sc.rec.Fields[n.key]; held && n.key != "" {
+				w.markHeld(at, n.n)
+			}
 		case seqPad:
 			w.alloc(n.n)
 		case seqAlign:
@@ -1700,6 +1741,18 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 	return nil
 }
 
+// innerClash is the fifth check of an `inner` line (0.52 rulings 20 and 20b):
+// no key that the outer pack's lines in reach map is a mapped key of the
+// inner pack.
+func (n *seqNode) innerClash(outer, in *Pack) error {
+	for _, k := range in.ModelKeys() {
+		if n.reach[k] {
+			return &Error{Kind: ErrBadDirective, Format: n.inner, Detail: fmt.Sprintf("the inner line on line %d of pack %s names format %s, and both packs map %s", n.line, outer.Format, n.inner, k)}
+		}
+	}
+	return nil
+}
+
 // inner writes an `inner` line (spec 0.34): after the checks made where the
 // line is reached, on a whole byte, the inner pack's encoding of the same
 // entity.
@@ -1709,6 +1762,9 @@ func (w *seqWriter) inner(n *seqNode) error {
 	}
 	in, err := w.eng.innerPack(w.p, n.inner)
 	if err != nil {
+		return err
+	}
+	if err := n.innerClash(w.p, in); err != nil {
 		return err
 	}
 	if w.pos%8 != 0 {

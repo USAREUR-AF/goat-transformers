@@ -1,0 +1,9 @@
+{
+  "name": "armor-nested-two-items-with-absent-nested-lists",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-armor-nested",
+  "input": "{\"n\":5,\"items\":[{\"qty\":7},{\"qty\":8}]}",
+  "expect": "527002000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: an item ends at the start of its empty nested group, and the next item begins there; ruling 10 of 0.14; L is 52"
+}

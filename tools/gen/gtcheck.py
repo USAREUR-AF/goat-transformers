@@ -694,7 +694,7 @@ class Node:
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
                  "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper",
-                 "values", "ranges", "until", "stop", "as_key", "names", "at")
+                 "values", "ranges", "until", "stop", "as_key", "names", "at", "optional")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
@@ -705,6 +705,7 @@ class Node:
         self.values = self.ranges = None
         self.until = self.stop = None
         self.as_key = None          # spec 0.30: the key of `when ... as <key>`
+        self.optional = False       # spec 0.52: `as <key> optional`
         self.at = None              # spec 0.33: the offset of `when ... at <offset>`
         self.names = None           # spec 0.31: the count names of `group <list> count @<a> [@<b>]`
 
@@ -1261,6 +1262,10 @@ class _Loader:
                 if sequential and (not top or (in_kind and lines_seen)):
                     self.bad(node, "`when` after another line of its kind, or inside a block")
                 self._when(node, group)
+                if node.optional and not in_kind and node.args[2] != "at":
+                    # 0.52 ruling 3: without `at`, with the `as` syntax checks; a
+                    # common `when` with `at` is an `at` form error already
+                    self.bad(node, "`optional` on a common `when` (0.52)")
                 if node.as_key is not None:
                     self._mapped.add(node.as_key)
             elif d == "field":
@@ -1785,15 +1790,20 @@ class _Loader:
         ranges 0.20, `as` 0.30 on a sequential pack only, ruling 15)."""
         a = node.args
         sequential = self.pack.wire == "bits" and self.pack.sequential
-        if sequential and "at" in a[2:]:
+        # spec 0.52 ruling 4: the token after a leading `as` is the key, so an
+        # `at` there does not make the line one that holds `at`
+        holds_at = "at" in a[4 if a[2:3] == ["as"] else 2:]
+        if sequential and holds_at:
+            if a[2] not in ("at", "as"):    # ruling 29 of 0.33, ruling 3 of 0.52: the line check
+                self.bad(node, "`%s` after the values of a `when`" % a[2])
             self._when_at(node)
-        elif len(a) > 2 and a[2] == "at":
+        elif holds_at and a[2] in ("at", "as"):
             # spec 0.33 ruling 30: `at` on a pack that is not sequential is an
             # `at` error with the late timing of rulings 10 and 14 (a third
             # token that is neither `at` nor `as` stays the line check, 29)
             self.at_form.append((node.line, "`at` on a `when` of a pack that is not `layout sequential`"))
-        elif len(a) == 4 and a[2] == "as" and a[3] != "as" and sequential:
-            node.as_key = a[3]
+        elif (len(a) == 4 or (len(a) == 5 and a[4] == "optional")) and a[2] == "as" and a[3] != "as" and sequential:
+            node.as_key, node.optional = a[3], len(a) == 5
             self.key_uses.append((node, a[3], "as"))
         elif len(a) != 2:
             self.bad(node, "`when` takes a locator and a value" + (
@@ -2295,15 +2305,16 @@ class _Loader:
         rest = node.args[2:]
         # the `as` key is registered whatever the offset, since the 0.30 `as`
         # checks come before the `at` form (ruling 10)
-        if len(rest) == 4 and rest[0] == "at" and rest[2] == "as" and rest[3] != "as":
-            node.as_key = rest[3]
+        if (len(rest) == 4 or (len(rest) == 5 and rest[4] == "optional")) \
+                and rest[0] == "at" and rest[1] not in ("at", "as", "optional") and rest[2] == "as" and rest[3] != "as":
+            node.as_key, node.optional = rest[3], len(rest) == 5
             self.key_uses.append((node, rest[3], "as"))
         if rest[0] != "at":
             self.at_form.append((node.line, "`at` must follow the values (`when <len> <values> [at <n>] [as <k>]`)"))
         elif len(rest) < 2 or not _UINT.match(rest[1]) or int(rest[1]) >> 64:
             self.at_form.append((node.line, "`at` takes an unsigned decimal offset below 2^64"))
-        elif len(rest) not in (2, 4) or (len(rest) == 4 and node.as_key is None):
-            self.at_form.append((node.line, "after `at <n>` only `as <key>` may follow"))
+        elif len(rest) != 2 and node.as_key is None:
+            self.at_form.append((node.line, "after `at <n>` only `as <key> [optional]` may follow"))
         else:
             node.at = int(rest[1])
 
@@ -2316,7 +2327,9 @@ class _Loader:
         line walked must be a plain `when`, `const`, `pad` or a `field` with a
         bit length."""
         pack = self.pack
-        bodies = [(pack.common, pack.kinds)] + [(n.body or [], n.kinds or []) for n in walk(pack.common, "group")]
+        bodies = [(pack.common, pack.kinds)] + [(n.body or [], n.kinds or [])
+                                                for lines in [pack.common] + [k.lines for k in pack.kinds]
+                                                for n in walk(lines, "group")]
         for common, kinds in bodies:
             for node in common:
                 if node.d == "when" and node.at is not None:

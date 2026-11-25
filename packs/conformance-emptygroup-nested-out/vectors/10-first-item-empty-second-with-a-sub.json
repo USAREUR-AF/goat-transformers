@@ -1,0 +1,13 @@
+{
+  "name": "first-item-empty-second-with-a-sub",
+  "from": "conformance-emptygroup-nested-out",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "050207000000080100002a",
+  "expect": "050207000000080100002a",
+  "model": {
+    "probe.items[0].probe.subs.#": "0",
+    "probe.items[1].probe.subs[0].probe.val": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: an item ends at the start of its empty nested group, and the next item begins there; items at bytes 2 and 6, the sub at byte 10"
+}

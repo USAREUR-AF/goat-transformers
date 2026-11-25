@@ -1,0 +1,9 @@
+{
+  "name": "switch-ruling-09-key-held",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-switch",
+  "input": "{\"x\":4,\"z\":6}",
+  "expect": "0406",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 9: a `switch` on the key selects by the bits written; 04: case 4, z"
+}

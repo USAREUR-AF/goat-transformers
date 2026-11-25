@@ -1,0 +1,9 @@
+{
+  "name": "decode",
+  "from": "conformance-inner-refused-as-optional",
+  "to": "conformance-inner-refused-as-optional",
+  "input": "0102",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; x is mapped by a kind's `when ... as ... optional`, not held on encode"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-opt-both-keys-absent",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-opt",
+  "input": "{\"y\":7}",
+  "expect": "020107",
+  "source": "constructed",
+  "reference": "spec 0.52 Choosing the kind, for the outer and for the inner pack; both terms hold; each writes its own first value"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "kind-with-the-line",
+  "from": "conformance-inner-refused-works-other-kind",
+  "to": "conformance-inner-refused-works-other-kind",
+  "input": "020506",
+  "expect": "020506",
+  "model": {
+    "@kind": "b",
+    "probe.y": "5",
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: lines of other kinds do not count"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "outer-transform-decode",
+  "from": "conformance-inner-distinct-ascii-outer",
+  "to": "conformance-inner-distinct-ascii-outer",
+  "input": "0105",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34: the `inner` line after it is read and has no error"
+}

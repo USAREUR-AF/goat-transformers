@@ -1,0 +1,10 @@
+{
+  "name": "item-limit-before-the-line",
+  "from": "conformance-inner-refused-list",
+  "to": "conformance-inner-refused-list",
+  "input": "02050607",
+  "expect_error": "malformed-wire",
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: an item limit met before the line wins: 2 items, limit 1"
+}

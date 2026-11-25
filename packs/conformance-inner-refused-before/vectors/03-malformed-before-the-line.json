@@ -1,0 +1,9 @@
+{
+  "name": "malformed-before-the-line",
+  "from": "conformance-inner-refused-before",
+  "to": "conformance-inner-refused-before",
+  "input": "",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: x is missing: a malformed-wire met before the line wins"
+}

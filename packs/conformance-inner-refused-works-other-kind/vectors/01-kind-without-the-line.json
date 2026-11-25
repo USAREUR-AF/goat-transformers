@@ -1,0 +1,13 @@
+{
+  "name": "kind-without-the-line",
+  "from": "conformance-inner-refused-works-other-kind",
+  "to": "conformance-inner-refused-works-other-kind",
+  "input": "0105",
+  "expect": "0105",
+  "model": {
+    "@kind": "a",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: the line is not reached"
+}

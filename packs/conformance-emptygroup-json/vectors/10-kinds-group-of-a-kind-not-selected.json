@@ -1,0 +1,9 @@
+{
+  "name": "kinds-group-of-a-kind-not-selected",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-kinds",
+  "input": "{\"n\":5,\"items\":[]}",
+  "expect": "0205",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: kind a requires x; kind b has no group"
+}

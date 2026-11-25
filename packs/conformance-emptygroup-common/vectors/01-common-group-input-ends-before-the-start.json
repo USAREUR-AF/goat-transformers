@@ -1,0 +1,9 @@
+{
+  "name": "common-group-input-ends-before-the-start",
+  "from": "conformance-emptygroup-common",
+  "to": "conformance-emptygroup-common",
+  "input": "0100",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: in the common lines: byte 4"
+}

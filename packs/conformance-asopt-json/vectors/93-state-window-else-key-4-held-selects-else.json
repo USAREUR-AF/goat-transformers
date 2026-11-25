@@ -1,0 +1,9 @@
+{
+  "name": "state-window-else-key-4-held-selects-else",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-state-window-else",
+  "input": "{\"x\":4,\"w\":7}",
+  "expect": "0407",
+  "source": "constructed",
+  "reference": "spec 0.33 Encode and ruling 12: the plain `when` writes 01, bits of no held key, and windows settle before a switch reads its key back; ruling 9 of 0.52; x = 4 is written: else, w"
+}

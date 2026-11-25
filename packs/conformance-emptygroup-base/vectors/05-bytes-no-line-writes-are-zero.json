@@ -1,0 +1,12 @@
+{
+  "name": "bytes-no-line-writes-are-zero",
+  "from": "conformance-emptygroup-base",
+  "to": "conformance-emptygroup-base",
+  "input": "05001122",
+  "expect": "05000000",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: zero bits where no line writes; a bits pack has no residue (0.2)"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "line-of-the-other-kind",
+  "from": "conformance-inner-refused-each-line",
+  "to": "conformance-inner-refused-each-line",
+  "input": "020506",
+  "expect": "020506",
+  "model": {
+    "@kind": "b",
+    "probe.y": "5",
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 rulings 20 and 20b: kind b does not map x; lines of other kinds do not count"
+}

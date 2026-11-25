@@ -1,0 +1,9 @@
+{
+  "name": "5277-asopt-ruling-03-at-with-a-token-after-optional-key-not-read",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey w int -\nkey x int -\nkey y int -\nkey a float -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.52.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 8 1 at 0 as probe.nosuch optional x\nfield probe.y 8 uint\n",
+  "expect_error": "bad-directive"
+}

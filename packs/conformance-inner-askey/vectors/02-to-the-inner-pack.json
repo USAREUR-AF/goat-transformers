@@ -3,7 +3,7 @@
   "from": "conformance-inner-askey",
   "to": "conformance-inner-fixed",
   "input": "052307",
-  "expect": "2507",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 8: the entity holds x 5, y 2, z 7; conformance-inner-fixed writes x 5 in the low nibble and y 2 in the high nibble (0x25), then z (0x07)"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-askey and its inner pack conformance-inner-fixed both map probe.x, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

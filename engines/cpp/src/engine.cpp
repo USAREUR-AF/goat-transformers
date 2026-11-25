@@ -866,6 +866,7 @@ public:
                             distribution_name(inner.distribution));
         return inner;
     }
+    std::vector<std::string> model_keys(const Pack& inner) const override { return eng_.model_keys(inner.format); }
     // Within the decode that is running: its limit and its failed fields.
     Entity decode(const Pack& inner, const std::string& hex, bool partial) const override {
         return decode_wire(inner, hex, nullptr, !partial);

@@ -1,0 +1,10 @@
+{
+  "name": "within-the-budget",
+  "from": "conformance-inner-distinct-count",
+  "to": "conformance-inner-distinct-count",
+  "input": "0105020607",
+  "expect": "0105020607",
+  "max_items": 3,
+  "source": "constructed",
+  "reference": "spec 0.34, `max_items`: the inner counts are checked against the budget the outer lines left (ruling 7); 1 + 2 of 3"
+}

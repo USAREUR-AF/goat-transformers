@@ -4,7 +4,7 @@
   "to": "conformance-inner-nestouter",
   "input": "01010a02020b0c020d0e",
   "max_items": 3,
-  "expect_error": "malformed-wire",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 22: the nested count 2 is over the 1 left"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-nestouter and its inner pack conformance-inner-nest both map probe.items[], probe.items[].probe.subs[], probe.items[].probe.subs[].probe.val, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

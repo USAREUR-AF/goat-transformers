@@ -1,0 +1,9 @@
+{
+  "name": "at-ruling-02-settle-failure-does-not-try-the-next-kind",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-at",
+  "input": "{\"y\":5,\"z\":7}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 2: choosing looks at keys only: x is absent and y held, so a; 07 does not match 1,2 and 1 differs from the bits z wrote. b, whose window 07 would match, is not tried"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "outer-table-miss",
+  "from": "conformance-inner-distinct-via-outer",
+  "to": "conformance-inner-distinct-via-outer",
+  "input": "0905",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.6: 9 has no entry and the types differ"
+}

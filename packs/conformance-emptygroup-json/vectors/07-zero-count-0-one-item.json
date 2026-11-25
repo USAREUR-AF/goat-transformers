@@ -1,0 +1,9 @@
+{
+  "name": "zero-count-0-one-item",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-zero",
+  "input": "{\"n\":5,\"items\":[{\"qty\":1}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.7 Encode: a fixed count with a different number of items"
+}

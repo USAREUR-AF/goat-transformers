@@ -1,0 +1,9 @@
+{
+  "name": "two-items-with-empty-nested-groups-input-short",
+  "from": "conformance-emptygroup-nested-out",
+  "to": "conformance-emptygroup-nested-out",
+  "input": "050207000000080000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: an item ends at the start of its empty nested group, and the next item begins there; 9 bytes of 10"
+}

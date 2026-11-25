@@ -977,6 +977,9 @@ const Pack = struct {
     // Version 0.34: the `inner` lines in file order, each with the number of
     // key uses read before it (its place in reading order for `model_keys`)
     inners: std.ArrayListUnmanaged(InnerMark) = .{},
+    // Version 0.52, ruling 20: where in `key_uses` each message kind of a
+    // sequential pack begins
+    kind_starts: std.ArrayListUnmanaged(usize) = .{},
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -1016,7 +1019,8 @@ const Pack = struct {
 };
 
 // Version 0.34: an `inner <format>` line of a sequential pack.
-const InnerMark = struct { fmt: []const u8, pos: usize, lineno: usize };
+// `kind`: 0 in the common lines, else the number of its message kind from 1.
+const InnerMark = struct { fmt: []const u8, pos: usize, lineno: usize, kind: usize };
 
 // Does an `inner` line of the pack name the format?
 fn packHasInner(p: *const Pack, fmt: []const u8) bool {
@@ -6368,7 +6372,8 @@ fn bitsWriteField(alloc: std.mem.Allocator, p: *const Pack, out: []u8, base: usi
 // The message being written: it grows as items are added, zero-filled.
 const BitsOut = struct {
     buf: std.ArrayList(u8),
-    // one past the furthest bit the items of any group reach (0: no item)
+    // one past the furthest bit the items of any group reach, or the start of
+    // a group with none (0: no group)
     items_end: usize = 0,
 
     fn ensure(self: *BitsOut, nbits: usize) !void {
@@ -7448,7 +7453,10 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
                 pos = @max(pos + need, iend);
             }
             try e.putList(g.list, items);
-            return if (count == 0) 0 else pos;
+            // a group with no items extends the message to its start (ruling
+            // 18 of 0.52)
+            if (pos > total) return bad(diag, alloc, mw, "group {s}: the input ends before the group's start", .{g.list});
+            return pos;
         },
         .text => |td| { if (comptime !built(.text)) unreachable;
             // items from field `tstart` to the end of the record, the last
@@ -8433,15 +8441,16 @@ fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, o
         const items: []const Entity = got orelse &.{};
         const size = @max(g.item_bits, g.body.nbits);
         var pos = base + g.gstart;
+        // a group with no items extends the message to its start (ruling 18
+        // of 0.52)
+        try out.ensure(pos);
         for (items) |*it| {
             try out.ensure(pos + size);
             const iend = try bitsEncodeScope(alloc, p, &g.body, out, pos, it, checks, diag);
             pos = @max(pos + size, iend);
         }
-        if (items.len > 0) {
-            end = @max(end, pos);
-            out.items_end = @max(out.items_end, pos);
-        }
+        end = @max(end, pos);
+        out.items_end = @max(out.items_end, pos);
     }
     // `when` and `const` values are written over any field, and a count
     // locator with the number of items
@@ -11253,6 +11262,7 @@ const SNode = struct {
     ranges: []const WRange = &.{}, // when: the values and ranges (Version 0.20)
     // when: the key `as <key>` binds its bits to (Version 0.30); "" for none
     as_key: []const u8 = "",
+    as_opt: bool = false, // `as <key> optional` (Version 0.52)
     // when: `at <offset>`, a look-ahead from kind start (Version 0.33)
     at_off: ?u64 = null,
     sw: ?*SSwitch = null, // switch
@@ -11303,9 +11313,19 @@ fn fitsBits(v: u64, len: usize) bool {
     return len >= 64 or (v >> @as(u6, @intCast(len))) == 0;
 }
 
-// Version 0.33: does a `when` line hold the token `at` after its values?
+// Version 0.33: does a `when` line hold the token `at` after its values? The
+// token after the first `as` is a key, `at` included (rulings 4 and 14 of
+// 0.52).
 fn holdsAt(toks: []const []const u8) bool {
-    for (toks[3..]) |t| if (std.mem.eql(u8, t, "at")) return true;
+    var as_seen = false;
+    var i: usize = 3;
+    while (i < toks.len) : (i += 1) {
+        if (std.mem.eql(u8, toks[i], "at")) return true;
+        if (!as_seen and std.mem.eql(u8, toks[i], "as")) {
+            as_seen = true;
+            if (i + 1 < toks.len and std.mem.eql(u8, toks[i + 1], "at")) i += 1;
+        }
+    }
     return false;
 }
 
@@ -11734,6 +11754,7 @@ const SParser = struct {
             // nor its mapped keys (a switch key is mapped in its scope)
             f.mapped.shrinkRetainingCapacity(f.common_mapped);
             try f.kinds.append(alloc, .{ .name = toks[1] });
+            if (!f.is_group) try p.kind_starts.append(alloc, p.key_uses.items.len);
             self.kind_seen = true;
             f.in_whens = true;
             f.last_field = false;
@@ -11785,24 +11806,31 @@ const SParser = struct {
             // `at` error is reported after the key checks (rulings 10, 14);
             // a line whose tokens are out of order has no key read
             // (rulings 27 and 28).
+            // Version 0.52: `as <k> optional`
+            var as_opt = false;
             var at_off: ?u64 = null;
             if (is_when and toks.len > 3 and holdsAt(toks)) {
+                // a word of the line in the place of the offset
                 const kwd = struct {
                     fn f(t: []const u8) bool {
-                        return std.mem.eql(u8, t, "at") or std.mem.eql(u8, t, "as");
+                        return std.mem.eql(u8, t, "at") or std.mem.eql(u8, t, "as") or std.mem.eql(u8, t, "optional");
                     }
                 }.f;
-                const ordered = is(toks[3], "at") and toks.len >= 5 and !kwd(toks[4]) and
-                    (toks.len == 5 or (toks.len == 7 and is(toks[5], "as") and !kwd(toks[6])));
+                const keyed = (toks.len == 7 or (toks.len == 8 and is(toks[7], "optional"))) and is(toks[5], "as") and !is(toks[6], "as");
+                const ordered = is(toks[3], "at") and toks.len >= 5 and !kwd(toks[4]) and (toks.len == 5 or keyed);
                 if (ordered) {
-                    if (toks.len == 7) as_key = toks[6];
+                    if (keyed) as_key = toks[6];
+                    as_opt = toks.len == 8;
                     at_off = parseOffset(toks[4]);
                     if (at_off == null) self.lateAt("when … at {s}: the offset is not plain digits that fit 64 bits", .{toks[4]});
-                } else self.lateAt("when … at: the tokens are not `when <len> <values> at <n> [as <key>]`", .{});
+                } else self.lateAt("when … at: the tokens are not `when <len> <values> at <n> [as <key> [optional]]`", .{});
                 if (at_off == null) at_off = 0;
             } else if (is_when and toks.len > 3 and is(toks[3], "as")) {
                 if (toks.len == 4) {
                     as_err = self.err(bd, "when … as: `as` names no key", .{});
+                } else if (toks.len == 6 and is(toks[5], "optional") and !is(toks[4], "as")) {
+                    as_key = toks[4];
+                    as_opt = true;
                 } else if (toks.len > 5) {
                     if (is(toks[5], "as")) {
                         as_err = self.err(bd, "when … as: `as` is given twice", .{});
@@ -11826,13 +11854,16 @@ const SParser = struct {
                 v = parseUnsigned(toks[2]) orelse return self.err(bd, "{s}: the value {s} is not an unsigned decimal integer", .{ kw, toks[2] });
                 if (!fitsBits(v, len)) return self.err(bd, "{s}: the value {d} does not fit {d} bits", .{ kw, v, len });
             }
-            const n = SNode{ .tag = if (is_when) .when else .constant, .lineno = self.lineno, .len = len, .value = v, .ranges = ranges, .as_key = as_key, .at_off = at_off };
+            const n = SNode{ .tag = if (is_when) .when else .constant, .lineno = self.lineno, .len = len, .value = v, .ranges = ranges, .as_key = as_key, .as_opt = as_opt, .at_off = at_off };
             if (!is_when) return self.add(n);
             const f = self.top();
             if (f.tag != .body) return self.err(bd, "when inside a block", .{});
             // Version 0.33: `at` is for a kind's `when`, not a common one (a
             // group body's common lines included)
             if (at_off != null and f.kinds.items.len == 0) self.lateAt("when … at: `at` on a common `when`", .{});
+            // Version 0.52: nor is `optional`; without `at` an error with the
+            // `as` syntax checks, before the key is read (rulings 3 and 13)
+            if (as_opt and at_off == null and f.kinds.items.len == 0) return self.err(bd, "when … as {s} optional on a common `when`", .{as_key});
             if (as_key.len > 0) {
                 // the key is a mapped key, listed by `model_keys` at this
                 // line (ruling 5 of 0.30)
@@ -12194,7 +12225,7 @@ const SParser = struct {
             // `length` blocks; under any other block it is `bad-directive`
             // after the file is read. The format is not looked up here.
             if (toks.len != 2 and toks.len != 3) return self.err(bd, "inner takes a format name and the word partial", .{});
-            try p.inners.append(alloc, .{ .fmt = toks[1], .pos = p.key_uses.items.len, .lineno = self.lineno });
+            try p.inners.append(alloc, .{ .fmt = toks[1], .pos = p.key_uses.items.len, .lineno = self.lineno, .kind = self.frames.items[0].kinds.items.len });
             var pending: ?anyerror = null;
             if (toks.len == 3 and !is(toks[2], "partial")) pending = self.err(bd, "inner {s}: the word {s} is not `partial`", .{ toks[1], toks[2] });
             for (self.frames.items[1..]) |f| {
@@ -13223,7 +13254,7 @@ const SDec = struct {
     // value read in reading order kept.
     fn innerNode(self: *SDec, n: *const SNode, se: *SEnt) anyerror!void {
         const alloc = self.alloc;
-        const ip = try innerLookup(alloc, self.diag, self.p, n.list);
+        const ip = try innerLookup(alloc, self.diag, self.p, n);
         if (self.pos % 8 != 0) return bad(self.diag, alloc, mw, "inner {s}: the cursor at bit {d} is not on a whole byte", .{ ip.format, self.pos });
         const end = self.limit();
         if (end % 8 != 0) return bad(self.diag, alloc, mw, "inner {s}: the enclosing extent ends at bit {d}, not on a whole byte", .{ ip.format, end });
@@ -13615,7 +13646,41 @@ fn innerCheck(outer: *const Pack, ip: *const Pack) ?anyerror {
     return null;
 }
 
-fn innerLookup(alloc: std.mem.Allocator, diag: *Diag, outer: *const Pack, fmt: []const u8) anyerror!*const Pack {
+// Do two key uses give one entry of `model_keys`?
+fn sameEntry(a: KeyUse, b: KeyUse) bool {
+    if ((a.use == .group) != (b.use == .group) or !std.mem.eql(u8, a.key, b.key)) return false;
+    var x = a.grp;
+    var y = b.grp;
+    while (x != null and y != null) {
+        if (!std.mem.eql(u8, x.?.list, y.?.list)) return false;
+        x = x.?.parent;
+        y = y.?.parent;
+    }
+    return x == null and y == null;
+}
+
+// A use that maps its key: a `field`, `also`, `group` or `when … as` line.
+fn mapsKey(ku: KeyUse) bool {
+    return ku.use == .field or ku.use == .group or ku.use == .as_;
+}
+
+// Version 0.52, ruling 20: a key that the lines in reach of the `inner` line
+// map and the inner pack maps too; null: none. In reach are the common lines
+// and, for a line in a kind, that kind's; for one in the common lines, every
+// kind's.
+fn innerClash(outer: *const Pack, im: InnerMark, ip: *const Pack) ?KeyUse {
+    var kind: usize = 0;
+    for (outer.key_uses.items, 0..) |ku, i| {
+        while (kind < outer.kind_starts.items.len and outer.kind_starts.items[kind] <= i) kind += 1;
+        if (!mapsKey(ku) or (kind != 0 and im.kind != 0 and kind != im.kind)) continue;
+        for (ip.key_uses.items) |other| if (mapsKey(other) and sameEntry(ku, other)) return ku;
+    }
+    return null;
+}
+
+// The checks of an `inner` line, when decode or encode reaches it.
+fn innerLookup(alloc: std.mem.Allocator, diag: *Diag, outer: *const Pack, n: *const SNode) anyerror!*const Pack {
+    const fmt = n.list;
     const ip: *const Pack = (if (diag.packs) |m| m.get(fmt) else null) orelse
         return bad(diag, alloc, E.@"unknown-format", "inner {s}: no loaded pack has format {s}", .{ fmt, fmt });
     if (innerCheck(outer, ip)) |err| {
@@ -13627,6 +13692,11 @@ fn innerLookup(alloc: std.mem.Allocator, diag: *Diag, outer: *const Pack, fmt: [
                 "the inner pack has an inner line of its own, or is the outer pack (one layer only)",
         };
         return bad(diag, alloc, err, "inner {s}: {s}", .{ fmt, why });
+    }
+    // the fifth check (ruling 20 of 0.52)
+    for (outer.inners.items) |im| {
+        if (im.lineno != n.lineno) continue;
+        if (innerClash(outer, im, ip)) |ku| return bad(diag, alloc, E.@"bad-directive", "inner {s}: the key {s} is mapped by both packs", .{ fmt, ku.key });
     }
     return ip;
 }
@@ -13911,9 +13981,16 @@ const SEnc = struct {
             }
             // Version 0.30: each `when … as <k>` line of the kind is an
             // implicit term: the entity holds <k> with a value the `when`
-            // matches
+            // matches; with `optional` (Version 0.52), or does not hold <k>
             for (k.whens) |*w| {
-                if (w.as_key.len > 0 and asValue(w, ent) != .match) all = false;
+                if (w.as_key.len == 0) continue;
+                switch (asValue(w, ent)) {
+                    .match => {},
+                    .absent => if (!w.as_opt) {
+                        all = false;
+                    },
+                    .nomatch => all = false,
+                }
             }
             if (all) return k;
         }
@@ -14099,40 +14176,61 @@ const SEnc = struct {
     // before any later line (a `switch` reading its key back) is written.
     const BitRange = struct { at: usize, len: usize };
     const FieldAt = struct { n: *const SNode, at: usize };
+    const WhenAt = struct { n: *const SNode, at: usize };
+    // What the windows of one kind settle against: the bits that keys the
+    // entity holds wrote (ruling 12 of 0.33, ruling 16 of 0.52), the fields
+    // and the `when … as` lines written, with their positions, and the keys
+    // a line before the kind's set.
+    const WinState = struct {
+        held: std.ArrayListUnmanaged(BitRange) = .{},
+        fields: std.ArrayListUnmanaged(FieldAt) = .{},
+        whens: std.ArrayListUnmanaged(WhenAt) = .{},
+        before: std.StringHashMapUnmanaged(void) = .{},
+        before_failed: std.StringHashMapUnmanaged(void) = .{},
+    };
 
     fn kindWithWindows(self: *SEnc, kk: *const SKind, kstart: usize, ent: *const Entity, ds: DS, env: *?*const PEnv) anyerror!void {
         const alloc = self.alloc;
-        // the bits a held key wrote (ruling 12), the windows written over
-        // (ruling 26), the fields written with their positions
-        var held = std.ArrayListUnmanaged(BitRange){};
-        var written = std.ArrayListUnmanaged(BitRange){};
-        var fields = std.ArrayListUnmanaged(FieldAt){};
+        var st = WinState{};
+        if (self.kv) |m| {
+            var it = m.keyIterator();
+            while (it.next()) |k| try st.before.put(alloc, k.*, {});
+            var fit = self.kv_failed.?.keyIterator();
+            while (fit.next()) |k| try st.before_failed.put(alloc, k.*, {});
+        }
+        // the plain `when … as` lines, written before any window settles
+        var at0 = kstart;
+        for (kk.whens) |*w| {
+            if (w.at_off != null) continue;
+            if (w.as_key.len > 0) {
+                try st.whens.append(alloc, .{ .n = w, .at = at0 });
+                _ = st.before.remove(w.as_key);
+                if (ent.get(w.as_key) != null) try st.held.append(alloc, .{ .at = at0, .len = w.len });
+            }
+            at0 += w.len;
+        }
         var wi: usize = 0;
-        // a window the plain `when` lines cover is settled before the first
-        // line, which may be a `switch` on its key
-        try self.settleReached(kk, kstart, ent, held.items, &written, fields.items, &wi);
         for (kk.lines, 0..) |*n, i| {
+            // before the line: a window may lie over the `when` lines alone
+            try self.settleReady(kk, &wi, kstart, ent, &st);
             const at = self.pos;
             try self.node(n, kk.lines[i + 1 ..], &.{}, ent, ds, env);
             if (n.tag == .field and n.uloc == null and n.ln.until_code == null) {
-                try fields.append(alloc, .{ .n = n, .at = at });
-                if (heldWrote(n, ent) and self.pos == at + n.ln.blen) try held.append(alloc, .{ .at = at, .len = n.ln.blen });
+                try st.fields.append(alloc, .{ .n = n, .at = at });
+                if (heldWrote(n, ent) and self.pos == at + n.ln.blen) try st.held.append(alloc, .{ .at = at, .len = n.ln.blen });
             }
-            try self.settleReached(kk, kstart, ent, held.items, &written, fields.items, &wi);
         }
-        // a window not fixed in its kind does not load; any left settle here
-        while (nextWindow(kk, &wi)) |w| {
-            try self.settleWindow(w, kstart, ent, held.items, &written, fields.items);
-            wi += 1;
-        }
+        // the windows that end at or within the last line
+        try self.settleReady(kk, &wi, kstart, ent, &st);
     }
 
-    // Settle, in line order, the windows that end at or before the cursor.
-    fn settleReached(self: *SEnc, kk: *const SKind, kstart: usize, ent: *const Entity, held: []const BitRange, written: *std.ArrayListUnmanaged(BitRange), fields: []const FieldAt, wi: *usize) !void {
+    // Settle, in line order, each window whose end the lines written reach. A
+    // window ends within its kind's lines, or the pack does not load.
+    fn settleReady(self: *SEnc, kk: *const SKind, wi: *usize, kstart: usize, ent: *const Entity, st: *WinState) !void {
         while (nextWindow(kk, wi)) |w| {
             const end: u128 = @as(u128, kstart) + w.at_off.? + w.len;
-            if (end > self.pos) break;
-            try self.settleWindow(w, kstart, ent, held, written, fields);
+            if (end > self.pos) return;
+            try self.settleWindow(w, kstart, ent, st);
             wi.* += 1;
         }
     }
@@ -14158,7 +14256,9 @@ const SEnc = struct {
     // key); else the window takes the `as` key's value or the first listed
     // value, and a bit of it that differs from a bit a held key wrote is
     // `transform-encode`. Raw stream bits in the pack's bit order (ruling 8).
-    fn settleWindow(self: *SEnc, w: *const SNode, kstart: usize, ent: *const Entity, held: []const BitRange, written: *std.ArrayListUnmanaged(BitRange), fields: []const FieldAt) !void {
+    // A window takes no bit away from a held key, and the bits of one whose
+    // `as` key is held are bits that key wrote (ruling 16 of 0.52).
+    fn settleWindow(self: *SEnc, w: *const SNode, kstart: usize, ent: *const Entity, st: *WinState) !void {
         const alloc = self.alloc;
         const pos: usize = kstart + @as(usize, @intCast(w.at_off.?));
         try self.ensure(pos + w.len);
@@ -14178,35 +14278,49 @@ const SEnc = struct {
             setBits(tmp, self.p.msb, pos, w.len, val);
             for (0..w.len) |i| {
                 const b = pos + i;
-                if (!inBitRanges(held, b) or inBitRanges(written.items, b)) continue;
+                if (!inBitRanges(st.held.items, b)) continue;
                 if (getBits(self.out.items, self.p.msb, b, 1) != getBits(tmp, self.p.msb, b, 1)) {
                     if (self.dry) break;
                     return bad(self.diag, alloc, te, "when … at {d}: the window's value {d} changes bit {d}, which a held key wrote; the output would decode another value", .{ w.at_off.?, val, b });
                 }
             }
             setBits(self.out.items, self.p.msb, pos, w.len, val);
-            try written.append(alloc, .{ .at = pos, .len = w.len });
+        }
+        if (w.as_key.len > 0) {
+            try st.whens.append(alloc, .{ .n = w, .at = pos });
+            if (av != .absent) try st.held.append(alloc, .{ .at = pos, .len = w.len });
         }
         // what decode reads back, for a `switch` on a key of these bits
-        if (self.kv) |m| {
-            if (w.as_key.len > 0) try m.put(alloc, w.as_key, MV{ .int = @bitCast(if (stand) cur else val) });
-            if (!stand) {
-                for (fields) |f| {
-                    if (f.at >= pos + w.len or f.at + f.n.ln.blen <= pos) continue;
-                    for (0..f.n.also.items.len + 1) |j| {
-                        const key = if (j == 0) f.n.ln.key else f.n.also.items[j - 1].key;
-                        switch (self.readBackR(self.out.items, f.at, f.n, j)) {
-                            .val => |mv| {
-                                try m.put(alloc, key, mv);
-                                _ = self.kv_failed.?.remove(key);
-                            },
-                            .failed => {
-                                _ = m.remove(key);
-                                try self.kv_failed.?.put(alloc, key, {});
-                            },
-                            .absent => _ = m.remove(key),
-                        }
-                    }
+        const m = self.kv orelse return;
+        for (st.whens.items) |x| {
+            try m.put(alloc, x.n.as_key, MV{ .int = @bitCast(getBits(self.out.items, self.p.msb, x.at, x.n.len)) });
+        }
+        if (stand) return;
+        for (st.fields.items) |f| {
+            if (f.at >= pos + w.len or f.at + f.n.ln.blen <= pos) continue;
+            for (0..f.n.also.items.len + 1) |j| try self.rereadKey(fieldKey(f.n, j), st);
+        }
+    }
+
+    fn fieldKey(n: *const SNode, j: usize) []const u8 {
+        return if (j == 0) n.ln.key else n.also.items[j - 1].key;
+    }
+
+    // The value decode reads for a key of the kind's fixed fields from the
+    // bits as they stand: that of the earliest line that yields one. A key
+    // that a line before the kind's set keeps that value.
+    fn rereadKey(self: *SEnc, key: []const u8, st: *const WinState) !void {
+        if (st.before.contains(key)) return;
+        const m = self.kv.?;
+        _ = m.remove(key);
+        if (!st.before_failed.contains(key)) _ = self.kv_failed.?.remove(key);
+        for (st.fields.items) |f| {
+            for (0..f.n.also.items.len + 1) |j| {
+                if (!std.mem.eql(u8, fieldKey(f.n, j), key)) continue;
+                switch (self.readBackR(self.out.items, f.at, f.n, j)) {
+                    .val => |mv| return m.put(self.alloc, key, mv),
+                    .failed => try self.kv_failed.?.put(self.alloc, key, {}),
+                    .absent => {},
                 }
             }
         }
@@ -14505,7 +14619,7 @@ const SEnc = struct {
     // format, else Entity.kind when it does, else the `requires` lines.
     fn innerNode(self: *SEnc, n: *const SNode, ent: *const Entity) anyerror!void {
         const alloc = self.alloc;
-        const ip = try innerLookup(alloc, self.diag, self.p, n.list);
+        const ip = try innerLookup(alloc, self.diag, self.p, n);
         if (self.pos % 8 != 0) return bad(self.diag, alloc, te, "inner {s}: the cursor at bit {d} is not on a whole byte", .{ ip.format, self.pos });
         var sub = ent.*;
         if (ent.inner_kind_fmt) |kf| {

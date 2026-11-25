@@ -4,10 +4,7 @@
   "to": "conformance-inner-countlists",
   "input": "020a0b030c0d0e",
   "max_items": 5,
-  "expect": "020a0b020a0b",
-  "model": {
-    "probe.nums.#": "2"
-  },
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 7: the outer list leaves 3 of 5; the inner count 3 is within it (7d); the entity holds 2 items"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-countlists and its inner pack conformance-inner-countonly both map probe.nums[], probe.nums[].probe.val, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

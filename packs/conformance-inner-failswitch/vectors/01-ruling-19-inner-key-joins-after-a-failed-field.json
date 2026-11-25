@@ -3,7 +3,7 @@
   "from": "conformance-inner-failswitch",
   "to": "conformance-inner-failswitch",
   "input": "0201050107",
-  "expect_error": "no-kind",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 19: s1 byte 01 is a transform-decode; n 5 still joins and is kept over the outer n 1; no case holds 5: no-kind, reported ahead"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-failswitch and its inner pack conformance-inner-failjoin both map probe.n, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

@@ -1,0 +1,9 @@
+{
+  "name": "as-encode",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-refused-as",
+  "input": "{\"x\":1}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; x is mapped by a common `when ... as` (ruling 24 of 0.30)"
+}

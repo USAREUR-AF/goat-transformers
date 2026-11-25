@@ -1,0 +1,9 @@
+{
+  "name": "asopt-inner-opt-outer-req-outer-key-absent",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-asopt-inner-opt-outer-req",
+  "input": "{\"x\":2,\"y\":7}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30: the outer kind, not optional, needs w"
+}

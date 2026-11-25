@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-inner-refused-works-derived",
+  "to": "conformance-inner-refused-works-derived",
+  "input": "0506",
+  "expect": "0506",
+  "model": {
+    "probe.n": "5",
+    "probe.n_copy": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: two keys"
+}

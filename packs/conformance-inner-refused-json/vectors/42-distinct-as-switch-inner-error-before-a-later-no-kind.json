@@ -1,0 +1,9 @@
+{
+  "name": "distinct-as-switch-inner-error-before-a-later-no-kind",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-distinct-as-switch",
+  "input": "{\"n\":9,\"w\":5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.34 Encode and ruling 12 of 0.20: the `inner` line stands before the switch"
+}

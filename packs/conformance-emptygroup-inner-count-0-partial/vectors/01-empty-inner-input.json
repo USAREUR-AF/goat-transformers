@@ -1,0 +1,12 @@
+{
+  "name": "empty-inner-input",
+  "from": "conformance-emptygroup-inner-count-0-partial",
+  "to": "conformance-emptygroup-inner-count-0-partial",
+  "input": "07",
+  "expect": "07",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 rulings 18 and 19: the group starts at bit 0; the list is present and empty"
+}

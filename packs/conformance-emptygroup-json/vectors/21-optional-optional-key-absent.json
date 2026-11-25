@@ -1,0 +1,9 @@
+{
+  "name": "optional-optional-key-absent",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-optional",
+  "input": "{\"n\":5}",
+  "expect": "05000000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the required length is the greater of the start and what the other lines require; encode writes up to byte 4"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "input-ends-before-the-start",
+  "from": "conformance-emptygroup-base",
+  "to": "conformance-emptygroup-base",
+  "input": "0500",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the empty group starts at byte 4; 2 bytes are there"
+}

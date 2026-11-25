@@ -1458,9 +1458,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         } else if (kw == "when") {
             not_in_group();
             // v0.30: `as` belongs to `layout sequential`; refused after the file (ruling 16).
-            if (t.size() > 3 && t[3] == "as") {
+            if (t.size() > 3 && t[3] == "as" && !detail::when_holds_at(t)) {  // 0.52 ruling 17
                 if (as_error.empty()) as_error = where + ": 'when ... as' applies to 'layout sequential' only";
-            } else if (t.size() > 3 && t[3] == "at") {
+            } else if (t.size() > 3 && (t[3] == "at" || t[3] == "as")) {
                 // v0.33: raised with the other `at` errors, after the module checks.
                 if (p.at_error.empty()) p.at_error = where + ": 'when ... at' applies to 'layout sequential' only";
             } else {

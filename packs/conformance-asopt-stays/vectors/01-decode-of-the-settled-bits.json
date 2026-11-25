@@ -1,0 +1,13 @@
+{
+  "name": "decode-of-the-settled-bits",
+  "from": "conformance-asopt-stays",
+  "to": "conformance-asopt-stays",
+  "input": "25",
+  "expect": "25",
+  "model": {
+    "@kind": "b",
+    "probe.z": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.33 Decode: 37 and the high nibble 2: b; encode settles to the same bits from z = 5"
+}

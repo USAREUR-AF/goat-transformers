@@ -1,0 +1,9 @@
+{
+  "name": "line-at-the-end-of-its-own-extent",
+  "from": "conformance-inner-refused-unread",
+  "to": "conformance-inner-refused-unread",
+  "input": "02050007",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: a line at the end of its own extent is reached"
+}

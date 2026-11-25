@@ -1,0 +1,9 @@
+{
+  "name": "inner-transform-decode-alone",
+  "from": "conformance-inner-distinct-fail-switch",
+  "to": "conformance-inner-distinct-fail-switch",
+  "input": "0201050107",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 19: the decode goes on, and label 01 is the error"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "gate-held-less-than-a-word",
+  "from": "conformance-noword-gate-words",
+  "to": "conformance-noword-gate-words",
+  "input": "0107",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.5: the held y requires a whole word"
+}

@@ -1096,7 +1096,8 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			p.addWithRef(f)
 			addLine(line{f: f})
 		case "when", "const":
-			if whenAt {
+			if whenAt || whenAs && whenHoldsAt(args[2:]) {
+				// `as k at 0` is the late `at` error too (0.52 ruling 17).
 				p.atLater(perr(ErrBadDirective, n, "", "when … at is valid only in a pack with `layout sequential`"))
 				args = args[:2]
 			} else if whenAs {
@@ -1617,6 +1618,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		// above; its error is reported by AddPack (ruling 10).
 		p.winErr = sp.atWindows()
 		sp.bind()
+		// Read by every decode and encode that reaches an `inner` line
+		// (0.52 ruling 20), so computed before the pack is shared.
+		p.ModelKeys()
 		return p, nil
 	}
 	if p.HasKinds() {
@@ -1654,6 +1658,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		for _, g := range p.Groups {
 			g.cbody, _ = cborTree(g.lines)
 		}
+	}
+	if p.Wire == WireBits {
+		p.ModelKeys()
 	}
 	return p, nil
 }

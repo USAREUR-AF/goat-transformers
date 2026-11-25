@@ -1,0 +1,9 @@
+{
+  "name": "lat-encode",
+  "from": "conformance-inner-refused-json-lat",
+  "to": "conformance-inner-refused-lat",
+  "input": "{\"lat\":1.5}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; lat and lat are one entry"
+}

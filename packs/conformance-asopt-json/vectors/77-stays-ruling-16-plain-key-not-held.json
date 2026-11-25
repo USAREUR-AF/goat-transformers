@@ -1,0 +1,9 @@
+{
+  "name": "stays-ruling-16-plain-key-not-held",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-stays",
+  "input": "{\"w\":9}",
+  "expect": "6109",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: x is not held: 5, then 0x51, then the high nibble 6 without a check: 0x61, w = 9"
+}

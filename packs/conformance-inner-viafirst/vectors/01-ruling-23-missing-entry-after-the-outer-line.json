@@ -3,7 +3,7 @@
   "from": "conformance-inner-viafirst",
   "to": "conformance-inner-viafirst",
   "input": "4102",
-  "expect_error": "transform-decode",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 23: s1 A is read first; the inner 02 has no entry and the types differ: transform-decode (ruling 10 of 0.7)"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-viafirst and its inner pack conformance-inner-viascalar both map probe.s1, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

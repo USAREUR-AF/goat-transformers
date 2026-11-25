@@ -1,0 +1,9 @@
+{
+  "name": "two-ruling-05-term-without-optional-fails-on-an-absent-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-two",
+  "input": "{\"y\":9}",
+  "expect": "1809",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 5: several `as` lines each have their own term and every term must hold; a needs w; b: both absent; 1, 8, 09"
+}

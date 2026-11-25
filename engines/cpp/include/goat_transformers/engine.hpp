@@ -533,6 +533,8 @@ struct SeqNode {
     // v0.30. when: `as <model-key>` binds the bits to `field.key`, read and
     // written as a `uint` of `len` bits.
     bool has_as = false;
+    // v0.52. when: `as <key> optional`: the kind is not refused when the key is absent.
+    bool as_optional = false;
     // v0.33. when: `at <offset>`, a look-ahead read at kind start plus `at`
     // bits; it does not move the cursor.
     bool has_at = false;

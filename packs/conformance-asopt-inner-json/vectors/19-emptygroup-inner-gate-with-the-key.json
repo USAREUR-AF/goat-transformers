@@ -1,0 +1,9 @@
+{
+  "name": "emptygroup-inner-gate-with-the-key",
+  "from": "conformance-asopt-inner-json",
+  "to": "conformance-emptygroup-inner-gate",
+  "input": "{\"x\":7,\"y\":7}",
+  "expect": "070107",
+  "source": "constructed",
+  "reference": "spec 0.17 Encode: the block is open"
+}

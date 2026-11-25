@@ -1,0 +1,12 @@
+{
+  "name": "gate-held",
+  "from": "conformance-noword-gate-words",
+  "to": "conformance-noword-gate-words",
+  "input": "01070000",
+  "expect": "01070000",
+  "model": {
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.17 and 0.5: one whole word"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "5289-asopt-0.30-ruling-29-as-on-a-fixed-layout-after-missing-version",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey w int -\nkey x int -\nkey y int -\nkey a float -\nkey label string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nfield probe.y 0:0:8 uint\nkind a\nwhen 0:0:8 1 as probe.x\n",
+  "expect_error": "missing-version"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gate-not-held",
+  "from": "conformance-noword-gate-zero",
+  "to": "conformance-noword-gate-zero",
+  "input": "01",
+  "expect": "0000",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 19: decode: the gate reads 1. spec 0.17 Encode step 4: bits nothing wrote read as 0, so the gate 0 holds although the block is not open; gate and y are written"
+}

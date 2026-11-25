@@ -1,0 +1,9 @@
+{
+  "name": "input-one-byte-short-of-the-start",
+  "from": "conformance-emptygroup-base",
+  "to": "conformance-emptygroup-base",
+  "input": "050000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 3 bytes of 4"
+}

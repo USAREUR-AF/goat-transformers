@@ -1,0 +1,9 @@
+{
+  "name": "armor-absent-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-armor",
+  "input": "{\"n\":5}",
+  "expect": "5000",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: L is 20; ruling 7 of 0.14: the count locator counts, here it ends at bit 12"
+}

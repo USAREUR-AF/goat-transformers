@@ -1438,8 +1438,9 @@ impl<'a, 's> Session<'a, 's> {
             return Ok(());
         }
         let input_len = self.input.len() as u64;
-        // whole words up to the furthest mapped, `when` or `const` bit
-        let need = words(need, fmt.word_bytes).max(fmt.word_bytes as u64);
+        // whole words up to the furthest mapped, `when` or `const` bit; none
+        // without a counted bit (ruling 19 of 0.52)
+        let need = words(need, fmt.word_bytes);
         if input_len < need {
             return Err(Error::MalformedWire);
         }
@@ -1586,7 +1587,8 @@ impl<'a, 's> Session<'a, 's> {
         Ok(item_bits.max(self.fx_group_reach([(body.lines, body.end), (0, 0)], item, 0, depth + 1)?))
     }
 
-    /// The furthest bit the groups of a scope write.
+    /// The furthest bit the groups of a scope write, or where a group without
+    /// items starts (ruling 18 of 0.52).
     fn fx_group_reach(&self, parts: [(u32, u32); 2], scope: u16, base: u64, depth: u8) -> Result<u64, Error> {
         if depth > MAX_DEPTH {
             return Err(Error::BadPlan);
@@ -1601,14 +1603,12 @@ impl<'a, 's> Session<'a, 's> {
                     if o.xf != 0 {
                         end = end.max(base + plan.pool(o.b as u32 + 1)? + o.len as u64);
                     }
-                    if let Some(n) = self.list_len(scope, o.key) {
-                        let mut at = base + o.a as u64;
-                        for k in 0..n {
-                            let item = self.item(scope, o.key, k).ok_or(Error::BadPlan)?;
-                            at = at.checked_add(self.fx_item_len(i, &o, item, depth)?).ok_or(Error::OutputFull)?;
-                        }
-                        end = end.max(at);
+                    let mut at = base + o.a as u64;
+                    for k in 0..self.list_len(scope, o.key).unwrap_or(0) {
+                        let item = self.item(scope, o.key, k).ok_or(Error::BadPlan)?;
+                        at = at.checked_add(self.fx_item_len(i, &o, item, depth)?).ok_or(Error::OutputFull)?;
                     }
+                    end = end.max(at);
                 }
                 i = plan.next(i, &o)?;
             }
@@ -2000,7 +2000,7 @@ impl<'a, 's> Session<'a, 's> {
         let wb = fmt.word_bytes;
         // whole words up to the furthest bit: the lines in force, extended by the items
         let items = self.fx_group_reach(parts, 0, 0, 1)?;
-        let mut size = words(need, wb).max(wb as u64).max(words(items, wb));
+        let mut size = words(need, wb).max(words(items, wb));
         let mut g = Gates::NONE;
         if self.has_gates(parts)? {
             // engine-spec 0.17, Encode: the lines outside any block are

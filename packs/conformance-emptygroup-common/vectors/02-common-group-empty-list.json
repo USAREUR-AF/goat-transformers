@@ -1,0 +1,13 @@
+{
+  "name": "common-group-empty-list",
+  "from": "conformance-emptygroup-common",
+  "to": "conformance-emptygroup-common",
+  "input": "01000000",
+  "expect": "01000000",
+  "model": {
+    "probe.items.#": "0",
+    "@kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: in the common lines"
+}

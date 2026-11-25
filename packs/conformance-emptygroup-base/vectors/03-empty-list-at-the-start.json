@@ -1,0 +1,13 @@
+{
+  "name": "empty-list-at-the-start",
+  "from": "conformance-emptygroup-base",
+  "to": "conformance-emptygroup-base",
+  "input": "05000000",
+  "expect": "05000000",
+  "model": {
+    "probe.items.#": "0",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 4 bytes reach the start; the list is present with no items (0.7 Decode)"
+}

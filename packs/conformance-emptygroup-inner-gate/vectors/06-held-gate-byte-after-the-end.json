@@ -1,0 +1,9 @@
+{
+  "name": "held-gate-byte-after-the-end",
+  "from": "conformance-emptygroup-inner-gate",
+  "to": "conformance-emptygroup-inner-gate",
+  "input": "070107aa",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 14: the end is 2; spec 0.34 Decode step 3: bytes after the inner message's end; "
+}

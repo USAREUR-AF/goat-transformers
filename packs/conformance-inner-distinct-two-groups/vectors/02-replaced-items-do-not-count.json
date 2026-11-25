@@ -1,0 +1,10 @@
+{
+  "name": "replaced-items-do-not-count",
+  "from": "conformance-inner-distinct-two-groups",
+  "to": "conformance-inner-distinct-two-groups",
+  "input": "c001050109020607",
+  "expect": "c00206070109020607",
+  "max_items": 2,
+  "source": "constructed",
+  "reference": "spec 0.34 ruling 20, first sentence, with 7g of 0.11: a count of 2 against a limit of 2 less the items outside the list it replaces"
+}

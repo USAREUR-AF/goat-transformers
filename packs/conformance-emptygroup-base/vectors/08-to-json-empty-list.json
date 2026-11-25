@@ -1,0 +1,9 @@
+{
+  "name": "to-json-empty-list",
+  "from": "conformance-emptygroup-base",
+  "to": "conformance-emptygroup-json",
+  "input": "05000000",
+  "expect": "{\"n\":5,\"items\":[]}",
+  "source": "constructed",
+  "reference": "spec 0.7: present and empty"
+}

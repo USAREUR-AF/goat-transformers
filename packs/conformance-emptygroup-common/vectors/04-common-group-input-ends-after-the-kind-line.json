@@ -1,0 +1,9 @@
+{
+  "name": "common-group-input-ends-after-the-kind-line",
+  "from": "conformance-emptygroup-common",
+  "to": "conformance-emptygroup-common",
+  "input": "020005",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 3 bytes of 4"
+}

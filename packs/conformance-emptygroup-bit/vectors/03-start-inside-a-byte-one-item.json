@@ -1,0 +1,12 @@
+{
+  "name": "start-inside-a-byte-one-item",
+  "from": "conformance-emptygroup-bit",
+  "to": "conformance-emptygroup-bit",
+  "input": "050100000ab0",
+  "expect": "050100000ab0",
+  "model": {
+    "probe.items[0].probe.qty": "171"
+  },
+  "source": "constructed",
+  "reference": "spec 0.7: the item is bits 36 to 43"
+}

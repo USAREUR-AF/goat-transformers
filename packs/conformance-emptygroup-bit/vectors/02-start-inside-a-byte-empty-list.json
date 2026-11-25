@@ -1,0 +1,12 @@
+{
+  "name": "start-inside-a-byte-empty-list",
+  "from": "conformance-emptygroup-bit",
+  "to": "conformance-emptygroup-bit",
+  "input": "0500000000",
+  "expect": "0500000000",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: 36 bits, 5 bytes of whole words"
+}

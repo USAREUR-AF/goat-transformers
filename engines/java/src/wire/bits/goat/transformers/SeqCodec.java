@@ -26,6 +26,36 @@ final class SeqCodec extends BitsWire<byte[]> {
         super(pack);
         this.msb = pack.bitOrder;
         this.root = pack.seq;
+        for (Seq.Kind k : root.kinds) {
+            for (Seq.Node n : Seq.innerLines(k.all)) inReach.computeIfAbsent(n, x -> new java.util.HashSet<>()).addAll(Seq.ownKeys(k.all));
+        }
+    }
+
+    /**
+     * Each {@code inner} line and the keys of its lines in reach (ruling 20 of 0.52): the common lines and those of
+     * its kind, or of every kind for a line in the common lines, which each kind's lines hold.
+     */
+    private final Map<Seq.Node, java.util.Set<String>> inReach = new IdentityHashMap<>();
+
+    /** The inner pack an {@code inner} line last passed the key check with; a pack does not change once loaded. */
+    private final Map<Seq.Node, Pack> keysChecked = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * The codec of an {@code inner} line that is reached: the four checks of engine-spec 0.34, then that no key its
+     * lines in reach map is one of the inner pack's {@code model_keys} (ruling 20 of 0.52).
+     */
+    private BitsWire<?> reachInner(Seq.Node n) {
+        Codec<?> inner = engine.innerCodec(pack, n.name);
+        if (keysChecked.get(n) != inner.pack) {
+            for (String key : inner.pack.modelKeys()) {
+                if (inReach.get(n).contains(key)) {
+                    throw new GtException(GtException.Code.BAD_DIRECTIVE, pack.format, null, "the inner line of " + pack.format
+                            + " (line " + n.line + ") names " + n.name + ", which also maps " + key);
+                }
+            }
+            keysChecked.put(n, inner.pack);
+        }
+        return (BitsWire<?>) inner;   // a bits pack, by check 2
     }
 
     // Kind selection needs the cursor, so decode and encode are whole here and the per-kind hooks are not used.
@@ -474,7 +504,7 @@ final class SeqCodec extends BitsWire<byte[]> {
      * the inner pack, decoded by its own rules into the same entity. A key or list read earlier is kept.
      */
     private void decodeInner(Seq.Node n, Reader r, Entity e) {
-        BitsWire<?> inner = (BitsWire<?>) engine.innerCodec(pack, n.name);   // a bits pack, by check 2
+        BitsWire<?> inner = reachInner(n);
         if (r.pos % 8 != 0) throw malformed("the inner line of " + n.name + " is reached at bit " + r.pos + ", not on a whole byte");
         long lim = r.limit();
         if (lim > (long) r.msg.length * 8) throw malformed("the extent of the inner line ends beyond the input");
@@ -1071,7 +1101,7 @@ final class SeqCodec extends BitsWire<byte[]> {
         for (Seq.Node w : k.whens) {
             if (w.as == null) continue;
             Object v = e.get(w.as.key);
-            if (v == null || !asMatches(w, v)) return false;
+            if (v == null ? !w.asOptional : !asMatches(w, v)) return false;   // optional: engine-spec 0.52
         }
         return true;
     }
@@ -1278,7 +1308,10 @@ final class SeqCodec extends BitsWire<byte[]> {
             long cur = BitsCodec.readBits(w.b, pos, len, msb);
             long target = win.as == null ? win.value : asWritten(win, e);   // the held as value (transform-encode when it does not match), or the first value
             boolean heldAs = win.as != null && e.get(win.as.key) != null;
-            if (matches(win, cur) && (!heldAs || cur == target)) continue;   // the bits stand
+            if (matches(win, cur) && (!heldAs || cur == target)) {   // the bits stand
+                if (heldAs) w.held.set((int) pos, (int) (pos + len));
+                continue;
+            }
             byte[] tmp = w.b.clone();
             BitsCodec.writeBits(tmp, pos, len, target, msb);
             for (long p = pos; p < pos + len; p++) {
@@ -1288,7 +1321,8 @@ final class SeqCodec extends BitsWire<byte[]> {
                 }
             }
             BitsCodec.writeBits(w.b, pos, len, target, msb);
-            w.held.clear((int) pos, (int) (pos + len));   // bits of an earlier window (ruling 26)
+            // the bits of a held as key are bits that key wrote; a window takes none away (ruling 16 of 0.52)
+            if (heldAs) w.held.set((int) pos, (int) (pos + len));
         }
         // the shadow as decode would read the kind's first lines back, windows written
         shadow.fields().clear();
@@ -1343,6 +1377,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     } else {
                         long v = asWritten(n, e);
                         w.put(n.len, v);
+                        if (e.get(n.as.key) != null) w.held.set((int) (w.pos - n.len), (int) w.pos);   // ruling 16 of 0.52
                         shadow.put(n.as.key, v);   // decode would read it back: a switch on the key selects by it
                     }
                     break;
@@ -1448,7 +1483,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                 }
                 case INNER: {
                     // engine-spec 0.34: the checks, then a whole byte, then the inner pack's message of the same entity
-                    Codec<?> inner = engine.innerCodec(pack, n.name);
+                    BitsWire<?> inner = reachInner(n);
                     if (w.pos % 8 != 0) throw encodeError("the inner line of " + n.name + " is reached at bit " + w.pos + ", not on a whole byte");
                     byte[] bytes = fromHex(inner.encode(e, true));
                     w.ensure(w.pos + 8L * bytes.length);

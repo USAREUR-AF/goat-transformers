@@ -1,0 +1,9 @@
+{
+  "name": "base-one-item",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-base",
+  "input": "{\"n\":5,\"items\":[{\"qty\":170}]}",
+  "expect": "05010000aa",
+  "source": "constructed",
+  "reference": "spec 0.7 Encode: the item at byte 4"
+}

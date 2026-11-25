@@ -1,0 +1,9 @@
+{
+  "name": "at-key-held-disagrees-with-matching-bits",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-at",
+  "input": "{\"x\":2,\"y\":5,\"z\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 The bits written, with `at` (0.33 alone): 01 matches but does not agree with x = 2, and 2 differs from the bits z wrote"
+}

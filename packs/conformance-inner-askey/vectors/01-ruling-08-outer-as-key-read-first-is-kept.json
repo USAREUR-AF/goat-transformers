@@ -3,15 +3,7 @@
   "from": "conformance-inner-askey",
   "to": "conformance-inner-askey",
   "input": "052307",
-  "expect": "052507",
-  "model": {
-    "probe.x": "5",
-    "probe.y": "2",
-    "probe.z": "7",
-    "@absent": [
-      "@inner_kind"
-    ]
-  },
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 8 and Decode step 4: the common when reads 05 and sets x 5; the inner conformance-inner-fixed (lsb) reads 0x23 as x 3, y 2 and 0x07 as z; x keeps 5. Encode: the when writes 05 (x matches), the inner writes x 5 and y 2 as 0x25, z 07"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-askey and its inner pack conformance-inner-fixed both map probe.x, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

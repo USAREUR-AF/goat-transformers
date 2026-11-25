@@ -1,0 +1,9 @@
+{
+  "name": "decode-of-no-kind",
+  "from": "conformance-asopt-kinds",
+  "to": "conformance-asopt-kinds",
+  "input": "0700",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.52: decode is unchanged; 7 matches no `when`"
+}

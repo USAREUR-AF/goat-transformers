@@ -1,0 +1,9 @@
+{
+  "name": "partly-ruling-16-changed-bits-outside-the-held-window",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-partly",
+  "input": "{\"x\":1,\"z\":6}",
+  "expect": "1506",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: the bits of a `when ... as <k>` line whose key the entity holds count as bits that key wrote; the first window writes the high nibble 1 for x; the second writes 0x15: the bits that change, the low nibble, are no held key's (y is absent)"
+}

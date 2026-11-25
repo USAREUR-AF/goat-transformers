@@ -1,0 +1,9 @@
+{
+  "name": "inner-input-ends-before-the-start",
+  "from": "conformance-emptygroup-inner-base-partial",
+  "to": "conformance-emptygroup-inner-base-partial",
+  "input": "070500",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18 and 0.34 ruling 14: the empty group of the inner pack counts up to its start, byte 4; ruling 15 of 0.34: whether it is an error is the inner pack's rule: malformed-wire"
+}

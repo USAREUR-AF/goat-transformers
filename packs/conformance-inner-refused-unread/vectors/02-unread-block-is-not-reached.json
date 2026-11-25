@@ -1,0 +1,9 @@
+{
+  "name": "unread-block-is-not-reached",
+  "from": "conformance-inner-refused-unread",
+  "to": "conformance-inner-refused-json",
+  "input": "010507",
+  "expect": "{\"w\":5,\"x\":7}",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: the nested `length` starts at the end of the extent and reads as absent (ruling 21 of 0.8): the line is not reached on decode"
+}

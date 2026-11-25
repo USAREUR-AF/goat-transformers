@@ -1,0 +1,9 @@
+{
+  "name": "before-ruling-16-window-listed-first-would-change-a-held-key",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-before",
+  "input": "{\"x\":16,\"y\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 16: the bits of a `when ... as <k>` line whose key the entity holds count as bits that key wrote; later is the order of settling: the window settles after the plain `when` wrote 0x10 for x = 16, and would change its low nibble 0 to 5"
+}

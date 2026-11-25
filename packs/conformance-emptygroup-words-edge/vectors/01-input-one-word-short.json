@@ -1,0 +1,9 @@
+{
+  "name": "input-one-word-short",
+  "from": "conformance-emptygroup-words-edge",
+  "to": "conformance-emptygroup-words-edge",
+  "input": "05000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: the start is bit 64, the end of word 1"
+}

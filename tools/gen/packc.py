@@ -309,6 +309,9 @@ class Model:
 
     def type_of(self, key):
         if key not in self.types:
+            if key.startswith("core.") and key[5:] in self.types:
+                refuse("unsupported-feature", "`%s`: a core key written with its module (ruling 2 of 0.4) "
+                       "is not in the device profile" % key)
             refuse("unknown-key", "model key `%s` is declared by no module" % key)
         return self.types[key]
 

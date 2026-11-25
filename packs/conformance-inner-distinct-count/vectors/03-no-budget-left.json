@@ -1,0 +1,10 @@
+{
+  "name": "no-budget-left",
+  "from": "conformance-inner-distinct-count",
+  "to": "conformance-inner-distinct-count",
+  "input": "0105020607",
+  "expect_error": "malformed-wire",
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.34, `max_items`: the inner counts are checked against the budget the outer lines left (ruling 7); a count of 2 with 0 left"
+}

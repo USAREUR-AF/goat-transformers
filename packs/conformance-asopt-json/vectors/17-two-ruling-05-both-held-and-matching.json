@@ -1,0 +1,9 @@
+{
+  "name": "two-ruling-05-both-held-and-matching",
+  "from": "conformance-asopt-json",
+  "to": "conformance-asopt-two",
+  "input": "{\"x\":3,\"w\":8,\"y\":9}",
+  "expect": "3809",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 5: several `as` lines each have their own term and every term must hold; w = 8 fails a; b: 3, 8, 09"
+}

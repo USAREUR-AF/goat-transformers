@@ -3,7 +3,7 @@
   "from": "conformance-inner-asouter",
   "to": "conformance-inner-asouter",
   "input": "090107",
-  "expect_error": "transform-encode",
+  "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.34 ruling 9: decode keeps outer n 9 (read first; the inner when reads 01); encode writes 09, then the inner when \u2026 as n meets n 9, which matches neither 1 nor 2: transform-encode (0.30), standing at the inner line"
+  "reference": "spec 0.52 ruling 20 refuses the pair: conformance-inner-asouter and its inner pack conformance-inner-aswhen both map probe.n, so the `inner` line is bad-directive when decode reaches it (20b). Before 0.52 this vector pinned 0.34 (the name states it)"
 }

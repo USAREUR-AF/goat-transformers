@@ -1,0 +1,9 @@
+{
+  "name": "near-absent-list",
+  "from": "conformance-emptygroup-json",
+  "to": "conformance-emptygroup-near",
+  "input": "{\"n\":5}",
+  "expect": "0500",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 18: nothing changes"
+}

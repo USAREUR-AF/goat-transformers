@@ -1,0 +1,9 @@
+{
+  "name": "distinct-as-inner-label-key-absent",
+  "from": "conformance-inner-refused-json",
+  "to": "conformance-inner-distinct-as",
+  "input": "{\"w\":1,\"y\":7}",
+  "expect": "010107",
+  "source": "constructed",
+  "reference": "spec 0.30: the first listed value"
+}
