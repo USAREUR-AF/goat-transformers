@@ -498,6 +498,8 @@ pub struct Session<'a, 's> {
     pos: u64,
     end: u64,
     whole: u64,
+    // the end of the innermost `length` block, which a whole length does not move
+    block: u64,
     extents: u16,
     // the limit on list items of a decode, and the items the entity holds
     max_items: u64,
@@ -525,6 +527,7 @@ impl<'a, 's> Session<'a, 's> {
             pos: 0,
             end: 0,
             whole: 0,
+            block: 0,
             extents: 0,
             max_items: DEFAULT_MAX_ITEMS,
             held: 0,
@@ -2354,8 +2357,10 @@ impl<'a, 's> Session<'a, 's> {
         while i < end {
             let o = plan.op(i)?;
             let next = plan.next(i, &o)?;
-            // inside a `length` block, lines beyond its extent read as absent (ruling 7 of 0.8)
-            if self.extents > 0 && self.pos >= self.end {
+            // inside a `length` block, lines beyond its extent read as absent
+            // (ruling 7 of 0.8); a whole length read inside it ends the input,
+            // not the block (ruling 16 of 0.83)
+            if self.extents > 0 && self.pos >= self.block {
                 if o.op == OP_PRESENCE {
                     *self.presence_slot(o.key)? = 0;
                 }
@@ -2489,9 +2494,11 @@ impl<'a, 's> Session<'a, 's> {
                         .filter(|s| *s <= self.end)
                         .ok_or(Error::MalformedWire)?;
                     let outer = core::mem::replace(&mut self.end, stop);
+                    let outer_block = core::mem::replace(&mut self.block, stop);
                     self.extents += 1;
                     let res = self.sq_decode_lines(i + 1, next, scope, depth + 1);
                     self.extents -= 1;
+                    self.block = outer_block;
                     // content of the extent no line reads is skipped
                     self.pos = stop;
                     self.end = outer.min(self.whole);
@@ -2516,7 +2523,7 @@ impl<'a, 's> Session<'a, 's> {
                             // the count against what the limit still allows (7d)
                             self.take_items(n)?;
                             // ruling 14 of 0.8: before any item is read
-                            if n > self.end - self.pos {
+                            if n > self.end.saturating_sub(self.pos) {
                                 return Err(Error::MalformedWire);
                             }
                             for _ in 0..n {
@@ -3079,6 +3086,7 @@ impl<'a, 's> Session<'a, 's> {
             self.pos = 0;
             self.end = total;
             self.whole = total;
+            self.block = total;
             self.extents = 0;
             self.kind = self.sq_decode_body(fmt.body, 0, 1)?;
         } else {
