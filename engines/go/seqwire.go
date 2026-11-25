@@ -666,9 +666,8 @@ func (w *seqWriter) settle(ks *seqKindWrite, sc seqScope) error {
 				hv, held = u, true
 			}
 		}
-		val := cur
 		if !inRanges(wn.rng, cur) || held && hv != cur {
-			val = wn.num
+			val := wn.num
 			if held {
 				val = hv
 			}
