@@ -1386,7 +1386,7 @@ func (sp *seqParser) unitsLine(args []string, n int, nodes *[]*seqNode) {
 		sp.lateErr(sp.bad(n, "", "a length given by a count is `length @<name> units <u>`"))
 	case !ok || u < 1 || u > 65535:
 		sp.lateErr(sp.bad(n, "", "length: `units` takes plain digits from 1 to 65535, got %q", args[2]))
-	default:
+	case u <= 65535: // always, past the case above; stated so the conversion is bounded where it is made
 		node.units = int(u)
 		node.bits = u%8 != 0
 		cd, err := sp.lookupCount(args[0][1:])
