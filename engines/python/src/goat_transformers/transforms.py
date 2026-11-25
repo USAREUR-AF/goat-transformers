@@ -568,8 +568,7 @@ class AsciiT(BitsTransform):
     trim = False  # the `trim` field option (0.6): decode also removes trailing spaces
 
     def __init__(self, name, length):
-        self.name = name
-        self.length = length
+        super().__init__(name, length)
         self.nbytes = length // 8
 
     def decode(self, raw):
@@ -607,8 +606,7 @@ class SixbitT(BitsTransform):
     trim = False
 
     def __init__(self, name, length):
-        self.name = name
-        self.length = length
+        super().__init__(name, length)
         self.nchars = length // 6
 
     def decode(self, raw):
