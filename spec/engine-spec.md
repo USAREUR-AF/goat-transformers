@@ -6604,8 +6604,7 @@ on a fixed layout or another wire.
 
 ## Stated limits
 
-A block behaves as a plain `length` block in what comes back (ruling 7 of 0.92
-states it for runs): units that no line reads are skipped on decode and not
+A block behaves as a plain `length` block in what comes back: units that no line reads are skipped on decode and not
 written back, so the count is written anew; and a block of fewer units than its
 lines write grows on encode, the missing fields as zero bits that then decode
 as values. A pack that must keep them maps every unit, by a closing `rest` of
