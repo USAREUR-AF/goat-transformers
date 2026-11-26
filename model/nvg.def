@@ -1,0 +1,7 @@
+# The nvg module: values of an NVG (NATO Vector Graphics) point that have no shared-model
+# key. packs/nvg/pack.md says why each is or is not bound.
+module        nvg
+version       0.1.0
+distribution  public
+source        "NATO Vector Graphics 1.5 XSD (NATO ACT, public)"
+key   symbol  string  -  "point/@symbol: the APP-6 / MIL-STD-2525 symbol code (e.g. app6a:SFGPUCI----D), not a CoT type token"

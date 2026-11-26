@@ -3,10 +3,14 @@
   "from": "nvg",
   "to": "geojson",
   "input": "<nvg><point x=\"11.2\" y=\"48.137\" label=\"ALPHA\" symbol=\"app6a:SFGPUCI----D\"/></nvg>",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.2,48.137]},\"properties\":{\"type\":\"app6a:SFGPUCI----D\",\"callsign\":\"ALPHA\"}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.2,48.137]},\"properties\":{\"callsign\":\"ALPHA\"}}",
   "model": {
     "lat": "48.137",
     "lon": "11.2",
-    "callsign": "ALPHA"
+    "callsign": "ALPHA",
+    "nvg.symbol": "app6a:SFGPUCI----D",
+    "@absent": [
+      "type"
+    ]
   }
 }
