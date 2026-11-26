@@ -2,10 +2,11 @@
 # keys are the shared-model keys themselves (goat-processors spec/correlate.md,
 # Reports). Public, no external standard. `time_ms` is an integer, epoch ms.
 format  goat-processors-report
-version 0.1.0
+version 0.2.0
 distribution public
 source  "USAREUR-AF/goat-processors spec/correlate.md, section Reports (Apache-2.0)"
 uses    track
+uses    radar
 wire    json
 field   track.source_id  track.source_id  string
 field   uid       uid       string
@@ -21,3 +22,4 @@ field   stale_ms  stale_ms  int
 field   callsign  callsign  string
 field   time_error_ms  time_error_ms  float
 field   time_state     time_state     string
+field   radar.rcs_m2   radar.rcs_m2   float

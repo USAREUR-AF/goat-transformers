@@ -6,11 +6,12 @@
 # 65535 held while the track lives, `mono` 1 when its members come from one
 # source and 0 when from more, and `now_ms` the tick it describes.
 format  goat-processors-system-track
-version 0.3.0
+version 0.4.0
 distribution public
 source  "USAREUR-AF/goat-processors runner/README.md, section What the runner publishes (Apache-2.0)"
 uses    track
 uses    cat062
+uses    radar
 wire    json
 field   uid       group     string
 field   cat062.track_number  track_number  int
@@ -23,3 +24,4 @@ field   speed_ms  speed_ms  float
 field   type      attributes.type.value      string
 field   callsign  attributes.callsign.value  string
 field   cat062.mon  mono      int
+field   radar.rcs_m2  rcs_m2  float

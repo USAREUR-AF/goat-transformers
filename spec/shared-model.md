@@ -174,6 +174,23 @@ Absent means "not stated", never 0. Types, units and meanings are in
 `model/detection.def`. The key set was agreed with goat-processors, whose
 `track` function reads it.
 
+## The `radar` module
+
+What a radar measured of the object a track or a detection describes, beyond
+position and motion. One key: `radar.rcs_m2`, the radar cross section in
+square metres, as the reporting radar measured it.
+
+A radar cross section depends on the radar (its band and polarization) and on
+the aspect it sees the object from. It is a measurement of one source, not a
+property of the object: two radars that track the same object report different
+values, and neither is wrong. A format that carries one value carries the
+value of the source that made the report. A system that combines several
+sources keeps each source's value beside the source's identifier and does not
+average them.
+
+The module is separate from `track` so that `track` stays field for field the
+Canonical Track v2 contract. Absent means "not stated", never 0.
+
 ## Residue
 
 A field a format carries that no loaded module has a key for is stored under

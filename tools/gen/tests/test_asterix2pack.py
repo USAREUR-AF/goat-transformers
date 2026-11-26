@@ -1067,6 +1067,7 @@ class CommittedPacks(unittest.TestCase):
         formats = sorted(os.path.basename(os.path.dirname(p))
                          for p in glob.glob(os.path.join(support.REPO, "packs", "asterix-cat*", "pack.def")))
         formats.remove("asterix-cat062")                                # the hand-written pack is not this generator's
+        formats.remove("asterix-cat062-rcs")                            # nor is its copy with the radar cross section in I062/SP
         self.assertGreaterEqual(len(formats), 27)
 
         def text(*rel):

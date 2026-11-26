@@ -1,0 +1,11 @@
+{
+ "name": "02-radar-cross-section-roundtrip",
+ "from": "goat-processors-report",
+ "to": "goat-processors-report",
+ "input": "{\"track\":{\"source_id\":\"radar-1\"},\"uid\":\"T11\",\"time_ms\":1795000000000,\"lat\":1.0001,\"lon\":1.05,\"hae\":1500,\"ce\":50,\"course\":90,\"speed_ms\":100,\"type\":\"a-u-A\",\"stale_ms\":1795000010000,\"callsign\":\"ALPHA\",\"time_error_ms\":2.5,\"time_state\":\"coherent\",\"radar\":{\"rcs_m2\":0.25}}",
+ "expect": "{\"track\":{\"source_id\":\"radar-1\"},\"uid\":\"T11\",\"time_ms\":1795000000000,\"lat\":1.0001,\"lon\":1.05,\"hae\":1500,\"ce\":50,\"course\":90,\"speed_ms\":100,\"type\":\"a-u-A\",\"stale_ms\":1795000010000,\"callsign\":\"ALPHA\",\"time_error_ms\":2.5,\"time_state\":\"coherent\",\"radar\":{\"rcs_m2\":0.25}}",
+ "model": {
+  "radar.rcs_m2": "0.25"
+ },
+ "reference": "Vector 01 with the member radar.rcs_m2 added last, nested as track.source_id is (pack.md); 0.25 is exact in binary."
+}
