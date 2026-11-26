@@ -27,6 +27,8 @@
  "Holder:timestamp": "holder_timestamp",
  "Holder:total": "holder_total",
  "HomePosition:alt": "home_position_alt",
+ "HomePosition:lat": "home_position_lat",
+ "HomePosition:lon": "home_position_lon",
  "HomePosition:timestamp": "home_position_timestamp",
  "HomePosition:valid_hpos": "home_position_valid_hpos",
  "Item:delta": "item_delta",
@@ -41,7 +43,11 @@
  "SensorGps:fix_type": "sensor_gps_fix_type",
  "SensorGps:timestamp": "sensor_gps_timestamp",
  "VehicleGlobalPosition:alt": "vehicle_global_position_alt",
+ "VehicleGlobalPosition:alt_ellipsoid": "vehicle_global_position_alt_ellipsoid",
+ "VehicleGlobalPosition:alt_valid": "vehicle_global_position_alt_valid",
+ "VehicleGlobalPosition:lat": "vehicle_global_position_lat",
  "VehicleGlobalPosition:lat_lon_valid": "vehicle_global_position_lat_lon_valid",
+ "VehicleGlobalPosition:lon": "vehicle_global_position_lon",
  "VehicleGlobalPosition:reset_counter": "vehicle_global_position_reset_counter",
  "VehicleGlobalPosition:timestamp": "vehicle_global_position_timestamp"
 }

@@ -3,12 +3,12 @@
   "from": "px4-ulog-vehicle-global-position",
   "to": "px4-ulog-vehicle-global-position",
   "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
-  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00010",
-  "expect": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00010",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00001c1",
+  "expect": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00001c1",
   "model": {
     "px4ulog.vehicle_global_position_timestamp": "1700000001000003",
-    "lat": "2.014",
-    "lon": "-3.021",
-    "px4ulog.vehicle_global_position_alt": "-6.625"
+    "px4ulog.vehicle_global_position_alt": "-6.625",
+    "hae": "-6.375",
+    "px4ulog.vehicle_global_position_lat_lon_valid": "0"
   }
 }

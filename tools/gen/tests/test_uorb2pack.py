@@ -87,7 +87,26 @@ class Case(unittest.TestCase):
                          [("timestamp", 0), ("value", 8), ("delta", 12), ("mode", 14), ("pad", 15)])
         self.assertEqual((item.size, item.logged_size), (16, 15))
         vgp = gen.layout(msgs, "VehicleGlobalPosition")
-        self.assertEqual((vgp.size, vgp.logged_size), (40, 34))
+        self.assertEqual((vgp.size, vgp.logged_size), (40, 35))      # with the fixture's alt_valid
+
+    def test_validity_flag_gates_the_shared_key(self):
+        # lat, lon and hae of VehicleGlobalPosition are read only when their flag is 1; the
+        # raw keys keep the bits, so a message with the flags 0 comes back byte for byte
+        self.first_run()
+        with open(os.path.join(self.root, "packs", "px4-ulog-vehicle-global-position", "pack.def"), encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertIn("field  px4ulog.vehicle_global_position_lat  0:64:64  f64\nif  0:", text)
+        self.assertIn("  field  lat  0:64:64  f64\nend", text)
+        lines = gen.read_pack(text)
+        flag = next(l for l in lines if l[0] == "field" and l[1].endswith("_lat_lon_valid"))
+        data = bytearray(40)
+        data[8:16] = gen.struct.pack("<d", 47.25)
+        ent = gen.decode(lines, bytes(data))
+        self.assertNotIn("lat", ent)
+        self.assertEqual(ent["px4ulog.vehicle_global_position_lat"], 47.25)
+        data[flag[2] // 8] = 1
+        self.assertEqual(gen.decode(lines, bytes(data))["lat"], 47.25)
+        self.assertEqual(gen.encode(lines, {"lat": 47.25}) >> flag[2] & 0xFF, 1)
 
     def test_pack_lines(self):
         self.first_run()
