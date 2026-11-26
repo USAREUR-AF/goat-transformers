@@ -1,0 +1,15 @@
+{
+  "name": "no-version-stays-absent",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e01030302000000120101040e0178170a323039392d30312d3031",
+  "expect": "060e2b34020301010e01030302000000120101040e0178170a323039392d30312d3031",
+  "model": {
+    "misb0102.security_classification": "SECRET//",
+    "@absent": [
+      "misb0102.version"
+    ]
+  },
+  "source": "constructed",
+  "reference": "MISB ST 0102.12 6.1.15 (requirement ST 0102.10-57): a set without tag 22 is read as version 3, and an absent tag 12 has its own meaning before version 6, so the pack writes no version the set did not hold; no tag 22: decode leaves misb0102.version absent, and encode writes none. Expected value derived by hand: the input."
+}

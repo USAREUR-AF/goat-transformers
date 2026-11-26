@@ -17,7 +17,6 @@ map      classification  3  CONFIDENTIAL//
 map      classification  4  SECRET//
 map      classification  5  "TOP SECRET//"
 
-default  misb0102.version  12
 
 field    misb0102.security_classification        1:1    uint  via classification
 field    misb0102.country_coding_method          2:1    uint

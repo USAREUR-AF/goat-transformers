@@ -29,9 +29,10 @@ document defines is below 128, where a one-byte tag and a BER-OID tag are the
 same byte.
 
 Encode writes the items in `field`-line order, which is tag order, then any
-residue. When the entity has no `misb0102.version`, item 22 is written as 12,
-the version of the document this pack was written from; the document requires
-item 22 in every set from version 4 on.
+residue. When the entity has no `misb0102.version`, no item 22 is written: a
+set without it is read as version 3 (6.1.15), so writing 12 would change what the
+set says. The document requires item 22 in every set from version 4 on; an entity
+that should be such a set must hold the version.
 
 The same items also travel without the key and length inside item 48 of the
 MISB ST 0601 UAS Datalink Local Set. That form is not a message of this pack
@@ -60,7 +61,7 @@ the document's stated length of the item (Table 2).
 | 12 | Object Country Coding Method | `object_country_coding_method` | `uint`, 1 byte | code list below |
 | 13 | Object Country Codes | `object_country_codes` | `hex` | UTF-16 in the document; kept as the item's bytes |
 | 14 | Classification Comments | `classification_comments` | `utf8` | free text |
-| 22 | Version | `version` | `uint`, 2 bytes | unsigned 16-bit; default 12 on encode |
+| 22 | Version | `version` | `uint`, 2 bytes | unsigned 16-bit; not written when absent |
 | 23 | Classifying Country and Releasing Instructions Country Coding Method Version Date | `country_coding_method_date` | `utf8` | ten characters, year-month-day with hyphens |
 | 24 | Object Country Coding Method Version Date | `object_country_coding_method_date` | `utf8` | as tag 23 |
 
@@ -155,7 +156,7 @@ pack's words:
   `transform-decode`.
 - **Version 3 by default.** The document says a set without tag 22 is to be
   read as version 3. Decode leaves `misb0102.version` absent rather than
-  inventing 3; encode writes 12 by default.
+  inventing 3, and encode writes no version, so the set round-trips as it was.
 - **Deprecated items.** Earlier versions of the document had items for
   linking a set to a stream or a metadata item (UMID, stream identifiers,
   item designator; revision history of ST 0102.12). ST 0102.12 deleted them,
