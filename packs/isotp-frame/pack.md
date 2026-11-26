@@ -29,6 +29,11 @@ None.
 - **STmin reserved values** are kept as sent; the source reads them as 0x7F.
 - **Padding inside a consecutive frame** cannot be told from data; the message length in the first frame
   says where the message ends.
+- **Frames the source refuses are read.** python-can-isotp (`isotp/protocol.py`, class `PDU`) raises an
+  error for a flow-control frame whose flow status is 3 or more ("Unknown flow status") and for an
+  escaped single frame of length 0. The pack reads both: `34 00 00` gives `isotp.flow_status` 4, and an escaped
+  single frame with length 0 gives an empty `single-frame-escape`. The pack language has no line that
+  refuses a value in range, so a consumer should check `isotp.flow_status` (0 to 2) and that an escaped single frame has data.
 
 ## Message convention
 
