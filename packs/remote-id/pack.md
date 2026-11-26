@@ -53,7 +53,11 @@ message (25, `rid.pack_msg_size`, written as 25 when the entity has no value),
 byte 2 the number of messages, then that many 25-byte messages. The kind
 `message-pack` maps the messages with a counted group (engine-spec Version
 0.7): `group rid.messages 0:24 item 200 count 0:16:8`. Byte 2 is the count; it
-is read on decode and written with the number of items on encode.
+is read on decode and written with the number of items on encode. The kind
+also needs byte 1 to be 25 (`when 0:8:8 25`): opendroneid.c (decodeMessagePack)
+refuses another size, so a pack stating 26 is `no-kind` (vector 17). The source
+also refuses a count of 0 or above 9; the pack reads such counts (vector 15
+holds a count of 0), a limit.
 
 Each item holds the fields every message type has in common, and the rest of
 the message as raw integers:
@@ -156,7 +160,7 @@ timestamp have no source.
 | 01-07 | one same-format round trip per kind, byte-identical | input values of upstream `test/test_inout.c`, quantized as `opendroneid.c` encodes them |
 | 08, 09 | the Basic ID message held as fixed bytes in upstream `test/unit_odid_wifi_beacon.cpp`: round trip, and to GeoJSON | `"source": "specification"` |
 | 10-12 | Location to GeoJSON | 10: `test_inout.c` values; 11, 12: constructed |
-| 13-16 | Message Pack: one message, two messages, no message (byte-identical round trips), and a count beyond the input (`malformed-wire`) | constructed from the messages of vectors 01, 02 and 08 |
+| 13-17 | Message Pack: one message, two messages, no message (byte-identical round trips), a count beyond the input (`malformed-wire`), and a message size of 26 (`no-kind`) | constructed from the messages of vectors 01, 02 and 08 |
 
 The upstream tests hold exactly one complete 25-byte message as fixed bytes
 (the Basic ID in vector 08). The Location message in the same array is cut off

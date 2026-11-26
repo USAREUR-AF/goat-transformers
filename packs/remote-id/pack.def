@@ -120,6 +120,7 @@ field  rid.reserved                0:176:24   uint
 # its own message type (pack.md).
 kind      message-pack
 when      0:4:4  15
+when      0:8:8  25                  # single message size (opendroneid.c decodeMessagePack)
 requires  rid.messages
 field  rid.pack_msg_size           0:8:8      uint
 default rid.pack_msg_size          25
