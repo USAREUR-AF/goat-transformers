@@ -4,5 +4,5 @@
   "to": "cot-xml",
   "input": "<nvg><point x=\"11.2\" y=\"48.137\" label=\"ALPHA\" symbol=\"app6a:SFGPUCI----D\"/></nvg>",
   "expect": "<event version=\"2.0\" type=\"a-u-X\"><point lat=\"48.137\" lon=\"11.2\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"ALPHA\"/></detail></event>",
-  "note": "the APP-6 symbol is not a CoT type: cot-xml writes its default type a-u-X (packs/cot-xml/pack.def, default type)"
+  "reference": "the APP-6 symbol is not a CoT type: cot-xml writes its default type a-u-X (packs/cot-xml/pack.def, default type)"
 }
