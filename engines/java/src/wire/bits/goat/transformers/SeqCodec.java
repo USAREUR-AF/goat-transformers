@@ -29,8 +29,14 @@ final class SeqCodec extends BitsWire<byte[]> {
         this.root = pack.seq;
         for (Seq.Kind k : root.kinds) {
             for (Seq.Node n : Seq.innerLines(k.all)) inReach.computeIfAbsent(n, x -> new java.util.HashSet<>()).addAll(Seq.ownKeys(k.all));
+            for (Seq.Node n : Seq.innerLines(k.all)) {
+                if (n.run) Seq.withKeys(k.all, "", withInReach.computeIfAbsent(n, x -> new java.util.HashSet<>()));
+            }
         }
     }
+
+    /** Each {@code run} line and the keys the {@code with} options of its lines in reach name (engine-spec 0.92, ruling 9). */
+    private final Map<Seq.Node, java.util.Set<String>> withInReach = new IdentityHashMap<>();
 
     /**
      * Each {@code inner} line and the keys of its lines in reach (ruling 20 of 0.52): the common lines and those of
@@ -46,12 +52,18 @@ final class SeqCodec extends BitsWire<byte[]> {
      * lines in reach map is one of the inner pack's {@code model_keys} (ruling 20 of 0.52).
      */
     private BitsWire<?> reachInner(Seq.Node n) {
-        Codec<?> inner = engine.innerCodec(pack, n.name);
+        Codec<?> inner = engine.innerCodec(pack, n.name, n.run);
         if (keysChecked.get(n) != inner.pack) {
             for (String key : inner.pack.modelKeys()) {
                 if (inReach.get(n).contains(key)) {
                     throw new GtException(GtException.Code.BAD_DIRECTIVE, pack.format, null, "the inner line of " + pack.format
                             + " (line " + n.line + ") names " + n.name + ", which also maps " + key);
+                }
+                // a list is named by its own name in a with, and as an entry with [] in model_keys
+                String name = key.endsWith("[]") ? key.substring(0, key.length() - 2) : key;
+                if (n.run && withInReach.get(n).contains(name)) {
+                    throw new GtException(GtException.Code.BAD_DIRECTIVE, pack.format, null, "the inner line of " + pack.format
+                            + " (line " + n.line + ") names " + n.name + " run, which maps " + name + ", a key an outer with names");
                 }
             }
             keysChecked.put(n, inner.pack);
@@ -127,6 +139,8 @@ final class SeqCodec extends BitsWire<byte[]> {
     /** One decode: the input, the cursor, the end of the input and of the innermost {@code length} extent. */
     private final class Reader {
         final byte[] msg;
+        /** The message's first bit in {@link #msg}: {@code align} and {@code length ... whole} count from it. */
+        final long base;
         long pos;
         /** The end of the input in bits; a {@code length ... whole} line moves it in. */
         long end;
@@ -147,6 +161,10 @@ final class SeqCodec extends BitsWire<byte[]> {
          * {@link #casesRead} when the presence was read}. Checked when the body that read them ends (ruling 21).
          */
         final List<Object[]> pending = new ArrayList<>();
+        /** The run operation this decode is part of (engine-spec 0.92), or null. */
+        Run.State run;
+        /** A message at a run line, in every operation: a switch on a key one line of which failed stops, forgiven or not (0.92, ruling 3). */
+        boolean strictSwitch;
         /** A {@code length ... whole} line was read: {@link #end} is the smallest length stated. */
         boolean wholeRead;
         /** The lists the inner decode gave the entity: no later outer group replaces them (engine-spec 0.34, step 4). */
@@ -159,6 +177,15 @@ final class SeqCodec extends BitsWire<byte[]> {
         Reader(BitMsg in) {
             this.msg = in.b;
             this.end = in.bits;
+            this.base = 0;
+        }
+
+        /** A message inside {@code msg}, from bit {@code start} (a whole byte) to bit {@code end}: a view, not a copy. */
+        Reader(byte[] msg, long start, long end) {
+            this.msg = msg;
+            this.pos = start;
+            this.end = end;
+            this.base = start;
         }
 
         /** The bits that may be read: those before the end of the innermost extent and of the input (ruling 16 of 0.83). */
@@ -289,8 +316,16 @@ final class SeqCodec extends BitsWire<byte[]> {
     }
 
     @Override
-    Layer decodeLayer(byte[] msg) {
-        Reader r = new Reader(new BitMsg(msg, (long) msg.length * 8));
+    Layer decodeLayer(byte[] msg) { return decodeLayer(new Reader(new BitMsg(msg, (long) msg.length * 8))); }
+
+    /** A message of a run (engine-spec 0.92), in place: from bit {@code start} of {@code msg}, the input ending at {@code end}. */
+    private Layer decodeMessage(byte[] msg, long start, long end) {
+        Reader r = new Reader(msg, start, end);
+        r.strictSwitch = true;
+        return decodeLayer(r);
+    }
+
+    private Layer decodeLayer(Reader r) {
         Layer l = new Layer();
         l.fails = r.fails;
         try {
@@ -299,7 +334,7 @@ final class SeqCodec extends BitsWire<byte[]> {
             if (ex.code() != GtException.Code.TRANSFORM_DECODE) throw ex;
             l.stopped = ex;
         }
-        l.end = r.wholeRead ? r.end : r.pos;   // ruling 13 of 0.34
+        l.end = (r.wholeRead ? r.end : r.pos) - r.base;   // ruling 13 of 0.34
         return l;
     }
 
@@ -372,8 +407,93 @@ final class SeqCodec extends BitsWire<byte[]> {
                 if (w.as != null) putDecoded(w.as, read[i], e, r.fails);
             }
         }
+        // a kind without a run line is an ordinary message's (engine-spec 0.92)
+        if (r.run != null && body == root && !r.run.reached && !hasRun(kind.all)) r.run.ordinary = true;
         decodeLines(kind.lines, r, e);
         return kind;
+    }
+
+    private static boolean hasRun(List<Seq.Node> lines) {
+        for (Seq.Node n : Seq.innerLines(lines)) if (n.run) return true;
+        return false;
+    }
+
+    /** A {@code length} block reads as absent: a run line in it is not reached. */
+    private static void absentBlock(Seq.Node n, Reader r) {
+        if (r.run != null && hasRun(n.body)) r.run.ordinary = true;
+    }
+
+    @Override
+    Run.State decodeRun(String text, long maxItems, boolean toCarrier) {
+        Run.State run = new Run.State(toCarrier, maxItems);
+        underBudget(maxItems, () -> {
+            Reader r = new Reader(parseBits(text));
+            r.run = run;
+            run.outer = new Entity();
+            try {
+                read(r, run.outer);
+            } catch (GtException ex) {
+                // an error after it was known that no run line is reached is the ordinary message's (ruling 4)
+                if (run.reached || !run.ordinary) throw ex;
+                run.ordinaryError = ex;
+                return;
+            }
+            try {
+                finishDecode(run.outer, r.fails);
+            } catch (GtException ex) {
+                if (run.reached) run.outerError = ex;
+                else run.ordinaryError = ex;
+            }
+        });
+        return run;
+    }
+
+    /** The messages of a {@code run} line in a run operation (engine-spec 0.92, rulings 2, 3 and 5). */
+    private void decodeMessages(Seq.Node n, SeqCodec inner, long start, long end, Reader r) {
+        Run.State run = r.run;
+        run.inner = n.name;
+        long before = itemsLeft();
+        java.util.Set<String> was = setOuterHeld(null);   // the two packs share no list (the fifth check)
+        try {
+            for (long at = start; at < end; ) {
+                if (run.messages.size() >= run.max) {
+                    throw malformed("the run holds more than " + run.max + " messages (the limit on list items)");
+                }
+                setItemsLeft(before);
+                GtException stop = null;
+                Layer layer = null;
+                long size = 0;
+                try {
+                    layer = inner.decodeMessage(r.msg, at, end);
+                    stop = layer.stopped;
+                    if (stop == null) size = messageEnd(n, layer, end - at);
+                } catch (GtException ex) {
+                    stop = ex;
+                }
+                if (stop != null) {
+                    if (run.toCarrier) throw stop;
+                    run.messages.add(stop);   // the last result: what follows cannot be found
+                    break;
+                }
+                try {
+                    inner.finishDecode(layer.entity, layer.fails);
+                    run.messages.add(layer.entity);
+                } catch (GtException ex) {
+                    run.messages.add(ex);
+                }
+                at += size;
+            }
+        } finally {
+            setOuterHeld(was);
+            setItemsLeft(before);   // the outer lines after the run do not count message items
+        }
+    }
+
+    /** The bits of one message of a run, whole bytes; an end beyond the extent or at the message's start is malformed-wire. */
+    private long messageEnd(Seq.Node n, Layer layer, long bits) {
+        long end = (layer.end + 7) / 8 * 8;
+        if (end > bits || end == 0) throw malformed("a message of " + n.name + " ends at bit " + end + " of the " + bits + " of its extent");
+        return end;
     }
 
     /** True when a {@code when} line holds for the value read: one of its values, or within one of its ranges. */
@@ -451,7 +571,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     break;
                 }
                 case ALIGN: {
-                    long to = (r.pos + n.len - 1) / n.len * n.len;
+                    long to = r.base + (r.pos - r.base + n.len - 1) / n.len * n.len;
                     r.pos = Math.max(r.pos, Math.min(to, r.limit()));   // stops at the end of the input or extent (ruling 20)
                     break;
                 }
@@ -478,7 +598,10 @@ final class SeqCodec extends BitsWire<byte[]> {
                     long bits;
                     if (n.countRef != null) {
                         // engine-spec 0.83: at or past the end of the enclosing block it is absent (ruling 4)
-                        if (r.soft >= 0 && r.pos >= r.soft) break;
+                        if (r.soft >= 0 && r.pos >= r.soft) {
+                            absentBlock(n, r);
+                            break;
+                        }
                         BigInteger count = r.exactCounts.get(n.countRef);
                         if (count == null || r.counts.get(n.countRef) < 0) break;   // the count line was absent: it states nothing
                         BigInteger size = count.multiply(BigInteger.valueOf(n.unit));
@@ -488,7 +611,10 @@ final class SeqCodec extends BitsWire<byte[]> {
                         bits = size.longValue();
                         if (r.units != null) r.units.blocks.add(n);
                     } else {
-                        if (!r.line(n.len, "a length")) break;
+                        if (!r.line(n.len, "a length")) {
+                            absentBlock(n, r);
+                            break;
+                        }
                         long units = r.take(n.len);
                         bits = extent(units, n, r.limit() - r.pos);
                     }
@@ -524,7 +650,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                         throw malformed("the message states a length of " + Long.toUnsignedString(units) + (n.plus == 0 ? "" : " less " + n.plus)
                                 + " bytes and the input has " + r.msg.length);
                     }
-                    long total = (units - n.plus) * 8;
+                    long total = r.base + (units - n.plus) * 8;
                     if (total < r.pos) throw malformed("the stated length of the message is shorter than what was already read");
                     if (total > r.end) throw malformed("the input is shorter than the stated length of the message");
                     r.end = total;
@@ -571,6 +697,10 @@ final class SeqCodec extends BitsWire<byte[]> {
                                 && (r.fails.hard.get(i) || e.get(n.switchKey) == null)) {
                             finishDecode(e, r.fails);
                         }
+                        if (r.strictSwitch && r.fails.into.get(i) == e && r.fails.fields.get(i).key.equals(n.switchKey)) {
+                            throw new GtException(GtException.Code.TRANSFORM_DECODE, pack.format, null, "switch " + n.switchKey
+                                    + ": a line of its key failed: " + r.fails.whys.get(i));
+                        }
                     }
                     // the key's decoded value when the cursor reaches the switch selects the case (engine-spec 0.20)
                     Seq.Case c = Seq.select(n, e.get(n.switchKey));
@@ -591,27 +721,38 @@ final class SeqCodec extends BitsWire<byte[]> {
      * the inner pack, decoded by its own rules into the same entity. A key or list read earlier is kept.
      */
     private void decodeInner(Seq.Node n, Reader r, Entity e) {
+        if (n.run && r.run != null) r.run.reached = true;
         BitsWire<?> inner = reachInner(n);
         if (r.pos % 8 != 0) throw malformed("the inner line of " + n.name + " is reached at bit " + r.pos + ", not on a whole byte");
         long lim = r.soft >= 0 ? r.soft : r.end;
         if (lim > r.end) throw malformed("the extent of the inner line ends beyond the input");
         if (lim % 8 != 0) throw malformed("the length extent of the inner line of " + n.name + " does not end on a whole byte");
         lim = Math.max(lim, r.pos);   // past a whole length the inner input is empty (ruling 16 of 0.83)
-        byte[] bytes = Arrays.copyOfRange(r.msg, (int) (r.pos / 8), (int) (lim / 8));
+        long start = r.pos;
         r.pos = lim;
+        if (n.run && r.run != null) {
+            decodeMessages(n, (SeqCodec) inner, start, lim, r);   // a layout sequential pack, by framing self
+            return;
+        }
+        if (n.run && start == lim) throw messageCount("the run of " + n.name + " holds no message");
         Layer layer;
         // the inner decode starts with the budget the outer lines have left (it shares this thread's budget); the
         // items of a list the outer entity holds are discarded, so its counts are checked but its items not counted
         long before = itemsLeft();
         java.util.Set<String> was = setOuterHeld(new java.util.HashSet<>(e.lists().keySet()));
         try {
-            layer = inner.decodeLayer(bytes);
+            layer = n.run ? ((SeqCodec) inner).decodeMessage(r.msg, start, lim)
+                    : inner.decodeLayer(Arrays.copyOfRange(r.msg, (int) (start / 8), (int) (lim / 8)));
         } finally {
             setOuterHeld(was);
         }
         // the check of step 3, before the keys join (ruling 17); a transform-decode that did not stop ranks after it
-        if (layer.stopped == null && !n.partial && layer.leftOver(bytes.length)) {
-            throw malformed("the " + bytes.length + " bytes of the inner line of " + n.name + " go on after the end of its message");
+        if (n.run) {
+            if (layer.stopped == null && messageEnd(n, layer, lim - start) < lim - start) {
+                throw messageCount("bytes remain after the first message of the run of " + n.name);
+            }
+        } else if (layer.stopped == null && !n.partial && layer.leftOver((int) ((lim - start) / 8))) {
+            throw malformed("the " + (lim - start) / 8 + " bytes of the inner line of " + n.name + " go on after the end of its message");
         }
         Entity got = layer.entity;
         r.fails.addInner(layer.fails, got, e);
@@ -958,6 +1099,9 @@ final class SeqCodec extends BitsWire<byte[]> {
         /** engine-spec 0.33: the bit positions a held key wrote (ruling 12). */
         final java.util.BitSet held = new java.util.BitSet();
 
+        /** The messages a {@code run} line writes (engine-spec 0.92); null for the one message of the entity itself. */
+        List<Entity> messages;
+
         Writer(Map<Entity, Map<Seq.Node, Seq.Case>> assumed) {
             this.assumed = assumed;
             extents.push(new Extent(0, false));
@@ -1093,10 +1237,33 @@ final class SeqCodec extends BitsWire<byte[]> {
 
     @Override
     String encode(Entity e, boolean layer) {
-        Seq.Kind kind = selectRoot(e, layer);
+        return encodeAs(selectRoot(e, layer), e, null);
+    }
+
+    @Override
+    String encodeRun(Entity outer, List<Entity> joined, String sourceInner, boolean context, boolean samePack,
+                     java.util.function.Consumer<Entity> complete) {
+        Seq.Kind kind = selectRoot(outer, false);   // on the outer entity alone (ruling 6 of 0.92)
+        for (Seq.Node n : Seq.innerLines(kind.all)) {
+            if (!n.run) continue;
+            // the inner format of the source: neither context nor derivations unless the caller gives context
+            if (context || !n.name.equals(sourceInner)) joined.forEach(complete);
+            return encodeAs(kind, outer, joined);
+        }
+        if (joined.size() != 1) throw messageCount("kind " + kind.name + " has no run line and takes one message, not " + joined.size());
+        if (context || !samePack) complete.accept(joined.get(0));
+        return encodeAs(kind, joined.get(0), null);
+    }
+
+    private GtException messageCount(String why) {
+        return new GtException(GtException.Code.MESSAGE_COUNT, pack.format, null, why);
+    }
+
+    private String encodeAs(Seq.Kind kind, Entity e, List<Entity> messages) {
         Map<Entity, Map<Seq.Node, Seq.Case>> assumed = new IdentityHashMap<>();
         for (int pass = 1; ; pass++) {
             Writer w = new Writer(assumed);
+            w.messages = messages;
             try {
                 encodeKind(root, kind, w, e);
             } catch (GtException ex) {
@@ -1584,10 +1751,14 @@ final class SeqCodec extends BitsWire<byte[]> {
                     // engine-spec 0.34: the checks, then a whole byte, then the inner pack's message of the same entity
                     BitsWire<?> inner = reachInner(n);
                     if (w.pos % 8 != 0) throw encodeError("the inner line of " + n.name + " is reached at bit " + w.pos + ", not on a whole byte");
-                    byte[] bytes = fromHex(inner.encode(e, true));
-                    w.ensure(w.pos + 8L * bytes.length);
-                    System.arraycopy(bytes, 0, w.b, (int) (w.pos / 8), bytes.length);
-                    w.pos += 8L * bytes.length;
+                    for (Entity m : n.run && w.messages != null ? w.messages : List.of(e)) {
+                        byte[] bytes = fromHex(inner.encode(m, true));
+                        // a message that cannot be found again (ruling 8 of 0.92)
+                        if (n.run && bytes.length == 0) throw encodeError("a message of the run of " + n.name + " writes no bytes");
+                        w.ensure(w.pos + 8L * bytes.length);
+                        System.arraycopy(bytes, 0, w.b, (int) (w.pos / 8), bytes.length);
+                        w.pos += 8L * bytes.length;
+                    }
                     break;
                 }
                 case SWITCH: {

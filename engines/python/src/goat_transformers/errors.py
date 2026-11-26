@@ -173,6 +173,12 @@ class MalformedWire(GTError):
     code = "malformed-wire"
 
 
+class MessageCount(GTError):
+    """Version 0.92: a carrier of none or several messages where one is needed."""
+
+    code = "message-count"
+
+
 class MissingRoot(GTError):
     code = "missing-root"
 

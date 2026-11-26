@@ -57,7 +57,8 @@ run(PacksDir, ModelsDir) ->
     {RPass, RFail} = run_ruling_cases(Engine),
     {UPass0, UFail0} = run_unit_checks(),
     {PPass, PFail} = run_profile_checks(),
-    {UPass, UFail} = {UPass0 + PPass, UFail0 + PFail},
+    {CostPass, CostFail} = run_cost_check(),
+    {UPass, UFail} = {UPass0 + PPass + CostPass, UFail0 + PFail + CostFail},
     {MPass, MFail} = {MPass0 + RPass, MFail0 + RFail},
     {KPass, KFail} = run_concurrent(PacksDir, ModelsDir),
     io:format("vectors: ~p/~p passed~n", [Pass, Pass + Fail]),
@@ -176,13 +177,19 @@ run_vector(Engine, G, From, To, Input, Context) ->
     case model_valid(Engine, G(<<"model">>)) of
         ok ->
             Convert = fun() -> gt_engine:convert(Engine, From, To, Input, Context) end,
-            Conv = case {G(<<"expect">>), G(<<"expect_error">>)} of
-                       {Expect, undefined} when is_binary(Expect) ->
+            Run = fun() -> gt_engine:convert_run(Engine, From, To, Input, Context) end,
+            Conv = case {G(<<"expect">>), G(<<"expect_error">>), G(<<"expect_results">>), G(<<"run">>)} of
+                       {Expect, undefined, undefined, undefined} when is_binary(Expect) ->
                            check_convert(Convert, Expect);
-                       {undefined, Kind} when is_binary(Kind) ->
+                       {undefined, Kind, undefined, undefined} when is_binary(Kind) ->
                            check_convert_error(Convert, Kind);
+                       %% runs of inner messages (0.92)
+                       {undefined, Kind, undefined, true} when is_binary(Kind) ->
+                           check_convert_error(Run, Kind);
+                       {undefined, undefined, {array, Wants}, undefined} ->
+                           check_run(Run(), Wants);
                        _ ->
-                           {error, vector_needs_exactly_one_of_expect_and_expect_error}
+                           {error, vector_needs_exactly_one_of_expect_expect_error_and_expect_results}
                    end,
             case Conv of
                 ok -> check_model(Engine, From, Input, Context, G(<<"model">>));
@@ -241,6 +248,22 @@ check_convert(Convert, Expect) ->
         Expect -> ok;
         Got -> {error, {convert, Expect, Got}}
     end.
+
+%% The results of convert_run, one for one (0.92).
+check_run(Got, Wants) when length(Got) =/= length(Wants) ->
+    {error, {run_results, {expected, length(Wants)}, {got, Got}}};
+check_run(Got, Wants) ->
+    Bad = [{I, W, G} || {I, W, G} <- lists:zip3(lists:seq(1, length(Got)), Wants, Got),
+                        not run_result_ok(W, G)],
+    case Bad of
+        [] -> ok;
+        _ -> {error, {run_results, Bad}}
+    end.
+
+run_result_ok({object, [{<<"expect">>, Want}]}, {ok, Out}) -> Out =:= Want;
+run_result_ok({object, [{<<"expect_error">>, Want}]}, {error, Kind, Msg}) ->
+    atom_to_binary(Kind) =:= Want andalso lists:prefix(binary_to_list(Want) ++ ":", Msg);
+run_result_ok(_, _) -> false.
 
 %% convert must fail, and the message must begin with the kind and a colon.
 check_convert_error(Convert, Kind) ->
@@ -715,7 +738,9 @@ self_contained(Pack, PackFiles) ->
 -define(KINDS, ['no-kind', 'missing-root', 'malformed-wire', 'transform-decode',
                 'transform-encode', 'undeclared-key', 'key-type-mismatch',
                 %% raised where decode or encode reaches an `inner` line (0.34)
-                'unknown-format', 'bad-directive', 'distribution-violation']).
+                'unknown-format', 'bad-directive', 'distribution-violation',
+                %% a run that does not hold one message (0.92)
+                'message-count']).
 
 run_malformed(Engine, PacksDir) ->
     {P, F, _, _} =
@@ -1196,6 +1221,40 @@ profile_checks(Root) ->
          || {Case, P, M} <- [{"inner not shown public", AP, AM},
                              {"inner using a controlled module", BP, BM}]],
     Rule6 ++ Rule5 ++ InnerCases ++ InnerC.
+
+%% A run of ten times the messages takes about ten times as long (0.92): a
+%% carrier of one-byte messages converted to itself, 2000 and 20000 messages,
+%% the best of three each. A quadratic decode or encode gives a ratio near 100.
+run_cost_check() ->
+    Head = fun(Name) -> ["format ", Name, "\nversion 0.92.0\ndistribution public\nsource \"unit check\"\n"
+                         "uses probe\nwire bits\nlayout sequential\nbit_order msb\n"] end,
+    Module = fun(Name, Keys) -> iolist_to_binary(["module ", Name, "\nversion 0.1.0\ndistribution public\n"
+                                                  "source \"unit check\"\n", Keys]) end,
+    Texts = [{load_model, Module("core", "key uid string -\nkey time_ms int ms\n")},
+             {load_model, Module("probe", "key x int -\n")},
+             {load_pack, iolist_to_binary([Head("unit-run-message"), "framing self\nfield probe.x 8 uint\n"])},
+             {load_pack, iolist_to_binary([Head("unit-run-carrier"), "inner unit-run-message run\n"])}],
+    E = lists:foldl(fun({load_model, T}, A) -> gt_engine:load_model(A, T);
+                       ({load_pack, T}, A) -> gt_engine:load_pack(A, T)
+                    end, gt_engine:new(), Texts),
+    C = <<"unit-run-carrier">>,
+    Time = fun(N) ->
+                   In = gt_hex:bytes_to_hex(<< <<(I rem 256)>> || I <- lists:seq(1, N) >>),
+                   lists:min([begin
+                                  T0 = erlang:monotonic_time(microsecond),
+                                  [{ok, Out}] = gt_engine:convert_run(E, C, C, In, none),
+                                  true = Out =:= In,
+                                  erlang:monotonic_time(microsecond) - T0
+                              end || _ <- [1, 2, 3]])
+           end,
+    Small = max(1000, Time(2000)),
+    Large = Time(20000),
+    case Large =< 40 * Small of
+        true -> {1, 0};
+        false ->
+            io:format("FAIL unit a run of 20000 messages takes ~p us, one of 2000 ~p us~n", [Large, Small]),
+            {0, 1}
+    end.
 
 run_ruling_cases(Engine) ->
     Packs = gt_engine:packs(Engine),

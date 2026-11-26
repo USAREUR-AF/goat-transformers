@@ -594,6 +594,9 @@ public final class Pack {
      * about them is checked at load.
      */
     public List<String> innerFormats = List.of();
+    /** engine-spec 0.92: the pack has an {@code inner ... run} line; it has a {@code framing self} line. */
+    boolean carrier;
+    boolean framing;
     /** tlv wire: bytes of a fixed tag, 0 for {@code ber-oid}. */
     int tlvTagSize;
     /** tlv wire: bytes of a fixed length, 0 for {@code ber}. */
@@ -732,7 +735,7 @@ public final class Pack {
     /** Directives that are not allowed between {@code group} and its {@code end}. */
     private static final Set<String> NOT_IN_GROUP = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap",
-            "delimiter", "start", "checksum", "tag", "key", "length", "armor", "encoding");
+            "delimiter", "start", "checksum", "tag", "key", "length", "armor", "encoding", "framing");
 
     /** The directives of a pack (ruling 5 of 0.11): any other first word is {@code unknown-directive}. */
     static final Set<String> DIRECTIVES = Set.of("format", "version", "distribution", "source", "uses", "wire", "root",
@@ -743,7 +746,8 @@ public final class Pack {
             "encoding", "ext", "choice", "alt",   // 0.19: directives on every wire (ruling 21)
             "switch", "case", "else",   // engine-spec 0.20
             "count",    // engine-spec 0.21
-            "inner");   // engine-spec 0.34
+            "inner",   // engine-spec 0.34
+            "framing");   // engine-spec 0.92
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
@@ -751,12 +755,14 @@ public final class Pack {
             "armor",    // armor: ruling 13 of 0.14
             "tag",      // tag: exactly one argument, checked as the line is read (engine-spec 0.28)
             "element",  // element (0.18): its count does not depend on the layout (step 3 of 5b of 0.11)
+            "framing",   // engine-spec 0.92, ruling 16
             "encoding", "alt");   // 0.19, ruling 23: counted at step 3 of 5b, as armor is
 
     /** The lines that stand after the {@code wire} line (ruling 5b of 0.11); one before it is {@code missing-wire}. */
     private static final Set<String> AFTER_WIRE = Set.of("root", "field", "when", "const", "group", "end", "word_bytes",
             "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
-            "inner");   // engine-spec 0.34
+            "inner",   // engine-spec 0.34
+            "framing");   // engine-spec 0.92
 
     /** Every transform of the specification, by the text before its first {@code :}. */
     private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "iso8601_short", "iso8601_s", "bool", "uint", "twos",
@@ -792,7 +798,7 @@ public final class Pack {
             case "else": ok = n == 0; break;
             // 0.13 adds `checksum sum16 <tag>`, the tlv form, beside the one-argument form of 5e; 0.27 `checksum crc32 <tag>`
             case "checksum": ok = n == 1 || (n == 2 && (args.get(0).equals("sum16") || args.get(0).equals("crc32"))); break;
-            case "inner": ok = n == 1 || n == 2; break;   // 0.34: a format name, then perhaps `partial`
+            case "inner": ok = n == 1 || n == 2; break;   // 0.34: a format name, then perhaps `partial` or `run` (0.92)
             default: ok = !ONE_ARGUMENT.contains(kw) || n == 1;
         }
         if (!ok) throw bad(format, null, where + ": " + kw + " has the wrong number of arguments (" + n + ")");
@@ -1138,6 +1144,8 @@ public final class Pack {
         GtException lateAt = null;   // engine-spec 0.33: an `at` on a pack that is not sequential
         int firstGate = 0;   // the line of the first gate block, 0 when there is none
         int fixedInnerLine = 0;   // the first inner line of a pack without layout sequential (engine-spec 0.34)
+        List<String[]> framingDirs = new ArrayList<>();   // framing lines {value, line, after a message kind} (0.92), checked after the file
+        boolean messageKindSeen = false;
         int firstElement = 0;   // the line of the first element line, 0 when there is none
         for (int i = 0; i < lines.length; i++) {
             int ln = i + 1;
@@ -1197,6 +1205,7 @@ public final class Pack {
                 }
             }
             if (kw.equals("kind") && firstKindLine == 0) firstKindLine = ln;
+            if (kw.equals("kind") && (seq == null || !seq.inBlock())) messageKindSeen = true;
             if (seq == null && kw.equals("inner")) {
                 // engine-spec 0.34: a line of a layout sequential bits pack; elsewhere refused after the file is read
                 if (fixedInnerLine == 0) fixedInnerLine = ln;
@@ -1328,6 +1337,9 @@ public final class Pack {
                         throw badDirective(format, null, where + ": layout must be fixed or sequential, got \"" + args.get(0) + "\"");
                     }
                     layout = args.get(0);
+                    break;
+                case "framing":
+                    framingDirs.add(new String[]{args.get(0), Integer.toString(ln), messageKindSeen ? "after" : null});
                     break;
                 case "encoding":
                     encodingDirs.add(new String[]{args.size() == 1 ? args.get(0) : null, Integer.toString(ln),
@@ -1554,6 +1566,17 @@ public final class Pack {
             if (uper && !"msb".equals(bitOrder)) throw badDirective(format, null, at + "encoding uper needs bit_order msb");
             if (uper && armorSixbit) throw badDirective(format, null, at + "encoding uper and armor sixbit in one pack");
         }
+        // framing (0.92, ruling 16): a layout sequential bits pack, once, before the first kind, self; no armor sixbit, no uper
+        for (int k = 0; k < framingDirs.size(); k++) {
+            String[] d = framingDirs.get(k);
+            String at = source + ":" + d[1] + ": ";
+            if (wire != Wire.BITS || seq == null) throw badDirective(format, null, at + "framing is for a bits pack with layout sequential");
+            if (k > 0) throw badDirective(format, null, at + "framing given twice");
+            if (d[2] != null) throw badDirective(format, null, at + "framing after the first kind line");
+            if (!d[0].equals("self")) throw badDirective(format, null, at + "framing takes self, got \"" + d[0] + "\"");
+            if (armorSixbit || uper) throw badDirective(format, null, at + "framing in a pack with armor sixbit or encoding uper");
+            seq.checkFraming(format);
+        }
         if (seq != null && seq.uperLine != 0 && !uper) {
             throw badDirective(format, null, source + ":" + seq.uperLine
                     + ": UPER locators, ext, choice, alt and group ... size are lines of a pack with encoding uper");
@@ -1685,6 +1708,8 @@ public final class Pack {
         pack.uper = uper;
         pack.valueLists = valueLists;
         if (seq != null && !seq.inners.isEmpty()) pack.innerFormats = List.copyOf(seq.inners);
+        pack.carrier = seq != null && seq.carrier;
+        pack.framing = !framingDirs.isEmpty();
         if (wire == Wire.TEXT) {
             String d = delimiterDir == null ? "," : delimiterDir[0];
             pack.textNoDelimiter = d.equals("none");

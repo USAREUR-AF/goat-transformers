@@ -17,19 +17,28 @@ import (
 const packsDir = "../../packs"
 
 type vector struct {
-	Name        string            `json:"name"`
-	From        string            `json:"from"`
-	To          string            `json:"to"`
-	Input       *string           `json:"input"`
-	InputB64    *string           `json:"input_b64"`
-	Expect      *string           `json:"expect"`
-	ExpectB64   *string           `json:"expect_b64"`
-	ExpectError *string           `json:"expect_error"`
-	Model       map[string]any    `json:"model"`
-	Context     map[string]string `json:"context"`
-	MaxItems    *json.Number      `json:"max_items"` // Version 0.11: the limit on list items for this vector
-	Source      string            `json:"source"`    // where the vector's bytes come from; not checked
-	Reference   string            `json:"reference"` // not checked
+	Name          string            `json:"name"`
+	From          string            `json:"from"`
+	To            string            `json:"to"`
+	Input         *string           `json:"input"`
+	InputB64      *string           `json:"input_b64"`
+	Expect        *string           `json:"expect"`
+	ExpectB64     *string           `json:"expect_b64"`
+	ExpectError   *string           `json:"expect_error"`
+	ExpectResults *[]resultVector   `json:"expect_results"` // Version 0.92: the results of convert_run
+	Run           *bool             `json:"run"`            // Version 0.92: the call of convert_run fails
+	Model         map[string]any    `json:"model"`
+	Context       map[string]string `json:"context"`
+	MaxItems      *json.Number      `json:"max_items"` // Version 0.11: the limit on list items for this vector
+	Source        string            `json:"source"`    // where the vector's bytes come from; not checked
+	Reference     string            `json:"reference"` // not checked
+}
+
+// resultVector is one expected result of convert_run (Version 0.92).
+type resultVector struct {
+	Expect      *string `json:"expect"`
+	ExpectB64   *string `json:"expect_b64"`
+	ExpectError *string `json:"expect_error"`
 }
 
 func bytesOf(t *testing.T, text, b64 *string, what string) []byte {
@@ -320,28 +329,74 @@ func checkVector(t *testing.T, eng *Engine, pack string, v vector) {
 		defer eng.SetMaxItems(DefaultMaxItems)
 	}
 	in := bytesOf(t, v.Input, v.InputB64, "input")
+	if v.Run != nil || v.ExpectResults != nil {
+		checkRunVector(t, eng, v, in)
+		if v.Run == nil {
+			checkVectorModel(t, eng, v, in)
+		}
+		return
+	}
 	got, err := eng.ConvertWith(v.From, v.To, in, v.Context)
-	if v.ExpectError != nil {
-		if v.Expect != nil || v.ExpectB64 != nil {
+	checkResult(t, v, "convert", resultVector{v.Expect, v.ExpectB64, v.ExpectError}, got, err)
+	checkVectorModel(t, eng, v, in)
+}
+
+// checkRunVector runs a vector of convert_run (Version 0.92).
+func checkRunVector(t *testing.T, eng *Engine, v vector, in []byte) {
+	t.Helper()
+	if v.Expect != nil || v.ExpectB64 != nil || v.ExpectResults != nil && (v.ExpectError != nil || v.Run != nil) {
+		t.Fatalf("vector sets more than one of expect, expect_error with run, and expect_results")
+	}
+	got, err := eng.ConvertRun(v.From, v.To, in, v.Context)
+	if v.ExpectResults == nil {
+		if !*v.Run || v.ExpectError == nil || len(v.Model) > 0 {
+			t.Fatalf("run is true, beside expect_error and without model")
+		}
+		checkResult(t, v, "convert_run", resultVector{ExpectError: v.ExpectError}, nil, err)
+		return
+	}
+	if err != nil {
+		t.Errorf("convert_run %s -> %s: %v", v.From, v.To, err)
+		return
+	}
+	if len(got) != len(*v.ExpectResults) {
+		t.Errorf("convert_run %s -> %s gave %d result(s), want %d", v.From, v.To, len(got), len(*v.ExpectResults))
+		return
+	}
+	for i, want := range *v.ExpectResults {
+		checkResult(t, v, fmt.Sprintf("result %d of convert_run", i), want, got[i].Bytes, got[i].Err)
+	}
+}
+
+// checkResult compares one result of a conversion with what the vector wants.
+func checkResult(t *testing.T, v vector, call string, w resultVector, got []byte, err error) {
+	t.Helper()
+	if w.ExpectError != nil {
+		if w.Expect != nil || w.ExpectB64 != nil {
 			t.Fatalf("vector sets both expect and expect_error")
 		}
-		want := *v.ExpectError
+		want := *w.ExpectError
 		switch {
 		case err == nil:
-			t.Errorf("convert %s -> %s succeeded with %s, want error %s", v.From, v.To, got, want)
+			t.Errorf("%s %s -> %s succeeded with %s, want error %s", call, v.From, v.To, got, want)
 		case !IsKind(err, ErrorKind(want)):
-			t.Errorf("convert %s -> %s: got %v, want error kind %s", v.From, v.To, err, want)
+			t.Errorf("%s %s -> %s: got %v, want error kind %s", call, v.From, v.To, err, want)
 		case !strings.HasPrefix(err.Error(), want+":"):
 			t.Errorf("message %q does not begin with %q", err.Error(), want+":")
 		}
 	} else {
-		want := bytesOf(t, v.Expect, v.ExpectB64, "expect")
+		want := bytesOf(t, w.Expect, w.ExpectB64, "expect")
 		if err != nil {
-			t.Errorf("convert %s -> %s: %v", v.From, v.To, err)
+			t.Errorf("%s %s -> %s: %v", call, v.From, v.To, err)
 		} else if !bytes.Equal(got, want) {
-			t.Errorf("convert %s -> %s mismatch\n got: %s\nwant: %s", v.From, v.To, got, want)
+			t.Errorf("%s %s -> %s mismatch\n got: %s\nwant: %s", call, v.From, v.To, got, want)
 		}
 	}
+}
+
+// checkVectorModel runs the `model` checks of a vector.
+func checkVectorModel(t *testing.T, eng *Engine, v vector, in []byte) {
+	t.Helper()
 	if len(v.Model) == 0 {
 		return
 	}

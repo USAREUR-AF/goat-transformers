@@ -9,5 +9,7 @@ func init() {
 		decode:      decodeBits,
 		encode:      func(p *Pack, lay *layout, _ *Entity, rec *Item) ([]byte, error) { return encodeBits(p, lay, rec) },
 		encodeWhole: encodeSeq,
+		encodeRun:   encodeSeqRun,
+		runKind:     seqRunKind,
 	})
 }

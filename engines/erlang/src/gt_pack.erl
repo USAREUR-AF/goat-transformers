@@ -69,7 +69,7 @@
 -export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
          require_marking/2, yields/1, model_keys/1, key_names_marked/1, named/1,
          index/1, factor/1, number/1, when_match/2, when_first/1, req_key/1,
-         as_holds/2, as_match/2, lenrefs/1]).
+         as_holds/2, as_match/2, lenrefs/1, inner_modes/1]).
 %% for gt_text
 -export([text_loc_indexes/1]).
 
@@ -102,7 +102,7 @@ parse(Bin) ->
              common => [], defaults => [], kinds => [], kind_names => #{},
              delimiter => <<",">>, start => <<>>, checksum => none, text_seen => #{},
              tag_enc => ber_oid, len_enc => ber, key => none, sum16 => none, tlv_seen => #{},
-             armor => hex, armor_seen => false,
+             armor => hex, armor_seen => false, framing => none,
              encoding => none, encoding_seen => false,
              cur => common, late => [], gstack => [], sstack => [], bstack => [],
              vchecks => [], has_switch => false, switch_n => 0, at_errs => [],
@@ -186,6 +186,12 @@ parse(Bin) ->
                       load_error('bad-directive', "encoding uper with armor sixbit", []);
                   _ -> load_error('bad-directive',
                                   "encoding uper needs layout sequential and bit_order msb", [])
+              end;
+         (framing_header) ->
+              case {maps:get(armor, P1), maps:get(encoding, P1)} of
+                  {sixbit, _} -> load_error('bad-directive', "framing self in a pack with armor sixbit", []);
+                  {_, uper} -> load_error('bad-directive', "framing self in a pack with encoding uper", []);
+                  _ -> ok
               end;
          (inner_header) ->
               case {maps:get(armor, P1), maps:get(encoding, P1)} of
@@ -535,15 +541,18 @@ pack_directives() ->
      %% a named count (Version 0.21)
      <<"count">>,
      %% a message of another pack inside a field (Version 0.34)
-     <<"inner">>].
+     <<"inner">>,
+     %% a pack whose messages end by themselves (0.92)
+     <<"framing">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
     [<<"root">>, <<"field">>, <<"when">>, <<"const">>, <<"group">>, <<"end">>,
      <<"word_bytes">>, <<"bit_order">>, <<"layout">>, <<"also">>, <<"pad">>, <<"align">>,
      <<"presence">>, <<"if">>, <<"opt">>, <<"chain">>, <<"fx">>, <<"length">>,
-     %% Version 0.34: `inner` stands after `wire` and `layout sequential`
-     <<"inner">>].
+     %% Version 0.34: `inner` stands after `wire` and `layout sequential`;
+     %% 0.92: `framing` too
+     <<"inner">>, <<"framing">>].
 
 %% Does a directive take this number of arguments? (ruling 5e of 0.11)
 arg_count_ok(Dir, N) ->
@@ -557,6 +566,8 @@ arg_count_ok(Dir, N) ->
            <<"element">>,
            %% `encoding <none | uper>` and `alt <i>` (0.19)
            <<"encoding">>, <<"alt">>,
+           %% `framing self` (0.92)
+           <<"framing">>,
            %% `tag <n>` takes exactly one argument (0.28)
            <<"tag">>],
     case lists:member(Dir, One) of
@@ -769,7 +780,7 @@ known_directives() ->
      <<"element">>,
      <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>,
      <<"switch">>, <<"case">>, <<"else">>,
-     <<"count">>, <<"inner">>].
+     <<"count">>, <<"inner">>, <<"framing">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -796,6 +807,7 @@ apply_line([<<"checksum">>, <<"crc32">>, _] = Args, P) ->
     tlv_directive(checksum, tl(Args), P);
 apply_line([<<"armor">>, V], P) -> armor_directive(V, P);
 apply_line([<<"encoding">>, V], P) -> encoding_directive(V, P);
+apply_line([<<"framing">>, V], P) -> framing_directive(V, P);
 apply_line([Dir | _], _P) when Dir =:= <<"ext">>; Dir =:= <<"choice">>; Dir =:= <<"alt">> ->
     load_error('bad-directive', "~s is a line of a sequential pack with encoding uper", [Dir]);
 apply_line([Dir, V], P) when Dir =:= <<"delimiter">>; Dir =:= <<"start">>;
@@ -2266,7 +2278,7 @@ scan_bare(Bin, 0) ->
 %% the bits some `if` names in `presence_named`.
 seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
     PackLevel = [<<"format">>, <<"version">>, <<"wire">>, <<"layout">>, <<"bit_order">>,
-                 <<"armor">>, <<"encoding">>,
+                 <<"armor">>, <<"encoding">>, <<"framing">>,
                  <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>,
                  <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>, <<"map">>,
                  <<"root">>, <<"word_bytes">>],
@@ -2463,7 +2475,8 @@ seq_apply([<<"inner">>, Format | Word], #{sstack := Stack} = P) ->
     Partial = case Word of
                   [] -> false;
                   [<<"partial">>] -> true;
-                  _ -> load_error('bad-directive', "inner is `inner <format> [partial]`", [])
+                  [<<"run">>] -> run;                           % 0.92
+                  _ -> load_error('bad-directive', "inner is `inner <format> [partial | run]`", [])
               end,
     case [T || #{type := T} <- Stack, T =/= length] of
         [] -> ok;
@@ -2888,26 +2901,68 @@ seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
     rest_scope(Common1, Kinds1, false, top),
     inner_paths(Common1, Kinds1),
     {Common2, Kinds2} = inner_reach(Common1, Kinds1),
+    case maps:get(framing, P) of
+        self -> framing_rests(Common1, Kinds1);
+        none -> ok
+    end,
     P#{common := Common2, kinds := Kinds2, presence_named => element(2, St),
        presence_static => element(3, St),
+       has_run => lists:any(fun({_, Mode}) -> Mode =:= run end,
+                            inner_modes(Common1 ++ lists:append([maps:get(lines, K) || K <- Kinds1]))),
        inner_formats => lists:usort(inner_lines(Common1 ++ lists:append([maps:get(lines, K) || K <- Kinds1])))}.
 
 %% ---- `inner` lines (0.34) ----
 %% The formats of the `inner` lines of a scope, `length` blocks included
 %% (the only blocks an `inner` line may stand in).
-inner_lines(Lines) ->
+inner_lines(Lines) -> [F || {F, _Mode} <- inner_modes(Lines)].
+
+%% -> [{Format, false | true | run}]: a plain line, one with `partial`, one
+%% with `run` (0.92)
+inner_modes(Lines) ->
     lists:append([case L of
-                      {inner, F, _, _} -> [F];
-                      {len, _, _, _, Body} -> inner_lines(Body);
-                      {lenref, _, _, Body} -> inner_lines(Body);
+                      {inner, F, Mode, _} -> [{F, Mode}];
+                      {len, _, _, _, Body} -> inner_modes(Body);
+                      {lenref, _, _, Body} -> inner_modes(Body);
                       _ -> []
                   end || L <- Lines]).
+
+%% ---- `rest` groups of a pack with `framing self` (ruling 16 of 0.92) ----
+%% A `rest` group whose extent is the message stands after a `length ... whole`
+%% read whenever it is: in the common lines or its kind, outside every block,
+%% or in a block that holds both. Items are judged by the group they stand in;
+%% a `length` block is another extent.
+framing_rests(Common, Kinds) ->
+    W = framing_walk(Common, false),
+    lists:foreach(fun(#{lines := Ls}) -> framing_walk(Ls, W) end, Kinds).
+
+%% Whole: a whole length was read before, on this path and level -> the same
+%% after Lines
+framing_walk(Lines, Whole) ->
+    lists:foldl(
+      fun({lenwhole, _, _}, _W) -> true;
+         ({sgroup, List, rest, _}, false) ->
+              load_error('bad-directive',
+                         "framing self: group ~s rest runs to the end of the message with no length ... whole before it",
+                         [List]);
+         ({sgroup, _, _, _}, W) -> W;
+         ({len, _, _, _, _}, W) -> W;
+         ({lenref, _, _, _}, W) -> W;
+         %% the parts of a chain are one block
+         ({chain, First, Parts, _}, W) -> framing_walk(lists:append([First | Parts]), W), W;
+         (L, W) ->
+              lists:foreach(fun(B) -> framing_walk(B, W) end, seq_bodies(L)),
+              W
+      end, Whole, Lines).
 
 %% Every `inner` line with the keys the lines in its reach map, as entries of
 %% model_keys (ruling 20 of 0.52): for a line in a kind the common lines and
 %% that kind's, for one in the common lines the common lines and every kind's.
 inner_reach(Common, Kinds) ->
-    Reach = fun(Lines) -> maps:from_list([{K, true} || K <- key_names(Lines, <<>>), is_binary(K)]) end,
+    %% under `with` what the lines' `with` options name (ruling 9 of 0.92)
+    Reach = fun(Lines) ->
+                    (maps:from_list([{K, true} || K <- key_names(Lines, <<>>), is_binary(K)]))
+                        #{with => with_names(Lines, <<>>)}
+            end,
     Set = fun Set(Lines, Keys) ->
                   [case L of
                        {inner, F, Partial, _} -> {inner, F, Partial, Keys};
@@ -2924,6 +2979,17 @@ inner_reach(Common, Kinds) ->
               end,
     {Reached(Common, Common ++ lists:append([maps:get(lines, K) || K <- Kinds])),
      [K#{lines := Reached(Ls, Common ++ Ls)} || #{lines := Ls} = K <- Kinds]}.
+
+%% The entries of model_keys a `with` of the lines names: a key, or a list.
+with_names(Lines, Prefix) ->
+    lists:append([case L of
+                      {sfield, _, _, _, _, _, _, _, With} when With =/= none ->
+                          [<<Prefix/binary, With/binary>>, <<Prefix/binary, With/binary, "[]">>];
+                      {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
+                          with_names(Ls ++ lists:append([maps:get(lines, K) || K <- Ks]),
+                                     <<Prefix/binary, List/binary, "[].">>);
+                      _ -> with_names(lists:append(seq_bodies(L)), Prefix)
+                  end || L <- Lines]).
 
 %% At most one `inner` line on any reading path (ruling 33 of 0.21 as 0.34
 %% applies it): the common lines with each kind's.
@@ -3269,6 +3335,20 @@ armor_directive(V, #{armor_seen := Seen, cur := Cur, kind_names := Kinds} = P0) 
         <<"sixbit">> -> late(need_msb, P#{armor := sixbit});
         _ -> late({bad, "armor ~s is neither hex nor sixbit", [V]}, P)
     end.
+
+%% `framing self` (ruling 16 of 0.92): in a `layout sequential` bits pack, at
+%% most once, before the first `kind`; refusals after the file is read.
+framing_directive(V, #{framing := Framing, cur := Cur, kind_names := Kinds, layout := Layout} = P) ->
+    Bad = fun(true, Why) -> load_error('bad-directive', "framing: ~s", [Why]);
+             (false, _) -> ok
+          end,
+    Bad(Layout =/= sequential orelse maps:get(wire, P) =/= bits,
+        "valid only in a layout sequential bits pack"),
+    Bad(V =/= <<"self">>, "the one argument is self"),
+    Bad(Framing =/= none, "a second framing line"),
+    %% a kind of the message; those of a group's items do not count
+    Bad(Cur =/= common orelse map_size(Kinds) > 0, "it stands after the first kind"),
+    late(framing_header, P#{framing := self}).
 
 %% `encoding <none | uper>` (0.19): on the bits wire only, at most once,
 %% before the first `kind`; refusals after the file is read.

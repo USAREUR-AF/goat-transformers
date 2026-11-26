@@ -48,6 +48,7 @@ const char* error_kind_name(ErrorKind kind) {
         case ErrorKind::DuplicateField: return "duplicate-field";
         case ErrorKind::BadDirective: return "bad-directive";
         case ErrorKind::BadLicence: return "bad-licence";
+        case ErrorKind::MessageCount: return "message-count";
     }
     return "unknown";
 }
@@ -1351,6 +1352,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             else if (t[1] == "uper") why = "'encoding uper' needs 'layout sequential'";
             if (!why.empty() && encoding_error.empty()) encoding_error = where + ": " + why;
             if (encoding_line == 0) encoding_line = lineno;
+        } else if (kw == "framing") {
+            // v0.92 ruling 16: a line of a `layout sequential` `bits` pack.
+            throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'framing' needs 'layout sequential'");
         } else if (kw == "ext" || kw == "choice" || kw == "alt") {
             // Outside a UPER pack, on any wire (ruling 21 of 0.19).
             if (uper_line == 0) {

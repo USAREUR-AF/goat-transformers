@@ -9,7 +9,7 @@
 %%   value has its first bit most significant. Read as one big-endian integer
 %%   of N bits, bit i of the message is bit N - 1 - i of the integer.
 -module(gt_bits).
--export([open/2, bit_size/1, read/3, slice/3, byte_value/2,
+-export([open/2, bit_size/1, read/3, slice/3, overwrite_bytes/3,
          new/2, new_bits/2, write/4, overwrite/4, to_bytes/1,
          unarmor/1, armor/2, peek/3, written_any/3, write_within/5]).
 
@@ -68,11 +68,6 @@ read({lsb, _, Bin}, Off, Len) ->
 %% 8 and within the message: the input of an inner message (0.34).
 slice({_, _, Bin}, Off, End) -> binary:part(Bin, Off div 8, (End - Off) div 8).
 
-%% The value an 8-bit field at a whole byte holds when the byte is B, in a
-%% bit order: B itself, but with its bits reversed under msb-lsb.
-byte_value(B, msblsb) -> rev(B, 8);
-byte_value(B, _Order) -> B.
-
 %% ---- writing ----
 
 %% A zeroed message of Bytes bytes: {Order, BitSize, Value, WrittenMask}.
@@ -107,6 +102,16 @@ overwrite({Order, Size, Val, Written}, Off, Len, U) ->
     Range = mask(Len) bsl Shift,
     {Order, Size, (Val band (bnot Range)) bor ((U band mask(Len)) bsl Shift),
      Written bor Range}.
+
+%% Whole bytes from Off, a multiple of 8, in one step: they stand in the output
+%% as they are, in every bit order.
+overwrite_bytes({msblsb, _, _, _} = M, Off, Bin) -> as_msblsb(overwrite_bytes(as_msb(M), Off, Bin));
+overwrite_bytes({msb, _, _, _} = M, Off, Bin) ->
+    overwrite(M, Off, bit_size_of(Bin), binary:decode_unsigned(Bin, big));
+overwrite_bytes({lsb, _, _, _} = M, Off, Bin) ->
+    overwrite(M, Off, bit_size_of(Bin), binary:decode_unsigned(Bin, little)).
+
+bit_size_of(Bin) -> 8 * byte_size(Bin).
 
 %% The Len bits from Off of a message being written, or `beyond` when the
 %% range runs past its end. Bits nothing wrote read as 0.

@@ -1,5 +1,7 @@
 // Unit checks for the parts the vectors exercise only partly: number formatting,
 // civil-date arithmetic, pack grammar errors, residue and parsing tolerance.
+#include <algorithm>
+#include <functional>
 #include <chrono>
 #include <cmath>
 #include <cstdint>
@@ -1642,6 +1644,50 @@ int main() {
                      "0.34 ruling 3: no inner bytes past the stated whole, a field");
     } catch (const std::exception& ex) {
         check(false, std::string("0.34 ruling 3 threw: ") + ex.what());
+    }
+
+    // v0.92: a run is decoded, joined and encoded in time linear in its length.
+    try {
+        const std::string head = "version 0.1.0\ndistribution public\nsource \"unit test\"\n";
+        const std::string seq = head + "wire bits\nlayout sequential\nbit_order msb\n";
+        gt::Engine eng;
+        eng.load_model("module core\nversion 0.1.0\ndistribution public\nsource \"unit test\"\nkey a int -\nkey b int -\n");
+        eng.add_pack(gt::parse_pack("format msg\n" + seq + "framing self\nfield b 8 uint\n"));
+        eng.add_pack(gt::parse_pack("format car\n" + seq + "field a 8 uint\ninner msg run\n"));
+        eng.add_pack(gt::parse_pack("format js\n" + head + "wire json\nfield a a int\nfield b b int\n"));
+        auto input = [](std::size_t n) {
+            std::string hex = "07";
+            for (std::size_t k = 0; k < n; ++k) hex += "05";
+            return hex;
+        };
+        auto seconds = [](const std::function<void()>& run) {
+            double best = 1e9;
+            for (int k = 0; k < 3; ++k) {
+                const auto start = std::chrono::steady_clock::now();
+                run();
+                best = std::min(best, std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count());
+            }
+            return best;
+        };
+        const std::size_t few = 10000, many = 80000;
+        const std::string small = input(few), big = input(many);
+        check(eng.decode_run("car", big).messages.size() == many, "0.92: decode_run of many messages");
+        const auto json = eng.convert_run("car", "js", small);
+        check(json.size() == few && json.back().output == "{\"a\":7,\"b\":5}", "0.92: convert_run of many messages");
+        const auto back = eng.convert_run("car", "car", big);
+        check(back.size() == 1 && back.front().output == big, "0.92: a carrier of many messages comes back");
+        const std::pair<const char*, std::function<void(const std::string&)>> runs[] = {
+            {"decode_run", [&](const std::string& in) { (void)eng.decode_run("car", in); }},
+            {"convert_run to json", [&](const std::string& in) { (void)eng.convert_run("car", "js", in); }},
+            {"convert_run to a carrier", [&](const std::string& in) { (void)eng.convert_run("car", "car", in); }}};
+        for (const auto& r : runs) {
+            const double t1 = seconds([&] { r.second(small); }), t8 = seconds([&] { r.second(big); });
+            // 8 times the messages: 8 times the time when linear, 64 when quadratic.
+            check(t8 < 24 * t1 || t8 < 0.05, std::string("0.92: ") + r.first + " is linear: " + std::to_string(t1) +
+                                                 " s for 10000, " + std::to_string(t8) + " s for 80000");
+        }
+    } catch (const std::exception& ex) {
+        check(false, std::string("0.92 run threw: ") + ex.what());
     }
 
     // v0.31 in v0.34: the item limit and a list counted from one or two places.

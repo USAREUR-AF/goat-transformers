@@ -218,6 +218,28 @@ def _max_items(vec):
     return vec.get("max_items")
 
 
+def _check_results(engine, src, dst, data, context, limit, want):
+    """`expect_results` (0.92): `convert_run` gives as many results, each as stated."""
+    try:
+        got = engine.convert_run(src, dst, data, context, max_items=limit)
+    except GTError as e:
+        return ["convert_run(%s -> %s) failed: %s" % (src, dst, e)]
+    out = []
+    if len(got) != len(want):
+        out.append("convert_run(%s -> %s) must give %d result(s), gave %d: %s"
+                   % (src, dst, len(want), len(got), [str(g) for g in got]))
+    for n, (w, g) in enumerate(zip(want, got)):
+        if "expect_error" in w:
+            ok = isinstance(g, GTError) and g.code == w["expect_error"] and str(g).startswith(w["expect_error"] + ":")
+            stated = w["expect_error"]
+        else:
+            ok = g == _bytes(w, "expect")
+            stated = _bytes(w, "expect")
+        if not ok:
+            out.append("result %d of convert_run(%s -> %s) must be %s, is: %s" % (n, src, dst, stated, g))
+    return out
+
+
 def run_conversion_vector(engine, rel, vec):
     """-> list of failure texts; empty when the vector passes."""
     src, dst = vec["from"], vec["to"]
@@ -227,19 +249,22 @@ def run_conversion_vector(engine, rel, vec):
     limit = _max_items(vec)
     if "max_items" in vec and (isinstance(limit, bool) or not isinstance(limit, int) or limit < 0):
         return ["invalid vector: max_items must be an integer of 0 or more, got %r" % (limit,)]
-    if "expect_error" in vec:
+    if [k in vec for k in ("expect", "expect_b64", "expect_error", "expect_results")].count(True) != 1:
+        return ["invalid vector: exactly one of expect, expect_error and expect_results"]
+    if "run" in vec and (vec["run"] is not True or "expect_error" not in vec):
+        return ["invalid vector: run is true, beside expect_error"]
+    if "expect_results" in vec:
+        out.extend(_check_results(engine, src, dst, data, context, limit, vec["expect_results"]))
+    elif "expect_error" in vec:
         want = vec["expect_error"]
+        call = engine.convert_run if "run" in vec else engine.convert
         try:
-            got = engine.convert(src, dst, data, context, max_items=limit)
+            got = call(src, dst, data, context, max_items=limit)
         except GTError as e:
             if e.code != want or not str(e).startswith(want + ":"):
-                out.append("convert(%s -> %s) must fail with %s, failed with: %s" % (src, dst, want, e))
+                out.append("%s(%s -> %s) must fail with %s, failed with: %s" % (call.__name__, src, dst, want, e))
         else:
-            out.append(
-                "convert(%s -> %s) must fail with %s, returned: %s" % (src, dst, want, got.decode("utf-8", "replace"))
-            )
-        if "expect" in vec:
-            out.append("vector carries both expect and expect_error")
+            out.append("%s(%s -> %s) must fail with %s, returned: %r" % (call.__name__, src, dst, want, got))
     else:
         expect = _bytes(vec, "expect")
         try:

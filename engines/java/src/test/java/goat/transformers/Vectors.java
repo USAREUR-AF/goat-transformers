@@ -108,12 +108,44 @@ final class Vectors {
     private static String runVectorChecks(Engine engine, Map<String, Object> v, String from, String to, String input,
                                           Map<String, String> context) {
         boolean wantsError = v.containsKey("expect_error");
-        if (wantsError == v.containsKey("expect")) return "vector needs exactly one of \"expect\" and \"expect_error\"";
-        if (wantsError) {
+        int forms = (wantsError ? 1 : 0) + (v.containsKey("expect") ? 1 : 0) + (v.containsKey("expect_results") ? 1 : 0);
+        if (forms != 1) return "vector needs exactly one of \"expect\", \"expect_error\" and \"expect_results\"";
+        // engine-spec 0.92: the call of convert_run as a whole fails
+        boolean run = v.containsKey("run");
+        if (run && !(Boolean.TRUE.equals(v.get("run")) && wantsError)) return "\"run\" is true, beside \"expect_error\"";
+        if (run && v.containsKey("model")) return "\"model\" is not used beside \"run\"";
+        if (v.containsKey("expect_results")) {
+            if (!(v.get("expect_results") instanceof List)) return "\"expect_results\" is not an array";
+            List<Object> want = (List<Object>) v.get("expect_results");
+            List<Run.Result> got = engine.convertRun(from, to, input, context);
+            if (v.containsKey("model") && got.size() != 1) return "\"model\" beside \"expect_results\" needs one message";
+            for (int i = 0; i < Math.min(want.size(), got.size()); i++) {
+                if (!(want.get(i) instanceof Map)) return "expect_results[" + i + "] is not an object";
+                Map<String, Object> w = (Map<String, Object>) want.get(i);
+                Run.Result g = got.get(i);
+                if (w.containsKey("expect") == w.containsKey("expect_error")) return "expect_results[" + i + "] needs exactly one of \"expect\" and \"expect_error\"";
+                if (w.containsKey("expect")) {
+                    if (g.error != null) return "result " + i + ": want " + w.get("expect") + "\n  got  " + g.error.getMessage();
+                    if (!g.output.equals(w.get("expect"))) return "result " + i + " mismatch\n  want " + w.get("expect") + "\n  got  " + g.output;
+                } else {
+                    if (g.error == null) return "result " + i + ": want error " + w.get("expect_error") + "\n  got  " + g.output;
+                    if (!g.error.kind().equals(w.get("expect_error")) || !g.error.getMessage().startsWith(w.get("expect_error") + ":")) {
+                        return "result " + i + ": want error " + w.get("expect_error") + ", got " + g.error.getMessage();
+                    }
+                }
+            }
+            if (want.size() != got.size()) return "want " + want.size() + " results, got " + got.size();
+        } else if (wantsError) {
             if (!(v.get("expect_error") instanceof String)) return "\"expect_error\" is not a string";
             String kind = (String) v.get("expect_error");
             try {
-                String got = engine.convert(from, to, input, context);
+                String got;
+                if (run) {
+                    List<Run.Result> results = engine.convertRun(from, to, input, context);
+                    got = results.size() + " results of convert_run";
+                } else {
+                    got = engine.convert(from, to, input, context);
+                }
                 return "convert succeeded, want error " + kind + "\n  got  " + got;
             } catch (GtException ex) {
                 if (!ex.kind().equals(kind)) return "want error " + kind + ", got " + ex.getMessage();

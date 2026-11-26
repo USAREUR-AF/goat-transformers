@@ -58,6 +58,8 @@ enum class ErrorKind {
     BadDirective,           // a directive this specification has, used wrongly
     // v0.29
     BadLicence,             // a licence file that cannot be read as ruling 1 says, or a profile that is no profile
+    // v0.92
+    MessageCount,       // a run of inner messages where an operation takes exactly one
 };
 
 const char* error_kind_name(ErrorKind kind);
@@ -558,6 +560,8 @@ struct SeqNode {
     std::string inner_format;
     // `partial`: bytes of the inner input after the inner message's end are ignored.
     bool inner_partial = false;
+    // v0.92: `run`: messages of the inner format one after another.
+    bool inner_run = false;
     bool holds(std::uint64_t v) const {
         if (ranges.empty()) return v == number;
         for (const auto& r : ranges)
@@ -657,6 +661,8 @@ struct Pack {
     // v0.34: the format of each `inner` line, file order (a format named twice
     // is listed twice). Empty for a pack with no `inner` line.
     std::vector<std::string> inner_formats;
+    bool carrier = false;       // v0.92: the pack has an `inner ... run` line
+    bool framing_self = false;  // v0.92: `framing self`
 };
 
 // Parse the text of a pack.def. `source` names the file in error messages.
@@ -813,6 +819,31 @@ public:
     std::string convert(const std::string& from, const std::string& to,
                         const std::string& bytes) const;
 
+    // ---- v0.92: a run of inner messages
+
+    // One result of convert_run: the output, or the error.
+    struct RunResult {
+        std::string output;
+        std::optional<Error> error;
+    };
+    // convert_run(from, to, bytes[, context]): one result per message of a
+    // carrier, one result otherwise. Throws the errors of the call. The context
+    // is in string form, as for convert_text.
+    std::vector<RunResult> convert_run(const std::string& from, const std::string& to, const std::string& bytes,
+                                       const std::map<std::string, std::string>* context = nullptr) const;
+    // decode_run(format, bytes): the entity of the outer lines alone, then per
+    // message the entity joined with it, or the message's error. An ordinary
+    // message gives one entity.
+    struct RunEntity {
+        Entity entity;
+        std::optional<Error> error;
+    };
+    struct RunDecode {
+        Entity outer;
+        std::vector<RunEntity> messages;
+    };
+    RunDecode decode_run(const std::string& format, const std::string& bytes) const;
+
     // ---- v0.6: caller-supplied keys and derived keys
 
     // Model keys and values the caller supplies to `convert`.
@@ -862,6 +893,9 @@ private:
     std::string convert_impl(const std::string& from, const std::string& to, const std::string& bytes,
                              const Context* context, const std::map<std::string, std::string>* text,
                              const TextContext* ordered = nullptr) const;
+    // Order inside `convert` (0.6): step 1's kinds; steps 2 and 3, then 4.
+    void clear_kinds(Entity& e, const std::string& from, const Pack& target) const;
+    std::string finish_convert(Entity e, const std::string& from, const std::string& to, const Context* context) const;
     Distribution max_distribution_ = Distribution::Controlled;
     bool profile_limit_ = false;  // a load with a profile was made (0.93 ruling 6)
     std::uint64_t max_items_ = kDefaultMaxItems;

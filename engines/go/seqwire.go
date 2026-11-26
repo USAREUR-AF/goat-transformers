@@ -171,7 +171,7 @@ func (r *seqReader) unitBlock(n *seqNode) error {
 		if st != nil {
 			st.unread = true
 		}
-		r.skipped(n.body)
+		r.absent(n)
 		return nil
 	}
 	if st == nil || !st.ok {
@@ -201,6 +201,15 @@ func (r *seqReader) unitCounts(from int) error {
 		}
 	}
 	return nil
+}
+
+// absent marks what stands in a length block that reads as absent: a `run`
+// line there makes the message an ordinary one (0.92 ruling 4).
+func (r *seqReader) absent(n *seqNode) {
+	if run := r.d.run; run != nil && runLine(n.body) != nil {
+		run.ordinary = true
+	}
+	r.skipped(n.body)
 }
 
 // skipped marks the counts whose `length @` block stands among lines that
@@ -310,6 +319,11 @@ func (r *seqReader) body(b *seqBody) (*seqKind, error) {
 				}
 			}
 			r.pos = pos
+			if run := r.d.run; run != nil && b == r.p.sbody {
+				if runLine(b.common) == nil && runLine(k.nodes) == nil {
+					run.ordinary = true
+				}
+			}
 			if err := r.nodes(k.nodes); err != nil {
 				return k, err
 			}
@@ -435,7 +449,7 @@ func (r *seqReader) node(n *seqNode) error {
 			return err
 		}
 		if !ok {
-			r.skipped(n.body)
+			r.absent(n)
 			return nil
 		}
 		size, err := r.stated(at, n)
@@ -511,10 +525,12 @@ func (r *seqReader) node(n *seqNode) error {
 		// the case (0.20).
 		// A key whose line failed its transform fails the decode (0.20
 		// ruling 35).
-		if _, ok := d.rec.Fields[n.sw.key]; !ok {
-			for i, fe := range d.failed {
+		// In a message at a `run` line also when another line forgives it (0.92
+		// ruling 3).
+		if _, ok := d.rec.Fields[n.sw.key]; !ok || d.strict {
+			for i := d.failFrom; i < len(d.failed); i++ {
 				if d.failedKey[i] == n.sw.key && d.failedIn[i] == d.rec {
-					return fe
+					return d.failed[i]
 				}
 			}
 		}
@@ -729,7 +745,7 @@ func (r *seqReader) inner(n *seqNode) error {
 	if d.eng == nil {
 		return &Error{Kind: ErrUnknownFormat, Format: n.inner, Detail: "no engine to find the inner pack in"}
 	}
-	in, err := d.eng.innerPack(r.p, n.inner)
+	in, err := d.eng.innerPack(r.p, n.inner, n.run)
 	if err != nil {
 		return err
 	}
@@ -752,6 +768,9 @@ func (r *seqReader) inner(n *seqNode) error {
 	}
 	bytes := r.data[start/8 : limit/8]
 	r.toEnd()
+	if n.run {
+		return r.innerRun(n, in, bytes)
+	}
 	sub := &decodeState{pack: in, ent: NewEntity(), limit: d.limit - d.held, eng: d.eng, trackEnd: true, discard: map[string]bool{}}
 	for name := range d.top.Lists {
 		sub.discard[name] = true
@@ -765,6 +784,61 @@ func (r *seqReader) inner(n *seqNode) error {
 		return &Error{Kind: ErrMalformedWire, Format: in.Format, Detail: fmt.Sprintf("%d byte(s) are left after the end of the inner message read at the inner line on line %d of pack %s", left, n.line, r.p.Format)}
 	}
 	d.joinInner(sub)
+	return nil
+}
+
+// innerRun reads the messages of an `inner … run` line (0.92): outside a run
+// operation exactly one, which joins the entity.
+func (r *seqReader) innerRun(n *seqNode, in *Pack, data []byte) error {
+	d := r.d
+	count := func(what string) error {
+		return &Error{Kind: ErrMessageCount, Format: n.inner, Detail: fmt.Sprintf("the run on line %d of pack %s holds %s", n.line, r.p.Format, what)}
+	}
+	// message decodes one message from the start of what is left; the next
+	// one starts at its end.
+	message := func(left []byte) (*decodeState, int, error) {
+		sub := &decodeState{pack: in, ent: NewEntity(), limit: d.limit - d.held, eng: d.eng, trackEnd: true, strict: true, discard: map[string]bool{}}
+		sub.rec = sub.ent.item()
+		sub.top = sub.rec
+		if err := decodeBitsData(sub, left, len(left)*8); err != nil {
+			return nil, 0, err
+		}
+		sub.ent.Lists = sub.rec.Lists
+		end := sub.end / 8
+		if end > len(left) || end == 0 {
+			return nil, 0, &Error{Kind: ErrMalformedWire, Format: in.Format, Detail: fmt.Sprintf("a message of the run on line %d of pack %s ends at byte %d of the %d left", n.line, r.p.Format, end, len(left))}
+		}
+		return sub, end, nil
+	}
+	if d.run == nil {
+		if len(data) == 0 {
+			return count("no message")
+		}
+		sub, end, err := message(data)
+		if err != nil {
+			return err
+		}
+		if end < len(data) {
+			return count("more than one message")
+		}
+		d.joinInner(sub)
+		return nil
+	}
+	d.run.reached, d.run.format, d.run.before = true, n.inner, len(d.failed)
+	for len(data) > 0 {
+		// The limit bounds the number of messages by itself (ruling 5).
+		if int64(len(d.run.msgs)) >= d.limit {
+			return r.malformed("the run on line %d holds more than %d message(s)", n.line, d.limit)
+		}
+		sub, end, err := message(data)
+		if err != nil {
+			d.run.msgs = append(d.run.msgs, runMsg{stop: err})
+			d.run.stop = err
+			return nil
+		}
+		d.run.msgs = append(d.run.msgs, runMsg{ent: sub.ent, failed: sub.unforgiven(0, len(sub.failed))})
+		data = data[end:]
+	}
 	return nil
 }
 
@@ -1179,8 +1253,9 @@ func (w *seqWriter) fieldBits(f *Field, sc seqScope) []byte {
 // seqWriter writes a sequential message at a cursor.
 type seqWriter struct {
 	p      *Pack
-	eng    *Engine // the engine of the encode: an `inner` line finds its pack there (0.34)
-	ent    *Entity // the entity being written, which an `inner` line encodes again
+	eng    *Engine   // the engine of the encode: an `inner` line finds its pack there (0.34)
+	ent    *Entity   // the entity being written, which an `inner` line encodes again
+	msgs   []*Entity // the entities a `run` line encodes (0.92)
 	buf    *bitBuf
 	pos    int
 	pres   map[*seqPresenceDef][]bool
@@ -1314,6 +1389,48 @@ func (w *seqWriter) fail(format string, a ...any) error {
 const seqMaxPasses = 16
 
 func encodeSeq(e *Engine, p *Pack, ent *Entity) ([]byte, error) {
+	return encodeSeqMsgs(e, p, ent, []*Entity{ent})
+}
+
+// encodeSeqRun writes a carrier: the outer lines from the outer entity alone,
+// and each message from its joined entity (0.92 ruling 6).
+func encodeSeqRun(e *Engine, p *Pack, outer *Entity, msgs []*Entity) ([]byte, error) {
+	return encodeSeqMsgs(e, p, outer, msgs)
+}
+
+// seqRunKind chooses the kind of a carrier on its outer entity, and returns
+// its name and the inner format of the `run` line of its lines, "" for none.
+func seqRunKind(p *Pack, outer *Entity) (kind, format string, err error) {
+	nodes, _, err := seqSelect(p, p.sbody, outer.Kind, outer.item(), "the entity")
+	if err != nil {
+		return "", "", err
+	}
+	for _, n := range nodes {
+		if n.op == seqKindStart {
+			kind = n.kind.name
+		}
+	}
+	if r := runLine(nodes); r != nil {
+		format = r.inner
+	}
+	return kind, format, nil
+}
+
+// runLine is the `inner … run` line among lines, through length blocks.
+func runLine(nodes []*seqNode) *seqNode {
+	for _, n := range nodes {
+		if n.op == seqInner && n.run {
+			return n
+		}
+		if r := runLine(n.body); r != nil {
+			return r
+		}
+	}
+	return nil
+}
+
+// encodeSeqMsgs writes a message, with the messages of its `run` line.
+func encodeSeqMsgs(e *Engine, p *Pack, ent *Entity, msgs []*Entity) ([]byte, error) {
 	rec := ent.item()
 	nodes, defs, err := seqSelect(p, p.sbody, ent.Kind, rec, "the entity")
 	if err != nil {
@@ -1321,7 +1438,7 @@ func encodeSeq(e *Engine, p *Pack, ent *Entity) ([]byte, error) {
 	}
 	forced := map[seqSwitchAt]*seqCase{}
 	for pass := 1; ; pass++ {
-		w := &seqWriter{p: p, eng: e, ent: ent, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}, forced: forced, actual: map[seqSwitchAt]*seqCase{}}
+		w := &seqWriter{p: p, eng: e, ent: ent, msgs: msgs, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}, forced: forced, actual: map[seqSwitchAt]*seqCase{}}
 		out, err := w.encodePass(nodes, newScope(p, rec, defs))
 		// Errors of a pass whose prediction does not hold are not reported
 		// (ruling 34): the next pass predicts the cases this one selected.
@@ -1896,6 +2013,16 @@ func (n *seqNode) innerClash(outer, in *Pack) error {
 			return &Error{Kind: ErrBadDirective, Format: n.inner, Detail: fmt.Sprintf("the inner line on line %d of pack %s names format %s, and both packs map %s", n.line, outer.Format, n.inner, k)}
 		}
 	}
+	if !n.run {
+		return nil
+	}
+	// An outer line whose `with` names a key of the inner pack (0.92 ruling
+	// 9).
+	for _, k := range in.ModelKeys() {
+		if n.withs[k] {
+			return &Error{Kind: ErrBadDirective, Format: n.inner, Detail: fmt.Sprintf("the inner … run line on line %d of pack %s names format %s, which maps %s, and an outer line names it in `with`", n.line, outer.Format, n.inner, k)}
+		}
+	}
 	return nil
 }
 
@@ -1906,7 +2033,7 @@ func (w *seqWriter) inner(n *seqNode) error {
 	if w.eng == nil {
 		return &Error{Kind: ErrUnknownFormat, Format: n.inner, Detail: "no engine to find the inner pack in"}
 	}
-	in, err := w.eng.innerPack(w.p, n.inner)
+	in, err := w.eng.innerPack(w.p, n.inner, n.run)
 	if err != nil {
 		return err
 	}
@@ -1916,12 +2043,22 @@ func (w *seqWriter) inner(n *seqNode) error {
 	if w.pos%8 != 0 {
 		return w.fail("the inner line on line %d stands at bit %d, not on a whole byte", n.line, w.pos)
 	}
-	out, err := w.eng.encodeLayer(in, w.ent)
-	if err != nil {
-		return err
+	msgs := []*Entity{w.ent}
+	if n.run {
+		msgs = w.msgs
 	}
-	at := w.alloc(len(out) * 8)
-	copy(w.buf.data[at/8:], out)
+	for _, m := range msgs {
+		out, err := w.eng.encodeLayer(in, m)
+		if err != nil {
+			return err
+		}
+		// A message of no bytes could not be found again (0.92 ruling 8).
+		if n.run && len(out) == 0 {
+			return w.fail("a message of the run on line %d writes no bytes", n.line)
+		}
+		at := w.alloc(len(out) * 8)
+		copy(w.buf.data[at/8:], out)
+	}
 	return nil
 }
 

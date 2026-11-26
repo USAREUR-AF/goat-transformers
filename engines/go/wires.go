@@ -30,6 +30,12 @@ type wireCodec struct {
 	// encodeWhole writes a message of a pack with `layout sequential`; nil on
 	// a wire that has no sequential layout.
 	encodeWhole func(e *Engine, p *Pack, ent *Entity) ([]byte, error)
+	// encodeRun writes a carrier from its outer entity and the joined entities
+	// of its messages, and runKind chooses its kind on the outer entity: the
+	// kind's name and the inner format of its `run` line, "" for none (0.92);
+	// nil on a wire that has no sequential layout.
+	encodeRun func(e *Engine, p *Pack, outer *Entity, msgs []*Entity) ([]byte, error)
+	runKind   func(p *Pack, outer *Entity) (kind, format string, err error)
 }
 
 // codecs holds the codec of every wire of this build.

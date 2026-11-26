@@ -22,7 +22,7 @@ from . import uper
 # 0.19 adds `size`; 0.21 adds `rest`, `last` and `count @<name>` (the count of a `count` line)
 GROUP_MODES = ("count", "while", "more", "fx", "size", "rest", "last")
 _HEADER = ("format", "version", "wire", "layout", "bit_order", "word_bytes", "distribution", "source", "uses",
-           "map", "typemap", "root", "armor", "encoding")
+           "map", "typemap", "root", "armor", "encoding", "framing")
 _SINGLE = ("layout", "bit_order")
 
 
@@ -41,7 +41,8 @@ class Node:
               group is the last line of an item of an outer `rest` group (ruling 10 of 0.21)
     count     `name`, `length`, `plus` (0.21); `size` is set when a `length @` line names it (0.83)
     inner     `name`: the format of the inner pack; `partial`: bytes after its message are ignored (0.34);
-              `reach`: the mapped keys of the lines in reach of it (0.52, ruling 20)
+              `reach`: the mapped keys of the lines in reach of it (0.52, ruling 20); `run`: a run of
+              messages, `withs`: the entries the `with` options in reach name (0.92, ruling 9)
     chain     `parts`: the lines between `fx` lines; `ends_fx`: the last line is `fx`
     length    `length`, `unit` ("bytes" | "bits"), `plus`, `body`; `length @<name> units <u>` (0.83):
               `length` None, `count_node`, the `count` line, and `size`, the bits of one unit
@@ -64,7 +65,7 @@ class Node:
                  "scope", "parts", "ends_fx", "unit", "plus", "locator", "uper", "n", "ext", "alts", "index",
                  "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines",
                  "count_node", "count_nodes", "tail_rest", "until", "as_key", "at", "partial", "as_optional",
-                 "reach", "size")
+                 "reach", "size", "run", "withs")
 
     is_field = False
     is_const = False
@@ -268,6 +269,31 @@ class Body:
         mapped_keys(self.common, out.add)
         for k in self.kinds if kind is None else (kind,):
             mapped_keys(k.whens + k.nodes, out.add)
+        return frozenset(out)
+
+    def withs(self, kind):
+        """The entries that the `with` options of the lines in reach name (0.92, ruling 9)."""
+        out = set()
+
+        def walk(nodes, prefix):
+            for nd in nodes:
+                if nd.t == T_FIELD:
+                    for f in nd.bindings:
+                        if f.with_key is not None:
+                            out.add(prefix + f.with_key)
+                            out.add(prefix + f.with_key + "[]")
+                elif nd.t == T_GROUP:
+                    inside = prefix + nd.list + "[]."
+                    walk(nd.scope.common, inside)
+                    for k in nd.scope.kinds:
+                        walk(k.nodes, inside)
+                else:
+                    for part in children(nd):
+                        walk(part, prefix)
+
+        walk(self.common, "")
+        for k in self.kinds if kind is None else (kind,):
+            walk(k.nodes, "")
         return frozenset(out)
 
 
@@ -490,6 +516,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     wholes = []        # the `length ... whole` nodes, refused under `armor sixbit` (ruling 3 of 0.14)
     encoding = []      # 0.19: the `encoding` lines, checked after the file (`check_encoding`)
     uper_lines = []    # 0.19: (lineno, BadDirective) for each UPER line, refused when the pack is not UPER
+    framing = []       # 0.92: (word, lineno, after a message kind) of each `framing` line
     at_form = []       # 0.33: (lineno, BadDirective) of the form of `at`, raised by `Engine.add` (ruling 10)
 
     def line_bad(msg_text, lineno, locator=None):
@@ -890,6 +917,40 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 return
             nd.tail_rest = True
 
+    def check_framing():
+        """0.92, ruling 16: the `framing` lines, and every `rest` group whose
+        extent is the message: a `length ... whole` before it is read whenever
+        the `rest` is. -> whether the pack has `framing self`."""
+        for k, (word, lineno, after_kind) in enumerate(framing):
+            if word != "self":
+                deferred.append((lineno, bad("a 'framing' line is: framing self; got %r" % word, lineno, "framing")))
+            elif k:
+                deferred.append((lineno, bad("a second 'framing' line", lineno, "framing")))
+            elif after_kind:
+                deferred.append((lineno, bad("'framing' after the first 'kind'", lineno, "framing")))
+        if not framing or stack:
+            return bool(framing)
+        for nd, (levels, end), lineno in rest_groups:
+            level = levels[-1][0]
+            if end != "extent" or level[0] != "body":
+                continue  # in a `length` block, or in an item (judged by the `rest` its group stands in)
+            before = list(msg.common) if level[2] is not None else []
+            for lv, child in levels:
+                if lv[0] == "chain":
+                    for part in lv[1].parts:
+                        here = any(x is child for x in part)
+                        before.extend(part[:_index(part, child)] if here else part)
+                        if here:
+                            break
+                else:
+                    lines = lv[1] if lv[0] == "list" else lv[2].nodes if lv[2] is not None else lv[1].common
+                    before.extend(lines[:_index(lines, child)])
+            if not any(x.t == T_WHOLE for x in before):
+                deferred.append((lineno, bad("a 'rest' group to the end of the message in a pack with 'framing self' "
+                                             "needs a 'length ... whole' before it that is read whenever it is",
+                                             lineno, "rest")))
+        return True
+
     def check_count(nd, home):
         """Rulings 2 and 33 of 0.21: in each reading path of the count's scope
         exactly one group, or `length @` (0.83), references it."""
@@ -981,6 +1042,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 # `delimiter`, `start`, `checksum` (0.10); `tag`, `key`, `checksum sum16|crc32` (0.13, 0.27);
                 # `element` (0.18, xml): another wire's
                 text_dirs.append((lineno, bad("%r is a directive of another wire" % kw, lineno, kw)))
+            elif kw == "framing":  # 0.92: checked after the file
+                framing.append((args[0], lineno, msg.cur is not None))
             elif kw == "armor":
                 armor_line(args, armor, any_kind, lineno)
             elif kw == "encoding":  # 0.19: checked after the file is read (`check_encoding`)
@@ -1209,9 +1272,10 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 count_lines.append((nd, home_of(body)))
                 target(body).append(nd)
             elif kw == "inner":  # 0.34: the rest of the extent is a message of another pack
-                nd = Node(T_INNER, lineno, name=args[0], locator=args[0], partial=len(args) == 2)
-                if nd.partial and args[1] != "partial":
-                    deferred.append((lineno, bad("an 'inner' line is: inner <format> [partial]; got %r" % args[1],
+                nd = Node(T_INNER, lineno, name=args[0], locator=args[0], partial=args[1:] == ["partial"],
+                          run=args[1:] == ["run"])
+                if len(args) == 2 and args[1] not in ("partial", "run"):
+                    deferred.append((lineno, bad("an 'inner' line is: inner <format> [partial | run]; got %r" % args[1],
                                                  lineno, args[1])))
                 target(body).append(nd)
                 inner_lines.append((nd, tuple(fr.what for fr in stack),
@@ -1476,6 +1540,11 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     armor_value = check_armor(armor, "bits", once.get("bit_order"), deferred, source, name)
     is_uper = check_encoding(encoding, "bits", True, once.get("bit_order"), armor_value, deferred, source,
                              name) == "uper"
+    is_framed = check_framing()
+    if armor_value == "sixbit" or is_uper:
+        for _, lineno, _ in framing:
+            deferred.append((lineno, bad("'framing' in a pack with %s" % (
+                "'armor sixbit'" if armor_value == "sixbit" else "'encoding uper'"), lineno, "framing")))
     if not is_uper:  # ruling 9 of 0.19
         deferred.extend(uper_lines)
     if armor_value == "sixbit" or is_uper:  # 0.34: not in a pack with `armor sixbit` or `encoding uper`
@@ -1508,6 +1577,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     pack.seq = msg
     for nd, _, _, kind in inner_lines:
         nd.reach = msg.reach(kind)
+        nd.withs = msg.withs(kind)
+    pack.framing = is_framed
+    pack.run_kinds = frozenset(kind.name if kind is not None else None for nd, _, _, kind in inner_lines if nd.run)
     late = sorted(at_form, key=lambda d: d[0])
     fixed = []
     for b in msg.bodies():  # 0.33: the fixed-window check, after the form of `at` (ruling 10)

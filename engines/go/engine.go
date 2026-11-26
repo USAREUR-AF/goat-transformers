@@ -500,7 +500,7 @@ func (e *Engine) modelKeys(p *Pack) []string {
 		}
 	}
 	p.sbody.modelKeys(add, "", func(format string) {
-		in, err := e.innerPack(p, format)
+		in, err := e.innerPack(p, format, false)
 		if err != nil {
 			return
 		}
@@ -512,16 +512,20 @@ func (e *Engine) modelKeys(p *Pack) []string {
 }
 
 // innerPack makes the checks of an `inner` line naming format in pack outer,
-// in the order of spec 0.34 ("Reaching the inner line"), and returns the
+// in the order of spec 0.34 ("Reaching the inner line"), with that of a `run`
+// line between checks 2 and 3 (0.92 ruling 16), and returns the
 // inner pack. The lookup is made at each use, so a pack loaded later is
 // found.
-func (e *Engine) innerPack(outer *Pack, format string) (*Pack, error) {
+func (e *Engine) innerPack(outer *Pack, format string, run bool) (*Pack, error) {
 	in, ok := e.packs[format]
 	if !ok {
 		return nil, &Error{Kind: ErrUnknownFormat, Format: format, Detail: fmt.Sprintf("the inner line of pack %s names format %s, which is not loaded", outer.Format, format)}
 	}
 	if in.Wire != WireBits || in.sixbitArmor || in.uper {
 		return nil, &Error{Kind: ErrBadDirective, Format: format, Detail: fmt.Sprintf("the inner line of pack %s names format %s, which is not on wire bits without armor sixbit and encoding uper", outer.Format, format)}
+	}
+	if run && (!in.seq || !in.framing) {
+		return nil, &Error{Kind: ErrBadDirective, Format: format, Detail: fmt.Sprintf("the inner … run line of pack %s names format %s, which is not a `layout sequential` pack with `framing self`", outer.Format, format)}
 	}
 	if in == outer || len(in.innerFormats) > 0 {
 		return nil, &Error{Kind: ErrBadDirective, Format: format, Detail: fmt.Sprintf("the inner line of pack %s names format %s, which is the outer pack or has an inner line of its own: one layer only", outer.Format, format)}
@@ -585,29 +589,11 @@ func (e *Engine) Decode(format string, b []byte) (*Entity, error) {
 	if err != nil {
 		return nil, err
 	}
-	d := &decodeState{pack: p, ent: NewEntity(), limit: e.maxItems, eng: e}
-	d.rec = d.ent.item()
-	d.top = d.rec
-	c, err := builtCodec(p)
+	d, err := e.decodePack(p, b, nil)
 	if err != nil {
 		return nil, err
 	}
-	if err := c.decode(d, b); err != nil {
-		return nil, err
-	}
-	d.ent.Lists = d.rec.Lists
-	// A key mapped by several lines takes its value from the earliest line
-	// whose locator is present and whose transform succeeds, so the failure
-	// of a line is an error only when no line gave its key a value, in the
-	// entity or the item the line was read for. A line whose transform
-	// succeeds and whose table has no entry is never forgiven (0.6 ruling 4,
-	// 0.7 ruling 10).
-	var failed []*Error
-	for i, f := range d.failed {
-		if _, has := d.failedIn[i].Fields[d.failedKey[i]]; !has || d.failedHard[i] {
-			failed = append(failed, f)
-		}
-	}
+	failed := d.unforgiven(0, len(d.failed))
 	if len(failed) > 0 {
 		return d.ent, &DecodeError{Format: p.Format, Fields: failed}
 	}
@@ -680,8 +666,13 @@ func (e *Engine) Convert(from, to string, b []byte) ([]byte, error) {
 // skipped, so a same-format round trip stays byte-exact. A decode that leaves
 // any key without a value fails the conversion.
 func (e *Engine) ConvertWith(from, to string, b []byte, context map[string]string) ([]byte, error) {
+	return e.ConvertOrdered(from, to, b, orderedContext(context))
+}
+
+// orderedContext is a context in byte order of its keys; nil for none.
+func orderedContext(context map[string]string) []KeyValue {
 	if context == nil {
-		return e.ConvertOrdered(from, to, b, nil)
+		return nil
 	}
 	keys := make([]string, 0, len(context))
 	for k := range context {
@@ -692,7 +683,7 @@ func (e *Engine) ConvertWith(from, to string, b []byte, context map[string]strin
 	for i, k := range keys {
 		ctx[i] = KeyValue{k, context[k]}
 	}
-	return e.ConvertOrdered(from, to, b, ctx)
+	return ctx
 }
 
 // KeyValue is one entry of an ordered context: a model key and its value in
@@ -706,17 +697,7 @@ type KeyValue struct {
 // key given twice takes its last value and keeps the place of its first. nil
 // means no context is given; an empty non-nil slice is an empty context.
 func (e *Engine) ConvertOrdered(from, to string, b []byte, ctx []KeyValue) ([]byte, error) {
-	var keys []string
-	var context map[string]string
-	if ctx != nil {
-		context = map[string]string{}
-		for _, kv := range ctx {
-			if _, seen := context[kv.Key]; !seen {
-				keys = append(keys, kv.Key)
-			}
-			context[kv.Key] = kv.Value
-		}
-	}
+	keys, context := readContext(ctx)
 	// from, then to, before the input is read (ruling 5 of 0.11).
 	if _, err := e.Pack(from); err != nil {
 		return nil, err
@@ -728,16 +709,7 @@ func (e *Engine) ConvertOrdered(from, to string, b []byte, ctx []KeyValue) ([]by
 	if err != nil {
 		return nil, err
 	}
-	// The kinds kept for the encode (0.5; spec 0.34, Conversion).
-	if from != to {
-		dst := e.packs[to]
-		if !dst.hasInnerFor(ent.Kind.Format) {
-			ent.Kind = EntityKind{}
-		}
-		if ent.InnerKind.Format != to && !dst.hasInnerFor(ent.InnerKind.Format) {
-			ent.InnerKind = EntityKind{}
-		}
-	}
+	keepKinds(ent, from, e.packs[to])
 	if from != to || context != nil {
 		if err := e.fillInOrder(ent, keys, context); err != nil {
 			return nil, err
@@ -747,7 +719,42 @@ func (e *Engine) ConvertOrdered(from, to string, b []byte, ctx []KeyValue) ([]by
 	return e.Encode(to, ent)
 }
 
+// readContext returns the keys of an ordered context, each at the place of
+// its first entry, and their last values; nil when no context is given.
+func readContext(ctx []KeyValue) (keys []string, context map[string]string) {
+	if ctx == nil {
+		return nil, nil
+	}
+	context = map[string]string{}
+	for _, kv := range ctx {
+		if _, seen := context[kv.Key]; !seen {
+			keys = append(keys, kv.Key)
+		}
+		context[kv.Key] = kv.Value
+	}
+	return keys, context
+}
+
+// keepKinds clears the kinds a conversion from one format into dst does not
+// keep (0.5; spec 0.34, Conversion).
+func keepKinds(ent *Entity, from string, dst *Pack) {
+	if from == dst.Format {
+		return
+	}
+	if !dst.hasInnerFor(ent.Kind.Format) {
+		ent.Kind = EntityKind{}
+	}
+	if ent.InnerKind.Format != dst.Format && !dst.hasInnerFor(ent.InnerKind.Format) {
+		ent.InnerKind = EntityKind{}
+	}
+}
+
 type decodeState struct {
+	// run is set in a run operation, and strict in the decode of a message at
+	// a `run` line (0.92).
+	run    *runDecode
+	strict bool
+
 	pack       *Pack
 	ent        *Entity
 	rec        *Item // what the lines being read fill: the entity's own keys and lists, or one item
@@ -755,6 +762,7 @@ type decodeState struct {
 	failedKey  []string        // the model key of each entry of failed
 	failedIn   []*Item         // the entity or item each entry of failed was read for
 	failedHard []bool          // the entry is an error whatever another line of its key gives
+	failFrom   int             // the first entry that can be of rec: those before are older than it
 	eng        *Engine         // the engine the decode runs in: an `inner` line finds its pack there (0.34)
 	top        *Item           // the record of the entity's own keys and lists
 	innerLists map[string]bool // the lists of the entity an inner decode gave: no later line replaces them (0.34)
@@ -918,11 +926,11 @@ func (d *decodeState) item(read func() error) (*Item, error) {
 		}
 		d.held++
 	}
-	saved := d.rec
+	saved, from := d.rec, d.failFrom
 	it := NewItem()
-	d.rec = it
+	d.rec, d.failFrom = it, len(d.failed)
 	err := read()
-	d.rec = saved
+	d.rec, d.failFrom = saved, from
 	return it, err
 }
 

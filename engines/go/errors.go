@@ -43,6 +43,7 @@ const (
 
 	// Version 0.5: message kinds.
 	ErrNoKind         ErrorKind = "no-kind"
+	ErrMessageCount   ErrorKind = "message-count" // 0.92: a carrier does not hold exactly one message
 	ErrDuplicateKind  ErrorKind = "duplicate-kind"
 	ErrDuplicateField ErrorKind = "duplicate-field" // withdrawn in 0.6: no longer raised
 

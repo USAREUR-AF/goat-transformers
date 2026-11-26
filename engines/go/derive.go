@@ -629,23 +629,37 @@ func (e *Engine) Fill(ent *Entity, context map[string]string) error {
 // fillInOrder is Fill with the context keys checked in the order of keys, so
 // the first failing key names the kind.
 func (e *Engine) fillInOrder(ent *Entity, keys []string, context map[string]string) error {
+	vals, err := e.contextValues(keys, context)
+	if err != nil {
+		return err
+	}
+	fillValues(ent, keys, vals)
+	return nil
+}
+
+// contextValues reads the context values as their keys' declared types.
+func (e *Engine) contextValues(keys []string, context map[string]string) ([]Value, error) {
 	vals := make([]Value, len(keys))
 	for i, k := range keys {
 		kind, err := e.keyType(k)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		v, err := readAs(context[k], kind)
 		if err != nil {
 			mod, _ := splitModelKey(k)
-			return &Error{Kind: ErrKeyTypeMismatch, Module: mod, Detail: fmt.Sprintf("context key %s is %s: %v", k, kindName(kind), err)}
+			return nil, &Error{Kind: ErrKeyTypeMismatch, Module: mod, Detail: fmt.Sprintf("context key %s is %s: %v", k, kindName(kind), err)}
 		}
 		vals[i] = v
 	}
+	return vals, nil
+}
+
+// fillValues sets each context key the entity lacks.
+func fillValues(ent *Entity, keys []string, vals []Value) {
 	for i, k := range keys {
 		if _, has := ent.Fields[k]; !has {
 			ent.Fields[k] = vals[i]
 		}
 	}
-	return nil
 }

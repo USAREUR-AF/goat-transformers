@@ -87,7 +87,9 @@ pub enum SeqLine {
     /// enclosing extent are one message of another loaded pack
     /// `bad_arg`: a second argument other than `partial`, refused after the file
     /// `reach`: the keys the outer pack's lines in reach map (ruling 20 of 0.52)
-    Inner { format: String, partial: bool, bad_arg: bool, line: usize, reach: Vec<String> },
+    /// `run`: `inner <format> run` (engine-spec v0.92); `withs`: the keys `with`
+    /// names on the lines in reach (ruling 9 of 0.92)
+    Inner { format: String, partial: bool, run: bool, bad_arg: bool, line: usize, reach: Vec<String>, withs: Vec<String> },
 }
 
 /// One `when` line of a sequential pack. `values`: every listed value and
@@ -427,6 +429,9 @@ struct Parser<'a> {
     as_err: Option<Error>,
     /// the first error of the form of an `at` (engine-spec v0.33)
     at_form: Option<Error>,
+    /// the first `framing` line and the first error of one (engine-spec v0.92)
+    framing: Option<usize>,
+    framing_err: Option<Error>,
     /// every `via` table a field names: (table, line)
     vias: Vec<(String, usize)>,
     // header
@@ -497,14 +502,32 @@ fn value_of(text: &str, len: u32, ln: usize) -> Result<u64, Error> {
     Ok(v)
 }
 
-const HEADER: [&str; 17] = [
+const HEADER: [&str; 18] = [
     "format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map", "typemap", "word_bytes", "root",
-    "delimiter", "start", "checksum", "armor", "encoding",
+    "delimiter", "start", "checksum", "armor", "encoding", "framing",
 ];
 
 impl<'a> Parser<'a> {
     fn peek(&self) -> Option<&'a (usize, Vec<String>)> {
         self.lines.get(self.i)
+    }
+
+    /// A `framing self` line (engine-spec v0.92, ruling 16): what is wrong with
+    /// it is reported after the file is read.
+    fn framing(&mut self, toks: &[String], ln: usize, after_kind: bool) {
+        let why = if self.framing.is_some() {
+            Some("a second `framing` line")
+        } else if toks.len() != 2 || toks[1] != "self" {
+            Some("framing is `self`")
+        } else if after_kind {
+            Some("`framing` stands before the first `kind`")
+        } else {
+            None
+        };
+        self.framing.get_or_insert(ln);
+        if let (Some(why), None) = (why, &self.framing_err) {
+            self.framing_err = Some(Error { msg: format!("bad-directive: line {}: {}", ln, why) });
+        }
     }
 
     /// One header directive of the pack, outside every block.
@@ -606,6 +629,8 @@ impl<'a> Parser<'a> {
                         self.armor.record(toks, ln, !out.kinds.is_empty());
                     } else if d == "encoding" {
                         self.encoding.record(toks, ln, !out.kinds.is_empty());
+                    } else if d == "framing" {
+                        self.framing(toks, ln, !out.kinds.is_empty());
                     } else {
                         self.header(ln, toks)?;
                     }
@@ -1391,10 +1416,19 @@ impl<'a> Parser<'a> {
             // engine-spec v0.34: where it may stand is checked after the file is read
             "inner" => {
                 if toks.len() != 2 && toks.len() != 3 {
-                    return bad(ln, "inner needs <format> [partial]");
+                    return bad(ln, "inner needs <format> [partial | run]");
                 }
                 let partial = toks.get(2).is_some_and(|t| t == "partial");
-                SeqLine::Inner { format: toks[1].clone(), partial, bad_arg: toks.len() == 3 && !partial, line: ln, reach: Vec::new() }
+                let run = toks.get(2).is_some_and(|t| t == "run");
+                SeqLine::Inner {
+                    format: toks[1].clone(),
+                    partial,
+                    run,
+                    bad_arg: toks.len() == 3 && !partial && !run,
+                    line: ln,
+                    reach: Vec::new(),
+                    withs: Vec::new(),
+                }
             }
             "case" | "else" => return bad(ln, format!("`{}` outside a `switch`", toks[0])),
             "fx" => return bad(ln, "`fx` outside a `chain`"),
@@ -1821,7 +1855,7 @@ fn check_inner(body: &SeqBody) -> Result<(), Error> {
         })
     }
     if let Some(ln) = bad_arg(&body.common).or_else(|| body.kinds.iter().find_map(|k| bad_arg(&k.lines))) {
-        return bad(ln, "the second argument of `inner` is `partial`");
+        return bad(ln, "the second argument of `inner` is `partial` or `run`");
     }
     /// the `inner` lines of these lines, `length` blocks entered, in line order
     fn found(lines: &[SeqLine], out: &mut Vec<usize>) {
@@ -1848,15 +1882,109 @@ fn check_inner(body: &SeqBody) -> Result<(), Error> {
     Ok(())
 }
 
+/// Engine-spec v0.92, ruling 16: in a pack with `framing self` a `rest` group
+/// whose extent is the message stands after a `length … whole` line that is
+/// read whenever the `rest` is. A `rest` of an item is judged by its group's.
+fn check_framing(body: &SeqBody) -> Result<(), Error> {
+    /// `whole`: such a line stands before `lines`; gives whether one does after them
+    fn walk(lines: &[SeqLine], mut whole: bool) -> Result<bool, Error> {
+        for l in lines {
+            match l {
+                SeqLine::Whole { .. } => whole = true,
+                SeqLine::Group(g) if g.rep == Rep::Rest && !whole => {
+                    return bad(g.line, format!("`group {} rest` of a pack with `framing self` needs a `length … whole` line read before it", g.list));
+                }
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Ext { body } => {
+                    walk(body, whole)?;
+                }
+                // a part is read only after the parts before it
+                SeqLine::Chain { parts, .. } => {
+                    let mut w = whole;
+                    for p in parts {
+                        w = walk(p, w)?;
+                    }
+                }
+                SeqLine::Choice { alts, .. } => {
+                    for (_, p) in alts {
+                        walk(p, whole)?;
+                    }
+                }
+                SeqLine::Switch(sw) => {
+                    for c in sw.bodies() {
+                        walk(&c.lines, whole)?;
+                    }
+                }
+                // a `length` block is an extent of its own
+                _ => {}
+            }
+        }
+        Ok(whole)
+    }
+    let whole = walk(&body.common, false)?;
+    for k in &body.kinds {
+        walk(&k.lines, whole)?;
+    }
+    Ok(())
+}
+
+/// The keys `with` names on the lines of a body, as entries of `model_keys`:
+/// a key, or a list of that name.
+fn with_keys(body: &SeqBody, prefix: &str, out: &mut Vec<String>) {
+    fn lines(ls: &[SeqLine], prefix: &str, out: &mut Vec<String>) {
+        for l in ls {
+            match l {
+                SeqLine::Field { f, .. } => {
+                    if let Some((k, _)) = &f.with {
+                        out.push(format!("{}{}", prefix, k));
+                        out.push(format!("{}{}[]", prefix, k));
+                    }
+                }
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => lines(body, prefix, out),
+                SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| lines(p, prefix, out)),
+                SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| lines(p, prefix, out)),
+                SeqLine::Switch(sw) => sw.bodies().for_each(|c| lines(&c.lines, prefix, out)),
+                SeqLine::Group(g) => with_keys(&g.body, &format!("{}{}[].", prefix, g.list), out),
+                _ => {}
+            }
+        }
+    }
+    lines(&body.common, prefix, out);
+    for k in &body.kinds {
+        lines(&k.lines, prefix, out);
+    }
+}
+
+/// Does one of these lines, `length` blocks entered, hold an `inner … run`?
+/// Gives its format (engine-spec v0.92).
+#[cfg(feature = "bits")]
+fn run_in(lines: &[SeqLine]) -> Option<&str> {
+    lines.iter().find_map(|l| match l {
+        SeqLine::Inner { run: true, format, .. } => Some(format.as_str()),
+        SeqLine::Length { body, .. } => run_in(body),
+        _ => None,
+    })
+}
+
+/// Is this the body of a carrier pack (engine-spec v0.92)?
+#[cfg(feature = "bits")]
+pub(crate) fn is_carrier(body: &SeqBody) -> bool {
+    run_in(&body.common).is_some() || body.kinds.iter().any(|k| run_in(&k.lines).is_some())
+}
+
 /// Set the lines in reach of each `inner` line (ruling 20 of 0.52): of one in
 /// a kind the common lines and that kind's; of one in the common lines, these
 /// and the lines of every kind. Run on a pack `check_inner` accepted.
 fn set_reach(body: &mut SeqBody) {
-    fn set(lines: &mut [SeqLine], keys: &[String]) {
+    fn set(lines: &mut [SeqLine], keys: &[String], with: &[String]) {
         for l in lines {
             match l {
-                SeqLine::Inner { reach, .. } => *reach = keys.to_vec(),
-                SeqLine::Length { body, .. } => set(body, keys),
+                SeqLine::Inner { reach, withs, run, .. } => {
+                    *reach = keys.to_vec();
+                    if *run {
+                        *withs = with.to_vec();
+                    }
+                }
+                SeqLine::Length { body, .. } => set(body, keys, with),
                 _ => {}
             }
         }
@@ -1870,15 +1998,19 @@ fn set_reach(body: &mut SeqBody) {
     }
     if holds(&body.common) {
         let mut keys = Vec::new();
+        let mut with = Vec::new();
         body.model_keys("", &mut keys);
-        set(&mut body.common, &keys);
+        with_keys(body, "", &mut with);
+        set(&mut body.common, &keys, &with);
     }
     let common = &body.common;
     for k in body.kinds.iter_mut().filter(|k| holds(&k.lines)) {
         let path = SeqBody { common: common.clone(), kinds: vec![k.clone()], ..Default::default() };
         let mut keys = Vec::new();
+        let mut with = Vec::new();
         path.model_keys("", &mut keys);
-        set(&mut k.lines, &keys);
+        with_keys(&path, "", &mut with);
+        set(&mut k.lines, &keys, &with);
     }
 }
 
@@ -1930,6 +2062,8 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         defaults: Vec::new(),
         as_err: None,
         at_form: None,
+        framing: None,
+        framing_err: None,
         vias: Vec::new(),
         format: None,
         version: None,
@@ -2006,6 +2140,16 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         crate::armor::check_no_whole(&body)?;
     }
     // engine-spec v0.34: no `inner` line in a pack with `armor sixbit` or `encoding uper` (`armor hex` is the default)
+    // engine-spec v0.92, ruling 16
+    if let Some(e) = p.framing_err.take() {
+        return Err(e);
+    }
+    if let Some(ln) = p.framing {
+        if armor == crate::armor::Armor::Sixbit || uper {
+            return bad(ln, "`framing self` in a pack with `armor sixbit` or `encoding uper`");
+        }
+        check_framing(&body)?;
+    }
     if let Some((format, ln)) = inner_lines(&body).first().filter(|_| armor == crate::armor::Armor::Sixbit || uper) {
         return bad(*ln, format!("`inner {}` in a pack with `armor sixbit` or `encoding uper`", format));
     }
@@ -2047,6 +2191,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         gates: Vec::new(),
         elements: Vec::new(),
         uper,
+        framing: p.framing.is_some(),
         at_err: None,
     })
 }
@@ -2095,19 +2240,42 @@ pub(crate) struct Reader<'a> {
     /// counts that state units whose `length @` block was not read, in the
     /// scopes being read (ruling 9 of 0.83)
     unread: Vec<usize>,
+    /// a run operation (engine-spec v0.92): the messages of the run are kept
+    /// here; None: `decode`, which reads a carrier of one message
+    run: Option<&'a std::cell::RefCell<RunCapture>>,
+    /// a message of a run: a `switch` on a key one of whose lines failed stops
+    /// the decode, forgiven or not (ruling 3 of 0.92)
+    strict: bool,
+}
+
+/// What a run operation reads of a carrier (engine-spec v0.92).
+#[cfg(feature = "bits")]
+#[derive(Default)]
+pub(crate) struct RunCapture {
+    /// the format of the `run` line reached
+    pub format: Option<String>,
+    /// a kind was selected with no `run` line in reach: an ordinary message
+    pub ordinary: bool,
+    /// each message: its failed lines not yet judged, or what stopped its
+    /// decode, which ends the run
+    pub messages: Vec<Result<Decoded, Error>>,
 }
 
 /// What a sequential layout needs of the engine for an `inner` line
 /// (engine-spec v0.34).
 #[cfg(feature = "bits")]
 pub(crate) trait InnerHost {
-    /// Checks 1 to 4 of "Reaching the `inner` line", in order.
-    fn inner_check(&self, outer: &Pack, format: &str) -> Result<(), Error>;
+    /// Checks 1 to 4 of "Reaching the `inner` line", in order; on a `run` line
+    /// that of 0.92 between 2 and 3.
+    fn inner_check(&self, outer: &Pack, format: &str, run: bool) -> Result<(), Error>;
     /// `decode(<format>, bytes)` of a pack that passed the checks. `held`:
     /// the lists the outer entity holds, which keep their items: the items
     /// of the inner lists of those names are not counted (7g of 0.11).
     /// Without `partial`, bytes after the message's end are `malformed-wire`.
     fn inner_decode(&self, format: &str, bytes: &[u8], partial: bool, held: Vec<String>) -> Result<Decoded, Error>;
+    /// One message of a run (engine-spec v0.92), from the first of `bytes`: its
+    /// entity, its failed lines not yet judged, and the byte it ends at.
+    fn inner_message(&self, format: &str, bytes: &[u8]) -> Result<(Decoded, usize), Error>;
     /// `encode(<format>, entity)` as a layer: the inner kind chosen by
     /// `Entity.inner_kind`, then `Entity.kind`, then `requires`.
     fn inner_encode(&self, format: &str, ent: &Entity) -> Result<Vec<u8>, Error>;
@@ -2119,12 +2287,23 @@ pub(crate) trait InnerHost {
 /// The checks made when decode or encode reaches an `inner` line: with no
 /// engine, no format is loaded.
 #[cfg(feature = "bits")]
-fn inner_host<'h>(host: Option<&'h dyn InnerHost>, outer: &Pack, format: &str, reach: &[String]) -> Result<&'h dyn InnerHost, Error> {
+fn inner_host<'h>(
+    host: Option<&'h dyn InnerHost>,
+    outer: &Pack,
+    format: &str,
+    run: bool,
+    reach: &[String],
+    withs: &[String],
+) -> Result<&'h dyn InnerHost, Error> {
     let h = host.ok_or_else(|| Error { msg: format!("unknown-format: no pack loaded for format `{}`", format) })?;
-    h.inner_check(outer, format)?;
+    h.inner_check(outer, format, run)?;
     // 5. no key of the lines in reach is a key of the inner pack
     if let Some(k) = h.inner_clash(format, reach) {
         return err(format!("bad-directive: format `{}`: `{}` is mapped by this pack and by the `inner` pack `{}`", outer.format, k, format));
+    }
+    // ruling 9 of 0.92
+    if let Some(k) = h.inner_clash(format, withs) {
+        return err(format!("bad-directive: format `{}`: `with` names `{}`, which the messages of the `{}` run map", outer.format, k, format));
     }
     Ok(h)
 }
@@ -2290,6 +2469,12 @@ fn decode_kind<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
         });
         if holds {
             r.pos = at;
+            if let Some(cap) = r.run {
+                let message = r.p.seq.as_ref().is_some_and(|b| std::ptr::eq(b, body));
+                if message && run_in(&body.common).is_none() && run_in(&k.lines).is_none() {
+                    cap.borrow_mut().ordinary = true;
+                }
+            }
             for (key, v) in bound {
                 set_as(d, key, v);
             }
@@ -2334,7 +2519,14 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 }
                 // a list an inner message gave the entity is kept (engine-spec v0.34)
                 SeqLine::Group(g) if g.rep == Rep::Rest && !r.inner_lists.contains(&g.list) => d.put_list(&g.list, Vec::new()),
-                absent => r.skip_blocks(std::slice::from_ref(absent)),
+                absent => {
+                    // a `run` line passed in an absent block: an ordinary message
+                    // (ruling 4 of 0.92)
+                    if let Some(cap) = r.run.filter(|_| run_in(std::slice::from_ref(absent)).is_some()) {
+                        cap.borrow_mut().ordinary = true;
+                    }
+                    r.skip_blocks(std::slice::from_ref(absent))
+                }
             }
             continue;
         }
@@ -2626,7 +2818,12 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
             SeqLine::Switch(sw) => {
                 // the key's value so far, as canonical text (engine-spec v0.20)
                 // a key whose line failed its transform fails the decode (ruling 35 of 0.20)
-                let value = match key_state(d, &sw.key) {
+                let failed = d.soft.iter().find(|(k, _)| r.strict && *k == sw.key).map(|(_, m)| m.clone());
+                let state = match failed {
+                    Some(m) => Err(m),
+                    None => key_state(d, &sw.key),
+                };
+                let value = match state {
                     Ok(v) => v,
                     Err(m) => return err(format!("transform-decode: format `{}`: {}", r.p.format, m)),
                 };
@@ -2648,8 +2845,8 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 }
                 decode_lines(&case.lines, r, d)?;
             }
-            SeqLine::Inner { format, partial, reach, .. } => {
-                let h = inner_host(r.host, r.p, format, reach)?;
+            SeqLine::Inner { format, partial, run, reach, withs, .. } => {
+                let h = inner_host(r.host, r.p, format, *run, reach, withs)?;
                 // Decode steps 1 and 2: whole bytes from the start of the message
                 if r.pos % 8 != 0 {
                     return Err(r.short(format!("the `inner {}` message starts at bit {}, inside a byte", format, r.pos)));
@@ -2662,6 +2859,26 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 let start = r.pos.min(r.end);
                 let bytes = &r.raw[(start / 8) as usize..(r.end / 8) as usize];
                 r.pos = r.end.max(r.pos);
+                if *run {
+                    let outer = r.p;
+                    match r.run {
+                        Some(cap) => read_run(outer, h, format, bytes, cap)?,
+                        // `decode` and `convert`: exactly one message (ruling 1 of 0.92)
+                        None => {
+                            let count = |what: &str| err(format!("message-count: format `{}`: the `{}` run holds {}", outer.format, format, what));
+                            if bytes.is_empty() {
+                                return count("no message");
+                            }
+                            let (inner, end) = message(outer, h, format, bytes)?;
+                            if end < bytes.len() {
+                                return count("more than one message");
+                            }
+                            let kept = d.join(inner, |m| inner_error(outer, Error { msg: format!("format `{}`: {}", format, m) }).msg);
+                            r.inner_lists.extend(kept);
+                        }
+                    }
+                    continue;
+                }
                 match h.inner_decode(format, bytes, *partial, d.ent.lists.keys().cloned().collect()) {
                     // steps 4 and 5, also after a failed line of the inner message (ruling 19)
                     Ok(inner) => {
@@ -2688,6 +2905,51 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
     Ok(())
 }
 
+/// One message of a run, from the first of `bytes`: it ends in them, and not
+/// at its start (engine-spec v0.92, "Where one message ends").
+#[cfg(feature = "bits")]
+fn message(outer: &Pack, h: &dyn InnerHost, format: &str, bytes: &[u8]) -> Result<(Decoded, usize), Error> {
+    let (d, end) = h.inner_message(format, bytes).map_err(|e| inner_error(outer, e))?;
+    if end == 0 || end > bytes.len() {
+        return err(format!(
+            "malformed-wire: format `{}`: a message of the `{}` run ends at byte {} of the {} left",
+            outer.format,
+            format,
+            end,
+            bytes.len()
+        ));
+    }
+    Ok((d, end))
+}
+
+/// Read the messages of a run in a run operation. A message whose decode stops
+/// is the last (ruling 3 of 0.92); one more than `max_items` is an error of
+/// the call (ruling 5). The outer lines after the run do not count their items.
+#[cfg(feature = "bits")]
+fn read_run(outer: &Pack, h: &dyn InnerHost, format: &str, bytes: &[u8], cap: &std::cell::RefCell<RunCapture>) -> Result<(), Error> {
+    cap.borrow_mut().format = Some(format.to_string());
+    let mut at = 0;
+    while at < bytes.len() {
+        let held = limit::held();
+        if held.is_some_and(|(_, max)| cap.borrow().messages.len() as u64 >= max) {
+            return err(format!("malformed-wire: format `{}`: the `{}` run holds more messages than the limit on items allows", outer.format, format));
+        }
+        let res = message(outer, h, format, &bytes[at..]);
+        limit::restore(held);
+        match res {
+            Ok((d, end)) => {
+                cap.borrow_mut().messages.push(Ok(d));
+                at += end;
+            }
+            Err(e) => {
+                cap.borrow_mut().messages.push(Err(e));
+                break;
+            }
+        }
+    }
+    Ok(())
+}
+
 /// `total`: the bits of the input (8 a byte of hex, 6 a character of armor).
 #[cfg(feature = "bits")]
 pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8], total: u64) -> Result<Entity, Error> {
@@ -2704,6 +2966,21 @@ pub(crate) fn decode_host(p: &Pack, body: &SeqBody, raw: &[u8], total: u64, host
 /// the bit the message ends at (ruling 13 of 0.34).
 #[cfg(feature = "bits")]
 pub(crate) fn decode_parts(p: &Pack, body: &SeqBody, raw: &[u8], total: u64, host: Option<&dyn InnerHost>) -> Result<(Decoded, u64), Error> {
+    decode_as(p, body, raw, total, host, None, false)
+}
+
+/// `decode_parts`, in a run operation with `run`, as a message of a run with
+/// `strict` (engine-spec v0.92).
+#[cfg(feature = "bits")]
+pub(crate) fn decode_as(
+    p: &Pack,
+    body: &SeqBody,
+    raw: &[u8],
+    total: u64,
+    host: Option<&dyn InnerHost>,
+    run: Option<&std::cell::RefCell<RunCapture>>,
+    strict: bool,
+) -> Result<(Decoded, u64), Error> {
     let mut r = Reader {
         host,
         inner_lists: Vec::new(),
@@ -2721,6 +2998,8 @@ pub(crate) fn decode_parts(p: &Pack, body: &SeqBody, raw: &[u8], total: u64, hos
         unit: 8,
         counts: HashMap::new(),
         unread: Vec::new(),
+        run,
+        strict,
     };
     let mut d = Decoded::new();
     let kind = decode_body(body, &mut r, &mut d)?;
@@ -2886,6 +3165,9 @@ struct Look<'p> {
     p: &'p Pack,
     /// the engine that finds the pack of an `inner` line (engine-spec v0.34)
     host: Option<&'p dyn InnerHost>,
+    /// the messages a `run` line writes (engine-spec v0.92); None: one, of the
+    /// entity encoded
+    messages: Option<&'p [Entity]>,
     /// (entity, switch line) -> case
     picks: std::cell::RefCell<HashMap<(usize, usize), Pick>>,
     changed: std::cell::Cell<bool>,
@@ -3223,6 +3505,8 @@ fn read_back_uper(p: &Pack, f: &FieldDef, loc: &crate::uper::Loc, also: &[FieldD
         unit: 8,
         counts: HashMap::new(),
         unread: Vec::new(),
+        run: None,
+        strict: false,
     };
     if let Ok(v) = crate::uper::read_field(&mut r, f, loc) {
         for a in also {
@@ -3706,15 +3990,25 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 encode_lines(&c.lines, &[], ent, defs.inside(c), w)?;
             }
             // engine-spec v0.34: the checks, a whole byte, then the inner message
-            SeqLine::Inner { format, reach, .. } => {
-                let h = inner_host(w.look.host, p, format, reach)?;
+            SeqLine::Inner { format, run, reach, withs, .. } => {
+                let h = inner_host(w.look.host, p, format, *run, reach, withs)?;
                 if w.pos % 8 != 0 {
                     return Err(w.fail(format!("the `inner {}` message would start at bit {}, inside a byte", format, w.pos)));
                 }
-                let bytes = h.inner_encode(format, ent).map_err(|e| inner_error(p, e))?;
-                let at = (w.pos / 8) as usize;
-                w.zeros(bytes.len() as u64 * 8);
-                w.buf[at..at + bytes.len()].copy_from_slice(&bytes);
+                let messages = match w.look.messages {
+                    Some(m) if *run => m,
+                    _ => std::slice::from_ref(ent),
+                };
+                for m in messages {
+                    let bytes = h.inner_encode(format, m).map_err(|e| inner_error(p, e))?;
+                    // ruling 8 of 0.92
+                    if *run && bytes.is_empty() {
+                        return Err(w.fail(format!("a message of the `{}` run writes no bytes: it could not be found again", format)));
+                    }
+                    let at = (w.pos / 8) as usize;
+                    w.zeros(bytes.len() as u64 * 8);
+                    w.buf[at..at + bytes.len()].copy_from_slice(&bytes);
+                }
             }
             // a group or block not reached leaves the field its `plus`
             // (ruling 6 of 0.21)
@@ -3742,7 +4036,28 @@ pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u
 /// `encode_bits` with the engine that finds the pack of an `inner` line.
 #[cfg(feature = "bits")]
 pub(crate) fn encode_host(p: &Pack, body: &SeqBody, ent: &Entity, host: Option<&dyn InnerHost>) -> Result<(Vec<u8>, u64), Error> {
-    let look = Look { p, host, picks: Default::default(), changed: Default::default() };
+    encode_run(p, body, ent, host, None)
+}
+
+/// The kind encode chooses for an entity, and the format of the `run` line in
+/// reach of it, when there is one (engine-spec v0.92, ruling 6).
+#[cfg(feature = "bits")]
+pub(crate) fn run_target<'b>(p: &Pack, body: &'b SeqBody, ent: &Entity) -> Result<(Option<&'b str>, Option<&'b str>), Error> {
+    let kind = select(p, body, ent, false)?;
+    let run = run_in(&body.common).or_else(|| kind.and_then(|k| run_in(&k.lines)));
+    Ok((kind.map(|k| k.name.as_str()), run))
+}
+
+/// `encode_host` with the messages of the run (engine-spec v0.92).
+#[cfg(feature = "bits")]
+pub(crate) fn encode_run(
+    p: &Pack,
+    body: &SeqBody,
+    ent: &Entity,
+    host: Option<&dyn InnerHost>,
+    messages: Option<&[Entity]>,
+) -> Result<(Vec<u8>, u64), Error> {
+    let look = Look { p, host, messages, picks: Default::default(), changed: Default::default() };
     // a pass whose switches select other cases than were looked up runs again
     let mut pass = 0;
     let mut w = loop {

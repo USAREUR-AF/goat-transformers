@@ -24,6 +24,8 @@
 //! Version 0.34: `"@inner_kind"` in `model` is the kind name of
 //! `Entity.inner_kind`, and `"@absent"` may list it. Every pack is loaded, so
 //! the packs `inner` lines name are loaded too.
+//! Version 0.92: `expect_results` holds the results of `convert_run`, and
+//! `"run": true` beside `expect_error` is an error of that call.
 
 use goat_transformers::json::Json;
 use goat_transformers::{json, Distribution, Engine, Entity, Grade, KeyType, Value, Wire};
@@ -207,18 +209,45 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
     };
     let convert = || engine.convert_text_limited(from, to, input, given, max_items);
 
+    // Version 0.92: `run` beside `expect_error`, or `expect_results`: `convert_run`
+    let convert_run = || engine.convert_run_text_limited(from, to, input, given, max_items);
+    let run = match v.get("run") {
+        None => false,
+        Some(Json::Bool(true)) if jstr(v, "expect_error").is_some() => true,
+        Some(_) => return Err("invalid vector: `run` is true, beside `expect_error`".into()),
+    };
     // `expect_error` in place of `expect`: convert must fail with that named error
     if let Some(kind) = jstr(v, "expect_error") {
-        return match convert() {
+        let res = if run { convert_run().map(|r| format!("{:?}", r)) } else { convert() };
+        return match res {
             Ok(out) => Err(format!("should fail with {}, produced {}", kind, out)),
             Err(e) if e.msg.starts_with(&format!("{}:", kind)) => Ok(()),
             Err(e) => Err(format!("want error kind `{}`, got `{}`", kind, e.msg)),
         };
     }
-    let expect = jstr(v, "expect").ok_or("no `expect`")?;
-    let got = convert().map_err(|e| format!("convert failed: {}", e))?;
-    if got != expect {
-        return Err(format!("({} -> {}) output mismatch\n      got  {}\n      want {}", from, to, got, expect));
+    if let Some(want) = v.get("expect_results") {
+        let want = match want {
+            Json::Arr(a) if v.get("expect").is_none() => a,
+            _ => return Err("invalid vector: `expect_results` is an array, in place of `expect`".into()),
+        };
+        let got = convert_run().map_err(|e| format!("convert_run failed: {}", e))?;
+        if got.len() != want.len() {
+            return Err(format!("want {} results, got {:?}", want.len(), got));
+        }
+        for (i, (g, w)) in got.iter().zip(want).enumerate() {
+            match (jstr(w, "expect"), jstr(w, "expect_error"), g) {
+                (Some(text), None, Ok(out)) if out == text => {}
+                (None, Some(kind), Err(e)) if e.msg.starts_with(&format!("{}:", kind)) => {}
+                (Some(_), None, _) | (None, Some(_), _) => return Err(format!("result {}: want {}, got {:?}", i, json::serialize(w), g)),
+                _ => return Err(format!("invalid vector: result {} holds one of `expect` and `expect_error`", i)),
+            }
+        }
+    } else {
+        let expect = jstr(v, "expect").ok_or("no `expect`")?;
+        let got = convert().map_err(|e| format!("convert failed: {}", e))?;
+        if got != expect {
+            return Err(format!("({} -> {}) output mismatch\n      got  {}\n      want {}", from, to, got, expect));
+        }
     }
 
     // optional model checks
