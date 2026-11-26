@@ -37,7 +37,8 @@ Endpoints
   uri        stdin:   stdout:   file:<path>   dir:<path>   serial:<device>
              tcp://<host>:<port>   tcp-listen://[<host>]:<port>
              udp://[<host>]:<port>   udp://<group>:<port>?iface=<address>
-  framing    newline | len:<N>:<be|le> | fixed:<N> | start:<byte>:len:<N>:<be|le>[:total] | whole
+  framing    newline | len:<N>:<be|le> | fixed:<N> | start:<byte>:len:<N>:<be|le>[:total]
+             | at:<offset>:len:<N>:<be|le>:<whole|rest> | whole
              | mavlink2 (MAVLink 2 frames; a trimmed payload is zero-filled to its full length)
              then optionally ,max=<bytes> and ,hex
   udp and dir endpoints are `whole` unless stated (one datagram or one file is

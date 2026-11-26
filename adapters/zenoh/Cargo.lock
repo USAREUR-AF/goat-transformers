@@ -769,7 +769,7 @@ dependencies = [
 
 [[package]]
 name = "goat-adapters-zenoh"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "goat-adapters-core",
  "goat-adapters-std",

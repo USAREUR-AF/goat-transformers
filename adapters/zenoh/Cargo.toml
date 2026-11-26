@@ -1,7 +1,7 @@
 # Built outside the adapters workspace: see README.md in this directory.
 [package]
 name = "goat-adapters-zenoh"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 description = "Zenoh transport adapter for goat-transformers. The only crate here with third-party dependencies."
 license = "Apache-2.0"
