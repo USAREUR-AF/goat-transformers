@@ -1,0 +1,13 @@
+{
+  "name": "ordinary-message",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-json",
+  "input": "020741",
+  "expect_results": [
+    {
+      "expect": "{\"n\":7,\"n_copy\":7}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: one result"
+}

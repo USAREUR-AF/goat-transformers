@@ -1,0 +1,13 @@
+{
+  "name": "outer-with-in-another-kind",
+  "from": "conformance-run-with-kind",
+  "to": "conformance-run-json",
+  "input": "02090102",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":1,\"y\":2}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 9: kind a's line is not in reach of kind b's `run` line"
+}

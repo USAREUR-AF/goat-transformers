@@ -1,0 +1,11 @@
+{
+  "name": "messages-over-the-limit-same-format",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-c-xy",
+  "input": "040102030409",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: the call's"
+}

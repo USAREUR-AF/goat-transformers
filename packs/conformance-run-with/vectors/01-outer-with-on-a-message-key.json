@@ -1,0 +1,10 @@
+{
+  "name": "outer-with-on-a-message-key",
+  "from": "conformance-run-with",
+  "to": "conformance-run-json",
+  "input": "090102",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 9: bad-directive at the `run` line, on decode"
+}

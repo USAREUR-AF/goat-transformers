@@ -1,0 +1,13 @@
+{
+  "name": "from-the-inner-format",
+  "from": "conformance-run-in-kinds",
+  "to": "conformance-run-c-kinds",
+  "input": "020008",
+  "expect_results": [
+    {
+      "expect": "0302000800"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: a carrier of one message"
+}

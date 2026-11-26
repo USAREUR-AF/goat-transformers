@@ -1,0 +1,10 @@
+{
+  "name": "outer-malformed-after",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "0401020304",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: w is missing: an outer error, whatever the messages do"
+}

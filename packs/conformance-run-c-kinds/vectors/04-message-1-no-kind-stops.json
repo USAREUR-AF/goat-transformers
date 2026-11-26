@@ -1,0 +1,9 @@
+{
+  "name": "message-1-no-kind-stops",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-json",
+  "input": "02050709",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: message 1 selects no kind"
+}

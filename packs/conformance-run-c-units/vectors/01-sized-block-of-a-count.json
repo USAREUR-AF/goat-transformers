@@ -1,0 +1,13 @@
+{
+  "name": "sized-block-of-a-count",
+  "from": "conformance-run-c-units",
+  "to": "conformance-run-c-units",
+  "input": "05010105000209",
+  "expect_results": [
+    {
+      "expect": "0601010501020009"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 7: the message with 0 units grows to 1"
+}

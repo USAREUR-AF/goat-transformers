@@ -1,0 +1,9 @@
+{
+  "name": "switch-on-a-failed-key",
+  "from": "conformance-run-c-switch",
+  "to": "conformance-run-json",
+  "input": "02010509",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 35: a switch on a key whose line failed fails the decode with transform-decode; one message"
+}

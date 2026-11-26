@@ -1,0 +1,10 @@
+{
+  "name": "run-to-itself",
+  "from": "conformance-run-c-plain",
+  "to": "conformance-run-c-plain",
+  "input": "02054109",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; the call's"
+}

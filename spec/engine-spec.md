@@ -6617,3 +6617,231 @@ raw units or by a kind for each size.
 - Header bytes inside the stated length that stand before the block.
 - A message that states 0 units and has no inner message, in a pack whose
   block holds `inner`: a kind with an empty block is needed.
+
+# Version 0.92: a run of inner messages
+
+Status: Written.
+
+A transport may carry several messages of one format, one after another, with
+nothing between them: each ends where its own decode ends. Version 0.34's
+`inner` hands over one message.
+
+```
+inner <format> run
+```
+
+A line as `inner` of 0.34, with its places, checks and errors. The inner pack
+must be `layout sequential` and have a `framing self` line
+(ruling 16), otherwise `bad-directive`, with check 2 of 0.34.
+A pack with a `run` line is a **carrier pack**. A **carrier** is a message
+whose selected lines reach an `inner … run`. A message that does not reach one
+(a kind without it, an absent block) is an ordinary message, for every
+operation.
+
+## Where one message ends
+
+Decoded by the inner pack from its first byte, with the input ending at the
+extent's end, a message ends at the **inner message's end** of 0.34 (its
+ruling 13): the stated end of a `length ... whole`, otherwise the cursor after
+its last line, rounded up to a whole byte. A message-level `rest` list without
+a `whole` cannot stand in such a pack (ruling 16). Its "three cases" are the
+padding bits, the unread content of a `length` extent and a `rest` group under
+a whole. "The inner input" of 0.34's ruling 12 is, in a run, from the
+message's start to the extent's end. An end beyond the extent, or at the start
+of the message, is `malformed-wire`. The next message starts there, until the
+extent ends. `align` and windows count from the message's own start. No byte
+stands between messages or after the last one: bytes that do not make a
+message are a message that fails.
+
+A pack says that its messages end by themselves with one line:
+
+```
+framing self
+```
+
+It is the author's word that each message of the pack ends where its last line
+ends: for example by a `length … whole`, a block that a count sizes (`length
+@<name> units <u>`, Version 0.83), a counted group of items of one size, or a
+kind of fixed size. An engine does not prove it. A message shorter than its
+lines then takes bytes of the next one, which no check here can see.
+
+Messages of one run may select different kinds: each selects its own.
+
+## Operations
+
+```
+decode_run(format, bytes)             -> (outer entity, [entity or error])
+convert_run(from, to, bytes, context) -> [result]
+```
+
+- **`decode_run`** returns the entity of the outer lines alone and one entity
+  per message, joined with the outer keys by step 4 of 0.34's Decode as if the
+  carrier held that message alone. Each has the outer `Entity.kind` and its
+  own `Entity.inner_kind`. An ordinary message gives one entity.
+- **`convert_run` to a format that is not a carrier pack** gives one result per
+  message, 0.6 steps 1 to 4 on each joined entity.
+- **From a carrier to a carrier pack** (its own format included) it gives one
+  result: as ruling 6 states. Every length or count that sizes the extent in
+  the target covers the whole run. Any error is the error of the call: nothing
+  is written in part.
+- **From any other format to a carrier pack** it gives one: a carrier
+  of one message, as `encode` writes it.
+- **`decode` and `convert`** read a carrier of exactly one message as 0.34
+  does. Otherwise they raise `message-count`, a new error kind (ruling 1).
+
+## Rulings
+
+1. **`message-count`.** On a `run` line the checks of 0.34, the fifth of 0.52
+   (ruling 20) and Decode steps 1 and 2 of 0.34 come first, in every
+   operation. Then, in `decode` and `convert`: an empty extent is
+   `message-count`; message 1 is decoded, and an error that stops its decode
+   is reported; if bytes remain after its end, `message-count`, without
+   reading further. It stops the decode, so it is ahead of any
+   `transform-decode` and of errors of later outer lines. The end rules above
+   hold in these operations too: an end beyond the extent, or at the start of
+   the message, is `malformed-wire` (amends 0.34 rulings 2, 6, 15 and 16 on a
+   `run` line).
+2. **Zero messages.** No inner decode is called. `decode_run` gives no
+   entities, `convert_run` no results, or an empty run for a carrier pack.
+3. **Message errors**, to a target that is not a carrier pack and in
+   `decode_run`: a `transform-decode` or an encode error is that message's
+   result and the run goes on. `malformed-wire` and `no-kind` that stop its
+   decode (a `no-kind` of encode is an encode error), and a `switch` that is
+   reached and reads a key whose line failed, forgiven or not within its own
+   pack (0.20 ruling 35), of a message at a `run` line, in every operation,
+   `decode` and `convert` of a carrier included (outer lines and a plain
+   `inner` keep 0.20 as it is), end the run, as its last result. A failed key
+   whose `switch` is not reached does not end it. Outer lines after the block
+   are still read.
+4. **Call errors:** `unknown-format` of `from` or `to`, always; and a bad
+   context key, unless the one ordinary message did not decode (then its error
+   is the result, as 0.6 and spec/vector-format.md state). Then, when `from`
+   is a carrier pack and the decode reached a `run` line or stopped before
+   that was known: 0.34's checks and the fifth of 0.52 (ruling 20), steps 1
+   and 2, and any error of the outer lines, a `transform-decode` that no outer
+   line forgives included, whatever the messages do. To a carrier pack every
+   error fails the call. A decode that came to its end without reaching a
+   `run` line, or that stopped after the kind was selected with no `run` line
+   in its reach, or after its `run` line was passed in a block that reads as
+   absent, is of an ordinary message, as every decode is when `from` is no
+   carrier pack: each of its decode and encode errors is its one result, or
+   the call's to a carrier pack. Errors come in phases, each in reading order:
+   those that stop a decode (the `switch` of ruling 3 included), then other
+   decode errors, then context, then encode. To a target that is not a carrier
+   pack, message errors take no part in the call's; a bad context key beside
+   an outer `transform-decode` is reported after it.
+5. **`max_items`** bounds the number of messages in run operations only, by
+   itself: one more than it allows is `malformed-wire` of the call, raised
+   when that message would start, and it stops the decode. Each message's items
+   start from the budget the outer lines before it left; in run operations the
+   outer lines after the run do not count message items. It also bounds the
+   items of all the joined entities together, in `decode_run` and in
+   `convert_run` to every target. Over the messages whose decode came to its
+   end (a message whose result is a `transform-decode` included), the items of
+   the outer entity, once for each such message, and each message's own items
+   are summed. The sum may reach `max_items`; one item more is `malformed-wire`
+   of the call. It is checked when the carrier's decode has ended, after every
+   other decode error of the call and before context and encode. The outer
+   entity that `decode_run` gives alone is not counted again.
+   `decode` keeps 0.34.
+6. **Carrier pack to carrier pack.** The outer lines are encoded from the
+   outer entity alone, `requires` and `with` included, so a key that only a
+   message holds is not written by an outer line. Each message is encoded from
+   the joined entity (ruling 9) into the inner format of the `run` line of the
+   target's selected kind: with the inner format of the source without context
+   and derivations unless the caller gives context, with another by 0.6 steps
+   1 to 4. When the outer formats differ, or the caller gives context, the
+   outer entity runs 0.6 steps 2 and 3, with or without equal inner formats;
+   the sentence on context of ruling 10 is about the messages. The target's
+   kind is chosen on the outer entity alone. A kind without a `run` line takes
+   exactly one message: the joined entity is then encoded into that kind by
+   0.6 steps 1 to 4, through a plain `inner` line as 0.34 states or without
+   one; none or several is `message-count`, in the encode phase, where the
+   kind is chosen (no kind chosen is `no-kind`). An ordinary message is
+   `convert`. For an empty run the checks of 0.34 and the fifth of 0.52 on the
+   target's `inner` line are made where it is reached, the format not loaded
+   and the whole-byte cursor included.
+7. **What comes back.** A message comes back as it was when its pack maps
+   every bit it reads and its sized last block holds exactly what the block's
+   lines write. A block with fewer units grows on encode (0.8): the fields it
+   did not hold are written as zero bits and then decode as values. One with
+   more units is cut to what the lines write. A pack keeps more units by a
+   closing `rest` of raw units inside the block and fewer by one kind for each
+   size. The same holds for a plain `length` block.
+8. **A message that cannot be found again.** On every encode that reaches a
+   `run` line (of `convert` and `encode` too, where one message is written),
+   never at a plain `inner` line, a message that writes no bytes is
+   `transform-encode`.
+9. **Keys are joined** in every case. The fifth check of 0.52 (ruling 20) is
+   made on a `run` line too, so a carrier's outer lines in reach and its inner
+   pack share no key: no list is discarded by the join and no failure is
+   forgiven across the two packs. A failed line of an outer key or of a
+   message key is an error unless another line of that same pack forgives it
+   (0.6). A `with <key>` names a key without mapping it, so an outer line in
+   reach (the lines in reach of ruling 20 of 0.52) whose `with` names a mapped
+   key of the inner pack of a `run` line would be written as absent in a run:
+   it is `bad-directive` at the `run` line, with the fifth check. An inner
+   line's `with` may name an outer key, and holds when the joined entity holds
+   it.
+10. **Context.** Keys of the caller's context fill the outer entity and each
+    joined entity (after the join) where they are absent. They are checked
+    once, after the decode errors (ruling 4), for an empty run too. With
+    context a derivation may set a message key from an outer one; without
+    context, from a carrier to a carrier with the same inner format, neither
+    context nor derivations run.
+11. **Kinds.** Each message's kinds are cleared as 0.34's Conversion states,
+    and the outer entity's `Entity.kind` unless `from` and `to` are equal.
+12. **Load.** `inner` takes one or two arguments; none, or three and more, is
+    the line check of 0.34. A
+    second word other than `run` or `partial`, compared after quotes are
+    removed, is an after-file `bad-directive`. `inner run` names a format.
+13. **Vectors.** `expect_results` is an array of objects holding `expect` or
+    `expect_error`; a vector with it calls `convert_run` and may hold
+    `context` and `max_items`. A call that fails holds `expect_error` and
+    `"run": true`.
+14. **Capability** is 0.34's. The pipe counts and the loss report go by
+    result. The C library offers `convert` only, so it gives `message-count`.
+15. **Not pinned:** `decode_run` itself, the recorded kinds, the pipe, the
+    report.
+16. **`framing self`.** A header directive of a `layout sequential` `bits`
+    pack, with the one argument `self` (compared after quotes are removed).
+    Load: it joins the lines of 0.11 5b that `layout sequential` and the
+    `wire` line must stand before, with that list's errors (`missing-wire`,
+    and `bad-directive` for the order); no argument, or two and more, is the
+    line check (5e); another word, a second `framing` line, a fixed layout,
+    another wire, `armor sixbit` and `encoding uper` are `bad-directive` after
+    the file, with the checks of ruling 25 of 0.5. It stands outside every
+    block (ruling 24 of 0.8) and before the first `kind` of the message (the
+    `kind` lines of a group's items do not count), otherwise `bad-directive`
+    after the file. A `rest` group whose enclosing extent (0.21) is the
+    message, in whatever other block it stands, needs a `length … whole` line
+    before it that is read whenever that `rest` is: in the common lines or the
+    same kind, outside every block, or in a block that also holds the `rest`;
+    otherwise the load is `bad-directive` after the file, judged for the
+    common lines with each kind and for each `case`. A `rest` in a `length` or
+    `length @` block is allowed; one in an item is judged by the `rest` its
+    group stands in. A pack with `framing self` and an `inner` line of its own
+    loads, but is never an inner pack (check 3 of 0.34). Use: an `inner … run`
+    whose inner pack is not `layout sequential` or has no `framing self` line
+    is `bad-directive`, made at each `run` line between checks 2 and 3 of
+    0.34, also by an engine that keeps lookups; it is ahead of the fifth check
+    of 0.52, and is made on decode and on encode, in every operation and for
+    an empty run. It changes nothing else: `decode`, `encode` and a plain
+    `inner` of the pack are as without it, and `model_keys` and the capability
+    report use checks 1 to 4 of 0.34, so a `run` line over a pack without it
+    still adds the inner pack's keys.
+
+## Amends
+
+0.8 (the last byte), 0.21 ruling 14, 0.20 ruling 35, 0.11 rulings 5e and 7 and
+the error kinds, 0.6 (order), 0.11 5b, 5e and its directive list, 0.8 ruling
+24, 0.34 (the second word of `inner` may be `run`, its introduction and the
+first bullet of its "Not in this version", check 2, Decode step 3, Encode (the
+outer entity alone), rulings 2, 6, 12, 15, 16 and 17, and its vectors:
+`message-count` in `expect_error`), 0.52 ruling 20 (the fifth check on a `run`
+line).
+
+## Not in this version
+
+- Padding, or any byte between or after the messages.
+- Messages of more than one inner format in one run.

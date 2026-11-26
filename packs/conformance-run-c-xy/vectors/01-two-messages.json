@@ -1,0 +1,16 @@
+{
+  "name": "two-messages",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "040102030409",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":1,\"y\":2}"
+    },
+    {
+      "expect": "{\"w\":9,\"x\":3,\"y\":4}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: each after its last line; the outer w joins both"
+}

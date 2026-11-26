@@ -1,0 +1,10 @@
+{
+  "name": "empty-run-whole-byte-cursor",
+  "from": "conformance-run-end",
+  "to": "conformance-run-mis",
+  "input": "09",
+  "expect_error": "transform-encode",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: the whole-byte cursor included"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "messages-of-two-kinds-round-trip",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-c-kinds",
+  "input": "05010702000809",
+  "expect_results": [
+    {
+      "expect": "05010702000809"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: each message keeps its own kind"
+}

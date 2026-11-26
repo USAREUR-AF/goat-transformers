@@ -1,0 +1,10 @@
+{
+  "name": "ordinary-message-no-kind-to-a-carrier-pack",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-req-only",
+  "input": "020741",
+  "expect_error": "no-kind",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: the call's to a carrier pack"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "empty-run",
+  "from": "conformance-run-c-plain",
+  "to": "conformance-run-json",
+  "input": "0009",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; for an empty run too"
+}

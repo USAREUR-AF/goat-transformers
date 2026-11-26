@@ -1,0 +1,10 @@
+{
+  "name": "whole-byte-cursor",
+  "from": "conformance-run-mis",
+  "to": "conformance-run-json",
+  "input": "5010",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: step 1 of 0.34's Decode"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "context-before-encode",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-c-none",
+  "input": "040105010609",
+  "expect_error": "undeclared-key",
+  "run": true,
+  "context": {
+    "probe.nosuch": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: context is ahead of encode errors: a message that writes no bytes (ruling 8) is the fourth phase"
+}

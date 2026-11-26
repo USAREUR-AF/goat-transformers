@@ -1,0 +1,14 @@
+{
+  "name": "one-message",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-c-xy",
+  "input": "02010209",
+  "expect": "02010209",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "2",
+    "probe.w": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: decode and convert read a carrier of exactly one message as 0.34 does"
+}

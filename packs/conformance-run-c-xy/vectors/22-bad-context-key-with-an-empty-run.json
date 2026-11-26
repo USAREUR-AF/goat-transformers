@@ -1,0 +1,13 @@
+{
+  "name": "bad-context-key-with-an-empty-run",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "0009",
+  "expect_error": "undeclared-key",
+  "run": true,
+  "context": {
+    "probe.nosuch": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 10: checked once, for an empty run too"
+}

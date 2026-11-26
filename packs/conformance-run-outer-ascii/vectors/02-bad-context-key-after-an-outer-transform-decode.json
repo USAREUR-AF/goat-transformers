@@ -1,0 +1,13 @@
+{
+  "name": "bad-context-key-after-an-outer-transform-decode",
+  "from": "conformance-run-outer-ascii",
+  "to": "conformance-run-json",
+  "input": "010506",
+  "expect_error": "transform-decode",
+  "run": true,
+  "context": {
+    "probe.nosuch": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: a bad context key beside an outer transform-decode is reported after it"
+}

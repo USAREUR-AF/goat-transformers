@@ -1,0 +1,9 @@
+{
+  "name": "plain-inner-switch",
+  "from": "conformance-run-one-switch",
+  "to": "conformance-run-json",
+  "input": "094105",
+  "expect": "{\"w\":9,\"x\":5}",
+  "source": "constructed",
+  "reference": "spec 0.20: A selects x"
+}

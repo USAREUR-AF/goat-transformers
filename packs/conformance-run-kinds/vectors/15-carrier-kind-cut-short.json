@@ -1,0 +1,10 @@
+{
+  "name": "carrier-kind-cut-short",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-json",
+  "input": "01",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: kind r has a `run` line in its reach; w is missing"
+}

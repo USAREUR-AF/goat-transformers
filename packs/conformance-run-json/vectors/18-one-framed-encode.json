@@ -1,0 +1,9 @@
+{
+  "name": "one-framed-encode",
+  "from": "conformance-run-json",
+  "to": "conformance-run-one-framed",
+  "input": "{\"w\":9,\"x\":5}",
+  "expect": "090500",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the line changes nothing else: equal with and without it; a plain `inner` line"
+}

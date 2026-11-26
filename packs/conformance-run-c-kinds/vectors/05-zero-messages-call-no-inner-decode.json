@@ -1,0 +1,9 @@
+{
+  "name": "zero-messages-call-no-inner-decode",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-json",
+  "input": "0009",
+  "expect_results": [],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 2: no inner decode is called, so none selects no kind"
+}

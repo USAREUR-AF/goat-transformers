@@ -1,0 +1,13 @@
+{
+  "name": "line-not-reached",
+  "from": "conformance-run-kinds-plain",
+  "to": "conformance-run-kinds-plain",
+  "input": "0207",
+  "expect": "0207",
+  "model": {
+    "@kind": "o",
+    "probe.n": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the check is made when the line is reached"
+}

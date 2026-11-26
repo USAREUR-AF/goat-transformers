@@ -1,0 +1,10 @@
+{
+  "name": "outer-transform-decode",
+  "from": "conformance-run-outer-ascii",
+  "to": "conformance-run-json",
+  "input": "010506",
+  "expect_error": "transform-decode",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: an outer transform-decode that no outer line forgives"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "unit-test-covers-the-run",
+  "from": "conformance-run-c-x",
+  "to": "conformance-run-units",
+  "input": "0301020309",
+  "expect_results": [
+    {
+      "expect": "0309010002000300"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: in-xy writes x and zero bits: 3 messages of 2 bytes, 3 units"
+}

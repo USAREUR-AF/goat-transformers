@@ -1,0 +1,13 @@
+{
+  "name": "json-to-a-carrier-pack",
+  "from": "conformance-run-json",
+  "to": "conformance-run-c-xy",
+  "input": "{\"w\":9,\"x\":1,\"y\":2}",
+  "expect_results": [
+    {
+      "expect": "02010209"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: one result"
+}

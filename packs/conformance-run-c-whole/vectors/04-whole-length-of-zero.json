@@ -1,0 +1,13 @@
+{
+  "name": "whole-length-of-zero",
+  "from": "conformance-run-c-whole",
+  "to": "conformance-run-json",
+  "input": "0300020109",
+  "expect_results": [
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: a stated length of 0 is shorter than what was read (0.8), malformed-wire"
+}

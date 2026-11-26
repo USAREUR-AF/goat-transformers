@@ -1,0 +1,9 @@
+{
+  "name": "tail-byte-is-message-count",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "0301020309",
+  "expect_error": "message-count",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: bytes remain, without reading further"
+}

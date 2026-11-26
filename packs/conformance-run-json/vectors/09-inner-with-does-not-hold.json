@@ -1,0 +1,9 @@
+{
+  "name": "inner-with-does-not-hold",
+  "from": "conformance-run-json",
+  "to": "conformance-run-c-with",
+  "input": "{\"x\":1,\"y\":2}",
+  "expect": "02000200",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 9: w is not held: x is written as absent"
+}

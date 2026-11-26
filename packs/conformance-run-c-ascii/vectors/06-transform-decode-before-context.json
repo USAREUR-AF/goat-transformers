@@ -1,0 +1,13 @@
+{
+  "name": "transform-decode-before-context",
+  "from": "conformance-run-c-ascii",
+  "to": "conformance-run-c-ascii",
+  "input": "02010509",
+  "expect_error": "transform-decode",
+  "run": true,
+  "context": {
+    "probe.nosuch": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: context is the third phase"
+}

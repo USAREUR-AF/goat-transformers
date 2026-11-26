@@ -1,0 +1,10 @@
+{
+  "name": "fifth-check",
+  "from": "conformance-run-clash",
+  "to": "conformance-run-json",
+  "input": "050102",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: the fifth check of 0.52"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "plain-inner",
+  "from": "conformance-run-one-framed",
+  "to": "conformance-run-one-framed",
+  "input": "090541",
+  "expect": "090541",
+  "model": {
+    "probe.w": "9",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the line changes nothing else: equal with and without it; a plain `inner` line"
+}

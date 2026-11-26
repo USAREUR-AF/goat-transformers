@@ -1,0 +1,9 @@
+{
+  "name": "end-at-the-start-in-decode",
+  "from": "conformance-run-c-none",
+  "to": "conformance-run-json",
+  "input": "010509",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: the end rules hold in decode too"
+}

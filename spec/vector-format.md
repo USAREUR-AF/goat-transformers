@@ -18,8 +18,10 @@ is the pack that owns the input. Fields:
 | `from` | yes | source format name |
 | `to` | yes | target format name; equal to `from` for a round-trip |
 | `input` | yes | source message as a UTF-8 string; for a `bits` or `protobuf` format, hex text |
-| `expect` | unless `expect_error` | expected canonical target message as a UTF-8 string; for a `bits` or `protobuf` format, lowercase hex text |
-| `expect_error` | in place of `expect` | the error kind `convert(from, to, input)` must fail with (`no-kind`, `missing-root`, `malformed-wire`, `transform-decode`, `transform-encode`, `unknown-format`, and with `context` `undeclared-key`, `key-type-mismatch`; Version 0.34: `bad-directive` and `distribution-violation` raised where decode or encode reaches an `inner` line) |
+| `expect` | unless `expect_error` or `expect_results` | expected canonical target message as a UTF-8 string; for a `bits` or `protobuf` format, lowercase hex text |
+| `expect_error` | in place of `expect` | the error kind `convert(from, to, input)` must fail with (`no-kind`, `message-count` (0.92), `missing-root`, `malformed-wire`, `transform-decode`, `transform-encode`, `unknown-format`, and with `context` `undeclared-key`, `key-type-mismatch`; Version 0.34: `bad-directive` and `distribution-violation` raised where decode or encode reaches an `inner` line) |
+| `expect_results` | in place of `expect` | 0.92: an array of objects, each holding `expect` or `expect_error`; the vector calls `convert_run` and may hold `context` and `max_items` |
+| `run` | with `expect_error` | 0.92: `true`, when the call of `convert_run` as a whole must fail with that error; may stand beside `context` and `max_items`; `false`, and `run` without `expect_error`, are not used |
 | `model` | optional | map of shared-model key to expected value in string form, checked against `decode(from, input)`; the key `"@kind"` holds the kind name the decode must select; `"@complete": true` moves the checks to the completed entity (below); `"<list>.#"` and `"<list>[<i>].<key>"` check a list, and `"<list>[<i>].@kind"` the kind of an item (Lists in `model`, below); `"@absent"` holds an array of keys the entity must not have (Version 0.9); `"@inner_kind"` holds the kind name `Entity.inner_kind` must hold, and `"@absent"` may list `"@inner_kind"` (Version 0.34) |
 | `context` | optional | map of shared-model key to value in string form: the caller-supplied keys of `convert(from, to, input, context)` (`spec/engine-spec.md`, Version 0.6). Each value is read as its key's declared type. A `context` member that is present is a context given, also when it is `{}` (ruling 10 of 0.6) |
 | `max_items` | optional | Version 0.11: an integer of 0 or more, the limit on list items the engine is set to for this vector (`spec/engine-spec.md`, ruling 7 of 0.11). Absent: the default, 100,000 |
@@ -32,7 +34,13 @@ is the pack that owns the input. Fields:
    (`spec/engine-spec.md`, Canonicalisation). With `context` present the call
    is `convert(from, to, input, context)`.
    With `expect_error`, `convert` must instead fail, and the error message
-   must begin with that kind and a colon. A `context` key that no loaded module
+   must begin with that kind and a colon. With `"run": true` it is
+   `convert_run` that must fail so. With `expect_results` (0.92) `convert_run`
+   must give the same number of results, each checked as a conversion with
+   `expect` or `expect_error` is. `model` beside `expect_results` is allowed
+   only when the input holds one message or is an ordinary message; beside
+   `expect_error` with `run` it is not used. An empty `expect_results` (`[]`) is
+   what zero messages give: a member that is present, not an absent one. A `context` key that no loaded module
    declares fails with `undeclared-key`, and a value that cannot be read as the
    key's type with `key-type-mismatch`. The context is read and checked after
    the decode, so a vector whose input does not decode fails with the decode's

@@ -1,0 +1,9 @@
+{
+  "name": "outer-with-on-a-message-key-in-decode",
+  "from": "conformance-run-with",
+  "to": "conformance-run-json",
+  "input": "09",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 9: with the fifth check, before message-count"
+}

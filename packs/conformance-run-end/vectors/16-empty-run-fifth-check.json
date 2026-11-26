@@ -1,0 +1,10 @@
+{
+  "name": "empty-run-fifth-check",
+  "from": "conformance-run-end",
+  "to": "conformance-run-clash",
+  "input": "09",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: the fifth of 0.52 too"
+}

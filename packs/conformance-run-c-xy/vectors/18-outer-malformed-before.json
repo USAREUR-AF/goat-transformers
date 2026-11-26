@@ -1,0 +1,10 @@
+{
+  "name": "outer-malformed-before",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: the decode stopped before the line was known to be reached"
+}

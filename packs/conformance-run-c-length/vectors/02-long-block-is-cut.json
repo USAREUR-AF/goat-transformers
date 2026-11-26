@@ -1,0 +1,13 @@
+{
+  "name": "long-block-is-cut",
+  "from": "conformance-run-c-length",
+  "to": "conformance-run-c-length",
+  "input": "070103050607020009",
+  "expect_results": [
+    {
+      "expect": "0601010502010009"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 7: 3 units are cut to the one the lines write; the second block grows"
+}

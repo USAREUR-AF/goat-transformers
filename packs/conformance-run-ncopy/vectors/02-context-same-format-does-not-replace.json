@@ -1,0 +1,14 @@
+{
+  "name": "context-same-format-does-not-replace",
+  "from": "conformance-run-ncopy",
+  "to": "conformance-run-ncopy",
+  "input": "070103",
+  "expect_results": [
+    {
+      "expect": "070103"
+    }
+  ],
+  "context": {},
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 10: a context is given, so derivations run; n_copy is held in each message"
+}

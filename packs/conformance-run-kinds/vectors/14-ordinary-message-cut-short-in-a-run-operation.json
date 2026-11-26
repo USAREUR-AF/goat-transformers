@@ -1,0 +1,13 @@
+{
+  "name": "ordinary-message-cut-short-in-a-run-operation",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-json",
+  "input": "0207",
+  "expect_results": [
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: the decode stopped after kind o was selected, with no `run` line in its reach: an ordinary message, its error is its one result"
+}

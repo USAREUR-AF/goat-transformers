@@ -1,0 +1,13 @@
+{
+  "name": "28-run-over-a-pack-without-framing",
+  "from": "conformance-run-c-plain",
+  "to": "conformance-run-json",
+  "grade": "partial",
+  "carried": [
+    "probe.x",
+    "probe.w"
+  ],
+  "dropped": [
+    "probe.label"
+  ]
+}

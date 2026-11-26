@@ -1,0 +1,10 @@
+{
+  "name": "no-kind-chosen",
+  "from": "conformance-run-end",
+  "to": "conformance-run-req-only",
+  "input": "0901020304",
+  "expect_error": "no-kind",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: no kind is chosen on the outer entity"
+}

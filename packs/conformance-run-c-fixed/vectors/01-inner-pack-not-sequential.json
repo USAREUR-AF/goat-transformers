@@ -1,0 +1,9 @@
+{
+  "name": "inner-pack-not-sequential",
+  "from": "conformance-run-c-fixed",
+  "to": "conformance-run-json",
+  "input": "010509",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.92 an inner pack of a `run` line must be `layout sequential`: bad-directive, with check 2 of 0.34"
+}

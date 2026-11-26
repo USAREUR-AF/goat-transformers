@@ -1,0 +1,10 @@
+{
+  "name": "message-that-writes-no-bytes-in-a-run-operation",
+  "from": "conformance-run-json",
+  "to": "conformance-run-c-none",
+  "input": "{\"w\":9}",
+  "expect_error": "transform-encode",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 8: the call's"
+}

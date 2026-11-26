@@ -206,7 +206,7 @@ impl Proof {
         self.plans[&id].clone()
     }
 
-    /// Every conversion vector of the repository.
+    /// Every conversion vector of the repository that calls `convert`.
     pub fn vectors(&self) -> Vec<Vector> {
         let mut out = Vec::new();
         for dir in sorted(&self.root.join("packs")) {
@@ -219,6 +219,9 @@ impl Proof {
                     continue;
                 }
                 let v = json::parse(&std::fs::read_to_string(&vf).expect("vector file")).expect("vector is JSON");
+                if calls_convert_run(&v) {
+                    continue;
+                }
                 let s = |k: &str| match v.get(k) {
                     Some(Json::Str(s)) => Some(s.clone()),
                     _ => None,
@@ -274,6 +277,12 @@ impl Proof {
         }
         out
     }
+}
+
+/// A vector of `convert_run` (engine-spec 0.92, spec/vector-format.md): it holds
+/// `expect_results`, or `run`. The device has `convert` only.
+fn calls_convert_run(v: &Json) -> bool {
+    v.get("expect_results").is_some() || v.get("run").is_some()
 }
 
 fn sorted(dir: &Path) -> Vec<PathBuf> {
@@ -435,5 +444,20 @@ impl Rng {
     }
     pub fn bytes(&mut self, n: usize) -> Vec<u8> {
         (0..n).map(|_| self.next() as u8).collect()
+    }
+}
+
+#[cfg(test)]
+mod run_vectors {
+    use super::*;
+
+    #[test]
+    fn a_vector_of_convert_run_is_not_one_of_convert() {
+        let calls = |text: &str| calls_convert_run(&json::parse(text).expect("JSON"));
+        assert!(calls(r#"{"expect_results": [{"expect": "00"}]}"#));
+        assert!(calls(r#"{"expect_results": []}"#));
+        assert!(calls(r#"{"expect_error": "malformed-wire", "run": true}"#));
+        assert!(!calls(r#"{"expect_error": "malformed-wire"}"#));
+        assert!(!calls(r#"{"expect": "00"}"#));
     }
 }

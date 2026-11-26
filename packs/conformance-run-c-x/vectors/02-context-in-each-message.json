@@ -1,0 +1,19 @@
+{
+  "name": "context-in-each-message",
+  "from": "conformance-run-c-x",
+  "to": "conformance-run-json",
+  "input": "02010209",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":1,\"y\":5}"
+    },
+    {
+      "expect": "{\"w\":9,\"x\":2,\"y\":5}"
+    }
+  ],
+  "context": {
+    "probe.y": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 10: each joined entity where it is absent"
+}

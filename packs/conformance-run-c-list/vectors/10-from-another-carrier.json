@@ -1,0 +1,10 @@
+{
+  "name": "from-another-carrier",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-c-rest",
+  "input": "040105010609",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; in-rest cannot have the line: its `rest` takes the rest of the run"
+}

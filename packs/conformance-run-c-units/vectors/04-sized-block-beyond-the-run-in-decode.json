@@ -1,0 +1,9 @@
+{
+  "name": "sized-block-beyond-the-run-in-decode",
+  "from": "conformance-run-c-units",
+  "to": "conformance-run-json",
+  "input": "0303010509",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83 ruling 5, in decode too: 3 units of 1 byte, at the `length @` line"
+}

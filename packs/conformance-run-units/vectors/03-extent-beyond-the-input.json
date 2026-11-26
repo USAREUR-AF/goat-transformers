@@ -1,0 +1,9 @@
+{
+  "name": "extent-beyond-the-input",
+  "from": "conformance-run-units",
+  "to": "conformance-run-json",
+  "input": "0309010203",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.83 ruling 5: 6 bytes of 3, malformed-wire at the `length @` line, before anything in the block is read"
+}

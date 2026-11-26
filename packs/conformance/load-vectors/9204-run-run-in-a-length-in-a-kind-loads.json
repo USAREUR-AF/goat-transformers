@@ -1,0 +1,8 @@
+{
+  "name": "9204-run-run-in-a-length-in-a-kind-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey w int -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.92.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 8 1\nlength 8\n  inner other run\nend\nfield probe.w 8 uint\nkind b\nwhen 8 2\ninner other\n"
+}

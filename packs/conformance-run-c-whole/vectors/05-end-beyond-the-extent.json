@@ -1,0 +1,9 @@
+{
+  "name": "end-beyond-the-extent",
+  "from": "conformance-run-c-whole",
+  "to": "conformance-run-json",
+  "input": "02050109",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: the end rules hold in decode too: 5 bytes of 2"
+}

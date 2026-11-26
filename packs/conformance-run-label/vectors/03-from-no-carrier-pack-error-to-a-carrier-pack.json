@@ -1,0 +1,10 @@
+{
+  "name": "from-no-carrier-pack-error-to-a-carrier-pack",
+  "from": "conformance-run-label",
+  "to": "conformance-run-c-x",
+  "input": "09",
+  "expect_error": "no-kind",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: to a carrier pack every error fails the call"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "one-kind-for-each-size",
+  "from": "conformance-run-c-sizes",
+  "to": "conformance-run-c-sizes",
+  "input": "05010502060709",
+  "expect_results": [
+    {
+      "expect": "05010502060709"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 7: fewer units by one kind for each size"
+}

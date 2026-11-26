@@ -1,0 +1,17 @@
+{
+  "name": "limit-not-reached-after-a-dead-message",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-json",
+  "input": "040107050509",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"y\":7}"
+    },
+    {
+      "expect_error": "no-kind"
+    }
+  ],
+  "max_items": 2,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: message 2 ends the run; no third would start"
+}

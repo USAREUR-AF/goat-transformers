@@ -1,0 +1,19 @@
+{
+  "name": "transform-decode-goes-on",
+  "from": "conformance-run-c-ascii",
+  "to": "conformance-run-json",
+  "input": "0641050106420709",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":5}"
+    },
+    {
+      "expect_error": "transform-decode"
+    },
+    {
+      "expect": "{\"w\":9,\"x\":7}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: label 01 of message 2 is its result; the run goes on"
+}

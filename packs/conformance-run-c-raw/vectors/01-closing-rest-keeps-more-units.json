@@ -1,0 +1,13 @@
+{
+  "name": "closing-rest-keeps-more-units",
+  "from": "conformance-run-c-raw",
+  "to": "conformance-run-c-raw",
+  "input": "070103050607020009",
+  "expect_results": [
+    {
+      "expect": "070103050607020009"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 7: a pack keeps more units by a closing rest"
+}

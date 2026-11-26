@@ -1,0 +1,13 @@
+{
+  "name": "derivation-into-another-inner-format",
+  "from": "conformance-run-nx",
+  "to": "conformance-run-ncopy",
+  "input": "070103",
+  "expect_results": [
+    {
+      "expect": "070707"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: another inner format: n_copy is derived in each joined entity"
+}

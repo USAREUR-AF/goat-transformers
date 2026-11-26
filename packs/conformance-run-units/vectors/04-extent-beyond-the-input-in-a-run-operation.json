@@ -1,0 +1,10 @@
+{
+  "name": "extent-beyond-the-input-in-a-run-operation",
+  "from": "conformance-run-units",
+  "to": "conformance-run-json",
+  "input": "0309010203",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: an outer malformed-wire before the line was known to be reached (0.83 ruling 5, at the `length @` line)"
+}

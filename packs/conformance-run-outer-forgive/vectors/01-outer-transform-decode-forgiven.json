@@ -1,0 +1,16 @@
+{
+  "name": "outer-transform-decode-forgiven",
+  "from": "conformance-run-outer-forgive",
+  "to": "conformance-run-json",
+  "input": "01410506",
+  "expect_results": [
+    {
+      "expect": "{\"x\":5}"
+    },
+    {
+      "expect": "{\"x\":6}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: forgiven by an outer line: no error"
+}

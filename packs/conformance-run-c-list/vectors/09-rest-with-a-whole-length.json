@@ -1,0 +1,13 @@
+{
+  "name": "rest-with-a-whole-length",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-c-whole-rest",
+  "input": "040105010609",
+  "expect_results": [
+    {
+      "expect": "040205020609"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 8: each message states its length"
+}

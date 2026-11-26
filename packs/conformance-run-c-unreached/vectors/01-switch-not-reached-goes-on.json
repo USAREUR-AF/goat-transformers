@@ -1,0 +1,16 @@
+{
+  "name": "switch-not-reached-goes-on",
+  "from": "conformance-run-c-unreached",
+  "to": "conformance-run-json",
+  "input": "05000180410509",
+  "expect_results": [
+    {
+      "expect_error": "transform-decode"
+    },
+    {
+      "expect": "{\"w\":9,\"x\":5}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: the switch of message 1 is not reached: its transform-decode does not end the run"
+}

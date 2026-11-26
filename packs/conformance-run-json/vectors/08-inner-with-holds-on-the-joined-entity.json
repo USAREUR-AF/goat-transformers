@@ -1,0 +1,9 @@
+{
+  "name": "inner-with-holds-on-the-joined-entity",
+  "from": "conformance-run-json",
+  "to": "conformance-run-c-with",
+  "input": "{\"w\":9,\"x\":1,\"y\":2}",
+  "expect": "02010209",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 9: an inner line's `with` may name an outer key"
+}

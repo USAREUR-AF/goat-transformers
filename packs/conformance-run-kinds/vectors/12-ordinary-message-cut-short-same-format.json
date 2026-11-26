@@ -1,0 +1,9 @@
+{
+  "name": "ordinary-message-cut-short-same-format",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-kinds",
+  "input": "0207",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: `convert` of an ordinary message; label is missing"
+}

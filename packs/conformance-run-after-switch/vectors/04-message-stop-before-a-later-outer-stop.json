@@ -1,0 +1,10 @@
+{
+  "name": "message-stop-before-a-later-outer-stop",
+  "from": "conformance-run-after-switch",
+  "to": "conformance-run-after-switch",
+  "input": "0341054105",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: the first phase, in reading order: message 2 is malformed before w = 5 has no case"
+}

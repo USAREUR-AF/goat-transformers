@@ -1,0 +1,13 @@
+{
+  "name": "end-at-the-start",
+  "from": "conformance-run-c-none",
+  "to": "conformance-run-json",
+  "input": "010509",
+  "expect_results": [
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: a message that reads no bytes ends at its start: malformed-wire"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "inner-pack-with-an-inner-line",
+  "from": "conformance-run-c-nested",
+  "to": "conformance-run-json",
+  "input": "02010209",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.34, check 3"
+}

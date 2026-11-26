@@ -1,0 +1,9 @@
+{
+  "name": "zero-messages",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "0009",
+  "expect_results": [],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 2: no results"
+}

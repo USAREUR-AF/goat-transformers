@@ -1,0 +1,9 @@
+{
+  "name": "9257-run-framing-rest-in-a-chain",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey w int -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.92.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nframing self\nchain\nfield probe.w 7 uint\nfx\ngroup probe.recs rest\n  field probe.x 8 uint\nend\nend\n",
+  "expect_error": "bad-directive"
+}

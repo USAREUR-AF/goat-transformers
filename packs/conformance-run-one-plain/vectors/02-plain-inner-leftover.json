@@ -1,0 +1,9 @@
+{
+  "name": "plain-inner-leftover",
+  "from": "conformance-run-one-plain",
+  "to": "conformance-run-json",
+  "input": "090541ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the line changes nothing else: equal with and without it; a plain `inner` line: a byte after the inner message (0.34)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "empty-extent-is-message-count",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "0009",
+  "expect_error": "message-count",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: an empty extent"
+}

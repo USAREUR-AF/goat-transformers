@@ -1,0 +1,10 @@
+{
+  "name": "ordinary-message-cut-short-to-a-carrier-pack",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-kinds",
+  "input": "0207",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: to a carrier pack every error fails the call"
+}

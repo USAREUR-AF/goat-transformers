@@ -1,0 +1,14 @@
+{
+  "name": "message-over-its-budget",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-json",
+  "input": "0302050609",
+  "expect_results": [
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: a count of 2 with a budget of 1: that message's malformed-wire"
+}

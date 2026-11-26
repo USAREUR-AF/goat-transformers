@@ -1,0 +1,10 @@
+{
+  "name": "ordinary-message-error-to-a-carrier-pack",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-kinds",
+  "input": "020701",
+  "expect_error": "transform-decode",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: the call's to a carrier pack"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ordinary-message-to-a-carrier-pack",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-kinds",
+  "input": "020741",
+  "expect_results": [
+    {
+      "expect": "020741"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: an ordinary message is `convert`"
+}

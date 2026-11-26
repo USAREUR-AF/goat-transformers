@@ -1,0 +1,13 @@
+{
+  "name": "ordinary-message-encode-error",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-label",
+  "input": "020741",
+  "expect_results": [
+    {
+      "expect_error": "no-kind"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: its encode error is its one result: the target needs x"
+}

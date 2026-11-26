@@ -1,0 +1,13 @@
+{
+  "name": "rest-with-a-whole-length",
+  "from": "conformance-run-c-whole-rest",
+  "to": "conformance-run-c-whole-rest",
+  "input": "05030102020309",
+  "expect_results": [
+    {
+      "expect": "05030102020309"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: each message ends at its stated length, so there are two"
+}

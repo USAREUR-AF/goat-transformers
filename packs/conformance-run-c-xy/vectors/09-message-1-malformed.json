@@ -1,0 +1,9 @@
+{
+  "name": "message-1-malformed",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "010109",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: an error that stops the decode of message 1 is reported"
+}

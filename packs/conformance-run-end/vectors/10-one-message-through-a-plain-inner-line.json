@@ -1,0 +1,13 @@
+{
+  "name": "one-message-through-a-plain-inner-line",
+  "from": "conformance-run-end",
+  "to": "conformance-run-plain-kind",
+  "input": "090102",
+  "expect_results": [
+    {
+      "expect": "010901"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: a kind without a `run` line takes exactly one message"
+}

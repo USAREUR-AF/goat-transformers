@@ -1,0 +1,13 @@
+{
+  "name": "run-in-an-outer-whole-length",
+  "from": "conformance-run-whole",
+  "to": "conformance-run-whole",
+  "input": "030506ff",
+  "expect_results": [
+    {
+      "expect": "030506"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: the extent ends at the outer whole length; what lies beyond is no message (0.34 ruling 3)"
+}

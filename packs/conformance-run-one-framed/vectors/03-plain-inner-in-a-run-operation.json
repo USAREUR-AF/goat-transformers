@@ -1,0 +1,13 @@
+{
+  "name": "plain-inner-in-a-run-operation",
+  "from": "conformance-run-one-framed",
+  "to": "conformance-run-json",
+  "input": "090541",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":5}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the line changes nothing else: equal with and without it; a plain `inner` line, an ordinary message"
+}

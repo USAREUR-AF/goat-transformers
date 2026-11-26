@@ -1,0 +1,13 @@
+{
+  "name": "no-derivation-for-the-same-inner-format",
+  "from": "conformance-run-ncopy",
+  "to": "conformance-run-ncopy2",
+  "input": "070103",
+  "expect_results": [
+    {
+      "expect": "00070103"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 10: the messages keep their own n_copy; w is absent"
+}

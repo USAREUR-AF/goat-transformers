@@ -1,0 +1,16 @@
+{
+  "name": "outer-lines-after-the-run-are-read",
+  "from": "conformance-run-after-switch",
+  "to": "conformance-run-json",
+  "input": "034105410107",
+  "expect_results": [
+    {
+      "expect": "{\"w\":1,\"x\":5,\"z\":7}"
+    },
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: message 2 is malformed and ends the run; w and z are read"
+}

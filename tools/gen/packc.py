@@ -353,6 +353,10 @@ class Pack:
         if self.wire != "bits":
             refuse("wire-not-bits", "format `%s` is on the `%s` wire; the device profile compiles the `bits` wire only"
                    % (self.format, self.wire))
+        for t in rows:      # spec 0.92: a pack made for runs of messages is not in the device profile
+            if t[0] == "framing":
+                refuse("unsupported-feature", "%s: `framing` (a pack whose messages may stand in a run, spec 0.92) "
+                       "is not in the device profile" % self.format)
         for t in rows:      # spec 0.34: a message of another pack inside a field is not in the device profile
             if t[0] == "inner":
                 refuse("unsupported-feature", "%s: `inner <format>` (a message of another pack inside a field, "

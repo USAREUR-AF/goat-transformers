@@ -1,0 +1,9 @@
+{
+  "name": "ahead-of-later-outer-errors",
+  "from": "conformance-run-after-switch",
+  "to": "conformance-run-json",
+  "input": "044105420605",
+  "expect_error": "message-count",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: the switch on w = 5 (no-kind) comes later and is not reached"
+}

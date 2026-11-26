@@ -1,0 +1,13 @@
+{
+  "name": "one-message-by-convert-run",
+  "from": "conformance-run-end",
+  "to": "conformance-run-wy",
+  "input": "090102",
+  "expect_results": [
+    {
+      "expect": "090001"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: the outer entity alone, for one message too"
+}

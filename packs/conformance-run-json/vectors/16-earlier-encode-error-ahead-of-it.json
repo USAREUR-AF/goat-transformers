@@ -1,0 +1,9 @@
+{
+  "name": "earlier-encode-error-ahead-of-it",
+  "from": "conformance-run-json",
+  "to": "conformance-run-label-plain",
+  "input": "{\"w\":9,\"x\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 12: the common `when` does not match w = 9"
+}

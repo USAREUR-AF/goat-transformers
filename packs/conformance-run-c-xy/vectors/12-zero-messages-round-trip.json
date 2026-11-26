@@ -1,0 +1,13 @@
+{
+  "name": "zero-messages-round-trip",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-c-xy",
+  "input": "0009",
+  "expect_results": [
+    {
+      "expect": "0009"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 2: an empty run for a carrier pack"
+}
