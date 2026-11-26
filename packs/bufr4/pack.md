@@ -45,6 +45,11 @@ section 4, which is not read.
 
 ## Not mapped
 
+- A section 3 whose length leaves one octet after the last descriptor (ecCodes counts
+  (length - 7) / 2 descriptors and allows a padding octet, `section.3.def`) does not round-trip:
+  the `rest` group reads the padding octet as the start of a further descriptor, and encode
+  writes it back as 16 bits, so section 3 and the message grow by one octet. The descriptors
+  carry no count on the wire, and a `rest` group has no rule for a shorter tail.
 - Section 4's values (above).
 - BUFR editions 2 and 3: section 1 differs; `no-kind`.
 - A file of several messages: one vector is one message.

@@ -12,7 +12,8 @@ response columns; vectors are derived by `tools/gen/usgov2-vectors.py`.
 
 The observation list maps the union of the documented columns of the water level, air gap,
 meteorological and water temperature products (`t`, `v`, `s`, `d`, `dr`, `g`, `ty`, `f`,
-`q`); an observation has the columns of its product. Every value is a JSON string, as the
+`q`); an observation has the columns of its product. A salinity response has `t`, `s`
+(salinity) and `g` (specific gravity) and decodes with the same keys (Response Help, Salinity). Every value is a JSON string, as the
 API sends it, so every line is `string`.
 
 ## Not bound to shared keys, and why
