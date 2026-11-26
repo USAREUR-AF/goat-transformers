@@ -75,12 +75,11 @@ decodes to a time in era 0, and a `time_ms` after the end of era 0 does not fit
 32 bits and is `transform-encode`, as is a time before 1900.
 
 Zero. RFC 5905 section 6 gives an all-zero timestamp the meaning of a time not
-known. The binding has no sentinel for it, so seconds 0 decode to
-`time_ms` -2208988800000 (1900-01-01), as in the kiss code
-vector. An `absent 0` (0.9) on the `time_ms` line was not used: 0.9 does not
-say whether the sentinel an absent key writes takes precedence over a present
-raw key on an overlapping later line (ruling 5 of 0.5 speaks of two present
-fields). Candidate for the specification.
+known. The `time_ms` line has `absent 0`: transmit seconds 0 decode with no
+`time_ms` (vectors 04 and 09), and an entity without `time_ms` writes 0, as it
+did before. Limit: the sentinel is on the seconds alone, so a true
+1900-01-01T00:00:00 with a fraction of a second has no `time_ms`; the raw keys
+keep both halves.
 
 The other three timestamps stay raw: they are not the time of this packet
 (reference: when the clock was last set; origin and receive: times of the
