@@ -1,0 +1,14 @@
+{
+  "name": "pgn129029-position-unknown-to-geojson",
+  "from": "nmea2000-seq",
+  "to": "geojson",
+  "input": "05f80103ffffffffffffffffffffff7fffffffffffffff7f20bcbe000000000001a0029600",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "@kind": "pgn129029",
+    "@absent": [
+      "lat",
+      "lon"
+    ]
+  }
+}

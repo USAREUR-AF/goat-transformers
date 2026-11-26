@@ -54,7 +54,7 @@ group     n2k.pgn126987_number_of_parameters count 8
   field     n2k.parameter_number       8   uint absent 255,254,253
   field     n2k.trigger_method         8   uint absent 255,254,253
   field     n2k.threshold_data_format  8   uint absent 255,254,253
-  field     n2k.threshold_level        64  uint
+  field     n2k.threshold_level        64  uint absent 18446744073709551615,18446744073709551614
 end
 
 # PGN 126988 alertValue: Alert Value [CANboat: incomplete]
@@ -73,7 +73,7 @@ field     n2k.alert_occurrence_number      8   uint absent 255,254,253
 group     n2k.pgn126988_number_of_parameters count 8
   field     n2k.value_parameter_number  8   uint absent 255,254,253
   field     n2k.value_data_format       8   uint absent 255,254,253
-  field     n2k.value_data              64  uint
+  field     n2k.value_data              64  uint absent 18446744073709551615,18446744073709551614
 end
 
 # PGN 127503 acInputStatus: AC Input Status
@@ -119,9 +119,9 @@ requires  n2k.date n2k.time n2k.pgn129029_altitude n2k.pgn129029_gnss_type n2k.m
 field     n2k.sid                  8   uint absent 255,254,253
 field     n2k.date                 16  uint absent 65535,65534,65533
 field     n2k.time                 32  uscale:1/10000 absent 4294967295,4294967294,4294967293
-field     lat                      64  sscale:1/10000000000000000
-field     lon                      64  sscale:1/10000000000000000
-field     n2k.pgn129029_altitude   64  sscale:1/1000000
+field     lat                      64  sscale:1/10000000000000000 absent 9223372036854775807,9223372036854775806
+field     lon                      64  sscale:1/10000000000000000 absent 9223372036854775807,9223372036854775806
+field     n2k.pgn129029_altitude   64  sscale:1/1000000 absent 9223372036854775807,9223372036854775806
 field     n2k.pgn129029_gnss_type  4   uint absent 15,14
 field     n2k.method               4   uint absent 15,14
 field     n2k.integrity            2   uint

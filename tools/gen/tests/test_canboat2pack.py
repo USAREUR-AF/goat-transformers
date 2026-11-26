@@ -1424,8 +1424,14 @@ class SentinelParseTest(unittest.TestCase):
 
     def test_a_field_that_states_none_has_none_whatever_its_type(self):
         self.assertEqual(source_field(length=2, field_type="LOOKUP").sentinels, ())
-        self.assertEqual(source_field(length=64, Signed=True).sentinels, ())
         self.assertEqual(source_field(length=32, field_type="FLOAT").sentinels, ())
+
+    def test_a_64_bit_number_that_states_none_takes_the_top_of_its_range(self):
+        # FieldTypes NUMBER, Sentinels TopOfRange: the highest positive value is unknown,
+        # that minus one an error; the database gives no value for 64-bit fields
+        self.assertEqual(source_field(length=64, Signed=True).sentinels, ((1 << 63) - 1, (1 << 63) - 2))
+        self.assertEqual(source_field(length=64).sentinels, ((1 << 64) - 1, (1 << 64) - 2))
+        self.assertEqual(source_field(length=64, field_type="FLOAT").sentinels, ())
 
     def test_an_mmsi_also_takes_zero(self):
         f = source_field(length=32, field_type="MMSI", UnknownValue=4294967295)

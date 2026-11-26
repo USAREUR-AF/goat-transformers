@@ -298,6 +298,13 @@ def _parse_field(label, raw, path, context):
             f.stated[member] = v
     if f.field_type == "MMSI":
         sent.append(0)
+    # A 64-bit NUMBER the database gives no value for (JSON cannot hold these integers
+    # exactly): the FieldTypes NUMBER rule (Sentinels TopOfRange) applies, the highest
+    # positive value is unknown and that minus one an error; the raw value is unsigned.
+    if f.field_type == "NUMBER" and f.bit_length == 64 and not sent:
+        top = (1 << 63) - 1 if f.signed else (1 << 64) - 1
+        sent += [top, top - 1]
+        f.stated["TopOfRange"] = top
     f.sentinels = tuple(OrderedDict.fromkeys(sent))
     return f
 
@@ -1475,8 +1482,10 @@ def _md_absent(kinds, seq=()):
         "An MMSI field also takes the raw value 0: the database's description of the MMSI field type",
         "says devices send 0 for \"none\" and that it is treated as not available. A field the database",
         "gives no such member keeps no option, whatever its type: a lookup of one or two bits uses every",
-        "value, and the database states none for the 64-bit numbers (the latitude and longitude of PGN",
-        "129029, for example). The pack uses only these statements of the database.",
+        "value. The 64-bit numbers (the latitude and longitude of PGN 129029, for example) state no value,",
+        "since JSON cannot hold such integers exactly; for them the rule of the field type NUMBER applies",
+        "(Sentinels TopOfRange): the highest positive value is unknown and that minus one an error.",
+        "The pack uses only these statements of the database.",
         "",
         "| Field type | Mapped fields with `absent` | Mapped fields without |",
         "|---|---|---|",
@@ -1709,7 +1718,8 @@ def emit_seq_pack_md(seq, unmapped, seq_keys, seq_lists, db, sha, vec_names):
     A("- `e02-fixed-layout-pgn-is-no-kind.json`: a PGN 129025 message is `no-kind` here.")
     A("- `s01-pgn129029-time-not-available-roundtrip.json`: the position of `x01` with the time of day")
     A("  at the value the database states for not available: no time key (`@absent`), same bytes back.")
-    A("  The 64-bit latitude and longitude of PGN 129029 state no such value, so they carry no `absent`.")
+    A("  The 64-bit latitude and longitude of PGN 129029 state no such value; the NUMBER rule gives them")
+    A("  `absent` at the top of their range (`s02`, `s03`).")
     A("")
     A("Fields carry `absent` as in pack `%s` (its section \"Absent values\"); the option needs" % FORMAT)
     A("engine version 0.9.")
@@ -2464,6 +2474,9 @@ def build_seq_vectors(seq, codec):
         # the time of day at the value the database states for "not available" (spec 0.9); the
         # 64-bit latitude and longitude of the PGN state none
         top = dict(top)
+        tf_lat, tf_lon = tf.get("latitude"), tf.get("longitude")
+        if tf_lat is None or tf_lon is None:
+            raise GenError("cross-format vector %s: no latitude or longitude" % name)
         tf = tf.get("time")
         if tf is None:
             raise GenError("cross-format vector %s: no field time" % name)
@@ -2477,6 +2490,24 @@ def build_seq_vectors(seq, codec):
         model["@absent"] = [tf.key]
         files.append(("s01-%s-time-not-available-roundtrip.json" % k.name,
                       _seq_vector("%s-time-not-available-roundtrip" % k.name, data, expect=data.hex(), model=model)))
+        # the 64-bit latitude and longitude at the top of their range: unknown (FieldTypes
+        # NUMBER, Sentinels TopOfRange), so neither becomes lat or lon, and no geometry
+        pos = dict(top)
+        pos[tf_lat] = _stated(tf_lat, "TopOfRange", name)
+        pos[tf_lon] = _stated(tf_lon, "TopOfRange", name)
+
+        data = seq_message(k, pos, items)
+        sel, ent = seq_decode(codec, data)
+        if "lat" in ent or "lon" in ent or seq_encode(sel, ent) != data:
+            raise GenError("sentinel vector of %s: position" % k.name)
+        model = OrderedDict([("@kind", k.name)])
+        model.update(seq_model(ent))
+        model["@absent"] = ["lat", "lon"]
+        files.append(("s02-%s-position-unknown-roundtrip.json" % k.name,
+                      _seq_vector("%s-position-unknown-roundtrip" % k.name, data, expect=data.hex(), model=model)))
+        files.append(("s03-%s-position-unknown-to-geojson.json" % k.name,
+                      _seq_vector("%s-position-unknown-to-geojson" % k.name, data, to="geojson",
+                                  expect=geojson_text(ent), model=OrderedDict([("@kind", k.name), ("@absent", ["lat", "lon"])]))))
     _expect_error(codec, FIXED_LAYOUT_MESSAGE, "no-kind")
     files.append(("e02-fixed-layout-pgn-is-no-kind.json",
                   _seq_vector("fixed-layout-pgn-is-no-kind", FIXED_LAYOUT_MESSAGE, expect_error="no-kind")))

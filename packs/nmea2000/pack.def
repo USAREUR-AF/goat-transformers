@@ -4998,8 +4998,8 @@ when      0:24:11 137
 when      0:37:3 4
 requires  n2k.vdr_recording_status n2k.memory_capacity n2k.memory_used
 field     n2k.vdr_recording_status  0:40:8       uint absent 255,254,253
-field     n2k.memory_capacity       0:48:64      uint
-field     n2k.memory_used           0:112:64     uint
+field     n2k.memory_capacity       0:48:64      uint absent 18446744073709551615,18446744073709551614
+field     n2k.memory_used           0:112:64     uint absent 18446744073709551615,18446744073709551614
 
 # PGN 130833 bGUserAndRemoteRename: B&G: User and Remote rename [CANboat: incomplete]
 kind      pgn130833_b_guser_and_remote_rename
