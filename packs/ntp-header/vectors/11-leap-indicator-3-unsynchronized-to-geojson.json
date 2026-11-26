@@ -1,0 +1,31 @@
+{
+  "name": "leap-indicator-3-unsynchronized-to-geojson",
+  "from": "ntp-header",
+  "to": "geojson",
+  "input": "e40106e900000000000003e847505300eea8c88fc0000000eea8c89080000000eea8c89080418937eea8c8908041ca2b",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "@kind": "primary",
+    "inet.ntp_leap": "3",
+    "inet.ntp_version": "4",
+    "inet.ntp_mode": "4",
+    "inet.ntp_stratum": "1",
+    "inet.ntp_poll": "6",
+    "inet.ntp_precision": "-23",
+    "inet.ntp_ref_ts_sec": "4004038799",
+    "inet.ntp_ref_ts_frac": "3221225472",
+    "inet.ntp_org_ts_sec": "4004038800",
+    "inet.ntp_org_ts_frac": "2147483648",
+    "inet.ntp_rec_ts_sec": "4004038800",
+    "inet.ntp_rec_ts_frac": "2151778615",
+    "inet.ntp_xmt_ts_sec": "4004038800",
+    "inet.ntp_xmt_ts_frac": "2151795243",
+    "@absent": [
+      "time_ms"
+    ],
+    "inet.ntp_root_delay": "0",
+    "inet.ntp_root_dispersion": "0.0152587890625",
+    "inet.ntp_ref_clock": "GPS"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the primary server reply with leap indicator 3, which RFC 5905 figure 9 calls unknown (clock unsynchronized): no time_ms"
+}
