@@ -74,7 +74,13 @@ both; others can differ by one count (about 2 m).
 Not bound, and why:
 
 - Pressure altitude (`gdl90.alt_raw`, feet = 25 x raw - 1000) is barometric,
-  not `hae`.
+  not `hae`. Limit: in a traffic report Stratux does not always put a pressure
+  altitude there. Its UAT decoder (`traffic.go`, `parseDownlinkReport`) keeps a
+  target's altitude together with a flag, `AltIsGNSS`, set from the frame when
+  the target reports a geometric altitude, and `makeTrafficReportMsg` writes
+  that altitude without testing the flag. The traffic report has no bit to say
+  which one it is, so `gdl90.alt_raw` and `gdl90.pressure_alt_ft` of a Stratux
+  traffic report may hold a GNSS altitude, and the pack cannot tell.
 - Geometric altitude (`gdl90.geo_alt_ft`): Stratux writes GPS altitude above
   mean sea level and sets ForeFlight capability bit 0 to say so; its `gps.go`
   notes that the height above the WGS 84 ellipsoid is what the protocol
