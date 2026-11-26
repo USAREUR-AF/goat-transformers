@@ -5,7 +5,7 @@
   "input": "ffffffffffffffffffffffff",
   "expect": "ffffffffffffffffffffffff",
   "model": {
-    "inet.ip_protocol": "255",
+    "inet.ah_next_header": "255",
     "inet.ah_payload_len": "255",
     "inet.ah_reserved": "65535",
     "inet.ipsec_spi": "4294967295",

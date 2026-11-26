@@ -5,11 +5,14 @@
   "input": "06040000000020020000002a000000000000000000000000",
   "expect": "06040000000020020000002a",
   "model": {
-    "inet.ip_protocol": "6",
+    "inet.ah_next_header": "6",
     "inet.ah_payload_len": "4",
     "inet.ah_reserved": "0",
     "inet.ipsec_spi": "8194",
-    "inet.ipsec_seq": "42"
+    "inet.ipsec_seq": "42",
+    "@absent": [
+      "inet.ip_protocol"
+    ]
   },
   "source": "built by tools/gen/link-headers-vectors.py from values chosen there; AH before TCP (next header 6), payload length 4 (3 fixed words and a 96-bit ICV, minus 2), SPI 0x2002, sequence 42; the 12-octet ICV read over"
 }

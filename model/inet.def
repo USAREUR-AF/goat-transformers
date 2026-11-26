@@ -392,6 +392,7 @@ key  l2tp_reserved             int     -     "data message over UDP: the 16 rese
 # IPsec ESP and AH, RFC 4303 section 2 and RFC 4302 section 2
 key  ipsec_spi                 int     -     "security parameters index: identifies the security association of the packet, 32 bits (ESP and AH)"
 key  ipsec_seq                 int     -     "sequence number: the low 32 bits of the anti-replay counter (ESP and AH)"
+key  ah_next_header            int     -     "AH: next header, the protocol of the payload after the AH header, from the IANA protocol numbers registry (RFC 4302 2.1); not the protocol after the IP header, which is 51 for AH"
 key  ah_payload_len            int     -     "AH: length of the header in 32-bit words, minus 2"
 key  ah_reserved               int     -     "AH: the 16 reserved bits, 0"
 

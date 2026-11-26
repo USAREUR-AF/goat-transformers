@@ -14,7 +14,7 @@ ICV and the payload are read over and not written (vector 01).
 
 | Octets | Field | Key | Transform |
 |---|---|---|---|
-| 0 | next header | `inet.ip_protocol` | `uint` |
+| 0 | next header | `inet.ah_next_header` | `uint` |
 | 1 | payload length | `inet.ah_payload_len` | `uint`: 32-bit words, minus 2 |
 | 2-3 | reserved | `inet.ah_reserved` | `uint` |
 | 4-7 | security parameters index | `inet.ipsec_spi` | `uint` |
@@ -22,12 +22,14 @@ ICV and the payload are read over and not written (vector 01).
 
 ## Shared keys
 
-- `inet.ip_protocol`, the key of the IPv4 protocol and IPv6 next header
-  fields: RFC 4302 section 2.1 takes the next header value from the IANA IP
-  Protocol Numbers, the registry those fields use.
 - `inet.ipsec_spi` and `inet.ipsec_seq`, with `esp-header` (its pack.md).
 
 ## Not mapped, and why
+
+- `inet.ip_protocol` is not bound. That key is the protocol after the IP
+  header, which for an AH packet is 51 (RFC 4302 section 2); the next header
+  field names the payload after AH, so it is `inet.ah_next_header`, from the
+  same IANA registry.
 
 - The ICV: its length is `(payload length + 2) × 4 - 12` octets, a count the
   header gives only through that sum; a `bits` group counts items by a field's
