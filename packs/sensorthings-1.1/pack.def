@@ -11,6 +11,23 @@ source  "OGC SensorThings API Part 1: Sensing Version 1.1, OGC 18-088, https://d
 uses    sensorthings
 wire    json
 
+kind    MultiDatastream
+requires  sensorthings.multi_observation_data_types
+field   sensorthings.name                name                 string
+field   sensorthings.description         description          string
+group   sensorthings.units               unitOfMeasurements
+  field  sensorthings.unit_name        name        string
+  field  sensorthings.unit_symbol      symbol      string
+  field  sensorthings.unit_definition  definition  string
+end
+field   sensorthings.observation_type    observationType      string
+group   sensorthings.multi_observation_data_types  multiObservationDataTypes
+  field  sensorthings.observation_type  .  string
+end
+field   sensorthings.phenomenon_time     phenomenonTime       string
+field   sensorthings.result_time_period  resultTime           string
+when    multiObservationDataTypes  present
+
 kind    Datastream
 requires  sensorthings.observation_type
 field   sensorthings.name                name                         string

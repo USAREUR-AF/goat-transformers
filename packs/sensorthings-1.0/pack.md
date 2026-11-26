@@ -4,7 +4,7 @@ OGC SensorThings API Part 1: Sensing, version 1.0 (OGC 15-078r6): one entity as 
 object, including the MultiDatastream extension of clause 12. Written by hand from the
 entity tables of clauses 8.2 and 12. Wire `json`.
 
-This pack has the kinds and lines of `sensorthings-1.1` and one kind before them,
+This pack has the kinds and lines of `sensorthings-1.1`, the first of which is
 `MultiDatastream`. Its message convention, kinds, shared-key bindings with their evidence
 (clause 8.2 has the same tables in both versions for `Thing.name`, `HistoricalLocation.time`
 and `Observation.resultTime`), raw keys and what is not mapped are stated in

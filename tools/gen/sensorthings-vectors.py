@@ -95,7 +95,7 @@ MULTI = ("MultiDatastream", named(
     ("f", "phenomenonTime", "s", P + "phenomenon_time"),
     ("f", "resultTime", "s", P + "result_time_period"),
     ("w", "multiObservationDataTypes", None)))
-PACK_KINDS = {"sensorthings-1.1": KINDS, "sensorthings-1.0": [MULTI] + KINDS}
+PACK_KINDS = {"sensorthings-1.1": [MULTI] + KINDS, "sensorthings-1.0": [MULTI] + KINDS}
 
 
 # -- values ---------------------------------------------------------------------------
@@ -422,8 +422,8 @@ def messages(v):
     return M
 
 
-def multidatastream():
-    md = ann("MultiDatastreams", 1, ["Thing", "Sensor", "ObservedProperties", "Observations"], "1.0")
+def multidatastream(v="1.0"):
+    md = ann("MultiDatastreams", 1, ["Thing", "Sensor", "ObservedProperties", "Observations"], v)
     md.update({"name": "Wind", "description": "Wind speed and direction, ten-minute means",
                "unitOfMeasurements": [
                    {"name": "metre per second", "symbol": "m/s", "definition": "http://unitsofmeasure.org/ucum.html"},
@@ -510,6 +510,15 @@ def build_vectors():
             error="transform-decode", ref=ref,
             note="resultTime is an instant with a time of day; a date alone is refused by iso8601_short (ruling 3 of 0.11)")
         n += 1
+        if v == "1.1":
+            # OGC 18-088 clause 12 and Table 26: the MultiDatastream extension is part of 1.1 too;
+            # without its kind the object fell to Thing (`when name present`) and name became callsign.
+            # Last, so the numbers of the vectors above stay as they were.
+            V["%02d-multidatastream-roundtrip" % n] = roundtrip(
+                fmt, "multidatastream-roundtrip", multidatastream("1.1"), ref,
+                "unitOfMeasurements is a group of objects, multiObservationDataTypes a group of strings; "
+                "name is sensorthings.name, not callsign")
+            n += 1
         out[fmt] = V
     return out
 
