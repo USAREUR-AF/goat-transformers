@@ -456,6 +456,84 @@ A context key that no loaded module declares is the error `undeclared-key`; a
 value that cannot be read as the key's type is `key-type-mismatch`.
 `spec/engine-spec.md`, Version 0.6, states the rules.
 
+## A carrier that holds several messages
+
+Some transports carry several messages of one format back to back in one
+field, with nothing between them: a JREAP-C block with several J-series
+messages, for example. The pack of such a transport is a **carrier pack**. In a
+carrier pack, the field is an `inner` line with `run`:
+
+```
+length 8
+inner conformance-run-in-xy run
+end
+```
+
+The inner pack, the one named on that line, states that each of its messages
+ends where its own lines end:
+
+```
+layout     sequential
+framing    self
+field probe.x 8 uint
+field probe.y 8 uint
+```
+
+`framing self` is the pack author's word, and no engine checks it. Write it
+only when each message's own lines fix its size. Examples are a
+`length … whole`, a block sized by a count, or a kind of fixed size. Both
+packs above are in `packs/`: `conformance-run-c-xy` and
+`conformance-run-in-xy`. `spec/engine-spec.md`, Version 0.92, states the rules.
+
+`convert` reads a carrier that holds exactly one message. If the carrier holds
+more, `convert` gives the error `message-count`. `convert_run` gives one result
+per message instead, and each result is either the converted message or that
+message's own error. The outer fields join every message. `decode_run` gives
+the entity of the outer fields alone, plus one entity or error per message.
+For an ordinary message that is not a carrier, `convert_run` gives one result,
+the same as `convert`.
+
+The input `040102030409` holds a length of 4, two messages (`0102` and
+`0304`), and the outer field `w` = 9. It is vector 01 of
+`packs/conformance-run-c-xy`:
+
+```rust
+let mut engine = Engine::new();
+engine.load_model_dir(Path::new("model"))?;
+engine.load_pack_dir_only(Path::new("packs"),
+    &["conformance-run-c-xy", "conformance-run-in-xy", "conformance-run-json"])?;
+for result in engine.convert_run("conformance-run-c-xy", "conformance-run-json", "040102030409", None)? {
+    match result {
+        Ok(message) => println!("{message}"),
+        Err(error) => eprintln!("{error}"),
+    }
+}
+```
+
+It prints:
+
+```json
+{"w":9,"x":1,"y":2}
+{"w":9,"x":3,"y":4}
+```
+
+`engine.convert` on the same input gives the error `message-count` (vector 06).
+The Rust engine words it:
+
+```
+message-count: format `conformance-run-c-xy`: the `conformance-run-in-xy` run holds more than one message
+```
+
+Name the inner pack when you load only some packs. In the example above,
+without `conformance-run-in-xy` the call gives `unknown-format: no pack loaded
+for format conformance-run-in-xy`.
+
+All seven engines provide `convert_run` and `decode_run`. The C library and the WebAssembly module do
+not have them yet, and the `goat-xf` command line has no run command. To
+convert a stream of carriers, use `goat-xf-pipe`, which calls `convert_run`
+for a carrier and writes each message as its own output frame
+([docs/adapters.md](adapters.md), worked example 5).
+
 ## Reading the capability report
 
 Before you rely on a conversion, the capability report says which model keys
