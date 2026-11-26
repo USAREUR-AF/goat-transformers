@@ -17,8 +17,14 @@ character: `ack` (0xE5), `short` (0x10), `long` (0x68, the control and long fram
   version, medium, access number, status, signature) and the records: DIF (extension bit, storage LSB,
   function, data coding), the DIFEs (unit, tariff, storage), VIF and VIFEs, a plain-text VIF's text, and
   the value by the data coding (integers of 1 to 8 octets, a 32-bit real, BCD as hex, a variable-length
-  value as octets). DIF 0x2F is an idle filler (an item with no more octets); DIF 0x0F and 0x1F take the
-  manufacturer data to the end.
+  value as octets). As in libmbus (`mbus_data_variable_parse`), the whole DIF octet decides: 0x2F is
+  an idle filler (an item with no more octets), 0x0F and 0x1F take the manufacturer data to the end,
+  and any other DIF with data field 0xF is a record with a VIF and 8 data octets (`mbus.value_special`,
+  as hex), the length `mbus_dif_datalength_lookup` gives 0xF.
+  Limit: libmbus defines CI 0x76 and 0x77 only by name (`RESP_VARIABLE_MSB`, `RESP_FIXED_MSB`) and
+  parses only 0x72 and 0x73, so it gives no layout for them; the pack reads 0x76 and 0x77 with the
+  layout of 0x72 and 0x73, low octet first. If they are sent most significant octet first, as their
+  names suggest, the multi-octet values come out octet-reversed.
 - **CI 0x73 and 0x77, fixed data**: identification, access number, status, the two type octets and the
   two counters (as hex).
 - Any other CI: the data as octets.
@@ -47,7 +53,8 @@ None.
 `tools/gen/meter2-vectors.py`, without an engine: an ACK; a REQ_UD2 short frame; a control frame
 (application reset); a variable data response with five records and two fillers; a plain-text VIF with a
 variable-length value and manufacturer data; a fixed data response; another start character
-(`no-kind`); a cut long frame (`malformed-wire`).
+(`no-kind`); a cut long frame (`malformed-wire`); a DIF 0x4F record (VIF and 8 octets) before DIF 0x1F
+manufacturer data.
 
 ## Kind on encode from another format
 

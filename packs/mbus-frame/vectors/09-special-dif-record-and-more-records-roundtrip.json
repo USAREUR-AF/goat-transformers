@@ -1,0 +1,17 @@
+{
+  "name": "special-dif-record-and-more-records-roundtrip",
+  "from": "mbus-frame",
+  "to": "mbus-frame",
+  "input": "681c1c680805720200000024400107570000004f1301020304050607081fbeef9616",
+  "expect": "681c1c680805720200000024400107570000004f1301020304050607081fbeef9616",
+  "model": {
+    "mbus.records.#": "2",
+    "mbus.records[0].mbus.storage_lsb": "1",
+    "mbus.records[0].mbus.data_field": "15",
+    "mbus.records[0].mbus.vif": "19",
+    "mbus.records[0].mbus.value_special": "0102030405060708",
+    "mbus.records[1].mbus.function_field": "1",
+    "mbus.records[1].mbus.manufacturer_data.#": "2"
+  },
+  "source": "built by tools/gen/meter2-vectors.py from values chosen there; layout restated from libmbus mbus-protocol.h and mbus-protocol.c; DIF 0x4F is an ordinary record (VIF and 8 octets), not manufacturer data; DIF 0x1F starts manufacturer data to the end (libmbus mbus_data_variable_parse); expect derived there, no engine run"
+}

@@ -130,6 +130,18 @@ def mbus_vectors():
                 ref=R_M, note="0x69 is not a start character")))
     out.append(("08-cut-long-frame-is-malformed.json", vec(P, "cut-long-frame-is-malformed", c[:20], error="malformed-wire",
                 ref=R_M, note="the frame stops inside the variable data header")))
+    # libmbus takes the whole DIF octet: only 0x0F and 0x1F start manufacturer data and only 0x2F is a
+    # filler. DIF 0x4F (storage bit set, data field 0xF) is a record with a VIF and 8 data octets
+    # (mbus_dif_datalength_lookup: 0xF is 8), then 0x1F manufacturer data to the end
+    recs3 = (bytes([0x4F, 0x13]) + bytes(range(1, 9))
+             + bytes([0x1F]) + bytes([0xBE, 0xEF]))
+    g = long_frame(0x08, 0x05, 0x72, var_header("00000002", 0x4024, 0x01, 0x07, 0x57, 0x00) + recs3)
+    out.append(("09-special-dif-record-and-more-records-roundtrip.json", vec(P, "special-dif-record-and-more-records-roundtrip", g,
+                {"mbus.records.#": "2", "mbus.records[0].mbus.storage_lsb": "1", "mbus.records[0].mbus.data_field": "15",
+                 "mbus.records[0].mbus.vif": str(0x13), "mbus.records[0].mbus.value_special": "0102030405060708",
+                 "mbus.records[1].mbus.function_field": "1", "mbus.records[1].mbus.manufacturer_data.#": "2"},
+                ref=R_M, note="DIF 0x4F is an ordinary record (VIF and 8 octets), not manufacturer data; DIF 0x1F starts "
+                              "manufacturer data to the end (libmbus mbus_data_variable_parse)")))
     return P, out
 
 
