@@ -81,6 +81,21 @@ did before. Limit: the sentinel is on the seconds alone, so a true
 1900-01-01T00:00:00 with a fraction of a second has no `time_ms`; the raw keys
 keep both halves.
 
+Unsynchronized. RFC 5905 gives leap indicator 3 the meaning "unknown (clock
+unsynchronized)" (figure 9) and stratum 16 "unsynchronized" (figure 11). The
+`time_ms` line lies in two nested gate blocks, `if !0:0:2 3` and `if !0:8:8 16`
+(engine-spec 0.17): a header with either gives no `time_ms` (vectors 10 and 11);
+`inet.ntp_xmt_ts_sec` still holds the seconds, so it comes back byte for byte
+(vector 12). Encoded from `time_ms` alone, both gates get the smallest value they
+hold for, leap indicator 0 and stratum 0, the bytes written before.
+
+Limit, encode from another format: an entity with only `time_ms` selects kind
+`secondary` and writes every other field as 0: version 0, mode 0 (reserved) and
+stratum 0, which RFC 5905 (figure 11, section 7.4) reads as unspecified or
+invalid, a Kiss-o'-Death packet; decoded again, the header is kind `kiss-code`.
+A consumer that needs a valid NTP reply should set `inet.ntp_version`,
+`inet.ntp_mode` and `inet.ntp_stratum` (`--set`).
+
 The other three timestamps stay raw: they are not the time of this packet
 (reference: when the clock was last set; origin and receive: times of the
 request).

@@ -390,7 +390,9 @@ def ntp_model(v, kind):
     m = {"@kind": kind}
     for k in ("ntp_leap", "ntp_version", "ntp_mode", "ntp_stratum", "ntp_poll", "ntp_precision") + tuple(TS_FIELDS):
         m["inet." + k] = str(v.get(k, 0))
-    if v.get("ntp_xmt_ts_sec", 0):
+    if v.get("ntp_leap", 0) == 3 or v.get("ntp_stratum", 0) == 16:
+        m["@absent"] = ["time_ms"]      # RFC 5905 figures 9 and 11: unsynchronized; the pack's gates
+    elif v.get("ntp_xmt_ts_sec", 0):
         m["time_ms"] = str(v.get("ntp_xmt_ts_sec", 0) * 1000 - NTP_UNIX_MS)
     else:
         m["@absent"] = ["time_ms"]      # RFC 5905 section 6: a zero timestamp is a time not known; `absent 0`
@@ -482,6 +484,20 @@ def ntp_vectors():
                    to="geojson",
                    ref=SRC + "the kiss reply, whose transmit timestamp is 0: RFC 5905 section 6 gives a zero "
                        "timestamp the meaning of a time not known, so no time_ms, and no position or id"))
+    unsync = dict(server, ntp_stratum=16, refid=0)
+    hu = pack(NTP, unsync)
+    out.append(vec(P, "stratum-16-unsynchronized-to-geojson", hu.hex(), '{"type":"Feature","geometry":null,"properties":{}}',
+                   model=ntp_model(unsync, "secondary"), to="geojson",
+                   ref=SRC + "the primary server reply with stratum 16, which RFC 5905 figure 11 calls "
+                       "unsynchronized: the transmit timestamp is not a time, so no time_ms"))
+    leap3 = dict(server, ntp_leap=3)
+    hl = pack(NTP, leap3)
+    out.append(vec(P, "leap-indicator-3-unsynchronized-to-geojson", hl.hex(), '{"type":"Feature","geometry":null,"properties":{}}',
+                   model=ntp_model(leap3, "primary"), to="geojson",
+                   ref=SRC + "the primary server reply with leap indicator 3, which RFC 5905 figure 9 calls "
+                       "unknown (clock unsynchronized): no time_ms"))
+    out.append(vec(P, "stratum-16-roundtrip", hu.hex(), hu.hex(), model=ntp_model(unsync, "secondary"),
+                   ref=SRC + "the stratum 16 reply comes back byte for byte from the raw transmit seconds"))
     return out
 
 
