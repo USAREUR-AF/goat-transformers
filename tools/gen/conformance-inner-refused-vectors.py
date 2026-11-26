@@ -686,7 +686,7 @@ def build(sink):
             ("else", "0002", '{"w":0}', "x is in an `else` that is not selected"),
             ("also", "0102", '{"w":1}', "x is mapped by an `also` line (ruling 13 of 0.8)"),
             ("as", "0102", '{"x":1}', "x is mapped by a common `when ... as` (ruling 24 of 0.30)"),
-            ("as-optional", "0102", '{"w":1}', "x is mapped by a kind's `when ... as ... optional`, not held on encode"),
+            ("as-optional", "0102", '{"x":1}', "x is mapped by a kind's `when ... as ... optional`; held on encode, as 0.94 asks of a conversion (ruling 5)"),
             ("as-at", "0102", '{"w":1}', "x is mapped by a `when ... at ... as`"),
             ("inner-kind", "010103", '{"y":3}', "the inner pack maps x in kind b only; kind a is the one selected"),
             ("partial", "010203", '{"x":1}', "also with `partial`"),

@@ -88,6 +88,7 @@ INNER = {
     "plain": ("x : 8, label, a character, without a `framing` line.", X + " / " + f("label", "ascii")),
     "framed": ("As in-plain, with `framing self`.", X + " / " + f("label", "ascii")),
     "nested": ("An inner pack with an `inner` line.", X + " / inner {P}in-x"),
+    "ping": ("kind p (1) maps nothing; kind d (2) x : 8 (0.94).", "kind p / when 8 1 / kind d / when 8 2 / " + X),
 }
 for k, (c, b) in INNER.items():
     define("in-" + k, "An inner pack: " + c, b, framing=k not in ("rest", "plain"))
@@ -147,6 +148,8 @@ define("one-switch", "A pack with a plain `inner` line: w : 8, then in-switch.",
 define("one", "A pack with a plain `inner` line: w : 8, then in-x.", W + " / inner {P}in-x")
 define("only-run", "A carrier pack whose kind r has its run line alone; kind o (2) n.", "kind r / when 8 1 / inner {P}in-xy run / kind o / when 8 2 / requires probe.n / " + N)
 define("held-target", "A target: kind a (1) y : 8 (0.94).", "kind a / when 8 1 / " + Y)
+define("only-ping", "A carrier pack whose kind r has a run of in-ping alone; kind o (2) n (0.94).", "kind r / when 8 1 / inner {P}in-ping run / kind o / when 8 2 / requires probe.n / " + N)
+define("plain-first", "A carrier pack: kind p (1) y and no run, then kind r (2) a run of in-xy (0.94).", "kind p / when 8 1 / " + Y + " / kind r / when 8 2 / inner {P}in-xy run")
 define("json", "The `json` source and target.", " / ".join("field probe.%s %s int" % (k, k) for k in ("n", "w", "x", "y", "z", "n_copy")), "json")
 
 
@@ -1071,6 +1074,9 @@ def build(sink):
     run(J, "only-run", "other-format-holding-nothing-of-the-kind", '{"w":9}', error=NK, ref=h + "a convert into kind r of an entity that holds only w")
     run("c-kinds", "held-target", "each-result-is-checked-on-its-own", "05010702000809", ["0107", "!" + NK], ref=h + "to a target that is not a carrier pack each joined entity is checked as convert: the second holds z and w, no key of kind a")
     con("c-xy", "held-target", "convert-of-one-message-is-checked", "02010209", "0102", ref=h + "convert of a carrier of one message: the joined entity holds y")
+    run("c-xy", "plain-first", "empty-run-into-a-kind-without-a-run-line-is-message-count", "0009", error="message-count", ref=h + "kind p, which has no run line, is chosen on the outer entity and takes one message; the count of 0.92 is made where the kind is chosen, before this check")
+    run("c-ping", "only-ping", "inner-kind-of-the-first-message-is-not-a-kept-kind", "010109", error=NK, ref=h + "the first message records kind p of in-ping and holds nothing; the inner kind it records does not stand for a kept kind (ruling 4), so kind r holds no key")
+    run("c-ping", "only-ping", "first-message-holding-a-key-of-the-inner-pack", "02020509", ["010205"], ref=h + "the first message, kind d, holds x, a key of in-ping")
 
     def load(name, text, error=BD, gtcheck_kind=None, packs=None):
         num[0] += 1

@@ -1,0 +1,13 @@
+{
+  "name": "first-message-holding-a-key-of-the-inner-pack",
+  "from": "conformance-run-c-ping",
+  "to": "conformance-run-only-ping",
+  "input": "02020509",
+  "expect_results": [
+    {
+      "expect": "010205"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: the first message, kind d, holds x, a key of in-ping"
+}

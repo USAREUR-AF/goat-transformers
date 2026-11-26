@@ -1,0 +1,10 @@
+{
+  "name": "empty-run-into-a-kind-without-a-run-line-is-message-count",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-plain-first",
+  "input": "0009",
+  "expect_error": "message-count",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: kind p, which has no run line, is chosen on the outer entity and takes one message; the count of 0.92 is made where the kind is chosen, before this check"
+}

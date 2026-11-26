@@ -362,7 +362,7 @@ def choose(name, ent, recorded):
             if ln.d == "requires":
                 for t in ln.a:
                     key, eq, vals = t.partition("=")
-                    ok = ok and key in ent and (not eq or str(ent[key]) in vals.split(","))
+                    ok = ok and key in ent and ent[key] != [] and (not eq or str(ent[key]) in vals.split(","))  # 0.7: a list holds with an item
             elif ln.d == "when" and ln.a[0].isdigit():
                 vals, as_ = when_of(ln)
                 if as_:
@@ -725,8 +725,8 @@ def build(sink):
     s("nomap", "requires-without-a-value", '{"y":2}', '{"t":"q"}', ref="ruling 3: y, which no line maps, is held")
     s("nomap", "no-requires", '{"n":1}', error=NK, ref="ruling 3: a kind that maps no key")
     s("reqlist", "requires-a-list-with-an-item", '{"recs":[{}]}', '{"t":"k"}', ref="ruling 3: a list with an item")
-    s("reqlist", "requires-met-by-an-empty-list", '{"recs":[],"w":1}', error=NK,
-      ref="ruling 1: an empty list meets a plain `requires`, so k is chosen, and then refused; the next kind is not tried")
+    s("reqlist", "an-empty-list-does-not-meet-requires", '{"recs":[],"w":1}', '{"t":"other","w":1}',
+      ref="ruling 1 and 0.7: a list with no item does not meet `requires`, so other is chosen, and it holds w")
 
     # -- Ruling 2
     for name, ctx, out in (("no-context", None, '{"t":"one"}'), ("empty-context", {}, '{"t":"one"}'),
