@@ -1,0 +1,9 @@
+{
+  "name": "message-pack-size-26-is-no-kind",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "f21a010000000000000000000000000000000000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "opendroneid.c decodeMessagePack fails when SingleMessageSize is not 25 (ODID_MESSAGE_SIZE); a pack stating 26 is no message pack"
+}
