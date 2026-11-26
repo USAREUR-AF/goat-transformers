@@ -40,8 +40,8 @@ group   c37118.phasors  0:128  item 64  count 3
   field c37118.phasor_magnitude  0:0:32   f32
   field c37118.phasor_angle      0:32:32  f32
 end
-field   c37118.freq_hz    0:320:32  f32
-field   c37118.rocof_hzs  0:352:32  f32
+field   c37118.freq_float  0:320:32  f32
+field   c37118.dfreq_float  0:352:32  f32
 group   c37118.analogs  0:384  item 32  count 1
   field c37118.analog_value  0:0:32  f32
 end

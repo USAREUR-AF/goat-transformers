@@ -15,6 +15,7 @@
     "c37118.fracsec": "0",
     "@kind": "cfg1",
     "c37118.time_base": "1000000",
+    "c37118.time_base_flags": "0",
     "c37118.station_name": "Bay 7           ",
     "c37118.pmu_idcode": "4321",
     "c37118.data_format": "15",

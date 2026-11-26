@@ -1,6 +1,6 @@
 # IEEE C37.118.2 data frame of one PMU whose configuration states 4 phasors in 16-bit integer
 # rectangular form, 3 analog values in floating point, frequency in 16-bit integer form and 1 digital
-# word (the configuration of pypmu's examples pyPMU.py and tinyPMU.py): 52 bytes. Big-endian.
+# word (the configuration of pypmu's example pyPMU.py): 52 bytes. Big-endian.
 # Licence: Apache-2.0 (a restatement; its source, pypmu, is BSD-3-Clause and implements IEEE C37.118.2-2011).
 format  c37118-data-4ph-int-rect
 version 0.1.0
@@ -41,7 +41,7 @@ group   c37118.phasors  0:128  item 32  count 4
   field c37118.phasor_imag  0:16:16  twos
 end
 field   c37118.freq_dev_mhz  0:256:16  twos
-field   c37118.rocof_hzs     0:272:16  sscale:1/100
+field   c37118.dfreq_raw     0:272:16  twos
 group   c37118.analogs  0:288  item 32  count 3
   field c37118.analog_value  0:0:32  f32
 end

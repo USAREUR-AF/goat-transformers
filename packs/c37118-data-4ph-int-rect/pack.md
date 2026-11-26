@@ -1,6 +1,6 @@
 # c37118-data-4ph-int-rect
 
-IEEE C37.118.2 synchrophasor frame. A data frame of one PMU whose configuration states 4 phasors as 16-bit integers in rectangular form, 3 analog values in floating point, the frequency and its rate of change as 16-bit integers, and 1 digital word: 52 bytes. This is the configuration of pypmu's examples `pyPMU.py` and `tinyPMU.py`.
+IEEE C37.118.2 synchrophasor frame. A data frame of one PMU whose configuration states 4 phasors as 16-bit integers in rectangular form, 3 analog values in floating point, the frequency and its rate of change as 16-bit integers, and 1 digital word: 52 bytes. This is the configuration of pypmu's example `pyPMU.py`.
 
 ## Source and status
 

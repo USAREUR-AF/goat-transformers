@@ -93,12 +93,12 @@ def data_a():
     m = header_model(4321, SOC, 500000, 5)
     m.update({"@kind": "data", "c37118.phasors.#": "4", "c37118.phasors[1].c37118.phasor_real": "-6000",
               "c37118.phasors[1].c37118.phasor_imag": "-10392", "c37118.freq_dev_mhz": "-15",
-              "c37118.rocof_hzs": "0.25", "c37118.analogs.#": "3", "c37118.analogs[1].c37118.analog_value": "230.25",
+              "c37118.dfreq_raw": "25", "c37118.analogs.#": "3", "c37118.analogs[1].c37118.analog_value": "230.25",
               "c37118.digital": "240", "c37118.stat_data_error": "0", "c37118.chk": str(struct.unpack(">H", fr[-2:])[0]),
-              "@absent": ["time_ms", "lat", "lon", "time_error_ms"]})
+              "@absent": ["time_ms", "lat", "lon", "time_error_ms", "c37118.rocof_hzs"]})
     out = {"01-data-roundtrip": vec("data-roundtrip", p, fr, fr, model=m,
                                     ref="4 integer rectangular phasors, 3 floating-point analogs, integer frequency and "
-                                        "rate of change (100 times Hz/s), one digital word; time quality 5 stays a raw code")}
+                                        "rate of change (DFREQ kept as the integer sent: pypmu gives it no scale), one digital word; time quality 5 stays a raw code")}
     st2 = stat(err=2, sync_lost=1, arrival=1, trig=1, cfgchg=1, mod=1, tq=7, unl=3, reason=15)
     body2 = struct.pack(">H", st2) + body[2:]
     fr2 = frame(0, 65535, 0, 16777215, 0, body2, version=2, leap=(1, 1, 1))
@@ -129,8 +129,9 @@ def data_b():
     assert len(fr) == 56
     m = header_model(1410, SOC + 1, 250000, 9)
     m.update({"@kind": "data", "c37118.phasors.#": "3", "c37118.phasors[2].c37118.phasor_magnitude": "229.75",
-              "c37118.phasors[2].c37118.phasor_angle": "2.625", "c37118.freq_hz": "49.9921875",
-              "c37118.rocof_hzs": "-0.03125", "c37118.analogs[0].c37118.analog_value": "12.5", "c37118.digital": "1"})
+              "c37118.phasors[2].c37118.phasor_angle": "2.625", "c37118.freq_float": "49.9921875",
+              "c37118.dfreq_float": "-0.03125", "c37118.analogs[0].c37118.analog_value": "12.5", "c37118.digital": "1"})
+    m["@absent"] = m.get("@absent", []) + ["c37118.freq_hz", "c37118.rocof_hzs"]   # withdrawn keys: no line maps them
     return p, {"01-data-roundtrip": vec("data-roundtrip", p, fr, fr, model=m,
                                         ref="3 floating-point polar phasors (magnitude, angle in radians), frequency "
                                             "and rate of change in floating point, one analog, one digital word; "
@@ -166,7 +167,7 @@ def config(p, nph, nan, ndg, fmt, phunits, anunits, names, station, rate):
     for i, (kind, ftype) in enumerate((("cfg2", 3), ("cfg1", 2)), 1):
         fr = frame(ftype, 4321, SOC, 0, 4, body)
         m = header_model(4321, SOC, 0, 4)
-        m.update({"@kind": kind, "c37118.time_base": "1000000", "c37118.station_name": text16(station).decode(),
+        m.update({"@kind": kind, "c37118.time_base": "1000000", "c37118.time_base_flags": "0", "c37118.station_name": text16(station).decode(),
                   "c37118.pmu_idcode": "4321", "c37118.data_format": str(fmt), "c37118.channel_names.#": str(len(names)),
                   "c37118.channel_names[0].c37118.channel_name": text16(names[0]).decode(),
                   "c37118.channel_names[%d].c37118.channel_name" % (len(names) - 1): text16(names[-1]).decode(),
@@ -179,6 +180,13 @@ def config(p, nph, nan, ndg, fmt, phunits, anunits, names, station, rate):
             "%s-roundtrip" % kind, p, fr, fr, model=m,
             ref="configuration frame %s of one PMU: %d phasors, %d analogs, %d digital word, %d channel names, "
                 "50 Hz nominal, data rate %d" % (kind[-1], nph, nan, ndg, len(names), rate))
+    # pypmu set_time_base: bits 31-24 of TIME_BASE are flags; ConfigFrame1 masks the word with
+    # 0x00ffffff, so a flag byte does not change the base
+    flagged = frame(3, 4321, SOC, 0, 4, struct.pack(">IH", (0x01 << 24) | 1000000, 1) + text16(station) + body_tail)
+    mf = header_model(4321, SOC, 0, 4)
+    mf.update({"@kind": "cfg2", "c37118.time_base": "1000000", "c37118.time_base_flags": "1"})
+    out["04-time-base-flags-roundtrip"] = vec("time-base-flags-roundtrip", p, flagged, flagged, model=mf,
+                                              ref="TIME_BASE with flag byte 0x01: the base is the low 24 bits, 1000000")
     two = frame(3, 4321, SOC, 0, 4, struct.pack(">IH", 1000000, 2) + text16(station) + body_tail)
     out["03-two-pmus-is-no-kind"] = vec("two-pmus-is-no-kind", p, two, error="no-kind",
                                         ref="NUM_PMU 2: the layout of a second PMU follows; this pack holds one")
