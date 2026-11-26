@@ -22,7 +22,7 @@ Date read: 2026-11-19.
 | `msg/SensorGnssRelative.msg` | `8d2851a15c00ece7123c0dad38dfc121a753ac86fc5cb37d540683393ba38107` |
 | `msg/SensorGps.msg` | `3d9d3781c62396cd29c8696d57e3605f05ef6ce8f84530da2e361f8ba03be52c` |
 | `msg/versioned/HomePosition.msg` | `3e7f6a4169d75652e81d4eae3b7a806707054a1ee22c1bebde0422c767af9cbd` |
-| `msg/versioned/VehicleGlobalPosition.msg` | `b2d4cd1c3fec0fcfd96e2867c22de61c2040056cb0e4120068c9e48b2b1713ae` |
+| `msg/versioned/VehicleGlobalPosition.msg` | `aa4f849e70e4622531dec5de8a2f2a6ef8cc7abb67faf0b093f2b1ee23b02948` |
 
 License: `LICENSE` (BSD 3-Clause License, Copyright (c) 2012 - 2023, PX4
 Development Team) for the .msg files and `Tools/msg/`; `docs/LICENSE` (CC BY 4.0)

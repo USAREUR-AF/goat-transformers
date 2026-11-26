@@ -4,7 +4,7 @@
   "to": "px4-ulog-vehicle-global-position",
   "source": "tools/gen/uorb2pack.py: lat and lon as float64 degrees, hae as the float32 ellipsoidal altitude in metres (410.5 is exact in float32); every other byte is zero (absent fields write nothing); uid and callsign have no line",
   "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410.5]},\"properties\":{\"callsign\":\"UAV1\"},\"id\":\"u-1\"}",
-  "expect": "00000000000000000000000000a047400000000000002140000000000040cd430000",
+  "expect": "00000000000000000000000000a047400000000000002140000000000040cd43010100",
   "model": {
     "lat": "47.25",
     "lon": "8.5",

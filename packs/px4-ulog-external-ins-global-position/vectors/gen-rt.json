@@ -8,7 +8,7 @@
   "model": {
     "px4ulog.vehicle_global_position_timestamp": "1700000001000003",
     "px4ulog.vehicle_global_position_timestamp_sample": "1700000002000006",
-    "lat": "-3.021",
-    "lon": "4.028"
+    "px4ulog.vehicle_global_position_alt": "-6.375",
+    "hae": "-6.125"
   }
 }

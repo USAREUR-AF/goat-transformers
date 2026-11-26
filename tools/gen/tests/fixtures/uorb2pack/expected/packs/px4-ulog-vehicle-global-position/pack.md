@@ -7,7 +7,7 @@ edit by hand.
 ## Message convention
 
 A message of this format is the `data` of one ULog 'D' message: the bytes after
-its two-byte `msg_id`, 34 bytes. ULog gives a topic its `msg_id` in an 'A'
+its two-byte `msg_id`, 35 bytes. ULog gives a topic its `msg_id` in an 'A'
 (subscription) message of the same log, so the id has no meaning outside that log
 and the data holds nothing that names the topic. There is no value on the wire a
 `when` line could select by, so each topic is a format of its own and the caller
@@ -34,7 +34,8 @@ the ROS 2 copy of the same messages.
 | 24 | 32 | `alt` | float32 | `px4ulog.vehicle_global_position_alt` f32 |
 | 28 | 32 | `alt_ellipsoid` | float32 | `hae` f32 |
 | 32 | 8 | `lat_lon_valid` | bool | `px4ulog.vehicle_global_position_lat_lon_valid` uint |
-| 33 | 8 | `reset_counter` | uint8 | `px4ulog.vehicle_global_position_reset_counter` uint |
+| 33 | 8 | `alt_valid` | bool | `px4ulog.vehicle_global_position_alt_valid` uint |
+| 34 | 8 | `reset_counter` | uint8 | `px4ulog.vehicle_global_position_reset_counter` uint |
 
 Padding bytes are not in the table: no line maps them. A numeric array of up
 to 64 elements is one key per element (`_0`, `_1`, ...); a longer one is a `group`
@@ -48,9 +49,15 @@ with a fixed count. A `char` array is `ascii` text.
 | `lon` | `lon` | as lat; longitude in degrees |
 | `alt_ellipsoid` | `hae` | file header: fused global position in WGS84; field: the ellipsoidal altitude in metres, float32. The altitude over mean sea level is a separate field |
 
+Validity flags. The message states a flag that says these values are valid: `lat` by `lat_lon_valid`, `lon` by `lat_lon_valid`, `hae` by `alt_valid`. The
+field is always the raw key (`px4ulog.vehicle_global_position_lat`, `px4ulog.vehicle_global_position_lon`, `px4ulog.vehicle_global_position_alt_ellipsoid`); the shared key is read only in a gate block that holds
+when the flag is 1, so a position the source marks invalid is no position, and the message
+comes back byte for byte. A shared key held from another format opens the block: the flag
+is written 1 (vector `gen-geojson-to-...`); `gen-x-invalid-position-to-geojson` has the flags 0.
+
 `timestamp` is microseconds since the system started, not UTC, and stays a raw
 key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the
-packs map the field to the shared key only.
+packs map the field to the shared key only, except the fields under a validity flag (above).
 
 ## Not mapped, and why
 
@@ -68,7 +75,7 @@ packs map the field to the shared key only.
 `vectors/gen-rt.json` is a round trip with every field set: values chosen by the
 generator, serialized by its own code from the layout, zero padding. `gen-*` files
 beside it, where there are any, are edge and error cases and conversions to
-geojson; each states its rule in `source`. 4 vector file(s).
+geojson; each states its rule in `source`. 5 vector file(s).
 `packs/geojson/vectors/gen-geojson-to-px4-ulog-vehicle-global-position.json` converts from geojson.
 
 ## Sources

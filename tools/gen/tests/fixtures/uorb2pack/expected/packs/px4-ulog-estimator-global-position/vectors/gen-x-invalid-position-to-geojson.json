@@ -1,0 +1,8 @@
+{
+  "name": "x-estimator_global_position-invalid-position-to-geojson",
+  "from": "px4-ulog-estimator-global-position",
+  "to": "geojson",
+  "source": "the message of gen-x-to-geojson with its validity flags (alt_valid, lat_lon_valid) 0: the source marks the position invalid, so lat, lon and hae are not read (raw keys keep the bits)",
+  "input": "43822d18240a0600dc5fe234e9b24740fdcc0f12581721400000d4c00000ccc00000c1",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}"
+}

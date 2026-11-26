@@ -12,8 +12,14 @@ wire          bits
 bit_order     lsb
 word_bytes    1
 field  px4ulog.home_position_timestamp  0:0:64  uint
-field  lat  0:64:64  f64
-field  lon  0:128:64  f64
+field  px4ulog.home_position_lat  0:64:64  f64
+if  0:456:8  1
+  field  lat  0:64:64  f64
+end
+field  px4ulog.home_position_lon  0:128:64  f64
+if  0:456:8  1
+  field  lon  0:128:64  f64
+end
 field  px4ulog.home_position_alt  0:192:32  f32
 field  px4ulog.home_position_x  0:224:32  f32
 field  px4ulog.home_position_y  0:256:32  f32

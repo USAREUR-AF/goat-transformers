@@ -20,7 +20,7 @@ Each file is `https://raw.githubusercontent.com/PX4/PX4-Autopilot/<commit>/<path
 | `docs/en/dev_log/ulog_file_format.md` | `09f9d8650d6d22660010c1bc3c816b47816de884a1e763f394d858b48f3e37f9` |
 | `Tools/msg/px_generate_uorb_topic_helper.py` | `7f1ce3d09c132d83fee4d76a68823a96a35cb70141688109c6739faf6d270895` |
 | `Tools/msg/templates/uorb/msg.json.em` | `eb3d6e68cb6419e99d83f80094fc7e65948a6cedaab3a326058d5701ef269026` |
-| `msg/versioned/VehicleGlobalPosition.msg` | `b2d4cd1c3fec0fcfd96e2867c22de61c2040056cb0e4120068c9e48b2b1713ae` |
+| `msg/versioned/VehicleGlobalPosition.msg` | `aa4f849e70e4622531dec5de8a2f2a6ef8cc7abb67faf0b093f2b1ee23b02948` |
 
 ## Licenses, as the sources state them
 
