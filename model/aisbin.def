@@ -365,3 +365,5 @@ key  isig_form                 int     -     "signal form, wire integer (signal-
 key  isig_facing               int     -     "signal orientation, wire integer (signal-status)"
 key  isig_direction            int     -     "direction of impact, code (signal-status)"
 key  isig_status               int     -     "light status, code (signal-status)"
+key  pos_lon_raw   int  -  "the longitude of DAC 1 FI 18, 19, 20, 21 and 31 as on the wire, 0.001 minute; kept beside `lon` because the source's not-available code and the value its unit implies for 181 or 91 degrees both mean no position"
+key  pos_lat_raw   int  -  "the latitude of DAC 1 FI 18, 19, 20, 21 and 31 as on the wire, 0.001 minute; kept beside `lat` because the source's not-available code and the value its unit implies for 181 or 91 degrees both mean no position"

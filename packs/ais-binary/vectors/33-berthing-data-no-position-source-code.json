@@ -1,0 +1,13 @@
+{
+  "name": "berthing-data-no-position-source-code",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "63`l7@0001i:05A9TKWRdjFfsfsfsfsf4:T`A0L2J:00000000000d<80F=p",
+  "expect": "63`l7@0001i:05A9TKWRdjFfsfsfsfsf4:T`A0L2J:00000000000d<80F=p",
+  "model": {
+    "@kind": "berthing-data",
+    "aisbin.pos_lon_raw": "181000",
+    "aisbin.pos_lat_raw": "91000"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 181000 and 91000: not available as the tables state it; the message comes back as it was"
+}

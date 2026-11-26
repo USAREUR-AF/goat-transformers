@@ -1,0 +1,13 @@
+{
+  "name": "met-hydro-imo289-no-position-source-code",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@00Gh5QQ02ig18Qew85mSGJIBURbvj>masPRM0pPR?3RK7hr1f<=RP0",
+  "expect": "83`l7@00Gh5QQ02ig18Qew85mSGJIBURbvj>masPRM0pPR?3RK7hr1f<=RP0",
+  "model": {
+    "@kind": "met-hydro-imo289",
+    "aisbin.pos_lon_raw": "181000",
+    "aisbin.pos_lat_raw": "91000"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 181000 and 91000: not available as the tables state it; the message comes back as it was"
+}

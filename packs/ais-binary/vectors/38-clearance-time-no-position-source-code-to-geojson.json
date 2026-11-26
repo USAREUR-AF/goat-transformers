@@ -1,0 +1,8 @@
+{
+  "name": "clearance-time-no-position-source-code-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "63`l7@0001i:0599Vbs90u9@p4lD000000000000@E=@T1HH@0dKh0000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"244123456\"}",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 181000 and 91000: not available as the tables state it; no position, so geometry null"
+}

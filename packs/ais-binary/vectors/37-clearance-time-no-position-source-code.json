@@ -1,0 +1,13 @@
+{
+  "name": "clearance-time-no-position-source-code",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "63`l7@0001i:0599Vbs90u9@p4lD000000000000@E=@T1HH@0dKh0000000",
+  "expect": "63`l7@0001i:0599Vbs90u9@p4lD000000000000@E=@T1HH@0dKh0000000",
+  "model": {
+    "@kind": "clearance-time",
+    "aisbin.pos_lon_raw": "181000",
+    "aisbin.pos_lat_raw": "91000"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 181000 and 91000: not available as the tables state it; the message comes back as it was"
+}

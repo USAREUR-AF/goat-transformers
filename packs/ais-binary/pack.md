@@ -97,10 +97,16 @@ What the evidence does not show, as for pack `ais`:
   which is not always the sending ship: the port and berth (FI 18), the berth
   (FI 20), the meteorological station (FI 11, 31), the signal station or signal
   (FI 19, DAC 200 FI 40). The MMSI is still the sender's, and gives `uid`.
-- **Not-available positions.** The source codes an unknown longitude and
-  latitude as 181 and 91 degrees in the field's unit (FI 11 as the field's
-  largest value). They decode as those numbers, as in pack `ais`; no sentinel
-  turns them into an absent key.
+- **Not-available positions.** For FI 18, 19, 20, 21 (bit 56 = 0) and 31 the
+  source's tables give 181000 and 91000 as not available, in a unit of 0.001
+  minute, where 181 and 91 degrees are 10860000 and 5460000 (of type 27 it says
+  in another place that the codes are 181 x 60 x 10 and 91 x 60 x 10). Neither
+  becomes `lat` or `lon` (`absent`), and `aisbin.pos_lon_raw` and
+  `aisbin.pos_lat_raw` keep the code, so each message comes back byte for byte.
+  Cost: a true longitude of 3.016667 or latitude of 1.516667 degrees, the
+  positions 181000 and 91000 stand for, has no `lon` or `lat`. Which code a
+  transmitter sends is not known here: IMO SN.1/Circ.289 was not read. FI 11
+  (the field's largest value) and DAC 200 FI 40 still decode as numbers.
 
 ## Not mapped, and why
 

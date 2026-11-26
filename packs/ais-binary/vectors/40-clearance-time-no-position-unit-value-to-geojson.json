@@ -1,0 +1,8 @@
+{
+  "name": "clearance-time-no-position-unit-value-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "63`l7@0001i:0599Vbs90u9@p4lD000000000000@E=@UBng0ab100000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"244123456\"}",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; raw 10860000 and 5460000: 181 and 91 degrees in the unit of 0.001 minute; no position, so geometry null"
+}
