@@ -385,3 +385,21 @@ fn a_mavlink2_frame_trimmed_of_trailing_zeros_decodes_with_mavlink2_framing() {
     let r = pipe(&["--from-format", "geojson", "--in", "stdin:", "--in-frame", "mavlink2", "--out", "stdout:", "--to-format", "geojson"], b"");
     assert_eq!(r.status, 2, "{}", r.stderr);
 }
+
+#[test]
+fn a_carrier_of_a_run_of_two_messages_becomes_two_output_frames() {
+    // engine-spec 0.92: from a carrier whose `inner` line reads a run, the
+    // pipe calls convert_run, and each message is a frame of its own and
+    // counted as converted. --packs-only names the carrier; the inner pack it
+    // names is loaded with it (0.34).
+    let common = ["--from-format", "conformance-run-c-xy", "--in", "stdin:", "--in-frame", "newline,hex", "--out", "stdout:", "--to-format", "conformance-run-json", "--out-frame", "newline"];
+    let r = pipe(&common, b"040102030409\n");
+    assert_eq!(r.status, 0, "{}", r.stderr);
+    assert_eq!(lines(&r.stdout), vec![r#"{"w":9,"x":1,"y":2}"#, r#"{"w":9,"x":3,"y":4}"#], "{}", r.stderr);
+    assert!(r.stderr.contains("done: in=1 converted=2 failed=0"), "{}", r.stderr);
+
+    // a carrier of one message is one frame, as convert gives it
+    let r = pipe(&common, b"02010209\n");
+    assert_eq!(r.status, 0, "{}", r.stderr);
+    assert_eq!(lines(&r.stdout), vec![r#"{"w":9,"x":1,"y":2}"#], "{}", r.stderr);
+}
