@@ -45,7 +45,7 @@ microseconds before the rest of the message.
 
 | Key | Field | Evidence |
 |---|---|---|
-| `time_ms` | Timestamp of the common header, `uiscale:1000` | RFC 6396 section 2: the timestamp is the number of seconds since the start of 1970 in UTC at which the record was written. Seconds times 1000 are `time_ms` |
+| `time_ms` | Timestamp of the common header, `uiscale:1000` | RFC 6396 section 2: the timestamp is the number of seconds, leap seconds excluded, since midnight UTC at the start of 1970 ("UNIX time"); the RFC does not say which event it marks. Seconds times 1000 are `time_ms` |
 
 `time_ms` holds whole seconds. In BGP4MP_ET records the microseconds after them are the raw key
 `mrt.microseconds`: `time_ms` is bound on the header line, before the kind is known, and no
