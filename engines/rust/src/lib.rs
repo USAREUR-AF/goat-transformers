@@ -8067,14 +8067,25 @@ pub mod bits {
 
     /// Which gate blocks of a scope hold on `raw`: a nested block only when
     /// the block enclosing it holds. A parent comes before its children in
-    /// the table.
+    /// the table. `kind` is the kind selected (its index in the pack): a
+    /// block of another kind is not evaluated and does not hold (ruling 1
+    /// of 0.17). An item's blocks belong to no kind.
     #[cfg(feature = "bits")]
-    fn held_on(p: &Pack, lay: &Layout, gates: &[GateDef], raw: &[u8], total: u64, base: u64) -> Vec<bool> {
+    fn held_on(p: &Pack, lay: &Layout, gates: &[GateDef], kind: Option<usize>, raw: &[u8], total: u64, base: u64) -> Vec<bool> {
         let mut held = vec![false; gates.len()];
         for (i, g) in gates.iter().enumerate() {
-            held[i] = g.parent.map_or(true, |q| held[q]) && gate_holds(p, lay, g, raw, total, base);
+            let in_force = g.kind.map_or(true, |k| kind == Some(k));
+            held[i] = in_force && g.parent.map_or(true, |q| held[q]) && gate_holds(p, lay, g, raw, total, base);
         }
         held
+    }
+
+    /// The index in the pack of the kind a selection holds; None for a pack
+    /// without kinds and for an item's lines.
+    #[cfg(feature = "bits")]
+    fn kind_index(p: &Pack, sel: &Sel) -> Option<usize> {
+        let k = sel.kind?;
+        p.kinds.iter().position(|x| std::ptr::eq(x, k))
     }
 
     /// The lines of a scope outside any gate block and those of the blocks
@@ -8224,7 +8235,7 @@ pub mod bits {
         }
         // step 4: each block evaluated on the bits of step 3 together with
         // those of an outside default or sentinel no gate value replaced
-        let held = held_on(p, lay, gates, &work, work.len() as u64 * 8, 0);
+        let held = held_on(p, lay, gates, kind_index(p, sel), &work, work.len() as u64 * 8, 0);
         Ok(GatePlan { held, values })
     }
 
@@ -8320,7 +8331,7 @@ pub mod bits {
                 }
                 let mut di = Decoded::new();
                 // the gate blocks of the item, evaluated per item (ruling 2 of 0.17)
-                let item = only_held(&body, &held_on(p, lay, &g.gates, raw, total, at));
+                let item = only_held(&body, &held_on(p, lay, &g.gates, None, raw, total, at));
                 let _item = limit::item();
                 let nested_end = decode_scope(p, lay, &item, raw, total, at, &mut di, reach)?;
                 at = (at + item_bits).max(nested_end);
@@ -8375,7 +8386,7 @@ pub mod bits {
             Err(_) => false,
         })?;
         // the lines of the gate blocks that hold (engine-spec v0.17)
-        let held = held_on(p, lay, sel.gates, raw, total, 0);
+        let held = held_on(p, lay, sel.gates, kind_index(p, &sel), raw, total, 0);
         let sel = only_held(&sel, &held);
         if sixbit {
             // every bit of the lines in force, not whole words (engine-spec v0.14)
@@ -8444,9 +8455,10 @@ pub mod bits {
     /// Write the lines of one scope: the message (`base` 0), or one item,
     /// whose first bit is `base`.
     /// A choice of gate blocks step 6 checks on the final output: the
-    /// scope's gate table, its first bit, and the blocks held on encode.
+    /// scope's gate table, the kind selected, its first bit, and the blocks
+    /// held on encode.
     #[cfg(feature = "bits")]
-    type GateCheck<'p> = (&'p [GateDef], u64, Vec<bool>);
+    type GateCheck<'p> = (&'p [GateDef], Option<usize>, u64, Vec<bool>);
 
     #[cfg(feature = "bits")]
     fn write_scope<'p>(
@@ -8571,7 +8583,7 @@ pub mod bits {
                 }
             }
             // the choice is checked once the whole output is written (ruling 9 of 0.17)
-            checks.push((all.gates, base, plan.held));
+            checks.push((all.gates, kind_index(p, all), base, plan.held));
         }
         Ok(())
     }
@@ -8580,8 +8592,8 @@ pub mod bits {
     /// the blocks encode chose.
     #[cfg(feature = "bits")]
     fn check_gates(p: &Pack, lay: &Layout, msg: &[u8], total: u64, checks: &[GateCheck]) -> Result<(), Error> {
-        for (gates, base, held) in checks {
-            let out = held_on(p, lay, gates, msg, total, *base);
+        for (gates, kind, base, held) in checks {
+            let out = held_on(p, lay, gates, *kind, msg, total, *base);
             if let Some(i) = (0..out.len()).find(|i| out[*i] != held[*i]) {
                 let g = &gates[i];
                 return err(format!(

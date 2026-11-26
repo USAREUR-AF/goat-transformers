@@ -398,3 +398,26 @@ fn absent_values_are_a_line_check() {
     assert!(load("field time_ms 0:0:8 uint absent +7\nbogus 1\n").starts_with("bad-directive:"));
     assert!(load("field time_ms 0:0:65 uint absent 7\nbogus 1\n").starts_with("unknown-directive:"));
 }
+
+/// Ruling 1 of 0.17 on the API: a gate block of a kind is evaluated only once
+/// that kind is selected. Kind `a`'s first item writes the bits kind `b`'s
+/// gate reads; encoding kind `a` neither evaluates nor checks that block, and
+/// encoding kind `b` gives its block the gate value of step 3.
+#[test]
+fn a_gate_block_of_another_kind_is_not_evaluated() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let mut e = Engine::new();
+    e.load_model_dir(&root.join("model")).unwrap();
+    e.load_pack_dir_only(&root.join("packs"), &["conformance-gate-other-kind"]).unwrap();
+    let f = "conformance-gate-other-kind";
+    for input in ["010506", "010906"] {
+        let ent = e.decode(f, input).unwrap();
+        assert_eq!(ent.kind, Some((f.to_string(), "a".to_string())));
+        assert!(!ent.fields.contains_key("probe.y"), "{}: kind b's block set a key", input);
+        assert_eq!(e.encode(f, &ent).unwrap(), input);
+    }
+    let mut ent = Entity::default();
+    ent.kind = Some((f.to_string(), "b".to_string()));
+    ent.fields.insert("probe.y".to_string(), Value::I64(10));
+    assert_eq!(e.encode(f, &ent).unwrap(), "02050a");
+}

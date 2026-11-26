@@ -1,0 +1,24 @@
+# Conformance probe pack for 0.17 ruling 1: a gate block inside a kind is
+# evaluated only after that kind is selected. Kind a's group writes the bits
+# that kind b's gate reads; encoding kind a does not evaluate kind b's block.
+# Public. Synthetic.
+format       conformance-gate-other-kind
+version      0.17.0
+distribution public
+source       "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses         probe
+wire         bits
+word_bytes   1
+bit_order    msb
+
+kind a
+when 0:0:8 1
+group probe.nums 0:8 item 8 count 2
+  field probe.val 0:0:8 uint
+end
+
+kind b
+when 0:0:8 2
+if 0:8:8 5
+  field probe.y 0:16:8 uint
+end
