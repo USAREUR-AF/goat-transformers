@@ -1,0 +1,13 @@
+{
+  "name": "sp-with-radar-cross-section-to-asterix-cat062-drops-sp",
+  "from": "asterix-cat062-rcs",
+  "to": "asterix-cat062",
+  "input": "3e00269b0d11010201075460100000000000000000ffce00110137810101000050053e800000",
+  "expect": "3e001f9b0d1001075460100000000000000000ffce00110137810101000050",
+  "model": {
+    "@kind": "track",
+    "radar.rcs_m2": "0.25"
+  },
+  "source": "EUROCONTROL-SPEC-0149-9 Edition 1.21, UAP (FRN 35 SP) and the SP item structure; IEEE 754 single for 0.25 is 3E800000; built by hand from asterix-cat062 vector 15",
+  "reference": "asterix-cat062 does not map I062/SP, so the same entity written with it has no SP: the opt-in is the choice of format."
+}

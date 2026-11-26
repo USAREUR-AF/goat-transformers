@@ -1,0 +1,14 @@
+{
+  "name": "radar-cross-section-in-sp-roundtrip",
+  "from": "asterix-cat062-rcs",
+  "to": "asterix-cat062-rcs",
+  "input": "3e00269b0d11010201075460100000000000000000ffce00110137810101000050053e800000",
+  "expect": "3e00269b0d11010201075460100000000000000000ffce00110137810101000050053e800000",
+  "model": {
+    "@kind": "track",
+    "cat062.track_number": "311",
+    "radar.rcs_m2": "0.25"
+  },
+  "source": "EUROCONTROL-SPEC-0149-9 Edition 1.21, UAP (FRN 35 SP) and the SP item structure; IEEE 754 single for 0.25 is 3E800000; built by hand from asterix-cat062 vector 15",
+  "reference": "FRN 35 set in the fifth FSPEC octet (0x02). SP: LEN 05 counts itself, then 3E800000, the single 0.25. LEN of the block 0x26 = 3 (CAT, LEN) + 5 (FSPEC) + 25 (items) + 5 (SP)."
+}

@@ -1,0 +1,13 @@
+{
+  "name": "no-radar-cross-section-writes-no-sp",
+  "from": "asterix-cat062-rcs",
+  "to": "asterix-cat062-rcs",
+  "input": "3e001f9b0d1001075460100000000000000000ffce00110137810101000050",
+  "expect": "3e001f9b0d1001075460100000000000000000ffce00110137810101000050",
+  "model": {
+    "@kind": "track",
+    "cat062.track_number": "311"
+  },
+  "source": "EUROCONTROL-SPEC-0149-9 Edition 1.21, UAP (FRN 35 SP) and the SP item structure; IEEE 754 single for 0.25 is 3E800000; built by hand from asterix-cat062 vector 15",
+  "reference": "The entity has no radar.rcs_m2, so FRN 35 is not set and the block equals what asterix-cat062 writes (its vector 15 expect)."
+}

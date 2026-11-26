@@ -1,0 +1,11 @@
+# The radar module: what a radar measured of the object a track or a detection
+# describes, beyond position and motion. spec/shared-model.md, "The radar
+# module". A module of its own, so `track` stays field for field the Canonical
+# Track v2 contract.
+#
+# Absent means "not stated", never 0: no conversion invents a value.
+module        radar
+version       0.1.0
+distribution  public
+source        "goat-transformers spec/shared-model.md, The radar module"
+key  rcs_m2  float  m2  "radar cross section of the object as the reporting radar measured it, in square metres; it depends on the radar and on the aspect it sees, so it is a measurement of one source, not a property of the object"
