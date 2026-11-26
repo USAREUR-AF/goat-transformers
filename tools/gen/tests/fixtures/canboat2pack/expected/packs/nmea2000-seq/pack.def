@@ -39,9 +39,9 @@ when      24 129029
 requires  n2k.sid n2k.time n2k.altitude n2k.pgn129029_reference_stations
 field     n2k.sid       8   uint
 field     n2k.time      32  uscale:1/10000 absent 4294967295,4294967294,4294967293
-field     lat           64  sscale:1/10000000000000000
-field     lon           64  sscale:1/10000000000000000
-field     n2k.altitude  64  sscale:1/1000000
+field     lat           64  sscale:1/10000000000000000 absent 9223372036854775807,9223372036854775806
+field     lon           64  sscale:1/10000000000000000 absent 9223372036854775807,9223372036854775806
+field     n2k.altitude  64  sscale:1/1000000 absent 9223372036854775807,9223372036854775806
 group     n2k.pgn129029_reference_stations count 8
   field     n2k.reference_station_type    4   uint
   field     n2k.reference_station_id      12  uint

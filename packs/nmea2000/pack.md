@@ -85,8 +85,10 @@ that order, so:
 An MMSI field also takes the raw value 0: the database's description of the MMSI field type
 says devices send 0 for "none" and that it is treated as not available. A field the database
 gives no such member keeps no option, whatever its type: a lookup of one or two bits uses every
-value, and the database states none for the 64-bit numbers (the latitude and longitude of PGN
-129029, for example). The pack uses only these statements of the database.
+value. The 64-bit numbers (the latitude and longitude of PGN 129029, for example) state no value,
+since JSON cannot hold such integers exactly; for them the rule of the field type NUMBER applies
+(Sentinels TopOfRange): the highest positive value is unknown and that minus one an error.
+The pack uses only these statements of the database.
 
 | Field type | Mapped fields with `absent` | Mapped fields without |
 |---|---|---|
@@ -101,7 +103,7 @@ value, and the database states none for the 64-bit numbers (the latitude and lon
 | ISO_NAME | 0 | 14 |
 | LOOKUP | 421 | 99 |
 | MMSI | 26 | 0 |
-| NUMBER | 1534 | 32 |
+| NUMBER | 1541 | 25 |
 | PGN | 0 | 11 |
 | STRING_FIX | 0 | 32 |
 | TIME | 11 | 0 |
