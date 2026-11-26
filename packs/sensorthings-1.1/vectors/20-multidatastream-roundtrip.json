@@ -1,0 +1,26 @@
+{
+  "name": "multidatastream-roundtrip",
+  "from": "sensorthings-1.1",
+  "to": "sensorthings-1.1",
+  "input": "{\"@iot.id\":1,\"@iot.selfLink\":\"https://sta.example.org/v1.1/MultiDatastreams(1)\",\"name\":\"Wind\",\"description\":\"Wind speed and direction, ten-minute means\",\"unitOfMeasurements\":[{\"name\":\"metre per second\",\"symbol\":\"m/s\",\"definition\":\"http://unitsofmeasure.org/ucum.html\"},{\"name\":\"degree\",\"symbol\":\"deg\",\"definition\":\"http://unitsofmeasure.org/ucum.html\"}],\"observationType\":\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation\",\"multiObservationDataTypes\":[\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement\",\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement\"],\"phenomenonTime\":\"2026-01-01T00:00:00Z/2026-04-05T06:00:00Z\"}",
+  "expect": "{\"name\":\"Wind\",\"description\":\"Wind speed and direction, ten-minute means\",\"unitOfMeasurements\":[{\"name\":\"metre per second\",\"symbol\":\"m/s\",\"definition\":\"http://unitsofmeasure.org/ucum.html\"},{\"name\":\"degree\",\"symbol\":\"deg\",\"definition\":\"http://unitsofmeasure.org/ucum.html\"}],\"observationType\":\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation\",\"multiObservationDataTypes\":[\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement\",\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement\"],\"phenomenonTime\":\"2026-01-01T00:00:00Z/2026-04-05T06:00:00Z\"}",
+  "model": {
+    "@kind": "MultiDatastream",
+    "sensorthings.name": "Wind",
+    "sensorthings.description": "Wind speed and direction, ten-minute means",
+    "sensorthings.units.#": "2",
+    "sensorthings.units[0].sensorthings.unit_name": "metre per second",
+    "sensorthings.units[0].sensorthings.unit_symbol": "m/s",
+    "sensorthings.units[0].sensorthings.unit_definition": "http://unitsofmeasure.org/ucum.html",
+    "sensorthings.units[1].sensorthings.unit_name": "degree",
+    "sensorthings.units[1].sensorthings.unit_symbol": "deg",
+    "sensorthings.units[1].sensorthings.unit_definition": "http://unitsofmeasure.org/ucum.html",
+    "sensorthings.observation_type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
+    "sensorthings.multi_observation_data_types.#": "2",
+    "sensorthings.multi_observation_data_types[0].sensorthings.observation_type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+    "sensorthings.multi_observation_data_types[1].sensorthings.observation_type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+    "sensorthings.phenomenon_time": "2026-01-01T00:00:00Z/2026-04-05T06:00:00Z"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.1 (OGC 18-088), clause 8.2; unitOfMeasurements is a group of objects, multiObservationDataTypes a group of strings; name is sensorthings.name, not callsign"
+}

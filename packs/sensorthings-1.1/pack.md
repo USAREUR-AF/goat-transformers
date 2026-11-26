@@ -22,7 +22,7 @@ that entity has. Kinds are tried in this order; the first whose `when` lines hol
 
 | Kind | Selected when | Encode requires |
 |---|---|---|
-| `MultiDatastream` (1.0 only) | `multiObservationDataTypes` is present | the list of data types |
+| `MultiDatastream` (1.0 and 1.1: OGC 18-088 clause 12, Table 26) | `multiObservationDataTypes` is present | the list of data types |
 | `Datastream` | `unitOfMeasurement` is present | `sensorthings.observation_type` |
 | `Observation` | `result` is present | `sensorthings.phenomenon_time` |
 | `LocationPoint` | `location.type` is `Point` | the position list |
@@ -80,7 +80,7 @@ Not bound, and why:
 `name`, `description`, `encodingType`, `definition`, `observationType`, the three members of
 `unitOfMeasurement`, `phenomenonTime`, a Datastream's `resultTime`, `validTime`, the `type`
 member of a `location` or `feature` that is not a Point, and the Point positions as lists of
-`sensorthings.coordinate`. For a MultiDatastream (1.0): `unitOfMeasurements` as the list
+`sensorthings.coordinate`. For a MultiDatastream: `unitOfMeasurements` as the list
 `sensorthings.units` and `multiObservationDataTypes` as the list
 `sensorthings.multi_observation_data_types`.
 
