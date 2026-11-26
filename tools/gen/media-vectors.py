@@ -183,6 +183,13 @@ def srt_vectors():
                 ref=R_SRT + "; a message drop request")))
     out.append((p, "08-keepalive-roundtrip.json", vec(p, "keepalive-roundtrip", srt_ctrl(1, 0, 0, 340, 0x22222222),
                 {"srt.control_type": "1", "srt.cif.#": "0"}, ref=R_SRT + "; a keep-alive")))
+    big = srt_ctrl(0, 0, 0, 350, 0x11111111, handshake(5, 0, 0, 0x80000001, 1500, 8192, 1, 0x11111111, 0,
+                                                       "192.0.2.10"))
+    out.append((p, "10-handshake-initial-seq-top-bit-roundtrip.json",
+                vec(p, "handshake-initial-seq-top-bit-roundtrip", big,
+                {"srt.initial_seq": str(0x80000001), "@absent": ["srt.hs_reserved"], "srt.extensions.#": "0"},
+                ref=R_SRT + "; a handshake whose initial packet sequence number has its top bit set: one 32-bit "
+                    "field (section 3.2.1, figure 5), no reserved bit")))
     out.append((p, "09-truncated-is-malformed.json", vec(p, "truncated-is-malformed", con[:-6], error="malformed-wire",
                 ref=R_SRT + "; the conclusion handshake cut inside its stream ID extension")))
     return out

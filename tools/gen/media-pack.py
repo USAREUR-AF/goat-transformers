@@ -126,8 +126,8 @@ MPEGTS_KEYS = [
 
 def srt_pack():
     s = "srt"
-    hs = ([F(s, "hs_version", 32), F(s, "encryption", 16), F(s, "extension_field", 16), F(s, "hs_reserved", 1),
-           F(s, "initial_seq", 31), F(s, "mtu", 32), F(s, "flow_window", 32), F(s, "handshake_type", 32),
+    hs = ([F(s, "hs_version", 32), F(s, "encryption", 16), F(s, "extension_field", 16),
+           F(s, "initial_seq", 32), F(s, "mtu", 32), F(s, "flow_window", 32), F(s, "handshake_type", 32),
            F(s, "srt_socket_id", 32), F(s, "syn_cookie", 32), F(s, "peer_ip", 128, "hex"),
            "group  srt.extensions  rest", "  " + F(s, "ext_type", 16), "  switch  srt.ext_type", "    case  1,2",
            "      " + F(s, "ext_length", 16), "      " + F(s, "srt_version", 32), "      " + F(s, "srt_flags", 32),
@@ -165,8 +165,8 @@ SRT_KEYS = [
     ("key", "hs_version", "handshake: version, 4 or 5"),
     ("key", "encryption", "handshake: encryption field, 0 none, 2 AES-128, 3 AES-192, 4 AES-256"),
     ("key", "extension_field", "handshake: extension field (the SRT magic 0x4A17 in an induction response; else the flags of the extensions present)"),
-    ("key", "hs_reserved", "handshake: the bit before the initial sequence number, 0"),
-    ("key", "initial_seq", "handshake: initial packet sequence number"),
+    ("key", "hs_reserved", "WITHDRAWN, no longer mapped: was a bit before the initial sequence number; draft-sharabayko-srt-01 section 3.2.1 has no such bit, the initial packet sequence number is 32 bits. Use initial_seq"),
+    ("key", "initial_seq", "handshake: initial packet sequence number, 32 bits"),
     ("key", "mtu", "handshake: maximum transmission unit size, octets"),
     ("key", "flow_window", "handshake: maximum flow window size, packets"),
     ("key", "handshake_type", "handshake: type, 0xFFFFFFFD done, 0xFFFFFFFE agreement, 0xFFFFFFFF conclusion, 0 wavehand, 1 induction"),

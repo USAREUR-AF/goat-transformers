@@ -37,8 +37,7 @@ switch  srt.control_type
     field  srt.hs_version  32  uint
     field  srt.encryption  16  uint
     field  srt.extension_field  16  uint
-    field  srt.hs_reserved  1  uint
-    field  srt.initial_seq  31  uint
+    field  srt.initial_seq  32  uint
     field  srt.mtu  32  uint
     field  srt.flow_window  32  uint
     field  srt.handshake_type  32  uint
