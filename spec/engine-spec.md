@@ -6888,8 +6888,9 @@ entity holds **no key of the chosen kind**, the error is `no-kind`.
 1. **The next kind is not tried.** The kind is the one that 0.5 chooses; this
    check only refuses it. No output changes other than to this error. A kind
    with a scalar `requires` or a non-optional `as` always passes; one with an
-   optional `as` passes when its label is held, even alone. A plain `requires`
-   is met by a present list that is empty (0.5), and the check may then refuse.
+   optional `as` passes when its label is held, even alone. A `requires` of a
+   list is met only by a list with at least one item (0.7, unchanged), which is
+   held, so such a kind passes too.
 2. **Same format and direct encode.** `convert(f, f, …)`, with or without
    context, and `encode(f, entity)` are unchanged. The `requires` choice of 0.5
    is made by both as before. A program that decodes and encodes by itself is
@@ -6899,6 +6900,8 @@ entity holds **no key of the chosen kind**, the error is `no-kind`.
 4. **Not checked:** the kind of a group item, the kind of an inner message, and
    a kept kind: when `Entity.kind` or `Entity.inner_kind` names the format of an
    `inner` line of the chosen kind or of the common lines (0.34), or names `to`.
+   An `inner` line cannot stand in a group body (0.34), so no other line keeps
+   a kind. In a run, ruling 7 says which kinds are kept.
    A pack without message kinds is not checked (ruling 6), a pack whose only
    `kind` lines are in a group body included: a message with no position still
    gives an empty GeoJSON Feature.
@@ -6948,9 +6951,24 @@ entity holds **no key of the chosen kind**, the error is `no-kind`.
      chooses, and on the outer entity joined with the first message, or on the
      outer entity alone when the run is empty. So a kind whose only line is
      its `run` line holds a key when the first message holds one of the inner
-     pack's keys. A kind without a `run` line that takes the one message is
-     checked on the joined entity. The messages' own kinds are those of inner
-     messages (ruling 4) and are not checked.
+     pack's keys. The inner kind that the first message records is not a
+     kept kind here, though it names the format of the `run` line: the check
+     is made. A kind without a `run` line takes the one message: the count of
+     0.92 ruling 6 is made first, where the kind is chosen (none or several
+     messages is `message-count`, as the `no-kind` of choosing comes before
+     this check, ruling 5); then the joined entity is checked as `convert`,
+     ruling 4 included. The messages' own kinds are those of inner messages
+     (ruling 4) and are not checked.
+8. **Vectors this version changes.** Four vectors written before 0.94 expected
+   output from an entity that holds no key of the chosen kind:
+   - `conformance-held-src` 40 is rederived under 0.7: an empty list does not
+     meet `requires`, so kind `other` is chosen and holds `w`.
+   - `conformance-asopt-json` 10 and `conformance-inner-refused-json` 13 keep
+     their point (the order of kinds, 0.52 ruling 8; the refusal of 0.52
+     ruling 20 on encode) with an input that holds a key of the kind.
+   - `cot-xml` `cam-01-to-etsi-cam-non-numeric-uid` is now `no-kind`: of kind
+     `cam` the entity holds nothing, as `etsicam.station_id` is absent. This
+     is the case the rule is for.
 
 ## Amends
 
