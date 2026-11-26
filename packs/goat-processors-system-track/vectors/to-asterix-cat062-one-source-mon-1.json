@@ -1,0 +1,12 @@
+{
+ "name": "to-asterix-cat062-one-source-mon-1",
+ "from": "goat-processors-system-track",
+ "to": "asterix-cat062",
+ "input": "{\"group\":\"s1\",\"track_number\":1,\"now_ms\":1795000060000,\"lat\":1.0001,\"lon\":1.0539,\"hae\":1500,\"course\":90,\"speed_ms\":100,\"mono\":1}",
+ "context": {
+  "cat062.sac": "25",
+  "cat062.sic": "10",
+  "track.confirmed": "1"
+ },
+ "expect": "3e001f9b0d10190a4e3e000002d8400002ff6d019000000001a10101000313"
+}

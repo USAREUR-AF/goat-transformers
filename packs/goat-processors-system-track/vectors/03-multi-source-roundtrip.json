@@ -1,0 +1,7 @@
+{
+ "name": "03-multi-source-roundtrip",
+ "from": "goat-processors-system-track",
+ "to": "goat-processors-system-track",
+ "input": "{\"group\":\"s1\",\"track_number\":1,\"now_ms\":1795000060000,\"lat\":1.0001,\"lon\":1.0539,\"hae\":1500,\"course\":90,\"speed_ms\":100,\"mono\":0}",
+ "expect": "{\"group\":\"s1\",\"track_number\":1,\"now_ms\":1795000060000,\"lat\":1.0001,\"lon\":1.0539,\"hae\":1500,\"course\":90,\"speed_ms\":100,\"mono\":0}"
+}
