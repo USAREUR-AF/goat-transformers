@@ -311,6 +311,78 @@ impl Framer for StartLength {
     }
 }
 
+/// A length field of `n` bytes at offset `at` of each frame, with no start
+/// byte: a stream of blocks whose header states their length after other
+/// header octets (`at:<K>:len:<N>:<be|le>:<whole|rest>`). With `whole` the
+/// length counts the whole frame, with `rest` the bytes after the length
+/// field. The message is the whole frame, header included.
+pub struct LengthAt {
+    buf: Buf,
+    at: usize,
+    n: usize,
+    big: bool,
+    whole: bool,
+    max: usize,
+}
+impl LengthAt {
+    pub fn new(at: usize, n: usize, big: bool, whole: bool, max: usize) -> LengthAt {
+        LengthAt { buf: Buf::default(), at, n, big, whole, max }
+    }
+    /// The size of the frame whose first `at + n` bytes are `head`; `None`
+    /// when the length is shorter than the length field's own end.
+    fn size(&self, head: &[u8]) -> Option<u64> {
+        let len = read_len(&head[self.at..self.at + self.n], self.big);
+        let end = (self.at + self.n) as u64;
+        if self.whole {
+            (len >= end).then_some(len)
+        } else {
+            len.checked_add(end)
+        }
+    }
+}
+impl Framer for LengthAt {
+    fn push(&mut self, bytes: &[u8]) {
+        self.buf.push(bytes)
+    }
+    fn next(&mut self) -> Result<Option<Vec<u8>>, AdapterError> {
+        let a = self.buf.avail();
+        let head = self.at + self.n;
+        if a.len() < head {
+            return Ok(None);
+        }
+        let size = match self.size(&a[..head]) {
+            Some(n) => n,
+            None => {
+                self.buf.skip(1);
+                return Err(AdapterError::new("frame-desync", format!("a whole-frame length shorter than the {} bytes up to the end of its length field; skipped one byte", head)));
+            }
+        };
+        if size > self.max as u64 {
+            self.buf.skip(1);
+            return Err(AdapterError::new("frame-desync", format!("a frame of {} bytes exceeds the maximum of {}; skipped one byte", size, self.max)));
+        }
+        let size = size as usize;
+        if a.len() < size {
+            return Ok(None);
+        }
+        Ok(Some(self.buf.take(size)))
+    }
+    fn finish(&mut self) -> Result<Option<Vec<u8>>, AdapterError> {
+        match self.buf.clear() {
+            0 => Ok(None),
+            n => Err(truncated(n)),
+        }
+    }
+    fn wrap(&self, msg: &[u8], out: &mut Vec<u8>) -> Result<(), AdapterError> {
+        let head = self.at + self.n;
+        if msg.len() < head || self.size(&msg[..head]) != Some(msg.len() as u64) {
+            return Err(AdapterError::new("frame-mismatch", format!("the message's length field ({} bytes at offset {}) does not state its own size", self.n, self.at)));
+        }
+        out.extend_from_slice(msg);
+        Ok(())
+    }
+}
+
 /// The whole unit is one message: one datagram, one file, one XML or JSON
 /// document read to the end of the input.
 pub struct Whole {
@@ -494,6 +566,9 @@ pub enum FrameSpec {
     Length { n: usize, big: bool },
     Fixed { n: usize },
     Start { start: u8, n: usize, big: bool, total: bool },
+    /// A length field at an offset of the frame: `whole` when it counts the
+    /// whole frame, else the bytes after it.
+    LengthAt { at: usize, n: usize, big: bool, whole: bool },
     Whole,
     /// MAVLink 2 frames, each payload zero-filled to its message's full
     /// length. `lengths` maps a message id to that length; the caller fills it
@@ -551,6 +626,8 @@ impl Framing {
     /// fixed:<N>                     every message is N bytes
     /// start:<byte>:len:<N>:<be|le>  a start byte, a length, then the message
     /// start:<byte>:len:<N>:<be|le>:total   the length counts the whole frame, which is the message
+    /// at:<K>:len:<N>:<be|le>:whole  a length of N bytes at offset K counts the whole frame, which is the message
+    /// at:<K>:len:<N>:<be|le>:rest   a length of N bytes at offset K counts the bytes after it; the frame is the message
     /// whole                         the whole datagram, file or document (also: datagram, file, document)
     /// mavlink2                      MAVLink 2 frames; a payload trimmed of trailing zeros is zero-filled
     /// ```
@@ -584,7 +661,18 @@ impl Framing {
                 };
                 FrameSpec::Start { start: start as u8, n, big, total }
             }
-            _ => return Err(bad(s, "expected newline, len:<N>:<be|le>, fixed:<N>, start:<byte>:len:<N>:<be|le>[:total], mavlink2 or whole")),
+            ["at", k, "len", n, e, w] => FrameSpec::LengthAt {
+                at: num(k, s)?,
+                n: len_bytes(n, s)?,
+                big: endian(e, s)?,
+                whole: match *w {
+                    "whole" => true,
+                    "rest" => false,
+                    _ => return Err(bad(s, "the length counts the `whole` frame or the `rest` after it")),
+                },
+            },
+            ["at", ..] => return Err(bad(s, "expected at:<offset>:len:<N>:<be|le>:<whole|rest>")),
+            _ => return Err(bad(s, "expected newline, len:<N>:<be|le>, fixed:<N>, start:<byte>:len:<N>:<be|le>[:total], at:<offset>:len:<N>:<be|le>:<whole|rest>, mavlink2 or whole")),
         };
         let mut fr = Framing::of(spec);
         for opt in parts {
@@ -604,6 +692,7 @@ impl Framing {
             FrameSpec::Length { n, big } => Box::new(LengthPrefix::new(*n, *big, self.max)),
             FrameSpec::Fixed { n } => Box::new(Fixed::new(*n)),
             FrameSpec::Start { start, n, big, total } => Box::new(StartLength::new(*start, *n, *big, *total, self.max)),
+            FrameSpec::LengthAt { at, n, big, whole } => Box::new(LengthAt::new(*at, *n, *big, *whole, self.max)),
             FrameSpec::Whole => Box::new(Whole::new(self.max)),
             FrameSpec::Mavlink2 { lengths } => Box::new(Mavlink2::new(lengths.clone())),
         }
@@ -846,8 +935,78 @@ mod tests {
         }
         let f = Framing::parse("newline,hex,max=1024").unwrap();
         assert_eq!((f.spec, f.hex, f.max), (FrameSpec::Newline, true, 1024));
-        for bad in ["", "lines", "len:3:be", "len:2", "len:2:xe", "fixed:0", "start:300:len:1", "newline,loud", "start:1:len:2"] {
+        for bad in ["", "lines", "len:3:be", "len:2", "len:2:xe", "fixed:0", "start:300:len:1", "newline,loud", "start:1:len:2",
+                    "at:2:len:2:be", "at:2:len:3:be:whole", "at:x:len:2:be:whole", "at:2:len:2:be:total"] {
             assert_eq!(Framing::parse(bad).unwrap_err().kind, "bad-frame", "{}", bad);
         }
+        assert_eq!(
+            Framing::parse("at:2:len:2:be:whole").unwrap().spec,
+            FrameSpec::LengthAt { at: 2, n: 2, big: true, whole: true }
+        );
+        assert_eq!(
+            Framing::parse("at:0x1:len:1:le:rest").unwrap().spec,
+            FrameSpec::LengthAt { at: 1, n: 1, big: false, whole: false }
+        );
+    }
+
+    // Invented blocks: a type octet, a flags octet, a 2-byte big-endian length
+    // of the whole block, then the rest.
+    fn block(kind: u8, body: &[u8]) -> Vec<u8> {
+        let len = (4 + body.len()) as u16;
+        let mut b = vec![kind, 0x10];
+        b.extend_from_slice(&len.to_be_bytes());
+        b.extend_from_slice(body);
+        b
+    }
+
+    #[test]
+    fn a_length_at_offset_2_cuts_a_stream_of_blocks_however_it_arrives() {
+        let blocks = [block(0x01, &[0xaa, 0xbb, 0xcc]), block(0x02, &[]), block(0x07, &[1, 2, 3, 4, 5, 6, 7, 8, 9])];
+        let stream: Vec<u8> = blocks.concat();
+        // one byte at a time, then in two halves: the same three blocks
+        for chunk in [1, stream.len() / 2 + 1, stream.len()] {
+            let mut f = Framing::parse("at:2:len:2:be:whole").unwrap().build();
+            let mut got = Vec::new();
+            for c in stream.chunks(chunk) {
+                f.push(c);
+                while let Some(m) = f.next().unwrap() {
+                    got.push(m);
+                }
+            }
+            assert_eq!(got, blocks.to_vec(), "chunks of {}", chunk);
+            assert_eq!(f.finish().unwrap(), None);
+        }
+        // wrap writes a block as it is, and only one whose length is its size
+        let f = Framing::parse("at:2:len:2:be:whole").unwrap().build();
+        let mut out = Vec::new();
+        f.wrap(&blocks[0], &mut out).unwrap();
+        assert_eq!(out, blocks[0]);
+        let mut wrong = blocks[0].clone();
+        wrong[3] += 1;
+        assert_eq!(f.wrap(&wrong, &mut out).unwrap_err().kind, "frame-mismatch");
+    }
+
+    #[test]
+    fn a_length_at_an_offset_counting_the_rest_and_the_errors() {
+        // a length of one byte at offset 1 counting the rest: 3 bytes after
+        // it make a frame of 5
+        let mut f = Framing::parse("at:1:len:1:be:rest").unwrap().build();
+        f.push(&[0x09, 0x03, 0xa1, 0xa2, 0xa3, 0x09, 0x00]);
+        assert_eq!(f.next().unwrap(), Some(vec![0x09, 0x03, 0xa1, 0xa2, 0xa3]));
+        assert_eq!(f.next().unwrap(), Some(vec![0x09, 0x00]));
+        assert_eq!(f.next().unwrap(), None);
+        // a whole-frame length shorter than its own field is skipped a byte at a time
+        let mut f = Framing::parse("at:2:len:2:be:whole").unwrap().build();
+        f.push(&[0x01, 0x10, 0x00, 0x03]);
+        assert_eq!(f.next().unwrap_err().kind, "frame-desync");
+        // a frame above max is skipped too
+        let mut f = Framing::parse("at:2:len:2:be:whole,max=16").unwrap().build();
+        f.push(&[0x01, 0x10, 0x00, 0x20]);
+        assert_eq!(f.next().unwrap_err().kind, "frame-desync");
+        // a block cut short at the end is frame-truncated
+        let mut f = Framing::parse("at:2:len:2:be:whole").unwrap().build();
+        f.push(&block(0x01, &[1, 2, 3])[..5]);
+        assert_eq!(f.next().unwrap(), None);
+        assert_eq!(f.finish().unwrap_err().kind, "frame-truncated");
     }
 }
