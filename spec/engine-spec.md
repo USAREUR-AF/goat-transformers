@@ -6871,7 +6871,8 @@ entity holds **no key of the chosen kind**, the error is `no-kind`.
   `model_keys` of the inner pack of an `inner` line among those lines (0.34,
   whichever inner kind encode will choose; a pack that does not pass 0.34's
   checks 1 to 4 adds nothing, so the result is then `no-kind` where nothing
-  else is held); and the keys, with `=` or without, of the kind's own
+  else is held; those four checks only, not the `framing self` check of 0.92
+  ruling 16); and the keys, with `=` or without, of the kind's own
   `requires` lines, not of a group's. A list counts by the entry of the list
   (`rows[]`), not by item keys. Keys are compared as literal text. A key does
   not count by being named by `with`, `switch` or a gate (a line that maps it

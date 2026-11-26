@@ -1075,6 +1075,7 @@ def build(sink):
     run("c-kinds", "held-target", "each-result-is-checked-on-its-own", "05010702000809", ["0107", "!" + NK], ref=h + "to a target that is not a carrier pack each joined entity is checked as convert: the second holds z and w, no key of kind a")
     con("c-xy", "held-target", "convert-of-one-message-is-checked", "02010209", "0102", ref=h + "convert of a carrier of one message: the joined entity holds y")
     run("c-xy", "plain-first", "empty-run-into-a-kind-without-a-run-line-is-message-count", "0009", error="message-count", ref=h + "kind p, which has no run line, is chosen on the outer entity and takes one message; the count of 0.92 is made where the kind is chosen, before this check")
+    run("c-x", "plain-first", "several-messages-into-a-kind-without-a-run-line-is-message-count", "02010209", error="message-count", ref=h + "kind p, which has no run line, is chosen on the outer entity; two messages is message-count, made where the kind is chosen and before this check, although neither the outer entity nor a message holds y, kind p's key")
     run("c-ping", "only-ping", "inner-kind-of-the-first-message-is-not-a-kept-kind", "010109", error=NK, ref=h + "the first message records kind p of in-ping and holds nothing; the inner kind it records does not stand for a kept kind (ruling 4), so kind r holds no key")
     run("c-ping", "only-ping", "first-message-holding-a-key-of-the-inner-pack", "02020509", ["010205"], ref=h + "the first message, kind d, holds x, a key of in-ping")
 
