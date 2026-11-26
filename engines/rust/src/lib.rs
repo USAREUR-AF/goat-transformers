@@ -2419,6 +2419,8 @@ pub struct Pack {
     pub elements: Vec<(String, usize)>,
     /// bits only, `layout sequential`: `encoding uper` (engine-spec v0.19)
     pub uper: bool,
+    /// bits only, `layout sequential`: `framing self` (engine-spec v0.92)
+    pub framing: bool,
     /// `at` on a `when` of a pack that is not `layout sequential`: raised
     /// with the other `at` errors, after the key passes (rulings 10 and 14
     /// of 0.33)
@@ -2453,6 +2455,7 @@ impl Pack {
         let mut at_err: Option<Error> = None;
         // engine-spec v0.34: the first `inner` line, refused after the file is read
         let mut inner_line: Option<usize> = None;
+        let mut framing_line: Option<usize> = None;
         // engine-spec v0.30: the first `when … as`, raised after `missing-wire`
         let mut as_err: Option<Error> = None;
         let mut format = None;
@@ -2564,6 +2567,10 @@ impl Pack {
                     }
                 }
                 "format" => format = Some(req_arg(&toks, 1, ln)?),
+                // engine-spec v0.92: refused after the file is read, this pack is not sequential
+                "framing" => {
+                    framing_line.get_or_insert(ln);
+                }
                 "armor" => armor_lines.record(&toks, ln, !kinds.is_empty()),
                 "encoding" => encoding_lines.record(&toks, ln, !kinds.is_empty()),
                 d @ ("ext" | "choice" | "alt") => {
@@ -2925,6 +2932,9 @@ impl Pack {
         if let Some(e) = as_err {
             return Err(e);
         }
+        if let Some(ln) = framing_line {
+            return bad(ln, "`framing` is a line of a `layout sequential` `bits` pack");
+        }
         if let Some(ln) = inner_line {
             return bad(ln, "`inner` is a line of a `layout sequential` `bits` pack");
         }
@@ -3164,6 +3174,7 @@ impl Pack {
             gates,
             elements,
             uper: false,
+            framing: false,
             at_err,
         })
     }
@@ -3632,6 +3643,18 @@ pub(crate) mod limit {
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     pub fn items_of(lists: &std::collections::BTreeMap<String, Vec<Entity>>) -> u64 {
         lists.values().map(|items| items.len() as u64 + items.iter().map(|i| items_of(&i.lists)).sum::<u64>()).sum()
+    }
+
+    /// What is counted now, (items held, the limit), and that put back: the
+    /// items of one message of a run are not counted after it (engine-spec
+    /// v0.92, ruling 5).
+    #[cfg(feature = "bits")]
+    pub fn held() -> Option<(u64, u64)> {
+        STATE.with(|s| s.get())
+    }
+    #[cfg(feature = "bits")]
+    pub fn restore(held: Option<(u64, u64)>) {
+        STATE.with(|s| s.set(held));
     }
 
     /// The entity no longer holds `n` items: a later group replaces the
@@ -4358,6 +4381,39 @@ impl Default for Engine {
     }
 }
 
+/// The bound on the items of all the joined entities of a run (engine-spec
+/// v0.92, ruling 5): over the messages whose decode came to its end, a
+/// `transform-decode` included, the outer entity's items once for each and
+/// each message's own items. The sum may reach `max`; past it is
+/// `malformed-wire` of the call. The outer entity is counted once and
+/// multiplied, so the check is linear in the number of messages.
+#[cfg(feature = "bits")]
+fn run_sum(from: &str, run: &str, outer: &Entity, messages: &[Result<Decoded, Error>], max: usize) -> Result<(), Error> {
+    let each = limit::items_of(&outer.lists) as u128;
+    let mut sum: u128 = 0;
+    for d in messages.iter().filter_map(|m| m.as_ref().ok()) {
+        sum += each + limit::items_of(&d.ent.lists) as u128;
+    }
+    if sum > max as u128 {
+        return err(format!(
+            "malformed-wire: format `{}`: the entities joined from the `{}` run hold {} list items together, beyond the limit of {}",
+            from, run, sum, max
+        ));
+    }
+    Ok(())
+}
+
+/// What a run operation decoded (engine-spec v0.92).
+#[cfg(feature = "bits")]
+enum Carrier {
+    /// a message that reaches no `run` line
+    Ordinary(Result<Entity, Error>),
+    /// the outer lines, the messages, and the format of the `run` line
+    Run { outer: Result<Entity, Error>, messages: Vec<Result<Decoded, Error>>, format: String },
+    /// the outer decode stopped; `message`: a message had stopped before it
+    Stopped { error: Error, message: Option<Error> },
+}
+
 impl Engine {
     pub fn new() -> Engine {
         Engine::default()
@@ -4962,6 +5018,254 @@ impl Engine {
         self.encode(to, &ent)
     }
 
+    /// Engine-spec v0.92: the entity of a carrier's outer lines alone, and one
+    /// entity, or error, per message of its run, joined with the outer keys.
+    /// An ordinary message gives its one entity in both places, or its error as
+    /// the one result beside an empty entity.
+    #[cfg(feature = "bits")]
+    pub fn decode_run(&self, format: &str, bytes: &str) -> Result<(Entity, Vec<Result<Entity, Error>>), Error> {
+        match self.read_carrier(format, bytes, self.max_items)? {
+            // an error of an ordinary message is its one result (ruling 4)
+            Carrier::Ordinary(res) => Ok((res.clone().unwrap_or_default(), vec![res])),
+            Carrier::Run { outer, messages, format: run } => {
+                let outer = outer?;
+                run_sum(format, &run, &outer, &messages, self.max_items)?;
+                let joined = messages.into_iter().map(|m| self.join_message(format, &outer, m)).collect();
+                Ok((outer, joined))
+            }
+            Carrier::Stopped { error, .. } => Err(error),
+        }
+    }
+
+    /// A build without `bits` has no carrier pack: every message is ordinary.
+    #[cfg(not(feature = "bits"))]
+    pub fn decode_run(&self, format: &str, bytes: &str) -> Result<(Entity, Vec<Result<Entity, Error>>), Error> {
+        self.pack(format)?;
+        let res = self.decode(format, bytes);
+        Ok((res.clone().unwrap_or_default(), vec![res]))
+    }
+
+    /// Engine-spec v0.92: one result per message, or one for a carrier pack.
+    pub fn convert_run(
+        &self,
+        from: &str,
+        to: &str,
+        bytes: &str,
+        context: Option<&[(String, Value)]>,
+    ) -> Result<Vec<Result<String, Error>>, Error> {
+        let given = context.is_some();
+        let read = || {
+            let c = context.unwrap_or(&[]).to_vec();
+            self.check_context(&c).map(|_| c)
+        };
+        self.convert_run_in(from, to, bytes, given, &read, self.max_items)
+    }
+
+    /// `convert_run` with the context given as text (a vector's `context`) and
+    /// the limit on list items and messages for this call.
+    pub fn convert_run_text_limited(
+        &self,
+        from: &str,
+        to: &str,
+        bytes: &str,
+        context: Option<&[(String, String)]>,
+        max_items: usize,
+    ) -> Result<Vec<Result<String, Error>>, Error> {
+        let read = || self.context_from_text(context.unwrap_or(&[]));
+        self.convert_run_in(from, to, bytes, context.is_some(), &read, max_items)
+    }
+
+    #[cfg(feature = "bits")]
+    fn convert_run_in(
+        &self,
+        from: &str,
+        to: &str,
+        bytes: &str,
+        given: bool,
+        context: &dyn Fn() -> Result<Vec<(String, Value)>, Error>,
+        max_items: usize,
+    ) -> Result<Vec<Result<String, Error>>, Error> {
+        self.pack(from)?;
+        let target = self.pack(to)?;
+        let carrier = target.seq.as_ref().filter(|b| seq::is_carrier(b));
+        // 0.6, steps 2 and 3
+        let steps = from != to || given;
+        let complete = |ent: &mut Entity, context: &[(String, Value)]| {
+            for (key, v) in context {
+                ent.fields.entry(key.clone()).or_insert_with(|| v.clone());
+            }
+            self.complete(ent);
+        };
+        let read_context = || if steps { context() } else { Ok(Vec::new()) };
+        let (outer, messages, format) = match self.read_carrier(from, bytes, max_items)? {
+            Carrier::Ordinary(res) => {
+                // to a carrier pack each of its errors is the call's (ruling 4)
+                let one = |res: Result<String, Error>| match res {
+                    Err(e) if carrier.is_some() => Err(e),
+                    res => Ok(vec![res]),
+                };
+                let mut ent = match res {
+                    Ok(ent) => ent,
+                    Err(e) => return one(Err(e)),
+                };
+                self.keep_kinds(from, to, &mut ent);
+                if steps {
+                    let context = read_context()?;
+                    complete(&mut ent, &context);
+                }
+                return one(self.encode(to, &ent));
+            }
+            // a message that stopped stands before the outer line that did
+            Carrier::Stopped { error, message } => {
+                return Err(match message {
+                    Some(e) if carrier.is_some() => e,
+                    _ => error,
+                })
+            }
+            Carrier::Run { outer, messages, format } => (outer, messages, format),
+        };
+        let body = match carrier {
+            // one result per message
+            None => {
+                let outer = outer?;
+                run_sum(from, &format, &outer, &messages, max_items)?;
+                let context = read_context()?;
+                let results = messages.into_iter().map(|m| {
+                    let mut ent = self.join_message(from, &outer, m)?;
+                    self.keep_kinds(from, to, &mut ent);
+                    if steps {
+                        complete(&mut ent, &context);
+                    }
+                    self.encode(to, &ent)
+                });
+                return Ok(results.collect());
+            }
+            Some(body) => body,
+        };
+        // a carrier pack: one result, and every error is the call's, in phases
+        if let Some(e) = messages.iter().find_map(|m| m.as_ref().err()) {
+            return Err(e.clone());
+        }
+        let outer = outer?;
+        // reported after the messages' own decode errors, before context
+        let sum = run_sum(from, &format, &outer, &messages, max_items);
+        let mut joined = Vec::with_capacity(messages.len());
+        for m in messages {
+            let mut ent = self.join_message(from, &outer, m)?;
+            self.keep_kinds(from, to, &mut ent);
+            joined.push(ent);
+        }
+        sum?;
+        let context = read_context()?;
+        let mut outer = outer;
+        if from != to {
+            outer.kind = None;
+        }
+        if steps {
+            complete(&mut outer, &context);
+        }
+        let (kind, run) = seq::run_target(target, body, &outer)?;
+        let text = match run {
+            Some(inner) => {
+                if given || inner != format {
+                    joined.iter_mut().for_each(|ent| complete(ent, &context));
+                }
+                let (b, _) = seq::encode_run(target, body, &outer, Some(self), Some(&joined))?;
+                bits::to_hex(&b)
+            }
+            // a kind without a `run` line takes exactly one message (ruling 6)
+            None => {
+                let mut ent = match (joined.pop(), joined.len()) {
+                    (Some(ent), 0) => ent,
+                    (last, n) => {
+                        let n = n + last.is_some() as usize;
+                        return err(format!("message-count: format `{}`: the kind chosen takes one message, the run holds {}", to, n));
+                    }
+                };
+                if steps {
+                    complete(&mut ent, &context);
+                }
+                if let Some(k) = kind {
+                    ent.kind = Some((to.to_string(), k.to_string()));
+                }
+                self.encode(to, &ent)?
+            }
+        };
+        Ok(vec![Ok(text)])
+    }
+
+    /// A build without `bits` has no carrier pack: every message is ordinary.
+    #[cfg(not(feature = "bits"))]
+    fn convert_run_in(
+        &self,
+        from: &str,
+        to: &str,
+        bytes: &str,
+        given: bool,
+        context: &dyn Fn() -> Result<Vec<(String, Value)>, Error>,
+        max_items: usize,
+    ) -> Result<Vec<Result<String, Error>>, Error> {
+        self.pack(from)?;
+        self.pack(to)?;
+        let mut ent = match self.decode_limited(from, bytes, max_items) {
+            Ok(ent) => ent,
+            Err(e) => return Ok(vec![Err(e)]),
+        };
+        self.keep_kinds(from, to, &mut ent);
+        if from != to || given {
+            for (key, v) in context()? {
+                ent.fields.entry(key).or_insert(v);
+            }
+            self.complete(&mut ent);
+        }
+        Ok(vec![self.encode(to, &ent)])
+    }
+
+    /// Decode for a run operation.
+    #[cfg(feature = "bits")]
+    fn read_carrier(&self, format: &str, bytes: &str, max_items: usize) -> Result<Carrier, Error> {
+        let p = self.pack(format)?;
+        let body = match p.seq.as_ref().filter(|b| seq::is_carrier(b)) {
+            Some(b) => b,
+            None => return Ok(Carrier::Ordinary(self.decode_limited(format, bytes, max_items))),
+        };
+        let _scope = limit::begin(max_items);
+        let raw = match bits::from_hex(bytes) {
+            Ok(raw) => raw,
+            Err(error) => return Ok(Carrier::Stopped { error, message: None }),
+        };
+        let capture = std::cell::RefCell::new(seq::RunCapture::default());
+        let res = seq::decode_as(p, body, &raw, raw.len() as u64 * 8, Some(self), Some(&capture), false);
+        let capture = capture.into_inner();
+        Ok(match (res, capture.format) {
+            (Ok((d, _)), Some(format)) => Carrier::Run { outer: d.finish_kind(p), messages: capture.messages, format },
+            (Ok((d, _)), None) => Carrier::Ordinary(d.finish_kind(p)),
+            (Err(e), None) if capture.ordinary => Carrier::Ordinary(Err(e)),
+            (Err(error), _) => {
+                Carrier::Stopped { error, message: capture.messages.into_iter().find_map(|m| m.err()) }
+            }
+        })
+    }
+
+    /// A message of a run joined with the outer keys (Decode step 4 of 0.34;
+    /// the packs share no key, ruling 9 of 0.92).
+    #[cfg(feature = "bits")]
+    fn join_message(&self, format: &str, outer: &Entity, message: Result<Decoded, Error>) -> Result<Entity, Error> {
+        let (inner, failed) = message?.close();
+        if !failed.is_empty() {
+            return err(format!("transform-decode: format `{}`: {}", format, failed.join("; ")));
+        }
+        let mut ent = outer.clone();
+        for (k, v) in inner.fields {
+            ent.fields.entry(k).or_insert(v);
+        }
+        for (k, v) in inner.lists {
+            ent.lists.entry(k).or_insert(v);
+        }
+        ent.inner_kind = inner.kind;
+        Ok(ent)
+    }
+
     /// A context key must be declared by a loaded module and hold its declared type.
     fn check_context(&self, context: &[(String, Value)]) -> Result<(), Error> {
         for (key, v) in context {
@@ -5104,7 +5408,7 @@ impl Engine {
         if let Some(body) = p.seq.as_ref().filter(|b| !seq::inner_lines(b).is_empty()) {
             let mut out = Vec::new();
             body.model_keys_with("", &mut out, &|format, out| {
-                if seq::InnerHost::inner_check(self, p, format).is_ok() {
+                if seq::InnerHost::inner_check(self, p, format, false).is_ok() {
                     for k in self.packs.get(format).map(|ip| ip.model_keys()).unwrap_or_default() {
                         if !out.contains(&k) {
                             out.push(k);
@@ -5168,13 +5472,20 @@ impl Engine {
 /// decode or encode reaches it, never when the outer pack loads.
 #[cfg(feature = "bits")]
 impl seq::InnerHost for Engine {
-    fn inner_check(&self, outer: &Pack, format: &str) -> Result<(), Error> {
+    fn inner_check(&self, outer: &Pack, format: &str, run: bool) -> Result<(), Error> {
         // 1. loaded (a pack refused at load is not)
         let ip = self.pack(format)?;
         // 2. on `bits`, with neither `armor sixbit` nor `encoding uper` (`armor hex` is the default)
         if ip.wire != Wire::Bits || ip.armor != armor::Armor::Hex || ip.uper {
             return err(format!(
                 "bad-directive: format `{}`: the `inner` pack `{}` is not a `bits` pack without `armor sixbit` and `encoding uper`",
+                outer.format, format
+            ));
+        }
+        // the messages of a run end by themselves (ruling 16 of 0.92)
+        if run && (ip.seq.is_none() || !ip.framing) {
+            return err(format!(
+                "bad-directive: format `{}`: the inner pack `{}` of a `run` line is not a `layout sequential` pack with `framing self`",
                 outer.format, format
             ));
         }
@@ -5215,6 +5526,14 @@ impl seq::InnerHost for Engine {
             ));
         }
         Ok(d)
+    }
+
+    fn inner_message(&self, format: &str, bytes: &[u8]) -> Result<(Decoded, usize), Error> {
+        let p = self.pack(format)?;
+        let body = p.seq.as_ref().ok_or(Error { msg: format!("bad-directive: format `{}` is not `layout sequential`", format) })?;
+        let _items = limit::inner(Vec::new());
+        let (d, end) = seq::decode_as(p, body, bytes, bytes.len() as u64 * 8, Some(self), None, true)?;
+        Ok((d, usize::try_from(end / 8).unwrap_or(usize::MAX)))
     }
 
     fn inner_encode(&self, format: &str, ent: &Entity) -> Result<Vec<u8>, Error> {
@@ -8925,6 +9244,8 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     // line fits its pack (ruling 9, 18, 21 of 0.19) is checked after the file.
     // None of them is in the list of lines that stand after the `wire` line.
     ("encoding", 1, 1),
+    // engine-spec v0.92, ruling 16
+    ("framing", 1, 1),
     ("ext", 0, 0),
     ("choice", 1, 2),
     ("alt", 1, 1),
@@ -8945,7 +9266,7 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).
 const AFTER_WIRE: &[&str] = &[
     "root", "field", "when", "const", "group", "end", "word_bytes", "bit_order", "layout", "also", "pad", "align",
-    "presence", "if", "opt", "chain", "fx", "length", "inner",
+    "presence", "if", "opt", "chain", "fx", "length", "inner", "framing",
 ];
 
 /// The checks of ruling 5 of 0.11 that each line of a pack owes as it is

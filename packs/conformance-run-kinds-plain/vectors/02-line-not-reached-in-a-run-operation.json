@@ -1,0 +1,13 @@
+{
+  "name": "line-not-reached-in-a-run-operation",
+  "from": "conformance-run-kinds-plain",
+  "to": "conformance-run-json",
+  "input": "0207",
+  "expect_results": [
+    {
+      "expect": "{\"n\":7,\"n_copy\":7}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: an ordinary message"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "9272-run-framing-after-item-kinds-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey w int -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.92.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ngroup probe.recs count 8\n  kind p\n  when 8 1\nend\nframing self\n"
+}

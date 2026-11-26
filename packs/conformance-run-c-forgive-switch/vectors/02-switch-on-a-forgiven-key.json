@@ -1,0 +1,9 @@
+{
+  "name": "switch-on-a-forgiven-key",
+  "from": "conformance-run-c-forgive-switch",
+  "to": "conformance-run-json",
+  "input": "0301410509",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: a `switch` that reads a key whose line failed, forgiven or not within its own pack, of a message at a `run` line, in every operation"
+}

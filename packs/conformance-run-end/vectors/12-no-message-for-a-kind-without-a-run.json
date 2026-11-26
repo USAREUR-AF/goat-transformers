@@ -1,0 +1,10 @@
+{
+  "name": "no-message-for-a-kind-without-a-run",
+  "from": "conformance-run-end",
+  "to": "conformance-run-plain-kind",
+  "input": "09",
+  "expect_error": "message-count",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: none"
+}

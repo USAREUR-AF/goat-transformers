@@ -4,6 +4,7 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -41,6 +42,28 @@ void seq_model_keys(const SeqBody& body, const std::string& prefix,
                     const std::function<void(const std::string&)>& add,
                     const std::function<void(const std::string&)>* inner = nullptr);
 
+// v0.92: the messages decode finds at an `inner ... run` line, for the run
+// operations, and where encode takes them from.
+struct RunMessage {
+    Entity entity;               // the message alone
+    std::optional<Error> error;
+    bool stopped = false;        // the error ended the run
+    std::uint64_t items = 0;     // its own items, when its decode came to its end (ruling 5)
+};
+struct RunSink {
+    std::uint64_t max_items = 0;
+    bool reached = false;
+    // No `run` line can be reached any more (ruling 4): the message is ordinary.
+    bool passed = false;
+    std::string inner_format;
+    std::vector<RunMessage> messages;
+};
+struct RunSource {
+    std::size_t count = 0;
+    // The bytes of message `k` as the inner pack writes it, in hex.
+    std::function<std::string(const Pack& inner, std::size_t k)> hex;
+};
+
 // v0.34: what decode and encode of a sequential pack ask of the engine when
 // they reach an `inner` line.
 class InnerHost {
@@ -50,7 +73,12 @@ public:
     // their order: unknown-format, bad-directive (its wire, armor, encoding;
     // an `inner` line of its own, or the outer pack itself), and
     // distribution-violation.
-    virtual const Pack& reach(const Pack& outer, const std::string& format) const = 0;
+    // `run` (0.92 ruling 16): the inner pack is sequential and has `framing self`,
+    // between the second and the third check.
+    virtual const Pack& reach(const Pack& outer, const std::string& format, bool run = false) const = 0;
+    // v0.92: set in the run operations; null otherwise.
+    virtual RunSink* sink() const { return nullptr; }
+    virtual const RunSource* source() const { return nullptr; }
     // model_keys(<format>) of the inner pack, for the fifth check (0.52 ruling 20).
     virtual std::vector<std::string> model_keys(const Pack& inner) const = 0;
     // decode(<format>, hex) by the inner pack's rules, within the decode that
@@ -72,5 +100,14 @@ std::vector<const SeqCase*> seq_cases_by_id(const Pack& p);
 // malformed-wire; without it, that input is ignored.
 Entity decode_seq(const Pack& p, const std::string& bytes, const InnerHost* host = nullptr, bool exact = false);
 std::string encode_seq(const Pack& p, const Entity& e, const InnerHost* host = nullptr);
+
+// v0.92: the kind an entity selects in a sequential pack (null when the pack
+// has none; throws no-kind) and the `inner` line of a run in the common lines
+// or in that kind; null when there is none.
+struct RunLine {
+    const SeqKind* kind = nullptr;
+    const SeqNode* line = nullptr;
+};
+RunLine seq_run_line(const Pack& p, const Entity& e);
 
 }  // namespace goat_transformers::detail

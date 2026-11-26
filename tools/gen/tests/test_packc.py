@@ -732,6 +732,14 @@ class Derive016Test(unittest.TestCase):
         self.assertEqual(cm.exception.reason, "unsupported-feature")
         self.assertIn("spec 0.83", str(cm.exception))
 
+    def test_framing_is_refused(self):
+        self.write_pack("df", "format  df\nversion  0.1.0\ndistribution  public\nsource  \"test\"\nuses  probe\n"
+                        "wire  bits\nlayout  sequential\nframing  self\nfield  probe.i0  8  uint\n")
+        with self.assertRaises(packc.Refused) as cm:
+            packc.compile_plan(self.model_dir, self.packs_dir, "da", "df", {}, False)
+        self.assertEqual(cm.exception.reason, "unsupported-feature")
+        self.assertIn("spec 0.92", str(cm.exception))
+
     def test_only_four_functions_of_016_stay_refused(self):
         self.assertEqual(sorted(packc.V016_DERIVES), ["deg_lat_of", "hae_of_ecef", "lat_of_ecef", "m_lat_of"])
 

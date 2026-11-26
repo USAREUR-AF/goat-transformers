@@ -1,0 +1,13 @@
+{
+  "name": "run-in-a-block-a-count-sizes",
+  "from": "conformance-run-units",
+  "to": "conformance-run-units",
+  "input": "020901020304",
+  "expect_results": [
+    {
+      "expect": "020901020304"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: the count that sizes the extent covers the whole run: 2 units of 16 bits"
+}

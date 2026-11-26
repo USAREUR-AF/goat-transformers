@@ -1,0 +1,16 @@
+{
+  "name": "context-in-the-outer-entity",
+  "from": "conformance-run-n",
+  "to": "conformance-run-copy-out",
+  "input": "07040102030409",
+  "expect_results": [
+    {
+      "expect": "090501020304"
+    }
+  ],
+  "context": {
+    "probe.n_copy": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 10: n_copy = 5 from the context, before a derivation would set it"
+}

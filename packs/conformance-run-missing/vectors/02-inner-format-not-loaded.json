@@ -1,0 +1,10 @@
+{
+  "name": "inner-format-not-loaded",
+  "from": "conformance-run-missing",
+  "to": "conformance-run-json",
+  "input": "0901",
+  "expect_error": "unknown-format",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: 0.34's checks"
+}

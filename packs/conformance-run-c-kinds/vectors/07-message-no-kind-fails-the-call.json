@@ -1,0 +1,10 @@
+{
+  "name": "message-no-kind-fails-the-call",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-c-kinds",
+  "input": "0301070509",
+  "expect_error": "no-kind",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: to a carrier pack every error fails the call"
+}

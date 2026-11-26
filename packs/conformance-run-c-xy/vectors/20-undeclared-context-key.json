@@ -1,0 +1,13 @@
+{
+  "name": "undeclared-context-key",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "040102030409",
+  "expect_error": "undeclared-key",
+  "run": true,
+  "context": {
+    "probe.nosuch": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: a bad context key is the call's"
+}

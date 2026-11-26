@@ -1,0 +1,9 @@
+{
+  "name": "kind-chosen-on-the-joined-entity-by-convert",
+  "from": "conformance-run-end",
+  "to": "conformance-run-req",
+  "input": "090102",
+  "expect": "0101",
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: `convert` holds y: kind a"
+}

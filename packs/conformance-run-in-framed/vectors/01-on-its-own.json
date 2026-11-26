@@ -1,0 +1,13 @@
+{
+  "name": "on-its-own",
+  "from": "conformance-run-in-framed",
+  "to": "conformance-run-in-framed",
+  "input": "0541ff",
+  "expect": "0541",
+  "model": {
+    "probe.x": "5",
+    "probe.label": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the line changes nothing else: equal with and without it; bytes after the last line are ignored (0.8)"
+}

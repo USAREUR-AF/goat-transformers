@@ -1,0 +1,9 @@
+{
+  "name": "ahead-of-the-whole-byte-test",
+  "from": "conformance-run-mis-plain",
+  "to": "conformance-run-json",
+  "input": "50",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; ahead of Decode step 1 of 0.34"
+}

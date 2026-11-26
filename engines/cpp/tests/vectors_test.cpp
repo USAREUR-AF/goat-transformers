@@ -344,7 +344,7 @@ std::string lacked_wire(const std::vector<std::string>& wires, const std::vector
 int main() {
     const fs::path packs = GT_PACKS_DIR;
     int ran = 0, failed = 0, error_vectors = 0, kind_checks = 0, context_vectors = 0, complete_checks = 0,
-        list_checks = 0, absent_checks = 0, limit_vectors = 0, inner_kind_checks = 0;
+        list_checks = 0, absent_checks = 0, limit_vectors = 0, inner_kind_checks = 0, run_vectors = 0;
 
     const std::vector<std::string> built = goat_transformers::built_wires();
     const bool reduced = built.size() != kSpecWires.size();
@@ -468,6 +468,9 @@ int main() {
                 if (v.find("expect") || v.find("expect_b64"))
                     throw std::runtime_error("vector has both expect and expect_error");
                 want_error = xe->text;
+            } else if (v.find("expect_results")) {
+                if (v.find("expect") || v.find("expect_b64"))
+                    throw std::runtime_error("vector has both expect and expect_results");
             } else if (!bytes_field(v, "expect", "expect_b64", expect)) {
                 throw std::runtime_error("vector lacks expect");
             }
@@ -497,7 +500,58 @@ int main() {
                 return eng.convert_text(from->text, to->text, input, ctx_text);
             };
 
-            if (xe) {
+            // v0.92: `expect_results`, and `"run": true` beside `expect_error`, call convert_run.
+            const json::Value* xr = v.find("expect_results");
+            const json::Value* run = v.find("run");
+            if (run && (!run->is(json::Value::Kind::Bool) || !run->b || !xe))
+                throw InvalidVector("run is not true beside expect_error");
+            if (xr && (xe || !xr->is(json::Value::Kind::Array)))
+                throw InvalidVector("expect_results is not an array, or stands beside expect_error");
+            auto convert_run = [&]() {
+                return eng.convert_run(from->text, to->text, input, ctx ? &ctx_text : nullptr);
+            };
+            auto kind_is = [](const std::string& message, const std::string& kind) {
+                return message.compare(0, kind.size() + 1, kind + ":") == 0;
+            };
+
+            if (xr) {
+                ++run_vectors;
+                const auto got = convert_run();
+                if (got.size() != xr->items.size())
+                    errs.push_back("convert_run gave " + std::to_string(got.size()) + " results, expected " +
+                                   std::to_string(xr->items.size()));
+                for (std::size_t k = 0; k < xr->items.size(); ++k) {
+                    const json::Value& want = xr->items[k];
+                    const std::string at = "result " + std::to_string(k);
+                    const json::Value* we = want.find("expect_error");
+                    std::string text;
+                    if (we ? !we->is(json::Value::Kind::String) || we->text.empty() || want.find("expect")
+                           : !bytes_field(want, "expect", "expect_b64", text))
+                        throw InvalidVector(at + " holds neither expect nor expect_error, or both");
+                    if (k >= got.size()) continue;
+                    if (we) {
+                        if (!got[k].error)
+                            errs.push_back(at + ": expected error " + we->text + ", got: " + got[k].output);
+                        else if (!kind_is(got[k].error->what(), we->text))
+                            errs.push_back(at + ": expected error " + we->text + ", got: " + got[k].error->what());
+                    } else if (got[k].error) {
+                        errs.push_back(at + ": expected " + text + ", got error: " + got[k].error->what());
+                    } else if (got[k].output != text) {
+                        errs.push_back(at + " mismatch\n    expect: " + text + "\n    got:    " + got[k].output);
+                    }
+                }
+            } else if (run) {
+                ++run_vectors;
+                ++error_vectors;
+                try {
+                    const auto got = convert_run();
+                    errs.push_back("expected error " + want_error + " of the run, got " + std::to_string(got.size()) +
+                                   " results");
+                } catch (const goat_transformers::Error& e) {
+                    if (!kind_is(e.what(), want_error))
+                        errs.push_back("expected error " + want_error + " of the run, got: " + e.what());
+                }
+            } else if (xe) {
                 ++error_vectors;
                 // convert must fail, and the message must begin with the kind and a colon.
                 try {
@@ -678,7 +732,7 @@ int main() {
               << error_vectors << " expect_error, " << kind_checks << " @kind checks, " << context_vectors
               << " with context, " << complete_checks << " @complete, " << list_checks << " list checks, "
               << absent_checks << " @absent, " << limit_vectors << " with max_items, " << inner_kind_checks
-              << " @inner_kind)\n";
+              << " @inner_kind, " << run_vectors << " of convert_run)\n";
     std::cout << "load vectors: " << load_ran << " run, " << (load_ran - load_failed) << " passed, " << load_failed
               << " failed\n";
     std::cout << "capability vectors: " << cap_ran << " run, " << (cap_ran - cap_failed) << " passed, " << cap_failed

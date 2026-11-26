@@ -7,7 +7,7 @@ import os
 from ._build import WIRES as BUILD_WIRES
 from .errors import (
     GTError, BadDirective, DistributionRefused, DistributionViolation, DuplicateFormat, DuplicateModule, KeyTypeMismatch,
-    MalformedWire,
+    MalformedWire, MessageCount,
     ModuleNotUsed, NoKind, TransformDecodeFailure, TransformEncodeFailure, UndeclaredKey, UnknownFormat,
     UnknownModule,
 )
@@ -543,9 +543,10 @@ class Engine:
 
     # --- inner lines (0.34) ------------------------------------------------
 
-    def _inner_pack(self, outer, name):
+    def _inner_pack(self, outer, name, run=False):
         """The checks made when decode or encode reaches an `inner` line, in
-        their order (0.34, "Reaching the inner line"). -> the inner pack."""
+        their order (0.34, "Reaching the inner line"; `run`: ruling 16 of
+        0.92). -> the inner pack."""
         inner = self.packs.get(name)
         if inner is None:
             raise UnknownFormat("pack %s names inner format %r, which is not loaded" % (outer.name, name),
@@ -557,6 +558,9 @@ class Engine:
                        "under 'armor sixbit'" if inner.armor == "sixbit" else "a UPER pack"),
                 format=name, locator=name,
             )
+        if run and (inner.seq is None or not inner.framing):
+            raise BadDirective("inner pack %s of an 'inner ... run' line is not 'layout sequential' with a "
+                               "'framing self' line" % name, format=name, locator=name)
         if inner is outer or inner.inners:
             raise BadDirective(
                 "inner pack %s %s; one layer only" % (
@@ -676,7 +680,8 @@ class Engine:
         limit = self.max_items if max_items is None else max_items
         return self._decode_pack(pack, data, limit)
 
-    def _decode_pack(self, pack, data, limit, discard=(), exact=False):
+    @staticmethod
+    def _text(pack, data):
         fmt = pack.name
         if isinstance(data, (bytes, bytearray)):
             try:
@@ -688,6 +693,11 @@ class Engine:
                 data.encode("utf-8")
             except UnicodeEncodeError:  # a str holding a lone surrogate
                 raise MalformedWire("input is not UTF-8 text: it holds a lone surrogate", format=fmt)
+        return data
+
+    def _decode_pack(self, pack, data, limit, discard=(), exact=False):
+        fmt = pack.name
+        data = self._text(pack, data)
         if pack.seq is not None:
             return wire_seq.decode(pack, data, limit, self, discard, exact)
         wire = pack.wire
@@ -1076,14 +1086,139 @@ class Engine:
         self.pack(from_fmt)  # ruling 5 of 0.11: `from`, then `to`, before the input is read
         to = self.pack(to_fmt)
         entity = self.decode(from_fmt, data, max_items)
-        if from_fmt != to_fmt:
-            # a cross-format conversion chooses the target kind by `requires`,
-            # unless `to` has an `inner` line naming the format of the kind (0.34)
-            if entity.kind is not None and entity.kind[0] not in to.inners:
-                entity.kind = None
-            ik = entity.inner_kind
-            if ik is not None and ik[0] != to_fmt and ik[0] not in to.inners:
-                entity.inner_kind = None
+        self._clear_kinds(entity, from_fmt, to)
         if from_fmt != to_fmt or context is not None:
             self.complete(entity, context)
         return self.encode(to_fmt, entity)
+
+    @staticmethod
+    def _clear_kinds(entity, from_fmt, to):
+        """A cross-format conversion chooses the target kind by `requires`,
+        unless `to` has an `inner` line naming the format of the kind (0.34)."""
+        if from_fmt != to.name:
+            if entity.kind is not None and entity.kind[0] not in to.inners:
+                entity.kind = None
+            ik = entity.inner_kind
+            if ik is not None and ik[0] != to.name and ik[0] not in to.inners:
+                entity.inner_kind = None
+
+    # --- runs of messages (0.92) -------------------------------------------
+
+    def _joined(self, outer, message):
+        """The entity of one message of a run, joined with the outer keys
+        (ruling 9: the two map no common key)."""
+        return Entity(fields={**outer.fields, **message.fields}, lists={**outer.lists, **message.lists},
+                      kind=outer.kind, inner_kind=message.kind)
+
+    def decode_run(self, fmt, data, max_items=None):
+        """-> (the entity of the outer lines, [one entity or error per message]).
+        An ordinary message gives its entity, or its error, as the one result;
+        the outer entity is then that entity (None when there is none)."""
+        pack = self.pack(fmt)
+        limit = self.max_items if max_items is None else max_items
+        if not pack.run_kinds:
+            try:
+                ent = self._decode_pack(pack, data, limit)
+            except GTError as e:
+                return getattr(e, "entity", None), [e]
+            return ent, [ent]
+        got = wire_seq.decode_run(pack, self._text(pack, data), limit, self)
+        if got.ordinary:
+            return got.entity, [got.entity if got.error is None else got.error]
+        if got.error is not None:
+            raise got.error
+        if got.over is not None:  # ruling 5: the sum of the joined entities' items
+            raise got.over
+        return got.entity, [m if isinstance(m, GTError) else self._joined(got.entity, m) for m in got.messages]
+
+    def convert_run(self, from_fmt, to_fmt, data, context=None, max_items=None):
+        """-> [result]: the bytes of a message, or its error (0.92, Operations).
+        An error of the call is raised."""
+        pack = self.pack(from_fmt)
+        to = self.pack(to_fmt)
+        if pack.run_kinds:
+            limit = self.max_items if max_items is None else max_items
+            got = wire_seq.decode_run(pack, self._text(pack, data), limit, self)
+            if not got.ordinary:
+                if to.run_kinds:
+                    return [self._carrier_to_carrier(pack, to, got, context)]
+                return self._carrier_to_messages(pack, to, got, context)
+            entity, error = got.entity, got.error
+        else:
+            entity = error = None
+            try:
+                entity = self.decode(from_fmt, data, max_items)
+            except GTError as e:
+                error = e
+        # an ordinary message: `convert`, whose decode and encode errors are its one result, or the call's
+        # to a carrier pack
+        if error is not None:
+            if to.run_kinds:
+                raise error
+            return [error]
+        if context is not None:
+            self.read_context(context)  # an error of the call, always
+        try:
+            self._clear_kinds(entity, from_fmt, to)
+            if from_fmt != to_fmt or context is not None:
+                self.complete(entity, context)
+            return [self.encode(to_fmt, entity)]
+        except GTError as e:
+            if to.run_kinds:
+                raise
+            return [e]
+
+    def _carrier_to_messages(self, pack, to, got, context):
+        if got.error is not None:  # of the outer lines; message errors take no part
+            raise got.error
+        if got.over is not None:  # ruling 5: after every other decode error, before context
+            raise got.over
+        self.read_context(context)
+        out = []
+        for m in got.messages:
+            if isinstance(m, GTError):
+                out.append(m)
+                continue
+            entity = self._joined(got.entity, m)
+            self._clear_kinds(entity, pack.name, to)
+            self.complete(entity, context)
+            try:
+                out.append(self.encode(to.name, entity))
+            except GTError as e:
+                out.append(e)
+        return out
+
+    def _carrier_to_carrier(self, pack, to, got, context):
+        # every error is the call's, in phases (ruling 4): those that stop a decode, in reading order
+        # (after a message that stopped, the outer lines alone are read), then other decode errors
+        if got.ended:
+            raise got.messages[-1]
+        if got.error is not None and got.stops:
+            raise got.error
+        if got.error is not None:
+            raise got.error
+        for m in got.messages:
+            if isinstance(m, GTError):
+                raise m
+        if got.over is not None:  # ruling 5: after every other decode error, before context
+            raise got.over
+        self.read_context(context)
+        same = pack is to
+        outer = Entity(fields=dict(got.entity.fields), lists=dict(got.entity.lists),
+                       kind=got.entity.kind if same else None)
+        if not same or context is not None:
+            self.complete(outer, context)
+        kind = wire_seq.select_kind(to, to.seq, _ref_for(to, outer.kind, None), outer.fields, outer.lists)
+        ref = (to.name, kind.name) if kind is not None else None
+        joined = [self._joined(got.entity, m) for m in got.messages]
+        line = wire_seq.run_line(to, kind)
+        if line is None and len(joined) != 1:
+            raise MessageCount("a kind with no 'inner ... run' line takes exactly one message, not %d" % len(joined),
+                               format=to.name)
+        for entity in joined:
+            self._clear_kinds(entity, pack.name, to)
+            if context is not None or (not same if line is None else line.name != got.format):
+                self.complete(entity, context)
+        if line is None:
+            return wire_seq.encode(to, joined[0], ref, self).encode("utf-8")
+        return wire_seq.encode(to, outer, ref, self, joined).encode("utf-8")

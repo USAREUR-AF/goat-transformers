@@ -1,0 +1,9 @@
+{
+  "name": "9262-run-framing-armor-sixbit-is-checked-after-the-file",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey w int -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.92.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nbit_order msb\narmor sixbit\nframing self\nfield probe.x 6 uint\nbogus\n",
+  "expect_error": "unknown-directive"
+}

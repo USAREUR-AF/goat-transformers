@@ -235,6 +235,8 @@ const EngineError = error{
     @"duplicate-key",
     // Version 0.5
     @"no-kind",
+    // Version 0.92
+    @"message-count",
     @"duplicate-kind",
     @"transform-encode",
     @"transform-decode",
@@ -280,9 +282,16 @@ const Diag = struct {
     inner: InnerMode = .none,
     // Version 0.34: an inner decode of a fixed layout is running
     soft: ?*Soft = null,
+    // Version 0.92: the outer decode of a run operation, taken by the decode
+    // about to start; where a message of a run ended, in bytes; and the
+    // messages the encode about to start writes at its `run` line
+    run: ?*RunRead = null,
+    run_end: usize = 0,
+    run_write: ?*RunWrite = null,
 };
 
-const InnerMode = enum { none, strict, partial };
+// `run`: one message of a run, which ends where its own decode ends.
+const InnerMode = enum { none, strict, partial, run };
 
 // Version 0.34, an inner decode of a fixed layout: a `transform-decode` does
 // not stop it. The first one, and the furthest start of a group (ruling 14).
@@ -331,6 +340,13 @@ fn holdList(diag: *Diag, alloc: std.mem.Allocator, n: u64, list: []const u8, wir
         diag.limit_hit = true;
         return bad(diag, alloc, E.@"malformed-wire", "list {s}: a count of {d} passes the {d} list items left of the limit of {d}", .{ list, n, diag.max_items - diag.held, diag.max_items });
     }
+}
+
+// The list items of every list of an entity, at every nesting level.
+fn entityItems(e: *const Entity) usize {
+    var n: usize = 0;
+    for (e.lists.ptr[0..e.lists.len]) |en| n += itemsHeld(en.value);
+    return n;
 }
 
 // The list items an entity holds, at every nesting level.
@@ -960,6 +976,10 @@ const Pack = struct {
     // file is read.
     enc_raw: ?[]const u8 = null,
     enc_bad: usize = 0,
+    // Version 0.92: the line of `framing self` (0: none), and the first that
+    // is not `framing self`, is a second one or stands after a kind
+    framing_line: usize = 0,
+    framing_bad: usize = 0,
     uper: bool = false,
     uper_line: usize = 0,
     // Version 0.20: the `requires =` terms and `case` lines, in line order,
@@ -977,6 +997,8 @@ const Pack = struct {
     // Version 0.34: the `inner` lines in file order, each with the number of
     // key uses read before it (its place in reading order for `model_keys`)
     inners: std.ArrayListUnmanaged(InnerMark) = .{},
+    // Version 0.92: does an `inner` line hold the word `run` (a carrier pack)?
+    has_run: bool = false,
     // Version 0.52, ruling 20: where in `key_uses` each message kind of a
     // sequential pack begins
     kind_starts: std.ArrayListUnmanaged(usize) = .{},
@@ -1020,7 +1042,7 @@ const Pack = struct {
 
 // Version 0.34: an `inner <format>` line of a sequential pack.
 // `kind`: 0 in the common lines, else the number of its message kind from 1.
-const InnerMark = struct { fmt: []const u8, pos: usize, lineno: usize, kind: usize };
+const InnerMark = struct { fmt: []const u8, pos: usize, lineno: usize, kind: usize, run: bool };
 
 // Does an `inner` line of the pack name the format?
 fn packHasInner(p: *const Pack, fmt: []const u8) bool {
@@ -2786,7 +2808,7 @@ fn fixedLen(loc: []const u8) ?u64 {
 }
 
 // The directives of a pack (ruling 5 of 0.11).
-const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else", count, inner };
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else", count, inner, framing };
 
 // The header lines a pack has given so far, for the line checks.
 const HeaderSeen = struct {
@@ -2802,7 +2824,7 @@ const HeaderSeen = struct {
 fn needsWire(d: PackDir) bool {
     return switch (d) {
         // Version 0.34: `inner` stands after `wire` and `layout sequential`
-        .root, .field, .when, .@"const", .group, .end, .word_bytes, .bit_order, .layout, .also, .pad, .@"align", .presence, .@"if", .opt, .chain, .fx, .length, .inner => true,
+        .root, .field, .when, .@"const", .group, .end, .word_bytes, .bit_order, .layout, .also, .pad, .@"align", .presence, .@"if", .opt, .chain, .fx, .length, .inner, .framing => true,
         else => false,
     };
 }
@@ -2823,7 +2845,7 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
     const n = toks.len - 1;
     const ok = switch (d) {
         // `armor` takes exactly one, checked here (ruling 13 of 0.14)
-        .format, .version, .distribution, .source, .uses, .wire, .root, .kind, .word_bytes, .bit_order, .layout, .pad, .@"align", .delimiter, .start, .tag, .key, .armor, .element => n == 1,
+        .format, .version, .distribution, .source, .uses, .wire, .root, .kind, .word_bytes, .bit_order, .layout, .pad, .@"align", .delimiter, .start, .tag, .key, .armor, .element, .framing => n == 1,
         // Version 0.19: `encoding` takes one, as `armor` does (ruling 13 of
         // 0.14); `ext` none; `choice <n> [ext]` one or two; `alt <i>` one.
         // Their wire, layout and values are checked after the file is read.
@@ -3256,6 +3278,9 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         try curLines(p, in_group, gtmp).append(ln);
         try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = if (in_group) gstack.items[gstack.items.len - 1] else null });
         if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
+    } else if (is(kw, "framing")) {
+        // Version 0.92, likewise
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: framing is for the sequential layout of the bits wire", .{lineno});
     } else if (is(kw, "inner")) {
         // Version 0.34: a line of a `layout sequential` `bits` pack only,
         // checked after the file is read
@@ -4437,25 +4462,220 @@ pub const Engine = struct {
         _ = try self.pack(from);
         _ = try self.pack(to);
         const same = std.mem.eql(u8, from, to);
-        const to_pack = self.findPack(to).?;
         var e = try self.decode(from, bytes);
-        // Entity.kind is kept when from == to, or when an `inner` line of
-        // `to` names its format; Entity.inner_kind when from == to, when it
-        // names `to`, or when an `inner` line of `to` names its format
-        // (Version 0.34)
-        if (!same) {
-            if (e.kind_fmt) |kf| {
-                if (!packHasInner(to_pack, kf)) e.clearKind();
-            }
-            if (e.inner_kind_fmt) |kf| {
-                if (!std.mem.eql(u8, kf, to) and !packHasInner(to_pack, kf)) e.clearInnerKind();
-            }
-        }
-        if (!same or context != null) {
-            if (context) |c| try self.fillContext(&e, c);
-            try self.complete(&e);
-        }
+        self.clearKinds(&e, from, to);
+        if (!same or context != null) try self.finish(self.scratch, &e, context);
         return self.encode(to, &e);
+    }
+
+    // Entity.kind is kept when from == to, or when an `inner` line of `to`
+    // names its format; Entity.inner_kind when from == to, when it names
+    // `to`, or when an `inner` line of `to` names its format (Version 0.34).
+    fn clearKinds(self: *const Engine, e: *Entity, from: []const u8, to: []const u8) void {
+        if (std.mem.eql(u8, from, to)) return;
+        const to_pack = self.findPack(to).?;
+        if (e.kind_fmt) |kf| {
+            if (!packHasInner(to_pack, kf)) e.clearKind();
+        }
+        if (e.inner_kind_fmt) |kf| {
+            if (!std.mem.eql(u8, kf, to) and !packHasInner(to_pack, kf)) e.clearInnerKind();
+        }
+    }
+
+    // Steps 2 and 3 of `convert`: the context, then the derivations.
+    fn finish(self: *Engine, alloc: std.mem.Allocator, e: *Entity, context: ?[]const KV) !void {
+        const keep = self.scratch;
+        self.scratch = alloc;
+        defer self.scratch = keep;
+        if (context) |c| try self.fillContext(e, c);
+        try self.complete(e);
+    }
+
+    // Version 0.92: one result of `convertRun`.
+    pub const RunResult = union(enum) {
+        ok: []const u8,
+        // the kind, and the message "<kind>: <detail>"
+        err: struct { kind: anyerror, msg: []const u8 },
+    };
+
+    fn errResult(self: *Engine, err: anyerror) RunResult {
+        return .{ .err = .{ .kind = err, .msg = self.last_error } };
+    }
+
+    fn oneResult(self: *Engine, r: RunResult) ![]const RunResult {
+        const out = try self.scratch.alloc(RunResult, 1);
+        out[0] = r;
+        return out;
+    }
+
+    // convert_run(from, to, bytes, context) (Version 0.92): one result per
+    // message of a carrier; one result, the whole, to a carrier pack and for
+    // an ordinary message. An error is the call's.
+    pub fn convertRun(self: *Engine, from: []const u8, to: []const u8, bytes: []const u8, context: ?[]const KV) ![]const RunResult {
+        const fp = try self.pack(from);
+        const tp = try self.pack(to);
+        if (!built(.bits) or !fp.has_run) {
+            var e = self.decode(from, bytes) catch |err| {
+                if (err == error.OutOfMemory or tp.has_run) return err;
+                return self.oneResult(self.errResult(err));
+            };
+            return self.finishOne(&e, from, to, context);
+        }
+        if (comptime built(.bits)) {
+            var r = RunRead{ .to_carrier = tp.has_run, .arena = std.heap.ArenaAllocator.init(self.scratch) };
+            defer r.arena.deinit();
+            var diag = Diag{ .max_items = self.max_items, .packs = &self.pack_index, .run = &r };
+            var outer = decodePack(self.scratch, fp, bytes, &diag) catch |err| {
+                if (err == error.OutOfMemory) return err;
+                self.fail(err, "decode {s}: {s}", .{ from, diag.msg });
+                // the call's: to a carrier pack, a `run` line reached, or the
+                // decode stopped before that was known (ruling 4)
+                if (tp.has_run or r.reached or !(r.ended or r.ordinary)) return err;
+                return self.oneResult(self.errResult(err));
+            };
+            if (!r.reached) return self.finishOne(&outer, from, to, context);
+            if (tp.has_run) {
+                // the other decode errors of the messages
+                for (r.msgs.items) |m| if (m.fail) |f| {
+                    self.fail(f.kind, "decode {s}: {s}", .{ from, f.msg });
+                    return f.kind;
+                };
+            }
+            // the items of all joined entities (ruling 5), after every other
+            // decode error of the call
+            r.checkSum(&diag, self.scratch, &outer) catch |err| {
+                self.fail(err, "decode {s}: {s}", .{ from, diag.msg });
+                return err;
+            };
+            // the context is checked once, for an empty run too (ruling 10)
+            if (context) |c| {
+                var probe = Entity.init(self.scratch);
+                try self.fillContext(&probe, c);
+            }
+            if (tp.has_run) return self.oneResult(.{ .ok = try self.writeCarrier(&r, &outer, from, tp, context) });
+            const out = try self.scratch.alloc(RunResult, r.msgs.items.len);
+            for (r.msgs.items, out) |m, *res| res.* = try self.messageResult(&r, &outer, m, from, to, context);
+            return out;
+        } else unreachable;
+    }
+
+    // The result of an ordinary message that decoded. A bad context key is
+    // the call's error, an encode error its result, or the call's to a
+    // carrier pack (ruling 4 of 0.92).
+    fn finishOne(self: *Engine, e: *Entity, from: []const u8, to: []const u8, context: ?[]const KV) ![]const RunResult {
+        self.clearKinds(e, from, to);
+        if (!std.mem.eql(u8, from, to) or context != null) try self.finish(self.scratch, e, context);
+        const out = self.encode(to, e) catch |err| {
+            if (err == error.OutOfMemory or self.findPack(to).?.has_run) return err;
+            return self.oneResult(self.errResult(err));
+        };
+        return self.oneResult(.{ .ok = out });
+    }
+
+    // One message of a run to a format that is not a carrier pack: 0.6 steps
+    // 1 to 4 on the joined entity. Only the result is kept.
+    fn messageResult(self: *Engine, r: *RunRead, outer: *const Entity, m: RunMsg, from: []const u8, to: []const u8, context: ?[]const KV) !RunResult {
+        if (m.fail) |f| {
+            self.fail(f.kind, "decode {s}: {s}", .{ from, f.msg });
+            return self.errResult(f.kind);
+        }
+        _ = r.arena.reset(.retain_capacity);
+        const a = r.arena.allocator();
+        const keep = self.scratch;
+        var e = try r.joined(a, outer, m);
+        self.clearKinds(&e, from, to);
+        try self.finish(a, &e, context);
+        self.scratch = a;
+        defer self.scratch = keep;
+        const out = self.encode(to, &e) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            // it outlives the arena
+            self.last_error = try keep.dupe(u8, self.last_error);
+            return self.errResult(err);
+        };
+        return .{ .ok = try keep.dupe(u8, out) };
+    }
+
+    // From a carrier to a carrier pack (ruling 6 of 0.92).
+    fn writeCarrier(self: *Engine, r: *RunRead, outer: *const Entity, from: []const u8, tp: *const Pack, context: ?[]const KV) ![]const u8 {
+        const to = tp.format;
+        const same = std.mem.eql(u8, from, to);
+        var oe = Entity.init(self.scratch);
+        for (outer.fields.ptr[0..outer.fields.len]) |en| try oe.put(en.key, en.value);
+        for (outer.lists.ptr[0..outer.lists.len]) |en| try oe.putList(en.key, en.value);
+        if (same) {
+            oe.kind_fmt = outer.kind_fmt;
+            oe.kind_name = outer.kind_name;
+        }
+        if (!same or context != null) try self.finish(self.scratch, &oe, context);
+        var diag = Diag{ .packs = &self.pack_index };
+        // the target's kind, chosen on the outer entity alone
+        const body = tp.seq.?;
+        var chooser = SEnc{ .alloc = self.scratch, .p = tp, .diag = &diag, .out = std.ArrayList(u8).init(self.scratch) };
+        const kind = chooser.selectKind(body, &oe, false) catch |err| {
+            self.fail(err, "encode {s}: {s}", .{ to, diag.msg });
+            return err;
+        };
+        const runs = seqRunCount(body.common) + if (kind) |k| seqRunCount(k.lines) else 0;
+        if (runs == 0) {
+            // a kind without a `run` line takes one message
+            if (r.msgs.items.len != 1) {
+                const err = E.@"message-count";
+                self.fail(err, "encode {s}: kind {s} takes one message, the run holds {d}", .{ to, if (kind) |k| k.name else "", r.msgs.items.len });
+                return err;
+            }
+            var e = try r.joined(self.scratch, outer, r.msgs.items[0]);
+            self.clearKinds(&e, from, to);
+            if (!same or context != null) try self.finish(self.scratch, &e, context);
+            if (kind) |k| {
+                e.kind_fmt = to;
+                e.kind_name = k.name;
+            }
+            return self.encode(to, &e);
+        }
+        var w = RunWrite{ .eng = self, .read = r, .outer = outer, .from = from, .to = to, .context = context };
+        diag.run_write = &w;
+        return encodePack(self.scratch, tp, &oe, &diag) catch |err| {
+            self.fail(err, "encode {s}: {s}", .{ to, diag.msg });
+            return err;
+        };
+    }
+
+    // decode_run(format, bytes) (Version 0.92): the entity of the outer lines,
+    // and the messages, each decoded when it is asked for.
+    pub const RunDecode = struct {
+        outer: Entity,
+        read: ?RunRead,
+
+        pub fn count(self: *const RunDecode) usize {
+            return if (self.read) |r| r.msgs.items.len else 1;
+        }
+
+        // The joined entity of message `i`, or its failure.
+        pub fn message(self: *const RunDecode, alloc: std.mem.Allocator, i: usize) anyerror!Entity {
+            const r = &(self.read orelse return self.outer);
+            const m = r.msgs.items[i];
+            if (m.fail) |f| return f.kind;
+            if (comptime built(.bits)) return r.joined(alloc, &self.outer, m) else unreachable;
+        }
+    };
+
+    pub fn decodeRun(self: *Engine, fmt: []const u8, bytes: []const u8) !RunDecode {
+        const p = try self.pack(fmt);
+        if (!built(.bits) or !p.has_run) return .{ .outer = try self.decode(fmt, bytes), .read = null };
+        var r = RunRead{ .to_carrier = false, .arena = std.heap.ArenaAllocator.init(self.scratch) };
+        var diag = Diag{ .max_items = self.max_items, .packs = &self.pack_index, .run = &r };
+        const outer = decodePack(self.scratch, p, bytes, &diag) catch |err| {
+            r.arena.deinit();
+            if (err != error.OutOfMemory) self.fail(err, "decode {s}: {s}", .{ fmt, diag.msg });
+            return err;
+        };
+        r.arena.deinit();
+        if (r.reached) r.checkSum(&diag, self.scratch, &outer) catch |err| {
+            self.fail(err, "decode {s}: {s}", .{ fmt, diag.msg });
+            return err;
+        };
+        return .{ .outer = outer, .read = if (r.reached) r else null };
     }
 
     // What one conversion of `convertIn` uses and leaves: its allocator, its
@@ -11245,6 +11465,7 @@ const SNode = struct {
     len: usize = 0,
     value: u64 = 0, // const, when
     partial: bool = false, // inner (Version 0.34)
+    run: bool = false, // inner (Version 0.92)
     pres: ?*SPres = null, // presence
     conds: []const SCond = &.{}, // if
     body: []SNode = &.{}, // if, opt, chain, length
@@ -11641,7 +11862,7 @@ const SParser = struct {
         // header and table directives belong to the pack, not to a block
         // (ruling 24 of 0.8)
         if (self.frames.items.len > 1) {
-            for ([_][]const u8{ "format", "version", "distribution", "source", "uses", "wire", "layout", "bit_order", "armor", "encoding", "map", "typemap" }) |h| {
+            for ([_][]const u8{ "format", "version", "distribution", "source", "uses", "wire", "layout", "bit_order", "armor", "encoding", "framing", "map", "typemap" }) |h| {
                 if (is(kw, h)) return self.err(bd, "{s} inside a block", .{kw});
             }
         }
@@ -11697,6 +11918,11 @@ const SParser = struct {
             // armor <hex | sixbit>, checked after the file is read
             if ((toks.len != 2 or p.armor_raw != null or self.kind_seen) and p.armor_bad == 0) p.armor_bad = self.lineno;
             p.armor_raw = toks[toks.len - 1];
+        } else if (is(kw, "framing")) {
+            // framing self (Version 0.92), checked after the file is read; only
+            // a kind of the message ends its place, not one of an item
+            if ((toks.len != 2 or p.framing_line != 0 or self.frames.items[0].kinds.items.len > 0 or !is(toks[1], "self")) and p.framing_bad == 0) p.framing_bad = self.lineno;
+            p.framing_line = self.lineno;
         } else if (is(kw, "encoding")) {
             // encoding <none | uper>, checked after the file is read
             if ((toks.len != 2 or p.enc_raw != null or self.kind_seen) and p.enc_bad == 0) p.enc_bad = self.lineno;
@@ -11989,7 +12215,7 @@ const SParser = struct {
                 ln.abs_checked = true;
             }
             try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = self.bodyFrame().grp });
-            if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
+            if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with, .grp = self.bodyFrame().grp });
             try self.mapKey(toks[1]);
             try self.add(.{ .tag = .field, .lineno = self.lineno, .ln = ln, .uloc = uloc });
         } else if (is(kw, "also")) {
@@ -12252,10 +12478,13 @@ const SParser = struct {
             // Version 0.34: `inner <format>`, in the common lines, a kind or
             // `length` blocks; under any other block it is `bad-directive`
             // after the file is read. The format is not looked up here.
-            if (toks.len != 2 and toks.len != 3) return self.err(bd, "inner takes a format name and the word partial", .{});
-            try p.inners.append(alloc, .{ .fmt = toks[1], .pos = p.key_uses.items.len, .lineno = self.lineno, .kind = self.frames.items[0].kinds.items.len });
+            if (toks.len != 2 and toks.len != 3) return self.err(bd, "inner takes a format name and the word partial or run", .{});
+            // Version 0.92: `run`
+            const run = toks.len == 3 and is(toks[2], "run");
+            if (run) p.has_run = true;
+            try p.inners.append(alloc, .{ .fmt = toks[1], .pos = p.key_uses.items.len, .lineno = self.lineno, .kind = self.frames.items[0].kinds.items.len, .run = run });
             var pending: ?anyerror = null;
-            if (toks.len == 3 and !is(toks[2], "partial")) pending = self.err(bd, "inner {s}: the word {s} is not `partial`", .{ toks[1], toks[2] });
+            if (toks.len == 3 and !run and !is(toks[2], "partial")) pending = self.err(bd, "inner {s}: the word {s} is not `partial` or `run`", .{ toks[1], toks[2] });
             for (self.frames.items[1..]) |f| {
                 if (pending != null) break;
                 if (f.tag == .length) continue;
@@ -12263,7 +12492,7 @@ const SParser = struct {
                 pending = self.err(bd, "inner {s} inside a {s} block; it stands in the common lines, a kind or `length` blocks only", .{ toks[1], what });
                 break;
             }
-            try self.add(.{ .tag = .inner, .lineno = self.lineno, .list = toks[1], .partial = toks.len == 3 });
+            try self.add(.{ .tag = .inner, .lineno = self.lineno, .list = toks[1], .partial = toks.len == 3 and !run, .run = run });
             if (pending) |e| return e;
         } else if (is(kw, "element")) {
             return self.err(E.@"bad-directive", "element is for the xml wire only", .{});
@@ -12606,6 +12835,52 @@ fn seqCheckInner(alloc: std.mem.Allocator, p: *const Pack, root: *const SBody, d
     }
 }
 
+// Version 0.92, ruling 16: `framing self`, after the file is read.
+fn framingCheck(alloc: std.mem.Allocator, p: *Pack, root: *const SBody, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    if (p.framing_bad != 0) return bad(diag, alloc, bd, "line {d}: framing is given as `framing self`, once, before the first kind", .{p.framing_bad});
+    if (p.framing_line == 0) return;
+    if (p.armor or p.uper) return bad(diag, alloc, bd, "line {d}: framing with armor sixbit or encoding uper", .{p.framing_line});
+    var whole = false;
+    var lost = restWithoutWhole(root.common, &whole);
+    for (root.kinds) |*k| {
+        if (lost != 0) break;
+        var w = whole;
+        lost = restWithoutWhole(k.lines, &w);
+    }
+    if (lost != 0) return bad(diag, alloc, bd, "line {d}: framing self, and a rest group to the end of the message with no `length … whole` read before it", .{lost});
+}
+
+// The line of a `rest` group of the message's extent that no `length … whole`
+// always read before it bounds; 0: none. `whole`: one has been read, on entry
+// and at the end of the lines; one inside a block counts in that block only.
+fn restWithoutWhole(list: []const SNode, whole: *bool) usize {
+    for (list) |*n| {
+        switch (n.tag) {
+            .whole => whole.* = true,
+            .group => if (n.mode == .rest and !whole.*) return n.lineno,
+            // the extent of a `rest` in it is the block
+            .length => {},
+            else => {
+                var w = whole.*;
+                const lost = restWithoutWhole(n.body, &w);
+                if (lost != 0) return lost;
+            },
+        }
+    }
+    return 0;
+}
+
+// The `run` lines of a list (Version 0.92), in `length` blocks too.
+fn seqRunCount(list: []const SNode) usize {
+    var n: usize = 0;
+    for (list) |*x| {
+        if (x.tag == .inner and x.run) n += 1;
+        n += seqRunCount(x.body);
+    }
+    return n;
+}
+
 // The `inner` lines of a list, in `length` blocks too (the only block that
 // may hold one).
 fn seqInnerCount(list: []const SNode) usize {
@@ -12679,6 +12954,7 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     // Version 0.33: reported after the key checks (ruling 10)
     try seqCheckWindows(alloc, p, root);
     try seqCheckInner(alloc, p, root, diag);
+    try framingCheck(alloc, p, root, diag);
     if (p.seq_switch) try seqLinkBody(alloc, root);
     p.seq = root;
     if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
@@ -12784,6 +13060,10 @@ const SDec = struct {
     whole_read: bool = false,
     // Version 0.34: the decode is an inner one; the keys an inner message gave
     is_inner: bool = false,
+    // Version 0.92: it is a message of a run; the run operation whose outer
+    // decode this is
+    in_run: bool = false,
+    run: ?*RunRead = null,
     inner_keys: std.ArrayListUnmanaged([]const u8) = .{},
 
     const mw = E.@"malformed-wire";
@@ -13057,7 +13337,9 @@ const SDec = struct {
                 const sw = n.sw.?;
                 // a key line that failed its transform fails the decode
                 // (ruling 35 of 0.20)
-                if (se.e.get(sw.key) == null) {
+                // in a message of a run also when another line gave the key
+                // (ruling 3 of 0.92)
+                if (se.e.get(sw.key) == null or self.in_run) {
                     for (se.failed.items) |fk| {
                         if (std.mem.eql(u8, fk, sw.key)) return bad(self.diag, alloc, E.@"transform-decode", "switch {s}: its line fails its transform", .{sw.key});
                     }
@@ -13073,7 +13355,7 @@ const SDec = struct {
             .case_ => unreachable, // a case is read by its switch
             .length => {
                 if (n.units > 0) return self.unitsBlock(n, se, env.*);
-                if (try self.avail(n.len, "length") == .absent) return;
+                if (try self.avail(n.len, "length") == .absent) return self.absentBlock(n);
                 const stated: i128 = self.take(n.len);
                 const count = stated - n.plus;
                 if (count < 0) return bad(self.diag, alloc, mw, "the stated length {d} is below its `plus {d}`", .{ stated, n.plus });
@@ -13301,9 +13583,9 @@ const SDec = struct {
     // beyond that end, the input, or a whole length read before is
     // `malformed-wire` before anything in it is read (rulings 4 and 5).
     fn unitsBlock(self: *SDec, n: *const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
-        if (self.atExtentEnd()) return;
+        if (self.atExtentEnd()) return self.absentBlock(n);
         // the count line lay at or past the end of its extent
-        const count = (self.cvals.get(n.cnt.?) orelse null) orelse return;
+        const count = (self.cvals.get(n.cnt.?) orelse null) orelse return self.absentBlock(n);
         const stop = @as(i128, self.pos) + count * n.units;
         if (stop > self.limit()) {
             return bad(self.diag, self.alloc, mw, "a block of {d} units of {d} bits at bit {d} runs past the end at bit {d}", .{ count, n.units, self.pos, self.limit() });
@@ -13328,6 +13610,14 @@ const SDec = struct {
         self.soft_end = save_end;
         self.in_extent = save_in;
         self.ext_bits = save_bits;
+    }
+
+    // Version 0.92: a message whose `run` line lies in an absent block is an
+    // ordinary one.
+    fn absentBlock(self: *SDec, n: *const SNode) void {
+        if (self.run) |r| if (seqRunCount(n.body) > 0) {
+            r.ordinary = true;
+        };
     }
 
     // Ruling 9 of 0.83, when a message or an item has been read: a count that
@@ -13388,16 +13678,27 @@ const SDec = struct {
         const end = self.limit();
         if (end % 8 != 0) return bad(self.diag, alloc, mw, "inner {s}: the enclosing extent ends at bit {d}, not on a whole byte", .{ ip.format, end });
         const at = @min(self.pos, end);
-        const hex = try hexEncode(alloc, self.buf[at / 8 .. end / 8]);
+        const input = self.buf[at / 8 .. end / 8];
+        if (n.run) {
+            if (self.run) |r| {
+                try self.runMessages(r, ip, input);
+                self.pos = end;
+                return;
+            }
+            // `decode` and `convert` read a carrier of one message (ruling 1
+            // of 0.92)
+            if (input.len == 0) return bad(self.diag, alloc, E.@"message-count", "inner {s} run: the run holds no message", .{ip.format});
+        }
+        const hex = if (n.run) "" else try hexEncode(alloc, input);
         // the lists the entity holds: the inner lists of those names are
         // discarded, and a sequential inner decode holds none of their items
         var held_lists = std.ArrayListUnmanaged([]const u8){};
         for (se.e.lists.ptr[0..se.e.lists.len]) |en| try held_lists.append(alloc, en.key);
         self.diag.discard = held_lists.items;
         defer self.diag.discard = &.{};
-        self.diag.inner = if (n.partial) .partial else .strict;
+        self.diag.inner = if (n.run) .run else if (n.partial) .partial else .strict;
         self.diag.partial = null;
-        const sub = decodePack(alloc, ip, hex, self.diag) catch |err| failed: {
+        const sub = (if (n.run) seqDecodeBits(alloc, ip, input, input.len * 8, self.diag) else decodePack(alloc, ip, hex, self.diag)) catch |err| failed: {
             if (err == error.OutOfMemory) return err;
             const msg = try std.fmt.allocPrint(alloc, "inner {s}: {s}", .{ ip.format, self.diag.msg });
             // a value that does not decode does not stop the decode (ruling
@@ -13414,6 +13715,7 @@ const SDec = struct {
             self.diag.msg = msg;
             return err;
         };
+        if (n.run and self.diag.run_end < input.len) return bad(self.diag, alloc, E.@"message-count", "inner {s} run: bytes remain after the first message", .{ip.format});
         self.pos = end;
         for (sub.fields.ptr[0..sub.fields.len]) |en| {
             if (se.e.fields.contains(en.key)) continue;
@@ -13433,6 +13735,51 @@ const SDec = struct {
         if (sub.kind_fmt) |kf| {
             se.e.inner_kind_fmt = kf;
             se.e.inner_kind_name = sub.kind_name;
+        }
+    }
+
+    // Version 0.92: the messages of a run, in the outer decode of a run
+    // operation. Each is decoded to find where it ends and whether it fails;
+    // its entity is not kept, only its place and its failure.
+    fn runMessages(self: *SDec, r: *RunRead, ip: *const Pack, input: []const u8) anyerror!void {
+        r.reached = true;
+        r.ip = ip;
+        r.input = input;
+        r.held = self.diag.held;
+        r.max_items = self.diag.max_items;
+        r.packs = self.diag.packs;
+        var at: usize = 0;
+        while (at < input.len) {
+            // one message more than the limit (ruling 5)
+            if (r.msgs.items.len >= r.max_items) return bad(self.diag, self.alloc, mw, "inner {s} run: more than {d} messages", .{ ip.format, r.max_items });
+            _ = r.arena.reset(.retain_capacity);
+            var md = r.messageDiag();
+            var m = RunMsg{ .at = at };
+            const got = seqDecodeBits(r.arena.allocator(), ip, input[at..], (input.len - at) * 8, &md) catch |err| got: {
+                if (err == error.OutOfMemory) return err;
+                const msg = try std.fmt.allocPrint(self.alloc, "inner {s}: message {d}: {s}", .{ ip.format, r.msgs.items.len + 1, md.msg });
+                // a `transform-decode` does not stop the message's decode
+                const goes_on = err == E.@"transform-decode" and md.partial != null;
+                if (!goes_on and r.to_carrier) {
+                    self.diag.msg = msg;
+                    return err;
+                }
+                const f = try self.alloc.create(RunFail);
+                f.* = .{ .kind = err, .msg = msg };
+                m.fail = f;
+                if (!goes_on) {
+                    // the run ends, with this as its last result (ruling 3)
+                    try r.msgs.append(self.alloc, m);
+                    return;
+                }
+                break :got md.partial.?;
+            };
+            // a message whose decode came to its end, a `transform-decode`
+            // included: its own items join the sum of ruling 5
+            r.done += 1;
+            r.own_items += entityItems(&got);
+            try r.msgs.append(self.alloc, m);
+            at += md.run_end;
         }
     }
 
@@ -13714,6 +14061,10 @@ const SDec = struct {
                 }
             }
             kind_lines = k.lines;
+            // Version 0.92: no `run` line is left to reach
+            if (self.run) |r| if (se.e == self.root and seqRunCount(b.common) + seqRunCount(k.lines) == 0) {
+                r.ordinary = true;
+            };
             try self.nodes(k.lines, se, &env);
         }
         try self.checkPending(mark);
@@ -13809,8 +14160,16 @@ fn innerClash(outer: *const Pack, im: InnerMark, ip: *const Pack) ?KeyUse {
     var kind: usize = 0;
     for (outer.key_uses.items, 0..) |ku, i| {
         while (kind < outer.kind_starts.items.len and outer.kind_starts.items[kind] <= i) kind += 1;
-        if (!mapsKey(ku) or (kind != 0 and im.kind != 0 and kind != im.kind)) continue;
-        for (ip.key_uses.items) |other| if (mapsKey(other) and sameEntry(ku, other)) return ku;
+        if (kind != 0 and im.kind != 0 and kind != im.kind) continue;
+        // at a `run` line a key the outer `with` names, too (ruling 9 of 0.92)
+        const named = im.run and ku.use == .with;
+        if (!mapsKey(ku) and !named) continue;
+        for (ip.key_uses.items) |other| {
+            if (!mapsKey(other)) continue;
+            // `with` may name a list
+            const as_use = KeyUse{ .key = ku.key, .tkind = null, .use = if (named) other.use else ku.use, .grp = ku.grp };
+            if (sameEntry(as_use, other)) return ku;
+        }
     }
     return null;
 }
@@ -13820,6 +14179,10 @@ fn innerLookup(alloc: std.mem.Allocator, diag: *Diag, outer: *const Pack, n: *co
     const fmt = n.list;
     const ip: *const Pack = (if (diag.packs) |m| m.get(fmt) else null) orelse
         return bad(diag, alloc, E.@"unknown-format", "inner {s}: no loaded pack has format {s}", .{ fmt, fmt });
+    // between checks 2 and 3, at a `run` line (ruling 16 of 0.92)
+    if (n.run and ip.wire == .bits and !ip.armor and !ip.uper and (ip.seq == null or ip.framing_line == 0)) {
+        return bad(diag, alloc, E.@"bad-directive", "inner {s} run: the inner pack is not `layout sequential` with `framing self`", .{fmt});
+    }
     if (innerCheck(outer, ip)) |err| {
         const why: []const u8 = switch (err) {
             E.@"distribution-violation" => "the outer pack is public and the inner pack is not",
@@ -13838,9 +14201,127 @@ fn innerLookup(alloc: std.mem.Allocator, diag: *Diag, outer: *const Pack, n: *co
     return ip;
 }
 
+// Version 0.92: what the outer decode of a run operation finds. A message is
+// held as its place in the input and, when it fails, its failure; its entity
+// is decoded again when its result is made, into an arena reset for each
+// message. So memory grows with the results, not with the entities.
+const RunFail = struct { kind: anyerror, msg: []const u8 };
+const RunMsg = struct { at: usize, fail: ?*const RunFail = null };
+
+const RunRead = struct {
+    to_carrier: bool,
+    arena: std.heap.ArenaAllocator,
+    // a `run` line was reached; the decode came to its end; no `run` line can
+    // be reached any more
+    reached: bool = false,
+    ended: bool = false,
+    ordinary: bool = false,
+    ip: *const Pack = undefined,
+    input: []const u8 = "",
+    held: usize = 0,
+    max_items: usize = 0,
+    packs: ?*const std.StringHashMap(*Pack) = null,
+    msgs: std.ArrayListUnmanaged(RunMsg) = .{},
+    // ruling 5: the messages whose decode came to its end, and the sum of
+    // their own items
+    done: usize = 0,
+    own_items: u128 = 0,
+
+    // Ruling 5: the items of all joined entities of the run, the outer
+    // entity's once for each message whose decode came to its end and each
+    // such message's own, may reach `max_items`; one more is `malformed-wire`
+    // of the call. Made when the carrier's decode has ended, after its other
+    // decode errors and before context and encode.
+    fn checkSum(self: *const RunRead, diag: *Diag, alloc: std.mem.Allocator, outer: *const Entity) anyerror!void {
+        const sum = @as(u128, entityItems(outer)) * self.done + self.own_items;
+        if (sum > self.max_items) {
+            diag.limit_hit = true;
+            return bad(diag, alloc, E.@"malformed-wire", "inner {s} run: the joined entities hold {d} list items, more than the limit of {d}", .{ self.ip.format, sum, self.max_items });
+        }
+    }
+
+    // A message's items start from the budget the outer lines before it left
+    // (ruling 5).
+    fn messageDiag(self: *const RunRead) Diag {
+        return .{ .max_items = self.max_items, .held = self.held, .packs = self.packs, .inner = .run };
+    }
+
+    // The outer entity and one message that decodes, joined (step 4 of 0.34;
+    // the two packs share no key).
+    fn joined(self: *const RunRead, alloc: std.mem.Allocator, outer: *const Entity, m: RunMsg) anyerror!Entity {
+        var md = self.messageDiag();
+        const buf = self.input[m.at..];
+        const sub = try seqDecodeBits(alloc, self.ip, buf, buf.len * 8, &md);
+        var e = Entity.init(alloc);
+        e.kind_fmt = outer.kind_fmt;
+        e.kind_name = outer.kind_name;
+        for ([_]*const Entity{ outer, &sub }) |x| {
+            for (x.fields.ptr[0..x.fields.len]) |en| if (!e.fields.contains(en.key)) try e.put(en.key, en.value);
+            for (x.lists.ptr[0..x.lists.len]) |en| if (!e.lists.contains(en.key)) try e.putList(en.key, en.value);
+        }
+        if (sub.kind_fmt) |kf| {
+            e.inner_kind_fmt = kf;
+            e.inner_kind_name = sub.kind_name;
+        }
+        return e;
+    }
+};
+
+// Version 0.92, ruling 6: the messages a carrier is written with. Written
+// once, also when the outer encode runs several times (0.20).
+const RunWrite = struct {
+    eng: *Engine,
+    read: *RunRead,
+    outer: *const Entity,
+    from: []const u8,
+    to: []const u8,
+    context: ?[]const KV,
+    done: ?[]const u8 = null,
+
+    fn bytes(self: *RunWrite, alloc: std.mem.Allocator, ip: *const Pack, diag: *Diag) anyerror![]const u8 {
+        if (self.done) |b| return b;
+        const r = self.read;
+        const a = r.arena.allocator();
+        const same_inner = std.mem.eql(u8, ip.format, r.ip.format);
+        var out = std.ArrayList(u8).init(alloc);
+        for (r.msgs.items, 0..) |m, i| {
+            _ = r.arena.reset(.retain_capacity);
+            var e = try r.joined(a, self.outer, m);
+            self.eng.clearKinds(&e, self.from, self.to);
+            if (!same_inner or self.context != null) try self.eng.finish(a, &e, self.context);
+            innerKind(&e, ip);
+            var ed = Diag{ .packs = diag.packs };
+            const hex = encodePack(a, ip, &e, &ed) catch |err| {
+                if (err == error.OutOfMemory) return err;
+                return bad(diag, alloc, err, "message {d}: {s}", .{ i + 1, ed.msg });
+            };
+            if (hex.len == 0) return bad(diag, alloc, E.@"transform-encode", "message {d} of the run writes no byte", .{i + 1});
+            const b = hexDecode(a, hex) catch return bad(diag, alloc, E.@"transform-encode", "message {d}: its encoding is not bytes", .{i + 1});
+            try out.appendSlice(b);
+        }
+        self.done = out.items;
+        return out.items;
+    }
+};
+
+// The kind an inner message is written with (Version 0.34): Entity.inner_kind
+// when it names the inner format, else Entity.kind.
+fn innerKind(e: *Entity, ip: *const Pack) void {
+    const kf = e.inner_kind_fmt orelse return;
+    if (!std.mem.eql(u8, kf, ip.format)) return;
+    e.kind_fmt = kf;
+    e.kind_name = e.inner_kind_name;
+}
+
 fn seqDecode(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Entity {
     const in = bitsInput(alloc, p, bytes) catch |err| return bad(diag, alloc, err, "{s}", .{if (p.armor) "the input is not six-bit armored text" else "the input is not hex of even length"});
-    var d = SDec{ .alloc = alloc, .p = p, .buf = in.buf, .diag = diag, .hard_end = in.nbits, .soft_end = in.nbits };
+    return seqDecodeBits(alloc, p, in.buf, in.nbits, diag);
+}
+
+fn seqDecodeBits(alloc: std.mem.Allocator, p: *const Pack, buf: []const u8, nbits: usize, diag: *Diag) anyerror!Entity {
+    var d = SDec{ .alloc = alloc, .p = p, .buf = buf, .diag = diag, .hard_end = nbits, .soft_end = nbits };
+    d.run = diag.run;
+    diag.run = null;
     var e = Entity.init(alloc);
     var se = SEnt{ .e = &e };
     d.root = &e;
@@ -13849,12 +14330,21 @@ fn seqDecode(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: 
     const mode = diag.inner;
     diag.inner = .none;
     d.is_inner = mode != .none;
+    d.in_run = mode == .run;
     try d.body(p.seq.?, &se, null);
     if (mode == .strict) {
         // rulings 13 and 17 of 0.34: ahead of a `transform-decode`
         const stop = ((if (d.whole_read) d.hard_end else d.pos) + 7) / 8;
-        if (in.buf.len > stop) return leftover(diag, alloc, stop, in.buf.len);
+        if (buf.len > stop) return leftover(diag, alloc, stop, buf.len);
     }
+    if (mode == .run) {
+        // Version 0.92: the message's end (ruling 13 of 0.34)
+        const stop = ((if (d.whole_read) d.hard_end else d.pos) + 7) / 8;
+        if (stop > buf.len) return bad(diag, alloc, E.@"malformed-wire", "a message of a run ends at byte {d}, its extent holds {d}", .{ stop, buf.len });
+        if (stop == 0) return bad(diag, alloc, E.@"malformed-wire", "a message of a run reads no byte", .{});
+        diag.run_end = stop;
+    }
+    if (d.run) |r| r.ended = true;
     if (mode != .none) {
         var keys = std.ArrayListUnmanaged([]const u8){};
         for (se.failed.items) |key| if (!e.fields.contains(key)) try keys.append(alloc, key);
@@ -13899,6 +14389,8 @@ const SEnc = struct {
     kv: ?*std.StringHashMapUnmanaged(MV) = null,
     // keys whose line wrote bits that do not read back
     kv_failed: ?*std.StringHashMapUnmanaged(void) = null,
+    // Version 0.92: the messages of a run to write; null: the entity itself
+    run_write: ?*RunWrite = null,
     // Version 0.21: the count fields written, filled in when the message is
     // finished; the latest of each count line
     cpend: std.ArrayListUnmanaged(SCountAt) = .{},
@@ -14766,19 +15258,28 @@ const SEnc = struct {
         const alloc = self.alloc;
         const ip = try innerLookup(alloc, self.diag, self.p, n);
         if (self.pos % 8 != 0) return bad(self.diag, alloc, te, "inner {s}: the cursor at bit {d} is not on a whole byte", .{ ip.format, self.pos });
+        if (n.run) if (self.run_write) |w| {
+            const all = w.bytes(alloc, ip, self.diag) catch |err| {
+                if (err == error.OutOfMemory) return err;
+                self.diag.msg = try std.fmt.allocPrint(alloc, "inner {s} run: {s}", .{ ip.format, self.diag.msg });
+                return err;
+            };
+            return self.putBytes(all);
+        };
         var sub = ent.*;
-        if (ent.inner_kind_fmt) |kf| {
-            if (std.mem.eql(u8, kf, ip.format)) {
-                sub.kind_fmt = kf;
-                sub.kind_name = ent.inner_kind_name;
-            }
-        }
+        innerKind(&sub, ip);
         const hex = encodePack(alloc, ip, &sub, self.diag) catch |err| {
             if (err == error.OutOfMemory) return err;
             self.diag.msg = try std.fmt.allocPrint(alloc, "inner {s}: {s}", .{ ip.format, self.diag.msg });
             return err;
         };
         const bytes = hexDecode(alloc, hex) catch return bad(self.diag, alloc, te, "inner {s}: its encoding is not bytes", .{ip.format});
+        // a message that could not be found again (ruling 8 of 0.92)
+        if (n.run and bytes.len == 0) return bad(self.diag, alloc, te, "inner {s} run: the message writes no byte", .{ip.format});
+        return self.putBytes(bytes);
+    }
+
+    fn putBytes(self: *SEnc, bytes: []const u8) !void {
         try self.ensure(self.pos + bytes.len * 8);
         @memcpy(self.out.items[self.pos / 8 ..][0..bytes.len], bytes);
         self.pos += bytes.len * 8;
@@ -14922,13 +15423,15 @@ const SEnc = struct {
 };
 
 fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag) anyerror![]u8 {
+    const run_write = diag.run_write;
+    diag.run_write = null;
     var table = SwTable{};
     if (p.seq_switch) {
         // Version 0.20: dry runs until the cases assumed ahead are the cases
         // the written bits select
         var iter: usize = 0;
         while (true) : (iter += 1) {
-            var dry = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = &table, .dry = true };
+            var dry = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = &table, .dry = true, .run_write = run_write };
             try dry.exts.append(alloc, .{ .bits = false });
             dry.body(p.seq.?, e, null, false) catch |err| {
                 if (err == error.OutOfMemory) return err;
@@ -14939,7 +15442,7 @@ fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *
             if (iter == 32) return bad(diag, alloc, E.@"transform-encode", "the predicted switch cases do not settle", .{});
         }
     }
-    var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = if (p.seq_switch) &table else null };
+    var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = if (p.seq_switch) &table else null, .run_write = run_write };
     try enc.exts.append(alloc, .{ .bits = false });
     try enc.body(p.seq.?, e, null, false);
     // the message extent ends at its byte-padded end, under `armor sixbit`
@@ -15118,8 +15621,16 @@ fn runVector(eng: *Engine, text: []const u8) !?[]const u8 {
     const input = getStr(vobj, "input") orelse return "no `input`";
     const expect = getStr(vobj, "expect");
     const expect_error = getStr(vobj, "expect_error");
-    if (expect == null and expect_error == null) return "neither `expect` nor `expect_error`";
-    if (expect != null and expect_error != null) return "both `expect` and `expect_error`";
+    // Version 0.92: `expect_results`, and `run` beside `expect_error`
+    const results = vobj.get("expect_results");
+    const whole_run = vobj.get("run") != null;
+    if (vobj.get("run")) |rv| {
+        if (rv != .bool or !rv.bool or expect_error == null) return "invalid vector: `run` is `true`, with `expect_error`";
+    }
+    const given = @as(usize, @intFromBool(expect != null)) + @intFromBool(expect_error != null) + @intFromBool(results != null);
+    if (given == 0) return "neither `expect` nor `expect_error` nor `expect_results`";
+    if (given > 1) return "more than one of `expect`, `expect_error` and `expect_results`";
+    if (results) |rv| if (rv != .array) return "`expect_results` is not an array";
     // `max_items` (Version 0.11): the limit on list items for this vector
     eng.max_items = default_max_items;
     if (vobj.get("max_items")) |mi| {
@@ -15152,8 +15663,22 @@ fn runVector(eng: *Engine, text: []const u8) !?[]const u8 {
         context = kvs.items;
     }
 
-    // 1. convert(from, to, input[, context])
-    if (eng.convert(from_fmt, to_fmt, input, context)) |got| {
+    // 1. convert(from, to, input[, context]); convert_run (Version 0.92)
+    if (results != null or whole_run) {
+        if (eng.convertRun(from_fmt, to_fmt, input, context)) |got| {
+            const want = if (results) |rv| rv.array.items else
+                return try std.fmt.allocPrint(alloc, "expected error {s} of convert_run, it gave {d} results", .{ expect_error.?, got.len });
+            if (try checkResults(alloc, want, got)) |why| return why;
+        } else |err| {
+            if (err == error.OutOfMemory) return err;
+            const want = expect_error orelse
+                return try std.fmt.allocPrint(alloc, "convert_run failed: {s}", .{clip(eng.last_error)});
+            if (!std.mem.eql(u8, @errorName(err), want) or !beginsWithKind(eng.last_error, want)) {
+                return try std.fmt.allocPrint(alloc, "expected error {s} of convert_run, got: {s}", .{ want, clip(eng.last_error) });
+            }
+            return null;
+        }
+    } else if (eng.convert(from_fmt, to_fmt, input, context)) |got| {
         if (expect_error) |want| {
             return try std.fmt.allocPrint(alloc, "expected error {s}, convert returned: {s}", .{ want, clip(got) });
         }
@@ -15229,6 +15754,33 @@ fn runVector(eng: *Engine, text: []const u8) !?[]const u8 {
             continue;
         }
         if (try checkModelKey(alloc, &ent, key, exp, completed)) |why| return why;
+    }
+    return null;
+}
+
+// The results of `convert_run` against `expect_results` (Version 0.92). null:
+// they agree.
+fn checkResults(alloc: std.mem.Allocator, want: []const JValue, got: []const Engine.RunResult) !?[]const u8 {
+    for (want) |w| {
+        if (w != .object) return "an entry of `expect_results` is not an object";
+        if ((getStr(w.object, "expect") == null) == (getStr(w.object, "expect_error") == null)) return "an entry of `expect_results` holds one of `expect` and `expect_error`";
+    }
+    if (want.len != got.len) return try std.fmt.allocPrint(alloc, "expected {d} results, convert_run gave {d}", .{ want.len, got.len });
+    for (want, got, 0..) |w, g, i| {
+        if (getStr(w.object, "expect")) |exp| {
+            switch (g) {
+                .ok => |b| if (!std.mem.eql(u8, b, exp)) return try std.fmt.allocPrint(alloc, "result {d} mismatch\n   expected: {s}\n   got:      {s}", .{ i, clip(exp), clip(b) }),
+                .err => |e| return try std.fmt.allocPrint(alloc, "result {d}: expected {s}, got: {s}", .{ i, clip(exp), clip(e.msg) }),
+            }
+        } else {
+            const kind = getStr(w.object, "expect_error").?;
+            switch (g) {
+                .ok => |b| return try std.fmt.allocPrint(alloc, "result {d}: expected error {s}, got: {s}", .{ i, kind, clip(b) }),
+                .err => |e| if (!std.mem.eql(u8, @errorName(e.kind), kind) or !beginsWithKind(e.msg, kind)) {
+                    return try std.fmt.allocPrint(alloc, "result {d}: expected error {s}, got: {s}", .{ i, kind, clip(e.msg) });
+                },
+            }
+        }
     }
     return null;
 }
@@ -15506,7 +16058,7 @@ const CapAlloc = struct {
 // The kinds a `convert` with no context may fail with.
 // Version 0.34 adds the kinds raised where decode or encode reaches an
 // `inner` line: `unknown-format`, `bad-directive`, `distribution-violation`.
-const named_kinds = [_][]const u8{ "malformed-wire", "transform-decode", "transform-encode", "no-kind", "missing-root", "unknown-format", "bad-directive", "distribution-violation" };
+const named_kinds = [_][]const u8{ "malformed-wire", "transform-decode", "transform-encode", "no-kind", "missing-root", "unknown-format", "bad-directive", "distribution-violation", "message-count" };
 
 const fuzz_steps: usize = 96;
 // What one `convert` of the run may hold; more fails the run.
@@ -15523,6 +16075,18 @@ const Fuzz = struct {
     inputs: usize = 0,
     failures: std.ArrayList([]const u8),
 
+    fn namedKind(err: anyerror, msg: []const u8) bool {
+        for (named_kinds) |k| {
+            if (std.mem.eql(u8, @errorName(err), k) and beginsWithKind(msg, k)) return true;
+        }
+        return false;
+    }
+
+    fn unnamed(self: *Fuzz, from: []const u8, to: []const u8, what: []const u8, n: usize, err: anyerror) !void {
+        if (self.failures.items.len >= 200) return;
+        try self.failures.append(try std.fmt.allocPrint(self.eng.alloc, "{s} -> {s}, {s} {d}: convert_run: {s} is not a named kind", .{ from, to, what, n, @errorName(err) }));
+    }
+
     // One input through `convert`: it returns a message, or fails with a
     // named kind and a message that begins with it. A panic ends the run.
     fn one(self: *Fuzz, from: []const u8, to: []const u8, input: []const u8, what: []const u8, n: usize) !void {
@@ -15531,6 +16095,13 @@ const Fuzz = struct {
         self.eng.scratch = self.arena.allocator();
         defer self.eng.scratch = self.eng.alloc;
         self.inputs += 1;
+        // a carrier pack's input through `convert_run` too (Version 0.92)
+        const carrier = if (self.eng.findPack(from)) |fp| fp.has_run else false;
+        if (carrier) if (self.eng.convertRun(from, to, input, null)) |got| {
+            for (got) |g| if (g == .err and !namedKind(g.err.kind, g.err.msg)) try self.unnamed(from, to, what, n, g.err.kind);
+        } else |err| {
+            if (err != error.OutOfMemory and !namedKind(err, self.eng.last_error)) try self.unnamed(from, to, what, n, err);
+        };
         const res = self.eng.convert(from, to, input, null);
         if (self.counted.peak > self.peak) {
             self.peak = self.counted.peak;

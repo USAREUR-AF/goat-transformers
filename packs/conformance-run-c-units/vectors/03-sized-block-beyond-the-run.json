@@ -1,0 +1,13 @@
+{
+  "name": "sized-block-beyond-the-run",
+  "from": "conformance-run-c-units",
+  "to": "conformance-run-json",
+  "input": "0303010509",
+  "expect_results": [
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: the message's input ends at the extent's end, so its 3 units of 1 byte are malformed-wire at its `length @` line (0.83 ruling 5)"
+}

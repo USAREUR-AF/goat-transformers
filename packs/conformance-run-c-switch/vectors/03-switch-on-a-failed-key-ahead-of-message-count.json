@@ -1,0 +1,9 @@
+{
+  "name": "switch-on-a-failed-key-ahead-of-message-count",
+  "from": "conformance-run-c-switch",
+  "to": "conformance-run-json",
+  "input": "040105410609",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 35: a switch on a key whose line failed fails the decode with transform-decode; it stops the decode of message 1, which is reported before the bytes that remain (ruling 1)"
+}

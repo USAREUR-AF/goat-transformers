@@ -557,6 +557,12 @@ V011_ORDER |= {
                "8305", "8307", "8309", "8311", "8313", "8315", "8317", "8319", "8321", "8323", "8325", "8327",
                "8329", "8331", "8333", "8335", "8337", "8339", "8341", "8343", "8345", "8347", "8349", "8355",
                "8361", "8363", "8373", "8379", "8385", "8387", "8389", "8392", "8393", "8400", "8402", "8404"}
+# Ruling 12 of 0.92: a second word of `inner` that is not `run` or `partial` is
+# checked after the file, so a later `bogus` line gives `unknown-directive`.
+V011_ORDER |= {"9210"}
+# Ruling 16 of 0.92: the same order for `framing` (9259 to 9265), and
+# `missing-wire` (9248), which gtcheck does not name.
+V011_ORDER |= {"9248", "9259", "9260", "9261", "9262", "9263", "9264", "9265"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line
@@ -570,6 +576,41 @@ V011_TLV |= {"wire-inner-03", "wire-inner-04", "wire-inner-07", "wire-inner-31",
 # `missing-wire` (48, 49) and `unterminated-quote` (67) come before it.
 V011_TLV |= {"wire-inner-02", "wire-inner-42", "wire-inner-48", "wire-inner-49", "wire-inner-64",
              "wire-inner-65", "wire-inner-67"}
+
+class InnerRunTest(Refusals):
+    SEQ = HEAD + "wire bits\nlayout sequential\n"
+
+    def test_the_second_word_of_inner_is_run_or_partial(self):
+        for line in ("inner other run", 'inner other "run"', "inner other partial", "inner run", "inner run run"):
+            pack = gtcheck.load_pack(self.SEQ + line + "\n", model())
+            self.assertEqual(pack.common[0].name, line.split()[1])
+        for line in ("inner other runs", "inner other RUN", "inner other run partial", "inner"):
+            with self.assertRaises(gtcheck.CheckError) as cm:
+                gtcheck.load_pack(self.SEQ + line + "\n", model())
+            self.assertEqual(cm.exception.kind, "bad-directive")
+
+
+    REST = "group probe.items rest\n  field probe.qty 8 uint\nend\n"
+
+    def test_framing_self_and_its_message_level_rests(self):
+        framing = self.SEQ + "framing self\n"
+        for text in (framing + "field probe.qty 8 uint\n", self.SEQ + 'framing "self"\n' + "field probe.qty 8 uint\n",
+                     framing + "length 8 whole\n" + self.REST, framing + "length 8\n" + self.REST + "end\n",
+                     framing + "length 8 whole\nkind a\nwhen 8 1\n" + self.REST):
+            gtcheck.load_pack(text, model())
+        for text in (self.SEQ + "framing\n", self.SEQ + "framing self self\n", self.SEQ + "framing other\n",
+                     framing + "framing self\n", self.SEQ + "kind a\nwhen 8 1\nframing self\n",
+                     self.SEQ + "opt\n  framing self\nend\n", HEAD + "wire bits\nword_bytes 1\nframing self\n",
+                     HEAD + "wire bits\nframing self\nlayout sequential\n", HEAD + "wire json\nframing self\n",
+                     self.SEQ + "bit_order msb\narmor sixbit\nframing self\n",
+                     self.SEQ + "bit_order msb\nencoding uper\nframing self\n", framing + self.REST,
+                     framing + "kind a\nwhen 8 1\nkind b\nwhen 8 2\n" + self.REST, framing + "opt\n" + self.REST + "end\n",
+                     framing + "opt\nlength 8 whole\nend\n" + self.REST,
+                     framing + "length 8\nlength 8 whole\nend\n" + self.REST):
+            with self.assertRaises(gtcheck.CheckError) as cm:
+                gtcheck.load_pack(text, model())
+            self.assertEqual(cm.exception.kind, "bad-directive", text)
+
 
 class TlvWireTest(Refusals):
     TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"

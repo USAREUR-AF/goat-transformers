@@ -20,6 +20,7 @@ type outcome struct {
 	convErr   string
 	ent       *Entity
 	decodeErr string
+	run       string // the results of convert_run, for a vector of it
 }
 
 func observe(eng *Engine, v *vector, in []byte) outcome {
@@ -29,6 +30,9 @@ func observe(eng *Engine, v *vector, in []byte) outcome {
 	if err != nil {
 		o.convErr = err.Error()
 	}
+	if v.Run != nil || v.ExpectResults != nil {
+		o.run = observeRun(eng, v, in)
+	}
 	ent, err := eng.Decode(v.From, in)
 	o.ent = ent
 	if err != nil {
@@ -37,12 +41,24 @@ func observe(eng *Engine, v *vector, in []byte) outcome {
 	return o
 }
 
+// observeRun is the outcome of convert_run as text (Version 0.92).
+func observeRun(eng *Engine, v *vector, in []byte) string {
+	results, err := eng.ConvertRun(v.From, v.To, in, v.Context)
+	out := fmt.Sprintf("error %v\n", err)
+	for _, r := range results {
+		out += fmt.Sprintf("%q %v\n", r.Bytes, r.Err)
+	}
+	return out
+}
+
 func (o outcome) differs(w outcome) string {
 	switch {
 	case !bytes.Equal(o.out, w.out):
 		return fmt.Sprintf("convert gave %q, want %q", o.out, w.out)
 	case o.convErr != w.convErr:
 		return fmt.Sprintf("convert error %q, want %q", o.convErr, w.convErr)
+	case o.run != w.run:
+		return fmt.Sprintf("convert_run gave %s, want %s", o.run, w.run)
 	case o.decodeErr != w.decodeErr:
 		return fmt.Sprintf("decode error %q, want %q", o.decodeErr, w.decodeErr)
 	case !reflect.DeepEqual(o.ent, w.ent):

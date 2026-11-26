@@ -217,7 +217,9 @@ int main() {
                     v.context[ctx->keys[k]] =
                         ctx->items[k].is(json::Value::Kind::String) ? ctx->items[k].text : json::write(ctx->items[k]);
             }
-            if (const json::Value* x = j.find("expect_error")) {
+            if (j.find("run") || j.find("expect_results")) {
+                // v0.92: an expectation on convert_run; convert's result is only compared with itself.
+            } else if (const json::Value* x = j.find("expect_error")) {
                 v.has_error = x->is(json::Value::Kind::String);
                 if (v.has_error) v.error = x->text;
             } else {

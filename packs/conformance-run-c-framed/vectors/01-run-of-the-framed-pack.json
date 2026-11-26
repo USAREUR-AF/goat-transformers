@@ -1,0 +1,13 @@
+{
+  "name": "run-of-the-framed-pack",
+  "from": "conformance-run-c-framed",
+  "to": "conformance-run-c-framed",
+  "input": "040541064209",
+  "expect_results": [
+    {
+      "expect": "040541064209"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: with the line the run is read"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "outer-items-before-the-run-count",
+  "from": "conformance-run-outer-list",
+  "to": "conformance-run-json",
+  "input": "01050106020708",
+  "expect_results": [
+    {
+      "expect": "{}"
+    },
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "max_items": 2,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: the outer list leaves 1 of 2 to each message: 1 fits, 2 does not"
+}

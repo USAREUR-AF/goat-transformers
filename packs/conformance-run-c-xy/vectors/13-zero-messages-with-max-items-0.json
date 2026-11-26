@@ -1,0 +1,10 @@
+{
+  "name": "zero-messages-with-max-items-0",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "0009",
+  "expect_results": [],
+  "max_items": 0,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 2: and ruling 5: no message, none over the limit"
+}

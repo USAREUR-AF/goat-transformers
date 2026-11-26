@@ -1,0 +1,9 @@
+{
+  "name": "ahead-of-the-whole-byte-test-encode",
+  "from": "conformance-run-json",
+  "to": "conformance-run-mis-plain",
+  "input": "{\"w\":5}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; ahead of the whole-byte test"
+}

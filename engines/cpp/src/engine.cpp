@@ -842,10 +842,14 @@ std::string encode_wire(const Pack& p, const Entity& entity, const detail::Inner
 // v0.34: the engine as the `inner` lines of its sequential packs see it.
 class Host final : public detail::InnerHost {
 public:
-    explicit Host(const Engine& engine) : eng_(engine) {}
+    // `sink`, `source`: the run operations of 0.92.
+    explicit Host(const Engine& engine, detail::RunSink* sink = nullptr, const detail::RunSource* source = nullptr)
+        : eng_(engine), sink_(sink), source_(source) {}
+    detail::RunSink* sink() const override { return sink_; }
+    const detail::RunSource* source() const override { return source_; }
 
     // The checks made where an `inner` line is reached, in their order.
-    const Pack& reach(const Pack& outer, const std::string& format) const override {
+    const Pack& reach(const Pack& outer, const std::string& format, bool run = false) const override {
         if (!eng_.has_format(format))
             throw Error(ErrorKind::UnknownFormat, format, "",
                         "the 'inner' line of " + outer.format + " names a format no loaded pack defines");
@@ -854,6 +858,10 @@ public:
             throw Error(ErrorKind::BadDirective, outer.format, "",
                         "the inner pack " + format + " of an 'inner' line is not on wire bits, or has 'armor sixbit' or "
                         "'encoding uper'");
+        if (run && !(inner.sequential && inner.framing_self))  // 0.92 ruling 16
+            throw Error(ErrorKind::BadDirective, outer.format, "",
+                        "the inner pack " + format + " of an 'inner ... run' line is not 'layout sequential' or has no "
+                        "'framing self' line");
         if (!inner.inner_formats.empty() || inner.format == outer.format)
             throw Error(ErrorKind::BadDirective, outer.format, "",
                         "the inner pack " + format + " of an 'inner' line " +
@@ -885,6 +893,8 @@ public:
 
 private:
     const Engine& eng_;
+    detail::RunSink* sink_;
+    const detail::RunSource* source_;
 };
 }  // namespace
 
@@ -946,18 +956,7 @@ std::string Engine::convert_impl(const std::string& from, const std::string& to,
     (void)pack(from);
     const Pack& target = pack(to);
     Entity e = decode(from, bytes);
-    if (from != to) {
-        // A cross-format conversion chooses the target kind by `requires`,
-        // unless the record names a format `to` holds as a layer (v0.34):
-        // Entity.kind kept when an `inner` line of `to` names its format,
-        // Entity.inner_kind when it names `to` or such a format.
-        auto layer = [&](const std::string& format) {
-            return std::find(target.inner_formats.begin(), target.inner_formats.end(), format) !=
-                   target.inner_formats.end();
-        };
-        if (!layer(e.kind.first)) e.kind = {};
-        if (e.inner_kind.first != to && !layer(e.inner_kind.first)) e.inner_kind = {};
-    }
+    clear_kinds(e, from, target);
     // A same-format conversion with no context skips both steps, so it stays byte-exact.
     // An empty context counts as given.
     if (from != to || context || text || ordered) {
@@ -967,6 +966,255 @@ std::string Engine::convert_impl(const std::string& from, const std::string& to,
         complete(e);
     }
     return encode(to, e);
+}
+
+void Engine::clear_kinds(Entity& e, const std::string& from, const Pack& target) const {
+    if (from == target.format) return;
+    // A cross-format conversion chooses the target kind by `requires`,
+    // unless the record names a format `to` holds as a layer (v0.34):
+    // Entity.kind kept when an `inner` line of `to` names its format,
+    // Entity.inner_kind when it names `to` or such a format.
+    auto layer = [&](const std::string& format) {
+        return std::find(target.inner_formats.begin(), target.inner_formats.end(), format) != target.inner_formats.end();
+    };
+    if (!layer(e.kind.first)) e.kind = {};
+    if (e.inner_kind.first != target.format && !layer(e.inner_kind.first)) e.inner_kind = {};
+}
+
+std::string Engine::finish_convert(Entity e, const std::string& from, const std::string& to,
+                                   const Context* context) const {
+    clear_kinds(e, from, pack(to));
+    if (from != to || context) {
+        if (context) apply_context(e, *context);
+        complete(e);
+    }
+    return encode(to, e);
+}
+
+// ---------------------------------------------------------------- a run of inner messages (0.92)
+
+namespace {
+// Step 4 of 0.34's Decode: the message's keys join those of the outer lines.
+Entity join_message(const Entity& outer, const Entity& message) {
+    Entity e = outer;
+    for (const auto& kv : message.fields) e.fields.emplace(kv.first, kv.second);
+    for (const auto& kv : message.lists) e.lists.emplace(kv.first, kv.second);
+    e.inner_kind = {};
+    if (!message.kind.second.empty()) e.inner_kind = message.kind;
+    return e;
+}
+
+// What the run operations read: the outer lines and the messages of a carrier.
+struct RunRead {
+    Entity outer;
+    detail::RunSink sink;
+    std::optional<Error> stopped;  // the error that stopped the outer lines
+    std::optional<Error> failed;   // an outer transform-decode
+    std::optional<Error> over;     // the items of all joined entities beyond max_items (ruling 5)
+};
+detail::RunLine run_line(const Pack& p, const Entity& e) {
+#if GT_WIRE_BITS
+    return detail::seq_run_line(p, e);
+#else
+    (void)p;  // a carrier pack is on `bits`
+    (void)e;
+    return {};
+#endif
+}
+
+RunRead read_run(const Engine& eng, const Pack& p, const std::string& bytes) {
+    RunRead r;
+    r.sink.max_items = eng.max_items();
+    const Host host(eng, &r.sink);
+    detail::DecodeScope scope(eng.max_items());
+    try {
+        r.outer = decode_wire(p, bytes, &host);
+    } catch (const Error& ex) {
+        r.stopped = ex;
+        return r;
+    }
+    try {
+        scope.raise_failure();
+    } catch (const Error& ex) {
+        r.failed = ex;
+    }
+    // Ruling 5: over the messages whose decode came to its end, the outer
+    // entity's items once for each and each message's own items, summed. The
+    // outer lines count into this scope, each message into its own.
+    if (r.sink.reached) {
+        const std::uint64_t limit = eng.max_items();
+        std::uint64_t sum = 0;
+        bool beyond = false;
+        for (const auto& m : r.sink.messages) {
+            if (m.stopped) continue;
+            const std::uint64_t add = scope.held;
+            if (add > limit - sum || m.items > limit - sum - add) {
+                beyond = true;
+                break;
+            }
+            sum += add + m.items;
+        }
+        if (beyond)
+            r.over = Error(ErrorKind::MalformedWire, p.format, "",
+                           "the entities of the run of " + r.sink.inner_format + " hold more than " +
+                               std::to_string(limit) + " items together");
+    }
+    return r;
+}
+}  // namespace
+
+Engine::RunDecode Engine::decode_run(const std::string& format, const std::string& bytes) const {
+    const Pack& p = pack(format);
+    RunDecode out;
+    if (!p.carrier) {
+        // An ordinary message: its error is its one result (ruling 4).
+        RunEntity one;
+        try {
+            one.entity = decode(format, bytes);
+            out.outer = one.entity;
+        } catch (const Error& ex) {
+            one.error = ex;
+        }
+        out.messages.push_back(std::move(one));
+        return out;
+    }
+    RunRead r = read_run(*this, p, bytes);
+    if (!r.sink.reached && (r.sink.passed || !r.stopped)) {
+        RunEntity one;
+        if (r.stopped) one.error = r.stopped;
+        else if (r.failed) one.error = r.failed;
+        else one.entity = r.outer;
+        out.outer = r.outer;
+        out.messages.push_back(std::move(one));
+        return out;
+    }
+    if (r.stopped) throw *r.stopped;
+    if (r.failed) throw *r.failed;
+    if (r.over) throw *r.over;
+    for (const auto& m : r.sink.messages) {
+        RunEntity one;
+        if (m.error) one.error = m.error;
+        else one.entity = join_message(r.outer, m.entity);
+        out.messages.push_back(std::move(one));
+    }
+    out.outer = std::move(r.outer);
+    return out;
+}
+
+std::vector<Engine::RunResult> Engine::convert_run(const std::string& from, const std::string& to,
+                                                   const std::string& bytes,
+                                                   const std::map<std::string, std::string>* context) const {
+    const Pack& source = pack(from);
+    const Pack& target = pack(to);
+    std::vector<RunResult> out;
+    auto result = [&](const std::function<std::string()>& make) {
+        RunResult one;
+        try {
+            one.output = make();
+        } catch (const Error& ex) {
+            if (target.carrier) throw;  // to a carrier pack every error fails the call
+            one.error = ex;
+        }
+        out.push_back(std::move(one));
+    };
+    // Keys of the context are read and checked once, after the decode errors.
+    Context ctx;
+    auto read_context = [&]() {
+        if (!context) return;
+        ctx = context_from_text(*context);
+    };
+    const Context* given = context ? &ctx : nullptr;
+
+    // An ordinary message (ruling 4): one result.
+    auto ordinary = [&](const Entity* e, const std::optional<Error>& failed) {
+        if (failed) {
+            if (target.carrier) throw *failed;
+            out.push_back(RunResult{std::string(), failed});
+            return;
+        }
+        read_context();
+        result([&] { return finish_convert(*e, from, to, given); });
+    };
+    if (!source.carrier) {
+        Entity e;
+        std::optional<Error> failed;
+        try {
+            e = decode(from, bytes);
+        } catch (const Error& ex) {
+            failed = ex;
+        }
+        ordinary(&e, failed);
+        return out;
+    }
+
+    const RunRead r = read_run(*this, source, bytes);
+    if (!r.sink.reached && (r.sink.passed || !r.stopped)) {
+        ordinary(&r.outer, r.stopped ? r.stopped : r.failed);
+        return out;
+    }
+    const std::vector<detail::RunMessage>& messages = r.sink.messages;
+    // The errors of the call, in phases (ruling 4): those that stop a decode,
+    // in reading order, then the other decode errors.
+    if (target.carrier)
+        for (const auto& m : messages)
+            if (m.stopped) throw *m.error;
+    if (r.stopped) throw *r.stopped;
+    if (r.failed) throw *r.failed;
+    if (target.carrier)
+        for (const auto& m : messages)
+            if (m.error) throw *m.error;
+    if (r.over) throw *r.over;  // ruling 5: after every other decode error, before context
+    read_context();
+
+    if (!target.carrier) {
+        for (const auto& m : messages) {
+            if (m.error) out.push_back(RunResult{std::string(), m.error});
+            else result([&] { return finish_convert(join_message(r.outer, m.entity), from, to, given); });
+        }
+        return out;
+    }
+
+    // Carrier pack to carrier pack (ruling 6): the outer lines from the outer entity alone.
+    Entity outer = r.outer;
+    if (from != to) outer.kind = {};
+    if (from != to || given) {
+        if (given) apply_context(outer, *given);
+        complete(outer);
+    }
+    const detail::RunLine run = run_line(target, outer);
+    if (!run.line) {
+        // A kind without a `run` line takes exactly one message.
+        if (messages.size() != 1)
+            throw Error(ErrorKind::MessageCount, to, "",
+                        "the kind '" + (run.kind ? run.kind->name : std::string()) + "' has no 'inner ... run' line and "
+                        "takes exactly one message, not " + std::to_string(messages.size()));
+        Entity e = join_message(r.outer, messages.front().entity);
+        clear_kinds(e, from, target);
+        if (from != to || given) {
+            if (given) apply_context(e, *given);
+            complete(e);
+        }
+        if (run.kind) e.kind = {to, run.kind->name};
+        out.push_back(RunResult{encode(to, e), std::nullopt});
+        return out;
+    }
+    std::vector<std::string> written(messages.size());
+    std::vector<char> done(messages.size(), 0);
+    detail::RunSource messages_of;
+    messages_of.count = messages.size();
+    messages_of.hex = [&](const Pack& inner, std::size_t k) {
+        if (done[k]) return written[k];  // the outer lines may be encoded more than once (0.20 ruling 33)
+        Entity e = join_message(r.outer, messages[k].entity);
+        clear_kinds(e, from, target);
+        if (given) apply_context(e, *given);
+        if (given || inner.format != r.sink.inner_format) complete(e);
+        written[k] = Host(*this).encode(inner, e);
+        done[k] = 1;
+        return written[k];
+    };
+    const Host host(*this, nullptr, &messages_of);
+    out.push_back(RunResult{encode_wire(target, outer, &host), std::nullopt});
+    return out;
 }
 
 const ModelKey* Engine::find_key(const std::string& key) const {

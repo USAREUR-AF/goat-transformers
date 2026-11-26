@@ -1,0 +1,9 @@
+{
+  "name": "line-not-reached-encode",
+  "from": "conformance-run-json",
+  "to": "conformance-run-kinds-plain",
+  "input": "{\"n\":7}",
+  "expect": "0207",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: kind o is chosen"
+}

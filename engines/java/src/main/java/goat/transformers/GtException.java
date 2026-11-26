@@ -37,7 +37,9 @@ public final class GtException extends RuntimeException {
         MISSING_MODULE,
         DUPLICATE_FORMAT,
         // Version 0.29, ruling 3f: a licence file that cannot be read as ruling 1 says, or an unknown profile name.
-        BAD_LICENCE;
+        BAD_LICENCE,
+        // Version 0.92: decode or convert of a carrier that does not hold exactly one message.
+        MESSAGE_COUNT;
 
         private final String specKind;
 

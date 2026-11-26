@@ -147,7 +147,8 @@ def layout(pack):
 
 
 class Message:
-    """The input bytes, held as one integer in the pack's bit order. It is also
+    """The input bytes (or a view of bytes), of which a read takes only those
+    its bits lie in, so that a read costs the same at any place. It is also
     the view of the top scope: `msg` is itself and `base` is 0."""
 
     base = 0
@@ -158,25 +159,29 @@ class Message:
         self.msb = order == "msb"           # a field's first bit is its most significant
         self.high = order != "lsb"          # bit `i` is bit `7 - (i mod 8)` of its byte
         self.rev = order == "msb-lsb"       # 0.22: placed as `msb`, valued as `lsb`
-        self.value = int.from_bytes(buf, "big" if self.high else "little")
+        self.buf = buf
         self.msg = self
 
     @classmethod
     def from_bits(cls, pack, value, nbits):
         """A message of `nbits` bits, `value` holding them in the pack's bit
         order (armored text, 0.14: any number of bits)."""
+        n = -(-nbits // 8)
         msg = cls(pack, b"")
-        msg.value = value
+        msg.buf = (value << (8 * n - nbits)).to_bytes(n, "big") if msg.high else value.to_bytes(n, "little")
         msg.nbits = nbits
         return msg
 
     def uint(self, start, length):
         """The `length` bits from bit `start` as an unsigned integer. The caller
         has checked that they lie within the input."""
+        end = start + length
+        last = (end + 7) >> 3
+        part = self.buf[start >> 3:last]
         if self.high:
-            v = (self.value >> (self.nbits - start - length)) & ((1 << length) - 1)
+            v = (int.from_bytes(part, "big") >> (8 * last - end)) & ((1 << length) - 1)
             return reverse_bits(v, length) if self.rev else v
-        return (self.value >> start) & ((1 << length) - 1)
+        return (int.from_bytes(part, "little") >> (start & 7)) & ((1 << length) - 1)
 
 
 class View:

@@ -51,7 +51,9 @@ const std::set<std::string>& pack_directives() {
                                          "count",
                                          // v0.34, `inner <format> [partial]`: where it stands and the
                                          // pack that holds it are checked after the file is read.
-                                         "inner"};
+                                         "inner",
+                                         // v0.92, `framing self`
+                                         "framing"};
     return s;
 }
 
@@ -61,7 +63,9 @@ const std::set<std::string>& after_wire() {
                                          "bit_order", "layout", "also", "pad", "align", "presence", "if",
                                          "opt",  "chain", "fx",    "length",
                                          // v0.34
-                                         "inner"};
+                                         "inner",
+                                         // v0.92 ruling 16
+                                         "framing"};
     return s;
 }
 
@@ -77,6 +81,7 @@ const std::set<std::string>& one_argument() {
                                          "element",
                                          // v0.19: a pack directive of one value, as `armor`
                                          "encoding",
+                                         "framing",  // v0.92
                                          // v0.20 ruling 39
                                          "switch", "case",
                                          // v0.28: `tag <n>` on cbor, and the `tag` of tlv (0.13)

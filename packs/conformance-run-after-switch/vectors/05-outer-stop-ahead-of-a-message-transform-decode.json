@@ -1,0 +1,10 @@
+{
+  "name": "outer-stop-ahead-of-a-message-transform-decode",
+  "from": "conformance-run-after-switch",
+  "to": "conformance-run-after-switch",
+  "input": "02010505",
+  "expect_error": "no-kind",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: w = 5 stops the decode; label 01 is a later phase"
+}

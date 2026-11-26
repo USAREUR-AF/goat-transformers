@@ -47,14 +47,15 @@
 
 use goat_transformers::json::Json;
 use goat_transformers::{json, Engine};
+use std::collections::BTreeMap;
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::path::{Path, PathBuf};
 
 /// The error kinds `convert` with no context may fail with
 /// (spec/vector-format.md, `expect_error`). Version 0.34 adds the checks
 /// made where decode or encode reaches an `inner` line: `unknown-format`,
-/// `bad-directive` and `distribution-violation`.
-const KINDS: [&str; 8] = [
+/// `bad-directive` and `distribution-violation`; Version 0.92 `message-count`.
+const KINDS: [&str; 9] = [
     "malformed-wire",
     "no-kind",
     "missing-root",
@@ -63,6 +64,7 @@ const KINDS: [&str; 8] = [
     "unknown-format",
     "bad-directive",
     "distribution-violation",
+    "message-count",
 ];
 
 /// Random inputs per pack and per alphabet, at `GOAT_FUZZ_ITERS=1`.
@@ -434,6 +436,48 @@ fn check(engine: &Engine, from: &str, to: &str, input: &str) -> Option<String> {
     }
 }
 
+/// `convert_run` and `decode_run` (Version 0.92): what they did wrong, if
+/// anything. The error of a call and those of its results are of a named kind
+/// too. `seen` counts what the calls gave.
+fn check_run(engine: &Engine, from: &str, to: &str, input: &str, seen: &mut BTreeMap<String, usize>) -> Option<String> {
+    let mut wrong = None;
+    let mut note = |call: &str, what: &str, e: Option<&goat_transformers::Error>| {
+        let kind = match e {
+            None => "ok",
+            Some(e) => match e.msg.split_once(':') {
+                Some((kind, _)) if KINDS.contains(&kind) => kind,
+                _ => {
+                    wrong.get_or_insert(format!("{}: error with no named kind: {}", call, e.msg));
+                    "no named kind"
+                }
+            },
+        };
+        *seen.entry(format!("{} {} {}", call, what, kind)).or_insert(0) += 1;
+    };
+    match catch_unwind(AssertUnwindSafe(|| engine.convert_run(from, to, input, None))) {
+        Err(_) => return Some("PANIC in convert_run".to_string()),
+        Ok(Err(e)) => note("convert_run", "call", Some(&e)),
+        Ok(Ok(results)) => results.iter().for_each(|r| note("convert_run", "result", r.as_ref().err())),
+    }
+    match catch_unwind(AssertUnwindSafe(|| engine.decode_run(from, input))) {
+        Err(_) => return Some("PANIC in decode_run".to_string()),
+        Ok(Err(e)) => note("decode_run", "call", Some(&e)),
+        Ok(Ok((_, results))) => results.iter().for_each(|r| note("decode_run", "result", r.as_ref().err())),
+    }
+    wrong
+}
+
+/// The formats whose pack has an `inner <format> run` line (Version 0.92).
+fn carriers(formats: &[String]) -> Vec<String> {
+    let packs = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../packs");
+    let is_run = |l: &str| {
+        let t: Vec<&str> = l.split_whitespace().collect();
+        t.len() >= 3 && t[0] == "inner" && t[2] == "run"
+    };
+    let text = |f: &String| std::fs::read_to_string(packs.join(f).join("pack.def")).unwrap_or_default();
+    formats.iter().filter(|f| text(f).lines().any(is_run)).cloned().collect()
+}
+
 /// A vector's `from`, `to` and `input`.
 struct Case {
     from: String,
@@ -654,18 +698,28 @@ fn malformed_input_never_panics() {
     let vectors = conversion_vectors(&engine);
     assert!(!formats.is_empty() && !vectors.is_empty(), "no packs or no vectors were loaded");
 
+    let carriers = carriers(&formats);
+
     // a caught panic is reported below with its input; keep the default
     // hook from printing each one as it happens
     let hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(|_| {}));
 
     let mut ran = 0usize;
+    // every failure is counted, by what it is; the first 200 are listed, and the
+    // first 200 panics whatever came before them
     let mut failures: Vec<String> = Vec::new();
+    let mut panics: Vec<String> = Vec::new();
+    let mut failed: BTreeMap<String, usize> = BTreeMap::new();
+    let mut run_seen: BTreeMap<String, usize> = BTreeMap::new();
     let mut slowest = (std::time::Duration::ZERO, String::new());
     let mut run = |from: &str, to: &str, input: &str, class: &str| {
         ran += 1;
         let started = std::time::Instant::now();
-        let result = check(&engine, from, to, input);
+        let mut result = check(&engine, from, to, input);
+        if result.is_none() && carriers.iter().any(|c| c == from || c == to) {
+            result = check_run(&engine, from, to, input, &mut run_seen);
+        }
         let took = started.elapsed();
         if took > slowest.0 {
             let shown: String = input.chars().take(60).collect();
@@ -676,9 +730,16 @@ fn malformed_input_never_panics() {
             eprintln!("slow {:?} [{}] {} -> {}, {} bytes: {:?}", took, class, from, to, input.len(), shown);
         }
         if let Some(why) = result {
-            if failures.len() < 200 {
+            let kind = match why.split_once("no named kind: ") {
+                _ if why.starts_with("PANIC") => "PANIC".to_string(),
+                Some((_, rest)) => format!("no named kind: {}", rest.split(':').next().unwrap_or("")),
+                None => why.clone(),
+            };
+            let list = if kind == "PANIC" { &mut panics } else { &mut failures };
+            *failed.entry(kind).or_insert(0) += 1;
+            if list.len() < 200 {
                 let shown: String = input.chars().take(160).collect();
-                failures.push(format!("[{}] {} -> {}: {}\n      input ({} bytes): {:?}", class, from, to, why, input.len(), shown));
+                list.push(format!("[{}] {} -> {}: {}\n      input ({} bytes): {:?}", class, from, to, why, input.len(), shown));
             }
         }
     };
@@ -808,6 +869,7 @@ fn malformed_input_never_panics() {
 
     std::panic::set_hook(hook);
     use std::io::Write;
+    let total: usize = failed.values().sum();
     let mut out = std::io::stderr();
     let _ = writeln!(
         out,
@@ -817,15 +879,21 @@ fn malformed_input_never_panics() {
         vectors.len(),
         iters,
         seed,
-        failures.len()
+        total
     );
+    for (kind, n) in &failed {
+        let _ = writeln!(out, "fuzz: {} failed: {}", n, kind);
+    }
+    for (what, n) in &run_seen {
+        let _ = writeln!(out, "fuzz: run: {} {}", n, what);
+    }
     let _ = writeln!(out, "fuzz: slowest input took {:?}: {}", slowest.0, slowest.1);
-    for f in &failures {
+    for f in panics.iter().chain(&failures) {
         let _ = writeln!(out, "  FAIL {}", f);
     }
     for s in &slow {
         let _ = writeln!(out, "  SLOW {}", s);
     }
     assert!(slow.is_empty(), "{} UPER inputs took longer than {:?}", slow.len(), UPER_TIME_LIMIT);
-    assert!(failures.is_empty(), "{} inputs panicked or failed with an error of no named kind", failures.len());
+    assert!(total == 0, "{} inputs panicked or failed with an error of no named kind", total);
 }

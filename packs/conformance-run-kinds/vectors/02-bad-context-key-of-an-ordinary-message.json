@@ -1,0 +1,13 @@
+{
+  "name": "bad-context-key-of-an-ordinary-message",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-json",
+  "input": "020741",
+  "expect_error": "undeclared-key",
+  "run": true,
+  "context": {
+    "probe.nosuch": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: the ordinary message decoded"
+}

@@ -16,7 +16,7 @@ var needsWire = map[string]bool{
 	"root": true, "field": true, "when": true, "const": true, "group": true, "end": true,
 	"word_bytes": true, "bit_order": true, "layout": true, "also": true, "pad": true,
 	"align": true, "presence": true, "if": true, "opt": true, "chain": true, "fx": true,
-	"length": true, "inner": true,
+	"length": true, "inner": true, "framing": true,
 }
 
 // noParamTransforms are the transforms whose name stands alone.

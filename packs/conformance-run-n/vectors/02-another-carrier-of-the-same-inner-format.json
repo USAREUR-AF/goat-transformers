@@ -1,0 +1,13 @@
+{
+  "name": "another-carrier-of-the-same-inner-format",
+  "from": "conformance-run-n",
+  "to": "conformance-run-n2",
+  "input": "07040102030409",
+  "expect_results": [
+    {
+      "expect": "09070401020304"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: w and n from the outer entity"
+}

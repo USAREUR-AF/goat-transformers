@@ -1,0 +1,10 @@
+{
+  "name": "inner-pack-not-sequential-in-a-run-operation",
+  "from": "conformance-run-c-fixed",
+  "to": "conformance-run-json",
+  "input": "010509",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: check 2 of 0.34, with 0.92"
+}

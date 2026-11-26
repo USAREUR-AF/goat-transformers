@@ -1,0 +1,9 @@
+{
+  "name": "plain-inner-switch-on-a-failed-key",
+  "from": "conformance-run-one-switch",
+  "to": "conformance-run-json",
+  "input": "090105",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 35: a switch on a key whose line failed fails the decode with transform-decode; through a plain `inner` line"
+}

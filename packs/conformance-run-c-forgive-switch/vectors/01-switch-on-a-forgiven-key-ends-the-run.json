@@ -1,0 +1,16 @@
+{
+  "name": "switch-on-a-forgiven-key-ends-the-run",
+  "from": "conformance-run-c-forgive-switch",
+  "to": "conformance-run-json",
+  "input": "0641410501410609",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":5}"
+    },
+    {
+      "expect_error": "transform-decode"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: forgiven or not within its own pack (0.20 ruling 35)"
+}

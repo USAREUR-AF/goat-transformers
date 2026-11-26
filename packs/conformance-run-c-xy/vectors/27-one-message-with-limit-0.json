@@ -1,0 +1,11 @@
+{
+  "name": "one-message-with-limit-0",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "02010209",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "max_items": 0,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: one more than 0"
+}

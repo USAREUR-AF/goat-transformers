@@ -1,0 +1,19 @@
+{
+  "name": "encode-error-goes-on",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-narrow",
+  "input": "0601022002030209",
+  "expect_results": [
+    {
+      "expect": "10"
+    },
+    {
+      "expect_error": "transform-encode"
+    },
+    {
+      "expect": "30"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: x = 32 does not fit 4 bits: that message's result"
+}

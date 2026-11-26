@@ -1,0 +1,17 @@
+{
+  "name": "items-of-all-messages-at-the-limit",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-json",
+  "input": "0602050602070809",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9}"
+    },
+    {
+      "expect": "{\"w\":9}"
+    }
+  ],
+  "max_items": 4,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: the items of all messages are summed: 2 and 2 of 4"
+}

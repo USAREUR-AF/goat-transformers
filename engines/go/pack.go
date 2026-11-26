@@ -471,6 +471,9 @@ type Pack struct {
 	innerFormats []string
 	innerLine    int
 
+	runs    bool // the pack has an `inner … run` line: a carrier pack (0.92)
+	framing bool // `framing self` (0.92)
+
 	units bool // the pack has a `length @<name> units <u>` line (0.83)
 }
 
@@ -739,12 +742,15 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// `encoding` lines, checked after the file is read (spec 0.19).
 	var encLines []int
 	encValue, encAfterKind := "", 0
+	// `framing` lines, checked after the file is read (spec 0.92).
+	var framingLines []int
+	framingValue := ""
 	// The argument count of each directive; a negative count is a minimum.
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
 		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1,
 		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1, "switch": 1, "case": 1, "else": 0, "count": -2,
-		"inner": -1}
+		"inner": -1, "framing": 1}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -831,6 +837,23 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 		if kw == "kind" && firstKind == 0 {
 			firstKind = n
+		}
+		if kw == "framing" {
+			// A header line of a sequential pack: outside every block and
+			// before the first kind, checked after the file (0.92 ruling 16).
+			if late == nil {
+				switch {
+				case len(open) > 0 || len(gates) > 0 || len(sp.stack) > 1:
+					late = perr(ErrBadDirective, n, "", "framing is not allowed inside a block")
+				case len(p.Kinds) > 0:
+					late = perr(ErrBadDirective, n, "", "framing stands before the first kind (line %d)", p.Kinds[0].Line)
+				}
+			}
+			framingLines = append(framingLines, n)
+			if len(framingLines) == 1 {
+				framingValue = args[0]
+			}
+			continue
 		}
 		if p.seq {
 			if seqStructural[kw] {
@@ -1332,6 +1355,24 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			return nil, perr(ErrBadDirective, first, "", "encoding uper is not valid with armor sixbit")
 		}
 		p.uper = encValue == "uper"
+	}
+	// `framing self` (spec 0.92 ruling 16).
+	if len(framingLines) > 0 {
+		first := framingLines[0]
+		switch {
+		case len(framingLines) > 1:
+			return nil, perr(ErrBadDirective, framingLines[1], "", "framing repeated (first on line %d)", first)
+		case framingValue != "self":
+			return nil, perr(ErrBadDirective, first, "", "framing must be self, got %q", framingValue)
+		case p.Wire != WireBits || !p.seq:
+			return nil, perr(ErrBadDirective, first, "", "framing is valid only on wire bits with layout sequential")
+		case p.sixbitArmor || p.uper:
+			return nil, perr(ErrBadDirective, first, "", "framing is not valid with armor sixbit or encoding uper")
+		}
+		p.framing = true
+		if err := sp.checkFraming(); err != nil {
+			return nil, err
+		}
 	}
 	// `inner` in a pack with `armor sixbit` or `encoding uper` (spec 0.34);
 	// `armor hex`, the default, loads.

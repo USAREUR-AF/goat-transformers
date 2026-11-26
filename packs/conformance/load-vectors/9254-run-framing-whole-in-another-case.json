@@ -1,0 +1,9 @@
+{
+  "name": "9254-run-framing-whole-in-another-case",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey w int -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.92.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nframing self\nfield probe.w 8 uint\nswitch probe.w\ncase 1\nlength 8 whole\ncase 2\ngroup probe.recs rest\n  field probe.x 8 uint\nend\nend\n",
+  "expect_error": "bad-directive"
+}

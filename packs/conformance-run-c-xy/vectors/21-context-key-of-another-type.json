@@ -1,0 +1,13 @@
+{
+  "name": "context-key-of-another-type",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "040102030409",
+  "expect_error": "key-type-mismatch",
+  "run": true,
+  "context": {
+    "probe.z": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: a bad context key is the call's"
+}

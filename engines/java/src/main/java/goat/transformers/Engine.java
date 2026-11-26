@@ -781,13 +781,19 @@ public final class Engine {
      */
     public Entity complete(Entity e) { return complete(e, null); }
 
+    /** The caller's context, each value read as its key's type. */
+    private Map<String, Object> readContext(Map<String, String> context) {
+        Map<String, Object> typed = new LinkedHashMap<>();
+        for (Map.Entry<String, String> c : context.entrySet()) {
+            typed.put(c.getKey(), readAs(c.getKey(), c.getValue(), null, "context"));
+        }
+        return typed;
+    }
+
     /** Fill the keys the entity lacks from {@code context} (values in string form), then apply the derivations. */
     public Entity complete(Entity e, Map<String, String> context) {
         if (context != null) {
-            Map<String, Object> typed = new LinkedHashMap<>();
-            for (Map.Entry<String, String> c : context.entrySet()) {
-                typed.put(c.getKey(), readAs(c.getKey(), c.getValue(), null, "context"));
-            }
+            Map<String, Object> typed = readContext(context);
             for (Map.Entry<String, Object> c : typed.entrySet()) {
                 if (e.get(c.getKey()) == null) e.put(c.getKey(), c.getValue());
             }
@@ -878,7 +884,10 @@ public final class Engine {
      * not {@code outer} ({@code bad-directive}); a public outer pack's inner pack is public
      * ({@code distribution-violation}). Nothing is kept: a pack loaded later is found at the next use.
      */
-    Codec<?> innerCodec(Pack outer, String format) {
+    Codec<?> innerCodec(Pack outer, String format) { return innerCodec(outer, format, false); }
+
+    /** As {@link #innerCodec(Pack, String)}; for a {@code run} line, between checks 2 and 3, the pack frames itself (0.92, ruling 16). */
+    Codec<?> innerCodec(Pack outer, String format, boolean run) {
         Codec<?> c = codecs.get(format);
         String at = "the inner line of " + outer.format + " names " + format;
         if (c == null) throw new GtException(GtException.Code.UNKNOWN_FORMAT, outer.format, null, at + ", and no pack of that format is loaded");
@@ -886,6 +895,10 @@ public final class Engine {
         if (p.wire != Pack.Wire.BITS || p.armorSixbit || p.uper) {
             throw new GtException(GtException.Code.BAD_DIRECTIVE, outer.format, null,
                     at + ", whose pack is not a bits pack without armor sixbit and encoding uper");
+        }
+        if (run && !p.framing) {
+            throw new GtException(GtException.Code.BAD_DIRECTIVE, outer.format, null,
+                    at + " run, whose pack is not layout sequential with a framing self line");
         }
         if (p == outer || !p.innerFormats.isEmpty()) {
             throw new GtException(GtException.Code.BAD_DIRECTIVE, outer.format, null,
@@ -953,6 +966,99 @@ public final class Engine {
         keepKinds(from, to, e);
         if (context != null || !from.equals(to)) complete(e, context);
         return target.encode(e);
+    }
+
+    /** {@code decode_run} (engine-spec 0.92): the outer entity, and per message its joined entity or its error. */
+    public Run.Decoded decodeRun(String format, String text) {
+        Codec<?> source = codec(format);
+        java.util.List<Object> messages = new java.util.ArrayList<>();
+        if (!source.pack.carrier) {
+            Entity e = null;
+            try {
+                e = decode(format, text);
+                messages.add(e);
+            } catch (GtException ex) {
+                messages.add(ex);
+            }
+            return new Run.Decoded(e, messages);
+        }
+        Run.State d = source.decodeRun(text, maxItems, false);
+        if (!d.reached) {
+            messages.add(d.ordinaryError != null ? d.ordinaryError : d.outer);
+            return new Run.Decoded(d.ordinaryError != null ? null : d.outer, messages);
+        }
+        if (d.outerError != null) throw d.outerError;
+        d.checkSum(format);   // the outer entity given alone is not counted again (ruling 5)
+        for (Object m : d.messages) messages.add(m instanceof Entity ? Run.join(d.outer, (Entity) m) : m);
+        return new Run.Decoded(d.outer, messages);
+    }
+
+    public java.util.List<Run.Result> convertRun(String from, String to, String text) { return convertRun(from, to, text, null); }
+
+    /**
+     * {@code convert_run} (engine-spec 0.92): one result per message, or one for the whole run when {@code to} is a
+     * carrier pack. An error of the call is thrown.
+     */
+    public java.util.List<Run.Result> convertRun(String from, String to, String text, Map<String, String> context) {
+        Codec<?> source = codec(from), target = codec(to);
+        boolean toCarrier = target.pack.carrier;
+        Run.State d;
+        if (source.pack.carrier) {
+            d = source.decodeRun(text, maxItems, toCarrier);
+        } else {
+            d = new Run.State(toCarrier, maxItems);
+            try {
+                d.outer = decode(from, text);
+            } catch (GtException ex) {
+                d.ordinaryError = ex;
+            }
+        }
+        if (!d.reached) {
+            // an ordinary message: its decode and encode errors are its result, or the call's to a carrier pack (ruling 4)
+            if (d.ordinaryError != null) {
+                if (toCarrier) throw d.ordinaryError;
+                return java.util.List.of(new Run.Result(null, d.ordinaryError));
+            }
+            if (context != null) readContext(context);
+            Run.Result r = runResult(from, to, target, d.outer, context);
+            if (toCarrier && r.error != null) throw r.error;
+            return java.util.List.of(r);
+        }
+        // the errors that stop a decode were thrown; then the other decode errors, the context, encode (ruling 4)
+        if (d.outerError != null) throw d.outerError;
+        if (toCarrier) for (Object m : d.messages) if (m instanceof GtException) throw (GtException) m;
+        d.checkSum(from);   // after every other decode error of the call, before context and encode (ruling 5)
+        if (context != null) readContext(context);
+        if (!toCarrier) {
+            java.util.List<Run.Result> out = new java.util.ArrayList<>();
+            for (Object m : d.messages) {
+                out.add(m instanceof GtException ? new Run.Result(null, (GtException) m)
+                        : runResult(from, to, target, Run.join(d.outer, (Entity) m), context));
+            }
+            return out;
+        }
+        java.util.List<Entity> joined = new java.util.ArrayList<>();
+        for (Object m : d.messages) {
+            Entity j = Run.join(d.outer, (Entity) m);
+            keepKinds(from, to, j);
+            joined.add(j);
+        }
+        Entity outer = Run.copy(d.outer);
+        keepKinds(from, to, outer);
+        if (context != null || !from.equals(to)) complete(outer, context);
+        return java.util.List.of(new Run.Result(target.encodeRun(outer, joined, d.inner, context != null, from.equals(to),
+                e -> complete(e, context)), null));
+    }
+
+    /** Steps 1 to 4 of 0.6 on one decoded entity, an error taken as the result. */
+    private Run.Result runResult(String from, String to, Codec<?> target, Entity e, Map<String, String> context) {
+        try {
+            keepKinds(from, to, e);
+            if (context != null || !from.equals(to)) complete(e, context);
+            return new Run.Result(target.encode(e), null);
+        } catch (GtException ex) {
+            return new Run.Result(null, ex);
+        }
     }
 
     /**

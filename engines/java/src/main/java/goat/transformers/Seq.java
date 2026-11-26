@@ -100,6 +100,8 @@ final class Seq {
         long plus;
         /** {@code inner <format> partial} (engine-spec 0.34): bytes after the inner message are ignored. */
         boolean partial;
+        /** {@code inner <format> run} (engine-spec 0.92): a run of messages. */
+        boolean run;
         /** {@code group}: the list, how it repeats, and the lines of one item. */
         String list;
         Repeat repeat;
@@ -372,6 +374,8 @@ final class Seq {
 
         /** The formats of the {@code inner} lines (engine-spec 0.34), in file order. */
         final List<String> inners = new ArrayList<>();
+        /** An {@code inner ... run} line stands in the pack (engine-spec 0.92). */
+        boolean carrier;
         /** The first {@code inner} line under a block that may not hold one: refused after the file is read. */
         String innerWhy;
 
@@ -1111,9 +1115,10 @@ final class Seq {
                     // engine-spec 0.34: in the common lines, a kind, or length blocks at any depth; under any other
                     // block it is bad-directive, checked after the file is read
                     inners.add(args.get(0));
-                    boolean partial = args.size() > 1;
-                    if (partial && !args.get(1).equals("partial") && innerWhy == null) {
-                        innerWhy = where + ": the second argument of inner is partial, got \"" + args.get(1) + "\"";
+                    boolean partial = args.size() > 1 && args.get(1).equals("partial"), run = args.size() > 1 && args.get(1).equals("run");
+                    carrier |= run;
+                    if (args.size() > 1 && !partial && !run && innerWhy == null) {
+                        innerWhy = where + ": the second argument of inner is partial or run, got \"" + args.get(1) + "\"";
                     }
                     Frame under = null;
                     for (Frame x : stack) {
@@ -1129,6 +1134,7 @@ final class Seq {
                     Node n = new Node(Op.INNER, ln);
                     n.name = args.get(0);
                     n.partial = partial;
+                    n.run = run;
                     f.lines.add(n);
                     break;
                 }
@@ -1539,6 +1545,51 @@ final class Seq {
             return sealed;
         }
 
+        /**
+         * {@code framing self} (engine-spec 0.92, ruling 16): a rest group whose extent is the message needs a
+         * {@code length ... whole} before it that is read whenever it is.
+         */
+        void checkFraming(String format) {
+            boolean whole = framed(root.common, false, format);
+            for (Kind k : root.kinds) framed(k.lines, whole, format);
+        }
+
+        /** Walk lines of one block outside every {@code length}; true when a whole was passed in them or before them. */
+        private boolean framed(List<Node> lines, boolean whole, String format) {
+            for (Node n : lines) {
+                switch (n.op) {
+                    case WHOLE:
+                        whole = true;
+                        break;
+                    case GROUP:
+                        if (n.repeat == Repeat.REST && !whole) {
+                            throw bad(format, null, source + ":" + n.line + ": framing self: a rest group of the message without a length ... whole before it");
+                        }
+                        break;   // a rest in an item is judged by the rest its group stands in
+                    case IF:
+                    case OPT:
+                    case EXT:
+                        framed(n.body, whole, format);
+                        break;
+                    case CHAIN: {
+                        boolean w = whole;   // a part is read only when the parts before it are
+                        for (List<Node> part : n.parts) w = framed(part, w, format);
+                        break;
+                    }
+                    case CHOICE:
+                        for (List<Node> alt : n.altLines) framed(alt, whole, format);
+                        break;
+                    case SWITCH:
+                        for (Case c : n.cases) framed(c.body, whole, format);
+                        if (n.elseCase != null) framed(n.elseCase.body, whole, format);
+                        break;
+                    default:
+                        break;   // a length block is an extent of its own
+                }
+            }
+            return whole;
+        }
+
         // ---- at most one inner line on a reading path (engine-spec 0.34, ruling 33 of 0.21) ----
 
         /** The inner lines of {@code lines}, in length blocks at any depth, in reading order. */
@@ -1617,6 +1668,19 @@ final class Seq {
         Set<String> out = new java.util.HashSet<>();
         modelKeys(nodes, "", out, Collections.newSetFromMap(new java.util.IdentityHashMap<>()), f -> null);
         return out;
+    }
+
+    /** The keys the {@code with} options of {@code nodes} name, as entries of {@code model_keys} are written (engine-spec 0.92, ruling 9). */
+    static void withKeys(List<Node> nodes, String prefix, Set<String> out) {
+        for (Node n : nodes) {
+            if (n.keys != null) for (Pack.Field f : n.keys) if (f.with != null) out.add(prefix + f.with);
+            if (n.body != null) withKeys(n.body, prefix, out);
+            if (n.parts != null) for (List<Node> part : n.parts) withKeys(part, prefix, out);
+            for (List<Node> alt : n.altLines) withKeys(alt, prefix, out);
+            if (n.items != null) for (Kind k : n.items.kinds) withKeys(k.all, prefix + n.list + "[].", out);
+            if (n.cases != null) for (Case c : n.cases) withKeys(c.body, prefix, out);
+            if (n.elseCase != null) withKeys(n.elseCase.body, prefix, out);
+        }
     }
 
     /** The {@code inner} lines among {@code nodes}: they stand there or in {@code length} blocks (engine-spec 0.34). */

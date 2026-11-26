@@ -1,0 +1,9 @@
+{
+  "name": "zero-messages-to-the-end",
+  "from": "conformance-run-end",
+  "to": "conformance-run-json",
+  "input": "09",
+  "expect_results": [],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 2: no results"
+}

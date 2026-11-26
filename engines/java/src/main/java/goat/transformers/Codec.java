@@ -42,6 +42,28 @@ abstract class Codec<W> {
 
     Entity decode(String text) { return decode(text, DEFAULT_MAX_ITEMS); }
 
+    /** Decode a message of a carrier pack for a run operation (engine-spec 0.92). */
+    Run.State decodeRun(String text, long maxItems, boolean toCarrier) { throw new IllegalStateException(); }
+
+    /**
+     * Encode a run into this carrier pack (engine-spec 0.92, ruling 6): the outer lines from {@code outer}, the
+     * messages from the joined entities, each completed by {@code complete} when the inner format differs.
+     */
+    String encodeRun(Entity outer, List<Entity> joined, String sourceInner, boolean context, boolean samePack,
+                     java.util.function.Consumer<Entity> complete) { throw new IllegalStateException(); }
+
+    /** Run {@code body} under a budget of {@code maxItems} list items. */
+    static void underBudget(long maxItems, Runnable body) {
+        Budget outer = BUDGET.get();
+        BUDGET.set(new Budget(maxItems));
+        try {
+            body.run();
+        } finally {
+            if (outer == null) BUDGET.remove();
+            else BUDGET.set(outer);
+        }
+    }
+
     /** Decode with at most {@code maxItems} list items, counted over every list at every level (ruling 7 of 0.11). */
     Entity decode(String text, long maxItems) {
         Budget outer = BUDGET.get();
@@ -119,6 +141,13 @@ abstract class Codec<W> {
         Budget b = BUDGET.get();
         if (b == null || items == null) return;
         b.left += deepCount(items);
+    }
+
+    /** The items of every list of an entity, at every level. */
+    static long listItems(Entity e) {
+        long n = 0;
+        if (e != null) for (List<Entity> l : e.lists().values()) n += deepCount(l);
+        return n;
     }
 
     /** The items of a list and of every list inside its items. */

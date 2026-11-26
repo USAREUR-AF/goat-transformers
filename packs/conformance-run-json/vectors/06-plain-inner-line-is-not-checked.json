@@ -1,0 +1,9 @@
+{
+  "name": "plain-inner-line-is-not-checked",
+  "from": "conformance-run-json",
+  "to": "conformance-run-one",
+  "input": "{\"w\":9,\"x\":1}",
+  "expect": "0901",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 8: never at a plain `inner` line"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "line-reached-encode",
+  "from": "conformance-run-json",
+  "to": "conformance-run-kinds-plain",
+  "input": "{\"w\":9}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; kind r is chosen"
+}

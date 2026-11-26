@@ -55,6 +55,7 @@ test("every conversion vector of the loaded packs", async () => {
 
   let passed = 0;
   let skipped = 0;
+  let runs = 0; // vectors of `convert_run`: the wrapper offers `convert` only (ruling 14 of 0.92)
   const failures = [];
   const runStarted = performance.now();
   for (const pack of packs) {
@@ -69,6 +70,10 @@ test("every conversion vector of the loaded packs", async () => {
         skipped++;
         continue;
       }
+      if (v.expect_results !== undefined || v.run === true) {
+        runs++;
+        continue;
+      }
       const why = checkVector(gt, v);
       if (why === null) passed++;
       else failures.push(`${pack}/vectors/${file}: ${why}`);
@@ -78,7 +83,7 @@ test("every conversion vector of the loaded packs", async () => {
   gt.dispose();
   console.log(
     `goat-transformers wasm: ${passed} vectors passed, ${failures.length} failed, ${skipped} skipped ` +
-      `(target format not loaded); ${packs.length} packs, ${wasm.length} byte module, ` +
+      `(target format not loaded), ${runs} of convert_run set aside; ${packs.length} packs, ${wasm.length} byte module, ` +
       `load ${loadMs.toFixed(0)} ms, run ${runMs.toFixed(0)} ms`,
   );
   assert.deepEqual(failures, []);

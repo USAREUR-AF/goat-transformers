@@ -1,0 +1,13 @@
+{
+  "name": "one-message-transform-decode-is-a-result",
+  "from": "conformance-run-c-ascii",
+  "to": "conformance-run-json",
+  "input": "02010509",
+  "expect_results": [
+    {
+      "expect_error": "transform-decode"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: one result"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "one-message-by-convert",
+  "from": "conformance-run-end",
+  "to": "conformance-run-wy",
+  "input": "090102",
+  "expect": "090201",
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: `convert` encodes the joined entity, y = 2 included"
+}

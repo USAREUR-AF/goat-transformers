@@ -1,0 +1,9 @@
+{
+  "name": "switch-on-a-forgiven-key-ahead-of-message-count",
+  "from": "conformance-run-c-forgive-switch",
+  "to": "conformance-run-json",
+  "input": "0601410541410609",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.92 rulings 1 and 3: it stops the decode of message 1"
+}

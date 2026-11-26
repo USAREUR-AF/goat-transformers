@@ -180,6 +180,8 @@ type seqNode struct {
 	kind  *seqKind        // seqKindStart: the kind whose lines follow
 	inner string          // inner: the format of the inner pack (0.34)
 	reach map[string]bool // inner: the entries the pack's lines in reach map (0.52 ruling 20)
+	run   bool            // inner: `run`, a run of messages (0.92)
+	withs map[string]bool // inner … run: the keys the lines in reach name in `with`, as entries of model_keys
 	units int             // length: the unit of `length @<name> units <u>` in bits, 0 for another length (0.83)
 	part  bool            // inner: `partial`, bytes after the inner message are ignored (0.34)
 }
@@ -1076,10 +1078,17 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 				break
 			}
 		}
-		if len(args) == 2 && args[1] != "partial" {
-			sp.lateErr(sp.bad(n, "", "inner is `inner <format> [partial]`, got %q", args[1]))
+		word := ""
+		if len(args) == 2 {
+			word = args[1]
+			if word != "partial" && word != "run" {
+				sp.lateErr(sp.bad(n, "", "inner is `inner <format> [partial | run]`, got %q", word))
+			}
 		}
-		add(&seqNode{op: seqInner, line: n, inner: args[0], part: len(args) == 2})
+		if word == "run" {
+			p.runs = true
+		}
+		add(&seqNode{op: seqInner, line: n, inner: args[0], part: word == "partial", run: word == "run"})
 		if p.innerLine == 0 {
 			p.innerLine = n
 		}
@@ -1633,13 +1642,96 @@ func parsePlus(s string) (int64, bool) {
 
 // innerReach gives each `inner` line among lines the entries the lines in its
 // reach map (0.52 ruling 20).
-func innerReach(lines []*seqNode, reach map[string]bool) {
+func innerReach(lines []*seqNode, reach, withs map[string]bool) {
 	for _, n := range lines {
 		if n.op == seqInner {
-			n.reach = reach
+			n.reach, n.withs = reach, withs
 		}
-		innerReach(n.body, reach)
+		innerReach(n.body, reach, withs)
 	}
+}
+
+// withKeys reports the keys the field lines of the body name in `with`, as
+// model_keys would list them: a scalar or a list.
+func (b *seqBody) withKeys(add func(string), prefix string) {
+	var walk func(nodes []*seqNode)
+	walk = func(nodes []*seqNode) {
+		for _, n := range nodes {
+			switch n.op {
+			case seqField:
+				if n.f.WithLine {
+					add(prefix + n.f.With)
+					add(prefix + n.f.With + "[]")
+				}
+			case seqGroup:
+				n.g.sbody.withKeys(add, prefix+n.g.List+"[].")
+			case seqSwitchOp:
+				for _, c := range n.sw.cases {
+					walk(c.body)
+				}
+				if n.sw.els != nil {
+					walk(n.sw.els.body)
+				}
+			default:
+				walk(n.body)
+			}
+		}
+	}
+	walk(b.common)
+	for _, k := range b.kinds {
+		walk(k.nodes)
+	}
+}
+
+// checkFraming checks the `rest` groups of a pack with `framing self` (0.92
+// ruling 16): one whose extent is the message needs a `length … whole` line
+// that is read before it whenever it is, for the common lines with each kind
+// and for each case.
+func (sp *seqParser) checkFraming() error {
+	// walk reads lines in order; whole tells whether such a line stands
+	// before them. A block passes it on to its lines and not past its end.
+	var walk func(nodes []*seqNode, whole bool) (bool, error)
+	walk = func(nodes []*seqNode, whole bool) (bool, error) {
+		for _, n := range nodes {
+			var bodies [][]*seqNode
+			switch n.op {
+			case seqWhole:
+				whole = true
+			case seqGroup:
+				if n.g.seqMode == seqRest && !whole {
+					return false, sp.bad(n.line, n.g.Locator, "framing self: the rest group takes the rest of the message and no `length … whole` line is read before it whenever it is")
+				}
+			case seqLength:
+				// A rest group in it ends with the block.
+			case seqSwitchOp:
+				for _, c := range n.sw.cases {
+					bodies = append(bodies, c.body)
+				}
+				if n.sw.els != nil {
+					bodies = append(bodies, n.sw.els.body)
+				}
+			default:
+				bodies = append(bodies, n.body)
+			}
+			for _, body := range bodies {
+				if _, err := walk(body, whole); err != nil {
+					return false, err
+				}
+			}
+		}
+		return whole, nil
+	}
+	b := sp.p.sbody
+	whole, err := walk(b.common, false)
+	if err != nil {
+		return err
+	}
+	for _, k := range b.kinds {
+		if _, err := walk(k.nodes, whole); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // bindInner computes the reach of the `inner` lines: of one in a kind the
@@ -1652,9 +1744,15 @@ func (sp *seqParser) bindInner() {
 		part.modelKeys(func(k string) { out[k] = true }, "", nil)
 		return out
 	}
-	innerReach(b.common, mapped(b.kinds))
+	withs := func(kinds []*seqKind) map[string]bool {
+		out := map[string]bool{}
+		(&seqBody{common: b.common, kinds: kinds}).withKeys(func(k string) { out[k] = true }, "")
+		return out
+	}
+	innerReach(b.common, mapped(b.kinds), withs(b.kinds))
 	for _, k := range b.kinds {
-		innerReach(k.nodes, mapped([]*seqKind{k}))
+		one := []*seqKind{k}
+		innerReach(k.nodes, mapped(one), withs(one))
 	}
 }
 

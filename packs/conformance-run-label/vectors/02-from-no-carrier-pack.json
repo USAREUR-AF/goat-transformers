@@ -1,0 +1,13 @@
+{
+  "name": "from-no-carrier-pack",
+  "from": "conformance-run-label",
+  "to": "conformance-run-json",
+  "input": "02",
+  "expect_results": [
+    {
+      "expect": "{\"x\":2}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: one result"
+}

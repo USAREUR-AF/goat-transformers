@@ -1,0 +1,16 @@
+{
+  "name": "switch-on-a-failed-key-ends-the-run",
+  "from": "conformance-run-c-switch",
+  "to": "conformance-run-json",
+  "input": "0641050106410709",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":5}"
+    },
+    {
+      "expect_error": "transform-decode"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: the switch of message 2 reads label 01, which failed"
+}

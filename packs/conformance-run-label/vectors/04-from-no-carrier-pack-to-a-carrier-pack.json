@@ -1,0 +1,13 @@
+{
+  "name": "from-no-carrier-pack-to-a-carrier-pack",
+  "from": "conformance-run-label",
+  "to": "conformance-run-c-x",
+  "input": "02",
+  "expect_results": [
+    {
+      "expect": "010200"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: a carrier of one message, as `encode` writes it"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "outer-items-after-the-run-over-the-sum",
+  "from": "conformance-run-list-after",
+  "to": "conformance-run-json",
+  "input": "03020506020708",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "max_items": 3,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: 2 in the message's own budget of 3, but 2 and 2 summed of 3: the call's malformed-wire"
+}

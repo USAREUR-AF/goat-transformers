@@ -34,6 +34,7 @@ from .errors import (
     UndeclaredKey,
     UnknownModule,
     MalformedWire,
+    MessageCount,
     MissingRoot,
     TransformDecodeFailure,
     TransformEncodeFailure,
@@ -49,7 +50,7 @@ __version__ = "0.8.0"
 
 __all__ = [
     "Engine", "Entity", "Item", "Pack", "load_pack", "parse_pack_text", "GTError", "InvalidPack",
-    "MalformedWire", "MissingRoot", "TransformDecodeFailure", "TransformEncodeFailure",
+    "MalformedWire", "MessageCount", "MissingRoot", "TransformDecodeFailure", "TransformEncodeFailure",
     "UnknownDirective", "UnknownFormat", "UnknownTransform",
     "Key", "Module", "Derive", "load_model_file", "parse_model_text", "InvalidModel",
     "MissingDistribution", "MissingSource", "DistributionRefused", "UnknownModule",

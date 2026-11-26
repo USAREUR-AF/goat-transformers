@@ -1,0 +1,13 @@
+{
+  "name": "key-only-a-message-holds",
+  "from": "conformance-run-end",
+  "to": "conformance-run-wy",
+  "input": "0901020304",
+  "expect_results": [
+    {
+      "expect": "09000103"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: y is held by messages only: the outer line writes zero bits"
+}

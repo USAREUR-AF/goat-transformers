@@ -1,0 +1,16 @@
+{
+  "name": "to-the-inner-format",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-in-kinds",
+  "input": "05010702000809",
+  "expect_results": [
+    {
+      "expect": "0107"
+    },
+    {
+      "expect": "020008"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: a target that is no carrier pack: one result per message, the kinds kept (0.34 Conversion)"
+}

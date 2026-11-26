@@ -1,0 +1,16 @@
+{
+  "name": "windows-count-from-the-message",
+  "from": "conformance-run-c-window",
+  "to": "conformance-run-json",
+  "input": "0501010302ff09",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":1,\"y\":1}"
+    },
+    {
+      "expect": "{\"w\":9,\"x\":3,\"y\":2,\"z\":255}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: windows count from the message's own start: 1 in y, then 2 in y"
+}

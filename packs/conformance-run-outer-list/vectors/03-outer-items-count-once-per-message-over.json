@@ -1,0 +1,11 @@
+{
+  "name": "outer-items-count-once-per-message-over",
+  "from": "conformance-run-outer-list",
+  "to": "conformance-run-json",
+  "input": "010501060107",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "max_items": 3,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: 4 of 3: malformed-wire of the call"
+}

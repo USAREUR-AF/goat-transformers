@@ -1,0 +1,16 @@
+{
+  "name": "messages-of-two-kinds",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-json",
+  "input": "05010702000809",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"y\":7}"
+    },
+    {
+      "expect": "{\"w\":9,\"z\":8}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: messages of one run may select different kinds: 01 07, then 02 0008"
+}

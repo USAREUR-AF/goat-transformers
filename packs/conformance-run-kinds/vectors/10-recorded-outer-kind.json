@@ -1,0 +1,13 @@
+{
+  "name": "recorded-outer-kind",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-kinds",
+  "input": "010901020304",
+  "expect_results": [
+    {
+      "expect": "010901020304"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: and ruling 11: Entity.kind is kept when `from` and `to` are equal"
+}

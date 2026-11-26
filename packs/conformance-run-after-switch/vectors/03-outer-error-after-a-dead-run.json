@@ -1,0 +1,10 @@
+{
+  "name": "outer-error-after-a-dead-run",
+  "from": "conformance-run-after-switch",
+  "to": "conformance-run-json",
+  "input": "0341054105",
+  "expect_error": "no-kind",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: and ruling 4: w = 5 has no case, the call's error, whatever the messages do"
+}

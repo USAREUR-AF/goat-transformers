@@ -1,0 +1,16 @@
+{
+  "name": "tail-that-makes-no-message",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "0301020309",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":1,\"y\":2}"
+    },
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: bytes that do not make a message are a message that fails"
+}

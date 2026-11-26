@@ -1,0 +1,16 @@
+{
+  "name": "context-fills-a-message-key",
+  "from": "conformance-run-c-length",
+  "to": "conformance-run-c-length",
+  "input": "02010009",
+  "expect_results": [
+    {
+      "expect": "0301010509"
+    }
+  ],
+  "context": {
+    "probe.y": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 10: y is absent in the message: 5 from the context"
+}

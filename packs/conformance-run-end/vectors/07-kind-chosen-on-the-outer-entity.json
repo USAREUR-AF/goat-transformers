@@ -1,0 +1,13 @@
+{
+  "name": "kind-chosen-on-the-outer-entity",
+  "from": "conformance-run-end",
+  "to": "conformance-run-req",
+  "input": "0901020304",
+  "expect_results": [
+    {
+      "expect": "02090103"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: kind a requires y, which only messages hold: kind b"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "malformed-wire-ends-the-run",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-json",
+  "input": "040105050209",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9}"
+    },
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: the second count is 5 with 1 byte left"
+}

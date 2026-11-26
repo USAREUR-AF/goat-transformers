@@ -49,12 +49,14 @@ PACK_DIRECTIVES = frozenset((
     "encoding", "ext", "choice", "alt",
     "switch", "case", "else",  # sequential layouts (0.20)
     "count",  # sequential layouts (0.21)
+    "framing",  # sequential layouts (0.92)
     "inner",  # sequential layouts (0.34): a message of another pack
 ))
 # The lines that stand after the `wire` line (5b): before it, `missing-wire`.
 NEEDS_WIRE = frozenset((
     "root", "field", "when", "const", "group", "end", "word_bytes", "bit_order", "layout", "also", "pad", "align",
     "presence", "if", "opt", "chain", "fx", "length", "inner",
+    "framing",  # 0.92, ruling 16
 ))
 # The number of arguments of each directive: (at least, at most or None). 5e
 # names the directives of exactly one argument.
@@ -84,6 +86,7 @@ ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     "count": (2, 4),
     # 0.34: `inner <format> [partial]`; the second word is checked after the file
     "inner": (1, 2),
+    "framing": (1, 1),  # 0.92: `framing self`; the word is checked after the file
 })
 HEADER_ONCE = ("format", "version", "wire", "distribution")  # a second one is `bad-directive` (5b step 5)
 _SINGLE = ("word_bytes", "bit_order", "layout")
@@ -92,7 +95,8 @@ LAYOUTS = ("fixed", "sequential")
 _SEQ_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also",
              "switch", "case", "else",  # 0.20: `switch` is a block of a sequential layout
              "count",  # 0.21: `count <name> <len> [plus <n>]`
-             "inner")  # 0.34: on another wire or a fixed layout, `bad-directive` after the file
+             "inner",  # 0.34: on another wire or a fixed layout, `bad-directive` after the file
+             "framing")  # 0.92: likewise
 _GROUP_LINES = ("field", "const", "default", "group", "if", "end")
 # The lines of a gate block (0.17).
 _GATE_LINES = ("field", "const", "default", "if", "end")
@@ -462,6 +466,8 @@ class Pack:
     # 0.33: the `at` errors, raised by `Engine.add` after the checks against the
     # modules (rulings 10, 14 and 25): the form errors, then the fixed-window ones
     late_errors: list = dc_field(default_factory=list)
+    framing: bool = False  # 0.92: the pack has a `framing self` line
+    run_kinds: frozenset = frozenset()  # 0.92: the kinds with an `inner ... run` line, None for the common lines
     inners: tuple = ()     # 0.34: the format named by each `inner` line, in line order
     tables: dict = dc_field(default_factory=dict)    # value tables: name -> [(native, model)] in line order
     delimiter: str = ","   # text: the field delimiter, None for `delimiter none`

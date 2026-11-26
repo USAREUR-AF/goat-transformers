@@ -73,7 +73,7 @@ decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} 
           end,
     gt_engine:inner_end(Pack, End, gt_bits:bit_size(Msg)),
     #{model => D2#d.model, lists => D2#d.lists, failed => D2#d.failed, residue => [], src => Name, kind => Kind,
-      inner_kind => D2#d.inner_kind}.
+      'end' => End, inner_kind => D2#d.inner_kind}.
 
 %% A key whose every line failed its transform fails the decode.
 check_failed(#d{uncounted = true}) -> ok;
@@ -100,8 +100,29 @@ kind([#{name := Name, lines := Lines} | Rest], Ext, D) ->
     KS = D#d.pos,
     case whens(Whens, KS, Ext, D#d{kstart = KS}, []) of
         false -> kind(Rest, Ext, D);
-        {Pos, Sets} -> {Name, lines(Body, Ext, set_as(Sets, D#d{pos = Pos}))}
+        {Pos, Sets} ->
+            kind_run(Lines, D),
+            {Name, lines(Body, Ext, set_as(Sets, D#d{pos = Pos}))}
     end.
+
+%% A run operation (ruling 4 of 0.92): the kind selected, or a block that reads
+%% as absent, settles that no `run` line is reached.
+kind_run(Lines, #d{top = true, pack = #{has_run := true, common := Common}}) ->
+    case has_run(Common) orelse has_run(Lines) of
+        true -> ok;
+        false -> gt_engine:run_passed()
+    end;
+kind_run(_Lines, _D) -> ok.
+
+has_run(Lines) -> lists:keymember(run, 2, gt_pack:inner_modes(Lines)).
+
+%% A `length` block that reads as absent.
+absent_block(Body, D) ->
+    case has_run(Body) of
+        true -> gt_engine:run_passed();
+        false -> ok
+    end,
+    missed(Body, D).
 
 %% A `when` any of whose bits lies beyond the input does not hold
 %% -> false | {Pos after the lines, [{Key, Len, Bits}]}: the keys the
@@ -303,7 +324,7 @@ line({chain, First, Parts, EndsFx}, Ext, D) ->
     parts(Parts, EndsFx, Ext, lines(First, Ext, D));
 line({len, Len, Unit, Plus, Body}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
-        absent -> missed(Body, D);
+        absent -> absent_block(Body, D);
         ok ->
             Count = gt_bits:read(D#d.msg, Pos, Len) - Plus,
             Start = Pos + Len,
@@ -321,8 +342,8 @@ line({len, Len, Unit, Plus, Body}, Ext, #d{pos = Pos} = D) ->
 %% whatever its count states (ruling 4), else a block of the count's units
 line({lenref, Id, U, Body}, Ext, #d{pos = Pos, counts = Cs} = D) ->
     case {at_end(Ext, D), maps:get(Id, Cs, absent)} of
-        {true, _} -> missed(Body, missed_one(Id, D));
-        {false, absent} -> missed(Body, D);
+        {true, _} -> absent_block(Body, missed_one(Id, D));
+        {false, absent} -> absent_block(Body, D);
         {false, N} -> block(Body, Pos, Pos + N * U, unit(U), Ext, D)
     end;
 line({lenwhole, Len, Plus}, Ext, #d{pos = Pos} = D) ->
@@ -344,7 +365,9 @@ line({lenwhole, Len, Plus}, Ext, #d{pos = Pos} = D) ->
 line({switch, Key, _Ref, Cases, Else}, Ext, #d{pack = Pack} = D) ->
     %% a key whose line failed its transform fails the decode (ruling 35)
     case [L || {K, L} <- D#d.failed, K =:= Key] of
-        [LenT | _] when not is_map_key(Key, D#d.model) ->
+        %% in a message at a `run` line also when another line forgives it
+        %% (ruling 3 of 0.92)
+        [LenT | _] when not is_map_key(Key, D#d.model); is_map_key(run_msg, Pack) ->
             gt_engine:conv_error('transform-decode', Pack, "failed fields: ~s of ~s bits", [Key, LenT]);
         _ -> ok
     end,
@@ -380,10 +403,10 @@ line({sgroup, List, Mode, Body}, Ext, #d{top = true, taken = Taken} = D)
     end;
 %% `inner <format>` (0.34): the bytes from the cursor to the end of the
 %% extent are one message of the inner pack, decoded into this entity
-line({inner, Format, Partial, Reach}, Ext, #d{pos = Pos, pack = Pack} = D) ->
+line({inner, Format, Mode, Reach}, Ext, #d{pos = Pos, pack = Pack} = D) ->
     Inner = try
-                I = gt_engine:inner_pack(Pack, Format),
-                gt_engine:inner_apart(Pack, I, Reach),          % ruling 20 of 0.52
+                I = gt_engine:inner_pack(Pack, Format, Mode),
+                gt_engine:inner_apart(Pack, I, Reach, Mode),    % ruling 20 of 0.52
                 I
             catch error:{convert_error, _, _} = Err -> gt_engine:pass(Err)
             end,
@@ -406,29 +429,14 @@ line({inner, Format, Partial, Reach}, Ext, #d{pos = Pos, pack = Pack} = D) ->
         true -> ok;
         false -> malformed(D, "the extent of the inner message ends beyond the whole length", [])
     end,
-    Hex = gt_hex:bytes_to_hex(gt_bits:slice(D#d.msg, Pos, End)),
-    IE = try gt_engine:decode_inner(Inner#{shadow => D#d.lists, exact => not Partial}, Hex)
-         catch error:{convert_error, Kind, _} = Err2:St ->
-             %% among transform-decode errors the earliest in reading order:
-             %% a field of the outer lines read so far that failed; an
-             %% error that stops the decode is reported ahead of it
-             case Kind of
-                 'transform-decode' -> check_failed(D);
-                 _ -> ok
-             end,
-             erlang:raise(error, Err2, St)
-         end,
-    %% the first value read is kept: the outer keys read so far win
-    Lists = D#d.lists,
-    {Kept, Dropped} = lists:partition(fun({L, _}) -> not maps:is_key(L, Lists) end,
-                                      maps:to_list(maps:get(lists, IE, #{}))),
-    [gt_engine:items_release(gt_engine:items_held(Is)) || {_, Is} <- Dropped],
-    KeptMap = maps:from_list(Kept),
-    D#d{pos = End, model = maps:merge(maps:get(model, IE), D#d.model),
-        failed = maps:get(failed, IE, []) ++ D#d.failed,
-        given = maps:without(maps:keys(D#d.model), maps:get(model, IE)),
-        lists = maps:merge(Lists, KeptMap), taken = maps:merge(D#d.taken, KeptMap),
-        inner_kind = maps:get(kind, IE, undefined)};
+    Bin = gt_bits:slice(D#d.msg, Pos, End),
+    case Mode =:= run andalso gt_engine:run_mode() of
+        true ->
+            %% the outer lines alone; the messages are kept apart (0.92)
+            gt_engine:run_messages(Pack, Inner, Bin),
+            D#d{pos = End};
+        false -> inner_one(Inner, Mode, Bin, End, D)
+    end;
 line({sgroup, List, Mode, Body}, Ext, D) ->
     %% a later group of a list replaces the items of an earlier one; those
     %% are no longer counted against the limit (ruling 7g of 0.11)
@@ -443,6 +451,51 @@ line({sgroup, List, Mode, Body}, Ext, D) ->
         absent -> D;
         {Items, D1} -> D1#d{lists = (D1#d.lists)#{List => Items}}
     end.
+
+%% The one message of an `inner` line. On a `run` line (0.92) an empty extent is
+%% message-count, and so are bytes after the message.
+inner_one(_Inner, run, <<>>, _End, D) ->
+    message_count(D);
+inner_one(Inner, Mode, Bin, End, D) ->
+    Inner1 = case Mode of
+                 run -> Inner#{run_msg => true};
+                 _ -> Inner
+             end,
+    IE = try gt_engine:decode_inner(Inner1#{shadow => D#d.lists, exact => Mode =:= false}, {bytes, Bin})
+         catch error:{convert_error, Kind, _} = Err2:St ->
+             %% among transform-decode errors the earliest in reading order:
+             %% a field of the outer lines read so far that failed; an
+             %% error that stops the decode is reported ahead of it
+             case Kind of
+                 'transform-decode' -> check_failed(D);
+                 _ -> ok
+             end,
+             erlang:raise(error, Err2, St)
+         end,
+    run_count(Mode, IE, Bin, D),
+    %% the first value read is kept: the outer keys read so far win
+    Lists = D#d.lists,
+    {Kept, Dropped} = lists:partition(fun({L, _}) -> not maps:is_key(L, Lists) end,
+                                      maps:to_list(maps:get(lists, IE, #{}))),
+    [gt_engine:items_release(gt_engine:items_held(Is)) || {_, Is} <- Dropped],
+    KeptMap = maps:from_list(Kept),
+    D#d{pos = End, model = maps:merge(maps:get(model, IE), D#d.model),
+        failed = maps:get(failed, IE, []) ++ D#d.failed,
+        given = maps:without(maps:keys(D#d.model), maps:get(model, IE)),
+        lists = maps:merge(Lists, KeptMap), taken = maps:merge(D#d.taken, KeptMap),
+        inner_kind = maps:get(kind, IE, undefined)}.
+
+run_count(run, #{'end' := MsgEnd}, Bin, D) ->
+    Size = bit_size(Bin),
+    if MsgEnd =:= 0; MsgEnd > Size ->
+            malformed(D, "a message of the run ends at byte ~p of its ~p", [MsgEnd div 8, byte_size(Bin)]);
+       MsgEnd < Size -> message_count(D);
+       true -> ok
+    end;
+run_count(_Mode, _IE, _Bin, _D) -> ok.
+
+message_count(#d{pack = Pack}) ->
+    gt_engine:conv_error('message-count', Pack, "the run does not hold exactly one message", []).
 
 skip(Len, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
@@ -936,7 +989,9 @@ uscale(V, {frac, Num, Den}, O) -> float(V) * Num / Den + O.
 %% scanned for the `if` blocks that name it and have content; then they are
 %% written. Src = #{model, lists, defaults}: what a scope is written from;
 %% for the scan also `wrote` and `env` (below).
-%% segs: [{Pos, Len, Value} | {whole, Pos, Len, Plus}], bits not named are 0.
+%% segs: [{Pos, Len, Value} | {whole, Pos, Len, Plus} | {bytes, Pos, Binary}],
+%% bits not named are 0; the bytes of an `inner` line are one segment, so that
+%% the segments do not grow with them.
 %% wrote: #{Key => Value}, what decode would read back from the field lines
 %%        written so far in the scope; a `switch` (0.20) selects from it.
 %% Settling (rulings 33, 34 and 37 of 0.20): a presence, `opt` or `fx` bit
@@ -1000,6 +1055,7 @@ encode(Pack, Lines, Defaults, Entity) ->
              %% not written (ruling 30)
              ({count, Pos, Len, Plus}, Acc) ->
                   gt_bits:overwrite(Acc, Pos, Len, fits(maps:get(Pos, CVals, 0) + Plus, Len, Pack));
+             ({bytes, Pos, Bin}, Acc) -> gt_bits:overwrite_bytes(Acc, Pos, Bin);
              ({Pos, Len, Val}, Acc) -> gt_bits:overwrite(Acc, Pos, Len, Val)
           end, M0, Segs),
     %% the windows of 0.33, in line order, over the bits below them
@@ -1157,18 +1213,27 @@ eline({sfield, Keys, Len, _, _, _, _, _, With} = L, _Rest, Src, #e{pack = Pack, 
     end;
 %% `inner <format>` (0.34): encode(<format>, entity) written at the cursor,
 %% which stands on a whole byte
-eline({inner, Format, _Partial, Reach}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) ->
-    Inner = gt_engine:inner_pack(Pack, Format),
-    gt_engine:inner_apart(Pack, Inner, Reach),                  % ruling 20 of 0.52
+eline({inner, Format, Mode, Reach}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) ->
+    Inner = gt_engine:inner_pack(Pack, Format, Mode),
+    gt_engine:inner_apart(Pack, Inner, Reach, Mode),            % ruling 20 of 0.52
     case Pos rem 8 of
         0 -> ok;
         _ -> gt_engine:conv_error('transform-encode', Pack,
                                   "the inner message would start at bit ~p, inside a byte", [Pos])
     end,
-    Bytes = gt_engine:encode_inner(Inner, maps:get(entity, Src)),
-    Order = maps:get(bit_order, Pack),
-    lists:foldl(fun(B, Acc) -> emit(8, gt_bits:byte_value(B, Order), Acc) end, E,
-                binary_to_list(Bytes));
+    Entity = maps:get(entity, Src),
+    %% the messages of a run (ruling 6 of 0.92), else the one entity
+    All = iolist_to_binary(
+            [case gt_engine:encode_inner(Inner, Message) of
+                 <<>> when Mode =:= run ->
+                     gt_engine:conv_error('transform-encode', Pack,
+                                          "a message of the run writes no bytes", []);
+                 Bytes -> Bytes
+             end || Message <- maps:get(run_msgs, Entity, [Entity])]),
+    case All of
+        <<>> -> E;
+        _ -> E#e{pos = Pos + 8 * byte_size(All), segs = [{bytes, Pos, All} | E#e.segs]}
+    end;
 eline({sconst, Len, Val}, _Rest, _Src, E) -> emit(Len, Val, E);
 %% a `when ... at` occupies no bits; its window is settled by ewalk/7
 eline({swhen, _, _, _, At, _}, _Rest, _Src, E) when At =/= none -> E;
@@ -1717,7 +1782,9 @@ win_peek(#e{pack = Pack, pos = Pos, segs = Segs, held = Held, wins = Wins}, P, L
     Size = max(Pos, P + Len),
     M0 = gt_bits:new_bits(Size, maps:get(bit_order, Pack)),
     M1 = case IsMask of
-             false -> lists:foldl(fun({SP, SL, SV}, A) -> gt_bits:overwrite(A, SP, SL, SV);
+             %% a window ends before any `inner` line (ruling 11 of 0.34)
+             false -> lists:foldl(fun({bytes, _, _}, A) -> A;
+                                     ({SP, SL, SV}, A) -> gt_bits:overwrite(A, SP, SL, SV);
                                      (_, A) -> A
                                   end, M0, lists:reverse(Segs));
              true -> lists:foldl(fun({HP, HL}, A) -> gt_bits:overwrite(A, HP, HL, (1 bsl HL) - 1) end,

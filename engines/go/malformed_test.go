@@ -31,6 +31,18 @@ func convertGuarded(eng *Engine, from, to string, in []byte, ctx map[string]stri
 		}
 	}()
 	out, err = eng.ConvertWith(from, to, in, ctx)
+	// A carrier pack's input is read as a run too (Version 0.92).
+	if p, perr := eng.Pack(from); perr == nil && p.runs {
+		results, rerr := eng.ConvertRun(from, to, in, ctx)
+		for _, r := range results {
+			if r.Err != nil && rerr == nil && !namedKind.MatchString(r.Err.Error()) {
+				rerr = r.Err
+			}
+		}
+		if rerr != nil && !namedKind.MatchString(rerr.Error()) {
+			return out, rerr, ""
+		}
+	}
 	return out, err, ""
 }
 

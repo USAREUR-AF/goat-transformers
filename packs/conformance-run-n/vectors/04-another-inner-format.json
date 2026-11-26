@@ -1,0 +1,13 @@
+{
+  "name": "another-inner-format",
+  "from": "conformance-run-n",
+  "to": "conformance-run-nx",
+  "input": "07040102030409",
+  "expect_results": [
+    {
+      "expect": "070103"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: each message by 0.6 steps 1 to 4 into in-x"
+}

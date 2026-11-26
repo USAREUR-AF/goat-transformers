@@ -1,0 +1,16 @@
+{
+  "name": "run-in-a-block-to-json",
+  "from": "conformance-run-units",
+  "to": "conformance-run-json",
+  "input": "020901020304",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":1,\"y\":2}"
+    },
+    {
+      "expect": "{\"w\":9,\"x\":3,\"y\":4}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: the extent is 4 bytes"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "fifth-check-before-message-count",
+  "from": "conformance-run-clash",
+  "to": "conformance-run-json",
+  "input": "05",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: the checks come first: x is mapped by both, the extent is empty"
+}

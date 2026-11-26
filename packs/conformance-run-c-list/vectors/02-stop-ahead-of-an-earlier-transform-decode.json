@@ -1,0 +1,10 @@
+{
+  "name": "stop-ahead-of-an-earlier-transform-decode",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-c-list",
+  "input": "040105050209",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: errors that stop a decode are the first phase"
+}

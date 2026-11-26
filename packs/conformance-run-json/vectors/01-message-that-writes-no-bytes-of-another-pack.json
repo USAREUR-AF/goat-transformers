@@ -1,0 +1,9 @@
+{
+  "name": "message-that-writes-no-bytes-of-another-pack",
+  "from": "conformance-run-json",
+  "to": "conformance-run-c-none",
+  "input": "{\"w\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 8: a message that writes no bytes"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "switch-on-a-failed-key-in-message-2",
+  "from": "conformance-run-c-switch",
+  "to": "conformance-run-json",
+  "input": "044105010609",
+  "expect_error": "message-count",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: bytes remain after message 1; message 2 is not read"
+}

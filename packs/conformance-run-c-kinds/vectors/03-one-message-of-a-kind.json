@@ -1,0 +1,12 @@
+{
+  "name": "one-message-of-a-kind",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-json",
+  "input": "0302000809",
+  "expect": "{\"w\":9,\"z\":8}",
+  "model": {
+    "@inner_kind": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: as 0.34"
+}

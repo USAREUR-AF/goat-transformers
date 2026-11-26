@@ -1,0 +1,13 @@
+{
+  "name": "outer-whole-length-covers-the-run",
+  "from": "conformance-run-whole",
+  "to": "conformance-run-whole",
+  "input": "04050607",
+  "expect_results": [
+    {
+      "expect": "04050607"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: every length that sizes the extent covers the whole run"
+}

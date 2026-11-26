@@ -1,0 +1,14 @@
+{
+  "name": "outer-items-after-the-run-count-in-the-sum",
+  "from": "conformance-run-list-after",
+  "to": "conformance-run-json",
+  "input": "03020506020708",
+  "expect_results": [
+    {
+      "expect": "{}"
+    }
+  ],
+  "max_items": 4,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: 2 items in the message and 2 after the run, of 4"
+}

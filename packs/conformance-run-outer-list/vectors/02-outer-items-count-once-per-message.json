@@ -1,0 +1,17 @@
+{
+  "name": "outer-items-count-once-per-message",
+  "from": "conformance-run-outer-list",
+  "to": "conformance-run-json",
+  "input": "010501060107",
+  "expect_results": [
+    {
+      "expect": "{}"
+    },
+    {
+      "expect": "{}"
+    }
+  ],
+  "max_items": 4,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: 1 outer item and 1 of each message, the outer item once per message: 4 of 4"
+}

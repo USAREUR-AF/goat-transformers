@@ -32,7 +32,7 @@
 %% 'transform-decode', 'transform-encode', and for a caller-supplied key
 %% 'undeclared-key', 'key-type-mismatch'; 'unknown-format'; and where decode
 %% or encode reaches an `inner` line (0.34) 'bad-directive',
-%% 'distribution-violation'.
+%% 'distribution-violation'; 'message-count' (0.92).
 -module(gt_engine).
 -include("gt_wires.hrl").
 -export([new/0, set_max_distribution/2, load_model/2, load_pack/2, load_dir/2,
@@ -41,14 +41,14 @@
          model_keys/1, model_keys/2, pack/2, set_max_items/2, capability/3,
          inner_names/2]).
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
-         convert/4, convert/5]).
+         convert/4, convert/5, decode_run/3, convert_run/5]).
 %% for the readers and writers of gt_seq, gt_text and gt_tlv
 -export([conv_error/4, item_source/2,
          items_reserve/2, items_check/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4,
          holds/3, line_value/3, req_holds/3,
-         inner_pack/2, inner_apart/3, decode_inner/2, encode_inner/2, pass/1, inner_end/3]).
+         inner_pack/3, inner_apart/4, run_mode/0, run_passed/0, run_messages/3, decode_inner/2, encode_inner/2, pass/1, inner_end/3]).
 %% the transforms of the bits wire, which the tlv wire uses too
 -if(?W_BITS orelse ?W_TLV).
 -export([bits_decode/4, bits_encode/4]).
@@ -75,6 +75,13 @@
 %% and whether the field failure held came from an inner decode
 -define(PASS, {gt_engine, pass}).
 -define(INNER_FAILED, {gt_engine, inner_failed}).
+%% Version 0.92: undefined outside a run operation; none while its outer decode
+%% has reached no `run` line; passed once it will reach none; {run, Format,
+%% Results} after one
+-define(RUN, {gt_engine, run}).
+%% Version 0.92 ruling 5: {Messages, Items} of a run, the number of messages
+%% whose decode came to its end and the sum of their own list items
+-define(RUN_ITEMS, {gt_engine, run_items}).
 
 %% Marks the message of a failure that no reader or writer names.
 -define(UNCLASSIFIED, "[unclassified:").
@@ -129,7 +136,11 @@ pack(#{packs := Packs} = Engine, Name) ->
 %% bits without armor or encoding uper (bad-directive); without an `inner`
 %% line of its own and not Outer (bad-directive); public when Outer is
 %% (distribution-violation). Nothing is kept: a pack loaded later is found.
-inner_pack(#{name := OuterName} = Outer, Format) ->
+inner_pack(Outer, Format) -> inner_pack(Outer, Format, false).
+
+%% Mode: false, true (`partial`) or run (0.92), whose inner pack must state
+%% `framing self`, a check between the second and the third.
+inner_pack(#{name := OuterName} = Outer, Format, Mode) ->
     All = maps:get(all_packs, Outer, #{}),
     Inner = case maps:find(Format, All) of
                 {ok, I} -> I;
@@ -142,6 +153,13 @@ inner_pack(#{name := OuterName} = Outer, Format) ->
             conv_error('bad-directive', Outer,
                        "the inner pack ~s is not a bits pack without armor or encoding uper (wire ~s, armor ~s, encoding ~s)",
                        [Format, W, A, Enc])
+    end,
+    case Mode =/= run orelse
+        {maps:get(layout, Inner), maps:get(framing, Inner, none)} =:= {sequential, self} of
+        true -> ok;
+        false -> conv_error('bad-directive', Outer,
+                            "the inner pack ~s of a run is not a layout sequential pack with framing self",
+                            [Format])
     end,
     case Format =:= OuterName of
         true -> conv_error('bad-directive', Outer, "the inner line names the pack itself", []);
@@ -169,11 +187,18 @@ pass({convert_error, _, _} = Err) ->
 %% The fifth check at an `inner` line (ruling 20 of 0.52): no key the outer
 %% pack's lines in reach of it map is a mapped key of the inner pack. It is the
 %% line's own, not the pack's: model_keys and capability do not make it.
-inner_apart(Outer, #{name := Format, mapped_keys := Mapped}, Reach) ->
+inner_apart(Outer, #{name := Format, mapped_keys := Mapped}, Reach, Mode) ->
     case maps:keys(maps:with(maps:keys(Reach), Mapped)) of
         [] -> ok;
         [K | _] -> conv_error('bad-directive', Outer,
                               "~s is mapped by the pack and by the inner pack ~s", [K, Format])
+    end,
+    %% on a `run` line no outer `with` names a key of the messages (ruling 9
+    %% of 0.92)
+    case Mode =:= run andalso [W || W <- maps:get(with, Reach, []), is_map_key(W, Mapped)] of
+        [W1 | _] -> conv_error('bad-directive', Outer,
+                               "a with names ~s, which the inner pack ~s of a run maps", [W1, Format]);
+        _ -> ok
     end.
 
 %% The end of an inner message (Version 0.34, Decode step 3): bytes of its
@@ -226,6 +251,276 @@ decode_inner(Inner, Hex) ->
             Entity;
         {error, 'transform-decode', M3} -> erlang:error({convert_error, 'transform-decode', M3});
         {error, K3, M3} -> pass({convert_error, K3, M3})
+    end.
+
+%% ---- runs of inner messages (Version 0.92) ----
+%% Is a run operation's outer decode in progress?
+run_mode() -> get(?RUN) =/= undefined.
+
+%% The outer decode will reach no `run` line: the message is an ordinary one.
+run_passed() ->
+    case get(?RUN) of
+        none -> put(?RUN, passed), ok;
+        _ -> ok
+    end.
+
+%% The messages of a `run` line from its extent's bytes, kept as the run's
+%% results: {ok, Entity, none | FailedMessage} | {stop, Kind, Message}, the
+%% last only at the end. One message more than `max_items` is malformed-wire of
+%% the call (ruling 5). The own items of the messages whose decode came to its
+%% end are summed as they are read, into ?RUN_ITEMS.
+run_messages(Outer, Inner, Bin) ->
+    Budget = get(?ITEMS),
+    Limit = maps:get(max_items, Outer, ?DEFAULT_MAX_ITEMS),
+    put(?RUN_ITEMS, {0, 0}),
+    Results = run_loop(Outer, Inner#{shadow => #{}, run_msg => true}, Bin, Budget, Limit, 0, []),
+    put(?ITEMS, Budget),
+    put(?RUN, {run, maps:get(name, Inner), Results}).
+
+run_loop(_Outer, _Inner, <<>>, _Budget, _Limit, _N, Acc) -> lists:reverse(Acc);
+run_loop(Outer, _Inner, _Bin, _Budget, Limit, N, _Acc) when N >= Limit ->
+    conv_error('malformed-wire', Outer, "the run holds more than ~p messages", [Limit]);
+run_loop(Outer, Inner, Bin, Budget, Limit, N, Acc) ->
+    case run_message(Inner, Bin, Budget) of
+        {stop, _, _} = Stop -> lists:reverse([Stop | Acc]);
+        {ok, _, _} = Ok ->
+            End = maps:get('end', element(2, Ok)),
+            case End > 0 andalso End =< bit_size(Bin) of
+                true ->
+                    {_, Start} = Budget,
+                    {_, Taken} = get(?ITEMS),
+                    {Ended, Sum} = get(?RUN_ITEMS),
+                    put(?RUN_ITEMS, {Ended + 1, Sum + Taken - Start}),
+                    <<_:End/bits, Rest/binary>> = Bin,
+                    run_loop(Outer, Inner, Rest, Budget, Limit, N + 1, [Ok | Acc]);
+                false ->
+                    Stop = {stop, 'malformed-wire',
+                            lists:flatten(io_lib:format("malformed-wire: format ~s: a message of the run ends at byte ~p of its ~p",
+                                                        [maps:get(name, Inner), End div 8, byte_size(Bin)]))},
+                    lists:reverse([Stop | Acc])
+            end
+    end.
+
+%% One message, decoded apart from the decode in progress.
+run_message(Inner, Bin, Budget) ->
+    Keys = [?OVER, ?FAILED, ?PASS, ?INNER_FAILED, ?RUN],
+    Saved = [{K, erase(K)} || K <- Keys],
+    put(?ITEMS, Budget),
+    try decode_wire(Inner, {bytes, Bin}) of
+        #{model := Model, failed := Failed} = E ->
+            Bad = [K || {K, _} <- Failed, not is_map_key(K, Model)],
+            {ok, E, case {get(?FAILED), Bad} of
+                        {undefined, []} -> none;
+                        {undefined, [K | _]} ->
+                            lists:flatten(io_lib:format("transform-decode: format ~s: failed field ~s",
+                                                        [maps:get(name, Inner), K]));
+                        {Msg, _} -> Msg
+                    end}
+    catch
+        error:{convert_error, K, M} -> {stop, K, M};
+        Class:Reason:Stack ->
+            try decode_failure(Inner, Class, Reason, Stack)
+            catch error:{convert_error, K2, M2} -> {stop, K2, M2}
+            end
+    after
+        [case V of
+             undefined -> erase(K);
+             _ -> put(K, V)
+         end || {K, V} <- Saved]
+    end.
+
+%% The decode of a run operation -> {ordinary, {ok, Entity} | {error, Kind,
+%% Message}} | {carrier, OuterEntity, none | FailedMessage, InnerFormat,
+%% Results, ok | {over, Message}} | {stopped, Kind, Message, none | {InnerFormat, Results}}: the last
+%% a carrier pack's decode that an error of its own lines stopped at its run
+%% line, after it, or before it was known whether one is reached.
+run_decode(Pack, Bytes) when is_list(Bytes) -> run_decode(Pack, iolist_to_binary(Bytes));
+run_decode(#{has_run := true} = Pack, Bytes) ->
+    put(?ITEMS, {maps:get(max_items, Pack, ?DEFAULT_MAX_ITEMS), 0}),
+    [erase(K) || K <- [?OVER, ?FAILED, ?PASS, ?INNER_FAILED]],
+    put(?RUN, none),
+    try decode_wire(Pack, Bytes) of
+        Entity ->
+            Failed = case get(?FAILED) of
+                         undefined -> none;
+                         Msg -> Msg
+                     end,
+            case {get(?RUN), Failed} of
+                {{run, Format, Results}, _} ->
+                    {carrier, Entity, Failed, Format, Results, run_over(Pack)};
+                {_, none} -> {ordinary, {ok, Entity}};
+                {_, _} -> {ordinary, {error, 'transform-decode', Failed}}
+            end
+    catch
+        error:{convert_error, K, M} -> run_stopped(K, M);
+        Class:Reason:Stack ->
+            try decode_failure(Pack, Class, Reason, Stack)
+            catch error:{convert_error, K2, M2} -> run_stopped(K2, M2)
+            end
+    after
+        [erase(K) || K <- [?ITEMS, ?OVER, ?FAILED, ?PASS, ?INNER_FAILED, ?RUN, ?RUN_ITEMS]]
+    end;
+run_decode(Pack, Bytes) ->
+    try decode(Pack, Bytes) of
+        Entity -> {ordinary, {ok, Entity}}
+    catch
+        error:{convert_error, K, M} -> {ordinary, {error, K, M}}
+    end.
+
+%% The items of all the joined entities of a run (ruling 5): the outer
+%% entity's, once for each message whose decode came to its end, and each such
+%% message's own; one more than `max_items` -> {over, Message}, else ok. Read
+%% when the carrier's decode has ended; the outer count excludes the messages'
+%% items, which run_messages gives back.
+run_over(Pack) ->
+    {Limit, OuterItems} = get(?ITEMS),
+    {Ended, Sum} = get(?RUN_ITEMS),
+    Total = OuterItems * Ended + Sum,
+    case Total > Limit of
+        true ->
+            {over, lists:flatten(io_lib:format("malformed-wire: format ~s: the entities of the run hold ~p list items, more than ~p",
+                                               [maps:get(name, Pack), Total, Limit]))};
+        false -> ok
+    end.
+
+%% malformed-wire of the call when the sum of ruling 5 is over the limit.
+run_sum(ok) -> ok;
+run_sum({over, Msg}) -> raise('malformed-wire', Msg).
+
+run_stopped(Kind, Msg) ->
+    case get(?RUN) of
+        {run, Format, Results} -> {stopped, Kind, Msg, {Format, Results}};
+        passed -> {ordinary, {error, Kind, Msg}};
+        none -> {stopped, Kind, Msg, none}
+    end.
+
+raise(Kind, Msg) -> erlang:error({convert_error, Kind, Msg}).
+
+%% decode_run(format, bytes) -> {OuterEntity, [Entity | {error, Kind, Message}]}
+%% (the outer entity of an ordinary message that does not decode is undefined).
+decode_run(Engine, Format, Bytes) ->
+    case run_decode(pack(Engine, Format), Bytes) of
+        {ordinary, {ok, Entity}} -> {Entity, [Entity]};
+        {ordinary, Error} -> {undefined, [Error]};
+        {stopped, K, M, _} -> raise(K, M);
+        {carrier, _, Failed, _, _, _} when Failed =/= none -> raise('transform-decode', Failed);
+        {carrier, Outer, none, _, Results, Over} ->
+            run_sum(Over),
+            {Outer, [case R of
+                         {ok, IE, none} -> run_join(Outer, IE);
+                         {ok, _, Msg} -> {error, 'transform-decode', Msg};
+                         {stop, K, M} -> {error, K, M}
+                     end || R <- Results]}
+    end.
+
+%% The two entities of a message share no key (the fifth check of 0.52).
+run_join(Outer, IE) ->
+    Outer#{model := maps:merge(maps:get(model, IE), maps:get(model, Outer)),
+           lists := maps:merge(maps:get(lists, IE), maps:get(lists, Outer)),
+           inner_kind => maps:get(kind, IE, undefined)}.
+
+%% convert_run(from, to, bytes, context) -> [{ok, Bytes} | {error, Kind,
+%% Message}]; an error of the call is raised.
+convert_run(Engine, From, To, Bytes, Context) ->
+    FromPack = pack(Engine, From),
+    ToPack = pack(Engine, To),
+    Decoded = run_decode(FromPack, Bytes),
+    case maps:get(has_run, ToPack, false) of
+        true -> [{ok, run_carrier(Engine, From, To, ToPack, Decoded, Context)}];
+        false -> run_results(Engine, From, To, ToPack, Decoded, Context)
+    end.
+
+%% To a format that is not a carrier pack: one result per message.
+run_results(_Engine, _From, _To, _ToPack, {ordinary, {error, _, _} = Error}, _Context) -> [Error];
+run_results(Engine, From, To, ToPack, {ordinary, {ok, Entity}}, Context) ->
+    _ = context(Engine, Context),
+    [run_result(fun() -> finish(Engine, From, To, ToPack, Entity, Context) end)];
+run_results(_Engine, _From, _To, _ToPack, {stopped, K, M, _}, _Context) -> raise(K, M);
+run_results(_Engine, _From, _To, _ToPack, {carrier, _, Failed, _, _, _}, _Context) when Failed =/= none ->
+    raise('transform-decode', Failed);
+run_results(Engine, From, To, ToPack, {carrier, Outer, none, _, Results, Over}, Context) ->
+    run_sum(Over),
+    _ = context(Engine, Context),
+    [case R of
+         {ok, IE, none} ->
+             run_result(fun() -> finish(Engine, From, To, ToPack, run_join(Outer, IE), Context) end);
+         {ok, _, Msg} -> {error, 'transform-decode', Msg};
+         {stop, K, M} -> {error, K, M}
+     end || R <- Results].
+
+run_result(Fun) ->
+    try {ok, Fun()}
+    catch error:{convert_error, K, M} -> {error, K, M}
+    end.
+
+%% To a carrier pack: one result, every error the call's, in phases: those
+%% that stop a decode, other decode errors, context, encode (ruling 4).
+run_carrier(_Engine, _From, _To, _ToPack, {ordinary, {error, K, M}}, _Context) -> raise(K, M);
+run_carrier(Engine, From, To, ToPack, {ordinary, {ok, Entity}}, Context) ->
+    finish(Engine, From, To, ToPack, Entity, Context);
+run_carrier(_Engine, _From, _To, _ToPack, {stopped, K, M, Run}, _Context) ->
+    %% a message's error stands before that of a later outer line
+    case Run of
+        {_, Results} -> run_stop(Results);
+        none -> ok
+    end,
+    raise(K, M);
+run_carrier(Engine, From, To, ToPack, {carrier, Outer, Failed, Format, Results, Over}, Context) ->
+    run_stop(Results),
+    case [M || M <- [Failed | [Msg || {ok, _, Msg} <- Results]], M =/= none] of
+        [] -> ok;
+        [M1 | _] -> raise('transform-decode', M1)
+    end,
+    run_sum(Over),
+    _ = context(Engine, Context),
+    Outer1 = kinds_for(Outer, From, To, ToPack),
+    Outer2 = case From =:= To andalso Context =:= none of
+                 true -> Outer1;
+                 false -> complete(Engine, Outer1, Context)
+             end,
+    encode_named(
+      ToPack,
+      fun() ->
+              {Kind, Lines} = chosen_lines(ToPack, Outer2),
+              Joined = [run_join(Outer, IE) || {ok, IE, _} <- Results],
+              case [F || {F, run} <- gt_pack:inner_modes(Lines)] of
+                  [Inner | _] ->
+                      Same = Inner =:= Format andalso Context =:= none,
+                      Messages = [case Same of
+                                      true -> kinds_for(J, From, To, ToPack);
+                                      false -> complete(Engine, kinds_for(J, From, To, ToPack), Context)
+                                  end || J <- Joined],
+                      encode(ToPack, Outer2#{run_msgs => Messages});
+                  [] when length(Joined) =/= 1 ->
+                      conv_error('message-count', ToPack,
+                                 "the kind chosen takes one message and the run holds ~p", [length(Joined)]);
+                  [] ->
+                      [J] = Joined,
+                      E0 = kinds_for(J, From, To, ToPack),
+                      E1 = case From =:= To andalso Context =:= none of
+                               true -> E0;
+                               false -> complete(Engine, E0, Context)
+                           end,
+                      encode(ToPack, case Kind of
+                                         undefined -> E1;
+                                         _ -> E1#{kind => {To, Kind}}
+                                     end)
+              end
+      end).
+
+run_stop(Results) ->
+    case [{K, M} || {stop, K, M} <- Results] of
+        [] -> ok;
+        [{K, M} | _] -> raise(K, M)
+    end.
+
+%% The kind the encode of an entity chooses and its scope -> {Name | undefined,
+%% Lines}.
+chosen_lines(#{has_kinds := false, common := Common}, _Entity) -> {undefined, Common};
+chosen_lines(Pack, Entity) ->
+    case chosen_kind(Pack, Entity) of
+        none -> conv_error('no-kind', Pack, "the entity selects no kind of the pack", []);
+        #{name := Name, scope := Scope} -> {Name, Scope}
     end.
 
 %% encode(<format>, entity) of an inner message, as bytes (Version 0.34,
@@ -930,20 +1225,28 @@ convert(Engine, From, To, Bytes) -> convert(Engine, From, To, Bytes, none).
 convert(Engine, From, To, Bytes, Context) ->
     FromPack = pack(Engine, From),
     ToPack = pack(Engine, To),
-    Entity = decode(FromPack, Bytes),
-    Same = From =:= To,
-    Entity1 = case Same of
-                  true -> Entity;
-                  false -> kept_kinds(Entity, To, ToPack)
-              end,
-    %% What a decoded message cannot be written as is a named error too: a
-    %% failure no encoder names is `transform-encode`, marked ?UNCLASSIFIED.
-    try
-        Entity2 = case Same andalso Context =:= none of
-                      true -> Entity1;
-                      false -> complete(Engine, Entity1, Context)
-                  end,
-        encode(ToPack, Entity2)
+    finish(Engine, From, To, ToPack, decode(FromPack, Bytes), Context).
+
+%% The steps of `convert` after its decode.
+finish(Engine, From, To, ToPack, Entity, Context) ->
+    Entity1 = kinds_for(Entity, From, To, ToPack),
+    encode_named(
+      ToPack,
+      fun() ->
+              Entity2 = case From =:= To andalso Context =:= none of
+                            true -> Entity1;
+                            false -> complete(Engine, Entity1, Context)
+                        end,
+              encode(ToPack, Entity2)
+      end).
+
+kinds_for(Entity, From, From, _ToPack) -> Entity;
+kinds_for(Entity, _From, To, ToPack) -> kept_kinds(Entity, To, ToPack).
+
+%% What a decoded message cannot be written as is a named error too: a failure
+%% no encoder names is `transform-encode`, marked ?UNCLASSIFIED.
+encode_named(ToPack, Fun) ->
+    try Fun()
     catch
         error:{convert_error, _, _} = Named:Stack -> erlang:raise(error, Named, Stack);
         Class:Reason ->
@@ -1055,7 +1358,16 @@ select_decode(#{common := Common} = Pack, Wire, Ctx) ->
 select_encode(#{has_kinds := false, common := Common, defaults := Defaults, root := Root,
                 plan := Plan}, _Entity) ->
     {Common, Defaults, Root, Plan};
-select_encode(#{name := Name, kinds := Kinds, root := PackRoot} = Pack, Entity) ->
+select_encode(#{root := PackRoot} = Pack, Entity) ->
+    Chosen = chosen_kind(Pack, Entity),
+    case Chosen of
+        none -> conv_error('no-kind', Pack, "the entity selects no kind of the pack", []);
+        #{scope := Scope, defaults := Defaults, root := Root, plan := Plan} ->
+            {Scope, Defaults, case Root of undefined -> PackRoot; _ -> Root end, Plan}
+    end.
+
+%% The kind an entity is encoded as -> none | Kind.
+chosen_kind(#{name := Name, kinds := Kinds} = Pack, Entity) ->
     Model = maps:get(model, Entity),
     Lists = maps:get(lists, Entity, #{}),
     Has = fun(T) -> req_holds(T, Model, Lists) end,
@@ -1066,7 +1378,6 @@ select_encode(#{name := Name, kinds := Kinds, root := PackRoot} = Pack, Entity) 
                 {_, {Name, K2}} -> {ok, K2};
                 _ -> none
             end,
-    Chosen =
         case Named of
             {ok, KindName} ->
                 maps:get(KindName, maps:get(kind_index, Pack), none);
@@ -1075,12 +1386,7 @@ select_encode(#{name := Name, kinds := Kinds, root := PackRoot} = Pack, Entity) 
                 first_kind(Kinds, fun(#{requires := Req, lines := Ls}) ->
                                           lists:all(Has, Req) andalso gt_pack:as_holds(Ls, Model)
                                   end)
-        end,
-    case Chosen of
-        none -> conv_error('no-kind', Pack, "the entity selects no kind of the pack", []);
-        #{scope := Scope, defaults := Defaults, root := Root, plan := Plan} ->
-            {Scope, Defaults, case Root of undefined -> PackRoot; _ -> Root end, Plan}
-    end.
+        end.
 
 %% Does a scope hold a `requires` term? A plain key: the key is present, or
 %% the list is present with at least one item. `<key>=<values>` (0.20): the
@@ -1593,6 +1899,8 @@ json_open(Wire, Pack, Bytes) ->
 -if(?W_BITS).
 %% The message of a bits pack: hex text, or under `armor sixbit` the six-bit
 %% armored text, every character checked before any line is read (0.14).
+%% a message of another pack, as its bytes (0.34, 0.92)
+unwire(_Pack, {bytes, Bin}) -> Bin;
 unwire(#{armor := sixbit} = Pack, Text) ->
     try gt_bits:unarmor(Text)
     catch error:{armor_malformed, Why} ->

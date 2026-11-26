@@ -1,0 +1,13 @@
+{
+  "name": "29-run-over-a-pack-with-framing",
+  "from": "conformance-run-c-framed",
+  "to": "conformance-run-json",
+  "grade": "partial",
+  "carried": [
+    "probe.x",
+    "probe.w"
+  ],
+  "dropped": [
+    "probe.label"
+  ]
+}

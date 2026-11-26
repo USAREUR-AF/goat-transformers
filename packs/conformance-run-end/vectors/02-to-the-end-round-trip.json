@@ -1,0 +1,13 @@
+{
+  "name": "to-the-end-round-trip",
+  "from": "conformance-run-end",
+  "to": "conformance-run-end",
+  "input": "0901020304",
+  "expect_results": [
+    {
+      "expect": "0901020304"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6"
+}

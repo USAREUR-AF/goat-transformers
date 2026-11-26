@@ -1,0 +1,11 @@
+{
+  "name": "items-of-all-messages-over-the-limit",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-json",
+  "input": "0602050602070809",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "max_items": 3,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: 2 and 2 of 3: malformed-wire of the call, though each message fits its own budget"
+}

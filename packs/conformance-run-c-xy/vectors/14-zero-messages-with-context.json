@@ -1,0 +1,12 @@
+{
+  "name": "zero-messages-with-context",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-json",
+  "input": "0009",
+  "expect_results": [],
+  "context": {
+    "probe.z": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 2: context fills no message"
+}

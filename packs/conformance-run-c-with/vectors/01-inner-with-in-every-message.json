@@ -1,0 +1,13 @@
+{
+  "name": "inner-with-in-every-message",
+  "from": "conformance-run-c-with",
+  "to": "conformance-run-c-with",
+  "input": "040102030409",
+  "expect_results": [
+    {
+      "expect": "040102030409"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 9: the joined entity holds w for each"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "last-message-writes-no-bytes",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-c-none",
+  "input": "010009",
+  "expect_error": "transform-encode",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 8: one message, which writes no bytes into in-none"
+}

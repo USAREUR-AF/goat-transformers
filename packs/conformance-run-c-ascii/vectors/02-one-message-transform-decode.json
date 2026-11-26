@@ -1,0 +1,9 @@
+{
+  "name": "one-message-transform-decode",
+  "from": "conformance-run-c-ascii",
+  "to": "conformance-run-json",
+  "input": "02010509",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: one message: its transform-decode is reported"
+}

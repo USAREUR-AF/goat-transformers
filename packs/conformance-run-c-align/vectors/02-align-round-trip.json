@@ -1,0 +1,13 @@
+{
+  "name": "align-round-trip",
+  "from": "conformance-run-c-align",
+  "to": "conformance-run-c-align",
+  "input": "0601000203000409",
+  "expect_results": [
+    {
+      "expect": "0601000203000409"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: `align` counts from the message's own start on encode too"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "overlong-block-ahead-of-it",
+  "from": "conformance-run-c-plain",
+  "to": "conformance-run-json",
+  "input": "0501",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: an overlong block is malformed-wire at its `length` line"
+}

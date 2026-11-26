@@ -1,0 +1,13 @@
+{
+  "name": "short-block-grows",
+  "from": "conformance-run-c-length",
+  "to": "conformance-run-c-length",
+  "input": "05010002010509",
+  "expect_results": [
+    {
+      "expect": "0601010002010509"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 7: 01 00: y was not held; it is written as zero bits"
+}

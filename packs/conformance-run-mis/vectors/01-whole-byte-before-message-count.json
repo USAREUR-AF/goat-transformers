@@ -1,0 +1,9 @@
+{
+  "name": "whole-byte-before-message-count",
+  "from": "conformance-run-mis",
+  "to": "conformance-run-json",
+  "input": "50",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: Decode step 1 of 0.34 comes before the count"
+}

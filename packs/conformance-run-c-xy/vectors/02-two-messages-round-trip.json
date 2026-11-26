@@ -1,0 +1,13 @@
+{
+  "name": "two-messages-round-trip",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-c-xy",
+  "input": "040102030409",
+  "expect_results": [
+    {
+      "expect": "040102030409"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: one result, the length covers the whole run"
+}

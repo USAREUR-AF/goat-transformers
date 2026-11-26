@@ -1,0 +1,13 @@
+{
+  "name": "derivations-to-no-carrier-pack",
+  "from": "conformance-run-n",
+  "to": "conformance-run-json",
+  "input": "0702010209",
+  "expect_results": [
+    {
+      "expect": "{\"n\":7,\"w\":9,\"x\":1,\"y\":2,\"n_copy\":7}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Operations: 0.6 steps 1 to 4 on each joined entity"
+}

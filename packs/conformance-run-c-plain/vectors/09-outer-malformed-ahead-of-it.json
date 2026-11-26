@@ -1,0 +1,9 @@
+{
+  "name": "outer-malformed-ahead-of-it",
+  "from": "conformance-run-c-plain",
+  "to": "conformance-run-json",
+  "input": "",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.52 ruling 20b: an error that stopped the decode before the line"
+}

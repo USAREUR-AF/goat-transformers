@@ -1,0 +1,9 @@
+{
+  "name": "c-plain-encode",
+  "from": "conformance-run-json",
+  "to": "conformance-run-c-plain",
+  "input": "{\"w\":9,\"x\":5}",
+  "expect_error": "bad-directive",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; on encode"
+}

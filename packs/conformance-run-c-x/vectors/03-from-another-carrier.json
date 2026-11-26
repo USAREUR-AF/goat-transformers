@@ -1,0 +1,10 @@
+{
+  "name": "from-another-carrier",
+  "from": "conformance-run-c-x",
+  "to": "conformance-run-c-plain",
+  "input": "010509",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; on encode of a run"
+}

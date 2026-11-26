@@ -1,0 +1,19 @@
+{
+  "name": "stated-ends",
+  "from": "conformance-run-c-whole",
+  "to": "conformance-run-json",
+  "input": "070301ff0202020709",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":1}"
+    },
+    {
+      "expect": "{\"w\":9,\"x\":2}"
+    },
+    {
+      "expect": "{\"w\":9,\"x\":7}"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: 03 01 ff ends at its stated 3 bytes, whatever its line reads"
+}

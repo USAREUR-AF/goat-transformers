@@ -1,0 +1,13 @@
+{
+  "name": "zero-messages-another-carrier",
+  "from": "conformance-run-n",
+  "to": "conformance-run-wx",
+  "input": "070009",
+  "expect_results": [
+    {
+      "expect": "09"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 2: and ruling 6: w from the outer entity, an empty run"
+}

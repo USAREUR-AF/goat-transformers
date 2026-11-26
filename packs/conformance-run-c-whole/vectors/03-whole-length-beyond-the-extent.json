@@ -1,0 +1,16 @@
+{
+  "name": "whole-length-beyond-the-extent",
+  "from": "conformance-run-c-whole",
+  "to": "conformance-run-json",
+  "input": "040201050109",
+  "expect_results": [
+    {
+      "expect": "{\"w\":9,\"x\":1}"
+    },
+    {
+      "expect_error": "malformed-wire"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 Where one message ends: the second message states 5 bytes of 2: an end beyond the extent, malformed-wire, the last result"
+}

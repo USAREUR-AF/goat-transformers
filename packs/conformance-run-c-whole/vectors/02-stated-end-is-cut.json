@@ -1,0 +1,13 @@
+{
+  "name": "stated-end-is-cut",
+  "from": "conformance-run-c-whole",
+  "to": "conformance-run-c-whole",
+  "input": "050301ff020209",
+  "expect_results": [
+    {
+      "expect": "040201020209"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 7: a message with more than its lines write is cut: 03 01 ff becomes 02 01"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "9268-run-framing-another-word-before-missing-distribution",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey w int -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.92.0\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nframing length\n",
+  "expect_error": "bad-directive"
+}

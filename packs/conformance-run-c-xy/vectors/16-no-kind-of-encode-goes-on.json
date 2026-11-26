@@ -1,0 +1,19 @@
+{
+  "name": "no-kind-of-encode-goes-on",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-label",
+  "input": "0601020902030209",
+  "expect_results": [
+    {
+      "expect": "01"
+    },
+    {
+      "expect_error": "no-kind"
+    },
+    {
+      "expect": "03"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 3: a no-kind of encode is an encode error: x = 9 is outside 1..3"
+}

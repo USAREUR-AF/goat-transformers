@@ -1,0 +1,9 @@
+{
+  "name": "ahead-of-a-transform-decode",
+  "from": "conformance-run-c-ascii",
+  "to": "conformance-run-json",
+  "input": "040105410609",
+  "expect_error": "message-count",
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 1: label 01 of message 1 is a transform-decode; message-count stops the decode and is ahead of it"
+}

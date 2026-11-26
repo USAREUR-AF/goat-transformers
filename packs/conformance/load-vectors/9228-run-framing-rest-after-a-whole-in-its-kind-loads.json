@@ -1,0 +1,8 @@
+{
+  "name": "9228-run-framing-rest-after-a-whole-in-its-kind-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey w int -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.92.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nframing self\nkind a\nwhen 8 1\nlength 8 whole\ngroup probe.recs rest\n  field probe.x 8 uint\nend\nkind b\nwhen 8 2\n"
+}

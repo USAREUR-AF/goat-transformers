@@ -104,7 +104,7 @@ ARMORS = ("hex", "sixbit")
 # the encoding of the bits wire (0.19): at most once, before the first `kind`
 ENCODINGS = ("none", "uper")
 HEADER = ("format", "version", "distribution", "source", "uses", "wire", "layout",
-          "bit_order", "word_bytes", "armor", "encoding") + TEXT_HEADER
+          "bit_order", "word_bytes", "armor", "encoding", "framing") + TEXT_HEADER
 TABLES = ("map", "typemap")
 BLOCKS = ("group", "if", "opt", "chain", "length", "ext", "choice")
 UPER_ONLY = ("ext", "choice", "alt")          # 0.19 ruling 9; `alt` closes at the next `alt` or `end`
@@ -810,6 +810,7 @@ class _Loader:
         self.tlv_lines = []         # (line number, directive, args, after a `kind`), 0.13
         self.armor_line = None      # (line number, value, after a `kind`), 0.14
         self.encoding_line = None   # (line number, value, after a `kind`), 0.19
+        self.framing_line = None    # (line number, value, after a `kind`, `layout sequential` stands before it), 0.92
         self._header_lines = {}
         self.switches = []          # spec 0.20: `switch` nodes, for the checks of their values
         self.counts = []            # spec 0.21: count lines
@@ -1019,6 +1020,9 @@ class _Loader:
         elif d == "encoding":
             # checked in `lines`, after the file is read (0.19; ruling 10 of 0.10)
             self.encoding_line = (no, value, bool(pack.kinds))
+        elif d == "framing":
+            # 0.92 ruling 16; checked in `lines`, after the file is read
+            self.framing_line = (no, value, bool(pack.kinds), pack.wire == "bits" and pack.sequential)
         elif d in TEXT_HEADER:
             if pack.kinds:
                 self.bad(no, "`%s` after the first `kind`" % d)
@@ -1093,6 +1097,7 @@ class _Loader:
         self._tlv_header()
         self._armor()
         self._encoding()
+        self._framing()
         if pack.wire != "xml" and (pack.root is not None or any(k.root is not None for k in pack.kinds)):
             self.bad(where["root"], "`root` on the %s wire" % pack.wire)
         if not pack.kinds:
@@ -1104,6 +1109,8 @@ class _Loader:
             self._count_paths(pack.common, pack.kinds)
             self._inner_places(pack.common, pack.kinds)
             self._rest_extents(pack.common, pack.kinds, None)
+            if self.framing_line is not None:
+                self._framing_rests()
 
         if pack.wire == "cbor":
             self._cbor_top()
@@ -1128,6 +1135,51 @@ class _Loader:
         if value == "sixbit" and pack.bit_order != "msb":
             self.bad(no, "`armor sixbit` needs `bit_order msb`")
         pack.armor = value
+
+    def _framing(self):
+        """0.92 ruling 16: `framing self` of a `layout sequential` `bits` pack,
+        after its `wire` and `layout` lines, before the first `kind`, not with
+        `armor sixbit` or `encoding uper`."""
+        if self.framing_line is None:
+            return
+        pack = self.pack
+        no, value, after_kind, after_layout = self.framing_line
+        if pack.wire != "bits" or not pack.sequential:
+            self.bad(no, "`framing` in a pack that is not a `layout sequential` `bits` pack")
+        if not after_layout:
+            self.bad(no, "`layout sequential` stands before a `framing` line")
+        if after_kind:
+            self.bad(no, "`framing` after the first `kind`")
+        if value != "self":
+            self.bad(no, "framing `%s` is not self" % value)
+        if pack.armor == "sixbit":
+            self.bad(no, "`framing` in a pack with `armor sixbit`")
+        if pack.uper:
+            self.bad(no, "`framing` in a pack with `encoding uper`")
+
+    def _framing_rests(self):
+        """0.92 ruling 16: a `rest` group whose enclosing extent is the message
+        needs a `length ... whole` before it, outside every block or in a block
+        that also holds the `rest`, on each path. A `length` block is an extent
+        of its own; a `rest` in an item is judged by the one its group is in."""
+        def visit(nodes, whole):
+            for node in nodes:
+                if node.d == "length":
+                    whole = whole or node.body is None
+                elif node.d == "group":
+                    if node.mode == "rest" and not whole:
+                        self.bad(node, "a message-level `rest` with no `length ... whole` before it, in a pack "
+                                       "with `framing self` (0.92 ruling 16)")
+                elif node.d in ("switch", "choice"):
+                    for arm in node.body:
+                        visit(arm.body, whole)
+                elif node.body:
+                    visit(node.body, whole)
+            return whole
+
+        whole = visit(self.pack.common, False)
+        for kind in self.pack.kinds:
+            visit(kind.lines, whole)
 
     def _encoding(self):
         """0.19: `encoding <none|uper>` on the bits wire only (any value, ruling
@@ -1359,8 +1411,8 @@ class _Loader:
             self.bad(node, "`inner` in a pack with `armor sixbit` (0.34)")
         if pack.uper:
             self.bad(node, "`inner` in a pack with `encoding uper` (0.34)")
-        if len(node.args) == 2 and node.args[1] != "partial":
-            self.bad(node, "`inner`: the word after the format is `partial`, not `%s` (0.34)" % node.args[1])
+        if len(node.args) == 2 and node.args[1] not in ("partial", "run"):     # `run`: 0.92 ruling 12
+            self.bad(node, "`inner`: the word after the format is `partial` or `run`, not `%s` (0.34, 0.92)" % node.args[1])
         node.name = node.args[0]
 
     def _inner_places(self, common, kinds):

@@ -1,0 +1,13 @@
+{
+  "name": "one-message-into-a-kind-without-inner",
+  "from": "conformance-run-end",
+  "to": "conformance-run-no-inner-kind",
+  "input": "090102",
+  "expect_results": [
+    {
+      "expect": "010902"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: the joined entity: w = 9, y = 2"
+}

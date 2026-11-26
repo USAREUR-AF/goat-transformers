@@ -1,0 +1,16 @@
+{
+  "name": "bad-context-key-of-an-ordinary-message-that-did-not-decode",
+  "from": "conformance-run-kinds",
+  "to": "conformance-run-json",
+  "input": "020701",
+  "expect_results": [
+    {
+      "expect_error": "transform-decode"
+    }
+  ],
+  "context": {
+    "probe.nosuch": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: its error is the result"
+}

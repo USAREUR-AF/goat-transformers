@@ -1,0 +1,13 @@
+{
+  "name": "outer-derivation-when-the-outer-formats-differ",
+  "from": "conformance-run-n",
+  "to": "conformance-run-copy-out",
+  "input": "07040102030409",
+  "expect_results": [
+    {
+      "expect": "090701020304"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 6: the outer entity runs 0.6 steps 2 and 3: n_copy = n = 7, with equal inner formats too"
+}

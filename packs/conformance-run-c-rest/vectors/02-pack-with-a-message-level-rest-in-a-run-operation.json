@@ -1,0 +1,10 @@
+{
+  "name": "pack-with-a-message-level-rest-in-a-run-operation",
+  "from": "conformance-run-c-rest",
+  "to": "conformance-run-json",
+  "input": "0301020309",
+  "expect_error": "bad-directive",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 16: the inner pack has no `framing self` line: bad-directive at the line; in-rest cannot have the line"
+}

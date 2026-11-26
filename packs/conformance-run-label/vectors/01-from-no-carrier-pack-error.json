@@ -1,0 +1,13 @@
+{
+  "name": "from-no-carrier-pack-error",
+  "from": "conformance-run-label",
+  "to": "conformance-run-json",
+  "input": "09",
+  "expect_results": [
+    {
+      "expect_error": "no-kind"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 4: every decode is of an ordinary message when `from` is no carrier pack"
+}
