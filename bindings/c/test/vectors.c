@@ -6,7 +6,9 @@
  * its `expect` (the same bytes) or its `expect_error` (GT_ERR_ENGINE and a
  * text that begins with that kind and a colon), as spec/vector-format.md
  * states. The `model` checks of a vector are not run: the library has no
- * decode call. Load vectors are not run.
+ * decode call. Load vectors are not run, and neither are the vectors of
+ * `convert_run` (`expect_results`, or `"run": true`): the library offers
+ * `convert` only (ruling 14 of 0.92). They are counted as skipped.
  *
  * The library is a way to ship the Rust engine, so this run is not a voice
  * in the cross-check of the engines. It shows that the boundary loses
@@ -220,6 +222,7 @@ typedef struct {
     text from, to, input, expect, expect_error;
     text context; /* "key=value\n" lines; bytes NULL: the vector has no context */
     int has_max_items; /* the vector sets the limit on list items (ruling 7 of 0.11) */
+    int is_run;        /* a vector of `convert_run` (ruling 13 of 0.92) */
     uint64_t max_items;
 } vector;
 
@@ -284,6 +287,10 @@ static vector read_vector(const char *source, const char *file) {
         if (member && member->bytes) json_stop(&j, "a member appears twice");
         if (member) *member = json_string(&j);
         else if (strcmp(name.bytes, "context") == 0) v.context = context_text(&j);
+        else if (strcmp(name.bytes, "expect_results") == 0 || strcmp(name.bytes, "run") == 0) {
+            v.is_run = 1;
+            json_skip(&j);
+        }
         else if (strcmp(name.bytes, "max_items") == 0) {
             /* an integer of 0 or more */
             if (*j.at < '0' || *j.at > '9') json_stop(&j, "`max_items` is an integer of 0 or more");
@@ -446,7 +453,7 @@ int main(int argc, char **argv) {
           "one format per pack: %zu packs, %zu formats", packs.count, count_lines(&formats));
     gt_buf_free(&formats);
 
-    long passed = 0, failed = 0;
+    long passed = 0, failed = 0, skipped = 0;
     for (size_t i = 0; i < packs.count; i++) {
         char dir[1024];
         snprintf(dir, sizeof dir, "%s/packs/%s/vectors", root, packs.items[i]);
@@ -457,7 +464,8 @@ int main(int argc, char **argv) {
             size_t len;
             char *source = read_file(root, rel, &len);
             vector v = read_vector(source, rel);
-            if (run_vector(e, rel, &v)) passed++;
+            if (v.is_run) skipped++;
+            else if (run_vector(e, rel, &v)) passed++;
             else failed++;
             vector_free(&v);
             free(source);
@@ -466,7 +474,7 @@ int main(int argc, char **argv) {
     }
     check(failed == 0, "%ld vectors failed", failed);
     check(passed > 0, "no vector ran");
-    printf("vectors: %ld passed, %ld failed; %zu packs, %zu model modules\n", passed, failed, packs.count, modules);
+    printf("vectors: %ld passed, %ld failed, %ld of convert_run skipped; %zu packs, %zu model modules\n", passed, failed, skipped, packs.count, modules);
 
     names_free(&packs);
     gt_engine_free(e);
