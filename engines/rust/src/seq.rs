@@ -504,7 +504,7 @@ fn value_of(text: &str, len: u32, ln: usize) -> Result<u64, Error> {
     Ok(v)
 }
 
-const HEADER: [&str; 18] = [
+const HEADER: [&str; 19] = [
     "format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map", "typemap", "word_bytes", "root",
     "delimiter", "start", "checksum", "armor", "encoding", "framing", "charset",
 ];
