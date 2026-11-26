@@ -2,7 +2,7 @@
   "name": "x-home_position-invalid-position-to-geojson",
   "from": "px4-ulog-home-position",
   "to": "geojson",
-  "source": "the message of gen-x-to-geojson with its validity flags (valid_hpos) 0: the source marks the position invalid, so lat, lon and hae are not read (raw keys keep the bits)",
+  "source": "the message of gen-x-to-geojson with its validity flags (valid_hpos) closed: the source marks the position invalid, so lat, lon and hae are not read (raw keys keep the bits)",
   "input": "43822d18240a0600dc5fe234e9b24740fdcc0f12581721400000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0d46a62cc00000001",
   "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}"
 }

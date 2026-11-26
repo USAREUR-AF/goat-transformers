@@ -2,7 +2,7 @@
   "name": "x-vehicle_global_position-invalid-position-to-geojson",
   "from": "px4-ulog-vehicle-global-position",
   "to": "geojson",
-  "source": "the message of gen-x-to-geojson with its validity flags (alt_valid, lat_lon_valid) 0: the source marks the position invalid, so lat, lon and hae are not read (raw keys keep the bits)",
+  "source": "the message of gen-x-to-geojson with its validity flags (alt_valid, lat_lon_valid) closed: the source marks the position invalid, so lat, lon and hae are not read (raw keys keep the bits)",
   "input": "43822d18240a060086c43c18240a0600dc5fe234e9b24740fdcc0f12581721400000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc00000e798490100",
   "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}"
 }

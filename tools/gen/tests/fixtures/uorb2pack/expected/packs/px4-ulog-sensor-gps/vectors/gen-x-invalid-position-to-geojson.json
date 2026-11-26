@@ -1,0 +1,11 @@
+{
+  "name": "x-sensor_gps-invalid-position-to-geojson",
+  "from": "px4-ulog-sensor-gps",
+  "to": "geojson",
+  "source": "the message of gen-x-to-geojson with its validity flags (fix_type) closed: the source marks the position invalid, so lat, lon and hae are not read (raw keys keep the bits)",
+  "input": "43822d18240a0600dc5fe234e9b24740fdcc0f1258172140e9263108ac1c1040408b6a18240a06000000c4c000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1700000005000}}",
+  "model": {
+    "time_ms": "1700000005000"
+  }
+}

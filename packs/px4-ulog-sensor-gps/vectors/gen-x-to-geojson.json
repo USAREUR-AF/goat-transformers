@@ -3,7 +3,7 @@
   "from": "px4-ulog-sensor-gps",
   "to": "geojson",
   "source": "the bound fields (pack.md): lat, lon and hae float64 degrees and metres, time_ms the UTC microseconds divided by 1000; geojson writes [lon, lat, alt] and properties.time_ms (RFC 7946, engine-spec 0.1.1 rulings 3 to 5)",
-  "input": "43822d18240a060086c43c18240a0600dc5fe234e9b24740fdcc0f1258172140a4703d0ad72314405eba490c022b18c0c00f8918240a0600c1fdbbf10000acc00000a4c000009cc0000094c000008cc0000084c04045098077e30980000058c0000048c0000038c0000028c0000018c0c1980d80201ffc360000d0bf0000b0bf000090bf000060bf957f46f7a85901bb6c00ce",
+  "input": "43822d18240a060086c43c18240a0600dc5fe234e9b24740fdcc0f1258172140a4703d0ad72314405eba490c022b18c0c00f8918240a0600c1fdbbf10000acc00000a4c000009cc0000094c000008cc0000084c04045098077e30980000058c0000048c0000038c0000028c0000018c0c1980d80201ffc360000d0bf0000b0bf000090bf000060bf957f02f7a85901bb6c00ce",
   "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455938,47.3977419,-6.042]},\"properties\":{\"time_ms\":1700000007000}}",
   "model": {
     "lat": "47.3977419",

@@ -118,13 +118,41 @@ CORE = {
 CORE_TYPES = {"lat": "float", "lon": "float", "hae": "float", "time_ms": "int"}
 # A bound field whose own message states a flag that says the value is valid: (message, field) ->
 # flag field. The bits are kept in a raw key; the shared key is read only in a gate block that
-# holds when the flag is 1, so a position the source marks invalid does not become one, and
+# holds when the flag says the value is valid, so a position the source marks invalid does not become one, and
 # a message comes back byte for byte (engine-spec 0.17 gate blocks).
 GATED = {
     ("VehicleGlobalPosition", "lat"): "lat_lon_valid", ("VehicleGlobalPosition", "lon"): "lat_lon_valid",
     ("VehicleGlobalPosition", "alt_ellipsoid"): "alt_valid",
     ("HomePosition", "lat"): "valid_hpos", ("HomePosition", "lon"): "valid_hpos",
+    # SensorGps: fix_type 0 and 1 are no fix (the .msg: FIX_TYPE_NONE = 1, 0 also no fix)
+    ("SensorGps", "latitude_deg"): ("fix_type", "!", "0,1"), ("SensorGps", "longitude_deg"): ("fix_type", "!", "0,1"),
+    ("SensorGps", "altitude_ellipsoid_m"): ("fix_type", "!", "0,1"),
 }
+
+
+def gate_holds(g, v):
+    """Does the flag value `v` open the gate `g` (bit, length, raw, flag, neg, values)?"""
+    return (v in [int(x) for x in g[5].split(",")]) != (g[4] == "!")
+
+
+def gate_open_value(g):
+    """The flag value a held key writes (engine-spec gate blocks, encode step 3)."""
+    vals = [int(x) for x in g[5].split(",")]
+    return min(v for v in range(1 << g[1]) if v not in vals) if g[4] == "!" else vals[0]
+
+
+def gate_closed_value(g):
+    """A flag value that closes the gate: the first listed one under `!`, else 0."""
+    return int(g[5].split(",")[0]) if g[4] == "!" else 0
+
+
+def gate_text(g):
+    return "`%s` is %s%s" % (g[3], "not " if g[4] == "!" else "", " or ".join(g[5].split(",")))
+
+
+def gate_spec(entry):
+    """(flag field, "" or "!", values text) of a GATED entry; a bare field name is a bool flag."""
+    return (entry, "", "1") if isinstance(entry, str) else entry
 # Every pack whose message binds lat and lon gets a vector to geojson; these get one from it.
 FROM_GEOJSON = ["vehicle_global_position", "sensor_gps"]
 
@@ -541,9 +569,10 @@ def read_pack(text):
             stack.append(cur)
             cur = body
         elif d == "if":
-            w, p, n = (int(x) for x in t[1].split(":"))
+            neg = t[1].startswith("!")
+            w, p, n = (int(x) for x in t[1].lstrip("!").split(":"))
             body = []
-            cur.append(("gate", w * 8 + p, n, [int(x) for x in t[2].split(",")], body))
+            cur.append(("gate", w * 8 + p, n, [int(x) for x in t[2].split(",")], body, neg))
             stack.append(cur)
             cur = body
         elif d == "end":
@@ -616,7 +645,7 @@ def decode(lines, data, base=0):
                 ent[ln[1]] = decode_value(raw, ln[3], ln[4])
         elif ln[0] == "group":
             ent[ln[1]] = [decode(ln[5], data, base + ln[2] + i * ln[3]) for i in range(ln[4])]
-        elif ln[0] == "gate" and get_bits(data, base + ln[1], ln[2]) in ln[3]:
+        elif ln[0] == "gate" and (get_bits(data, base + ln[1], ln[2]) in ln[3]) != ln[5]:
             ent.update(decode(ln[4], data, base))
     return ent
 
@@ -665,9 +694,10 @@ def encode(lines, ent, base=0, acc=0):
             written = any(o[0] == "field" and o[1] in ent and gbits & set(range(base + o[2], base + o[2] + o[3]))
                           for o in lines)
             if opened and not written:
+                gv = min(v for v in range(1 << ln[2]) if v not in ln[3]) if ln[5] else ln[3][0]
                 mask = ((1 << ln[2]) - 1) << (base + ln[1])
-                acc = (acc & ~mask) | (ln[3][0] << (base + ln[1]))
-            if ((acc >> (base + ln[1])) & ((1 << ln[2]) - 1)) in ln[3]:
+                acc = (acc & ~mask) | (gv << (base + ln[1]))
+            if (((acc >> (base + ln[1])) & ((1 << ln[2]) - 1)) in ln[3]) != ln[5]:
                 acc = encode(ln[4], ent, base, acc)
     for ln in lines:
         if ln[0] == "const":
@@ -767,7 +797,7 @@ def emit_lines(items, indent=""):
             gate = getattr(x, "gate", None)
             if gate:
                 out.append("%sfield  %s  0:%d:%d  %s" % (indent, qual(gate[2]), x.bit, x.length, x.transform))
-                out.append("%sif  0:%d:%d  1" % (indent, gate[0], gate[1]))
+                out.append("%sif  %s0:%d:%d  %s" % (indent, gate[4], gate[0], gate[1], gate[5]))
                 indent2 = indent + "  "
             else:
                 indent2 = indent
@@ -860,12 +890,13 @@ def emit_pack_md(topic, msg, items, lay, deps, n_vec, cross_to, cross_from, msgs
         gated = [x for x in iter_leaves(items) if getattr(x, "gate", None)]
         if gated:
             a += ["", "Validity flags. The message states a flag that says these values are valid: %s. The"
-                  % ", ".join("`%s` by `%s`" % (x.key, x.gate[3]) for x in gated),
+                  % ", ".join("`%s` when %s" % (x.key, gate_text(x.gate)) for x in gated),
                   "field is always the raw key (%s); the shared key is read only in a gate block that holds"
                   % ", ".join("`%s`" % qual(x.gate[2]) for x in gated),
-                  "when the flag is 1, so a position the source marks invalid is no position, and the message",
+                  "when the flag says so, so a position the source marks invalid is no position, and the message",
                   "comes back byte for byte. A shared key held from another format opens the block: the flag",
-                  "is written 1 (vector `gen-geojson-to-...`); `gen-x-invalid-position-to-geojson` has the flags 0."]
+                  "gets the first value that opens it (vector `gen-geojson-to-...` where there is one);",
+                  "`gen-x-invalid-position-to-geojson` has the flags closed."]
         if any(x.key in ("time_ms", "hae") for x in bound):
             a += ["", "`timestamp` is microseconds since the system started, not UTC, and stays a raw",
                   "key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the",
@@ -1094,7 +1125,8 @@ def build(args, out):
         items = leaves(msgs, m.name, m.name, 0, [], "", m.name, namer)
         per_msg[m.name] = items
         for y in items:
-            flag = GATED.get((m.name, getattr(y, "pathid", None)))
+            entry = GATED.get((m.name, getattr(y, "pathid", None)))
+            flag, neg, vals = gate_spec(entry) if entry else (None, "", "")
             if flag and not isinstance(y, Group):
                 fl = next((z for z in items if not isinstance(z, Group) and z.pathid == flag), None)
                 if fl is None:
@@ -1103,14 +1135,14 @@ def build(args, out):
                 raw = y.raw_key or namer.names.get(pid) or "%s_%s" % (snake(m.name), y.pathid)
                 namer.name(pid, raw)
                 y.raw_key = raw
-                y.gate = (fl.bit, fl.length, raw, fl.pathid)
+                y.gate = (fl.bit, fl.length, raw, fl.pathid, neg, vals)
         for x in items:
             for y in ([x] + (x.body if isinstance(x, Group) else [])):
                 if y.key in CORE_TYPES and getattr(y, "raw_key", None) and y.raw_key not in seen:
                     seen.add(y.raw_key)
                     decls.append(("key", y.raw_key, BUILTIN[y.rostype.split("[")[0]][2],
                                   "%s (%s); bound to `%s` in the packs%s" % (y.desc.split(" (")[0], y.rostype, y.key,
-                                  " when `%s` is 1" % y.gate[3] if getattr(y, "gate", None) else "")))
+                                  " when %s" % gate_text(y.gate) if getattr(y, "gate", None) else "")))
                     continue
                 if y.key in CORE_TYPES or y.key in seen:
                     continue
@@ -1159,7 +1191,7 @@ def build(args, out):
         model = collections.OrderedDict()
         for x in iter_leaves(items):
             gate = getattr(x, "gate", None)
-            if gate and values.get(gate[3]) != 1:
+            if gate and not gate_holds(gate, values.get(gate[3])):
                 continue                    # its flag is not 1: the shared key is not read
             if x.pathid in values and len(model) < 4:
                 model[qual(x.key)] = model_value(x, values[x.pathid])
@@ -1173,14 +1205,14 @@ def build(args, out):
             b2 = bytearray(buf)
             b2[bound["lat"].bit // 8:bound["lat"].bit // 8 + 8] = struct.pack("<d", lat)
             b2[bound["lon"].bit // 8:bound["lon"].bit // 8 + 8] = struct.pack("<d", lon)
-            gates = sorted({x.gate[0] for x in bound.values() if getattr(x, "gate", None)})
-            for gbit in gates:              # the flags say the values are valid
-                b2[gbit // 8] = 1
+            gates = {x.gate[0]: x.gate for x in bound.values() if getattr(x, "gate", None)}
+            for gbit, g in gates.items():   # the flags say the values are valid
+                b2[gbit // 8] = gate_open_value(g)
             if gates:
-                # the same message with every validity flag 0: no bound key behind a gate is read
+                # the same message with every validity flag closed: no bound key behind a gate is read
                 b4 = bytearray(b2)
-                for gbit in gates:
-                    b4[gbit // 8] = 0
+                for gbit, g in gates.items():
+                    b4[gbit // 8] = gate_closed_value(g)
                 ent4 = {}
                 for k, x in bound.items():
                     if not getattr(x, "gate", None):
@@ -1188,7 +1220,7 @@ def build(args, out):
                 vs.append(("gen-x-invalid-position-to-geojson.json", vec(
                     "x-%s-invalid-position-to-geojson" % topic, fmt, "geojson", bytes(b4[:lay.logged_size]).hex(),
                     geojson_feature(ent4), collections.OrderedDict((k, model_text(v)) for k, v in ent4.items()),
-                    source="the message of gen-x-to-geojson with its validity flags (%s) 0: the source marks the "
+                    source="the message of gen-x-to-geojson with its validity flags (%s) closed: the source marks the "
                            "position invalid, so lat, lon and hae are not read (raw keys keep the bits)"
                            % ", ".join(sorted({x.gate[3] for x in bound.values() if getattr(x, "gate", None)})))))
             if set(bound) == {"lat", "lon"}:
@@ -1230,9 +1262,9 @@ def build(args, out):
                     raw = (encode_value(value, x.length, x.transform) if x.transform.startswith("uiscale:")
                            else int.from_bytes(struct.pack("<d" if x.length == 64 else "<f", value), "little"))
                     b3[x.bit // 8:x.bit // 8 + x.length // 8] = raw.to_bytes(x.length // 8, "little")
-            gated = sorted({bound[k].gate[0] for k in bound if getattr(bound[k], "gate", None)})
-            for gbit in gated:             # a held position opens its gate: the flag is written 1
-                b3[gbit // 8] = 1
+            gated = {bound[k].gate[0]: bound[k].gate for k in bound if getattr(bound[k], "gate", None)}
+            for gbit, g in gated.items():  # a held position opens its gate: the gate value is written
+                b3[gbit // 8] = gate_open_value(g)
             timed = "time_ms" in bound
             model = {"lat": "47.25", "lon": "8.5", "hae": "410.5"}
             if timed:
@@ -1245,7 +1277,7 @@ def build(args, out):
                              "Unix epoch by date arithmetic (no engine); it is written as microseconds, "
                              "time_ms times 1000 (uiscale:1/1000); lat, lon and hae as float64; every other "
                              "byte is zero (no value, and 0 is also the absent sentinel of the time)"
-                             + ("; the validity flags of lat/lon and hae are 1, the gate value a held key writes"
+                             + ("; the validity flags of lat/lon and hae hold the first value that opens their gate, as a held key writes it"
                                 if gated else "")) if timed else
                             ("tools/gen/uorb2pack.py: lat and lon as float64 degrees, hae as the float32 "
                              "ellipsoidal altitude in metres (410.5 is exact in float32); every other byte is "
