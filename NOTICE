@@ -776,9 +776,6 @@ Pack ntrip-sourcetable-line; module ntrip
   notice or licence stated (LicenseRef-unstated). Record layouts restated; no
   text copied.
 
-Pack nvg
-  NATO Vector Graphics 1.5 XML schema, NATO Allied Command Transformation.
-
 Packs nws-*; modules nws*
   The National Weather Service weather.gov API OpenAPI document,
   https://api.weather.gov/openapi.json (version 3.12.2, copy of 2026-11-19),
