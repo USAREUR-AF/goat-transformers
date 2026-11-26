@@ -4,11 +4,13 @@
 #include <functional>
 #include <chrono>
 #include <cmath>
+#include <ctime>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -1660,14 +1662,24 @@ int main() {
             for (std::size_t k = 0; k < n; ++k) hex += "05";
             return hex;
         };
-        auto seconds = [](const std::function<void()>& run) {
-            double best = 1e9;
-            for (int k = 0; k < 3; ++k) {
-                const auto start = std::chrono::steady_clock::now();
-                run();
-                best = std::min(best, std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count());
+        // The processor time of this process, not the time on the wall: other
+        // processes on a loaded machine do not count in it.
+        auto once = [](const std::function<void()>& run) {
+            const std::clock_t start = std::clock();
+            run();
+            return double(std::clock() - start) / CLOCKS_PER_SEC;
+        };
+        // The best of 7 runs of each size, the two sizes taken in turn, so that
+        // both see the same conditions. Noise only adds time, so the best run is
+        // the nearest to the work itself, and it cannot make a quadratic run
+        // look linear: that is 64 times slower in every round.
+        auto best_pair = [&](const std::function<void()>& one, const std::function<void()>& eight) {
+            double b1 = 1e9, b8 = 1e9;
+            for (int k = 0; k < 7; ++k) {
+                b1 = std::min(b1, once(one));
+                b8 = std::min(b8, once(eight));
             }
-            return best;
+            return std::make_pair(b1, b8);
         };
         const std::size_t few = 10000, many = 80000;
         const std::string small = input(few), big = input(many);
@@ -1681,10 +1693,17 @@ int main() {
             {"convert_run to json", [&](const std::string& in) { (void)eng.convert_run("car", "js", in); }},
             {"convert_run to a carrier", [&](const std::string& in) { (void)eng.convert_run("car", "car", in); }}};
         for (const auto& r : runs) {
-            const double t1 = seconds([&] { r.second(small); }), t8 = seconds([&] { r.second(big); });
-            // 8 times the messages: 8 times the time when linear, 64 when quadratic.
-            check(t8 < 24 * t1 || t8 < 0.05, std::string("0.92: ") + r.first + " is linear: " + std::to_string(t1) +
-                                                 " s for 10000, " + std::to_string(t8) + " s for 80000");
+            // 8 times the messages: 8 times the time when linear, 64 when
+            // quadratic. A comparison that fails is measured again, at most 3
+            // times in all: a quadratic run fails every one.
+            double t1 = 0, t8 = 0;
+            bool linear = false;
+            for (int attempt = 0; attempt < 3 && !linear; ++attempt) {
+                std::tie(t1, t8) = best_pair([&] { r.second(small); }, [&] { r.second(big); });
+                linear = t8 < 24 * t1 || t8 < 0.05;
+            }
+            check(linear, std::string("0.92: ") + r.first + " is linear: " + std::to_string(t1) + " s for 10000, " +
+                              std::to_string(t8) + " s for 80000");
         }
     } catch (const std::exception& ex) {
         check(false, std::string("0.92 run threw: ") + ex.what());
