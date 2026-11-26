@@ -106,9 +106,9 @@ default le        9999999</pre>
   <div class="wrap">
     <ul class="numbers strip" aria-label="Counted from the tree">
       <li><b data-stat="formats">4,255</b><span class="unit">formats<sup><a href="#fn-formats">1</a></sup></span><span class="d">each one a pack from a public source</span></li>
-      <li><b data-stat="message_kinds">16,746</b><span class="unit">message kinds<sup><a href="#fn-kinds">2</a></sup></span><span class="d">message layouts across those formats</span></li>
-      <li><b data-stat="conversion_vectors">25,472</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
-      <li><b data-stat="wasm_bytes">799,867</b><span class="unit">bytes<sup><a href="#fn-wasm">4</a></sup></span><span class="d">the engine as WebAssembly, in this page</span></li>
+      <li><b data-stat="message_kinds">16,748</b><span class="unit">message kinds<sup><a href="#fn-kinds">2</a></sup></span><span class="d">message layouts across those formats</span></li>
+      <li><b data-stat="conversion_vectors">25,845</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
+      <li><b data-stat="wasm_bytes">812,294</b><span class="unit">bytes<sup><a href="#fn-wasm">4</a></sup></span><span class="d">the engine as WebAssembly, in this page</span></li>
     </ul>
   </div>
 </section>
@@ -747,7 +747,7 @@ default le        9999999</pre>
   <div class="wrap">
     <p class="tag">Live</p>
     <h2 id="h-demo">The engine runs in this page</h2>
-    <p class="lead">This is the engine itself: the Rust reference engine compiled to WebAssembly, <span data-stat="wasm_bytes">799,867</span> bytes, with nine packs. Choose two formats, edit the message and read the result. The page sends nothing anywhere.</p>
+    <p class="lead">This is the engine itself: the Rust reference engine compiled to WebAssembly, <span data-stat="wasm_bytes">812,294</span> bytes, with nine packs. Choose two formats, edit the message and read the result. The page sends nothing anywhere.</p>
 
     <div class="demo" id="demo-box">
       <form class="demo-bar js-only" id="demo-form" aria-label="Formats">
@@ -933,7 +933,7 @@ build:       cargo build --release --lib --target wasm32-unknown-unknown</span><
         <caption>Measured sizes, at commit 7597d81</caption>
         <thead><tr><th>What</th><th class="n">Bytes</th><th>Measured with</th></tr></thead>
         <tbody>
-          <tr><td>WebAssembly module, small build</td><td class="n" data-stat="wasm_bytes">799,867</td><td class="cmd">footnote 4</td></tr>
+          <tr><td>WebAssembly module, small build</td><td class="n" data-stat="wasm_bytes">812,294</td><td class="cmd">footnote 4</td></tr>
           <tr><td>The same module after <code>gzip -9</code></td><td class="n">235,164</td><td class="cmd"><code>gzip -9 -c goat_transformers_wasm.wasm | wc -c</code></td></tr>
           <tr><td>Command-line tool <code>goat-xf</code>, release build, macOS arm64</td><td class="n">1,657,776</td><td class="cmd"><code>wc -c engines/rust/target/release/goat-xf</code></td></tr>
           <tr><td>The two packs of the conversion at the top of this page</td><td class="n">8,712</td><td class="cmd"><code>cat packs/remote-id/pack.def packs/cot-xml/pack.def | wc -c</code></td></tr>
