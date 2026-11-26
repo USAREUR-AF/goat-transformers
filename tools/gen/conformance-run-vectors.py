@@ -869,6 +869,7 @@ def build(sink):
     run("c-kinds", J, "limit-not-reached-after-a-dead-message", "040107050509", ['{"w":9,"y":7}', "!" + NK], limit=2, ref=r + "message 2 ends the run; no third would start")
     run("c-list", J, "items-of-all-messages-at-the-limit", "0602050602070809", ['{"w":9}', '{"w":9}'], limit=4, ref=r + "the items of all messages are summed: 2 and 2 of 4")
     run("c-list", J, "items-of-all-messages-over-the-limit", "0602050602070809", error=MW, limit=3, ref=r + "2 and 2 of 3: malformed-wire of the call, though each message fits its own budget")
+    run("c-list", J, "items-of-all-messages-over-the-limit-after-a-stopped-message", "06010501060502" + "09", error=MW, limit=1, ref=r + "1 and 1 of 1 summed over the two messages that came to their end; the third stops with malformed-wire, its own result, which is no call error, so the sum is checked and fails the call")
     run("c-list", "c-list", "items-of-all-messages-over-the-limit-same-format", "0602050602070809", error=MW, limit=3, ref=r + "the sum holds to a carrier pack too")
     run("c-list", J, "message-over-its-budget", "0302050609", ["!" + MW], limit=1, ref=r + "a count of 2 with a budget of 1: that message's malformed-wire")
     run("outer-list", J, "outer-items-before-the-run-count", "01050106020708", ["{}", "!" + MW], limit=2, ref=r + "the outer list leaves 1 of 2 to each message: 1 fits, 2 does not")

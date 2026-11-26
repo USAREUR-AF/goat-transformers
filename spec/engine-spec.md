@@ -6741,7 +6741,9 @@ convert_run(from, to, bytes, context) -> [result]
    the outer entity, once for each such message, and each message's own items
    are summed. The sum may reach `max_items`; one item more is `malformed-wire`
    of the call. It is checked when the carrier's decode has ended, after every
-   other decode error of the call and before context and encode. The outer
+   other decode error of the call and before context and encode; a message
+   that ends the run with its own error, to a target that is not a carrier
+   pack, is no error of the call, so the sum is still checked. The outer
    entity that `decode_run` gives alone is not counted again.
    `decode` keeps 0.34.
 6. **Carrier pack to carrier pack.** The outer lines are encoded from the

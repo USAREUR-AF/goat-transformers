@@ -1,0 +1,11 @@
+{
+  "name": "items-of-all-messages-over-the-limit-after-a-stopped-message",
+  "from": "conformance-run-c-list",
+  "to": "conformance-run-json",
+  "input": "0601050106050209",
+  "expect_error": "malformed-wire",
+  "run": true,
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.92 ruling 5: 1 and 1 of 1 summed over the two messages that came to their end; the third stops with malformed-wire, its own result, which is no call error, so the sum is checked and fails the call"
+}
