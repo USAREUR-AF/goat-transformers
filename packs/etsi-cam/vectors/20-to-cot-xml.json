@@ -3,15 +3,15 @@
   "from": "etsi-cam",
   "to": "cot-xml",
   "input": "020200003039a028005a4bf4b00e44929803e82587084a3e4c00384120fa0402c08a9453ff61fff8c0",
-  "expect": "<event version=\"2.0\" uid=\"12345\" type=\"a-u-X\"><point hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><track course=\"90\" speed=\"5\"/></detail></event>",
+  "expect": "<event version=\"2.0\" uid=\"12345\" type=\"a-u-X\"><point hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail/></event>",
   "model": {
     "@complete": true,
     "uid": "12345",
     "etsicam.latitude": "482000000",
     "etsicam.longitude": "115000000",
-    "course": "90",
-    "speed_ms": "5"
+    "etsicam.heading_value": "900",
+    "etsicam.speed_value": "500"
   },
   "source": "constructed",
-  "reference": "Input: vector 01 (asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper). uid \"12345\" from stationID by text_of; the cot-xml pack writes the constant version, uid, its default type a-u-X, the point with its defaults 9999999 for hae, ce and le, and detail/track course and speed; time, start, stale and how have no value and no default and are not written. Attributes in field-line order (0.1 canonicalisation). Derived without an engine.; the position is a raw key (pack.md), so none is carried"
+  "reference": "Input: vector 01 (asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper). uid \"12345\" from stationID by text_of; the cot-xml pack writes the constant version, uid, its default type a-u-X, the point with its defaults 9999999 for hae, ce and le, and detail/track course and speed; time, start, stale and how have no value and no default and are not written. Attributes in field-line order (0.1 canonicalisation). Derived without an engine.; the position is a raw key (pack.md), so none is carried; heading and speed too"
 }

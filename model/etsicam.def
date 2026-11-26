@@ -28,6 +28,8 @@ key  longitude                             int  1e-7deg  "ReferencePosition long
 key  altitude_value                        int  cm       "Altitude altitudeValue, AltitudeValue -100000 to 800001 in cm, 0 = referenceEllipsoidSurface; 800001 unavailable"
 key  altitude_confidence                   int  -        "Altitude altitudeConfidence, AltitudeConfidence 0 to 15 (0 alt-000-01 ... 13 alt-200-00, 14 outOfRange, 15 unavailable)"
 # BasicVehicleContainerHighFrequency, mandatory components
+key  heading_value                         int  0.1deg   "Heading headingValue, HeadingValue 0 to 3601 in 0.1 degree, clockwise from WGS 84 north; 3601 = unavailable"
+key  speed_value                           int  0.01m/s  "Speed speedValue, SpeedValue 0 to 16383 in 0.01 m/s; 16383 = unavailable"
 key  heading_confidence                    int  0.1deg   "Heading headingConfidence, HeadingConfidence 1 to 127 in 0.1 degree; 126 outOfRange, 127 unavailable"
 key  speed_confidence                      int  cm/s     "Speed speedConfidence, SpeedConfidence 1 to 127 in cm/s; 126 outOfRange, 127 unavailable"
 key  drive_direction                       int  -        "DriveDirection: 0 forward, 1 backward, 2 unavailable"

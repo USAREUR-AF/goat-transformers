@@ -24,9 +24,9 @@ default  etsicam.semi_minor_confidence                 4095
 default  etsicam.semi_major_orientation                3601
 default  etsicam.altitude_value                        800001
 default  etsicam.altitude_confidence                   15
-default  course                                        360.1
+default  etsicam.heading_value                         3601
 default  etsicam.heading_confidence                    127
-default  speed_ms                                      163.83
+default  etsicam.speed_value                           16383
 default  etsicam.speed_confidence                      127
 default  etsicam.drive_direction                       2
 default  etsicam.vehicle_length_value                  1023
@@ -75,9 +75,9 @@ ext
     alt 0
       # basicVehicleContainerHighFrequency (SEQUENCE, no extension marker)
       presence hf 7
-      field  course                                        int:0:3601        uscale:1/10
+      field  etsicam.heading_value                         int:0:3601        uint
       field  etsicam.heading_confidence                    int:1:127         uint
-      field  speed_ms                                      int:0:16383       uscale:1/100
+      field  etsicam.speed_value                           int:0:16383       uint
       field  etsicam.speed_confidence                      int:1:127         uint
       field  etsicam.drive_direction                       enum:3            uint
       field  etsicam.vehicle_length_value                  int:1:1023        uint
