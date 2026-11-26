@@ -8,260 +8,9 @@ wire          bits
 layout        sequential
 bit_order     msb
 
-kind  validated_train_data
-when  8  129
-length  10  whole                    # L_MESSAGE, bytes of the whole message
-field  etcs.train_t_train  32  uint
-field  etcs.nid_engine  24  uint
-group  etcs.train_packets  rest
-  kind  tp0
-  when  8  0
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp0_q_scale  2  uint
-    field  etcs.tp0_lrbg_nid_c  10  uint
-    field  etcs.tp0_lrbg_nid_bg  14  uint
-    field  etcs.tp0_d_lrbg  15  uint
-    field  etcs.tp0_q_dirlrbg  2  uint
-    field  etcs.tp0_q_dlrbg  2  uint
-    field  etcs.tp0_l_doubtover  15  uint
-    field  etcs.tp0_l_doubtunder  15  uint
-    field  etcs.tp0_q_length  2  uint
-    switch  etcs.tp0_q_length
-      case  1,2
-        field  etcs.tp0_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp0_v_train  7  uint
-    field  etcs.tp0_q_dirtrain  2  uint
-    field  etcs.tp0_m_mode  4  uint
-    field  etcs.tp0_m_level  3  uint
-    switch  etcs.tp0_m_level
-      case  1
-        field  etcs.tp0_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp1
-  when  8  1
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp1_q_scale  2  uint
-    field  etcs.tp1_lrbg_nid_c  10  uint
-    field  etcs.tp1_lrbg_nid_bg  14  uint
-    field  etcs.tp1_prvlrbg_nid_c  10  uint
-    field  etcs.tp1_prvlrbg_nid_bg  14  uint
-    field  etcs.tp1_d_lrbg  15  uint
-    field  etcs.tp1_q_dirlrbg  2  uint
-    field  etcs.tp1_q_dlrbg  2  uint
-    field  etcs.tp1_l_doubtover  15  uint
-    field  etcs.tp1_l_doubtunder  15  uint
-    field  etcs.tp1_q_length  2  uint
-    switch  etcs.tp1_q_length
-      case  1,2
-        field  etcs.tp1_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp1_v_train  7  uint
-    field  etcs.tp1_q_dirtrain  2  uint
-    field  etcs.tp1_m_mode  4  uint
-    field  etcs.tp1_m_level  3  uint
-    switch  etcs.tp1_m_level
-      case  1
-        field  etcs.tp1_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp2
-  when  8  2
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp2_m_version  7  uint
-    group  etcs.tp2_versions  count 5                 # N_ITER
-      field  etcs.tp2_versions_m_version  7  uint
-    end
-  end
-  kind  tp4
-  when  8  4
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp4_m_error  8  uint
-  end
-  kind  tp5
-  when  8  5
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp5_nid_operational  32  uint
-  end
-  kind  tp9
-  when  8  9
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp9_ltrbg_nid_c  10  uint
-    field  etcs.tp9_ltrbg_nid_bg  14  uint
-  end
-  kind  tp11
-  when  8  11
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp11_nc_cdtrain  4  uint
-    field  etcs.tp11_nc_train  15  uint
-    field  etcs.tp11_l_train  12  uint
-    field  etcs.tp11_v_maxtrain  7  uint
-    field  etcs.tp11_m_loadinggauge  8  uint
-    field  etcs.tp11_m_axleloadcat  7  uint
-    field  etcs.tp11_m_airtight  2  uint
-    field  etcs.tp11_n_axle  10  uint
-    group  etcs.tp11_tractions  count 5                 # N_ITER
-      field  etcs.tp11_tractions_m_voltage  4  uint
-      switch  etcs.tp11_tractions_m_voltage
-        case  0
-        else
-          field  etcs.tp11_tractions_nid_ctraction  10  uint
-      end
-    end
-    group  etcs.tp11_ntcs  count 5                 # N_ITER
-      field  etcs.tp11_ntcs_nid_ntc  8  uint
-    end
-  end
-  kind  tp44
-  when  8  44
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp44_nid_xuser  9  uint
-    group  etcs.tp44_data  rest
-      field  etcs.tp44_data_bit  1  uint
-    end
-  end
-  kind  tother
-  field  etcs.train_nid_packet  8  uint
-  length  13  bits  plus 21
-    group  etcs.train_other_packet_bits  rest
-      field  etcs.train_other_packet_bit  1  uint
-    end
-  end
-end
-
-kind  request_for_shunting
-when  8  130
-length  10  whole                    # L_MESSAGE, bytes of the whole message
-field  etcs.train_t_train  32  uint
-field  etcs.nid_engine  24  uint
-group  etcs.train_packets  rest
-  kind  tp0
-  when  8  0
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp0_q_scale  2  uint
-    field  etcs.tp0_lrbg_nid_c  10  uint
-    field  etcs.tp0_lrbg_nid_bg  14  uint
-    field  etcs.tp0_d_lrbg  15  uint
-    field  etcs.tp0_q_dirlrbg  2  uint
-    field  etcs.tp0_q_dlrbg  2  uint
-    field  etcs.tp0_l_doubtover  15  uint
-    field  etcs.tp0_l_doubtunder  15  uint
-    field  etcs.tp0_q_length  2  uint
-    switch  etcs.tp0_q_length
-      case  1,2
-        field  etcs.tp0_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp0_v_train  7  uint
-    field  etcs.tp0_q_dirtrain  2  uint
-    field  etcs.tp0_m_mode  4  uint
-    field  etcs.tp0_m_level  3  uint
-    switch  etcs.tp0_m_level
-      case  1
-        field  etcs.tp0_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp1
-  when  8  1
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp1_q_scale  2  uint
-    field  etcs.tp1_lrbg_nid_c  10  uint
-    field  etcs.tp1_lrbg_nid_bg  14  uint
-    field  etcs.tp1_prvlrbg_nid_c  10  uint
-    field  etcs.tp1_prvlrbg_nid_bg  14  uint
-    field  etcs.tp1_d_lrbg  15  uint
-    field  etcs.tp1_q_dirlrbg  2  uint
-    field  etcs.tp1_q_dlrbg  2  uint
-    field  etcs.tp1_l_doubtover  15  uint
-    field  etcs.tp1_l_doubtunder  15  uint
-    field  etcs.tp1_q_length  2  uint
-    switch  etcs.tp1_q_length
-      case  1,2
-        field  etcs.tp1_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp1_v_train  7  uint
-    field  etcs.tp1_q_dirtrain  2  uint
-    field  etcs.tp1_m_mode  4  uint
-    field  etcs.tp1_m_level  3  uint
-    switch  etcs.tp1_m_level
-      case  1
-        field  etcs.tp1_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp2
-  when  8  2
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp2_m_version  7  uint
-    group  etcs.tp2_versions  count 5                 # N_ITER
-      field  etcs.tp2_versions_m_version  7  uint
-    end
-  end
-  kind  tp4
-  when  8  4
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp4_m_error  8  uint
-  end
-  kind  tp5
-  when  8  5
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp5_nid_operational  32  uint
-  end
-  kind  tp9
-  when  8  9
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp9_ltrbg_nid_c  10  uint
-    field  etcs.tp9_ltrbg_nid_bg  14  uint
-  end
-  kind  tp11
-  when  8  11
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp11_nc_cdtrain  4  uint
-    field  etcs.tp11_nc_train  15  uint
-    field  etcs.tp11_l_train  12  uint
-    field  etcs.tp11_v_maxtrain  7  uint
-    field  etcs.tp11_m_loadinggauge  8  uint
-    field  etcs.tp11_m_axleloadcat  7  uint
-    field  etcs.tp11_m_airtight  2  uint
-    field  etcs.tp11_n_axle  10  uint
-    group  etcs.tp11_tractions  count 5                 # N_ITER
-      field  etcs.tp11_tractions_m_voltage  4  uint
-      switch  etcs.tp11_tractions_m_voltage
-        case  0
-        else
-          field  etcs.tp11_tractions_nid_ctraction  10  uint
-      end
-    end
-    group  etcs.tp11_ntcs  count 5                 # N_ITER
-      field  etcs.tp11_ntcs_nid_ntc  8  uint
-    end
-  end
-  kind  tp44
-  when  8  44
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp44_nid_xuser  9  uint
-    group  etcs.tp44_data  rest
-      field  etcs.tp44_data_bit  1  uint
-    end
-  end
-  kind  tother
-  field  etcs.train_nid_packet  8  uint
-  length  13  bits  plus 21
-    group  etcs.train_other_packet_bits  rest
-      field  etcs.train_other_packet_bit  1  uint
-    end
-  end
-end
-
 kind  ma_request
 when  8  132
+requires  etcs.tm132_q_marqstreason
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
@@ -387,134 +136,9 @@ group  etcs.train_packets  rest
   end
 end
 
-kind  train_position_report
-when  8  136
-length  10  whole                    # L_MESSAGE, bytes of the whole message
-field  etcs.train_t_train  32  uint
-field  etcs.nid_engine  24  uint
-group  etcs.train_packets  rest
-  kind  tp0
-  when  8  0
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp0_q_scale  2  uint
-    field  etcs.tp0_lrbg_nid_c  10  uint
-    field  etcs.tp0_lrbg_nid_bg  14  uint
-    field  etcs.tp0_d_lrbg  15  uint
-    field  etcs.tp0_q_dirlrbg  2  uint
-    field  etcs.tp0_q_dlrbg  2  uint
-    field  etcs.tp0_l_doubtover  15  uint
-    field  etcs.tp0_l_doubtunder  15  uint
-    field  etcs.tp0_q_length  2  uint
-    switch  etcs.tp0_q_length
-      case  1,2
-        field  etcs.tp0_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp0_v_train  7  uint
-    field  etcs.tp0_q_dirtrain  2  uint
-    field  etcs.tp0_m_mode  4  uint
-    field  etcs.tp0_m_level  3  uint
-    switch  etcs.tp0_m_level
-      case  1
-        field  etcs.tp0_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp1
-  when  8  1
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp1_q_scale  2  uint
-    field  etcs.tp1_lrbg_nid_c  10  uint
-    field  etcs.tp1_lrbg_nid_bg  14  uint
-    field  etcs.tp1_prvlrbg_nid_c  10  uint
-    field  etcs.tp1_prvlrbg_nid_bg  14  uint
-    field  etcs.tp1_d_lrbg  15  uint
-    field  etcs.tp1_q_dirlrbg  2  uint
-    field  etcs.tp1_q_dlrbg  2  uint
-    field  etcs.tp1_l_doubtover  15  uint
-    field  etcs.tp1_l_doubtunder  15  uint
-    field  etcs.tp1_q_length  2  uint
-    switch  etcs.tp1_q_length
-      case  1,2
-        field  etcs.tp1_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp1_v_train  7  uint
-    field  etcs.tp1_q_dirtrain  2  uint
-    field  etcs.tp1_m_mode  4  uint
-    field  etcs.tp1_m_level  3  uint
-    switch  etcs.tp1_m_level
-      case  1
-        field  etcs.tp1_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp2
-  when  8  2
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp2_m_version  7  uint
-    group  etcs.tp2_versions  count 5                 # N_ITER
-      field  etcs.tp2_versions_m_version  7  uint
-    end
-  end
-  kind  tp4
-  when  8  4
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp4_m_error  8  uint
-  end
-  kind  tp5
-  when  8  5
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp5_nid_operational  32  uint
-  end
-  kind  tp9
-  when  8  9
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp9_ltrbg_nid_c  10  uint
-    field  etcs.tp9_ltrbg_nid_bg  14  uint
-  end
-  kind  tp11
-  when  8  11
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp11_nc_cdtrain  4  uint
-    field  etcs.tp11_nc_train  15  uint
-    field  etcs.tp11_l_train  12  uint
-    field  etcs.tp11_v_maxtrain  7  uint
-    field  etcs.tp11_m_loadinggauge  8  uint
-    field  etcs.tp11_m_axleloadcat  7  uint
-    field  etcs.tp11_m_airtight  2  uint
-    field  etcs.tp11_n_axle  10  uint
-    group  etcs.tp11_tractions  count 5                 # N_ITER
-      field  etcs.tp11_tractions_m_voltage  4  uint
-      switch  etcs.tp11_tractions_m_voltage
-        case  0
-        else
-          field  etcs.tp11_tractions_nid_ctraction  10  uint
-      end
-    end
-    group  etcs.tp11_ntcs  count 5                 # N_ITER
-      field  etcs.tp11_ntcs_nid_ntc  8  uint
-    end
-  end
-  kind  tp44
-  when  8  44
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp44_nid_xuser  9  uint
-    group  etcs.tp44_data  rest
-      field  etcs.tp44_data_bit  1  uint
-    end
-  end
-  kind  tother
-  field  etcs.train_nid_packet  8  uint
-  length  13  bits  plus 21
-    group  etcs.train_other_packet_bits  rest
-      field  etcs.train_other_packet_bit  1  uint
-    end
-  end
-end
-
 kind  shorten_ma_granted
 when  8  137
+requires  etcs.tm137_t_train
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
@@ -642,6 +266,7 @@ end
 
 kind  shorten_ma_rejected
 when  8  138
+requires  etcs.tm138_t_train
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
@@ -769,6 +394,7 @@ end
 
 kind  acknowledgement
 when  8  146
+requires  etcs.tm146_t_train
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
@@ -896,6 +522,7 @@ end
 
 kind  emergency_stop_acknowledgement
 when  8  147
+requires  etcs.tm147_nid_em
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
@@ -1022,260 +649,9 @@ group  etcs.train_packets  rest
   end
 end
 
-kind  track_ahead_free_granted
-when  8  149
-length  10  whole                    # L_MESSAGE, bytes of the whole message
-field  etcs.train_t_train  32  uint
-field  etcs.nid_engine  24  uint
-group  etcs.train_packets  rest
-  kind  tp0
-  when  8  0
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp0_q_scale  2  uint
-    field  etcs.tp0_lrbg_nid_c  10  uint
-    field  etcs.tp0_lrbg_nid_bg  14  uint
-    field  etcs.tp0_d_lrbg  15  uint
-    field  etcs.tp0_q_dirlrbg  2  uint
-    field  etcs.tp0_q_dlrbg  2  uint
-    field  etcs.tp0_l_doubtover  15  uint
-    field  etcs.tp0_l_doubtunder  15  uint
-    field  etcs.tp0_q_length  2  uint
-    switch  etcs.tp0_q_length
-      case  1,2
-        field  etcs.tp0_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp0_v_train  7  uint
-    field  etcs.tp0_q_dirtrain  2  uint
-    field  etcs.tp0_m_mode  4  uint
-    field  etcs.tp0_m_level  3  uint
-    switch  etcs.tp0_m_level
-      case  1
-        field  etcs.tp0_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp1
-  when  8  1
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp1_q_scale  2  uint
-    field  etcs.tp1_lrbg_nid_c  10  uint
-    field  etcs.tp1_lrbg_nid_bg  14  uint
-    field  etcs.tp1_prvlrbg_nid_c  10  uint
-    field  etcs.tp1_prvlrbg_nid_bg  14  uint
-    field  etcs.tp1_d_lrbg  15  uint
-    field  etcs.tp1_q_dirlrbg  2  uint
-    field  etcs.tp1_q_dlrbg  2  uint
-    field  etcs.tp1_l_doubtover  15  uint
-    field  etcs.tp1_l_doubtunder  15  uint
-    field  etcs.tp1_q_length  2  uint
-    switch  etcs.tp1_q_length
-      case  1,2
-        field  etcs.tp1_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp1_v_train  7  uint
-    field  etcs.tp1_q_dirtrain  2  uint
-    field  etcs.tp1_m_mode  4  uint
-    field  etcs.tp1_m_level  3  uint
-    switch  etcs.tp1_m_level
-      case  1
-        field  etcs.tp1_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp2
-  when  8  2
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp2_m_version  7  uint
-    group  etcs.tp2_versions  count 5                 # N_ITER
-      field  etcs.tp2_versions_m_version  7  uint
-    end
-  end
-  kind  tp4
-  when  8  4
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp4_m_error  8  uint
-  end
-  kind  tp5
-  when  8  5
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp5_nid_operational  32  uint
-  end
-  kind  tp9
-  when  8  9
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp9_ltrbg_nid_c  10  uint
-    field  etcs.tp9_ltrbg_nid_bg  14  uint
-  end
-  kind  tp11
-  when  8  11
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp11_nc_cdtrain  4  uint
-    field  etcs.tp11_nc_train  15  uint
-    field  etcs.tp11_l_train  12  uint
-    field  etcs.tp11_v_maxtrain  7  uint
-    field  etcs.tp11_m_loadinggauge  8  uint
-    field  etcs.tp11_m_axleloadcat  7  uint
-    field  etcs.tp11_m_airtight  2  uint
-    field  etcs.tp11_n_axle  10  uint
-    group  etcs.tp11_tractions  count 5                 # N_ITER
-      field  etcs.tp11_tractions_m_voltage  4  uint
-      switch  etcs.tp11_tractions_m_voltage
-        case  0
-        else
-          field  etcs.tp11_tractions_nid_ctraction  10  uint
-      end
-    end
-    group  etcs.tp11_ntcs  count 5                 # N_ITER
-      field  etcs.tp11_ntcs_nid_ntc  8  uint
-    end
-  end
-  kind  tp44
-  when  8  44
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp44_nid_xuser  9  uint
-    group  etcs.tp44_data  rest
-      field  etcs.tp44_data_bit  1  uint
-    end
-  end
-  kind  tother
-  field  etcs.train_nid_packet  8  uint
-  length  13  bits  plus 21
-    group  etcs.train_other_packet_bits  rest
-      field  etcs.train_other_packet_bit  1  uint
-    end
-  end
-end
-
-kind  end_of_mission
-when  8  150
-length  10  whole                    # L_MESSAGE, bytes of the whole message
-field  etcs.train_t_train  32  uint
-field  etcs.nid_engine  24  uint
-group  etcs.train_packets  rest
-  kind  tp0
-  when  8  0
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp0_q_scale  2  uint
-    field  etcs.tp0_lrbg_nid_c  10  uint
-    field  etcs.tp0_lrbg_nid_bg  14  uint
-    field  etcs.tp0_d_lrbg  15  uint
-    field  etcs.tp0_q_dirlrbg  2  uint
-    field  etcs.tp0_q_dlrbg  2  uint
-    field  etcs.tp0_l_doubtover  15  uint
-    field  etcs.tp0_l_doubtunder  15  uint
-    field  etcs.tp0_q_length  2  uint
-    switch  etcs.tp0_q_length
-      case  1,2
-        field  etcs.tp0_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp0_v_train  7  uint
-    field  etcs.tp0_q_dirtrain  2  uint
-    field  etcs.tp0_m_mode  4  uint
-    field  etcs.tp0_m_level  3  uint
-    switch  etcs.tp0_m_level
-      case  1
-        field  etcs.tp0_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp1
-  when  8  1
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp1_q_scale  2  uint
-    field  etcs.tp1_lrbg_nid_c  10  uint
-    field  etcs.tp1_lrbg_nid_bg  14  uint
-    field  etcs.tp1_prvlrbg_nid_c  10  uint
-    field  etcs.tp1_prvlrbg_nid_bg  14  uint
-    field  etcs.tp1_d_lrbg  15  uint
-    field  etcs.tp1_q_dirlrbg  2  uint
-    field  etcs.tp1_q_dlrbg  2  uint
-    field  etcs.tp1_l_doubtover  15  uint
-    field  etcs.tp1_l_doubtunder  15  uint
-    field  etcs.tp1_q_length  2  uint
-    switch  etcs.tp1_q_length
-      case  1,2
-        field  etcs.tp1_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp1_v_train  7  uint
-    field  etcs.tp1_q_dirtrain  2  uint
-    field  etcs.tp1_m_mode  4  uint
-    field  etcs.tp1_m_level  3  uint
-    switch  etcs.tp1_m_level
-      case  1
-        field  etcs.tp1_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp2
-  when  8  2
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp2_m_version  7  uint
-    group  etcs.tp2_versions  count 5                 # N_ITER
-      field  etcs.tp2_versions_m_version  7  uint
-    end
-  end
-  kind  tp4
-  when  8  4
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp4_m_error  8  uint
-  end
-  kind  tp5
-  when  8  5
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp5_nid_operational  32  uint
-  end
-  kind  tp9
-  when  8  9
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp9_ltrbg_nid_c  10  uint
-    field  etcs.tp9_ltrbg_nid_bg  14  uint
-  end
-  kind  tp11
-  when  8  11
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp11_nc_cdtrain  4  uint
-    field  etcs.tp11_nc_train  15  uint
-    field  etcs.tp11_l_train  12  uint
-    field  etcs.tp11_v_maxtrain  7  uint
-    field  etcs.tp11_m_loadinggauge  8  uint
-    field  etcs.tp11_m_axleloadcat  7  uint
-    field  etcs.tp11_m_airtight  2  uint
-    field  etcs.tp11_n_axle  10  uint
-    group  etcs.tp11_tractions  count 5                 # N_ITER
-      field  etcs.tp11_tractions_m_voltage  4  uint
-      switch  etcs.tp11_tractions_m_voltage
-        case  0
-        else
-          field  etcs.tp11_tractions_nid_ctraction  10  uint
-      end
-    end
-    group  etcs.tp11_ntcs  count 5                 # N_ITER
-      field  etcs.tp11_ntcs_nid_ntc  8  uint
-    end
-  end
-  kind  tp44
-  when  8  44
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp44_nid_xuser  9  uint
-    group  etcs.tp44_data  rest
-      field  etcs.tp44_data_bit  1  uint
-    end
-  end
-  kind  tother
-  field  etcs.train_nid_packet  8  uint
-  length  13  bits  plus 21
-    group  etcs.train_other_packet_bits  rest
-      field  etcs.train_other_packet_bit  1  uint
-    end
-  end
-end
-
 kind  radio_infill_request
 when  8  153
+requires  etcs.tm153_nid_c
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
@@ -1403,386 +779,9 @@ group  etcs.train_packets  rest
   end
 end
 
-kind  no_compatible_version
-when  8  154
-length  10  whole                    # L_MESSAGE, bytes of the whole message
-field  etcs.train_t_train  32  uint
-field  etcs.nid_engine  24  uint
-group  etcs.train_packets  rest
-  kind  tp0
-  when  8  0
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp0_q_scale  2  uint
-    field  etcs.tp0_lrbg_nid_c  10  uint
-    field  etcs.tp0_lrbg_nid_bg  14  uint
-    field  etcs.tp0_d_lrbg  15  uint
-    field  etcs.tp0_q_dirlrbg  2  uint
-    field  etcs.tp0_q_dlrbg  2  uint
-    field  etcs.tp0_l_doubtover  15  uint
-    field  etcs.tp0_l_doubtunder  15  uint
-    field  etcs.tp0_q_length  2  uint
-    switch  etcs.tp0_q_length
-      case  1,2
-        field  etcs.tp0_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp0_v_train  7  uint
-    field  etcs.tp0_q_dirtrain  2  uint
-    field  etcs.tp0_m_mode  4  uint
-    field  etcs.tp0_m_level  3  uint
-    switch  etcs.tp0_m_level
-      case  1
-        field  etcs.tp0_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp1
-  when  8  1
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp1_q_scale  2  uint
-    field  etcs.tp1_lrbg_nid_c  10  uint
-    field  etcs.tp1_lrbg_nid_bg  14  uint
-    field  etcs.tp1_prvlrbg_nid_c  10  uint
-    field  etcs.tp1_prvlrbg_nid_bg  14  uint
-    field  etcs.tp1_d_lrbg  15  uint
-    field  etcs.tp1_q_dirlrbg  2  uint
-    field  etcs.tp1_q_dlrbg  2  uint
-    field  etcs.tp1_l_doubtover  15  uint
-    field  etcs.tp1_l_doubtunder  15  uint
-    field  etcs.tp1_q_length  2  uint
-    switch  etcs.tp1_q_length
-      case  1,2
-        field  etcs.tp1_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp1_v_train  7  uint
-    field  etcs.tp1_q_dirtrain  2  uint
-    field  etcs.tp1_m_mode  4  uint
-    field  etcs.tp1_m_level  3  uint
-    switch  etcs.tp1_m_level
-      case  1
-        field  etcs.tp1_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp2
-  when  8  2
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp2_m_version  7  uint
-    group  etcs.tp2_versions  count 5                 # N_ITER
-      field  etcs.tp2_versions_m_version  7  uint
-    end
-  end
-  kind  tp4
-  when  8  4
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp4_m_error  8  uint
-  end
-  kind  tp5
-  when  8  5
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp5_nid_operational  32  uint
-  end
-  kind  tp9
-  when  8  9
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp9_ltrbg_nid_c  10  uint
-    field  etcs.tp9_ltrbg_nid_bg  14  uint
-  end
-  kind  tp11
-  when  8  11
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp11_nc_cdtrain  4  uint
-    field  etcs.tp11_nc_train  15  uint
-    field  etcs.tp11_l_train  12  uint
-    field  etcs.tp11_v_maxtrain  7  uint
-    field  etcs.tp11_m_loadinggauge  8  uint
-    field  etcs.tp11_m_axleloadcat  7  uint
-    field  etcs.tp11_m_airtight  2  uint
-    field  etcs.tp11_n_axle  10  uint
-    group  etcs.tp11_tractions  count 5                 # N_ITER
-      field  etcs.tp11_tractions_m_voltage  4  uint
-      switch  etcs.tp11_tractions_m_voltage
-        case  0
-        else
-          field  etcs.tp11_tractions_nid_ctraction  10  uint
-      end
-    end
-    group  etcs.tp11_ntcs  count 5                 # N_ITER
-      field  etcs.tp11_ntcs_nid_ntc  8  uint
-    end
-  end
-  kind  tp44
-  when  8  44
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp44_nid_xuser  9  uint
-    group  etcs.tp44_data  rest
-      field  etcs.tp44_data_bit  1  uint
-    end
-  end
-  kind  tother
-  field  etcs.train_nid_packet  8  uint
-  length  13  bits  plus 21
-    group  etcs.train_other_packet_bits  rest
-      field  etcs.train_other_packet_bit  1  uint
-    end
-  end
-end
-
-kind  session_initiation
-when  8  155
-length  10  whole                    # L_MESSAGE, bytes of the whole message
-field  etcs.train_t_train  32  uint
-field  etcs.nid_engine  24  uint
-group  etcs.train_packets  rest
-  kind  tp0
-  when  8  0
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp0_q_scale  2  uint
-    field  etcs.tp0_lrbg_nid_c  10  uint
-    field  etcs.tp0_lrbg_nid_bg  14  uint
-    field  etcs.tp0_d_lrbg  15  uint
-    field  etcs.tp0_q_dirlrbg  2  uint
-    field  etcs.tp0_q_dlrbg  2  uint
-    field  etcs.tp0_l_doubtover  15  uint
-    field  etcs.tp0_l_doubtunder  15  uint
-    field  etcs.tp0_q_length  2  uint
-    switch  etcs.tp0_q_length
-      case  1,2
-        field  etcs.tp0_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp0_v_train  7  uint
-    field  etcs.tp0_q_dirtrain  2  uint
-    field  etcs.tp0_m_mode  4  uint
-    field  etcs.tp0_m_level  3  uint
-    switch  etcs.tp0_m_level
-      case  1
-        field  etcs.tp0_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp1
-  when  8  1
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp1_q_scale  2  uint
-    field  etcs.tp1_lrbg_nid_c  10  uint
-    field  etcs.tp1_lrbg_nid_bg  14  uint
-    field  etcs.tp1_prvlrbg_nid_c  10  uint
-    field  etcs.tp1_prvlrbg_nid_bg  14  uint
-    field  etcs.tp1_d_lrbg  15  uint
-    field  etcs.tp1_q_dirlrbg  2  uint
-    field  etcs.tp1_q_dlrbg  2  uint
-    field  etcs.tp1_l_doubtover  15  uint
-    field  etcs.tp1_l_doubtunder  15  uint
-    field  etcs.tp1_q_length  2  uint
-    switch  etcs.tp1_q_length
-      case  1,2
-        field  etcs.tp1_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp1_v_train  7  uint
-    field  etcs.tp1_q_dirtrain  2  uint
-    field  etcs.tp1_m_mode  4  uint
-    field  etcs.tp1_m_level  3  uint
-    switch  etcs.tp1_m_level
-      case  1
-        field  etcs.tp1_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp2
-  when  8  2
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp2_m_version  7  uint
-    group  etcs.tp2_versions  count 5                 # N_ITER
-      field  etcs.tp2_versions_m_version  7  uint
-    end
-  end
-  kind  tp4
-  when  8  4
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp4_m_error  8  uint
-  end
-  kind  tp5
-  when  8  5
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp5_nid_operational  32  uint
-  end
-  kind  tp9
-  when  8  9
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp9_ltrbg_nid_c  10  uint
-    field  etcs.tp9_ltrbg_nid_bg  14  uint
-  end
-  kind  tp11
-  when  8  11
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp11_nc_cdtrain  4  uint
-    field  etcs.tp11_nc_train  15  uint
-    field  etcs.tp11_l_train  12  uint
-    field  etcs.tp11_v_maxtrain  7  uint
-    field  etcs.tp11_m_loadinggauge  8  uint
-    field  etcs.tp11_m_axleloadcat  7  uint
-    field  etcs.tp11_m_airtight  2  uint
-    field  etcs.tp11_n_axle  10  uint
-    group  etcs.tp11_tractions  count 5                 # N_ITER
-      field  etcs.tp11_tractions_m_voltage  4  uint
-      switch  etcs.tp11_tractions_m_voltage
-        case  0
-        else
-          field  etcs.tp11_tractions_nid_ctraction  10  uint
-      end
-    end
-    group  etcs.tp11_ntcs  count 5                 # N_ITER
-      field  etcs.tp11_ntcs_nid_ntc  8  uint
-    end
-  end
-  kind  tp44
-  when  8  44
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp44_nid_xuser  9  uint
-    group  etcs.tp44_data  rest
-      field  etcs.tp44_data_bit  1  uint
-    end
-  end
-  kind  tother
-  field  etcs.train_nid_packet  8  uint
-  length  13  bits  plus 21
-    group  etcs.train_other_packet_bits  rest
-      field  etcs.train_other_packet_bit  1  uint
-    end
-  end
-end
-
-kind  session_termination
-when  8  156
-length  10  whole                    # L_MESSAGE, bytes of the whole message
-field  etcs.train_t_train  32  uint
-field  etcs.nid_engine  24  uint
-group  etcs.train_packets  rest
-  kind  tp0
-  when  8  0
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp0_q_scale  2  uint
-    field  etcs.tp0_lrbg_nid_c  10  uint
-    field  etcs.tp0_lrbg_nid_bg  14  uint
-    field  etcs.tp0_d_lrbg  15  uint
-    field  etcs.tp0_q_dirlrbg  2  uint
-    field  etcs.tp0_q_dlrbg  2  uint
-    field  etcs.tp0_l_doubtover  15  uint
-    field  etcs.tp0_l_doubtunder  15  uint
-    field  etcs.tp0_q_length  2  uint
-    switch  etcs.tp0_q_length
-      case  1,2
-        field  etcs.tp0_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp0_v_train  7  uint
-    field  etcs.tp0_q_dirtrain  2  uint
-    field  etcs.tp0_m_mode  4  uint
-    field  etcs.tp0_m_level  3  uint
-    switch  etcs.tp0_m_level
-      case  1
-        field  etcs.tp0_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp1
-  when  8  1
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp1_q_scale  2  uint
-    field  etcs.tp1_lrbg_nid_c  10  uint
-    field  etcs.tp1_lrbg_nid_bg  14  uint
-    field  etcs.tp1_prvlrbg_nid_c  10  uint
-    field  etcs.tp1_prvlrbg_nid_bg  14  uint
-    field  etcs.tp1_d_lrbg  15  uint
-    field  etcs.tp1_q_dirlrbg  2  uint
-    field  etcs.tp1_q_dlrbg  2  uint
-    field  etcs.tp1_l_doubtover  15  uint
-    field  etcs.tp1_l_doubtunder  15  uint
-    field  etcs.tp1_q_length  2  uint
-    switch  etcs.tp1_q_length
-      case  1,2
-        field  etcs.tp1_l_trainint  15  uint
-      else
-    end
-    field  etcs.tp1_v_train  7  uint
-    field  etcs.tp1_q_dirtrain  2  uint
-    field  etcs.tp1_m_mode  4  uint
-    field  etcs.tp1_m_level  3  uint
-    switch  etcs.tp1_m_level
-      case  1
-        field  etcs.tp1_nid_ntc  8  uint
-      else
-    end
-  end
-  kind  tp2
-  when  8  2
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp2_m_version  7  uint
-    group  etcs.tp2_versions  count 5                 # N_ITER
-      field  etcs.tp2_versions_m_version  7  uint
-    end
-  end
-  kind  tp4
-  when  8  4
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp4_m_error  8  uint
-  end
-  kind  tp5
-  when  8  5
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp5_nid_operational  32  uint
-  end
-  kind  tp9
-  when  8  9
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp9_ltrbg_nid_c  10  uint
-    field  etcs.tp9_ltrbg_nid_bg  14  uint
-  end
-  kind  tp11
-  when  8  11
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp11_nc_cdtrain  4  uint
-    field  etcs.tp11_nc_train  15  uint
-    field  etcs.tp11_l_train  12  uint
-    field  etcs.tp11_v_maxtrain  7  uint
-    field  etcs.tp11_m_loadinggauge  8  uint
-    field  etcs.tp11_m_axleloadcat  7  uint
-    field  etcs.tp11_m_airtight  2  uint
-    field  etcs.tp11_n_axle  10  uint
-    group  etcs.tp11_tractions  count 5                 # N_ITER
-      field  etcs.tp11_tractions_m_voltage  4  uint
-      switch  etcs.tp11_tractions_m_voltage
-        case  0
-        else
-          field  etcs.tp11_tractions_nid_ctraction  10  uint
-      end
-    end
-    group  etcs.tp11_ntcs  count 5                 # N_ITER
-      field  etcs.tp11_ntcs_nid_ntc  8  uint
-    end
-  end
-  kind  tp44
-  when  8  44
-  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
-    field  etcs.tp44_nid_xuser  9  uint
-    group  etcs.tp44_data  rest
-      field  etcs.tp44_data_bit  1  uint
-    end
-  end
-  kind  tother
-  field  etcs.train_nid_packet  8  uint
-  length  13  bits  plus 21
-    group  etcs.train_other_packet_bits  rest
-      field  etcs.train_other_packet_bit  1  uint
-    end
-  end
-end
-
 kind  som_position_report
 when  8  157
+requires  etcs.tm157_q_status
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
@@ -1910,6 +909,7 @@ end
 
 kind  text_message_acknowledged
 when  8  158
+requires  etcs.tm158_nid_textmessage
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
@@ -2035,8 +1035,1025 @@ group  etcs.train_packets  rest
   end
 end
 
+kind  validated_train_data
+when  8  129
+requires  etcs.train_t_train
+length  10  whole                    # L_MESSAGE, bytes of the whole message
+field  etcs.train_t_train  32  uint
+field  etcs.nid_engine  24  uint
+group  etcs.train_packets  rest
+  kind  tp0
+  when  8  0
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp0_q_scale  2  uint
+    field  etcs.tp0_lrbg_nid_c  10  uint
+    field  etcs.tp0_lrbg_nid_bg  14  uint
+    field  etcs.tp0_d_lrbg  15  uint
+    field  etcs.tp0_q_dirlrbg  2  uint
+    field  etcs.tp0_q_dlrbg  2  uint
+    field  etcs.tp0_l_doubtover  15  uint
+    field  etcs.tp0_l_doubtunder  15  uint
+    field  etcs.tp0_q_length  2  uint
+    switch  etcs.tp0_q_length
+      case  1,2
+        field  etcs.tp0_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp0_v_train  7  uint
+    field  etcs.tp0_q_dirtrain  2  uint
+    field  etcs.tp0_m_mode  4  uint
+    field  etcs.tp0_m_level  3  uint
+    switch  etcs.tp0_m_level
+      case  1
+        field  etcs.tp0_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp1
+  when  8  1
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp1_q_scale  2  uint
+    field  etcs.tp1_lrbg_nid_c  10  uint
+    field  etcs.tp1_lrbg_nid_bg  14  uint
+    field  etcs.tp1_prvlrbg_nid_c  10  uint
+    field  etcs.tp1_prvlrbg_nid_bg  14  uint
+    field  etcs.tp1_d_lrbg  15  uint
+    field  etcs.tp1_q_dirlrbg  2  uint
+    field  etcs.tp1_q_dlrbg  2  uint
+    field  etcs.tp1_l_doubtover  15  uint
+    field  etcs.tp1_l_doubtunder  15  uint
+    field  etcs.tp1_q_length  2  uint
+    switch  etcs.tp1_q_length
+      case  1,2
+        field  etcs.tp1_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp1_v_train  7  uint
+    field  etcs.tp1_q_dirtrain  2  uint
+    field  etcs.tp1_m_mode  4  uint
+    field  etcs.tp1_m_level  3  uint
+    switch  etcs.tp1_m_level
+      case  1
+        field  etcs.tp1_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp2
+  when  8  2
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp2_m_version  7  uint
+    group  etcs.tp2_versions  count 5                 # N_ITER
+      field  etcs.tp2_versions_m_version  7  uint
+    end
+  end
+  kind  tp4
+  when  8  4
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp4_m_error  8  uint
+  end
+  kind  tp5
+  when  8  5
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp5_nid_operational  32  uint
+  end
+  kind  tp9
+  when  8  9
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp9_ltrbg_nid_c  10  uint
+    field  etcs.tp9_ltrbg_nid_bg  14  uint
+  end
+  kind  tp11
+  when  8  11
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp11_nc_cdtrain  4  uint
+    field  etcs.tp11_nc_train  15  uint
+    field  etcs.tp11_l_train  12  uint
+    field  etcs.tp11_v_maxtrain  7  uint
+    field  etcs.tp11_m_loadinggauge  8  uint
+    field  etcs.tp11_m_axleloadcat  7  uint
+    field  etcs.tp11_m_airtight  2  uint
+    field  etcs.tp11_n_axle  10  uint
+    group  etcs.tp11_tractions  count 5                 # N_ITER
+      field  etcs.tp11_tractions_m_voltage  4  uint
+      switch  etcs.tp11_tractions_m_voltage
+        case  0
+        else
+          field  etcs.tp11_tractions_nid_ctraction  10  uint
+      end
+    end
+    group  etcs.tp11_ntcs  count 5                 # N_ITER
+      field  etcs.tp11_ntcs_nid_ntc  8  uint
+    end
+  end
+  kind  tp44
+  when  8  44
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp44_nid_xuser  9  uint
+    group  etcs.tp44_data  rest
+      field  etcs.tp44_data_bit  1  uint
+    end
+  end
+  kind  tother
+  field  etcs.train_nid_packet  8  uint
+  length  13  bits  plus 21
+    group  etcs.train_other_packet_bits  rest
+      field  etcs.train_other_packet_bit  1  uint
+    end
+  end
+end
+
+kind  request_for_shunting
+when  8  130
+requires  etcs.train_t_train
+length  10  whole                    # L_MESSAGE, bytes of the whole message
+field  etcs.train_t_train  32  uint
+field  etcs.nid_engine  24  uint
+group  etcs.train_packets  rest
+  kind  tp0
+  when  8  0
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp0_q_scale  2  uint
+    field  etcs.tp0_lrbg_nid_c  10  uint
+    field  etcs.tp0_lrbg_nid_bg  14  uint
+    field  etcs.tp0_d_lrbg  15  uint
+    field  etcs.tp0_q_dirlrbg  2  uint
+    field  etcs.tp0_q_dlrbg  2  uint
+    field  etcs.tp0_l_doubtover  15  uint
+    field  etcs.tp0_l_doubtunder  15  uint
+    field  etcs.tp0_q_length  2  uint
+    switch  etcs.tp0_q_length
+      case  1,2
+        field  etcs.tp0_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp0_v_train  7  uint
+    field  etcs.tp0_q_dirtrain  2  uint
+    field  etcs.tp0_m_mode  4  uint
+    field  etcs.tp0_m_level  3  uint
+    switch  etcs.tp0_m_level
+      case  1
+        field  etcs.tp0_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp1
+  when  8  1
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp1_q_scale  2  uint
+    field  etcs.tp1_lrbg_nid_c  10  uint
+    field  etcs.tp1_lrbg_nid_bg  14  uint
+    field  etcs.tp1_prvlrbg_nid_c  10  uint
+    field  etcs.tp1_prvlrbg_nid_bg  14  uint
+    field  etcs.tp1_d_lrbg  15  uint
+    field  etcs.tp1_q_dirlrbg  2  uint
+    field  etcs.tp1_q_dlrbg  2  uint
+    field  etcs.tp1_l_doubtover  15  uint
+    field  etcs.tp1_l_doubtunder  15  uint
+    field  etcs.tp1_q_length  2  uint
+    switch  etcs.tp1_q_length
+      case  1,2
+        field  etcs.tp1_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp1_v_train  7  uint
+    field  etcs.tp1_q_dirtrain  2  uint
+    field  etcs.tp1_m_mode  4  uint
+    field  etcs.tp1_m_level  3  uint
+    switch  etcs.tp1_m_level
+      case  1
+        field  etcs.tp1_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp2
+  when  8  2
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp2_m_version  7  uint
+    group  etcs.tp2_versions  count 5                 # N_ITER
+      field  etcs.tp2_versions_m_version  7  uint
+    end
+  end
+  kind  tp4
+  when  8  4
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp4_m_error  8  uint
+  end
+  kind  tp5
+  when  8  5
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp5_nid_operational  32  uint
+  end
+  kind  tp9
+  when  8  9
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp9_ltrbg_nid_c  10  uint
+    field  etcs.tp9_ltrbg_nid_bg  14  uint
+  end
+  kind  tp11
+  when  8  11
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp11_nc_cdtrain  4  uint
+    field  etcs.tp11_nc_train  15  uint
+    field  etcs.tp11_l_train  12  uint
+    field  etcs.tp11_v_maxtrain  7  uint
+    field  etcs.tp11_m_loadinggauge  8  uint
+    field  etcs.tp11_m_axleloadcat  7  uint
+    field  etcs.tp11_m_airtight  2  uint
+    field  etcs.tp11_n_axle  10  uint
+    group  etcs.tp11_tractions  count 5                 # N_ITER
+      field  etcs.tp11_tractions_m_voltage  4  uint
+      switch  etcs.tp11_tractions_m_voltage
+        case  0
+        else
+          field  etcs.tp11_tractions_nid_ctraction  10  uint
+      end
+    end
+    group  etcs.tp11_ntcs  count 5                 # N_ITER
+      field  etcs.tp11_ntcs_nid_ntc  8  uint
+    end
+  end
+  kind  tp44
+  when  8  44
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp44_nid_xuser  9  uint
+    group  etcs.tp44_data  rest
+      field  etcs.tp44_data_bit  1  uint
+    end
+  end
+  kind  tother
+  field  etcs.train_nid_packet  8  uint
+  length  13  bits  plus 21
+    group  etcs.train_other_packet_bits  rest
+      field  etcs.train_other_packet_bit  1  uint
+    end
+  end
+end
+
+kind  train_position_report
+when  8  136
+requires  etcs.train_t_train
+length  10  whole                    # L_MESSAGE, bytes of the whole message
+field  etcs.train_t_train  32  uint
+field  etcs.nid_engine  24  uint
+group  etcs.train_packets  rest
+  kind  tp0
+  when  8  0
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp0_q_scale  2  uint
+    field  etcs.tp0_lrbg_nid_c  10  uint
+    field  etcs.tp0_lrbg_nid_bg  14  uint
+    field  etcs.tp0_d_lrbg  15  uint
+    field  etcs.tp0_q_dirlrbg  2  uint
+    field  etcs.tp0_q_dlrbg  2  uint
+    field  etcs.tp0_l_doubtover  15  uint
+    field  etcs.tp0_l_doubtunder  15  uint
+    field  etcs.tp0_q_length  2  uint
+    switch  etcs.tp0_q_length
+      case  1,2
+        field  etcs.tp0_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp0_v_train  7  uint
+    field  etcs.tp0_q_dirtrain  2  uint
+    field  etcs.tp0_m_mode  4  uint
+    field  etcs.tp0_m_level  3  uint
+    switch  etcs.tp0_m_level
+      case  1
+        field  etcs.tp0_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp1
+  when  8  1
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp1_q_scale  2  uint
+    field  etcs.tp1_lrbg_nid_c  10  uint
+    field  etcs.tp1_lrbg_nid_bg  14  uint
+    field  etcs.tp1_prvlrbg_nid_c  10  uint
+    field  etcs.tp1_prvlrbg_nid_bg  14  uint
+    field  etcs.tp1_d_lrbg  15  uint
+    field  etcs.tp1_q_dirlrbg  2  uint
+    field  etcs.tp1_q_dlrbg  2  uint
+    field  etcs.tp1_l_doubtover  15  uint
+    field  etcs.tp1_l_doubtunder  15  uint
+    field  etcs.tp1_q_length  2  uint
+    switch  etcs.tp1_q_length
+      case  1,2
+        field  etcs.tp1_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp1_v_train  7  uint
+    field  etcs.tp1_q_dirtrain  2  uint
+    field  etcs.tp1_m_mode  4  uint
+    field  etcs.tp1_m_level  3  uint
+    switch  etcs.tp1_m_level
+      case  1
+        field  etcs.tp1_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp2
+  when  8  2
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp2_m_version  7  uint
+    group  etcs.tp2_versions  count 5                 # N_ITER
+      field  etcs.tp2_versions_m_version  7  uint
+    end
+  end
+  kind  tp4
+  when  8  4
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp4_m_error  8  uint
+  end
+  kind  tp5
+  when  8  5
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp5_nid_operational  32  uint
+  end
+  kind  tp9
+  when  8  9
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp9_ltrbg_nid_c  10  uint
+    field  etcs.tp9_ltrbg_nid_bg  14  uint
+  end
+  kind  tp11
+  when  8  11
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp11_nc_cdtrain  4  uint
+    field  etcs.tp11_nc_train  15  uint
+    field  etcs.tp11_l_train  12  uint
+    field  etcs.tp11_v_maxtrain  7  uint
+    field  etcs.tp11_m_loadinggauge  8  uint
+    field  etcs.tp11_m_axleloadcat  7  uint
+    field  etcs.tp11_m_airtight  2  uint
+    field  etcs.tp11_n_axle  10  uint
+    group  etcs.tp11_tractions  count 5                 # N_ITER
+      field  etcs.tp11_tractions_m_voltage  4  uint
+      switch  etcs.tp11_tractions_m_voltage
+        case  0
+        else
+          field  etcs.tp11_tractions_nid_ctraction  10  uint
+      end
+    end
+    group  etcs.tp11_ntcs  count 5                 # N_ITER
+      field  etcs.tp11_ntcs_nid_ntc  8  uint
+    end
+  end
+  kind  tp44
+  when  8  44
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp44_nid_xuser  9  uint
+    group  etcs.tp44_data  rest
+      field  etcs.tp44_data_bit  1  uint
+    end
+  end
+  kind  tother
+  field  etcs.train_nid_packet  8  uint
+  length  13  bits  plus 21
+    group  etcs.train_other_packet_bits  rest
+      field  etcs.train_other_packet_bit  1  uint
+    end
+  end
+end
+
+kind  track_ahead_free_granted
+when  8  149
+requires  etcs.train_t_train
+length  10  whole                    # L_MESSAGE, bytes of the whole message
+field  etcs.train_t_train  32  uint
+field  etcs.nid_engine  24  uint
+group  etcs.train_packets  rest
+  kind  tp0
+  when  8  0
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp0_q_scale  2  uint
+    field  etcs.tp0_lrbg_nid_c  10  uint
+    field  etcs.tp0_lrbg_nid_bg  14  uint
+    field  etcs.tp0_d_lrbg  15  uint
+    field  etcs.tp0_q_dirlrbg  2  uint
+    field  etcs.tp0_q_dlrbg  2  uint
+    field  etcs.tp0_l_doubtover  15  uint
+    field  etcs.tp0_l_doubtunder  15  uint
+    field  etcs.tp0_q_length  2  uint
+    switch  etcs.tp0_q_length
+      case  1,2
+        field  etcs.tp0_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp0_v_train  7  uint
+    field  etcs.tp0_q_dirtrain  2  uint
+    field  etcs.tp0_m_mode  4  uint
+    field  etcs.tp0_m_level  3  uint
+    switch  etcs.tp0_m_level
+      case  1
+        field  etcs.tp0_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp1
+  when  8  1
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp1_q_scale  2  uint
+    field  etcs.tp1_lrbg_nid_c  10  uint
+    field  etcs.tp1_lrbg_nid_bg  14  uint
+    field  etcs.tp1_prvlrbg_nid_c  10  uint
+    field  etcs.tp1_prvlrbg_nid_bg  14  uint
+    field  etcs.tp1_d_lrbg  15  uint
+    field  etcs.tp1_q_dirlrbg  2  uint
+    field  etcs.tp1_q_dlrbg  2  uint
+    field  etcs.tp1_l_doubtover  15  uint
+    field  etcs.tp1_l_doubtunder  15  uint
+    field  etcs.tp1_q_length  2  uint
+    switch  etcs.tp1_q_length
+      case  1,2
+        field  etcs.tp1_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp1_v_train  7  uint
+    field  etcs.tp1_q_dirtrain  2  uint
+    field  etcs.tp1_m_mode  4  uint
+    field  etcs.tp1_m_level  3  uint
+    switch  etcs.tp1_m_level
+      case  1
+        field  etcs.tp1_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp2
+  when  8  2
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp2_m_version  7  uint
+    group  etcs.tp2_versions  count 5                 # N_ITER
+      field  etcs.tp2_versions_m_version  7  uint
+    end
+  end
+  kind  tp4
+  when  8  4
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp4_m_error  8  uint
+  end
+  kind  tp5
+  when  8  5
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp5_nid_operational  32  uint
+  end
+  kind  tp9
+  when  8  9
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp9_ltrbg_nid_c  10  uint
+    field  etcs.tp9_ltrbg_nid_bg  14  uint
+  end
+  kind  tp11
+  when  8  11
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp11_nc_cdtrain  4  uint
+    field  etcs.tp11_nc_train  15  uint
+    field  etcs.tp11_l_train  12  uint
+    field  etcs.tp11_v_maxtrain  7  uint
+    field  etcs.tp11_m_loadinggauge  8  uint
+    field  etcs.tp11_m_axleloadcat  7  uint
+    field  etcs.tp11_m_airtight  2  uint
+    field  etcs.tp11_n_axle  10  uint
+    group  etcs.tp11_tractions  count 5                 # N_ITER
+      field  etcs.tp11_tractions_m_voltage  4  uint
+      switch  etcs.tp11_tractions_m_voltage
+        case  0
+        else
+          field  etcs.tp11_tractions_nid_ctraction  10  uint
+      end
+    end
+    group  etcs.tp11_ntcs  count 5                 # N_ITER
+      field  etcs.tp11_ntcs_nid_ntc  8  uint
+    end
+  end
+  kind  tp44
+  when  8  44
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp44_nid_xuser  9  uint
+    group  etcs.tp44_data  rest
+      field  etcs.tp44_data_bit  1  uint
+    end
+  end
+  kind  tother
+  field  etcs.train_nid_packet  8  uint
+  length  13  bits  plus 21
+    group  etcs.train_other_packet_bits  rest
+      field  etcs.train_other_packet_bit  1  uint
+    end
+  end
+end
+
+kind  end_of_mission
+when  8  150
+requires  etcs.train_t_train
+length  10  whole                    # L_MESSAGE, bytes of the whole message
+field  etcs.train_t_train  32  uint
+field  etcs.nid_engine  24  uint
+group  etcs.train_packets  rest
+  kind  tp0
+  when  8  0
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp0_q_scale  2  uint
+    field  etcs.tp0_lrbg_nid_c  10  uint
+    field  etcs.tp0_lrbg_nid_bg  14  uint
+    field  etcs.tp0_d_lrbg  15  uint
+    field  etcs.tp0_q_dirlrbg  2  uint
+    field  etcs.tp0_q_dlrbg  2  uint
+    field  etcs.tp0_l_doubtover  15  uint
+    field  etcs.tp0_l_doubtunder  15  uint
+    field  etcs.tp0_q_length  2  uint
+    switch  etcs.tp0_q_length
+      case  1,2
+        field  etcs.tp0_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp0_v_train  7  uint
+    field  etcs.tp0_q_dirtrain  2  uint
+    field  etcs.tp0_m_mode  4  uint
+    field  etcs.tp0_m_level  3  uint
+    switch  etcs.tp0_m_level
+      case  1
+        field  etcs.tp0_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp1
+  when  8  1
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp1_q_scale  2  uint
+    field  etcs.tp1_lrbg_nid_c  10  uint
+    field  etcs.tp1_lrbg_nid_bg  14  uint
+    field  etcs.tp1_prvlrbg_nid_c  10  uint
+    field  etcs.tp1_prvlrbg_nid_bg  14  uint
+    field  etcs.tp1_d_lrbg  15  uint
+    field  etcs.tp1_q_dirlrbg  2  uint
+    field  etcs.tp1_q_dlrbg  2  uint
+    field  etcs.tp1_l_doubtover  15  uint
+    field  etcs.tp1_l_doubtunder  15  uint
+    field  etcs.tp1_q_length  2  uint
+    switch  etcs.tp1_q_length
+      case  1,2
+        field  etcs.tp1_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp1_v_train  7  uint
+    field  etcs.tp1_q_dirtrain  2  uint
+    field  etcs.tp1_m_mode  4  uint
+    field  etcs.tp1_m_level  3  uint
+    switch  etcs.tp1_m_level
+      case  1
+        field  etcs.tp1_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp2
+  when  8  2
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp2_m_version  7  uint
+    group  etcs.tp2_versions  count 5                 # N_ITER
+      field  etcs.tp2_versions_m_version  7  uint
+    end
+  end
+  kind  tp4
+  when  8  4
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp4_m_error  8  uint
+  end
+  kind  tp5
+  when  8  5
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp5_nid_operational  32  uint
+  end
+  kind  tp9
+  when  8  9
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp9_ltrbg_nid_c  10  uint
+    field  etcs.tp9_ltrbg_nid_bg  14  uint
+  end
+  kind  tp11
+  when  8  11
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp11_nc_cdtrain  4  uint
+    field  etcs.tp11_nc_train  15  uint
+    field  etcs.tp11_l_train  12  uint
+    field  etcs.tp11_v_maxtrain  7  uint
+    field  etcs.tp11_m_loadinggauge  8  uint
+    field  etcs.tp11_m_axleloadcat  7  uint
+    field  etcs.tp11_m_airtight  2  uint
+    field  etcs.tp11_n_axle  10  uint
+    group  etcs.tp11_tractions  count 5                 # N_ITER
+      field  etcs.tp11_tractions_m_voltage  4  uint
+      switch  etcs.tp11_tractions_m_voltage
+        case  0
+        else
+          field  etcs.tp11_tractions_nid_ctraction  10  uint
+      end
+    end
+    group  etcs.tp11_ntcs  count 5                 # N_ITER
+      field  etcs.tp11_ntcs_nid_ntc  8  uint
+    end
+  end
+  kind  tp44
+  when  8  44
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp44_nid_xuser  9  uint
+    group  etcs.tp44_data  rest
+      field  etcs.tp44_data_bit  1  uint
+    end
+  end
+  kind  tother
+  field  etcs.train_nid_packet  8  uint
+  length  13  bits  plus 21
+    group  etcs.train_other_packet_bits  rest
+      field  etcs.train_other_packet_bit  1  uint
+    end
+  end
+end
+
+kind  no_compatible_version
+when  8  154
+requires  etcs.train_t_train
+length  10  whole                    # L_MESSAGE, bytes of the whole message
+field  etcs.train_t_train  32  uint
+field  etcs.nid_engine  24  uint
+group  etcs.train_packets  rest
+  kind  tp0
+  when  8  0
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp0_q_scale  2  uint
+    field  etcs.tp0_lrbg_nid_c  10  uint
+    field  etcs.tp0_lrbg_nid_bg  14  uint
+    field  etcs.tp0_d_lrbg  15  uint
+    field  etcs.tp0_q_dirlrbg  2  uint
+    field  etcs.tp0_q_dlrbg  2  uint
+    field  etcs.tp0_l_doubtover  15  uint
+    field  etcs.tp0_l_doubtunder  15  uint
+    field  etcs.tp0_q_length  2  uint
+    switch  etcs.tp0_q_length
+      case  1,2
+        field  etcs.tp0_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp0_v_train  7  uint
+    field  etcs.tp0_q_dirtrain  2  uint
+    field  etcs.tp0_m_mode  4  uint
+    field  etcs.tp0_m_level  3  uint
+    switch  etcs.tp0_m_level
+      case  1
+        field  etcs.tp0_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp1
+  when  8  1
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp1_q_scale  2  uint
+    field  etcs.tp1_lrbg_nid_c  10  uint
+    field  etcs.tp1_lrbg_nid_bg  14  uint
+    field  etcs.tp1_prvlrbg_nid_c  10  uint
+    field  etcs.tp1_prvlrbg_nid_bg  14  uint
+    field  etcs.tp1_d_lrbg  15  uint
+    field  etcs.tp1_q_dirlrbg  2  uint
+    field  etcs.tp1_q_dlrbg  2  uint
+    field  etcs.tp1_l_doubtover  15  uint
+    field  etcs.tp1_l_doubtunder  15  uint
+    field  etcs.tp1_q_length  2  uint
+    switch  etcs.tp1_q_length
+      case  1,2
+        field  etcs.tp1_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp1_v_train  7  uint
+    field  etcs.tp1_q_dirtrain  2  uint
+    field  etcs.tp1_m_mode  4  uint
+    field  etcs.tp1_m_level  3  uint
+    switch  etcs.tp1_m_level
+      case  1
+        field  etcs.tp1_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp2
+  when  8  2
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp2_m_version  7  uint
+    group  etcs.tp2_versions  count 5                 # N_ITER
+      field  etcs.tp2_versions_m_version  7  uint
+    end
+  end
+  kind  tp4
+  when  8  4
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp4_m_error  8  uint
+  end
+  kind  tp5
+  when  8  5
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp5_nid_operational  32  uint
+  end
+  kind  tp9
+  when  8  9
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp9_ltrbg_nid_c  10  uint
+    field  etcs.tp9_ltrbg_nid_bg  14  uint
+  end
+  kind  tp11
+  when  8  11
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp11_nc_cdtrain  4  uint
+    field  etcs.tp11_nc_train  15  uint
+    field  etcs.tp11_l_train  12  uint
+    field  etcs.tp11_v_maxtrain  7  uint
+    field  etcs.tp11_m_loadinggauge  8  uint
+    field  etcs.tp11_m_axleloadcat  7  uint
+    field  etcs.tp11_m_airtight  2  uint
+    field  etcs.tp11_n_axle  10  uint
+    group  etcs.tp11_tractions  count 5                 # N_ITER
+      field  etcs.tp11_tractions_m_voltage  4  uint
+      switch  etcs.tp11_tractions_m_voltage
+        case  0
+        else
+          field  etcs.tp11_tractions_nid_ctraction  10  uint
+      end
+    end
+    group  etcs.tp11_ntcs  count 5                 # N_ITER
+      field  etcs.tp11_ntcs_nid_ntc  8  uint
+    end
+  end
+  kind  tp44
+  when  8  44
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp44_nid_xuser  9  uint
+    group  etcs.tp44_data  rest
+      field  etcs.tp44_data_bit  1  uint
+    end
+  end
+  kind  tother
+  field  etcs.train_nid_packet  8  uint
+  length  13  bits  plus 21
+    group  etcs.train_other_packet_bits  rest
+      field  etcs.train_other_packet_bit  1  uint
+    end
+  end
+end
+
+kind  session_initiation
+when  8  155
+requires  etcs.train_t_train
+length  10  whole                    # L_MESSAGE, bytes of the whole message
+field  etcs.train_t_train  32  uint
+field  etcs.nid_engine  24  uint
+group  etcs.train_packets  rest
+  kind  tp0
+  when  8  0
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp0_q_scale  2  uint
+    field  etcs.tp0_lrbg_nid_c  10  uint
+    field  etcs.tp0_lrbg_nid_bg  14  uint
+    field  etcs.tp0_d_lrbg  15  uint
+    field  etcs.tp0_q_dirlrbg  2  uint
+    field  etcs.tp0_q_dlrbg  2  uint
+    field  etcs.tp0_l_doubtover  15  uint
+    field  etcs.tp0_l_doubtunder  15  uint
+    field  etcs.tp0_q_length  2  uint
+    switch  etcs.tp0_q_length
+      case  1,2
+        field  etcs.tp0_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp0_v_train  7  uint
+    field  etcs.tp0_q_dirtrain  2  uint
+    field  etcs.tp0_m_mode  4  uint
+    field  etcs.tp0_m_level  3  uint
+    switch  etcs.tp0_m_level
+      case  1
+        field  etcs.tp0_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp1
+  when  8  1
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp1_q_scale  2  uint
+    field  etcs.tp1_lrbg_nid_c  10  uint
+    field  etcs.tp1_lrbg_nid_bg  14  uint
+    field  etcs.tp1_prvlrbg_nid_c  10  uint
+    field  etcs.tp1_prvlrbg_nid_bg  14  uint
+    field  etcs.tp1_d_lrbg  15  uint
+    field  etcs.tp1_q_dirlrbg  2  uint
+    field  etcs.tp1_q_dlrbg  2  uint
+    field  etcs.tp1_l_doubtover  15  uint
+    field  etcs.tp1_l_doubtunder  15  uint
+    field  etcs.tp1_q_length  2  uint
+    switch  etcs.tp1_q_length
+      case  1,2
+        field  etcs.tp1_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp1_v_train  7  uint
+    field  etcs.tp1_q_dirtrain  2  uint
+    field  etcs.tp1_m_mode  4  uint
+    field  etcs.tp1_m_level  3  uint
+    switch  etcs.tp1_m_level
+      case  1
+        field  etcs.tp1_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp2
+  when  8  2
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp2_m_version  7  uint
+    group  etcs.tp2_versions  count 5                 # N_ITER
+      field  etcs.tp2_versions_m_version  7  uint
+    end
+  end
+  kind  tp4
+  when  8  4
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp4_m_error  8  uint
+  end
+  kind  tp5
+  when  8  5
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp5_nid_operational  32  uint
+  end
+  kind  tp9
+  when  8  9
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp9_ltrbg_nid_c  10  uint
+    field  etcs.tp9_ltrbg_nid_bg  14  uint
+  end
+  kind  tp11
+  when  8  11
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp11_nc_cdtrain  4  uint
+    field  etcs.tp11_nc_train  15  uint
+    field  etcs.tp11_l_train  12  uint
+    field  etcs.tp11_v_maxtrain  7  uint
+    field  etcs.tp11_m_loadinggauge  8  uint
+    field  etcs.tp11_m_axleloadcat  7  uint
+    field  etcs.tp11_m_airtight  2  uint
+    field  etcs.tp11_n_axle  10  uint
+    group  etcs.tp11_tractions  count 5                 # N_ITER
+      field  etcs.tp11_tractions_m_voltage  4  uint
+      switch  etcs.tp11_tractions_m_voltage
+        case  0
+        else
+          field  etcs.tp11_tractions_nid_ctraction  10  uint
+      end
+    end
+    group  etcs.tp11_ntcs  count 5                 # N_ITER
+      field  etcs.tp11_ntcs_nid_ntc  8  uint
+    end
+  end
+  kind  tp44
+  when  8  44
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp44_nid_xuser  9  uint
+    group  etcs.tp44_data  rest
+      field  etcs.tp44_data_bit  1  uint
+    end
+  end
+  kind  tother
+  field  etcs.train_nid_packet  8  uint
+  length  13  bits  plus 21
+    group  etcs.train_other_packet_bits  rest
+      field  etcs.train_other_packet_bit  1  uint
+    end
+  end
+end
+
+kind  session_termination
+when  8  156
+requires  etcs.train_t_train
+length  10  whole                    # L_MESSAGE, bytes of the whole message
+field  etcs.train_t_train  32  uint
+field  etcs.nid_engine  24  uint
+group  etcs.train_packets  rest
+  kind  tp0
+  when  8  0
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp0_q_scale  2  uint
+    field  etcs.tp0_lrbg_nid_c  10  uint
+    field  etcs.tp0_lrbg_nid_bg  14  uint
+    field  etcs.tp0_d_lrbg  15  uint
+    field  etcs.tp0_q_dirlrbg  2  uint
+    field  etcs.tp0_q_dlrbg  2  uint
+    field  etcs.tp0_l_doubtover  15  uint
+    field  etcs.tp0_l_doubtunder  15  uint
+    field  etcs.tp0_q_length  2  uint
+    switch  etcs.tp0_q_length
+      case  1,2
+        field  etcs.tp0_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp0_v_train  7  uint
+    field  etcs.tp0_q_dirtrain  2  uint
+    field  etcs.tp0_m_mode  4  uint
+    field  etcs.tp0_m_level  3  uint
+    switch  etcs.tp0_m_level
+      case  1
+        field  etcs.tp0_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp1
+  when  8  1
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp1_q_scale  2  uint
+    field  etcs.tp1_lrbg_nid_c  10  uint
+    field  etcs.tp1_lrbg_nid_bg  14  uint
+    field  etcs.tp1_prvlrbg_nid_c  10  uint
+    field  etcs.tp1_prvlrbg_nid_bg  14  uint
+    field  etcs.tp1_d_lrbg  15  uint
+    field  etcs.tp1_q_dirlrbg  2  uint
+    field  etcs.tp1_q_dlrbg  2  uint
+    field  etcs.tp1_l_doubtover  15  uint
+    field  etcs.tp1_l_doubtunder  15  uint
+    field  etcs.tp1_q_length  2  uint
+    switch  etcs.tp1_q_length
+      case  1,2
+        field  etcs.tp1_l_trainint  15  uint
+      else
+    end
+    field  etcs.tp1_v_train  7  uint
+    field  etcs.tp1_q_dirtrain  2  uint
+    field  etcs.tp1_m_mode  4  uint
+    field  etcs.tp1_m_level  3  uint
+    switch  etcs.tp1_m_level
+      case  1
+        field  etcs.tp1_nid_ntc  8  uint
+      else
+    end
+  end
+  kind  tp2
+  when  8  2
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp2_m_version  7  uint
+    group  etcs.tp2_versions  count 5                 # N_ITER
+      field  etcs.tp2_versions_m_version  7  uint
+    end
+  end
+  kind  tp4
+  when  8  4
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp4_m_error  8  uint
+  end
+  kind  tp5
+  when  8  5
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp5_nid_operational  32  uint
+  end
+  kind  tp9
+  when  8  9
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp9_ltrbg_nid_c  10  uint
+    field  etcs.tp9_ltrbg_nid_bg  14  uint
+  end
+  kind  tp11
+  when  8  11
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp11_nc_cdtrain  4  uint
+    field  etcs.tp11_nc_train  15  uint
+    field  etcs.tp11_l_train  12  uint
+    field  etcs.tp11_v_maxtrain  7  uint
+    field  etcs.tp11_m_loadinggauge  8  uint
+    field  etcs.tp11_m_axleloadcat  7  uint
+    field  etcs.tp11_m_airtight  2  uint
+    field  etcs.tp11_n_axle  10  uint
+    group  etcs.tp11_tractions  count 5                 # N_ITER
+      field  etcs.tp11_tractions_m_voltage  4  uint
+      switch  etcs.tp11_tractions_m_voltage
+        case  0
+        else
+          field  etcs.tp11_tractions_nid_ctraction  10  uint
+      end
+    end
+    group  etcs.tp11_ntcs  count 5                 # N_ITER
+      field  etcs.tp11_ntcs_nid_ntc  8  uint
+    end
+  end
+  kind  tp44
+  when  8  44
+  length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
+    field  etcs.tp44_nid_xuser  9  uint
+    group  etcs.tp44_data  rest
+      field  etcs.tp44_data_bit  1  uint
+    end
+  end
+  kind  tother
+  field  etcs.train_nid_packet  8  uint
+  length  13  bits  plus 21
+    group  etcs.train_other_packet_bits  rest
+      field  etcs.train_other_packet_bit  1  uint
+    end
+  end
+end
+
 kind  session_established
 when  8  159
+requires  etcs.train_t_train
 length  10  whole                    # L_MESSAGE, bytes of the whole message
 field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint

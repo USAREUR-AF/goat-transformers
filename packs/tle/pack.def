@@ -11,6 +11,7 @@ delimiter     none
 
 kind   line1
 when   0:0:2  1
+requires  tle.classification
 field  tle.satellite_number   0:2:5    int
 field  tle.classification     0:7:1    string
 field  tle.launch_year        0:9:2    int
@@ -27,6 +28,7 @@ field  tle.checksum           0:68:1   int
 
 kind   line2
 when   0:0:2  2
+requires  tle.inclination
 field  tle.satellite_number   0:2:5    int
 field  tle.inclination        0:8:8    dec:4:8
 field  tle.ra_of_asc_node     0:17:8   dec:4:8
@@ -38,4 +40,5 @@ field  tle.rev_number         0:63:5   int
 field  tle.checksum           0:68:1   int
 
 kind   name
+requires  tle.name
 field  tle.name               0:0:24   string
