@@ -153,6 +153,14 @@ format leaves with the datum it is in.
 - `base_station_id` (13) is `bytes`: not carried.
 - The solution status and type, the satellite counts and masks, the ages: raw keys.
 
+## Validity flag not applied
+
+`sol_status` and `sol_type`, which state whether the solution is computed and what it is. The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.
+
 ## Generated vectors
 
 `vectors/gen-<n>-<kind>-roundtrip.json`, one per kind: every mapped field of the kind, one member

@@ -89,6 +89,14 @@ Not bound, and why:
 - `OpenDroneIDSystem` operator position: integers in 1e-7 degrees with no datum stated
   in the .msg. Raw keys.
 
+## Validity flag not applied
+
+GPSINPUT and GPSRAW: `fix_type` 0 is no GPS and 1 no position information (GPSINPUT.msg, GPSRAW.msg). The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.
+
 ## Kinds
 
 | Kind | `type` | Fields | Lists | Constants not mapped |

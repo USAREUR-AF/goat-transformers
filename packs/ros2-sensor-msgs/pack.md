@@ -85,6 +85,14 @@ Not bound, and why:
 - No other message of the package states a geodetic frame. `sensor_msgs/msg/TimeReference`
   carries a time from an external source with no stated time base; raw keys.
 
+## Validity flag not applied
+
+nav_sat_fix: NavSatStatus `status` below 0 (-1 no fix, -2 not set, the default) means the position is not valid. The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.
+
 ## Kinds
 
 | Kind | `type` | Fields | Lists | Constants not mapped |

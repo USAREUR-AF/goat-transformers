@@ -99,3 +99,11 @@ consumer that must be sure checks `gpsd.datum`.
 | `packs/cot-xml/vectors/21-to-gpsd-json-tpv` | CoT to TPV |
 
 Every message is written for these vectors; none is taken from the document.
+
+## Validity flag not applied
+
+TPV `mode` 0 (unknown) and 1 (no fix): gpsd_json.adoc says there is likely no usable data then, and TPV `time` may be present but invalid without a fix. The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.

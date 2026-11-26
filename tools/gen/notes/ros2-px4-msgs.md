@@ -29,3 +29,11 @@ Not bound, and why:
   this batch binds positions only, and the generator binds `core` keys only. They are
   raw keys. `vel_down` points down, against `track.vel_up_ms`, and the json wire has
   no transform that negates a value.
+
+## Validity flag not applied
+
+home_position: `valid_hpos`; sensor_gnss: `fix_type` 0 and 1 are no fix; vehicle_global_position: `lat_lon_valid` and `alt_valid`; target_gnss: `abs_pos_updated` (a freshness flag rather than validity). The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.

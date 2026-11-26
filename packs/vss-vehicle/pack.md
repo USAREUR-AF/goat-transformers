@@ -100,6 +100,14 @@ Not bound:
 - The other speeds, positions and times of the tree (wheel speeds, the speed of the
   powertrain, timestamps of other branches) are not the vehicle's own report.
 
+## Validity flag not applied
+
+CurrentLocation.GNSSReceiver.FixType 'NONE' (Vehicle.vspec) says there is no fix. The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.
+
 ## Not mapped
 
 Nothing.
