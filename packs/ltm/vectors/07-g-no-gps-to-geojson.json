@@ -1,0 +1,20 @@
+{
+  "name": "g-no-gps-to-geojson",
+  "from": "ltm",
+  "to": "geojson",
+  "input": "245447000000000000000000e204000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "@kind": "g",
+    "@absent": [
+      "lat",
+      "lon",
+      "speed_ms"
+    ],
+    "ltm.g_lat": "0",
+    "ltm.g_lon": "0",
+    "ltm.g_fix_type": "0"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV src/main/telemetry/ltm.c at 21adf64; fix type 0: no GPS; lat, lon and speed are not a position"
+}

@@ -3,7 +3,7 @@
   "from": "geojson",
   "to": "ltm",
   "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[7.2345678,45.1234567]},\"properties\":{\"speed_ms\":17}}",
-  "expect": "245447074be51a4ee84f04110000000000",
+  "expect": "245447074be51a4ee84f04110000000002",
   "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
-  "reference": "INAV src/main/telemetry/ltm.c at 21adf64; g is the first kind whose requires (lat, lon) hold"
+  "reference": "INAV src/main/telemetry/ltm.c at 21adf64; g is the first kind whose requires (lat, lon) hold; the fix type is written 2"
 }

@@ -17,9 +17,17 @@ when      0:8:8 84
 kind      g
 when      0:16:8 71
 requires  lat lon
-field     lat 0:24:32 sscale:1/10000000
-field     lon 0:56:32 sscale:1/10000000
-field     speed_ms 0:88:8 uscale:1
+# ltm.c writes lat, lon and ground speed 0 with fix type 0 when there is no GPS, and the
+# GPS solution's own values with fix type 1 when it has no fix: a position only for fix
+# type 2 or 3 (engine-spec 0.17 gate); the bits stay raw keys, so a frame comes back whole
+field     ltm.g_lat 0:24:32 twos
+field     ltm.g_lon 0:56:32 twos
+field     ltm.g_ground_speed 0:88:8 uint
+if        !0:128:2 0,1
+  field     lat 0:24:32 sscale:1/10000000
+  field     lon 0:56:32 sscale:1/10000000
+  field     speed_ms 0:88:8 uscale:1
+end
 field     ltm.g_altitude 0:96:32 twos
 field     ltm.g_fix_type 0:128:2 uint
 field     ltm.g_satellites 0:130:6 uint

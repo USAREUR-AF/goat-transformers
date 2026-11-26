@@ -245,14 +245,31 @@ def ltm_vectors():
                                       {"@kind": "o", "ltm.o_home_lat": "451200000", "ltm.o_home_lon": "72300000",
                                        "ltm.o_home_alt": "21300", "ltm.o_osd_on": "1", "ltm.o_home_fix": "1"},
                                       note="the home position stays raw: it is not the vehicle's position")
+    # no GPS: ltm.c leaves lat, lon and ground speed 0 and fix type 0; no fix: fix type 1 with
+    # the solution's values. Neither is a position (the gate holds only for fix type 2 or 3);
+    # the raw keys keep the bytes
+    f0 = ltm("G", struct.pack("<iiBiB", 0, 0, 0, 1250, 0))
+    V["ltm", "07-g-no-gps-to-geojson"] = vec("g-no-gps-to-geojson", "ltm", "geojson", f0.hex(),
+                                             '{"type":"Feature","geometry":null,"properties":{}}',
+                                             {"@kind": "g", "@absent": ["lat", "lon", "speed_ms"],
+                                              "ltm.g_lat": "0", "ltm.g_lon": "0", "ltm.g_fix_type": "0"},
+                                             note="fix type 0: no GPS; lat, lon and speed are not a position")
+    f1 = ltm("G", struct.pack("<iiBiB", lat_i, lon_i, 0, alt, (5 << 2) | 1))
+    V["ltm", "08-g-no-fix-roundtrip"] = vec("g-no-fix-roundtrip", "ltm", "ltm", f1.hex(), f1.hex(),
+                                            {"@kind": "g", "@absent": ["lat", "lon", "speed_ms"],
+                                             "ltm.g_lat": str(lat_i), "ltm.g_lon": str(lon_i),
+                                             "ltm.g_fix_type": "1"},
+                                            note="fix type 1: no fix; the frame comes back byte for byte from the raw keys")
     V["ltm", "06-g-frame-cut-short"] = vec("g-frame-cut-short", "ltm", "ltm", ltm("G", bytes(6)).hex(),
                                             error="malformed-wire", note="a G frame needs 14 payload bytes")
     lat, lon, spd = 45.1234567, 7.2345678, 17.0
     feat = '{"type":"Feature","geometry":{"type":"Point","coordinates":[%s,%s]},"properties":{"speed_ms":%s}}' % (
         num(lon), num(lat), num(spd))
-    out = ltm("G", struct.pack("<iiBiB", enc(lat, 1, 10000000), enc(lon, 1, 10000000), enc(spd, 1, 1), 0, 0))
+    # the gate on the fix type holds for 2 or 3: with no fix type given, encode writes the
+    # smallest value it holds for, 2 (engine-spec 0.17 encode step 3)
+    out = ltm("G", struct.pack("<iiBiB", enc(lat, 1, 10000000), enc(lon, 1, 10000000), enc(spd, 1, 1), 0, 2))
     V["geojson", "to-ltm-g"] = vec("geojson-to-ltm-g", "geojson", "ltm", feat, out.hex(),
-                                   note="g is the first kind whose requires (lat, lon) hold")
+                                   note="g is the first kind whose requires (lat, lon) hold; the fix type is written 2")
     return V
 
 

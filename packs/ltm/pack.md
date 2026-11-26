@@ -24,6 +24,15 @@ payload and is not read or written. LTM has no length byte: each letter has a fi
   degrees times 1e7 (`gpsSol.llh`); GNSS positions are on WGS 84.
 - `speed_ms` (`g`, `uscale:1`): the ground speed of the GNSS solution, in whole metres per
   second (the code divides cm/s by 100).
+- Only with a fix. `ltm_gframe` starts lat, lon and ground speed at 0 and the fix type at
+  0, and fills them only when a GPS is present: fix type 1 for no fix (with the
+  solution's last values), 2 for 2D, 3 for 3D. The three shared lines therefore lie in a
+  gate block `if !0:128:2 0,1` (engine-spec 0.17): a frame with fix type 0 or 1 gives no
+  position. The same bits are always the raw keys `ltm.g_lat`, `ltm.g_lon` and
+  `ltm.g_ground_speed`, so every G frame comes back byte for byte. Encoded from `lat` and
+  `lon` with no `ltm.g_fix_type`, the frame gets fix type 2, the smallest value the gate
+  holds for; with a fix type of 0 or 1 given, an entity whose position is only in `lat`
+  and `lon` is `transform-encode`.
 
 ## Not mapped, or not bound
 
@@ -38,4 +47,5 @@ payload and is not read or written. LTM has no length byte: each letter has a fi
 
 Written by `tools/gen/rc-telemetry-vectors.py` (no engine): a round trip per kind, the G
 frame to geojson, a GeoJSON Feature to the G frame (`packs/geojson/vectors/to-ltm-g.json`),
-and a G frame cut short, `malformed-wire`.
+a G frame cut short, `malformed-wire`, a G frame without GPS to geojson (no position) and a
+G frame without a fix as a round trip.
