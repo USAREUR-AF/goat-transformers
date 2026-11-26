@@ -19,6 +19,10 @@ data bytes to the end of the NPDU.
 
 ## Not mapped
 
+- A TPDU of one octet (NPDU length 0, as the transport-layer control frames use; calimero reads
+  a TPDU of the NPDU length plus one) is `malformed-wire`: the APCI lines do not fit the
+  extent (`2900bce011050a030080` on Rust). Reading the APCI only when the TPDU is longer than
+  one octet needs a condition on the length, which a `length` block does not give.
 - Extended frames (control field 1 bit 7 = 0) and cEMI messages other than L_Data are read with
   the same layout; calimero refuses them, and their data may not be what this layout reads.
 - No shared key: KNX carries building-automation values, addressed by group addresses whose

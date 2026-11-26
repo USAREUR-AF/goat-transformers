@@ -22,7 +22,7 @@ key  message_code               int   -  "cEMI message code: 0x11 L_Data.req, 0x
 key  additional_info_byte       int   -  "one byte of the cEMI additional information"
 key  frame_format               int   -  "control field 1 bit 7: 1 standard frame, 0 extended"
 key  ctrl1_reserved             int   -  "control field 1 bit 6"
-key  repeat                     int   -  "control field 1 bit 5: 0 repeat on error, 1 do not repeat"
+key  repeat                     int   -  "control field 1 bit 5: in a request or confirmation 1 the default (repetitions allowed), 0 do not repeat; in an indication 0 a repeated frame, 1 not repeated (calimero CEMILData)"
 key  system_broadcast           int   -  "control field 1 bit 4: 0 system broadcast, 1 broadcast"
 key  priority                   int   -  "control field 1 bits 3-2: 0 system, 1 normal, 2 urgent, 3 low"
 key  ack_request                int   -  "control field 1 bit 1: 1 acknowledge requested"

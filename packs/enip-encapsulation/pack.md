@@ -27,6 +27,11 @@ None.
 
 ## Not mapped
 
+- In a ListIdentity request (command 0x63, length 0), Wireshark's dissector (packet-enip.c) reads
+  octets 12-13 as a response delay and only 14-19 as the sender context. The pack reads octets
+  12-19 as `enip.sender_context` for every command, so for that request the key holds the delay
+  as its first two octets. The bytes round-trip; choosing the layout by the command and the length
+  together is a two-field condition the language has no form for.
 - **The CIP message** inside unconnected and connected data items (service, request path, status,
   data): octets. The CIP specification: not read.
 - **ListIdentity, ListServices and ListInterfaces replies**: octets (their item list is the same CPF,
