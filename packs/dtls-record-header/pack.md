@@ -38,7 +38,7 @@ Unified header (kind `ciphertext`):
 | 0, bit 4 | S, sequence number is 16 bits | `inet.dtls_seq_16bit` | `uint` |
 | 0, bit 5 | L, length present | `inet.dtls_length_present` | `uint` |
 | 0, bits 6-7 | epoch, low 2 bits | `inet.dtls_epoch_low` | `uint` |
-| 1 (S = 0) or 1-2 (S = 1) | sequence number, low bits | `inet.dtls_seq_low` | `if 0:4:1 0` / `if 0:4:1 1` |
+| 1 (S = 0) or 1-2 (S = 1) | sequence number, low bits, encrypted (XORed with a mask from the ciphertext, RFC 9147 4.2.3; the pack keeps them as sent) | `inet.dtls_seq_low` | `if 0:4:1 0` / `if 0:4:1 1` |
 | next 2 octets, when L = 1 | length | `inet.tls_record_length` | nested `if 0:5:1 1` |
 
 `word_bytes 1`, `bit_order msb`; the fields are big-endian. The position of the
