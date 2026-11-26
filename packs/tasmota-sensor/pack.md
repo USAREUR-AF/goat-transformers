@@ -7,8 +7,8 @@ climate sensors. Licence Apache-2.0 (a layout restated from GPL-3.0 firmware, no
 ## Message convention
 
 One JSON object: `Time` (local time, ISO 8601 without zone), then one object per attached sensor,
-named by its type, then `TempUnit` (`C` or `F`) and, when a pressure sensor is attached,
-`PressureUnit` (`hPa` or `mmHg`).
+named by its type, then, when a pressure sensor is attached, `PressureUnit` (`hPa` or `mmHg`),
+then `TempUnit` (`C` or `F`), in the order MqttAppendSensorUnits writes them.
 
 - `ENERGY` (energy monitoring builds): the start of the total counter (local time text), total
   energy, yesterday's and today's energy (kWh), energy in the last telemetry period (Wh), active,
