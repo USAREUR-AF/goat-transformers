@@ -9,7 +9,9 @@ only); the KNX Standard was not used.
 
 DPT 5 (8-bit unsigned): one data byte. It is read as a float key (`uscale:1`), so that module `knx` derives `knx.dpt5_scaling_percent` (DPT 5.001, raw x 100/255) and `knx.dpt5_angle_deg` (DPT 5.003, raw x 360/255) with `scale`. Only the raw value is written back; the derived keys are not encoded.
 
-A GroupValueRead carries no value: the value key is absent.
+A GroupValueRead carries no value: the value lines are read only when `knx.apci` is 1
+(GroupValueResponse) or 2 (GroupValueWrite); otherwise the TPDU is the six data bits
+(`knx.apci_data`), the value key is absent and a read round-trips as two octets (vector 02).
 
 ## Not mapped
 

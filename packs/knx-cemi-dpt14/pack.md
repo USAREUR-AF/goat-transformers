@@ -9,7 +9,9 @@ only); the KNX Standard was not used.
 
 DPT 14 (4-byte float): an IEEE 754 single, big-endian, `f32`. The unit depends on the sub-type (14.xxx) the installation assigns, so the key is raw.
 
-A GroupValueRead carries no value: the value key is absent.
+A GroupValueRead carries no value: the value lines are read only when `knx.apci` is 1
+(GroupValueResponse) or 2 (GroupValueWrite); otherwise the TPDU is the six data bits
+(`knx.apci_data`), the value key is absent and a read round-trips as two octets (vector 02).
 
 ## Not mapped
 
