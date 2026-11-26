@@ -7,6 +7,12 @@ request (0x0420, the 4-byte connection header then a cEMI frame) or a tunneling 
 its data as bytes. The total length is `length 16 whole`. Restated from calimero-core
 (GPL-2.0 with the Classpath Exception; facts only); the KNX Standard was not used.
 
+## Encode
+
+With no recorded kind, encode chooses the tunneling acknowledge when `knx.channel_id` and
+`knx.status` are present, the tunneling request when `knx.channel_id` is, and the routing
+indication otherwise. The kinds' service types differ, so their order does not change decode.
+
 ## Not mapped
 
 - Other services (search, description, connect, connection state, disconnect, device

@@ -11,40 +11,21 @@ bit_order     msb
 field  knx.header_length  8  uint
 field  knx.protocol_version  8  uint
 
-kind  routing_indication
-when  16  1328
+# Kinds: the tunneling acknowledge and request first, chosen on encode by their keys; the
+# routing indication last, with no requires, for any other entity. The `when`s are disjoint,
+# so the order does not change decode.
+kind  tunneling_ack
+when  16  1057
+requires  knx.channel_id  knx.status
 length  16  whole
-field  knx.message_code  8  uint
-length  8  bytes
-  group  knx.additional_info  rest
-    field  knx.additional_info_byte  8  uint
-  end
-end
-field  knx.frame_format  1  uint
-field  knx.ctrl1_reserved  1  uint
-field  knx.repeat  1  uint
-field  knx.system_broadcast  1  uint
-field  knx.priority  2  uint
-field  knx.ack_request  1  uint
-field  knx.confirm  1  uint
-field  knx.destination_is_group  1  uint
-field  knx.hop_count  3  uint
-field  knx.extended_frame_format  4  uint
-field  knx.source_area  4  uint
-field  knx.source_line  4  uint
-field  knx.source_device  8  uint
-field  knx.destination  16  uint
-length  8  bytes  plus -1
-  field  knx.tpci  6  uint
-  field  knx.apci  4  uint
-  field  knx.apci_data  6  uint
-  group  knx.data  rest
-    field  knx.data_byte  8  uint
-  end
-end
+field  knx.connection_header_length  8  uint
+field  knx.channel_id  8  uint
+field  knx.sequence_counter  8  uint
+field  knx.status  8  uint
 
 kind  tunneling_request
 when  16  1056
+requires  knx.channel_id
 length  16  whole
 field  knx.connection_header_length  8  uint
 field  knx.channel_id  8  uint
@@ -79,10 +60,34 @@ length  8  bytes  plus -1
   end
 end
 
-kind  tunneling_ack
-when  16  1057
+kind  routing_indication
+when  16  1328
 length  16  whole
-field  knx.connection_header_length  8  uint
-field  knx.channel_id  8  uint
-field  knx.sequence_counter  8  uint
-field  knx.status  8  uint
+field  knx.message_code  8  uint
+length  8  bytes
+  group  knx.additional_info  rest
+    field  knx.additional_info_byte  8  uint
+  end
+end
+field  knx.frame_format  1  uint
+field  knx.ctrl1_reserved  1  uint
+field  knx.repeat  1  uint
+field  knx.system_broadcast  1  uint
+field  knx.priority  2  uint
+field  knx.ack_request  1  uint
+field  knx.confirm  1  uint
+field  knx.destination_is_group  1  uint
+field  knx.hop_count  3  uint
+field  knx.extended_frame_format  4  uint
+field  knx.source_area  4  uint
+field  knx.source_line  4  uint
+field  knx.source_device  8  uint
+field  knx.destination  16  uint
+length  8  bytes  plus -1
+  field  knx.tpci  6  uint
+  field  knx.apci  4  uint
+  field  knx.apci_data  6  uint
+  group  knx.data  rest
+    field  knx.data_byte  8  uint
+  end
+end
