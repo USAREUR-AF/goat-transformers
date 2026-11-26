@@ -6960,16 +6960,19 @@ entity holds **no key of the chosen kind**, the error is `no-kind`.
      this check, ruling 5); then the joined entity is checked as `convert`,
      ruling 4 included. The messages' own kinds are those of inner messages
      (ruling 4) and are not checked.
-8. **Vectors this version changes.** Four vectors written before 0.94 expected
+8. **Vectors this version changes.** Five vectors written before 0.94 expected
    output from an entity that holds no key of the chosen kind:
+   - `geojson` `bpv7-01-to-dtn-bpv7-nothing-to-write` is now `no-kind`: a
+     Feature holds no key of `dtn-bpv7`'s chosen kind, and the bundle of
+     constants it gave before is the case the rule is for.
    - `conformance-held-src` 40 is rederived under 0.7: an empty list does not
      meet `requires`, so kind `other` is chosen and holds `w`.
    - `conformance-asopt-json` 10 and `conformance-inner-refused-json` 13 keep
      their point (the order of kinds, 0.52 ruling 8; the refusal of 0.52
      ruling 20 on encode) with an input that holds a key of the kind.
    - `cot-xml` `cam-01-to-etsi-cam-non-numeric-uid` is now `no-kind`: of kind
-     `cam` the entity holds nothing, as `etsicam.station_id` is absent. This
-     is the case the rule is for.
+     `cam` the entity holds nothing, as `etsicam.station_id` is absent. The
+     same case.
 
 ## Amends
 
