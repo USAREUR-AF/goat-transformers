@@ -499,9 +499,10 @@ Layout = collections.namedtuple("Layout", "message wire length crc_extra")
 Layout.__doc__ = """A message on the wire: its Placed fields in wire order, the full payload
 length in bytes and its CRC_EXTRA."""
 
-Line = collections.namedtuple("Line", "key pos bits transform absent", defaults=((),))
+Line = collections.namedtuple("Line", "key pos bits transform absent gate", defaults=((), None))
 Line.__doc__ = """One `field` line of the pack: model key, first bit, length in bits, transform,
-and the raw values that mean "no value" (`absent`, engine-spec 0.9), first the one encode writes."""
+the raw values that mean "no value" (`absent`, engine-spec 0.9), first the one encode writes,
+and the gate block it stands in (`gate`: first bit and length of the gate field), or None."""
 
 MappedField = collections.namedtuple("MappedField", "field offset status lines")
 MappedField.__doc__ = """A placed field with its mapping decided. `status` is `core`, `scalar`,
@@ -810,6 +811,29 @@ def core_name(f):
     return "lat" if f.name in LAT_NAMES else "lon"
 
 
+# A position the message itself marks as no fix is not a position: in GPS_RAW_INT, GPS2_RAW
+# and GPS_INPUT `fix_type` is enum GPS_FIX_TYPE (0 GPS_FIX_TYPE_NO_GPS, 1 GPS_FIX_TYPE_NO_FIX),
+# in HIL_GPS the field text says 0-1 is no fix. Core lat and lon of such a message are read
+# only in a gate block that holds when fix_type is neither 0 nor 1 (engine-spec 0.17); the
+# bits are kept in raw keys outside the block, so the frame comes back byte for byte.
+FIX_FIELD = "fix_type"
+NO_FIX = (0, 1)
+
+
+def fix_gate(layout):
+    """(first bit, length) of the uint8_t `fix_type` of a message, or None."""
+    for p in layout.wire:
+        if p.field.name == FIX_FIELD and p.field.base == "uint8_t" and p.field.n is None:
+            return PAYLOAD_BIT0 + 8 * p.offset, 8
+    return None
+
+
+def gate_open_value():
+    """The fix_type a gate block writes when no raw fix_type is given (encode step 3: the
+    smallest value not listed)."""
+    return min(v for v in range(256) if v not in NO_FIX)
+
+
 def core_pair(layout):
     """A message maps core lat/lon only when it has exactly one qualifying
     latitude field and one qualifying longitude field."""
@@ -924,7 +948,12 @@ def assign_keys(layouts):
         for placed, status in zip(layout.wire, statuses):
             f, lines = placed.field, []
             pos = PAYLOAD_BIT0 + 8 * placed.offset
-            if status == "core":
+            if status == "core" and fix_gate(layout):
+                stem = base_key(f)
+                declare(stem, type_class(f), f.units or "-", m, f)
+                lines.append(Line(MODULE + "." + stem, pos, 32, transform_for(f)))
+                lines.append(Line(core_name(f), pos, 32, "sscale:" + DEGE7, (), fix_gate(layout)))
+            elif status == "core":
                 lines.append(Line(core_name(f), pos, 32, "sscale:" + DEGE7))
             elif status == "time":
                 lines.append(Line("time_ms", pos, 8 * f.bytes, time_binding(m, f)[2]))
@@ -1226,9 +1255,14 @@ def emit_pack(kinds, sha):
         out.append("requires  %s" % " ".join(kind.requires))
         for f in kind.fields:
             for line in f.lines:
-                out.append("field     %s %s %s%s" % (line.key, loc(line.pos, line.bits), line.transform,
-                                                   " absent " + ",".join(map(str, line.absent))
-                                                   if line.absent else ""))
+                text = "field     %s %s %s%s" % (line.key, loc(line.pos, line.bits), line.transform,
+                                                 " absent " + ",".join(map(str, line.absent))
+                                                 if line.absent else "")
+                if line.gate:
+                    out += ["if        !%s %s" % (loc(*line.gate), ",".join(map(str, NO_FIX))),
+                            "  " + text, "end"]
+                else:
+                    out.append(text)
     return "\n".join(out) + "\n"
 
 
@@ -1416,6 +1450,12 @@ CROSS = [
       "relative_alt": 5000, "flight_state": 3},
      '<event version="2.0" type="a-u-X" time="2023-11-14T22:13:20.000Z" start="2023-11-14T22:13:20.000Z">'
      '<point lat="35.6762" lon="139.6503" hae="9999999" ce="9999999" le="9999999"/><detail/></event>', "cot-xml"),
+    # fix_type 1 (GPS_FIX_TYPE_NO_FIX): the lat and lon bits are kept in raw keys and are
+    # not a position, so `geometry` is null
+    ("GPS_RAW_INT", 13, 1, 1,
+     {"time_usec": 1700000000000000, "fix_type": 1, "lat": -338568000, "lon": 1512153000,
+      "alt": 58000, "eph": 9999, "epv": 9999, "vel": 0, "cog": 0, "satellites_visible": 2},
+     '{"type":"Feature","geometry":null,"properties":{}}'),
 ]
 
 # With core speed_ms and course declared, the mavlink module derives them from vx_ms and
@@ -1502,7 +1542,9 @@ def vector_files(kinds):
         for f in kind.fields:
             if f.status == "core":
                 v = values[f.field.name]
-                if (v & 0xFFFFFFFF) in f.lines[0].absent:
+                gate = f.lines[-1].gate
+                if (v & 0xFFFFFFFF) in f.lines[-1].absent or (
+                        gate and values.get(FIX_FIELD) in NO_FIX):
                     gone.append(core_name(f.field))
                 else:
                     pos[core_name(f.field)] = v
@@ -1516,7 +1558,8 @@ def vector_files(kinds):
                                          (HEADER_MODULE + ".compid", str(compid))])
         if gone:
             model["@absent"] = gone
-        stem = kind.name + ("-unknown-position" if gone else "")
+        stem = kind.name + (("-no-fix" if values.get(FIX_FIELD) in NO_FIX else "-unknown-position")
+                            if gone else "")
         files.append(("x-%02d-%s-to-%s.json" % (n, stem, target), _vector_text([
             ("name", "%s-to-%s" % (stem, target)), ("from", FORMAT), ("to", target),
             ("input", data.hex()), ("expect", expect), ("model", model)])))
@@ -1542,10 +1585,11 @@ def time_ms_of(mapped, raw):
 
 
 def write_vectors(out, files):
-    """Write the vector files and remove every other .json of the directory."""
+    """Write the vector files and remove every other .json of the directory, except the
+    golden-*.json that tools/gen/golden-pymavlink.py writes there."""
     keep = {name for name, _ in files}
     for old in out.listdir(VECTOR_DIR):
-        if old.endswith(".json") and old not in keep:
+        if old.endswith(".json") and old not in keep and not old.startswith("golden-"):
             out.remove("%s/%s" % (VECTOR_DIR, old))
     for name, text in files:
         out.write("%s/%s" % (VECTOR_DIR, name), text)
@@ -1686,6 +1730,17 @@ def _md_core(plan):
     a("vehicle's: `terrain_request`, `terrain_data` and `terrain_report`")
     a("carry a terrain grid point, `follow_target` a target, `camera_image_captured` the")
     a("camera at capture time.")
+    gated = [k for k in core if any(line.gate for f in k.fields for line in f.lines)]
+    if gated:
+        a("")
+        a("%s carry `fix_type`, where 0 and 1 are no fix (enum `GPS_FIX_TYPE`:" % _ticked(k.name for k in gated))
+        a("`GPS_FIX_TYPE_NO_GPS`, `GPS_FIX_TYPE_NO_FIX`; the `HIL_GPS` field text: 0-1 no fix).")
+        a("Their `lat` and `lon` lie in a gate block `if !<fix_type> 0,1` (engine-spec 0.17),")
+        a("so a message without a fix gives no position; the same bits are the raw keys")
+        a("`%s.lat_dege7` and `%s.lon_dege7` outside the block, and the frame comes back byte" % (MODULE, MODULE))
+        a("for byte. Encoded from `lat` and `lon` with no raw key of the message's `fix_type`,")
+        a("the gate writes %d (2D fix), the smallest value that is a fix; with a raw `fix_type` of" % gate_open_value())
+        a("0 or 1 an entity that holds `lat` or `lon` without the raw keys is `transform-encode`.")
     if nocore:
         a("%s has no field but `lat` and `lon`; they stay raw there so the kind has a raw" % _ticked(k.name for k in nocore))
         a("key to require, otherwise any entity with a position would encode as that kind.")
@@ -2324,8 +2379,9 @@ def _when_holds(lines, word, total_bits):
 
 
 def message_bytes(lines):
-    """Bytes up to the last bit a `when` or `field` line of the scope names."""
-    return (max(node.start + node.bits for node in lines) + 7) // 8
+    """Bytes up to the last bit a `when` or `field` line of the scope names (outside gate
+    blocks: a gated field lies on the bits of a raw field, its gate on another field)."""
+    return (max(node.start + node.bits for node in lines if node.d != "if") + 7) // 8
 
 
 def engine_decode(pack, data):
@@ -2342,13 +2398,31 @@ def engine_decode(pack, data):
     if len(data) < message_bytes(lines):
         raise CodecError("malformed-wire")
     entity = collections.OrderedDict()
-    for node in lines:
+    for node in _held_lines(lines, word, total_bits):
         if node.d == "field":
             raw = get_bits(word, node.start, node.bits)
             if raw in sentinels_of(node):
                 continue                # engine-spec 0.9: the sentinel means no value
             entity[node.key] = decode_value(node.tr, node.targs, node.bits, raw)
     return kind.name, entity
+
+
+def _gate_holds(node, word, total_bits):
+    """Engine-spec 0.17 decode: a gate beyond the input does not hold, nor does its `!` form."""
+    if node.start + node.bits > total_bits:
+        return False
+    neg, values = node.gate
+    return (get_bits(word, node.start, node.bits) in values) != neg
+
+
+def _held_lines(lines, word, total_bits):
+    """The lines outside gate blocks and the lines of the blocks that hold, in line order."""
+    for node in lines:
+        if node.d == "if":
+            if _gate_holds(node, word, total_bits):
+                yield from _held_lines(node.body, word, total_bits)
+        else:
+            yield node
 
 
 def sentinels_of(node):
@@ -2362,14 +2436,36 @@ def engine_encode(pack, name, entity):
     up to the last bit a line names."""
     kind = next(k for k in pack.kinds if k.name == name)
     lines = pack.common + kind.lines
-    word = 0
+    word, written = 0, 0
     for node in lines:
+        mask = ((1 << node.bits) - 1) << node.start if node.d != "if" else 0
         if node.d == "field" and node.key in entity:
             word |= encode_value(node.tr, node.targs, node.bits, entity[node.key]) << node.start
+            written |= mask
         elif node.d == "field" and node.absent:
             word |= sentinels_of(node)[0] << node.start      # 0.9: an absent key writes the first sentinel
         elif node.d == "when":
             word |= int(node.value) << node.start
+            written |= mask
+    # engine-spec 0.17 encode, for the gate blocks this generator writes (one level, `!`, and
+    # field lines on the bits of raw fields): an open block whose gate bits nothing wrote gets
+    # the smallest value not listed; a block is written when it then holds
+    total_bits = 8 * message_bytes(lines)
+    for node in lines:
+        if node.d != "if":
+            continue
+        gmask = ((1 << node.bits) - 1) << node.start
+        opened = any(b.d == "field" and b.key in entity for b in node.body)
+        if opened and not written & gmask:
+            word = (word & ~gmask) | (gate_open_value() << node.start)
+        if _gate_holds(node, word, total_bits):
+            for b in node.body:
+                if b.d == "field" and b.key in entity:
+                    bmask = ((1 << b.bits) - 1) << b.start
+                    word = (word & ~bmask) | (encode_value(b.tr, b.targs, b.bits, entity[b.key]) << b.start)
+        elif opened and any(b.d == "field" and b.key in entity and
+                            not any(o.d == "field" and o.key == b.key for o in lines) for b in node.body):
+            raise CodecError("transform-encode")      # step 6: a held key no held line maps
     return word.to_bytes(message_bytes(lines), "little")
 
 
@@ -2455,6 +2551,9 @@ def check_frame_invariants(pack):
       and no other; `requires` of one or more keys the kind itself maps; no key
       mapped twice; no two lines on the same bit; every field inside the
       payload LEN states, on byte boundaries;
+    - a gate block only in a kind, `if !<fix_type> 0,1` on the bits of a field
+      of the kind, holding one core lat or lon line on the bits of a raw field
+      of the kind (FIX_FIELD);
     - no two kinds with the same `when` set."""
     def fail(message, line=None):
         raise GenError(message, pack.label, line)
@@ -2463,10 +2562,22 @@ def check_frame_invariants(pack):
         fail("a MAVLink 2 pack is wire bits, fixed layout, bit_order lsb, word_bytes 1")
     for scope in [pack.common] + [k.lines for k in pack.kinds]:
         for node in scope:
-            if node.d not in ("when", "field"):
+            if node.d == "if" and scope is not pack.common:
+                body = node.body or []
+                spans = {_span(n) for n in scope if n.d == "field"}
+                if (node.gate != (True, NO_FIX) or len(body) != 1 or body[0].d != "field"
+                        or body[0].key not in ("lat", "lon") or _span(node) not in spans
+                        or _span(body[0]) not in spans):
+                    fail("gate block: only `if !<fix_type> 0,1` around one core lat or lon line on a raw field",
+                         node.line)
+                node_fields = body
+            elif node.d not in ("when", "field"):
                 fail("`%s` line: the frame has only `when` and `field` lines" % node.d, node.line)
-            if node.d == "field" and (node.tr not in CODEC_TRANSFORMS or node.via or node.opts or node.also):
-                fail("field %s: transform or option outside what a MAVLink 2 frame uses" % node.key, node.line)
+            else:
+                node_fields = [node] if node.d == "field" else []
+            for n in node_fields:
+                if n.tr not in CODEC_TRANSFORMS or n.via or n.opts or n.also:
+                    fail("field %s: transform or option outside what a MAVLink 2 frame uses" % n.key, n.line)
     stx = (LOC_STX[0], LOC_STX[0] + LOC_STX[1], STX)
     if not any(n.d == "when" and _span(n) + (int(n.value),) == stx for n in pack.common):
         fail("common `when` on STX missing")
@@ -2476,7 +2587,7 @@ def check_frame_invariants(pack):
         if not KIND_NAME_RE.match(kind.name):
             fail("%s: bad kind name" % where, kind.line)
         whens = [n for n in kind.lines if n.d == "when"]
-        fields = [n for n in kind.lines if n.d == "field"]
+        fields = [n for n in gtcheck.walk(kind.lines, "field")]
         seen = set()
         for node in pack.common + fields:
             if node.d == "field":
@@ -2493,7 +2604,7 @@ def check_frame_invariants(pack):
         lens = [int(n.value) for n in whens if (n.start, n.bits) == LOC_LEN]
         if len(ids) != 1 or len(lens) != 1 or len(whens) != 2:
             fail("%s: needs exactly one MSGID when and one LEN when" % where, kind.line)
-        taken = sorted((_span(n) + (n.line,) for n in pack.common + kind.lines))
+        taken = sorted((_span(n) + (n.line,) for n in pack.common + kind.lines if n.d != "if"))
         for (_, a1, _), (b0, _, line) in zip(taken, taken[1:]):
             if b0 < a1:
                 fail("%s: bit ranges overlap at %d" % (where, b0), line)
@@ -2686,8 +2797,10 @@ def generate(out, core_text, core_label, src=None, provenance=None):
     module = model.modules[MODULE]
     check_frame_invariants(pack)
     check_pack_matches_plan(pack, module, plan)
-    checked = check_vectors(pack, read_vectors(out))
-    if checked != len(vectors):
+    on_disk = read_vectors(out)
+    checked = check_vectors(pack, on_disk)
+    golden = sum(1 for name, _ in on_disk if name.startswith("golden-"))     # golden-pymavlink.py's
+    if checked != len(vectors) + golden:
         raise GenError("%d vectors written, %d checked" % (len(vectors), checked), VECTOR_DIR)
 
     stats = collect_stats(plan)

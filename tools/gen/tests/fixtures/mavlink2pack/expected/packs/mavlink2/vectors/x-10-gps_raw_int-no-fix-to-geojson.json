@@ -1,0 +1,17 @@
+{
+  "name": "gps_raw_int-no-fix-to-geojson",
+  "from": "mavlink2",
+  "to": "geojson",
+  "input": "fd3400000d010118000000401e18240a0600c0dcd1eba89f215a90e200000f270f2700000000010200000000000000000000000000000000000000000000daed",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"1\"}",
+  "model": {
+    "@kind": "gps_raw_int",
+    "mavlink.seq": "13",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "1",
+    "@absent": [
+      "lat",
+      "lon"
+    ]
+  }
+}

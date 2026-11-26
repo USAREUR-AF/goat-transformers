@@ -56,8 +56,14 @@ when      0:56:24 24
 when      0:8:8 52
 requires  mavlink.gps_raw_int_alt_mm mavlink.eph mavlink.epv mavlink.vel_cm_per_s mavlink.cog_cdeg mavlink.alt_ellipsoid_mm
 field     mavlink.time_usec_us 0:80:64 uint
-field     lat 0:144:32 sscale:1/10000000
-field     lon 0:176:32 sscale:1/10000000
+field     mavlink.lat_dege7 0:144:32 twos
+if        !0:304:8 0,1
+  field     lat 0:144:32 sscale:1/10000000
+end
+field     mavlink.lon_dege7 0:176:32 twos
+if        !0:304:8 0,1
+  field     lon 0:176:32 sscale:1/10000000
+end
 field     mavlink.gps_raw_int_alt_mm 0:208:32 twos
 field     mavlink.eph 0:240:16 uint
 field     mavlink.epv 0:256:16 uint
@@ -124,10 +130,16 @@ field     mavlink.confirmation 0:336:8 uint
 kind      hil_gps
 when      0:56:24 113
 when      0:8:8 22
-requires  mavlink.time_usec_us mavlink.hil_gps_alt_mm mavlink.fix_type mavlink.satellites_visible
+requires  mavlink.time_usec_us mavlink.lat_dege7 mavlink.lon_dege7 mavlink.hil_gps_alt_mm mavlink.fix_type mavlink.satellites_visible
 field     mavlink.time_usec_us 0:80:64 uint
-field     lat 0:144:32 sscale:1/10000000
-field     lon 0:176:32 sscale:1/10000000
+field     mavlink.lat_dege7 0:144:32 twos
+if        !0:240:8 0,1
+  field     lat 0:144:32 sscale:1/10000000
+end
+field     mavlink.lon_dege7 0:176:32 twos
+if        !0:240:8 0,1
+  field     lon 0:176:32 sscale:1/10000000
+end
 field     mavlink.hil_gps_alt_mm 0:208:32 twos
 field     mavlink.fix_type 0:240:8 uint
 field     mavlink.satellites_visible 0:248:8 uint
@@ -135,10 +147,16 @@ field     mavlink.satellites_visible 0:248:8 uint
 kind      gps2_raw
 when      0:56:24 124
 when      0:8:8 22
-requires  mavlink.time_usec_us mavlink.gps2_raw_alt_mm mavlink.fix_type mavlink.satellites_visible
+requires  mavlink.time_usec_us mavlink.lat_dege7 mavlink.lon_dege7 mavlink.gps2_raw_alt_mm mavlink.fix_type mavlink.satellites_visible
 field     mavlink.time_usec_us 0:80:64 uint
-field     lat 0:144:32 sscale:1/10000000
-field     lon 0:176:32 sscale:1/10000000
+field     mavlink.lat_dege7 0:144:32 twos
+if        !0:240:8 0,1
+  field     lat 0:144:32 sscale:1/10000000
+end
+field     mavlink.lon_dege7 0:176:32 twos
+if        !0:240:8 0,1
+  field     lon 0:176:32 sscale:1/10000000
+end
 field     mavlink.gps2_raw_alt_mm 0:208:32 twos
 field     mavlink.fix_type 0:240:8 uint
 field     mavlink.satellites_visible 0:248:8 uint
