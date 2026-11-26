@@ -220,6 +220,51 @@ abstract class Codec<W> {
                 "the entity has the required keys of no kind");
     }
 
+    /**
+     * The check of engine-spec 0.94 in {@code convert} with {@code from} different from {@code to}, after the context
+     * and the derivations and before any line is written: a pack with message kinds refuses the kind encode chooses
+     * when the entity holds no key of it ({@code no-kind}). A kind the entity records for this format is kept and not
+     * checked (ruling 4). Choosing itself may be the {@code no-kind} of 0.5, which comes first (ruling 5).
+     */
+    void checkHeld(Entity e) {
+        if (!pack.hasKinds) return;
+        Pack.Kind k = selectForEncode(e, false);
+        if (recordedKind(e, false) != null) return;
+        java.util.Set<String> keys = new java.util.LinkedHashSet<>();
+        for (Pack.Line l : k.lines) kindKeys(l, keys);
+        for (Pack.Require r : k.requires) keys.add(r.key);
+        refuseUnheld(keys, e, k.name);
+    }
+
+    /** The keys of a kind one line adds (0.94): a field's key, a list by its entry, the lines of a gate. */
+    private static void kindKeys(Pack.Line l, java.util.Set<String> out) {
+        if (l instanceof Pack.Field) out.add(((Pack.Field) l).key);
+        else if (l instanceof Pack.Group) out.add(((Pack.Group) l).list + "[]");
+        else if (l instanceof Pack.Gate) for (Pack.Line b : ((Pack.Gate) l).body.lines) kindKeys(b, out);
+    }
+
+    /**
+     * {@code no-kind} unless the entity holds one of {@code keys} (engine-spec 0.94): a key holds when the entity has
+     * a value for it; a list ({@code rows[]}, or a {@code requires} key that names a list) when it has an item. An
+     * entry of an item key ({@code rows[].x}) does not count.
+     */
+    final void refuseUnheld(java.util.Collection<String> keys, Entity e, String kind) {
+        for (String k : keys) {
+            if (k.endsWith("[]")) {
+                if (k.indexOf("[].") < 0 && hasItems(e, k.substring(0, k.length() - 2))) return;
+            } else if (k.indexOf("[].") < 0 && (e.get(k) != null || hasItems(e, k))) {
+                return;
+            }
+        }
+        throw new GtException(GtException.Code.NO_KIND, pack.format, null,
+                "the entity holds no key of kind " + kind + " (a conversion into a kind holds one of its keys)");
+    }
+
+    private static boolean hasItems(Entity e, String list) {
+        List<Entity> items = e.list(list);
+        return items != null && !items.isEmpty();
+    }
+
     GtException malformed(String why) {
         return new GtException(GtException.Code.MALFORMED_WIRE, pack.format, null, why);
     }

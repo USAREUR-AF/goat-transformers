@@ -43,8 +43,11 @@ hands the rest of a sequential message, or of a `length` block, to another
 loaded `bits` pack (`inner <format> [partial]`, spec Version 0.34: the inner pack decodes into the same entity and encodes from it; the kind it selected
 is `Entity.inner_kind_fmt` and `Entity.inner_kind_name`, beside
 `Entity.kind_fmt` and `Entity.kind_name`; `loadPacksOnly` also loads, from
-the packs directory, the packs `inner` lines name, transitively), and
-converts between formats via the shared model.
+the packs directory, the packs `inner` lines name, transitively),
+refuses a conversion into a message kind of which the entity holds no key
+(spec Version 0.94: `no-kind`, after the kind is chosen and before any line
+is written, in `convert` and `convert_run` with `from` different from `to`),
+and converts between formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -170,18 +173,18 @@ builds the engine with all eight wires and with `xml`, `json` and `geojson`
 of the packs on those three wires through the reduced harness, loads a pack
 on `bits` (fixed and sequential), `protobuf`, `text`, `tlv` and `cbor`, each of which
 must be `unknown-wire` naming its wire, and prints the sizes of both builds.
-It exits non-zero on any failure. Measured on 2026-11-21 (Zig 0.13.0, x86_64
+It exits non-zero on any failure. Measured on 2026-11-26 (Zig 0.13.0, x86_64
 Linux, `ReleaseSmall`):
 
 | Binary | All eight wires | `xml`, `json`, `geojson` | Reduced / full |
 |---|---|---|---|
-| `gt-engine-zig` (harness) | 807 576 bytes | 443 032 bytes | 54 % |
-| `goat-xf` (command-line tool) | 803 480 bytes | 443 032 bytes | 55 % |
+| `gt-engine-zig` (harness) | 881 304 bytes | 471 704 bytes | 53 % |
+| `goat-xf` (command-line tool) | 848 536 bytes | 451 224 bytes | 53 % |
 
-The reduced harness loaded 1713 packs and left out 2815; it ran 8377
-conversion vectors (8377 passed), 394 load vectors (394 passed) and 16
-capability vectors (16 passed), and did not run 718 vectors that name a pack
-it left out nor 1008 load vectors with such a pack.
+The reduced harness loaded 1750 packs and left out 3302; it ran 8519
+conversion vectors (8519 passed), 402 load vectors (402 passed) and 16
+capability vectors (16 passed), and did not run 1051 vectors that name a
+pack it left out nor 1351 load vectors with such a pack.
 
 `goat-xf` of a reduced build loads a whole packs directory as Version 0.23
 says, so a directory holding a pack on a wire the build lacks fails with that
@@ -545,6 +548,13 @@ the end of the record. `--convert` does not trim the input of a `text` format.
   field that fails once the whole message has been read.
 
 ## Readings where the specification leaves a choice
+
+- Version 0.94: from a carrier to a carrier pack (ruling 7), the check on
+  the outer entity joined with the first message is made after that
+  entity's context and derivations; the inner kind the first message records
+  is not a kept kind there. A kind without a `run` line makes the
+  `message-count` of 0.92 ruling 6 first, then checks the joined entity as
+  `convert` does, a kept kind (ruling 4) included.
 
 - Version 0.25: the benchmark's load time includes reading the files and
   the scan of the model directory (every module file is read once to learn

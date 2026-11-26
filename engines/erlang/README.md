@@ -10,17 +10,17 @@ An independent, clean-room implementation of the gt engine, written from
 ./run_tests       # loads ../../model and ../../packs, runs every vector
 ```
 
-| Test | Command (repository root) | Measured (2026-11-24; the benchmark 2026-11-21) |
+| Test | Command (repository root) | Measured (2026-11-26; the benchmark table below 2026-11-21) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 24684/24684 |
-| load vectors | same run | 1471/1471 |
-| capability vectors | same run | 27/27 |
-| malformed inputs | same run | 159765/159765 |
-| concurrent conversions (Version 0.25) | same run | 740/740 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 25823/25823 |
+| load vectors | same run | 1753/1753 |
+| capability vectors | same run | 29/29 |
+| malformed inputs | same run | 168760/168760 |
+| concurrent conversions (Version 0.25) | same run | 1194/1194 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 16 vectors, 16 packs (below) |
-| unit checks (the CRC of 0.27; rulings 5 and 6 of 0.93, a controlled inner pack) | same run | 41/41 |
+| unit checks (the CRC of 0.27; rulings 5 and 6 of 0.93, a controlled inner pack) | same run | 42/42 |
 | tool vectors (Versions 0.23, 0.29, 0.93) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 183/183 |
-| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8398/8398 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8516/8516 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
@@ -476,6 +476,33 @@ whose body holds kinds also has `kind => {FormatName, KindName}`. A model
 module may hold `uses` lines, and `derive` has the functions `day_seconds`,
 `any`, `not`, `parse_int` and `text_of`. Rulings 16 to 34 of 0.8 are
 implemented as the specification states them.
+
+## A conversion into a kind holds one of its keys (engine-spec Version 0.94)
+
+`convert` with `from` different from `to`, after the context and the
+derivations and before any line is written, takes the kind encode chooses
+(0.5; none is the `no-kind` of choosing, first) and refuses it with `no-kind`
+unless the entity holds one of the kind's keys (`gt_engine:held_check/4`):
+a key of a `field`, `also` or `when ... as` line of the common lines or the
+kind, inside blocks, gates and cases and whether or not it is written; a
+group by its list (held with at least one item), never by its item keys; the
+`model_keys` of the pack of an `inner` line, when it passes the checks of
+0.34 (else nothing); the keys of the kind's own `requires` lines. A key is held
+when it is in the entity's model (decode, context or a derivation put it
+there); a `default`, `const`, `when` value and residue are not. Not checked:
+a pack without message kinds (one whose only `kind` lines are in a group body
+included), and a kept kind (`kind` or `inner_kind` naming `to` or the format
+of an `inner` line of the common lines or the chosen kind). `encode` and
+`convert(f, f, ...)` are unchanged. `convert_run` (ruling 7): each joined
+message as `convert`; from a carrier to a carrier pack, once, on the kind
+chosen for the outer entity, with the keys of the outer entity joined with the
+first message (alone when the run is empty), kept only by the outer entity's
+records (the inner kind the first message records is not kept); into a kind
+without a `run` line, the `message-count` of 0.92 ruling 6 first, then the one
+joined message as `convert`, kept kinds included.
+
+Every vector passes, the four that ruling 8 rederived included; an empty
+list does not meet `requires` (0.7, ruling 1).
 
 ## Layout
 

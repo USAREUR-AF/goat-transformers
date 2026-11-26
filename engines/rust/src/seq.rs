@@ -3047,6 +3047,70 @@ fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity, item: bool) -> Result<O
     }
 }
 
+/// The kind `encode` chooses for a message (0.5), for the check of 0.94.
+#[cfg(feature = "bits")]
+pub(crate) fn chosen_kind<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity) -> Result<Option<&'a SeqKind>, Error> {
+    select(p, body, ent, false)
+}
+
+/// The keys of a kind (engine-spec v0.94, Rule), over the common lines and
+/// the lines of `kind`, every block, case and suppressed line included: the
+/// keys of `field` and `also` lines, of `when … as` lines, a list by its
+/// entry `<list>[]` (its items' keys not), the keys `inner` adds for an
+/// `inner` line (format, `run`), and the keys of the kind's own `requires`
+/// lines. Also the formats of the `inner` lines of those lines.
+#[cfg(feature = "bits")]
+pub(crate) fn kind_keys(
+    body: &SeqBody,
+    kind: Option<&SeqKind>,
+    inner: &dyn Fn(&str, bool, &mut Vec<String>),
+) -> (Vec<String>, Vec<String>) {
+    fn add(out: &mut Vec<String>, key: String) {
+        if !out.contains(&key) {
+            out.push(key);
+        }
+    }
+    fn walk(ls: &[SeqLine], out: &mut Vec<String>, formats: &mut Vec<String>, inner: &dyn Fn(&str, bool, &mut Vec<String>)) {
+        for l in ls {
+            match l {
+                SeqLine::Field { f, also, .. } => {
+                    std::iter::once(f).chain(also.iter()).for_each(|k| add(out, k.model_key.clone()))
+                }
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                    walk(body, out, formats, inner)
+                }
+                SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| walk(p, out, formats, inner)),
+                SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| walk(p, out, formats, inner)),
+                // a list by its entry; an `inner` line cannot stand in a group
+                // body (0.34), so no format of one keeps a kind (ruling 4)
+                SeqLine::Group(g) => add(out, format!("{}[]", g.list)),
+                SeqLine::Switch(sw) => sw.bodies().for_each(|c| walk(&c.lines, out, formats, inner)),
+                SeqLine::When(SeqWhen { key: Some(k), .. }) => add(out, k.clone()),
+                SeqLine::Inner { format, run, .. } => {
+                    if !formats.contains(format) {
+                        formats.push(format.clone());
+                    }
+                    inner(format, *run, out)
+                }
+                _ => {}
+            }
+        }
+    }
+    let mut out = Vec::new();
+    let mut formats = Vec::new();
+    walk(&body.common, &mut out, &mut formats, inner);
+    if let Some(k) = kind {
+        for w in &k.whens {
+            if let Some(key) = &w.key {
+                add(&mut out, key.clone());
+            }
+        }
+        walk(&k.lines, &mut out, &mut formats, inner);
+        k.requires.iter().for_each(|r| add(&mut out, r.key.clone()));
+    }
+    (out, formats)
+}
+
 /// The implicit `requires` term of a `when` line: none without `as`; else the
 /// entity holds the key with a value the line matches, or, on an `optional`
 /// line (engine-spec v0.52), does not hold it. The value is read as an

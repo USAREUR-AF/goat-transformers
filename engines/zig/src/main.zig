@@ -288,6 +288,10 @@ const Diag = struct {
     run: ?*RunRead = null,
     run_end: usize = 0,
     run_write: ?*RunWrite = null,
+    // Version 0.94: the encode about to start is that of `convert` with
+    // `from` different from `to`: the chosen kind must hold one of its
+    // keys. Taken by that encode, so an inner encode is not checked.
+    held_check: bool = false,
 };
 
 // `run`: one message of a run, which ends where its own decode ends.
@@ -902,6 +906,8 @@ const KeyUse = struct {
     // the innermost group the line is in: `model_keys` lists a key inside a
     // group as `<list>[].<key>`
     grp: ?*const Group = null,
+    // a `requires` line of a kind in a group body (an item kind)
+    item: bool = false,
 };
 
 const Pack = struct {
@@ -999,8 +1005,8 @@ const Pack = struct {
     inners: std.ArrayListUnmanaged(InnerMark) = .{},
     // Version 0.92: does an `inner` line hold the word `run` (a carrier pack)?
     has_run: bool = false,
-    // Version 0.52, ruling 20: where in `key_uses` each message kind of a
-    // sequential pack begins
+    // Version 0.52, ruling 20, and Version 0.94: where in `key_uses` each
+    // message kind begins
     kind_starts: std.ArrayListUnmanaged(usize) = .{},
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
@@ -1032,6 +1038,12 @@ const Pack = struct {
             if (self.kinds.items[idx].root) |r| return r;
         }
         return self.root;
+    }
+
+    // The name of message kind `i` (fixed or sequential layout).
+    fn kindName(self: *const Pack, i: usize) []const u8 {
+        if (self.seq) |b| return if (i < b.kinds.len) b.kinds[i].name else "";
+        return if (i < self.kinds.items.len) self.kinds.items[i].name else "";
     }
 
     fn kindIndex(self: *const Pack, name: []const u8) ?usize {
@@ -3111,6 +3123,8 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
             .requires = std.ArrayList(*ReqTerm).init(alloc),
             .defaults = std.ArrayList(Default).init(alloc),
         });
+        // where the kind's key uses begin (Version 0.94)
+        try p.kind_starts.append(alloc, p.key_uses.items.len);
     } else if (is(kw, "requires")) {
         if (p.kinds.items.len == 0) {
             return bad(diag, alloc, E.@"bad-directive", "line {d}: requires before the first kind", .{lineno});
@@ -4341,8 +4355,14 @@ pub const Engine = struct {
 
     // encode(format, Entity) -> bytes
     pub fn encode(self: *Engine, fmt: []const u8, e: *const Entity) ![]u8 {
+        return self.encodeHeld(fmt, e, false);
+    }
+
+    // encode; with `held_check`, the encode of a conversion between two
+    // formats: the chosen kind must hold one of its keys (Version 0.94).
+    fn encodeHeld(self: *Engine, fmt: []const u8, e: *const Entity, held_check: bool) ![]u8 {
         const p = try self.pack(fmt);
-        var diag = Diag{ .packs = &self.pack_index };
+        var diag = Diag{ .packs = &self.pack_index, .held_check = held_check };
         return encodePack(self.scratch, p, e, &diag) catch |err| {
             self.fail(err, "encode {s}: {s}", .{ fmt, diag.msg });
             return err;
@@ -4465,7 +4485,7 @@ pub const Engine = struct {
         var e = try self.decode(from, bytes);
         self.clearKinds(&e, from, to);
         if (!same or context != null) try self.finish(self.scratch, &e, context);
-        return self.encode(to, &e);
+        return self.encodeHeld(to, &e, !same);
     }
 
     // Entity.kind is kept when from == to, or when an `inner` line of `to`
@@ -4564,8 +4584,9 @@ pub const Engine = struct {
     // carrier pack (ruling 4 of 0.92).
     fn finishOne(self: *Engine, e: *Entity, from: []const u8, to: []const u8, context: ?[]const KV) ![]const RunResult {
         self.clearKinds(e, from, to);
-        if (!std.mem.eql(u8, from, to) or context != null) try self.finish(self.scratch, e, context);
-        const out = self.encode(to, e) catch |err| {
+        const same = std.mem.eql(u8, from, to);
+        if (!same or context != null) try self.finish(self.scratch, e, context);
+        const out = self.encodeHeld(to, e, !same) catch |err| {
             if (err == error.OutOfMemory or self.findPack(to).?.has_run) return err;
             return self.oneResult(self.errResult(err));
         };
@@ -4587,7 +4608,7 @@ pub const Engine = struct {
         try self.finish(a, &e, context);
         self.scratch = a;
         defer self.scratch = keep;
-        const out = self.encode(to, &e) catch |err| {
+        const out = self.encodeHeld(to, &e, !std.mem.eql(u8, from, to)) catch |err| {
             if (err == error.OutOfMemory) return err;
             // it outlives the arena
             self.last_error = try keep.dupe(u8, self.last_error);
@@ -4618,7 +4639,8 @@ pub const Engine = struct {
         };
         const runs = seqRunCount(body.common) + if (kind) |k| seqRunCount(k.lines) else 0;
         if (runs == 0) {
-            // a kind without a `run` line takes one message
+            // a kind without a `run` line takes one message; the count is
+            // made first (0.94 ruling 7)
             if (r.msgs.items.len != 1) {
                 const err = E.@"message-count";
                 self.fail(err, "encode {s}: kind {s} takes one message, the run holds {d}", .{ to, if (kind) |k| k.name else "", r.msgs.items.len });
@@ -4628,11 +4650,38 @@ pub const Engine = struct {
             self.clearKinds(&e, from, to);
             if (!same or context != null) try self.finish(self.scratch, &e, context);
             if (kind) |k| {
+                // Version 0.94, ruling 7: the joined entity is checked as
+                // `convert`, kept kinds (ruling 4) included
+                if (!same) {
+                    const ki = (@intFromPtr(k) - @intFromPtr(body.kinds.ptr)) / @sizeOf(SKind);
+                    heldCheck(self.scratch, tp, ki, &e, &diag) catch |err| {
+                        self.fail(err, "encode {s}: {s}", .{ to, diag.msg });
+                        return err;
+                    };
+                }
                 e.kind_fmt = to;
                 e.kind_name = k.name;
             }
             return self.encode(to, &e);
         }
+        // Version 0.94, ruling 7: from another carrier, the chosen kind holds
+        // a key of the outer entity joined with the first message, or of
+        // the outer entity alone when the run is empty. The inner kind the
+        // first message records is not a kept kind here.
+        if (!same) if (kind) |k| {
+            var probe = oe;
+            if (r.msgs.items.len > 0) {
+                probe = try r.joined(self.scratch, outer, r.msgs.items[0]);
+                self.clearKinds(&probe, from, to);
+                try self.finish(self.scratch, &probe, context);
+                probe.clearInnerKind();
+            }
+            const ki = (@intFromPtr(k) - @intFromPtr(body.kinds.ptr)) / @sizeOf(SKind);
+            heldCheck(self.scratch, tp, ki, &probe, &diag) catch |err| {
+                self.fail(err, "encode {s}: {s}", .{ to, diag.msg });
+                return err;
+            };
+        };
         var w = RunWrite{ .eng = self, .read = r, .outer = outer, .from = from, .to = to, .context = context };
         diag.run_write = &w;
         return encodePack(self.scratch, tp, &oe, &diag) catch |err| {
@@ -7934,6 +7983,53 @@ fn selectKindEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, 
     return bad(diag, alloc, E.@"no-kind", "the entity has the `requires` keys of no kind", .{});
 }
 
+// Version 0.94: does the entity hold a key of message kind `ki` (its index
+// among the pack's message kinds)? The keys are those the common lines and
+// the kind's lines map (`field`, `also`, `group` as its list, `when … as`),
+// written or not, outside a group's items; the kind's own `requires` keys;
+// and the `model_keys` of the pack of an `inner` line among those lines that
+// passes the checks of 0.34. A key is held when the entity has it, a list
+// when it has an item. A kept kind is not checked (ruling 4).
+fn kindHeld(p: *const Pack, ki: usize, e: *const Entity, packs: ?*const std.StringHashMap(*Pack)) bool {
+    for ([_]?[]const u8{ e.kind_fmt, e.inner_kind_fmt }) |kf_opt| {
+        const kf = kf_opt orelse continue;
+        if (std.mem.eql(u8, kf, p.format)) return true;
+        for (p.inners.items) |im| {
+            if ((im.kind == 0 or im.kind == ki + 1) and std.mem.eql(u8, im.fmt, kf)) return true;
+        }
+    }
+    const starts = p.kind_starts.items;
+    const common_end = if (starts.len > 0) starts[0] else p.key_uses.items.len;
+    const kind_lo = if (ki < starts.len) starts[ki] else p.key_uses.items.len;
+    const kind_hi = if (ki + 1 < starts.len) starts[ki + 1] else p.key_uses.items.len;
+    for ([_][2]usize{ .{ 0, common_end }, .{ kind_lo, kind_hi } }) |r| {
+        for (p.key_uses.items[r[0]..r[1]]) |ku| {
+            const counts = switch (ku.use) {
+                .field, .group, .as_ => ku.grp == null,
+                .requires => !ku.item,
+                .default, .with => false,
+            };
+            if (counts and e.has(ku.key)) return true;
+        }
+    }
+    const m = packs orelse return false;
+    for (p.inners.items) |im| {
+        if (im.kind != 0 and im.kind != ki + 1) continue;
+        const ip = m.get(im.fmt) orelse continue;
+        if (innerCheck(p, ip) != null) continue;
+        for (ip.key_uses.items) |ku| {
+            if (!mapsKey(ku) or ku.grp != null) continue;
+            if (e.has(ku.key)) return true;
+        }
+    }
+    return false;
+}
+
+fn heldCheck(alloc: std.mem.Allocator, p: *const Pack, ki: usize, e: *const Entity, diag: *Diag) anyerror!void {
+    if (kindHeld(p, ki, e, diag.packs)) return;
+    return bad(diag, alloc, E.@"no-kind", "the entity holds no key of kind {s}", .{p.kindName(ki)});
+}
+
 // The value a field line writes: the entity's (or item's) value, else the
 // `default` in scope; the CoT type token mapped back to the format's native
 // code; then through the line's `via` table. null: nothing to write.
@@ -8705,8 +8801,11 @@ fn armorLength(p: *const Pack, sc: *const Scope, e: *const Entity, end: usize, h
 }
 
 fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag) anyerror![]u8 {
-    if (built(.bits) and p.seq != null) return seqEncode(alloc, p, e, diag);
+    const held_check = diag.held_check;
+    diag.held_check = false;
+    if (built(.bits) and p.seq != null) return seqEncode(alloc, p, e, diag, held_check);
     const kind_idx = try selectKindEncode(alloc, p, e, diag);
+    if (held_check) if (kind_idx) |ki| try heldCheck(alloc, p, ki, e, diag);
     const sc = p.scope(kind_idx);
     const lines = sc.lines;
 
@@ -12020,7 +12119,7 @@ const SParser = struct {
                 const t = (try parseReqTerm(alloc, tok, self.lineno)) orelse
                     return self.err(bd, "requires {s}: a key and a non-empty value list around `=`", .{tok});
                 try k.requires.append(alloc, t);
-                try p.key_uses.append(.{ .key = t.key, .tkind = null, .use = .requires, .eq = t.vals != null });
+                try p.key_uses.append(.{ .key = t.key, .tkind = null, .use = .requires, .eq = t.vals != null, .item = f.is_group });
                 if (t.vals != null) try p.vchecks.append(alloc, .{ .req = t });
             }
             f.last_field = false;
@@ -14398,6 +14497,8 @@ const SEnc = struct {
     // the extents being laid out, innermost last, with where each item of a
     // `rest` group in them starts
     exts: std.ArrayListUnmanaged(SExt) = .{},
+    // Version 0.94: the message's chosen kind must hold one of its keys
+    held_check: bool = false,
 
     const te = E.@"transform-encode";
 
@@ -14778,6 +14879,12 @@ const SEnc = struct {
             self.kv_failed = save_kvf;
         }
         const k = try self.selectKind(b, ent, is_item);
+        // Version 0.94: the message's kind, between choosing and the first
+        // line; not an item's (ruling 4)
+        if (self.held_check and !is_item) if (k) |kk| {
+            const ki = (@intFromPtr(kk) - @intFromPtr(b.kinds.ptr)) / @sizeOf(SKind);
+            try heldCheck(self.alloc, self.p, ki, ent, self.diag);
+        };
         const ds = DS{ .a = if (k) |kk| &kk.dmap else null, .b = &b.dmap };
         var env = env_in;
         const tail: []const SNode = if (k) |kk| kk.lines else &.{};
@@ -15422,7 +15529,7 @@ const SEnc = struct {
     }
 };
 
-fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag) anyerror![]u8 {
+fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag, held_check: bool) anyerror![]u8 {
     const run_write = diag.run_write;
     diag.run_write = null;
     var table = SwTable{};
@@ -15431,7 +15538,7 @@ fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *
         // the written bits select
         var iter: usize = 0;
         while (true) : (iter += 1) {
-            var dry = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = &table, .dry = true, .run_write = run_write };
+            var dry = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = &table, .dry = true, .run_write = run_write, .held_check = held_check };
             try dry.exts.append(alloc, .{ .bits = false });
             dry.body(p.seq.?, e, null, false) catch |err| {
                 if (err == error.OutOfMemory) return err;
@@ -15442,7 +15549,7 @@ fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *
             if (iter == 32) return bad(diag, alloc, E.@"transform-encode", "the predicted switch cases do not settle", .{});
         }
     }
-    var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = if (p.seq_switch) &table else null, .run_write = run_write };
+    var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = if (p.seq_switch) &table else null, .run_write = run_write, .held_check = held_check };
     try enc.exts.append(alloc, .{ .bits = false });
     try enc.body(p.seq.?, e, null, false);
     // the message extent ends at its byte-padded end, under `armor sixbit`

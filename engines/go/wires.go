@@ -36,6 +36,10 @@ type wireCodec struct {
 	// nil on a wire that has no sequential layout.
 	encodeRun func(e *Engine, p *Pack, outer *Entity, msgs []*Entity) ([]byte, error)
 	runKind   func(p *Pack, outer *Entity) (kind, format string, err error)
+	// pickKind is the message kind an encode of a sequential pack writes
+	// for an entity (0.5), nil with no error when the pack has no kind; nil
+	// on a wire that has no sequential layout.
+	pickKind func(p *Pack, ent *Entity) (*seqKind, error)
 }
 
 // codecs holds the codec of every wire of this build.

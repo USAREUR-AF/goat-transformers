@@ -1249,11 +1249,45 @@ final class SeqCodec extends BitsWire<byte[]> {
             if (!n.run) continue;
             // the inner format of the source: neither context nor derivations unless the caller gives context
             if (context || !n.name.equals(sourceInner)) joined.forEach(complete);
+            // 0.94 ruling 7: once, on the outer entity joined with the first message, or alone for an empty run; the
+            // inner kind the first message records is not a kept kind here, so the records are the outer entity's
+            if (!samePack) checkHeld(kind, outer, joined.isEmpty() ? outer : Run.join(outer, joined.get(0)));
             return encodeAs(kind, outer, joined);
         }
         if (joined.size() != 1) throw messageCount("kind " + kind.name + " has no run line and takes one message, not " + joined.size());
         if (context || !samePack) complete.accept(joined.get(0));
+        // on the joined entity, as convert, its kind records included (ruling 7, with ruling 4)
+        if (!samePack) checkHeld(kind, joined.get(0), Run.join(outer, joined.get(0)));
         return encodeAs(kind, joined.get(0), null);
+    }
+
+    @Override
+    void checkHeld(Entity e) {
+        if (!root.hasKinds) return;
+        checkHeld(selectRoot(e, false), e, e);
+    }
+
+    /**
+     * The check of engine-spec 0.94 on the chosen root kind: {@code records} gives the kind records (a kept kind is
+     * not checked, ruling 4), {@code held} the values. The keys are those {@code model_keys} lists over the kind's
+     * lines, the common lines among them, with each {@code inner} line's inner pack (none when it fails checks 1 to
+     * 4 of 0.34), and the kind's own {@code requires} keys.
+     */
+    private void checkHeld(Seq.Kind k, Entity records, Entity held) {
+        if (!root.hasKinds) return;
+        if (recordedKind(records, false) != null) return;
+        String kf = records.kindFormat(), ikf = records.innerKindFormat();
+        for (Seq.Node n : Seq.innerLines(k.all)) {
+            if (n.name.equals(kf) || n.name.equals(ikf)) return;
+        }
+        java.util.Set<String> keys = Seq.kindKeys(k, f -> {
+            try {
+                return engine.innerCodec(pack, f).pack.modelKeys();
+            } catch (GtException ex) {
+                return null;
+            }
+        });
+        refuseUnheld(keys, held, k.name);
     }
 
     private GtException messageCount(String why) {

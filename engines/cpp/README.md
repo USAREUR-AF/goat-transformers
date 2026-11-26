@@ -123,10 +123,12 @@ Measured on 2026-11-24 on Linux x86-64 with GCC 15.2, Release, not stripped:
 | `libgoat_transformers.a` | 3,420,664 bytes | 2,415,622 bytes (71%) |
 | `goat-xf` | 1,915,376 bytes | 1,364,408 bytes (71%) |
 
-The check passed with 8399 of 8399 conversion vectors, 396 of 396 load
-vectors and 16 of 16 capability vectors run (16212, 1075 and 11 skipped), and
-2946 packs refused with `unknown-wire` (bits 1966, protobuf 876, text 86,
-tlv 11, cbor 7). What stays in the reduced build is the pack reader and the transforms
+On 2026-11-26 it ran 8519 conversion vectors (8518 passed; the one failure is
+`conformance-held-src/40-reqlist-requires-met-by-an-empty-list`, below, so
+the check exits 1 before its size step), 402
+of 402 load vectors and 16 of 16 capability vectors, and refused 3298 packs
+with `unknown-wire` (bits 2317, protobuf 876, text 87, tlv 11, cbor 7). The
+sizes are those of 2026-11-24. What stays in the reduced build is the pack reader and the transforms
 every wire shares.
 
 ### Single-wire check
@@ -154,17 +156,17 @@ cd build && ctest --output-on-failure
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
 | `parse_once` | `goat_transformers_parse_once` | what an instance keeps (0.25 ruling 1), below: every vector gives the same output, error and decoded entity on a new instance (the benchmark set's vectors), in reverse order after failing conversions, and from eight threads at once |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
-| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29 and 0.93): 183/183 pass (2026-11-24). The entry exists when CMake finds a Python 3 interpreter |
+| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29 and 0.93): 183/183 pass (2026-11-26). The entry exists when CMake finds a Python 3 interpreter |
 
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
 
-Measured on 2026-11-24 (Release, all eight wires, through Version 0.34,
-`inner`, with 0.30's `when … as`, 0.31's two counts and 0.33's `when … at`):
-all seven ctest entries pass; `vectors` ran 24611 of 24611 conversion vectors,
-1471 of 1471 load vectors and 27 of 27 capability vectors; `unit` made 2176
-checks, none failed; `malformed_input` made 9580150 convert calls, 0 failed;
-`parse_once` ran 24557 vectors, 0 failures; `tool_vectors` passed 135 of 135.
+Measured on 2026-11-26 (Release, all eight wires, through Version 0.94, on
+top of 0.92's runs): `vectors` ran 25823 of 25823 conversion vectors, 1753 of
+1753 load vectors and 29 of 29 capability vectors, none failed; `unit` made
+2339 checks, none failed; `malformed_input` made 9705345 convert calls over
+25823 vector inputs, 0 failed; `parse_once` ran 25733 vectors, 0 failures;
+`tool_vectors` passed 183 of 183.
 
 ## What an instance keeps
 
@@ -182,8 +184,11 @@ held by `Pack::plan`):
   `element` lines of each kind (xml), the locators each kind maps (xml and
   json residue), and every `case` by id (`layout sequential`).
 
-None of it is written after the pack is added, and a conversion keeps its own
-state on its stack (the list-item count of 0.11 ruling 7 is per thread), so a
+None of it is written after the pack is added. The one thing computed later
+is the set of keys of each kind that a conversion checks (Version 0.94,
+below): it is computed the first time a conversion chooses that kind, kept
+behind a mutex, and computed again after the engine adds a pack. A conversion
+keeps its own state on its stack (the list-item count of 0.11 ruling 7 is per thread), so a
 `const Engine` may be used from several threads at once (ruling 1c). The
 setters (`set_max_items`, `set_max_distribution`) and the loading functions
 change the instance and are not to be called while another thread converts.
@@ -201,6 +206,29 @@ not when the outer pack loads, so packs load in any order. The kind the inner
 pack selected is `Entity::inner_kind`, a `(format, kind name)` pair beside
 `Entity::kind`; both are empty when nothing was selected. `Pack::inner_formats`
 lists the formats of a pack's `inner` lines.
+
+## A conversion into a kind holds one of its keys
+
+In `convert` and `convert_run` with `from` different from `to`
+(`spec/engine-spec.md`, Version 0.94), after the context and the derivations
+and once the target kind is chosen, `Engine::check_held` (`src/engine.cpp`)
+raises `no-kind` when the target pack has message kinds and the entity holds
+no key of the chosen kind: the keys of the common lines and the kind's lines
+(every `field`, `also` and `when … as` line, in any block or case, and a
+group by its `<list>[]` entry), the `model_keys` of the pack of each `inner`
+line among them that passes 0.34's checks, and the kind's own `requires`
+keys. A key counts when the entity has a value for it, a list when it has an
+item. A pack without message kinds, a same-format conversion, `encode` and a
+kind kept by `Entity.kind` or `Entity.inner_kind` are not checked. From a
+carrier to a carrier pack the kind of 0.92 ruling 6 is checked once, on the
+outer entity joined with the first message.
+
+`requires <list>` holds only for a list with at least one item (0.7, which
+0.94 ruling 1 keeps), so a kind with such a `requires` always passes. A
+carrier-to-carrier kind without a `run` line makes 0.92's message count
+first, then checks the joined entity (0.94 ruling 7). The inner packs'
+`model_keys` count only after 0.34's checks 1 to 4, not the `framing self`
+check of 0.92 ruling 16.
 
 ## Benchmark
 

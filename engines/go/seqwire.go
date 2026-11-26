@@ -1510,26 +1510,39 @@ func seqSelect(p *Pack, b *seqBody, kind EntityKind, rec *Item, what string) ([]
 	if len(b.kinds) == 0 {
 		return b.common, b.defs, nil
 	}
+	k, err := seqPick(p, b, kind, rec, what)
+	if err != nil {
+		return nil, nil, err
+	}
+	return k.all, k.defs, nil
+}
+
+// seqPick is the kind seqSelect writes; nil, with no error, for a body
+// without kinds.
+func seqPick(p *Pack, b *seqBody, kind EntityKind, rec *Item, what string) (*seqKind, error) {
+	if len(b.kinds) == 0 {
+		return nil, nil
+	}
 	if kind.Format == p.Format {
 		for _, k := range b.kinds {
 			if k.name == kind.Name {
-				return k.all, k.defs, nil
+				return k, nil
 			}
 		}
 		// A message that names a kind the format does not have is no-kind
 		// (0.5 ruling 24). An item that names a kind its group does not have
 		// selects by `requires` (0.8 ruling 26).
 		if b == p.sbody {
-			return nil, nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("%s names kind %q, which the format does not have", what, kind.Name)}
+			return nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("%s names kind %q, which the format does not have", what, kind.Name)}
 		}
 	}
 	for _, k := range b.kinds {
 		// A `when … as` line adds an implicit term (0.30, Encode).
 		if reqHolds(k.requires, rec) && asHolds(k.whens, rec) {
-			return k.all, k.defs, nil
+			return k, nil
 		}
 	}
-	return nil, nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: what + " has the required keys of no kind"}
+	return nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: what + " has the required keys of no kind"}
 }
 
 // fieldPresent reports whether a field line has something to write: a key of

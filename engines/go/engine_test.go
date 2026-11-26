@@ -308,7 +308,8 @@ func TestKinds(t *testing.T) {
 	if out, err := eng.Convert("j", "k", []byte(`{"v":1,"id":"Z"}`)); err != nil || string(out) != "015a00" {
 		t.Errorf("j -> k: %s, %v", out, err)
 	}
-	if out, err := eng.Convert("j", "k", []byte(`{"v":1}`)); err != nil || string(out) != "00" {
+	// The kind chosen holds none of its keys (0.94): no-kind.
+	if out, err := eng.Convert("j", "k", []byte(`{"v":1}`)); !IsKind(err, ErrNoKind) {
 		t.Errorf("j -> k default kind: %s, %v", out, err)
 	}
 	keys, _ := eng.ModelKeys("k")

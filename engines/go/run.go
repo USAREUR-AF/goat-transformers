@@ -200,6 +200,10 @@ func (e *Engine) ConvertRunOrdered(from, to string, b []byte, ctx []KeyValue) ([
 		keepKinds(j, from, dst)
 		fillValues(j, keys, vals)
 		e.Complete(j)
+		if err := e.checkHeld(dst, j); err != nil {
+			results = append(results, RunResult{Err: err})
+			continue
+		}
 		out, err := e.Encode(to, j)
 		results = append(results, RunResult{Bytes: out, Err: err})
 	}
@@ -226,6 +230,11 @@ func (e *Engine) convertOrdinary(d *decodeState, from string, dst *Pack, keys []
 	if from != dst.Format || context != nil {
 		fillValues(d.ent, keys, vals)
 		e.Complete(d.ent)
+	}
+	if from != dst.Format {
+		if err := e.checkHeld(dst, d.ent); err != nil {
+			return result(nil, err)
+		}
 	}
 	return result(e.Encode(dst.Format, d.ent))
 }
@@ -285,6 +294,27 @@ func (e *Engine) convertCarrier(d *decodeState, run *runDecode, from string, dst
 		for _, m := range msgs {
 			fillValues(m, keys, vals)
 			e.Complete(m)
+		}
+	}
+	// 0.94 ruling 7: once, on the kind chosen, the outer entity joined with
+	// the first message, or alone for an empty run.
+	if from != dst.Format {
+		chk := outer
+		if len(msgs) > 0 {
+			chk = joined(outer, msgs[0])
+		}
+		// To a kind with a `run` line the messages' kinds are those of
+		// inner messages: not a kept kind of the carrier (ruling 4). A kind
+		// without one takes the one message, checked as `convert`: its
+		// kinds, as kept by keepKinds, are those of ruling 4.
+		c := *chk
+		c.Kind, c.InnerKind = EntityKind{}, EntityKind{}
+		if format == "" {
+			c.Kind, c.InnerKind = msgs[0].Kind, msgs[0].InnerKind
+		}
+		chk = &c
+		if err := e.checkHeldNamed(dst, kind, chk); err != nil {
+			return nil, err
 		}
 	}
 	if format != "" {

@@ -490,23 +490,61 @@ run_carrier(Engine, From, To, ToPack, {carrier, Outer, Failed, Format, Results, 
                                       true -> kinds_for(J, From, To, ToPack);
                                       false -> complete(Engine, kinds_for(J, From, To, ToPack), Context)
                                   end || J <- Joined],
+                      run_held(From, To, ToPack, Outer2,
+                               case Messages of
+                                   [] -> Outer2;
+                                   [M | _] -> Outer2#{model := maps:merge(maps:get(model, M),
+                                                                         maps:get(model, Outer2)),
+                                                      lists := maps:merge(maps:get(lists, M, #{}),
+                                                                          maps:get(lists, Outer2, #{}))}
+                               end),
                       encode(ToPack, Outer2#{run_msgs => Messages});
-                  [] when length(Joined) =/= 1 ->
-                      conv_error('message-count', ToPack,
-                                 "the kind chosen takes one message and the run holds ~p", [length(Joined)]);
                   [] ->
+                      Complete = fun(J) ->
+                                         E0 = kinds_for(J, From, To, ToPack),
+                                         case From =:= To andalso Context =:= none of
+                                             true -> E0;
+                                             false -> complete(Engine, E0, Context)
+                                         end
+                                 end,
+                      %% ruling 7 of 0.94: the count of 0.92 ruling 6
+                      %% first, then the joined entity checked as convert,
+                      %% ruling 4 included, on the kind already chosen
+                      case length(Joined) of
+                          1 -> ok;
+                          N -> conv_error('message-count', ToPack,
+                                          "the kind chosen takes one message and the run holds ~p", [N])
+                      end,
                       [J] = Joined,
-                      E0 = kinds_for(J, From, To, ToPack),
-                      E1 = case From =:= To andalso Context =:= none of
-                               true -> E0;
-                               false -> complete(Engine, E0, Context)
-                           end,
+                      E1 = Complete(J),
+                      run_held(From, To, ToPack, Outer2, E1, E1),
                       encode(ToPack, case Kind of
                                          undefined -> E1;
                                          _ -> E1#{kind => {To, Kind}}
                                      end)
               end
       end).
+
+%% Ruling 7 of 0.94, from a carrier to a carrier pack: the check once, on
+%% the kind chosen for the outer entity (ruling 6 of 0.92), with the keys of
+%% Held (the outer entity joined with the first message, or alone); a kind
+%% is kept by the outer entity's records only.
+run_held(From, From, _ToPack, _Outer, _Held) -> ok;
+run_held(_From, _To, #{has_kinds := false}, _Outer, _Held) -> ok;
+run_held(_From, To, ToPack, Outer, Held) ->
+    case chosen_kind(ToPack, Outer) of
+        none -> conv_error('no-kind', ToPack, "the entity selects no kind of the pack", []);
+        Kind -> kind_held(To, ToPack, Kind, Outer, Held)
+    end.
+
+%% The kind chosen for Outer, with the records of Kept and the keys of Held.
+run_held(From, From, _ToPack, _Outer, _Kept, _Held) -> ok;
+run_held(_From, _To, #{has_kinds := false}, _Outer, _Kept, _Held) -> ok;
+run_held(_From, To, ToPack, Outer, Kept, Held) ->
+    case chosen_kind(ToPack, Outer) of
+        none -> conv_error('no-kind', ToPack, "the entity selects no kind of the pack", []);
+        Kind -> kind_held(To, ToPack, Kind, Kept, Held)
+    end.
 
 run_stop(Results) ->
     case [{K, M} || {stop, K, M} <- Results] of
@@ -1237,8 +1275,88 @@ finish(Engine, From, To, ToPack, Entity, Context) ->
                             true -> Entity1;
                             false -> complete(Engine, Entity1, Context)
                         end,
+              held_check(From, To, ToPack, Entity2),
               encode(ToPack, Entity2)
       end).
+
+%% Version 0.94: a conversion into a kind holds one of its keys. With From
+%% different from To, after the context and the derivations and before any
+%% line is written: when the pack of To has message kinds, the entity must
+%% hold a key of the kind encode chooses (0.5), unless a kind is kept
+%% (ruling 4). The no-kind of choosing comes first (ruling 5).
+held_check(From, From, _ToPack, _Entity) -> ok;
+held_check(_From, _To, #{has_kinds := false}, _Entity) -> ok;
+held_check(_From, To, ToPack, Entity) ->
+    case chosen_kind(ToPack, Entity) of
+        none -> conv_error('no-kind', ToPack, "the entity selects no kind of the pack", []);
+        Kind -> kind_held(To, ToPack, Kind, Entity, Entity)
+    end.
+
+%% Kind: the chosen kind; Kept: the entity whose recorded kinds may exempt
+%% it (ruling 4); Held: the entity whose keys are looked at.
+kind_held(To, #{common := Common} = ToPack, #{name := Name, lines := KLines} = Kind, Kept, Held) ->
+    Entries = scope_keys(Common ++ KLines),
+    Inner = [F || {inner, F} <- Entries],
+    KeptKind = lists:any(fun(Rec) ->
+                                 case maps:get(Rec, Kept, undefined) of
+                                     {F, _} -> F =:= To orelse lists:member(F, Inner);
+                                     _ -> false
+                                 end
+                         end, [kind, inner_kind]),
+    Model = maps:get(model, Held),
+    Lists = maps:get(lists, Held, #{}),
+    Holds = fun(E) -> entry_held(E, ToPack, Model, Lists) end,
+    Requires = [gt_pack:req_key(T) || T <- maps:get(requires, Kind, [])],
+    case KeptKind orelse lists:any(Holds, Entries) orelse lists:any(Holds, Requires) of
+        true -> ok;
+        false -> conv_error('no-kind', ToPack, "the entity holds no key of the kind ~s", [Name])
+    end.
+
+%% Is an entry of scope_keys held? A key by a value of the model, a list
+%% by an item; an `inner` line by a key of its pack's model_keys, when the
+%% pack passes the checks of 0.34 (else it adds nothing).
+entry_held({list, L}, _Pack, _Model, Lists) -> holds_list(L, Lists);
+entry_held({inner, F}, Pack, Model, Lists) ->
+    try inner_pack(Pack, F) of
+        InnerPack ->
+            lists:any(fun(E) -> entry_held(E, Pack, Model, Lists) end,
+                      [model_entry(K) || K <- gt_pack:model_keys(InnerPack)])
+    catch error:{convert_error, _, _} -> false
+    end;
+entry_held(none, _Pack, _Model, _Lists) -> false;
+entry_held(K, _Pack, Model, Lists) -> maps:is_key(K, Model) orelse holds_list(K, Lists).
+
+%% A `requires` key may name a list: held when it has an item (ruling 3).
+holds_list(K, Lists) ->
+    case maps:find(K, Lists) of
+        {ok, [_ | _]} -> true;
+        _ -> false
+    end.
+
+%% An entry of model_keys as the check looks at it: a list by its entry
+%% (`rows[]`), an item key not at all.
+model_entry(K) ->
+    case binary:split(K, <<"[]">>) of
+        [K] -> K;
+        [L, <<>>] -> {list, L};
+        _ -> none
+    end.
+
+%% The keys of a scope's lines (rule of 0.94): a field's, an `also`'s and a
+%% `when ... as` key, inside blocks, gates and cases; a group by its list,
+%% not by its items; {inner, Format} at an `inner` line.
+scope_keys(Lines) ->
+    lists:append(
+      [case L of
+           {inner, F, _Mode, _Reach} -> [{inner, F}];
+           {field, K, _, _, _, _} -> [K];
+           {group, List, _, _, _, _} -> [{list, List}];
+           {sgroup, List, _, _} -> [{list, List}];
+           {gate, _, _, _, #{lines := Ls}, _} -> scope_keys(Ls);
+           {sfield, Keys, _, _, _, _, _, _, _} -> [K || {K, _} <- Keys];
+           {swhen, _, _, K, _, _} when K =/= none -> [K];
+           _ -> scope_keys(lists:append(gt_pack:seq_bodies(L)))
+       end || L <- Lines]).
 
 kinds_for(Entity, From, From, _ToPack) -> Entity;
 kinds_for(Entity, _From, To, ToPack) -> kept_kinds(Entity, To, ToPack).

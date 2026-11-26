@@ -5,10 +5,12 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -896,6 +898,26 @@ private:
     // Order inside `convert` (0.6): step 1's kinds; steps 2 and 3, then 4.
     void clear_kinds(Entity& e, const std::string& from, const Pack& target) const;
     std::string finish_convert(Entity e, const std::string& from, const std::string& to, const Context* context) const;
+    // v0.94: in a conversion with `from` different from `to`, after steps 2
+    // and 3 and before encode: no-kind when `to` has message kinds and the
+    // entity holds no key of the kind encode chooses. `kind` (sequential
+    // carriers, 0.92 ruling 6) is the kind already chosen; null: chosen here.
+    // `kept` is the entity whose Entity.kind and Entity.inner_kind decide a
+    // kept kind (ruling 4); null: `e` itself.
+    void check_held(const Pack& target, const Entity& e, const void* kind = nullptr, bool chosen = false,
+                    const Entity* kept = nullptr) const;
+    // The keys of a kind (0.94 Rule), computed once per kind of a pack for the
+    // packs this engine has loaded; a pack added starts a new cache.
+    struct HeldKeys {
+        std::unordered_set<std::string> keys;
+        std::vector<std::string> inner;  // the formats of the `inner` lines of the kind and the common lines
+    };
+    struct HeldCache {
+        std::mutex m;
+        std::unordered_map<const void*, std::shared_ptr<const HeldKeys>> by_kind;
+    };
+    std::shared_ptr<const HeldKeys> held_keys(const Pack& target, const void* kind) const;
+    std::shared_ptr<HeldCache> held_cache_ = std::make_shared<HeldCache>();
     Distribution max_distribution_ = Distribution::Controlled;
     bool profile_limit_ = false;  // a load with a profile was made (0.93 ruling 6)
     std::uint64_t max_items_ = kDefaultMaxItems;

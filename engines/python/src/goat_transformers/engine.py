@@ -164,6 +164,7 @@ class Engine:
         self.models = {}
         self.licences = {}  # format -> (directory, licence, profile), filled by from_dir with a profile
         self._derives = None
+        self._kind_keys = {}  # (format, kind name) -> the keys of the kind (0.94), cleared by every load
         self._profile_bound = False  # a load with a profile has set the limit to `public` (0.93, ruling 6)
         self.set_max_distribution(max_distribution)
         self.set_max_items(max_items)
@@ -407,6 +408,7 @@ class Engine:
                 format=pack.name,
             )
         self.packs[pack.name] = pack
+        self._kind_keys = {}  # an inner line's keys depend on the packs loaded (0.94)
 
     @classmethod
     def from_dir(cls, packs_dir, models_dir=None, max_distribution="controlled", packs_only=None, profile=None,
@@ -1078,6 +1080,115 @@ class Engine:
             enc.groups[i] = [self._encode_scope(pack, item_plan, it.fields, it.lists) for it in items]
         return enc
 
+    # --- a conversion into a kind holds one of its keys (0.94) ------------
+
+    def _keys_of_kind(self, pack, kind):
+        """-> (scalar keys, list names) of `kind` (0.94, Rule): the keys 6a to
+        6c of 0.11 list over the common lines and the kind's lines, every
+        block and case of them; a list by its entry; an `inner` line's
+        `model_keys` (none when its pack fails the checks of the line); the
+        keys of the kind's own `requires` terms. Item keys do not count."""
+        cache_key = (pack.name, kind.name)
+        got = self._kind_keys.get(cache_key)
+        if got is not None:
+            return got
+        scalars = set()
+        lists = set()
+        if pack.seq is not None:
+            from .seqdef import T_FIELD, T_GROUP, T_INNER, T_WHEN, children
+
+            def walk(nodes):
+                for nd in nodes:
+                    t = nd.t
+                    if t == T_FIELD:
+                        for f in nd.bindings:
+                            scalars.add(f.key)
+                    elif t == T_WHEN:
+                        if nd.as_key is not None:
+                            scalars.add(nd.as_key)
+                    elif t == T_GROUP:
+                        lists.add(nd.list)
+                    elif t == T_INNER:
+                        for name in self._inner_keys(pack, nd.name):
+                            if name.endswith("[]"):
+                                lists.add(name[:-2])
+                            elif "[]." not in name:
+                                scalars.add(name)
+                    else:
+                        for part in children(nd):
+                            walk(part)
+
+            walk(kind.block)
+        else:
+            for ln in pack.common + kind.lines:
+                if ln.is_field:
+                    scalars.add(ln.key)
+                elif ln.is_group:
+                    lists.add(ln.list)
+        scalars.update(kind.requires_keys)
+        scalars.update(vc.key for vc in kind.requires_eq)
+        lists.update(kind.requires_lists)
+        got = self._kind_keys[cache_key] = (frozenset(scalars), frozenset(lists))
+        return got
+
+    def _kept(self, to, kind, entity):
+        """Ruling 4 of 0.94: a recorded kind that names `to`, or the format of
+        an `inner` line of the chosen kind or of the common lines."""
+        refs = [r for r in (entity.kind, entity.inner_kind) if r is not None]
+        if not refs:
+            return False
+        names = {r[0] for r in refs}
+        if to.name in names:
+            return True
+        if not to.inners or to.seq is None:
+            return False
+        from .seqdef import T_INNER, children
+
+        def walk(nodes):
+            for nd in nodes:
+                if nd.t == T_INNER:
+                    if nd.name in names:
+                        return True
+                else:
+                    for part in children(nd):
+                        if walk(part):
+                            return True
+            return False
+
+        return walk(kind.block)
+
+    def _target_kind(self, to, entity):
+        """The message kind encode chooses (0.5, 0.34), or None for a pack with no message kinds."""
+        ref = _ref_for(to, entity.kind, entity.inner_kind)
+        if to.seq is not None:
+            if not to.seq.kinds:
+                return None
+            return wire_seq.select_kind(to, to.seq, ref, entity.fields, entity.lists)
+        if not to.kinds:
+            return None
+        return self._select_encode_kind(to, entity, ref)
+
+    def _check_held(self, to, entity, kind=None, kept=True):
+        """0.94, Rule: in a conversion into a pack with message kinds, the
+        entity holds a key of the chosen kind, else `no-kind`. `kind`: the
+        kind already chosen (runs); `kept`: whether a recorded kind exempts."""
+        if kind is None:
+            kind = self._target_kind(to, entity)  # the `no-kind` of choosing comes first
+            if kind is None:
+                return
+        if kept and self._kept(to, kind, entity):
+            return
+        scalars, lists = self._keys_of_kind(to, kind)
+        fields = entity.fields
+        for key in scalars:
+            if key in fields:
+                return
+        have = entity.lists
+        for name in lists:
+            if have.get(name):
+                return
+        raise NoKind("the entity holds no key of kind %r" % (kind.name,), format=to.name)
+
     def convert(self, from_fmt, to_fmt, data, context=None, max_items=None):
         """spec 0.6, "Order inside `convert`": decode, and clear the kind unless
         `from == to`; fill absent keys from `context`; apply the derivations;
@@ -1089,6 +1200,8 @@ class Engine:
         self._clear_kinds(entity, from_fmt, to)
         if from_fmt != to_fmt or context is not None:
             self.complete(entity, context)
+        if from_fmt != to_fmt:
+            self._check_held(to, entity)
         return self.encode(to_fmt, entity)
 
     @staticmethod
@@ -1162,6 +1275,8 @@ class Engine:
             self._clear_kinds(entity, from_fmt, to)
             if from_fmt != to_fmt or context is not None:
                 self.complete(entity, context)
+            if from_fmt != to_fmt:
+                self._check_held(to, entity)
             return [self.encode(to_fmt, entity)]
         except GTError as e:
             if to.run_kinds:
@@ -1183,6 +1298,8 @@ class Engine:
             self._clear_kinds(entity, pack.name, to)
             self.complete(entity, context)
             try:
+                if pack is not to:
+                    self._check_held(to, entity)
                 out.append(self.encode(to.name, entity))
             except GTError as e:
                 out.append(e)
@@ -1219,6 +1336,14 @@ class Engine:
             self._clear_kinds(entity, pack.name, to)
             if context is not None or (not same if line is None else line.name != got.format):
                 self.complete(entity, context)
+        if not same and kind is not None:
+            if line is None:  # 0.94 ruling 7: the one message's joined entity, as `convert`, ruling 4 included
+                self._check_held(to, joined[0], kind)
+            else:  # once, on the outer entity joined with the first message; the first message's kind is not kept
+                first = joined[0] if joined else outer
+                if joined:
+                    first = Entity(fields={**outer.fields, **first.fields}, lists={**outer.lists, **first.lists})
+                self._check_held(to, first, kind, kept=False)
         if line is None:
             return wire_seq.encode(to, joined[0], ref, self).encode("utf-8")
         return wire_seq.encode(to, outer, ref, self, joined).encode("utf-8")

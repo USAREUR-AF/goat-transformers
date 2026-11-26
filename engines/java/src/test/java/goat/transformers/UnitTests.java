@@ -33,6 +33,7 @@ final class UnitTests {
         cbor();
         armor();
         uper();
+        heldRuns();
     }
 
     /** Version 0.27: the two check values of the CRC-32 of ISO/IEC 13818-1. */
@@ -999,6 +1000,27 @@ final class UnitTests {
         errorKind("inner list of both packs, two counts that differ: decode", "bad-directive", () -> both.decode("o", "0105" + "0204" + "0c0d"));
         Engine apart = probeEngine(outer, two.replace("%s", "subs"));
         errorKind("two counts of an inner list that differ", "malformed-wire", () -> apart.decode("o", "0105" + "0204" + "0c0d"));
+    }
+
+    /**
+     * Version 0.94 ruling 7, from a carrier to a carrier pack: a kind without a run line checks the joined entity as
+     * convert, ruling 4 included, so the inner kind of the one message is kept when that kind has an inner line of
+     * the message's format; a kind with a run line does not keep it.
+     */
+    static void heldRuns() {
+        String mid = "version 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\nlayout sequential\nbit_order msb\n";
+        Engine e = probeEngine(
+                "format i\n" + mid + "framing self\nkind p\nwhen 8 1\nkind d\nwhen 8 2\nfield probe.x 8 uint\n",
+                "format c\n" + mid + "length 8\ninner i run\nend\nfield probe.z 8 uint\n",
+                "format t\n" + mid + "kind p\nwhen 8 1\nlength 8\ninner i\nend\nkind r\nwhen 8 2\ninner i run\n",
+                "format u\n" + mid + "kind r\nwhen 8 1\ninner i run\n");
+        eq("0.94 ruling 7: a kind without a run line keeps the message's inner kind", "010101",
+                e.convertRun("c", "t", "010109").get(0).output);
+        eq("0.94 ruling 7: the same message as convert from the inner format", "010101", e.convert("i", "t", "01"));
+        errorKind("0.94 ruling 7: a kind with a run line does not keep the first message's inner kind", "no-kind",
+                () -> e.convertRun("c", "u", "010109"));
+        eq("0.94 ruling 7: the first message holds a key of the inner pack", "010205",
+                e.convertRun("c", "u", "02020509").get(0).output);
     }
 
     /** The packs {@link #packsOnly} loads one by one unless GOAT_SWEEP_FULL=1. */

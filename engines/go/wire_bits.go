@@ -11,5 +11,8 @@ func init() {
 		encodeWhole: encodeSeq,
 		encodeRun:   encodeSeqRun,
 		runKind:     seqRunKind,
+		pickKind: func(p *Pack, ent *Entity) (*seqKind, error) {
+			return seqPick(p, p.sbody, ent.Kind, ent.item(), "the entity")
+		},
 	})
 }

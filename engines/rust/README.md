@@ -187,25 +187,42 @@ zz-first-by-format	lic-aa	Apache-2.0	open
 ## Test
 
 `cargo test --release` in `engines/rust` (CI runs `cargo test` there, in the
-`rust` job of `.github/workflows/conformance.yml`). Measured on 2026-11-24 with rustc 1.99.1:
+`rust` job of `.github/workflows/conformance.yml`). Measured on 2026-11-26 with rustc 1.99.1:
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 24611 conversion vectors, 1471 load vectors, 27 capability vectors, 0 failed |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 25823 conversion vectors, 1753 load vectors, 29 capability vectors, 0 failed |
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 6925424 inputs over 4669 packs and 24608 vectors |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 7441424 inputs over 5052 packs and the 25819 conversion vectors that have an `input` |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
 | `tests/cbor.rs` | spec 0.28: the `cbor` wire on byte strings built by hand from RFC 8949: heads of every length, the core deterministic encoding (key order, shortest floats), the depth limit, equal keys, UTF-8 across chunks, tags, residue and the `tag` directive | 17 tests |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
 | `tests/parse_once.rs` | spec 0.25, ruling 1: every conversion vector, failing ones included, gives the same output or error on one instance in line order, in reverse order and on four threads at once; the benchmark set and one failing vector of each wire give the same on a new instance; a second load is still a duplicate (the debug build runs the reverse order and the threads on every eighth vector and every failing one, and the new instance for the failing vectors only) | 3 tests |
 | `tests/seconds.rs` | spec 0.26, ruling 1: the transform `iso8601_s` loads on the xml, geojson, json and text wires; it is `bad-directive` on another wire and with a parameter; it gives an integer, so on a key of another type it is `key-type-mismatch`; writing drops the milliseconds and keeps to the years 0001 to 9999 | 5 tests |
-| `tests/inner.rs` | spec 0.34: keys and lists that the outer and the inner message both hold (Decode step 4, rulings 7, 17, 19, 22 and 23) | 8 tests |
+| `tests/inner.rs` | spec 0.34: keys and lists that the outer and the inner message both hold (Decode step 4, rulings 7, 17, 19, 22 and 23) | 4 tests |
 | `tests/licences.rs` | spec 0.29: `load_tree` with a licence profile on the fixture trees of the tool vectors: what each profile loads and skips, the widest profile of a pack and its modules, a skipped broken pack, `bad-licence` for a wrong profile name and for a bad licence file before any module loads, no licence file read without a profile, a non-directory on the path read as an absent file; spec 0.93, ruling 6: the instance's limit after a load with a profile, set before or after, a later direct load and a later load with no profile, an instance that already holds a controlled module or pack, the order of the errors, a failed load that keeps the limit; with spec 0.34, a controlled `inner` pack never loads: not shown public or using a controlled module under a profile, or refused by a `public` limit, while the public outer pack loads alone and is `unknown-format` at its `inner` line; under a profile a module file with no name by 0.29 2b (`module mx # note`, `module "mx"`, `core` too) is not loaded and what uses it is `unknown-module` | 21 tests |
 | `tests/reduced.rs` | spec 0.24: a pack on a wire the build lacks is `unknown-wire`; a value that is no wire keeps its message (run in a reduced build by `reduced-build-check.sh`) | 2 tests |
 | `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23 and the licence profiles of spec 0.29: every tool vector under `packs/conformance/tool-vectors/` | 183 tool vectors, 0 failed |
 
 `GOAT_FUZZ_ITERS=<n>` multiplies the fuzz inputs; `GOAT_FUZZ_SEED=<n>`
 changes the seed.
+
+## A conversion into a kind holds one of its keys
+
+Spec 0.94. `convert` and `convert_run`, with `from` different from `to`,
+refuse with `no-kind` an entity that holds no key of the kind encode chooses
+in a pack with message kinds: after the context and the derivations, before
+the first line is written (`Engine::check_held` in `src/lib.rs`, the keys of a
+sequential kind from `seq::kind_keys`). The keys are those of the common lines
+and the chosen kind's lines, every block and case included, a list by its
+entry, the `model_keys` of an `inner` (or `run`) line's pack, and the kind's
+own `requires` keys. A pack that fails checks 1 to 4 of 0.34 adds no keys (the `framing self`
+check of a `run` line is not one of them). A kept kind (an `inner` line's
+format, or `to`) is not checked; `encode`, and `convert` of a format to
+itself, are unchanged. Carrier to carrier (ruling 7): into a kind with a `run`
+line, once, on the outer entity joined with the first message (or the outer
+entity alone); into a kind without one, after the message count, on the one
+joined message, its own kinds looked at as kept kinds.
 
 ## Benchmark
 
@@ -298,10 +315,10 @@ another set. Measured on 2026-11-24 with rustc 1.99.1 on x86_64 Linux:
 
 | Reduced build (`xml,json,geojson`) | Measured |
 |---|---|
-| conversion vectors | 8399 run, 0 failed (16212 on other wires left out) |
-| load vectors | 396 run, 0 failed (1075 left out) |
-| capability vectors | 16 run, 0 failed (11 left out) |
-| `unknown-wire` loads | 5 of 5: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv), `conformance-cbor` (cbor) |
+| conversion vectors | 8519 run, 1 failed (17300 on other wires left out) |
+| load vectors | 402 run, 0 failed (1351 left out) |
+| capability vectors | 16 run, 0 failed (13 left out) |
+| `unknown-wire` loads | 5 of 5: `adsb` (bits), `apollo-ch` (protobuf), `aprs` (text), `conformance-cond-tlv` (tlv), `conformance-cbor` (cbor) |
 
 | Release artifact | All eight wires | `xml,json,geojson` |
 |---|---|---|

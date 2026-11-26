@@ -763,7 +763,11 @@ int main() {
                                           "group g.items items\n  field g.name name string\nend\nkind bare\nwhen s b\n"));
             eq(r.convert("gj", "gk", "{\"items\":[{\"name\":\"a\"}]}"), "{\"s\":\"f\",\"items\":[{\"name\":\"a\"}]}",
                "requires <list> holds with at least one item");
-            eq(r.convert("gj", "gk", "{\"items\":[]}"), "{\"s\":\"b\"}", "requires <list> does not hold for an empty list");
+            eq(r.encode("gk", r.decode("gj", "{\"items\":[]}")), "{\"s\":\"b\"}",
+               "requires <list> does not hold for an empty list");
+            // v0.94: a conversion into kind bare, which maps no key, holds none of its keys.
+            expect_error(gt::ErrorKind::NoKind, [&] { r.convert("gj", "gk", "{\"items\":[]}"); },
+                         "0.94: a conversion into a kind that maps no key, with an empty list");
 
             // load errors
             auto load_error = [&](const std::string& body) {
@@ -1707,6 +1711,30 @@ int main() {
         }
     } catch (const std::exception& ex) {
         check(false, std::string("0.92 run threw: ") + ex.what());
+    }
+
+    // v0.94 ruling 7, carrier to carrier: a target kind without a `run` line
+    // checks the joined entity as `convert`, ruling 4 included, so the kind the
+    // one message records is kept; a kind with a `run` line does not keep it.
+    try {
+        const std::string seq = "version 0.1.0\ndistribution public\nsource \"unit test\"\n"
+                                "wire bits\nlayout sequential\nbit_order msb\n";
+        gt::Engine eng;
+        eng.load_model("module core\nversion 0.1.0\ndistribution public\nsource \"unit test\"\nkey x int -\n");
+        eng.add_pack(gt::parse_pack("format in\n" + seq + "framing self\nkind p\nwhen 8 1\nkind d\nwhen 8 2\nfield x 8 uint\n"));
+        eng.add_pack(gt::parse_pack("format car\n" + seq + "length 8\ninner in run\nend\n"));
+        eng.add_pack(gt::parse_pack("format to\n" + seq + "kind p\nwhen 8 1\nlength 8\ninner in\nend\n"
+                                    "kind r\nwhen 8 2\ninner in run\n"));
+        eng.add_pack(gt::parse_pack("format only\n" + seq + "kind r\ninner in run\n"));
+        const auto one = eng.convert_run("car", "to", "010109");
+        check(one.size() == 1 && !one.front().error && one.front().output == "010101",
+              "0.94 ruling 7: no run line, the message's inner kind is kept (" +
+                  (one.empty() ? std::string("none") : one.front().output) + ")");
+        eq(eng.convert("in", "to", "01"), "010101", "0.94 ruling 7: the same as convert of the message");
+        expect_error(gt::ErrorKind::NoKind, [&] { (void)eng.convert_run("car", "only", "010109"); },
+                     "0.94 ruling 7: a run line, the first message's inner kind is not kept");
+    } catch (const std::exception& ex) {
+        check(false, std::string("0.94 ruling 7 kept kind threw: ") + ex.what());
     }
 
     // v0.31 in v0.34: the item limit and a list counted from one or two places.
