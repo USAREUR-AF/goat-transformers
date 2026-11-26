@@ -3,7 +3,7 @@ module        seatalk
 version       0.1.0
 distribution  public
 source        "SignalK/signalk-parser-nmea0183, https://github.com/SignalK/signalk-parser-nmea0183 at commit 5ab479bcfc1bec0d36f98616e5f9be96f52e3f23, src/hooks/seatalk/0x00.ts to 0x9C.ts (Apache License 2.0, Copyright 2016 Signal K and contributors); layouts restated, no code or comment copied"
-key   attribute_high              int     -  "attribute octet, high nibble: data in several datagrams (0x25 total mileage bits 16-19, 0x50/0x51 a tag, 0x53/0x84/0x9C U, 0x54 T, 0x56 month, 0x57 satellite count, 0x85 the high XTE digit)"
+key   attribute_high              int     -  "attribute octet, high nibble: data in several datagrams (0x25 total mileage bits 16-19, 0x50/0x51 a tag, 0x53/0x84/0x9C U, 0x54 T, 0x56 month, 0x57 satellite count, 0x85 X, the lowest hex digit of the cross-track error XXX = XX * 16 + X)"
 key   attribute_length            int     -  "attribute octet, low nibble: the number of data octets after the first, as sent"
 key   depth_anchor_alarm          int     -  "0x00: Y bit 3, anchor alarm active"
 key   depth_metric_units          int     -  "0x00: Y bit 2, metric (or fathom) display units"
@@ -57,7 +57,7 @@ key   alarms                      int     -  "0x84: M (bit 2 off course, bit 3 w
 key   rudder_position             int     -  "0x84, 0x9C: rudder position, degrees (positive steers right)"
 key   autopilot_ss                int     -  "0x84: SS display flags"
 key   autopilot_tt                int     -  "0x84: TT"
-key   xte_low                     int     -  "0x85: XX, the low octet of the cross-track error in hundredths of a nautical mile"
+key   xte_low                     int     -  "0x85: XX, the two high hex digits of the cross-track error XXX = XX * 16 + X (X is attribute_high), in hundredths of a nautical mile"
 key   nav_v                       int     -  "0x85: V"
 key   nav_u                       int     -  "0x85: U (bits 1-0 bearing quadrant, bit 3 true)"
 key   nav_z                       int     -  "0x85: Z"

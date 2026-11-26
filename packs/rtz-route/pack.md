@@ -1,6 +1,6 @@
 # Pack: rtz-route
 
-An RTZ route exchange file, schema revision 1.2 (CIRM; its header names IEC PAS 61174-1:2021). Wire `xml`, root `route`; the default namespace `http://www.cirm.org/RTZ/1/2` and
+An RTZ route exchange file, schema revision 1.2 (CIRM; its header names the source only as "IEC PAS 6XXXX", a placeholder). Wire `xml`, root `route`; the default namespace `http://www.cirm.org/RTZ/1/2` and
 `version="1.2"` select the one kind, `route`. One message is one file. Written by
 `tools/gen/maritime-pack.py`. Labelled `LicenseRef-unstated` (PROVENANCE.md).
 

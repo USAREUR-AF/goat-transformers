@@ -76,7 +76,7 @@ def pack():
 
 
 KEYS = [
-    ("int", "attribute_high", "attribute octet, high nibble: data in several datagrams (0x25 total mileage bits 16-19, 0x50/0x51 a tag, 0x53/0x84/0x9C U, 0x54 T, 0x56 month, 0x57 satellite count, 0x85 the high XTE digit)"),
+    ("int", "attribute_high", "attribute octet, high nibble: data in several datagrams (0x25 total mileage bits 16-19, 0x50/0x51 a tag, 0x53/0x84/0x9C U, 0x54 T, 0x56 month, 0x57 satellite count, 0x85 X, the lowest hex digit of the cross-track error XXX = XX * 16 + X)"),
     ("int", "attribute_length", "attribute octet, low nibble: the number of data octets after the first, as sent"),
     ("int", "depth_anchor_alarm", "0x00: Y bit 3, anchor alarm active"), ("int", "depth_metric_units", "0x00: Y bit 2, metric (or fathom) display units"),
     ("int", "depth_flag_y1", "0x00: Y bit 1"), ("int", "depth_flag_y0", "0x00: Y bit 0"), ("int", "depth_flag_z3", "0x00: Z bit 3"),
@@ -113,7 +113,7 @@ KEYS = [
     ("int", "alarm_pad", "0x84: high nibble of octet 5"), ("int", "alarms", "0x84: M (bit 2 off course, bit 3 wind shift)"),
     ("int", "rudder_position", "0x84, 0x9C: rudder position, degrees (positive steers right)"),
     ("int", "autopilot_ss", "0x84: SS display flags"), ("int", "autopilot_tt", "0x84: TT"),
-    ("int", "xte_low", "0x85: XX, the low octet of the cross-track error in hundredths of a nautical mile"),
+    ("int", "xte_low", "0x85: XX, the two high hex digits of the cross-track error XXX = XX * 16 + X (X is attribute_high), in hundredths of a nautical mile"),
     ("int", "nav_v", "0x85: V"), ("int", "nav_u", "0x85: U (bits 1-0 bearing quadrant, bit 3 true)"), ("int", "nav_z", "0x85: Z"),
     ("int", "nav_w", "0x85: W"), ("int", "nav_zz", "0x85: ZZ (distance with Z)"), ("int", "nav_y", "0x85: Y (bit 0 distance in hundredths, bit 2 steer right)"),
     ("int", "nav_f", "0x85: F (bits 0-3: XTE, bearing, range present, XTE above 0.3 nm)"), ("int", "nav_zero", "0x85: the zero octet"),
