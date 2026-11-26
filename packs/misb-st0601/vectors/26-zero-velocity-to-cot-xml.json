@@ -6,13 +6,12 @@
   "context": {
     "uid": "MISB-UAV-2"
   },
-  "expect": "<event version=\"2.0\" uid=\"MISB-UAV-2\" type=\"a-u-X\"><point lat=\"90\" lon=\"-180\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><track speed=\"0\"/></detail></event>",
+  "expect": "<event version=\"2.0\" uid=\"MISB-UAV-2\" type=\"a-u-X\"><point hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail/></event>",
   "model": {
     "@complete": true,
-    "lat": "90",
-    "lon": "-180",
-    "speed_ms": "0"
+    "misb0601.sensor_latitude": "90",
+    "misb0601.sensor_longitude": "-180"
   },
   "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
-  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); velocity 0 and 0: speed 0, course absent (bearing); lat 90 and lon -180 from 7fffffff and 80000001; no hae so the default 9999999"
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); velocity 0 and 0: speed 0, course absent (bearing); lat 90 and lon -180 from 7fffffff and 80000001; no hae so the default 9999999; position and velocities are raw keys (pack.md), so neither the point nor a course or a speed from the velocities is carried"
 }

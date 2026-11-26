@@ -3,7 +3,7 @@
   "from": "geojson",
   "to": "misb-st0601",
   "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,91]},\"properties\":{}}",
-  "expect_error": "transform-encode",
   "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
-  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); 91*4294967294/180 = 2171233687.4 is above 2^31-1"
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); 91*4294967294/180 = 2171233687.4 is above 2^31-1; lat and lon are raw keys of misb-st0601 since items 13 and 14 have a reserved value (pack.md), so 91 is not written and no error comes",
+  "expect": "060e2b34020b01010e010301010000000741011301024fa6"
 }

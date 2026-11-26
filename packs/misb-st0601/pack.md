@@ -38,17 +38,28 @@ Scales are the document's mapping of each item: the value range over the
 integer range, written as a fraction (`spec/engine-spec.md`, ruling 1 of 0.5).
 Sizes `:<n>` are the document's required length of each item.
 
+### Special values
+
+Section 7.5 and the items' Special Values rows reserve 0x80000000 in items 13 and
+14 (an error indicator) and give 0x8000 as out of range in items 79 and 80. The
+`tlv` wire refuses `absent` (0.13 ruling 10), so these values would decode as a
+latitude of -90.0000000419, a longitude of -180.0000000838 and velocities of
+-327.01 m/s, and a conversion carried them as a position and a course and speed.
+A false position is worse than none: until the language can state the codes, the
+four items are raw keys of this module, and a message carries no position, course
+or speed from them into another format. `speed_ms` from item 56 is unchanged.
+
 ### Shared keys, with evidence
 
 | Item | Model key | Transform | Evidence in ST 0601.19 |
 |---|---|---|---|
-| 13 Sensor Latitude | `lat` | `sscale:180/4294967294`, 4 bytes | Item 13 summary: degrees; a 4-byte two's-complement integer from -(2^31-1) to 2^31-1 maps to -90..90; the note under the table says it is based on the WGS84 ellipsoid. Same meaning and unit as `core.lat` (degrees, WGS84). |
-| 14 Sensor Longitude | `lon` | `sscale:360/4294967294`, 4 bytes | Item 14 summary: degrees; the same integer range maps to -180..180; based on the WGS84 ellipsoid. |
+| 13 Sensor Latitude | `misb0601.sensor_latitude` (raw, see Special values) | `sscale:180/4294967294`, 4 bytes | Item 13 summary: degrees; a 4-byte two's-complement integer from -(2^31-1) to 2^31-1 maps to -90..90; the note under the table says it is based on the WGS84 ellipsoid. Same meaning and unit as `core.lat` (degrees, WGS84). |
+| 14 Sensor Longitude | `misb0601.sensor_longitude` (raw) | `sscale:360/4294967294`, 4 bytes | Item 14 summary: degrees; the same integer range maps to -180..180; based on the WGS84 ellipsoid. |
 | 75 Sensor Ellipsoid Height | `hae` | `uscale:19900/65535:-900`, 2 bytes | Item 75 summary and 8.75.1: meters, the vertical distance between the sensor and the WGS84 reference ellipsoid; 0..65535 maps to -900..19000. Same as `core.hae` (meters above the WGS84 ellipsoid). |
 | 56 Platform Ground Speed | `speed_ms` | `uscale:1`, 1 byte | Item 56 summary and 8.56.1: meters per second, 0..255, the aircraft's speed projected onto the ground. `core.speed_ms` is ground speed in m/s. `uscale:1` is used because the key is a float. |
 | 59 Platform Call Sign | `callsign` | `utf8` | Item 59 summary: free text, the call sign of the platform or of its operating unit. `core.callsign` is a human-readable name. A reviewer may prefer a raw key because the document allows the unit's call sign as well as the platform's. |
-| 79 Sensor North Velocity | `track.vel_north_ms` | `sscale:654/65534`, 2 bytes | Item 79 summary: meters per second, positive toward true north; -(2^15-1)..2^15-1 maps to -327..327. |
-| 80 Sensor East Velocity | `track.vel_east_ms` | `sscale:654/65534`, 2 bytes | Item 80 summary: meters per second, positive toward east; same mapping as item 79. |
+| 79 Sensor North Velocity | `misb0601.platform_vel_north` (raw) | `sscale:654/65534`, 2 bytes | Item 79 summary: meters per second, positive toward true north; -(2^15-1)..2^15-1 maps to -327..327. |
+| 80 Sensor East Velocity | `misb0601.platform_vel_east` (raw) | `sscale:654/65534`, 2 bytes | Item 80 summary: meters per second, positive toward east; same mapping as item 79. |
 
 Section 7.2.1 names items 13, 14 and 75 as the location of the sensor, and
 items 79 and 80 give the velocity "of the sensor or platform". The sensor is

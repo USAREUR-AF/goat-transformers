@@ -3,7 +3,7 @@
   "from": "geojson",
   "to": "misb-st0601",
   "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-120,45,100]},\"properties\":{\"callsign\":\"HAWK21\",\"course\":90,\"speed_ms\":10.5,\"extra\":\"x\"},\"id\":\"G-7\"}",
-  "expect": "060e2b34020b01010e010301010000002a0d04400000000e04aaaaaaab38010b3b064841574b32314101134b020cdd4f0200005002041c01023301",
+  "expect": "060e2b34020b01010e010301010000001638010b3b064841574b32314101134b020cdd01029faf",
   "model": {
     "@complete": true,
     "lat": "45",
@@ -15,5 +15,5 @@
     "track.vel_north_ms": "0.0000000000000006429395695523604"
   },
   "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
-  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); lat 45*4294967294/180 = 1073741823.5 rounds half away to 40000000; lon -120*4294967294/360 = -1431655764.67 -> aaaaaaab; speed 10.5 -> 0b; hae (100+900)*65535/19900 = 3293.2 -> 0cdd; velocity derived east 10.5*sin(90 deg) = 10.5 -> round(1052.12) = 041c, north 10.5*cos(90 deg) = 6.4e-16 -> 0000; item 65 default 19; uid, course and residue have no misb line; checksum computed"
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); lat 45*4294967294/180 = 1073741823.5 rounds half away to 40000000; lon -120*4294967294/360 = -1431655764.67 -> aaaaaaab; speed 10.5 -> 0b; hae (100+900)*65535/19900 = 3293.2 -> 0cdd; velocity derived east 10.5*sin(90 deg) = 10.5 -> round(1052.12) = 041c, north 10.5*cos(90 deg) = 6.4e-16 -> 0000; item 65 default 19; uid, course and residue have no misb line; checksum computed; items 13, 14, 79 and 80 are raw keys of misb-st0601 (pack.md), so the position and the velocities are not written"
 }

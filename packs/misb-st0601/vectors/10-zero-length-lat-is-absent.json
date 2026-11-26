@@ -6,7 +6,7 @@
   "expect": "060e2b34020b01010e0103010100000017020800060a24181e40000e04a697d10041011301024c8f",
   "model": {
     "misb0601.precision_time_us": "1700000000000000",
-    "lon": "-125.72854763163652",
+    "misb0601.sensor_longitude": "-125.72854763163652",
     "misb0601.ls_version": "19"
   },
   "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
