@@ -1,0 +1,8 @@
+{
+  "name": "unknown-time-to-geojson",
+  "from": "ntp-header",
+  "to": "geojson",
+  "input": "e4000a000000000000000000524154450000000000000000eea8c8908000000000000000000000000000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the kiss reply, whose transmit timestamp is 0: RFC 5905 section 6 gives a zero timestamp the meaning of a time not known, so no time_ms, and no position or id"
+}

@@ -390,7 +390,10 @@ def ntp_model(v, kind):
     m = {"@kind": kind}
     for k in ("ntp_leap", "ntp_version", "ntp_mode", "ntp_stratum", "ntp_poll", "ntp_precision") + tuple(TS_FIELDS):
         m["inet." + k] = str(v.get(k, 0))
-    m["time_ms"] = str(v.get("ntp_xmt_ts_sec", 0) * 1000 - NTP_UNIX_MS)
+    if v.get("ntp_xmt_ts_sec", 0):
+        m["time_ms"] = str(v.get("ntp_xmt_ts_sec", 0) * 1000 - NTP_UNIX_MS)
+    else:
+        m["@absent"] = ["time_ms"]      # RFC 5905 section 6: a zero timestamp is a time not known; `absent 0`
     m["inet.ntp_root_delay"] = plain(v.get("root_delay_raw", 0) / 65536)
     m["inet.ntp_root_dispersion"] = plain(v.get("root_disp_raw", 0) / 65536)
     refid = v.get("refid", 0)
@@ -475,6 +478,10 @@ def ntp_vectors():
                    ref=SRC + "the primary server reply to GeoJSON: GeoJSON maps time_ms only; the transmit "
                        "seconds times 1000 less 2208988800000 give 2026-11-19 01:00:00 UTC, and the fraction "
                        "(about 0.501 s) is not added"))
+    out.append(vec(P, "unknown-time-to-geojson", hk.hex(), '{"type":"Feature","geometry":null,"properties":{}}',
+                   to="geojson",
+                   ref=SRC + "the kiss reply, whose transmit timestamp is 0: RFC 5905 section 6 gives a zero "
+                       "timestamp the meaning of a time not known, so no time_ms, and no position or id"))
     return out
 
 

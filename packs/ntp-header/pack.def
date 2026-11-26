@@ -29,7 +29,7 @@ field  inet.ntp_org_ts_sec          0:192:32   uint
 field  inet.ntp_org_ts_frac         0:224:32   uint
 field  inet.ntp_rec_ts_sec          0:256:32   uint
 field  inet.ntp_rec_ts_frac         0:288:32   uint
-field  time_ms                     0:320:32   uiscale:1000:-2208988800000
+field  time_ms                     0:320:32   uiscale:1000:-2208988800000  absent 0
 field  inet.ntp_xmt_ts_sec          0:320:32   uint
 field  inet.ntp_xmt_ts_frac         0:352:32   uint
 
