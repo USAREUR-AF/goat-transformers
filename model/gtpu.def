@@ -28,7 +28,7 @@ key   ext4_content     string  -  "extension header 4: its content, as hexadecim
 key   ext4_next_type   int     -  "extension header 4: the type of the extension header after it, 0 for none"
 list  t_pdu            "G-PDU: the user packet (T-PDU), as octets"
 list  ies              "the information elements of a signalling message, in order"
-key   ie_type          int     -  "IE type: 14 recovery, 16 tunnel endpoint identifier data I; 128 and above have a length (133 GTP-U peer address, 141 extension header type list, 255 private extension)"
+key   ie_type          int     -  "IE type: 14 recovery, 16 tunnel endpoint identifier data I; 128 and above have a length, of 2 octets except 141 extension header type list, whose length is 1 octet (133 GTP-U peer address, 141, 255 private extension)"
 key   restart_counter  int     -  "recovery IE: restart counter"
 key   teid_data_i      int     -  "tunnel endpoint identifier data I IE"
 list  ie_value         "value of an IE with a length field, as octets"

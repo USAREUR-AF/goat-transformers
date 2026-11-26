@@ -1,0 +1,16 @@
+{
+  "name": "supported-extension-headers-roundtrip",
+  "from": "gtpu",
+  "to": "gtpu",
+  "input": "321f000800000000000500008d024085",
+  "expect": "321f000800000000000500008d024085",
+  "model": {
+    "gtpu.message_type": "31",
+    "gtpu.ies.#": "1",
+    "gtpu.ies[0].gtpu.ie_type": "141",
+    "gtpu.ies[0].gtpu.ie_value.#": "2",
+    "gtpu.ies[0].gtpu.ie_value[0].gtpu.octet": "64",
+    "gtpu.ies[0].gtpu.ie_value[1].gtpu.octet": "133"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.281 clauses 5 and 8; a Supported Extension Headers Notification (type 31) with its Extension Header Type List IE (141, clause 8.5): a 1-octet length, 2, then the types 0x40 and 0x85; expect derived there, no engine run"
+}

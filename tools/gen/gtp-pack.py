@@ -86,6 +86,7 @@ def gtpu_optional():
 GTPU_IES = (["group  gtpu.ies  rest", "  " + F("gtpu", "ie_type", 8), "  switch  gtpu.ie_type",
              "    case  14", "      " + F("gtpu", "restart_counter", 8),
              "    case  16", "      " + F("gtpu", "teid_data_i", 32),
+             "    case  141", "      length  8  bytes"] + ind(4, octets("gtpu", "ie_value")) + ["      end",
              "    else", "      length  16  bytes"] + ind(4, octets("gtpu", "ie_value")) + ["      end", "  end", "end"])
 
 
@@ -123,7 +124,7 @@ GTPU_KEYS = [
     ("key", "ext%d_next_type" % i, "extension header %d: the type of the extension header after it, 0 for none" % i))] + [
     ("list", "t_pdu", "G-PDU: the user packet (T-PDU), as octets"),
     ("list", "ies", "the information elements of a signalling message, in order"),
-    ("key", "ie_type", "IE type: 14 recovery, 16 tunnel endpoint identifier data I; 128 and above have a length (133 GTP-U peer address, 141 extension header type list, 255 private extension)"),
+    ("key", "ie_type", "IE type: 14 recovery, 16 tunnel endpoint identifier data I; 128 and above have a length, of 2 octets except 141 extension header type list, whose length is 1 octet (133 GTP-U peer address, 141, 255 private extension)"),
     ("key", "restart_counter", "recovery IE: restart counter"),
     ("key", "teid_data_i", "tunnel endpoint identifier data I IE"),
     ("list", "ie_value", "value of an IE with a length field, as octets"),

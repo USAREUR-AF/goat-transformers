@@ -117,6 +117,13 @@ def gtpu_vectors():
                 {"gtpu.message_type": "254", "gtpu.ies.#": "0"}, ref=R_U + "; an end marker, the header alone")))
     out.append(("07-truncated-is-malformed.json", vec("gtpu", "truncated-is-malformed", gtpu(255, 1, pdu)[:-3],
                 error="malformed-wire", ref=R_U + "; a G-PDU shorter than its length field")))
+    m = gtpu(31, 0, u16(5) + u8(0, 0) + u8(141, 2, 0x40, 0x85), s=1)
+    out.append(("08-supported-extension-headers-roundtrip.json", vec("gtpu", "supported-extension-headers-roundtrip", m,
+                {"gtpu.message_type": "31", "gtpu.ies.#": "1", "gtpu.ies[0].gtpu.ie_type": "141",
+                 "gtpu.ies[0].gtpu.ie_value.#": "2", "gtpu.ies[0].gtpu.ie_value[0].gtpu.octet": str(0x40),
+                 "gtpu.ies[0].gtpu.ie_value[1].gtpu.octet": str(0x85)},
+                ref=R_U + "; a Supported Extension Headers Notification (type 31) with its Extension Header Type List "
+                    "IE (141, clause 8.5): a 1-octet length, 2, then the types 0x40 and 0x85")))
     return [("gtpu",) + x for x in out]
 
 
