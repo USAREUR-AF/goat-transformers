@@ -45,8 +45,12 @@ field  rid.status                  0:12:4     uint
 field  rid.direction_raw           0:16:8     uint
 field  rid.speed_h_raw             0:24:8     uint
 field  rid.speed_v                 0:32:8     sscale:1/2
-field  lat                         0:40:32    sscale:1/10000000
-field  lon                         0:72:32    sscale:1/10000000
+field  rid.lat_raw                 0:40:32    twos
+field  rid.lon_raw                 0:72:32    twos
+if  !0:40:64  0
+  field  lat                         0:40:32    sscale:1/10000000
+  field  lon                         0:72:32    sscale:1/10000000
+end
 field  rid.alt_baro                0:104:16   uscale:1/2:-1000  absent 0
 field  hae                         0:120:16   uscale:1/2:-1000  absent 0
 field  rid.height                  0:136:16   uscale:1/2:-1000  absent 0

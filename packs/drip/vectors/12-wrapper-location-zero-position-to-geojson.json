@@ -1,0 +1,18 @@
+{
+  "name": "wrapper-location-zero-position-to-geojson",
+  "from": "drip",
+  "to": "geojson",
+  "input": "068bbf0b000002e8030000600400000212445249502d4558414d504c452d3030303100000000000012205a28000000000000000000a00fb81334084a33393001002001003ffe0001050123456789abcdef0e1b2835424f5c697683909daab7c4d1deebf805121f2c394653606d7a8794a1aebbc8d5e2effc091623303d4a5764717e8b98a5b2bfccd9e6f3000d1a273441",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "@kind": "wrapper-2-location-2",
+    "@absent": [
+      "lat",
+      "lon"
+    ],
+    "rid.lat_raw": "0",
+    "rid.lon_raw": "0",
+    "hae": "1524"
+  },
+  "source": "built by this program: vector 04's Wrapper with the wrapped Location's latitude and longitude both 0, which opendroneid.h defines as unknown: no position (gate if !<lat>:64 0). The geodetic altitude is still decoded, but GeoJSON holds hae only as the third coordinate of a Point (engine-spec, geojson slots), so with no point it is not written"
+}
