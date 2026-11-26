@@ -292,6 +292,68 @@ goat-xf-pipe: FAILED message 2 -> geojson: malformed-wire: format `remote-id`: i
 goat-xf-pipe: done, WITH FAILURES: in=2 converted=1 failed=1 [malformed-wire=1] 0s
 ```
 
+### 4. Blocks whose length is inside the header
+
+An ASTERIX data block starts with a 1-byte category, then a 2-byte big-endian
+length that counts the whole block. With no start byte to look for, the framing
+is `at:1:len:2:be:whole`: a length of 2 bytes, big-endian, at offset 1, that
+counts the whole frame. `two-cat011.bin` holds the input of vector 07 of
+`packs/asterix-cat011` twice. Each copy is 20 bytes, starting with `0b 0014`.
+
+```bash
+printf '0b0014092021c71c72a9111111000464b2c34c60%.0s' 1 2 | xxd -r -p > two-cat011.bin
+goat-xf-pipe --packs packs --packs-only \
+  --from-format asterix-cat011 --in file:two-cat011.bin --in-frame at:1:len:2:be:whole \
+  --out stdout: --to-format geojson --out-frame newline
+```
+
+stdout, the vector's `expect` once per block:
+
+```json
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.25000000558794,47.50000001862645]},"properties":{"callsign":"AFR2041"}}
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.25000000558794,47.50000001862645]},"properties":{"callsign":"AFR2041"}}
+```
+
+stderr, and the exit status 0:
+
+```
+goat-xf-pipe: asterix-cat011 from file:two-cat011.bin -> geojson to stdout:; on-error skip
+goat-xf-pipe: done: in=2 converted=2 failed=0 0s
+```
+
+`start:0x0b:len:2:be:total` reads the same file. Use `at:` when the frame has
+no byte to search for: a JREAP-C application block on TCP is
+`at:2:len:2:be:whole`.
+
+### 5. A carrier of several messages
+
+One input message can hold a run of messages (`inner <format> run`,
+[docs/using.md](using.md), "A carrier that holds several messages"). The input
+is vector 01 of `packs/conformance-run-c-xy`: one carrier with two messages.
+
+```bash
+echo 040102030409 | goat-xf-pipe --packs packs --packs-only \
+  --from-format conformance-run-c-xy --in stdin: --in-frame newline,hex \
+  --out stdout: --to-format conformance-run-json --out-frame newline
+```
+
+stdout, one frame per message:
+
+```json
+{"w":9,"x":1,"y":2}
+{"w":9,"x":3,"y":4}
+```
+
+stderr, and the exit status 0. One message in, two converted:
+
+```
+goat-xf-pipe: conformance-run-c-xy from stdin: -> conformance-run-json to stdout:; on-error skip
+goat-xf-pipe: done: in=1 converted=2 failed=0 0s
+```
+
+`--packs-only` loads `conformance-run-in-xy` as well, because the carrier's
+`inner` line names it.
+
 ## Writing a new adapter
 
 A new transport is a `Source`, a `Sink`, or both, from `goat-adapters-core`:
