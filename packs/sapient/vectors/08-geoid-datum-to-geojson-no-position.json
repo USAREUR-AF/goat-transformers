@@ -1,0 +1,18 @@
+{
+ "name": "geoid-datum-to-geojson-no-position",
+ "from": "sapient",
+ "to": "geojson",
+ "input": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038014002",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"}",
+ "model": {
+  "@complete": true,
+  "uid": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+  "@absent": [
+   "lat",
+   "lon",
+   "hae"
+  ]
+ },
+ "source": "synthetic: the input of 03-degrees-object-id-to-geojson with Location.datum (7.6.8) set to 2, by a small field editor (varint replaced, lengths rewritten)",
+ "reference": "location.proto: datum 2 is the WGS84 geoid; lat, lon and hae are read only for coordinate system 1 with datum 1 (WGS84 ellipsoid), so the message decodes as detection_report_other_system and reaches GeoJSON without a position"
+}

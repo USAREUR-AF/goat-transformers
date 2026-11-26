@@ -30,7 +30,7 @@ of version 0.6 where the generator was given them, and a `group` block of versio
 | `field` lines bound to `core` or `track` keys | 11 |
 | `const` lines | 2 |
 | value tables (`map` lines) | 1 (9) |
-| vectors (existing and generated) | 22 |
+| vectors (existing and generated) | 24 |
 
 ## Kinds
 
@@ -125,7 +125,7 @@ require only common keys, so they are reached only by an entity that lacks
 
 ## Position assumption
 
-`lon`, `lat` and `hae` are bound to `Location.x`, `y`, `z` of `DetectionReport.location` (paths 7.6.1 to 7.6.3). The schema calls x, y, z 'normally' longitude, latitude, altitude: the meaning is set by `Location.coordinate_system` (7.6.7), where 1 is latitude/longitude in decimal degrees and metres, 2 is radians and 5 is UTM, and by `Location.datum` (7.6.8), where 1 is the WGS84 ellipsoid and 2 the geoid. The binding holds only when 7.6.7 is 1, and `hae` is ellipsoid height only when 7.6.8 is 1. Kind `detection_report` therefore has `const 7.6.7 1` and `const 7.6.8 1`: every detection report this pack encodes states the units and datum its `lon`, `lat` and `hae` are in. A constant is written over any field, so a detection report that arrives with another coordinate system or datum leaves with 1 and 1 while its x, y, z are unchanged; decode still fills `sapient.location_coordinate_system` and `sapient.location_datum` with what the message said, for a consumer to check before it trusts the position. No other `Location` in the schema (Alert, StatusReport.node_location, the predicted location) is bound to core keys; in kind `alert` the same fields are the raw keys `sapient.location_x`, `location_y`, `location_z`.
+`lon`, `lat` and `hae` are bound to `Location.x`, `y`, `z` of `DetectionReport.location` (paths 7.6.1 to 7.6.3). The schema calls x, y, z 'normally' longitude, latitude, altitude: the meaning is set by `Location.coordinate_system` (7.6.7), where 1 is latitude/longitude in decimal degrees and metres, 2 is radians and 5 is UTM, and by `Location.datum` (7.6.8), where 1 is the WGS84 ellipsoid and 2 the geoid. The binding holds only when 7.6.7 is 1 and 7.6.8 is 1. Kind `detection_report` therefore has `when 7.6.7 1` and `when 7.6.8 1`: it reads x, y, z as `lon`, `lat` and `hae` only then, and every detection report this pack encodes from them writes 1 and 1, the units and datum they are in. A detection report with another coordinate system or datum (UTM, radians, the geoid, not defined, or no value) is kind `detection_report_other_system`: x, y, z, the coordinate system and the datum stay the raw keys `sapient.location_x` ... `sapient.location_datum`, the message carries no position into another format, and it comes back byte for byte. No other `Location` in the schema (Alert, StatusReport.node_location, the predicted location) is bound to core keys; in kind `alert` the same fields are the raw keys `sapient.location_x`, `location_y`, `location_z`.
 
 ## Bound to `track` keys
 

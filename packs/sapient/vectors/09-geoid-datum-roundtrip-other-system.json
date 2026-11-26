@@ -1,0 +1,12 @@
+{
+ "name": "geoid-datum-roundtrip-other-system",
+ "from": "sapient",
+ "to": "sapient",
+ "input": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038014002",
+ "expect": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038014002",
+ "model": {
+  "@kind": "detection_report_other_system"
+ },
+ "source": "synthetic: as 08",
+ "reference": "the message of 08 comes back byte for byte; the raw keys hold x, y, z, the coordinate system and the datum"
+}
