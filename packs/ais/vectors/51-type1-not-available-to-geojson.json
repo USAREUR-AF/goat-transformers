@@ -7,11 +7,13 @@
   "model": {
     "@complete": true,
     "uid": "244000002",
-    "lat": "91",
-    "lon": "181",
-    "speed_ms": "52.62766666666667",
-    "course": "360"
+    "@absent": [
+      "lat",
+      "lon",
+      "speed_ms",
+      "course"
+    ]
   },
   "source": "values chosen for this vector (as type1-all-not-available)",
-  "reference": "Not-available codes are carried as values: lon 181, lat 91, course 360, speed 1023 x 1852/36000 = 52.62766666666667 (pack.md, Not-available codes on decode). geojson writes coordinates [lon, lat], properties in field-line order (callsign, course, speed_ms), then id (ruling 4 of 0.1.1); uid is derived as text_of(ais.mmsi) (model/ais.def), so it is checked with @complete.; longitude 181, latitude 91, speed 1023 and course 3600 are not available (AIVDM.adoc, common navigation block), so none reaches GeoJSON"
+  "reference": "Longitude 181, latitude 91, speed 1023 and course 3600 are the not-available codes (AIVDM.adoc, common navigation block); each is `absent` on its line, so the four keys are absent after decode (pack.md, Not-available codes on decode) and none reaches GeoJSON: geometry null, no course or speed_ms property, then id (ruling 4 of 0.1.1). uid is derived as text_of(ais.mmsi) (model/ais.def), so it is checked with @complete."
 }

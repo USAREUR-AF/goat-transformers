@@ -7,15 +7,17 @@
   "model": {
     "@kind": "position-a1",
     "ais.mmsi": "244000002",
-    "lat": "91",
-    "lon": "181",
-    "speed_ms": "52.62766666666667",
-    "course": "360",
     "ais.nav_status": "15",
     "ais.turn": "-128",
     "ais.heading": "511",
-    "ais.second": "60"
+    "ais.second": "60",
+    "@absent": [
+      "lat",
+      "lon",
+      "speed_ms",
+      "course"
+    ]
   },
   "source": "values chosen for this vector: every not-available code the source gives for a position report",
-  "reference": "Nav status 15, turn -128, SOG 1023, lon 108600000 (181 degrees), lat 54600000 (91 degrees), course 3600, heading 511, second 60. Decoded as values: speed 1023 x 1852/36000 = 52.62766666666667 m/s, course 360 (pack.md, Not-available codes on decode)."
+  "reference": "Nav status 15, turn -128, SOG 1023, lon 108600000 (181 degrees), lat 54600000 (91 degrees), course 3600, heading 511, second 60. SOG, lon, lat and course are `absent` codes: those keys are absent after decode and encode back to the codes; nav status, turn, heading and second decode as values (pack.md, Not-available codes on decode)."
 }
