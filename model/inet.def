@@ -86,9 +86,9 @@ key  icmp_sequence             int     -     "sequence number that helps match r
 key  icmp_gateway_addr         int     -     "redirect: address of the gateway to use, the 32-bit integer"
 key  icmp_pointer              int     -     "parameter problem: octet of the original header where the error was found"
 key  icmp_rest                 int     -     "the 32 bits after the checksum of a type this pack has no kind for"
-key  icmp_originate_ms         int     ms    "timestamp messages: time the sender last touched the message, milliseconds since midnight UT"
-key  icmp_receive_ms           int     ms    "timestamp messages: time the echoer first touched it, milliseconds since midnight UT"
-key  icmp_transmit_ms          int     ms    "timestamp messages: time the echoer last touched it, milliseconds since midnight UT"
+key  icmp_originate_ms         int     ms    "timestamp messages: time the sender last touched the message, milliseconds since midnight UT; with the high-order bit set, a time the sender could not give that way (RFC 792), not milliseconds since midnight"
+key  icmp_receive_ms           int     ms    "timestamp messages: time the echoer first touched it, milliseconds since midnight UT; with the high-order bit set, a time the sender could not give that way (RFC 792), not milliseconds since midnight"
+key  icmp_transmit_ms          int     ms    "timestamp messages: time the echoer last touched it, milliseconds since midnight UT; with the high-order bit set, a time the sender could not give that way (RFC 792), not milliseconds since midnight"
 
 # NTP, RFC 5905 section 7.3
 key  ntp_leap                  int     -     "leap indicator (0 no warning, 1 last minute has 61 seconds, 2 last minute has 59 seconds, 3 clock unsynchronized)"
@@ -154,7 +154,7 @@ key  rtcp_octet_count          int     -     "sender report: payload octets sent
 key  arp_operation             int     -     "operation, 1 request or 2 reply"
 key  arp_sender_hw_addr        int     -     "Ethernet address of the sender, the 48-bit integer"
 key  arp_sender_ip_addr        int     -     "IPv4 address of the sender, the 32-bit integer"
-key  arp_target_hw_addr        int     -     "Ethernet address of the target, the 48-bit integer (0 when not known)"
+key  arp_target_hw_addr        int     -     "Ethernet address of the target, the 48-bit integer; in a request any value, often 0 or all ones (RFC 826 gives no not-known value)"
 key  arp_target_ip_addr        int     -     "IPv4 address of the target, the 32-bit integer"
 
 # GRE, RFC 2784 with the key and sequence number of RFC 2890
