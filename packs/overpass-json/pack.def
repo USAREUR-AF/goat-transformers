@@ -11,7 +11,7 @@ wire          json
 
 field  overpass.version               version                     float
 field  overpass.generator             generator                   string
-field  time_ms                        osm3s.timestamp_osm_base    iso8601_ms
+field  time_ms                        osm3s.timestamp_osm_base    iso8601_s
 field  overpass.timestamp_osm_base    osm3s.timestamp_osm_base    string
 field  overpass.timestamp_areas_base  osm3s.timestamp_areas_base  string
 field  overpass.osm3s_copyright       osm3s.copyright             string

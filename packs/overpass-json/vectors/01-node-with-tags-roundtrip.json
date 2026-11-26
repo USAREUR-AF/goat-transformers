@@ -3,7 +3,7 @@
   "from": "overpass-json",
   "to": "overpass-json",
   "input": "{\"version\":0.6,\"generator\":\"Overpass API 0.7.62.7\",\"osm3s\":{\"timestamp_osm_base\":\"2026-11-20T08:15:02Z\",\"copyright\":\"Data: OpenStreetMap contributors, ODbL.\"},\"elements\":[{\"type\":\"node\",\"id\":900002,\"lat\":50.2121617,\"lon\":8.5867523,\"timestamp\":\"2025-02-11T07:30:15Z\",\"version\":1,\"changeset\":160002,\"user\":\"mapper-b\",\"uid\":4402,\"tags\":{\"highway\":\"bus_stop\",\"name\":\"Example Street\"}}]}",
-  "expect": "{\"version\":0.6,\"generator\":\"Overpass API 0.7.62.7\",\"osm3s\":{\"timestamp_osm_base\":\"2026-11-20T08:15:02.000Z\",\"copyright\":\"Data: OpenStreetMap contributors, ODbL.\"},\"elements\":[{\"type\":\"node\",\"id\":900002,\"lat\":50.2121617,\"lon\":8.5867523,\"timestamp\":\"2025-02-11T07:30:15Z\",\"version\":1,\"changeset\":160002,\"user\":\"mapper-b\",\"uid\":4402}]}",
+  "expect": "{\"version\":0.6,\"generator\":\"Overpass API 0.7.62.7\",\"osm3s\":{\"timestamp_osm_base\":\"2026-11-20T08:15:02Z\",\"copyright\":\"Data: OpenStreetMap contributors, ODbL.\"},\"elements\":[{\"type\":\"node\",\"id\":900002,\"lat\":50.2121617,\"lon\":8.5867523,\"timestamp\":\"2025-02-11T07:30:15Z\",\"version\":1,\"changeset\":160002,\"user\":\"mapper-b\",\"uid\":4402}]}",
   "model": {
     "overpass.version": "0.6",
     "overpass.generator": "Overpass API 0.7.62.7",
@@ -28,5 +28,5 @@
       "lon"
     ]
   },
-  "source": "derived by hand in tools/gen/overpass-json-roundtrip-vectors.py from values chosen there, from spec/engine-spec.md (0.5 json wire and ruling 16, 0.7 groups, 0.11 rulings 2 and 3) and packs/overpass-json/pack.def; no engine run before the expect was written; one node: the time of the data is written back as iso8601_ms writes it (the time_ms line comes first on that locator); the tags object of an item is dropped (items carry no residue)"
+  "source": "derived by hand in tools/gen/overpass-json-roundtrip-vectors.py from values chosen there, from spec/engine-spec.md (0.5 json wire and ruling 16, 0.7 groups, 0.11 rulings 2 and 3) and packs/overpass-json/pack.def; no engine run before the expect was written; one node: the time of the data is written back as iso8601_s writes it (the time_ms line comes first on that locator); the tags object of an item is dropped (items carry no residue)"
 }

@@ -9,10 +9,11 @@ packs/overpass-json/pack.def:
 
 - members are written in field-line order (0.5, "Canonical output"); a nested object
   (`osm3s`, `bounds`) stands at the position of the first line that addresses into it;
-- `osm3s.timestamp_osm_base` is bound to `time_ms` (iso8601_ms) and then to the raw key
+- `osm3s.timestamp_osm_base` is bound to `time_ms` (iso8601_s) and then to the raw key
   `overpass.timestamp_osm_base` (string). Decode fills both (ruling 16 of 0.5); encode
   writes the value of the earliest line whose key is present, the `time_ms` line, in the
-  canonical text of iso8601_ms, `YYYY-MM-DDTHH:MM:SS.fffZ` (ruling 3f of 0.11);
+  text of iso8601_s, `YYYY-MM-DDTHH:MM:SSZ` (engine-spec 0.26), the form the Output
+  Formats page says osm_base always has;
 - items of a group carry no residue (0.7, Decode), so an element's `tags` object is
   dropped; a `.` item of `nodes` is the array element itself;
 - numbers are written as ruling 2f/2g of 0.11 states (shortest round-trip digits, plain
@@ -41,9 +42,10 @@ def epoch_ms(text):
     return int(d.timestamp()) * 1000
 
 
-def iso_ms(ms):
+def iso_s(ms):
+    """iso8601_s encode (engine-spec 0.26): whole seconds, `Z`."""
     d = datetime.datetime.fromtimestamp(ms // 1000, tz=datetime.timezone.utc)
-    return d.strftime("%Y-%m-%dT%H:%M:%S") + ".%03dZ" % (ms % 1000)
+    return d.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def dump(obj):
@@ -70,7 +72,7 @@ in1 = {"version": 0.6, "generator": GEN,
        "elements": [node]}
 node_out = {k: v for k, v in node.items() if k != "tags"}
 out1 = {"version": 0.6, "generator": GEN,
-        "osm3s": {"timestamp_osm_base": iso_ms(epoch_ms(T1)), "copyright": COPY},
+        "osm3s": {"timestamp_osm_base": iso_s(epoch_ms(T1)), "copyright": COPY},
         "elements": [node_out]}
 v1 = {
     "name": "node-with-tags-roundtrip",
@@ -95,7 +97,7 @@ v1 = {
         "overpass.elements[0].overpass.nodes.#": "absent",
         "@absent": ["overpass.timestamp_areas_base", "overpass.remark", "lat", "lon"],
     },
-    "source": SOURCE + "one node: the time of the data is written back as iso8601_ms writes it "
+    "source": SOURCE + "one node: the time of the data is written back as iso8601_s writes it "
               "(the time_ms line comes first on that locator); the tags object of an item is "
               "dropped (items carry no residue)",
 }
@@ -115,7 +117,7 @@ in2 = {"version": 0.6, "generator": GEN,
        "elements": [way_in]}
 way_out = {k: v for k, v in way_in.items() if k != "tags"}
 out2 = {"version": 0.6, "generator": GEN,
-        "osm3s": {"timestamp_osm_base": iso_ms(epoch_ms(T2)), "timestamp_areas_base": TA,
+        "osm3s": {"timestamp_osm_base": iso_s(epoch_ms(T2)), "timestamp_areas_base": TA,
                   "copyright": COPY},
         "elements": [way_out]}
 v2 = {
@@ -146,7 +148,7 @@ v2 = {
     },
     "source": SOURCE + "one way with out geom: bounds, the node ids and the geometry come "
               "back in line order; the osm3s members, given out of line order, are written in "
-              "line order with the data time in iso8601_ms form; tags dropped",
+              "line order with the data time in iso8601_s form; tags dropped",
 }
 
 # --- 03: one relation with a node member and a way member (out geom), remark last ------
@@ -163,7 +165,7 @@ in3 = {"version": 0.6, "generator": GEN,
        "elements": [rel_in], "remark": REMARK}
 rel_out = {k: v for k, v in rel_in.items() if k != "tags"}
 out3 = {"version": 0.6, "generator": GEN,
-        "osm3s": {"timestamp_osm_base": iso_ms(epoch_ms(T3)), "copyright": COPY},
+        "osm3s": {"timestamp_osm_base": iso_s(epoch_ms(T3)), "copyright": COPY},
         "remark": REMARK, "elements": [rel_out]}
 v3 = {
     "name": "relation-members-roundtrip",
