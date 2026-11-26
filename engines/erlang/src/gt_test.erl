@@ -1228,8 +1228,11 @@ profile_checks(Root) ->
     Rule6 ++ Rule5 ++ InnerCases ++ InnerC.
 
 %% A run of ten times the messages takes about ten times as long (0.92): a
-%% carrier of one-byte messages converted to itself, 2000 and 20000 messages,
-%% the best of three each. A quadratic decode or encode gives a ratio near 100.
+%% carrier of one-byte messages converted to itself, 2000 and 20000 messages.
+%% A quadratic decode or encode gives a ratio near 100. The times are the VM's
+%% CPU time (statistics runtime, in ms), the two sizes alternate so that a busy
+%% moment falls on both, the least of seven of each counts, and the bound has
+%% three tries: load can only make a time longer, so the bound is not loosened.
 run_cost_check() ->
     Head = fun(Name) -> ["format ", Name, "\nversion 0.92.0\ndistribution public\nsource \"unit check\"\n"
                          "uses probe\nwire bits\nlayout sequential\nbit_order msb\n"] end,
@@ -1243,22 +1246,30 @@ run_cost_check() ->
                        ({load_pack, T}, A) -> gt_engine:load_pack(A, T)
                     end, gt_engine:new(), Texts),
     C = <<"unit-run-carrier">>,
-    Time = fun(N) ->
-                   In = gt_hex:bytes_to_hex(<< <<(I rem 256)>> || I <- lists:seq(1, N) >>),
-                   lists:min([begin
-                                  T0 = erlang:monotonic_time(microsecond),
-                                  [{ok, Out}] = gt_engine:convert_run(E, C, C, In, none),
-                                  true = Out =:= In,
-                                  erlang:monotonic_time(microsecond) - T0
-                              end || _ <- [1, 2, 3]])
+    Input = fun(N) -> gt_hex:bytes_to_hex(<< <<(I rem 256)>> || I <- lists:seq(1, N) >>) end,
+    {In2, In20} = {Input(2000), Input(20000)},
+    Once = fun(In) ->
+                   {T0, _} = erlang:statistics(runtime),
+                   [{ok, Out}] = gt_engine:convert_run(E, C, C, In, none),
+                   true = Out =:= In,
+                   {T1, _} = erlang:statistics(runtime),
+                   T1 - T0
            end,
-    Small = max(1000, Time(2000)),
-    Large = Time(20000),
+    Try = fun() ->
+                  Pairs = [{Once(In2), Once(In20)} || _ <- lists:seq(1, 7)],
+                  {max(1, lists:min([S || {S, _} <- Pairs])), lists:min([L || {_, L} <- Pairs])}
+          end,
+    cost_tries(Try, 3, []).
+
+cost_tries(_Try, 0, Seen) ->
+    io:format("FAIL unit a run of 20000 messages against one of 2000, CPU ms, three tries: ~p~n",
+              [lists:reverse(Seen)]),
+    {0, 1};
+cost_tries(Try, Left, Seen) ->
+    {Small, Large} = Try(),
     case Large =< 40 * Small of
         true -> {1, 0};
-        false ->
-            io:format("FAIL unit a run of 20000 messages takes ~p us, one of 2000 ~p us~n", [Large, Small]),
-            {0, 1}
+        false -> cost_tries(Try, Left - 1, [{Small, Large} | Seen])
     end.
 
 run_ruling_cases(Engine) ->

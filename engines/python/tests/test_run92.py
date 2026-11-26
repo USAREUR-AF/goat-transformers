@@ -297,31 +297,44 @@ class TestCarriers(Base):
 
 class TestCost(Base):
     """Ten times the length costs about ten times as much: far under the 100
-    of a cost that grows with the square."""
+    of a cost that grows with the square. The times are CPU times, the two
+    lengths alternate so that a busy moment falls on both, the least of seven
+    of each counts, and the bound has three tries: load can only make a time
+    longer, so the bound is not loosened."""
 
     def ratio(self, eng, fmt, call):
-        def best(n):
-            data = b"01" * n
-            out = []
-            for _ in range(3):
-                gc.collect()
-                gc.disable()  # the collector's passes over a long result are not what is measured
-                try:
-                    at = time.process_time()
-                    call(eng, fmt, data)
-                    out.append(time.process_time() - at)
-                finally:
-                    gc.enable()
-            return min(out)
-        return best(20000) / best(2000)
+        def once(data):
+            gc.collect()
+            gc.disable()  # the collector's passes over a long result are not what is measured
+            try:
+                at = time.process_time()
+                call(eng, fmt, data)
+                return time.process_time() - at
+            finally:
+                gc.enable()
+        short, long_ = b"01" * 2000, b"01" * 20000
+        best_short = best_long = float("inf")
+        for _ in range(7):
+            best_short = min(best_short, once(short))
+            best_long = min(best_long, once(long_))
+        return best_long / best_short
+
+    def linear(self, eng, fmt, call):
+        seen = []
+        for _ in range(3):
+            r = self.ratio(eng, fmt, call)
+            if r < 50:
+                return
+            seen.append(round(r, 1))
+        self.fail("%s: 20000 against 2000 cost %s times as much, three tries" % (fmt, seen))
 
     def test_a_run_and_a_list_are_read_in_linear_time(self):
         item = "field m.a 8 uint\n"
         eng = engine(c=SEQ + "inner in run\n", in_=SELF + item, g=SEQ + "group m.rows rest\n  " + item + "end\n",
                      l="wire bits\nlayout sequential\ngroup m.rows rest\n  " + item + "end\n")
-        self.assertLess(self.ratio(eng, "c", lambda e, f, d: e.decode_run(f, d)), 50)
-        self.assertLess(self.ratio(eng, "g", lambda e, f, d: e.decode(f, d)), 50)
-        self.assertLess(self.ratio(eng, "l", lambda e, f, d: e.decode(f, d)), 50)
+        self.linear(eng, "c", lambda e, f, d: e.decode_run(f, d))
+        self.linear(eng, "g", lambda e, f, d: e.decode(f, d))
+        self.linear(eng, "l", lambda e, f, d: e.decode(f, d))
 
 
 class TestLoad(Base):

@@ -576,10 +576,11 @@ mod tests {
     fn long_texts_are_linear() {
         let one = Exact { num: 1, den: 1, offset: 0 };
         let text = format!("0.{}5", "4".repeat(2_000_000));
-        let t = std::time::Instant::now();
+        // CPU time, so that a loaded machine does not fail the bound
+        let t = crate::cpu_clock::thread_cpu_time();
         assert_eq!(one.decode_text(&text), Some(0));
         let text = format!("2.{}1", "0".repeat(2_000_000));
         assert_eq!(Exact { num: 1, den: 4, offset: 0 }.decode_text(&text), Some(1));
-        assert!(t.elapsed().as_secs() < 2);
+        assert!((crate::cpu_clock::thread_cpu_time() - t).as_secs() < 2);
     }
 }

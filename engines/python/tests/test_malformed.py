@@ -406,16 +406,16 @@ class TestJsonGrammar(_Rulings):
         eng.load_model("module core\nversion 1\ndistribution public\nsource s\nkey uid string -\nkey n int -\n")
         eng.load("format x\nversion 1\ndistribution public\nsource s\nwire json\nfield n n int\n")
         for v in ("2e47686170", "-1e999999999", "1.5e4400", "1e4300"):
-            start = time.monotonic()
+            start = time.process_time()
             with self.assertRaises(GTError, msg=v) as cm:
                 eng.decode("x", '{"n":%s}' % v)
             self.assertEqual(cm.exception.code, "transform-decode", v)
-            self.assertLess(time.monotonic() - start, 1.0, v)
-            start = time.monotonic()
+            self.assertLess(time.process_time() - start, 1.0, v)
+            start = time.process_time()
             with self.assertRaises(GTError, msg=v) as cm:
                 eng.decode("x", '{"n":1,"m":%s}' % v)
             self.assertEqual(cm.exception.code, "malformed-wire", v)
-            self.assertLess(time.monotonic() - start, 1.0, v)
+            self.assertLess(time.process_time() - start, 1.0, v)
         self.assertEqual(eng.decode("x", '{"n":1e3}').fields, {"n": 1000})
         with self.assertRaises(GTError) as cm:
             eng.decode("x", '{"n":1e300}')
@@ -424,10 +424,10 @@ class TestJsonGrammar(_Rulings):
 
         for v in ("1e4300", "2e47686170", "1e4299", "9" * 6000):
             for read in (IntT().decode, IntT().decode_json):
-                start = time.monotonic()
+                start = time.process_time()
                 with self.assertRaises(ValueError, msg=v[:20]):
                     read(v)
-                self.assertLess(time.monotonic() - start, 1.0, v[:20])
+                self.assertLess(time.process_time() - start, 1.0, v[:20])
         self.assertEqual(IntT().decode_json("9.223372036854775807e18"), (1 << 63) - 1)
 
     def test_strings(self):

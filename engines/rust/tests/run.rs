@@ -4,7 +4,11 @@
 
 use goat_transformers::{Engine, Value};
 use std::path::Path;
-use std::time::{Duration, Instant};
+use std::time::Duration;
+
+#[path = "../src/cpu_clock.rs"]
+mod cpu_clock;
+use cpu_clock::thread_cpu_time as cpu_time;
 
 const HEAD: &str = "version 0.92.0\ndistribution public\nsource \"synthetic\"\nuses probe\nwire bits\nlayout sequential\nbit_order msb\n";
 
@@ -56,20 +60,31 @@ fn decode_run_of_an_ordinary_message() {
 
 /// Ten times the messages take about ten times as long; a step that copies or
 /// scans the rest of the run for each message would take a hundred times.
+/// The times are CPU times, the two sizes alternate so that a busy moment
+/// falls on both, the least of seven of each counts, and the check has three
+/// tries: load can only make a time longer, so the bound is not loosened.
 #[test]
 fn a_run_is_read_and_written_in_linear_time() {
     let e = xy();
-    let time = |n: usize| {
-        let input = format!("09{}", "0102".repeat(n));
-        let once = || {
-            let started = Instant::now();
-            assert_eq!(e.decode_run("out", &input).unwrap().1.len(), n);
-            assert_eq!(e.convert_run("out", "other", &input, None).unwrap().len(), 1);
-            started.elapsed()
-        };
-        (0..3).map(|_| once()).min().unwrap_or(Duration::ZERO)
+    let inputs = [2_000usize, 20_000].map(|n| (n, format!("09{}", "0102".repeat(n))));
+    let once = |(n, input): &(usize, String)| {
+        let started = cpu_time();
+        assert_eq!(e.decode_run("out", input).unwrap().1.len(), *n);
+        assert_eq!(e.convert_run("out", "other", input, None).unwrap().len(), 1);
+        cpu_time() - started
     };
-    let (short, long) = (time(2_000), time(20_000));
     let floor = Duration::from_millis(1);
-    assert!(long < short.max(floor) * 40, "2000 messages took {:?}, 20000 took {:?}", short, long);
+    let mut seen = Vec::new();
+    for _ in 0..3 {
+        let (mut short, mut long) = (Duration::MAX, Duration::MAX);
+        for _ in 0..7 {
+            short = short.min(once(&inputs[0]));
+            long = long.min(once(&inputs[1]));
+        }
+        if long < short.max(floor) * 40 {
+            return;
+        }
+        seen.push((short, long));
+    }
+    panic!("2000 messages against 20000, three tries: {:?}", seen);
 }
