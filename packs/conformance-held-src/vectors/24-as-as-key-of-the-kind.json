@@ -1,0 +1,9 @@
+{
+  "name": "as-as-key-of-the-kind",
+  "from": "conformance-held-src",
+  "to": "conformance-held-as",
+  "input": "{\"x\":2}",
+  "expect": "050200",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: ruling 24 of 0.30; ruling 1"
+}

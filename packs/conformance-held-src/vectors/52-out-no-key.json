@@ -1,0 +1,9 @@
+{
+  "name": "out-no-key",
+  "from": "conformance-held-src",
+  "to": "conformance-held-out",
+  "input": "{\"y\":5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule"
+}

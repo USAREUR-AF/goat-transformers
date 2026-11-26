@@ -221,24 +221,25 @@ the reduced jar:
   `wire` value that is no wire, plain `unknown-wire`.
 
 It prints the size of both jars and exits non-zero on any failure. Measured
-with `nice -n 10` on this tree on 2026-11-21:
+with `nice` on this tree on 2026-11-26 (Version 0.94 as ruled on 26 Nov):
 
 ```
 reduced jar: no class of the bits, protobuf, text, tlv or cbor codecs
 build wires: xml, geojson, json
-conversion vectors: 8374/8374 passed (1713 packs on xml, geojson, json; 15236 vectors on other wires not run)
+packs on other wires refused as unknown-wire, the wire named: 3302/3302
+conversion vectors: 8516/8516 passed (1750 packs on xml, geojson, json; 17307 vectors on other wires and 0 vectors of outer packs not run)
 capability vectors: 16/16 passed (those between formats on wires of the build)
-load vectors: 393/393 passed (those with no pack on a wire this build lacks)
+load vectors: 400/400 passed (those with no pack on a wire this build lacks and no outer pack)
 unknown-wire: bits (pack adsb): unknown-wire: .../packs/adsb/pack.def:18: wire "bits" is a wire of the specification, but this build does not have it (this build has xml, geojson, json) [format=adsb locator=-]
 unknown-wire: protobuf (pack apollo-ch): ...
-unknown-wire: text (pack argo-index-meta): ...
+unknown-wire: text (pack aprs): ...
 unknown-wire: tlv (pack conformance-cond-tlv): ...
 unknown-wire: cbor (pack conformance-cbor): ...
 unknown-wire loads: 5/5 passed
 unknown-wire: nowire (no wire of the specification): unknown-wire: nowire-check:3: unknown wire "nowire" [format=nowire-check locator=-]
 OK
-jar size, all eight wires:       351969 bytes
-jar size, xml, json and geojson: 257708 bytes, 73% of the full jar
+jar size, all eight wires:       375637 bytes
+jar size, xml, json and geojson: 271546 bytes, 72% of the full jar
 ```
 
 `sh engines/java/single-wire-check.sh` (`GOAT_WIRES="a b"` to limit it) does the same for each of the eight wires alone: it builds the jar with that wire alone and the jar with every other wire, runs the same check on the first, prints `<wire> alone: N conversion vectors run, N passed, 0 failed`, and stops non-zero at the first failure, showing that step's output.
@@ -284,22 +285,36 @@ and runs:
   0.34) under every profile, on trees written to a temporary directory.
 
 It prints each failure and exits non-zero on any. Measured with
-`nice -n 10 ./build.sh` on this tree on 2026-11-21 (23610 vectors, 4528 packs,
-with `when … at` of Version 0.33 and the `cbor` wire of Version 0.28), on a loaded machine:
+`nice ./build.sh` on this tree on 2026-11-26 (25823 vectors, 5052 packs,
+with Version 0.94 as ruled on 26 Nov), on a loaded machine:
 
 ```
-conversion vectors: 23610/23610 passed (4528 packs, 3115 model modules)
-load vectors: 1399/1399 passed
-capability vectors: 18/18 passed
-packs-only: loadOnly checked for 48 of 4528 packs, 620 ms (GOAT_SWEEP_FULL=1 for all)
-malformed input sweep: 1390217 inputs over 23610 of 23610 conversion vectors (27 damaged copies each) and 4528 packs of 8 wires, 1052413 named errors, 0 defects, 35791 ms (GOAT_SWEEP_FULL=1 for the full sweep)
-parse once: 8 threads x 2 rounds x 2739 conversions on one instance, 0 differ
-parse once (0.25): 4751 ms
-unit checks: 979/979 passed
+conversion vectors: 25823/25823 passed (5052 packs, 3133 model modules)
+load vectors: 1753/1753 passed
+capability vectors: 29/29 passed
+packs-only: loadOnly checked for 48 of 5052 packs, 1943 ms (GOAT_SWEEP_FULL=1 for all)
+malformed input sweep: 1313552 inputs over 25823 of 25823 conversion vectors (24 damaged copies each) and 5052 packs of 8 wires, 1007481 named errors, 0 defects, 66351 ms (GOAT_SWEEP_FULL=1 for the full sweep)
+parse once: 8 threads x 2 rounds x 4051 conversions on one instance, 0 differ
+parse once (0.25): 6329 ms
+unit checks: 1144/1144 passed
 OK
 ```
 
-`./build.sh` took 1 min 31 s in all on that run, with a load average near 12
+### Version 0.94
+
+`convert` with `from` different from `to`, and `convert_run` wherever it
+converts so, refuse with `no-kind` a chosen kind of a pack with message kinds
+of which the entity holds no key (`Codec.checkHeld`, `SeqCodec.checkHeld`),
+after the context and the derivations and before any line is written. From a
+carrier to a carrier pack (ruling 7), a kind with a `run` line is checked once
+on the outer entity joined with the first message, with the outer entity's
+kind records only (the first message's inner kind is not kept); a kind without
+a `run` line makes the message count first, then checks the joined entity as
+`convert`, its kind records included, so ruling 4 keeps the message's inner
+kind when that kind has an `inner` line of its format (`UnitTests.heldRuns`).
+Every vector passes.
+
+`./build.sh` took 1 min 31 s in all on the run of 2026-11-21 (23610 vectors), with a load average near 12
 (22 min 23 s on an earlier run with a load average near 68; 78 s on an idle
 machine before Version 0.26).
 
@@ -314,7 +329,7 @@ tool vectors: 183/183 passed
 
 | Test | Command | Measured |
 |---|---|---|
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 183/183 passed on 2026-11-24 (with Version 0.93; the licence vectors 101 to 186 of Versions 0.29 and 0.93 included), on a loaded machine (each run starts a JVM and loads every model module) |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 183/183 passed on 2026-11-26 (with Version 0.94; the licence vectors 101 to 186 of Versions 0.29 and 0.93 included), on a loaded machine (each run starts a JVM and loads every model module) |
 
 ### The bounded sweep and `GOAT_SWEEP_FULL=1`
 
@@ -416,25 +431,26 @@ from `expect` stops the run with exit status 1 and the reason on standard
 error. The numbers are measurements of one machine at one time; nothing
 fails on them (ruling 2d).
 
-Measured with `nice -n 10 engines/java/bench.sh` on the same loaded machine:
+Measured with `nice engines/java/bench.sh bench/set.json` on 2026-11-26, on a loaded machine:
 
 ```
-{"vector": "packs/cot-xml/vectors/01-track-to-geojson.json", "iterations": 2000, "ns_per_op": 383026}
-{"vector": "packs/geojson/vectors/01-geojson-to-cot.json", "iterations": 2000, "ns_per_op": 503986}
-{"vector": "packs/canonical-track-v2/vectors/02-to-cot-xml.json", "iterations": 2000, "ns_per_op": 480673}
-{"vector": "packs/sapient/vectors/01-sapient-to-geojson.json", "iterations": 2000, "ns_per_op": 223247}
-{"vector": "packs/cot-protobuf/vectors/01-event-to-cot-xml.json", "iterations": 2000, "ns_per_op": 197957}
-{"vector": "packs/isa/vectors/01-isa-to-geojson.json", "iterations": 2000, "ns_per_op": 115894}
-{"vector": "packs/uci/vectors/gen-001-access_assessment-roundtrip.json", "iterations": 2000, "ns_per_op": 890889}
-{"vector": "packs/a-gra/vectors/gen-001-access_assessment-roundtrip.json", "iterations": 2000, "ns_per_op": 457272}
-{"vector": "packs/nmea2000/vectors/rt-pgn59392.json", "iterations": 2000, "ns_per_op": 45874}
-{"vector": "packs/mavlink2/vectors/rt-00000-heartbeat.json", "iterations": 2000, "ns_per_op": 7126}
-{"vector": "packs/asterix-cat062/vectors/12-to-canonical-track-v2-with-context.json", "iterations": 2000, "ns_per_op": 98995}
-{"vector": "packs/remote-id/vectors/09-basic-id-upstream-test-bytes-to-geojson.json", "iterations": 2000, "ns_per_op": 54745}
-{"vector": "packs/adsb/vectors/01-identification-tc1-roundtrip.json", "iterations": 2000, "ns_per_op": 46450}
-{"vector": "packs/nmea0183/vectors/40-rmc-to-geojson.json", "iterations": 2000, "ns_per_op": 134277}
-{"vector": "packs/dhcpv6-options/vectors/01-solicit-options-round-trip.json", "iterations": 2000, "ns_per_op": 210163}
-{"load": 15, "ns": 6903855046}
+{"vector": "packs/cot-xml/vectors/01-track-to-geojson.json", "iterations": 2000, "ns_per_op": 295927}
+{"vector": "packs/geojson/vectors/01-geojson-to-cot.json", "iterations": 2000, "ns_per_op": 333041}
+{"vector": "packs/canonical-track-v2/vectors/02-to-cot-xml.json", "iterations": 2000, "ns_per_op": 458543}
+{"vector": "packs/sapient/vectors/01-sapient-to-geojson.json", "iterations": 2000, "ns_per_op": 93321}
+{"vector": "packs/cot-protobuf/vectors/01-event-to-cot-xml.json", "iterations": 2000, "ns_per_op": 198344}
+{"vector": "packs/isa/vectors/01-isa-to-geojson.json", "iterations": 2000, "ns_per_op": 112442}
+{"vector": "packs/uci/vectors/gen-001-access_assessment-roundtrip.json", "iterations": 2000, "ns_per_op": 895980}
+{"vector": "packs/a-gra/vectors/gen-001-access_assessment-roundtrip.json", "iterations": 2000, "ns_per_op": 554184}
+{"vector": "packs/nmea2000/vectors/rt-pgn59392.json", "iterations": 2000, "ns_per_op": 41390}
+{"vector": "packs/mavlink2/vectors/rt-00000-heartbeat.json", "iterations": 2000, "ns_per_op": 13553}
+{"vector": "packs/asterix-cat062/vectors/12-to-canonical-track-v2-with-context.json", "iterations": 2000, "ns_per_op": 327581}
+{"vector": "packs/remote-id/vectors/09-basic-id-upstream-test-bytes-to-geojson.json", "iterations": 2000, "ns_per_op": 78962}
+{"vector": "packs/adsb/vectors/01-identification-tc1-roundtrip.json", "iterations": 2000, "ns_per_op": 47149}
+{"vector": "packs/nmea0183/vectors/40-rmc-to-geojson.json", "iterations": 2000, "ns_per_op": 95826}
+{"vector": "packs/dhcpv6-options/vectors/01-solicit-options-round-trip.json", "iterations": 2000, "ns_per_op": 120080}
+{"vector": "packs/dtn-bpv7/vectors/01-ipn-round-trip.json", "iterations": 2000, "ns_per_op": 93047}
+{"load": 16, "ns": 4777776523}
 ```
 
 ## Where to read next

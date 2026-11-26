@@ -1,0 +1,9 @@
+{
+  "name": "one-only-sentinel-default-and-constant",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: a default, a const and a when value are not held"
+}

@@ -69,7 +69,7 @@
 -export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
          require_marking/2, yields/1, model_keys/1, key_names_marked/1, named/1,
          index/1, factor/1, number/1, when_match/2, when_first/1, req_key/1,
-         as_holds/2, as_match/2, lenrefs/1, inner_modes/1]).
+         as_holds/2, as_match/2, lenrefs/1, inner_modes/1, seq_bodies/1]).
 %% for gt_text
 -export([text_loc_indexes/1]).
 

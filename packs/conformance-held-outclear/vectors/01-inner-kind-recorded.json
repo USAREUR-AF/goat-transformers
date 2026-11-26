@@ -1,0 +1,14 @@
+{
+  "name": "inner-kind-recorded",
+  "from": "conformance-held-outclear",
+  "to": "conformance-held-outclear",
+  "input": "07090105",
+  "expect": "07090105",
+  "model": {
+    "@kind": "k",
+    "@inner_kind": "clear",
+    "probe.w": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6: as an inner pack it records inner_kind"
+}

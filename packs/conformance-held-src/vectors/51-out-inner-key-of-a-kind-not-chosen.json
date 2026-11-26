@@ -1,0 +1,9 @@
+{
+  "name": "out-inner-key-of-a-kind-not-chosen",
+  "from": "conformance-held-src",
+  "to": "conformance-held-out",
+  "input": "{\"z\":5}",
+  "expect": "070101",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: the model_keys of the inner pack; whichever inner kind encode will choose: z is of extra, and ping is chosen; ruling 4: the kind of an inner message is not checked"
+}

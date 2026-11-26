@@ -1,0 +1,9 @@
+{
+  "name": "also-also-key",
+  "from": "conformance-held-src",
+  "to": "conformance-held-also",
+  "input": "{\"y\":3}",
+  "expect": "0703",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: 6a of 0.11 lists an `also` key"
+}

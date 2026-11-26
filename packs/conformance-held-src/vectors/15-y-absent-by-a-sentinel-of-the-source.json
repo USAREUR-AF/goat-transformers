@@ -1,0 +1,14 @@
+{
+  "name": "y-absent-by-a-sentinel-of-the-source",
+  "from": "conformance-held-src",
+  "to": "conformance-held-y",
+  "input": "{\"y\":99}",
+  "expect_error": "no-kind",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: a key left absent by a sentinel does not count"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-a-format-without-an-inner-line",
+  "from": "conformance-held-in",
+  "to": "conformance-held-y",
+  "input": "01",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule: Entity.kind is cleared"
+}

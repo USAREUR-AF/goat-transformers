@@ -207,10 +207,19 @@ func TestGroupsModelKeysAndRequires(t *testing.T) {
 	}
 	for in, want := range map[string]string{
 		`{"items":[{"name":"a"}]}`: `{"s":1,"items":[{"name":"a"}]}`,
-		`{"items":[]}`:             `{"s":2}`, // present and empty does not satisfy requires
-		`{}`:                       `{"s":2}`,
+		`{"id":"u","items":[]}`:    `{"id":"u","s":2}`, // present and empty does not satisfy requires
+		`{"id":"u"}`:               `{"id":"u","s":2}`,
+		`{"items":[]}`:             "no-kind", // bare maps no key and uid is not held (0.94)
+		`{}`:                       "no-kind",
 	} {
-		if out, err := eng.Convert("gj", "gk", []byte(in)); err != nil || string(out) != want {
+		out, err := eng.Convert("gj", "gk", []byte(in))
+		if want == "no-kind" {
+			if !IsKind(err, ErrNoKind) {
+				t.Errorf("gj -> gk %s: %s, %v; want no-kind", in, out, err)
+			}
+			continue
+		}
+		if err != nil || string(out) != want {
 			t.Errorf("gj -> gk %s: %s, %v; want %s", in, out, err, want)
 		}
 	}

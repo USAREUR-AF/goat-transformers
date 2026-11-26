@@ -252,16 +252,31 @@ compares `model_keys` of every loaded format and the capability report of
 every converted pair with the full build. It prints the sizes and exits 1 on
 any failure. `--wires <set>` checks another set the same way.
 
-One run on 2026-11-21: 1713 packs loaded; 8374 of the 23610 conversion
-vectors run, 8374 passed; 394 load vectors run, 394 passed; the six
-`unknown-wire` loads and the load of `wire morse` as specified; `model_keys`
-of 1713 formats and the capability report of 192 pairs the same in both
-builds. Sizes:
+One run on 2026-11-26: 1750 packs loaded; 8516 of the 25823 conversion
+vectors run, 8516 passed; 402 load vectors run, 402 passed; the six `unknown-wire` loads and the
+load of `wire morse` as specified; `model_keys` of 1750 formats and the
+capability report of 251 pairs the same in both builds. Sizes:
 
 | Build | Wheel | Package source |
 |---|---|---|
-| all eight wires | 166235 bytes | 588298 bytes, 25 modules |
-| `xml`, `json`, `geojson` | 89815 bytes (54%) | 310616 bytes, 16 modules |
+| all eight wires | 180605 bytes | 645501 bytes, 25 modules |
+| `xml`, `json`, `geojson` | 95716 bytes (53%) | 334581 bytes, 16 modules |
+
+## Version 0.94: a conversion into a kind holds one of its keys
+
+Status: Built. `convert`, and `convert_run` wherever it converts with `from`
+different from `to`, refuse with `no-kind` a conversion into a pack with
+message kinds when the entity, after context and derivations, holds no key of
+the kind encode chooses (`Engine._check_held`). The keys of a kind are the
+mapped keys of the common lines and the kind's lines, every block and case of
+them, a list by its entry, the `model_keys` of an `inner` line's pack, and the
+keys of the kind's own `requires` terms. A kept kind (ruling 4) is not
+checked; from a carrier to a carrier pack the check is made once, on the outer
+entity joined with the first message, the first message's kind not kept, or,
+for a kind without a `run` line, on the one message's joined entity with
+ruling 4 (ruling 7). `encode` and same-format conversions are unchanged. A
+`requires <list>` is met only by a list with an item (0.7, ruling 1). Every
+vector passes, the four that ruling 8 changed included.
 
 ## Parse once, and the benchmark
 
@@ -299,13 +314,13 @@ in `engines/python`:
 PYTHONPATH=src python -m unittest discover -s tests
 ```
 
-It loads every pack and model module. One run on 2026-11-21 gave
-`Ran 288 tests … OK`.
+It loads every pack and model module. One run on 2026-11-26 gave
+`Ran 379 tests … OK`.
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (23610, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1402, all passed); every capability vector (18, all passed) |
-| `test_malformed.py` | the input of every conversion vector cut and changed (139556 damaged inputs from 23607 vectors over 4528 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
+| `test_vectors.py` | every conversion vector of every pack (25823, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1753, all passed); every capability vector (29, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (151352 damaged inputs from 25819 vectors over 5052 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool; the `iso8601_s` transform of Version 0.26 (whole seconds written, milliseconds dropped; valid on `xml`, `geojson`, `json` and `text` only, no parameter, an `int` key only) |
 | `test_whenas30.py` | Version 0.30, what `convert` cannot reach: a kind or item kind recorded on the entity skips the implicit term, writes the held value or the first listed value, and is `transform-encode` for a held value its `when` does not match (ruling 25); a 64-bit label with the top bit set decodes negative and encodes back (ruling 7); `when 8 1 as as` is `bad-directive` (ruling 31) |
 | `test_lookahead33.py` | Version 0.33, what the vectors do not reach: overlapping windows, a written window overwritten without a check and a standing one leaving held bits (ruling 26); a switch on an `as` key a window binds (ruling 22) and on a field a window wrote; a partial window in the `msb`, `lsb` and `msb-lsb` bit orders |

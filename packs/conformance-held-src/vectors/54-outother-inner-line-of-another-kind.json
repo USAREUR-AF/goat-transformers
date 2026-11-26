@@ -1,0 +1,9 @@
+{
+  "name": "outother-inner-line-of-another-kind",
+  "from": "conformance-held-src",
+  "to": "conformance-held-outother",
+  "input": "{\"x\":5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: the model_keys of the inner pack; first is chosen; the inner line is in second"
+}

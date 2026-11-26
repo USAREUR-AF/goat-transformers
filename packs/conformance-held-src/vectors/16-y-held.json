@@ -1,0 +1,9 @@
+{
+  "name": "y-held",
+  "from": "conformance-held-src",
+  "to": "conformance-held-y",
+  "input": "{\"y\":98}",
+  "expect": "{\"t\":\"k\",\"y\":98}",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule"
+}

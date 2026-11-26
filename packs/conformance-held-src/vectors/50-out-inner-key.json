@@ -1,0 +1,9 @@
+{
+  "name": "out-inner-key",
+  "from": "conformance-held-src",
+  "to": "conformance-held-out",
+  "input": "{\"x\":5}",
+  "expect": "07020205",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: the model_keys of the inner pack; x"
+}

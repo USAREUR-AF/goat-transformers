@@ -1,0 +1,9 @@
+{
+  "name": "derived-nothing-derived",
+  "from": "conformance-held-src",
+  "to": "conformance-held-derived",
+  "input": "{\"x\":4}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule: after the derivations"
+}

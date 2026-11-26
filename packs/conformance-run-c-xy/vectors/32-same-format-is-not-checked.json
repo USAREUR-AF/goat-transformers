@@ -1,0 +1,13 @@
+{
+  "name": "same-format-is-not-checked",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-c-xy",
+  "input": "0009",
+  "expect_results": [
+    {
+      "expect": "0009"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: with `from` equal to `to` nothing is checked (ruling 2)"
+}

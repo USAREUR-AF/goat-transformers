@@ -1,0 +1,9 @@
+{
+  "name": "outclear-layer-requires-held",
+  "from": "conformance-held-src",
+  "to": "conformance-held-outclear",
+  "input": "{\"w\":9,\"n\":1}",
+  "expect": "07090105",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6: the layer's `requires` is held"
+}

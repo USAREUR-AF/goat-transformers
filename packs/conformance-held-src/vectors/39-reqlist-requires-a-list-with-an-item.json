@@ -1,0 +1,9 @@
+{
+  "name": "reqlist-requires-a-list-with-an-item",
+  "from": "conformance-held-src",
+  "to": "conformance-held-reqlist",
+  "input": "{\"recs\":[{}]}",
+  "expect": "{\"t\":\"k\"}",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 3: a list with an item"
+}

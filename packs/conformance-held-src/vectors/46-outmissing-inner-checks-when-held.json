@@ -1,0 +1,9 @@
+{
+  "name": "outmissing-inner-checks-when-held",
+  "from": "conformance-held-src",
+  "to": "conformance-held-outmissing",
+  "input": "{\"w\":1}",
+  "expect_error": "unknown-format",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 5: w is held; 0.34 check 1"
+}

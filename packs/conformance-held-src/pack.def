@@ -1,0 +1,20 @@
+# Conformance probe pack for spec 0.94: plain members, the entities the other packs are encoded from. Public.
+format     conformance-held-src
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+field   uid         id   string
+field   lat         lat  float
+field   probe.n     n    int
+field   probe.x     x    int
+field   probe.y     y    int  absent 99
+field   probe.z     z    int
+field   probe.w     w    int
+field   probe.c1    c1   int
+field   probe.s1    s    string
+group   probe.recs  recs
+  field  probe.x  x  int
+  field  probe.y  y  int
+end

@@ -1,0 +1,13 @@
+{
+  "name": "other-format-to-a-carrier-is-a-convert",
+  "from": "conformance-run-json",
+  "to": "conformance-run-only-run",
+  "input": "{\"x\":1,\"y\":2}",
+  "expect_results": [
+    {
+      "expect": "010102"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: from another format the carrier of one message is a convert, and x is held"
+}

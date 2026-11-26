@@ -1,0 +1,10 @@
+{
+  "name": "several-messages-into-a-kind-without-a-run-line-is-message-count",
+  "from": "conformance-run-c-x",
+  "to": "conformance-run-plain-first",
+  "input": "02010209",
+  "expect_error": "message-count",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: kind p, which has no run line, is chosen on the outer entity; two messages is message-count, made where the kind is chosen and before this check, although neither the outer entity nor a message holds y, kind p's key"
+}

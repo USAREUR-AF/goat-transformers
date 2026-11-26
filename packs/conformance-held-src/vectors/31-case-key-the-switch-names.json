@@ -1,0 +1,9 @@
+{
+  "name": "case-key-the-switch-names",
+  "from": "conformance-held-src",
+  "to": "conformance-held-case",
+  "input": "{\"x\":1}",
+  "expect": "070100",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: x counts by the line that maps it"
+}

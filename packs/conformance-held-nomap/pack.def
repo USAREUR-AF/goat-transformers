@@ -1,0 +1,15 @@
+# Conformance probe pack for spec 0.94: kinds that map no key. Public.
+format     conformance-held-nomap
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+kind    p
+when    t  p
+requires probe.x=1
+kind    q
+when    t  q
+requires probe.y
+kind    r
+when    t  r

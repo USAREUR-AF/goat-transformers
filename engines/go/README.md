@@ -157,12 +157,12 @@ x86_64, 62 top-level tests and examples, none failing (one skipped, below):
 
 | Test | Covers | Measured |
 |---|---|---|
-| `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 24274 run, 24274 passed (4543 packs loaded; 2026-11-24) |
-| `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 1402 run, 1402 passed |
-| `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 102385 inputs fed, 0 failed |
-| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 24244 vectors (1514 failing conversions), 0 outcomes differ |
+| `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 25823 run, 25823 passed (5052 packs loaded; 2026-11-26) |
+| `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 1753 run, 1753 passed |
+| `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 109859 inputs fed, 0 failed |
+| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 25733 vectors (2222 failing conversions), 0 outcomes differ |
 | `TestMalformedRulings` | the malformed-input rulings of the specification, such as nesting depth and bytes that are not UTF-8 | pass |
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 183 run, 183 passed (2026-11-24) |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 183 run, 183 passed (2026-11-26) |
 | `TestLoadToolProfile`, `TestLoadToolLicences`, `TestLicenceFiles`, `TestLicenceTable`, `TestProfileHeader`, `TestDefFilesRegularOnly` | spec 0.29: the library loader with each profile and none, the fixture trees of `packs/conformance/tool-fixtures/licences-*`, the line forms of `REUSE.toml`, `.def.license` and `licences.toml`, the `module` and `uses` lines the profiles read, and the module files of 0.23 Loading 1 (regular files or links to one) | pass |
 | `TestProfileSetsLimitPublic`, `TestProfileSkipsBeforeTheLimit`, `TestProfileRefusesAFileThatChanged`, `TestProfileLimitIsTheInstances`, `TestProfileThenDirectLoad`, `TestProfileOnAnInstanceHoldingControlled`, `TestProfileLoadOrder`, `TestProfileThenLoadWithoutProfile` | spec 0.93, rulings 5 and 6: the limit is `public` with a profile, a file that reads as controlled when loaded (a test hook stands for a file that changed after its profile was read), the instance's limit before and after, a later direct load, an instance that already holds a controlled module or pack, the order of the errors, a later load with no profile | pass |
 | `TestHeapPerListItem` | the heap a decode takes per item of a long list; runs only with `GOAT_XF_HEAP=1` | skipped in CI |
@@ -283,11 +283,11 @@ Measured with Go 1.26.8 on Linux x86_64:
 
 | | Measured |
 |---|---|
-| packs loaded in the reduced build | 1713 |
-| conversion vectors on `xml`, `json` and `geojson` | 8374 run, 8374 passed |
-| packs refused with `unknown-wire` | `bits` 1835, `protobuf` 876, `text` 86, `tlv` 11, `cbor` 7 |
-| `goat-xf`, all eight wires | 5331961 bytes |
-| `goat-xf`, `xml`, `json` and `geojson` | 4769917 bytes (562044 bytes less) |
+| packs loaded in the reduced build | 1750 |
+| conversion vectors on `xml`, `json` and `geojson` | 8516 run, 8515 passed, 1 failed (`conformance-held-src/reqlist-requires-met-by-an-empty-list`, open) |
+| packs refused with `unknown-wire` | `bits` 2317, `protobuf` 876, `text` 87, `tlv` 11, `cbor` 7 |
+| `goat-xf`, all eight wires | 5404032 bytes |
+| `goat-xf`, `xml`, `json` and `geojson` | 4785521 bytes (618511 bytes less) |
 
 ### The single-wire check
 

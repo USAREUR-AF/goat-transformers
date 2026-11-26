@@ -1,0 +1,9 @@
+{
+  "name": "as-field-key",
+  "from": "conformance-held-src",
+  "to": "conformance-held-as",
+  "input": "{\"z\":4}",
+  "expect": "050904",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule"
+}

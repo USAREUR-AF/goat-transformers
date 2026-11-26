@@ -1,0 +1,9 @@
+{
+  "name": "by-table-only-a",
+  "from": "conformance-held-src",
+  "to": "conformance-held-by",
+  "input": "{\"x\":1}",
+  "expect": "{\"a\":1}",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6, the table: only-a"
+}

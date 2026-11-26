@@ -716,6 +716,11 @@ func (e *Engine) ConvertOrdered(from, to string, b []byte, ctx []KeyValue) ([]by
 		}
 		e.Complete(ent)
 	}
+	if from != to {
+		if err := e.checkHeld(e.packs[to], ent); err != nil {
+			return nil, err
+		}
+	}
 	return e.Encode(to, ent)
 }
 

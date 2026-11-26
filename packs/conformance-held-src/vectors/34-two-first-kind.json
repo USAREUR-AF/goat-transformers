@@ -1,0 +1,9 @@
+{
+  "name": "two-first-kind",
+  "from": "conformance-held-src",
+  "to": "conformance-held-two",
+  "input": "{\"x\":1}",
+  "expect": "{\"t\":\"one\",\"x\":1}",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule"
+}

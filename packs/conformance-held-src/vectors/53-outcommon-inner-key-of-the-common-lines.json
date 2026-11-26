@@ -1,0 +1,9 @@
+{
+  "name": "outcommon-inner-key-of-the-common-lines",
+  "from": "conformance-held-src",
+  "to": "conformance-held-outcommon",
+  "input": "{\"x\":5}",
+  "expect": "0202050700",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: the model_keys of the inner pack; an inner line of the common lines"
+}

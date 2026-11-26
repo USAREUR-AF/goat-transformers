@@ -1,0 +1,9 @@
+{
+  "name": "list-list-counts-by-its-entry",
+  "from": "conformance-held-src",
+  "to": "conformance-held-list",
+  "input": "{\"recs\":[{\"x\":1}]}",
+  "expect": "{\"t\":\"k\",\"recs\":[{\"x\":1}]}",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Keys of a kind: recs[]"
+}

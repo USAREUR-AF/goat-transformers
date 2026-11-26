@@ -1,0 +1,9 @@
+{
+  "name": "derived-derived-only",
+  "from": "conformance-held-src",
+  "to": "conformance-held-derived",
+  "input": "{\"n\":4}",
+  "expect": "{\"t\":\"k\",\"c\":4}",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: a value a derivation gave (n_copy)"
+}

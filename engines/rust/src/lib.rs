@@ -4963,6 +4963,9 @@ impl Engine {
             self.fill(&mut ent, context.unwrap_or(&[]))?;
             self.complete(&mut ent);
         }
+        if from != to {
+            self.check_held(to, &ent)?;
+        }
         self.encode(to, &ent)
     }
 
@@ -4982,6 +4985,94 @@ impl Engine {
         if !inner_of_to(&ent.inner_kind) && !ent.inner_kind.as_ref().is_some_and(|(f, _)| f == to) {
             ent.inner_kind = None;
         }
+    }
+
+    /// Engine-spec v0.94: a conversion into a pack with message kinds refuses,
+    /// with `no-kind`, an entity that holds no key of the kind encode chooses.
+    /// Made after the context and the derivations and before encode; when the
+    /// choosing itself fails, encode reports that `no-kind`. A pack without
+    /// message kinds, and a kept kind (ruling 4), are not checked.
+    fn check_held(&self, to: &str, ent: &Entity) -> Result<(), Error> {
+        self.check_held_in(to, ent, ent, ent)
+    }
+
+    /// `check_held` with the kind chosen on `chooser`, a kept kind looked for
+    /// on `keeper`, and the keys looked for on `ent` (ruling 7: a carrier's
+    /// outer entity chooses, the outer entity joined with the first message
+    /// holds; into a kind without a `run` line the kind is the one chosen
+    /// from the outer entity, the message's own kinds are looked at as kept).
+    fn check_held_in(&self, to: &str, ent: &Entity, chooser: &Entity, keeper: &Entity) -> Result<(), Error> {
+        let p = self.pack(to)?;
+        let names_to = |k: &Option<(String, String)>| k.as_ref().is_some_and(|(f, _)| f == to);
+        if names_to(&keeper.kind) || names_to(&keeper.inner_kind) {
+            return Ok(());
+        }
+        let (keys, formats): (Vec<String>, Vec<String>) = match self.kind_keys(p, chooser) {
+            Some(found) => found,
+            None => return Ok(()),
+        };
+        let kept = |k: &Option<(String, String)>| k.as_ref().is_some_and(|(f, _)| formats.contains(f));
+        if kept(&keeper.kind) || kept(&keeper.inner_kind) {
+            return Ok(());
+        }
+        let holds = |key: &str| match key.strip_suffix("[]") {
+            Some(list) => ent.lists.get(list).is_some_and(|items| !items.is_empty()),
+            None => ent.fields.contains_key(key) || ent.lists.get(key).is_some_and(|items| !items.is_empty()),
+        };
+        // a list counts by its entry, never by the keys of its items
+        if keys.iter().filter(|k| !k.contains("[].")).any(|k| holds(k)) {
+            return Ok(());
+        }
+        err(format!("no-kind: format `{}`: the entity holds no key of the kind chosen", to))
+    }
+
+    /// The keys of the kind encode chooses for `ent` in `p`, and the formats
+    /// of the `inner` lines among its lines (0.94); None when the pack has no
+    /// message kinds or no kind is chosen (encode then reports it).
+    #[allow(unused_variables)]
+    fn kind_keys(&self, p: &Pack, ent: &Entity) -> Option<(Vec<String>, Vec<String>)> {
+        #[cfg(feature = "bits")]
+        if let Some(body) = &p.seq {
+            if body.kinds.is_empty() {
+                return None;
+            }
+            let kind = seq::chosen_kind(p, body, ent).ok()?;
+            return Some(seq::kind_keys(body, kind, &|format, _run, out| {
+                // a pack that does not pass checks 1 to 4 of 0.34 adds nothing;
+                // those four only, not the `framing self` of a `run` line
+                // (0.92 ruling 16)
+                if seq::InnerHost::inner_check(self, p, format, false).is_ok() {
+                    for k in self.packs.get(format).map(|ip| ip.model_keys()).unwrap_or_default() {
+                        if !out.contains(&k) {
+                            out.push(k);
+                        }
+                    }
+                }
+            }));
+        }
+        #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
+        {
+            if p.kinds.is_empty() {
+                return None;
+            }
+            let sel = p.select_encode(ent).ok()?;
+            let mut keys: Vec<String> = Vec::new();
+            let fields = p.fields.iter().chain(sel.kind.iter().flat_map(|k| k.fields.iter()));
+            let groups = p.groups.iter().chain(sel.kind.iter().flat_map(|k| k.groups.iter()));
+            let requires = sel.kind.iter().flat_map(|k| k.requires.iter());
+            for k in fields
+                .map(|f| f.model_key.clone())
+                .chain(groups.map(|g| format!("{}[]", g.list)))
+                .chain(requires.map(|r| r.key.clone()))
+            {
+                if !keys.contains(&k) {
+                    keys.push(k);
+                }
+            }
+            return Some((keys, Vec::new()));
+        }
+        #[allow(unreachable_code)]
+        None
     }
 
     /// `convert` with the context given as text (the CLI's `--set`, a vector's
@@ -5014,6 +5105,9 @@ impl Engine {
             let context = self.context_from_text(context.unwrap_or(&[]))?;
             self.fill(&mut ent, &context)?;
             self.complete(&mut ent);
+        }
+        if from != to {
+            self.check_held(to, &ent)?;
         }
         self.encode(to, &ent)
     }
@@ -5113,6 +5207,12 @@ impl Engine {
                     let context = read_context()?;
                     complete(&mut ent, &context);
                 }
+                // 0.94, ruling 7: the carrier of one message is a `convert`
+                if from != to {
+                    if let Err(e) = self.check_held(to, &ent) {
+                        return one(Err(e));
+                    }
+                }
                 return one(self.encode(to, &ent));
             }
             // a message that stopped stands before the outer line that did
@@ -5135,6 +5235,10 @@ impl Engine {
                     self.keep_kinds(from, to, &mut ent);
                     if steps {
                         complete(&mut ent, &context);
+                    }
+                    // 0.94, ruling 7: each joined entity on its own
+                    if from != to {
+                        self.check_held(to, &ent)?;
                     }
                     self.encode(to, &ent)
                 });
@@ -5167,6 +5271,20 @@ impl Engine {
         let (kind, run) = seq::run_target(target, body, &outer)?;
         let text = match run {
             Some(inner) => {
+                // 0.94, ruling 7: once, on the kind chosen, the outer entity
+                // joined with the first message holding, or the outer alone
+                if from != to {
+                    match joined.first() {
+                        Some(first) => {
+                            let mut first = first.clone();
+                            if steps {
+                                complete(&mut first, &context);
+                            }
+                            self.check_held_in(to, &first, &outer, &outer)?;
+                        }
+                        None => self.check_held_in(to, &outer, &outer, &outer)?,
+                    }
+                }
                 if given || inner != format {
                     joined.iter_mut().for_each(|ent| complete(ent, &context));
                 }
@@ -5185,8 +5303,14 @@ impl Engine {
                 if steps {
                     complete(&mut ent, &context);
                 }
+                let own = ent.clone();
                 if let Some(k) = kind {
                     ent.kind = Some((to.to_string(), k.to_string()));
+                }
+                // 0.94, ruling 7: after the count, the joined entity checked
+                // as `convert` on the kind chosen, ruling 4 on its own kinds
+                if from != to {
+                    self.check_held_in(to, &own, &ent, &own)?;
                 }
                 self.encode(to, &ent)?
             }
@@ -5217,6 +5341,11 @@ impl Engine {
                 ent.fields.entry(key).or_insert(v);
             }
             self.complete(&mut ent);
+        }
+        if from != to {
+            if let Err(e) = self.check_held(to, &ent) {
+                return Ok(vec![Err(e)]);
+            }
         }
         Ok(vec![self.encode(to, &ent)])
     }

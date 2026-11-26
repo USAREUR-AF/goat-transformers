@@ -2,8 +2,8 @@
   "name": "as-optional-encode",
   "from": "conformance-inner-refused-json",
   "to": "conformance-inner-refused-as-optional",
-  "input": "{\"w\":1}",
+  "input": "{\"x\":1}",
   "expect_error": "bad-directive",
   "source": "constructed",
-  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; x is mapped by a kind's `when ... as ... optional`, not held on encode"
+  "reference": "spec 0.52 ruling 20: a key both packs map is refused when the `inner` line is reached; x is mapped by a kind's `when ... as ... optional`; held on encode, as 0.94 asks of a conversion (ruling 5)"
 }

@@ -1,0 +1,9 @@
+{
+  "name": "to-another-format",
+  "from": "conformance-held-two",
+  "to": "conformance-held-y",
+  "input": "{\"t\":\"one\"}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule"
+}

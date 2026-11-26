@@ -1663,6 +1663,18 @@ final class Seq {
         for (Kind k : body.kinds) modelKeys(k.all, prefix, out, seen, inner);
     }
 
+    /**
+     * The keys of one message kind for the check of engine-spec 0.94: the entries {@code model_keys} lists over its
+     * lines (the common lines, its {@code when} lines and its own), each {@code inner} line adding what {@code inner}
+     * gives, then the keys of the kind's own {@code requires} terms.
+     */
+    static Set<String> kindKeys(Kind k, java.util.function.Function<String, List<String>> inner) {
+        Set<String> out = new java.util.LinkedHashSet<>();
+        modelKeys(k.all, "", out, Collections.newSetFromMap(new java.util.IdentityHashMap<>()), inner);
+        for (Pack.Require r : k.requires) out.add(r.key);
+        return out;
+    }
+
     /** The entries of {@code model_keys} that {@code nodes} map themselves, those of an inner pack left out. */
     static Set<String> ownKeys(List<Node> nodes) {
         Set<String> out = new java.util.HashSet<>();

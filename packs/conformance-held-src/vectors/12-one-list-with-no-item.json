@@ -1,0 +1,9 @@
+{
+  "name": "one-list-with-no-item",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{\"recs\":[]}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: a list counts when it has at least one item"
+}

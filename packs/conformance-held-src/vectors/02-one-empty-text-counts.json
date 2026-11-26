@@ -1,0 +1,9 @@
+{
+  "name": "one-empty-text-counts",
+  "from": "conformance-held-src",
+  "to": "conformance-held-one",
+  "input": "{\"s\":\"\"}",
+  "expect": "{\"t\":\"k\",\"s\":\"\",\"z\":255,\"d\":5,\"c\":7}",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule, Holds: the empty text is held"
+}

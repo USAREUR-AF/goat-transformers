@@ -1,0 +1,12 @@
+# Conformance probe pack for spec 0.94: an inner pack of a constant and a kind that holds only `requires` (ruling 6). Public.
+format     conformance-held-clearin
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+const   8  5
+kind    clear
+requires probe.n

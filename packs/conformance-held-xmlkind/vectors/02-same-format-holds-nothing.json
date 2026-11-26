@@ -1,0 +1,12 @@
+{
+  "name": "same-format-holds-nothing",
+  "from": "conformance-held-xmlkind",
+  "to": "conformance-held-xmlkind",
+  "input": "<R/>",
+  "expect": "<R/>",
+  "model": {
+    "@kind": "by-x"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6"
+}

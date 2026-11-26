@@ -1,0 +1,12 @@
+{
+  "name": "same-format-no-context",
+  "from": "conformance-held-two",
+  "to": "conformance-held-two",
+  "input": "{\"t\":\"one\"}",
+  "expect": "{\"t\":\"one\"}",
+  "model": {
+    "@kind": "first"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 2: the same format, with or without context, is unchanged"
+}

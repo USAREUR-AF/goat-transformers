@@ -1,0 +1,9 @@
+{
+  "name": "none-table-only-uid",
+  "from": "conformance-held-src",
+  "to": "conformance-held-none",
+  "input": "{\"id\":\"u\"}",
+  "expect": "{}",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 6, the table: only-uid"
+}

@@ -23,6 +23,7 @@ SCRIPTS = (
     "conformance-extents-vectors.py",
     "conformance-gates-vectors.py",
     "conformance-groups-vectors.py",
+    "conformance-held-vectors.py",
     "conformance-inner-refused-vectors.py",
     "conformance-kinds-vectors.py",
     "conformance-long-vectors.py",

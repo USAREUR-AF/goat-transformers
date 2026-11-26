@@ -1,0 +1,9 @@
+{
+  "name": "reqlist-an-empty-list-does-not-meet-requires",
+  "from": "conformance-held-src",
+  "to": "conformance-held-reqlist",
+  "input": "{\"recs\":[],\"w\":1}",
+  "expect": "{\"t\":\"other\",\"w\":1}",
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 1 and 0.7: a list with no item does not meet `requires`, so other is chosen, and it holds w"
+}

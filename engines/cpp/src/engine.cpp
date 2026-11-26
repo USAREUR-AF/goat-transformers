@@ -702,6 +702,7 @@ void Engine::add_pack(Pack pack) {
     kept->plan = detail::build_plan(*kept);
     std::string format = kept->format;
     packs_.emplace(std::move(format), std::move(kept));
+    held_cache_ = std::make_shared<HeldCache>();  // the keys of an inner pack may change (0.94)
 }
 
 bool Engine::has_format(const std::string& format) const { return packs_.count(format) != 0; }
@@ -965,6 +966,7 @@ std::string Engine::convert_impl(const std::string& from, const std::string& to,
         if (context) apply_context(e, *context);
         complete(e);
     }
+    if (from != to) check_held(target, e);
     return encode(to, e);
 }
 
@@ -983,12 +985,123 @@ void Engine::clear_kinds(Entity& e, const std::string& from, const Pack& target)
 
 std::string Engine::finish_convert(Entity e, const std::string& from, const std::string& to,
                                    const Context* context) const {
-    clear_kinds(e, from, pack(to));
+    const Pack& target = pack(to);
+    clear_kinds(e, from, target);
     if (from != to || context) {
         if (context) apply_context(e, *context);
         complete(e);
     }
+    if (from != to) check_held(target, e);
     return encode(to, e);
+}
+
+// ---------------------------------------------------------------- the keys a conversion holds (0.94)
+
+std::shared_ptr<const Engine::HeldKeys> Engine::held_keys(const Pack& p, const void* kind) const {
+    const std::shared_ptr<HeldCache> cache = held_cache_;
+    {
+        std::lock_guard<std::mutex> lock(cache->m);
+        auto it = cache->by_kind.find(kind);
+        if (it != cache->by_kind.end()) return it->second;
+    }
+    auto out = std::make_shared<HeldKeys>();
+    auto add = [&](const std::string& key) { out->keys.insert(key); };
+    // 6a to 6c of 0.11 and ruling 24 of 0.30 over the common lines and the
+    // kind's: every line whether or not it is written; a list by its entry,
+    // not by its items' keys; a key named only by `switch`, a gate, a count or
+    // a presence is not one.
+    auto requires_of = [&](const std::vector<RequiresTerm>& terms, const std::vector<std::string>& keys) {
+        for (const auto& t : terms) add(t.key);
+        for (const auto& k : keys) add(k);
+    };
+    if (p.sequential) {
+        using T = SeqNode::Type;
+        const std::function<void(const std::vector<SeqNode>&)> walk = [&](const std::vector<SeqNode>& lines) {
+            for (const auto& n : lines) {
+                if (n.type == T::Field) {
+                    add(n.field.key);
+                    for (const auto& a : n.also) add(a.key);
+                } else if (n.type == T::When) {
+                    if (n.has_as) add(n.field.key);
+                } else if (n.type == T::Group) {
+                    add(n.list + "[]");
+                } else if (n.type == T::Inner) {
+                    out->inner.push_back(n.inner_format);
+                } else {
+                    walk(n.inner.lines);
+                    for (const auto& c : n.cases) walk(c.body.lines);
+                }
+            }
+        };
+        const auto* k = static_cast<const SeqKind*>(kind);
+        walk(p.seq.lines);
+        walk(k->lines);
+        requires_of(k->requires_terms, k->requires_keys);
+    } else {
+        const auto* k = static_cast<const Kind*>(kind);
+        for (const auto& line : detail::active_lines(p, k)) {
+            if (line.field) add(line.field->key);
+            if (line.group) add(line.group->list + "[]");
+        }
+        requires_of(k->requires_terms, k->requires_keys);
+    }
+    // The model_keys of each `inner` line's pack that passes 0.34's checks 1 to 4.
+    const Host host(*this);
+    for (const auto& f : out->inner) {
+        const Pack* in = nullptr;
+        try {
+            in = &host.reach(p, f);
+        } catch (const Error&) {
+            continue;
+        }
+        for (const auto& key : model_keys(in->format)) add(key);
+    }
+    std::lock_guard<std::mutex> lock(cache->m);
+    return cache->by_kind.emplace(kind, std::move(out)).first->second;
+}
+
+void Engine::check_held(const Pack& p, const Entity& e, const void* kind, bool chosen, const Entity* kept) const {
+    // Ruling 6: a pack without message kinds is not checked.
+    if (p.sequential ? p.seq.kinds.empty() : p.kinds.empty()) return;
+    if (!chosen) {
+        // The kind encode chooses (0.5, 0.20, 0.34: Entity.inner_kind when
+        // Entity.kind does not name the format); its no-kind comes first.
+        const Entity* view = &e;
+        Entity named;
+        if (e.kind.first != p.format && e.inner_kind.first == p.format) {
+            named = e;
+            named.kind = e.inner_kind;
+            view = &named;
+        }
+        if (p.sequential) {
+#if GT_WIRE_BITS
+            kind = detail::seq_run_line(p, *view).kind;
+#else
+            return;  // a sequential pack does not load in this build
+#endif
+        } else {
+            kind = detail::select_encode_kind(p, *view);
+        }
+    }
+    if (!kind) return;
+    const std::shared_ptr<const HeldKeys> keys = held_keys(p, kind);
+    // Ruling 4: a kept kind is not checked.
+    const Entity& record = kept ? *kept : e;
+    auto keeps = [&](const std::string& format) {
+        return !format.empty() &&
+               (format == p.format || std::find(keys->inner.begin(), keys->inner.end(), format) != keys->inner.end());
+    };
+    if (keeps(record.kind.first) || keeps(record.inner_kind.first)) return;
+    // Held: a value of the entity (decode, context, derivation); a list with
+    // at least one item, by its entry or as a `requires` key.
+    for (const auto& kv : e.fields)
+        if (keys->keys.count(kv.first)) return;
+    for (const auto& kv : e.lists)
+        if (!kv.second.empty() && (keys->keys.count(kv.first + "[]") || keys->keys.count(kv.first))) return;
+    const std::string name =
+        p.sequential ? static_cast<const SeqKind*>(kind)->name : static_cast<const Kind*>(kind)->name;
+    throw Error(ErrorKind::NoKind, p.format, "",
+                "the entity holds no key of the kind '" + name + "' (a conversion into a kind holds one of its keys)");
 }
 
 // ---------------------------------------------------------------- a run of inner messages (0.92)
@@ -1194,9 +1307,24 @@ std::vector<Engine::RunResult> Engine::convert_run(const std::string& from, cons
             if (given) apply_context(e, *given);
             complete(e);
         }
+        // 0.94 ruling 7: the joined entity is checked as `convert`, ruling 4
+        // included, so the kind the message records can be a kept kind.
+        if (from != to) check_held(target, e, run.kind, true);
         if (run.kind) e.kind = {to, run.kind->name};
         out.push_back(RunResult{encode(to, e), std::nullopt});
         return out;
+    }
+    if (from != to) {
+        // The outer entity joined with the first message, or alone when the run is empty.
+        Entity e = messages.empty() ? r.outer : join_message(r.outer, messages.front().entity);
+        clear_kinds(e, from, target);
+        if (given) apply_context(e, *given);
+        complete(e);
+        // 0.94 ruling 7: with a `run` line the kind the first message records
+        // is not a kept kind; only the outer entity's record can keep one.
+        Entity kept = r.outer;
+        clear_kinds(kept, from, target);
+        check_held(target, e, run.kind, true, &kept);
     }
     std::vector<std::string> written(messages.size());
     std::vector<char> done(messages.size(), 0);

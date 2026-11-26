@@ -965,6 +965,7 @@ public final class Engine {
         Entity e = decode(from, text);
         keepKinds(from, to, e);
         if (context != null || !from.equals(to)) complete(e, context);
+        if (!from.equals(to)) target.checkHeld(e);   // engine-spec 0.94: the chosen kind holds a key
         return target.encode(e);
     }
 
@@ -1055,6 +1056,7 @@ public final class Engine {
         try {
             keepKinds(from, to, e);
             if (context != null || !from.equals(to)) complete(e, context);
+            if (!from.equals(to)) target.checkHeld(e);   // engine-spec 0.94, ruling 7
             return new Run.Result(target.encode(e), null);
         } catch (GtException ex) {
             return new Run.Result(null, ex);

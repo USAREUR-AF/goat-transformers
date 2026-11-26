@@ -1,0 +1,13 @@
+{
+  "name": "one-message-into-a-kind-without-a-run-line-keeps-its-inner-kind",
+  "from": "conformance-run-c-ping",
+  "to": "conformance-run-kept-ping",
+  "input": "010109",
+  "expect_results": [
+    {
+      "expect": "010101"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: kind p, which has no run line, takes the one message and is checked as convert, ruling 4 included: the message's inner kind p of in-ping names the format of kind p's plain `inner` line, so it is kept and nothing is checked, although the joined entity holds only w; written as when 1, length 1, message 01"
+}

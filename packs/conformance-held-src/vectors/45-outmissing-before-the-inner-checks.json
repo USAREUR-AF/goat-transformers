@@ -1,0 +1,9 @@
+{
+  "name": "outmissing-before-the-inner-checks",
+  "from": "conformance-held-src",
+  "to": "conformance-held-outmissing",
+  "input": "{\"x\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.94, Rule: an inner pack that does not pass 0.34's checks adds nothing; ruling 5"
+}

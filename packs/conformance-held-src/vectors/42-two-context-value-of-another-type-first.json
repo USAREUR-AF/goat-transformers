@@ -1,0 +1,12 @@
+{
+  "name": "two-context-value-of-another-type-first",
+  "from": "conformance-held-src",
+  "to": "conformance-held-two",
+  "input": "{}",
+  "expect_error": "key-type-mismatch",
+  "context": {
+    "probe.n": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.94, ruling 5: context errors come before it"
+}

@@ -803,8 +803,8 @@ def build(sink):
 
     # order: first 5 [y], second 6 [z], no other terms
     O = "spec 0.52 ruling 8: the order of kinds decides for an entity without the key; "
-    enc("order", "ruling-08-no-other-terms-sends-it-to-the-first-kind", '{"z":3}', "0500",
-        ref=O + "first takes it although it holds only z; y writes zero bits")
+    enc("order", "ruling-08-no-other-terms-sends-it-to-the-first-kind", '{"y":1,"z":3}', "0501",
+        ref=O + "first takes it although second maps z; it holds y, as 0.94 asks of a conversion")
     enc("order", "ruling-08-key-held-chooses-the-second", '{"x":6,"z":3}', "0603", ref=C + "x = 6 does not match first")
     vec("order", "order", "recorded-kind-is-written-again", "0603", "0603",
         model={"@kind": "second", "probe.x": "6", "probe.z": "3"},

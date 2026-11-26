@@ -1,0 +1,9 @@
+{
+  "name": "convert-of-one-message-is-checked",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-held-target",
+  "input": "02010209",
+  "expect": "0102",
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: convert of a carrier of one message: the joined entity holds y"
+}

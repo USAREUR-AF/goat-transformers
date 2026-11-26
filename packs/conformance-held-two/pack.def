@@ -1,0 +1,13 @@
+# Conformance probe pack for spec 0.94: two kinds, each with a key of its own. Public.
+format     conformance-held-two
+version    0.94.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+kind    first
+when    t  one
+field   probe.x  x  int
+kind    second
+when    t  two
+field   probe.y  y  int

@@ -197,8 +197,8 @@ vec(DBP, "19-no-break.json", "no-break", BP, BP, indef(BUN1)[:-2], error="malfor
 # ---------------------------------------------------------------- geojson -> dtn-bpv7
 GJB = '{"type":"Feature","geometry":{"type":"Point","coordinates":[-90.25,45.5]},"properties":{},"id":"G-1"}'
 vec(DG, "bpv7-01-to-dtn-bpv7-nothing-to-write.json", "bpv7-01-to-dtn-bpv7-nothing-to-write", G, BP, GJB,
-    H([[7]]), model={"uid": "G-1", "lat": "45.5", "lon": "-90.25"},
-    ref=bref("No bpv7 key: Encode step 2 takes the first kind whose requires keys are present, whole (no requires). Only the common when [0].[0] 7 writes (Encode step 4): the primary block [7] in the top array, 81 81 07 (pack.md, Shared keys)."))
+    error="no-kind", model={"uid": "G-1", "lat": "45.5", "lon": "-90.25"},
+    ref=bref("No bpv7 key: Encode step 2 takes the first kind whose requires keys are present, whole (no requires). The entity holds uid, lat and lon, and no key of whole or of the common lines: no-kind (Version 0.94, Rule)."))
 
 CTX = {"bpv7.bundle_flags": "4", "bpv7.primary_crc_type": "0",
        "bpv7.dst_ipn_node": "977", "bpv7.dst_ipn_service": "1",
