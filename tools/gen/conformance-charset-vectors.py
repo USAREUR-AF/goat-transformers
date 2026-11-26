@@ -39,7 +39,7 @@ import gtcheck  # noqa: E402
 
 PACKS = ("src", "bits", "lsb", "one", "swapopt", "msb-lsb", "five-msb", "five-lsb", "five-seq-msb", "five-seq-lsb",
          "items", "absent", "wide", "armor", "json", "absent-json", "text", "xml",
-         "order-a", "order-b", "via", "absent-number", "absent-text")
+         "order-a", "order-b", "via", "absent-number", "absent-text", "order-num-a", "order-num-b")
 PREFIX = "conformance-charset-"
 TD, TE = "transform-decode", "transform-encode"
 SOURCE = "constructed"
@@ -642,6 +642,10 @@ def build(sink):
     R1 = "spec 0.46 ruling 1; code order is the pack's: both packs read the text ABCD"
     vec("order-a", "order-b", "one-text-other-codes", "1b", "e4", model_={"probe.s1": "ABCD"}, ref=R1)
     vec("order-b", "order-a", "one-text-other-codes", "e4", "1b", model_={"probe.s1": "ABCD"}, ref=R1)
+    # 1b: codes 0 1 2 3, number 0*64 + 1*16 + 2*4 + 3 = 27; in order-num-a the text ABCD, in order-num-b DCBA
+    vec("order-num-a", "order-num-b", "the-number-is-of-the-pack-codes", "1b", "1b", model_={"probe.x": "27"},
+        ref="spec 0.46 ruling 5: the number is of the pack's own codes, so it carries codes, not characters: ABCD in "
+            "conformance-charset-order-num-a is 27, and 27 written by conformance-charset-order-num-b is DCBA, with no error")
     VI = "spec 0.46, Where the rules apply (`via`, 0.6); "
     vec("via", "via", "via-after-the-transform", "0107", "0107", model_={"probe.s1": "alpha", "probe.s2": "seven"},
         ref=VI + "the string 01 and the integer 7 (not the text 07) are looked up")

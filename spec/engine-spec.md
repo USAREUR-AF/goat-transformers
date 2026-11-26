@@ -5953,7 +5953,14 @@ it is `unknown-directive`.
    with distinct codes.
 5. **The string and the number are two keys.** A pack chooses the form its
    model key has. `codenum` on one format and `codestr` on another meet only
-   if both map one key of one type.
+   if both map one key of one type. The number is of the pack's own codes
+   (ruling 1), so it carries codes, not characters: two packs that declare
+   the same characters in another order and map one integer key with
+   `codenum` convert with no error and change the identifier. `01234` under
+   `charset D 0123456789` is 1234; a pack with `charset D 9876543210` writes
+   1234 as the codes 0, 1, 2, 3, 4 and reads them as `98765`. Formats that
+   share an identifier as a number declare the same sets in the same code
+   order, or map the text form, which keeps the characters.
 6. **The most significant end first.** Sources print an identifier with its
    first character in the highest bits of the number. With `lsb` this differs
    from `chars` (0.15), which reads characters in bit order. `codenum` is the
@@ -6041,7 +6048,9 @@ number in brackets).
   - [41-5] `json` `{"id":12345}` under `codestr:D,D,D,D,D`:
     `transform-decode`; `codenum` encode writes `"12345"`;
   - ruling 6: one identifier of sets of 5, 5, 3, 3 and 3 bits under `msb`
-    and under `lsb`, with the same characters from the same number.
+    and under `lsb`, with the same characters from the same number;
+  - ruling 5: `conformance-charset-order-num-a` and `-b`, the sets `ABCD`
+    and `DCBA` under `codenum`: one number, two texts, no error.
 - Load vectors:
   - [41-1] `charset A,B 0123`: `bad-directive`;
   - [41-3] `charset S AB#C` loads with 4 characters;

@@ -1,0 +1,12 @@
+{
+  "name": "the-number-is-of-the-pack-codes",
+  "from": "conformance-charset-order-num-a",
+  "to": "conformance-charset-order-num-b",
+  "input": "1b",
+  "expect": "1b",
+  "model": {
+    "probe.x": "27"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 5: the number is of the pack's own codes, so it carries codes, not characters: ABCD in conformance-charset-order-num-a is 27, and 27 written by conformance-charset-order-num-b is DCBA, with no error"
+}

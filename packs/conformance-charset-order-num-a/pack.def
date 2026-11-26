@@ -1,0 +1,13 @@
+# Conformance probe pack for spec 0.46 ruling 5: conformance-charset-order-a
+# in the number form, so its number is of its own codes; the twin of
+# conformance-charset-order-num-b. Public. No kinds.
+format  conformance-charset-order-num-a
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset S  ABCD
+field   probe.x  0:0:8  codenum:S,S,S,S
