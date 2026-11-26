@@ -284,6 +284,12 @@ def build():
     out.append(vec("wrapper-length-of-no-whole-message-count-is-no-kind", odd.hex(), error="no-kind",
                    ref="built by this program: SAM Type 0x02 and 100 octets of data, which is not "
                        "89 + 25 n (RFC 9575 section 4.3.1)"))
+    wu = payload_of(wrapper_data([basic_id_message(), location_message(47.5, -122.25, -1000.0)]), 3000)
+    out.append(vec("wrapper-location-unknown-altitude-to-geojson", wu.hex(),
+                   '{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.25,47.5]},"properties":{}}',
+                   to="geojson",
+                   ref="built by this program: vector 04's Wrapper with the geodetic altitude of the wrapped "
+                       "Location at raw 0, which encodes -1000 m, the unknown value: the point has no altitude"))
     return out
 
 
