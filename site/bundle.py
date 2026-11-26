@@ -54,8 +54,6 @@ DEMO = [
      "TAK protocol version 1 message"),
     ("geojson", "GeoJSON", "01-geojson-to-cot.json",
      "a Feature (IETF RFC 7946)"),
-    ("nvg", "NATO Vector Graphics", "01-nvg-to-geojson.json",
-     "a point"),
     ("canonical-track-v2", "Canonical Track v2", "24-to-asterix-cat062-open-billie-sample.json",
      "a radar track as JSON, the contract of open-billie"),
     ("asterix-cat062", "ASTERIX Category 062", "01-open-billie-sample-roundtrip.json",

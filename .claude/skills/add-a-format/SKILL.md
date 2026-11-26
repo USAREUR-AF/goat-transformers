@@ -39,7 +39,7 @@ the format needs a new wire type: stop and use `extend-the-pack-language`.
 `docs/coverage-roadmap.md` lists the wire types that are designed and not built.
 
 Read the section of `spec/engine-spec.md` for the wire you chose, and one
-existing pack of that wire as a model: `packs/nvg` (xml), `packs/demo-track-json`
+existing pack of that wire as a model: `packs/gpx` (xml), `packs/demo-track-json`
 (json), `packs/remote-id` (bits with kinds), `packs/asterix-cat062` (sequential).
 
 ## 2. Write pack.def
