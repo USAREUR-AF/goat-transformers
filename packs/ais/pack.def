@@ -39,11 +39,11 @@ default   ais.heading     511
 default   ais.second      60
 field  ais.nav_status     0:38:4     uint
 field  ais.turn           0:42:8     twos
-field  speed_ms           0:50:10    uscale:1852/36000
+field  speed_ms           0:50:10    uscale:1852/36000  absent 1023
 field  ais.accuracy       0:60:1     uint
-field  lon                0:61:28    sscale:1/600000
-field  lat                0:89:27    sscale:1/600000
-field  course             0:116:12   uscale:1/10
+field  lon                0:61:28    sscale:1/600000  absent 108600000
+field  lat                0:89:27    sscale:1/600000  absent 54600000
+field  course             0:116:12   uscale:1/10  absent 3600
 field  ais.heading        0:128:9    uint
 field  ais.second         0:137:6    uint
 field  ais.maneuver       0:143:2    uint
@@ -62,11 +62,11 @@ default   ais.heading     511
 default   ais.second      60
 field  ais.nav_status     0:38:4     uint
 field  ais.turn           0:42:8     twos
-field  speed_ms           0:50:10    uscale:1852/36000
+field  speed_ms           0:50:10    uscale:1852/36000  absent 1023
 field  ais.accuracy       0:60:1     uint
-field  lon                0:61:28    sscale:1/600000
-field  lat                0:89:27    sscale:1/600000
-field  course             0:116:12   uscale:1/10
+field  lon                0:61:28    sscale:1/600000  absent 108600000
+field  lat                0:89:27    sscale:1/600000  absent 54600000
+field  course             0:116:12   uscale:1/10  absent 3600
 field  ais.heading        0:128:9    uint
 field  ais.second         0:137:6    uint
 field  ais.maneuver       0:143:2    uint
@@ -85,11 +85,11 @@ default   ais.heading     511
 default   ais.second      60
 field  ais.nav_status     0:38:4     uint
 field  ais.turn           0:42:8     twos
-field  speed_ms           0:50:10    uscale:1852/36000
+field  speed_ms           0:50:10    uscale:1852/36000  absent 1023
 field  ais.accuracy       0:60:1     uint
-field  lon                0:61:28    sscale:1/600000
-field  lat                0:89:27    sscale:1/600000
-field  course             0:116:12   uscale:1/10
+field  lon                0:61:28    sscale:1/600000  absent 108600000
+field  lat                0:89:27    sscale:1/600000  absent 54600000
+field  course             0:116:12   uscale:1/10  absent 3600
 field  ais.heading        0:128:9    uint
 field  ais.second         0:137:6    uint
 field  ais.maneuver       0:143:2    uint
@@ -111,8 +111,8 @@ field  ais.hour           0:61:5     uint
 field  ais.minute         0:66:6     uint
 field  ais.second         0:72:6     uint
 field  ais.accuracy       0:78:1     uint
-field  lon                0:79:28    sscale:1/600000
-field  lat                0:107:27   sscale:1/600000
+field  lon                0:79:28    sscale:1/600000  absent 108600000
+field  lat                0:107:27   sscale:1/600000  absent 54600000
 field  ais.epfd           0:134:4    uint
 field  ais.spare          0:138:10   uint
 field  ais.raim           0:148:1    uint
@@ -170,11 +170,11 @@ default   course          360
 default   ais.second      60
 default   ais.dte         1
 field  ais.altitude       0:38:12    uint
-field  speed_ms           0:50:10    uscale:1852/3600
+field  speed_ms           0:50:10    uscale:1852/3600  absent 1023
 field  ais.accuracy       0:60:1     uint
-field  lon                0:61:28    sscale:1/600000
-field  lat                0:89:27    sscale:1/600000
-field  course             0:116:12   uscale:1/10
+field  lon                0:61:28    sscale:1/600000  absent 108600000
+field  lat                0:89:27    sscale:1/600000  absent 54600000
+field  course             0:116:12   uscale:1/10  absent 3600
 field  ais.second         0:128:6    uint
 field  ais.regional       0:134:8    uint
 field  ais.dte            0:142:1    uint
@@ -205,8 +205,8 @@ field  ais.hour           0:61:5     uint
 field  ais.minute         0:66:6     uint
 field  ais.second         0:72:6     uint
 field  ais.accuracy       0:78:1     uint
-field  lon                0:79:28    sscale:1/600000
-field  lat                0:107:27   sscale:1/600000
+field  lon                0:79:28    sscale:1/600000  absent 108600000
+field  lat                0:107:27   sscale:1/600000  absent 54600000
 field  ais.epfd           0:134:4    uint
 field  ais.spare          0:138:10   uint
 field  ais.raim           0:148:1    uint
@@ -264,11 +264,11 @@ default   course          360
 default   ais.heading     511
 default   ais.second      60
 field  ais.reserved       0:38:8     uint
-field  speed_ms           0:46:10    uscale:1852/36000
+field  speed_ms           0:46:10    uscale:1852/36000  absent 1023
 field  ais.accuracy       0:56:1     uint
-field  lon                0:57:28    sscale:1/600000
-field  lat                0:85:27    sscale:1/600000
-field  course             0:112:12   uscale:1/10
+field  lon                0:57:28    sscale:1/600000  absent 108600000
+field  lat                0:85:27    sscale:1/600000  absent 54600000
+field  course             0:112:12   uscale:1/10  absent 3600
 field  ais.heading        0:124:9    uint
 field  ais.second         0:133:6    uint
 field  ais.regional       0:139:2    uint
@@ -291,11 +291,11 @@ default   ais.heading     511
 default   ais.second      60
 default   ais.dte         1
 field  ais.reserved       0:38:8     uint
-field  speed_ms           0:46:10    uscale:1852/36000
+field  speed_ms           0:46:10    uscale:1852/36000  absent 1023
 field  ais.accuracy       0:56:1     uint
-field  lon                0:57:28    sscale:1/600000
-field  lat                0:85:27    sscale:1/600000
-field  course             0:112:12   uscale:1/10
+field  lon                0:57:28    sscale:1/600000  absent 108600000
+field  lat                0:85:27    sscale:1/600000  absent 54600000
+field  course             0:112:12   uscale:1/10  absent 3600
 field  ais.heading        0:124:9    uint
 field  ais.second         0:133:6    uint
 field  ais.regional       0:139:4    uint
@@ -343,8 +343,8 @@ default   ais.second      60
 field  ais.aid_type       0:38:5     uint
 field  ais.name           0:43:120   sixbit    trim
 field  ais.accuracy       0:163:1    uint
-field  lon                0:164:28   sscale:1/600000
-field  lat                0:192:27   sscale:1/600000
+field  lon                0:164:28   sscale:1/600000  absent 108600000
+field  lat                0:192:27   sscale:1/600000  absent 54600000
 field  ais.to_bow         0:219:9    uint
 field  ais.to_stern       0:228:9    uint
 field  ais.to_port        0:237:6    uint
@@ -458,9 +458,9 @@ default   ais.gnss        1
 field  ais.accuracy       0:38:1     uint
 field  ais.raim           0:39:1     uint
 field  ais.nav_status     0:40:4     uint
-field  lon                0:44:18    sscale:1/600
-field  lat                0:62:17    sscale:1/600
-field  speed_ms           0:79:6     uscale:1852/3600
+field  lon                0:44:18    sscale:1/600  absent 108600
+field  lat                0:62:17    sscale:1/600  absent 54600
+field  speed_ms           0:79:6     uscale:1852/3600  absent 63
 field  ais.course_lr      0:85:9     uint
 field  ais.gnss           0:94:1     uint
 field  ais.spare          0:95:1     uint
