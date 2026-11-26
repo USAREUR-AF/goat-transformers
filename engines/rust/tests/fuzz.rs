@@ -23,7 +23,7 @@
 //!     built from the pieces X.691 reads (single bits, short and long length
 //!     determinants, the fragmented prefix `11`, normally small numbers,
 //!     runs of ones and of zeros, lengths of 16383 with nothing behind them),
-//!     each of which must also finish within `UPER_TIME_LIMIT`, so that no
+//!     each of which must also finish within `UPER_TIME_LIMIT` of CPU time, so that no
 //!     length read from the input makes the work unbounded.
 //! (h) CBOR data items (engine-spec 0.28): random items of every major type,
 //!     with definite and indefinite lengths, heads longer than they need,
@@ -50,6 +50,10 @@ use goat_transformers::{json, Engine};
 use std::collections::BTreeMap;
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::path::{Path, PathBuf};
+
+#[path = "../src/cpu_clock.rs"]
+mod cpu_clock;
+use cpu_clock::thread_cpu_time as cpu_time;
 
 /// The error kinds `convert` with no context may fail with
 /// (spec/vector-format.md, `expect_error`). Version 0.34 adds the checks
@@ -795,10 +799,11 @@ fn malformed_input_never_panics() {
     for format in &uper_formats() {
         for _ in 0..RANDOM_PER_ALPHABET * 8 * iters {
             let input = uper_bits(&mut rng);
-            let started = std::time::Instant::now();
+            let started = cpu_time();
             run(format, format, &input, "uper bits");
-            if started.elapsed() > UPER_TIME_LIMIT {
-                slow.push(format!("{}: {:?} for {} bytes", format, started.elapsed(), input.len() / 2));
+            let took = cpu_time() - started;
+            if took > UPER_TIME_LIMIT {
+                slow.push(format!("{}: {:?} for {} bytes", format, took, input.len() / 2));
             }
         }
     }

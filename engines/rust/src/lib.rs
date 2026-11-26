@@ -8,6 +8,8 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt;
 
+#[cfg(test)]
+mod cpu_clock;
 mod exact;
 pub use exact::Exact;
 mod layout;
