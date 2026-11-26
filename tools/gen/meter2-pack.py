@@ -108,7 +108,13 @@ def mbus_record():
     rec = ([F("mbus.dif_extension", 1), F("mbus.storage_lsb", 1), F("mbus.function_field", 2), F("mbus.data_field", 4)] +
            sw("mbus.dif_extension", [("1", ["group  mbus.difes  more", "  " + F("mbus.dife_unit", 1), "  " + F("mbus.dife_tariff", 2),
                                             "  " + F("mbus.dife_storage", 4), "end"])], []) +
-           sw("mbus.data_field", [("15", sw("mbus.function_field", [("2", [])], octets("mbus.manufacturer_data", o)))],
+           # libmbus (mbus_data_variable_parse) takes the whole DIF octet: 0x2F is a filler, 0x0F and 0x1F
+           # start manufacturer data to the end; any other DIF with data field 0xF is a record with a VIF
+           # and 8 data octets (mbus_dif_datalength_lookup gives 0xF the length 8)
+           sw("mbus.data_field", [("15", sw("mbus.dif_extension", [("0", sw("mbus.storage_lsb", [("0", sw(
+               "mbus.function_field", [("0,1", octets("mbus.manufacturer_data", o)), ("2", [])],
+               vib + [F("mbus.value_special", 64, "hex")]))], vib + [F("mbus.value_special", 64, "hex")]))],
+               vib + [F("mbus.value_special", 64, "hex")]))],
               vib + value))
     return ["group  mbus.records  rest"] + ind(1, rec) + ["end"]
 
@@ -161,6 +167,7 @@ MBUS_KEYS = [
     ("float", "value_real", "a 32-bit real value"), ("string", "value_bcd", "a BCD value: its octets as sent, as hexadecimal digits (low octet first)"),
     ("list", "value_lvar", "a variable-length value (LVAR 0x00-0xBF: that many characters), as octets"),
     ("list", "manufacturer_data", "DIF 0x0F or 0x1F: the manufacturer-specific data to the end, as octets"),
+    ("string", "value_special", "a record whose DIF has data field 0xF and is not 0x0F, 0x1F or 0x2F: its 8 data octets as sent, as hexadecimal digits"),
     ("int", "counter1_type", "fixed data: medium and unit of counter 1"), ("int", "counter2_type", "fixed data: medium and unit of counter 2"),
     ("string", "counter1", "fixed data: counter 1, its 4 octets as sent, as hexadecimal digits (BCD or binary by the status; low octet first)"),
     ("string", "counter2", "fixed data: counter 2, as hexadecimal digits"),

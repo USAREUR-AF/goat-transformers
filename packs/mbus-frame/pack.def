@@ -62,12 +62,75 @@ length  8  bytes  plus  -2
         end
         switch  mbus.data_field
           case  15
-            switch  mbus.function_field
-              case  2
-              else
-                group  mbus.manufacturer_data  rest
-                  field  mbus.octet  8  uint
+            switch  mbus.dif_extension
+              case  0
+                switch  mbus.storage_lsb
+                  case  0
+                    switch  mbus.function_field
+                      case  0,1
+                        group  mbus.manufacturer_data  rest
+                          field  mbus.octet  8  uint
+                        end
+                      case  2
+                      else
+                        field  mbus.vif_extension  1  uint
+                        field  mbus.vif  7  uint
+                        switch  mbus.vif_extension
+                          case  1
+                            group  mbus.vifes  more
+                              field  mbus.vife  7  uint
+                            end
+                          else
+                        end
+                        switch  mbus.vif
+                          case  124
+                            count  vif_text_length  8
+                            group  mbus.vif_text  count  @vif_text_length
+                              field  mbus.octet  8  uint
+                            end
+                          else
+                        end
+                        field  mbus.value_special  64  hex
+                    end
+                  else
+                    field  mbus.vif_extension  1  uint
+                    field  mbus.vif  7  uint
+                    switch  mbus.vif_extension
+                      case  1
+                        group  mbus.vifes  more
+                          field  mbus.vife  7  uint
+                        end
+                      else
+                    end
+                    switch  mbus.vif
+                      case  124
+                        count  vif_text_length  8
+                        group  mbus.vif_text  count  @vif_text_length
+                          field  mbus.octet  8  uint
+                        end
+                      else
+                    end
+                    field  mbus.value_special  64  hex
                 end
+              else
+                field  mbus.vif_extension  1  uint
+                field  mbus.vif  7  uint
+                switch  mbus.vif_extension
+                  case  1
+                    group  mbus.vifes  more
+                      field  mbus.vife  7  uint
+                    end
+                  else
+                end
+                switch  mbus.vif
+                  case  124
+                    count  vif_text_length  8
+                    group  mbus.vif_text  count  @vif_text_length
+                      field  mbus.octet  8  uint
+                    end
+                  else
+                end
+                field  mbus.value_special  64  hex
             end
           else
             field  mbus.vif_extension  1  uint
