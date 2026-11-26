@@ -16,7 +16,7 @@ Each set is an item of `ipfixmsg.sets`: its set ID (`ipfixmsg.set_id`), then a `
 | Set ID | Read as |
 |---|---|
 | 2, Template Set | each Template Record: template ID, a field count (a `count` line), the field specifiers: the enterprise bit (a `presence` bit), the element ID (15 bits), the field length, and the enterprise number when the bit is 1 |
-| 3, Options Template Set | as a Template Record, with the scope field count after the field count |
+| 3, Options Template Set | as a Template Record, with the scope field count after the field count (limit: see below) |
 | 256 and above, Data Set | the content, octet by octet, as items of `ipfixmsg.set_octets` |
 
 Each set's length (RFC 7011 section 3.3.2, counting its 4-octet header) is a `length 16 bytes
@@ -53,3 +53,15 @@ record covers an interval, and neither end is the time of the report. They stay 
 derives `expect` without an engine: a Template Set with two templates (one with an
 enterprise-specific element) and a Data Set; an Options Template Set; version 9 in place of 10
 (`no-kind`); a message shorter than its length field (`malformed-wire`).
+
+## Limit: Options Template withdrawals
+
+RFC 7011 section 8.1 (figure T) writes a withdrawal in an Options Template Set (Set ID 3)
+as the Template ID and a field count of 0, with no scope field count. The pack's Set ID 3
+records always read a scope field count after the field count, so a set of withdrawals
+is misread: with two records the second record's Template ID is read as the first one's
+scope field count and the values come out wrong without an error, with three or more the
+message is `malformed-wire`. One withdrawal in a set decodes as it should. A field that
+is present only when an earlier count is not 0 has no line in a sequential layout yet
+(gate blocks are for fixed layouts, engine-spec 0.17); the case is with the pack-language
+work.
