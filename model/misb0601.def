@@ -32,3 +32,7 @@ key  ls_version              int     -     "item 65: major version of MISB ST 06
 key  frame_center_hae        float   m     "item 78: frame center height above the WGS84 ellipsoid, -900 to 19000"
 key  platform_pitch_full     float   deg   "item 90: platform pitch, nose up positive, -90 to 90"
 key  platform_roll_full      float   deg   "item 91: platform roll, right wing down positive, -90 to 90"
+key   sensor_latitude     float  deg  "item 13 Sensor Latitude, WGS 84, -90 to 90; 0x80000000 is reserved (error), and decodes as -90.0000000419 here"
+key   sensor_longitude    float  deg  "item 14 Sensor Longitude, WGS 84, -180 to 180; 0x80000000 is reserved (error), and decodes as -180.0000000838 here"
+key   platform_vel_north  float  m/s  "item 79 Sensor North Velocity, -327 to 327; 0x8000 means out of range, and decodes as -327.00998 here"
+key   platform_vel_east   float  m/s  "item 80 Sensor East Velocity, -327 to 327; 0x8000 means out of range, and decodes as -327.00998 here"

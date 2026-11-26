@@ -42,7 +42,6 @@ mds/gen-001-vehicle_status-residue speed_ms defect(vector): the generated messag
 mds/gen-001-vehicle_status-roundtrip speed_ms defect(vector): the generated message holds a negative speed; a GPS speed is not negative
 mds/gen-003-event-residue speed_ms defect(vector): the generated message holds a negative speed; a GPS speed is not negative
 mds/gen-003-event-roundtrip speed_ms defect(vector): the generated message holds a negative speed; a GPS speed is not negative
-misb-st0601/08-lat-reserved-value-decodes-past-range lat defect(pack): the source reserves the most negative latitude as an error indicator; the pack decodes it past -90 instead of declaring it `absent`, and the vector pins that
 nws-alert/gen-001-alert_geo_json-residue stale_ms defect(vector): the generated alert expires before it is sent
 nws-alert/gen-001-alert_geo_json-roundtrip stale_ms defect(vector): the generated alert expires before it is sent
 readsb-aircraft-json/pack.md datum datum: maps alt_geom and does not say it is above the ellipsoid (readsb-aircraft's pack.md does)

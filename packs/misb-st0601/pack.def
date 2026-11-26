@@ -27,8 +27,8 @@ field    misb0601.platform_indicated_airspeed  9:1  uint
 field    misb0601.platform_designation    10     utf8
 field    misb0601.image_source_sensor     11     utf8
 field    misb0601.image_coordinate_system 12     utf8
-field    lat                              13:4   sscale:180/4294967294
-field    lon                              14:4   sscale:360/4294967294
+field    misb0601.sensor_latitude         13:4   sscale:180/4294967294
+field    misb0601.sensor_longitude        14:4   sscale:360/4294967294
 field    misb0601.sensor_true_altitude    15:2   uscale:19900/65535:-900
 field    misb0601.sensor_hfov             16:2   uscale:180/65535
 field    misb0601.sensor_vfov             17:2   uscale:180/65535
@@ -45,7 +45,7 @@ field    callsign                         59     utf8
 field    misb0601.ls_version              65:1   uint
 field    hae                              75:2   uscale:19900/65535:-900
 field    misb0601.frame_center_hae        78:2   uscale:19900/65535:-900
-field    track.vel_north_ms               79:2   sscale:654/65534
-field    track.vel_east_ms                80:2   sscale:654/65534
+field    misb0601.platform_vel_north      79:2   sscale:654/65534
+field    misb0601.platform_vel_east       80:2   sscale:654/65534
 field    misb0601.platform_pitch_full     90:4   sscale:180/4294967294
 field    misb0601.platform_roll_full      91:4   sscale:180/4294967294

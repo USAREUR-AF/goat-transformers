@@ -3,18 +3,17 @@
   "from": "misb-st0601",
   "to": "geojson",
   "input": "060e2b34020b01010e010301010000003c020800060a24181e40000d043ccbf7000e04a697d10038010c3b064841574b32314101134b0266664f020000500203ea300601010102010701020b08",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-125.72854763163652,42.74770619475642,7060]},\"properties\":{\"callsign\":\"HAWK21\",\"course\":90,\"speed_ms\":12}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"HAWK21\",\"speed_ms\":12}}",
   "model": {
     "@complete": true,
-    "lat": "42.74770619475642",
-    "lon": "-125.72854763163652",
+    "misb0601.sensor_latitude": "42.74770619475642",
+    "misb0601.sensor_longitude": "-125.72854763163652",
     "hae": "7060",
     "callsign": "HAWK21",
     "speed_ms": "12",
-    "course": "90",
-    "track.vel_east_ms": "9.999511703848384",
-    "track.vel_north_ms": "0"
+    "misb0601.platform_vel_east": "9.999511703848384",
+    "misb0601.platform_vel_north": "0"
   },
   "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
-  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); hae from item 75 6666: 26214*19900/65535 - 900 = 7060; item 56 gives speed_ms 12 and is not replaced; course = bearing(east 1002*654/65534, north 0) = atan2(e,0)*(180/pi) = 90 exactly in doubles; misb0601 keys and residue 48 have no geojson line"
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); hae from item 75 6666: 26214*19900/65535 - 900 = 7060; item 56 gives speed_ms 12 and is not replaced; course = bearing(east 1002*654/65534, north 0) = atan2(e,0)*(180/pi) = 90 exactly in doubles; misb0601 keys and residue 48 have no geojson line; position and velocities are raw keys (pack.md), so neither the point nor a course or a speed from the velocities is carried"
 }
