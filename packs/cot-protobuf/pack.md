@@ -30,7 +30,7 @@ of version 0.6 where the generator was given them, and a `group` block of versio
 | `field` lines bound to `core` or `track` keys | 14 |
 | `const` lines | 0 |
 | value tables (`map` lines) | 0 (0) |
-| vectors (existing and generated) | 10 |
+| vectors (existing and generated) | 12 |
 | vectors to and from other formats, generated | 4 |
 
 ## Kinds
@@ -210,6 +210,12 @@ both directions.
 `cot-xml` writes `version="2.0"` on every event, and `type="a-u-X"` and `hae`, `ce`, `le`
 `9999999` when the entity has no value: an event that left a proto3 writer with `hae` 0 (not on
 the wire) arrives in XML with `hae="9999999"`.
+
+`cotevent.proto` says to use 999999 (six nines) for an unknown `hae`, `ce` and `le`. The three
+shared lines have that double as `absent` (the unsigned integer of its 8 bytes, 4696837138094751744):
+such an event carries no height, `ce` or `le` into another format, the raw keys keep the value, and
+an absent key writes 999999 (vectors 09 and 10). `cot-xml` uses seven nines; each pack follows its
+own source.
 
 An XML event converted to this pack and back returns the canonical XML of `cot-xml`:
 `01-event-to-cot-xml` takes the output of `gen-cot-xml-to-cot-protobuf` and returns the `expect`

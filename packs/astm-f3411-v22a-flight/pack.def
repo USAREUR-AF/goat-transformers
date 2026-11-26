@@ -21,7 +21,7 @@ field  lat  current_state.position.lat  float
 field  ridv22afl.current_state_position_lat  current_state.position.lat  float
 field  lon  current_state.position.lng  float
 field  ridv22afl.current_state_position_lng  current_state.position.lng  float
-field  hae  current_state.position.alt  float
+field  hae  current_state.position.alt  float  absent -1000
 field  ridv22afl.current_state_position_alt  current_state.position.alt  float
 field  ridv22afl.current_state_position_accuracy_h  current_state.position.accuracy_h  string
 field  ridv22afl.current_state_position_accuracy_v  current_state.position.accuracy_v  string
@@ -29,9 +29,9 @@ field  ridv22afl.current_state_position_extrapolated  current_state.position.ext
 field  ridv22afl.current_state_position_pressure_altitude  current_state.position.pressure_altitude  float
 field  ridv22afl.current_state_position_height_distance  current_state.position.height.distance  float
 field  ridv22afl.current_state_position_height_reference  current_state.position.height.reference  string
-field  course  current_state.track  float
+field  course  current_state.track  float  absent 361
 field  ridv22afl.current_state_track  current_state.track  float
-field  speed_ms  current_state.speed  float
+field  speed_ms  current_state.speed  float  absent 255
 field  ridv22afl.current_state_speed  current_state.speed  float
 field  ridv22afl.current_state_speed_accuracy  current_state.speed_accuracy  string
 field  track.vel_up_ms  current_state.vertical_speed  float

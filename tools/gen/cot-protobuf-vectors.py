@@ -56,6 +56,9 @@ START_DIFFERS = {2: {**SMALL, 6: (V, T), 7: (V, T - 60000)}}
 START_ONLY = {2: {**SMALL, 7: (V, T - 60000)}}
 CONTROL = {1: {1: (V, 1), 2: (V, 1)}}
 EMPTY_CONTROL = {1: {}}
+# cotevent.proto: use 999999 for an unknown hae, ce and le
+UNKNOWN = 999999.0
+UNKNOWN_HEIGHT = {2: {**EVENT[2], 12: (D, UNKNOWN), 13: (D, UNKNOWN), 14: (D, UNKNOWN)}}
 
 # (file name, message, target format, the keys `model` states; None: every decoded key)
 CASES = [
@@ -69,12 +72,14 @@ CASES = [
     ("06-start-alone-fills-time", START_ONLY, "cot-protobuf", ["time_ms", "takproto.cot_event_start_time"]),
     ("07-control-alone", CONTROL, "cot-protobuf", None),
     ("08-control-empty-member", EMPTY_CONTROL, "cot-protobuf", []),
+    ("09-unknown-hae-ce-le-roundtrip", UNKNOWN_HEIGHT, "cot-protobuf", ["lat", "lon"]),
+    ("10-unknown-hae-ce-le-to-geojson", UNKNOWN_HEIGHT, "geojson", ["lat", "lon"]),
 ]
 NO_POSITION = '{"type":"Feature","geometry":null,"properties":{"type":"a-f-G-U-C","callsign":"GATOR"},"id":"J-01334"}'
 
 
 def from_cot_protobuf(pack, others):
-    """{relative path: vector} for the eight vectors out of cot-protobuf."""
+    """{relative path: vector} for the ten vectors out of cot-protobuf."""
     vectors = {}
     for name, tree, to, keys in CASES:
         message = proto2pack.enc_tree(tree).hex()
@@ -86,6 +91,8 @@ def from_cot_protobuf(pack, others):
         missing = [k for k in keys or () if k not in ent]
         if missing:
             raise proto2pack.GenError("vector %s: the pack does not decode %s" % (name, " ".join(missing)))
+        if name.startswith(("09-", "10-")) and any(k in ent for k in ("hae", "ce", "le")):
+            raise proto2pack.GenError("vector %s: 999999 decodes as a value" % name)
         model = {"@kind": kind}
         model.update({k: proto2pack.model_text(ent[k]) for k in (ent if keys is None else keys)})
         vectors["packs/cot-protobuf/vectors/%s.json" % name] = {
@@ -123,7 +130,7 @@ def into_cot_protobuf(pack, others, full_event_xml):
 
 
 def generate(out):
-    """Load the packs through `out`, compute the ten vectors and write them."""
+    """Load the packs through `out`, compute the twelve vectors and write them."""
     model = proto2pack.load_model(out)
     rel = "packs/cot-protobuf/pack.def"
     pack = proto2pack.load_protobuf_pack(out.read(rel), model, rel)

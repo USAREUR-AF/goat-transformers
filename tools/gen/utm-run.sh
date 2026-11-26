@@ -87,6 +87,12 @@ rid() {
     --evidence "RIDFlight:current_state.speed=api.py RIDAircraftState.speed: ground speed, metres per second"
     --evidence "RIDFlight:current_state.vertical_speed=api.py RIDAircraftState.vertical_speed: speed upward, metres per second"
     --evidence "RIDFlight:simulated=api.py RIDFlight.simulated: the flight is simulated")
+  if [ "$ver" = v22a ]; then
+    # canonical.yaml of v22a states the unknown values (alt -1000, track 361, speed 255); they are
+    # absent on the shared lines and kept by the raw keys. lat/lon 0,0 is a pair: not stated here.
+    flight+=(--absent "RIDFlight:current_state.position.alt=-1000" --absent "RIDFlight:current_state.track=361"
+      --absent "RIDFlight:current_state.speed=255")
+  fi
   one flight fl RIDFlight "${flight[@]}" --cross "$XG"
   one get-flights-response gfr GetFlightsResponse
   one flight-details fd RIDFlightDetails --map "RIDFlightDetails:id=uid" \
@@ -123,7 +129,8 @@ tel() {
     --evidence "$k:${p}position.longitude=api.py Longitude: degrees east on the WGS 84 ellipsoid"
     --evidence "$k:${p}position.altitude.value=api.py Altitude: reference W84 (WGS 84) only, units metres only"
     --evidence "$k:${p}velocity.speed=api.py Velocity.speed: ground speed, metres per second only"
-    --evidence "$k:${p}velocity.track=api.py Velocity.track: ground track angle from true north, degrees east of north")
+    --evidence "$k:${p}velocity.track=api.py Velocity.track: ground track angle from true north, degrees east of north"
+    --absent "$k:${p}velocity.track=360")      # utm.yaml Velocity.track: 360 is invalid, no value or unknown
 }
 one operational-intent-reference oir OperationalIntentReference --map "OperationalIntentReference:id=uid" \
   --evidence "OperationalIntentReference:id=api.py OperationalIntentReference.id: the identifier of the operational intent"

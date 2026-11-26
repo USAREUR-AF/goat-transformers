@@ -25,5 +25,5 @@ field  utm21vt.position_altitude_units  position.altitude.units  string
 field  speed_ms  velocity.speed  float
 field  utm21vt.velocity_speed  velocity.speed  float
 field  utm21vt.velocity_units_speed  velocity.units_speed  string
-field  course  velocity.track  float
+field  course  velocity.track  float  absent 360
 field  utm21vt.velocity_track  velocity.track  float

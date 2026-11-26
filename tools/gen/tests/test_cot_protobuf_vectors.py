@@ -34,7 +34,7 @@ class RepositoryTest(unittest.TestCase):
     def test_the_committed_vectors_are_what_the_script_writes(self):
         status, _, err = support.run_main(script.main, ["--out", support.REPO, "--check"])
         self.assertEqual(status, 0, err)
-        self.assertIn("cot-protobuf-vectors: --check: ok, 10 file(s)", err)
+        self.assertIn("cot-protobuf-vectors: --check: ok, 12 file(s)", err)
 
     def test_the_default_output_directory_is_the_repository(self):
         self.assertEqual(script.REPO, support.REPO)

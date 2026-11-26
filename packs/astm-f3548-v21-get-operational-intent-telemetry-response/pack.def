@@ -27,7 +27,7 @@ field  utm21goit.telemetry_position_altitude_units  telemetry.position.altitude.
 field  speed_ms  telemetry.velocity.speed  float
 field  utm21goit.telemetry_velocity_speed  telemetry.velocity.speed  float
 field  utm21goit.telemetry_velocity_units_speed  telemetry.velocity.units_speed  string
-field  course  telemetry.velocity.track  float
+field  course  telemetry.velocity.track  float  absent 360
 field  utm21goit.telemetry_velocity_track  telemetry.velocity.track  float
 field  utm21goit.next_telemetry_opportunity_value  next_telemetry_opportunity.value  string
 field  utm21goit.next_telemetry_opportunity_format  next_telemetry_opportunity.format  string
