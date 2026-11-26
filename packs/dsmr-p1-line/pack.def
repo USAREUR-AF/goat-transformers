@@ -9,178 +9,214 @@ delimiter     "("
 
 kind  header
 when  0:0:1  /
+requires  dsmr.header
 field  dsmr.header  0  string
 
 kind  end
 when  0:0:1  !
+requires  dsmr.end
 field  dsmr.end  0  string
 
 kind  version
 when  0  1-3:0.2.8
+requires  dsmr.version
 field  dsmr.version  1:0:2  string
 const  1:2:1  )
 
 kind  timestamp
 when  0  0-0:1.0.0
+requires  dsmr.timestamp
 field  dsmr.timestamp  1:0:13  string
 const  1:13:1  )
 
 kind  energy_delivered_tariff1_kwh
 when  0  1-0:1.8.1
+requires  dsmr.energy_delivered_tariff1_kwh
 field  dsmr.energy_delivered_tariff1_kwh  1:0:10  dec:3:10
 const  1:10:5  *kWh)
 
 kind  energy_delivered_tariff2_kwh
 when  0  1-0:1.8.2
+requires  dsmr.energy_delivered_tariff2_kwh
 field  dsmr.energy_delivered_tariff2_kwh  1:0:10  dec:3:10
 const  1:10:5  *kWh)
 
 kind  energy_returned_tariff1_kwh
 when  0  1-0:2.8.1
+requires  dsmr.energy_returned_tariff1_kwh
 field  dsmr.energy_returned_tariff1_kwh  1:0:10  dec:3:10
 const  1:10:5  *kWh)
 
 kind  energy_returned_tariff2_kwh
 when  0  1-0:2.8.2
+requires  dsmr.energy_returned_tariff2_kwh
 field  dsmr.energy_returned_tariff2_kwh  1:0:10  dec:3:10
 const  1:10:5  *kWh)
 
 kind  tariff_indicator
 when  0  0-0:96.14.0
+requires  dsmr.tariff_indicator
 field  dsmr.tariff_indicator  1:0:4  string
 const  1:4:1  )
 
 kind  power_delivered_kw
 when  0  1-0:1.7.0
+requires  dsmr.power_delivered_kw
 field  dsmr.power_delivered_kw  1:0:6  dec:3:6
 const  1:6:4  *kW)
 
 kind  power_returned_kw
 when  0  1-0:2.7.0
+requires  dsmr.power_returned_kw
 field  dsmr.power_returned_kw  1:0:6  dec:3:6
 const  1:6:4  *kW)
 
 kind  power_failures
 when  0  0-0:96.7.21
+requires  dsmr.power_failures
 field  dsmr.power_failures  1:0:5  int:5
 const  1:5:1  )
 
 kind  long_power_failures
 when  0  0-0:96.7.9
+requires  dsmr.long_power_failures
 field  dsmr.long_power_failures  1:0:5  int:5
 const  1:5:1  )
 
 kind  voltage_sags_l1
 when  0  1-0:32.32.0
+requires  dsmr.voltage_sags_l1
 field  dsmr.voltage_sags_l1  1:0:5  int:5
 const  1:5:1  )
 
 kind  voltage_sags_l2
 when  0  1-0:52.32.0
+requires  dsmr.voltage_sags_l2
 field  dsmr.voltage_sags_l2  1:0:5  int:5
 const  1:5:1  )
 
 kind  voltage_sags_l3
 when  0  1-0:72.32.0
+requires  dsmr.voltage_sags_l3
 field  dsmr.voltage_sags_l3  1:0:5  int:5
 const  1:5:1  )
 
 kind  voltage_swells_l1
 when  0  1-0:32.36.0
+requires  dsmr.voltage_swells_l1
 field  dsmr.voltage_swells_l1  1:0:5  int:5
 const  1:5:1  )
 
 kind  voltage_swells_l2
 when  0  1-0:52.36.0
+requires  dsmr.voltage_swells_l2
 field  dsmr.voltage_swells_l2  1:0:5  int:5
 const  1:5:1  )
 
 kind  voltage_swells_l3
 when  0  1-0:72.36.0
+requires  dsmr.voltage_swells_l3
 field  dsmr.voltage_swells_l3  1:0:5  int:5
 const  1:5:1  )
 
 kind  voltage_l1_v
 when  0  1-0:32.7.0
+requires  dsmr.voltage_l1_v
 field  dsmr.voltage_l1_v  1:0:5  dec:1:5
 const  1:5:3  *V)
 
 kind  voltage_l2_v
 when  0  1-0:52.7.0
+requires  dsmr.voltage_l2_v
 field  dsmr.voltage_l2_v  1:0:5  dec:1:5
 const  1:5:3  *V)
 
 kind  voltage_l3_v
 when  0  1-0:72.7.0
+requires  dsmr.voltage_l3_v
 field  dsmr.voltage_l3_v  1:0:5  dec:1:5
 const  1:5:3  *V)
 
 kind  current_l1_a
 when  0  1-0:31.7.0
+requires  dsmr.current_l1_a
 field  dsmr.current_l1_a  1:0:3  int:3
 const  1:3:3  *A)
 
 kind  current_l2_a
 when  0  1-0:51.7.0
+requires  dsmr.current_l2_a
 field  dsmr.current_l2_a  1:0:3  int:3
 const  1:3:3  *A)
 
 kind  current_l3_a
 when  0  1-0:71.7.0
+requires  dsmr.current_l3_a
 field  dsmr.current_l3_a  1:0:3  int:3
 const  1:3:3  *A)
 
 kind  power_delivered_l1_kw
 when  0  1-0:21.7.0
+requires  dsmr.power_delivered_l1_kw
 field  dsmr.power_delivered_l1_kw  1:0:6  dec:3:6
 const  1:6:4  *kW)
 
 kind  power_delivered_l2_kw
 when  0  1-0:41.7.0
+requires  dsmr.power_delivered_l2_kw
 field  dsmr.power_delivered_l2_kw  1:0:6  dec:3:6
 const  1:6:4  *kW)
 
 kind  power_delivered_l3_kw
 when  0  1-0:61.7.0
+requires  dsmr.power_delivered_l3_kw
 field  dsmr.power_delivered_l3_kw  1:0:6  dec:3:6
 const  1:6:4  *kW)
 
 kind  power_returned_l1_kw
 when  0  1-0:22.7.0
+requires  dsmr.power_returned_l1_kw
 field  dsmr.power_returned_l1_kw  1:0:6  dec:3:6
 const  1:6:4  *kW)
 
 kind  power_returned_l2_kw
 when  0  1-0:42.7.0
+requires  dsmr.power_returned_l2_kw
 field  dsmr.power_returned_l2_kw  1:0:6  dec:3:6
 const  1:6:4  *kW)
 
 kind  power_returned_l3_kw
 when  0  1-0:62.7.0
+requires  dsmr.power_returned_l3_kw
 field  dsmr.power_returned_l3_kw  1:0:6  dec:3:6
 const  1:6:4  *kW)
 
 kind  equipment_id
 when  0  0-0:96.1.1
+requires  dsmr.equipment_id
 field  dsmr.equipment_id  1  string
 
 kind  text_message
 when  0  0-0:96.13.0
+requires  dsmr.text_message
 field  dsmr.text_message  1  string
 
 kind  mbus1_device_type
 when  0  0-1:24.1.0
+requires  dsmr.mbus_device_type
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_device_type  1:0:3  int:3
 const  1:3:1  )
 
 kind  mbus1_equipment_id
 when  0  0-1:96.1.0
+requires  dsmr.mbus_equipment_id
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_equipment_id  1  string
 
 kind  mbus1_value
 when  0  0-1:24.2.1
+requires  dsmr.mbus_capture_time
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_capture_time  1:0:13  string
 const  1:13:1  )
@@ -188,17 +224,20 @@ field  dsmr.mbus_value  2  string
 
 kind  mbus2_device_type
 when  0  0-2:24.1.0
+requires  dsmr.mbus_device_type
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_device_type  1:0:3  int:3
 const  1:3:1  )
 
 kind  mbus2_equipment_id
 when  0  0-2:96.1.0
+requires  dsmr.mbus_equipment_id
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_equipment_id  1  string
 
 kind  mbus2_value
 when  0  0-2:24.2.1
+requires  dsmr.mbus_capture_time
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_capture_time  1:0:13  string
 const  1:13:1  )
@@ -206,17 +245,20 @@ field  dsmr.mbus_value  2  string
 
 kind  mbus3_device_type
 when  0  0-3:24.1.0
+requires  dsmr.mbus_device_type
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_device_type  1:0:3  int:3
 const  1:3:1  )
 
 kind  mbus3_equipment_id
 when  0  0-3:96.1.0
+requires  dsmr.mbus_equipment_id
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_equipment_id  1  string
 
 kind  mbus3_value
 when  0  0-3:24.2.1
+requires  dsmr.mbus_capture_time
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_capture_time  1:0:13  string
 const  1:13:1  )
@@ -224,17 +266,20 @@ field  dsmr.mbus_value  2  string
 
 kind  mbus4_device_type
 when  0  0-4:24.1.0
+requires  dsmr.mbus_device_type
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_device_type  1:0:3  int:3
 const  1:3:1  )
 
 kind  mbus4_equipment_id
 when  0  0-4:96.1.0
+requires  dsmr.mbus_equipment_id
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_equipment_id  1  string
 
 kind  mbus4_value
 when  0  0-4:24.2.1
+requires  dsmr.mbus_capture_time
 field  dsmr.mbus_channel  0:2:1  int
 field  dsmr.mbus_capture_time  1:0:13  string
 const  1:13:1  )
@@ -242,6 +287,7 @@ field  dsmr.mbus_value  2  string
 
 kind  power_failure_log
 when  0  1-0:99.97.0
+requires  dsmr.power_failure_log_count
 field  dsmr.power_failure_log_count  1  string
 field  dsmr.power_failure_log_id  2  string
 group  dsmr.power_failure_log  3  item 2

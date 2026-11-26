@@ -21,6 +21,13 @@ text message, the M-Bus value whose width and unit depend on the medium, the ent
 failure log) is the field as sent, its ')' included. The M-Bus objects are one kind per channel 1
 to 4, with the channel as a key.
 
+On encode with no recorded kind (a library entity, or a conversion), each kind requires a key
+of its own, so an entity is written as the line whose value it holds (before, every such entity
+was written as the header line `/`). The four M-Bus channels' kinds have the same keys and differ
+only in the channel digit inside their OBIS code, so `requires` reaches the channel 1 kind only:
+an M-Bus entity of channel 2, 3 or 4 is written as channel 1. Choosing a kind by a key's value
+is a language addition (`requires` on a value).
+
 ## Shared keys
 
 None. The date-time line 0-0:1.0.0 (YYMMDDhhmmssX) is kept as text and not bound to `time_ms`:
