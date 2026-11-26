@@ -2,8 +2,8 @@
 
 One line of a NORAD two-line element set: line 1 or line 2, or the name line (line 0) of
 the three-line form CelesTrak serves. Public. Hand-written on the `text` wire (engine-spec
-0.10) with `delimiter none`; every field is a column. Uses the modules `core` and `tle`
-(`model/tle.def`).
+0.10) with `delimiter none`; every field is a column. Uses the module `tle`
+(`model/tle.def`) and binds no `core` key.
 
 ## Message convention
 
