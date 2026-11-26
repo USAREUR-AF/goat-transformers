@@ -101,9 +101,6 @@ ubx-nav2/rt-2912-nav2_velned speed_ms defect(vector): the round trip encodes ran
 ubx-nav2/rt-2912-nav2_velned track.vel_east_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
 ubx-nav2/rt-2912-nav2_velned track.vel_north_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
 ubx-nav2/rt-2912-nav2_velned track.vel_up_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
-etsi-cam/15-edges-lower-position-speed-and-heading-unavailable course defect(pack): the heading value 3601 means unavailable in ETSI CAM and decodes as 360.1; the field needs an `absent` sentinel
-etsi-cam/16-position-unavailable lat defect(pack): the latitude value 900000001 means unavailable in ETSI CAM and decodes as 90.0000001; the field needs an `absent` sentinel
-etsi-cam/16-position-unavailable lon defect(pack): the longitude value 1800000001 means unavailable in ETSI CAM and decodes as 180.0000001; the field needs an `absent` sentinel
 gmti-records/pack.md datum datum: maps hae and detection.sensor_hae and names no vertical datum (STANAG 4607 is expected to give heights above the WGS 84 ellipsoid; the owner confirms and says so in pack.md)
 gmti-segment/pack.md datum datum: maps hae and detection.sensor_hae and names no vertical datum (STANAG 4607 is expected to give heights above the WGS 84 ellipsoid; the owner confirms and says so in pack.md)
 gmti-segment-records/pack.md datum datum: maps hae and detection.sensor_hae and names no vertical datum (STANAG 4607 is expected to give heights above the WGS 84 ellipsoid; the owner confirms and says so in pack.md)

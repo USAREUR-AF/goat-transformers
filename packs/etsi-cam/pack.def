@@ -17,16 +17,16 @@ encoding      uper
 # What an encoder writes for a mandatory component the entity does not hold:
 # the value the ASN.1 names unavailable (pack.md, "Defaults").
 default  etsicam.protocol_version                      2
-default  lat                                           90.0000001
-default  lon                                           180.0000001
+default  etsicam.latitude                              900000001
+default  etsicam.longitude                             1800000001
 default  etsicam.semi_major_confidence                 4095
 default  etsicam.semi_minor_confidence                 4095
 default  etsicam.semi_major_orientation                3601
 default  etsicam.altitude_value                        800001
 default  etsicam.altitude_confidence                   15
-default  course                                        360.1
+default  etsicam.heading_value                         3601
 default  etsicam.heading_confidence                    127
-default  speed_ms                                      163.83
+default  etsicam.speed_value                           16383
 default  etsicam.speed_confidence                      127
 default  etsicam.drive_direction                       2
 default  etsicam.vehicle_length_value                  1023
@@ -61,8 +61,8 @@ ext
   ext
     field  etsicam.station_type            int:0:255                  uint
     # referencePosition: ReferencePosition (SEQUENCE, no extension marker)
-    field  lat                             int:-900000000:900000001   uscale:1/10000000
-    field  lon                             int:-1800000000:1800000001 uscale:1/10000000
+    field  etsicam.latitude                int:-900000000:900000001   uint
+    field  etsicam.longitude               int:-1800000000:1800000001 uint
     field  etsicam.semi_major_confidence   int:0:4095                 uint
     field  etsicam.semi_minor_confidence   int:0:4095                 uint
     field  etsicam.semi_major_orientation  int:0:3601                 uint
@@ -75,9 +75,9 @@ ext
     alt 0
       # basicVehicleContainerHighFrequency (SEQUENCE, no extension marker)
       presence hf 7
-      field  course                                        int:0:3601        uscale:1/10
+      field  etsicam.heading_value                         int:0:3601        uint
       field  etsicam.heading_confidence                    int:1:127         uint
-      field  speed_ms                                      int:0:16383       uscale:1/100
+      field  etsicam.speed_value                           int:0:16383       uint
       field  etsicam.speed_confidence                      int:1:127         uint
       field  etsicam.drive_direction                       enum:3            uint
       field  etsicam.vehicle_length_value                  int:1:1023        uint

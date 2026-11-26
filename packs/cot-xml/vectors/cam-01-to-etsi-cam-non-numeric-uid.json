@@ -3,7 +3,7 @@
   "from": "cot-xml",
   "to": "etsi-cam",
   "input": "<event version=\"2.0\" uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" start=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><track course=\"90\" speed=\"5\"/></detail></event>",
-  "expect": "02020000000000000008f0fd756701b6575ffffffc23b7743e00384fc0fa7ebfe9ed0737feebfff600",
+  "expect": "0202000000000000000d693a403ad274803ffffffc23b7743e00e11fdffffebfe9ed0737feebfff600",
   "model": {
     "@complete": true,
     "uid": "J-01334",
@@ -13,5 +13,5 @@
     "speed_ms": "5"
   },
   "source": "constructed",
-  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. uid J-01334 is not a decimal number: parse_int leaves etsicam.station_id absent (ruling 28 of 0.8), and stationID is written as its lower bound 0 (ruling 1 of 0.19). lat round(30.0090027 * 10000000 / 1) = 300090027, lon round(-85.9578182 * 10000000 / 1) = -859578182, heading round(90 * 10) = 900, speed round(5 * 100) = 500; type, time, how, hae, ce and le have no line in the pack; the other components from the defaults as in geojson cam-01. 322 bits. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine."
+  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. uid J-01334 is not a decimal number: parse_int leaves etsicam.station_id absent (ruling 28 of 0.8), and stationID is written as its lower bound 0 (ruling 1 of 0.19). lat round(30.0090027 * 10000000 / 1) = 300090027, lon round(-85.9578182 * 10000000 / 1) = -859578182, heading round(90 * 10) = 900, speed round(5 * 100) = 500; type, time, how, hae, ce and le have no line in the pack; the other components from the defaults as in geojson cam-01. 322 bits. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine.; latitude and longitude are raw keys of etsi-cam, absent here, so their unavailable values are written; course and speed are raw keys of etsi-cam, so the unavailable codes 3601 and 16383 are written"
 }
