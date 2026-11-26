@@ -24,12 +24,15 @@ in the source should treat these as approximate.
 
 **On names.** The reference's rules say every property name is camelCase, and the site's
 example file names the numeric position `latitudeNumeric` and `longitudeNumeric`; the
-reference's annotated example writes `latitude_numeric` once. The pack follows the rule.
+reference itself writes `latitude_numeric` and `longitude_numeric` (four times each: in the
+list of numeric values and in its examples). The pack follows the camelCase rule and the
+example file; a file that used the reference's spelling would give no `lat` and `lon`.
 
 ## Not mapped
 
-- `intensity` (knots) and `pressure` (millibars): the reference lists them as numbers, and
-  the site's example file sends them as text. A line can read one JSON type only, so they
+- `intensity` (knots) and `pressure` (millibars): the reference's list of values sent as
+  numbers names `pressure` but not `intensity` (its annotated example writes `intensity` as
+  a number), and the site's example file sends both as text. A line can read one JSON type only, so they
   are not lines; at the top level they are residue and come back as sent, number or text.
 - `fileUpdateTime` (sent inside each advisory object, not in the reference),
   `stormSurgeWatchWarningGIS` and `potentialStormSurgeFloodingGIS`: residue; a `null`
