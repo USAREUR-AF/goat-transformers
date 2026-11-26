@@ -26,7 +26,14 @@ An adapter moves bytes and finds message boundaries. It has three parts:
 
 The pipeline (`adapters/core/src/pipeline.rs`) joins them: for each message from
 the source it calls the engine's `convert_text(from, to, message, context)` and
-gives the result to each sink.
+gives the result to each sink. When the input format is a carrier whose `inner`
+line reads a run of messages (`inner <format> run`, engine-spec 0.92, such as a
+JREAP-C block of several J-series messages), it calls `convert_run` instead:
+each message of the run is one output frame, counted in `converted` and in
+`goat_xf_pipe_messages_out_total`, and a message that fails is counted and
+reported with its place in the run while the others are delivered. With
+`--packs-only`, the packs that the `inner` lines of a named pack name are loaded
+with it.
 
 An adapter does not read, change or select fields. Everything about the content
 of a message is in a pack. An adapter does not guess: the format of the input,

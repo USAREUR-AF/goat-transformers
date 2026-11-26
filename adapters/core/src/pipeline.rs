@@ -1,4 +1,6 @@
 //! The pipeline: source -> engine.convert(from, to, context) -> sinks.
+//! From a carrier pack whose `inner` line reads a run of messages (engine-spec
+//! 0.92) it is engine.convert_run, and each message is one output frame.
 //!
 //! One thread, one message at a time, no queue. A slow sink slows the
 //! source; nothing is buffered between them. A message that does not convert
@@ -21,6 +23,28 @@ use std::time::{Duration, Instant};
 pub struct Formats {
     engine: Engine,
     binary: BTreeMap<String, bool>,
+    // the formats whose pack has an `inner <format> run` line (0.92)
+    runs: std::collections::BTreeSet<String>,
+}
+
+/// The tokens of a pack line before any `#`.
+fn tokens(line: &str) -> Vec<&str> {
+    line.split('#').next().unwrap_or("").split_whitespace().collect()
+}
+
+/// The formats a pack's `inner` lines name, and whether one of them reads a
+/// run (`inner <format> run`), from the text alone.
+fn inner_lines(text: &str) -> (Vec<String>, bool) {
+    let mut names = Vec::new();
+    let mut run = false;
+    for l in text.lines() {
+        let t = tokens(l);
+        if t.len() >= 2 && t[0] == "inner" {
+            names.push(t[1].to_string());
+            run |= t[2..].contains(&"run");
+        }
+    }
+    (names, run)
 }
 
 impl Formats {
@@ -41,27 +65,48 @@ impl Formats {
             .collect();
         dirs.sort();
         let mut binary = BTreeMap::new();
+        let mut runs = std::collections::BTreeSet::new();
         let mut wanted: Vec<(Pack, std::path::PathBuf)> = Vec::new();
+        // (pack.def, its text, its format line)
+        let mut texts: Vec<(std::path::PathBuf, String, Option<String>)> = Vec::new();
         for d in dirs {
             let def = d.join("pack.def");
             if !def.exists() {
                 continue;
             }
-            let located = |e: Error| Error { msg: format!("{} (in {})", e.msg, def.display()) };
             let text = std::fs::read_to_string(&def).map_err(|e| Error { msg: format!("cannot read {}: {}", def.display(), e) })?;
-            if let Some(only) = only {
-                // the `format` line says whether this pack was asked for;
-                // a pack that was not is neither parsed nor checked
-                let format = text.lines().find_map(|l| {
-                    let mut t = l.split_whitespace();
-                    (t.next() == Some("format")).then(|| t.next()).flatten()
-                });
-                if !format.map_or(false, |f| only.iter().any(|o| o == f)) {
-                    continue;
+            let format = text.lines().find_map(|l| {
+                let t = tokens(l);
+                (t.len() >= 2 && t[0] == "format").then(|| t[1].to_string())
+            });
+            texts.push((def, text, format));
+        }
+        // with `only`, the named formats and (engine-spec 0.34) every format
+        // an `inner` line of one of them names, and so on
+        let mut asked: Vec<String> = only.map(|o| o.to_vec()).unwrap_or_default();
+        let mut i = 0;
+        while only.is_some() && i < asked.len() {
+            if let Some((_, text, _)) = texts.iter().find(|t| t.2.as_deref() == Some(asked[i].as_str())) {
+                for n in inner_lines(text).0 {
+                    if !asked.contains(&n) {
+                        asked.push(n);
+                    }
                 }
+            }
+            i += 1;
+        }
+        for (def, text, format) in texts {
+            let located = |e: Error| Error { msg: format!("{} (in {})", e.msg, def.display()) };
+            // the `format` line says whether this pack was asked for; a pack
+            // that was not is neither parsed nor checked
+            if only.is_some() && !format.as_ref().map_or(false, |f| asked.contains(f)) {
+                continue;
             }
             let pack = Pack::parse(&text).map_err(located)?;
             binary.insert(pack.format.clone(), matches!(pack.wire, Wire::Bits | Wire::Protobuf));
+            if inner_lines(&text).1 {
+                runs.insert(pack.format.clone());
+            }
             if only.is_some() {
                 wanted.push((pack, def));
             } else {
@@ -80,7 +125,7 @@ impl Formats {
                 return Err(Error { msg: format!("no pack for format `{}` in {}", name, packs.display()) });
             }
         }
-        Ok(Formats { engine, binary })
+        Ok(Formats { engine, binary, runs })
     }
 
     pub fn engine(&self) -> &Engine {
@@ -92,6 +137,10 @@ impl Formats {
     }
     pub fn names(&self) -> Vec<String> {
         self.binary.keys().cloned().collect()
+    }
+    /// Is this format a carrier of a run of messages (`inner <format> run`)?
+    pub fn is_run_carrier(&self, format: &str) -> bool {
+        self.runs.contains(format)
     }
 }
 
@@ -389,44 +438,71 @@ impl<'a> Pipeline<'a> {
         context.extend(self.context.iter().cloned());
         let context = if context.is_empty() { None } else { Some(context.as_slice()) };
         let engine = self.formats.engine();
+        // from a carrier of a run, convert_run: one result per message (0.92)
+        let run = self.formats.is_run_carrier(&self.from);
         // one conversion per target format, however many outputs share it
-        let mut done: Vec<(String, Result<String, Error>)> = Vec::new();
+        let mut done: Vec<(String, Result<Vec<Result<String, Error>>, Error>)> = Vec::new();
         for i in 0..self.outputs.len() {
             let to = self.outputs[i].to.clone();
             if !done.iter().any(|(t, _)| *t == to) {
-                done.push((to.clone(), engine.convert_text(&self.from, &to, &text, context)));
+                let res = if run {
+                    engine.convert_run_text_limited(&self.from, &to, &text, context, engine.max_items())
+                } else {
+                    engine.convert_text(&self.from, &to, &text, context).map(|out| vec![Ok(out)])
+                };
+                done.push((to.clone(), res));
             }
             let result = &done.iter().find(|(t, _)| *t == to).unwrap().1;
-            // (stage, error name, text, fatal)
-            let delivered = match result {
-                Err(e) => {
-                    // which side failed: decode the input alone (only on a failure)
-                    let stage = if engine.decode(&self.from, &text).is_err() { "decode" } else { "encode" };
-                    Err((stage, error_kind(&e.msg).to_string(), e.msg.clone(), false))
-                }
-                Ok(out) => {
-                    let binary = self.formats.is_binary(&to).unwrap_or(false);
-                    let bytes = if binary && !self.outputs[i].hex {
-                        bits::from_hex(out).map_err(|e| ("encode", error_kind(&e.msg).to_string(), e.msg, false))
-                    } else {
-                        Ok(out.clone().into_bytes())
-                    };
-                    bytes.and_then(|b| {
-                        self.outputs[i].sink.send(&b, &Meta { seq, origin }).map_err(|e| {
-                            ("deliver", e.kind.clone(), format!("{} at {}", e, self.outputs[i].sink.describe()), e.fatal)
-                        })
-                    })
+            // which side failed, read only on a failure: the decode of the
+            // input, or of message `m` of the run
+            let decode_failed = |m: Option<usize>| {
+                if run {
+                    match engine.decode_run(&self.from, &text) {
+                        Err(_) => true,
+                        Ok((_, msgs)) => m.map_or(false, |m| msgs.get(m).map_or(true, |r| r.is_err())),
+                    }
+                } else {
+                    engine.decode(&self.from, &text).is_err()
                 }
             };
-            match delivered {
-                Ok(()) => {
-                    self.stats.delivered(&to);
-                }
-                Err((stage, kind, text, fatal)) => {
-                    let format = if stage == "decode" { self.from.clone() } else { to.clone() };
-                    self.report(stage, &format, &kind, format!("{}: {}", at(&to), text));
-                    if stop || fatal {
-                        return Err(text);
+            // (message index in a run, its result)
+            let each: Vec<(Option<usize>, Result<&String, &Error>)> = match result {
+                Err(e) => vec![(None, Err(e))],
+                Ok(list) => list.iter().enumerate().map(|(m, r)| (run.then_some(m), r.as_ref())).collect(),
+            };
+            let count = each.len();
+            for (m, r) in each {
+                // (stage, error name, text, fatal)
+                let delivered = match r {
+                    Err(e) => {
+                        let stage = if decode_failed(m) { "decode" } else { "encode" };
+                        Err((stage, error_kind(&e.msg).to_string(), e.msg.clone(), false))
+                    }
+                    Ok(out) => {
+                        let binary = self.formats.is_binary(&to).unwrap_or(false);
+                        let bytes = if binary && !self.outputs[i].hex {
+                            bits::from_hex(out).map_err(|e| ("encode", error_kind(&e.msg).to_string(), e.msg, false))
+                        } else {
+                            Ok(out.clone().into_bytes())
+                        };
+                        bytes.and_then(|b| {
+                            self.outputs[i].sink.send(&b, &Meta { seq, origin }).map_err(|e| {
+                                ("deliver", e.kind.clone(), format!("{} at {}", e, self.outputs[i].sink.describe()), e.fatal)
+                            })
+                        })
+                    }
+                };
+                match delivered {
+                    Ok(()) => {
+                        self.stats.delivered(&to);
+                    }
+                    Err((stage, kind, text, fatal)) => {
+                        let format = if stage == "decode" { self.from.clone() } else { to.clone() };
+                        let which = m.map(|m| format!(" (message {} of {} in the run)", m + 1, count)).unwrap_or_default();
+                        self.report(stage, &format, &kind, format!("{}{}: {}", at(&to), which, text));
+                        if stop || fatal {
+                            return Err(text);
+                        }
                     }
                 }
             }
