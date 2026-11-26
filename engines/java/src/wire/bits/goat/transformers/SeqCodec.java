@@ -475,6 +475,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                     run.messages.add(stop);   // the last result: what follows cannot be found
                     break;
                 }
+                run.ended(layer.entity);   // its decode came to its end, a transform-decode included (ruling 5)
                 try {
                     inner.finishDecode(layer.entity, layer.fails);
                     run.messages.add(layer.entity);

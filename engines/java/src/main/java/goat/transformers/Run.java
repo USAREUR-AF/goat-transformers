@@ -54,9 +54,40 @@ public final class Run {
         /** Of an ordinary message: its decode error. */
         GtException ordinaryError;
 
+        /** The messages whose decode came to its end, a transform-decode included (ruling 5). */
+        long ended;
+        /** The items of those messages' own entities, summed (ruling 5); saturates at Long.MAX_VALUE. */
+        long items;
+
         State(boolean toCarrier, long max) {
             this.toCarrier = toCarrier;
             this.max = max;
+        }
+
+        /** A message whose decode came to its end: its own items join the sum of ruling 5. */
+        void ended(Entity message) {
+            ended++;
+            items = add(items, Codec.listItems(message));
+        }
+
+        /**
+         * Ruling 5: over the messages whose decode came to its end, the outer entity's items once for each and each
+         * message's own items, summed; one more than {@code max} is {@code malformed-wire} of the call. Made once the
+         * carrier's decode has ended, after the call's other decode errors, before context and encode.
+         */
+        void checkSum(String format) {
+            long outerItems = Codec.listItems(outer);
+            long sum = add(items, outerItems == 0 || ended == 0 ? 0
+                    : ended > Long.MAX_VALUE / outerItems ? Long.MAX_VALUE : ended * outerItems);
+            if (sum > max) {
+                throw new GtException(GtException.Code.MALFORMED_WIRE, format, null, "the joined entities of the run hold "
+                        + sum + " list items together, more than " + max + " (the limit on list items)");
+            }
+        }
+
+        private static long add(long a, long b) {
+            long s = a + b;
+            return s < 0 ? Long.MAX_VALUE : s;
         }
     }
 

@@ -48,6 +48,7 @@ struct RunMessage {
     Entity entity;               // the message alone
     std::optional<Error> error;
     bool stopped = false;        // the error ended the run
+    std::uint64_t items = 0;     // its own items, when its decode came to its end (ruling 5)
 };
 struct RunSink {
     std::uint64_t max_items = 0;

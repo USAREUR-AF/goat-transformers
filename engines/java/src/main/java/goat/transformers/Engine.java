@@ -988,6 +988,7 @@ public final class Engine {
             return new Run.Decoded(d.ordinaryError != null ? null : d.outer, messages);
         }
         if (d.outerError != null) throw d.outerError;
+        d.checkSum(format);   // the outer entity given alone is not counted again (ruling 5)
         for (Object m : d.messages) messages.add(m instanceof Entity ? Run.join(d.outer, (Entity) m) : m);
         return new Run.Decoded(d.outer, messages);
     }
@@ -1026,6 +1027,7 @@ public final class Engine {
         // the errors that stop a decode were thrown; then the other decode errors, the context, encode (ruling 4)
         if (d.outerError != null) throw d.outerError;
         if (toCarrier) for (Object m : d.messages) if (m instanceof GtException) throw (GtException) m;
+        d.checkSum(from);   // after every other decode error of the call, before context and encode (ruling 5)
         if (context != null) readContext(context);
         if (!toCarrier) {
             java.util.List<Run.Result> out = new java.util.ArrayList<>();

@@ -79,6 +79,9 @@
 %% has reached no `run` line; passed once it will reach none; {run, Format,
 %% Results} after one
 -define(RUN, {gt_engine, run}).
+%% Version 0.92 ruling 5: {Messages, Items} of a run, the number of messages
+%% whose decode came to its end and the sum of their own list items
+-define(RUN_ITEMS, {gt_engine, run_items}).
 
 %% Marks the message of a failure that no reader or writer names.
 -define(UNCLASSIFIED, "[unclassified:").
@@ -264,10 +267,12 @@ run_passed() ->
 %% The messages of a `run` line from its extent's bytes, kept as the run's
 %% results: {ok, Entity, none | FailedMessage} | {stop, Kind, Message}, the
 %% last only at the end. One message more than `max_items` is malformed-wire of
-%% the call (ruling 5).
+%% the call (ruling 5). The own items of the messages whose decode came to its
+%% end are summed as they are read, into ?RUN_ITEMS.
 run_messages(Outer, Inner, Bin) ->
     Budget = get(?ITEMS),
     Limit = maps:get(max_items, Outer, ?DEFAULT_MAX_ITEMS),
+    put(?RUN_ITEMS, {0, 0}),
     Results = run_loop(Outer, Inner#{shadow => #{}, run_msg => true}, Bin, Budget, Limit, 0, []),
     put(?ITEMS, Budget),
     put(?RUN, {run, maps:get(name, Inner), Results}).
@@ -282,6 +287,10 @@ run_loop(Outer, Inner, Bin, Budget, Limit, N, Acc) ->
             End = maps:get('end', element(2, Ok)),
             case End > 0 andalso End =< bit_size(Bin) of
                 true ->
+                    {_, Start} = Budget,
+                    {_, Taken} = get(?ITEMS),
+                    {Ended, Sum} = get(?RUN_ITEMS),
+                    put(?RUN_ITEMS, {Ended + 1, Sum + Taken - Start}),
                     <<_:End/bits, Rest/binary>> = Bin,
                     run_loop(Outer, Inner, Rest, Budget, Limit, N + 1, [Ok | Acc]);
                 false ->
@@ -322,7 +331,7 @@ run_message(Inner, Bin, Budget) ->
 
 %% The decode of a run operation -> {ordinary, {ok, Entity} | {error, Kind,
 %% Message}} | {carrier, OuterEntity, none | FailedMessage, InnerFormat,
-%% Results} | {stopped, Kind, Message, none | {InnerFormat, Results}}: the last
+%% Results, ok | {over, Message}} | {stopped, Kind, Message, none | {InnerFormat, Results}}: the last
 %% a carrier pack's decode that an error of its own lines stopped at its run
 %% line, after it, or before it was known whether one is reached.
 run_decode(Pack, Bytes) when is_list(Bytes) -> run_decode(Pack, iolist_to_binary(Bytes));
@@ -337,7 +346,8 @@ run_decode(#{has_run := true} = Pack, Bytes) ->
                          Msg -> Msg
                      end,
             case {get(?RUN), Failed} of
-                {{run, Format, Results}, _} -> {carrier, Entity, Failed, Format, Results};
+                {{run, Format, Results}, _} ->
+                    {carrier, Entity, Failed, Format, Results, run_over(Pack)};
                 {_, none} -> {ordinary, {ok, Entity}};
                 {_, _} -> {ordinary, {error, 'transform-decode', Failed}}
             end
@@ -348,7 +358,7 @@ run_decode(#{has_run := true} = Pack, Bytes) ->
             catch error:{convert_error, K2, M2} -> run_stopped(K2, M2)
             end
     after
-        [erase(K) || K <- [?ITEMS, ?OVER, ?FAILED, ?PASS, ?INNER_FAILED, ?RUN]]
+        [erase(K) || K <- [?ITEMS, ?OVER, ?FAILED, ?PASS, ?INNER_FAILED, ?RUN, ?RUN_ITEMS]]
     end;
 run_decode(Pack, Bytes) ->
     try decode(Pack, Bytes) of
@@ -356,6 +366,26 @@ run_decode(Pack, Bytes) ->
     catch
         error:{convert_error, K, M} -> {ordinary, {error, K, M}}
     end.
+
+%% The items of all the joined entities of a run (ruling 5): the outer
+%% entity's, once for each message whose decode came to its end, and each such
+%% message's own; one more than `max_items` -> {over, Message}, else ok. Read
+%% when the carrier's decode has ended; the outer count excludes the messages'
+%% items, which run_messages gives back.
+run_over(Pack) ->
+    {Limit, OuterItems} = get(?ITEMS),
+    {Ended, Sum} = get(?RUN_ITEMS),
+    Total = OuterItems * Ended + Sum,
+    case Total > Limit of
+        true ->
+            {over, lists:flatten(io_lib:format("malformed-wire: format ~s: the entities of the run hold ~p list items, more than ~p",
+                                               [maps:get(name, Pack), Total, Limit]))};
+        false -> ok
+    end.
+
+%% malformed-wire of the call when the sum of ruling 5 is over the limit.
+run_sum(ok) -> ok;
+run_sum({over, Msg}) -> raise('malformed-wire', Msg).
 
 run_stopped(Kind, Msg) ->
     case get(?RUN) of
@@ -373,8 +403,9 @@ decode_run(Engine, Format, Bytes) ->
         {ordinary, {ok, Entity}} -> {Entity, [Entity]};
         {ordinary, Error} -> {undefined, [Error]};
         {stopped, K, M, _} -> raise(K, M);
-        {carrier, _, Failed, _, _} when Failed =/= none -> raise('transform-decode', Failed);
-        {carrier, Outer, none, _, Results} ->
+        {carrier, _, Failed, _, _, _} when Failed =/= none -> raise('transform-decode', Failed);
+        {carrier, Outer, none, _, Results, Over} ->
+            run_sum(Over),
             {Outer, [case R of
                          {ok, IE, none} -> run_join(Outer, IE);
                          {ok, _, Msg} -> {error, 'transform-decode', Msg};
@@ -405,9 +436,10 @@ run_results(Engine, From, To, ToPack, {ordinary, {ok, Entity}}, Context) ->
     _ = context(Engine, Context),
     [run_result(fun() -> finish(Engine, From, To, ToPack, Entity, Context) end)];
 run_results(_Engine, _From, _To, _ToPack, {stopped, K, M, _}, _Context) -> raise(K, M);
-run_results(_Engine, _From, _To, _ToPack, {carrier, _, Failed, _, _}, _Context) when Failed =/= none ->
+run_results(_Engine, _From, _To, _ToPack, {carrier, _, Failed, _, _, _}, _Context) when Failed =/= none ->
     raise('transform-decode', Failed);
-run_results(Engine, From, To, ToPack, {carrier, Outer, none, _, Results}, Context) ->
+run_results(Engine, From, To, ToPack, {carrier, Outer, none, _, Results, Over}, Context) ->
+    run_sum(Over),
     _ = context(Engine, Context),
     [case R of
          {ok, IE, none} ->
@@ -433,12 +465,13 @@ run_carrier(_Engine, _From, _To, _ToPack, {stopped, K, M, Run}, _Context) ->
         none -> ok
     end,
     raise(K, M);
-run_carrier(Engine, From, To, ToPack, {carrier, Outer, Failed, Format, Results}, Context) ->
+run_carrier(Engine, From, To, ToPack, {carrier, Outer, Failed, Format, Results, Over}, Context) ->
     run_stop(Results),
     case [M || M <- [Failed | [Msg || {ok, _, Msg} <- Results]], M =/= none] of
         [] -> ok;
         [M1 | _] -> raise('transform-decode', M1)
     end,
+    run_sum(Over),
     _ = context(Engine, Context),
     Outer1 = kinds_for(Outer, From, To, ToPack),
     Outer2 = case From =:= To andalso Context =:= none of

@@ -122,6 +122,9 @@ func (e *Engine) DecodeRun(format string, b []byte) (*Entity, []RunResult, error
 	if len(failed) > 0 {
 		return nil, nil, &DecodeError{Format: p.Format, Fields: failed}
 	}
+	if err := e.runItems(p.Format, d, run); err != nil {
+		return nil, nil, err
+	}
 	results := []RunResult{}
 	for i := range run.msgs {
 		m := &run.msgs[i]
@@ -178,6 +181,9 @@ func (e *Engine) ConvertRunOrdered(from, to string, b []byte, ctx []KeyValue) ([
 	// Errors of the outer lines, then the context, are the call's (ruling 4).
 	if failed := d.unforgiven(0, len(d.failed)); len(failed) > 0 {
 		return nil, &DecodeError{Format: from, Fields: failed}
+	}
+	if err := e.runItems(from, d, run); err != nil {
+		return nil, err
 	}
 	vals, err := e.contextValues(keys, context)
 	if err != nil {
@@ -239,6 +245,9 @@ func (e *Engine) convertCarrier(d *decodeState, run *runDecode, from string, dst
 	if len(failed) > 0 {
 		return nil, &DecodeError{Format: from, Fields: failed}
 	}
+	if err := e.runItems(from, d, run); err != nil {
+		return nil, err
+	}
 	vals, err := e.contextValues(keys, context)
 	if err != nil {
 		return nil, err
@@ -283,4 +292,35 @@ func (e *Engine) convertCarrier(d *decodeState, run *runDecode, from string, dst
 	}
 	msgs[0].Kind = EntityKind{Format: dst.Format, Name: kind}
 	return e.encodeWith(dst, msgs[0])
+}
+
+// runItems bounds the items of all the joined entities of a run together
+// (0.92 ruling 5): over the messages whose decode came to its end, a message
+// whose result is a `transform-decode` included, the items of the outer
+// entity once for each and each message's own items are summed. The sum may
+// reach the limit; one item more is `malformed-wire` of the call. The outer
+// entity is walked once, and each message once.
+func (e *Engine) runItems(format string, d *decodeState, run *runDecode) error {
+	outer := int64(0)
+	for _, l := range d.ent.Lists {
+		outer += deepItems(l)
+	}
+	sum := int64(0)
+	for i := range run.msgs {
+		m := &run.msgs[i]
+		if m.stop != nil || m.ent == nil {
+			continue
+		}
+		own := int64(0)
+		for _, l := range m.ent.Lists {
+			own += deepItems(l)
+		}
+		// The sum never passes the limit, so the subtractions cannot
+		// overflow.
+		if outer > e.maxItems-sum || own > e.maxItems-sum-outer {
+			return &Error{Kind: ErrMalformedWire, Format: format, Detail: fmt.Sprintf("the items of the joined entities of the run exceed the limit of %d list items at message %d", e.maxItems, i+1)}
+		}
+		sum += outer + own
+	}
+	return nil
 }

@@ -978,9 +978,38 @@ class Run:
     `error`, the error that ended the outer decode, `stops` whether it stopped
     it; `messages`, each an Entity or its error, `ended` whether the last one's
     error stopped its decode; `format`, the inner format of the `run` line
-    reached, None when none was; `ordinary`, that none is reached is known."""
+    reached, None when none was; `ordinary`, that none is reached is known;
+    `over`, the `malformed-wire` of ruling 5's bound on the items of all the
+    joined entities, None when the sum is within `max_items`."""
 
-    __slots__ = ("entity", "error", "stops", "messages", "ended", "format", "ordinary")
+    __slots__ = ("entity", "error", "stops", "messages", "ended", "format", "ordinary", "over")
+
+
+def _sum_over(pack, entity, messages, ended, limit):
+    """0.92 ruling 5: over the messages whose decode came to its end (a
+    `transform-decode` included), the outer entity's items once for each and
+    each message's own items -> the `malformed-wire` when the sum exceeds
+    `limit`, else None. The outer entity is counted once and multiplied."""
+    if limit is None or entity is None:
+        return None
+    done = messages[:-1] if ended else messages
+    if not done:
+        return None
+    total = _held_lists(entity.lists) * len(done)
+    for m in done:
+        ent = m if isinstance(m, Entity) else getattr(m, "entity", None)
+        if ent is not None:
+            total += _held_lists(ent.lists)
+        if total > limit:
+            break
+    if total <= limit:
+        return None
+    return MalformedWire("the joined entities of the run hold more than the %d item(s) allowed" % limit,
+                         format=pack.name)
+
+
+def _held_lists(lists):
+    return sum(_held(items) for items in lists.values())
 
 
 def decode_run(pack, data, limit, layer):
@@ -999,6 +1028,9 @@ def decode_run(pack, data, limit, layer):
     out.messages, out.ended = rd.messages, rd.ended
     out.format = rd.run_format
     out.ordinary = rd.run_format is None and (rd.passed or not out.stops)
+    out.over = None
+    if not out.ordinary and not out.stops:
+        out.over = _sum_over(pack, out.entity, out.messages, out.ended, limit)
     return out
 
 

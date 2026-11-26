@@ -2307,6 +2307,7 @@ void decode_run_messages(SeqIn& in, const SeqNode& n, const Pack& inner, RunSink
             m.stopped = true;
             break;
         }
+        m.items = scope.held;
         try {
             scope.raise_failure();
         } catch (const Error& ex) {

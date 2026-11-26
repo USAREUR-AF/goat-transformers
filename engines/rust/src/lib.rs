@@ -4381,6 +4381,28 @@ impl Default for Engine {
     }
 }
 
+/// The bound on the items of all the joined entities of a run (engine-spec
+/// v0.92, ruling 5): over the messages whose decode came to its end, a
+/// `transform-decode` included, the outer entity's items once for each and
+/// each message's own items. The sum may reach `max`; past it is
+/// `malformed-wire` of the call. The outer entity is counted once and
+/// multiplied, so the check is linear in the number of messages.
+#[cfg(feature = "bits")]
+fn run_sum(from: &str, run: &str, outer: &Entity, messages: &[Result<Decoded, Error>], max: usize) -> Result<(), Error> {
+    let each = limit::items_of(&outer.lists) as u128;
+    let mut sum: u128 = 0;
+    for d in messages.iter().filter_map(|m| m.as_ref().ok()) {
+        sum += each + limit::items_of(&d.ent.lists) as u128;
+    }
+    if sum > max as u128 {
+        return err(format!(
+            "malformed-wire: format `{}`: the entities joined from the `{}` run hold {} list items together, beyond the limit of {}",
+            from, run, sum, max
+        ));
+    }
+    Ok(())
+}
+
 /// What a run operation decoded (engine-spec v0.92).
 #[cfg(feature = "bits")]
 enum Carrier {
@@ -5005,8 +5027,9 @@ impl Engine {
         match self.read_carrier(format, bytes, self.max_items)? {
             // an error of an ordinary message is its one result (ruling 4)
             Carrier::Ordinary(res) => Ok((res.clone().unwrap_or_default(), vec![res])),
-            Carrier::Run { outer, messages, .. } => {
+            Carrier::Run { outer, messages, format: run } => {
                 let outer = outer?;
+                run_sum(format, &run, &outer, &messages, self.max_items)?;
                 let joined = messages.into_iter().map(|m| self.join_message(format, &outer, m)).collect();
                 Ok((outer, joined))
             }
@@ -5105,6 +5128,7 @@ impl Engine {
             // one result per message
             None => {
                 let outer = outer?;
+                run_sum(from, &format, &outer, &messages, max_items)?;
                 let context = read_context()?;
                 let results = messages.into_iter().map(|m| {
                     let mut ent = self.join_message(from, &outer, m)?;
@@ -5123,12 +5147,15 @@ impl Engine {
             return Err(e.clone());
         }
         let outer = outer?;
+        // reported after the messages' own decode errors, before context
+        let sum = run_sum(from, &format, &outer, &messages, max_items);
         let mut joined = Vec::with_capacity(messages.len());
         for m in messages {
             let mut ent = self.join_message(from, &outer, m)?;
             self.keep_kinds(from, to, &mut ent);
             joined.push(ent);
         }
+        sum?;
         let context = read_context()?;
         let mut outer = outer;
         if from != to {

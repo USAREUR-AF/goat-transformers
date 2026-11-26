@@ -1010,6 +1010,7 @@ struct RunRead {
     detail::RunSink sink;
     std::optional<Error> stopped;  // the error that stopped the outer lines
     std::optional<Error> failed;   // an outer transform-decode
+    std::optional<Error> over;     // the items of all joined entities beyond max_items (ruling 5)
 };
 detail::RunLine run_line(const Pack& p, const Entity& e) {
 #if GT_WIRE_BITS
@@ -1036,6 +1037,27 @@ RunRead read_run(const Engine& eng, const Pack& p, const std::string& bytes) {
         scope.raise_failure();
     } catch (const Error& ex) {
         r.failed = ex;
+    }
+    // Ruling 5: over the messages whose decode came to its end, the outer
+    // entity's items once for each and each message's own items, summed. The
+    // outer lines count into this scope, each message into its own.
+    if (r.sink.reached) {
+        const std::uint64_t limit = eng.max_items();
+        std::uint64_t sum = 0;
+        bool beyond = false;
+        for (const auto& m : r.sink.messages) {
+            if (m.stopped) continue;
+            const std::uint64_t add = scope.held;
+            if (add > limit - sum || m.items > limit - sum - add) {
+                beyond = true;
+                break;
+            }
+            sum += add + m.items;
+        }
+        if (beyond)
+            r.over = Error(ErrorKind::MalformedWire, p.format, "",
+                           "the entities of the run of " + r.sink.inner_format + " hold more than " +
+                               std::to_string(limit) + " items together");
     }
     return r;
 }
@@ -1068,6 +1090,7 @@ Engine::RunDecode Engine::decode_run(const std::string& format, const std::strin
     }
     if (r.stopped) throw *r.stopped;
     if (r.failed) throw *r.failed;
+    if (r.over) throw *r.over;
     for (const auto& m : r.sink.messages) {
         RunEntity one;
         if (m.error) one.error = m.error;
@@ -1140,6 +1163,7 @@ std::vector<Engine::RunResult> Engine::convert_run(const std::string& from, cons
     if (target.carrier)
         for (const auto& m : messages)
             if (m.error) throw *m.error;
+    if (r.over) throw *r.over;  // ruling 5: after every other decode error, before context
     read_context();
 
     if (!target.carrier) {

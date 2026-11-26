@@ -83,6 +83,32 @@ class TestOperations(Base):
         self.assertEqual(self.code(self.eng.convert_run, "c", "j", b"050401020304", max_items=1), "malformed-wire")
         self.assertEqual(r("c", "j", b"0500", max_items=0), [])
 
+    def test_max_items_sums_the_joined_entities(self):
+        # ruling 5: the items of every message that came to its end, and the outer entity's once per message
+        rows = "group m.rows count 8\n  field m.a 8 uint\nend\n"
+        after = "group m.subs count 8\n  field m.b 8 uint\nend\n"
+        eng = engine(c=C, k=C + after, in_=SELF + rows, j=JSON)
+        run = b"05" b"06" b"020102" b"020304"
+        self.assertEqual(len(eng.decode_run("c", run, max_items=4)[1]), 2)
+        self.assertEqual(self.code(eng.decode_run, "c", run, max_items=3), "malformed-wire")
+        self.assertEqual(len(self.results(eng, "c", "j", run, max_items=4)), 2)
+        self.assertEqual(self.code(eng.convert_run, "c", "j", run, max_items=3), "malformed-wire")
+        self.assertEqual(self.code(eng.convert_run, "c", "c", run, max_items=3), "malformed-wire")
+        # a message whose decode stops is not counted
+        got = self.results(eng, "c", "j", b"05" b"05" b"020102" b"0301", max_items=2)
+        self.assertEqual((len(got), got[1]), (2, "malformed-wire"))
+        # outer items after the run count once per message; the outer entity alone is not counted again
+        run = b"05" b"04" b"0101" b"0102" b"01" b"09"
+        self.assertEqual(len(eng.decode_run("k", run, max_items=4)[1]), 2)
+        self.assertEqual(self.code(eng.decode_run, "k", run, max_items=3), "malformed-wire")
+        # a message that ends the run with its own error is no error of the call: the sum is still checked
+        self.assertEqual(self.results(eng, "k", "j", b"05" b"04" b"0101" b"0301" b"0109", max_items=2),
+                         ['{"n":5}', "malformed-wire"])
+        self.assertEqual(self.code(eng.convert_run, "k", "j", b"05" b"04" b"0101" b"0301" b"020909", max_items=2),
+                         "malformed-wire")
+        # a bad context key comes after the bound
+        self.assertEqual(self.code(eng.convert_run, "k", "j", run, {"m.zz": "1"}, max_items=3), "malformed-wire")
+
     def test_context(self):
         eng = self.eng
         run = b"050401020304"

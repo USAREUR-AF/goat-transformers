@@ -342,6 +342,13 @@ fn holdList(diag: *Diag, alloc: std.mem.Allocator, n: u64, list: []const u8, wir
     }
 }
 
+// The list items of every list of an entity, at every nesting level.
+fn entityItems(e: *const Entity) usize {
+    var n: usize = 0;
+    for (e.lists.ptr[0..e.lists.len]) |en| n += itemsHeld(en.value);
+    return n;
+}
+
 // The list items an entity holds, at every nesting level.
 fn itemsHeld(items: []const Entity) usize {
     var n: usize = items.len;
@@ -4534,6 +4541,12 @@ pub const Engine = struct {
                     return f.kind;
                 };
             }
+            // the items of all joined entities (ruling 5), after every other
+            // decode error of the call
+            r.checkSum(&diag, self.scratch, &outer) catch |err| {
+                self.fail(err, "decode {s}: {s}", .{ from, diag.msg });
+                return err;
+            };
             // the context is checked once, for an empty run too (ruling 10)
             if (context) |c| {
                 var probe = Entity.init(self.scratch);
@@ -4658,6 +4671,10 @@ pub const Engine = struct {
             return err;
         };
         r.arena.deinit();
+        if (r.reached) r.checkSum(&diag, self.scratch, &outer) catch |err| {
+            self.fail(err, "decode {s}: {s}", .{ fmt, diag.msg });
+            return err;
+        };
         return .{ .outer = outer, .read = if (r.reached) r else null };
     }
 
@@ -13738,7 +13755,7 @@ const SDec = struct {
             _ = r.arena.reset(.retain_capacity);
             var md = r.messageDiag();
             var m = RunMsg{ .at = at };
-            _ = seqDecodeBits(r.arena.allocator(), ip, input[at..], (input.len - at) * 8, &md) catch |err| {
+            const got = seqDecodeBits(r.arena.allocator(), ip, input[at..], (input.len - at) * 8, &md) catch |err| got: {
                 if (err == error.OutOfMemory) return err;
                 const msg = try std.fmt.allocPrint(self.alloc, "inner {s}: message {d}: {s}", .{ ip.format, r.msgs.items.len + 1, md.msg });
                 // a `transform-decode` does not stop the message's decode
@@ -13755,7 +13772,12 @@ const SDec = struct {
                     try r.msgs.append(self.alloc, m);
                     return;
                 }
+                break :got md.partial.?;
             };
+            // a message whose decode came to its end, a `transform-decode`
+            // included: its own items join the sum of ruling 5
+            r.done += 1;
+            r.own_items += entityItems(&got);
             try r.msgs.append(self.alloc, m);
             at += md.run_end;
         }
@@ -14200,6 +14222,23 @@ const RunRead = struct {
     max_items: usize = 0,
     packs: ?*const std.StringHashMap(*Pack) = null,
     msgs: std.ArrayListUnmanaged(RunMsg) = .{},
+    // ruling 5: the messages whose decode came to its end, and the sum of
+    // their own items
+    done: usize = 0,
+    own_items: u128 = 0,
+
+    // Ruling 5: the items of all joined entities of the run, the outer
+    // entity's once for each message whose decode came to its end and each
+    // such message's own, may reach `max_items`; one more is `malformed-wire`
+    // of the call. Made when the carrier's decode has ended, after its other
+    // decode errors and before context and encode.
+    fn checkSum(self: *const RunRead, diag: *Diag, alloc: std.mem.Allocator, outer: *const Entity) anyerror!void {
+        const sum = @as(u128, entityItems(outer)) * self.done + self.own_items;
+        if (sum > self.max_items) {
+            diag.limit_hit = true;
+            return bad(diag, alloc, E.@"malformed-wire", "inner {s} run: the joined entities hold {d} list items, more than the limit of {d}", .{ self.ip.format, sum, self.max_items });
+        }
+    }
 
     // A message's items start from the budget the outer lines before it left
     // (ruling 5).

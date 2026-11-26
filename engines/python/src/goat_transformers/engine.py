@@ -1127,6 +1127,8 @@ class Engine:
             return got.entity, [got.entity if got.error is None else got.error]
         if got.error is not None:
             raise got.error
+        if got.over is not None:  # ruling 5: the sum of the joined entities' items
+            raise got.over
         return got.entity, [m if isinstance(m, GTError) else self._joined(got.entity, m) for m in got.messages]
 
     def convert_run(self, from_fmt, to_fmt, data, context=None, max_items=None):
@@ -1169,6 +1171,8 @@ class Engine:
     def _carrier_to_messages(self, pack, to, got, context):
         if got.error is not None:  # of the outer lines; message errors take no part
             raise got.error
+        if got.over is not None:  # ruling 5: after every other decode error, before context
+            raise got.over
         self.read_context(context)
         out = []
         for m in got.messages:
@@ -1196,6 +1200,8 @@ class Engine:
         for m in got.messages:
             if isinstance(m, GTError):
                 raise m
+        if got.over is not None:  # ruling 5: after every other decode error, before context
+            raise got.over
         self.read_context(context)
         same = pack is to
         outer = Entity(fields=dict(got.entity.fields), lists=dict(got.entity.lists),

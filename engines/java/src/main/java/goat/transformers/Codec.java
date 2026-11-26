@@ -143,6 +143,13 @@ abstract class Codec<W> {
         b.left += deepCount(items);
     }
 
+    /** The items of every list of an entity, at every level. */
+    static long listItems(Entity e) {
+        long n = 0;
+        if (e != null) for (List<Entity> l : e.lists().values()) n += deepCount(l);
+        return n;
+    }
+
     /** The items of a list and of every list inside its items. */
     static long deepCount(List<Entity> items) {
         long n = items.size();
