@@ -1,0 +1,8 @@
+{
+ "name": "03-to-goat-processors-report-keeps-the-radar-cross-section",
+ "from": "cot-xml-radar",
+ "to": "goat-processors-report",
+ "input": "<?xml version=\"1.0\"?><event version=\"2.0\" uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><contact callsign=\"GATOR\"/><__radar rcs_m2=\"0.25\"/></detail></event>",
+ "expect": "{\"uid\":\"J-01334\",\"time_ms\":1614456000000,\"lat\":30.0090027,\"lon\":-85.9578182,\"hae\":-42.6,\"ce\":45.3,\"type\":\"a-f-G-U-C\",\"callsign\":\"GATOR\",\"radar\":{\"rcs_m2\":0.25}}",
+ "reference": "The cot-xml vector to-goat-processors-report-cot-event with the detail element __radar added: the report gains the member radar.rcs_m2, written last (the pack's last line), nested as track.source_id is."
+}

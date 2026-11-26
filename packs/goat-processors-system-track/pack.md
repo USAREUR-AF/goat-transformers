@@ -9,6 +9,7 @@ CAT062; split the output into lines with newline framing.
 |---|---|---|
 | `uid` | `group` | the system track's identifier when fuse makes the tracks |
 | `cat062.track_number` | `track_number` | a number 1 to 65535 the track keeps while it lives |
+| `radar.rcs_m2` | `rcs_m2` | the radar cross section in square metres of the member that reported most recently. The runner's list `rcs`, one value per member and source, is not mapped: an entity holds one value |
 | `cat062.mon` | `mono` | 1 when the track's members come from one source, 0 when from more than one; a runner that does not publish it leaves the target's default (ASTERIX CAT062: 1) |
 | `time_ms` | `now_ms` | the tick the track describes, epoch ms |
 | `type`, `callsign` | `attributes.type.value`, `attributes.callsign.value` | the fused identity, when the fuse pack names the attribute and a member states it |

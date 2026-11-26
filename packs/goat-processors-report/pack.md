@@ -16,6 +16,7 @@ object, because a JSON member name holding `.` is not addressable (engine-spec
 | `time_ms`, `stale_ms` | same names | integers, epoch ms |
 | `lat`, `lon`, `hae`, `ce`, `course`, `speed_ms` | same names | numbers; `hae` is the model key unchanged, metres above the WGS 84 ellipsoid; the source calls `ce` a one-sigma horizontal error, while the model key states no sigma |
 | `time_error_ms`, `time_state` | same names | time quality of the stamping clock |
+| `radar.rcs_m2` | `radar.rcs_m2` (nested) | the radar cross section in square metres, as the reporting radar measured it; the runner carries it to the system track, per source |
 
 Not mapped: every other model key. A message decoded from another format
 keeps only these keys.

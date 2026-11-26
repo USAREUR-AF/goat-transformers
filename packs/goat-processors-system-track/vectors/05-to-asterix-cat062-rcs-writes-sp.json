@@ -1,0 +1,14 @@
+{
+ "name": "05-to-asterix-cat062-rcs-writes-sp",
+ "from": "goat-processors-system-track",
+ "to": "asterix-cat062-rcs",
+ "input": "{\"group\":\"s1\",\"track_number\":1,\"now_ms\":1795000060000,\"lat\":1.0001,\"lon\":1.0539,\"hae\":1500,\"course\":90,\"speed_ms\":100,\"mono\":1,\"rcs\":[{\"member\":\"radar-1/T1\",\"source\":\"radar-1\",\"rcs_m2\":0.25,\"time_ms\":1795000059000}],\"rcs_m2\":0.25}",
+ "context": {
+  "cat062.sac": "25",
+  "cat062.sic": "10",
+  "track.confirmed": "1"
+ },
+ "expect": "3e00269b0d110102190a4e3e000002d8400002ff6d019000000001a10101000313053e800000",
+ "source": "EUROCONTROL-SPEC-0149-9 Edition 1.21, UAP (FRN 35 SP); IEEE 754 single for 0.25 is 3E800000; built by hand from the vector to-asterix-cat062-one-source-mon-1",
+ "reference": "That vector's block with FRN 35 added: the third FSPEC octet gains FX (10 to 11), two more follow (01, then 02 for FRN 35), and the SP item 05 3E800000 ends the block; LEN 0x1F + 2 + 5 = 0x26. The runner's list rcs is not mapped; the top-level rcs_m2 is written."
+}
