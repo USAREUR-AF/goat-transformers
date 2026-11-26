@@ -6938,6 +6938,20 @@ entity holds **no key of the chosen kind**, the error is `no-kind`.
    | only `b` and `uid` | `{}` | `no-kind` | `{"b":…,"id":…}` |
    | the same format's `{}` | `{}` | `{}` | `{}` |
 
+7. **Runs (0.92).** `convert_run` makes this check wherever it converts with
+   `from` different from `to`; `decode_run` checks nothing.
+   - To a target that is not a carrier pack: on each message's joined entity,
+     as `convert`, each result on its own.
+   - From any other format to a carrier pack: on the entity, as `convert`; the
+     carrier of one message is a `convert`.
+   - From a carrier to a carrier pack: once, on the kind that ruling 6 of 0.92
+     chooses, and on the outer entity joined with the first message, or on the
+     outer entity alone when the run is empty. So a kind whose only line is
+     its `run` line holds a key when the first message holds one of the inner
+     pack's keys. A kind without a `run` line that takes the one message is
+     checked on the joined entity. The messages' own kinds are those of inner
+     messages (ruling 4) and are not checked.
+
 ## Amends
 
 0.5 Encode ("A kind with no `requires` always qualifies": it is then also held
