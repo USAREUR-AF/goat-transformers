@@ -3118,6 +3118,8 @@
  "SensorGps:heading_offset": "sensor_gps_heading_offset",
  "SensorGps:jamming_indicator": "sensor_gps_jamming_indicator",
  "SensorGps:jamming_state": "sensor_gps_jamming_state",
+ "SensorGps:latitude_deg": "sensor_gps_latitude_deg",
+ "SensorGps:longitude_deg": "sensor_gps_longitude_deg",
  "SensorGps:noise_per_ms": "sensor_gps_noise_per_ms",
  "SensorGps:rtcm_crc_failed": "sensor_gps_rtcm_crc_failed",
  "SensorGps:rtcm_injection_rate": "sensor_gps_rtcm_injection_rate",

@@ -79,9 +79,16 @@ with a fixed count. A `char` array is `ascii` text.
 | `altitude_ellipsoid_m` | `hae` | file header: GPS position in WGS84 coordinates; field: the ellipsoidal altitude in metres, float64. The altitude over mean sea level is a separate field |
 | `time_utc_usec` | `time_ms` | field: a UTC timestamp in microseconds from the receiver, 0 while it is not yet known; uint64. `uiscale:1/1000` keeps whole milliseconds, `absent 0` makes 0 no value |
 
+Validity flags. The message states a flag that says these values are valid: `lat` when `fix_type` is not 0 or 1, `lon` when `fix_type` is not 0 or 1, `hae` when `fix_type` is not 0 or 1. The
+field is always the raw key (`px4ulog.sensor_gps_latitude_deg`, `px4ulog.sensor_gps_longitude_deg`, `px4ulog.sensor_gps_altitude_ellipsoid_m`); the shared key is read only in a gate block that holds
+when the flag says so, so a position the source marks invalid is no position, and the message
+comes back byte for byte. A shared key held from another format opens the block: the flag
+gets the first value that opens it (vector `gen-geojson-to-...` where there is one);
+`gen-x-invalid-position-to-geojson` has the flags closed.
+
 `timestamp` is microseconds since the system started, not UTC, and stays a raw
 key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the
-packs map the field to the shared key only. A UTC time in microseconds that is
+packs map the field to the shared key only, except the fields under a validity flag (above). A UTC time in microseconds that is
 not a whole millisecond decodes to the nearest millisecond (half away from zero)
 and re-encodes as that millisecond times 1000.
 
@@ -101,7 +108,7 @@ and re-encodes as that millisecond times 1000.
 `vectors/gen-rt.json` is a round trip with every field set: values chosen by the
 generator, serialized by its own code from the layout, zero padding. `gen-*` files
 beside it, where there are any, are edge and error cases and conversions to
-geojson; each states its rule in `source`. 5 vector file(s).
+geojson; each states its rule in `source`. 6 vector file(s).
 `packs/geojson/vectors/gen-geojson-to-px4-ulog-sensor-gps.json` converts from geojson.
 
 ## Sources

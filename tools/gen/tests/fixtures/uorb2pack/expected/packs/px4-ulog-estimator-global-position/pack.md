@@ -49,11 +49,12 @@ with a fixed count. A `char` array is `ascii` text.
 | `lon` | `lon` | as lat; longitude in degrees |
 | `alt_ellipsoid` | `hae` | file header: fused global position in WGS84; field: the ellipsoidal altitude in metres, float32. The altitude over mean sea level is a separate field |
 
-Validity flags. The message states a flag that says these values are valid: `lat` by `lat_lon_valid`, `lon` by `lat_lon_valid`, `hae` by `alt_valid`. The
+Validity flags. The message states a flag that says these values are valid: `lat` when `lat_lon_valid` is 1, `lon` when `lat_lon_valid` is 1, `hae` when `alt_valid` is 1. The
 field is always the raw key (`px4ulog.vehicle_global_position_lat`, `px4ulog.vehicle_global_position_lon`, `px4ulog.vehicle_global_position_alt_ellipsoid`); the shared key is read only in a gate block that holds
-when the flag is 1, so a position the source marks invalid is no position, and the message
+when the flag says so, so a position the source marks invalid is no position, and the message
 comes back byte for byte. A shared key held from another format opens the block: the flag
-is written 1 (vector `gen-geojson-to-...`); `gen-x-invalid-position-to-geojson` has the flags 0.
+gets the first value that opens it (vector `gen-geojson-to-...` where there is one);
+`gen-x-invalid-position-to-geojson` has the flags closed.
 
 `timestamp` is microseconds since the system started, not UTC, and stays a raw
 key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the

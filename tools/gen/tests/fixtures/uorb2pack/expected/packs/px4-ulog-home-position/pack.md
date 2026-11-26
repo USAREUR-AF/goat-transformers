@@ -45,11 +45,12 @@ with a fixed count. A `char` array is `ascii` text.
 | `lat` | `lat` | file header: GPS home position in WGS84 coordinates; field: latitude in degrees, float64 |
 | `lon` | `lon` | as lat; longitude in degrees |
 
-Validity flags. The message states a flag that says these values are valid: `lat` by `valid_hpos`, `lon` by `valid_hpos`. The
+Validity flags. The message states a flag that says these values are valid: `lat` when `valid_hpos` is 1, `lon` when `valid_hpos` is 1. The
 field is always the raw key (`px4ulog.home_position_lat`, `px4ulog.home_position_lon`); the shared key is read only in a gate block that holds
-when the flag is 1, so a position the source marks invalid is no position, and the message
+when the flag says so, so a position the source marks invalid is no position, and the message
 comes back byte for byte. A shared key held from another format opens the block: the flag
-is written 1 (vector `gen-geojson-to-...`); `gen-x-invalid-position-to-geojson` has the flags 0.
+gets the first value that opens it (vector `gen-geojson-to-...` where there is one);
+`gen-x-invalid-position-to-geojson` has the flags closed.
 
 Altitude, velocity and time are not bound: this pack binds latitude and
 longitude only, and `timestamp` is microseconds since the system started, not UTC.

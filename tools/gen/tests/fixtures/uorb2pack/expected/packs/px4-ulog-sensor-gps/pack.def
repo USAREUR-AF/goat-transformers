@@ -12,9 +12,18 @@ wire          bits
 bit_order     lsb
 word_bytes    1
 field  px4ulog.sensor_gps_timestamp  0:0:64  uint
-field  lat  0:64:64  f64
-field  lon  0:128:64  f64
-field  hae  0:192:64  f64
+field  px4ulog.sensor_gps_latitude_deg  0:64:64  f64
+if  !0:352:8  0,1
+  field  lat  0:64:64  f64
+end
+field  px4ulog.sensor_gps_longitude_deg  0:128:64  f64
+if  !0:352:8  0,1
+  field  lon  0:128:64  f64
+end
+field  px4ulog.sensor_gps_altitude_ellipsoid_m  0:192:64  f64
+if  !0:352:8  0,1
+  field  hae  0:192:64  f64
+end
 field  time_ms  0:256:64  uiscale:1/1000  absent 0
 field  px4ulog.sensor_gps_altitude_msl_m  0:320:32  f32
 field  px4ulog.sensor_gps_fix_type  0:352:8  uint
