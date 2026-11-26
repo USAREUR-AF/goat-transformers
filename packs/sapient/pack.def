@@ -486,6 +486,7 @@ end
 kind      detection_report
 when      7 present
 when      7.6.7 1
+when      7.6.8 1
 requires  lat lon
 field  sapient.detection_report_report_id                                      7.1         pstring
 field  sapient.detection_report_object_id                                      7.2         pstring
@@ -547,7 +548,6 @@ field  sapient.detection_report_colour                                         7
 field  sapient.detection_report_id                                             7.23        pstring
 field  track.class                                                             7.11.1      pstring  via sapient-class
 field  track.confidence                                                        7.11.2      pfloat  with track.class
-const  7.6.8       1
 group  sapient.detection_report_track_info  7.8
   field  sapient.track_object_info_type  1  pstring
   field  sapient.track_object_info_value  2  pstring
@@ -587,7 +587,7 @@ group  sapient.detection_report_derived_detection  7.16
   field  sapient.derived_detection_object_id  3  pstring
 end
 
-# detection_report_other_system: the detection_report messages whose 7.6.7 is not 1; no field of hae, lat, lon, track.sigma_up_m
+# detection_report_other_system: the detection_report messages whose 7.6.7 is not 1 or 7.6.8 is not 1; no field of hae, lat, lon, track.sigma_up_m
 kind      detection_report_other_system
 when      7 present
 requires  sapient.detection_report_report_id sapient.detection_report_object_id

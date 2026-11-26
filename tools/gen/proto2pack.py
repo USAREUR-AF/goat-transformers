@@ -2273,13 +2273,15 @@ def group_lines(g, ind=""):
 
 
 def split_kind(opts):
-    """--split-kind as (kind, path, value, new kind, dropped keys), or None."""
+    """--split-kind as (kind, [(path, value), ...], new kind, dropped keys), or None. Several
+    PATH=VALUE joined by `+` must all hold (one `when` line each)."""
     if not opts.split_kind:
         return None
-    m = re.fullmatch(r"([a-z0-9_]+):([0-9.]+)=([0-9]+):([a-z0-9_]+):([a-z0-9_.,]+)", opts.split_kind)
+    m = re.fullmatch(r"([a-z0-9_]+):([0-9.]+=[0-9]+(?:\+[0-9.]+=[0-9]+)*):([a-z0-9_]+):([a-z0-9_.,]+)", opts.split_kind)
     if not m:
-        raise GenError("--split-kind %r: give KIND:PATH=VALUE:NEWKIND:KEY[,KEY...]" % opts.split_kind)
-    return m.group(1), m.group(2), m.group(3), m.group(4), set(m.group(5).split(","))
+        raise GenError("--split-kind %r: give KIND:PATH=VALUE[+PATH=VALUE...]:NEWKIND:KEY[,KEY...]" % opts.split_kind)
+    conds = [tuple(c.split("=")) for c in m.group(2).split("+")]
+    return m.group(1), conds, m.group(3), set(m.group(4).split(","))
 
 
 def emit_pack(plan):
@@ -2323,8 +2325,8 @@ def emit_pack(plan):
         lines = ["", "kind      %s" % name]
         if kind.number is not None:
             lines += ["when      %d present" % kind.number]
-        if extra_when:
-            lines += ["when      %s %s" % extra_when]
+        for w in extra_when or ():
+            lines += ["when      %s %s" % w]
         if requires:
             lines += ["requires  %s" % " ".join(requires)]
         for l in kind.leaves:
@@ -2338,9 +2340,10 @@ def emit_pack(plan):
                                                 if (kind.name, p) in plan.withs else "")
                   for key, p, tr, table in plan.binds.get(kind.name, []) if key not in dropped]
         if extra_when:
-            keep = lambda p: p != extra_when[0]                  # the `when` writes PATH on encode
+            wpaths = {w[0] for w in extra_when}
+            keep = lambda p: p not in wpaths                     # the `when` writes PATH on encode
         elif drop is not None:
-            parent = split[1].rsplit(".", 1)[0] + "."            # nothing of the message PATH is in
+            parent = split[1][0][0].rsplit(".", 1)[0] + "."      # nothing of the message PATH is in
             keep = lambda p: not p.startswith(parent)
         else:
             keep = lambda p: True
@@ -2350,7 +2353,7 @@ def emit_pack(plan):
 
     for kind in plan.kinds:
         if split and kind.name == split[0]:
-            out += kind_lines(kind, kind.name, (split[1], split[2]), None, kind.requires)
+            out += kind_lines(kind, kind.name, split[1], None, kind.requires)
         else:
             out += kind_lines(kind, kind.name, None, None, kind.requires)
     if split:
@@ -2360,10 +2363,16 @@ def emit_pack(plan):
         kind = next(k for k in plan.kinds if k.name == split[0])
         need = [l.key for l in kind.leaves if l.mandatory and len(l.nums) == 2]
         if not need:
-            raise GenError("--split-kind: %s has no mandatory field of its own for %s to require" % (split[0], split[3]))
-        tail = kind_lines(kind, split[3], None, split[4], need[:6])
-        out += ["", "# %s: the %s messages whose %s is not %s; no field of %s" % (
-            split[3], split[0], split[1], split[2], ", ".join(sorted(split[4])))] + tail[1:]
+            # a schema without mandatory fields (proto3, implicit presence): the raw keys of the
+            # condition's message, which only a message of this kind carries
+            parent = split[1][0][0].rsplit(".", 1)[0] + "."
+            need = [l.key for l in kind.leaves if l.key and dotted(l.nums).startswith(parent)
+                    and l.key.split(".")[-1].endswith(("_x", "_y"))]
+        if not need:
+            raise GenError("--split-kind: %s has no mandatory field of its own for %s to require" % (split[0], split[2]))
+        tail = kind_lines(kind, split[2], None, split[3], need[:6])
+        out += ["", "# %s: the %s messages whose %s; no field of %s" % (
+            split[2], split[0], " or ".join("%s is not %s" % c for c in split[1]), ", ".join(sorted(split[3])))] + tail[1:]
         plan.split_field_lines = sum(1 for ln in tail if ln.startswith("field "))
     if plan.tables:
         out += ["", "# value tables: <table> <value on the wire> <value of the model key>"]
@@ -2541,7 +2550,7 @@ def check_kind_order(pack, default_kind, split=None):
             raise GenError("kind %s has no requires and would shadow the kinds after it on encode" % kind.name)
     if default_kind:
         names = [k.name for k in pack.kinds]
-        after = [k for k in pack.kinds[names.index(default_kind) + 1:] if not (split and k.name == split[3])]
+        after = [k for k in pack.kinds[names.index(default_kind) + 1:] if not (split and k.name == split[2])]
         if any(k.fields or k.groups for k in after):
             raise GenError("a kind with fields follows the default kind")
 

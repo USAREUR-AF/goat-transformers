@@ -19,8 +19,8 @@ of version 0.6 where the generator was given them, and a `group` block of versio
 | enums defined | 30 |
 | messages reachable from `SapientMessage` (through repeated fields too) | 60 |
 | message types on the walked paths | 49 |
-| kinds | 9 |
-| `field` lines | 385 |
+| kinds | 10 |
+| `field` lines | 439 |
 | of those, inside a `group` | 194 |
 | `group` blocks | 39 |
 | of those, inside another group | 20 |
@@ -30,7 +30,7 @@ of version 0.6 where the generator was given them, and a `group` block of versio
 | `field` lines bound to `core` or `track` keys | 9 |
 | `const` lines | 2 |
 | value tables (`map` lines) | 1 (9) |
-| vectors (existing and generated) | 12 |
+| vectors (existing and generated) | 13 |
 | vectors to and from other formats, generated | 2 |
 
 ## Kinds
@@ -137,7 +137,7 @@ expected output (engine-spec, derived keys).
 
 ## Position assumption
 
-`lon`, `lat` and `hae` are bound to `Location.x` (field 1), `y` (field 2) and `z` (field 3) of `DetectionReport.location` (field 6 of `DetectionReport`, which is field 7 of `SapientMessage`: paths 7.6.1 to 7.6.3). This is the reading the `sapient` pack (BSI Flex 335 v2.0) takes, and `location.proto` of v1.0 declares the same message: `x = 1` 'X-coordinate (normally longitude)', `y = 2` 'Y-coordinate (normally latitude)', `z = 3` 'Z-coordinate (normally altitude)', `coordinate_system = 7`, `datum = 8`. The meaning of x, y, z is set by `Location.coordinate_system` (7.6.7), where 1 is latitude/longitude in decimal degrees and metres, 2 is radians and 5 is UTM, and by `Location.datum` (7.6.8), where 1 is the WGS84 ellipsoid and 2 the geoid. The binding holds only when 7.6.7 is 1, and `hae` is ellipsoid height only when 7.6.8 is 1. Kind `detection_report` therefore has `const 7.6.7 1` and `const 7.6.8 1`: every detection report this pack encodes states the units and datum its `lon`, `lat` and `hae` are in. A constant is written over any field, so a detection report that arrives with another coordinate system or datum leaves with 1 and 1 while its x, y, z are unchanged; decode still fills `sapient1.location_coordinate_system` and `sapient1.location_datum` with what the message said, for a consumer to check before it trusts the position. No other `Location` in the schema (`Alert.location` at 10.6, `StatusReport.node_location` at 6.7, the predicted location at 7.9.2) is bound to core keys; in kind `alert` the same fields are the raw keys `sapient1.location_x`, `location_y`, `location_z`.
+`lon`, `lat` and `hae` are bound to `Location.x` (field 1), `y` (field 2) and `z` (field 3) of `DetectionReport.location` (field 6 of `DetectionReport`, which is field 7 of `SapientMessage`: paths 7.6.1 to 7.6.3). This is the reading the `sapient` pack (BSI Flex 335 v2.0) takes, and `location.proto` of v1.0 declares the same message: `x = 1` 'X-coordinate (normally longitude)', `y = 2` 'Y-coordinate (normally latitude)', `z = 3` 'Z-coordinate (normally altitude)', `coordinate_system = 7`, `datum = 8`. The meaning of x, y, z is set by `Location.coordinate_system` (7.6.7), where 1 is latitude/longitude in decimal degrees and metres, 2 is radians and 5 is UTM, and by `Location.datum` (7.6.8), where 1 is the WGS84 ellipsoid and 2 the geoid. The binding holds only when 7.6.7 is 1 and 7.6.8 is 1. Kind `detection_report` therefore has `when 7.6.7 1` and `when 7.6.8 1`: it reads x, y, z as `lon`, `lat` and `hae` only then, and every detection report this pack encodes from them writes 1 and 1, the units and datum they are in. A detection report with another coordinate system or datum (UTM, radians, the geoid, not defined, or no value) is kind `detection_report_other_system`: x, y, z, the coordinate system and the datum stay the raw keys `sapient1.location_x` ... `sapient1.location_datum`, the message carries no position into another format, and it comes back byte for byte. No other `Location` in the schema (`Alert.location` at 10.6, `StatusReport.node_location` at 6.7, the predicted location at 7.9.2) is bound to core keys; in kind `alert` the same fields are the raw keys `sapient1.location_x`, `location_y`, `location_z`.
 
 ## Bound to `track` keys
 

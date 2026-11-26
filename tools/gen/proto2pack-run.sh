@@ -155,7 +155,7 @@ python3 -I "$GEN/proto2pack.py" \
   --derive "sapient.location_x_error deg_lon_of track.sigma_east_m lat" \
   --derive "sapient.location_y_error deg_lat_of track.sigma_north_m lat" \
   --derive "uid copy sapient.detection_report_object_id" \
-  --split-kind "detection_report:7.6.7=1:detection_report_other_system:lat,lon,hae,track.sigma_up_m" \
+  --split-kind "detection_report:7.6.7=1+7.6.8=1:detection_report_other_system:lat,lon,hae,track.sigma_up_m" \
   --map 7.4=track.status_text \
   --bind detection_report:7.11.2=track.confidence:pfloat \
   --with detection_report:7.11.2=track.class \
@@ -203,6 +203,7 @@ python3 -I "$GEN/proto2pack.py" \
   --proto "$SRC"/sapient-v1/bsi_flex_335_v1_0/*.proto "$SRC/sapient-v1/proto_options.proto" \
   --envelope SapientMessage --format sapient-v1 --module sapient1 --out "$ROOT" \
   --mandatory-option is_mandatory \
+  --split-kind "detection_report:7.6.7=1+7.6.8=1:detection_report_other_system:lat,lon,hae,track.sigma_up_m" \
   --source "BSI Flex 335 v1.0 protobuf definitions: github.com/dstl/SAPIENT-Proto-Files commit $SHA, directory bsi_flex_335_v1_0 (15 .proto files) and proto_options.proto" \
   --source "$LICENCE" \
   "${DETECTION[@]}" \

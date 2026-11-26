@@ -413,6 +413,8 @@ field  sapient1.error_error_message                                             
 
 kind      detection_report
 when      7 present
+when      7.6.7 1
+when      7.6.8 1
 requires  lat lon
 field  sapient1.detection_report_report_id                                      7.1         pstring
 field  sapient1.detection_report_object_id                                      7.2         pstring
@@ -472,8 +474,103 @@ field  sapient1.enu_velocity_up_rate_error                                      
 field  sapient1.detection_report_colour                                         7.22        pstring
 field  sapient1.detection_report_id                                             7.23        pstring
 field  track.class                                                              7.11.1      pstring  via sapient-class
-const  7.6.7       1
-const  7.6.8       1
+group  sapient1.detection_report_track_info  7.8
+  field  sapient1.track_object_info_type  1  pstring
+  field  sapient1.track_object_info_value  2  pstring
+  field  sapient1.track_object_info_error  3  pfloat
+end
+group  sapient1.detection_report_object_info  7.10
+  field  sapient1.track_object_info_type  1  pstring
+  field  sapient1.track_object_info_value  2  pstring
+  field  sapient1.track_object_info_error  3  pfloat
+end
+group  sapient1.detection_report_behaviour  7.12
+  field  sapient1.behaviour_type  1  pstring
+  field  sapient1.behaviour_confidence  2  pfloat
+end
+group  sapient1.detection_report_associated_file  7.13
+  field  sapient1.associated_file_type  1  pstring
+  field  sapient1.associated_file_url  2  pstring
+end
+group  sapient1.detection_report_signal  7.14
+  field  sapient1.signal_amplitude  1  pfloat
+  field  sapient1.signal_start_frequency  2  pfloat
+  field  sapient1.signal_centre_frequency  3  pfloat
+  field  sapient1.signal_stop_frequency  4  pfloat
+  field  sapient1.signal_pulse_duration  5  pfloat
+end
+group  sapient1.detection_report_associated_detection  7.15
+  field  sapient1.associated_detection_timestamp_seconds  1.1  pvarint
+  field  sapient1.associated_detection_timestamp_nanos  1.2  pvarint
+  field  sapient1.associated_detection_node_id  2  pstring
+  field  sapient1.associated_detection_object_id  3  pstring
+  field  sapient1.associated_detection_association_type  4  pvarint
+end
+group  sapient1.detection_report_derived_detection  7.16
+  field  sapient1.derived_detection_timestamp_seconds  1.1  pvarint
+  field  sapient1.derived_detection_timestamp_nanos  1.2  pvarint
+  field  sapient1.derived_detection_node_id  2  pstring
+  field  sapient1.derived_detection_object_id  3  pstring
+end
+
+# detection_report_other_system: the detection_report messages whose 7.6.7 is not 1 or 7.6.8 is not 1; no field of hae, lat, lon, track.sigma_up_m
+kind      detection_report_other_system
+when      7 present
+requires  sapient1.location_x sapient1.location_y
+field  sapient1.detection_report_report_id                                      7.1         pstring
+field  sapient1.detection_report_object_id                                      7.2         pstring
+field  sapient1.detection_report_task_id                                        7.3         pstring
+field  sapient1.detection_report_state                                          7.4         pstring
+field  sapient1.range_bearing_elevation                                         7.5.1       pdouble
+field  sapient1.range_bearing_azimuth                                           7.5.2       pdouble
+field  sapient1.range_bearing_range                                             7.5.3       pdouble
+field  sapient1.range_bearing_elevation_error                                   7.5.4       pdouble
+field  sapient1.range_bearing_azimuth_error                                     7.5.5       pdouble
+field  sapient1.range_bearing_range_error                                       7.5.6       pdouble
+field  sapient1.range_bearing_coordinate_system                                 7.5.7       pvarint
+field  sapient1.range_bearing_datum                                             7.5.8       pvarint
+field  sapient1.location_x                                                      7.6.1       pdouble
+field  sapient1.location_y                                                      7.6.2       pdouble
+field  sapient1.location_z                                                      7.6.3       pdouble
+field  sapient1.location_x_error                                                7.6.4       pdouble
+field  sapient1.location_y_error                                                7.6.5       pdouble
+field  sapient1.location_z_error                                                7.6.6       pdouble
+field  sapient1.location_coordinate_system                                      7.6.7       pvarint
+field  sapient1.location_datum                                                  7.6.8       pvarint
+field  sapient1.location_utm_zone                                               7.6.9       pstring
+field  track.confidence                                                         7.7         pfloat
+field  sapient1.detection_report_detection_confidence                           7.7         pfloat
+field  sapient1.prediction_location_range_bearing_elevation                     7.9.1.1     pdouble
+field  sapient1.prediction_location_range_bearing_azimuth                       7.9.1.2     pdouble
+field  sapient1.prediction_location_range_bearing_range                         7.9.1.3     pdouble
+field  sapient1.prediction_location_range_bearing_elevation_error               7.9.1.4     pdouble
+field  sapient1.prediction_location_range_bearing_azimuth_error                 7.9.1.5     pdouble
+field  sapient1.prediction_location_range_bearing_range_error                   7.9.1.6     pdouble
+field  sapient1.prediction_location_range_bearing_coordinate_system             7.9.1.7     pvarint
+field  sapient1.prediction_location_range_bearing_datum                         7.9.1.8     pvarint
+field  sapient1.prediction_location_location_x                                  7.9.2.1     pdouble
+field  sapient1.prediction_location_location_y                                  7.9.2.2     pdouble
+field  sapient1.prediction_location_location_z                                  7.9.2.3     pdouble
+field  sapient1.prediction_location_location_x_error                            7.9.2.4     pdouble
+field  sapient1.prediction_location_location_y_error                            7.9.2.5     pdouble
+field  sapient1.prediction_location_location_z_error                            7.9.2.6     pdouble
+field  sapient1.prediction_location_location_coordinate_system                  7.9.2.7     pvarint
+field  sapient1.prediction_location_location_datum                              7.9.2.8     pvarint
+field  sapient1.prediction_location_location_utm_zone                           7.9.2.9     pstring
+field  sapient1.prediction_location_predicted_timestamp_seconds                 7.9.3.1     pvarint
+field  sapient1.prediction_location_predicted_timestamp_nanos                   7.9.3.2     pvarint
+field  track.vel_east_ms                                                        7.19.1      pdouble
+field  sapient1.enu_velocity_east_rate                                          7.19.1      pdouble
+field  track.vel_north_ms                                                       7.19.2      pdouble
+field  sapient1.enu_velocity_north_rate                                         7.19.2      pdouble
+field  track.vel_up_ms                                                          7.19.3      pdouble
+field  sapient1.enu_velocity_up_rate                                            7.19.3      pdouble
+field  sapient1.enu_velocity_east_rate_error                                    7.19.4      pdouble
+field  sapient1.enu_velocity_north_rate_error                                   7.19.5      pdouble
+field  sapient1.enu_velocity_up_rate_error                                      7.19.6      pdouble
+field  sapient1.detection_report_colour                                         7.22        pstring
+field  sapient1.detection_report_id                                             7.23        pstring
+field  track.class                                                              7.11.1      pstring  via sapient-class
 group  sapient1.detection_report_track_info  7.8
   field  sapient1.track_object_info_type  1  pstring
   field  sapient1.track_object_info_value  2  pstring

@@ -1603,7 +1603,9 @@ class DeriveTest(unittest.TestCase):
 
     def test_split_kind_is_parsed_or_refused(self):
         opts = type("Opts", (), {"split_kind": "detection_report:7.6.7=1:other:lat,lon"})()
-        self.assertEqual(p2p.split_kind(opts), ("detection_report", "7.6.7", "1", "other", {"lat", "lon"}))
+        self.assertEqual(p2p.split_kind(opts), ("detection_report", [("7.6.7", "1")], "other", {"lat", "lon"}))
+        opts.split_kind = "detection_report:7.6.7=1+7.6.8=1:other:lat,lon"
+        self.assertEqual(p2p.split_kind(opts), ("detection_report", [("7.6.7", "1"), ("7.6.8", "1")], "other", {"lat", "lon"}))
         opts.split_kind = None
         self.assertIsNone(p2p.split_kind(opts))
         opts.split_kind = "detection_report:7.6.7=one:other:lat"
