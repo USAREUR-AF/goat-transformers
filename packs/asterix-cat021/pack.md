@@ -178,4 +178,5 @@ the generator then reloads the pack and replays every vector through a second co
 | `06-category-is-not-21.json` | the first octet is 22 |
 | `07-block-shorter-than-len.json` | LEN states 6 octets and the input holds 5 |
 | `08-to-geojson.json` | a record with I021/131, I021/140, I021/160, I021/170: the shared keys `hae`, `speed_ms`, `course`, `callsign`, `lat`, `lon` reach the Feature |
+| `09-to-geojson-hae-not-given.json` | the record above with I021/140 at 32767, which the item's remark says is no hae: the key is absent (spec 0.9) |
 | `packs/canonical-track-v2/vectors/gen-to-asterix-cat021.json` | from `canonical-track-v2` to this pack: a track at 47.5 N 122.25 W, 1524 m, velocity 3 m/s east and 4 m/s north, at 12:00:00.125 UTC: the record holds I021/131, I021/140, I021/160; the fields of those items that no key fills are zero |
