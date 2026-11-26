@@ -73,6 +73,14 @@ ellipsoid is altitude plus undulation, which no transform adds. Velocities and
 accuracies are raw keys. The time fields (`time_stamp`, the time of week of the satellite clock) are
 not UTC epoch times.
 
+## Validity flag not applied
+
+sbg_ekf_nav: SbgEkfStatus `solution_mode` 0 (all data invalid) and `position_valid`; sbg_gps_pos: SbgGpsPosStatus `status` other than 0, `type` 0 (no solution), and `ifm` 4 (position invalid). The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.
+
 ## Kinds
 
 | Kind | `type` | Fields | Lists | Constants not mapped |

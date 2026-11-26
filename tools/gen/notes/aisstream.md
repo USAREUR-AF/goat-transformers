@@ -29,3 +29,11 @@ the first kind, `PositionReport`.
 `tools/gen/aisstream-run.sh` writes a small schema of its own, one envelope per message
 type that refers to that type's schema in `type-definition.yaml`, so that a kind holds only
 its own report. It adds no member that the document does not state.
+
+## Validity flag not applied
+
+PositionReport `Valid`: the documentation says whether the decoded value passed validation. The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.

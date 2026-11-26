@@ -26,3 +26,11 @@ exact can carry a fraction.
 
 The padding fields of the u-blox layouts are not mapped (`--skip-field-re` in
 `tools/gen/ros2-run.sh`).
+
+## Validity flag not applied
+
+hnr_pvt, nav_pvt, nav_pvt7: `gps_fix` or `fix_type` 0 (no fix) and the GNSS_FIX_OK bit of `flags`. The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.

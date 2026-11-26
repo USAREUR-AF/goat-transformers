@@ -9,3 +9,11 @@
 geodetic coordinates. `euler_angles` (roll, pitch, yaw in radians, in Apollo's own convention),
 the angular velocity and the acceleration (vehicle axes) and the covariance lists (squared units)
 are raw keys.
+
+## Validity flag not applied
+
+Ins `type` INVALID (0, marked "Do NOT use" in ins.proto) and CONVERGING (1, use with caution). The pack keeps the flag as a raw key and binds the position whatever it says: a message whose
+flag says there is no fix converts with the coordinates it carries (often 0, 0), as if they were a
+position. The pack language has no gate for a JSON or protobuf member yet (asked of gt-lang); until
+it has, a consumer must read the flag. Bit-level packs of the same messages (PX4) read the shared
+keys only when the flag says so.
