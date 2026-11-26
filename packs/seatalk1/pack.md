@@ -45,8 +45,11 @@ datum is not stated by the source.
 
 - **Values split across nibbles, octets and bits**: heading and course (U, VW, V, XY), time (T and RS),
   mileage (low and high parts), latitude and longitude minutes and hemisphere, the 0x85 distances and
-  bearing, and the waypoint name's six-bit characters: each part is a key; the combining formulas are
-  in the key descriptions. Combining them needs derived keys over several fields.
+  bearing, and the waypoint name's six-bit characters: each part is a key. The key descriptions give
+  the combining formula for most of them, not all: the 0x84/0x9C compass heading (whose U bits are
+  counted differently from 0x53's), the 0x85 bearing and distance and the 0x82 name characters
+  are only named there, and the source's code (the 0x84, 0x85 and 0x82 hooks) is the reference.
+  Combining them needs derived keys over several fields.
 - **Depth bit 15**: kept in `depth_raw` (the source masks it before scaling).
 - Datagrams the source does not decode (such as 0x58, which its comments name for raw position): kept
   by `other`.

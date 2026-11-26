@@ -11,7 +11,7 @@ of the files read, each column ends at the same position, and values are right-a
 | Columns | Key | Content |
 |---|---|---|
 | 0-3, 5-6, 8-9, 11-12, 14-15 | `year`, `month`, `day`, `hour`, `minute` | the time of the observation, UTC (`int`) |
-| 16-19 | `wdir` | wind direction, degrees from true north |
+| 16-19 | `wdir` | direction the wind comes from, degrees from true north |
 | 20-24, 25-29 | `wspd`, `gst` | wind speed and peak gust, m/s |
 | 30-35, 36-41, 42-47 | `wvht`, `dpd`, `apd` | significant wave height (m), dominant and average wave period (s) |
 | 48-51 | `mwd` | direction the dominant waves come from, degrees from true north |
