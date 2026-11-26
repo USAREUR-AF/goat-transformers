@@ -27,8 +27,9 @@ relation (type, ref, role, and with `out geom` a member node's position or a mem
 |---|---|---|
 | `osm3s.timestamp_osm_base` | `time_ms` | The Overpass output formats page: the date of the data; every edit uploaded before it is included; written as YYYY-MM-DDThh:mm:ssZ. The response describes the map as of that moment, so it is the time the report holds for. Read with `iso8601_ms` (exact: whole seconds in UTC); the text is kept in `overpass.timestamp_osm_base` too. |
 
-On encode the `time_ms` line comes first, so a round trip writes the time in the form
-`iso8601_ms` writes (`…:02.000Z`), not the input's `…:02Z` (ruling 16 of engine-spec 0.5).
+On encode the `time_ms` line comes first (ruling 16 of engine-spec 0.5); its transform is
+`iso8601_s` (engine-spec 0.26), so the time is written `…:02Z`, the one form the Output
+Formats page gives for osm_base, and a round trip keeps it.
 
 Positions are not `lat` and `lon`: every node is an item of the element list, and a shared key is
 bound only outside lists.
@@ -50,4 +51,4 @@ bound only outside lists.
 `tools/gen/geo-open-vectors.py`, without an engine: a response to geojson (the time of the data
 carries) and an OSM API response whose string `version` is `transform-decode`. Round trips are to be
 written by an independent vector-deriver from the specification and this pack; on encode
-`timestamp_osm_base` is written in the canonical form of `iso8601_ms` (`…:02.000Z`).
+`timestamp_osm_base` is written as `iso8601_s` writes it (`…:02Z`).
