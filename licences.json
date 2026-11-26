@@ -80,6 +80,26 @@
       "distribution": "public",
       "profile": "open"
     },
+    "DL-DE-ZERO-2.0": {
+      "name": "Data licence Germany - Zero - version 2.0",
+      "url": "https://www.govdata.de/dl-de/zero-2-0",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": false,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    },
+    "LicenseRef-APRS-NC": {
+      "name": "APRS Protocol Reference 1.0.1 permission statement (copying for non-commercial purposes only, with the copyright and trademark statements)",
+      "url": "http://www.aprs.org/doc/APRS101.PDF",
+      "commercial": "no",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "everything"
+    },
     "LicenseRef-MS-OpenSpec": {
       "name": "Microsoft Open Specifications copyright permission (implementations and their documentation; no patent licence granted)",
       "url": "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/5606ad47-5ee0-437a-817e-70c366052962",
@@ -216,6 +236,11 @@
       "format": "amqp10-frame",
       "licence": "LicenseRef-OASIS-Notice",
       "profile": "open"
+    },
+    "aprs": {
+      "format": "aprs",
+      "licence": "LicenseRef-APRS-NC",
+      "profile": "everything"
     },
     "arsdk-proto-antiflicker": {
       "format": "arsdk-proto-antiflicker",
@@ -3937,6 +3962,21 @@
       "licence": "CC-BY-4.0",
       "profile": "open"
     },
+    "pegelonline-current": {
+      "format": "pegelonline-current",
+      "licence": "DL-DE-ZERO-2.0",
+      "profile": "open"
+    },
+    "pegelonline-station": {
+      "format": "pegelonline-station",
+      "licence": "DL-DE-ZERO-2.0",
+      "profile": "open"
+    },
+    "pegelonline-timeseries": {
+      "format": "pegelonline-timeseries",
+      "licence": "DL-DE-ZERO-2.0",
+      "profile": "open"
+    },
     "pfcp": {
       "format": "pfcp",
       "licence": "LicenseRef-unstated",
@@ -6043,6 +6083,11 @@
       "module": "amqp",
       "licence": "LicenseRef-OASIS-Notice",
       "profile": "open"
+    },
+    "aprs.def": {
+      "module": "aprs",
+      "licence": "LicenseRef-APRS-NC",
+      "profile": "everything"
     },
     "arsdkprotoantiflicker.def": {
       "module": "arsdkprotoantiflicker",
@@ -9707,6 +9752,11 @@
     "overturewater.def": {
       "module": "overturewater",
       "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "pegelonline.def": {
+      "module": "pegelonline",
+      "licence": "DL-DE-ZERO-2.0",
       "profile": "open"
     },
     "pfcp.def": {

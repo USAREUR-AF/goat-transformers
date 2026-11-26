@@ -64,6 +64,21 @@ Packs apollo-*; modules apollo*
   Copyright (c) 2018 Apollo Authors and The Apollo Authors. Field numbers,
   names and types only.
 
+Pack aprs; module aprs
+  APRS Protocol Reference, Protocol Version 1.0, document version 1.0.1,
+  APRS Working Group, technical editor Ian Wade, 29 August 2000 (TAPR
+  publication 99-4), http://www.aprs.org/doc/APRS101.PDF. Field order and
+  widths restated; no text, table or example copied. LicenseRef-APRS-NC
+  (non-commercial). The reference asks that copies carry its copyright and
+  trademark statements in full:
+
+    Copyright ©2000 APRS Working Group
+    All rights reserved
+
+    APRS® is a registered trademark of Bob Bruninga.
+    WinAPRS™, MacAPRS™, X-APRS™, PalmAPRS™ and APRS/CE™
+    are trademarks using the APRS® name, licensed from Bob Bruninga.
+
 Packs ardupilot-log-*; module aplog
   ArduPilot log message definitions (log structure tables and Write calls),
   https://github.com/ArduPilot/ardupilot tag Copter-4.6.2. GNU General Public
@@ -208,6 +223,12 @@ Pack cot-protobuf; module takproto
 Pack cot-xml; module core
   Cursor on Target event schema, The MITRE Corporation, approved for public
   release.
+
+Packs csl-json-item; module csl
+  Citation Style Language data schema, https://github.com/citation-style-language/schema
+  at commit e3ce254a72c4470a5ed3b9d23b428017d25674e9, schemas/input/csl-data.json. MIT
+  License, Copyright (c) 2007-2018 Citation Style Language and contributors.
+  Structure restated; no text copied.
 
 Packs csp-v1-packet, csp-v2-packet
   CSP 1.x and 2.x headers restated from libcsp src/csp_id.c and
@@ -571,6 +592,12 @@ Packs m17-lsf, m17-stream-frame, m17-packet-frame; module m17
   2023-2026 M17 Project; GNU FDL 1.3 or later. Layouts restated; no text
   copied.
 
+Packs marc21-record; module marc
+  Library of Congress, MARC 21 Format for Bibliographic Data,
+  https://www.loc.gov/marc/bibliographic/ (Leader, Directory, Introduction),
+  maintained with Library and Archives Canada. Layouts restated; no text
+  copied.
+
 Packs mavlink2-ardupilotmega, mavlink2-asluav, mavlink2-avssuas,
 mavlink2-csairlink, mavlink2-cubepilot, mavlink2-development, mavlink2-icarous,
 mavlink2-loweheiser, mavlink2-marsh, mavlink2-paparazzi, mavlink2-stemstudios,
@@ -824,6 +851,13 @@ Packs overture-*; modules overture*
   (schema/). Overture Maps Foundation. Creative Commons Attribution 4.0
   International (CC BY 4.0). The packs are derived from the schema, restating
   its structure, and are not endorsed by the Overture Maps Foundation.
+
+Packs pegelonline-station, pegelonline-timeseries, pegelonline-current; module pegelonline
+  PEGELONLINE REST API v2, Wasserstraßen- und Schifffahrtsverwaltung des
+  Bundes (WSV). https://www.pegelonline.wsv.de/webservice/dokuRestapi, read
+  2026-11-21. Datenlizenz Deutschland - Zero - Version 2.0
+  (DL-DE-ZERO-2.0); no attribution required, source named.
+  Layouts restated; no text copied.
 
 Pack pocsag-batch
   From Recommendation ITU-R M.584-2, Codes and formats for radio paging,
@@ -1084,6 +1118,13 @@ Packs tts-* (generated)
   https://github.com/TheThingsNetwork/lorawan-stack tag v3.37.0 commit
   0bfcfcd2. Copyright The Things Network Foundation, The Things Industries
   B.V. Apache License 2.0. No code or comments copied.
+
+Pack uat; module uat
+  dump978, https://github.com/flightaware/dump978 at commit
+  f40aa9a0d2d0a0067c0c628b44ba316f7049b8ce (files uat_message.cc,
+  uat_message.h and uat_protocol.h). Copyright 2015, Oliver Jowett;
+  Copyright (c) 2019, FlightAware LLC. BSD-2-Clause (dump978 LICENSE). Bit
+  positions, widths, code meanings and scaling restated; no code copied.
 
 Packs ubx-*; modules ubx<class>
   u-blox UBX message definitions of pyubx2, https://github.com/semuconsulting/pyubx2
