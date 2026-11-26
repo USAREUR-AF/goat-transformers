@@ -164,8 +164,9 @@ def srt_vectors():
                 {"srt.hs_version": "5", "srt.extension_field": "5", "srt.handshake_type": str(0xFFFFFFFF),
                  "srt.extensions.#": "2", "srt.extensions[0].srt.srt_version": str(0x010500),
                  "srt.extensions[0].srt.srt_flags": str(0xBF), "srt.extensions[0].srt.receiver_tsbpd_delay": "120",
-                 "srt.extensions[1].srt.ext_type": "5", "srt.extensions[1].srt.ext_length": "2",
-                 "srt.extensions[1].srt.ext_content": b"#!::r=ab".hex()},
+                 "srt.extensions[1].srt.ext_type": "5", "srt.extensions[1].srt.ext_octets.#": "8",
+                 "srt.extensions[1].srt.ext_octets[0].srt.octet": str(ord("#")),
+                 "@absent": ["srt.extensions[1].srt.ext_length", "srt.extensions[1].srt.ext_content"]},
                 ref=R_SRT + "; a conclusion handshake (version 5) with an HSREQ and a stream ID extension")))
     ack = srt_ctrl(2, 0, 9, 300, 0x22222222, u32(1001, 25000, 5000, 8000, 1000, 50000, 120000))
     out.append((p, "04-ack-roundtrip.json", vec(p, "ack-roundtrip", ack,
@@ -190,6 +191,15 @@ def srt_vectors():
                 {"srt.initial_seq": str(0x80000001), "@absent": ["srt.hs_reserved"], "srt.extensions.#": "0"},
                 ref=R_SRT + "; a handshake whose initial packet sequence number has its top bit set: one 32-bit "
                     "field (section 3.2.1, figure 5), no reserved bit")))
+    sid300 = bytes((0x61 + k % 26) for k in range(300))
+    longx = srt_ctrl(0, 0, 0, 360, 0x11111111, handshake(5, 0, 0x0004, 5000, 1500, 8192, 0xFFFFFFFF, 0x22222222,
+                                                         0x99887766, "198.51.100.20", u16(5, 75) + sid300))
+    out.append((p, "11-handshake-long-stream-id-roundtrip.json", vec(p, "handshake-long-stream-id-roundtrip", longx,
+                {"srt.extensions.#": "1", "srt.extensions[0].srt.ext_type": "5",
+                 "srt.extensions[0].srt.ext_octets.#": "300",
+                 "srt.extensions[0].srt.ext_octets[299].srt.octet": str(sid300[299])},
+                ref=R_SRT + "; a conclusion handshake with a 300-octet stream ID, extension length 75 (4-octet "
+                    "units; up to 512 bytes, section 3.2.1.3)")))
     out.append((p, "09-truncated-is-malformed.json", vec(p, "truncated-is-malformed", con[:-6], error="malformed-wire",
                 ref=R_SRT + "; the conclusion handshake cut inside its stream ID extension")))
     return out

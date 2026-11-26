@@ -132,7 +132,10 @@ def srt_pack():
            "group  srt.extensions  rest", "  " + F(s, "ext_type", 16), "  switch  srt.ext_type", "    case  1,2",
            "      " + F(s, "ext_length", 16), "      " + F(s, "srt_version", 32), "      " + F(s, "srt_flags", 32),
            "      " + F(s, "receiver_tsbpd_delay", 16), "      " + F(s, "sender_tsbpd_delay", 16), "    else",
-           "      " + F(s, "ext_length", 16)] + ind(3, units_hex(s, "ext_length", "ext_content", 63)) + ["  end", "end"])
+           # Other extensions: the length counts 4-octet units (up to 128, a 512-byte stream ID, section
+           # 3.2.1.3); a counted length (engine-spec 0.83) sizes the content, kept as octets.
+           "      count  ext_units  16", "      length  @ext_units  units  32"] + ind(4, octets(s, "ext_octets")) +
+          ["      end", "  end", "end"])
     words = lambda lst: ["group  srt.%s  rest" % lst, "  " + F(s, "word", 32), "end"]
     L = head("srt-packet", ["SRT packet (draft-sharabayko-srt-01): the data packet and the control packets with the handshake",
                             "and its extensions. Public. Written by tools/gen/media-pack.py; do not edit by hand."],
@@ -175,8 +178,9 @@ SRT_KEYS = [
     ("key", "peer_ip", "handshake: the peer's IP address, 128 bits as 32 hexadecimal digits (an IPv4 address in the first 32 bits)"),
     ("list", "extensions", "handshake: the extensions, in order"),
     ("key", "ext_type", "handshake extension type: 1 HSREQ, 2 HSRSP, 3 KMREQ, 4 KMRSP, 5 SID, 6 congestion, 7 filter, 8 group"),
-    ("key", "ext_length", "handshake extension: length in 4-octet units"),
-    ("key", "ext_content", "handshake extension: the content of an extension other than HSREQ and HSRSP, as hexadecimal digits"),
+    ("key", "ext_length", "HSREQ and HSRSP extension: length in 4-octet units (3); for other extensions the length is read as a count that sizes ext_octets and is not a key"),
+    ("key", "ext_content", "WITHDRAWN, no longer mapped: was the content of an extension other than HSREQ and HSRSP as hexadecimal digits, read only up to 63 units although the draft allows a 512-byte stream ID (section 3.2.1.3). Use ext_octets"),
+    ("list", "ext_octets", "handshake extension other than HSREQ and HSRSP: its content as octets, sized by the extension length in 4-octet units"),
     ("key", "srt_version", "HSREQ, HSRSP: SRT library version"),
     ("key", "srt_flags", "HSREQ, HSRSP: SRT flags (TSBPDSND, TSBPDRCV, CRYPT, TLPKTDROP, PERIODICNAK, REXMITFLG, STREAM, PACKET_FILTER)"),
     ("key", "receiver_tsbpd_delay", "HSREQ, HSRSP: receiver latency, milliseconds"),
