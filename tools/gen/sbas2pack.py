@@ -23,6 +23,9 @@ import os
 import sys
 from fractions import Fraction as Fr
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import kindorder  # noqa: E402
+
 FMT = "sbas-l1"
 MODULE = "sbas"
 SRC = ('RTKLIB, https://github.com/tomojitakasu/RTKLIB commit 71db0ffa0d9735697c6adfd06fdf766d0e5ce807, '
@@ -327,7 +330,7 @@ def vectors():
 def main():
     gt = sys.argv[1]
     check = "--check" in sys.argv[2:]
-    files = {os.path.join("packs", FMT, "pack.def"): pack_text(), os.path.join("model", MODULE + ".def"): module_text()}
+    files = {os.path.join("packs", FMT, "pack.def"): kindorder.order(pack_text()), os.path.join("model", MODULE + ".def"): module_text()}
     for name, v in vectors().items():
         files[os.path.join("packs", FMT, "vectors", name + ".json")] = json.dumps(v, indent=2) + "\n"
     bad = 0

@@ -20,6 +20,15 @@ is kept as written; the epoch is in GNSS system time (below).
 
 ## Not mapped
 
+On encode with no recorded kind (engine-spec Encode step 2), each kind is chosen by the keys
+it requires.
+`dcbs-applied`, `pcvs-applied` require the same keys, so an entity with them is written as `dcbs-applied`.
+`scale-factor`, `phase-shift`, `glonass-slot-frq`, `glonass-cod-phs-bis`, `prn-number-of-obs` require the same keys, so an entity with them is written as `scale-factor`.
+`observation-gps`, `observation-glonass`, `observation-galileo`, `observation-beidou`, `observation-qzss`, `observation-navic`, `observation-sbas` require the same keys, so an entity with them is written as `observation-gps`.
+Choosing between them needs `requires` on a value or on an absent key, a language addition.
+`end-of-header` maps no key and must stand before `header-other` for decode, so a kind-less entity
+that fits no other kind is written as END OF HEADER and `header-other` is not reached.
+
 - **Numbers as numbers**: every value is its column text. RINEX right-justifies numbers in their
   columns with spaces, and the `text` wire's numeric transforms write zeros where a column is wider than
   the number, so a round trip would not be exact; its `float` does not read an exponent (`E+01`,

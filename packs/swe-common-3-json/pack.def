@@ -36,21 +36,9 @@ source        "https://github.com/opengeospatial/ogcapi-connected-systems at com
 uses          swecommon3
 wire          json
 
-kind      boolean
-when      type  Boolean
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.reference_frame  referenceFrame  string
-field  swecommon3.axis_id  axisID  string
-field  swecommon3.value  value  bool
-
 kind      count
 when      type  Count
+requires  swecommon3.nil_values_value
 field  swecommon3.id  id  string
 field  swecommon3.label  label  string
 field  swecommon3.description  description  string
@@ -68,97 +56,9 @@ field  swecommon3.constraint_type  constraint.type  string
 field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
 field  swecommon3.value  value  int
 
-kind      quantity
-when      type  Quantity
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.reference_frame  referenceFrame  string
-field  swecommon3.axis_id  axisID  string
-group  swecommon3.nil_values  nilValues
-  field  swecommon3.nil_values_reason  reason  string
-end
-field  swecommon3.constraint_type  constraint.type  string
-field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
-field  swecommon3.uom_label  uom.label  string
-field  swecommon3.uom_symbol  uom.symbol  string
-field  swecommon3.uom_code  uom.code  string
-field  swecommon3.uom_href  uom.href  string
-
-kind      time
-when      type  Time
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.reference_frame  referenceFrame  string
-field  swecommon3.axis_id  axisID  string
-group  swecommon3.nil_values  nilValues
-  field  swecommon3.nil_values_reason  reason  string
-end
-field  swecommon3.constraint_type  constraint.type  string
-field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
-field  swecommon3.reference_time  referenceTime  string
-field  swecommon3.local_frame  localFrame  string
-field  swecommon3.uom_label  uom.label  string
-field  swecommon3.uom_symbol  uom.symbol  string
-field  swecommon3.uom_code  uom.code  string
-field  swecommon3.uom_href  uom.href  string
-
-kind      category
-when      type  Category
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.reference_frame  referenceFrame  string
-field  swecommon3.axis_id  axisID  string
-group  swecommon3.nil_values  nilValues
-  field  swecommon3.nil_values_reason  reason  string
-  field  swecommon3.nil_values_value_2  value  string
-end
-field  swecommon3.constraint_type  constraint.type  string
-group  swecommon3.constraint_values  constraint.values
-  field  swecommon3.constraint_values_value  .  string
-end
-field  swecommon3.constraint_pattern  constraint.pattern  string
-field  swecommon3.value_2  value  string
-field  swecommon3.code_space  codeSpace  string
-
-kind      text
-when      type  Text
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.reference_frame  referenceFrame  string
-field  swecommon3.axis_id  axisID  string
-group  swecommon3.nil_values  nilValues
-  field  swecommon3.nil_values_reason  reason  string
-  field  swecommon3.nil_values_value_2  value  string
-end
-field  swecommon3.constraint_type  constraint.type  string
-group  swecommon3.constraint_values  constraint.values
-  field  swecommon3.constraint_values_value  .  string
-end
-field  swecommon3.constraint_pattern  constraint.pattern  string
-field  swecommon3.value_2  value  string
-
 kind      count_range
 when      type  CountRange
+requires  swecommon3.value_3_value
 field  swecommon3.id  id  string
 field  swecommon3.label  label  string
 field  swecommon3.description  description  string
@@ -178,52 +78,9 @@ group  swecommon3.value_3  value
   field  swecommon3.value_3_value  .  int
 end
 
-kind      quantity_range
-when      type  QuantityRange
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.reference_frame  referenceFrame  string
-field  swecommon3.axis_id  axisID  string
-group  swecommon3.nil_values  nilValues
-  field  swecommon3.nil_values_reason  reason  string
-end
-field  swecommon3.constraint_type  constraint.type  string
-field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
-field  swecommon3.uom_label  uom.label  string
-field  swecommon3.uom_symbol  uom.symbol  string
-field  swecommon3.uom_code  uom.code  string
-field  swecommon3.uom_href  uom.href  string
-
-kind      time_range
-when      type  TimeRange
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.reference_frame  referenceFrame  string
-field  swecommon3.axis_id  axisID  string
-group  swecommon3.nil_values  nilValues
-  field  swecommon3.nil_values_reason  reason  string
-end
-field  swecommon3.constraint_type  constraint.type  string
-field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
-field  swecommon3.reference_time  referenceTime  string
-field  swecommon3.local_frame  localFrame  string
-field  swecommon3.uom_label  uom.label  string
-field  swecommon3.uom_symbol  uom.symbol  string
-field  swecommon3.uom_code  uom.code  string
-field  swecommon3.uom_href  uom.href  string
-
 kind      category_range
 when      type  CategoryRange
+requires  swecommon3.value_3_value_2
 field  swecommon3.id  id  string
 field  swecommon3.label  label  string
 field  swecommon3.description  description  string
@@ -249,6 +106,7 @@ field  swecommon3.code_space  codeSpace  string
 
 kind      data_record
 when      type  DataRecord
+requires  swecommon3.fields_name
 field  swecommon3.id  id  string
 field  swecommon3.label  label  string
 field  swecommon3.description  description  string
@@ -344,6 +202,7 @@ end
 
 kind      vector
 when      type  Vector
+requires  swecommon3.coordinates_name
 field  swecommon3.id  id  string
 field  swecommon3.label  label  string
 field  swecommon3.description  description  string
@@ -374,536 +233,9 @@ group  swecommon3.coordinates  coordinates
   field  swecommon3.coordinates_local_frame  localFrame  string
 end
 
-kind      data_array
-when      type  DataArray
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.element_count_href  elementCount.href  string
-field  swecommon3.element_count_role  elementCount.role  string
-field  swecommon3.element_count_arcrole  elementCount.arcrole  string
-field  swecommon3.element_count_title  elementCount.title  string
-field  swecommon3.element_count_id  elementCount.id  string
-field  swecommon3.element_count_label  elementCount.label  string
-field  swecommon3.element_count_description  elementCount.description  string
-field  swecommon3.element_count_type  elementCount.type  string
-field  swecommon3.element_count_updatable  elementCount.updatable  bool
-field  swecommon3.element_count_optional  elementCount.optional  bool
-field  swecommon3.element_count_definition  elementCount.definition  string
-field  swecommon3.element_count_reference_frame  elementCount.referenceFrame  string
-field  swecommon3.element_count_axis_id  elementCount.axisID  string
-field  swecommon3.element_count_constraint_type  elementCount.constraint.type  string
-field  swecommon3.element_count_constraint_significant_figures  elementCount.constraint.significantFigures  int
-field  swecommon3.element_count_value  elementCount.value  int
-field  swecommon3.element_type_name  elementType.name  string
-field  swecommon3.element_type_href  elementType.href  string
-field  swecommon3.element_type_role  elementType.role  string
-field  swecommon3.element_type_arcrole  elementType.arcrole  string
-field  swecommon3.element_type_title  elementType.title  string
-field  swecommon3.element_type_id  elementType.id  string
-field  swecommon3.element_type_label  elementType.label  string
-field  swecommon3.element_type_description  elementType.description  string
-field  swecommon3.element_type_type  elementType.type  string
-field  swecommon3.element_type_updatable  elementType.updatable  bool
-field  swecommon3.element_type_optional  elementType.optional  bool
-field  swecommon3.element_type_definition  elementType.definition  string
-field  swecommon3.element_type_reference_frame  elementType.referenceFrame  string
-field  swecommon3.element_type_axis_id  elementType.axisID  string
-group  swecommon3.element_type_nil_values  elementType.nilValues
-  field  swecommon3.element_type_nil_values_reason  reason  string
-end
-field  swecommon3.element_type_constraint_type  elementType.constraint.type  string
-field  swecommon3.element_type_constraint_significant_figures  elementType.constraint.significantFigures  int
-field  swecommon3.element_type_constraint_pattern  elementType.constraint.pattern  string
-group  swecommon3.element_type_constraint_geom_types  elementType.constraint.geomTypes
-  field  swecommon3.element_type_constraint_geom_types_value  .  string
-end
-field  swecommon3.element_type_uom_label  elementType.uom.label  string
-field  swecommon3.element_type_uom_symbol  elementType.uom.symbol  string
-field  swecommon3.element_type_uom_code  elementType.uom.code  string
-field  swecommon3.element_type_uom_href  elementType.uom.href  string
-field  swecommon3.element_type_reference_time  elementType.referenceTime  string
-field  swecommon3.element_type_local_frame  elementType.localFrame  string
-field  swecommon3.element_type_code_space  elementType.codeSpace  string
-group  swecommon3.element_type_fields  elementType.fields
-  field  swecommon3.element_type_fields_name  name  string
-  field  swecommon3.element_type_fields_href  href  string
-  field  swecommon3.element_type_fields_role  role  string
-  field  swecommon3.element_type_fields_arcrole  arcrole  string
-  field  swecommon3.element_type_fields_title  title  string
-  field  swecommon3.element_type_fields_id  id  string
-  field  swecommon3.element_type_fields_label  label  string
-  field  swecommon3.element_type_fields_description  description  string
-  field  swecommon3.element_type_fields_type  type  string
-  field  swecommon3.element_type_fields_updatable  updatable  bool
-  field  swecommon3.element_type_fields_optional  optional  bool
-  field  swecommon3.element_type_fields_definition  definition  string
-  field  swecommon3.element_type_fields_reference_frame  referenceFrame  string
-  field  swecommon3.element_type_fields_axis_id  axisID  string
-  field  swecommon3.element_type_fields_reference_time  referenceTime  string
-  field  swecommon3.element_type_fields_local_frame  localFrame  string
-  field  swecommon3.element_type_fields_code_space  codeSpace  string
-  field  swecommon3.element_type_fields_srs  srs  string
-end
-group  swecommon3.element_type_coordinates  elementType.coordinates
-  field  swecommon3.element_type_coordinates_name  name  string
-  field  swecommon3.element_type_coordinates_id  id  string
-  field  swecommon3.element_type_coordinates_label  label  string
-  field  swecommon3.element_type_coordinates_description  description  string
-  field  swecommon3.element_type_coordinates_type  type  string
-  field  swecommon3.element_type_coordinates_updatable  updatable  bool
-  field  swecommon3.element_type_coordinates_optional  optional  bool
-  field  swecommon3.element_type_coordinates_definition  definition  string
-  field  swecommon3.element_type_coordinates_reference_frame  referenceFrame  string
-  field  swecommon3.element_type_coordinates_axis_id  axisID  string
-  field  swecommon3.element_type_coordinates_reference_time  referenceTime  string
-  field  swecommon3.element_type_coordinates_local_frame  localFrame  string
-end
-field  swecommon3.element_type_element_count_href  elementType.elementCount.href  string
-field  swecommon3.element_type_element_count_role  elementType.elementCount.role  string
-field  swecommon3.element_type_element_count_arcrole  elementType.elementCount.arcrole  string
-field  swecommon3.element_type_element_count_title  elementType.elementCount.title  string
-field  swecommon3.element_type_element_count_id  elementType.elementCount.id  string
-field  swecommon3.element_type_element_count_label  elementType.elementCount.label  string
-field  swecommon3.element_type_element_count_description  elementType.elementCount.description  string
-field  swecommon3.element_type_element_count_type  elementType.elementCount.type  string
-field  swecommon3.element_type_element_count_updatable  elementType.elementCount.updatable  bool
-field  swecommon3.element_type_element_count_optional  elementType.elementCount.optional  bool
-field  swecommon3.element_type_element_count_definition  elementType.elementCount.definition  string
-field  swecommon3.element_type_element_count_reference_frame  elementType.elementCount.referenceFrame  string
-field  swecommon3.element_type_element_count_axis_id  elementType.elementCount.axisID  string
-field  swecommon3.element_type_element_count_constraint_type  elementType.elementCount.constraint.type  string
-field  swecommon3.element_type_element_count_constraint_significant_figures  elementType.elementCount.constraint.significantFigures  int
-field  swecommon3.element_type_element_count_value  elementType.elementCount.value  int
-field  swecommon3.element_type_element_type_name  elementType.elementType.name  string
-field  swecommon3.element_type_element_type_href  elementType.elementType.href  string
-field  swecommon3.element_type_element_type_role  elementType.elementType.role  string
-field  swecommon3.element_type_element_type_arcrole  elementType.elementType.arcrole  string
-field  swecommon3.element_type_element_type_title  elementType.elementType.title  string
-field  swecommon3.element_type_element_type_id  elementType.elementType.id  string
-field  swecommon3.element_type_element_type_label  elementType.elementType.label  string
-field  swecommon3.element_type_element_type_description  elementType.elementType.description  string
-field  swecommon3.element_type_element_type_type  elementType.elementType.type  string
-field  swecommon3.element_type_element_type_updatable  elementType.elementType.updatable  bool
-field  swecommon3.element_type_element_type_optional  elementType.elementType.optional  bool
-field  swecommon3.element_type_element_type_definition  elementType.elementType.definition  string
-field  swecommon3.element_type_element_type_reference_frame  elementType.elementType.referenceFrame  string
-field  swecommon3.element_type_element_type_axis_id  elementType.elementType.axisID  string
-field  swecommon3.element_type_element_type_constraint_type  elementType.elementType.constraint.type  string
-field  swecommon3.element_type_element_type_constraint_significant_figures  elementType.elementType.constraint.significantFigures  int
-field  swecommon3.element_type_element_type_constraint_pattern  elementType.elementType.constraint.pattern  string
-group  swecommon3.element_type_element_type_constraint_geom_types  elementType.elementType.constraint.geomTypes
-  field  swecommon3.element_type_element_type_constraint_geom_types_value  .  string
-end
-field  swecommon3.element_type_element_type_uom_label  elementType.elementType.uom.label  string
-field  swecommon3.element_type_element_type_uom_symbol  elementType.elementType.uom.symbol  string
-field  swecommon3.element_type_element_type_uom_code  elementType.elementType.uom.code  string
-field  swecommon3.element_type_element_type_uom_href  elementType.elementType.uom.href  string
-field  swecommon3.element_type_element_type_reference_time  elementType.elementType.referenceTime  string
-field  swecommon3.element_type_element_type_local_frame  elementType.elementType.localFrame  string
-field  swecommon3.element_type_element_type_code_space  elementType.elementType.codeSpace  string
-field  swecommon3.element_type_element_type_element_count_href  elementType.elementType.elementCount.href  string
-field  swecommon3.element_type_element_type_element_count_role  elementType.elementType.elementCount.role  string
-field  swecommon3.element_type_element_type_element_count_arcrole  elementType.elementType.elementCount.arcrole  string
-field  swecommon3.element_type_element_type_element_count_title  elementType.elementType.elementCount.title  string
-field  swecommon3.element_type_element_type_element_count_id  elementType.elementType.elementCount.id  string
-field  swecommon3.element_type_element_type_element_count_label  elementType.elementType.elementCount.label  string
-field  swecommon3.element_type_element_type_element_count_description  elementType.elementType.elementCount.description  string
-field  swecommon3.element_type_element_type_element_count_type  elementType.elementType.elementCount.type  string
-field  swecommon3.element_type_element_type_element_count_updatable  elementType.elementType.elementCount.updatable  bool
-field  swecommon3.element_type_element_type_element_count_optional  elementType.elementType.elementCount.optional  bool
-field  swecommon3.element_type_element_type_element_count_definition  elementType.elementType.elementCount.definition  string
-field  swecommon3.element_type_element_type_element_count_reference_frame  elementType.elementType.elementCount.referenceFrame  string
-field  swecommon3.element_type_element_type_element_count_axis_id  elementType.elementType.elementCount.axisID  string
-field  swecommon3.element_type_element_type_element_count_value  elementType.elementType.elementCount.value  int
-field  swecommon3.element_type_element_type_element_type_name  elementType.elementType.elementType.name  string
-field  swecommon3.element_type_element_type_element_type_href  elementType.elementType.elementType.href  string
-field  swecommon3.element_type_element_type_element_type_role  elementType.elementType.elementType.role  string
-field  swecommon3.element_type_element_type_element_type_arcrole  elementType.elementType.elementType.arcrole  string
-field  swecommon3.element_type_element_type_element_type_title  elementType.elementType.elementType.title  string
-field  swecommon3.element_type_element_type_element_type_id  elementType.elementType.elementType.id  string
-field  swecommon3.element_type_element_type_element_type_label  elementType.elementType.elementType.label  string
-field  swecommon3.element_type_element_type_element_type_description  elementType.elementType.elementType.description  string
-field  swecommon3.element_type_element_type_element_type_type  elementType.elementType.elementType.type  string
-field  swecommon3.element_type_element_type_element_type_updatable  elementType.elementType.elementType.updatable  bool
-field  swecommon3.element_type_element_type_element_type_optional  elementType.elementType.elementType.optional  bool
-field  swecommon3.element_type_element_type_element_type_definition  elementType.elementType.elementType.definition  string
-field  swecommon3.element_type_element_type_element_type_reference_frame  elementType.elementType.elementType.referenceFrame  string
-field  swecommon3.element_type_element_type_element_type_axis_id  elementType.elementType.elementType.axisID  string
-field  swecommon3.element_type_element_type_element_type_reference_time  elementType.elementType.elementType.referenceTime  string
-field  swecommon3.element_type_element_type_element_type_local_frame  elementType.elementType.elementType.localFrame  string
-field  swecommon3.element_type_element_type_element_type_code_space  elementType.elementType.elementType.codeSpace  string
-field  swecommon3.element_type_element_type_element_type_srs  elementType.elementType.elementType.srs  string
-field  swecommon3.element_type_element_type_encoding_id  elementType.elementType.encoding.id  string
-field  swecommon3.element_type_element_type_encoding_type  elementType.elementType.encoding.type  string
-field  swecommon3.element_type_element_type_encoding_byte_order  elementType.elementType.encoding.byteOrder  string
-field  swecommon3.element_type_element_type_encoding_byte_encoding  elementType.elementType.encoding.byteEncoding  string
-field  swecommon3.element_type_element_type_encoding_byte_length  elementType.elementType.encoding.byteLength  int
-field  swecommon3.element_type_element_type_encoding_collapse_white_spaces  elementType.elementType.encoding.collapseWhiteSpaces  bool
-field  swecommon3.element_type_element_type_encoding_decimal_separator  elementType.elementType.encoding.decimalSeparator  string
-field  swecommon3.element_type_element_type_encoding_token_separator  elementType.elementType.encoding.tokenSeparator  string
-field  swecommon3.element_type_element_type_encoding_block_separator  elementType.elementType.encoding.blockSeparator  string
-field  swecommon3.element_type_element_type_encoding_namespace  elementType.elementType.encoding.namespace  string
-field  swecommon3.element_type_element_type_encoding_records_as_arrays  elementType.elementType.encoding.recordsAsArrays  bool
-field  swecommon3.element_type_element_type_encoding_vectors_as_arrays  elementType.elementType.encoding.vectorsAsArrays  bool
-field  swecommon3.element_type_element_type_choice_value_id  elementType.elementType.choiceValue.id  string
-field  swecommon3.element_type_element_type_choice_value_label  elementType.elementType.choiceValue.label  string
-field  swecommon3.element_type_element_type_choice_value_description  elementType.elementType.choiceValue.description  string
-field  swecommon3.element_type_element_type_choice_value_type  elementType.elementType.choiceValue.type  string
-field  swecommon3.element_type_element_type_choice_value_updatable  elementType.elementType.choiceValue.updatable  bool
-field  swecommon3.element_type_element_type_choice_value_optional  elementType.elementType.choiceValue.optional  bool
-field  swecommon3.element_type_element_type_choice_value_definition  elementType.elementType.choiceValue.definition  string
-field  swecommon3.element_type_element_type_choice_value_reference_frame  elementType.elementType.choiceValue.referenceFrame  string
-field  swecommon3.element_type_element_type_choice_value_axis_id  elementType.elementType.choiceValue.axisID  string
-field  swecommon3.element_type_element_type_choice_value_value  elementType.elementType.choiceValue.value  string
-field  swecommon3.element_type_element_type_choice_value_code_space  elementType.elementType.choiceValue.codeSpace  string
-field  swecommon3.element_type_element_type_srs  elementType.elementType.srs  string
-field  swecommon3.element_type_encoding_id  elementType.encoding.id  string
-field  swecommon3.element_type_encoding_type  elementType.encoding.type  string
-field  swecommon3.element_type_encoding_byte_order  elementType.encoding.byteOrder  string
-field  swecommon3.element_type_encoding_byte_encoding  elementType.encoding.byteEncoding  string
-field  swecommon3.element_type_encoding_byte_length  elementType.encoding.byteLength  int
-field  swecommon3.element_type_encoding_collapse_white_spaces  elementType.encoding.collapseWhiteSpaces  bool
-field  swecommon3.element_type_encoding_decimal_separator  elementType.encoding.decimalSeparator  string
-field  swecommon3.element_type_encoding_token_separator  elementType.encoding.tokenSeparator  string
-field  swecommon3.element_type_encoding_block_separator  elementType.encoding.blockSeparator  string
-field  swecommon3.element_type_encoding_namespace  elementType.encoding.namespace  string
-field  swecommon3.element_type_encoding_records_as_arrays  elementType.encoding.recordsAsArrays  bool
-field  swecommon3.element_type_encoding_vectors_as_arrays  elementType.encoding.vectorsAsArrays  bool
-field  swecommon3.element_type_choice_value_id  elementType.choiceValue.id  string
-field  swecommon3.element_type_choice_value_label  elementType.choiceValue.label  string
-field  swecommon3.element_type_choice_value_description  elementType.choiceValue.description  string
-field  swecommon3.element_type_choice_value_type  elementType.choiceValue.type  string
-field  swecommon3.element_type_choice_value_updatable  elementType.choiceValue.updatable  bool
-field  swecommon3.element_type_choice_value_optional  elementType.choiceValue.optional  bool
-field  swecommon3.element_type_choice_value_definition  elementType.choiceValue.definition  string
-field  swecommon3.element_type_choice_value_reference_frame  elementType.choiceValue.referenceFrame  string
-field  swecommon3.element_type_choice_value_axis_id  elementType.choiceValue.axisID  string
-field  swecommon3.element_type_choice_value_constraint_type  elementType.choiceValue.constraint.type  string
-group  swecommon3.element_type_choice_value_constraint_values  elementType.choiceValue.constraint.values
-  field  swecommon3.element_type_choice_value_constraint_values_value  .  string
-end
-field  swecommon3.element_type_choice_value_constraint_pattern  elementType.choiceValue.constraint.pattern  string
-field  swecommon3.element_type_choice_value_value  elementType.choiceValue.value  string
-field  swecommon3.element_type_choice_value_code_space  elementType.choiceValue.codeSpace  string
-group  swecommon3.element_type_items  elementType.items
-  field  swecommon3.element_type_items_name  name  string
-  field  swecommon3.element_type_items_href  href  string
-  field  swecommon3.element_type_items_role  role  string
-  field  swecommon3.element_type_items_arcrole  arcrole  string
-  field  swecommon3.element_type_items_title  title  string
-  field  swecommon3.element_type_items_id  id  string
-  field  swecommon3.element_type_items_label  label  string
-  field  swecommon3.element_type_items_description  description  string
-  field  swecommon3.element_type_items_type  type  string
-  field  swecommon3.element_type_items_updatable  updatable  bool
-  field  swecommon3.element_type_items_optional  optional  bool
-  field  swecommon3.element_type_items_definition  definition  string
-  field  swecommon3.element_type_items_reference_frame  referenceFrame  string
-  field  swecommon3.element_type_items_axis_id  axisID  string
-  field  swecommon3.element_type_items_reference_time  referenceTime  string
-  field  swecommon3.element_type_items_local_frame  localFrame  string
-  field  swecommon3.element_type_items_code_space  codeSpace  string
-  field  swecommon3.element_type_items_srs  srs  string
-end
-field  swecommon3.element_type_srs  elementType.srs  string
-field  swecommon3.encoding_id  encoding.id  string
-field  swecommon3.encoding_type  encoding.type  string
-field  swecommon3.encoding_byte_order  encoding.byteOrder  string
-field  swecommon3.encoding_byte_encoding  encoding.byteEncoding  string
-field  swecommon3.encoding_byte_length  encoding.byteLength  int
-group  swecommon3.encoding_members  encoding.members
-  field  swecommon3.encoding_members_id  id  string
-  field  swecommon3.encoding_members_type  type  string
-  field  swecommon3.encoding_members_encryption  encryption  string
-  field  swecommon3.encoding_members_significant_bits  significantBits  int
-  field  swecommon3.encoding_members_bit_length  bitLength  int
-  field  swecommon3.encoding_members_byte_length  byteLength  int
-  field  swecommon3.encoding_members_data_type  dataType  string
-  field  swecommon3.encoding_members_ref  ref  string
-  field  swecommon3.encoding_members_compression  compression  string
-  field  swecommon3.encoding_members_padding_bytes_after  paddingBytes-after  int
-  field  swecommon3.encoding_members_padding_bytes_before  paddingBytes-before  int
-end
-field  swecommon3.encoding_collapse_white_spaces  encoding.collapseWhiteSpaces  bool
-field  swecommon3.encoding_decimal_separator  encoding.decimalSeparator  string
-field  swecommon3.encoding_token_separator  encoding.tokenSeparator  string
-field  swecommon3.encoding_block_separator  encoding.blockSeparator  string
-field  swecommon3.encoding_namespace  encoding.namespace  string
-field  swecommon3.encoding_records_as_arrays  encoding.recordsAsArrays  bool
-field  swecommon3.encoding_vectors_as_arrays  encoding.vectorsAsArrays  bool
-
-kind      matrix
-when      type  Matrix
-field  swecommon3.id  id  string
-field  swecommon3.label  label  string
-field  swecommon3.description  description  string
-field  swecommon3.type  type  string
-field  swecommon3.updatable  updatable  bool
-field  swecommon3.optional  optional  bool
-field  swecommon3.definition  definition  string
-field  swecommon3.element_count_href  elementCount.href  string
-field  swecommon3.element_count_role  elementCount.role  string
-field  swecommon3.element_count_arcrole  elementCount.arcrole  string
-field  swecommon3.element_count_title  elementCount.title  string
-field  swecommon3.element_count_id  elementCount.id  string
-field  swecommon3.element_count_label  elementCount.label  string
-field  swecommon3.element_count_description  elementCount.description  string
-field  swecommon3.element_count_type  elementCount.type  string
-field  swecommon3.element_count_updatable  elementCount.updatable  bool
-field  swecommon3.element_count_optional  elementCount.optional  bool
-field  swecommon3.element_count_definition  elementCount.definition  string
-field  swecommon3.element_count_reference_frame  elementCount.referenceFrame  string
-field  swecommon3.element_count_axis_id  elementCount.axisID  string
-field  swecommon3.element_count_constraint_type  elementCount.constraint.type  string
-field  swecommon3.element_count_constraint_significant_figures  elementCount.constraint.significantFigures  int
-field  swecommon3.element_count_value  elementCount.value  int
-field  swecommon3.element_type_name  elementType.name  string
-field  swecommon3.element_type_href  elementType.href  string
-field  swecommon3.element_type_role  elementType.role  string
-field  swecommon3.element_type_arcrole  elementType.arcrole  string
-field  swecommon3.element_type_title  elementType.title  string
-field  swecommon3.element_type_id  elementType.id  string
-field  swecommon3.element_type_label  elementType.label  string
-field  swecommon3.element_type_description  elementType.description  string
-field  swecommon3.element_type_type  elementType.type  string
-field  swecommon3.element_type_updatable  elementType.updatable  bool
-field  swecommon3.element_type_optional  elementType.optional  bool
-field  swecommon3.element_type_definition  elementType.definition  string
-field  swecommon3.element_type_reference_frame  elementType.referenceFrame  string
-field  swecommon3.element_type_axis_id  elementType.axisID  string
-group  swecommon3.element_type_nil_values  elementType.nilValues
-  field  swecommon3.element_type_nil_values_reason  reason  string
-end
-field  swecommon3.element_type_constraint_type  elementType.constraint.type  string
-field  swecommon3.element_type_constraint_significant_figures  elementType.constraint.significantFigures  int
-field  swecommon3.element_type_constraint_pattern  elementType.constraint.pattern  string
-group  swecommon3.element_type_constraint_geom_types  elementType.constraint.geomTypes
-  field  swecommon3.element_type_constraint_geom_types_value  .  string
-end
-field  swecommon3.element_type_uom_label  elementType.uom.label  string
-field  swecommon3.element_type_uom_symbol  elementType.uom.symbol  string
-field  swecommon3.element_type_uom_code  elementType.uom.code  string
-field  swecommon3.element_type_uom_href  elementType.uom.href  string
-field  swecommon3.element_type_reference_time  elementType.referenceTime  string
-field  swecommon3.element_type_local_frame  elementType.localFrame  string
-field  swecommon3.element_type_code_space  elementType.codeSpace  string
-group  swecommon3.element_type_fields  elementType.fields
-  field  swecommon3.element_type_fields_name  name  string
-  field  swecommon3.element_type_fields_href  href  string
-  field  swecommon3.element_type_fields_role  role  string
-  field  swecommon3.element_type_fields_arcrole  arcrole  string
-  field  swecommon3.element_type_fields_title  title  string
-  field  swecommon3.element_type_fields_id  id  string
-  field  swecommon3.element_type_fields_label  label  string
-  field  swecommon3.element_type_fields_description  description  string
-  field  swecommon3.element_type_fields_type  type  string
-  field  swecommon3.element_type_fields_updatable  updatable  bool
-  field  swecommon3.element_type_fields_optional  optional  bool
-  field  swecommon3.element_type_fields_definition  definition  string
-  field  swecommon3.element_type_fields_reference_frame  referenceFrame  string
-  field  swecommon3.element_type_fields_axis_id  axisID  string
-  field  swecommon3.element_type_fields_reference_time  referenceTime  string
-  field  swecommon3.element_type_fields_local_frame  localFrame  string
-  field  swecommon3.element_type_fields_code_space  codeSpace  string
-  field  swecommon3.element_type_fields_srs  srs  string
-end
-group  swecommon3.element_type_coordinates  elementType.coordinates
-  field  swecommon3.element_type_coordinates_name  name  string
-  field  swecommon3.element_type_coordinates_id  id  string
-  field  swecommon3.element_type_coordinates_label  label  string
-  field  swecommon3.element_type_coordinates_description  description  string
-  field  swecommon3.element_type_coordinates_type  type  string
-  field  swecommon3.element_type_coordinates_updatable  updatable  bool
-  field  swecommon3.element_type_coordinates_optional  optional  bool
-  field  swecommon3.element_type_coordinates_definition  definition  string
-  field  swecommon3.element_type_coordinates_reference_frame  referenceFrame  string
-  field  swecommon3.element_type_coordinates_axis_id  axisID  string
-  field  swecommon3.element_type_coordinates_reference_time  referenceTime  string
-  field  swecommon3.element_type_coordinates_local_frame  localFrame  string
-end
-field  swecommon3.element_type_element_count_href  elementType.elementCount.href  string
-field  swecommon3.element_type_element_count_role  elementType.elementCount.role  string
-field  swecommon3.element_type_element_count_arcrole  elementType.elementCount.arcrole  string
-field  swecommon3.element_type_element_count_title  elementType.elementCount.title  string
-field  swecommon3.element_type_element_count_id  elementType.elementCount.id  string
-field  swecommon3.element_type_element_count_label  elementType.elementCount.label  string
-field  swecommon3.element_type_element_count_description  elementType.elementCount.description  string
-field  swecommon3.element_type_element_count_type  elementType.elementCount.type  string
-field  swecommon3.element_type_element_count_updatable  elementType.elementCount.updatable  bool
-field  swecommon3.element_type_element_count_optional  elementType.elementCount.optional  bool
-field  swecommon3.element_type_element_count_definition  elementType.elementCount.definition  string
-field  swecommon3.element_type_element_count_reference_frame  elementType.elementCount.referenceFrame  string
-field  swecommon3.element_type_element_count_axis_id  elementType.elementCount.axisID  string
-field  swecommon3.element_type_element_count_constraint_type  elementType.elementCount.constraint.type  string
-field  swecommon3.element_type_element_count_constraint_significant_figures  elementType.elementCount.constraint.significantFigures  int
-field  swecommon3.element_type_element_count_value  elementType.elementCount.value  int
-field  swecommon3.element_type_element_type_name  elementType.elementType.name  string
-field  swecommon3.element_type_element_type_href  elementType.elementType.href  string
-field  swecommon3.element_type_element_type_role  elementType.elementType.role  string
-field  swecommon3.element_type_element_type_arcrole  elementType.elementType.arcrole  string
-field  swecommon3.element_type_element_type_title  elementType.elementType.title  string
-field  swecommon3.element_type_element_type_id  elementType.elementType.id  string
-field  swecommon3.element_type_element_type_label  elementType.elementType.label  string
-field  swecommon3.element_type_element_type_description  elementType.elementType.description  string
-field  swecommon3.element_type_element_type_type  elementType.elementType.type  string
-field  swecommon3.element_type_element_type_updatable  elementType.elementType.updatable  bool
-field  swecommon3.element_type_element_type_optional  elementType.elementType.optional  bool
-field  swecommon3.element_type_element_type_definition  elementType.elementType.definition  string
-field  swecommon3.element_type_element_type_reference_frame  elementType.elementType.referenceFrame  string
-field  swecommon3.element_type_element_type_axis_id  elementType.elementType.axisID  string
-field  swecommon3.element_type_element_type_constraint_type  elementType.elementType.constraint.type  string
-field  swecommon3.element_type_element_type_constraint_significant_figures  elementType.elementType.constraint.significantFigures  int
-field  swecommon3.element_type_element_type_constraint_pattern  elementType.elementType.constraint.pattern  string
-group  swecommon3.element_type_element_type_constraint_geom_types  elementType.elementType.constraint.geomTypes
-  field  swecommon3.element_type_element_type_constraint_geom_types_value  .  string
-end
-field  swecommon3.element_type_element_type_uom_label  elementType.elementType.uom.label  string
-field  swecommon3.element_type_element_type_uom_symbol  elementType.elementType.uom.symbol  string
-field  swecommon3.element_type_element_type_uom_code  elementType.elementType.uom.code  string
-field  swecommon3.element_type_element_type_uom_href  elementType.elementType.uom.href  string
-field  swecommon3.element_type_element_type_reference_time  elementType.elementType.referenceTime  string
-field  swecommon3.element_type_element_type_local_frame  elementType.elementType.localFrame  string
-field  swecommon3.element_type_element_type_code_space  elementType.elementType.codeSpace  string
-field  swecommon3.element_type_element_type_element_count_href  elementType.elementType.elementCount.href  string
-field  swecommon3.element_type_element_type_element_count_role  elementType.elementType.elementCount.role  string
-field  swecommon3.element_type_element_type_element_count_arcrole  elementType.elementType.elementCount.arcrole  string
-field  swecommon3.element_type_element_type_element_count_title  elementType.elementType.elementCount.title  string
-field  swecommon3.element_type_element_type_element_count_id  elementType.elementType.elementCount.id  string
-field  swecommon3.element_type_element_type_element_count_label  elementType.elementType.elementCount.label  string
-field  swecommon3.element_type_element_type_element_count_description  elementType.elementType.elementCount.description  string
-field  swecommon3.element_type_element_type_element_count_type  elementType.elementType.elementCount.type  string
-field  swecommon3.element_type_element_type_element_count_updatable  elementType.elementType.elementCount.updatable  bool
-field  swecommon3.element_type_element_type_element_count_optional  elementType.elementType.elementCount.optional  bool
-field  swecommon3.element_type_element_type_element_count_definition  elementType.elementType.elementCount.definition  string
-field  swecommon3.element_type_element_type_element_count_reference_frame  elementType.elementType.elementCount.referenceFrame  string
-field  swecommon3.element_type_element_type_element_count_axis_id  elementType.elementType.elementCount.axisID  string
-field  swecommon3.element_type_element_type_element_count_value  elementType.elementType.elementCount.value  int
-field  swecommon3.element_type_element_type_element_type_name  elementType.elementType.elementType.name  string
-field  swecommon3.element_type_element_type_element_type_href  elementType.elementType.elementType.href  string
-field  swecommon3.element_type_element_type_element_type_role  elementType.elementType.elementType.role  string
-field  swecommon3.element_type_element_type_element_type_arcrole  elementType.elementType.elementType.arcrole  string
-field  swecommon3.element_type_element_type_element_type_title  elementType.elementType.elementType.title  string
-field  swecommon3.element_type_element_type_element_type_id  elementType.elementType.elementType.id  string
-field  swecommon3.element_type_element_type_element_type_label  elementType.elementType.elementType.label  string
-field  swecommon3.element_type_element_type_element_type_description  elementType.elementType.elementType.description  string
-field  swecommon3.element_type_element_type_element_type_type  elementType.elementType.elementType.type  string
-field  swecommon3.element_type_element_type_element_type_updatable  elementType.elementType.elementType.updatable  bool
-field  swecommon3.element_type_element_type_element_type_optional  elementType.elementType.elementType.optional  bool
-field  swecommon3.element_type_element_type_element_type_definition  elementType.elementType.elementType.definition  string
-field  swecommon3.element_type_element_type_element_type_reference_frame  elementType.elementType.elementType.referenceFrame  string
-field  swecommon3.element_type_element_type_element_type_axis_id  elementType.elementType.elementType.axisID  string
-field  swecommon3.element_type_element_type_element_type_reference_time  elementType.elementType.elementType.referenceTime  string
-field  swecommon3.element_type_element_type_element_type_local_frame  elementType.elementType.elementType.localFrame  string
-field  swecommon3.element_type_element_type_element_type_code_space  elementType.elementType.elementType.codeSpace  string
-field  swecommon3.element_type_element_type_element_type_srs  elementType.elementType.elementType.srs  string
-field  swecommon3.element_type_element_type_encoding_id  elementType.elementType.encoding.id  string
-field  swecommon3.element_type_element_type_encoding_type  elementType.elementType.encoding.type  string
-field  swecommon3.element_type_element_type_encoding_byte_order  elementType.elementType.encoding.byteOrder  string
-field  swecommon3.element_type_element_type_encoding_byte_encoding  elementType.elementType.encoding.byteEncoding  string
-field  swecommon3.element_type_element_type_encoding_byte_length  elementType.elementType.encoding.byteLength  int
-field  swecommon3.element_type_element_type_encoding_collapse_white_spaces  elementType.elementType.encoding.collapseWhiteSpaces  bool
-field  swecommon3.element_type_element_type_encoding_decimal_separator  elementType.elementType.encoding.decimalSeparator  string
-field  swecommon3.element_type_element_type_encoding_token_separator  elementType.elementType.encoding.tokenSeparator  string
-field  swecommon3.element_type_element_type_encoding_block_separator  elementType.elementType.encoding.blockSeparator  string
-field  swecommon3.element_type_element_type_encoding_namespace  elementType.elementType.encoding.namespace  string
-field  swecommon3.element_type_element_type_encoding_records_as_arrays  elementType.elementType.encoding.recordsAsArrays  bool
-field  swecommon3.element_type_element_type_encoding_vectors_as_arrays  elementType.elementType.encoding.vectorsAsArrays  bool
-field  swecommon3.element_type_element_type_choice_value_id  elementType.elementType.choiceValue.id  string
-field  swecommon3.element_type_element_type_choice_value_label  elementType.elementType.choiceValue.label  string
-field  swecommon3.element_type_element_type_choice_value_description  elementType.elementType.choiceValue.description  string
-field  swecommon3.element_type_element_type_choice_value_type  elementType.elementType.choiceValue.type  string
-field  swecommon3.element_type_element_type_choice_value_updatable  elementType.elementType.choiceValue.updatable  bool
-field  swecommon3.element_type_element_type_choice_value_optional  elementType.elementType.choiceValue.optional  bool
-field  swecommon3.element_type_element_type_choice_value_definition  elementType.elementType.choiceValue.definition  string
-field  swecommon3.element_type_element_type_choice_value_reference_frame  elementType.elementType.choiceValue.referenceFrame  string
-field  swecommon3.element_type_element_type_choice_value_axis_id  elementType.elementType.choiceValue.axisID  string
-field  swecommon3.element_type_element_type_choice_value_value  elementType.elementType.choiceValue.value  string
-field  swecommon3.element_type_element_type_choice_value_code_space  elementType.elementType.choiceValue.codeSpace  string
-field  swecommon3.element_type_element_type_srs  elementType.elementType.srs  string
-field  swecommon3.element_type_encoding_id  elementType.encoding.id  string
-field  swecommon3.element_type_encoding_type  elementType.encoding.type  string
-field  swecommon3.element_type_encoding_byte_order  elementType.encoding.byteOrder  string
-field  swecommon3.element_type_encoding_byte_encoding  elementType.encoding.byteEncoding  string
-field  swecommon3.element_type_encoding_byte_length  elementType.encoding.byteLength  int
-field  swecommon3.element_type_encoding_collapse_white_spaces  elementType.encoding.collapseWhiteSpaces  bool
-field  swecommon3.element_type_encoding_decimal_separator  elementType.encoding.decimalSeparator  string
-field  swecommon3.element_type_encoding_token_separator  elementType.encoding.tokenSeparator  string
-field  swecommon3.element_type_encoding_block_separator  elementType.encoding.blockSeparator  string
-field  swecommon3.element_type_encoding_namespace  elementType.encoding.namespace  string
-field  swecommon3.element_type_encoding_records_as_arrays  elementType.encoding.recordsAsArrays  bool
-field  swecommon3.element_type_encoding_vectors_as_arrays  elementType.encoding.vectorsAsArrays  bool
-field  swecommon3.element_type_choice_value_id  elementType.choiceValue.id  string
-field  swecommon3.element_type_choice_value_label  elementType.choiceValue.label  string
-field  swecommon3.element_type_choice_value_description  elementType.choiceValue.description  string
-field  swecommon3.element_type_choice_value_type  elementType.choiceValue.type  string
-field  swecommon3.element_type_choice_value_updatable  elementType.choiceValue.updatable  bool
-field  swecommon3.element_type_choice_value_optional  elementType.choiceValue.optional  bool
-field  swecommon3.element_type_choice_value_definition  elementType.choiceValue.definition  string
-field  swecommon3.element_type_choice_value_reference_frame  elementType.choiceValue.referenceFrame  string
-field  swecommon3.element_type_choice_value_axis_id  elementType.choiceValue.axisID  string
-field  swecommon3.element_type_choice_value_constraint_type  elementType.choiceValue.constraint.type  string
-group  swecommon3.element_type_choice_value_constraint_values  elementType.choiceValue.constraint.values
-  field  swecommon3.element_type_choice_value_constraint_values_value  .  string
-end
-field  swecommon3.element_type_choice_value_constraint_pattern  elementType.choiceValue.constraint.pattern  string
-field  swecommon3.element_type_choice_value_value  elementType.choiceValue.value  string
-field  swecommon3.element_type_choice_value_code_space  elementType.choiceValue.codeSpace  string
-group  swecommon3.element_type_items  elementType.items
-  field  swecommon3.element_type_items_name  name  string
-  field  swecommon3.element_type_items_href  href  string
-  field  swecommon3.element_type_items_role  role  string
-  field  swecommon3.element_type_items_arcrole  arcrole  string
-  field  swecommon3.element_type_items_title  title  string
-  field  swecommon3.element_type_items_id  id  string
-  field  swecommon3.element_type_items_label  label  string
-  field  swecommon3.element_type_items_description  description  string
-  field  swecommon3.element_type_items_type  type  string
-  field  swecommon3.element_type_items_updatable  updatable  bool
-  field  swecommon3.element_type_items_optional  optional  bool
-  field  swecommon3.element_type_items_definition  definition  string
-  field  swecommon3.element_type_items_reference_frame  referenceFrame  string
-  field  swecommon3.element_type_items_axis_id  axisID  string
-  field  swecommon3.element_type_items_reference_time  referenceTime  string
-  field  swecommon3.element_type_items_local_frame  localFrame  string
-  field  swecommon3.element_type_items_code_space  codeSpace  string
-  field  swecommon3.element_type_items_srs  srs  string
-end
-field  swecommon3.element_type_srs  elementType.srs  string
-field  swecommon3.encoding_id  encoding.id  string
-field  swecommon3.encoding_type  encoding.type  string
-field  swecommon3.encoding_byte_order  encoding.byteOrder  string
-field  swecommon3.encoding_byte_encoding  encoding.byteEncoding  string
-field  swecommon3.encoding_byte_length  encoding.byteLength  int
-group  swecommon3.encoding_members  encoding.members
-  field  swecommon3.encoding_members_id  id  string
-  field  swecommon3.encoding_members_type  type  string
-  field  swecommon3.encoding_members_encryption  encryption  string
-  field  swecommon3.encoding_members_significant_bits  significantBits  int
-  field  swecommon3.encoding_members_bit_length  bitLength  int
-  field  swecommon3.encoding_members_byte_length  byteLength  int
-  field  swecommon3.encoding_members_data_type  dataType  string
-  field  swecommon3.encoding_members_ref  ref  string
-  field  swecommon3.encoding_members_compression  compression  string
-  field  swecommon3.encoding_members_padding_bytes_after  paddingBytes-after  int
-  field  swecommon3.encoding_members_padding_bytes_before  paddingBytes-before  int
-end
-field  swecommon3.encoding_collapse_white_spaces  encoding.collapseWhiteSpaces  bool
-field  swecommon3.encoding_decimal_separator  encoding.decimalSeparator  string
-field  swecommon3.encoding_token_separator  encoding.tokenSeparator  string
-field  swecommon3.encoding_block_separator  encoding.blockSeparator  string
-field  swecommon3.encoding_namespace  encoding.namespace  string
-field  swecommon3.encoding_records_as_arrays  encoding.recordsAsArrays  bool
-field  swecommon3.encoding_vectors_as_arrays  encoding.vectorsAsArrays  bool
-field  swecommon3.reference_frame  referenceFrame  string
-field  swecommon3.local_frame  localFrame  string
-
 kind      data_choice
 when      type  DataChoice
+requires  swecommon3.choice_value_id
 field  swecommon3.id  id  string
 field  swecommon3.label  label  string
 field  swecommon3.description  description  string
@@ -1019,6 +351,7 @@ end
 
 kind      geometry
 when      type  Geometry
+requires  swecommon3.constraint_geom_types_value
 field  swecommon3.id  id  string
 field  swecommon3.label  label  string
 field  swecommon3.description  description  string
@@ -1037,6 +370,7 @@ field  swecommon3.srs  srs  string
 
 kind      data_stream
 when      type  DataStream
+requires  swecommon3.values_href
 field  swecommon3.id  id  string
 field  swecommon3.label  label  string
 field  swecommon3.description  description  string
@@ -1282,3 +616,685 @@ field  swecommon3.values_href  values.href  string
 field  swecommon3.values_role  values.role  string
 field  swecommon3.values_arcrole  values.arcrole  string
 field  swecommon3.values_title  values.title  string
+
+kind      matrix
+when      type  Matrix
+requires  swecommon3.updatable  swecommon3.optional  swecommon3.definition  swecommon3.element_count_href  swecommon3.element_count_role  swecommon3.element_count_arcrole  swecommon3.element_count_title  swecommon3.element_count_id  swecommon3.element_count_label  swecommon3.element_count_description  swecommon3.element_count_type  swecommon3.element_count_updatable  swecommon3.element_count_optional  swecommon3.element_count_definition  swecommon3.element_count_reference_frame  swecommon3.element_count_axis_id  swecommon3.element_count_constraint_type  swecommon3.element_count_constraint_significant_figures  swecommon3.element_count_value  swecommon3.element_type_name  swecommon3.element_type_href  swecommon3.element_type_role  swecommon3.element_type_arcrole  swecommon3.element_type_title  swecommon3.element_type_id  swecommon3.element_type_label  swecommon3.element_type_description  swecommon3.element_type_type  swecommon3.element_type_updatable  swecommon3.element_type_optional  swecommon3.element_type_definition  swecommon3.element_type_reference_frame  swecommon3.element_type_axis_id  swecommon3.element_type_nil_values_reason  swecommon3.element_type_constraint_type  swecommon3.element_type_constraint_significant_figures  swecommon3.element_type_constraint_pattern  swecommon3.element_type_constraint_geom_types_value  swecommon3.element_type_uom_label  swecommon3.element_type_uom_symbol  swecommon3.element_type_uom_code  swecommon3.element_type_uom_href  swecommon3.element_type_reference_time  swecommon3.element_type_local_frame  swecommon3.element_type_code_space  swecommon3.element_type_fields_name  swecommon3.element_type_fields_href  swecommon3.element_type_fields_role  swecommon3.element_type_fields_arcrole  swecommon3.element_type_fields_title  swecommon3.element_type_fields_id  swecommon3.element_type_fields_label  swecommon3.element_type_fields_description  swecommon3.element_type_fields_type  swecommon3.element_type_fields_updatable  swecommon3.element_type_fields_optional  swecommon3.element_type_fields_definition  swecommon3.element_type_fields_reference_frame  swecommon3.element_type_fields_axis_id  swecommon3.element_type_fields_reference_time  swecommon3.element_type_fields_local_frame  swecommon3.element_type_fields_code_space  swecommon3.element_type_fields_srs  swecommon3.element_type_coordinates_name  swecommon3.element_type_coordinates_id  swecommon3.element_type_coordinates_label  swecommon3.element_type_coordinates_description  swecommon3.element_type_coordinates_type  swecommon3.element_type_coordinates_updatable  swecommon3.element_type_coordinates_optional  swecommon3.element_type_coordinates_definition  swecommon3.element_type_coordinates_reference_frame  swecommon3.element_type_coordinates_axis_id  swecommon3.element_type_coordinates_reference_time  swecommon3.element_type_coordinates_local_frame  swecommon3.element_type_element_count_href  swecommon3.element_type_element_count_role  swecommon3.element_type_element_count_arcrole  swecommon3.element_type_element_count_title  swecommon3.element_type_element_count_id  swecommon3.element_type_element_count_label  swecommon3.element_type_element_count_description  swecommon3.element_type_element_count_type  swecommon3.element_type_element_count_updatable  swecommon3.element_type_element_count_optional  swecommon3.element_type_element_count_definition  swecommon3.element_type_element_count_reference_frame  swecommon3.element_type_element_count_axis_id  swecommon3.element_type_element_count_constraint_type  swecommon3.element_type_element_count_constraint_significant_figures  swecommon3.element_type_element_count_value  swecommon3.element_type_element_type_name  swecommon3.element_type_element_type_href  swecommon3.element_type_element_type_role  swecommon3.element_type_element_type_arcrole  swecommon3.element_type_element_type_title  swecommon3.element_type_element_type_id  swecommon3.element_type_element_type_label  swecommon3.element_type_element_type_description  swecommon3.element_type_element_type_type  swecommon3.element_type_element_type_updatable  swecommon3.element_type_element_type_optional  swecommon3.element_type_element_type_definition  swecommon3.element_type_element_type_reference_frame  swecommon3.element_type_element_type_axis_id  swecommon3.element_type_element_type_constraint_type  swecommon3.element_type_element_type_constraint_significant_figures  swecommon3.element_type_element_type_constraint_pattern  swecommon3.element_type_element_type_constraint_geom_types_value  swecommon3.element_type_element_type_uom_label  swecommon3.element_type_element_type_uom_symbol  swecommon3.element_type_element_type_uom_code  swecommon3.element_type_element_type_uom_href  swecommon3.element_type_element_type_reference_time  swecommon3.element_type_element_type_local_frame  swecommon3.element_type_element_type_code_space  swecommon3.element_type_element_type_element_count_href  swecommon3.element_type_element_type_element_count_role  swecommon3.element_type_element_type_element_count_arcrole  swecommon3.element_type_element_type_element_count_title  swecommon3.element_type_element_type_element_count_id  swecommon3.element_type_element_type_element_count_label  swecommon3.element_type_element_type_element_count_description  swecommon3.element_type_element_type_element_count_type  swecommon3.element_type_element_type_element_count_updatable  swecommon3.element_type_element_type_element_count_optional  swecommon3.element_type_element_type_element_count_definition  swecommon3.element_type_element_type_element_count_reference_frame  swecommon3.element_type_element_type_element_count_axis_id  swecommon3.element_type_element_type_element_count_value  swecommon3.element_type_element_type_element_type_name  swecommon3.element_type_element_type_element_type_href  swecommon3.element_type_element_type_element_type_role  swecommon3.element_type_element_type_element_type_arcrole  swecommon3.element_type_element_type_element_type_title  swecommon3.element_type_element_type_element_type_id  swecommon3.element_type_element_type_element_type_label  swecommon3.element_type_element_type_element_type_description  swecommon3.element_type_element_type_element_type_type  swecommon3.element_type_element_type_element_type_updatable  swecommon3.element_type_element_type_element_type_optional  swecommon3.element_type_element_type_element_type_definition  swecommon3.element_type_element_type_element_type_reference_frame  swecommon3.element_type_element_type_element_type_axis_id  swecommon3.element_type_element_type_element_type_reference_time  swecommon3.element_type_element_type_element_type_local_frame  swecommon3.element_type_element_type_element_type_code_space  swecommon3.element_type_element_type_element_type_srs  swecommon3.element_type_element_type_encoding_id  swecommon3.element_type_element_type_encoding_type  swecommon3.element_type_element_type_encoding_byte_order  swecommon3.element_type_element_type_encoding_byte_encoding  swecommon3.element_type_element_type_encoding_byte_length  swecommon3.element_type_element_type_encoding_collapse_white_spaces  swecommon3.element_type_element_type_encoding_decimal_separator  swecommon3.element_type_element_type_encoding_token_separator  swecommon3.element_type_element_type_encoding_block_separator  swecommon3.element_type_element_type_encoding_namespace  swecommon3.element_type_element_type_encoding_records_as_arrays  swecommon3.element_type_element_type_encoding_vectors_as_arrays  swecommon3.element_type_element_type_choice_value_id  swecommon3.element_type_element_type_choice_value_label  swecommon3.element_type_element_type_choice_value_description  swecommon3.element_type_element_type_choice_value_type  swecommon3.element_type_element_type_choice_value_updatable  swecommon3.element_type_element_type_choice_value_optional  swecommon3.element_type_element_type_choice_value_definition  swecommon3.element_type_element_type_choice_value_reference_frame  swecommon3.element_type_element_type_choice_value_axis_id  swecommon3.element_type_element_type_choice_value_value  swecommon3.element_type_element_type_choice_value_code_space  swecommon3.element_type_element_type_srs  swecommon3.element_type_encoding_id  swecommon3.element_type_encoding_type  swecommon3.element_type_encoding_byte_order  swecommon3.element_type_encoding_byte_encoding  swecommon3.element_type_encoding_byte_length  swecommon3.element_type_encoding_collapse_white_spaces  swecommon3.element_type_encoding_decimal_separator  swecommon3.element_type_encoding_token_separator  swecommon3.element_type_encoding_block_separator  swecommon3.element_type_encoding_namespace  swecommon3.element_type_encoding_records_as_arrays  swecommon3.element_type_encoding_vectors_as_arrays  swecommon3.element_type_choice_value_id  swecommon3.element_type_choice_value_label  swecommon3.element_type_choice_value_description  swecommon3.element_type_choice_value_type  swecommon3.element_type_choice_value_updatable  swecommon3.element_type_choice_value_optional  swecommon3.element_type_choice_value_definition  swecommon3.element_type_choice_value_reference_frame  swecommon3.element_type_choice_value_axis_id  swecommon3.element_type_choice_value_constraint_type  swecommon3.element_type_choice_value_constraint_values_value  swecommon3.element_type_choice_value_constraint_pattern  swecommon3.element_type_choice_value_value  swecommon3.element_type_choice_value_code_space  swecommon3.element_type_items_name  swecommon3.element_type_items_href  swecommon3.element_type_items_role  swecommon3.element_type_items_arcrole  swecommon3.element_type_items_title  swecommon3.element_type_items_id  swecommon3.element_type_items_label  swecommon3.element_type_items_description  swecommon3.element_type_items_type  swecommon3.element_type_items_updatable  swecommon3.element_type_items_optional  swecommon3.element_type_items_definition  swecommon3.element_type_items_reference_frame  swecommon3.element_type_items_axis_id  swecommon3.element_type_items_reference_time  swecommon3.element_type_items_local_frame  swecommon3.element_type_items_code_space  swecommon3.element_type_items_srs  swecommon3.element_type_srs  swecommon3.encoding_id  swecommon3.encoding_type  swecommon3.encoding_byte_order  swecommon3.encoding_byte_encoding  swecommon3.encoding_byte_length  swecommon3.encoding_members_id  swecommon3.encoding_members_type  swecommon3.encoding_members_encryption  swecommon3.encoding_members_significant_bits  swecommon3.encoding_members_bit_length  swecommon3.encoding_members_byte_length  swecommon3.encoding_members_data_type  swecommon3.encoding_members_ref  swecommon3.encoding_members_compression  swecommon3.encoding_members_padding_bytes_after  swecommon3.encoding_members_padding_bytes_before  swecommon3.encoding_collapse_white_spaces  swecommon3.encoding_decimal_separator  swecommon3.encoding_token_separator  swecommon3.encoding_block_separator  swecommon3.encoding_namespace  swecommon3.encoding_records_as_arrays  swecommon3.encoding_vectors_as_arrays  swecommon3.reference_frame  swecommon3.local_frame
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.element_count_href  elementCount.href  string
+field  swecommon3.element_count_role  elementCount.role  string
+field  swecommon3.element_count_arcrole  elementCount.arcrole  string
+field  swecommon3.element_count_title  elementCount.title  string
+field  swecommon3.element_count_id  elementCount.id  string
+field  swecommon3.element_count_label  elementCount.label  string
+field  swecommon3.element_count_description  elementCount.description  string
+field  swecommon3.element_count_type  elementCount.type  string
+field  swecommon3.element_count_updatable  elementCount.updatable  bool
+field  swecommon3.element_count_optional  elementCount.optional  bool
+field  swecommon3.element_count_definition  elementCount.definition  string
+field  swecommon3.element_count_reference_frame  elementCount.referenceFrame  string
+field  swecommon3.element_count_axis_id  elementCount.axisID  string
+field  swecommon3.element_count_constraint_type  elementCount.constraint.type  string
+field  swecommon3.element_count_constraint_significant_figures  elementCount.constraint.significantFigures  int
+field  swecommon3.element_count_value  elementCount.value  int
+field  swecommon3.element_type_name  elementType.name  string
+field  swecommon3.element_type_href  elementType.href  string
+field  swecommon3.element_type_role  elementType.role  string
+field  swecommon3.element_type_arcrole  elementType.arcrole  string
+field  swecommon3.element_type_title  elementType.title  string
+field  swecommon3.element_type_id  elementType.id  string
+field  swecommon3.element_type_label  elementType.label  string
+field  swecommon3.element_type_description  elementType.description  string
+field  swecommon3.element_type_type  elementType.type  string
+field  swecommon3.element_type_updatable  elementType.updatable  bool
+field  swecommon3.element_type_optional  elementType.optional  bool
+field  swecommon3.element_type_definition  elementType.definition  string
+field  swecommon3.element_type_reference_frame  elementType.referenceFrame  string
+field  swecommon3.element_type_axis_id  elementType.axisID  string
+group  swecommon3.element_type_nil_values  elementType.nilValues
+  field  swecommon3.element_type_nil_values_reason  reason  string
+end
+field  swecommon3.element_type_constraint_type  elementType.constraint.type  string
+field  swecommon3.element_type_constraint_significant_figures  elementType.constraint.significantFigures  int
+field  swecommon3.element_type_constraint_pattern  elementType.constraint.pattern  string
+group  swecommon3.element_type_constraint_geom_types  elementType.constraint.geomTypes
+  field  swecommon3.element_type_constraint_geom_types_value  .  string
+end
+field  swecommon3.element_type_uom_label  elementType.uom.label  string
+field  swecommon3.element_type_uom_symbol  elementType.uom.symbol  string
+field  swecommon3.element_type_uom_code  elementType.uom.code  string
+field  swecommon3.element_type_uom_href  elementType.uom.href  string
+field  swecommon3.element_type_reference_time  elementType.referenceTime  string
+field  swecommon3.element_type_local_frame  elementType.localFrame  string
+field  swecommon3.element_type_code_space  elementType.codeSpace  string
+group  swecommon3.element_type_fields  elementType.fields
+  field  swecommon3.element_type_fields_name  name  string
+  field  swecommon3.element_type_fields_href  href  string
+  field  swecommon3.element_type_fields_role  role  string
+  field  swecommon3.element_type_fields_arcrole  arcrole  string
+  field  swecommon3.element_type_fields_title  title  string
+  field  swecommon3.element_type_fields_id  id  string
+  field  swecommon3.element_type_fields_label  label  string
+  field  swecommon3.element_type_fields_description  description  string
+  field  swecommon3.element_type_fields_type  type  string
+  field  swecommon3.element_type_fields_updatable  updatable  bool
+  field  swecommon3.element_type_fields_optional  optional  bool
+  field  swecommon3.element_type_fields_definition  definition  string
+  field  swecommon3.element_type_fields_reference_frame  referenceFrame  string
+  field  swecommon3.element_type_fields_axis_id  axisID  string
+  field  swecommon3.element_type_fields_reference_time  referenceTime  string
+  field  swecommon3.element_type_fields_local_frame  localFrame  string
+  field  swecommon3.element_type_fields_code_space  codeSpace  string
+  field  swecommon3.element_type_fields_srs  srs  string
+end
+group  swecommon3.element_type_coordinates  elementType.coordinates
+  field  swecommon3.element_type_coordinates_name  name  string
+  field  swecommon3.element_type_coordinates_id  id  string
+  field  swecommon3.element_type_coordinates_label  label  string
+  field  swecommon3.element_type_coordinates_description  description  string
+  field  swecommon3.element_type_coordinates_type  type  string
+  field  swecommon3.element_type_coordinates_updatable  updatable  bool
+  field  swecommon3.element_type_coordinates_optional  optional  bool
+  field  swecommon3.element_type_coordinates_definition  definition  string
+  field  swecommon3.element_type_coordinates_reference_frame  referenceFrame  string
+  field  swecommon3.element_type_coordinates_axis_id  axisID  string
+  field  swecommon3.element_type_coordinates_reference_time  referenceTime  string
+  field  swecommon3.element_type_coordinates_local_frame  localFrame  string
+end
+field  swecommon3.element_type_element_count_href  elementType.elementCount.href  string
+field  swecommon3.element_type_element_count_role  elementType.elementCount.role  string
+field  swecommon3.element_type_element_count_arcrole  elementType.elementCount.arcrole  string
+field  swecommon3.element_type_element_count_title  elementType.elementCount.title  string
+field  swecommon3.element_type_element_count_id  elementType.elementCount.id  string
+field  swecommon3.element_type_element_count_label  elementType.elementCount.label  string
+field  swecommon3.element_type_element_count_description  elementType.elementCount.description  string
+field  swecommon3.element_type_element_count_type  elementType.elementCount.type  string
+field  swecommon3.element_type_element_count_updatable  elementType.elementCount.updatable  bool
+field  swecommon3.element_type_element_count_optional  elementType.elementCount.optional  bool
+field  swecommon3.element_type_element_count_definition  elementType.elementCount.definition  string
+field  swecommon3.element_type_element_count_reference_frame  elementType.elementCount.referenceFrame  string
+field  swecommon3.element_type_element_count_axis_id  elementType.elementCount.axisID  string
+field  swecommon3.element_type_element_count_constraint_type  elementType.elementCount.constraint.type  string
+field  swecommon3.element_type_element_count_constraint_significant_figures  elementType.elementCount.constraint.significantFigures  int
+field  swecommon3.element_type_element_count_value  elementType.elementCount.value  int
+field  swecommon3.element_type_element_type_name  elementType.elementType.name  string
+field  swecommon3.element_type_element_type_href  elementType.elementType.href  string
+field  swecommon3.element_type_element_type_role  elementType.elementType.role  string
+field  swecommon3.element_type_element_type_arcrole  elementType.elementType.arcrole  string
+field  swecommon3.element_type_element_type_title  elementType.elementType.title  string
+field  swecommon3.element_type_element_type_id  elementType.elementType.id  string
+field  swecommon3.element_type_element_type_label  elementType.elementType.label  string
+field  swecommon3.element_type_element_type_description  elementType.elementType.description  string
+field  swecommon3.element_type_element_type_type  elementType.elementType.type  string
+field  swecommon3.element_type_element_type_updatable  elementType.elementType.updatable  bool
+field  swecommon3.element_type_element_type_optional  elementType.elementType.optional  bool
+field  swecommon3.element_type_element_type_definition  elementType.elementType.definition  string
+field  swecommon3.element_type_element_type_reference_frame  elementType.elementType.referenceFrame  string
+field  swecommon3.element_type_element_type_axis_id  elementType.elementType.axisID  string
+field  swecommon3.element_type_element_type_constraint_type  elementType.elementType.constraint.type  string
+field  swecommon3.element_type_element_type_constraint_significant_figures  elementType.elementType.constraint.significantFigures  int
+field  swecommon3.element_type_element_type_constraint_pattern  elementType.elementType.constraint.pattern  string
+group  swecommon3.element_type_element_type_constraint_geom_types  elementType.elementType.constraint.geomTypes
+  field  swecommon3.element_type_element_type_constraint_geom_types_value  .  string
+end
+field  swecommon3.element_type_element_type_uom_label  elementType.elementType.uom.label  string
+field  swecommon3.element_type_element_type_uom_symbol  elementType.elementType.uom.symbol  string
+field  swecommon3.element_type_element_type_uom_code  elementType.elementType.uom.code  string
+field  swecommon3.element_type_element_type_uom_href  elementType.elementType.uom.href  string
+field  swecommon3.element_type_element_type_reference_time  elementType.elementType.referenceTime  string
+field  swecommon3.element_type_element_type_local_frame  elementType.elementType.localFrame  string
+field  swecommon3.element_type_element_type_code_space  elementType.elementType.codeSpace  string
+field  swecommon3.element_type_element_type_element_count_href  elementType.elementType.elementCount.href  string
+field  swecommon3.element_type_element_type_element_count_role  elementType.elementType.elementCount.role  string
+field  swecommon3.element_type_element_type_element_count_arcrole  elementType.elementType.elementCount.arcrole  string
+field  swecommon3.element_type_element_type_element_count_title  elementType.elementType.elementCount.title  string
+field  swecommon3.element_type_element_type_element_count_id  elementType.elementType.elementCount.id  string
+field  swecommon3.element_type_element_type_element_count_label  elementType.elementType.elementCount.label  string
+field  swecommon3.element_type_element_type_element_count_description  elementType.elementType.elementCount.description  string
+field  swecommon3.element_type_element_type_element_count_type  elementType.elementType.elementCount.type  string
+field  swecommon3.element_type_element_type_element_count_updatable  elementType.elementType.elementCount.updatable  bool
+field  swecommon3.element_type_element_type_element_count_optional  elementType.elementType.elementCount.optional  bool
+field  swecommon3.element_type_element_type_element_count_definition  elementType.elementType.elementCount.definition  string
+field  swecommon3.element_type_element_type_element_count_reference_frame  elementType.elementType.elementCount.referenceFrame  string
+field  swecommon3.element_type_element_type_element_count_axis_id  elementType.elementType.elementCount.axisID  string
+field  swecommon3.element_type_element_type_element_count_value  elementType.elementType.elementCount.value  int
+field  swecommon3.element_type_element_type_element_type_name  elementType.elementType.elementType.name  string
+field  swecommon3.element_type_element_type_element_type_href  elementType.elementType.elementType.href  string
+field  swecommon3.element_type_element_type_element_type_role  elementType.elementType.elementType.role  string
+field  swecommon3.element_type_element_type_element_type_arcrole  elementType.elementType.elementType.arcrole  string
+field  swecommon3.element_type_element_type_element_type_title  elementType.elementType.elementType.title  string
+field  swecommon3.element_type_element_type_element_type_id  elementType.elementType.elementType.id  string
+field  swecommon3.element_type_element_type_element_type_label  elementType.elementType.elementType.label  string
+field  swecommon3.element_type_element_type_element_type_description  elementType.elementType.elementType.description  string
+field  swecommon3.element_type_element_type_element_type_type  elementType.elementType.elementType.type  string
+field  swecommon3.element_type_element_type_element_type_updatable  elementType.elementType.elementType.updatable  bool
+field  swecommon3.element_type_element_type_element_type_optional  elementType.elementType.elementType.optional  bool
+field  swecommon3.element_type_element_type_element_type_definition  elementType.elementType.elementType.definition  string
+field  swecommon3.element_type_element_type_element_type_reference_frame  elementType.elementType.elementType.referenceFrame  string
+field  swecommon3.element_type_element_type_element_type_axis_id  elementType.elementType.elementType.axisID  string
+field  swecommon3.element_type_element_type_element_type_reference_time  elementType.elementType.elementType.referenceTime  string
+field  swecommon3.element_type_element_type_element_type_local_frame  elementType.elementType.elementType.localFrame  string
+field  swecommon3.element_type_element_type_element_type_code_space  elementType.elementType.elementType.codeSpace  string
+field  swecommon3.element_type_element_type_element_type_srs  elementType.elementType.elementType.srs  string
+field  swecommon3.element_type_element_type_encoding_id  elementType.elementType.encoding.id  string
+field  swecommon3.element_type_element_type_encoding_type  elementType.elementType.encoding.type  string
+field  swecommon3.element_type_element_type_encoding_byte_order  elementType.elementType.encoding.byteOrder  string
+field  swecommon3.element_type_element_type_encoding_byte_encoding  elementType.elementType.encoding.byteEncoding  string
+field  swecommon3.element_type_element_type_encoding_byte_length  elementType.elementType.encoding.byteLength  int
+field  swecommon3.element_type_element_type_encoding_collapse_white_spaces  elementType.elementType.encoding.collapseWhiteSpaces  bool
+field  swecommon3.element_type_element_type_encoding_decimal_separator  elementType.elementType.encoding.decimalSeparator  string
+field  swecommon3.element_type_element_type_encoding_token_separator  elementType.elementType.encoding.tokenSeparator  string
+field  swecommon3.element_type_element_type_encoding_block_separator  elementType.elementType.encoding.blockSeparator  string
+field  swecommon3.element_type_element_type_encoding_namespace  elementType.elementType.encoding.namespace  string
+field  swecommon3.element_type_element_type_encoding_records_as_arrays  elementType.elementType.encoding.recordsAsArrays  bool
+field  swecommon3.element_type_element_type_encoding_vectors_as_arrays  elementType.elementType.encoding.vectorsAsArrays  bool
+field  swecommon3.element_type_element_type_choice_value_id  elementType.elementType.choiceValue.id  string
+field  swecommon3.element_type_element_type_choice_value_label  elementType.elementType.choiceValue.label  string
+field  swecommon3.element_type_element_type_choice_value_description  elementType.elementType.choiceValue.description  string
+field  swecommon3.element_type_element_type_choice_value_type  elementType.elementType.choiceValue.type  string
+field  swecommon3.element_type_element_type_choice_value_updatable  elementType.elementType.choiceValue.updatable  bool
+field  swecommon3.element_type_element_type_choice_value_optional  elementType.elementType.choiceValue.optional  bool
+field  swecommon3.element_type_element_type_choice_value_definition  elementType.elementType.choiceValue.definition  string
+field  swecommon3.element_type_element_type_choice_value_reference_frame  elementType.elementType.choiceValue.referenceFrame  string
+field  swecommon3.element_type_element_type_choice_value_axis_id  elementType.elementType.choiceValue.axisID  string
+field  swecommon3.element_type_element_type_choice_value_value  elementType.elementType.choiceValue.value  string
+field  swecommon3.element_type_element_type_choice_value_code_space  elementType.elementType.choiceValue.codeSpace  string
+field  swecommon3.element_type_element_type_srs  elementType.elementType.srs  string
+field  swecommon3.element_type_encoding_id  elementType.encoding.id  string
+field  swecommon3.element_type_encoding_type  elementType.encoding.type  string
+field  swecommon3.element_type_encoding_byte_order  elementType.encoding.byteOrder  string
+field  swecommon3.element_type_encoding_byte_encoding  elementType.encoding.byteEncoding  string
+field  swecommon3.element_type_encoding_byte_length  elementType.encoding.byteLength  int
+field  swecommon3.element_type_encoding_collapse_white_spaces  elementType.encoding.collapseWhiteSpaces  bool
+field  swecommon3.element_type_encoding_decimal_separator  elementType.encoding.decimalSeparator  string
+field  swecommon3.element_type_encoding_token_separator  elementType.encoding.tokenSeparator  string
+field  swecommon3.element_type_encoding_block_separator  elementType.encoding.blockSeparator  string
+field  swecommon3.element_type_encoding_namespace  elementType.encoding.namespace  string
+field  swecommon3.element_type_encoding_records_as_arrays  elementType.encoding.recordsAsArrays  bool
+field  swecommon3.element_type_encoding_vectors_as_arrays  elementType.encoding.vectorsAsArrays  bool
+field  swecommon3.element_type_choice_value_id  elementType.choiceValue.id  string
+field  swecommon3.element_type_choice_value_label  elementType.choiceValue.label  string
+field  swecommon3.element_type_choice_value_description  elementType.choiceValue.description  string
+field  swecommon3.element_type_choice_value_type  elementType.choiceValue.type  string
+field  swecommon3.element_type_choice_value_updatable  elementType.choiceValue.updatable  bool
+field  swecommon3.element_type_choice_value_optional  elementType.choiceValue.optional  bool
+field  swecommon3.element_type_choice_value_definition  elementType.choiceValue.definition  string
+field  swecommon3.element_type_choice_value_reference_frame  elementType.choiceValue.referenceFrame  string
+field  swecommon3.element_type_choice_value_axis_id  elementType.choiceValue.axisID  string
+field  swecommon3.element_type_choice_value_constraint_type  elementType.choiceValue.constraint.type  string
+group  swecommon3.element_type_choice_value_constraint_values  elementType.choiceValue.constraint.values
+  field  swecommon3.element_type_choice_value_constraint_values_value  .  string
+end
+field  swecommon3.element_type_choice_value_constraint_pattern  elementType.choiceValue.constraint.pattern  string
+field  swecommon3.element_type_choice_value_value  elementType.choiceValue.value  string
+field  swecommon3.element_type_choice_value_code_space  elementType.choiceValue.codeSpace  string
+group  swecommon3.element_type_items  elementType.items
+  field  swecommon3.element_type_items_name  name  string
+  field  swecommon3.element_type_items_href  href  string
+  field  swecommon3.element_type_items_role  role  string
+  field  swecommon3.element_type_items_arcrole  arcrole  string
+  field  swecommon3.element_type_items_title  title  string
+  field  swecommon3.element_type_items_id  id  string
+  field  swecommon3.element_type_items_label  label  string
+  field  swecommon3.element_type_items_description  description  string
+  field  swecommon3.element_type_items_type  type  string
+  field  swecommon3.element_type_items_updatable  updatable  bool
+  field  swecommon3.element_type_items_optional  optional  bool
+  field  swecommon3.element_type_items_definition  definition  string
+  field  swecommon3.element_type_items_reference_frame  referenceFrame  string
+  field  swecommon3.element_type_items_axis_id  axisID  string
+  field  swecommon3.element_type_items_reference_time  referenceTime  string
+  field  swecommon3.element_type_items_local_frame  localFrame  string
+  field  swecommon3.element_type_items_code_space  codeSpace  string
+  field  swecommon3.element_type_items_srs  srs  string
+end
+field  swecommon3.element_type_srs  elementType.srs  string
+field  swecommon3.encoding_id  encoding.id  string
+field  swecommon3.encoding_type  encoding.type  string
+field  swecommon3.encoding_byte_order  encoding.byteOrder  string
+field  swecommon3.encoding_byte_encoding  encoding.byteEncoding  string
+field  swecommon3.encoding_byte_length  encoding.byteLength  int
+group  swecommon3.encoding_members  encoding.members
+  field  swecommon3.encoding_members_id  id  string
+  field  swecommon3.encoding_members_type  type  string
+  field  swecommon3.encoding_members_encryption  encryption  string
+  field  swecommon3.encoding_members_significant_bits  significantBits  int
+  field  swecommon3.encoding_members_bit_length  bitLength  int
+  field  swecommon3.encoding_members_byte_length  byteLength  int
+  field  swecommon3.encoding_members_data_type  dataType  string
+  field  swecommon3.encoding_members_ref  ref  string
+  field  swecommon3.encoding_members_compression  compression  string
+  field  swecommon3.encoding_members_padding_bytes_after  paddingBytes-after  int
+  field  swecommon3.encoding_members_padding_bytes_before  paddingBytes-before  int
+end
+field  swecommon3.encoding_collapse_white_spaces  encoding.collapseWhiteSpaces  bool
+field  swecommon3.encoding_decimal_separator  encoding.decimalSeparator  string
+field  swecommon3.encoding_token_separator  encoding.tokenSeparator  string
+field  swecommon3.encoding_block_separator  encoding.blockSeparator  string
+field  swecommon3.encoding_namespace  encoding.namespace  string
+field  swecommon3.encoding_records_as_arrays  encoding.recordsAsArrays  bool
+field  swecommon3.encoding_vectors_as_arrays  encoding.vectorsAsArrays  bool
+field  swecommon3.reference_frame  referenceFrame  string
+field  swecommon3.local_frame  localFrame  string
+
+kind      data_array
+when      type  DataArray
+requires  swecommon3.updatable  swecommon3.optional  swecommon3.definition  swecommon3.element_count_href  swecommon3.element_count_role  swecommon3.element_count_arcrole  swecommon3.element_count_title  swecommon3.element_count_id  swecommon3.element_count_label  swecommon3.element_count_description  swecommon3.element_count_type  swecommon3.element_count_updatable  swecommon3.element_count_optional  swecommon3.element_count_definition  swecommon3.element_count_reference_frame  swecommon3.element_count_axis_id  swecommon3.element_count_constraint_type  swecommon3.element_count_constraint_significant_figures  swecommon3.element_count_value  swecommon3.element_type_name  swecommon3.element_type_href  swecommon3.element_type_role  swecommon3.element_type_arcrole  swecommon3.element_type_title  swecommon3.element_type_id  swecommon3.element_type_label  swecommon3.element_type_description  swecommon3.element_type_type  swecommon3.element_type_updatable  swecommon3.element_type_optional  swecommon3.element_type_definition  swecommon3.element_type_reference_frame  swecommon3.element_type_axis_id  swecommon3.element_type_nil_values_reason  swecommon3.element_type_constraint_type  swecommon3.element_type_constraint_significant_figures  swecommon3.element_type_constraint_pattern  swecommon3.element_type_constraint_geom_types_value  swecommon3.element_type_uom_label  swecommon3.element_type_uom_symbol  swecommon3.element_type_uom_code  swecommon3.element_type_uom_href  swecommon3.element_type_reference_time  swecommon3.element_type_local_frame  swecommon3.element_type_code_space  swecommon3.element_type_fields_name  swecommon3.element_type_fields_href  swecommon3.element_type_fields_role  swecommon3.element_type_fields_arcrole  swecommon3.element_type_fields_title  swecommon3.element_type_fields_id  swecommon3.element_type_fields_label  swecommon3.element_type_fields_description  swecommon3.element_type_fields_type  swecommon3.element_type_fields_updatable  swecommon3.element_type_fields_optional  swecommon3.element_type_fields_definition  swecommon3.element_type_fields_reference_frame  swecommon3.element_type_fields_axis_id  swecommon3.element_type_fields_reference_time  swecommon3.element_type_fields_local_frame  swecommon3.element_type_fields_code_space  swecommon3.element_type_fields_srs  swecommon3.element_type_coordinates_name  swecommon3.element_type_coordinates_id  swecommon3.element_type_coordinates_label  swecommon3.element_type_coordinates_description  swecommon3.element_type_coordinates_type  swecommon3.element_type_coordinates_updatable  swecommon3.element_type_coordinates_optional  swecommon3.element_type_coordinates_definition  swecommon3.element_type_coordinates_reference_frame  swecommon3.element_type_coordinates_axis_id  swecommon3.element_type_coordinates_reference_time  swecommon3.element_type_coordinates_local_frame  swecommon3.element_type_element_count_href  swecommon3.element_type_element_count_role  swecommon3.element_type_element_count_arcrole  swecommon3.element_type_element_count_title  swecommon3.element_type_element_count_id  swecommon3.element_type_element_count_label  swecommon3.element_type_element_count_description  swecommon3.element_type_element_count_type  swecommon3.element_type_element_count_updatable  swecommon3.element_type_element_count_optional  swecommon3.element_type_element_count_definition  swecommon3.element_type_element_count_reference_frame  swecommon3.element_type_element_count_axis_id  swecommon3.element_type_element_count_constraint_type  swecommon3.element_type_element_count_constraint_significant_figures  swecommon3.element_type_element_count_value  swecommon3.element_type_element_type_name  swecommon3.element_type_element_type_href  swecommon3.element_type_element_type_role  swecommon3.element_type_element_type_arcrole  swecommon3.element_type_element_type_title  swecommon3.element_type_element_type_id  swecommon3.element_type_element_type_label  swecommon3.element_type_element_type_description  swecommon3.element_type_element_type_type  swecommon3.element_type_element_type_updatable  swecommon3.element_type_element_type_optional  swecommon3.element_type_element_type_definition  swecommon3.element_type_element_type_reference_frame  swecommon3.element_type_element_type_axis_id  swecommon3.element_type_element_type_constraint_type  swecommon3.element_type_element_type_constraint_significant_figures  swecommon3.element_type_element_type_constraint_pattern  swecommon3.element_type_element_type_constraint_geom_types_value  swecommon3.element_type_element_type_uom_label  swecommon3.element_type_element_type_uom_symbol  swecommon3.element_type_element_type_uom_code  swecommon3.element_type_element_type_uom_href  swecommon3.element_type_element_type_reference_time  swecommon3.element_type_element_type_local_frame  swecommon3.element_type_element_type_code_space  swecommon3.element_type_element_type_element_count_href  swecommon3.element_type_element_type_element_count_role  swecommon3.element_type_element_type_element_count_arcrole  swecommon3.element_type_element_type_element_count_title  swecommon3.element_type_element_type_element_count_id  swecommon3.element_type_element_type_element_count_label  swecommon3.element_type_element_type_element_count_description  swecommon3.element_type_element_type_element_count_type  swecommon3.element_type_element_type_element_count_updatable  swecommon3.element_type_element_type_element_count_optional  swecommon3.element_type_element_type_element_count_definition  swecommon3.element_type_element_type_element_count_reference_frame  swecommon3.element_type_element_type_element_count_axis_id  swecommon3.element_type_element_type_element_count_value  swecommon3.element_type_element_type_element_type_name  swecommon3.element_type_element_type_element_type_href  swecommon3.element_type_element_type_element_type_role  swecommon3.element_type_element_type_element_type_arcrole  swecommon3.element_type_element_type_element_type_title  swecommon3.element_type_element_type_element_type_id  swecommon3.element_type_element_type_element_type_label  swecommon3.element_type_element_type_element_type_description  swecommon3.element_type_element_type_element_type_type  swecommon3.element_type_element_type_element_type_updatable  swecommon3.element_type_element_type_element_type_optional  swecommon3.element_type_element_type_element_type_definition  swecommon3.element_type_element_type_element_type_reference_frame  swecommon3.element_type_element_type_element_type_axis_id  swecommon3.element_type_element_type_element_type_reference_time  swecommon3.element_type_element_type_element_type_local_frame  swecommon3.element_type_element_type_element_type_code_space  swecommon3.element_type_element_type_element_type_srs  swecommon3.element_type_element_type_encoding_id  swecommon3.element_type_element_type_encoding_type  swecommon3.element_type_element_type_encoding_byte_order  swecommon3.element_type_element_type_encoding_byte_encoding  swecommon3.element_type_element_type_encoding_byte_length  swecommon3.element_type_element_type_encoding_collapse_white_spaces  swecommon3.element_type_element_type_encoding_decimal_separator  swecommon3.element_type_element_type_encoding_token_separator  swecommon3.element_type_element_type_encoding_block_separator  swecommon3.element_type_element_type_encoding_namespace  swecommon3.element_type_element_type_encoding_records_as_arrays  swecommon3.element_type_element_type_encoding_vectors_as_arrays  swecommon3.element_type_element_type_choice_value_id  swecommon3.element_type_element_type_choice_value_label  swecommon3.element_type_element_type_choice_value_description  swecommon3.element_type_element_type_choice_value_type  swecommon3.element_type_element_type_choice_value_updatable  swecommon3.element_type_element_type_choice_value_optional  swecommon3.element_type_element_type_choice_value_definition  swecommon3.element_type_element_type_choice_value_reference_frame  swecommon3.element_type_element_type_choice_value_axis_id  swecommon3.element_type_element_type_choice_value_value  swecommon3.element_type_element_type_choice_value_code_space  swecommon3.element_type_element_type_srs  swecommon3.element_type_encoding_id  swecommon3.element_type_encoding_type  swecommon3.element_type_encoding_byte_order  swecommon3.element_type_encoding_byte_encoding  swecommon3.element_type_encoding_byte_length  swecommon3.element_type_encoding_collapse_white_spaces  swecommon3.element_type_encoding_decimal_separator  swecommon3.element_type_encoding_token_separator  swecommon3.element_type_encoding_block_separator  swecommon3.element_type_encoding_namespace  swecommon3.element_type_encoding_records_as_arrays  swecommon3.element_type_encoding_vectors_as_arrays  swecommon3.element_type_choice_value_id  swecommon3.element_type_choice_value_label  swecommon3.element_type_choice_value_description  swecommon3.element_type_choice_value_type  swecommon3.element_type_choice_value_updatable  swecommon3.element_type_choice_value_optional  swecommon3.element_type_choice_value_definition  swecommon3.element_type_choice_value_reference_frame  swecommon3.element_type_choice_value_axis_id  swecommon3.element_type_choice_value_constraint_type  swecommon3.element_type_choice_value_constraint_values_value  swecommon3.element_type_choice_value_constraint_pattern  swecommon3.element_type_choice_value_value  swecommon3.element_type_choice_value_code_space  swecommon3.element_type_items_name  swecommon3.element_type_items_href  swecommon3.element_type_items_role  swecommon3.element_type_items_arcrole  swecommon3.element_type_items_title  swecommon3.element_type_items_id  swecommon3.element_type_items_label  swecommon3.element_type_items_description  swecommon3.element_type_items_type  swecommon3.element_type_items_updatable  swecommon3.element_type_items_optional  swecommon3.element_type_items_definition  swecommon3.element_type_items_reference_frame  swecommon3.element_type_items_axis_id  swecommon3.element_type_items_reference_time  swecommon3.element_type_items_local_frame  swecommon3.element_type_items_code_space  swecommon3.element_type_items_srs  swecommon3.element_type_srs  swecommon3.encoding_id  swecommon3.encoding_type  swecommon3.encoding_byte_order  swecommon3.encoding_byte_encoding  swecommon3.encoding_byte_length  swecommon3.encoding_members_id  swecommon3.encoding_members_type  swecommon3.encoding_members_encryption  swecommon3.encoding_members_significant_bits  swecommon3.encoding_members_bit_length  swecommon3.encoding_members_byte_length  swecommon3.encoding_members_data_type  swecommon3.encoding_members_ref  swecommon3.encoding_members_compression  swecommon3.encoding_members_padding_bytes_after  swecommon3.encoding_members_padding_bytes_before  swecommon3.encoding_collapse_white_spaces  swecommon3.encoding_decimal_separator  swecommon3.encoding_token_separator  swecommon3.encoding_block_separator  swecommon3.encoding_namespace  swecommon3.encoding_records_as_arrays  swecommon3.encoding_vectors_as_arrays
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.element_count_href  elementCount.href  string
+field  swecommon3.element_count_role  elementCount.role  string
+field  swecommon3.element_count_arcrole  elementCount.arcrole  string
+field  swecommon3.element_count_title  elementCount.title  string
+field  swecommon3.element_count_id  elementCount.id  string
+field  swecommon3.element_count_label  elementCount.label  string
+field  swecommon3.element_count_description  elementCount.description  string
+field  swecommon3.element_count_type  elementCount.type  string
+field  swecommon3.element_count_updatable  elementCount.updatable  bool
+field  swecommon3.element_count_optional  elementCount.optional  bool
+field  swecommon3.element_count_definition  elementCount.definition  string
+field  swecommon3.element_count_reference_frame  elementCount.referenceFrame  string
+field  swecommon3.element_count_axis_id  elementCount.axisID  string
+field  swecommon3.element_count_constraint_type  elementCount.constraint.type  string
+field  swecommon3.element_count_constraint_significant_figures  elementCount.constraint.significantFigures  int
+field  swecommon3.element_count_value  elementCount.value  int
+field  swecommon3.element_type_name  elementType.name  string
+field  swecommon3.element_type_href  elementType.href  string
+field  swecommon3.element_type_role  elementType.role  string
+field  swecommon3.element_type_arcrole  elementType.arcrole  string
+field  swecommon3.element_type_title  elementType.title  string
+field  swecommon3.element_type_id  elementType.id  string
+field  swecommon3.element_type_label  elementType.label  string
+field  swecommon3.element_type_description  elementType.description  string
+field  swecommon3.element_type_type  elementType.type  string
+field  swecommon3.element_type_updatable  elementType.updatable  bool
+field  swecommon3.element_type_optional  elementType.optional  bool
+field  swecommon3.element_type_definition  elementType.definition  string
+field  swecommon3.element_type_reference_frame  elementType.referenceFrame  string
+field  swecommon3.element_type_axis_id  elementType.axisID  string
+group  swecommon3.element_type_nil_values  elementType.nilValues
+  field  swecommon3.element_type_nil_values_reason  reason  string
+end
+field  swecommon3.element_type_constraint_type  elementType.constraint.type  string
+field  swecommon3.element_type_constraint_significant_figures  elementType.constraint.significantFigures  int
+field  swecommon3.element_type_constraint_pattern  elementType.constraint.pattern  string
+group  swecommon3.element_type_constraint_geom_types  elementType.constraint.geomTypes
+  field  swecommon3.element_type_constraint_geom_types_value  .  string
+end
+field  swecommon3.element_type_uom_label  elementType.uom.label  string
+field  swecommon3.element_type_uom_symbol  elementType.uom.symbol  string
+field  swecommon3.element_type_uom_code  elementType.uom.code  string
+field  swecommon3.element_type_uom_href  elementType.uom.href  string
+field  swecommon3.element_type_reference_time  elementType.referenceTime  string
+field  swecommon3.element_type_local_frame  elementType.localFrame  string
+field  swecommon3.element_type_code_space  elementType.codeSpace  string
+group  swecommon3.element_type_fields  elementType.fields
+  field  swecommon3.element_type_fields_name  name  string
+  field  swecommon3.element_type_fields_href  href  string
+  field  swecommon3.element_type_fields_role  role  string
+  field  swecommon3.element_type_fields_arcrole  arcrole  string
+  field  swecommon3.element_type_fields_title  title  string
+  field  swecommon3.element_type_fields_id  id  string
+  field  swecommon3.element_type_fields_label  label  string
+  field  swecommon3.element_type_fields_description  description  string
+  field  swecommon3.element_type_fields_type  type  string
+  field  swecommon3.element_type_fields_updatable  updatable  bool
+  field  swecommon3.element_type_fields_optional  optional  bool
+  field  swecommon3.element_type_fields_definition  definition  string
+  field  swecommon3.element_type_fields_reference_frame  referenceFrame  string
+  field  swecommon3.element_type_fields_axis_id  axisID  string
+  field  swecommon3.element_type_fields_reference_time  referenceTime  string
+  field  swecommon3.element_type_fields_local_frame  localFrame  string
+  field  swecommon3.element_type_fields_code_space  codeSpace  string
+  field  swecommon3.element_type_fields_srs  srs  string
+end
+group  swecommon3.element_type_coordinates  elementType.coordinates
+  field  swecommon3.element_type_coordinates_name  name  string
+  field  swecommon3.element_type_coordinates_id  id  string
+  field  swecommon3.element_type_coordinates_label  label  string
+  field  swecommon3.element_type_coordinates_description  description  string
+  field  swecommon3.element_type_coordinates_type  type  string
+  field  swecommon3.element_type_coordinates_updatable  updatable  bool
+  field  swecommon3.element_type_coordinates_optional  optional  bool
+  field  swecommon3.element_type_coordinates_definition  definition  string
+  field  swecommon3.element_type_coordinates_reference_frame  referenceFrame  string
+  field  swecommon3.element_type_coordinates_axis_id  axisID  string
+  field  swecommon3.element_type_coordinates_reference_time  referenceTime  string
+  field  swecommon3.element_type_coordinates_local_frame  localFrame  string
+end
+field  swecommon3.element_type_element_count_href  elementType.elementCount.href  string
+field  swecommon3.element_type_element_count_role  elementType.elementCount.role  string
+field  swecommon3.element_type_element_count_arcrole  elementType.elementCount.arcrole  string
+field  swecommon3.element_type_element_count_title  elementType.elementCount.title  string
+field  swecommon3.element_type_element_count_id  elementType.elementCount.id  string
+field  swecommon3.element_type_element_count_label  elementType.elementCount.label  string
+field  swecommon3.element_type_element_count_description  elementType.elementCount.description  string
+field  swecommon3.element_type_element_count_type  elementType.elementCount.type  string
+field  swecommon3.element_type_element_count_updatable  elementType.elementCount.updatable  bool
+field  swecommon3.element_type_element_count_optional  elementType.elementCount.optional  bool
+field  swecommon3.element_type_element_count_definition  elementType.elementCount.definition  string
+field  swecommon3.element_type_element_count_reference_frame  elementType.elementCount.referenceFrame  string
+field  swecommon3.element_type_element_count_axis_id  elementType.elementCount.axisID  string
+field  swecommon3.element_type_element_count_constraint_type  elementType.elementCount.constraint.type  string
+field  swecommon3.element_type_element_count_constraint_significant_figures  elementType.elementCount.constraint.significantFigures  int
+field  swecommon3.element_type_element_count_value  elementType.elementCount.value  int
+field  swecommon3.element_type_element_type_name  elementType.elementType.name  string
+field  swecommon3.element_type_element_type_href  elementType.elementType.href  string
+field  swecommon3.element_type_element_type_role  elementType.elementType.role  string
+field  swecommon3.element_type_element_type_arcrole  elementType.elementType.arcrole  string
+field  swecommon3.element_type_element_type_title  elementType.elementType.title  string
+field  swecommon3.element_type_element_type_id  elementType.elementType.id  string
+field  swecommon3.element_type_element_type_label  elementType.elementType.label  string
+field  swecommon3.element_type_element_type_description  elementType.elementType.description  string
+field  swecommon3.element_type_element_type_type  elementType.elementType.type  string
+field  swecommon3.element_type_element_type_updatable  elementType.elementType.updatable  bool
+field  swecommon3.element_type_element_type_optional  elementType.elementType.optional  bool
+field  swecommon3.element_type_element_type_definition  elementType.elementType.definition  string
+field  swecommon3.element_type_element_type_reference_frame  elementType.elementType.referenceFrame  string
+field  swecommon3.element_type_element_type_axis_id  elementType.elementType.axisID  string
+field  swecommon3.element_type_element_type_constraint_type  elementType.elementType.constraint.type  string
+field  swecommon3.element_type_element_type_constraint_significant_figures  elementType.elementType.constraint.significantFigures  int
+field  swecommon3.element_type_element_type_constraint_pattern  elementType.elementType.constraint.pattern  string
+group  swecommon3.element_type_element_type_constraint_geom_types  elementType.elementType.constraint.geomTypes
+  field  swecommon3.element_type_element_type_constraint_geom_types_value  .  string
+end
+field  swecommon3.element_type_element_type_uom_label  elementType.elementType.uom.label  string
+field  swecommon3.element_type_element_type_uom_symbol  elementType.elementType.uom.symbol  string
+field  swecommon3.element_type_element_type_uom_code  elementType.elementType.uom.code  string
+field  swecommon3.element_type_element_type_uom_href  elementType.elementType.uom.href  string
+field  swecommon3.element_type_element_type_reference_time  elementType.elementType.referenceTime  string
+field  swecommon3.element_type_element_type_local_frame  elementType.elementType.localFrame  string
+field  swecommon3.element_type_element_type_code_space  elementType.elementType.codeSpace  string
+field  swecommon3.element_type_element_type_element_count_href  elementType.elementType.elementCount.href  string
+field  swecommon3.element_type_element_type_element_count_role  elementType.elementType.elementCount.role  string
+field  swecommon3.element_type_element_type_element_count_arcrole  elementType.elementType.elementCount.arcrole  string
+field  swecommon3.element_type_element_type_element_count_title  elementType.elementType.elementCount.title  string
+field  swecommon3.element_type_element_type_element_count_id  elementType.elementType.elementCount.id  string
+field  swecommon3.element_type_element_type_element_count_label  elementType.elementType.elementCount.label  string
+field  swecommon3.element_type_element_type_element_count_description  elementType.elementType.elementCount.description  string
+field  swecommon3.element_type_element_type_element_count_type  elementType.elementType.elementCount.type  string
+field  swecommon3.element_type_element_type_element_count_updatable  elementType.elementType.elementCount.updatable  bool
+field  swecommon3.element_type_element_type_element_count_optional  elementType.elementType.elementCount.optional  bool
+field  swecommon3.element_type_element_type_element_count_definition  elementType.elementType.elementCount.definition  string
+field  swecommon3.element_type_element_type_element_count_reference_frame  elementType.elementType.elementCount.referenceFrame  string
+field  swecommon3.element_type_element_type_element_count_axis_id  elementType.elementType.elementCount.axisID  string
+field  swecommon3.element_type_element_type_element_count_value  elementType.elementType.elementCount.value  int
+field  swecommon3.element_type_element_type_element_type_name  elementType.elementType.elementType.name  string
+field  swecommon3.element_type_element_type_element_type_href  elementType.elementType.elementType.href  string
+field  swecommon3.element_type_element_type_element_type_role  elementType.elementType.elementType.role  string
+field  swecommon3.element_type_element_type_element_type_arcrole  elementType.elementType.elementType.arcrole  string
+field  swecommon3.element_type_element_type_element_type_title  elementType.elementType.elementType.title  string
+field  swecommon3.element_type_element_type_element_type_id  elementType.elementType.elementType.id  string
+field  swecommon3.element_type_element_type_element_type_label  elementType.elementType.elementType.label  string
+field  swecommon3.element_type_element_type_element_type_description  elementType.elementType.elementType.description  string
+field  swecommon3.element_type_element_type_element_type_type  elementType.elementType.elementType.type  string
+field  swecommon3.element_type_element_type_element_type_updatable  elementType.elementType.elementType.updatable  bool
+field  swecommon3.element_type_element_type_element_type_optional  elementType.elementType.elementType.optional  bool
+field  swecommon3.element_type_element_type_element_type_definition  elementType.elementType.elementType.definition  string
+field  swecommon3.element_type_element_type_element_type_reference_frame  elementType.elementType.elementType.referenceFrame  string
+field  swecommon3.element_type_element_type_element_type_axis_id  elementType.elementType.elementType.axisID  string
+field  swecommon3.element_type_element_type_element_type_reference_time  elementType.elementType.elementType.referenceTime  string
+field  swecommon3.element_type_element_type_element_type_local_frame  elementType.elementType.elementType.localFrame  string
+field  swecommon3.element_type_element_type_element_type_code_space  elementType.elementType.elementType.codeSpace  string
+field  swecommon3.element_type_element_type_element_type_srs  elementType.elementType.elementType.srs  string
+field  swecommon3.element_type_element_type_encoding_id  elementType.elementType.encoding.id  string
+field  swecommon3.element_type_element_type_encoding_type  elementType.elementType.encoding.type  string
+field  swecommon3.element_type_element_type_encoding_byte_order  elementType.elementType.encoding.byteOrder  string
+field  swecommon3.element_type_element_type_encoding_byte_encoding  elementType.elementType.encoding.byteEncoding  string
+field  swecommon3.element_type_element_type_encoding_byte_length  elementType.elementType.encoding.byteLength  int
+field  swecommon3.element_type_element_type_encoding_collapse_white_spaces  elementType.elementType.encoding.collapseWhiteSpaces  bool
+field  swecommon3.element_type_element_type_encoding_decimal_separator  elementType.elementType.encoding.decimalSeparator  string
+field  swecommon3.element_type_element_type_encoding_token_separator  elementType.elementType.encoding.tokenSeparator  string
+field  swecommon3.element_type_element_type_encoding_block_separator  elementType.elementType.encoding.blockSeparator  string
+field  swecommon3.element_type_element_type_encoding_namespace  elementType.elementType.encoding.namespace  string
+field  swecommon3.element_type_element_type_encoding_records_as_arrays  elementType.elementType.encoding.recordsAsArrays  bool
+field  swecommon3.element_type_element_type_encoding_vectors_as_arrays  elementType.elementType.encoding.vectorsAsArrays  bool
+field  swecommon3.element_type_element_type_choice_value_id  elementType.elementType.choiceValue.id  string
+field  swecommon3.element_type_element_type_choice_value_label  elementType.elementType.choiceValue.label  string
+field  swecommon3.element_type_element_type_choice_value_description  elementType.elementType.choiceValue.description  string
+field  swecommon3.element_type_element_type_choice_value_type  elementType.elementType.choiceValue.type  string
+field  swecommon3.element_type_element_type_choice_value_updatable  elementType.elementType.choiceValue.updatable  bool
+field  swecommon3.element_type_element_type_choice_value_optional  elementType.elementType.choiceValue.optional  bool
+field  swecommon3.element_type_element_type_choice_value_definition  elementType.elementType.choiceValue.definition  string
+field  swecommon3.element_type_element_type_choice_value_reference_frame  elementType.elementType.choiceValue.referenceFrame  string
+field  swecommon3.element_type_element_type_choice_value_axis_id  elementType.elementType.choiceValue.axisID  string
+field  swecommon3.element_type_element_type_choice_value_value  elementType.elementType.choiceValue.value  string
+field  swecommon3.element_type_element_type_choice_value_code_space  elementType.elementType.choiceValue.codeSpace  string
+field  swecommon3.element_type_element_type_srs  elementType.elementType.srs  string
+field  swecommon3.element_type_encoding_id  elementType.encoding.id  string
+field  swecommon3.element_type_encoding_type  elementType.encoding.type  string
+field  swecommon3.element_type_encoding_byte_order  elementType.encoding.byteOrder  string
+field  swecommon3.element_type_encoding_byte_encoding  elementType.encoding.byteEncoding  string
+field  swecommon3.element_type_encoding_byte_length  elementType.encoding.byteLength  int
+field  swecommon3.element_type_encoding_collapse_white_spaces  elementType.encoding.collapseWhiteSpaces  bool
+field  swecommon3.element_type_encoding_decimal_separator  elementType.encoding.decimalSeparator  string
+field  swecommon3.element_type_encoding_token_separator  elementType.encoding.tokenSeparator  string
+field  swecommon3.element_type_encoding_block_separator  elementType.encoding.blockSeparator  string
+field  swecommon3.element_type_encoding_namespace  elementType.encoding.namespace  string
+field  swecommon3.element_type_encoding_records_as_arrays  elementType.encoding.recordsAsArrays  bool
+field  swecommon3.element_type_encoding_vectors_as_arrays  elementType.encoding.vectorsAsArrays  bool
+field  swecommon3.element_type_choice_value_id  elementType.choiceValue.id  string
+field  swecommon3.element_type_choice_value_label  elementType.choiceValue.label  string
+field  swecommon3.element_type_choice_value_description  elementType.choiceValue.description  string
+field  swecommon3.element_type_choice_value_type  elementType.choiceValue.type  string
+field  swecommon3.element_type_choice_value_updatable  elementType.choiceValue.updatable  bool
+field  swecommon3.element_type_choice_value_optional  elementType.choiceValue.optional  bool
+field  swecommon3.element_type_choice_value_definition  elementType.choiceValue.definition  string
+field  swecommon3.element_type_choice_value_reference_frame  elementType.choiceValue.referenceFrame  string
+field  swecommon3.element_type_choice_value_axis_id  elementType.choiceValue.axisID  string
+field  swecommon3.element_type_choice_value_constraint_type  elementType.choiceValue.constraint.type  string
+group  swecommon3.element_type_choice_value_constraint_values  elementType.choiceValue.constraint.values
+  field  swecommon3.element_type_choice_value_constraint_values_value  .  string
+end
+field  swecommon3.element_type_choice_value_constraint_pattern  elementType.choiceValue.constraint.pattern  string
+field  swecommon3.element_type_choice_value_value  elementType.choiceValue.value  string
+field  swecommon3.element_type_choice_value_code_space  elementType.choiceValue.codeSpace  string
+group  swecommon3.element_type_items  elementType.items
+  field  swecommon3.element_type_items_name  name  string
+  field  swecommon3.element_type_items_href  href  string
+  field  swecommon3.element_type_items_role  role  string
+  field  swecommon3.element_type_items_arcrole  arcrole  string
+  field  swecommon3.element_type_items_title  title  string
+  field  swecommon3.element_type_items_id  id  string
+  field  swecommon3.element_type_items_label  label  string
+  field  swecommon3.element_type_items_description  description  string
+  field  swecommon3.element_type_items_type  type  string
+  field  swecommon3.element_type_items_updatable  updatable  bool
+  field  swecommon3.element_type_items_optional  optional  bool
+  field  swecommon3.element_type_items_definition  definition  string
+  field  swecommon3.element_type_items_reference_frame  referenceFrame  string
+  field  swecommon3.element_type_items_axis_id  axisID  string
+  field  swecommon3.element_type_items_reference_time  referenceTime  string
+  field  swecommon3.element_type_items_local_frame  localFrame  string
+  field  swecommon3.element_type_items_code_space  codeSpace  string
+  field  swecommon3.element_type_items_srs  srs  string
+end
+field  swecommon3.element_type_srs  elementType.srs  string
+field  swecommon3.encoding_id  encoding.id  string
+field  swecommon3.encoding_type  encoding.type  string
+field  swecommon3.encoding_byte_order  encoding.byteOrder  string
+field  swecommon3.encoding_byte_encoding  encoding.byteEncoding  string
+field  swecommon3.encoding_byte_length  encoding.byteLength  int
+group  swecommon3.encoding_members  encoding.members
+  field  swecommon3.encoding_members_id  id  string
+  field  swecommon3.encoding_members_type  type  string
+  field  swecommon3.encoding_members_encryption  encryption  string
+  field  swecommon3.encoding_members_significant_bits  significantBits  int
+  field  swecommon3.encoding_members_bit_length  bitLength  int
+  field  swecommon3.encoding_members_byte_length  byteLength  int
+  field  swecommon3.encoding_members_data_type  dataType  string
+  field  swecommon3.encoding_members_ref  ref  string
+  field  swecommon3.encoding_members_compression  compression  string
+  field  swecommon3.encoding_members_padding_bytes_after  paddingBytes-after  int
+  field  swecommon3.encoding_members_padding_bytes_before  paddingBytes-before  int
+end
+field  swecommon3.encoding_collapse_white_spaces  encoding.collapseWhiteSpaces  bool
+field  swecommon3.encoding_decimal_separator  encoding.decimalSeparator  string
+field  swecommon3.encoding_token_separator  encoding.tokenSeparator  string
+field  swecommon3.encoding_block_separator  encoding.blockSeparator  string
+field  swecommon3.encoding_namespace  encoding.namespace  string
+field  swecommon3.encoding_records_as_arrays  encoding.recordsAsArrays  bool
+field  swecommon3.encoding_vectors_as_arrays  encoding.vectorsAsArrays  bool
+
+kind      time
+when      type  Time
+requires  swecommon3.updatable  swecommon3.optional  swecommon3.definition  swecommon3.reference_frame  swecommon3.axis_id  swecommon3.nil_values_reason  swecommon3.constraint_type  swecommon3.constraint_significant_figures  swecommon3.reference_time  swecommon3.local_frame  swecommon3.uom_label  swecommon3.uom_symbol  swecommon3.uom_code  swecommon3.uom_href
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.reference_frame  referenceFrame  string
+field  swecommon3.axis_id  axisID  string
+group  swecommon3.nil_values  nilValues
+  field  swecommon3.nil_values_reason  reason  string
+end
+field  swecommon3.constraint_type  constraint.type  string
+field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
+field  swecommon3.reference_time  referenceTime  string
+field  swecommon3.local_frame  localFrame  string
+field  swecommon3.uom_label  uom.label  string
+field  swecommon3.uom_symbol  uom.symbol  string
+field  swecommon3.uom_code  uom.code  string
+field  swecommon3.uom_href  uom.href  string
+
+kind      time_range
+when      type  TimeRange
+requires  swecommon3.updatable  swecommon3.optional  swecommon3.definition  swecommon3.reference_frame  swecommon3.axis_id  swecommon3.nil_values_reason  swecommon3.constraint_type  swecommon3.constraint_significant_figures  swecommon3.reference_time  swecommon3.local_frame  swecommon3.uom_label  swecommon3.uom_symbol  swecommon3.uom_code  swecommon3.uom_href
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.reference_frame  referenceFrame  string
+field  swecommon3.axis_id  axisID  string
+group  swecommon3.nil_values  nilValues
+  field  swecommon3.nil_values_reason  reason  string
+end
+field  swecommon3.constraint_type  constraint.type  string
+field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
+field  swecommon3.reference_time  referenceTime  string
+field  swecommon3.local_frame  localFrame  string
+field  swecommon3.uom_label  uom.label  string
+field  swecommon3.uom_symbol  uom.symbol  string
+field  swecommon3.uom_code  uom.code  string
+field  swecommon3.uom_href  uom.href  string
+
+kind      quantity
+when      type  Quantity
+requires  swecommon3.updatable  swecommon3.optional  swecommon3.definition  swecommon3.reference_frame  swecommon3.axis_id  swecommon3.nil_values_reason  swecommon3.constraint_type  swecommon3.constraint_significant_figures  swecommon3.uom_label  swecommon3.uom_symbol  swecommon3.uom_code  swecommon3.uom_href
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.reference_frame  referenceFrame  string
+field  swecommon3.axis_id  axisID  string
+group  swecommon3.nil_values  nilValues
+  field  swecommon3.nil_values_reason  reason  string
+end
+field  swecommon3.constraint_type  constraint.type  string
+field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
+field  swecommon3.uom_label  uom.label  string
+field  swecommon3.uom_symbol  uom.symbol  string
+field  swecommon3.uom_code  uom.code  string
+field  swecommon3.uom_href  uom.href  string
+
+kind      category
+when      type  Category
+requires  swecommon3.updatable  swecommon3.optional  swecommon3.definition  swecommon3.reference_frame  swecommon3.axis_id  swecommon3.nil_values_reason  swecommon3.nil_values_value_2  swecommon3.constraint_type  swecommon3.constraint_values_value  swecommon3.constraint_pattern  swecommon3.value_2  swecommon3.code_space
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.reference_frame  referenceFrame  string
+field  swecommon3.axis_id  axisID  string
+group  swecommon3.nil_values  nilValues
+  field  swecommon3.nil_values_reason  reason  string
+  field  swecommon3.nil_values_value_2  value  string
+end
+field  swecommon3.constraint_type  constraint.type  string
+group  swecommon3.constraint_values  constraint.values
+  field  swecommon3.constraint_values_value  .  string
+end
+field  swecommon3.constraint_pattern  constraint.pattern  string
+field  swecommon3.value_2  value  string
+field  swecommon3.code_space  codeSpace  string
+
+kind      quantity_range
+when      type  QuantityRange
+requires  swecommon3.updatable  swecommon3.optional  swecommon3.definition  swecommon3.reference_frame  swecommon3.axis_id  swecommon3.nil_values_reason  swecommon3.constraint_type  swecommon3.constraint_significant_figures  swecommon3.uom_label  swecommon3.uom_symbol  swecommon3.uom_code  swecommon3.uom_href
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.reference_frame  referenceFrame  string
+field  swecommon3.axis_id  axisID  string
+group  swecommon3.nil_values  nilValues
+  field  swecommon3.nil_values_reason  reason  string
+end
+field  swecommon3.constraint_type  constraint.type  string
+field  swecommon3.constraint_significant_figures  constraint.significantFigures  int
+field  swecommon3.uom_label  uom.label  string
+field  swecommon3.uom_symbol  uom.symbol  string
+field  swecommon3.uom_code  uom.code  string
+field  swecommon3.uom_href  uom.href  string
+
+kind      text
+when      type  Text
+requires  swecommon3.updatable  swecommon3.optional  swecommon3.definition  swecommon3.reference_frame  swecommon3.axis_id  swecommon3.nil_values_reason  swecommon3.nil_values_value_2  swecommon3.constraint_type  swecommon3.constraint_values_value  swecommon3.constraint_pattern  swecommon3.value_2
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.reference_frame  referenceFrame  string
+field  swecommon3.axis_id  axisID  string
+group  swecommon3.nil_values  nilValues
+  field  swecommon3.nil_values_reason  reason  string
+  field  swecommon3.nil_values_value_2  value  string
+end
+field  swecommon3.constraint_type  constraint.type  string
+group  swecommon3.constraint_values  constraint.values
+  field  swecommon3.constraint_values_value  .  string
+end
+field  swecommon3.constraint_pattern  constraint.pattern  string
+field  swecommon3.value_2  value  string
+
+kind      boolean
+when      type  Boolean
+field  swecommon3.id  id  string
+field  swecommon3.label  label  string
+field  swecommon3.description  description  string
+field  swecommon3.type  type  string
+field  swecommon3.updatable  updatable  bool
+field  swecommon3.optional  optional  bool
+field  swecommon3.definition  definition  string
+field  swecommon3.reference_frame  referenceFrame  string
+field  swecommon3.axis_id  axisID  string
+field  swecommon3.value  value  bool

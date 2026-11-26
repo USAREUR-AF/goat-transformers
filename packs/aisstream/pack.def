@@ -11,31 +11,9 @@ source        "https://aisstream.io/documentation (units of PositionReport, read
 uses          aisstream
 wire          json
 
-kind      position_report
-when      MessageType  PositionReport
-field  aisstream.message_position_report_message_id  Message.PositionReport.MessageID  int
-field  aisstream.message_position_report_repeat_indicator  Message.PositionReport.RepeatIndicator  int
-field  aisstream.message_position_report_user_id  Message.PositionReport.UserID  int
-field  aisstream.message_position_report_valid  Message.PositionReport.Valid  bool
-field  aisstream.message_position_report_navigational_status  Message.PositionReport.NavigationalStatus  int
-field  aisstream.message_position_report_rate_of_turn  Message.PositionReport.RateOfTurn  int
-field  aisstream.message_position_report_sog  Message.PositionReport.Sog  float
-field  aisstream.message_position_report_position_accuracy  Message.PositionReport.PositionAccuracy  bool
-field  lon  Message.PositionReport.Longitude  float
-field  aisstream.message_position_report_longitude  Message.PositionReport.Longitude  float
-field  lat  Message.PositionReport.Latitude  float
-field  aisstream.message_position_report_latitude  Message.PositionReport.Latitude  float
-field  aisstream.message_position_report_cog  Message.PositionReport.Cog  float
-field  aisstream.message_position_report_true_heading  Message.PositionReport.TrueHeading  int
-field  aisstream.message_position_report_timestamp  Message.PositionReport.Timestamp  int
-field  aisstream.message_position_report_special_manoeuvre_indicator  Message.PositionReport.SpecialManoeuvreIndicator  int
-field  aisstream.message_position_report_spare  Message.PositionReport.Spare  int
-field  aisstream.message_position_report_raim  Message.PositionReport.Raim  bool
-field  aisstream.message_position_report_communication_state  Message.PositionReport.CommunicationState  int
-field  aisstream.message_type  MessageType  string
-
 kind      standard_class_bposition_report
 when      MessageType  StandardClassBPositionReport
+requires  aisstream.message_standard_class_bposition_report_message_id
 field  aisstream.message_standard_class_bposition_report_message_id  Message.StandardClassBPositionReport.MessageID  int
 field  aisstream.message_standard_class_bposition_report_repeat_indicator  Message.StandardClassBPositionReport.RepeatIndicator  int
 field  aisstream.message_standard_class_bposition_report_user_id  Message.StandardClassBPositionReport.UserID  int
@@ -62,6 +40,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      extended_class_bposition_report
 when      MessageType  ExtendedClassBPositionReport
+requires  aisstream.message_extended_class_bposition_report_message_id
 field  aisstream.message_extended_class_bposition_report_message_id  Message.ExtendedClassBPositionReport.MessageID  int
 field  aisstream.message_extended_class_bposition_report_repeat_indicator  Message.ExtendedClassBPositionReport.RepeatIndicator  int
 field  aisstream.message_extended_class_bposition_report_user_id  Message.ExtendedClassBPositionReport.UserID  int
@@ -90,6 +69,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      base_station_report
 when      MessageType  BaseStationReport
+requires  aisstream.message_base_station_report_message_id
 field  aisstream.message_base_station_report_message_id  Message.BaseStationReport.MessageID  int
 field  aisstream.message_base_station_report_repeat_indicator  Message.BaseStationReport.RepeatIndicator  int
 field  aisstream.message_base_station_report_user_id  Message.BaseStationReport.UserID  int
@@ -112,6 +92,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      ship_static_data
 when      MessageType  ShipStaticData
+requires  aisstream.message_ship_static_data_message_id
 field  aisstream.message_ship_static_data_message_id  Message.ShipStaticData.MessageID  int
 field  aisstream.message_ship_static_data_repeat_indicator  Message.ShipStaticData.RepeatIndicator  int
 field  aisstream.message_ship_static_data_user_id  Message.ShipStaticData.UserID  int
@@ -138,6 +119,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      static_data_report
 when      MessageType  StaticDataReport
+requires  aisstream.message_static_data_report_message_id
 field  aisstream.message_static_data_report_message_id  Message.StaticDataReport.MessageID  int
 field  aisstream.message_static_data_report_repeat_indicator  Message.StaticDataReport.RepeatIndicator  int
 field  aisstream.message_static_data_report_user_id  Message.StaticDataReport.UserID  int
@@ -162,6 +144,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      aids_to_navigation_report
 when      MessageType  AidsToNavigationReport
+requires  aisstream.message_aids_to_navigation_report_message_id
 field  aisstream.message_aids_to_navigation_report_message_id  Message.AidsToNavigationReport.MessageID  int
 field  aisstream.message_aids_to_navigation_report_repeat_indicator  Message.AidsToNavigationReport.RepeatIndicator  int
 field  aisstream.message_aids_to_navigation_report_user_id  Message.AidsToNavigationReport.UserID  int
@@ -188,6 +171,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      standard_search_and_rescue_aircraft_report
 when      MessageType  StandardSearchAndRescueAircraftReport
+requires  aisstream.message_standard_search_and_rescue_aircraft_report_message_id
 field  aisstream.message_standard_search_and_rescue_aircraft_report_message_id  Message.StandardSearchAndRescueAircraftReport.MessageID  int
 field  aisstream.message_standard_search_and_rescue_aircraft_report_repeat_indicator  Message.StandardSearchAndRescueAircraftReport.RepeatIndicator  int
 field  aisstream.message_standard_search_and_rescue_aircraft_report_user_id  Message.StandardSearchAndRescueAircraftReport.UserID  int
@@ -211,6 +195,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      long_range_ais_broadcast_message
 when      MessageType  LongRangeAisBroadcastMessage
+requires  aisstream.message_long_range_ais_broadcast_message_message_id
 field  aisstream.message_long_range_ais_broadcast_message_message_id  Message.LongRangeAisBroadcastMessage.MessageID  int
 field  aisstream.message_long_range_ais_broadcast_message_repeat_indicator  Message.LongRangeAisBroadcastMessage.RepeatIndicator  int
 field  aisstream.message_long_range_ais_broadcast_message_user_id  Message.LongRangeAisBroadcastMessage.UserID  int
@@ -228,6 +213,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      addressed_safety_message
 when      MessageType  AddressedSafetyMessage
+requires  aisstream.message_addressed_safety_message_message_id
 field  aisstream.message_addressed_safety_message_message_id  Message.AddressedSafetyMessage.MessageID  int
 field  aisstream.message_addressed_safety_message_repeat_indicator  Message.AddressedSafetyMessage.RepeatIndicator  int
 field  aisstream.message_addressed_safety_message_user_id  Message.AddressedSafetyMessage.UserID  int
@@ -241,6 +227,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      safety_broadcast_message
 when      MessageType  SafetyBroadcastMessage
+requires  aisstream.message_safety_broadcast_message_message_id
 field  aisstream.message_safety_broadcast_message_message_id  Message.SafetyBroadcastMessage.MessageID  int
 field  aisstream.message_safety_broadcast_message_repeat_indicator  Message.SafetyBroadcastMessage.RepeatIndicator  int
 field  aisstream.message_safety_broadcast_message_user_id  Message.SafetyBroadcastMessage.UserID  int
@@ -251,6 +238,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      addressed_binary_message
 when      MessageType  AddressedBinaryMessage
+requires  aisstream.message_addressed_binary_message_message_id
 field  aisstream.message_addressed_binary_message_message_id  Message.AddressedBinaryMessage.MessageID  int
 field  aisstream.message_addressed_binary_message_repeat_indicator  Message.AddressedBinaryMessage.RepeatIndicator  int
 field  aisstream.message_addressed_binary_message_user_id  Message.AddressedBinaryMessage.UserID  int
@@ -267,6 +255,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      binary_broadcast_message
 when      MessageType  BinaryBroadcastMessage
+requires  aisstream.message_binary_broadcast_message_message_id
 field  aisstream.message_binary_broadcast_message_message_id  Message.BinaryBroadcastMessage.MessageID  int
 field  aisstream.message_binary_broadcast_message_repeat_indicator  Message.BinaryBroadcastMessage.RepeatIndicator  int
 field  aisstream.message_binary_broadcast_message_user_id  Message.BinaryBroadcastMessage.UserID  int
@@ -280,6 +269,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      single_slot_binary_message
 when      MessageType  SingleSlotBinaryMessage
+requires  aisstream.message_single_slot_binary_message_message_id
 field  aisstream.message_single_slot_binary_message_message_id  Message.SingleSlotBinaryMessage.MessageID  int
 field  aisstream.message_single_slot_binary_message_repeat_indicator  Message.SingleSlotBinaryMessage.RepeatIndicator  int
 field  aisstream.message_single_slot_binary_message_user_id  Message.SingleSlotBinaryMessage.UserID  int
@@ -296,6 +286,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      multi_slot_binary_message
 when      MessageType  MultiSlotBinaryMessage
+requires  aisstream.message_multi_slot_binary_message_message_id
 field  aisstream.message_multi_slot_binary_message_message_id  Message.MultiSlotBinaryMessage.MessageID  int
 field  aisstream.message_multi_slot_binary_message_repeat_indicator  Message.MultiSlotBinaryMessage.RepeatIndicator  int
 field  aisstream.message_multi_slot_binary_message_user_id  Message.MultiSlotBinaryMessage.UserID  int
@@ -315,6 +306,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      binary_acknowledge
 when      MessageType  BinaryAcknowledge
+requires  aisstream.message_binary_acknowledge_message_id
 field  aisstream.message_binary_acknowledge_message_id  Message.BinaryAcknowledge.MessageID  int
 field  aisstream.message_binary_acknowledge_repeat_indicator  Message.BinaryAcknowledge.RepeatIndicator  int
 field  aisstream.message_binary_acknowledge_user_id  Message.BinaryAcknowledge.UserID  int
@@ -336,6 +328,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      coordinated_utcinquiry
 when      MessageType  CoordinatedUTCInquiry
+requires  aisstream.message_coordinated_utcinquiry_message_id
 field  aisstream.message_coordinated_utcinquiry_message_id  Message.CoordinatedUTCInquiry.MessageID  int
 field  aisstream.message_coordinated_utcinquiry_repeat_indicator  Message.CoordinatedUTCInquiry.RepeatIndicator  int
 field  aisstream.message_coordinated_utcinquiry_user_id  Message.CoordinatedUTCInquiry.UserID  int
@@ -347,6 +340,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      interrogation
 when      MessageType  Interrogation
+requires  aisstream.message_interrogation_message_id
 field  aisstream.message_interrogation_message_id  Message.Interrogation.MessageID  int
 field  aisstream.message_interrogation_repeat_indicator  Message.Interrogation.RepeatIndicator  int
 field  aisstream.message_interrogation_user_id  Message.Interrogation.UserID  int
@@ -370,6 +364,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      assigned_mode_command
 when      MessageType  AssignedModeCommand
+requires  aisstream.message_assigned_mode_command_message_id
 field  aisstream.message_assigned_mode_command_message_id  Message.AssignedModeCommand.MessageID  int
 field  aisstream.message_assigned_mode_command_repeat_indicator  Message.AssignedModeCommand.RepeatIndicator  int
 field  aisstream.message_assigned_mode_command_user_id  Message.AssignedModeCommand.UserID  int
@@ -387,6 +382,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      group_assignment_command
 when      MessageType  GroupAssignmentCommand
+requires  aisstream.message_group_assignment_command_message_id
 field  aisstream.message_group_assignment_command_message_id  Message.GroupAssignmentCommand.MessageID  int
 field  aisstream.message_group_assignment_command_repeat_indicator  Message.GroupAssignmentCommand.RepeatIndicator  int
 field  aisstream.message_group_assignment_command_user_id  Message.GroupAssignmentCommand.UserID  int
@@ -407,6 +403,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      data_link_management_message
 when      MessageType  DataLinkManagementMessage
+requires  aisstream.message_data_link_management_message_message_id
 field  aisstream.message_data_link_management_message_message_id  Message.DataLinkManagementMessage.MessageID  int
 field  aisstream.message_data_link_management_message_repeat_indicator  Message.DataLinkManagementMessage.RepeatIndicator  int
 field  aisstream.message_data_link_management_message_user_id  Message.DataLinkManagementMessage.UserID  int
@@ -436,6 +433,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      channel_management
 when      MessageType  ChannelManagement
+requires  aisstream.message_channel_management_message_id
 field  aisstream.message_channel_management_message_id  Message.ChannelManagement.MessageID  int
 field  aisstream.message_channel_management_repeat_indicator  Message.ChannelManagement.RepeatIndicator  int
 field  aisstream.message_channel_management_user_id  Message.ChannelManagement.UserID  int
@@ -462,6 +460,7 @@ field  aisstream.message_type  MessageType  string
 
 kind      gnss_broadcast_binary_message
 when      MessageType  GnssBroadcastBinaryMessage
+requires  aisstream.message_gnss_broadcast_binary_message_message_id
 field  aisstream.message_gnss_broadcast_binary_message_message_id  Message.GnssBroadcastBinaryMessage.MessageID  int
 field  aisstream.message_gnss_broadcast_binary_message_repeat_indicator  Message.GnssBroadcastBinaryMessage.RepeatIndicator  int
 field  aisstream.message_gnss_broadcast_binary_message_user_id  Message.GnssBroadcastBinaryMessage.UserID  int
@@ -475,5 +474,29 @@ field  aisstream.message_type  MessageType  string
 
 kind      unknown_message
 when      MessageType  UnknownMessage
+requires  aisstream.message_unknown_message_error
 field  aisstream.message_unknown_message_error  Message.UnknownMessage.Error  string
+field  aisstream.message_type  MessageType  string
+
+kind      position_report
+when      MessageType  PositionReport
+field  aisstream.message_position_report_message_id  Message.PositionReport.MessageID  int
+field  aisstream.message_position_report_repeat_indicator  Message.PositionReport.RepeatIndicator  int
+field  aisstream.message_position_report_user_id  Message.PositionReport.UserID  int
+field  aisstream.message_position_report_valid  Message.PositionReport.Valid  bool
+field  aisstream.message_position_report_navigational_status  Message.PositionReport.NavigationalStatus  int
+field  aisstream.message_position_report_rate_of_turn  Message.PositionReport.RateOfTurn  int
+field  aisstream.message_position_report_sog  Message.PositionReport.Sog  float
+field  aisstream.message_position_report_position_accuracy  Message.PositionReport.PositionAccuracy  bool
+field  lon  Message.PositionReport.Longitude  float
+field  aisstream.message_position_report_longitude  Message.PositionReport.Longitude  float
+field  lat  Message.PositionReport.Latitude  float
+field  aisstream.message_position_report_latitude  Message.PositionReport.Latitude  float
+field  aisstream.message_position_report_cog  Message.PositionReport.Cog  float
+field  aisstream.message_position_report_true_heading  Message.PositionReport.TrueHeading  int
+field  aisstream.message_position_report_timestamp  Message.PositionReport.Timestamp  int
+field  aisstream.message_position_report_special_manoeuvre_indicator  Message.PositionReport.SpecialManoeuvreIndicator  int
+field  aisstream.message_position_report_spare  Message.PositionReport.Spare  int
+field  aisstream.message_position_report_raim  Message.PositionReport.Raim  bool
+field  aisstream.message_position_report_communication_state  Message.PositionReport.CommunicationState  int
 field  aisstream.message_type  MessageType  string

@@ -22,6 +22,12 @@ None.
 
 ## Not mapped
 
+On encode with no recorded kind (engine-spec Encode step 2), each kind is chosen by the keys it
+requires. The escape forms (single and first frame with the length after a zero nibble) must
+stand before the normal forms for decode and require the same keys, so a single or first frame
+entity is written in the escape form. Choosing the normal form needs `requires` on a value or on
+an absent key, a language addition. Consecutive frame and flow control are reached by their keys.
+
 - **Reassembly** of a message from its first and consecutive frames: one message is one frame.
 - **Extended and mixed addressing** (an address octet before the control information): use a pack per
   addressing mode; not written.

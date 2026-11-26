@@ -10,6 +10,7 @@ delimiter     none
 
 kind  version-type
 when  0:60:20  "RINEX VERSION / TYPE"
+requires  rinexobs.format_version
 field  rinexobs.format_version  0:0:9  string
 field  rinexobs.file_type  0:20:1  string
 field  rinexobs.file_type_text  0:21:19  string
@@ -18,62 +19,74 @@ field  rinexobs.satellite_system_text  0:41:19  string
 
 kind  program
 when  0:60:20  "PGM / RUN BY / DATE"
+requires  rinexobs.program
 field  rinexobs.program  0:0:20  string
 field  rinexobs.run_by  0:20:20  string
 field  rinexobs.created  0:40:20  string
 
 kind  comment
 when  0:60:20  "COMMENT"
+requires  rinexobs.comment
 field  rinexobs.comment  0:0:60  string
 
 kind  marker-name
 when  0:60:20  "MARKER NAME"
+requires  rinexobs.marker_name
 field  rinexobs.marker_name  0:0:60  string
 
 kind  marker-number
 when  0:60:20  "MARKER NUMBER"
+requires  rinexobs.marker_number
 field  rinexobs.marker_number  0:0:20  string
 
 kind  marker-type
 when  0:60:20  "MARKER TYPE"
+requires  rinexobs.marker_type
 field  rinexobs.marker_type  0:0:20  string
 
 kind  observer-agency
 when  0:60:20  "OBSERVER / AGENCY"
+requires  rinexobs.observer
 field  rinexobs.observer  0:0:20  string
 field  rinexobs.agency  0:20:40  string
 
 kind  receiver
 when  0:60:20  "REC # / TYPE / VERS"
+requires  rinexobs.receiver_number
 field  rinexobs.receiver_number  0:0:20  string
 field  rinexobs.receiver_type  0:20:20  string
 field  rinexobs.receiver_version  0:40:20  string
 
 kind  antenna
 when  0:60:20  "ANT # / TYPE"
+requires  rinexobs.antenna_number
 field  rinexobs.antenna_number  0:0:20  string
 field  rinexobs.antenna_type  0:20:20  string
 
 kind  approx-position
 when  0:60:20  "APPROX POSITION XYZ"
+requires  rinexobs.approx_x
 field  rinexobs.approx_x  0:0:14  string
 field  rinexobs.approx_y  0:14:14  string
 field  rinexobs.approx_z  0:28:14  string
 
 kind  antenna-delta-hen
 when  0:60:20  "ANTENNA: DELTA H/E/N"
+requires  rinexobs.delta_h
 field  rinexobs.delta_h  0:0:14  string
 field  rinexobs.delta_e  0:14:14  string
 field  rinexobs.delta_n  0:28:14  string
 
 kind  antenna-delta-xyz
 when  0:60:20  "ANTENNA: DELTA X/Y/Z"
+requires  rinexobs.delta_x
 field  rinexobs.delta_x  0:0:14  string
 field  rinexobs.delta_y  0:14:14  string
 field  rinexobs.delta_z  0:28:14  string
 
 kind  antenna-phasecenter
 when  0:60:20  "ANTENNA: PHASECENTER"
+requires  rinexobs.pc_system
 field  rinexobs.pc_system  0:0:1  string
 field  rinexobs.pc_code  0:2:3  string
 field  rinexobs.pc_1  0:5:9  string
@@ -82,40 +95,48 @@ field  rinexobs.pc_3  0:28:14  string
 
 kind  antenna-bsight
 when  0:60:20  "ANTENNA: B.SIGHT XYZ"
+requires  rinexobs.bsight_x
 field  rinexobs.bsight_x  0:0:14  string
 field  rinexobs.bsight_y  0:14:14  string
 field  rinexobs.bsight_z  0:28:14  string
 
 kind  antenna-zerodir-azi
 when  0:60:20  "ANTENNA: ZERODIR AZI"
+requires  rinexobs.zerodir_azi
 field  rinexobs.zerodir_azi  0:0:14  string
 
 kind  antenna-zerodir-xyz
 when  0:60:20  "ANTENNA: ZERODIR XYZ"
+requires  rinexobs.zerodir_x
 field  rinexobs.zerodir_x  0:0:14  string
 field  rinexobs.zerodir_y  0:14:14  string
 field  rinexobs.zerodir_z  0:28:14  string
 
 kind  center-of-mass
 when  0:60:20  "CENTER OF MASS: XYZ"
+requires  rinexobs.com_x
 field  rinexobs.com_x  0:0:14  string
 field  rinexobs.com_y  0:14:14  string
 field  rinexobs.com_z  0:28:14  string
 
 kind  doi
 when  0:60:20  "DOI"
+requires  rinexobs.doi
 field  rinexobs.doi  0:0:60  string
 
 kind  license
 when  0:60:20  "LICENSE OF USE"
+requires  rinexobs.license
 field  rinexobs.license  0:0:60  string
 
 kind  station-information
 when  0:60:20  "STATION INFORMATION"
+requires  rinexobs.station_information
 field  rinexobs.station_information  0:0:60  string
 
 kind  obs-types
 when  0:60:20  "SYS / # / OBS TYPES"
+requires  rinexobs.obs_system
 field  rinexobs.obs_system  0:0:1  string
 field  rinexobs.obs_type_count  0:3:3  string
 field  rinexobs.obs_type_1  0:7:3  string
@@ -134,14 +155,17 @@ field  rinexobs.obs_type_13  0:55:3  string
 
 kind  signal-strength-unit
 when  0:60:20  "SIGNAL STRENGTH UNIT"
+requires  rinexobs.signal_strength_unit
 field  rinexobs.signal_strength_unit  0:0:20  string
 
 kind  interval
 when  0:60:20  "INTERVAL"
+requires  rinexobs.interval
 field  rinexobs.interval  0:0:10  string
 
 kind  time-of-first-obs
 when  0:60:20  "TIME OF FIRST OBS"
+requires  rinexobs.first_year
 field  rinexobs.first_year  0:0:6  string
 field  rinexobs.first_month  0:6:6  string
 field  rinexobs.first_day  0:12:6  string
@@ -152,6 +176,7 @@ field  rinexobs.first_time_system  0:48:3  string
 
 kind  time-of-last-obs
 when  0:60:20  "TIME OF LAST OBS"
+requires  rinexobs.last_year
 field  rinexobs.last_year  0:0:6  string
 field  rinexobs.last_month  0:6:6  string
 field  rinexobs.last_day  0:12:6  string
@@ -162,38 +187,46 @@ field  rinexobs.last_time_system  0:48:3  string
 
 kind  rcv-clock-offs-appl
 when  0:60:20  "RCV CLOCK OFFS APPL"
+requires  rinexobs.clock_offset_applied
 field  rinexobs.clock_offset_applied  0:0:6  string
 
 kind  dcbs-applied
 when  0:60:20  "SYS / DCBS APPLIED"
+requires  rinexobs.corr_system  rinexobs.corr_program  rinexobs.corr_source
 field  rinexobs.corr_system  0:0:1  string
 field  rinexobs.corr_program  0:2:17  string
 field  rinexobs.corr_source  0:20:40  string
 
 kind  pcvs-applied
 when  0:60:20  "SYS / PCVS APPLIED"
+requires  rinexobs.corr_system  rinexobs.corr_program  rinexobs.corr_source
 field  rinexobs.corr_system  0:0:1  string
 field  rinexobs.corr_program  0:2:17  string
 field  rinexobs.corr_source  0:20:40  string
 
 kind  scale-factor
 when  0:60:20  "SYS / SCALE FACTOR"
+requires  rinexobs.content
 field  rinexobs.content  0:0:60  string
 
 kind  phase-shift
 when  0:60:20  "SYS / PHASE SHIFT"
+requires  rinexobs.content
 field  rinexobs.content  0:0:60  string
 
 kind  glonass-slot-frq
 when  0:60:20  "GLONASS SLOT / FRQ #"
+requires  rinexobs.content
 field  rinexobs.content  0:0:60  string
 
 kind  glonass-cod-phs-bis
 when  0:60:20  "GLONASS COD/PHS/BIS"
+requires  rinexobs.content
 field  rinexobs.content  0:0:60  string
 
 kind  leap-seconds
 when  0:60:20  "LEAP SECONDS"
+requires  rinexobs.leap_seconds
 field  rinexobs.leap_seconds  0:0:6  string
 field  rinexobs.leap_seconds_future  0:6:6  string
 field  rinexobs.leap_week  0:12:6  string
@@ -202,17 +235,17 @@ field  rinexobs.leap_time_system  0:24:3  string
 
 kind  number-of-satellites
 when  0:60:20  "# OF SATELLITES"
+requires  rinexobs.satellite_count
 field  rinexobs.satellite_count  0:0:6  string
 
 kind  prn-number-of-obs
 when  0:60:20  "PRN / # OF OBS"
+requires  rinexobs.content
 field  rinexobs.content  0:0:60  string
-
-kind  end-of-header
-when  0:60:20  "END OF HEADER"
 
 kind  epoch
 when  0:0:1  >
+requires  rinexobs.year
 field  rinexobs.year  0:2:4  string
 field  rinexobs.month  0:7:2  string
 field  rinexobs.day  0:10:2  string
@@ -225,6 +258,7 @@ field  rinexobs.clock_offset  0:41:15  string
 
 kind  observation-gps
 when  0:0:1  G
+requires  rinexobs.satellite_system  rinexobs.satellite_number  rinexobs.obs_1  rinexobs.lli_1  rinexobs.ssi_1  rinexobs.obs_2  rinexobs.lli_2  rinexobs.ssi_2  rinexobs.obs_3  rinexobs.lli_3  rinexobs.ssi_3  rinexobs.obs_4  rinexobs.lli_4  rinexobs.ssi_4  rinexobs.obs_5  rinexobs.lli_5  rinexobs.ssi_5  rinexobs.obs_6  rinexobs.lli_6  rinexobs.ssi_6  rinexobs.obs_7  rinexobs.lli_7  rinexobs.ssi_7  rinexobs.obs_8  rinexobs.lli_8  rinexobs.ssi_8  rinexobs.obs_9  rinexobs.lli_9  rinexobs.ssi_9  rinexobs.obs_10  rinexobs.lli_10  rinexobs.ssi_10  rinexobs.obs_11  rinexobs.lli_11  rinexobs.ssi_11  rinexobs.obs_12  rinexobs.lli_12  rinexobs.ssi_12  rinexobs.obs_13  rinexobs.lli_13  rinexobs.ssi_13  rinexobs.obs_14  rinexobs.lli_14  rinexobs.ssi_14  rinexobs.obs_15  rinexobs.lli_15  rinexobs.ssi_15  rinexobs.obs_16  rinexobs.lli_16  rinexobs.ssi_16  rinexobs.obs_17  rinexobs.lli_17  rinexobs.ssi_17  rinexobs.obs_18  rinexobs.lli_18  rinexobs.ssi_18  rinexobs.obs_19  rinexobs.lli_19  rinexobs.ssi_19  rinexobs.obs_20  rinexobs.lli_20  rinexobs.ssi_20  rinexobs.obs_21  rinexobs.lli_21  rinexobs.ssi_21  rinexobs.obs_22  rinexobs.lli_22  rinexobs.ssi_22  rinexobs.obs_23  rinexobs.lli_23  rinexobs.ssi_23  rinexobs.obs_24  rinexobs.lli_24  rinexobs.ssi_24  rinexobs.obs_25  rinexobs.lli_25  rinexobs.ssi_25  rinexobs.obs_26  rinexobs.lli_26  rinexobs.ssi_26  rinexobs.obs_27  rinexobs.lli_27  rinexobs.ssi_27  rinexobs.obs_28  rinexobs.lli_28  rinexobs.ssi_28  rinexobs.obs_29  rinexobs.lli_29  rinexobs.ssi_29  rinexobs.obs_30  rinexobs.lli_30  rinexobs.ssi_30  rinexobs.obs_31  rinexobs.lli_31  rinexobs.ssi_31  rinexobs.obs_32  rinexobs.lli_32  rinexobs.ssi_32  rinexobs.obs_33  rinexobs.lli_33  rinexobs.ssi_33  rinexobs.obs_34  rinexobs.lli_34  rinexobs.ssi_34  rinexobs.obs_35  rinexobs.lli_35  rinexobs.ssi_35  rinexobs.obs_36  rinexobs.lli_36  rinexobs.ssi_36  rinexobs.obs_37  rinexobs.lli_37  rinexobs.ssi_37  rinexobs.obs_38  rinexobs.lli_38  rinexobs.ssi_38  rinexobs.obs_39  rinexobs.lli_39  rinexobs.ssi_39  rinexobs.obs_40  rinexobs.lli_40  rinexobs.ssi_40
 field  rinexobs.satellite_system  0:0:1  string
 field  rinexobs.satellite_number  0:1:2  string
 field  rinexobs.obs_1  0:3:14  string
@@ -350,6 +384,7 @@ field  rinexobs.ssi_40  0:642:1  string
 
 kind  observation-glonass
 when  0:0:1  R
+requires  rinexobs.satellite_system  rinexobs.satellite_number  rinexobs.obs_1  rinexobs.lli_1  rinexobs.ssi_1  rinexobs.obs_2  rinexobs.lli_2  rinexobs.ssi_2  rinexobs.obs_3  rinexobs.lli_3  rinexobs.ssi_3  rinexobs.obs_4  rinexobs.lli_4  rinexobs.ssi_4  rinexobs.obs_5  rinexobs.lli_5  rinexobs.ssi_5  rinexobs.obs_6  rinexobs.lli_6  rinexobs.ssi_6  rinexobs.obs_7  rinexobs.lli_7  rinexobs.ssi_7  rinexobs.obs_8  rinexobs.lli_8  rinexobs.ssi_8  rinexobs.obs_9  rinexobs.lli_9  rinexobs.ssi_9  rinexobs.obs_10  rinexobs.lli_10  rinexobs.ssi_10  rinexobs.obs_11  rinexobs.lli_11  rinexobs.ssi_11  rinexobs.obs_12  rinexobs.lli_12  rinexobs.ssi_12  rinexobs.obs_13  rinexobs.lli_13  rinexobs.ssi_13  rinexobs.obs_14  rinexobs.lli_14  rinexobs.ssi_14  rinexobs.obs_15  rinexobs.lli_15  rinexobs.ssi_15  rinexobs.obs_16  rinexobs.lli_16  rinexobs.ssi_16  rinexobs.obs_17  rinexobs.lli_17  rinexobs.ssi_17  rinexobs.obs_18  rinexobs.lli_18  rinexobs.ssi_18  rinexobs.obs_19  rinexobs.lli_19  rinexobs.ssi_19  rinexobs.obs_20  rinexobs.lli_20  rinexobs.ssi_20  rinexobs.obs_21  rinexobs.lli_21  rinexobs.ssi_21  rinexobs.obs_22  rinexobs.lli_22  rinexobs.ssi_22  rinexobs.obs_23  rinexobs.lli_23  rinexobs.ssi_23  rinexobs.obs_24  rinexobs.lli_24  rinexobs.ssi_24  rinexobs.obs_25  rinexobs.lli_25  rinexobs.ssi_25  rinexobs.obs_26  rinexobs.lli_26  rinexobs.ssi_26  rinexobs.obs_27  rinexobs.lli_27  rinexobs.ssi_27  rinexobs.obs_28  rinexobs.lli_28  rinexobs.ssi_28  rinexobs.obs_29  rinexobs.lli_29  rinexobs.ssi_29  rinexobs.obs_30  rinexobs.lli_30  rinexobs.ssi_30  rinexobs.obs_31  rinexobs.lli_31  rinexobs.ssi_31  rinexobs.obs_32  rinexobs.lli_32  rinexobs.ssi_32  rinexobs.obs_33  rinexobs.lli_33  rinexobs.ssi_33  rinexobs.obs_34  rinexobs.lli_34  rinexobs.ssi_34  rinexobs.obs_35  rinexobs.lli_35  rinexobs.ssi_35  rinexobs.obs_36  rinexobs.lli_36  rinexobs.ssi_36  rinexobs.obs_37  rinexobs.lli_37  rinexobs.ssi_37  rinexobs.obs_38  rinexobs.lli_38  rinexobs.ssi_38  rinexobs.obs_39  rinexobs.lli_39  rinexobs.ssi_39  rinexobs.obs_40  rinexobs.lli_40  rinexobs.ssi_40
 field  rinexobs.satellite_system  0:0:1  string
 field  rinexobs.satellite_number  0:1:2  string
 field  rinexobs.obs_1  0:3:14  string
@@ -475,6 +510,7 @@ field  rinexobs.ssi_40  0:642:1  string
 
 kind  observation-galileo
 when  0:0:1  E
+requires  rinexobs.satellite_system  rinexobs.satellite_number  rinexobs.obs_1  rinexobs.lli_1  rinexobs.ssi_1  rinexobs.obs_2  rinexobs.lli_2  rinexobs.ssi_2  rinexobs.obs_3  rinexobs.lli_3  rinexobs.ssi_3  rinexobs.obs_4  rinexobs.lli_4  rinexobs.ssi_4  rinexobs.obs_5  rinexobs.lli_5  rinexobs.ssi_5  rinexobs.obs_6  rinexobs.lli_6  rinexobs.ssi_6  rinexobs.obs_7  rinexobs.lli_7  rinexobs.ssi_7  rinexobs.obs_8  rinexobs.lli_8  rinexobs.ssi_8  rinexobs.obs_9  rinexobs.lli_9  rinexobs.ssi_9  rinexobs.obs_10  rinexobs.lli_10  rinexobs.ssi_10  rinexobs.obs_11  rinexobs.lli_11  rinexobs.ssi_11  rinexobs.obs_12  rinexobs.lli_12  rinexobs.ssi_12  rinexobs.obs_13  rinexobs.lli_13  rinexobs.ssi_13  rinexobs.obs_14  rinexobs.lli_14  rinexobs.ssi_14  rinexobs.obs_15  rinexobs.lli_15  rinexobs.ssi_15  rinexobs.obs_16  rinexobs.lli_16  rinexobs.ssi_16  rinexobs.obs_17  rinexobs.lli_17  rinexobs.ssi_17  rinexobs.obs_18  rinexobs.lli_18  rinexobs.ssi_18  rinexobs.obs_19  rinexobs.lli_19  rinexobs.ssi_19  rinexobs.obs_20  rinexobs.lli_20  rinexobs.ssi_20  rinexobs.obs_21  rinexobs.lli_21  rinexobs.ssi_21  rinexobs.obs_22  rinexobs.lli_22  rinexobs.ssi_22  rinexobs.obs_23  rinexobs.lli_23  rinexobs.ssi_23  rinexobs.obs_24  rinexobs.lli_24  rinexobs.ssi_24  rinexobs.obs_25  rinexobs.lli_25  rinexobs.ssi_25  rinexobs.obs_26  rinexobs.lli_26  rinexobs.ssi_26  rinexobs.obs_27  rinexobs.lli_27  rinexobs.ssi_27  rinexobs.obs_28  rinexobs.lli_28  rinexobs.ssi_28  rinexobs.obs_29  rinexobs.lli_29  rinexobs.ssi_29  rinexobs.obs_30  rinexobs.lli_30  rinexobs.ssi_30  rinexobs.obs_31  rinexobs.lli_31  rinexobs.ssi_31  rinexobs.obs_32  rinexobs.lli_32  rinexobs.ssi_32  rinexobs.obs_33  rinexobs.lli_33  rinexobs.ssi_33  rinexobs.obs_34  rinexobs.lli_34  rinexobs.ssi_34  rinexobs.obs_35  rinexobs.lli_35  rinexobs.ssi_35  rinexobs.obs_36  rinexobs.lli_36  rinexobs.ssi_36  rinexobs.obs_37  rinexobs.lli_37  rinexobs.ssi_37  rinexobs.obs_38  rinexobs.lli_38  rinexobs.ssi_38  rinexobs.obs_39  rinexobs.lli_39  rinexobs.ssi_39  rinexobs.obs_40  rinexobs.lli_40  rinexobs.ssi_40
 field  rinexobs.satellite_system  0:0:1  string
 field  rinexobs.satellite_number  0:1:2  string
 field  rinexobs.obs_1  0:3:14  string
@@ -600,6 +636,7 @@ field  rinexobs.ssi_40  0:642:1  string
 
 kind  observation-beidou
 when  0:0:1  C
+requires  rinexobs.satellite_system  rinexobs.satellite_number  rinexobs.obs_1  rinexobs.lli_1  rinexobs.ssi_1  rinexobs.obs_2  rinexobs.lli_2  rinexobs.ssi_2  rinexobs.obs_3  rinexobs.lli_3  rinexobs.ssi_3  rinexobs.obs_4  rinexobs.lli_4  rinexobs.ssi_4  rinexobs.obs_5  rinexobs.lli_5  rinexobs.ssi_5  rinexobs.obs_6  rinexobs.lli_6  rinexobs.ssi_6  rinexobs.obs_7  rinexobs.lli_7  rinexobs.ssi_7  rinexobs.obs_8  rinexobs.lli_8  rinexobs.ssi_8  rinexobs.obs_9  rinexobs.lli_9  rinexobs.ssi_9  rinexobs.obs_10  rinexobs.lli_10  rinexobs.ssi_10  rinexobs.obs_11  rinexobs.lli_11  rinexobs.ssi_11  rinexobs.obs_12  rinexobs.lli_12  rinexobs.ssi_12  rinexobs.obs_13  rinexobs.lli_13  rinexobs.ssi_13  rinexobs.obs_14  rinexobs.lli_14  rinexobs.ssi_14  rinexobs.obs_15  rinexobs.lli_15  rinexobs.ssi_15  rinexobs.obs_16  rinexobs.lli_16  rinexobs.ssi_16  rinexobs.obs_17  rinexobs.lli_17  rinexobs.ssi_17  rinexobs.obs_18  rinexobs.lli_18  rinexobs.ssi_18  rinexobs.obs_19  rinexobs.lli_19  rinexobs.ssi_19  rinexobs.obs_20  rinexobs.lli_20  rinexobs.ssi_20  rinexobs.obs_21  rinexobs.lli_21  rinexobs.ssi_21  rinexobs.obs_22  rinexobs.lli_22  rinexobs.ssi_22  rinexobs.obs_23  rinexobs.lli_23  rinexobs.ssi_23  rinexobs.obs_24  rinexobs.lli_24  rinexobs.ssi_24  rinexobs.obs_25  rinexobs.lli_25  rinexobs.ssi_25  rinexobs.obs_26  rinexobs.lli_26  rinexobs.ssi_26  rinexobs.obs_27  rinexobs.lli_27  rinexobs.ssi_27  rinexobs.obs_28  rinexobs.lli_28  rinexobs.ssi_28  rinexobs.obs_29  rinexobs.lli_29  rinexobs.ssi_29  rinexobs.obs_30  rinexobs.lli_30  rinexobs.ssi_30  rinexobs.obs_31  rinexobs.lli_31  rinexobs.ssi_31  rinexobs.obs_32  rinexobs.lli_32  rinexobs.ssi_32  rinexobs.obs_33  rinexobs.lli_33  rinexobs.ssi_33  rinexobs.obs_34  rinexobs.lli_34  rinexobs.ssi_34  rinexobs.obs_35  rinexobs.lli_35  rinexobs.ssi_35  rinexobs.obs_36  rinexobs.lli_36  rinexobs.ssi_36  rinexobs.obs_37  rinexobs.lli_37  rinexobs.ssi_37  rinexobs.obs_38  rinexobs.lli_38  rinexobs.ssi_38  rinexobs.obs_39  rinexobs.lli_39  rinexobs.ssi_39  rinexobs.obs_40  rinexobs.lli_40  rinexobs.ssi_40
 field  rinexobs.satellite_system  0:0:1  string
 field  rinexobs.satellite_number  0:1:2  string
 field  rinexobs.obs_1  0:3:14  string
@@ -725,6 +762,7 @@ field  rinexobs.ssi_40  0:642:1  string
 
 kind  observation-qzss
 when  0:0:1  J
+requires  rinexobs.satellite_system  rinexobs.satellite_number  rinexobs.obs_1  rinexobs.lli_1  rinexobs.ssi_1  rinexobs.obs_2  rinexobs.lli_2  rinexobs.ssi_2  rinexobs.obs_3  rinexobs.lli_3  rinexobs.ssi_3  rinexobs.obs_4  rinexobs.lli_4  rinexobs.ssi_4  rinexobs.obs_5  rinexobs.lli_5  rinexobs.ssi_5  rinexobs.obs_6  rinexobs.lli_6  rinexobs.ssi_6  rinexobs.obs_7  rinexobs.lli_7  rinexobs.ssi_7  rinexobs.obs_8  rinexobs.lli_8  rinexobs.ssi_8  rinexobs.obs_9  rinexobs.lli_9  rinexobs.ssi_9  rinexobs.obs_10  rinexobs.lli_10  rinexobs.ssi_10  rinexobs.obs_11  rinexobs.lli_11  rinexobs.ssi_11  rinexobs.obs_12  rinexobs.lli_12  rinexobs.ssi_12  rinexobs.obs_13  rinexobs.lli_13  rinexobs.ssi_13  rinexobs.obs_14  rinexobs.lli_14  rinexobs.ssi_14  rinexobs.obs_15  rinexobs.lli_15  rinexobs.ssi_15  rinexobs.obs_16  rinexobs.lli_16  rinexobs.ssi_16  rinexobs.obs_17  rinexobs.lli_17  rinexobs.ssi_17  rinexobs.obs_18  rinexobs.lli_18  rinexobs.ssi_18  rinexobs.obs_19  rinexobs.lli_19  rinexobs.ssi_19  rinexobs.obs_20  rinexobs.lli_20  rinexobs.ssi_20  rinexobs.obs_21  rinexobs.lli_21  rinexobs.ssi_21  rinexobs.obs_22  rinexobs.lli_22  rinexobs.ssi_22  rinexobs.obs_23  rinexobs.lli_23  rinexobs.ssi_23  rinexobs.obs_24  rinexobs.lli_24  rinexobs.ssi_24  rinexobs.obs_25  rinexobs.lli_25  rinexobs.ssi_25  rinexobs.obs_26  rinexobs.lli_26  rinexobs.ssi_26  rinexobs.obs_27  rinexobs.lli_27  rinexobs.ssi_27  rinexobs.obs_28  rinexobs.lli_28  rinexobs.ssi_28  rinexobs.obs_29  rinexobs.lli_29  rinexobs.ssi_29  rinexobs.obs_30  rinexobs.lli_30  rinexobs.ssi_30  rinexobs.obs_31  rinexobs.lli_31  rinexobs.ssi_31  rinexobs.obs_32  rinexobs.lli_32  rinexobs.ssi_32  rinexobs.obs_33  rinexobs.lli_33  rinexobs.ssi_33  rinexobs.obs_34  rinexobs.lli_34  rinexobs.ssi_34  rinexobs.obs_35  rinexobs.lli_35  rinexobs.ssi_35  rinexobs.obs_36  rinexobs.lli_36  rinexobs.ssi_36  rinexobs.obs_37  rinexobs.lli_37  rinexobs.ssi_37  rinexobs.obs_38  rinexobs.lli_38  rinexobs.ssi_38  rinexobs.obs_39  rinexobs.lli_39  rinexobs.ssi_39  rinexobs.obs_40  rinexobs.lli_40  rinexobs.ssi_40
 field  rinexobs.satellite_system  0:0:1  string
 field  rinexobs.satellite_number  0:1:2  string
 field  rinexobs.obs_1  0:3:14  string
@@ -850,6 +888,7 @@ field  rinexobs.ssi_40  0:642:1  string
 
 kind  observation-navic
 when  0:0:1  I
+requires  rinexobs.satellite_system  rinexobs.satellite_number  rinexobs.obs_1  rinexobs.lli_1  rinexobs.ssi_1  rinexobs.obs_2  rinexobs.lli_2  rinexobs.ssi_2  rinexobs.obs_3  rinexobs.lli_3  rinexobs.ssi_3  rinexobs.obs_4  rinexobs.lli_4  rinexobs.ssi_4  rinexobs.obs_5  rinexobs.lli_5  rinexobs.ssi_5  rinexobs.obs_6  rinexobs.lli_6  rinexobs.ssi_6  rinexobs.obs_7  rinexobs.lli_7  rinexobs.ssi_7  rinexobs.obs_8  rinexobs.lli_8  rinexobs.ssi_8  rinexobs.obs_9  rinexobs.lli_9  rinexobs.ssi_9  rinexobs.obs_10  rinexobs.lli_10  rinexobs.ssi_10  rinexobs.obs_11  rinexobs.lli_11  rinexobs.ssi_11  rinexobs.obs_12  rinexobs.lli_12  rinexobs.ssi_12  rinexobs.obs_13  rinexobs.lli_13  rinexobs.ssi_13  rinexobs.obs_14  rinexobs.lli_14  rinexobs.ssi_14  rinexobs.obs_15  rinexobs.lli_15  rinexobs.ssi_15  rinexobs.obs_16  rinexobs.lli_16  rinexobs.ssi_16  rinexobs.obs_17  rinexobs.lli_17  rinexobs.ssi_17  rinexobs.obs_18  rinexobs.lli_18  rinexobs.ssi_18  rinexobs.obs_19  rinexobs.lli_19  rinexobs.ssi_19  rinexobs.obs_20  rinexobs.lli_20  rinexobs.ssi_20  rinexobs.obs_21  rinexobs.lli_21  rinexobs.ssi_21  rinexobs.obs_22  rinexobs.lli_22  rinexobs.ssi_22  rinexobs.obs_23  rinexobs.lli_23  rinexobs.ssi_23  rinexobs.obs_24  rinexobs.lli_24  rinexobs.ssi_24  rinexobs.obs_25  rinexobs.lli_25  rinexobs.ssi_25  rinexobs.obs_26  rinexobs.lli_26  rinexobs.ssi_26  rinexobs.obs_27  rinexobs.lli_27  rinexobs.ssi_27  rinexobs.obs_28  rinexobs.lli_28  rinexobs.ssi_28  rinexobs.obs_29  rinexobs.lli_29  rinexobs.ssi_29  rinexobs.obs_30  rinexobs.lli_30  rinexobs.ssi_30  rinexobs.obs_31  rinexobs.lli_31  rinexobs.ssi_31  rinexobs.obs_32  rinexobs.lli_32  rinexobs.ssi_32  rinexobs.obs_33  rinexobs.lli_33  rinexobs.ssi_33  rinexobs.obs_34  rinexobs.lli_34  rinexobs.ssi_34  rinexobs.obs_35  rinexobs.lli_35  rinexobs.ssi_35  rinexobs.obs_36  rinexobs.lli_36  rinexobs.ssi_36  rinexobs.obs_37  rinexobs.lli_37  rinexobs.ssi_37  rinexobs.obs_38  rinexobs.lli_38  rinexobs.ssi_38  rinexobs.obs_39  rinexobs.lli_39  rinexobs.ssi_39  rinexobs.obs_40  rinexobs.lli_40  rinexobs.ssi_40
 field  rinexobs.satellite_system  0:0:1  string
 field  rinexobs.satellite_number  0:1:2  string
 field  rinexobs.obs_1  0:3:14  string
@@ -975,6 +1014,7 @@ field  rinexobs.ssi_40  0:642:1  string
 
 kind  observation-sbas
 when  0:0:1  S
+requires  rinexobs.satellite_system  rinexobs.satellite_number  rinexobs.obs_1  rinexobs.lli_1  rinexobs.ssi_1  rinexobs.obs_2  rinexobs.lli_2  rinexobs.ssi_2  rinexobs.obs_3  rinexobs.lli_3  rinexobs.ssi_3  rinexobs.obs_4  rinexobs.lli_4  rinexobs.ssi_4  rinexobs.obs_5  rinexobs.lli_5  rinexobs.ssi_5  rinexobs.obs_6  rinexobs.lli_6  rinexobs.ssi_6  rinexobs.obs_7  rinexobs.lli_7  rinexobs.ssi_7  rinexobs.obs_8  rinexobs.lli_8  rinexobs.ssi_8  rinexobs.obs_9  rinexobs.lli_9  rinexobs.ssi_9  rinexobs.obs_10  rinexobs.lli_10  rinexobs.ssi_10  rinexobs.obs_11  rinexobs.lli_11  rinexobs.ssi_11  rinexobs.obs_12  rinexobs.lli_12  rinexobs.ssi_12  rinexobs.obs_13  rinexobs.lli_13  rinexobs.ssi_13  rinexobs.obs_14  rinexobs.lli_14  rinexobs.ssi_14  rinexobs.obs_15  rinexobs.lli_15  rinexobs.ssi_15  rinexobs.obs_16  rinexobs.lli_16  rinexobs.ssi_16  rinexobs.obs_17  rinexobs.lli_17  rinexobs.ssi_17  rinexobs.obs_18  rinexobs.lli_18  rinexobs.ssi_18  rinexobs.obs_19  rinexobs.lli_19  rinexobs.ssi_19  rinexobs.obs_20  rinexobs.lli_20  rinexobs.ssi_20  rinexobs.obs_21  rinexobs.lli_21  rinexobs.ssi_21  rinexobs.obs_22  rinexobs.lli_22  rinexobs.ssi_22  rinexobs.obs_23  rinexobs.lli_23  rinexobs.ssi_23  rinexobs.obs_24  rinexobs.lli_24  rinexobs.ssi_24  rinexobs.obs_25  rinexobs.lli_25  rinexobs.ssi_25  rinexobs.obs_26  rinexobs.lli_26  rinexobs.ssi_26  rinexobs.obs_27  rinexobs.lli_27  rinexobs.ssi_27  rinexobs.obs_28  rinexobs.lli_28  rinexobs.ssi_28  rinexobs.obs_29  rinexobs.lli_29  rinexobs.ssi_29  rinexobs.obs_30  rinexobs.lli_30  rinexobs.ssi_30  rinexobs.obs_31  rinexobs.lli_31  rinexobs.ssi_31  rinexobs.obs_32  rinexobs.lli_32  rinexobs.ssi_32  rinexobs.obs_33  rinexobs.lli_33  rinexobs.ssi_33  rinexobs.obs_34  rinexobs.lli_34  rinexobs.ssi_34  rinexobs.obs_35  rinexobs.lli_35  rinexobs.ssi_35  rinexobs.obs_36  rinexobs.lli_36  rinexobs.ssi_36  rinexobs.obs_37  rinexobs.lli_37  rinexobs.ssi_37  rinexobs.obs_38  rinexobs.lli_38  rinexobs.ssi_38  rinexobs.obs_39  rinexobs.lli_39  rinexobs.ssi_39  rinexobs.obs_40  rinexobs.lli_40  rinexobs.ssi_40
 field  rinexobs.satellite_system  0:0:1  string
 field  rinexobs.satellite_number  0:1:2  string
 field  rinexobs.obs_1  0:3:14  string
@@ -1098,7 +1138,11 @@ field  rinexobs.obs_40  0:627:14  string
 field  rinexobs.lli_40  0:641:1  string
 field  rinexobs.ssi_40  0:642:1  string
 
+kind  end-of-header
+when  0:60:20  "END OF HEADER"
+
 kind  header-other
 when  0:60:20  present
+requires  rinexobs.label
 field  rinexobs.content  0:0:60  string
 field  rinexobs.label  0:60:20  string

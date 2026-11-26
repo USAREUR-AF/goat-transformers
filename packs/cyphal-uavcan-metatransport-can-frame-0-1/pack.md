@@ -65,6 +65,10 @@ Every field is mapped.
 Mapping ends early: a second union in one scope. In a delimited composite the rest of that composite
 is skipped by its length; anywhere else decode ignores the rest of the payload.
 
+On encode with no recorded kind, each variant is chosen by its keys. The variants
+`error`, `data_fd`, `data_classic`, `remote_transmission_request` map no key, so an entity with none is written as `error`;
+the others are chosen only by a recorded kind.
+
 - Implicit zero extension: Cyphal reads a field beyond the end of a short
   payload, or of a delimited composite, as zero. The pack reads the first as
   `malformed-wire` and the second as absent.

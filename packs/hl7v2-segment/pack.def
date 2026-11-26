@@ -7,31 +7,9 @@ uses          hl7v2
 wire          text
 delimiter     "|"
 
-kind  msh
-when  0  MSH
-field  hl7v2.msh_2_encoding_characters  1  string  optional
-field  hl7v2.msh_3_sending_application  2  string  optional
-field  hl7v2.msh_4_sending_facility  3  string  optional
-field  hl7v2.msh_5_receiving_application  4  string  optional
-field  hl7v2.msh_6_receiving_facility  5  string  optional
-field  hl7v2.msh_7_date_time_of_message  6  string  optional
-field  hl7v2.msh_8_security  7  string  optional
-field  hl7v2.msh_9_message_type  8  string  optional
-field  hl7v2.msh_10_message_control_id  9  string  optional
-field  hl7v2.msh_11_processing_id  10  string  optional
-field  hl7v2.msh_12_version_id  11  string  optional
-field  hl7v2.msh_13_sequence_number  12  string  optional
-field  hl7v2.msh_14_continuation_pointer  13  string  optional
-field  hl7v2.msh_15_accept_acknowledgment_type  14  string  optional
-field  hl7v2.msh_16_application_acknowledgment_type  15  string  optional
-field  hl7v2.msh_17_country_code  16  string  optional
-field  hl7v2.msh_18_character_set  17  string  optional
-field  hl7v2.msh_19_principal_language_of_message  18  string  optional
-field  hl7v2.msh_20_alternate_character_set_handling_scheme  19  string  optional
-field  hl7v2.msh_21_message_profile_identifier  20  string  optional
-
 kind  pid
 when  0  PID
+requires  hl7v2.pid_1_set_id_pid
 field  hl7v2.pid_1_set_id_pid  1  string  optional
 field  hl7v2.pid_2_patient_id  2  string  optional
 field  hl7v2.pid_3_patient_identifier_list  3  string  optional
@@ -74,6 +52,7 @@ field  hl7v2.pid_39_tribal_citizenship  39  string  optional
 
 kind  obx
 when  0  OBX
+requires  hl7v2.obx_1_set_id_obx
 field  hl7v2.obx_1_set_id_obx  1  string  optional
 field  hl7v2.obx_2_value_type  2  string  optional
 field  hl7v2.obx_3_observation_identifier  3  string  optional
@@ -93,3 +72,26 @@ field  hl7v2.obx_16_responsible_observer  16  string  optional
 field  hl7v2.obx_17_observation_method  17  string  optional
 field  hl7v2.obx_18_equipment_instance_identifier  18  string  optional
 field  hl7v2.obx_19_date_time_of_the_analysis  19  string  optional
+
+kind  msh
+when  0  MSH
+field  hl7v2.msh_2_encoding_characters  1  string  optional
+field  hl7v2.msh_3_sending_application  2  string  optional
+field  hl7v2.msh_4_sending_facility  3  string  optional
+field  hl7v2.msh_5_receiving_application  4  string  optional
+field  hl7v2.msh_6_receiving_facility  5  string  optional
+field  hl7v2.msh_7_date_time_of_message  6  string  optional
+field  hl7v2.msh_8_security  7  string  optional
+field  hl7v2.msh_9_message_type  8  string  optional
+field  hl7v2.msh_10_message_control_id  9  string  optional
+field  hl7v2.msh_11_processing_id  10  string  optional
+field  hl7v2.msh_12_version_id  11  string  optional
+field  hl7v2.msh_13_sequence_number  12  string  optional
+field  hl7v2.msh_14_continuation_pointer  13  string  optional
+field  hl7v2.msh_15_accept_acknowledgment_type  14  string  optional
+field  hl7v2.msh_16_application_acknowledgment_type  15  string  optional
+field  hl7v2.msh_17_country_code  16  string  optional
+field  hl7v2.msh_18_character_set  17  string  optional
+field  hl7v2.msh_19_principal_language_of_message  18  string  optional
+field  hl7v2.msh_20_alternate_character_set_handling_scheme  19  string  optional
+field  hl7v2.msh_21_message_profile_identifier  20  string  optional

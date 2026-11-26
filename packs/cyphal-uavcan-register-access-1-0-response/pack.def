@@ -18,100 +18,127 @@ field  cyuavcanregister.access_1_0_response_mutable  1  uint
 field  cyuavcanregister.access_1_0_response_persistent  1  uint
 pad    6
 align  8
-kind   empty
-when   8  0
-align  8
 kind   string
 when   8  1
+requires  cyuavcanregister.access_1_0_response_value_string_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_string_value  count 16
   field  cyuavcanregister.access_1_0_response_value_string_value_item  8  uint
 end
 align  8
+
 kind   unstructured
 when   8  2
+requires  cyuavcanregister.access_1_0_response_value_unstructured_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_unstructured_value  count 16
   field  cyuavcanregister.access_1_0_response_value_unstructured_value_item  8  uint
 end
 align  8
+
 kind   bit
 when   8  3
+requires  cyuavcanregister.access_1_0_response_value_bit_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_bit_value  count 16
   field  cyuavcanregister.access_1_0_response_value_bit_value_item  1  uint
 end
 align  8
+
 kind   integer64
 when   8  4
+requires  cyuavcanregister.access_1_0_response_value_integer64_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_integer64_value  count 8
   field  cyuavcanregister.access_1_0_response_value_integer64_value_item  64  twos
 end
 align  8
+
 kind   integer32
 when   8  5
+requires  cyuavcanregister.access_1_0_response_value_integer32_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_integer32_value  count 8
   field  cyuavcanregister.access_1_0_response_value_integer32_value_item  32  twos
 end
 align  8
+
 kind   integer16
 when   8  6
+requires  cyuavcanregister.access_1_0_response_value_integer16_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_integer16_value  count 8
   field  cyuavcanregister.access_1_0_response_value_integer16_value_item  16  twos
 end
 align  8
+
 kind   integer8
 when   8  7
+requires  cyuavcanregister.access_1_0_response_value_integer8_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_integer8_value  count 16
   field  cyuavcanregister.access_1_0_response_value_integer8_value_item  8  twos
 end
 align  8
+
 kind   natural64
 when   8  8
+requires  cyuavcanregister.access_1_0_response_value_natural64_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_natural64_value  count 8
   field  cyuavcanregister.access_1_0_response_value_natural64_value_item  64  uint
 end
 align  8
+
 kind   natural32
 when   8  9
+requires  cyuavcanregister.access_1_0_response_value_natural32_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_natural32_value  count 8
   field  cyuavcanregister.access_1_0_response_value_natural32_value_item  32  uint
 end
 align  8
+
 kind   natural16
 when   8  10
+requires  cyuavcanregister.access_1_0_response_value_natural16_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_natural16_value  count 8
   field  cyuavcanregister.access_1_0_response_value_natural16_value_item  16  uint
 end
 align  8
+
 kind   natural8
 when   8  11
+requires  cyuavcanregister.access_1_0_response_value_natural8_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_natural8_value  count 16
   field  cyuavcanregister.access_1_0_response_value_natural8_value_item  8  uint
 end
 align  8
+
 kind   real64
 when   8  12
+requires  cyuavcanregister.access_1_0_response_value_real64_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_real64_value  count 8
   field  cyuavcanregister.access_1_0_response_value_real64_value_item  64  f64
 end
 align  8
+
 kind   real32
 when   8  13
+requires  cyuavcanregister.access_1_0_response_value_real32_value_item
 align  8
 group  cyuavcanregister.access_1_0_response_value_real32_value  count 8
   field  cyuavcanregister.access_1_0_response_value_real32_value_item  32  f32
 end
 align  8
+
+kind   empty
+when   8  0
+align  8
+
 kind   real16
 when   8  14
 align  8

@@ -23,8 +23,9 @@ source        "GS1 EPCIS 2.0 JSON Schema, https://github.com/gs1/EPCIS at commit
 uses          epcis
 wire          json
 
-kind      object_event
-when      type  ObjectEvent
+kind      transformation_event
+when      type  TransformationEvent
+requires  epcis.input_epclist_value
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string
@@ -35,15 +36,23 @@ group  epcis.error_declaration_corrective_event_ids  errorDeclaration.corrective
   field  epcis.error_declaration_corrective_event_ids_value  .  string
 end
 field  epcis.type  type  string
-group  epcis.epc_list  epcList
-  field  epcis.epc_list_value  .  string
+group  epcis.input_epclist  inputEPCList
+  field  epcis.input_epclist_value  .  string
 end
-group  epcis.quantity_list  quantityList
-  field  epcis.quantity_list_epc_class  epcClass  string
-  field  epcis.quantity_list_quantity  quantity  float
-  field  epcis.quantity_list_uom  uom  string
+group  epcis.input_quantity_list  inputQuantityList
+  field  epcis.input_quantity_list_epc_class  epcClass  string
+  field  epcis.input_quantity_list_quantity  quantity  float
+  field  epcis.input_quantity_list_uom  uom  string
 end
-field  epcis.action  action  string
+group  epcis.output_epclist  outputEPCList
+  field  epcis.output_epclist_value  .  string
+end
+group  epcis.output_quantity_list  outputQuantityList
+  field  epcis.output_quantity_list_epc_class  epcClass  string
+  field  epcis.output_quantity_list_quantity  quantity  float
+  field  epcis.output_quantity_list_uom  uom  string
+end
+field  epcis.transformation_id  transformationID  string
 field  epcis.biz_step  bizStep  string
 field  epcis.disposition  disposition  string
 group  epcis.persistent_disposition_set  persistentDisposition.set
@@ -105,6 +114,7 @@ end
 
 kind      aggregation_event
 when      type  AggregationEvent
+requires  epcis.parent_id  epcis.child_epcs_value  epcis.child_quantity_list_epc_class  epcis.child_quantity_list_quantity  epcis.child_quantity_list_uom  epcis.action
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string
@@ -180,6 +190,7 @@ end
 
 kind      association_event
 when      type  AssociationEvent
+requires  epcis.parent_id  epcis.child_epcs_value  epcis.child_quantity_list_epc_class  epcis.child_quantity_list_quantity  epcis.child_quantity_list_uom  epcis.action
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string
@@ -255,6 +266,7 @@ end
 
 kind      transaction_event
 when      type  TransactionEvent
+requires  epcis.parent_id  epcis.epc_list_value  epcis.quantity_list_epc_class  epcis.quantity_list_quantity  epcis.quantity_list_uom  epcis.action
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string
@@ -328,8 +340,8 @@ group  epcis.sensor_element_list  sensorElementList
   end
 end
 
-kind      transformation_event
-when      type  TransformationEvent
+kind      object_event
+when      type  ObjectEvent
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string
@@ -340,23 +352,15 @@ group  epcis.error_declaration_corrective_event_ids  errorDeclaration.corrective
   field  epcis.error_declaration_corrective_event_ids_value  .  string
 end
 field  epcis.type  type  string
-group  epcis.input_epclist  inputEPCList
-  field  epcis.input_epclist_value  .  string
+group  epcis.epc_list  epcList
+  field  epcis.epc_list_value  .  string
 end
-group  epcis.input_quantity_list  inputQuantityList
-  field  epcis.input_quantity_list_epc_class  epcClass  string
-  field  epcis.input_quantity_list_quantity  quantity  float
-  field  epcis.input_quantity_list_uom  uom  string
+group  epcis.quantity_list  quantityList
+  field  epcis.quantity_list_epc_class  epcClass  string
+  field  epcis.quantity_list_quantity  quantity  float
+  field  epcis.quantity_list_uom  uom  string
 end
-group  epcis.output_epclist  outputEPCList
-  field  epcis.output_epclist_value  .  string
-end
-group  epcis.output_quantity_list  outputQuantityList
-  field  epcis.output_quantity_list_epc_class  epcClass  string
-  field  epcis.output_quantity_list_quantity  quantity  float
-  field  epcis.output_quantity_list_uom  uom  string
-end
-field  epcis.transformation_id  transformationID  string
+field  epcis.action  action  string
 field  epcis.biz_step  bizStep  string
 field  epcis.disposition  disposition  string
 group  epcis.persistent_disposition_set  persistentDisposition.set

@@ -11,6 +11,7 @@ bit_order     msb
 
 kind  depth
 when  8  0
+requires  seatalk.depth_anchor_alarm
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.depth_anchor_alarm  1  uint
@@ -25,12 +26,14 @@ field  seatalk.depth_raw  16  uint  swap
 
 kind  apparent-wind-angle
 when  8  16
+requires  seatalk.apparent_wind_angle
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.apparent_wind_angle  16  uscale:1/2
 
 kind  apparent-wind-speed
 when  8  17
+requires  seatalk.apparent_wind_speed_units
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.apparent_wind_speed_units  1  uint
@@ -40,20 +43,14 @@ field  seatalk.apparent_wind_speed_tenths  4  uint
 
 kind  speed-through-water
 when  8  32
+requires  seatalk.speed_through_water
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.speed_through_water  16  uscale:1/10  swap
 
-kind  trip-mileage
-when  8  33
-field  seatalk.attribute_high  4  uint
-field  seatalk.attribute_length  4  uint
-field  seatalk.trip_low  16  uint  swap
-field  seatalk.trip_pad  4  uint
-field  seatalk.trip_high  4  uint
-
 kind  total-mileage
 when  8  34
+requires  seatalk.total_mileage
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.total_mileage  16  uscale:1/10  swap
@@ -61,6 +58,7 @@ field  seatalk.total_pad  8  uint
 
 kind  total-and-trip-log
 when  8  37
+requires  seatalk.total_low
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.total_low  16  uint  swap
@@ -70,6 +68,7 @@ field  seatalk.trip_high  4  uint
 
 kind  speed-through-water-2
 when  8  38
+requires  seatalk.speed_sensor_1
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.speed_sensor_1  16  uscale:1/100  swap
@@ -79,12 +78,14 @@ field  seatalk.speed_flags_e  4  uint
 
 kind  water-temperature
 when  8  39
+requires  seatalk.water_temperature
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.water_temperature  16  uscale:1/10:-10  swap
 
 kind  latitude
 when  8  80
+requires  seatalk.latitude_degrees
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.latitude_degrees  8  uint
@@ -92,6 +93,7 @@ field  seatalk.latitude_minutes_raw  16  uint  swap
 
 kind  longitude
 when  8  81
+requires  seatalk.longitude_degrees
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.longitude_degrees  8  uint
@@ -99,18 +101,21 @@ field  seatalk.longitude_minutes_raw  16  uint  swap
 
 kind  speed-over-ground
 when  8  82
+requires  seatalk.speed_over_ground
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.speed_over_ground  16  uscale:1/10  swap
 
 kind  magnetic-course
 when  8  83
+requires  seatalk.course_vw
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.course_vw  8  uint
 
 kind  gmt-time
 when  8  84
+requires  seatalk.time_rs
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.time_rs  8  uint
@@ -118,6 +123,7 @@ field  seatalk.time_hours  8  uint
 
 kind  date
 when  8  86
+requires  seatalk.date_day
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.date_day  8  uint
@@ -125,12 +131,14 @@ field  seatalk.date_year  8  uint
 
 kind  satellite-info
 when  8  87
+requires  seatalk.satellite_hdop
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.satellite_hdop  8  uint
 
 kind  target-waypoint-name
 when  8  130
+requires  seatalk.waypoint_xx
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.waypoint_xx  8  uint
@@ -142,6 +150,7 @@ field  seatalk.waypoint_zz_complement  8  uint
 
 kind  heading-course-rudder
 when  8  132
+requires  seatalk.autopilot_course_xy
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.heading_vw  8  uint
@@ -156,6 +165,7 @@ field  seatalk.autopilot_tt  8  uint
 
 kind  navigation-to-waypoint
 when  8  133
+requires  seatalk.xte_low
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.xte_low  8  uint
@@ -171,12 +181,23 @@ field  seatalk.nav_yf_complement  8  uint
 
 kind  compass-variation
 when  8  153
+requires  seatalk.compass_variation
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.compass_variation  8  twos
 
+kind  trip-mileage
+when  8  33
+requires  seatalk.attribute_length  seatalk.trip_low  seatalk.trip_pad  seatalk.trip_high
+field  seatalk.attribute_high  4  uint
+field  seatalk.attribute_length  4  uint
+field  seatalk.trip_low  16  uint  swap
+field  seatalk.trip_pad  4  uint
+field  seatalk.trip_high  4  uint
+
 kind  heading-rudder
 when  8  156
+requires  seatalk.attribute_length  seatalk.heading_vw  seatalk.rudder_position
 field  seatalk.attribute_high  4  uint
 field  seatalk.attribute_length  4  uint
 field  seatalk.heading_vw  8  uint

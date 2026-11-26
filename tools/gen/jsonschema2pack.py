@@ -51,6 +51,7 @@ import urllib.parse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import genio      # noqa: E402  (the directory of this file is put on the path above)
+import kindorder  # noqa: E402
 
 NAME = "jsonschema2pack"
 
@@ -1957,8 +1958,11 @@ def run(argv=None):
             ("reference", "engine-spec 0.5, Encode step 2: the entity holds the required key of no kind")]), indent=1) + "\n")
     out.write(pdir + "/pack.def", pack_text)
     out.write("model/%s.def" % a.module, module_text)
-    out.write(pdir + "/pack.md", write_md(a, reg, kinds, bound, module_keys, module_lists, vectors, cross,
-                                          use_kinds))
+    md = write_md(a, reg, kinds, bound, module_keys, module_lists, vectors, cross, use_kinds)
+    note = kindorder.encode_note(kindorder.order(pack_text))
+    if note:
+        md = md.replace("\n## Keys and lists\n", "\n" + note + "\n## Keys and lists\n", 1)
+    out.write(pdir + "/pack.md", md)
     names_out, names_rel = names_output(a.names_file, out)
     names_out.write(names_rel, names.text())
     if not a.check:

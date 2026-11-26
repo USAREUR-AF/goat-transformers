@@ -15,6 +15,11 @@ None.
 
 ## Not mapped
 
+On encode with no recorded kind (engine-spec Encode step 2), each kind is chosen by the keys
+it requires.
+`receive-control-file`, `receive-data-file` require the same keys, so an entity with them is written as `receive-control-file`.
+Choosing between them needs `requires` on a value or on an absent key, a language addition.
+
 - **The byte count as a number**: the pack reads text up to a terminator, and a decimal text to integer
   transform exists on the `text` wire only; the count is the digits as text.
 - **The file contents** that follow the subcommand, the zero octet after them and the acknowledgements:

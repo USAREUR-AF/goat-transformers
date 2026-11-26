@@ -9,10 +9,6 @@ wire          bits
 layout        sequential
 bit_order     msb
 
-kind  abort-job
-when  8  1  as  lpd.subcommand_code
-const  8  10
-
 kind  receive-control-file
 when  8  2  as  lpd.subcommand_code
 requires  lpd.byte_count  lpd.file_name
@@ -24,3 +20,7 @@ when  8  3  as  lpd.subcommand_code
 requires  lpd.byte_count  lpd.file_name
 field  lpd.byte_count  until:32  chars:ascii8
 field  lpd.file_name  until:10  chars:ascii8
+
+kind  abort-job
+when  8  1  as  lpd.subcommand_code
+const  8  10

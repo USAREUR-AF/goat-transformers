@@ -21,6 +21,8 @@ Python 3 standard library only.
 import os
 import sys
 
+import kindorder
+
 
 def add_arguments(parser, default_out=None, what="the checkout to write into"):
     """The two options every generator has: `--out DIR` and `--check`."""
@@ -61,7 +63,14 @@ class Output:
             return fh.read().decode("utf-8")
 
     def write(self, rel, text):
-        """Write `text` to `rel`, or in check mode compare it with the file there."""
+        """Write `text` to `rel`, or in check mode compare it with the file there.
+
+        A pack.def passes through kindorder.order first, so every kind is reachable on
+        encode by its keys (engine-spec Encode step 2); it leaves a pack whose kinds
+        already are unchanged. The conformance packs are exempt: they test the engines'
+        rules, a requires-less kind before others among them."""
+        if rel.endswith("pack.def") and not rel.replace(os.sep, "/").startswith("packs/conformance-"):
+            text = kindorder.order(text)
         data = text.encode("utf-8")
         if rel in self.removed:
             self.removed.remove(rel)

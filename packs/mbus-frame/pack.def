@@ -9,21 +9,6 @@ wire          bits
 layout        sequential
 bit_order     msb
 
-kind  ack
-when  8  229  as  mbus.start
-
-kind  short
-when  8  16  as  mbus.start
-requires  mbus.control_reserved  mbus.control_prm  mbus.control_fcb_acd  mbus.control_fcv_dfc  mbus.control_function  mbus.address  mbus.checksum
-field  mbus.control_reserved  1  uint
-field  mbus.control_prm  1  uint
-field  mbus.control_fcb_acd  1  uint
-field  mbus.control_fcv_dfc  1  uint
-field  mbus.control_function  4  uint
-field  mbus.address  8  uint
-field  mbus.checksum  8  uint
-const  8  22
-
 kind  long
 when  8  104  as  mbus.start
 requires  mbus.length_repeat  mbus.control_reserved  mbus.control_prm  mbus.control_fcb_acd  mbus.control_fcv_dfc  mbus.control_function  mbus.address  mbus.checksum  mbus.ci
@@ -200,3 +185,18 @@ length  8  bytes  plus  -2
 end
 field  mbus.checksum  8  uint
 const  8  22
+
+kind  short
+when  8  16  as  mbus.start
+requires  mbus.control_reserved  mbus.control_prm  mbus.control_fcb_acd  mbus.control_fcv_dfc  mbus.control_function  mbus.address  mbus.checksum
+field  mbus.control_reserved  1  uint
+field  mbus.control_prm  1  uint
+field  mbus.control_fcb_acd  1  uint
+field  mbus.control_fcv_dfc  1  uint
+field  mbus.control_function  4  uint
+field  mbus.address  8  uint
+field  mbus.checksum  8  uint
+const  8  22
+
+kind  ack
+when  8  229  as  mbus.start

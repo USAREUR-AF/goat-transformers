@@ -14,76 +14,9 @@ field  sbas.preamble  0:0:8  uint
 field  sbas.crc  0:226:24  uint
 
 # PRN mask
-kind  type-1
-when  0:8:6  1
-group  sbas.prn_mask  0:14  item 1  count 210
-  field  sbas.mask_bit  0:0:1  uint
-end
-field  sbas.iodp  0:224:2  uint
-
-# fast corrections
-kind  type-2
-when  0:8:6  2
-field  sbas.iodf  0:14:2  uint
-field  sbas.iodp  0:16:2  uint
-group  sbas.fast_corrections  0:18  item 12  count 13
-  field  sbas.prc_m  0:0:12  sscale:1/8
-end
-group  sbas.udreis  0:174  item 4  count 13
-  field  sbas.udrei  0:0:4  uint
-end
-
-# fast corrections
-kind  type-3
-when  0:8:6  3
-field  sbas.iodf  0:14:2  uint
-field  sbas.iodp  0:16:2  uint
-group  sbas.fast_corrections  0:18  item 12  count 13
-  field  sbas.prc_m  0:0:12  sscale:1/8
-end
-group  sbas.udreis  0:174  item 4  count 13
-  field  sbas.udrei  0:0:4  uint
-end
-
-# fast corrections
-kind  type-4
-when  0:8:6  4
-field  sbas.iodf  0:14:2  uint
-field  sbas.iodp  0:16:2  uint
-group  sbas.fast_corrections  0:18  item 12  count 13
-  field  sbas.prc_m  0:0:12  sscale:1/8
-end
-group  sbas.udreis  0:174  item 4  count 13
-  field  sbas.udrei  0:0:4  uint
-end
-
-# fast corrections
-kind  type-5
-when  0:8:6  5
-field  sbas.iodf  0:14:2  uint
-field  sbas.iodp  0:16:2  uint
-group  sbas.fast_corrections  0:18  item 12  count 13
-  field  sbas.prc_m  0:0:12  sscale:1/8
-end
-group  sbas.udreis  0:174  item 4  count 13
-  field  sbas.udrei  0:0:4  uint
-end
-
-# fast corrections (type 0: test message, read as type 2)
-kind  type-0
-when  0:8:6  0
-field  sbas.iodf  0:14:2  uint
-field  sbas.iodp  0:16:2  uint
-group  sbas.fast_corrections  0:18  item 12  count 13
-  field  sbas.prc_m  0:0:12  sscale:1/8
-end
-group  sbas.udreis  0:174  item 4  count 13
-  field  sbas.udrei  0:0:4  uint
-end
-
-# integrity information
 kind  type-6
 when  0:8:6  6
+requires  sbas.iodf_2
 field  sbas.iodf_2  0:14:2  uint
 field  sbas.iodf_3  0:16:2  uint
 field  sbas.iodf_4  0:18:2  uint
@@ -93,8 +26,10 @@ group  sbas.udreis  0:22  item 4  count 51
 end
 
 # fast correction degradation factors
+
 kind  type-7
 when  0:8:6  7
+requires  sbas.latency_s
 field  sbas.latency_s  0:14:4  uint
 field  sbas.iodp  0:18:2  uint
 field  sbas.spare  0:20:2  uint
@@ -103,8 +38,10 @@ group  sbas.degradation_factors  0:22  item 4  count 51
 end
 
 # GEO navigation message
+
 kind  type-9
 when  0:8:6  9
+requires  sbas.geo_reserved
 field  sbas.geo_reserved  0:14:8  uint
 field  sbas.geo_t0_s  0:22:13  uiscale:16
 field  sbas.geo_ura  0:35:4  uint
@@ -121,8 +58,10 @@ field  sbas.geo_af0_s  0:206:12  sscale:1/2147483648
 field  sbas.geo_af1_ss  0:218:8  sscale:1/1099511627776
 
 # ionospheric grid point mask
+
 kind  type-18
 when  0:8:6  18
+requires  sbas.band_count
 field  sbas.band_count  0:14:4  uint
 field  sbas.band  0:18:4  uint
 field  sbas.iodi  0:22:2  uint
@@ -132,8 +71,22 @@ end
 field  sbas.spare  0:225:1  uint
 
 # mixed fast and long-term corrections
+
+kind  type-26
+when  0:8:6  26
+requires  sbas.giv_delay_m
+field  sbas.band  0:14:4  uint
+field  sbas.block  0:18:4  uint
+group  sbas.grid_points  0:22  item 13  count 15
+  field  sbas.giv_delay_m  0:0:9  uscale:1/8  absent 511
+  field  sbas.givei  0:9:4  uint
+end
+field  sbas.iodi  0:217:2  uint
+field  sbas.spare  0:219:7  uint
+
 kind  type-24
 when  0:8:6  24
+requires  sbas.prc_m  sbas.udrei  sbas.iodp  sbas.block  sbas.iodf  sbas.spare  sbas.vel_code  sbas.sat1_slot  sbas.sat1_iode  sbas.sat1_dx_m  sbas.sat1_dy_m  sbas.sat1_dz_m  sbas.sat1_daf0_s  sbas.sat2_slot  sbas.sat2_iode  sbas.sat2_dx_m  sbas.sat2_dy_m  sbas.sat2_dz_m  sbas.sat2_daf0_s  sbas.lt_slot  sbas.lt_iode  sbas.lt_dx_m  sbas.lt_dy_m  sbas.lt_dz_m  sbas.lt_daf0_s  sbas.lt_ddx_ms  sbas.lt_ddy_ms  sbas.lt_ddz_ms  sbas.lt_daf1_ss  sbas.lt_t0_s
 group  sbas.fast_corrections  0:14  item 12  count 6
   field  sbas.prc_m  0:0:12  sscale:1/8
 end
@@ -179,8 +132,10 @@ group  sbas.long_term  0:120  item 106  count 1
 end
 
 # long-term satellite error corrections
+
 kind  type-25
 when  0:8:6  25
+requires  sbas.vel_code  sbas.sat1_slot  sbas.sat1_iode  sbas.sat1_dx_m  sbas.sat1_dy_m  sbas.sat1_dz_m  sbas.sat1_daf0_s  sbas.sat2_slot  sbas.sat2_iode  sbas.sat2_dx_m  sbas.sat2_dy_m  sbas.sat2_dz_m  sbas.sat2_daf0_s  sbas.iodp  sbas.spare  sbas.lt_slot  sbas.lt_iode  sbas.lt_dx_m  sbas.lt_dy_m  sbas.lt_dz_m  sbas.lt_daf0_s  sbas.lt_ddx_ms  sbas.lt_ddy_ms  sbas.lt_ddz_ms  sbas.lt_daf1_ss  sbas.lt_t0_s
 group  sbas.long_term  0:14  item 106  count 2
   field  sbas.vel_code  0:0:1  uint
   if 0:0:1 0
@@ -216,13 +171,82 @@ group  sbas.long_term  0:14  item 106  count 2
 end
 
 # ionospheric delay corrections
-kind  type-26
-when  0:8:6  26
-field  sbas.band  0:14:4  uint
-field  sbas.block  0:18:4  uint
-group  sbas.grid_points  0:22  item 13  count 15
-  field  sbas.giv_delay_m  0:0:9  uscale:1/8  absent 511
-  field  sbas.givei  0:9:4  uint
+
+kind  type-2
+when  0:8:6  2
+requires  sbas.iodf  sbas.iodp  sbas.prc_m  sbas.udrei
+field  sbas.iodf  0:14:2  uint
+field  sbas.iodp  0:16:2  uint
+group  sbas.fast_corrections  0:18  item 12  count 13
+  field  sbas.prc_m  0:0:12  sscale:1/8
 end
-field  sbas.iodi  0:217:2  uint
-field  sbas.spare  0:219:7  uint
+group  sbas.udreis  0:174  item 4  count 13
+  field  sbas.udrei  0:0:4  uint
+end
+
+# fast corrections
+
+kind  type-3
+when  0:8:6  3
+requires  sbas.iodf  sbas.iodp  sbas.prc_m  sbas.udrei
+field  sbas.iodf  0:14:2  uint
+field  sbas.iodp  0:16:2  uint
+group  sbas.fast_corrections  0:18  item 12  count 13
+  field  sbas.prc_m  0:0:12  sscale:1/8
+end
+group  sbas.udreis  0:174  item 4  count 13
+  field  sbas.udrei  0:0:4  uint
+end
+
+# fast corrections
+
+kind  type-4
+when  0:8:6  4
+requires  sbas.iodf  sbas.iodp  sbas.prc_m  sbas.udrei
+field  sbas.iodf  0:14:2  uint
+field  sbas.iodp  0:16:2  uint
+group  sbas.fast_corrections  0:18  item 12  count 13
+  field  sbas.prc_m  0:0:12  sscale:1/8
+end
+group  sbas.udreis  0:174  item 4  count 13
+  field  sbas.udrei  0:0:4  uint
+end
+
+# fast corrections
+
+kind  type-5
+when  0:8:6  5
+requires  sbas.iodf  sbas.iodp  sbas.prc_m  sbas.udrei
+field  sbas.iodf  0:14:2  uint
+field  sbas.iodp  0:16:2  uint
+group  sbas.fast_corrections  0:18  item 12  count 13
+  field  sbas.prc_m  0:0:12  sscale:1/8
+end
+group  sbas.udreis  0:174  item 4  count 13
+  field  sbas.udrei  0:0:4  uint
+end
+
+# fast corrections (type 0: test message, read as type 2)
+
+kind  type-0
+when  0:8:6  0
+requires  sbas.iodf  sbas.iodp  sbas.prc_m  sbas.udrei
+field  sbas.iodf  0:14:2  uint
+field  sbas.iodp  0:16:2  uint
+group  sbas.fast_corrections  0:18  item 12  count 13
+  field  sbas.prc_m  0:0:12  sscale:1/8
+end
+group  sbas.udreis  0:174  item 4  count 13
+  field  sbas.udrei  0:0:4  uint
+end
+
+# integrity information
+
+kind  type-1
+when  0:8:6  1
+group  sbas.prn_mask  0:14  item 1  count 210
+  field  sbas.mask_bit  0:0:1  uint
+end
+field  sbas.iodp  0:224:2  uint
+
+# fast corrections
