@@ -83,7 +83,6 @@ The figure is drawn from `packs/` by `python3 -I tools/catalog-figure.py`; `tool
 | `cot-xml` | Cursor on Target event XML | `xml` | 1 |
 | `cot-protobuf` | TAK protocol version 1, the protobuf form of a Cursor on Target event | `protobuf` | 2 |
 | `geojson` | GeoJSON Feature (IETF RFC 7946) | `geojson` | 1 |
-| `nvg` | NATO Vector Graphics 1.5, point | `xml` | 1 |
 | `canonical-track-v2` | Canonical Track v2 of [open-billie](https://github.com/USAREUR-AF/open-billie) | `json` | 1 |
 | `geo-track-v1` | GeoTrackV1, the display track of [goatstuff](https://github.com/USAREUR-AF/goatstuff)'s map | `json` | 1 |
 | `sapient` | SAPIENT, BSI Flex 335 v2.0 | `protobuf` | 9 |
@@ -262,34 +261,47 @@ The design, the record format and a worked example are in
 
 ## Add a format without writing code
 
-This is the complete pack for a NATO Vector Graphics point,
-[`packs/nvg/pack.def`](packs/nvg/pack.def):
+These are lines of the pack for a GPX 1.1 waypoint,
+[`packs/gpx/pack.def`](packs/gpx/pack.def), in their order with some left out
+(the file also reads the document's creator, the waypoint's other elements, and
+route and track points, the same way):
 
 ```
-format   nvg                                # the name used with --from and --to
-version  0.1.0
-distribution public                         # public, or controlled (overlay only)
-source  "NATO Vector Graphics 1.5 XSD (NATO ACT, public)"   # the document it was written from
-wire     xml                                # the codec: xml, json, geojson, protobuf or bits
-root     nvg                                # the root element
-field   lon       point/@x        float     # model key, place in the message, transform
-field   lat       point/@y        float
-field   callsign  point/@label    string
-field   type      point/@symbol   string
+format  gpx
+version 0.1.0
+distribution public
+source  "GPX 1.1 schema, TopoGrafix, https://www.topografix.com/GPX/1/1/gpx.xsd (open standard; https://www.topografix.com/gpx.asp)"
+uses    gpx
+wire    xml
+root    gpx
+when    @xmlns    http://www.topografix.com/GPX/1/1
+when    @version  1.1
+
+kind    waypoint
+when    wpt/@lat  present
+requires lat lon
+field   lat               wpt/@lat                 float
+field   lon               wpt/@lon                 float
+field   gpx.ele           wpt/ele/#text            float
+field   time_ms           wpt/time/#text           iso8601_ms
+field   callsign          wpt/name/#text           string
 ```
 
-and this is the message it describes:
+`format` is the name used with `--from` and `--to`; `source` is the document the pack was
+written from; `wire` is the codec (xml, json, geojson, protobuf or bits); each `field` line
+reads: the model key, the place in the message, the transform. This is a message it
+describes:
 
 ```xml
-<nvg><point x="11.2" y="48.137" label="ALPHA" symbol="app6a:SFGPUCI----D"/></nvg>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="survey-tool"><wpt lat="48.137154" lon="11.576124"><ele>519.5</ele><time>2024-05-01T12:30:00.000Z</time><name>POINT A</name><sym>Flag, Blue</sym></wpt></gpx>
 ```
 
-With that file in `packs/nvg/`, all seven engines convert NVG points to and
+With that file in `packs/gpx/`, all seven engines convert GPX points to and
 from every other loaded format:
 
 ```console
-$ echo '<nvg><point x="11.2" y="48.137" label="ALPHA" symbol="app6a:SFGPUCI----D"/></nvg>' | goat-xf convert --from nvg --to geojson
-{"type":"Feature","geometry":{"type":"Point","coordinates":[11.2,48.137]},"properties":{"type":"app6a:SFGPUCI----D","callsign":"ALPHA"}}
+$ echo '<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="survey-tool"><wpt lat="48.137154" lon="11.576124"><ele>519.5</ele><time>2024-05-01T12:30:00.000Z</time><name>POINT A</name><sym>Flag, Blue</sym></wpt></gpx>' | goat-xf convert --from gpx --to geojson
+{"type":"Feature","geometry":{"type":"Point","coordinates":[11.576124,48.137154]},"properties":{"time_ms":1714566600000,"callsign":"POINT A"}}
 ```
 
 The pack language also states binary layouts by bit range, scale factors,

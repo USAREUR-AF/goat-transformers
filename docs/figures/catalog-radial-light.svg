@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 922" width="100%" role="img" aria-labelledby="t d">
-<title id="t">Every public format, by family: 234 families, 4,255 formats</title>
+<title id="t">Every public format, by family: 233 families, 4,254 formats</title>
 <desc id="d">One bar per family around the shared model, its length the logarithm of its pack count, coloured by domain. A dashed outer ring stands for private overlays, which the same engines read.</desc>
 <style>
   .rd-bg{fill:#f3f5f6} .rd-t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"Liberation Sans","DejaVu Sans",sans-serif;fill:#0f1c26}
@@ -16,7 +16,7 @@
   .rd-air{--rd:#2a78d6} .rd-land{--rd:#eb6834} .rd-sea{--rd:#1baf7a} .rd-space{--rd:#6250d6} .rd-uncrewed{--rd:#e34948} .rd-c2{--rd:#184f95} .rd-sensors{--rd:#008300} .rd-transport{--rd:#e87ba4} .rd-iot{--rd:#eda100} .rd-networks{--rd:#009a8a} .rd-maps{--rd:#a14a1a}
 </style>
 <rect x="0" y="0" width="680" height="922" class="rd-bg"/>
-<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">Every public format, by family: 234 families, 4,255 formats</text>
+<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">Every public format, by family: 233 families, 4,254 formats</text>
 <text x="20" y="50" class="rd-t rd-q" font-size="13">Bar length: the pack count on a log scale, read against the faint rings; colour: the domain.</text>
 <g transform="translate(0 64)">
 <circle cx="340" cy="340" r="318" class="rd-private"/>
@@ -108,17 +108,16 @@
 <path d="M442.59 438.18A142 142 0 0 1 415.42 460.32L397.36 431.51A108 108 0 0 0 418.03 414.67Z" class="rd-dom rd-c2"/>
 <path id="rd-light-l5" d="M410.11 451.84A132 132 0 0 0 435.37 431.26" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-light-l5" startOffset="50%" text-anchor="middle">C2</textPath></text>
-<path d="M464.69 460.08A173 173 0 0 1 462.73 462.08L444.93 444.38A148 148 0 0 0 446.61 442.66Z" class="rd-bar rd-c2"><title>Cursor on Target: 2 packs (C2 and tactical)</title></path>
-<path d="M461.96 462.85A173 173 0 0 1 459.95 464.81L442.55 446.71A148 148 0 0 0 444.27 445.03Z" class="rd-bar rd-c2"><title>goat-processors outputs: 2 packs (C2 and tactical)</title></path>
-<path d="M459.16 465.56A173 173 0 0 1 457.11 467.48L440.13 448.99A148 148 0 0 0 441.88 447.35Z" class="rd-bar rd-c2"><title>UCI: 2 packs (C2 and tactical)</title></path>
-<path d="M444.81 455.54A156 156 0 0 1 442.93 457.23L437.65 451.21A148 148 0 0 0 439.44 449.62Z" class="rd-bar rd-c2"><title>A-GRA: 1 pack (C2 and tactical)</title></path>
-<path d="M442.19 457.87A156 156 0 0 1 440.26 459.51L435.12 453.38A148 148 0 0 0 436.95 451.83Z" class="rd-bar rd-c2"><title>APRS: 1 pack (C2 and tactical)</title></path>
-<path d="M439.51 460.14A156 156 0 0 1 437.55 461.74L432.55 455.49A148 148 0 0 0 434.41 453.98Z" class="rd-bar rd-c2"><title>C2SIM: 1 pack (C2 and tactical)</title></path>
-<path d="M436.78 462.35A156 156 0 0 1 434.79 463.9L429.93 457.55A148 148 0 0 0 431.82 456.07Z" class="rd-bar rd-c2"><title>Canonical Track v2: 1 pack (C2 and tactical)</title></path>
-<path d="M434.01 464.49A156 156 0 0 1 431.98 466L427.26 459.54A148 148 0 0 0 429.19 458.11Z" class="rd-bar rd-c2"><title>DIS (IEEE 1278.1): 1 pack (C2 and tactical)</title></path>
-<path d="M431.18 466.58A156 156 0 0 1 429.12 468.04L424.55 461.47A148 148 0 0 0 426.51 460.09Z" class="rd-bar rd-c2"><title>GeoTrackV1: 1 pack (C2 and tactical)</title></path>
-<path d="M428.31 468.6A156 156 0 0 1 426.22 470.01L421.8 463.34A148 148 0 0 0 423.78 462Z" class="rd-bar rd-c2"><title>NVG: 1 pack (C2 and tactical)</title></path>
-<path d="M425.4 470.55A156 156 0 0 1 423.27 471.92L419 465.15A148 148 0 0 0 421.02 463.85Z" class="rd-bar rd-c2"><title>STANAG 4676 ISR tracking: 1 pack (C2 and tactical)</title></path>
+<path d="M464.69 460.08A173 173 0 0 1 462.45 462.36L444.69 444.61A148 148 0 0 0 446.61 442.66Z" class="rd-bar rd-c2"><title>Cursor on Target: 2 packs (C2 and tactical)</title></path>
+<path d="M461.68 463.13A173 173 0 0 1 459.39 465.35L442.07 447.17A148 148 0 0 0 444.03 445.27Z" class="rd-bar rd-c2"><title>goat-processors outputs: 2 packs (C2 and tactical)</title></path>
+<path d="M458.6 466.1A173 173 0 0 1 456.25 468.27L439.39 449.66A148 148 0 0 0 441.4 447.81Z" class="rd-bar rd-c2"><title>UCI: 2 packs (C2 and tactical)</title></path>
+<path d="M444.03 456.25A156 156 0 0 1 441.87 458.15L436.64 452.09A148 148 0 0 0 438.7 450.29Z" class="rd-bar rd-c2"><title>A-GRA: 1 pack (C2 and tactical)</title></path>
+<path d="M441.12 458.79A156 156 0 0 1 438.91 460.63L433.84 454.45A148 148 0 0 0 435.94 452.69Z" class="rd-bar rd-c2"><title>APRS: 1 pack (C2 and tactical)</title></path>
+<path d="M438.15 461.25A156 156 0 0 1 435.9 463.04L430.98 456.73A148 148 0 0 0 433.12 455.03Z" class="rd-bar rd-c2"><title>C2SIM: 1 pack (C2 and tactical)</title></path>
+<path d="M435.12 463.64A156 156 0 0 1 432.83 465.38L428.06 458.95A148 148 0 0 0 430.25 457.3Z" class="rd-bar rd-c2"><title>Canonical Track v2: 1 pack (C2 and tactical)</title></path>
+<path d="M432.04 465.96A156 156 0 0 1 429.69 467.64L425.09 461.09A148 148 0 0 0 427.32 459.5Z" class="rd-bar rd-c2"><title>DIS (IEEE 1278.1): 1 pack (C2 and tactical)</title></path>
+<path d="M428.89 468.2A156 156 0 0 1 426.51 469.82L422.07 463.16A148 148 0 0 0 424.33 461.62Z" class="rd-bar rd-c2"><title>GeoTrackV1: 1 pack (C2 and tactical)</title></path>
+<path d="M425.69 470.36A156 156 0 0 1 423.27 471.92L419 465.15A148 148 0 0 0 421.3 463.67Z" class="rd-bar rd-c2"><title>STANAG 4676 ISR tracking: 1 pack (C2 and tactical)</title></path>
 <path d="M411.17 462.87A142 142 0 0 1 334.26 481.88L335.63 447.91A108 108 0 0 0 394.13 433.45Z" class="rd-dom rd-sensors"/>
 <path id="rd-light-l6" d="M334.66 471.89A132 132 0 0 0 406.16 454.22" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-light-l6" startOffset="50%" text-anchor="middle">Sensors</textPath></text>
@@ -310,7 +309,7 @@
 <rect x="20" y="794" width="12" height="12" rx="2" class="rd-sw rd-uncrewed"/>
 <text x="38" y="804" class="rd-t" font-size="13">Uncrewed systems and robots <tspan class="rd-q">1,640</tspan></text>
 <rect x="340" y="794" width="12" height="12" rx="2" class="rd-sw rd-c2"/>
-<text x="358" y="804" class="rd-t" font-size="13">C2 and tactical <tspan class="rd-q">14</tspan></text>
+<text x="358" y="804" class="rd-t" font-size="13">C2 and tactical <tspan class="rd-q">13</tspan></text>
 <rect x="20" y="816" width="12" height="12" rx="2" class="rd-sw rd-sensors"/>
 <text x="38" y="826" class="rd-t" font-size="13">Sensors <tspan class="rd-q">159</tspan></text>
 <rect x="340" y="816" width="12" height="12" rx="2" class="rd-sw rd-transport"/>
