@@ -7,7 +7,9 @@
  "model": {
   "@kind": "hil_gps",
   "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.lat_dege7": "-327600000",
   "lat": "-32.76",
+  "mavlink.lon_dege7": "-655200000",
   "lon": "-65.52",
   "mavlink.alt_mm": "2003195204",
   "mavlink.eph": "26197",

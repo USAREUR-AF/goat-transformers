@@ -47,9 +47,9 @@ comparing six of them with the values the protocol fixes.
 | ... array of more than 8 elements, one key per element | 57 (3374 element lines) |
 | ... `lat` / `lon` in degE7 to core `lat` / `lon` | 36 |
 | Payload fields not mapped | 0 |
-| `field` lines in `pack.def` (5 common + per kind) | 5532 |
+| `field` lines in `pack.def` (5 common + per kind) | 5540 |
 | Keys in module `mavlink` (5 frame-header + payload) | 3968 |
-| Vectors (235 same-format round trips + 9 to geojson) | 244 |
+| Vectors (235 same-format round trips + 10 to geojson) | 245 |
 
 ## What is mapped
 
@@ -161,6 +161,15 @@ The position is the one the message reports, which is not always the sending
 vehicle's: `terrain_request`, `terrain_data` and `terrain_report`
 carry a terrain grid point, `follow_target` a target, `camera_image_captured` the
 camera at capture time.
+
+`gps_raw_int`, `hil_gps`, `gps2_raw`, `gps_input` carry `fix_type`, where 0 and 1 are no fix (enum `GPS_FIX_TYPE`:
+`GPS_FIX_TYPE_NO_GPS`, `GPS_FIX_TYPE_NO_FIX`; the `HIL_GPS` field text: 0-1 no fix).
+Their `lat` and `lon` lie in a gate block `if !<fix_type> 0,1` (engine-spec 0.17),
+so a message without a fix gives no position; the same bits are the raw keys
+`mavlink.lat_dege7` and `mavlink.lon_dege7` outside the block, and the frame comes back byte
+for byte. Encoded from `lat` and `lon` with no raw key of the message's `fix_type`,
+the gate writes 2 (2D fix), the smallest value that is a fix; with a raw `fix_type` of
+0 or 1 an entity that holds `lat` or `lon` without the raw keys is `transform-encode`.
 `terrain_check` has no field but `lat` and `lon`; they stay raw there so the kind has a raw
 key to require, otherwise any entity with a position would encode as that kind.
 
@@ -185,7 +194,7 @@ Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds, so encoding an entity that came from another format selects a kind only
 when the entity holds those `mavlink.` keys. No kind requires a core key, so a
 GeoJSON or CoT entity selects no kind (`no-kind`).
-For 44 kinds the required keys are all mapped by at least one other kind.
+For 45 kinds the required keys are all mapped by at least one other kind.
 Encode selects the first kind whose required keys are present, so pack.def
 writes a kind before every kind whose required keys it maps, unless that kind
 also maps all of its own; otherwise the kinds are in id order. An entity built
@@ -287,7 +296,7 @@ are identical. Values are inside each field's range; floats are multiples of
 0.25 or 0.125; every other `uint64_t` sample has its top bit set; every other
 frame has COMPAT = 1, and INCOMPAT is 0.
 
-`vectors/x-NN-<kind>-to-geojson.json`: 9 full frames with a correct CRC,
+`vectors/x-NN-<kind>-to-geojson.json`: 10 full frames with a correct CRC,
 converted to GeoJSON. Expected output: `coordinates` = `[lon, lat]` in degrees
 (wire value / 10^7), `properties` empty because `geojson` carries no other key
 this pack maps.

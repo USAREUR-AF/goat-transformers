@@ -272,7 +272,32 @@ class GeneratedFilesLoad(unittest.TestCase):
         for name in sorted(os.listdir(directory)):
             with open(os.path.join(directory, name), encoding="utf-8") as fh:
                 vectors.append((name, fh.read()))
-        self.assertEqual(gen.check_vectors(self.pack, vectors), 16 + 9 + 4 + 2)
+        self.assertEqual(gen.check_vectors(self.pack, vectors), 16 + 9 + 4 + 2 + 1)
+
+    def test_lat_lon_of_a_message_with_fix_type_are_read_only_with_a_fix(self):
+        # GPS_RAW_INT: raw keys outside, core lat and lon in `if !<fix_type> 0,1`
+        kind = self.kinds["gps_raw_int"]
+        gates = [n for n in kind.lines if n.d == "if"]
+        self.assertEqual([g.body[0].key for g in gates], ["lat", "lon"])
+        fix = self.fields("gps_raw_int")["mavlink.fix_type"]
+        self.assertTrue(all(g.gate == (True, (0, 1)) and (g.start, g.bits) == (fix.start, 8) for g in gates))
+        self.assertIn("mavlink.lat_dege7", self.fields("gps_raw_int"))
+
+    def test_no_fix_keeps_the_bits_and_gives_no_position(self):
+        kind = next(k for k in self.pack.kinds if k.name == "gps_raw_int")
+        _, entity = gen.engine_decode(self.pack, gen.engine_encode(
+            self.pack, "gps_raw_int", {"mavlink.time_usec_us": 1, "mavlink.fix_type": 1, "mavlink.lat_dege7": 100000000,
+                                       "mavlink.lon_dege7": 200000000}))
+        self.assertNotIn("lat", entity)
+        self.assertEqual(entity["mavlink.lat_dege7"], 100000000)
+        data = gen.engine_encode(self.pack, "gps_raw_int", {"lat": 10.0, "lon": 20.0})
+        _, entity = gen.engine_decode(self.pack, data)
+        fix = self.fields("gps_raw_int")["mavlink.fix_type"]
+        self.assertEqual(entity["mavlink.fix_type"], 2)      # the gate writes the smallest fix value
+        self.assertAlmostEqual(entity["lat"], 10.0)
+        with self.assertRaises(gen.CodecError):      # engine-spec 0.17 encode step 6
+            gen.engine_encode(self.pack, "gps_raw_int", {"lat": 10.0, "lon": 20.0, "mavlink.fix_type": 0})
+        self.assertTrue(kind.lines and fix.bits == 8)
 
     def test_long_arrays_are_listed_in_pack_md_and_have_no_field_line(self):
         with open(os.path.join(EXPECTED, "packs", "mavlink2", "pack.md"), encoding="utf-8") as fh:

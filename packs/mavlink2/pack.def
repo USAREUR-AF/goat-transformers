@@ -134,8 +134,14 @@ when      0:56:24 24
 when      0:8:8 52
 requires  mavlink.eph mavlink.epv mavlink.gps_raw_int_fix_type mavlink.alt_ellipsoid_mm mavlink.vel_acc_mm_per_s mavlink.hdg_acc_dege5
 field     mavlink.time_usec_us 0:80:64 uint
-field     lat 0:144:32 sscale:1/10000000
-field     lon 0:176:32 sscale:1/10000000
+field     mavlink.lat_dege7 0:144:32 twos
+if        !0:304:8 0,1
+  field     lat 0:144:32 sscale:1/10000000
+end
+field     mavlink.lon_dege7 0:176:32 twos
+if        !0:304:8 0,1
+  field     lon 0:176:32 sscale:1/10000000
+end
 field     mavlink.alt_mm 0:208:32 twos
 field     mavlink.eph 0:240:16 uint absent 65535
 field     mavlink.epv 0:256:16 uint absent 65535
@@ -1587,8 +1593,14 @@ when      0:56:24 113
 when      0:8:8 39
 requires  mavlink.eph mavlink.epv mavlink.vn_cm_per_s mavlink.ve_cm_per_s mavlink.vd_cm_per_s mavlink.hil_gps_fix_type
 field     mavlink.time_usec_us 0:80:64 uint
-field     lat 0:144:32 sscale:1/10000000
-field     lon 0:176:32 sscale:1/10000000
+field     mavlink.lat_dege7 0:144:32 twos
+if        !0:352:8 0,1
+  field     lat 0:144:32 sscale:1/10000000
+end
+field     mavlink.lon_dege7 0:176:32 twos
+if        !0:352:8 0,1
+  field     lon 0:176:32 sscale:1/10000000
+end
 field     mavlink.alt_mm 0:208:32 twos
 field     mavlink.eph 0:240:16 uint absent 65535
 field     mavlink.epv 0:256:16 uint absent 65535
@@ -1942,8 +1954,14 @@ when      0:56:24 124
 when      0:8:8 57
 requires  mavlink.dgps_age_ms mavlink.gps2_raw_fix_type mavlink.dgps_numch mavlink.alt_ellipsoid_mm mavlink.vel_acc_mm_per_s mavlink.hdg_acc_dege5
 field     mavlink.time_usec_us 0:80:64 uint
-field     lat 0:144:32 sscale:1/10000000
-field     lon 0:176:32 sscale:1/10000000
+field     mavlink.lat_dege7 0:144:32 twos
+if        !0:336:8 0,1
+  field     lat 0:144:32 sscale:1/10000000
+end
+field     mavlink.lon_dege7 0:176:32 twos
+if        !0:336:8 0,1
+  field     lon 0:176:32 sscale:1/10000000
+end
 field     mavlink.alt_mm 0:208:32 twos
 field     mavlink.dgps_age_ms 0:240:32 uint
 field     mavlink.eph 0:272:16 uint absent 65535
@@ -2426,13 +2444,6 @@ field     mavlink.data_m_13 0:368:16 twos
 field     mavlink.data_m_14 0:384:16 twos
 field     mavlink.data_m_15 0:400:16 twos
 field     mavlink.gridbit 0:416:8 uint
-
-kind      terrain_check
-when      0:56:24 135
-when      0:8:8 8
-requires  mavlink.lat_dege7 mavlink.lon_dege7
-field     mavlink.lat_dege7 0:80:32 twos
-field     mavlink.lon_dege7 0:112:32 twos
 
 kind      terrain_report
 when      0:56:24 136
@@ -3048,8 +3059,14 @@ when      0:8:8 65
 requires  mavlink.time_week_ms mavlink.hdop mavlink.vdop mavlink.speed_accuracy_m_per_s mavlink.horiz_accuracy_m mavlink.vert_accuracy_m
 field     mavlink.time_usec_us 0:80:64 uint
 field     mavlink.time_week_ms 0:144:32 uint
-field     lat 0:176:32 sscale:1/10000000
-field     lon 0:208:32 sscale:1/10000000
+field     mavlink.lat_dege7 0:176:32 twos
+if        !0:568:8 0,1
+  field     lat 0:176:32 sscale:1/10000000
+end
+field     mavlink.lon_dege7 0:208:32 twos
+if        !0:568:8 0,1
+  field     lon 0:208:32 sscale:1/10000000
+end
 field     mavlink.alt_m 0:240:32 f32
 field     mavlink.hdop 0:272:32 f32 absent 1199570688
 field     mavlink.vdop 0:304:32 f32 absent 1199570688
@@ -3065,6 +3082,13 @@ field     mavlink.gps_id 0:560:8 uint
 field     mavlink.gps_input_fix_type 0:568:8 uint
 field     mavlink.satellites_visible 0:576:8 uint
 field     mavlink.yaw_cdeg 0:584:16 uint absent 0
+
+kind      terrain_check
+when      0:56:24 135
+when      0:8:8 8
+requires  mavlink.lat_dege7 mavlink.lon_dege7
+field     mavlink.lat_dege7 0:80:32 twos
+field     mavlink.lon_dege7 0:112:32 twos
 
 kind      gps_rtcm_data
 when      0:56:24 233
