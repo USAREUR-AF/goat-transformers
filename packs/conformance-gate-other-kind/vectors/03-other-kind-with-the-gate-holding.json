@@ -1,0 +1,9 @@
+{
+  "name": "other-kind-with-the-gate-holding",
+  "from": "conformance-gate-other-kind",
+  "to": "conformance-gate-other-kind",
+  "input": "02050a",
+  "expect": "02050a",
+  "source": "constructed",
+  "reference": "spec 0.17: kind b (when 2) is selected, its gate 0:8:8 reads 5 and holds, y is 0a; the same bytes come back"
+}

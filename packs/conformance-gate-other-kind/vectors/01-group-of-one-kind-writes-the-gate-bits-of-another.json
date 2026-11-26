@@ -1,0 +1,9 @@
+{
+  "name": "group-of-one-kind-writes-the-gate-bits-of-another",
+  "from": "conformance-gate-other-kind",
+  "to": "conformance-gate-other-kind",
+  "input": "010506",
+  "expect": "010506",
+  "source": "constructed",
+  "reference": "spec 0.17 ruling 1: a block inside a kind is evaluated after the kind is selected. Kind a (when 1) is selected; its group's first item 05 fills bits 8 to 15, which kind b's gate `if 0:8:8 5` reads. Kind b's block is not evaluated, so step 6 does not apply to it: the round trip gives the same bytes"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "group-of-one-kind-gate-value-not-met",
+  "from": "conformance-gate-other-kind",
+  "to": "conformance-gate-other-kind",
+  "input": "010906",
+  "expect": "010906",
+  "source": "constructed",
+  "reference": "spec 0.17 ruling 1: as vector 01 with a first item that kind b's gate does not list; the same bytes come back"
+}
