@@ -1050,6 +1050,11 @@ def bind_height(plan, c):
             and re.search(r"geometric (height|altitude)", c.title, re.I)
             and re.search(r"ellipsoid", c.definition, re.I) and re.search(r"wgs-? ?84", c.definition, re.I)):
         mult = FT if n["src_unit"] == "ft" else Fraction(1)
+        # a value the remark says is no height ("greater than" indication): absent, so it never
+        # becomes `hae`, and an absent `hae` writes it (spec 0.9)
+        m = re.search(r"value of [\u2018'\"]([01]+)[\u2019'\"] indicates", c.remark or "")
+        if m and len(m.group(1)) == n["bits"]:
+            n["absent"] = int(m.group(1), 2)
         convert(plan, n, "hae", mult,
                 '%s "%s", definition: "%s"; LSB %s %s%s' % (c.label, c.title, c.definition, frac_text(n["frac"]), n["src_unit"],
                                                            '; note: "%s"' % c.remark if c.remark else ""))
@@ -1240,7 +1245,8 @@ def emit_nodes(nodes, ind, L):
     for n in nodes:
         t = n["t"]
         if t == "field":
-            L.append("%sfield  %s  %d  %s" % (pad, n["key"], n["bits"], n["tr"]))
+            L.append("%sfield  %s  %d  %s%s" % (pad, n["key"], n["bits"], n["tr"],
+                                               "  absent %d" % n["absent"] if "absent" in n else ""))
             for a in n["also"]:
                 L.append("%salso   %s" % (pad, a))
         elif t == "pad":
@@ -1866,6 +1872,19 @@ class VectorSet:
                      ", ".join("`%s`" % k for k in bound)),
                  to="geojson", input=raw_block(plan, rec), expect=geojson_text(ent),
                  model=model_strings(OrderedDict((k, v) for k, v in model.items() if k in bound)))
+        # a field whose remark names a value that is no measurement (its `absent`): that value
+        # reaches the Feature as no key
+        for e in in_frn_order:
+            for n in e["nodes"]:
+                if n["t"] == "field" and "absent" in n and n["key"] in bound:
+                    rec2 = dict(rec)
+                    rec2[n["key"]] = n["absent"]
+                    model2 = OrderedDict((k, v) for k, v in model.items() if k != n["key"])
+                    self.put("to-geojson-%s-not-given" % n["key"],
+                             "the record above with I%s/%s at %d, which the item's remark says is no %s: "
+                             "the key is absent (spec 0.9)" % (cat.nnn, e["name"], n["absent"], n["key"]),
+                             to="geojson", input=raw_block(plan, rec2), expect=geojson_text(apply_derives(dict(model2), derives)),
+                             model=model_strings(OrderedDict((k, v) for k, v in model2.items() if k in bound)))
 
     def samples(self, pack):
         """Blocks a publisher prints with the values they hold. A sample whose decode does not give
@@ -2308,7 +2327,9 @@ def dec_lines(lines, rd, ent, lists, env):
                 raise WireError("no-kind", "when %s" % x.value)
         elif d == "field":
             v = rd.take(x.bits)
-            if v is not None:
+            if v is not None and x.absent is not None and v in {int(t) for t in x.absent.split(",")}:
+                pass                            # a sentinel: the key is absent (spec 0.9)
+            elif v is not None:
                 val = t_decode(x, v)
                 for k in gtcheck.keys_of(x):
                     ent.setdefault(k, val)
@@ -2408,7 +2429,7 @@ def enc_lines(lines, ent, lists, env, st):
             out += to_bits(int(x.value), x.bits)
         elif d == "field":
             val = next((ent[k] for k in gtcheck.keys_of(x) if k in ent), None)     # ruling 13 of 0.8
-            wire = t_encode(x, val) if val is not None else 0
+            wire = t_encode(x, val) if val is not None else (int(x.absent.split(",")[0]) if x.absent else 0)
             out += to_bits(wire, x.bits)
             if x.tr in ("uint", "twos"):            # what decode reads back, for a `switch` (0.20)
                 for k in gtcheck.keys_of(x):
