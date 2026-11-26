@@ -983,11 +983,12 @@ class Scope:
     (key, path, transform, table), `whens` and `consts` (path, value), `groups`
     GroupScope objects. A path is a tuple of field numbers; inside a group it
     is relative to the item, `()` for the `.` locator."""
-    __slots__ = ("fields", "whens", "consts", "groups", "withs")
+    __slots__ = ("fields", "whens", "consts", "groups", "withs", "absents")
 
     def __init__(self):
         self.fields, self.whens, self.consts, self.groups = [], [], [], []
         self.withs = {}         # (key, path) -> the key a `with` option names (0.18)
+        self.absents = {}       # (key, path) -> raw values that mean absent (0.9)
 
 
 class GroupScope(Scope):
@@ -1012,11 +1013,12 @@ class WirePack:
             scope = _fill_scope(KindScope(), kind.lines)
             scope.name, scope.requires = kind.name, list(kind.requires)
             self.kinds.append(scope)
-        self.all_withs = {}
+        self.all_withs, self.all_absents = {}, {}
         stack = [self.common] + self.kinds
         while stack:
             sc = stack.pop()
             self.all_withs.update(sc.withs)
+            self.all_absents.update(sc.absents)
             stack += sc.groups
 
     def kind(self, name):
@@ -1043,6 +1045,8 @@ def _fill_scope(scope, lines):
             scope.fields.append((node.key, node.path, node.tr, node.via))
             if getattr(node, "with_", None):
                 scope.withs[(node.key, node.path)] = node.with_
+            if node.absent is not None:
+                scope.absents[(node.key, node.path)] = [int(x) for x in node.absent.split(",")]
         elif node.d == "when":
             scope.whens.append((node.path, node.value))
         elif node.d == "const":
@@ -1172,12 +1176,33 @@ def via_value(pack, via, v, to_model):
     return v
 
 
+def raw_of(got):
+    """The raw value of an occurrence as 0.9 compares a sentinel: the varint, or the fixed bytes
+    as an unsigned little-endian integer, or the text."""
+    wt, val = got
+    if isinstance(val, (bytes, bytearray)):
+        return int.from_bytes(val, "little") if wt in (1, 5) else val.decode("utf-8", "replace")
+    return val
+
+
+def sentinel_value(tr, raw):
+    """The model value a sentinel stands for, so encode can write it through the transform."""
+    if tr == "pdouble":
+        return struct.unpack("<d", raw.to_bytes(8, "little"))[0]
+    if tr == "pfloat":
+        return struct.unpack("<f", raw.to_bytes(4, "little"))[0]
+    return raw
+
+
 def decode_scope(pack, b, fields, groups):
     """The keys and lists of one message: the entity, or one item. A list is a
     Python list of such dicts under its name (engine-spec 0.7, Decode)."""
     ent = {}
+    absents = getattr(pack, "all_absents", {})
     for key, path, tr, via in fields:
         got = wire_get(b, path)
+        if got is not None and (key, path) in absents and raw_of(got) in absents[(key, path)]:
+            continue                                # a sentinel (0.9): no value
         if got is not None and key not in ent:      # 0.6: the earliest line present on the wire
             ent[key] = via_value(pack, via, dec_value(tr, *got), True)
     for g in groups:
@@ -1235,6 +1260,13 @@ def encode_scope(pack, ent, fields, consts, groups):
                 node = node.setdefault(n, {})
             # 0.5 ruling 16: the earliest line whose key is present
             node.setdefault(path[-1], (tr, via_value(pack, via, ent[key], False)))
+    absents = getattr(pack, "all_absents", {})
+    for key, path, tr, via in fields:       # an absent key writes its first sentinel (0.9), under present keys
+        if key not in ent and (key, path) in absents:
+            node = tree
+            for n in path[:-1]:
+                node = node.setdefault(n, {})
+            node.setdefault(path[-1], (tr, sentinel_value(tr, absents[(key, path)][0])))
     for path, value in consts:
         node = tree
         for n in path[:-1]:
@@ -2099,6 +2131,12 @@ def make_plan(schema, opts, budgets=DEFAULT_BUDGETS):
     for spec in opts.map:
         path, _, key = spec.partition("=")
         plan.core_map.setdefault(path, []).append(key)     # several keys on one path: lines in this order
+    plan.absent = {}
+    for spec in getattr(opts, "absent", []):
+        path, vals = spec.split("=", 1)
+        if path not in plan.core_map:
+            raise GenError("--absent %s: no --map binding at that path" % spec)
+        plan.absent[path] = vals
     pinned, own_names, plan.inherited = read_names(opts)
     if opts.module_base:
         plan.base = BaseModule.read(opts.module_base, opts.module)
@@ -2291,7 +2329,10 @@ def emit_pack(plan):
             lines += ["requires  %s" % " ".join(requires)]
         for l in kind.leaves:
             keys = [k for k in l.cores if k not in dropped] + ([l.key] if l.key else [])
-            lines += ["field  %-*s  %-*s  %s" % (kw, k, pw, l.path, l.transform) for k in keys]
+            lines += [("field  %-*s  %-*s  %s%s" % (kw, k, pw, l.path, l.transform,
+                                                  "  absent %s" % plan.absent[l.path]
+                                                  if k in l.cores and l.path in getattr(plan, "absent", {}) else ""))
+                      for k in keys]
         lines += ["field  %-*s  %-*s  %s%s%s" % (kw, key, pw, p, tr, "  via %s" % table if table else "",
                                                 "  with %s" % plan.withs[(kind.name, p)]
                                                 if (kind.name, p) in plan.withs else "")
@@ -3109,6 +3150,9 @@ def argument_parser():
     ap.add_argument("--module", required=True, help="model module the raw keys go to: model/<module>.def")
     genio.add_arguments(ap, what="checkout root holding model/ and packs/")
     ap.add_argument("--source", action="append", required=True, help="source line text; repeatable")
+    ap.add_argument("--absent", action="append", default=[], metavar="PATH=VALUE[,VALUE...]",
+                    help="the shared-key lines of a --map path take `absent`: raw values (spec 0.9: the varint, or "
+                         "the 8 or 4 bytes as an unsigned little-endian integer) the source says mean unknown")
     ap.add_argument("--map", action="append", default=[], metavar="PATH=KEY",
                     help="bind a field-number path to an existing model key (core key bare, else module.key)")
     ap.add_argument("--bind", action="append", default=[], metavar="KIND:PATH=KEY:TRANSFORM[:TABLE]",

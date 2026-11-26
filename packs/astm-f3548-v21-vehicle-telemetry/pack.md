@@ -58,7 +58,7 @@ key first, so encode writes the shared value when the entity has it.
 - `speed_ms` (`velocity.speed`): ground speed in metres per second (`units_speed` is
   `MetersPerSecond` only).
 - `course` (`velocity.track`): true-north ground track angle in degrees east of north; 360
-  means unknown and passes through as a number.
+  means unknown and is `absent`: no `course`, the raw key keeps it, an absent `course` writes 360.
 
 ## Licence and source
 

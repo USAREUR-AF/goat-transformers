@@ -947,7 +947,8 @@ class Pack:
             elif d == "requires":
                 cur["requires"] = t[1:]
             elif d == "field":
-                (stack[-1].lines if stack else cur["lines"]).append(("field", t[1], t[2], t[3]))
+                absent = tuple(t[t.index("absent") + 1].split(",")) if "absent" in t[4:] else ()
+                (stack[-1].lines if stack else cur["lines"]).append(("field", t[1], t[2], t[3], absent))
             elif d == "group":
                 g = PackGroup(t[1], t[2])
                 (stack[-1].lines if stack else cur["lines"]).append(("group", g))
@@ -1126,15 +1127,35 @@ def parse_json(text):
     return json.loads(text, object_pairs_hook=hook)
 
 
+def json_text(v):
+    """The canonical text of a JSON scalar, as a sentinel is compared with it (0.9, ruling 11 of 0.5)."""
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    if isinstance(v, (int, float)):
+        return str(int(v)) if float(v).is_integer() else fmt_float(v)
+    return str(v)
+
+
+def json_value(text):
+    """A sentinel written as a JSON value: a number when it is number text, else a string."""
+    if re.fullmatch(r"-?(0|[1-9][0-9]*)", text):
+        return int(text)
+    if re.fullmatch(r"-?(0|[1-9][0-9]*)\.[0-9]+", text):
+        return float(text)
+    return text
+
+
 def decode_lines(obj, lines, ent, root):
     mapped = set()
     for ln in lines:
         if ln[0] == "field":
-            _, key, loc, tr = ln
+            _, key, loc, tr = ln[:4]
             v = obj if loc == "." else get_path(obj, loc)
             mapped.add(loc)
             if v is None or isinstance(v, (dict, list)) and loc != ".":
                 continue
+            if ln[4] and json_text(v) in ln[4]:
+                continue                    # a sentinel (spec 0.9): the key is absent
             val = dec_value(v, tr, loc)
             if key not in ent:
                 ent[key] = val
@@ -1239,7 +1260,7 @@ def decode(pack, text):
                     items.append(it)
                 ent[g.list] = items
                 continue
-            _, key, loc, tr = ln
+            _, key, loc, tr = ln[:4]
             mapped.add(loc)
             v = geo_get(obj, loc)
             if v is not None and key not in ent:
@@ -1276,12 +1297,14 @@ def put_path(obj, path, v):
 def encode_lines(lines, ent, obj):
     for ln in lines:
         if ln[0] == "field":
-            _, key, loc, tr = ln
+            _, key, loc, tr = ln[:4]
             if key in ent:
                 v = enc_value(ent[key], tr)
                 if loc == ".":
                     return v
                 put_path(obj, loc, v)
+            elif ln[4] and loc != "." and get_path(obj, loc) is None:
+                put_path(obj, loc, json_value(ln[4][0]))     # an absent key writes its sentinel (0.9)
             elif loc != ".":
                 # reserve the position of the first line that addresses a nested object
                 pass
@@ -1399,7 +1422,7 @@ def encode(pack, kind, ent, residue):
             if g.list in ent and props.get(g.path[11:]) is None:
                 props[g.path[11:]] = group_array(g, ent)
             continue
-        _, key, loc, tr = ln
+        _, key, loc, tr = ln[:4]
         if key not in ent:
             continue
         v = enc_value(ent[key], tr)
@@ -1589,6 +1612,9 @@ def run(argv=None):
     ap.add_argument("--evidence", action="append", default=[], metavar="KIND:PATH=TEXT",
                     help="pack.md states this text, in the project's words, as the evidence of the "
                          "binding at PATH in place of the schema's description")
+    ap.add_argument("--absent", action="append", default=[], metavar="KIND:PATH=VALUE[,VALUE...]",
+                    help="the shared-key line of a --map binding takes `absent VALUE...`: values the source says "
+                         "mean unknown (spec 0.9); the raw key keeps them, so a message comes back as it was")
     ap.add_argument("--scale", action="append", default=[], metavar="KIND:PATH=iscale:FACTOR[:OFFSET]",
                     help="the line of a --map binding reads the number through this transform "
                          "(engine-spec 0.15), e.g. POSIX seconds to time_ms with iscale:1000")
@@ -1731,6 +1757,14 @@ def run(argv=None):
     for (kn, path) in a.evidence_of:
         if not any(p == path and leaf is not None and (kn == "*" or k["label"] == kn) for k, p, key, leaf in bound):
             raise GenError("--evidence %s:%s: no --map binding at that path" % (kn, path))
+    for spec in a.absent:
+        kn, rest = spec.split(":", 1) if ":" in spec else (spec, "")
+        path, vals = parse_kv(rest, "--absent")
+        hits = [leaf for k, p, key, leaf in bound if leaf is not None and p == path and (kn == "*" or k["label"] == kn)]
+        if not hits:
+            raise GenError("--absent %s: no --map binding at that path" % spec)
+        for leaf in hits:
+            leaf.shared_absent = vals
     for spec in a.scale:
         kn, rest = spec.split(":", 1) if ":" in spec else (spec, "")
         path, tr = parse_kv(rest, "--scale")
@@ -1985,7 +2019,9 @@ def line_for(ln, indent, wire, shared):
         out.append("%sfield  %s  %s  %s" % (indent, ln.shared, q(loc), ln.shared_transform))
         return out
     if shared:
-        out.append("%sfield  %s  %s  %s" % (indent, ln.shared, q(loc), ln.shared_transform))
+        sa = getattr(ln, "shared_absent", None)
+        out.append("%sfield  %s  %s  %s%s" % (indent, ln.shared, q(loc), ln.shared_transform,
+                                              "  absent %s" % sa if sa else ""))
     out.append("%sfield  %s  %s  %s" % (indent, ln.key, q(loc), ln.transform))
     return out
 

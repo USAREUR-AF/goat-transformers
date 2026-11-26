@@ -76,9 +76,12 @@ and stay raw.
 
 The interface gives a value that means invalid, no value or unknown for several members:
 latitude and longitude 0, altitude -1000 m, track 361 degrees, speed 255 m/s, vertical speed
-63 m/s. As in the `remote-id` pack, they pass through as numbers: a flight with an unknown
-altitude reaches another format with `hae` -1000. A generator option for the pack language's
-`absent` sentinels would carry them as absent.
+63 m/s. Altitude -1000, track 361 and speed 255 are `absent` on the `hae`, `course` and
+`speed_ms` lines: such a flight carries no height, course or speed into another format, the raw
+keys keep the values, and an absent key writes the unknown value (vector
+`unknown-alt-track-speed-roundtrip`). Not stated: latitude and longitude 0, which mean unknown
+only together (a condition over two members the language does not have), and the vertical
+speed, which is `track.vel_up_ms`, not one of the keys of this change.
 
 ## Licence and source
 
