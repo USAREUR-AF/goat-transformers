@@ -1,0 +1,9 @@
+{
+  "name": "to-adsb-surface-status-is-no-kind",
+  "from": "adsb-df18",
+  "to": "adsb",
+  "input": "90abc01df909010d7cfd3e2d6a59",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "pyModeS bds65: subtype 1 is the surface status; adsb-df18 maps its capability class as adsb.capability_class, which adsb's surface kind does not hold (it requires the surface capability class and the length/width code), and the subtype now requires its value, so the message is no-kind, not an airborne status"
+}

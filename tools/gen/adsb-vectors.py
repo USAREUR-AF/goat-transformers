@@ -514,12 +514,19 @@ KEEPS_VELOCITY_REF = ('pyModeS decoder/bds/bds09.py: the subtype is ME bits 5 to
 
 
 def adsb18_to_adsb():
-    """The vectors from adsb-df18 to adsb that keep the velocity subtype."""
+    """The vectors from adsb-df18 to adsb: two that keep the velocity subtype, and a surface
+    status that adsb has no kind for."""
     out = []
     for name, hexmsg in (("to-adsb-keeps-velocity-st2", '90abc0149adf1faf7c148f2cfccc'), ("to-adsb-keeps-velocity-st4", '90abc0169cdcdbf978cc9bd68485')):
         df17 = "88" + hexmsg[2:]   # only the 5-bit downlink format differs (18 to 17), CA 0 for CF 0
         out.append({"name": name, "from": "adsb-df18", "to": "adsb", "input": hexmsg, "expect": df17,
                     "source": "constructed", "reference": KEEPS_VELOCITY_REF})
+    out.append({"name": "to-adsb-surface-status-is-no-kind", "from": "adsb-df18", "to": "adsb",
+                "input": "90abc01df909010d7cfd3e2d6a59", "expect_error": "no-kind", "source": "constructed",
+                "reference": "pyModeS bds65: subtype 1 is the surface status; adsb-df18 maps its capability "
+                             "class as adsb.capability_class, which adsb's surface kind does not hold (it "
+                             "requires the surface capability class and the length/width code), and the "
+                             "subtype now requires its value, so the message is no-kind, not an airborne status"})
     return out
 
 

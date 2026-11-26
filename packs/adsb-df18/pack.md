@@ -122,3 +122,8 @@ any 6-bit numbers, parity recomputed.
 Each airborne velocity kind holds its subtype in `adsb.velocity_subtype` and requires that value, since
 subtypes 1 and 2, and 3 and 4, have the same fields and 2 and 4 multiply the speed by 4. A conversion between
 `adsb` and `adsb-df18` keeps the subtype; an entity with velocity fields but no subtype is `no-kind`.
+
+## Operational status subtype
+
+The two operational status kinds hold their subtype in `adsb.opstatus_subtype` and require its value (0
+airborne, 1 surface), so a status is never written under the other subtype's meaning.
