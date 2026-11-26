@@ -167,22 +167,20 @@ What the evidence does not show:
 
 ## Not-available codes on decode
 
-The source gives not-available codes: longitude 181 degrees (108600000),
-latitude 91 degrees (54600000), speed 1023, course 3600, heading 511, and in
-type 27 longitude 181 degrees, latitude 91 degrees, speed 63 and course 511.
-Engine version 0.14 has no way to state that a wire value decodes as an absent
-key. So a position report with no position decodes to `lon` 181 and `lat` 91,
-speed 1023 to 52.627666... m/s and course 3600 to 360 degrees, and a
-conversion carries these to the target as if they were values. A consumer
-must check them until the language can state sentinels (another change is
-adding them). The raw keys (`ais.heading`, `ais.second`, `ais.turn` and the
-rest) hold the code itself, which the key's description in `model/ais.def`
-names.
+The source gives not-available codes, and each is `absent` on its line: in the
+common navigation block (types 1, 2, 3, 9, 18, 19) and in types 4, 11 and 21,
+longitude 181 degrees (raw 108600000), latitude 91 degrees (54600000), speed
+1023 and course 3600. A message with them decodes without `lon`, `lat`,
+`speed_ms` or `course`, so no conversion carries them as values, and an absent
+key writes the code: the message comes back byte for byte. Heading 511 and the
+other raw keys (`ais.heading`, `ais.second`, `ais.turn` and the rest) still hold
+the code, which the key's description in `model/ais.def` names.
 
-The source states the type 27 not-available codes as 181000 and 91000, which
-do not fit the 18-bit and 17-bit fields; in 1/10 minute, 181 and 91 degrees
-are 108600 and 54600, the values the source gives for type 17. A sentinel for
-type 27 needs that resolved.
+Type 27: the source prints 181000 and 91000 in a unit of 1/10 minute, which do
+not fit its signed 18- and 17-bit fields; the pack takes 181 and 91 degrees in
+that unit, 108600 and 54600, as the source does for type 17, and speed 63. The
+course of type 27 is the raw key `ais.course_lr` (511 not available). Every code
+lies outside the range of a real value, so no real value is lost.
 
 ## Not mapped
 

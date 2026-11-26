@@ -12,12 +12,6 @@
 # `--check` fails on a failure not listed here and on a line that no longer
 # fails. Do not add a line without a reason; the list is burned down.
 adsb-df18/pack.md datum datum: maps adsb.gnss_height_m and states no datum for it (adsb's pack.md says the source names none)
-ais/06-type4-date-time-and-position-not-available lat defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
-ais/06-type4-date-time-and-position-not-available lon defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
-ais/33-type1-all-not-available lat defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
-ais/33-type1-all-not-available lon defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
-ais/51-type1-not-available-to-geojson lat defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
-ais/51-type1-not-available-to-geojson lon defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
 arsdk-ardrone3/gen-038-piloting-state-gps-location-changed-roundtrip track.sigma_north_m defect(vector): a generated message holds a negative accuracy; the source gives -1 for not available, which the pack's sentinel covers, and no other negative value
 arsdk-ardrone3/gen-038-piloting-state-gps-location-changed-roundtrip track.sigma_up_m defect(vector): a generated message holds a negative accuracy; the source gives -1 for not available, which the pack's sentinel covers, and no other negative value
 awc-taf/gen-001-report-residue stale_ms defect(vector): validTimeTo is epoch seconds and the generated message holds 50074, a counter, not a time
