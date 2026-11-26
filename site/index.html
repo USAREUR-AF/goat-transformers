@@ -105,9 +105,9 @@ default le        9999999</pre>
 
   <div class="wrap">
     <ul class="numbers strip" aria-label="Counted from the tree">
-      <li><b data-stat="formats">4,255</b><span class="unit">formats<sup><a href="#fn-formats">1</a></sup></span><span class="d">each one a pack from a public source</span></li>
-      <li><b data-stat="message_kinds">16,748</b><span class="unit">message kinds<sup><a href="#fn-kinds">2</a></sup></span><span class="d">message layouts across those formats</span></li>
-      <li><b data-stat="conversion_vectors">25,845</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
+      <li><b data-stat="formats">4,254</b><span class="unit">formats<sup><a href="#fn-formats">1</a></sup></span><span class="d">each one a pack from a public source</span></li>
+      <li><b data-stat="message_kinds">16,747</b><span class="unit">message kinds<sup><a href="#fn-kinds">2</a></sup></span><span class="d">message layouts across those formats</span></li>
+      <li><b data-stat="conversion_vectors">25,842</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
       <li><b data-stat="wasm_bytes">812,294</b><span class="unit">bytes<sup><a href="#fn-wasm">4</a></sup></span><span class="d">the engine as WebAssembly, in this page</span></li>
     </ul>
   </div>
@@ -817,7 +817,7 @@ default le        9999999</pre>
       </div>
       <div>
         <h3>One shared model</h3>
-        <p>Every pack maps its fields to typed keys in fixed units: degrees, meters, meters per second, milliseconds since 1970. A conversion decodes the source message to the model and encodes the model to the target, so <span data-stat="formats">4,255</span> formats need <span data-stat="formats">4,255</span> packs, not <span data-stat="pair_converters">18,100,770</span> converters, one for each ordered pair.</p>
+        <p>Every pack maps its fields to typed keys in fixed units: degrees, meters, meters per second, milliseconds since 1970. A conversion decodes the source message to the model and encodes the model to the target, so <span data-stat="formats">4,254</span> formats need <span data-stat="formats">4,254</span> packs, not <span data-stat="pair_converters">18,092,262</span> converters, one for each ordered pair.</p>
       </div>
       <div>
         <h3>Seven engines that must agree</h3>
@@ -866,11 +866,10 @@ default le        9999999</pre>
     <p class="lead">These are lines of the pack for a GPX 1.1 waypoint, in their order with some left out, beside a message it describes. The file also reads the document's creator, the waypoint's other elements, and route and track points, the same way.</p>
     <div class="grid2">
       <div class="term">
-        <div class="term-head"><span><a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/packs/gpx/pack.def">packs/gpx/pack.def</a>, a selection of its lines, comments left out<span class="scrollhint">; on a narrow screen it scrolls sideways</span></span></div>
+        <div class="term-head"><span><a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/packs/gpx/pack.def">packs/gpx/pack.def</a>, a selection of its lines, comments and the source line left out<span class="scrollhint">; on a narrow screen it scrolls sideways</span></span></div>
 <pre data-box="output">format  gpx
 version 0.1.0
 distribution public
-source  &quot;GPX 1.1 schema, TopoGrafix, https://www.topografix.com/GPX/1/1/gpx.xsd (open standard; https://www.topografix.com/gpx.asp)&quot;
 uses    gpx
 wire    xml
 root    gpx
