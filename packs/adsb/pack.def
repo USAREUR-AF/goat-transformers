@@ -438,7 +438,8 @@ field  adsb.reserved2                 0:86:2     uint
 kind      operational-status-airborne
 when      0:32:5     31
 when      0:37:3     0
-requires  adsb.icao adsb.capability_class adsb.operational_mode adsb.version
+requires  adsb.opstatus_subtype=0 adsb.icao adsb.capability_class adsb.operational_mode adsb.version
+field  adsb.opstatus_subtype        0:37:3     uint
 field  adsb.tc                        0:32:5     uint
 field  adsb.capability_class          0:40:16    uint
 field  adsb.operational_mode          0:56:16    uint
@@ -456,7 +457,8 @@ field  adsb.reserved                  0:87:1     uint
 kind      operational-status-surface
 when      0:32:5     31
 when      0:37:3     1
-requires  adsb.icao adsb.surface_capability_class adsb.length_width adsb.operational_mode adsb.version
+requires  adsb.opstatus_subtype=1 adsb.icao adsb.surface_capability_class adsb.length_width adsb.operational_mode adsb.version
+field  adsb.opstatus_subtype        0:37:3     uint
 field  adsb.tc                        0:32:5     uint
 field  adsb.surface_capability_class  0:40:12    uint
 field  adsb.length_width              0:52:4     uint
