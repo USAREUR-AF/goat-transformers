@@ -36,6 +36,8 @@ below, and every vector of another pack that converts from or to one of them.
 | [CC-BY-SA-2.0](https://creativecommons.org/licenses/by-sa/2.0/) | yes | yes | yes | none | `open+copyleft` |
 | [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) | yes | yes | yes | none | `open+copyleft` |
 | [CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/) | yes | no | no | none | `open` |
+| [DL-DE-ZERO-2.0](https://www.govdata.de/dl-de/zero-2-0) | yes | no | no | none | `open` |
+| [LicenseRef-APRS-NC](http://www.aprs.org/doc/APRS101.PDF) | no | no | yes | none | `everything` |
 | [LicenseRef-MS-OpenSpec](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/5606ad47-5ee0-437a-817e-70c366052962) | unknown | no | yes | none | `everything` |
 | [LicenseRef-NGA-MSI](https://msi.nga.mil) | yes | no | yes | none | `open` |
 | [LicenseRef-OASIS-Notice](https://www.oasis-open.org/policies-guidelines/ipr/) | yes | no | yes | none | `open` |
@@ -57,6 +59,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/aisstream` | `aisstream` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/altbeacon` | `altbeacon` | CC-BY-SA-4.0 | `open+copyleft` | its own licence |
 | `packs/amqp10-frame` | `amqp10-frame` | LicenseRef-OASIS-Notice | `open` | its own licence |
+| `packs/aprs` | `aprs` | LicenseRef-APRS-NC | `everything` | its own licence |
 | `packs/arsdk-proto-antiflicker` | `arsdk-proto-antiflicker` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/arsdk-proto-backuplink` | `arsdk-proto-backuplink` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/arsdk-proto-calibration` | `arsdk-proto-calibration` | LicenseRef-unstated | `everything` | its own licence |
@@ -801,6 +804,9 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/overture-place` | `overture-place` | CC-BY-4.0 | `open` | its own licence |
 | `packs/overture-segment` | `overture-segment` | CC-BY-4.0 | `open` | its own licence |
 | `packs/overture-water` | `overture-water` | CC-BY-4.0 | `open` | its own licence |
+| `packs/pegelonline-current` | `pegelonline-current` | DL-DE-ZERO-2.0 | `open` | its own licence |
+| `packs/pegelonline-station` | `pegelonline-station` | DL-DE-ZERO-2.0 | `open` | its own licence |
+| `packs/pegelonline-timeseries` | `pegelonline-timeseries` | DL-DE-ZERO-2.0 | `open` | its own licence |
 | `packs/pfcp` | `pfcp` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/pocsag-batch` | `pocsag-batch` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/px4-ulog-action-request` | `px4-ulog-action-request` | CC-BY-4.0 | `open` | its own licence |
@@ -1227,6 +1233,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/aisstream.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/altbeacon.def` | CC-BY-SA-4.0 | `open+copyleft` | its own licence |
 | `model/amqp.def` | LicenseRef-OASIS-Notice | `open` | its own licence |
+| `model/aprs.def` | LicenseRef-APRS-NC | `everything` | its own licence |
 | `model/arsdkprotoantiflicker.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/arsdkprotobackuplink.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/arsdkprotocalibration.def` | LicenseRef-unstated | `everything` | its own licence |
@@ -1960,6 +1967,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/overtureplace.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/overturesegment.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/overturewater.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/pegelonline.def` | DL-DE-ZERO-2.0 | `open` | its own licence |
 | `model/pfcp.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/pocsag.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/px4ulog.def` | CC-BY-4.0 | `open` | its own licence |
