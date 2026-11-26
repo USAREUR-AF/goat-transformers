@@ -1,0 +1,18 @@
+{
+  "name": "consistency-check-secured-octets-roundtrip",
+  "from": "rpl-control",
+  "to": "rpl-control",
+  "input": "9b8a1a2b0000000000000009011e80123420010db800000000000000000000000100000007",
+  "expect": "9b8a1a2b0000000000000009011e80123420010db800000000000000000000000100000007",
+  "model": {
+    "inet.icmpv6_code": "138",
+    "rpl.secured_octets.#": "33",
+    "@absent": [
+      "rpl.cc_response",
+      "rpl.cc_nonce",
+      "rpl.destination_counter",
+      "rpl.instance_id"
+    ]
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6550 section 6.1 and 6.6; a consistency check, which is always secured: its security section (9 octets) and base object kept as octets, as for 0x80-0x83; expect derived there, no engine run"
+}

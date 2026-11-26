@@ -16,8 +16,7 @@ The ICMPv6 type, code and checksum, then by code:
 | 0x01 DIO | RPLInstanceID, version, rank, G, the zero bit, MOP, preference, DTSN, flags, reserved, DODAGID |
 | 0x02 DAO | RPLInstanceID, K, D, flags, reserved, DAO sequence, the DODAGID when D is 1 |
 | 0x03 DAO-ACK | RPLInstanceID, D, reserved, DAO sequence, status, the DODAGID when D is 1 |
-| 0x8A consistency check | RPLInstanceID, R, flags, nonce, DODAGID, destination counter |
-| any other (the secured forms 0x80-0x83) | the rest as octets |
+| any other (the secured forms 0x80-0x83, and 0x8A consistency check, which section 6.6 says is always sent secured) | the rest as octets |
 
 Then the options to the end: the option type, and for any type but Pad1 (0, a single octet) the data
 in the extent of the option length. Laid out: route information (3), DODAG configuration (4), RPL
@@ -45,5 +44,5 @@ fill (the 32 bits after the checksum belong to different fields by code).
 
 `tools/gen/mesh-vectors.py`, without an engine: DIS; DIO with DODAG configuration and prefix information;
 DAO with target and transit information; DAO-ACK with the DODAGID; Pad1, PadN and an unassigned option;
-consistency check; a secure DIS as octets; DIS with solicited and route information; an echo request
+a consistency check as octets; a secure DIS as octets; DIS with solicited and route information; an echo request
 (`no-kind`); a cut DIO (`malformed-wire`).

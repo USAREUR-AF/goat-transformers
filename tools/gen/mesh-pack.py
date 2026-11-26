@@ -303,9 +303,9 @@ def rpl_pack():
         ("2", [r("instance_id", 8), r("dao_k", 1), r("dao_d", 1), r("dao_flags", 6), r("dao_reserved", 8),
                r("dao_sequence", 8)] + sw("rpl.dao_d", [("1", dodagid)], []) + opts),
         ("3", [r("instance_id", 8), r("dao_d", 1), r("ack_reserved", 7), r("dao_sequence", 8), r("status", 8)] +
-              sw("rpl.dao_d", [("1", dodagid)], []) + opts),
-        ("138", [r("instance_id", 8), r("cc_response", 1), r("cc_flags", 7), r("cc_nonce", 16)] + dodagid +
-                [r("destination_counter", 32)] + opts)],
+              sw("rpl.dao_d", [("1", dodagid)], []) + opts)],
+        # 0x8A (consistency check) has the secured bit 0x80 set (RFC 6550 6.1) and MUST be sent secured
+        # (6.6): a security section precedes its base object, so it is kept as octets with 0x80-0x83.
         octets(R, "secured_octets"))
     L += ["field  inet.icmpv6_type  8  uint", "field  inet.icmpv6_code  8  uint", "field  inet.icmpv6_checksum  16  uint"]
     L += sw("inet.icmpv6_type", [("155", by_code)])
@@ -333,11 +333,11 @@ RPL_KEYS = [
     ("key", "dao_sequence", "DAO and DAO-ACK: DAO sequence"),
     ("key", "ack_reserved", "DAO-ACK: the 7 reserved bits after D, 0"),
     ("key", "status", "DAO-ACK status: 0 unqualified acceptance, 1-127 acceptance with a condition, 128-255 rejection"),
-    ("key", "cc_response", "consistency check R: the message is a response"),
-    ("key", "cc_flags", "consistency check: the 7 flag bits after R, 0"),
-    ("key", "cc_nonce", "consistency check nonce"),
-    ("key", "destination_counter", "consistency check: the destination counter"),
-    ("list", "secured_octets", "a code other than 0-3 and 0x8A (the secured forms 0x80-0x83 and others): the message after the checksum, as octets"),
+    ("key", "cc_response", "WITHDRAWN, no longer mapped: was the consistency check R, read straight after the checksum; a consistency check (0x8A) is always secured (RFC 6550 6.1, 6.6), its security section comes first, so it is now kept in secured_octets"),
+    ("key", "cc_flags", "WITHDRAWN, no longer mapped: was the consistency check flags, read straight after the checksum; a consistency check (0x8A) is always secured (RFC 6550 6.1, 6.6), its security section comes first, so it is now kept in secured_octets"),
+    ("key", "cc_nonce", "WITHDRAWN, no longer mapped: was the consistency check nonce, read straight after the checksum; a consistency check (0x8A) is always secured (RFC 6550 6.1, 6.6), its security section comes first, so it is now kept in secured_octets"),
+    ("key", "destination_counter", "WITHDRAWN, no longer mapped: was the consistency check destination counter, read straight after the checksum; a consistency check (0x8A) is always secured (RFC 6550 6.1, 6.6), its security section comes first, so it is now kept in secured_octets"),
+    ("list", "secured_octets", "a code other than 0-3 (the secured forms 0x80-0x83 and the consistency check 0x8A, which is always secured, and others): the message after the checksum, as octets"),
     ("list", "options", "the options, in order"),
     ("key", "option_type", "option type: 0 Pad1, 1 PadN, 2 DAG metric container, 3 route information, 4 DODAG configuration, 5 RPL target, 6 transit information, 7 solicited information, 8 prefix information, 9 target descriptor"),
     ("list", "metric_container", "DAG metric container (RFC 6551): its data, as octets"),
