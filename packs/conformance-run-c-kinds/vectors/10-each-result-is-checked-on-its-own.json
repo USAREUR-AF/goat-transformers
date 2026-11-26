@@ -1,0 +1,16 @@
+{
+  "name": "each-result-is-checked-on-its-own",
+  "from": "conformance-run-c-kinds",
+  "to": "conformance-run-held-target",
+  "input": "05010702000809",
+  "expect_results": [
+    {
+      "expect": "0107"
+    },
+    {
+      "expect_error": "no-kind"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: to a target that is not a carrier pack each joined entity is checked as convert: the second holds z and w, no key of kind a"
+}

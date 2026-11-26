@@ -1,0 +1,13 @@
+{
+  "name": "kind-of-a-run-line-holds-the-first-message",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-only-run",
+  "input": "040102030409",
+  "expect_results": [
+    {
+      "expect": "0101020304"
+    }
+  ],
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: carrier to carrier: the outer entity joined with the first message holds x, a key of in-xy, the inner pack of kind r's run line"
+}

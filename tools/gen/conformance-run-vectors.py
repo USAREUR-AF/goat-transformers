@@ -145,6 +145,8 @@ for k in ("plain", "framed"):
     define("one-" + k, "A pack with a plain `inner` line: w : 8, then in-%s." % k, W + " / inner {P}in-" + k)
 define("one-switch", "A pack with a plain `inner` line: w : 8, then in-switch.", W + " / inner {P}in-switch")
 define("one", "A pack with a plain `inner` line: w : 8, then in-x.", W + " / inner {P}in-x")
+define("only-run", "A carrier pack whose kind r has its run line alone; kind o (2) n.", "kind r / when 8 1 / inner {P}in-xy run / kind o / when 8 2 / requires probe.n / " + N)
+define("held-target", "A target: kind a (1) y : 8 (0.94).", "kind a / when 8 1 / " + Y)
 define("json", "The `json` source and target.", " / ".join("field probe.%s %s int" % (k, k) for k in ("n", "w", "x", "y", "z", "n_copy")), "json")
 
 
@@ -569,6 +571,38 @@ def joined(d, m):
     return join(d.ent, m.ent), (d.inner, m.kind["name"]) if m.kind else None
 
 
+def kind_keys(lines):
+    """0.94: the keys of a kind over these lines: mapped fields, list entries
+    (not item keys) and the model keys of an `inner` line's pack."""
+    out = set()
+    for n in lines:
+        if n["d"] == "field":
+            out.add(n["a"][0])
+        elif n["d"] == "group":
+            out.add(n["a"][0])
+        elif n["d"] == "inner":
+            if n["a"][0] in PACKS:
+                out |= kind_keys(all_lines(pack_of(n["a"][0])))
+        else:
+            out |= kind_keys(n["body"])
+    return out
+
+
+def held_check(name, ent, kept_kind, kept_inner):
+    """0.94: a conversion into a chosen kind holds one of its keys, else no-kind."""
+    pack = pack_of(name)
+    if pack["kinds"] and not kept_kind and not kept_inner and not held_by(name, choose(name, ent, None), ent):
+        raise Fail("no-kind")
+
+
+def held_by(name, kind, ent):
+    lines = pack_of(name)["body"] + kind["body"]
+    if any(REF.as_key(n) and "optional" not in n["a"] for n in lines):
+        return True
+    keys = kind_keys(lines) | {r.split("=")[0] for r in kind["requires"]}
+    return any(k in ent and ent[k] != [] for k in keys)
+
+
 def convert(frm, to, text, context, limit, d=None):
     if frm not in PACKS or to not in PACKS:
         raise Fail("unknown-format")
@@ -583,6 +617,8 @@ def convert(frm, to, text, context, limit, d=None):
     if frm != to or context is not None:
         ent = complete(ent, context)
     kind, inner = kept(frm, to, d.kind and d.kind["name"], inner)
+    if frm != to:
+        held_check(to, ent, kind, inner)
     return encode(to, ent, kind, inner)
 
 
@@ -637,7 +673,10 @@ def convert_run(frm, to, text, context, limit):
                 raise Fail("transform-decode")
             ent, inner = joined(d, m)
             kind, inner = kept(frm, to, d.kind and d.kind["name"], inner)
-            out.append(("ok", encode(to, complete(ent, context), kind, inner)))
+            ent = complete(ent, context)
+            if frm != to:
+                held_check(to, ent, kind, inner)
+            out.append(("ok", encode(to, ent, kind, inner)))
         except Fail as e:
             out.append(("error", e.kind))
     return out
@@ -658,7 +697,14 @@ def to_run(frm, to, d, messages, context):
         if len(messages) != 1:
             raise Fail("message-count")
         ent, inner = joined(d, messages[0])
-        return Enc(to, complete(ent, context), inner_kind=kept(frm, to, None, inner)[1], chosen=kind).run()
+        ent, kept_inner = complete(ent, context), kept(frm, to, None, inner)[1]
+        if frm != to and kind and not kept_inner and not held_by(to, kind, ent):
+            raise Fail("no-kind")                    # 0.94 ruling 7: checked on the joined entity
+        return Enc(to, ent, inner_kind=kept_inner, chosen=kind).run()
+    if frm != to and kind:                           # 0.94 ruling 7: the outer entity joined with the first message
+        first = complete(joined(d, messages[0])[0], context) if messages else outer
+        if not held_by(to, kind, first):
+            raise Fail("no-kind")
 
     def each(fmt):
         for i, m in enumerate(messages):
@@ -1015,6 +1061,16 @@ def build(sink):
     hd = 'format probe\nversion 0.92.0\ndistribution public\nsource "probe"\nuses probe\nwire bits\n'
     sq = hd + "layout sequential\n"
     num = [FIRST_LOAD - 1]
+
+    # 0.94 ruling 7: the check in run operations
+    h = "spec 0.94 ruling 7: "
+    run("c-xy", "only-run", "kind-of-a-run-line-holds-the-first-message", "040102030409", ["0101020304"], ref=h + "carrier to carrier: the outer entity joined with the first message holds x, a key of in-xy, the inner pack of kind r's run line")
+    run("c-xy", "only-run", "empty-run-checks-the-outer-entity-alone", "0009", error=NK, ref=h + "an empty run: the outer entity alone holds w, no key of kind r; to a carrier pack the call's no-kind")
+    run("c-xy", "c-xy", "same-format-is-not-checked", "0009", ["0009"], ref=h + "with `from` equal to `to` nothing is checked (ruling 2)")
+    run(J, "only-run", "other-format-to-a-carrier-is-a-convert", '{"x":1,"y":2}', ["010102"], ref=h + "from another format the carrier of one message is a convert, and x is held")
+    run(J, "only-run", "other-format-holding-nothing-of-the-kind", '{"w":9}', error=NK, ref=h + "a convert into kind r of an entity that holds only w")
+    run("c-kinds", "held-target", "each-result-is-checked-on-its-own", "05010702000809", ["0107", "!" + NK], ref=h + "to a target that is not a carrier pack each joined entity is checked as convert: the second holds z and w, no key of kind a")
+    con("c-xy", "held-target", "convert-of-one-message-is-checked", "02010209", "0102", ref=h + "convert of a carrier of one message: the joined entity holds y")
 
     def load(name, text, error=BD, gtcheck_kind=None, packs=None):
         num[0] += 1

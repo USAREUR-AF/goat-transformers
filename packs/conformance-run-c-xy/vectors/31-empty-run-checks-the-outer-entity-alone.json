@@ -1,0 +1,10 @@
+{
+  "name": "empty-run-checks-the-outer-entity-alone",
+  "from": "conformance-run-c-xy",
+  "to": "conformance-run-only-run",
+  "input": "0009",
+  "expect_error": "no-kind",
+  "run": true,
+  "source": "constructed",
+  "reference": "spec 0.94 ruling 7: an empty run: the outer entity alone holds w, no key of kind r; to a carrier pack the call's no-kind"
+}
