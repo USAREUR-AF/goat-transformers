@@ -1,7 +1,0 @@
-{
-  "name": "nvg-to-cot",
-  "from": "nvg",
-  "to": "cot-xml",
-  "input": "<nvg><point x=\"11.2\" y=\"48.137\" label=\"ALPHA\" symbol=\"app6a:SFGPUCI----D\"/></nvg>",
-  "expect": "<event version=\"2.0\" type=\"app6a:SFGPUCI----D\"><point lat=\"48.137\" lon=\"11.2\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"ALPHA\"/></detail></event>"
-}
