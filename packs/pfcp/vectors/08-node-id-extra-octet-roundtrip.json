@@ -1,0 +1,15 @@
+{
+  "name": "node-id-extra-octet-roundtrip",
+  "from": "pfcp",
+  "to": "pfcp",
+  "input": "2005000e00020300003c000600c000021eab",
+  "expect": "2005000e00020300003c000600c000021eab",
+  "model": {
+    "pfcp.message_type": "5",
+    "pfcp.ies[0].pfcp.node_id_type": "0",
+    "pfcp.ies[0].pfcp.ipv4": "3221226014",
+    "pfcp.ies[0].pfcp.extra.#": "1",
+    "pfcp.ies[0].pfcp.extra[0].pfcp.octet": "171"
+  },
+  "source": "built by tools/gen/gtp-vectors.py from values chosen there; layout restated from 3GPP TS 29.244 clauses 7.2 and 8; an association setup request whose Node ID (extendable, Table 8.1.2-1 and Figure 8.2.38-1) has one octet after its IPv4 address: the IE length is 6 and the octet is kept; expect derived there, no engine run"
+}
