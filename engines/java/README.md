@@ -209,10 +209,14 @@ It builds the full jar and the jar with `xml`, `json` and `geojson` under
 the reduced jar:
 
 - every conversion vector whose `from` and `to` packs are on the three wires,
-  with every pack on those wires loaded;
+  with every pack on those wires loaded, except a vector of an outer pack (a
+  pack with an `inner` line), which no reduced-build check runs (ruling 1 of
+  0.34);
 - the capability vectors between formats on the three wires, and the load
-  vectors none of whose packs is on another wire of the specification;
-- one pack each on `bits`, `protobuf`, `text`, `tlv` and `cbor`: `unknown-wire`, the
+  vectors none of whose packs is on another wire of the specification or is an
+  outer pack;
+- every pack on another wire of the specification: `unknown-wire`, the wire
+  named in the message; and one pack each on `bits`, `protobuf`, `text`, `tlv` and `cbor`: `unknown-wire`, the
   wire named in the message, and the format then `unknown-format`; and a
   `wire` value that is no wire, plain `unknown-wire`.
 
@@ -236,6 +240,8 @@ OK
 jar size, all eight wires:       351969 bytes
 jar size, xml, json and geojson: 257708 bytes, 73% of the full jar
 ```
+
+`sh engines/java/single-wire-check.sh` (`GOAT_WIRES="a b"` to limit it) does the same for each of the eight wires alone: it builds the jar with that wire alone and the jar with every other wire, runs the same check on the first, prints `<wire> alone: N conversion vectors run, N passed, 0 failed`, and stops non-zero at the first failure, showing that step's output.
 
 The jar shrinks by a quarter, not more, because the pack reader stays whole:
 a pack on `xml` gets the same named errors in every build (ruling 1b), and

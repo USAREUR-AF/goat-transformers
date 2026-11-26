@@ -148,7 +148,7 @@ parse(Bin) ->
                                               [Text])
                       end;
                   cbor ->
-                      case gt_cbor:tag_value(Args) of
+                      case ?CBOR(gt_cbor:tag_value(Args)) of
                           {ok, _} -> ok;
                           error -> load_error('bad-directive',
                                               "tag ~s is not a decimal from 0 to 2^64-1 with no leading zero",
@@ -249,7 +249,7 @@ parse(Bin) ->
              fixed ->
                  check_scopes(P2),
                  case Wire of
-                     cbor -> gt_cbor:prepare(P2);
+                     cbor -> ?CBOR(gt_cbor:prepare(P2));
                      _ -> P2
                  end
          end,
@@ -1298,7 +1298,7 @@ parse_loc(cbor, <<".">>, P) ->
         true -> [];
         false -> line_error('bad-locator', "cbor path . stands outside a group", [])
     end;
-parse_loc(cbor, S, _P) -> gt_cbor:path(S);
+parse_loc(cbor, S, _P) -> ?CBOR(gt_cbor:path(S));
 parse_loc(text, S, P) ->
     Loc = text_loc(S),
     case maps:get(gstack, P) of
@@ -1433,7 +1433,7 @@ group_loc(protobuf, S, _InGroup, _P) when S =:= <<"rest">>; S =:= <<"last">> ->
 group_loc(cbor, <<".">>, true, _P) ->
     line_error('bad-locator', "group . inside a group body", []);
 group_loc(cbor, <<".">>, false, _P) -> [];
-group_loc(cbor, S, _InGroup, _P) -> gt_cbor:path(S);
+group_loc(cbor, S, _InGroup, _P) -> ?CBOR(gt_cbor:path(S));
 group_loc(protobuf, S, _InGroup, P) -> top_loc(protobuf, S, P);
 group_loc(bits, S, _InGroup, #{word_bytes := WB0}) ->
     WB = case WB0 of
@@ -1484,7 +1484,7 @@ group_spec(Wire, [Tok | _], LocS, _P) ->
 %% last thing in its scope, and a field of an item stays within its item.
 check_scopes(#{wire := text} = P) -> text_scopes(P);
 check_scopes(#{wire := tlv} = P) -> tlv_scopes(P);
-check_scopes(#{wire := cbor} = P) -> gt_cbor:check_pack(P);
+check_scopes(#{wire := cbor} = P) -> ?CBOR(gt_cbor:check_pack(P));
 check_scopes(#{common := Common, kinds := Kinds, wire := Wire}) ->
     case Kinds of
         [] -> check_scope(Common, none, Wire);
@@ -1740,7 +1740,7 @@ fixed_value(Which, tlv, {_Path, Size}, LocS, ValS, P) ->
 fixed_value(wh, cbor, _Loc, _LocS, <<"present">>, P) -> {present, P};
 fixed_value(const, cbor, _Loc, LocS, <<"present">>, _P) ->
     load_error('bad-directive', "const ~s present: a const needs a value", [LocS]);
-fixed_value(_Which, cbor, _Loc, _LocS, ValS, P) -> {gt_cbor:fixed(ValS), P};
+fixed_value(_Which, cbor, _Loc, _LocS, ValS, P) -> {?CBOR(gt_cbor:fixed(ValS)), P};
 fixed_value(wh, _Text, _Loc, _LocS, <<"present">>, P) -> {present, P};
 fixed_value(const, _Text, _Loc, LocS, <<"present">>, _P) ->
     load_error('bad-directive', "const ~s present: write =present for the text", [LocS]);
@@ -1924,7 +1924,7 @@ parse_transform1(Wire, S) ->
     Ok = case {Class, Wire} of
              %% on cbor the transforms of its table, every other after the file
              {_, cbor} ->
-                 case gt_cbor:transform_ok(Tr) of
+                 case ?CBOR(gt_cbor:transform_ok(Tr)) of
                      true -> true;
                      false -> late
                  end;

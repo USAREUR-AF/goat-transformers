@@ -129,6 +129,18 @@ vectors and 16 of 16 capability vectors run (16212, 1075 and 11 skipped), and
 tlv 11, cbor 7). What stays in the reduced build is the pack reader and the transforms
 every wire shares.
 
+### Single-wire check
+
+```sh
+sh engines/cpp/tests/single-wire.sh
+```
+
+It builds the library and `goat-xf` with each wire alone, and with every wire
+but it, and fails on a warning the build with all eight wires does not have.
+With the wire alone it also runs `goat_transformers_vectors`, and fails when no
+conversion vector between two formats of the wire ran. `GOAT_WIRES="cbor tlv"`
+checks fewer wires; `GT_JOBS` sets the parallel jobs (4).
+
 ## Test
 
 ```sh

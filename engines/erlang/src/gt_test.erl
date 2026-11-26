@@ -31,6 +31,7 @@
 -module(gt_test).
 -include_lib("kernel/include/file.hrl").
 -export([main/1, run/1, run/2, run_reduced/3, run_profile_checks/0]).
+-include("gt_wires.hrl").
 
 main(Args) ->
     case Args of
@@ -900,7 +901,7 @@ ruling_cases() ->
 cbor_cases(C, CA) ->
     Rep = fun(Hex, N) -> binary:copy(Hex, N) end,
     %% a head of major type MT declaring the largest length of each width
-    Huge = [gt_hex:bytes_to_hex(<<((MT bsl 5) bor AI), Arg/binary>>)
+    Huge = [?CBOR(gt_hex:bytes_to_hex(<<((MT bsl 5) bor AI), Arg/binary>>))
             || MT <- [2, 3, 4, 5],
                {AI, Arg} <- [{27, <<-1:64>>}, {26, <<-1:32>>}, {25, <<-1:16>>}, {24, <<255>>}]],
     [{C, refused, <<"a200010a", (Rep(<<"81">>, 100000))/binary, "00">>},       % arrays
@@ -944,7 +945,8 @@ cbor_cases(C, CA) ->
         [{C, refused, <<"a200010a", H/binary>>} || H <- Huge] ++
         [{C, refused, <<"a200010a5f", H/binary, "ff">>} || <<"5", _/binary>> = H <- Huge].
 
-%% The check values of the CRC-32 of 0.27 ("The CRC").
+%% The check values of the CRC-32 of 0.27 ("The CRC"), a part of the tlv wire.
+-if(?W_TLV).
 run_unit_checks() ->
     lists:foldl(
       fun({Name, Got, Want}, {P, F}) ->
@@ -957,6 +959,9 @@ run_unit_checks() ->
       end, {0, 0},
       [{"crc32 of 123456789", gt_tlv:crc32(<<"123456789">>), 16#0376E6E7},
        {"crc32 of no bytes", gt_tlv:crc32(<<>>), 16#FFFFFFFF}]).
+-else.
+run_unit_checks() -> {0, 0}.
+-endif.
 
 %% ===================================================================
 %% Version 0.93 in the library: rulings 5 and 6, and a controlled inner
@@ -1282,7 +1287,10 @@ run_reduced(PacksDir, ModelsDir, Wires0) ->
     Packs = [{Dir, Text, pack_head(Text)}
              || Dir <- lists:sort(Entries),
                 {ok, Text} <- [file:read_file(filename:join([PacksDir, Dir, "pack.def"]))]],
-    FormatWire = maps:from_list([{F, W} || {_, _, {F, W}} <- Packs]),
+    %% ruling 1 of 0.34: the check runs no vector of an outer pack (a pack
+    %% with an `inner` line), so an outer pack is on no wire here
+    FormatWire = maps:from_list([{F, case outer_text(Text) of true -> outer; false -> W end}
+                                 || {_, Text, {F, W}} <- Packs]),
     %% the packs on the wires of the set, in one engine
     {Engine, LoadFail} =
         lists:foldl(
@@ -1359,6 +1367,13 @@ pack_head(Text) ->
     {Get(<<"format">>), Get(<<"wire">>)}.
 
 %% Is the vector's `from` and `to` each a pack on a wire of the set?
+outer_text(Text) ->
+    lists:any(fun(L) -> case string:lexemes(L, " \t\r") of
+                            [<<"inner">>, _ | _] -> true;
+                            _ -> false
+                        end
+              end, binary:split(Text, <<"\n">>, [global])).
+
 vector_on(File, FormatWire, Wires) ->
     try
         {ok, Bin} = file:read_file(File),

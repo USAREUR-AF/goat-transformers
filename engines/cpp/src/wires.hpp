@@ -30,6 +30,7 @@
 #endif
 
 // The JSON reader serves the json and geojson codecs; the hex text of a binary
-// message serves bits, protobuf and tlv.
+// message serves bits, protobuf, tlv and cbor; UTF-8 validation serves bits,
+// tlv and cbor.
 #define GT_WIRE_JSON_READER (GT_WIRE_JSON || GT_WIRE_GEOJSON)
-#define GT_WIRE_HEX (GT_WIRE_BITS || GT_WIRE_PROTOBUF || GT_WIRE_TLV)
+#define GT_WIRE_HEX (GT_WIRE_BITS || GT_WIRE_PROTOBUF || GT_WIRE_TLV || GT_WIRE_CBOR)

@@ -130,9 +130,15 @@ func TestReducedBuild(t *testing.T) {
 		if err := dec.Decode(&v); err != nil {
 			t.Fatalf("%s: %v", file, err)
 		}
-		_, fromLoaded := eng.packs[v.From]
-		_, toLoaded := eng.packs[v.To]
+		fromPack, fromLoaded := eng.packs[v.From]
+		toPack, toLoaded := eng.packs[v.To]
 		if !fromLoaded || !toLoaded {
+			skipped++
+			continue
+		}
+		// ruling 1 of 0.34: the reduced-build check runs no vector of an outer
+		// pack, since whether its inner pack loads differs between builds
+		if len(fromPack.innerFormats) > 0 || len(toPack.innerFormats) > 0 {
 			skipped++
 			continue
 		}

@@ -15044,8 +15044,9 @@ fn beginsWithKind(msg: []const u8, kind: []const u8) bool {
     return std.mem.startsWith(u8, msg, kind) and msg.len > kind.len and msg[kind.len] == ':';
 }
 
-// Are the `from` and `to` formats of a vector both loaded? A vector that does
-// not parse counts as loaded, so that `runVector` reports it.
+// Are the `from` and `to` formats of a vector both loaded (and, in a build
+// without every wire, neither an outer pack)? A vector that does not parse
+// counts as loaded, so that `runVector` reports it.
 // A format that is not a directory under the packs directory is not left
 // out: the vector pins `unknown-format` and is run.
 fn vectorFormatsLoaded(eng: *Engine, packs_dir: []const u8, text: []const u8) bool {
@@ -15053,7 +15054,13 @@ fn vectorFormatsLoaded(eng: *Engine, packs_dir: []const u8, text: []const u8) bo
     if (parsed != .object) return true;
     for ([_][]const u8{ "from", "to" }) |k| {
         const fmt = getStr(parsed.object, k) orelse return true;
-        if (eng.findPack(fmt) != null) continue;
+        if (eng.findPack(fmt)) |p| {
+            // ruling 1 of 0.34: a build without every wire runs no vector
+            // of an outer pack, since whether its inner pack loads differs
+            // between builds
+            if (!all_wires and p.inners.items.len > 0) return false;
+            continue;
+        }
         const path = std.fmt.allocPrint(eng.scratch, "{s}/{s}", .{ packs_dir, fmt }) catch return true;
         var d = std.fs.cwd().openDir(path, .{}) catch continue;
         d.close();
