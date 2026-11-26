@@ -10,6 +10,7 @@ value is this repository's own.
 | Pages | `General/RPCProtocol`, `General/Notifications`, `ComponentsAndServices/Switch`, `ComponentsAndServices/Cover`, `ComponentsAndServices/Input`, `ComponentsAndServices/Temperature`, `ComponentsAndServices/Sys` |
 | Version | the pages as served on the date read; they describe firmware up to 2.0 |
 | Date read | 2026-11-21 |
+| Add-on page | `Addons/ShellySensorAddon` as served 2026-11-26 (SHA-256 `151ea561faf701a95c1bb2d225c3a18414322ab325ea4e61b169da17f1156192`; no public repository, so no git pin): add-on components take ids 100 to 199, ids 0 to 99 the device's own. The pack maps `temperature:100` to `temperature:104`; the page sets no limit of five, that is the pack's choice. |
 
 ## Licence
 

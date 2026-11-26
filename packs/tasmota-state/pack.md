@@ -6,7 +6,7 @@ copied).
 
 ## Message convention
 
-One JSON object. `Time` (local time, ISO 8601 without zone), `Uptime` (text, days `T` hh:mm:ss)
+One JSON object. `Time` (local time, ISO 8601 without zone by default), `Uptime` (text, days `T` hh:mm:ss)
 and `UptimeSec` (seconds); then, as the device has them, the battery level and supply voltage of
 deep-sleep builds, free heap (kB), the sleep mode and sleep time (ms), the loop load average and
 the MQTT connection count; one power state per relay, `POWER` when the device has one relay and
@@ -18,9 +18,12 @@ it).
 
 ## Shared keys
 
-None. `Time` is the device's local time with no zone (the offset is configured on the device and
-not sent), so it is not core `time_ms`, which is UTC; it is the raw key `tasmota.time_local`, kept
-as text.
+None. `Time` is, with the default settings, the device's local time with no zone
+(ResponseAppendTime, `support.ino`; `support_rtc.ino`), so it is not core `time_ms`, which is UTC;
+it is the raw key `tasmota.time_local`, kept as text. Settings change it: SetOption52 appends the
+zone offset (kept in the same text), TimeStamp 1 adds an `Epoch` member (UTC seconds, residue),
+TimeStamp 3 adds milliseconds, and TimeStamp 2 makes `Time` a number of UTC epoch seconds, which
+this `string` line does not read.
 
 ## Raw keys
 

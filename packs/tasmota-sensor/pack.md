@@ -6,7 +6,7 @@ climate sensors. Licence Apache-2.0 (a layout restated from GPL-3.0 firmware, no
 
 ## Message convention
 
-One JSON object: `Time` (local time, ISO 8601 without zone), then one object per attached sensor,
+One JSON object: `Time` (local time, ISO 8601 without zone by default), then one object per attached sensor,
 named by its type, then, when a pressure sensor is attached, `PressureUnit` (`hPa` or `mmHg`),
 then `TempUnit` (`C` or `F`), in the order MqttAppendSensorUnits writes them.
 
@@ -19,15 +19,20 @@ then `TempUnit` (`C` or `F`), in the order MqttAppendSensorUnits writes them.
   them by address instead). Each has `Id` (the ROM address in hexadecimal text) and `Temperature`.
 - `BME280`: temperature, humidity (percent), dew point, pressure and, when an altitude is set,
   pressure at sea level. `BMP280`: the same without humidity and dew point.
-- `AM2301` (DHT21): temperature, humidity, dew point.
+- `AM2301`: the name Tasmota gives a DHT21, DHT22, AM2301, AM2302 or AM2321 on the DHT22 GPIO
+  type; temperature, humidity, dew point (heat index only in builds with USE_HEAT_INDEX). With
+  more than one DHT the name gains a separator and the pin, which this pack does not read.
 
 Temperatures and dew points are in `TempUnit`; pressures in `PressureUnit`.
 
 ## Shared keys
 
-None. `Time` is the device's local time with no zone (the offset is configured on the device and
-not sent), so it is not core `time_ms`, which is UTC; it is the raw key `tasmota.time_local`, kept
-as text.
+None. `Time` is, with the default settings, the device's local time with no zone
+(ResponseAppendTime, `support.ino`; `support_rtc.ino`), so it is not core `time_ms`, which is UTC;
+it is the raw key `tasmota.time_local`, kept as text. Settings change it: SetOption52 appends the
+zone offset (kept in the same text), TimeStamp 1 adds an `Epoch` member (UTC seconds, residue),
+TimeStamp 3 adds milliseconds, and TimeStamp 2 makes `Time` a number of UTC epoch seconds, which
+this `string` line does not read.
 
 ## Raw keys
 
