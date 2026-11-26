@@ -541,6 +541,12 @@ length  16  bytes  plus  -4
             field  gtpu.restart_counter  8  uint
           case  16
             field  gtpu.teid_data_i  32  uint
+          case  141
+            length  8  bytes
+              group  gtpu.ie_value  rest
+                field  gtpu.octet  8  uint
+              end
+            end
           else
             length  16  bytes
               group  gtpu.ie_value  rest

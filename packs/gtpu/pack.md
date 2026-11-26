@@ -23,7 +23,9 @@ type before it; the contents are not laid out by type.
 
 Then the payload: a G-PDU (message type 255) carries its T-PDU as octets; every other message
 carries IEs: Recovery (14, the restart counter), TEID Data I (16), and the IEs of type 128 and above
-(GTP-U peer address, extension header type list, private extension) as a length and octets.
+(GTP-U peer address, extension header type list, private extension) as a length and octets. The
+length is 2 octets, except for the Extension Header Type List (141), whose length is 1 octet, the
+number of types that follow (clause 8.5, Figure 8.5-1; vector 08).
 
 ## Shared keys
 
