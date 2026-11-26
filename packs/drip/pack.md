@@ -75,7 +75,7 @@ pack.
 | Key | Where | Evidence |
 |---|---|---|
 | `lat`, `lon` | the wrapped Location message, `sscale:1/10000000` | as in pack `remote-id`: the F3411 Location message holds latitude and longitude as 32-bit integers of 10^-7 degree (`pack.md` of `remote-id`, "Encodings"); RFC 9575 section 4.3 wraps whole F3411 messages unchanged |
-| `hae` | the wrapped Location message, `uscale:1/2:-1000` | as in pack `remote-id`: geodetic altitude, the height above the WGS84 ellipsoid, (meters + 1000) x 2 |
+| `hae` | the wrapped Location message, `uscale:1/2:-1000`, `absent 0` | as in pack `remote-id`: geodetic altitude, the height above the WGS84 ellipsoid, (meters + 1000) x 2; raw 0 (-1000 m) is unknown, so absent, as for `rid.alt_baro` and `rid.height` |
 
 The other Location fields go to the `rid` keys pack `remote-id` uses for them.
 A Location message that is wrapped is the same message an aircraft also sends on

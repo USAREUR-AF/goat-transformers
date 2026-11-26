@@ -1,0 +1,9 @@
+{
+  "name": "wrapper-location-unknown-altitude-to-geojson",
+  "from": "drip",
+  "to": "geojson",
+  "input": "068bb80b000002e8030000600400000212445249502d4558414d504c452d3030303100000000000012205a2800c0ec4f1c602122b7a00f000034084a33393001002001003ffe0001050123456789abcdef0e1b2835424f5c697683909daab7c4d1deebf805121f2c394653606d7a8794a1aebbc8d5e2effc091623303d4a5764717e8b98a5b2bfccd9e6f3000d1a273441",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-122.25,47.5]},\"properties\":{}}",
+  "source": "constructed",
+  "reference": "vector 04 with the geodetic altitude of the wrapped Location set to raw 0 (bytes 55-56): opendroneid.h gives -1000 m as unknown, written as raw 0, so the point has no altitude"
+}

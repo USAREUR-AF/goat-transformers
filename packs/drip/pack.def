@@ -65,9 +65,9 @@ field     rid.speed_h_raw 0:144:8 uint
 field     rid.speed_v 0:152:8 sscale:1/2
 field     lat 0:160:32 sscale:1/10000000
 field     lon 0:192:32 sscale:1/10000000
-field     rid.alt_baro 0:224:16 uscale:1/2:-1000
-field     hae 0:240:16 uscale:1/2:-1000
-field     rid.height 0:256:16 uscale:1/2:-1000
+field     rid.alt_baro 0:224:16 uscale:1/2:-1000  absent 0
+field     hae 0:240:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:256:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:272:4 uint
 field     rid.vert_acc 0:276:4 uint
 field     rid.speed_acc 0:280:4 uint
@@ -123,9 +123,9 @@ field     rid.speed_h_raw 0:144:8 uint
 field     rid.speed_v 0:152:8 sscale:1/2
 field     lat 0:160:32 sscale:1/10000000
 field     lon 0:192:32 sscale:1/10000000
-field     rid.alt_baro 0:224:16 uscale:1/2:-1000
-field     hae 0:240:16 uscale:1/2:-1000
-field     rid.height 0:256:16 uscale:1/2:-1000
+field     rid.alt_baro 0:224:16 uscale:1/2:-1000  absent 0
+field     hae 0:240:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:256:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:272:4 uint
 field     rid.vert_acc 0:276:4 uint
 field     rid.speed_acc 0:280:4 uint
@@ -173,9 +173,9 @@ field     rid.speed_h_raw 0:344:8 uint
 field     rid.speed_v 0:352:8 sscale:1/2
 field     lat 0:360:32 sscale:1/10000000
 field     lon 0:392:32 sscale:1/10000000
-field     rid.alt_baro 0:424:16 uscale:1/2:-1000
-field     hae 0:440:16 uscale:1/2:-1000
-field     rid.height 0:456:16 uscale:1/2:-1000
+field     rid.alt_baro 0:424:16 uscale:1/2:-1000  absent 0
+field     hae 0:440:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:456:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:472:4 uint
 field     rid.vert_acc 0:476:4 uint
 field     rid.speed_acc 0:480:4 uint
@@ -231,9 +231,9 @@ field     rid.speed_h_raw 0:144:8 uint
 field     rid.speed_v 0:152:8 sscale:1/2
 field     lat 0:160:32 sscale:1/10000000
 field     lon 0:192:32 sscale:1/10000000
-field     rid.alt_baro 0:224:16 uscale:1/2:-1000
-field     hae 0:240:16 uscale:1/2:-1000
-field     rid.height 0:256:16 uscale:1/2:-1000
+field     rid.alt_baro 0:224:16 uscale:1/2:-1000  absent 0
+field     hae 0:240:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:256:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:272:4 uint
 field     rid.vert_acc 0:276:4 uint
 field     rid.speed_acc 0:280:4 uint
@@ -281,9 +281,9 @@ field     rid.speed_h_raw 0:344:8 uint
 field     rid.speed_v 0:352:8 sscale:1/2
 field     lat 0:360:32 sscale:1/10000000
 field     lon 0:392:32 sscale:1/10000000
-field     rid.alt_baro 0:424:16 uscale:1/2:-1000
-field     hae 0:440:16 uscale:1/2:-1000
-field     rid.height 0:456:16 uscale:1/2:-1000
+field     rid.alt_baro 0:424:16 uscale:1/2:-1000  absent 0
+field     hae 0:440:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:456:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:472:4 uint
 field     rid.vert_acc 0:476:4 uint
 field     rid.speed_acc 0:480:4 uint
@@ -331,9 +331,9 @@ field     rid.speed_h_raw 0:544:8 uint
 field     rid.speed_v 0:552:8 sscale:1/2
 field     lat 0:560:32 sscale:1/10000000
 field     lon 0:592:32 sscale:1/10000000
-field     rid.alt_baro 0:624:16 uscale:1/2:-1000
-field     hae 0:640:16 uscale:1/2:-1000
-field     rid.height 0:656:16 uscale:1/2:-1000
+field     rid.alt_baro 0:624:16 uscale:1/2:-1000  absent 0
+field     hae 0:640:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:656:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:672:4 uint
 field     rid.vert_acc 0:676:4 uint
 field     rid.speed_acc 0:680:4 uint
@@ -389,9 +389,9 @@ field     rid.speed_h_raw 0:144:8 uint
 field     rid.speed_v 0:152:8 sscale:1/2
 field     lat 0:160:32 sscale:1/10000000
 field     lon 0:192:32 sscale:1/10000000
-field     rid.alt_baro 0:224:16 uscale:1/2:-1000
-field     hae 0:240:16 uscale:1/2:-1000
-field     rid.height 0:256:16 uscale:1/2:-1000
+field     rid.alt_baro 0:224:16 uscale:1/2:-1000  absent 0
+field     hae 0:240:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:256:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:272:4 uint
 field     rid.vert_acc 0:276:4 uint
 field     rid.speed_acc 0:280:4 uint
@@ -439,9 +439,9 @@ field     rid.speed_h_raw 0:344:8 uint
 field     rid.speed_v 0:352:8 sscale:1/2
 field     lat 0:360:32 sscale:1/10000000
 field     lon 0:392:32 sscale:1/10000000
-field     rid.alt_baro 0:424:16 uscale:1/2:-1000
-field     hae 0:440:16 uscale:1/2:-1000
-field     rid.height 0:456:16 uscale:1/2:-1000
+field     rid.alt_baro 0:424:16 uscale:1/2:-1000  absent 0
+field     hae 0:440:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:456:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:472:4 uint
 field     rid.vert_acc 0:476:4 uint
 field     rid.speed_acc 0:480:4 uint
@@ -489,9 +489,9 @@ field     rid.speed_h_raw 0:544:8 uint
 field     rid.speed_v 0:552:8 sscale:1/2
 field     lat 0:560:32 sscale:1/10000000
 field     lon 0:592:32 sscale:1/10000000
-field     rid.alt_baro 0:624:16 uscale:1/2:-1000
-field     hae 0:640:16 uscale:1/2:-1000
-field     rid.height 0:656:16 uscale:1/2:-1000
+field     rid.alt_baro 0:624:16 uscale:1/2:-1000  absent 0
+field     hae 0:640:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:656:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:672:4 uint
 field     rid.vert_acc 0:676:4 uint
 field     rid.speed_acc 0:680:4 uint
@@ -539,9 +539,9 @@ field     rid.speed_h_raw 0:744:8 uint
 field     rid.speed_v 0:752:8 sscale:1/2
 field     lat 0:760:32 sscale:1/10000000
 field     lon 0:792:32 sscale:1/10000000
-field     rid.alt_baro 0:824:16 uscale:1/2:-1000
-field     hae 0:840:16 uscale:1/2:-1000
-field     rid.height 0:856:16 uscale:1/2:-1000
+field     rid.alt_baro 0:824:16 uscale:1/2:-1000  absent 0
+field     hae 0:840:16 uscale:1/2:-1000  absent 0
+field     rid.height 0:856:16 uscale:1/2:-1000  absent 0
 field     rid.horiz_acc 0:872:4 uint
 field     rid.vert_acc 0:876:4 uint
 field     rid.speed_acc 0:880:4 uint
