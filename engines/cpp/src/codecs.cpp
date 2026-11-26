@@ -1118,9 +1118,10 @@ std::string bytes_to_hex(const std::string& data) {
 
 #endif  // GT_WIRE_HEX
 
-#if GT_WIRE_BITS || GT_WIRE_TLV
+#if GT_WIRE_BITS || GT_WIRE_TLV || GT_WIRE_CBOR
 // UTF-8 and hex text of an item's value: the `utf8` and `hex` transforms of
-// tlv (0.13), and of a UPER `octets` locator of bits (0.19).
+// tlv (0.13), of a UPER `octets` locator of bits (0.19), and a text string of
+// cbor (0.28).
 bool utf8_is_valid(const std::string& s) {
     std::size_t i = 0;
     while (i < s.size()) {
@@ -1166,7 +1167,7 @@ bool hex_text_bytes(const std::string& s, std::string& out) {
     }
     return true;
 }
-#endif  // GT_WIRE_BITS || GT_WIRE_TLV
+#endif  // GT_WIRE_BITS || GT_WIRE_TLV || GT_WIRE_CBOR
 
 #if GT_WIRE_XML || GT_WIRE_GEOJSON
 namespace {

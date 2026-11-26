@@ -289,6 +289,19 @@ Measured with Go 1.26.8 on Linux x86_64:
 | `goat-xf`, all eight wires | 5331961 bytes |
 | `goat-xf`, `xml`, `json` and `geojson` | 4769917 bytes (562044 bytes less) |
 
+### The single-wire check
+
+From the repository root:
+
+```
+sh engines/go/single-wire-check.sh
+```
+
+For each of the eight wires it runs `go vet` and builds with that wire alone and
+with every wire but it, then runs `TestReducedBuild` with the wire alone. It
+exits non-zero at the first failure, and also when no conversion vector ran on a
+wire. `GOAT_WIRES="xml cbor"` checks only the wires it names.
+
 ## Read next
 
 - `spec/engine-spec.md`: the pack grammar, the wire types, decode, encode,

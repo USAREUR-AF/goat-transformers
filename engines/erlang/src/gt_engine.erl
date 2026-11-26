@@ -232,10 +232,16 @@ decode_inner(Inner, Hex) ->
 %% Encode). The inner kind is the entity's `inner_kind` when it names the
 %% format, else its `kind`, else by `requires`: the top-level order with
 %% the two records exchanged.
+%% An outer pack, and so its inner pack, is on bits: a build without bits
+%% loads neither, and may lack gt_hex.
+-if(?W_BITS).
 encode_inner(Inner, Entity) ->
     Swapped = Entity#{kind => maps:get(inner_kind, Entity, undefined),
                       inner_kind => maps:get(kind, Entity, undefined)},
     gt_hex:hex_to_bytes(encode(Inner, Swapped)).
+-else.
+encode_inner(_Inner, _Entity) -> ?ABSENT(bits).
+-endif.
 
 %% Union of the keys a pack maps, common lines and all kinds, in first
 %% appearance order; a list as `<list>[]`, an item key as `<list>[].<key>`.
@@ -1262,10 +1268,12 @@ inner_fixed_end(_Wire, _Pack, _Ctx, _All, _Held, _GroupsEnd) -> ok.
 %% transform fails is an error only when no line of its key succeeds. A line
 %% whose transform succeeds and whose table has no entry for a value of
 %% another type fails the decode.
+-if(?W_XML orelse ?W_JSON orelse ?W_GEOJSON orelse ?W_PROTOBUF orelse ?W_TEXT orelse ?W_BITS).
 decode_scope(Wire, Ctx, Lines, Pack) ->
     {Model, Lists, Bad, End} = scope_read(Wire, Ctx, Lines, Pack),
     scope_failed(Bad, Pack),
     {Model, Lists, End}.
+-endif.
 
 %% The keys of a scope with a failed line and no line that succeeds.
 scope_failed([], _Pack) -> ok;

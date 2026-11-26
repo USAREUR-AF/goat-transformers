@@ -350,8 +350,8 @@ int main() {
     const bool reduced = built.size() != kSpecWires.size();
     // Reduced build: the formats of the packs on a wire it lacks, whose vectors
     // are not run, and the refusals of those packs.
-    std::set<std::string> lacked_formats;
-    int skipped = 0, refused = 0, refusal_failed = 0;
+    std::set<std::string> lacked_formats, loaded_formats;
+    int skipped = 0, refused = 0, refusal_failed = 0, on_wires = 0;
     std::map<std::string, int> refused_by_wire;
 
     Engine eng;
@@ -374,6 +374,7 @@ int main() {
                 header_values(text, format, wires);
                 const std::string wire = lacked_wire(wires, built);
                 if (wire.empty()) {
+                    loaded_formats.insert(format);
                     names.push_back(d.filename().string());
                     continue;
                 }
@@ -456,6 +457,7 @@ int main() {
                 ++skipped;
                 continue;
             }
+            if (reduced && loaded_formats.count(from->text) && loaded_formats.count(to->text)) ++on_wires;
             if (const json::Value* n = v.find("name"))
                 if (n->is(json::Value::Kind::String)) label += " (" + n->text + ")";
             if (!bytes_field(v, "input", "input_b64", input)) throw std::runtime_error("vector lacks input");
@@ -682,6 +684,8 @@ int main() {
     std::cout << "capability vectors: " << cap_ran << " run, " << (cap_ran - cap_failed) << " passed, " << cap_failed
               << " failed\n";
     if (reduced) {
+        // The vectors that pin unknown-format run in every build; these do not.
+        std::cout << "conversion vectors with both formats loaded: " << on_wires << "\n";
         std::cout << "skipped, a format or pack on a wire this build lacks: " << skipped << " conversion, "
                   << load_skipped << " load, " << cap_skipped << " capability vectors\n";
         std::cout << "packs on a wire this build lacks: " << refused << " refused with unknown-wire (";
