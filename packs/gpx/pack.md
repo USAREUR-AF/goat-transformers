@@ -56,6 +56,12 @@ before the points, as `rteType` and `trkType` order them.
 - `magvar` is a magnetic variation, not a course.
 - `hdop`, `vdop`, `pdop` are dilutions of precision, without unit; they are not
   the circular or linear error in metres (`ce`, `le`).
+- Limit: a point whose `fix` is `none` still gives `lat` and `lon`. The schema
+  (gpx.xsd, `fixType`) says `none` means the GPS had no fix, and that a fix not
+  known is written by leaving `fix` out. The pack keeps `fix` as the raw key
+  `gpx.fix` only; the xml wire has no condition that leaves a key out when a
+  sibling element holds a given text, so the coordinates are read whatever
+  `fix` says. A consumer should check `gpx.fix` before it trusts the position.
 
 ## Not mapped
 

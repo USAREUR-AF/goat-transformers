@@ -52,6 +52,12 @@ no fraction. The locator is bound to `time_ms` through `iso8601_s`
 the whole second: a track observed at `12:30:00.750Z` is written
 `12:30:00Z`.
 
+Limit on `lat` and `lon`: the pinned schema (C2SIM_SMX_LOX.xsd) gives `Latitude` and
+`Longitude` as degrees with their ranges and names no datum, ellipsoid or WGS 84 anywhere.
+The pack binds them to `lat` and `lon`, which are WGS 84 (model/core.def), on the
+assumption that C2SIM coordinates are WGS 84; the schema does not state it, and the
+standard text that may (SISO-STD-019) was not read.
+
 ### Keys not bound to the shared model
 
 - `AltitudeMSL` is height above mean sea level and `hae` is height above the
