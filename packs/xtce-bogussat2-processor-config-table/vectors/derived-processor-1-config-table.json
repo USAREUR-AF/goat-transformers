@@ -1,0 +1,20 @@
+{
+  "name": "derived-processor-1-config-table",
+  "from": "xtce-bogussat2-processor-config-table",
+  "to": "xtce-bogussat2-processor-config-table",
+  "input": "0112312310",
+  "expect": "0112312310",
+  "model": {
+    "@kind": "processor_1_config_table",
+    "xtcebogussat2.sc001_onboard_processor_config_table_processor_id": "1",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_coreinf": "1",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_antctrl": "2",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_tcmgmnt": "3",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_time": "1",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_tmmgmnt": "2",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_interface": "3",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_mw1553": "1"
+  },
+  "source": "synthetic: values chosen by the vector deriver (processor 1, log levels 1,2,3,1,2,3,1 from the Log_Level_Type enumeration); bytes derived by hand and with a standalone stdlib program, no engine or generator run. No kind of this pack maps a scaled value",
+  "reference": "BogusSAT-2.xml Onboard_Processor_Config: Table_Processor_ID (IntegerDataEncoding with XTCE defaults, 8 bits unsigned), Config_Log_Levels (7 members of Log_Level_Type, 4 bits unsigned), Processor_1_Config_Table criterion PROCESSOR1=1; engine-spec 0.5 msb order and uint, 0.8 sequential (36 bits, last byte padded with zero bits), 0.30/0.33 window at 0 written from the as key"
+}

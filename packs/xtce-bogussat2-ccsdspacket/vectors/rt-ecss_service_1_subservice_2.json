@@ -1,0 +1,26 @@
+{
+  "name": "rt-ecss_service_1_subservice_2",
+  "from": "xtce-bogussat2-ccsdspacket",
+  "to": "xtce-bogussat2-ccsdspacket",
+  "input": "086400be00e3100102c1e6",
+  "expect": "086400be00e3100102c1e6",
+  "model": {
+    "@kind": "ecss_service_1_subservice_2",
+    "xtcebogussat2.ccsds_packet_id_version": "0",
+    "xtcebogussat2.ccsds_packet_id_type": "0",
+    "xtcebogussat2.ccsds_packet_id_sec_hdr_flag": "1",
+    "xtcebogussat2.ccsds_packet_id_apid": "100",
+    "xtcebogussat2.ccsds_packet_sequence_group_flags": "0",
+    "xtcebogussat2.ccsds_packet_sequence_count": "190",
+    "xtcebogussat2.ccsds_packet_length": "227",
+    "xtcebogussat2.pus_data_field_header_spare1": "0",
+    "xtcebogussat2.pus_data_field_header_version": "1",
+    "xtcebogussat2.pus_data_field_header_spare4": "0",
+    "xtcebogussat2.pus_data_field_header_service": "1",
+    "xtcebogussat2.pus_data_field_header_subservice": "2",
+    "xtcebogussat2.pus_data_field_header_seq_count": "193",
+    "xtcebogussat2.pus_data_field_header_destination": "230"
+  },
+  "source": "written by tools/gen/xtce2pack.py from the container's entries in BogusSAT-2.xml (https://github.com/CesarCoelho/xtcetools @14b7f51c5)",
+  "reference": "CCSDS 660.0-B-2: a sequence container's entries in order, most significant bit first"
+}

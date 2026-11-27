@@ -1,0 +1,20 @@
+{
+  "name": "rt-processor_2_config_table",
+  "from": "xtce-bogussat2-processor-config-table",
+  "to": "xtce-bogussat2-processor-config-table",
+  "input": "0212301230",
+  "expect": "0212301230",
+  "model": {
+    "@kind": "processor_2_config_table",
+    "xtcebogussat2.sc001_onboard_processor_config_table_processor_id": "2",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_coreinf": "1",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_antctrl": "2",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_tcmgmnt": "3",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_time": "0",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_tmmgmnt": "1",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_interface": "2",
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_mw1553": "3"
+  },
+  "source": "written by tools/gen/xtce2pack.py from the container's entries in BogusSAT-2.xml (https://github.com/CesarCoelho/xtcetools @14b7f51c5)",
+  "reference": "CCSDS 660.0-B-2: a sequence container's entries in order, most significant bit first"
+}

@@ -1,0 +1,9 @@
+# The xtcediaglog module: the parameters of the XTCE database Diagnostic_Log_Packets.xml (https://github.com/CesarCoelho/xtcetools @14b7f51c5), as its containers
+# lay them out. Written by tools/gen/xtce2pack.py; do not edit by hand.
+module        xtcediaglog
+version       0.1.0
+distribution  public
+source        "XTCE database Diagnostic_Log_Packets.xml, https://github.com/CesarCoelho/xtcetools at commit 14b7f51c5a93faa0bae7c655dbb8d1d1f466fcf6 (sha256 df17b82659d32ab96a81223a3217a0a9c75e06a730121f29caac447fcc1648c9); Apache-2.0"
+key   format_id          int    -  "the bits that select a container"
+key   fsw_subsys_name    int    -  "fsw subsys name"
+key   log_record_length  int    -  "log record length"

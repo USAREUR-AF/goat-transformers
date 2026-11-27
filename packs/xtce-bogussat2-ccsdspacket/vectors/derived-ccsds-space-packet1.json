@@ -1,0 +1,25 @@
+{
+  "name": "derived-ccsds-space-packet1",
+  "from": "xtce-bogussat2-ccsdspacket",
+  "to": "xtce-bogussat2-ccsdspacket",
+  "input": "0001c4d2000d41e40000bfa00000d55dc929",
+  "expect": "0001c4d2000d41e40000bfa00000d55dc929",
+  "model": {
+    "@kind": "ccsds_space_packet1",
+    "xtcebogussat2.ccsds_packet_id_version": "0",
+    "xtcebogussat2.ccsds_packet_id_type": "0",
+    "xtcebogussat2.ccsds_packet_id_sec_hdr_flag": "0",
+    "xtcebogussat2.ccsds_packet_id_apid": "1",
+    "xtcebogussat2.ccsds_packet_sequence_group_flags": "3",
+    "xtcebogussat2.ccsds_packet_sequence_count": "1234",
+    "xtcebogussat2.ccsds_packet_length": "13",
+    "xtcebogussat2.sc001_bus_electronics_battery_voltage": "28.5",
+    "xtcebogussat2.sc001_bus_electronics_battery_current": "-1.25",
+    "xtcebogussat2.sc001_bus_electronics_battery_charge_mode": "1",
+    "xtcebogussat2.some_parameter": "85",
+    "xtcebogussat2.sc001_bus_electronics_solar_array_voltage_1": "50",
+    "xtcebogussat2.sc001_bus_electronics_solar_array_voltage_2": "134.5"
+  },
+  "source": "synthetic: values chosen by the vector deriver (APID 1, group flags 3, sequence count 1234, packet length 13, battery voltage 28.5, battery current -1.25, charge mode 1, SomeParameter 85, solar array voltage raw 1500 and 2345); bytes derived by hand and with a standalone stdlib program, no engine or generator run",
+  "reference": "BogusSAT-2.xml CCSDSPacket entries (Packet_ID 3+1+1+11, Packet_Sequence 2+14, Packet_Length 16), CCSDSTelemetryPacket and CCSDS_SpacePacket1 criteria (Version 0, Type TM=0, SecHdrFlag NotPresent=0, APID 1), CCSDS_SpacePacket1 entries (Battery_Voltage/Current IEEE754 32 msb, Charge_Mode 1, SomeParameter 7, Solar_Array_Voltage_1/2 12 unsigned with polynomial -100.0+0.1x); engine-spec 0.5 msb order, uint, f32 (0x41e40000, 0xbfa00000), uscale ruling 1 (1500*0.1-100=50, 2345*0.1-100=134.5, both exact in doubles), 0.8 sequential (144 bits, 18 bytes), 0.30/0.33 when-at-as windows over the pads written from the as keys"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-format2",
+  "from": "xtce-diaglog-log-record-header",
+  "to": "xtce-diaglog-log-record-header",
+  "input": "00050101",
+  "expect": "00050101",
+  "model": {
+    "@kind": "format2",
+    "xtcediaglog.log_record_length": "5",
+    "xtcediaglog.fsw_subsys_name": "1",
+    "xtcediaglog.format_id": "1"
+  },
+  "source": "written by tools/gen/xtce2pack.py from the container's entries in Diagnostic_Log_Packets.xml (https://github.com/CesarCoelho/xtcetools @14b7f51c5)",
+  "reference": "CCSDS 660.0-B-2: a sequence container's entries in order, most significant bit first"
+}

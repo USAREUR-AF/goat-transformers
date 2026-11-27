@@ -1,0 +1,9 @@
+{
+  "name": "XTCE mission databases",
+  "domain": "space",
+  "exact": [
+    "xtce-bogussat2-ccsdspacket",
+    "xtce-bogussat2-processor-config-table",
+    "xtce-diaglog-log-record-header"
+  ]
+}
