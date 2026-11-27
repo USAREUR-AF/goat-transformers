@@ -8,6 +8,7 @@ key   reserved                              int    -    "section 0: reserved oct
 key   discipline                            int    -    "section 0: discipline of the data (code table 0.0: 0 meteorological, 10 oceanographic, ...)"
 list  sections                                          "sections 1 to 7 of the message, in order, and section 8 as the last item (kind end)"
 key   section_number                        int    -    "number of a section, 1 to 7"
+key   end_marker                            int    -    "section 8: the four octets 7777 as an integer (926365495); held by the end item, and on encode it chooses the item kind end"
 list  section_octets                                    "octets of a section the pack does not read field by field (local use, other templates, a template's optional list, the bitmap, the packed data)"
 key   octet                                 int    -    "one octet"
 key   centre                                int    -    "section 1: originating centre (common code table C-11)"
