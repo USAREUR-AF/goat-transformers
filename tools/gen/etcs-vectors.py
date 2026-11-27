@@ -92,7 +92,7 @@ def more(files):
     t.put(8, 255).pad()
     P = "etcs.packets[%d]."
     model = dict(hm, **{"etcs.packets.#": 9,
-                        P % 0 + "@kind": "p3", P % 0 + "etcs.p3_d_validnv": 100, P % 0 + "etcs.p3_areas.#": 0,
+                        P % 0 + "@kind": "p3", P % 0 + "etcs.nid_packet": 3, P % 0 + "etcs.p3_d_validnv": 100, P % 0 + "etcs.p3_areas.#": 0,
                         P % 0 + "etcs.p3_m_nvebcl": 9, P % 0 + "etcs.p3_q_nvkint": 0,
                         P % 1 + "@kind": "p6", P % 1 + "etcs.p6_q_vbco": 1, P % 1 + "etcs.p6_t_vbc": 30,
                         P % 2 + "@kind": "p68", P % 2 + "etcs.p68_q_trackinit": 0, P % 2 + "etcs.p68_d_trackcond": 300,
@@ -122,7 +122,8 @@ def more(files):
     msg = radio(37, packet(136, 1, Bits().put(1, 0).put(14, 88)).extend(packet(12, 1, p12)))
     files.append(("etcs-radio-track-to-train", "06-infill-ma.json", msg.hex(),
                   m(dict(rm, **{"@kind": "infill_ma", "etcs.optional_packets.#": 2,
-                                "etcs.optional_packets[0].@kind": "p136", "etcs.optional_packets[0].etcs.p136_nid_bg": 88,
+                                "etcs.optional_packets[0].@kind": "p136", "etcs.optional_packets[0].etcs.nid_packet": 136,
+                                "etcs.optional_packets[0].etcs.p136_nid_bg": 88,
                                 "etcs.optional_packets[1].@kind": "p12", "etcs.optional_packets[1].etcs.p12_l_endsection": 900})),
                   "message 37: packet 136 then packet 12, read as the packet list"))
     msg = radio(45, Bits().put(1, 1))
@@ -148,7 +149,7 @@ def more(files):
     T = "etcs.train_packets[%d]."
     files.append(("etcs-radio-train-to-track", "01-validated-train-data.json", msg.hex(),
                   m(dict(tm, **{"@kind": "validated_train_data", "etcs.train_packets.#": 2,
-                                T % 0 + "@kind": "tp0", T % 0 + "etcs.tp0_d_lrbg": 120, T % 0 + "etcs.tp0_v_train": 16,
+                                T % 0 + "@kind": "tp0", T % 0 + "etcs.train_nid_packet": 0, T % 0 + "etcs.tp0_d_lrbg": 120, T % 0 + "etcs.tp0_v_train": 16,
                                 T % 0 + "etcs.tp0_m_level": 3,
                                 T % 1 + "@kind": "tp11", T % 1 + "etcs.tp11_l_train": 400, T % 1 + "etcs.tp11_n_axle": 24,
                                 T % 1 + "etcs.tp11_tractions.#": 1, T % 1 + "etcs.tp11_tractions[0].etcs.tp11_tractions_nid_ctraction": 253,

@@ -52,3 +52,13 @@ is the on-board clock, not UTC.
 ## Not mapped
 
 - Packet 44's data is kept as bits.
+
+## Packet kinds on encode
+
+Each packet kind's `when` on NID_PACKET binds `etcs.train_nid_packet` (`when 8 <n> as etcs.train_nid_packet`, engine-spec 0.30). An
+item of `etcs.train_packets` that records no kind is chosen by its keys (0.8 ruling 26, 0.5 Encode step 2).
+It is the packet whose NID_PACKET the item holds. An item without one is `tother`, the generic
+packet. Before that binding, no packet kind had a term, so `tp0`, the first, took every such item.
+Only a library caller that builds the items itself, without a kind, meets this. A decoded message
+records each item's kind, and no other format has this list, so no conversion vector can show it.
+Vectors of this pack check `etcs.train_nid_packet` on decode.

@@ -10,6 +10,7 @@
     "@kind": "validated_train_data",
     "etcs.train_packets.#": "2",
     "etcs.train_packets[0].@kind": "tp0",
+    "etcs.train_packets[0].etcs.train_nid_packet": "0",
     "etcs.train_packets[0].etcs.tp0_d_lrbg": "120",
     "etcs.train_packets[0].etcs.tp0_v_train": "16",
     "etcs.train_packets[0].etcs.tp0_m_level": "3",
