@@ -3405,7 +3405,7 @@ impl Pack {
 
     /// Is `v` a part with no entry in the table of an `unlisted` line? The
     /// line then counts as one whose place is absent (engine-spec v0.64).
-    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv"))]
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn unlisted(&self, f: &FieldDef, v: &Value) -> bool {
         let (table, text) = match (&f.via, v) {
             (Some(t), Value::Str(s)) if f.unlisted => (t, s),
