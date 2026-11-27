@@ -1237,7 +1237,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
                 defer("field option %r applies to the bits wire only" % opt)
         if wire == "text" and "absent" in opts:  # ruling 16 of 0.10
             defer("field option 'absent' is not a field option of the text wire")
-        if code_part and any(o in opts for o in ("absent", "with")):
+        # `null`, `implicit`, `range`, `wrap` and range sentinels (inside `absent`): ruling 15 of 0.56
+        if code_part and any(o in opts for o in ("absent", "with", "null", "implicit", "range", "wrap")):
             defer("a part line takes the options 'via', 'unlisted' and, on 'text', 'optional' only")
         if "stop" in opts:  # 0.22: a `chars` field of the bits wire
             defer("field option 'stop' applies to a 'chars' field of the bits wire only")
