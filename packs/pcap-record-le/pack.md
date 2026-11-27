@@ -28,8 +28,7 @@ Each field has the option `swap`.
 
 None. The timestamp is not bound to `time_ms`: the fraction is microseconds
 or nanoseconds as the file header's magic number says, which the record does
-not carry, and the draft does not state the epoch or time scale of the
-seconds. `pcap.pcap_caplen` and `pcap.pcap_origlen` are also the keys of the
+not carry. The seconds are since 1970-01-01 00:00:00 UTC (draft section 5). `pcap.pcap_caplen` and `pcap.pcap_origlen` are also the keys of the
 pcapng enhanced packet block packs, with the same meaning.
 
 ## Not mapped, and why

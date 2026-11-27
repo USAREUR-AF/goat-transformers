@@ -45,7 +45,9 @@ decodes (vector 12). A timestamp message cut to 8 octets is `malformed-wire`
 ## Shared keys
 
 None. No field is bound to `core` or `track`. The ICMP timestamps are
-milliseconds since midnight UT with no date, so they are not `time_ms`.
+milliseconds since midnight UT with no date, so they are not `time_ms`. RFC 792 lets a sender that
+cannot give that time send any time with the high-order bit set; the pack does not test that bit, so
+such a value decodes as a number of milliseconds above 2^31, more than a day.
 
 ## Not mapped, and why
 
