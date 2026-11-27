@@ -227,6 +227,11 @@ test("10,000 refused arguments leave the memory the size it was", async () => {
   // and not released, 10,000 calls would need 640 MiB.
   const large = "x".repeat(32 * 1024);
   gt.convert("cot-xml", "cot-xml", EVENT);
+  // Each refusal once before measuring: the first may raise the allocator's
+  // high-water mark, which depends on what was loaded before (every model
+  // module), and is not a leak. A leak grows the memory on every call.
+  assert.throws(() => gt.convert(large, large, new Uint8Array([0xff])), /bad-argument: input is not UTF-8/);
+  assert.throws(() => gt.loadPack(large), Error);
   const before = gt.memoryBytes;
   for (let i = 0; i < 5000; i++) {
     assert.throws(() => gt.convert(large, large, 7), TypeError);
