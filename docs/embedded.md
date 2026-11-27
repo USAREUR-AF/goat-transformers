@@ -340,13 +340,46 @@ names is 262,264 bytes (256 KiB), and the whole `ais` pack (22 kinds, six-bit
 armor) 10,352 bytes. `mavlink2` compiled for the one kind
 `global_position_int`, without names, is 2,472 bytes.
 
+## On hardware: ESP32-P4 with ESP-IDF
+
+`example-bare` was built for `riscv32imafc-unknown-none-elf` with stable
+rustc 1.100.0 and linked as a prebuilt static library into C firmware on an
+ESP32-P4 (revision 1.3, ESP-IDF v6.1.1):
+
+```
+cargo rustc -p example-bare --release --target riscv32imafc-unknown-none-elf --crate-type staticlib
+```
+
+| | Measured on the chip |
+|---|---|
+| Outputs equal to `goat-xf convert` with the same context | 509 of 509, byte for byte: the 9 `location` conformance vectors of the `remote-id` pack and 500 random Location messages |
+| Inputs of other kinds | 31 of 31 refused with `no-kind`, as a one-kind plan requires |
+| Time in the engine | 232 µs per message |
+| End to end in the firmware (convert, then send) | no loss at 3,000 messages per second |
+| Heap | none used |
+| Firmware image | 64 KB larger with gt-core and the plan |
+
+**Linking into ESP-IDF.** gt-core's objects carry the single-float ABI flag,
+as ESP-IDF's objects for this chip do. The static library also holds about 32
+`compiler_builtins` objects from the Rust toolchain flagged soft-float. When the
+linker takes one of them it stops with `can't link soft-float modules with
+single-float modules`; which members it takes depends on the firmware, so one
+firmware links and another does not. ESP-IDF's `libgcc` provides the same
+functions, so remove those members from the copy that is linked:
+
+```
+mkdir x && cd x && riscv32-esp-elf-ar x ../libexample_bare.a
+SOFT=$(for o in *; do riscv32-esp-elf-readelf -h "$o" | grep -q soft-float && echo "$o"; done)
+cd .. && riscv32-esp-elf-ar d libexample_bare.a $SOFT && rm -rf x
+```
+
 ## What is not supported and not done
 
 - Text wires. A conversion with `xml`, `geojson`, `json` or `protobuf` on
   either side is refused by the compiler.
-- Running on hardware. The image for `thumbv7em-none-eabihf` links and its
+- Running on a Cortex-M. The image for `thumbv7em-none-eabihf` links and its
   sizes are measured; it was not executed on a microcontroller or an emulator.
-  Equivalence is measured on the host, where the same source runs.
+  On RISC-V it ran on an ESP32-P4 (above).
 - Other targets. `thumbv6m-none-eabi` and `riscv32imc-unknown-none-elf` were
   not built.
 - `east_of` and `north_of` for a course beyond ±94 million degrees, and
