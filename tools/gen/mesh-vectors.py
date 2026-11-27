@@ -230,10 +230,13 @@ def rpl_vectors():
                  "rpl.options[1].rpl.option_octets.#": "2", "rpl.options[2].rpl.option_type": "99",
                  "rpl.options[2].rpl.option_octets.#": "3"},
                 ref=R_RPL + ".7; a Pad1 option (no length), a PadN option and an option of an unassigned type")))
-    f = icmp(0x8A, u8(30) + bits([(1, 1), (0, 7)]) + u16(0x1234) + root + u32(7))
-    out.append((p, "06-consistency-check-roundtrip.json", vec(p, "consistency-check-roundtrip", f,
-                {"inet.icmpv6_code": "138", "rpl.cc_response": "1", "rpl.cc_nonce": str(0x1234), "rpl.destination_counter": "7"},
-                ref=R_RPL + ".6; a consistency check response")))
+    sec = u8(0, 0, 0x00, 0) + u32(9) + u8(1)  # T 0, algorithm 0, KIM 0 LVL 0, flags, counter 9, key index 1
+    f = icmp(0x8A, sec + u8(30) + bits([(1, 1), (0, 7)]) + u16(0x1234) + root + u32(7))
+    out.append((p, "06-consistency-check-secured-octets-roundtrip.json", vec(p, "consistency-check-secured-octets-roundtrip", f,
+                {"inet.icmpv6_code": "138", "rpl.secured_octets.#": str(len(f) - 4),
+                 "@absent": ["rpl.cc_response", "rpl.cc_nonce", "rpl.destination_counter", "rpl.instance_id"]},
+                ref=R_RPL + ".1 and 6.6; a consistency check, which is always secured: its security section "
+                    "(9 octets) and base object kept as octets, as for 0x80-0x83")))
     g = icmp(0x80, bytes(range(12)))
     out.append((p, "07-secure-dis-octets-roundtrip.json", vec(p, "secure-dis-octets-roundtrip", g,
                 {"inet.icmpv6_code": "128", "rpl.secured_octets.#": "12"},
