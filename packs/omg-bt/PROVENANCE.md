@@ -9,6 +9,7 @@ no code or comment is restated: only the member names and the JSON types of the 
 | Tag | `v1.9.1`, commit `1b28de93a4853020e4ad39c4a25562c23218d818`, the latest release when read |
 | Files read | `main/gatewayBT.cpp` (the BLE payload and the members the decoder adds), `main/gatewayRF.cpp` (the RCSwitch payload) |
 | Date read | 2026-11-21 |
+| Member names | Theengs Decoder `v2.5.0`, commit `08531d205d491457d9d8ccf4e0ecdfe90b60c513`, the version OpenMQTTGateway v1.9.1 fetches (`platformio.ini`); https://github.com/theengs/decoder. `src/decoder.cpp` (SHA-256 `a2f36948b3be8f55ed19062fcb6185c8187913f4860d6ea998bb6d411c7ca5b7`): `brand` is copied into the payload, and `tempf` is added beside every `tempc`; `src/devices/LYWSD03MMC_json.h` (SHA-256 `e675c5839d1f61bcdb13feba53e0d89e301f96ffa4de09f2c2f45a616d71c85e`) and the other device files name `tempc`, `hum`, `batt`, `volt`. Read 2026-11-26. |
 
 ## Licence
 
