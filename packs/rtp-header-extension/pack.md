@@ -11,7 +11,7 @@ By the profile:
 
 | Profile | Read as |
 |---|---|
-| 0xBEDE, the one-byte form | elements to the end: the ID (4 bits) and, for an ID other than 0, the length minus one (4 bits) and the data (1 to 16 octets, `hex`); an ID of 0 is a padding octet |
+| 0xBEDE, the one-byte form | elements to the end: the ID (4 bits) and the length field (4 bits), and, for an ID other than 0, the data (length plus one octets, 1 to 16, `hex`); an ID of 0 is a padding octet |
 | 0x1000 to 0x100F, the two-byte form (the low 4 bits are application bits) | elements to the end: the ID (8 bits) and, for an ID other than 0, the length (a `length 8 bytes` block) and the data as octets; an ID of 0 is a padding octet |
 | any other | the data as octets |
 
@@ -24,6 +24,10 @@ None.
 - The meaning of each element is negotiated per session by its ID; the elements are kept as ID and data.
 - The length field is carried, not computed from the elements.
 - ID 15 in the one-byte form (reserved: stop reading) is read as an element.
+- An ID 0 octet with a length field above 0 in the one-byte form is read as padding, and the
+  elements after it are read too. RFC 8285 section 4.1.1 says processing of the whole extension
+  ends there and only the elements before it count; the pack language has no way to end a
+  `rest` group on a value.
 
 ## Vectors
 

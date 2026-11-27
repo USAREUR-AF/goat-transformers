@@ -38,6 +38,12 @@ No `core` or `track` key.
 - The checksum is carried, not computed or checked (CRC32c).
 - The flag bits are one octet, not named bits (DATA's I, U, B, E; ABORT's and SHUTDOWN COMPLETE's T).
 - Chunks of extensions (FORWARD TSN, AUTH, ASCONF, RE-CONFIG, PAD and others) are octets.
+- On encode, the chunk length counts the padding of the last parameter or cause in the chunk.
+  RFC 9260 section 3.2 says it counts the padding of every parameter except the last, so a chunk
+  whose last parameter is not a multiple of 4 octets (an INIT ending in Supported Address Types
+  with one type: 0x001a) is written 2 octets longer (0x001c). Decode reads either form, which the
+  RFC asks receivers to accept. The padding is an `align` inside the `length` block, and the
+  language has no way to leave the last one out of the count.
 
 ## Vectors
 

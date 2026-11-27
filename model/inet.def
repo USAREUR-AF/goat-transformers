@@ -288,7 +288,7 @@ key  dtls_cid_present          int     -     "DTLS unified header: C bit, a conn
 key  dtls_seq_16bit            int     -     "DTLS unified header: S bit, 1 = the sequence number is 16 bits, 0 = 8 bits"
 key  dtls_length_present       int     -     "DTLS unified header: L bit, a 16-bit length follows the sequence number"
 key  dtls_epoch_low            int     -     "DTLS unified header: the low 2 bits of the epoch"
-key  dtls_seq_low              int     -     "DTLS unified header: the low 8 or 16 bits of the record sequence number"
+key  dtls_seq_low              int     -     "DTLS unified header: the low 8 or 16 bits of the record sequence number as sent, XORed with a mask from the ciphertext (RFC 9147 4.2.3), so not the sequence number itself"
 
 # BGP-4, RFC 4271 section 4
 key  bgp_length                int     -     "total length of the message in octets, header included, 19-4096"
@@ -334,7 +334,7 @@ key  vrrp_vrid                 int     -     "virtual router identifier"
 key  vrrp_priority             int     -     "priority of the sender for the virtual router (255 address owner, 0 the active router stops)"
 key  vrrp_addr_count           int     -     "number of addresses that follow"
 key  vrrp_reserved             int     -     "the 4 reserved bits before the interval, 0"
-key  vrrp_max_adver_int        int     -     "maximum advertisement interval, centiseconds, 12 bits"
+key  vrrp_max_adver_int        int     cs    "maximum advertisement interval, centiseconds, 12 bits"
 key  vrrp_checksum             int     -     "ones' complement checksum of the VRRP message (with a pseudo header for IPv6)"
 list vrrp_ipv4_addrs                   "the IPv4 addresses of the virtual router, counted by the address count; each item holds inet.vrrp_ipv4_addr"
 key  vrrp_ipv4_addr            int     -     "one IPv4 address, the 32-bit integer"
