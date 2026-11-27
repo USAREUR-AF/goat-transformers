@@ -37,6 +37,26 @@ files the run keeps as artifacts. Every `conformance` run writes the same
 table to the summary of its `bench-table` job and keeps it as the
 `bench-table` artifact; that job never fails the run.
 
+## Where the time goes in the slowest vectors
+
+The two slowest vectors in every engine are `uci` and `a-gra`: XML formats
+generated from a schema, each pack holding about 48,000 field lines in 725 and
+860 kinds. Measured in the Rust engine on 27 November 2026 (thread CPU time,
+the least of 9 runs of 1000 conversions, on a loaded machine):
+
+| Step of one decode of uci's 3 KB message | Time |
+|---|---:|
+| parse the XML document | about 30 µs |
+| select the kind (the `when` lines of 725 kinds) | 0.3 µs |
+| read the lines of the selected scope and decode the values the message holds | about 15 µs, plus the groups whose lists occur |
+
+The pack's size does not set the cost. A decode reads only the selected kind's
+lines (19 at the median kind, 1,498 at the largest), not the 48,000. An index of
+the selected scope's lines by element path was built and measured against
+`main`, and gave no gain within the noise, so it was not merged. What a faster
+decode of these vectors would change is the XML parse, not what the engine
+keeps.
+
 ## Running it
 
 Each engine's README states its command (ruling 2e). From the repository root:
