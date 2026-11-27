@@ -219,10 +219,12 @@ func (p *Pack) partGroups(lines []line, fail func(at int, loc, format string, a 
 }
 
 // isWholeLine reports whether a field line can be the whole line of a part
-// group: `string`, without options but, on text, `optional`.
+// group: `string`, without options but, on text, `optional`. `null`,
+// `implicit` and `range` (with or without `wrap`) are refused there too (0.56
+// ruling 15).
 func (p *Pack) isWholeLine(f *Field) bool {
 	return f.Transform == "string" && f.Via == "" && !f.Swap && !f.Trim && (!f.Optional || p.Wire == WireText) &&
-		f.Absent == nil && !f.WithLine && !f.StopLine && !f.Unlisted
+		f.Absent == nil && !f.WithLine && !f.StopLine && !f.Unlisted && !f.Null && !f.Implicit && f.Range == nil
 }
 
 // checkPartLines runs the checks of 0.64 that need no locator: `unlisted`
@@ -267,7 +269,10 @@ func (p *Pack) checkParts(whens []*When, perr perrFunc) error {
 			continue
 		}
 		any = true
-		if f.Swap || f.Trim || f.Absent != nil || f.WithLine || f.StopLine || f.Optional && p.Wire != WireText {
+		// 0.56 ruling 15: null, implicit, range and wrap are refused on a
+		// part line too; absent (with its >= and <= sentinels) already is.
+		if f.Swap || f.Trim || f.Absent != nil || f.WithLine || f.StopLine || f.Optional && p.Wire != WireText ||
+			f.Null || f.Implicit || f.Range != nil {
 			fail(f.Line, f.Locator, "a part line takes no field option but via, unlisted and, on text, optional")
 		}
 		place(f.Line, &f.loc, f.part)
