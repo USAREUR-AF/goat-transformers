@@ -4058,7 +4058,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 // (ruling 26 of 0.64), so the key does not read back then either
                 let back = w.back.last().expect("a scope");
                 let state = match back.hard_keys.contains(&sw.key) {
-                    true => Err(back.hard.last().cloned().unwrap_or_default()),
+                    true => Err(back.hard.iter().rev().find(|(k, _, _)| *k == sw.key).map(|(_, _, m)| m.clone()).unwrap_or_default()),
                     false => key_state(back, &sw.key),
                 };
                 let value = match state {

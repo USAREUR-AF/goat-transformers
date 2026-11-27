@@ -3887,7 +3887,9 @@ impl Decoded {
             Ok(t) => format!("part {} is `{}`, not `{}`", n, t, c.text),
             Err(e) => e.msg,
         };
-        self.hard.push(format!("`const` at `{}`: {}", c.locator, why));
+        // a `const` has no key; like a refused table value it stands
+        // whatever is held (the flag of ruling 21 of 0.34)
+        self.hard.push((String::new(), true, format!("`const` at `{}`: {}", c.locator, why)));
     }
     /// The entity so far and every failure that stands.
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
