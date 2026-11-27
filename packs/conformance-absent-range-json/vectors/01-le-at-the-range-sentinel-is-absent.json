@@ -1,0 +1,16 @@
+{
+  "name": "le-at-the-range-sentinel-is-absent",
+  "from": "conformance-absent-range-json",
+  "to": "conformance-absent-range-json",
+  "input": "{\"le\":9999999}",
+  "expect": "{\"label\":\"N/A\"}",
+  "model": {
+    "@absent": [
+      "probe.qty",
+      "probe.label",
+      "probe.a"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range and 0.9. le canonical text 9999999 is number text >= 9999999: absent. Encode of an absent key writes the first exact sentinel; le has only a range and writes nothing, a likewise; label writes its exact sentinel N/A as a string. Derived by hand."
+}

@@ -35,7 +35,9 @@ pub(crate) fn check_field(wire: Wire, f: &FieldDef, in_group: bool) -> Result<()
         return Ok(());
     }
     check_place(wire, &f.locator, f.line, in_group)?;
-    if f.absent_arg.is_some() || f.with.is_some() || f.swap || f.trim || f.stop.is_some() {
+    // engine-spec v0.56 ruling 15: nor `null`, `implicit`, `range` (with or
+    // without `wrap`); range sentinels come with `absent`
+    if f.absent_arg.is_some() || f.with.is_some() || f.swap || f.trim || f.stop.is_some() || f.null || f.implicit || f.range.is_some() {
         return bad(f.line, "a `part` line takes only `via`, `unlisted` and, on text, `optional`");
     }
     Ok(())
@@ -94,7 +96,16 @@ pub(crate) fn check_scope(
                     keys.push(&f.model_key);
                 }
                 Transform::StringT
-                    if f.via.is_none() && f.with.is_none() && f.absent_arg.is_none() && !f.swap && !f.trim && !f.unlisted =>
+                    if f.via.is_none()
+                        && f.with.is_none()
+                        && f.absent_arg.is_none()
+                        && !f.swap
+                        && !f.trim
+                        && !f.unlisted
+                        // engine-spec v0.56 ruling 15
+                        && !f.null
+                        && !f.implicit
+                        && f.range.is_none() =>
                 {
                     if whole.is_some() {
                         return bad(f.line, format!("a second whole line on `{}`", place));

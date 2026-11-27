@@ -1,0 +1,15 @@
+{
+  "name": "x-at-the-range-sentinel-is-absent",
+  "from": "conformance-absent-range-bits",
+  "to": "conformance-absent-range-bits",
+  "input": "000001fa",
+  "expect": "00000100",
+  "model": {
+    "probe.n": "1",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range and 0.9 table (bits: the len bits as unsigned), msb, word_bytes 1. Input n = 1 (0x000001), x = 250 (0xfa). x 250 >= 250: absent; x has only a range sentinel, so an absent key writes zero bits as a field with no sentinel (ruling 1 of 0.9): 00. Derived by hand."
+}

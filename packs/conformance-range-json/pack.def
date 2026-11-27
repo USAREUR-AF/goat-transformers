@@ -1,0 +1,16 @@
+# Conformance probe pack for the field option `range` with and without
+# `wrap` (spec 0.56) on `json`. Public. No kinds.
+#   x  int    range -180 180 wrap
+#   y  int    range 0 4095
+#   a  float  range -180 180 wrap
+#   r  float  range -1500 150000
+format  conformance-range-json
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.x      x  int    range -180 180 wrap
+field   probe.y      y  int    range 0 4095
+field   probe.a      a  float  range -180 180 wrap
+field   probe.ratio  r  float  range -1500 150000

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-default-on-an-unwritten-line-is-checked",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-6",
+  "input": "{\"x\":5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9: probe.x writes v, and the probe.y line is reached; its default 99 is outside 0..10."
+}

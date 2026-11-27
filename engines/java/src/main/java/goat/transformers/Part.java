@@ -103,6 +103,16 @@ final class Part {
         return l instanceof Const ? ((Const) l).part : l instanceof Pack.Field ? ((Pack.Field) l).part : null;
     }
 
+    /** The first option of engine-spec 0.56 the field has (a range sentinel of absent included), or null. */
+    private static String outputOption(Pack.Field f) {
+        if (f.out.nul) return "null";
+        if (f.out.implicit) return "implicit";
+        if (f.out.min != null) return "range";
+        if (f.out.wrap) return "wrap";
+        if (f.absent != null && f.absent.hasRange()) return "a range sentinel of absent";
+        return null;
+    }
+
     private static GtException bad(String format, String source, Pack.Line l, String why) {
         return new GtException(GtException.Code.BAD_DIRECTIVE, format, l.locator, source + ":" + l.line + ": " + why);
     }
@@ -123,6 +133,10 @@ final class Part {
             if (g == null || l instanceof Pack.Element) continue;
             if (g.first == null) g.first = l;
             Part p = partOf(l);
+            if (l instanceof Pack.Field && outputOption((Pack.Field) l) != null) {
+                // ruling 15 of 0.56: no option of 0.56 on a part line or on the whole line of its group
+                throw bad(format, source, l, outputOption((Pack.Field) l) + " is not an option of a part line or of the whole line of a part group");
+            }
             if (p == null) {
                 if (!(l instanceof Pack.Field) || !((Pack.Field) l).plainString()) {
                     throw bad(format, source, l, "another line on the locator of a part group (one field ... string without options may stand there)");

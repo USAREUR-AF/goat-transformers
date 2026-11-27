@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-each-operation-is-rounded",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-4",
+  "input": "{\"x\":5,\"a\":0.7}",
+  "expect": "{\"x\":5,\"a\":0.09999999999999987}",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 11, doubles: d 0.1; (0.7 - 0)/0.1 = 6.999999999999999; floor 6; 0.1 x 6 = 0.6000000000000001; 0.7 - that = 0.09999999999999987. A fused multiply-subtract would differ in the last digits."
+}

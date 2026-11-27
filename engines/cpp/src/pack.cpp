@@ -489,7 +489,10 @@ void check_parts(Pack& p) {
                 bad(f.locator, f.line, "'unlisted' applies to a 'part' field with 'via'");
             if (f.transform != Transform::Part) continue;
             part_line(f);
+            // 0.56 ruling 15: nor `null`, `implicit`, `range`, `wrap` or a range sentinel
+            // (a sentinel of `absent` is already refused).
             if (f.swap || f.trim || f.has_stop || f.has_absent || !f.with.empty() ||
+                f.null_member || f.implicit || f.has_range || f.range_wrap ||
                 (f.optional && p.wire != Wire::Text))
                 bad(f.locator, f.line, "a 'part' field takes 'via', 'unlisted' and, on wire text, 'optional' only");
         }
@@ -523,7 +526,8 @@ void check_parts(Pack& p) {
                 const std::size_t at = f ? f->line : line.group ? line.group->line : line.fixed()->line;
                 // The whole line (ruling 24).
                 if (!f || f->transform != Transform::String || !f->via.empty() || f->has_absent || !f->with.empty() ||
-                    f->swap || f->trim || f->has_stop || f->unlisted || (f->optional && p.wire != Wire::Text))
+                    f->swap || f->trim || f->has_stop || f->unlisted || f->null_member || f->implicit ||
+                    f->has_range || f->range_wrap || (f->optional && p.wire != Wire::Text))
                     bad(*g.locator, at, "another line on the locator of a part group");
                 if (whole) bad(f->locator, at, "a second whole line of a part group");
                 whole = f;
@@ -1763,6 +1767,14 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                     ++k;
                     continue;
                 }
+                // v0.56: `null`, `implicit`, `range <min> <max> [wrap]`; whether
+                // they fit the wire, the transform and the key is checked later.
+                {
+                    std::string why;
+                    const int r = detail::parse_output_option(t, k, f, why);
+                    if (r < 0) throw Error(ErrorKind::BadDirective, p.format, f.locator, where + ": " + why);
+                    if (r > 0) continue;
+                }
                 if (t[k] == "swap") flag = &f.swap;
                 else if (t[k] == "trim") flag = &f.trim;
                 else if (t[k] == "optional") flag = &f.optional;
@@ -1964,6 +1976,24 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 check_v015_wire(p, f);
                 if (p.wire == Wire::Bits && detail::transform_is_bits(f.transform)) check_bits_field_len(p, f);
                 check_field_options(p, table_index, f);
+                // v0.56: `null` on json and on geojson outside `geometry`;
+                // `implicit` on protobuf, with a scalar transform, not on a scalar item.
+                if (f.null_member &&
+                    !(p.wire == Wire::Json ||
+                      (p.wire == Wire::GeoJson && (in_group || f.locator.compare(0, 9, "geometry.") != 0))))
+                    throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                source + ":" + std::to_string(f.line) +
+                                    ": option 'null' applies to wire json, and to geojson outside 'geometry'");
+                if (f.implicit) {
+                    const bool scalar_tf = f.transform == Transform::Pvarint || f.transform == Transform::Psint ||
+                                           f.transform == Transform::Pdouble || f.transform == Transform::Pfloat ||
+                                           f.transform == Transform::Pstring;
+                    if (p.wire != Wire::Protobuf || !scalar_tf || (in_group && f.locator == "."))
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    source + ":" + std::to_string(f.line) +
+                                        ": option 'implicit' applies to wire protobuf, with pvarint, psint, pdouble, "
+                                        "pfloat or pstring, and not to a scalar item");
+                }
                 if (f.has_absent) {
                     detail::BitsLocator loc;
                     std::uint32_t len = 0;

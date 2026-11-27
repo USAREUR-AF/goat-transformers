@@ -1,0 +1,13 @@
+{
+  "name": "wrap-before-sscale",
+  "from": "conformance-range-bits",
+  "to": "conformance-range-bits",
+  "input": "0002bf200000",
+  "expect": "fffd40e00000",
+  "model": {
+    "probe.a": "180",
+    "probe.n": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` (\"the model value is checked before via and the transform\") and 0.5 sscale with ruling 1 of 0.5, msb, word_bytes 1. Input 0002bf20 0000: a raw 180000 (0x0002BF20) * 1 / 1000 = 180; n 0. Encode: 180 wraps to -180 (180 - 360*floor(360/360)), then (x - 0) * 1000 / 1 = -180000, two's complement in 32 bits 0xFFFD40E0; n 0 is in [0, 4095]. Derived by hand."
+}

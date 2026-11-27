@@ -1,0 +1,11 @@
+{
+  "name": "5606-null-on-json-and-on-geojson-properties-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey hae float m\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey a float -\nkey ratio float -\nkey label string -\nkey s1 string -\nkey s2 string -\nkey val int -\nlist nums \"scalar items\"\n"
+  ],
+  "packs": [
+    "format probe\nversion 0.56.0\ndistribution public\nsource \"probe\"\nuses probe\nwire json\nfield probe.label label string null\nfield probe.a a.b float null\ngroup probe.nums nums\n  field probe.val . int null\nend\n",
+    "format probe2\nversion 0.56.0\ndistribution public\nsource \"probe\"\nuses probe\nwire geojson\nfield probe.label properties.label string null\nfield probe.n properties.n int null\n"
+  ]
+}

@@ -342,6 +342,7 @@ final class TlvCodec extends Codec<TlvCodec.Msg> {
                 else if (o.fixed == null) o.fixed = w;   // the earliest when or const (ruling 9 of 0.13)
             }
         }
+        for (Out o : slots) for (Pack.Field f : o.fields) checkRange(f, e, kind.scope.defaultValues);   // ruling 9 of 0.56
         for (Out o : slots) {
             if (o.fixed != null) {
                 o.value = TlvTransform.bigEndian(o.fixed.number, ((Loc) o.fixed.loc).size);

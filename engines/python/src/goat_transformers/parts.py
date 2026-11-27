@@ -63,6 +63,8 @@ def check_parts(wire, common, kinds, deferred, source, name, delimiter=None, che
             elif not (ln.is_field and ln.transform.name == "string" and ln.via is None and ln.absent is None
                       and ln.with_key is None):
                 bad(ln, "another line on the locator of a part group")
+            elif ln.null or ln.implicit or ln.range is not None:  # ruling 15 of 0.56
+                bad(ln, "the whole line of a part group takes no option but 'optional' on text")
             elif whole is not None:
                 bad(ln, "a second whole line in one part group")
             else:

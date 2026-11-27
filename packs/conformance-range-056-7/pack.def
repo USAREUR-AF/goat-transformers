@@ -1,0 +1,17 @@
+# Conformance probe pack for ruling 9 of 0.56 and the gate blocks of 0.17: probe.x
+# in two blocks of a selector, only the first with a range. Fixed layout, least
+# significant bit first. Public. No kinds.
+format  conformance-range-056-7
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire       bits
+word_bytes 1
+field   probe.y  0:0:1  uint
+if      0:0:1  0
+  field probe.x  0:8:8  uint  range 0 10
+end
+if      0:0:1  1
+  field probe.x  0:8:8  uint
+end

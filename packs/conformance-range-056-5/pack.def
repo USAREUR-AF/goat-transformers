@@ -1,0 +1,12 @@
+# Conformance probe pack for ruling 9 of 0.56: a default under a const is still
+# checked. Least significant bit first. Public. No kinds.
+format  conformance-range-056-5
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    bits
+word_bytes 1
+field   probe.x  0:0:8  uint  range 0 10
+default probe.x  99
+const   0:0:8  1

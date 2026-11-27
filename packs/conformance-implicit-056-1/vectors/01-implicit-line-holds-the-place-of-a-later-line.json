@@ -1,0 +1,13 @@
+{
+  "name": "implicit-line-holds-the-place-of-a-later-line",
+  "from": "conformance-implicit-056-1",
+  "to": "conformance-implicit-056-1",
+  "input": "0800",
+  "expect": "",
+  "model": {
+    "probe.n": "0",
+    "probe.x": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit`: \"A line that implicit leaves out is still the line that holds the place for ruling 16 of 0.5\". Input 08 00 fills n and x with 0 (ruling 16 of 0.5). Encode: n is the earliest held line on path 1, 0 is left out; x (no implicit) does not write its 0 there. Output empty, not 0800. Derived by hand."
+}

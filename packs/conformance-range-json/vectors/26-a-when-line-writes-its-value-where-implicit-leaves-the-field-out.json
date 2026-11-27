@@ -1,0 +1,9 @@
+{
+  "name": "a-when-line-writes-its-value-where-implicit-leaves-the-field-out",
+  "from": "conformance-range-json",
+  "to": "conformance-implicit-056-2",
+  "input": "{\"x\":0,\"y\":5}",
+  "expect": "08001005",
+  "source": "constructed",
+  "reference": "spec 0.56 implicit: probe.x 0 is left out by implicit, and when 1 0 writes its own value (field 1 varint 0: 08 00); probe.y 5 is field 2 (10 05)."
+}

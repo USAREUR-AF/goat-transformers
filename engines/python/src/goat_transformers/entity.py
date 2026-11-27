@@ -1,6 +1,7 @@
 """The shared model in memory (`Entity`, `Item`) and the value-table lookups
 of a `via` field."""
 
+import math
 from dataclasses import dataclass, field as dc_field
 
 from .transforms import canonical_text, read_typed
@@ -90,6 +91,48 @@ def _via_encode(f, value):
             return value
         raise ValueError("%s has no entry in table %s" % (text, f.via))
     return read_typed(native, nt)
+
+
+def apply_range(f, value):
+    """`range <min> <max> [wrap]` (0.56) on encode, before `via` and the
+    transform: the value, wrapped into `[min, max)` with `wrap`; without it a
+    value outside `[min, max]` raises ValueError (`transform-encode`)."""
+    lo, hi, wrap = f.rng
+    if f.key_type == "int":
+        if isinstance(value, bool) or not isinstance(value, int):
+            if isinstance(value, float) and value.is_integer():
+                value = int(value)
+            else:
+                raise ValueError("%r is not an int value" % (value,))
+        if not wrap:
+            if value < lo or value > hi:
+                raise ValueError("%d is outside the range [%d, %d]" % (value, lo, hi))
+            return value
+        if lo <= value < hi:
+            return value
+        w = hi - lo
+        return value - w * ((value - lo) // w)  # exact integer arithmetic (ruling 7 of 0.56)
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError("%r is not a float value" % (value,))
+    x = float(value)
+    if not wrap:
+        if not lo <= x <= hi:  # a NaN is outside every interval (ruling 10 of 0.56)
+            raise ValueError("%r is outside the range [%r, %r]" % (x, lo, hi))
+        return value
+    if lo <= x < hi:
+        return value
+    # rulings 10 and 11 of 0.56: five operations, each rounded, none fused; a
+    # step that is not finite, or a result outside the interval, is refused
+    d = hi - lo
+    q = (x - lo) / d
+    if not (math.isfinite(d) and math.isfinite(q)):
+        raise ValueError("%r does not wrap into [%r, %r): a step is not finite" % (x, lo, hi))
+    r = x - d * float(math.floor(q))
+    if r == hi:  # the same point of the circle
+        return lo
+    if not lo <= r < hi:  # not finite included
+        raise ValueError("%r does not wrap into [%r, %r): the result is %r" % (x, lo, hi, r))
+    return r
 
 
 @dataclass

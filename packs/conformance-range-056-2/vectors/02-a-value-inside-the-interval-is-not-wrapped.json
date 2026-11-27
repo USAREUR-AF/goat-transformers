@@ -1,0 +1,12 @@
+{
+  "name": "a-value-inside-the-interval-is-not-wrapped",
+  "from": "conformance-range-056-2",
+  "to": "conformance-range-056-2",
+  "input": "{\"a\":0.5}",
+  "expect": "{\"a\":0.5}",
+  "model": {
+    "probe.a": "0.5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.56 range: a value inside the interval is written as it is; no arithmetic is done."
+}

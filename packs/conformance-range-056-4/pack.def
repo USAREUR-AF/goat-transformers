@@ -1,0 +1,11 @@
+# Conformance probe pack for a default outside its range (0.56) and for the
+# rounding of the wrap formula (ruling 11). Public. No kinds.
+format  conformance-range-056-4
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.x  x  int  range 0 10
+default probe.x  99
+field   probe.a  a  float  range 0 0.1 wrap

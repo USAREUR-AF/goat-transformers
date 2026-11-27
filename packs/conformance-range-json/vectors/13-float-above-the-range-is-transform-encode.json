@@ -1,0 +1,9 @@
+{
+  "name": "float-above-the-range-is-transform-encode",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"r\":150000.5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` without wrap: 150000.5 (exact in binary) is above 150000, transform-encode. Derived by hand."
+}

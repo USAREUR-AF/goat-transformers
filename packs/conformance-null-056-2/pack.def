@@ -1,0 +1,13 @@
+# Conformance probe pack for ruling 1 of 0.56: a `group` on the member of a
+# `null` field comes before `null`, with the field line first. Public. No kinds.
+format  conformance-null-056-2
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.s1     m  string  null
+group   probe.items  m
+  field  probe.label  name  string
+  field  probe.qty    q     int
+end

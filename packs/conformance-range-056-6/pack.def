@@ -1,0 +1,11 @@
+# Conformance probe pack for ruling 9 of 0.56: a default on a line whose member
+# another line writes is still checked. Public. No kinds.
+format  conformance-range-056-6
+version 0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.x  v  int
+field   probe.y  v  int  range 0 10
+default probe.y  99

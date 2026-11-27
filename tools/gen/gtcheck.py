@@ -13,8 +13,9 @@ the long and terminated fields of 0.22:
 the `hex` transform, the set `ascii8`, the locator `until:<code>`, the field
 option `stop <code>` and `bit_order msb-lsb`, the load rules of the
 `inner <format> [partial]` line of 0.34, the part lines of 0.64,
-`part:<sep>:<n>`, `unlisted` and `const ... part`, and the transforms of 0.55:
-`iso8601_si`, the decimal places of `uscale` and `sscale`, `utf8` on bits) and
+`part:<sep>:<n>`, `unlisted` and `const ... part`, the transforms of 0.55:
+`iso8601_si`, the decimal places of `uscale` and `sscale`, `utf8` on bits, and the
+options of 0.56: `null`, `implicit`, `range` and range sentinels) and
 imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
@@ -712,13 +713,14 @@ class Node:
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
                  "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper",
-                 "values", "ranges", "until", "stop", "as_key", "names", "at", "optional", "part")
+                 "values", "ranges", "until", "stop", "as_key", "names", "at", "optional", "part", "range")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
         self.body = self.kinds = self.key = self.loc = self.tr = self.targs = self.via = None
         self.opts = self.also = self.value = self.mode = self.count = self.item = None
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
+        self.range = None
         self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = self.with_ = self.uper = None
         self.values = self.ranges = None
         self.until = self.stop = None
@@ -1778,8 +1780,16 @@ class _Loader:
             if opt == "via" and node.via is None and i + 1 < len(a):
                 node.via = a[i + 1]
                 i += 1
-            elif opt in ("swap", "trim", "optional", "unlisted") and opt not in node.opts:
+            elif opt in ("swap", "trim", "optional", "unlisted", "null", "implicit") and opt not in node.opts:
                 node.opts.add(opt)
+            elif opt == "range" and node.range is None and i + 2 < len(a):
+                # engine-spec 0.56: the form here (number text), the rest with the key's type
+                if not all(_VALUE_FLOAT.match(v) for v in a[i + 1:i + 3]):
+                    self.bad(node, "`range %s %s`: a bound is not number text" % (a[i + 1], a[i + 2]))
+                node.range = (a[i + 1], a[i + 2])
+                i += 2
+                if i + 1 < len(a) and a[i + 1] == "wrap":
+                    i += 1
             elif opt == "absent" and node.absent is None and i + 1 < len(a):
                 # spec 0.9: the token after `absent` is always its argument
                 node.absent = a[i + 1]
@@ -1800,10 +1810,12 @@ class _Loader:
             self.bad(node, "`unlisted` needs `part` and `via`")
         if node.part is not None:
             self._part(node, group)
-            if node.opts & {"swap", "trim"} or node.absent is not None or node.with_ is not None \
-                    or node.stop is not None:
+            # engine-spec 0.56 ruling 15: nor `null`, `implicit`, `range` or `wrap`
+            if node.opts & {"swap", "trim", "null", "implicit"} or node.absent is not None \
+                    or node.with_ is not None or node.stop is not None or node.range is not None:
                 self.bad(node, "a `part` line takes only `via`, `unlisted` and, on text, `optional`")
         self._terminated(node, bits_wire)
+        self._output_options(node, group)
         if self.pack.wire == "cbor" and (node.opts or node.absent is not None):
             self.bad(node, "`%s` on the cbor wire, whose only field option is `via`"
                      % ("absent" if node.absent is not None else sorted(node.opts)[0]))
@@ -1833,6 +1845,35 @@ class _Loader:
         if node.with_ is not None:
             # 0.18 ruling 5: checked as a `requires` key is
             self.key_uses.append((node.line, node.with_, "requires"))
+
+    def _output_options(self, node, group):
+        """engine-spec 0.56: where `null`, `implicit` and `range` are valid."""
+        wire = self.pack.wire
+        if "null" in node.opts and (wire not in ("json", "geojson") or (
+                wire == "geojson" and group is None and str(node.loc).startswith("geometry"))):
+            self.bad(node, "`null` needs a json locator, or a geojson locator outside `geometry`")
+        if "implicit" in node.opts and (wire != "protobuf" or node.path == ()):
+            self.bad(node, "`implicit` needs a protobuf scalar that is not an item")
+        if node.range is not None and wire == "cbor":
+            self.bad(node, "`range` on the cbor wire")
+
+    def _range_check(self, node, key_type):
+        """engine-spec 0.56: `range` against the key's type (rulings 10 and 12)."""
+        low, high = node.range
+        if key_type not in ("int", "float"):
+            self.bad(node, "`range` on a key that is declared %s" % key_type)
+        if key_type == "int":
+            if not (_INT.match(low) and _INT.match(high)):
+                self.bad(node, "`range %s %s` on an int key" % (low, high))
+            low, high = int(low), int(high)
+            if not all(-1 << 63 <= v < 1 << 63 for v in (low, high)):
+                self.bad(node, "a `range` bound does not fit 64 bits")
+        else:
+            low, high = float(low), float(high)
+            if not (math.isfinite(low) and math.isfinite(high)):
+                self.bad(node, "a `range` bound does not fit a finite double")
+        if not low < high:
+            self.bad(node, "`range` needs a minimum less than its maximum")
 
     def _terminated(self, node, bits_wire):
         """engine-spec 0.22: `until:<code>` and `stop <code>` (rulings 9 and 16)."""
@@ -1865,8 +1906,17 @@ class _Loader:
         for v in values:
             if '"' in v or (v == "" and arg != ""):
                 self.bad(node, "`absent %s`: an empty value or a double quote" % arg)
+        # engine-spec 0.56: `>=<n>` and `<=<n>`, looked for in the value as written
+        ranged = [v[2:] for v in values if v.startswith((">=", "<="))]
+        if ranged and (node.tr == "bool" or (wire == "protobuf" and node.tr in ("pdouble", "pfloat"))):
+            self.bad(node, "a range sentinel with `%s`" % node.tr)
+        if wire in ("xml", "json", "geojson") or node.tr == "pstring":
+            for v in ranged:
+                if not _VALUE_FLOAT.match(v) or not math.isfinite(float(v)):
+                    self.bad(node, "`absent %s`: a range sentinel takes number text" % arg)
+
         def unsigned(limit):
-            for v in values:
+            for v in [v[2:] if v.startswith((">=", "<=")) else v for v in values]:
                 if not v.isdigit() or not v.isascii() or int(v) >= limit:
                     self.bad(node, "`absent %s`: each value is an unsigned integer below %d" % (arg, limit))
         if wire == "bits":
@@ -1878,6 +1928,7 @@ class _Loader:
                 return
             unsigned(1 << 32 if node.tr == "pfloat" else 1 << 64)
         else:
+            values = [v for v in values if not v.startswith((">=", "<="))]
             stripped = [v[1:] if v.startswith("=") else v for v in values]
             for v, t in zip(values, stripped):
                 if t == "" and arg != "":
@@ -2419,7 +2470,9 @@ class _Loader:
                         self.bad(n, "part %d of `%s` is named twice" % (n.part[1], loc))
                     numbers.add(n.part[1])
                 elif n.d == "field" and n.tr == "string" and n.via is None and n.absent is None \
-                        and n.with_ is None and whole is None:
+                        and n.with_ is None and n.stop is None and n.range is None \
+                        and not n.opts - {"optional"} and whole is None:
+                    # 0.64 ruling 24 and 0.56 ruling 15: no option but `optional` on text
                     whole = n
                 else:
                     self.bad(n, "a `%s` on `%s`, whose token is read in parts" % (n.d, loc))
@@ -2732,6 +2785,8 @@ class _Loader:
                 value_checks.append((at, lambda at=at, key=key, role=role: self._type_check(at, key, role, types[key])))
             else:
                 self._type_check(at, key, role, types[key])
+                if role == "field" and at.range is not None:
+                    self._range_check(at, types[key])
         for node in self.switches:
             key_type, seen = model.type_of(node.key), set()
             for arm in node.body:

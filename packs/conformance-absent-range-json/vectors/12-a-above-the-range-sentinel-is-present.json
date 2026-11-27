@@ -1,0 +1,16 @@
+{
+  "name": "a-above-the-range-sentinel-is-present",
+  "from": "conformance-absent-range-json",
+  "to": "conformance-absent-range-json",
+  "input": "{\"a\":-998}",
+  "expect": "{\"label\":\"N/A\",\"a\":-998}",
+  "model": {
+    "probe.a": "-998",
+    "@absent": [
+      "probe.qty",
+      "probe.label"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range and 0.9. -998 > -999: present and written; field-line order le, label, a. Derived by hand."
+}

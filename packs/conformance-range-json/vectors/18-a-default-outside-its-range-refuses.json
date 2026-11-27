@@ -1,0 +1,9 @@
+{
+  "name": "a-default-outside-its-range-refuses",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-4",
+  "input": "{}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.56 range, \"a value a default supplies is checked\": probe.x is absent, its default 99 is outside 0..10."
+}

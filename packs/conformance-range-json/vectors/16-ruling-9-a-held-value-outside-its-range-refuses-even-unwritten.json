@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-held-value-outside-its-range-refuses-even-unwritten",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-1",
+  "input": "{\"x\":5,\"y\":4095}",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9: decode of conformance-range-json gives probe.x 5 and probe.y 4095. On encode, v would be written from probe.x (ruling 16 of 0.5), but probe.y is held and outside its range 0 10, so the encode is refused.",
+  "expect_error": "transform-encode"
+}

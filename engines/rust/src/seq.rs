@@ -1026,6 +1026,9 @@ impl<'a> Parser<'a> {
                     stop: None,
                     code: CodeSeq::of(&toks[3]),
                     unlisted: false,
+                    null: false,
+                    implicit: false,
+                    range: None,
                 };
                 for table in field_options(&mut f, toks, ln, false)? {
                     self.vias.push((table, ln));
@@ -1074,7 +1077,8 @@ impl<'a> Parser<'a> {
                     return bad(ln, "`swap` is not valid with `chars`, `octal` or `hex`");
                 }
                 resolve_absent(Wire::Bits, &mut f, Some(len as u32))?;
-                // `also <key> [via <table>]` lines directly after the field (ruling 13 of 0.8)
+                // `also <key> [via <table>]` lines directly after the field (ruling 13 of 0.8);
+                // `range` is the field line's own key's only (ruling 8 of 0.56)
                 let mut also = Vec::new();
                 while let Some((l, t)) = self.peek() {
                     if t[0] != "also" {
@@ -1088,7 +1092,7 @@ impl<'a> Parser<'a> {
                         }
                         _ => return bad(*l, "also needs <model-key> [via <table>]"),
                     };
-                    also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, with: None, ..f.clone() });
+                    also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, with: None, range: None, ..f.clone() });
                     self.i += 1;
                 }
                 let line = First::Field(f.clone(), len as u32, also.clone(), uper.clone());
@@ -2139,6 +2143,19 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         return Err(e);
     }
     check_as(&body)?;
+    // engine-spec v0.56: `null` (json, geojson) and `implicit` (protobuf) do
+    // not fit the bits wire, a check made after the file (ruling 10 of 0.10)
+    let mut wire_opt: Option<usize> = None;
+    body.visit(&mut |v| {
+        if let Visit::Field(f) = v {
+            if f.null || f.implicit {
+                wire_opt = Some(wire_opt.map_or(f.line, |l| l.min(f.line)));
+            }
+        }
+    });
+    if let Some(ln) = wire_opt {
+        return bad(ln, "`null` and `implicit` are not valid on a bits wire");
+    }
     // `armor sixbit` and `encoding uper` need `bit_order msb` (0.14, 0.19); `msb-lsb` is not `msb`
     let armor = p.armor.check(true, p.order == BitOrder::Msb)?;
     // engine-spec v0.19: `encoding uper`, and the lines only it allows (ruling 9)
@@ -3427,6 +3444,21 @@ fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, look
     }
 }
 
+/// The `default` that fills the absent key of a `field` line is checked
+/// against the line's `range`, also where a held `also` key supplies the bits
+/// (ruling 9 of 0.56).
+#[cfg(feature = "bits")]
+fn check_own_default(p: &Pack, f: &FieldDef, ent: &Entity, defs: Defaults) -> Result<(), Error> {
+    if f.range.is_some() && live(ent, f) && !ent.fields.contains_key(&f.model_key) {
+        if let (Some(r), Some(v)) = (&f.range, defs.default(&f.model_key)) {
+            if let Some(rv) = r.val {
+                rv.apply(r.wrap, v).map_err(|e| transform_encode_err(p, f, e))?;
+            }
+        }
+    }
+    Ok(())
+}
+
 /// Write one `field` line, with its `also` keys, at bit `at` of `buf`, whose
 /// bits there are zero: the earliest of the line's keys that the entity
 /// holds; when it holds none, the default of the earliest key that has one
@@ -3435,6 +3467,7 @@ fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, look
 #[allow(clippy::too_many_arguments)]
 #[cfg(feature = "bits")]
 fn write_line(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], ent: &Entity, defs: Defaults, at: u64, buf: &mut [u8]) -> Result<(), Error> {
+    check_own_default(p, f, ent, defs)?;
     let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
     let value = keys()
         .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))
@@ -3498,6 +3531,7 @@ fn read_until(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, end: u64) -> Resul
 /// else the terminator alone (ruling 10 of 0.22).
 #[cfg(feature = "bits")]
 fn until_codes(p: &Pack, f: &FieldDef, also: &[FieldDef], ent: &Entity, defs: Defaults) -> Result<(Vec<u32>, u32), Error> {
+    check_own_default(p, f, ent, defs)?;
     let (set, term) = until_of(f);
     let w = set.width();
     let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
@@ -3560,6 +3594,7 @@ fn write_uper_line(
     defs: Defaults,
 ) -> Result<(), Error> {
     let p = w.p;
+    check_own_default(p, f, ent, defs)?;
     let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
     let value = keys()
         .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))

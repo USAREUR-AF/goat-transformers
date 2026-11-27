@@ -255,6 +255,11 @@ func (e *Engine) AddPack(p *Pack) error {
 		} else if got, ok := transformYields(f.Transform); !ok || got != k.Type {
 			return lerr(ErrKeyTypeMismatch, mod, r, "key %s is %s but transform %s yields %s", r.key, kindName(k.Type), f.Transform, kindName(got))
 		}
+		if f.Range != nil {
+			if err := f.Range.resolve(k.Type); err != nil {
+				return &Error{Kind: ErrBadDirective, Format: p.Format, Module: mod, Source: p.Source, Line: r.line, Locator: f.Locator, Detail: err.Error()}
+			}
+		}
 		f.keyType = k.Type
 		f.bindTable()
 	}
@@ -1149,6 +1154,10 @@ func fieldValue(p *Pack, lay *layout, f *Field, rec *Item) (Value, bool, error) 
 			return Value{}, false, nil
 		}
 		v = d.val
+	}
+	v, err := f.applyRange(v)
+	if err != nil {
+		return Value{}, false, encodeErr(p, f, err)
 	}
 	if f.Key == "type" && p.TypeMapped() && v.Kind == KindString {
 		if native, ok := p.cotToNative[v.S]; ok {

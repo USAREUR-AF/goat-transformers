@@ -1,0 +1,9 @@
+{
+  "name": "int-below-the-range-is-transform-encode",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"y\":-1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` without wrap: -1 is below <min> 0, transform-encode. Derived by hand."
+}

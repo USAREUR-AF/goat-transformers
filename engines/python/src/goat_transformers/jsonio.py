@@ -295,6 +295,9 @@ def resolve(pack, enc):
         children = enc.groups.get(i)
         if children is not None and g.locator not in resolved:
             resolved[g.locator] = "[" + ",".join([item_text(pack, c) for c in children]) + "]"
+    for i, ln in plan.ifields:  # 0.56: `null` where no line, a group included, on the member writes a value
+        if i in enc.nulls and ln.locator not in resolved:
+            resolved[ln.locator] = "null"
     return resolved
 
 

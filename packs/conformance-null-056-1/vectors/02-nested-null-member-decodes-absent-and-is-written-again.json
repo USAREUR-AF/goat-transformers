@@ -1,0 +1,15 @@
+{
+  "name": "nested-null-member-decodes-absent-and-is-written-again",
+  "from": "conformance-null-056-1",
+  "to": "conformance-null-056-1",
+  "input": "{\"id\":\"u1\",\"a\":{\"b\":null}}",
+  "expect": "{\"id\":\"u1\",\"a\":{\"b\":null}}",
+  "model": {
+    "uid": "u1",
+    "@absent": [
+      "probe.a"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null` Decode (null yields no value) and the nested-object sentence: probe.a is absent, so a.b is written null and the object a is kept. Derived by hand."
+}

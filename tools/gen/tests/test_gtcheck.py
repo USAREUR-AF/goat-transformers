@@ -363,6 +363,48 @@ class ValueForms055Test(Refusals):
         self.refuse_pack(HEAD + "wire tlv\ntag 2\nfield lat 1:4 uscale:0.1:0:1\n", "bad-directive", 8)
 
 
+class OutputConditions056Test(Refusals):
+    """engine-spec 0.56: `null`, `implicit`, `range`, range sentinels."""
+    JSON = HEAD + "wire json\n"
+    PROTO = HEAD + "wire protobuf\n"
+
+    def test_the_options_load(self):
+        for line in ("field probe.qty q int null", "field probe.qty q int range 0 10 wrap null",
+                     "field probe.ratio q float range -1.5 2e3", "field probe.qty q int absent 0,>=9",
+                     "field probe.label q string absent =>=x"):
+            gtcheck.load_pack(self.JSON + line + "\n", model())
+        for line in ("field probe.qty 1 pvarint implicit", "field probe.label 1 pstring absent <=5"):
+            gtcheck.load_pack(self.PROTO + line + "\n", model())
+
+    def test_what_the_options_refuse(self):
+        for line in ("field probe.qty q int implicit", "field probe.qty q int null null",
+                     "field probe.qty q int range 5", "field probe.qty q int range 5 5",
+                     "field probe.qty q int range 0 1.5", "field probe.ratio q float range -0 0",
+                     "field probe.qty q int range 0 9223372036854775808", "field probe.label q string range 0 1",
+                     "field probe.qty q int range 0 9 null wrap", "field probe.qty q int wrap",
+                     "field probe.qty q int range 0 1 range 0 1", "field probe.qty q bool absent >=1",
+                     "field probe.label q string absent >=x"):
+            self.refuse_pack(self.JSON + line + "\n", "bad-directive", 7)
+        for line in ("field probe.qty 1 pvarint null", "field probe.ratio 1 pdouble absent >=1"):
+            self.refuse_pack(self.PROTO + line + "\n", "bad-directive", 7)
+        self.refuse_pack(self.PROTO + "group probe.items 1\n  field probe.items.n . pvarint implicit\nend\n",
+                         "bad-directive", 8)
+
+    def test_a_part_line_and_its_whole_line_refuse_the_options(self):
+        # ruling 15: none of the four options, nor a range sentinel, on a part
+        # line of 0.64 or on the whole line of its group; the 0.64 options stay
+        tables = self.JSON + "map t a 1\nmap t b 2\n"
+        gtcheck.load_pack(tables + "field probe.qty t part:-:0 via t unlisted\nfield probe.label t string\n",
+                          model())
+        gtcheck.load_pack(HEAD + "wire text\nfield probe.label 0 part:-:0 optional\n"
+                          "field uid 0 string optional\n", model())
+        for option in ("range 0 10", "range 0 10 wrap", "null", "implicit", "absent >=1"):
+            self.refuse_pack(tables + "field probe.qty t part:-:0 via t %s\n" % option, "bad-directive", 9)
+        for option in ("null", "implicit", "absent <=1"):
+            self.refuse_pack(tables + "field probe.qty t part:-:0 via t\nfield probe.label t string %s\n" % option,
+                             "bad-directive", 10)
+
+
 class GroupsTest(Refusals):
     def test_a_group_holds_its_body_and_nests(self):
         pack = gtcheck.load_pack(HEAD + "wire json\ngroup probe.items items\n  field probe.label name string\n"
@@ -607,6 +649,9 @@ V011_ORDER |= {"6548", "6549", "6550", "6551", "6552", "6553", "6554", "6555", "
 # 0.55: on tlv a transform's parameters are checked after the file, so a later
 # `bogus` line gives `unknown-directive` (5523).
 V011_ORDER |= {"5523"}
+# 0.56: the key-type checks of `range` (5617), and where `null` (5630) and `range`
+# (5632) are valid, come after the file; a later `bogus` line is `unknown-directive`.
+V011_ORDER |= {"5617", "5630", "5632"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line

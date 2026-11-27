@@ -1,0 +1,16 @@
+{
+  "name": "a-below-the-range-sentinel-is-absent",
+  "from": "conformance-absent-range-json",
+  "to": "conformance-absent-range-json",
+  "input": "{\"a\":-1000}",
+  "expect": "{\"label\":\"N/A\"}",
+  "model": {
+    "@absent": [
+      "probe.qty",
+      "probe.label",
+      "probe.a"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range and 0.9. -1000 <= -999: absent. Derived by hand."
+}

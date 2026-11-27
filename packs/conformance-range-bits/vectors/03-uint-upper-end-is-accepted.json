@@ -1,0 +1,13 @@
+{
+  "name": "uint-upper-end-is-accepted",
+  "from": "conformance-range-bits",
+  "to": "conformance-range-bits",
+  "input": "000000000fff",
+  "expect": "000000000fff",
+  "model": {
+    "probe.n": "4095",
+    "probe.a": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range`: 4095 is <max>, accepted; a 0 lies in [-180, 180) and is unchanged. Derived by hand."
+}

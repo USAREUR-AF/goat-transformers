@@ -1,0 +1,12 @@
+{
+  "name": "nested-member-with-a-value-is-written",
+  "from": "conformance-null-056-1",
+  "to": "conformance-null-056-1",
+  "input": "{\"id\":\"u1\",\"a\":{\"b\":1.5}}",
+  "expect": "{\"id\":\"u1\",\"a\":{\"b\":1.5}}",
+  "model": {
+    "probe.a": "1.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.5 canonical output; 0.56 `null` does not act on a held key. 1.5 is exact in binary. Derived by hand."
+}

@@ -424,7 +424,7 @@ func (p *Pack) resolveCBOR(whens []*When, perr perrFunc) error {
 		for _, o := range []struct {
 			set  bool
 			name string
-		}{{f.Absent != nil, "absent"}, {f.Swap, "swap"}, {f.Trim, "trim"}, {f.Optional, "optional"}} {
+		}{{f.Absent != nil, "absent"}, {f.Swap, "swap"}, {f.Trim, "trim"}, {f.Optional, "optional"}, {f.Range != nil, "range"}} {
 			if o.set {
 				return perr(ErrBadDirective, f.Line, f.Locator, "field option `%s` is not valid on wire cbor", o.name)
 			}

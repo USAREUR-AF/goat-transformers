@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-a-result-below-min-is-refused",
+  "from": "conformance-range-056-9",
+  "to": "conformance-range-json",
+  "input": "{\"a\":1.000000000000002e+18}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.56 rulings 10 and 11, range -180 180 wrap, doubles: x = 1.000000000000002e+18; d 360; q = (x + 180)/360; r = x - 360 x floor(q) = -256.0, below -180."
+}

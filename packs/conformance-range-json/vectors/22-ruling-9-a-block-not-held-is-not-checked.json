@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-block-not-held-is-not-checked",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-7",
+  "input": "{\"x\":50,\"y\":1}",
+  "expect": "0132",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9, 0.17 ruling 10: probe.y 1 sets bit 0, so the second block is held; probe.x 50 = 0x32 at byte 1; the first block, with the range, is not reached."
+}

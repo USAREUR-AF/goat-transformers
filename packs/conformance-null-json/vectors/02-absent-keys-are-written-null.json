@@ -1,0 +1,21 @@
+{
+  "name": "absent-keys-are-written-null",
+  "from": "conformance-null-json",
+  "to": "conformance-null-json",
+  "input": "{\"id\":\"u1\"}",
+  "expect": "{\"id\":\"u1\",\"label\":null,\"q\":null,\"x\":7,\"code\":\"N/A\",\"s\":null}",
+  "model": {
+    "uid": "u1",
+    "probe.items.#": "absent",
+    "@absent": [
+      "probe.label",
+      "probe.qty",
+      "probe.x",
+      "probe.tag",
+      "probe.s1",
+      "probe.s2"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `null`: no line writes a value at label, q or s (s1 and s2 both absent), so each is written null at its field-line position. The order for an absent key is default, then first exact sentinel, then null: x has `default probe.x 7` and writes 7; code has `absent N/A` and writes the string \"N/A\" (ruling 11 of 0.5: not number text). The list is absent and writes nothing (0.7). Derived by hand."
+}

@@ -1,0 +1,12 @@
+{
+  "name": "float-upper-end-is-accepted",
+  "from": "conformance-range-json",
+  "to": "conformance-range-json",
+  "input": "{\"r\":150000}",
+  "expect": "{\"r\":150000}",
+  "model": {
+    "probe.ratio": "150000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `range` without wrap, float key, range -1500 150000: 150000 is <max>, accepted; written 150000 (2f). Derived by hand."
+}

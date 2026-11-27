@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-an-unwritten-wrap-line-does-not-refuse",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-3",
+  "input": "{\"x\":11,\"y\":1}",
+  "expect": "{\"v\":1}",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9: probe.y is written (ruling 16 of 0.5); probe.x 11 is outside 0..10 but its line wraps, finitely, so nothing is refused."
+}

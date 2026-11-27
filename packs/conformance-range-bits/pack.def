@@ -1,0 +1,15 @@
+# Conformance probe pack for `range` (spec 0.56) on `bits`: the range is
+# checked, and the wrap made, before the transform. Most significant bit
+# first, one byte per word. Public. No kinds.
+#   bytes 0-3  probe.a  sscale:1/1000  range -180 180 wrap   (a longitude in millidegrees)
+#   bytes 4-5  probe.n  uint           range 0 4095          (a track number of 12 bits in 16)
+format     conformance-range-bits
+version    0.56.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.a  0:0:32  sscale:1/1000  range -180 180 wrap
+field   probe.n  4:0:16  uint           range 0 4095

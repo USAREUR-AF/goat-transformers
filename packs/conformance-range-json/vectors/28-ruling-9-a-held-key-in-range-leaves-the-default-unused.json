@@ -1,0 +1,9 @@
+{
+  "name": "ruling-9-a-held-key-in-range-leaves-the-default-unused",
+  "from": "conformance-range-json",
+  "to": "conformance-range-056-10",
+  "input": "{\"x\":5}",
+  "expect": "05",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 9: probe.x is held, so the default fills nothing and is not checked; 5 is in 0..10 and is written as 05."
+}

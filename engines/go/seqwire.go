@@ -1261,16 +1261,27 @@ func readBack(p *Pack, f *Field, sc seqScope, data []byte, at int) {
 	}
 }
 
+// fieldValue is seqFieldValue for a line the pass writes: the refusal of a
+// `range` is kept for the end of the pass.
+func (w *seqWriter) fieldValue(f *Field, sc seqScope) (Value, *Field, bool, error) {
+	v, from, ok, refused, err := seqRangedValue(w.p, f, sc)
+	if refused != nil && w.refused == nil {
+		w.refused = refused
+	}
+	return v, from, ok, err
+}
+
 // fieldBits returns the bits a field line writes, from bit 0 of a scratch
 // buffer; nil when the value cannot be written.
 func (w *seqWriter) fieldBits(f *Field, sc seqScope) []byte {
 	buf := make([]byte, (f.loc.blen+7)/8+1)
-	v, from, ok, err := seqFieldValue(w.p, f, sc)
+	// A simulation is as if there were no `range` refusal (0.56 ruling 9).
+	v, from, ok, _, err := seqRangedValue(w.p, f, sc)
 	if err != nil {
 		return nil
 	}
 	if !ok {
-		if f.absent != nil && !f.suppressed(sc.rec) {
+		if f.hasExact() && !f.suppressed(sc.rec) {
 			putBits(buf, 0, f.loc.blen, f.sentinelBits(), w.p.msb)
 		}
 		return buf
@@ -1296,6 +1307,10 @@ type seqWriter struct {
 	// forced holds the cases a previous pass found the switches to select;
 	// predicted the cases the prediction used; actual the cases the encode
 	// selected from the bits written.
+	// refused is the first refusal of a `range` in the pass: the pass is
+	// written to its end, so that one whose prediction does not hold reports
+	// nothing (0.56 ruling 9).
+	refused   error
 	forced    map[seqSwitchAt]*seqCase
 	predicted []seqPrediction
 	actual    map[seqSwitchAt]*seqCase
@@ -1471,6 +1486,9 @@ func encodeSeqMsgs(e *Engine, p *Pack, ent *Entity, msgs []*Entity) ([]byte, err
 	for pass := 1; ; pass++ {
 		w := &seqWriter{p: p, eng: e, ent: ent, msgs: msgs, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}, forced: forced, actual: map[seqSwitchAt]*seqCase{}}
 		out, err := w.encodePass(nodes, newScope(p, rec, defs))
+		if w.refused != nil {
+			out, err = nil, w.refused
+		}
 		// Errors of a pass whose prediction does not hold are not reported
 		// (ruling 34): the next pass predicts the cases this one selected.
 		if w.settled() {
@@ -1780,6 +1798,16 @@ func (w *seqWriter) presenceBits(pr *seqPresenceDef, rest []*seqNode, sc seqScop
 // else the default of the earliest key that has one (0.8 ruling 13); the
 // `type` key mapped back to the native code; then the line's value table.
 func seqFieldValue(p *Pack, f *Field, sc seqScope) (Value, *Field, bool, error) {
+	v, from, ok, refused, err := seqRangedValue(p, f, sc)
+	if refused != nil {
+		return Value{}, nil, false, refused
+	}
+	return v, from, ok, err
+}
+
+// seqRangedValue is seqFieldValue with the refusal of a `range` apart: the
+// value is then the one the line would write without its `range`.
+func seqRangedValue(p *Pack, f *Field, sc seqScope) (val Value, line *Field, has bool, refused, err error) {
 	// A line suppressed by `with` is no candidate; its `also` keys stay
 	// candidates (0.18 ruling 5).
 	var cands []*Field
@@ -1804,7 +1832,21 @@ func seqFieldValue(p *Pack, f *Field, sc seqScope) (Value, *Field, bool, error) 
 		}
 	}
 	if from == nil {
-		return Value{}, nil, false, nil
+		return Value{}, nil, false, nil, nil
+	}
+	if rv, rerr := from.applyRange(v); rerr == nil {
+		v = rv
+	} else {
+		refused = encodeErr(p, from, rerr)
+	}
+	// The default of the line's absent key is checked also where a held
+	// `also` key supplies the bits (0.56 ruling 9).
+	if from != f && refused == nil && f.Range != nil && !f.suppressed(sc.rec) {
+		if d := sc.defs[f.Key]; d != nil {
+			if _, rerr := f.applyRange(d.val); rerr != nil {
+				refused = encodeErr(p, f, rerr)
+			}
+		}
 	}
 	if from.Key == "type" && p.TypeMapped() && v.Kind == KindString {
 		if native, ok := p.cotToNative[v.S]; ok {
@@ -1814,11 +1856,11 @@ func seqFieldValue(p *Pack, f *Field, sc seqScope) (Value, *Field, bool, error) 
 	if from.table != nil {
 		nv, err := from.viaEncode(v)
 		if err != nil {
-			return Value{}, nil, false, encodeErr(p, from, err)
+			return Value{}, nil, false, refused, encodeErr(p, from, err)
 		}
 		v = nv
 	}
-	return v, from, true, nil
+	return v, from, true, refused, nil
 }
 
 // emit writes lines at the cursor. chain is set for the lines of a chain,
@@ -1855,7 +1897,7 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 				}
 				continue
 			}
-			v, from, ok, err := seqFieldValue(p, f, sc)
+			v, from, ok, err := w.fieldValue(f, sc)
 			if err != nil {
 				return err
 			}
@@ -1863,7 +1905,7 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			if !ok {
 				// An absent key writes the sentinel in place of zero bits.
 				// A line suppressed by `with` has no sentinel (0.18).
-				if f.absent != nil && !f.suppressed(sc.rec) {
+				if f.hasExact() && !f.suppressed(sc.rec) {
 					w.put(at, f.loc.blen, f.sentinelBits())
 				}
 			} else if err := putBitsField(p, from, v, w.buf.data, at); err != nil {

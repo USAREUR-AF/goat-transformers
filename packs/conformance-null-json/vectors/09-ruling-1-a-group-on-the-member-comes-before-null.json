@@ -1,0 +1,9 @@
+{
+  "name": "ruling-1-a-group-on-the-member-comes-before-null",
+  "from": "conformance-null-json",
+  "to": "conformance-null-056-2",
+  "input": "{\"id\":\"u1\",\"items\":[{\"name\":\"A\",\"q\":1}]}",
+  "expect": "{\"m\":[{\"name\":\"A\",\"q\":1}]}",
+  "source": "constructed",
+  "reference": "spec 0.56 ruling 1: probe.s1 is absent, and the group on m writes its list, so null is not written."
+}

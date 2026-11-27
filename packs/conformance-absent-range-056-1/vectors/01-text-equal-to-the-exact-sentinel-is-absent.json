@@ -1,0 +1,15 @@
+{
+  "name": "text-equal-to-the-exact-sentinel-is-absent",
+  "from": "conformance-absent-range-056-1",
+  "to": "conformance-absent-range-056-1",
+  "input": "<msg uid=\"u1\" label=\"&gt;=5\"/>",
+  "expect": "<msg uid=\"u1\" label=\"&gt;=5\"/>",
+  "model": {
+    "uid": "u1",
+    "@absent": [
+      "probe.label"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range: on xml one leading `=` is stripped (0.9 ruling 12) and \"=>=5 is the exact text >=5\", so the sentinel is exact, not a range. The attribute text after references is >=5, equal to the sentinel: absent. Encode writes the sentinel >=5 as the attribute value, `>` escaped as &gt; (1a and 1f of 0.11). Derived by hand."
+}

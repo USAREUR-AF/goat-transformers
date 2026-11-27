@@ -1,0 +1,15 @@
+{
+  "name": "x-all-ones-is-absent",
+  "from": "conformance-absent-range-bits",
+  "to": "conformance-absent-range-bits",
+  "input": "000001ff",
+  "expect": "00000100",
+  "model": {
+    "probe.n": "1",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range and 0.9 table (bits: the len bits as unsigned), msb, word_bytes 1. Input n = 1 (0x000001), x = 255 (0xff). x 255 >= 250: absent; written 00. Derived by hand."
+}

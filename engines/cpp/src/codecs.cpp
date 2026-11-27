@@ -5,6 +5,7 @@
 #include "codecs.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <memory>
 #include <stdexcept>
@@ -704,7 +705,7 @@ void Decoder::finish() {
 
 // ---- encode: the value of a field
 
-bool EncodeSource::value(const FieldLine& f, Value& out) const {
+const Value* EncodeSource::model_value(const FieldLine& f) const {
     const Value* v = nullptr;
     auto it = e.fields.find(f.key);
     if (it != e.fields.end()) {
@@ -731,9 +732,42 @@ bool EncodeSource::value(const FieldLine& f, Value& out) const {
                     break;
                 }
         }
-        if (!v) return false;
     }
-    out = typemapped_out(p, f, *v);
+    return v;
+}
+
+void EncodeSource::apply_line_range(const FieldLine& f, Value& v) const {
+    if (use_range) {
+        apply_range(p, f, v);
+        return;
+    }
+    if (!f.range_wrap) return;
+    try {
+        apply_range(p, f, v);
+    } catch (const Error&) {
+        // A wrap that cannot be made is refused by the encode, not by a prediction.
+    }
+}
+
+void EncodeSource::check_range(const FieldLine& f) const {
+    if (!f.has_range || !use_range || suppressed(f)) return;
+    if (const Value* v = model_value(f)) {
+        Value ranged = *v;
+        apply_range(p, f, ranged);
+    }
+}
+
+bool EncodeSource::value(const FieldLine& f, Value& out) const {
+    const Value* v = model_value(f);
+    if (!v) return false;
+    if (f.has_range) {
+        // v0.56: the model value, a default's included, before `via` and the transform.
+        Value ranged = *v;
+        apply_line_range(f, ranged);
+        out = typemapped_out(p, f, ranged);
+    } else {
+        out = typemapped_out(p, f, *v);
+    }
     if (f.table >= 0) {
         try {
             out = table_encode(p, f, out);
@@ -742,6 +776,64 @@ bool EncodeSource::value(const FieldLine& f, Value& out) const {
         }
     }
     return true;
+}
+
+void apply_range(const Pack& p, const FieldLine& f, Value& v) {
+    auto refuse = [&](const std::string& text) {
+        throw Error(ErrorKind::TransformEncode, p.format, f.locator,
+                    f.key + ": " + text + " is outside 'range " + f.range_min_text + " " + f.range_max_text + "'");
+    };
+    if (f.key_type == KeyType::Int) {
+        std::int64_t x = 0;
+        try {
+            x = model_int(v);
+        } catch (const std::invalid_argument& ex) {
+            throw Error(ErrorKind::TransformEncode, p.format, f.locator, f.key + ": " + ex.what());
+        }
+        const std::int64_t lo = f.range_min_i, hi = f.range_max_i;
+        if (!f.range_wrap) {
+            if (x < lo || x > hi) refuse(std::to_string(x));
+            return;
+        }
+        if (x >= lo && x < hi) return;
+        // Exact: x - span * floor((x - lo) / span), in unsigned 64-bit
+        // arithmetic, where span = hi - lo lies in [1, 2^64 - 1] (ruling 7).
+        const std::uint64_t ulo = static_cast<std::uint64_t>(lo);
+        const std::uint64_t span = static_cast<std::uint64_t>(hi) - ulo;
+        std::uint64_t offset = 0;  // the result minus lo, in [0, span)
+        if (x < lo) {
+            const std::uint64_t r = (ulo - static_cast<std::uint64_t>(x)) % span;
+            offset = r == 0 ? 0 : span - r;
+        } else {
+            offset = (static_cast<std::uint64_t>(x) - ulo) % span;
+        }
+        v = Value::of_int(static_cast<std::int64_t>(ulo + offset));
+        return;
+    }
+    double x = 0;
+    try {
+        x = model_double(v);
+    } catch (const std::invalid_argument& ex) {
+        throw Error(ErrorKind::TransformEncode, p.format, f.locator, f.key + ": " + ex.what());
+    }
+    const double lo = f.range_min_d, hi = f.range_max_d;
+    // A NaN is outside every interval (ruling 10).
+    if (x >= lo && (f.range_wrap ? x < hi : x <= hi)) return;
+    if (!std::isfinite(x)) refuse("a value that is not finite");
+    if (!f.range_wrap) refuse(format_double(x));
+    // Ruling 11: five operations, each rounded to a double. `volatile` keeps a
+    // compiler from fusing the multiply and the subtract, or keeping excess
+    // precision, whatever its flags.
+    const volatile double d = hi - lo;
+    const volatile double o = x - lo;
+    const volatile double q = o / d;
+    const volatile double fl = std::floor(q);
+    const volatile double m = d * fl;
+    const volatile double r = x - m;
+    if (!std::isfinite(d) || !std::isfinite(o) || !std::isfinite(q) || !std::isfinite(m) || !std::isfinite(r) ||
+        r < lo || r > hi)
+        refuse(format_double(x) + ", whose wrap does not land in the interval,");
+    v = Value::of_float(r == hi ? lo : static_cast<double>(r));
 }
 
 bool EncodeSource::holds(const std::string& key) const {
@@ -890,6 +982,75 @@ std::string field_text(const Pack& p, const FieldLine& f, const Value& v) {
     }
 }
 
+int parse_output_option(const std::vector<std::string>& t, std::size_t& k, FieldLine& f, std::string& why) {
+    const std::string& w = t[k];
+    if (w == "null" || w == "implicit") {
+        bool& flag = w == "null" ? f.null_member : f.implicit;
+        if (flag) {
+            why = "'" + w + "' is given twice";
+            return -1;
+        }
+        flag = true;
+        return 1;
+    }
+    if (w == "range") {
+        if (f.has_range) {
+            why = "'range' is given twice";
+            return -1;
+        }
+        if (k + 2 >= t.size()) {
+            why = "'range' takes <min> and <max>";
+            return -1;
+        }
+        const std::string &lo = t[k + 1], &hi = t[k + 2];
+        if (!parse_number_text(lo, f.range_min_d) || !parse_number_text(hi, f.range_max_d)) {
+            why = "'range " + lo + " " + hi + "': <min> and <max> are number text";
+            return -1;
+        }
+        f.range_ints = parse_int_text(lo, f.range_min_i) && parse_int_text(hi, f.range_max_i);
+        f.range_min_text = lo;
+        f.range_max_text = hi;
+        f.has_range = true;
+        k += 2;
+        // `wrap` is the argument directly after <max>, or nowhere.
+        if (k + 1 < t.size() && t[k + 1] == "wrap") {
+            f.range_wrap = true;
+            ++k;
+        }
+        return 1;
+    }
+    if (w == "wrap") {
+        why = f.range_wrap ? "'wrap' is given twice" : "'wrap' stands directly after 'range <min> <max>'";
+        return -1;
+    }
+    return 0;
+}
+
+bool check_range(const FieldLine& f, KeyType type, std::string& why) {
+    if (!f.has_range) return true;
+    const std::string what = "'range " + f.range_min_text + " " + f.range_max_text + "'";
+    if (type == KeyType::Int) {
+        if (!f.range_ints) {
+            why = what + " on an int key takes integer text";
+            return false;
+        }
+        if (!(f.range_min_i < f.range_max_i)) {
+            why = what + ": <min> is not less than <max>";
+            return false;
+        }
+        return true;
+    }
+    if (type == KeyType::Float) {
+        if (!(f.range_min_d < f.range_max_d)) {
+            why = what + ": <min> is not less than <max>";
+            return false;
+        }
+        return true;
+    }
+    why = what + " applies to a key of type int or float";
+    return false;
+}
+
 // ---- absent-value sentinels (Version 0.9)
 
 namespace {
@@ -938,6 +1099,8 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
     f.absent_num.clear();
     f.absent_text.clear();
     f.absent_json.clear();
+    f.absent_ranges.clear();
+    f.absent_exact = false;
     const std::string where = p.source + ":" + std::to_string(f.line) + ": ";
     auto bad = [&](const std::string& why) {
         throw Error(ErrorKind::BadDirective, p.format, f.locator, where + "'absent " + f.absent_arg + "': " + why);
@@ -965,31 +1128,73 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
     }
     for (const auto& v : values)
         if (v.find('"') != std::string::npos) bad("a value cannot hold a double quote");
+    // v0.56: a value that begins with `>=` or `<=`, as written, is a range sentinel.
+    auto is_range = [](const std::string& v) {
+        return v.size() >= 2 && (v[0] == '>' || v[0] == '<') && v[1] == '=';
+    };
+    auto range_u64 = [&](const std::string& v, std::uint32_t width) {
+        FieldLine::AbsentRange r;
+        r.at_least = v[0] == '>';
+        const std::string n = v.substr(2);
+        if (!absent_u64(n, r.n)) bad("the range sentinel '" + v + "' takes an unsigned decimal integer");
+        if (width < 64 && (r.n >> width) != 0) bad(v + " does not fit " + std::to_string(width) + " bits");
+        f.absent_ranges.push_back(r);
+    };
+    auto range_number = [&](const std::string& v) {
+        FieldLine::AbsentRange r;
+        r.at_least = v[0] == '>';
+        if (!parse_number_text(v.substr(2), r.d)) bad("the range sentinel '" + v + "' takes number text");
+        f.absent_ranges.push_back(r);
+    };
+    if (f.transform == Transform::Bool)
+        for (const auto& v : values)
+            if (is_range(v)) bad("a range sentinel does not apply to transform bool");
 
     const bool is_bits = transform_is_bits(f.transform), is_pb = transform_is_protobuf(f.transform);
     if (wire == Wire::Bits) {
         if (!is_bits) return;  // invalid_pack later
         if (bits_len > 64) bad("a sentinel applies to a bits field of at most 64 bits, not " + std::to_string(bits_len));
         for (const auto& v : values) {
+            if (is_range(v)) {
+                range_u64(v, bits_len);
+                continue;
+            }
             std::uint64_t n = 0;
             if (!absent_u64(v, n)) bad("'" + v + "' is not an unsigned decimal integer");
             if (bits_len < 64 && (n >> bits_len) != 0)
                 bad(v + " does not fit " + std::to_string(bits_len) + " bits");
             f.absent_num.push_back(n);
+            f.absent_exact = true;
         }
         return;
     }
     if (wire == Wire::Protobuf) {
         if (!is_pb) return;
         if (f.transform == Transform::Pstring) {
-            f.absent_text = values;  // `=` is part of the text on this wire (ruling 12)
+            // `=` is part of the text on this wire (ruling 12), and `>=` or `<=`
+            // always begins a range (0.56).
+            for (const auto& v : values) {
+                if (is_range(v)) {
+                    range_number(v);
+                    continue;
+                }
+                f.absent_text.push_back(v);
+                f.absent_exact = true;
+            }
             return;
         }
         for (const auto& v : values) {
+            if (is_range(v)) {
+                if (f.transform == Transform::Pdouble || f.transform == Transform::Pfloat)
+                    bad("a range sentinel does not apply to transform " + std::string(transform_name(f.transform)));
+                range_u64(v, 64);
+                continue;
+            }
             std::uint64_t n = 0;
             if (!absent_u64(v, n)) bad("'" + v + "' is not an unsigned decimal integer");
             if (f.transform == Transform::Pfloat && (n >> 32) != 0) bad(v + " does not fit 32 bits");
             f.absent_num.push_back(n);
+            f.absent_exact = true;
         }
         return;
     }
@@ -998,6 +1203,10 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
     const bool json_wire = wire == Wire::Json || wire == Wire::GeoJson;
     for (std::size_t k = 0; k < values.size(); ++k) {
         std::string v = values[k];
+        if (!empty_text && is_range(v)) {
+            range_number(v);
+            continue;
+        }
         bool forced = false;
         if (!empty_text && !v.empty() && v[0] == '=') {
             forced = true;
@@ -1025,20 +1234,29 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
             if (f.transform == Transform::Bool && (forced || (v != "true" && v != "false")))
                 bad("a sentinel on transform bool is true or false");
         }
-        if (k == 0) f.absent_json = json_text;
+        if (!f.absent_exact) f.absent_json = json_text;
         f.absent_text.push_back(std::move(v));
+        f.absent_exact = true;
     }
 }
 
 bool sentinel_num(const FieldLine& f, std::uint64_t raw) {
     for (std::uint64_t n : f.absent_num)
         if (n == raw) return true;
+    for (const auto& r : f.absent_ranges)
+        if (r.at_least ? raw >= r.n : raw <= r.n) return true;
     return false;
 }
 
 bool sentinel_text(const FieldLine& f, const std::string& raw) {
     for (const auto& t : f.absent_text)
         if (t == raw) return true;
+    // v0.56: a range sentinel matches raw text that is number text (2b) whose
+    // nearest double is at least, or at most, the sentinel's.
+    double d = 0;
+    if (!f.absent_ranges.empty() && parse_number_text(raw, d))
+        for (const auto& r : f.absent_ranges)
+            if (r.at_least ? d >= r.d : d <= r.d) return true;
     return false;
 }
 
@@ -1360,6 +1578,7 @@ struct TextSlots {
         std::string value;
         bool has = false;
         bool sentinel = false;  // the value is a field's sentinel: a line whose key is present writes over it
+        bool null = false;      // geojson: the value is the `null` of a field's `null` option (0.56), below a sentinel
         // xml: a `group` line with a list to write, one element per item.
         const GroupLine* group = nullptr;
         const std::vector<Item>* items = nullptr;
@@ -1656,13 +1875,16 @@ void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const En
         }
         const FieldLine& f = *line.field;
         auto& slot = out.at(f.locator);
-        if (slot.has && !slot.sentinel) continue;
+        if (slot.has && !slot.sentinel) {
+            src.check_range(f);  // 0.56 ruling 9
+            continue;
+        }
         if (src.suppressed(f)) continue;  // the slot keeps its place (0.18 ruling 1)
         if (src.value(f, v)) {
             slot.value = field_text(p, f, v);
             slot.has = true;
             slot.sentinel = false;
-        } else if (f.has_absent && !slot.has) {
+        } else if (f.writes_sentinel() && !slot.has) {
             // An absent key writes its first sentinel (0.9); a later line whose key is present wins (ruling 16).
             slot.value = f.absent_text.front();
             slot.has = true;
@@ -1912,6 +2134,7 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
             slot.value = json_when_text(*w);
             slot.has = true;
             slot.sentinel = false;
+            slot.null = false;
             continue;
         }
         if (line.group) {
@@ -1922,30 +2145,46 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
             slot.value = json_encode_items(p, *line.group, *items, true);
             slot.has = true;
             slot.sentinel = false;
+            slot.null = false;
             continue;
         }
         const FieldLine& f = *line.field;
         TextSlots::Slot* slot = nullptr;
-        bool taken = false, sentinel = false;
+        bool taken = false, sentinel = false, null_here = false;
         switch (loc.kind) {
             case GeoLocator::Kind::Lon: taken = has_lon; sentinel = sen_lon; break;
             case GeoLocator::Kind::Lat: taken = has_lat; sentinel = sen_lat; break;
             case GeoLocator::Kind::Alt: taken = has_alt; sentinel = sen_alt; break;
-            case GeoLocator::Kind::Property: slot = &props.at(f.locator); taken = slot->has; sentinel = slot->sentinel; break;
-            case GeoLocator::Kind::Member: slot = &members.at(f.locator); taken = slot->has; sentinel = slot->sentinel; break;
+            case GeoLocator::Kind::Property:
+            case GeoLocator::Kind::Member:
+                slot = &(loc.kind == GeoLocator::Kind::Property ? props : members).at(f.locator);
+                taken = slot->has;
+                sentinel = slot->sentinel;
+                null_here = slot->null;
+                break;
         }
-        if (taken && !sentinel) continue;
+        if (taken && !sentinel) {
+            src.check_range(f);  // 0.56 ruling 9
+            continue;
+        }
         if (src.suppressed(f)) continue;  // the member keeps its place (0.18 ruling 1)
         std::string jv;
         bool writes_sentinel = false;
         if (src.value(f, v)) {
             std::string text = field_text(p, f, v);
             jv = transform_is_textual(f.transform) ? json::quote(text) : text;
-        } else if (f.has_absent && !taken) {
+        } else if (f.writes_sentinel() && (!taken || null_here)) {
             // The first sentinel, typed as a `when` value is (0.9). On `lon` and
             // `lat` it counts as a value, so `geometry` is written (ruling 10).
             jv = f.absent_json;
             writes_sentinel = true;
+        } else if (f.null_member && !taken && slot) {
+            // v0.56: no line has written a value here; a later line may still (ruling 1).
+            slot->value = "null";
+            slot->has = true;
+            slot->sentinel = true;
+            slot->null = true;
+            continue;
         } else {
             continue;
         }
@@ -1957,6 +2196,7 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
                 slot->value = std::move(jv);
                 slot->has = true;
                 slot->sentinel = writes_sentinel;
+                slot->null = false;
                 break;
         }
     }
@@ -2285,9 +2525,9 @@ void write_field_lines(const Pack& p, std::string& data, BitMode msb, const std:
     // sentinels are written first.
     Value mv;
     for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
-        if (!it->field || !it->field->has_absent || !gate_on(it->field->gate, held)) continue;
+        if (!it->field || !it->field->writes_sentinel() || !gate_on(it->field->gate, held)) continue;
         const FieldLine& f = *it->field;
-        if (src.suppressed(f) || src.value(f, mv)) continue;
+        if (src.suppressed(f) || src.has_value(f)) continue;
         BitRange r = bit_range(p, f.locator);
         r.start += base;
         std::uint64_t raw = f.absent_num.front();
@@ -2378,7 +2618,6 @@ bool gate_value(const GateBlock& b, std::uint64_t& out) {
 std::uint64_t armor_extent(const Pack& p, const std::vector<LineRef>& lines, const std::vector<int>& gates,
                            std::uint64_t base, const EncodeSource& src, const std::vector<char>* held) {
     std::uint64_t end = 0;
-    Value mv;
     for (const auto& line : lines) {
         if (line.group) {
             if (!line.group->count_fixed) end = std::max(end, base + line.group->count_start + line.group->count_len);
@@ -2388,7 +2627,7 @@ std::uint64_t armor_extent(const Pack& p, const std::vector<LineRef>& lines, con
         // An `optional` field counts only when it is written (0.17 ruling 14); one
         // suppressed by `with` writes nothing, not even its sentinel (0.18 ruling 1).
         if (line.field && line.field->optional &&
-            (src.suppressed(*line.field) || (!line.field->has_absent && !src.value(*line.field, mv))))
+            (src.suppressed(*line.field) || (!line.field->writes_sentinel() && !src.has_value(*line.field))))
             continue;
         end = std::max(end, base + bit_range(p, line.locator()).end());
     }

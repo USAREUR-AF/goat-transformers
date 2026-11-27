@@ -1,0 +1,18 @@
+{
+  "name": "later-line-with-a-nonzero-value-does-not-write",
+  "from": "conformance-implicit-056-1",
+  "to": "conformance-implicit-056-1",
+  "input": "",
+  "context": {
+    "probe.n": "0",
+    "probe.x": "5"
+  },
+  "expect": "",
+  "model": {
+    "@complete": true,
+    "probe.n": "0",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `implicit` and ruling 16 of 0.5: context sets n 0 and x 5 (no derive line targets them). n is the earliest held line on path 1 and holds the place; implicit leaves its 0 out; x's 5 is not written (it would be 08 05). Output empty. Derived by hand."
+}

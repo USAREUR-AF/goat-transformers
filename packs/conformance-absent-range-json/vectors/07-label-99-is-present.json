@@ -1,0 +1,16 @@
+{
+  "name": "label-99-is-present",
+  "from": "conformance-absent-range-json",
+  "to": "conformance-absent-range-json",
+  "input": "{\"label\":\"99\"}",
+  "expect": "{\"label\":\"99\"}",
+  "model": {
+    "probe.label": "99",
+    "@absent": [
+      "probe.qty",
+      "probe.a"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range and 0.9. 99 is number text below 100 and is not N/A: present, written as the string \"99\" (string transform). Derived by hand."
+}

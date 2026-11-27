@@ -1,0 +1,13 @@
+{
+  "name": "n-below-the-range-sentinel-is-present",
+  "from": "conformance-absent-range-bits",
+  "to": "conformance-absent-range-bits",
+  "input": "98967e00",
+  "expect": "98967e00",
+  "model": {
+    "probe.n": "9999998",
+    "probe.x": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.56 `absent` by range and 0.9 table (bits: the len bits as unsigned), msb, word_bytes 1. Input n = 9999998 (0x98967e), x = 0 (0x00). 9999998 is neither 0 nor >= 9999999: present, written 98967e. Derived by hand."
+}

@@ -473,7 +473,7 @@ func uperIntValue(u *uperLoc, v Value) (int64, error) {
 func (w *seqWriter) uperField(f *Field, sc seqScope) error {
 	p := w.p
 	u := f.uper
-	v, from, ok, err := seqFieldValue(p, f, sc)
+	v, from, ok, err := w.fieldValue(f, sc)
 	if err != nil {
 		return err
 	}
