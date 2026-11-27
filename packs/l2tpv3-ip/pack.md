@@ -19,7 +19,7 @@ message AVPs are read over and not written.
 | `data` | none | `inet.l2tp_session_id`, octets 0-3 |
 
 On encode the `control` kind requires `inet.l2tp_control_connection_id`, so an entity
-without it, such as an l2tpv3-udp data message, is written as `data` (vector 05).
+without it, such as an l2tpv3-udp data message, is written as `data` (l2tpv3-udp vector 04).
 
 Control message header (bits from its T bit): 0 T, 1 L (`inet.l2tp_length_bit`),
 4 S (`inet.l2tp_sequence_bit`), 12-15 version (`inet.l2tp_version`), 16-31

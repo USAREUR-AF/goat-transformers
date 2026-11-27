@@ -1,5 +1,5 @@
 {
-  "name": "data-from-l2tpv3-udp-is-data",
+  "name": "data-to-l2tpv3-ip-is-data",
   "from": "l2tpv3-udp",
   "to": "l2tpv3-ip",
   "input": "0003000012345678",

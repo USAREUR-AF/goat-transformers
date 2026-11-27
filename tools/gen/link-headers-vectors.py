@@ -189,12 +189,6 @@ def l2tp_ip_vectors():
                    SRC + "a control header with every field at its largest value"))
     out.append(vec(P, "control-cut-short-is-malformed", h[:14].hex(), error="malformed-wire",
                    ref=SRC + "the control message cut to 14 octets"))
-    du = pack([(C(0), 1), (C(0), 11), ("l2tp_version", 4), ("l2tp_reserved", 16), ("l2tp_session_id", 32)],
-              {"l2tp_version": 3, "l2tp_session_id": 0x12345678})
-    out.append(vec("l2tpv3-udp", "data-from-l2tpv3-udp-is-data", du.hex(), be(0x12345678, 32).hex(), to=P,
-                   ref=SRC + "a data message over UDP (session 0x12345678) to L2TPv3 over IP: the control kind "
-                         "requires inet.l2tp_control_connection_id, which the entity lacks, so the data kind "
-                         "writes the session ID (engine-spec, Encode step 2)"))
     return out
 
 
@@ -214,6 +208,13 @@ def l2tp_udp_vectors():
                    SRC + "a data message over UDP: T 0, version 3, session 0xcafe0001, 10 octets read over"))
     out.append(vec(P, "data-cut-short-is-malformed", hd[:6].hex(), error="malformed-wire",
                    ref=SRC + "the data header cut to 6 octets"))
+    # a vector lives in the pack its `from` names (vector-format): this conversion is from l2tpv3-udp
+    du = pack([(C(0), 1), (C(0), 11), ("l2tp_version", 4), ("l2tp_reserved", 16), ("l2tp_session_id", 32)],
+              {"l2tp_version": 3, "l2tp_session_id": 0x12345678})
+    out.append(vec(P, "data-to-l2tpv3-ip-is-data", du.hex(), be(0x12345678, 32).hex(), to="l2tpv3-ip",
+                   ref=SRC + "a data message over UDP (session 0x12345678) to L2TPv3 over IP: the control kind "
+                         "requires inet.l2tp_control_connection_id, which the entity lacks, so the data kind "
+                         "writes the session ID (engine-spec, Encode step 2)"))
     return out
 
 
