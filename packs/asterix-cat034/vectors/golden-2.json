@@ -1,0 +1,17 @@
+{
+ "name": "golden-2",
+ "from": "asterix-cat034",
+ "to": "asterix-cat034",
+ "input": "22000bf0190d02356dfa60",
+ "expect": "22000bf0190d02356dfa60",
+ "model": {
+  "@kind": "record",
+  "cat034.i010_sac": "25",
+  "cat034.i010_sic": "13",
+  "cat034.i000": "2",
+  "cat034.i030": "27355.953125",
+  "cat034.i020": "135"
+ },
+ "source": "asterix_decoder 0.7.11: asterix.parse of a single-record block from its sample capture, record cat_034_048.pcap:3.0 (block.record; the record's bytes unchanged, behind CAT and LEN). Written by tools/gen/golden-asterix.py; no engine is run.",
+ "reference": "ASTERIX category 034 as asterix_decoder (Croatia Control, GPL-2.0, its own category definitions) decodes it; items named alike in both are compared."
+}

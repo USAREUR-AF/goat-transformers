@@ -1,0 +1,29 @@
+# ASTERIX golden vectors are what asterix_decoder decodes (shared-model hardening, item 2).
+# A workflow of its own, so that a golden check added for another reference adds a file
+# and edits no shared list. asterix_decoder is a C extension built from its sdist, pinned
+# by SHA-256 (with the setuptools it builds with); it needs the expat headers. Its sample
+# captures are checked by SHA-256.
+name: golden-asterix
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: golden-asterix-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  golden-asterix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: ASTERIX golden vectors are what asterix_decoder decodes
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y --no-install-recommends libexpat1-dev
+          python3 -m venv "$RUNNER_TEMP/asterix"
+          "$RUNNER_TEMP/asterix/bin/pip" install --quiet --disable-pip-version-check --require-hashes -r tools/gen/golden-asterix-build.txt
+          "$RUNNER_TEMP/asterix/bin/pip" install --quiet --disable-pip-version-check --no-build-isolation --require-hashes -r tools/gen/golden-asterix.txt
+          "$RUNNER_TEMP/asterix/bin/python" -I tools/gen/golden-asterix.py --check
