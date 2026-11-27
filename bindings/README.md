@@ -228,6 +228,7 @@ import { GoatTransformers } from "./goat_transformers.mjs";
 const gt = await GoatTransformers.load(readFileSync("goat_transformers_wasm.wasm"));
 gt.loadModel(readFileSync("model/core.def", "utf8"));
 gt.loadModel(readFileSync("model/track.def", "utf8"));
+gt.loadModel(readFileSync("model/cot.def", "utf8"));
 gt.loadPack(readFileSync("packs/canonical-track-v2/pack.def", "utf8"));
 gt.loadPack(readFileSync("packs/cot-xml/pack.def", "utf8"));
 

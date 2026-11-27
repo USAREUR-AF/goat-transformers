@@ -130,6 +130,7 @@ int main(int argc, char **argv) {
     gt_engine *loading = gt_engine_new();
     load_file(loading, root, "model/core.def", 1);
     load_file(loading, root, "model/track.def", 1);
+    load_file(loading, root, "model/cot.def", 1);
     load_file(loading, root, "packs/cot-xml/pack.def", 0);
     load_file(loading, root, "packs/geojson/pack.def", 0);
     engine = loading; /* loading is over: from here the engine is only read */
