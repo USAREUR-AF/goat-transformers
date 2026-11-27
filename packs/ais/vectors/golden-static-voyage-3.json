@@ -1,0 +1,30 @@
+{
+ "name": "golden-static-voyage-3",
+ "from": "ais",
+ "to": "ais",
+ "input": "55MwnAh2;=`8<4hk800Lth@Dr1<PU23800000018<PD:<5GVNGl3lU8<P00000000000000",
+ "expect": "55MwnAh2;=`8<4hk800Lth@Dr1<PU23800000018<PD:<5GVNGl3lU8<P00000000000000",
+ "model": {
+  "@kind": "static-voyage",
+  "ais.mmsi": "366999111",
+  "ais.epfd": "1",
+  "ais.dte": "0",
+  "ais.ais_version": "0",
+  "ais.imo": "9123458",
+  "callsign": "CALL2",
+  "ais.shipname": "GOLDEN SHIP 2",
+  "ais.shiptype": "72",
+  "ais.to_bow": "100",
+  "ais.to_stern": "20",
+  "ais.to_port": "10",
+  "ais.to_starboard": "12",
+  "ais.eta_month": "5",
+  "ais.eta_day": "15",
+  "ais.eta_hour": "6",
+  "ais.eta_minute": "30",
+  "ais.draught": "9.5",
+  "ais.destination": "PORT 2"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"ais_version\": 0, \"callsign\": \"CALL2\", \"day\": 15, \"destination\": \"PORT 2\", \"draught\": 9.5, \"dte\": 0, \"epfd\": 1, \"hour\": 6, \"imo\": 9123458, \"minute\": 30, \"mmsi\": 366999111, \"month\": 5, \"ship_type\": 72, \"shipname\": \"GOLDEN SHIP 2\", \"to_bow\": 100, \"to_port\": 10, \"to_starboard\": 12, \"to_stern\": 20, \"type\": 5}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 5 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s."
+}

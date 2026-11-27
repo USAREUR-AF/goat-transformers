@@ -1,0 +1,28 @@
+{
+ "name": "golden-aid-to-nav-3",
+ "from": "ais",
+ "to": "ais",
+ "input": "E5MwnAiV4ST:@IP000000000000=FWAw;aNB810888V02000000000000000",
+ "expect": "E5MwnAiV4ST:@IP000000000000=FWAw;aNB810888V020",
+ "model": {
+  "@kind": "aid-to-nav",
+  "ais.mmsi": "366999111",
+  "ais.accuracy": "0",
+  "ais.raim": "1",
+  "ais.second": "12",
+  "ais.epfd": "1",
+  "ais.assigned": "0",
+  "lat": "40.712775",
+  "lon": "-74.005975",
+  "ais.aid_type": "3",
+  "ais.name": "LIGHT 3",
+  "ais.to_bow": "1",
+  "ais.to_stern": "1",
+  "ais.to_port": "1",
+  "ais.to_starboard": "1",
+  "ais.off_position": "0",
+  "ais.virtual_aid": "0"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"accuracy\": 0, \"aid_type\": 3, \"assigned\": 0, \"epfd\": 1, \"lat\": 40.712775, \"lon\": -74.005975, \"mmsi\": 366999111, \"name\": \"LIGHT 3\", \"off_position\": 0, \"radio\": 2251, \"raim\": 1, \"second\": 12, \"to_bow\": 1, \"to_port\": 1, \"to_starboard\": 1, \"to_stern\": 1, \"type\": 21, \"virtual_aid\": 0}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 21 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s. The expected output is pyais's payload cut to its first 272 bits: the pack does not read the name extension and a round trip drops it (packs/ais/pack.md)."
+}

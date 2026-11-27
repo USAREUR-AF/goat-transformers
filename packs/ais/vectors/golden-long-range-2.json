@@ -1,0 +1,20 @@
+{
+ "name": "golden-long-range-2",
+ "from": "ais",
+ "to": "ais",
+ "input": "K7Ol>08ERH=QB5VD",
+ "expect": "K7Ol>08ERH=QB5VD",
+ "model": {
+  "@kind": "long-range",
+  "ais.mmsi": "503123456",
+  "ais.accuracy": "1",
+  "ais.raim": "0",
+  "lat": "-33.86",
+  "lon": "151.2",
+  "ais.nav_status": "1",
+  "ais.gnss": "0",
+  "speed_ms": "5.658888888888889"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"accuracy\": 1, \"course\": 101, \"gnss\": 0, \"lat\": -33.86, \"lon\": 151.2, \"mmsi\": 503123456, \"raim\": 0, \"speed\": 11, \"status\": 1, \"type\": 27}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 27 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s."
+}

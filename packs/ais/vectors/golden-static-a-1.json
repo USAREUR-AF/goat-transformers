@@ -1,0 +1,15 @@
+{
+ "name": "golden-static-a-1",
+ "from": "ais",
+ "to": "ais",
+ "input": "H5RTgt0:1<PU2300000000000000",
+ "expect": "H5RTgt0:1<PU2300000000000000",
+ "model": {
+  "@kind": "static-a",
+  "ais.mmsi": "371798000",
+  "ais.part_no": "0",
+  "ais.shipname": "B SHIP 0"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"mmsi\": 371798000, \"partno\": 0, \"shipname\": \"B SHIP 0\", \"type\": 24}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 24 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s."
+}

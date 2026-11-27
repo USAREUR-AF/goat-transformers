@@ -1,0 +1,24 @@
+{
+ "name": "golden-sar-aircraft-2",
+ "from": "ais",
+ "to": "ais",
+ "input": "97Ol>01;00bl;IgdWcu3r2h280S:",
+ "expect": "97Ol>01;00bl;IgdWcu3r2h280S:",
+ "model": {
+  "@kind": "sar-aircraft",
+  "ais.mmsi": "503123456",
+  "ais.accuracy": "1",
+  "ais.raim": "0",
+  "ais.second": "11",
+  "ais.radio": "2250",
+  "ais.dte": "1",
+  "ais.assigned": "1",
+  "lat": "-33.86882",
+  "lon": "151.208625",
+  "course": "100",
+  "ais.altitude": "300",
+  "speed_ms": "0"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"accuracy\": 1, \"alt\": 300, \"assigned\": 1, \"course\": 100.0, \"dte\": 1, \"lat\": -33.86882, \"lon\": 151.208625, \"mmsi\": 503123456, \"radio\": 2250, \"raim\": 0, \"second\": 11, \"speed\": 0, \"type\": 9}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 9 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s."
+}

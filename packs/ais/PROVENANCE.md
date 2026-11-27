@@ -49,6 +49,21 @@ Sections read: "AIVDM/AIVDO Payload Armoring", "AIS Payload Data Types",
 1 to 27, without the subtypes of types 6 and 8), and "AIS Payload Byte
 Alignment, Padding, and Bit Stuffing".
 
+## Golden vectors: pyais
+
+`packs/ais/vectors/golden-*.json` are written by `tools/gen/golden-pyais.py`
+from pyais, a reference AIS encoder and decoder, not from this pack and not by
+any engine (shared-model hardening, item 2). pyais encodes each message and
+decodes it again; the vector's input is pyais's payload and its model values
+are what pyais decodes.
+
+| | |
+|---|---|
+| Package | pyais 3.3.1, https://github.com/M0r13n/pyais, wheel `pyais-3.3.1-py3-none-any.whl`, SHA-256 `0ad45f232639cfec7eadb20228a0402e5a0c81e46d3a32a8229eeb384199a093` |
+| Dependency | attrs 26.1.0, wheel `attrs-26.1.0-py3-none-any.whl`, SHA-256 `c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309` |
+| Pins | `tools/gen/golden-pyais.txt`, installed with `pip --require-hashes` (CI: conformance, "AIS golden vectors are what pyais writes") |
+| Licence | MIT (the wheel's `LICENSE`); only its output is used, no code is copied |
+
 ## What was not used
 
 ITU-R M.1371, "Technical characteristics for an automatic identification

@@ -1,0 +1,25 @@
+{
+ "name": "golden-base-station-2",
+ "from": "ais",
+ "to": "ais",
+ "input": "47Ol>01v`UU7;bl;IgdWcu2000S:",
+ "expect": "47Ol>01v`UU7;bl;IgdWcu2000S:",
+ "model": {
+  "@kind": "base-station",
+  "ais.mmsi": "503123456",
+  "ais.accuracy": "1",
+  "ais.raim": "0",
+  "ais.second": "11",
+  "ais.radio": "2250",
+  "ais.epfd": "2",
+  "lat": "-33.86882",
+  "lon": "151.208625",
+  "ais.year": "2026",
+  "ais.month": "2",
+  "ais.day": "11",
+  "ais.hour": "5",
+  "ais.minute": "7"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"accuracy\": 1, \"day\": 11, \"epfd\": 2, \"hour\": 5, \"lat\": -33.86882, \"lon\": 151.208625, \"minute\": 7, \"mmsi\": 503123456, \"month\": 2, \"radio\": 2250, \"raim\": 0, \"second\": 11, \"type\": 4, \"year\": 2026}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 4 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s."
+}

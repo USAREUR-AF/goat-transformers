@@ -198,6 +198,19 @@ lies outside the range of a real value, so no real value is lost.
 | A time instant (`time_ms`) | Position reports carry only the UTC second. Types 4 and 11 carry year to second, but no derive function builds an instant from date and time parts. They are raw keys. |
 | Type 24 part B, bits 132-161 | Not left out, but read twice: as the four dimensions and as `ais.mothership_mmsi`. The source says the second reading holds when the MMSI has the form 98xxxxxxx (auxiliary craft). That is a range of the MMSI, not a value a `when` can test, so both are decoded and the consumer chooses. Bits 48-89 are likewise read both as vendor ID, model and serial, and as the 7-character `ais.vendor_text`, as the source advises. On encode the earlier line wins (ruling 5 of 0.5). |
 
+## Golden vectors
+
+41 vectors `golden-<kind>-<n>.json`, written by `tools/gen/golden-pyais.py`
+from pyais (PROVENANCE.md): types 1, 2, 3, 4, 9, 18, 19, 21 and 27 at four
+places (every quadrant, near a pole and the antimeridian; three for type 27),
+type 5 and type 24 part A three times. The expected model values are pyais's,
+under the pack's keys; speed is pyais's knots at 1 kn = 1852/3600 m/s. The
+positions are whole counts of the raw field, so pyais's six-decimal latitude
+and longitude are exact. Not compared: the rate of turn (pyais reports degrees
+per minute, the pack keys the raw field), spare and reserved bits, and type
+27's course (kept raw). For type 21 the expected output is pyais's payload
+cut to 272 bits, since a round trip drops the name extension (above).
+
 ## Behaviour to know
 
 - **Six-bit text.** Ship name, destination, aid name and call sign are read
