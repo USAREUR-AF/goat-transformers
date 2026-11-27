@@ -36,15 +36,34 @@ class Probe(unittest.TestCase):
     def test_a_kind_per_restricted_container(self):
         status, out, err = self.run_gen()
         self.assertEqual((status, err), (0, ""))
-        self.assertIn("xtce-probe-header: 2 kinds, 1 left out", out)
+        self.assertIn("xtce-probe-header: 4 kinds, 1 left out", out)
         pack = self.read("packs/xtce-probe-header/pack.def")
         # the criterion selects the kind and, bound with `as`, chooses it on encode; its bits are a pad
         self.assertIn("kind  status\nwhen  8  1  at 0  as xtceprobe.id\npad   8\n", pack)
         self.assertIn("field  xtceprobe.mode  4  uint\n", pack)
         # a polynomial calibrator of degree 1 on a two's complement integer is a signed scale
         self.assertIn("field  xtceprobe.temp  12  sscale:1/2:-40\n", pack)
-        self.assertIn("field  xtceprobe.name  32  utf8\n# not mapped from here on: ContainerRefEntry\n", pack)
-        self.assertNotIn("xtceprobe.rate", pack, "nothing is mapped after a stop")
+        # an included container that brings the selecting parameter again stops the kind (0.30)
+        self.assertIn("field  xtceprobe.name  32  utf8\n# not mapped from here on: a second instance of id, which selects the kind\n", pack)
+
+    def test_a_repeat_counted_by_an_earlier_value_is_a_group(self):
+        """The count parameter's line becomes the count (0.21) and the repeated
+        included container a group of its entries."""
+        self.assertEqual(self.run_gen()[0], 0)
+        pack = self.read("packs/xtce-probe-header/pack.def")
+        self.assertIn("count  n_count  8\ngroup  xtceprobe.pair_items  count @n_count\n"
+                      "  field  xtceprobe.mode  4  uint\n  field  xtceprobe.level  8  uint\nend\n"
+                      "field  xtceprobe.rate  32  f32\n", pack)
+        self.assertIn('list  pair_items', self.read("model/xtceprobe.def"))
+        v = json.loads(self.read("packs/xtce-probe-header/vectors/rt-batch.json"))
+        self.assertEqual(v["model"]["xtceprobe.pair_items.#"], "2")
+        self.assertEqual(v["input"][:4], "0302", "the id, then the count of the two items")
+
+    def test_a_fixed_repeat_is_unrolled_and_a_stated_location_is_a_pad(self):
+        self.assertEqual(self.run_gen()[0], 0)
+        pack = self.read("packs/xtce-probe-header/pack.def")
+        self.assertIn("field  xtceprobe.level_1  8  uint\nfield  xtceprobe.level_2  8  uint\n"
+                      "field  xtceprobe.level_3  8  uint\npad   16\nfield  xtceprobe.name  32  utf8\n", pack)
 
     def test_a_criterion_this_phase_cannot_state_leaves_the_container_out(self):
         self.assertEqual(self.run_gen()[0], 0)

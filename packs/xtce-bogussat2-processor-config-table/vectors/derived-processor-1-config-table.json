@@ -2,8 +2,8 @@
   "name": "derived-processor-1-config-table",
   "from": "xtce-bogussat2-processor-config-table",
   "to": "xtce-bogussat2-processor-config-table",
-  "input": "0112312310",
-  "expect": "0112312310",
+  "input": "01123123100001e006400c8138800320",
+  "expect": "01123123100001e006400c8138800320",
   "model": {
     "@kind": "processor_1_config_table",
     "xtcebogussat2.sc001_onboard_processor_config_table_processor_id": "1",
@@ -13,8 +13,13 @@
     "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_time": "1",
     "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_tmmgmnt": "2",
     "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_interface": "3",
-    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_mw1553": "1"
+    "xtcebogussat2.sc001_onboard_processor_config_config_log_levels_mw1553": "1",
+    "xtcebogussat2.sc001_onboard_processor_config_config_watchdog": "30",
+    "xtcebogussat2.sc001_onboard_processor_config_config_prom_access_read": "100",
+    "xtcebogussat2.sc001_onboard_processor_config_config_prom_access_write": "200",
+    "xtcebogussat2.sc001_onboard_processor_config_config_prom_access_erase": "5000",
+    "xtcebogussat2.sc001_onboard_processor_config_config_prom_access_lock": "50"
   },
-  "source": "synthetic: values chosen by the vector deriver (processor 1, log levels 1,2,3,1,2,3,1 from the Log_Level_Type enumeration); bytes derived by hand and with a standalone stdlib program, no engine or generator run. No kind of this pack maps a scaled value",
-  "reference": "BogusSAT-2.xml Onboard_Processor_Config: Table_Processor_ID (IntegerDataEncoding with XTCE defaults, 8 bits unsigned), Config_Log_Levels (7 members of Log_Level_Type, 4 bits unsigned), Processor_1_Config_Table criterion PROCESSOR1=1; engine-spec 0.5 msb order and uint, 0.8 sequential (36 bits, last byte padded with zero bits), 0.30/0.33 window at 0 written from the as key"
+  "source": "synthetic: values chosen by the vector deriver (processor 1, log levels 1,2,3,1,2,3,1 from Log_Level_Type, watchdog 30 s within 1-300, PROM read/write/erase/lock 100/200/5000/50 us within 10-50000); bytes derived by hand and with a standalone stdlib program, no engine or generator run. No kind of this pack maps a scaled value",
+  "reference": "BogusSAT-2.xml Processor_Config_Table: Table_Processor_ID (IntegerDataEncoding with XTCE defaults, 8 bits unsigned), Config_Log_Levels (7 x Log_Level_Type, 4 bits unsigned, ends at bit 36), Config_Watchdog at LocationInContainerInBits 8 with referenceLocation absent (XTCE 1.2 default previousEntry: 8 bits after bit 36, so bits 36-43 skipped, watchdog at 44, 16 bits unsigned), Config_PROM_Access (4 x PROM_Programming_Access_Timing_Type, 16 bits unsigned), then Config_Self_Test whose first member is a BinaryParameterType (not mapped); Processor_1_Config_Table criterion PROCESSOR1=1; engine-spec 0.5 msb order and uint, 0.8 sequential (124 bits, last byte padded with zero bits), 0.30/0.33 window at 0 written from the as key"
 }

@@ -16,11 +16,11 @@ when  8  0  at 24  as xtcediaglog.format_id
 field  xtcediaglog.log_record_length  16  uint
 field  xtcediaglog.fsw_subsys_name  8  uint
 pad   8
-# not mapped from here on: an entry at a stated location
+# not mapped from here on: a repeat counted by a value that is not an unsigned integer
 
 kind  format2
 when  8  1  at 24  as xtcediaglog.format_id
 field  xtcediaglog.log_record_length  16  uint
 field  xtcediaglog.fsw_subsys_name  8  uint
 pad   8
-# not mapped from here on: an entry at a stated location
+# not mapped from here on: a repeat counted by a value that is not an unsigned integer

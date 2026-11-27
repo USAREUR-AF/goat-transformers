@@ -26,14 +26,23 @@ at <bit offset> as <key>` (engine-spec 0.30, 0.33), and the bits of that
 parameter a `pad`, so the comparison both selects the kind on decode and
 chooses it on encode.
 
-Mapped (phase 1): integer, float, boolean, enumerated and fixed-size string
-parameter types; aggregate parameters, member by member; integer encodings
-unsigned and two's complement, most significant byte first; IEEE 754 floats of
-32 and 64 bits; a polynomial calibrator of degree 0 or 1 as a scale; a
-comparison or a list of comparisons (all must hold) with `==` on an
-uncalibrated integer, boolean or enumerated parameter. Anything else ends the
-kind's mapping at that entry with a `# not mapped from here on:` comment, and a
-container whose criteria cannot be stated is left out; pack.md lists both.
+Mapped: integer, float, boolean, enumerated and fixed-size string parameter
+types; aggregate parameters, member by member; integer encodings unsigned and
+two's complement, most significant byte first; IEEE 754 floats of 32 and 64
+bits; a polynomial calibrator of degree 0 or 1 as a scale (an exact factor as
+the fraction, engine-spec 0.5 ruling 1); a comparison or a list of comparisons
+(all must hold) with `==` on an uncalibrated integer, boolean or enumerated
+parameter; an included container (its entries in place, its locations from
+where it is included); a stated location ahead of the cursor (a `pad`); a repeat
+of a fixed count (unrolled, the keys numbered `_1`, `_2`, ...); a repeat counted
+by an earlier unsigned, uncalibrated parameter (that parameter's line becomes a
+`count`, the repeat a `group ... count @`, engine-spec 0.21), also when the count
+is stated on the bits of an earlier field of its size, which is then read again
+as the count. Anything else ends the kind's mapping at that entry with a
+`# not mapped from here on:` comment, and a container whose criteria cannot be
+stated is left out; pack.md lists both. The most common stops name what the pack
+language lacks: an entry included on the value of an earlier field
+(IncludeCondition) and a count computed from a field by a formula.
 
 Every vector is a round trip whose message is written by the bit writer in this
 file from the container's entries; the generator then loads each pack with
@@ -314,6 +323,10 @@ class Kind:
         self.lines = []          # ("field", Leaf) | ("pad", bits) | ("stop", why)
         self.whens = []          # (bits, value, offset, key)
         self.leaves = []         # the Leafs of the field lines, in order
+        self.item_leaves = []    # the Leafs of the lines of group bodies
+        self.lists = {}          # list name -> description
+        self.item_bits = {}      # list name -> bits of one item
+        self.notes = []
         self.stop = None
 
 
@@ -328,6 +341,190 @@ def entries_of(c):
         el = x.el.find(NS + "EntryList")
         out += [(x.system, e) for e in (el if el is not None else [])]
     return out
+
+
+class Layout:
+    """Lays out a container's entries as lines, with the bit offset of each.
+
+    The offset counts from the message's first bit. Each container's bit 0 is
+    the start of the whole container, inherited entries included, and an
+    included container's locations count from where it is included (the XTCE
+    schema's description of LocationInContainerInBits)."""
+
+    def __init__(self, kind, want, keyname):
+        self.k, self.want, self.keyname = kind, want, keyname
+        self.offset = 0
+        self.placed = {}      # parameter key -> (lines, index, offset, bits) of its field line
+        self.variable = False # True after a group whose size the count sets
+        self.overlaid = {}    # key read again on the bits of an earlier field -> that field's key
+
+    def move_to(self, target, lines):
+        if target > self.offset:
+            lines.append(("pad", target - self.offset))
+            self.offset = target
+        elif target < self.offset:
+            raise Stop("an entry before the end of the entry ahead of it")
+
+    def location(self, e, start):
+        """The bit an entry starts at, or None for the next one."""
+        loc = e.find(NS + "LocationInContainerInBits")
+        if loc is None:
+            return None
+        fv = loc.find(NS + "FixedValue")
+        if fv is None:
+            raise Stop("an entry at a location that is not fixed")
+        v = int(fv.text.strip())
+        where = loc.get("referenceLocation", "previousEntry")
+        if where == "previousEntry":
+            return self.offset + v
+        if where == "containerStart":
+            if self.variable:
+                raise Stop("an entry located from the container's start after a repeat of variable count")
+            return start + v
+        raise Stop("an entry located from %s" % where)
+
+    def leaves(self, system, ref):
+        psys, pel, members = lookup(system, ref, "param")
+        if members:
+            raise Stop("an entry of an aggregate's member")
+        tsys, tel, _ = lookup(psys, pel.get("parameterTypeRef"), "type")
+        return leaves_of(tsys, tel, self.keyname(psys, pel), pel.get("shortDescription") or ""), pel
+
+    def entries(self, entries, start, lines, in_group=False):
+        for system, e in entries:
+            self.entry(system, e, start, lines, in_group)
+
+    def entry(self, system, e, start, lines, in_group):
+        t = tag(e)
+        if e.find(NS + "IncludeCondition") is not None:
+            raise Stop("an entry with an include condition")
+        if t not in ("ParameterRefEntry", "ContainerRefEntry"):
+            raise Stop(t)
+        target = self.location(e, start)
+        repeat = e.find(NS + "RepeatEntry")
+        if repeat is not None:
+            self.repeated(system, e, target, start, repeat, lines, in_group)
+            return
+        if target is not None and target < self.offset and t == "ParameterRefEntry" and not in_group:
+            self.overlay(system, e, target)
+            return
+        if target is not None:
+            self.move_to(target, lines)
+        self.one(system, e, lines, in_group, suffix="")
+
+    def overlay(self, system, e, target):
+        """An entry located on the bits of a field already laid out, of the same
+        size: the same bits read again under a second name. It is kept only as
+        the count of a later repeat (`repeated`), which turns that field's line
+        into the count."""
+        leaves, _ = self.leaves(system, e.get("parameterRef"))
+        hit = [(key, at) for key, at in self.placed.items() if at[2] == target]
+        if len(leaves) != 1 or not hit or hit[0][1][3] != leaves[0].bits:
+            raise Stop("an entry before the end of the entry ahead of it")
+        first_key, at = hit[0]
+        self.placed[leaves[0].key] = at
+        self.overlaid[leaves[0].key] = first_key
+
+    def one(self, system, e, lines, in_group, suffix):
+        if tag(e) == "ContainerRefEntry":
+            cs, cel, _ = lookup(system, e.get("containerRef"), "container")
+            here = self.offset
+            sub = Container(cs, cel)
+            chain = []
+            x = sub
+            while x is not None:
+                chain.append(x)
+                x = None
+                if chain[-1].base_ref:
+                    bs, bel, _ = lookup(chain[-1].system, chain[-1].base_ref, "container")
+                    x = Container(bs, bel)
+            for c in reversed(chain):
+                el = c.el.find(NS + "EntryList")
+                for item in (el if el is not None else []):
+                    if suffix:
+                        self.suffixed(c.system, item, here, lines, in_group, suffix)
+                    else:
+                        self.entry(c.system, item, here, lines, in_group)
+            return
+        leaves, _ = self.leaves(system, e.get("parameterRef"))
+        for leaf in leaves:
+            if suffix:
+                leaf = Leaf(leaf.key + suffix, leaf.bits, leaf.transform, leaf.ktype, leaf.enum, leaf.desc)
+            if not in_group and leaf.key in self.want:
+                self.k.whens.append((leaf.bits, self.want.pop(leaf.key), self.offset, leaf.key))
+                lines.append(("pad", leaf.bits))
+            elif any(leaf.key == w[3] for w in self.k.whens):
+                # its `when ... as` binds the key already (0.30 forbids a second line)
+                raise Stop("a second instance of %s, which selects the kind" % leaf.key)
+            else:
+                if not in_group:
+                    self.placed[leaf.key] = (lines, len(lines), self.offset, leaf.bits)
+                lines.append(("field", leaf))
+                if not in_group:
+                    self.k.leaves.append(leaf)
+                else:
+                    self.k.item_leaves.append(leaf)
+            self.offset += leaf.bits
+
+    def suffixed(self, system, item, start, lines, in_group, suffix):
+        if item.find(NS + "RepeatEntry") is not None:
+            raise Stop("a repeat inside a repeat")
+        if item.find(NS + "IncludeCondition") is not None:
+            raise Stop("an entry with an include condition")
+        target = self.location(item, start)
+        if target is not None:
+            self.move_to(target, lines)
+        self.one(system, item, lines, in_group, suffix)
+
+    def repeated(self, system, e, target, start, repeat, lines, in_group):
+        count = repeat.find(NS + "Count")
+        if count is None or len(count) != 1:
+            raise Stop("a repeat whose count is not one value")
+        if repeat.find(NS + "Offset") is not None and repeat.find(NS + "Offset").find(NS + "FixedValue").text.strip() != "0":
+            raise Stop("a repeat with an offset between its items")
+        how = count[0]
+        if tag(how) == "FixedValue":
+            n = int(how.text.strip())
+            if not 1 <= n <= 32:
+                raise Stop("a repeat of %d" % n)
+            if target is not None:
+                self.move_to(target, lines)
+            for i in range(1, n + 1):
+                self.one(system, e, lines, in_group, suffix="_%d" % i)
+            return
+        if tag(how) != "DynamicValue" or in_group:
+            raise Stop("a repeat counted by %s" % tag(how))
+        ref = how.find(NS + "ParameterInstanceRef")
+        if ref is None or how.find(NS + "LinearAdjustment") is not None or ref.get("instance", "0") != "0":
+            raise Stop("a repeat counted by an adjusted value")
+        leaves, _ = self.leaves(system, ref.get("parameterRef"))
+        if len(leaves) != 1 or leaves[0].transform != "uint":
+            raise Stop("a repeat counted by a value that is not an unsigned integer")
+        ckey = leaves[0].key
+        if ckey not in self.placed:
+            raise Stop("a repeat counted by a value laid out after it")
+        clines, ci, _, cbits = self.placed.pop(ckey)
+        if clines[ci][0] != "field":
+            raise Stop("a repeat counted by a value already used")
+        clines[ci] = ("count", "n_" + ckey, cbits)
+        gone = self.overlaid.get(ckey, ckey)
+        self.k.leaves = [lf for lf in self.k.leaves if lf.key != gone]
+        if gone != ckey:
+            self.k.notes.append("`%s` is read again as `%s`, the count of the repeat: the field is the count line"
+                                % (gone, ckey))
+        if target is not None:
+            self.move_to(target, lines)
+        name = snake(e.get("containerRef") or e.get("parameterRef")) + "_items"
+        body = []
+        before = self.offset
+        self.one(system, e, body, True, suffix="")
+        if any(x[0] in ("stop", "group", "count") for x in body):
+            raise Stop("a repeated entry that is not fixed")
+        self.k.item_bits[name] = self.offset - before
+        self.offset = before          # the items' size is not known here
+        lines.append(("group", name, "n_" + ckey, body))
+        self.k.lists[name] = "items of %s, as many as %s states" % (e.get("containerRef") or e.get("parameterRef"), ckey)
+        self.variable = True          # offsets after this group depend on the count
 
 
 def build_kind(c, keyname):
@@ -361,36 +558,12 @@ def build_kind(c, keyname):
         if want.get(key, raw) != raw:
             raise GenError("two criteria on %s disagree" % key)
         want[key] = raw
-    offset = 0
-    for system, e in entries_of(c):
-        if k.stop:
-            break
-        try:
-            t = tag(e)
-            if t != "ParameterRefEntry":
-                raise Stop(t)
-            if e.find(NS + "IncludeCondition") is not None:
-                raise Stop("an entry with an include condition")
-            loc = e.find(NS + "LocationInContainerInBits")
-            if loc is not None:
-                fv = loc.find(NS + "FixedValue")
-                if loc.get("referenceLocation", "previousEntry") != "previousEntry" or fv is None or fv.text.strip() != "0":
-                    raise Stop("an entry at a stated location")
-            psys, pel, members = lookup(system, e.get("parameterRef"), "param")
-            if members:
-                raise Stop("an entry of an aggregate's member")
-            tsys, tel, _ = lookup(psys, pel.get("parameterTypeRef"), "type")
-            for leaf in leaves_of(tsys, tel, keyname(psys, pel), pel.get("shortDescription") or ""):
-                if leaf.key in want:
-                    k.whens.append((leaf.bits, want.pop(leaf.key), offset, leaf.key))
-                    k.lines.append(("pad", leaf.bits))
-                else:
-                    k.lines.append(("field", leaf))
-                    k.leaves.append(leaf)
-                offset += leaf.bits
-        except Stop as s:
-            k.stop = str(s)
-            k.lines.append(("stop", k.stop))
+    lay = Layout(k, want, keyname)
+    try:
+        lay.entries(entries_of(c), 0, k.lines)
+    except Stop as st:
+        k.stop = str(st)
+        k.lines.append(("stop", k.stop))
     if want:
         raise GenError("criterion on %s, which no entry before it lays out" % ", ".join(sorted(want)))
     return k
@@ -423,22 +596,6 @@ def families(db):
 
 # ----------------------------------------------------------------- output ---
 
-def bit_writer(lines, values):
-    """The message of a kind: each field's value, each pad's bits from `values`."""
-    bits = []
-    for item in lines:
-        if item[0] == "stop":
-            break
-        if item[0] == "pad":
-            n, v = item[1], values[("pad", len(bits))]
-        else:
-            leaf = item[1]
-            n, v = leaf.bits, values[leaf.key]
-        bits += [(v >> (n - 1 - i)) & 1 for i in range(n)]
-    bits += [0] * (-len(bits) % 8)
-    return bytes(int("".join(map(str, bits[i:i + 8])), 2) for i in range(0, len(bits), 8))
-
-
 def sample(leaf, i):
     """A raw value for a vector: within the field and different per field."""
     if leaf.enum:
@@ -452,34 +609,73 @@ def sample(leaf, i):
     return (i * 37 + 5) % (top + 1) if top else 0
 
 
+ITEMS = 2   # the items a vector writes for each repeat of variable count
+
+
 def vector(fmt, module, k, db_label):
-    """A round trip of the kind, written by the bit writer: integers and
-    enumerations get sample values; floats and texts are written as zero bits,
-    an empty text and 0.0."""
-    values, model, written = {}, {"@kind": k.name}, []
-    offset = 0
+    """A round trip of the kind, its bits written here from the kind's lines:
+    a `when` pad holds its criterion value and any other pad zero bits, a count
+    the number of items (ITEMS), integers and enumerations sample values,
+    floats and texts zero bits (0.0 and the empty text)."""
+    bits, model = [], {"@kind": k.name}
     whens = {off: (n, v, key) for n, v, off, key in k.whens}
-    for i, item in enumerate(k.lines):
-        if item[0] == "stop":
-            break
-        if item[0] == "pad":
-            n, v, key = whens[offset]
-            values[("pad", offset)] = v
-            model[module + "." + key] = str(v)
-            offset += n
-            continue
-        leaf = item[1]
-        raw = sample(leaf, i)
-        values[leaf.key] = raw or 0
-        if raw is not None and leaf.ktype == "int":
-            # a two's complement value with its top bit set reads negative
-            v = raw - (1 << leaf.bits) if leaf.transform == "twos" and raw >> (leaf.bits - 1) else raw
-            model[module + "." + leaf.key] = str(v)
-        offset += leaf.bits
-    msg = bit_writer(k.lines, values).hex()
+
+    def emit(n, v):
+        bits.extend((v >> (n - 1 - i)) & 1 for i in range(n))
+
+    def walk(lines, top, salt):
+        for i, item in enumerate(lines):
+            if item[0] == "stop":
+                return False
+            if item[0] == "pad":
+                at = len(bits)
+                if top and at in whens:
+                    n, v, key = whens[at]
+                    model[module + "." + key] = str(v)
+                    emit(n, v)
+                else:
+                    emit(item[1], 0)
+            elif item[0] == "count":
+                emit(item[2], ITEMS)
+            elif item[0] == "group":
+                model["%s.%s.#" % (module, item[1])] = str(ITEMS)
+                for j in range(ITEMS):
+                    walk(item[3], False, salt + 7 * (j + 1))
+            else:
+                leaf = item[1]
+                raw = sample(leaf, i + salt)
+                emit(leaf.bits, raw or 0)
+                if top and raw is not None and leaf.ktype == "int":
+                    # a two's complement value with its top bit set reads negative
+                    v = raw - (1 << leaf.bits) if leaf.transform == "twos" and raw >> (leaf.bits - 1) else raw
+                    model[module + "." + leaf.key] = str(v)
+        return True
+
+    walk(k.lines, True, 0)
+    bits += [0] * (-len(bits) % 8)
+    msg = bytes(int("".join(map(str, bits[i:i + 8])), 2) for i in range(0, len(bits), 8)).hex()
     return {"name": "rt-" + k.name, "from": fmt, "to": fmt, "input": msg, "expect": msg, "model": model,
             "source": "written by tools/gen/xtce2pack.py from the container's entries in %s" % db_label,
             "reference": "CCSDS 660.0-B-2: a sequence container's entries in order, most significant bit first"}
+
+
+def render(lines, module, ind):
+    out = []
+    for item in lines:
+        if item[0] == "pad":
+            out.append("%spad   %d" % (ind, item[1]))
+        elif item[0] == "stop":
+            out.append("%s# not mapped from here on: %s" % (ind, item[1]))
+        elif item[0] == "count":
+            out.append("%scount  %s  %d" % (ind, item[1], item[2]))
+        elif item[0] == "group":
+            out.append("%sgroup  %s.%s  count @%s" % (ind, module, item[1], item[2]))
+            out += render(item[3], module, ind + "  ")
+            out.append("%send" % ind)
+        else:
+            leaf = item[1]
+            out.append("%sfield  %s.%s  %d  %s" % (ind, module, leaf.key, leaf.bits, leaf.transform))
+    return out
 
 
 def pack_text(fmt, module, db_label, sources, kinds):
@@ -493,18 +689,11 @@ def pack_text(fmt, module, db_label, sources, kinds):
         L += ["", "kind  %s" % k.name]
         for n, v, off, key in k.whens:
             L.append("when  %d  %d  at %d  as %s.%s" % (n, v, off, module, key))
-        for item in k.lines:
-            if item[0] == "pad":
-                L.append("pad   %d" % item[1])
-            elif item[0] == "stop":
-                L.append("# not mapped from here on: %s" % item[1])
-            else:
-                leaf = item[1]
-                L.append("field  %s.%s  %d  %s" % (module, leaf.key, leaf.bits, leaf.transform))
+        L += render(k.lines, module, "")
     return "\n".join(L) + "\n"
 
 
-def module_text(module, db_label, sources, leaves):
+def module_text(module, db_label, sources, leaves, lists=None):
     L = ["# The %s module: the parameters of the XTCE database %s, as its containers" % (module, db_label),
          "# lay them out. Written by tools/gen/xtce2pack.py; do not edit by hand.",
          "module        %s" % module, "version       0.1.0", "distribution  public"]
@@ -514,6 +703,8 @@ def module_text(module, db_label, sources, leaves):
         leaf = leaves[key]
         desc = (leaf.desc or key.replace("_", " ")).replace('"', "'")
         L.append('key   %-*s  %-6s -  "%s"' % (width, key, leaf.ktype, desc))
+    for name in sorted(lists or {}):
+        L.append('list  %-*s  "%s"' % (width, name, (lists[name]).replace('"', "'")))
     return "\n".join(L) + "\n"
 
 
@@ -529,6 +720,9 @@ def pack_md(fmt, db_label, family, kinds, left_out):
     for k in kinds:
         sel = ", ".join("`%s` = %d" % (key, v) for _, v, _, key in k.whens) or "none"
         L.append("| `%s` | %d | %s | %s |" % (k.name, len(k.leaves), sel, k.stop or ""))
+    notes = [n for k in kinds for n in k.notes]
+    if notes:
+        L += ["", "Read again:", ""] + ["- %s" % n for n in notes]
     if left_out:
         L += ["", "Containers left out, with the reason:", ""]
         L += ["- `%s`: %s" % (n, why) for n, why in left_out]
@@ -590,7 +784,7 @@ def run(src, out, provenance=None):
             rel = psys.path[len(root.path):].strip("/")
             return snake((rel + "/" if rel else "") + pel.get("name"))
 
-        leaves, packs = {}, []
+        leaves, lists, packs = {}, {}, []
         for fam, concrete in families(root):
             kinds, left_out = [], []
             for c in concrete:
@@ -612,12 +806,13 @@ def run(src, out, provenance=None):
             if len(set(names)) != len(names):
                 raise GenError("two containers of family %s have one name" % fam.name)
             for k in kinds:
-                for lf in k.leaves:
+                for lf in k.leaves + k.item_leaves:
                     leaves[lf.key] = lf
+                lists.update(k.lists)
                 for _, _, _, key in k.whens:
                     leaves.setdefault(key, Leaf(key, 0, "uint", "int", desc="the bits that select a container"))
             packs.append((fam, kinds, left_out))
-        out.write("model/%s.def" % module, module_text(module, label, sources, leaves))
+        out.write("model/%s.def" % module, module_text(module, label, sources, leaves, lists))
         for fam, kinds, left_out in packs:
             fmt = "xtce-%s-%s" % (db["name"], snake(fam.name).replace("_", "-"))
             pdir = "packs/" + fmt

@@ -9,9 +9,9 @@ bits are a `pad` in the kind, since the `as` key holds them.
 
 | Kind | Fields | Selected by | Not mapped from |
 |---|---:|---|---|
-| `processor_1_config_table` | 7 | `sc001_onboard_processor_config_table_processor_id` = 1 | an entry at a stated location |
-| `processor_2_config_table` | 7 | `sc001_onboard_processor_config_table_processor_id` = 2 | an entry at a stated location |
-| `processor_3_config_table` | 7 | `sc001_onboard_processor_config_table_processor_id` = 3 | an entry at a stated location |
+| `processor_1_config_table` | 12 | `sc001_onboard_processor_config_table_processor_id` = 1 | BinaryParameterType |
+| `processor_2_config_table` | 12 | `sc001_onboard_processor_config_table_processor_id` = 2 | BinaryParameterType |
+| `processor_3_config_table` | 12 | `sc001_onboard_processor_config_table_processor_id` = 3 | BinaryParameterType |
 
 Floats and texts are written as zero bits in the round-trip vectors, which
 check the bytes and the integer, boolean and enumerated keys.

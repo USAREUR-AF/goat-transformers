@@ -24,6 +24,8 @@
       <Parameter name="Temp" parameterTypeRef="TempType"/>
       <Parameter name="Name" parameterTypeRef="NameType"/>
       <Parameter name="Rate" parameterTypeRef="RateType"/>
+      <Parameter name="Count" parameterTypeRef="IdType"/>
+      <Parameter name="Level" parameterTypeRef="IdType"/>
     </ParameterSet>
     <ContainerSet>
       <SequenceContainer name="Header" abstract="true">
@@ -40,6 +42,26 @@
       <SequenceContainer name="Ranged">
         <EntryList><ParameterRefEntry parameterRef="Mode"/></EntryList>
         <BaseContainer containerRef="Header"><RestrictionCriteria><Comparison parameterRef="Id" value="5" comparisonOperator="&gt;"/></RestrictionCriteria></BaseContainer>
+      </SequenceContainer>
+      <SequenceContainer name="Pair">
+        <EntryList><ParameterRefEntry parameterRef="Mode"/><ParameterRefEntry parameterRef="Level"/></EntryList>
+      </SequenceContainer>
+      <SequenceContainer name="Batch">
+        <EntryList>
+          <ParameterRefEntry parameterRef="Count"/>
+          <ContainerRefEntry containerRef="Pair">
+            <RepeatEntry><Count><DynamicValue><ParameterInstanceRef parameterRef="Count"/></DynamicValue></Count></RepeatEntry>
+          </ContainerRefEntry>
+          <ParameterRefEntry parameterRef="Rate"/>
+        </EntryList>
+        <BaseContainer containerRef="Header"><RestrictionCriteria><Comparison parameterRef="Id" value="3"/></RestrictionCriteria></BaseContainer>
+      </SequenceContainer>
+      <SequenceContainer name="Fixed">
+        <EntryList>
+          <ParameterRefEntry parameterRef="Level"><RepeatEntry><Count><FixedValue>3</FixedValue></Count></RepeatEntry></ParameterRefEntry>
+          <ParameterRefEntry parameterRef="Name"><LocationInContainerInBits referenceLocation="containerStart"><FixedValue>48</FixedValue></LocationInContainerInBits></ParameterRefEntry>
+        </EntryList>
+        <BaseContainer containerRef="Header"><RestrictionCriteria><Comparison parameterRef="Id" value="4"/></RestrictionCriteria></BaseContainer>
       </SequenceContainer>
     </ContainerSet>
   </TelemetryMetaData>

@@ -15,9 +15,9 @@ bits are a `pad` in the kind, since the `as` key holds them.
 | `ccsds_space_packet1` | 9 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 1 |  |
 | `ccsds_space_packet2` | 4 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 2 | an entry with an include condition |
 | `ccsds_space_packet3` | 3 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 3 | a string whose size is not fixed |
-| `ccsds_space_packet4` | 4 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 4 | ContainerRefEntry |
-| `ccsds_space_packet5` | 5 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 5 | ContainerRefEntry |
-| `ccsds_space_packet6` | 5 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 6 | ContainerRefEntry |
+| `ccsds_space_packet4` | 4 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 4 | an entry with an include condition |
+| `ccsds_space_packet5` | 5 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 5 | an entry with an include condition |
+| `ccsds_space_packet6` | 5 | `ccsds_packet_id_version` = 0, `ccsds_packet_id_type` = 0, `ccsds_packet_id_sec_hdr_flag` = 0, `ccsds_packet_id_apid` = 6 | binary encoding of EnumeratedParameterType |
 
 Containers left out, with the reason:
 

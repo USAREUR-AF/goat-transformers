@@ -21,7 +21,13 @@ field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_time  4  u
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_tmmgmnt  4  uint
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_interface  4  uint
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_mw1553  4  uint
-# not mapped from here on: an entry at a stated location
+pad   8
+field  xtcebogussat2.sc001_onboard_processor_config_config_watchdog  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_read  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_write  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_erase  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_lock  16  uint
+# not mapped from here on: BinaryParameterType
 
 kind  processor_2_config_table
 when  8  2  at 0  as xtcebogussat2.sc001_onboard_processor_config_table_processor_id
@@ -33,7 +39,13 @@ field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_time  4  u
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_tmmgmnt  4  uint
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_interface  4  uint
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_mw1553  4  uint
-# not mapped from here on: an entry at a stated location
+pad   8
+field  xtcebogussat2.sc001_onboard_processor_config_config_watchdog  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_read  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_write  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_erase  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_lock  16  uint
+# not mapped from here on: BinaryParameterType
 
 kind  processor_3_config_table
 when  8  3  at 0  as xtcebogussat2.sc001_onboard_processor_config_table_processor_id
@@ -45,4 +57,10 @@ field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_time  4  u
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_tmmgmnt  4  uint
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_interface  4  uint
 field  xtcebogussat2.sc001_onboard_processor_config_config_log_levels_mw1553  4  uint
-# not mapped from here on: an entry at a stated location
+pad   8
+field  xtcebogussat2.sc001_onboard_processor_config_config_watchdog  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_read  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_write  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_erase  16  uint
+field  xtcebogussat2.sc001_onboard_processor_config_config_prom_access_lock  16  uint
+# not mapped from here on: BinaryParameterType
