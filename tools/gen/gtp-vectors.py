@@ -263,6 +263,13 @@ def pfcp_vectors():
                 ref=R_P + "; the heartbeat request with version 2 in place of 1")))
     out.append(("07-truncated-is-malformed.json", vec("pfcp", "truncated-is-malformed", m[:-1], error="malformed-wire",
                 ref=R_P + "; the vendor IE message without its last octet")))
+    m = pfcp(5, [iep(60, u8(0) + u32(v4("192.0.2.30")) + u8(0xAB))], seq=0x000203)
+    out.append(("08-node-id-extra-octet-roundtrip.json", vec("pfcp", "node-id-extra-octet-roundtrip", m,
+                {"pfcp.message_type": "5", "pfcp.ies[0].pfcp.node_id_type": "0",
+                 "pfcp.ies[0].pfcp.ipv4": str(v4("192.0.2.30")), "pfcp.ies[0].pfcp.extra.#": "1",
+                 "pfcp.ies[0].pfcp.extra[0].pfcp.octet": str(0xAB)},
+                ref=R_P + "; an association setup request whose Node ID (extendable, Table 8.1.2-1 and Figure "
+                    "8.2.38-1) has one octet after its IPv4 address: the IE length is 6 and the octet is kept")))
     return [("pfcp",) + x for x in out]
 
 

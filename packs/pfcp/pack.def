@@ -84,8 +84,14 @@ length  16  bytes
               switch  pfcp.node_id_type
                 case  0
                   field  pfcp.ipv4  32  uint
+                  group  pfcp.extra  rest
+                    field  pfcp.octet  8  uint
+                  end
                 case  1
                   field  pfcp.ipv6  128  hex
+                  group  pfcp.extra  rest
+                    field  pfcp.octet  8  uint
+                  end
                 else
                   group  pfcp.node_id_fqdn  rest
                     field  pfcp.octet  8  uint
@@ -151,8 +157,14 @@ length  16  bytes
                           switch  pfcp.node_id_type
                             case  0
                               field  pfcp.ipv4  32  uint
+                              group  pfcp.extra  rest
+                                field  pfcp.octet  8  uint
+                              end
                             case  1
                               field  pfcp.ipv6  128  hex
+                              group  pfcp.extra  rest
+                                field  pfcp.octet  8  uint
+                              end
                             else
                               group  pfcp.node_id_fqdn  rest
                                 field  pfcp.octet  8  uint

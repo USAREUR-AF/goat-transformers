@@ -237,8 +237,11 @@ def pfcp_ies(lst, nested):
                 "switch  pfcp.fseid_v4", "  case  1", "    " + F(p, "ipv4", 32), "  case  0", "end",
                 "switch  pfcp.fseid_v6", "  case  1", "    " + F(p, "ipv6", 128, "hex"), "  case  0", "end"] +
          octets(p, "extra")),
+        # Node ID is extendable (TS 29.244 Table 8.1.2-1, Figure 8.2.38-1): octets after an IPv4 or
+        # IPv6 address are kept; an FQDN runs to the end of the IE, so it can have none.
         ("60", [F(p, "node_id_spare", 4), F(p, "node_id_type", 4), "switch  pfcp.node_id_type", "  case  0",
-                "    " + F(p, "ipv4", 32), "  case  1", "    " + F(p, "ipv6", 128, "hex"), "  else"] +
+                "    " + F(p, "ipv4", 32)] + ind(2, octets(p, "extra")) +
+               ["  case  1", "    " + F(p, "ipv6", 128, "hex")] + ind(2, octets(p, "extra")) + ["  else"] +
          ind(2, octets(p, "node_id_fqdn")) + ["end"]),
         ("96", [F(p, "recovery_time_stamp", 32)] + octets(p, "extra")),
     ]
