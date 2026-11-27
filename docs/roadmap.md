@@ -9,7 +9,7 @@ built. It gives no dates.
 |---|---|
 | Engines | Seven: Rust (reference), Go, Python, Java, C++, Erlang, Zig. Each uses only its language's standard library and passes every vector |
 | Wire types | Five: `xml`, `geojson`, `json`, `protobuf`, `bits` (either bit order; scaled, floating-point and text fields) |
-| Conformance vectors | 25,941 conversion vectors in 4,957 packs and 1,834 load vectors; every engine reproduces every one |
+| Conformance vectors | 26,552 conversion vectors in 5,035 packs and 2,015 load vectors; every engine reproduces every one |
 | Shared model | Modules `core` and `track`, and one module of raw wire values for each catalog format. Every mapped key is declared and type-checked at load (`spec/shared-model.md`) |
 | Packs | The table in `README.md`; coverage by format in `docs/coverage-roadmap.md` |
 | Pack generators | `tools/gen/proto2pack.py`, `xsd2pack.py`, `canboat2pack.py`, `mavlink2pack.py`: a pack, its module and its round-trip vectors from a machine-readable definition |
