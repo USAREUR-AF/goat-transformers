@@ -61,9 +61,13 @@ it is done.
   README; the footnotes of the page give the command behind each number. The
   counts move with every merged pack, so `build.sh` writes the tree's counts
   into the page before it checks it (`python3 -I site/bundle.py --counts-only
-  --write`): the deployed page is never behind the tree it was built from,
-  and a committed page that is behind is a note, not a failure. The counts
-  pull request after each merge wave commits them with the README's;
+  --write`): the deployed page is never behind the tree it was built from.
+  The committed page holds the placeholder `…` in each count, never a
+  number, so a pull request that adds a pack does not change `index.html`;
+  `python3 -I site/bundle.py --counts-only` (the tools tests run it) fails
+  when a number is committed there. After running `build.sh` locally, put
+  the placeholders back with `python3 -I site/bundle.py --counts-only
+  --clear` before committing;
 - the catalog chart, the page's first section (one bar per format family
   around the shared model), is written by `python3 -I tools/catalog-radial.py
   --site` from `tools/catalog-families/` and `packs/` on every build, as the
