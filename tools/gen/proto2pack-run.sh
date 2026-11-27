@@ -235,8 +235,9 @@ python3 -I "$GEN/proto2pack.py" \
 # and startTime both hold time_ms, as @time and @start do there. --cross writes
 # gen-cot-xml-to-cot-protobuf.json; --cross-text on cot-xml then writes the vector into
 # cot-xml and checks the way back without writing it again.
-# cotevent.proto says to use 999999 for an unknown hae, ce and le: --absent gives that
-# double, as the unsigned integer of its 8 bytes (spec 0.9), on the shared lines.
+# An unknown hae, ce and le is 9999999.0, as TAK's own library at that commit writes it
+# (commoncommo cotmessageio.h; the 999999 in the cotevent.proto comment is not what it uses):
+# --absent gives that double, as the unsigned integer of its 8 bytes (spec 0.9), on the shared lines.
 TAKSHA=889eee292c43d3d2eafdd1f2fbf378ad5cd89ecc
 python3 -I "$GEN/proto2pack.py" \
   --proto "$SRC"/tak/*.proto \
@@ -247,7 +248,7 @@ python3 -I "$GEN/proto2pack.py" \
   --source "LICENSE.md at that commit: GNU General Public License, Version 3; INTENT.md at that commit on work of U.S. Federal government employees; the .proto files carry no header (packs/cot-protobuf/PROVENANCE.md)" \
   --map 2.1=type --map 2.5=track.scoped_id --map 2.5=uid --map 2.6=time_ms --map 2.7=time_ms --map 2.8=stale_ms --map 2.9=how \
   --map 2.10=lat --map 2.11=lon --map 2.12=hae --map 2.13=ce --map 2.14=le \
-  --absent 2.12=4696837138094751744 --absent 2.13=4696837138094751744 --absent 2.14=4696837138094751744 \
+  --absent 2.12=4711630319185297408 --absent 2.13=4711630319185297408 --absent 2.14=4711630319185297408 \
   --map 2.15.2.2=callsign --map 2.15.7.1=speed_ms --map 2.15.7.2=course \
   --default-kind cot_event --default-requires lat lon \
   --names-file "$NAMES/cot-protobuf.json" \

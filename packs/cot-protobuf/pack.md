@@ -211,11 +211,16 @@ both directions.
 `9999999` when the entity has no value: an event that left a proto3 writer with `hae` 0 (not on
 the wire) arrives in XML with `hae="9999999"`.
 
-`cotevent.proto` says to use 999999 (six nines) for an unknown `hae`, `ce` and `le`. The three
-shared lines have that double as `absent` (the unsigned integer of its 8 bytes, 4696837138094751744):
-such an event carries no height, `ce` or `le` into another format, the raw keys keep the value, and
-an absent key writes 999999 (vectors 09 and 10). `cot-xml` uses seven nines; each pack follows its
-own source.
+The value for an unknown `hae`, `ce` and `le` is 9999999.0 (seven nines), the value CoT XML uses.
+The comment in `cotevent.proto` says 999999 (six nines), but the TAK library in the same repository
+at the same commit uses seven: `commoncommo/core/include/cotmessageio.h` defines its no-value point
+constant as 9999999.0, `commoncommo/core/impl/cotmessage.cpp` copies `hae`, `ce` and `le` from the
+XML event into the protobuf one unchanged and writes that constant back to XML as `9999999`, and
+takproto 3.0.1 (github.com/snstac/takproto) also copies the XML value unchanged.
+The three shared lines have 9999999.0 as `absent` (the unsigned integer of its 8 bytes,
+4711630319185297408): such an event carries no height, `ce` or `le` into another format, the raw keys
+keep the value, and an absent key writes 9999999.0 (vectors 09 and 10), as `cot-xml` writes
+`9999999`. Before 27 November 2026 the lines had six nines, from the comment.
 
 An XML event converted to this pack and back returns the canonical XML of `cot-xml`:
 `01-event-to-cot-xml` takes the output of `gen-cot-xml-to-cot-protobuf` and returns the `expect`
