@@ -150,7 +150,7 @@ field  xtcebogussat2.ccsds_packet_sequence_group_flags  2  uint
 field  xtcebogussat2.ccsds_packet_sequence_count  14  uint
 field  xtcebogussat2.ccsds_packet_length  16  uint
 field  xtcebogussat2.sc001_payload1_payload_1_state  4  uint
-# not mapped from here on: ContainerRefEntry
+# not mapped from here on: an entry with an include condition
 
 kind  ccsds_space_packet5
 when  3  0  at 0  as xtcebogussat2.ccsds_packet_id_version
@@ -166,7 +166,7 @@ field  xtcebogussat2.ccsds_packet_sequence_count  14  uint
 field  xtcebogussat2.ccsds_packet_length  16  uint
 field  xtcebogussat2.sc001_payload1_payload_1_state  4  uint
 field  xtcebogussat2.sc001_bus_electronics_solar_array_voltage_1_state  8  uint
-# not mapped from here on: ContainerRefEntry
+# not mapped from here on: an entry with an include condition
 
 kind  ccsds_space_packet6
 when  3  0  at 0  as xtcebogussat2.ccsds_packet_id_version
@@ -182,4 +182,4 @@ field  xtcebogussat2.ccsds_packet_sequence_count  14  uint
 field  xtcebogussat2.ccsds_packet_length  16  uint
 field  xtcebogussat2.sc001_payload1_payload_1_state  4  uint
 field  xtcebogussat2.sc001_bus_electronics_solar_array_voltage_1_state  8  uint
-# not mapped from here on: ContainerRefEntry
+# not mapped from here on: binary encoding of EnumeratedParameterType

@@ -9,8 +9,8 @@ bits are a `pad` in the kind, since the `as` key holds them.
 
 | Kind | Fields | Selected by | Not mapped from |
 |---|---:|---|---|
-| `format1` | 2 | `format_id` = 0 | an entry at a stated location |
-| `format2` | 2 | `format_id` = 1 | an entry at a stated location |
+| `format1` | 2 | `format_id` = 0 | a repeat counted by a value that is not an unsigned integer |
+| `format2` | 2 | `format_id` = 1 | a repeat counted by a value that is not an unsigned integer |
 
 Floats and texts are written as zero bits in the round-trip vectors, which
 check the bytes and the integer, boolean and enumerated keys.
