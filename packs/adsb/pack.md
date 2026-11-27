@@ -214,3 +214,15 @@ subtypes 1 and 2, and 3 and 4, have the same fields and 2 and 4 multiply the spe
 
 The two operational status kinds hold their subtype in `adsb.opstatus_subtype` and require its value (0
 airborne, 1 surface), so a status is never written under the other subtype's meaning.
+
+## Golden vectors
+
+11 vectors `golden-<kind>-<n>.json`, written by `tools/gen/golden-pymodes.py`
+from pyModeS (PROVENANCE.md): every DF17 type code and subtype pyModeS's own
+tests hold (identification type code 4, airborne position 11, airborne velocity
+subtypes 1 and 3, aircraft status 28, target state 29, operational status 31),
+up to three messages each. Their model values are pyModeS's: the fields it
+reports raw, and the fields it reports scaled turned back into the raw field
+by the DO-260B scaling the script names. Not compared: the barometric
+altitude code, the ground velocity's components and the squawk. No surface or
+GNSS position message is in pyModeS's tests, so those kinds have none.

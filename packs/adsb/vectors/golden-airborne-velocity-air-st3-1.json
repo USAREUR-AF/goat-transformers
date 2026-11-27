@@ -1,0 +1,24 @@
+{
+ "name": "golden-airborne-velocity-air-st3-1",
+ "from": "adsb",
+ "to": "adsb",
+ "input": "8DA05F219B06B6AF189400CBC33F",
+ "expect": "8da05f219b06b6af189400cbc33f",
+ "model": {
+  "@kind": "airborne-velocity-air-st3",
+  "adsb.df": "17",
+  "adsb.icao": "10510113",
+  "adsb.tc": "19",
+  "adsb.velocity_subtype": "3",
+  "adsb.nac_v": "0",
+  "adsb.vr_source": "1",
+  "adsb.vr_sign": "1",
+  "adsb.vr_raw": "37",
+  "adsb.heading_valid": "1",
+  "adsb.heading_raw": "694",
+  "adsb.airspeed_true": "1",
+  "adsb.airspeed_raw": "376"
+ },
+ "source": "pyModeS 3.7.0: pyModeS.decode of a message from tests/test_bds09.py at 4bf0832 (github.com/junzis/pyModeS). Written by tools/gen/golden-pymodes.py; no engine is run.",
+ "reference": "DF17 type code 19 as pyModeS (GPL-3.0) decodes it; raw fields that pyModeS reports scaled are turned back by the DO-260B scaling named in tools/gen/golden-pymodes.py."
+}
