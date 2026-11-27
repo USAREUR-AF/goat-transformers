@@ -141,8 +141,14 @@ timestamp 65535. An altitude of raw 0 (-1000 m) in `rid.alt_baro`, `hae`,
 `rid.height` and `rid.operator_hae` is absent (`absent 0`): the message
 reaches GeoJSON without an altitude (vector
 `location-unknown-values-to-geojson`), and an absent key is written as raw 0.
-The others pass through as numbers; latitude and longitude both 0 (unknown)
-decode as the point 0, 0, since either value alone is a real coordinate.
+Latitude and longitude both 0 (unknown) give no `lat` and `lon`: the two
+int32 fields are adjacent (bits 40 to 103), so one gate block `if !0:40:64 0`
+(engine-spec 0.17) holds unless all 64 bits are 0. Either value alone is a real
+coordinate and still reads. The bits are always the raw keys `rid.lat_raw` and
+`rid.lon_raw`, so the message comes back byte for byte (vectors
+`location-zero-position-to-geojson`, `location-zero-position-roundtrip`); an
+entity whose `lat` and `lon` are both 0 is `transform-encode`, as the source
+gives that pair no meaning. The others pass through as numbers.
 
 ## Cross-format encode
 

@@ -63,8 +63,12 @@ field     rid.status 0:132:4 uint
 field     rid.direction_raw 0:136:8 uint
 field     rid.speed_h_raw 0:144:8 uint
 field     rid.speed_v 0:152:8 sscale:1/2
-field     lat 0:160:32 sscale:1/10000000
-field     lon 0:192:32 sscale:1/10000000
+field     rid.lat_raw 0:160:32 twos
+field     rid.lon_raw 0:192:32 twos
+if        !0:160:64 0
+  field     lat 0:160:32 sscale:1/10000000
+  field     lon 0:192:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:224:16 uscale:1/2:-1000  absent 0
 field     hae 0:240:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:256:16 uscale:1/2:-1000  absent 0
@@ -121,8 +125,12 @@ field     rid.status 0:132:4 uint
 field     rid.direction_raw 0:136:8 uint
 field     rid.speed_h_raw 0:144:8 uint
 field     rid.speed_v 0:152:8 sscale:1/2
-field     lat 0:160:32 sscale:1/10000000
-field     lon 0:192:32 sscale:1/10000000
+field     rid.lat_raw 0:160:32 twos
+field     rid.lon_raw 0:192:32 twos
+if        !0:160:64 0
+  field     lat 0:160:32 sscale:1/10000000
+  field     lon 0:192:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:224:16 uscale:1/2:-1000  absent 0
 field     hae 0:240:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:256:16 uscale:1/2:-1000  absent 0
@@ -171,8 +179,12 @@ field     rid.status 0:332:4 uint
 field     rid.direction_raw 0:336:8 uint
 field     rid.speed_h_raw 0:344:8 uint
 field     rid.speed_v 0:352:8 sscale:1/2
-field     lat 0:360:32 sscale:1/10000000
-field     lon 0:392:32 sscale:1/10000000
+field     rid.lat_raw 0:360:32 twos
+field     rid.lon_raw 0:392:32 twos
+if        !0:360:64 0
+  field     lat 0:360:32 sscale:1/10000000
+  field     lon 0:392:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:424:16 uscale:1/2:-1000  absent 0
 field     hae 0:440:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:456:16 uscale:1/2:-1000  absent 0
@@ -229,8 +241,12 @@ field     rid.status 0:132:4 uint
 field     rid.direction_raw 0:136:8 uint
 field     rid.speed_h_raw 0:144:8 uint
 field     rid.speed_v 0:152:8 sscale:1/2
-field     lat 0:160:32 sscale:1/10000000
-field     lon 0:192:32 sscale:1/10000000
+field     rid.lat_raw 0:160:32 twos
+field     rid.lon_raw 0:192:32 twos
+if        !0:160:64 0
+  field     lat 0:160:32 sscale:1/10000000
+  field     lon 0:192:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:224:16 uscale:1/2:-1000  absent 0
 field     hae 0:240:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:256:16 uscale:1/2:-1000  absent 0
@@ -279,8 +295,12 @@ field     rid.status 0:332:4 uint
 field     rid.direction_raw 0:336:8 uint
 field     rid.speed_h_raw 0:344:8 uint
 field     rid.speed_v 0:352:8 sscale:1/2
-field     lat 0:360:32 sscale:1/10000000
-field     lon 0:392:32 sscale:1/10000000
+field     rid.lat_raw 0:360:32 twos
+field     rid.lon_raw 0:392:32 twos
+if        !0:360:64 0
+  field     lat 0:360:32 sscale:1/10000000
+  field     lon 0:392:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:424:16 uscale:1/2:-1000  absent 0
 field     hae 0:440:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:456:16 uscale:1/2:-1000  absent 0
@@ -329,8 +349,12 @@ field     rid.status 0:532:4 uint
 field     rid.direction_raw 0:536:8 uint
 field     rid.speed_h_raw 0:544:8 uint
 field     rid.speed_v 0:552:8 sscale:1/2
-field     lat 0:560:32 sscale:1/10000000
-field     lon 0:592:32 sscale:1/10000000
+field     rid.lat_raw 0:560:32 twos
+field     rid.lon_raw 0:592:32 twos
+if        !0:560:64 0
+  field     lat 0:560:32 sscale:1/10000000
+  field     lon 0:592:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:624:16 uscale:1/2:-1000  absent 0
 field     hae 0:640:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:656:16 uscale:1/2:-1000  absent 0
@@ -387,8 +411,12 @@ field     rid.status 0:132:4 uint
 field     rid.direction_raw 0:136:8 uint
 field     rid.speed_h_raw 0:144:8 uint
 field     rid.speed_v 0:152:8 sscale:1/2
-field     lat 0:160:32 sscale:1/10000000
-field     lon 0:192:32 sscale:1/10000000
+field     rid.lat_raw 0:160:32 twos
+field     rid.lon_raw 0:192:32 twos
+if        !0:160:64 0
+  field     lat 0:160:32 sscale:1/10000000
+  field     lon 0:192:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:224:16 uscale:1/2:-1000  absent 0
 field     hae 0:240:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:256:16 uscale:1/2:-1000  absent 0
@@ -437,8 +465,12 @@ field     rid.status 0:332:4 uint
 field     rid.direction_raw 0:336:8 uint
 field     rid.speed_h_raw 0:344:8 uint
 field     rid.speed_v 0:352:8 sscale:1/2
-field     lat 0:360:32 sscale:1/10000000
-field     lon 0:392:32 sscale:1/10000000
+field     rid.lat_raw 0:360:32 twos
+field     rid.lon_raw 0:392:32 twos
+if        !0:360:64 0
+  field     lat 0:360:32 sscale:1/10000000
+  field     lon 0:392:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:424:16 uscale:1/2:-1000  absent 0
 field     hae 0:440:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:456:16 uscale:1/2:-1000  absent 0
@@ -487,8 +519,12 @@ field     rid.status 0:532:4 uint
 field     rid.direction_raw 0:536:8 uint
 field     rid.speed_h_raw 0:544:8 uint
 field     rid.speed_v 0:552:8 sscale:1/2
-field     lat 0:560:32 sscale:1/10000000
-field     lon 0:592:32 sscale:1/10000000
+field     rid.lat_raw 0:560:32 twos
+field     rid.lon_raw 0:592:32 twos
+if        !0:560:64 0
+  field     lat 0:560:32 sscale:1/10000000
+  field     lon 0:592:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:624:16 uscale:1/2:-1000  absent 0
 field     hae 0:640:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:656:16 uscale:1/2:-1000  absent 0
@@ -537,8 +573,12 @@ field     rid.status 0:732:4 uint
 field     rid.direction_raw 0:736:8 uint
 field     rid.speed_h_raw 0:744:8 uint
 field     rid.speed_v 0:752:8 sscale:1/2
-field     lat 0:760:32 sscale:1/10000000
-field     lon 0:792:32 sscale:1/10000000
+field     rid.lat_raw 0:760:32 twos
+field     rid.lon_raw 0:792:32 twos
+if        !0:760:64 0
+  field     lat 0:760:32 sscale:1/10000000
+  field     lon 0:792:32 sscale:1/10000000
+end
 field     rid.alt_baro 0:824:16 uscale:1/2:-1000  absent 0
 field     hae 0:840:16 uscale:1/2:-1000  absent 0
 field     rid.height 0:856:16 uscale:1/2:-1000  absent 0

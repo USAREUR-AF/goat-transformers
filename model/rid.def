@@ -41,6 +41,8 @@ key  description             string  -     "Self-ID free text, up to 23 characte
 # System
 key  operator_location_type  int     -     "operator location type code (0 take-off, 1 live GNSS, 2 fixed)"
 key  classification_type     int     -     "classification region code (0 undeclared, 1 European Union)"
+key  lat_raw                 int     -     "Location latitude as sent, 1e-7 degree; lat only when latitude and longitude are not both 0 (0, 0 = unknown)"
+key  lon_raw                 int     -     "Location longitude as sent, 1e-7 degree; lon only when latitude and longitude are not both 0"
 key  operator_lat            float   deg   "operator latitude, WGS84; 0 with operator_lon 0 = unknown"
 key  operator_lon            float   deg   "operator longitude, WGS84"
 key  area_count              int     -     "number of aircraft in the area or swarm"

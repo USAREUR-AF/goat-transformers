@@ -77,6 +77,12 @@ pack.
 | `lat`, `lon` | the wrapped Location message, `sscale:1/10000000` | as in pack `remote-id`: the F3411 Location message holds latitude and longitude as 32-bit integers of 10^-7 degree (`pack.md` of `remote-id`, "Encodings"); RFC 9575 section 4.3 wraps whole F3411 messages unchanged |
 | `hae` | the wrapped Location message, `uscale:1/2:-1000`, `absent 0` | as in pack `remote-id`: geodetic altitude, the height above the WGS84 ellipsoid, (meters + 1000) x 2; raw 0 (-1000 m) is unknown, so absent, as for `rid.alt_baro` and `rid.height` |
 
+Latitude and longitude both 0 mean unknown (opendroneid.h, `ODID_Location_data`):
+as in pack `remote-id`, each wrapped Location's two adjacent fields lie in a gate
+block `if !0:<lat>:64 0`, with the raw keys `rid.lat_raw` and `rid.lon_raw` outside
+it, in all ten kinds that wrap a Location message (vectors
+`wrapper-location-zero-position-to-geojson` and `-roundtrip`).
+
 The other Location fields go to the `rid` keys pack `remote-id` uses for them.
 A Location message that is wrapped is the same message an aircraft also sends on
 its own (RFC 9575 section 4.3.3): the position is the reported aircraft's.

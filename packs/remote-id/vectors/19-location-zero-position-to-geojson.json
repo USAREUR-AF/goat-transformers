@@ -1,0 +1,18 @@
+{
+ "name": "location-zero-position-to-geojson",
+ "from": "remote-id",
+ "to": "geojson",
+ "input": "1217b5ff7e00000000000000000000000000000000ffff0000",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+ "model": {
+  "@kind": "location",
+  "@absent": [
+   "lat",
+   "lon"
+  ],
+  "rid.lat_raw": "0",
+  "rid.lon_raw": "0"
+ },
+ "source": "constructed",
+ "reference": "constructed: the input of 12-location-unknown-values-to-geojson with latitude and longitude (bytes 5 to 12) set to 0; opendroneid.h ODID_Location_data: both 0 is invalid, no value or unknown, so the message has no position (gate if !0:40:64 0)"
+}

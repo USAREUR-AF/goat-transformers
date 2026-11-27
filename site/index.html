@@ -41,8 +41,12 @@ field  rid.status                  0:12:4     uint
 field  rid.direction_raw           0:16:8     uint
 field  rid.speed_h_raw             0:24:8     uint
 field  rid.speed_v                 0:32:8     sscale:1/2
-field  lat                         0:40:32    sscale:1/10000000
-field  lon                         0:72:32    sscale:1/10000000
+field  rid.lat_raw                 0:40:32    twos
+field  rid.lon_raw                 0:72:32    twos
+if  !0:40:64  0
+  field  lat                         0:40:32    sscale:1/10000000
+  field  lon                         0:72:32    sscale:1/10000000
+end
 field  rid.alt_baro                0:104:16   uscale:1/2:-1000  absent 0
 field  hae                         0:120:16   uscale:1/2:-1000  absent 0
 field  rid.height                  0:136:16   uscale:1/2:-1000  absent 0
@@ -90,8 +94,8 @@ default le        9999999</pre>
       </div>
       <ol class="sig-steps">
         <li data-step="kind" data-pack="remote-id" data-loc="0:4:4" data-line="when      0:4:4  1" data-raw="1" data-key="@kind" data-value="location"><code class="ln">when 0:4:4 1</code><span class="rd">byte 0, high half: 1</span><span class="to">kind <b>location</b></span></li>
-        <li data-step="lat" data-pack="remote-id" data-loc="0:40:32" data-line="field  lat                         0:40:32    sscale:1/10000000" data-raw="455393090" data-key="lat" data-value="45.539309"><code class="ln">field lat 0:40:32 sscale:1/10000000</code><span class="rd">bytes 5&ndash;8: 455393090</span><span class="to">lat <b>45.539309</b></span></li>
-        <li data-step="lon" data-pack="remote-id" data-loc="0:72:32" data-line="field  lon                         0:72:32    sscale:1/10000000" data-raw="-1229663890" data-key="lon" data-value="-122.966389"><code class="ln">field lon 0:72:32 sscale:1/10000000</code><span class="rd">bytes 9&ndash;12: -1229663890</span><span class="to">lon <b>-122.966389</b></span></li>
+        <li data-step="lat" data-pack="remote-id" data-loc="0:40:32" data-line="  field  lat                         0:40:32    sscale:1/10000000" data-raw="455393090" data-key="lat" data-value="45.539309"><code class="ln">field lat 0:40:32 sscale:1/10000000</code><span class="rd">bytes 5&ndash;8: 455393090</span><span class="to">lat <b>45.539309</b></span></li>
+        <li data-step="lon" data-pack="remote-id" data-loc="0:72:32" data-line="  field  lon                         0:72:32    sscale:1/10000000" data-raw="-1229663890" data-key="lon" data-value="-122.966389"><code class="ln">field lon 0:72:32 sscale:1/10000000</code><span class="rd">bytes 9&ndash;12: -1229663890</span><span class="to">lon <b>-122.966389</b></span></li>
         <li data-step="hae" data-pack="remote-id" data-loc="0:120:16" data-line="field  hae                         0:120:16   uscale:1/2:-1000  absent 0" data-raw="2220" data-key="hae" data-value="110"><code class="ln">field hae 0:120:16 uscale:1/2:-1000 absent 0</code><span class="rd">bytes 15&ndash;16: 2220</span><span class="to">hae <b>110</b></span></li>
         <li data-step="def" data-pack="cot-xml" data-line="default type      a-u-X"><code class="ln">default type a-u-X, ce 9999999, le 9999999</code><span class="rd">from the cot-xml pack</span><span class="to">not known</span></li>
       </ol>
@@ -107,7 +111,7 @@ default le        9999999</pre>
     <ul class="numbers strip" aria-label="Counted from the tree">
       <li><b data-stat="formats">4,256</b><span class="unit">formats<sup><a href="#fn-formats">1</a></sup></span><span class="d">each one a pack from a public source</span></li>
       <li><b data-stat="message_kinds">16,749</b><span class="unit">message kinds<sup><a href="#fn-kinds">2</a></sup></span><span class="d">message layouts across those formats</span></li>
-      <li><b data-stat="conversion_vectors">25,941</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
+      <li><b data-stat="conversion_vectors">25,949</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
       <li><b data-stat="wasm_bytes">812,294</b><span class="unit">bytes<sup><a href="#fn-wasm">4</a></sup></span><span class="d">the engine as WebAssembly, in this page</span></li>
     </ul>
   </div>

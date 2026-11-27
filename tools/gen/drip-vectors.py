@@ -88,6 +88,10 @@ def location_model(msg, model):
         # a fraction factor is applied as the pack's scale is: v * num / den, then + offset
         x = raw * 1.0 / 10000000 if factor == 1e-7 else raw * 1.0 / 2
         model[key] = plain(x + offset)
+    # latitude and longitude both 0 are unknown (opendroneid.h ODID_Location_data): the pack's
+    # gate `if !<lat>:64 0` gives no lat and lon then
+    if (v >> 40) & ((1 << 64) - 1) == 0:
+        del model["lat"], model["lon"]
 
 
 def wrapped_model(model, lst, msgs):
@@ -290,6 +294,18 @@ def build():
                    to="geojson",
                    ref="built by this program: vector 04's Wrapper with the geodetic altitude of the wrapped "
                        "Location at raw 0, which encodes -1000 m, the unknown value: the point has no altitude"))
+    wz = payload_of(wrapper_data([basic_id_message(), location_message(0.0, 0.0, 1524.0)]), 3007)
+    out.append(vec("wrapper-location-zero-position-to-geojson", wz.hex(),
+                   '{"type":"Feature","geometry":null,"properties":{}}',
+                   to="geojson", model={"@kind": "wrapper-2-location-2", "@absent": ["lat", "lon"],
+                                        "rid.lat_raw": "0", "rid.lon_raw": "0", "hae": "1524"},
+                   ref="built by this program: vector 04's Wrapper with the wrapped Location's latitude and "
+                       "longitude both 0, which opendroneid.h defines as unknown: no position (gate "
+                       "if !<lat>:64 0). The geodetic altitude is still decoded, but GeoJSON holds hae only as the "
+                       "third coordinate of a Point (engine-spec, geojson slots), so with no point it is not written"))
+    out.append(vec("wrapper-location-zero-position-roundtrip", wz.hex(), wz.hex(), model=wrapper_model(wz),
+                   ref="the same Wrapper: the raw keys rid.lat_raw and rid.lon_raw keep the zero bits, so it "
+                       "comes back byte for byte"))
     return out
 
 
