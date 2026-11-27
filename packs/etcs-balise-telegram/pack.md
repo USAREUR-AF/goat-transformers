@@ -48,3 +48,13 @@ each packet sets (10 cm, 1 m or 10 m), not latitude and longitude, so they stay 
 - Numbers chapter 7 assigns to no packet are kept as bits (kind `other`).
 - A telegram whose filler after packet 255 is kept is longer than this message: trailing bits
   of eight or more are read as further packets.
+
+## Packet kinds on encode
+
+Each packet kind's `when` on NID_PACKET binds `etcs.nid_packet` (`when 8 <n> as etcs.nid_packet`, engine-spec 0.30). An
+item of `etcs.packets` that records no kind is chosen by its keys (0.8 ruling 26, 0.5 Encode step 2).
+It is the packet whose NID_PACKET the item holds. An item without one is `other`, the generic
+packet. Before that binding, no packet kind had a term, so `p0`, the first, took every such item.
+Only a library caller that builds the items itself, without a kind, meets this. A decoded message
+records each item's kind, and no other format has this list, so no conversion vector can show it.
+Vectors of this pack check `etcs.nid_packet` on decode.

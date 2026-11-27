@@ -20,10 +20,10 @@ field  etcs.nid_bg  14  uint
 field  etcs.q_link  1  uint
 group  etcs.packets  rest
   kind  p0
-  when  8  0
+  when  8  0  as  etcs.nid_packet
   field  etcs.p0_nid_vbcmk  6  uint
   kind  p5
-  when  8  5
+  when  8  5  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p5_q_scale  2  uint
@@ -49,7 +49,7 @@ group  etcs.packets  rest
     end
   end
   kind  p12
-  when  8  12
+  when  8  12  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p12_q_scale  2  uint
@@ -89,7 +89,7 @@ group  etcs.packets  rest
     end
   end
   kind  p21
-  when  8  21
+  when  8  21  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p21_q_scale  2  uint
@@ -103,7 +103,7 @@ group  etcs.packets  rest
     end
   end
   kind  p27
-  when  8  27
+  when  8  27  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p27_q_scale  2  uint
@@ -139,7 +139,7 @@ group  etcs.packets  rest
     end
   end
   kind  p41
-  when  8  41
+  when  8  41  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p41_q_scale  2  uint
@@ -162,7 +162,7 @@ group  etcs.packets  rest
     end
   end
   kind  p44
-  when  8  44
+  when  8  44  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p44_nid_xuser  9  uint
@@ -176,13 +176,13 @@ group  etcs.packets  rest
     end
   end
   kind  p2
-  when  8  2
+  when  8  2  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p2_m_version  7  uint
   end
   kind  p3
-  when  8  3
+  when  8  3  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p3_q_scale  2  uint
@@ -229,7 +229,7 @@ group  etcs.packets  rest
     end
   end
   kind  p6
-  when  8  6
+  when  8  6  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p6_q_vbco  1  uint
@@ -242,7 +242,7 @@ group  etcs.packets  rest
     end
   end
   kind  p13
-  when  8  13
+  when  8  13  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p13_q_scale  2  uint
@@ -273,14 +273,14 @@ group  etcs.packets  rest
     end
   end
   kind  p16
-  when  8  16
+  when  8  16  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p16_q_scale  2  uint
     field  etcs.p16_l_section  15  uint
   end
   kind  p39
-  when  8  39
+  when  8  39  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p39_q_scale  2  uint
@@ -293,7 +293,7 @@ group  etcs.packets  rest
     end
   end
   kind  p40
-  when  8  40
+  when  8  40  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p40_q_scale  2  uint
@@ -301,7 +301,7 @@ group  etcs.packets  rest
     field  etcs.p40_m_current  10  uint
   end
   kind  p42
-  when  8  42
+  when  8  42  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p42_q_rbc  1  uint
@@ -311,13 +311,13 @@ group  etcs.packets  rest
     field  etcs.p42_q_sleepsession  1  uint
   end
   kind  p45
-  when  8  45
+  when  8  45  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p45_nid_mn  24  uint
   end
   kind  p46
-  when  8  46
+  when  8  46  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p46_m_leveltr  3  uint
@@ -336,7 +336,7 @@ group  etcs.packets  rest
     end
   end
   kind  p49
-  when  8  49
+  when  8  49  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     group  etcs.p49_balises  count 5                 # N_ITER
@@ -350,7 +350,7 @@ group  etcs.packets  rest
     end
   end
   kind  p51
-  when  8  51
+  when  8  51  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p51_q_scale  2  uint
@@ -378,7 +378,7 @@ group  etcs.packets  rest
     end
   end
   kind  p52
-  when  8  52
+  when  8  52  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p52_q_scale  2  uint
@@ -404,7 +404,7 @@ group  etcs.packets  rest
     end
   end
   kind  p57
-  when  8  57
+  when  8  57  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p57_t_mar  8  uint
@@ -412,7 +412,7 @@ group  etcs.packets  rest
     field  etcs.p57_t_cycrqst  8  uint
   end
   kind  p58
-  when  8  58
+  when  8  58  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p58_q_scale  2  uint
@@ -425,7 +425,7 @@ group  etcs.packets  rest
     end
   end
   kind  p63
-  when  8  63
+  when  8  63  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     group  etcs.p63_balises  count 5                 # N_ITER
@@ -439,12 +439,12 @@ group  etcs.packets  rest
     end
   end
   kind  p64
-  when  8  64
+  when  8  64  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
   end
   kind  p65
-  when  8  65
+  when  8  65  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p65_q_scale  2  uint
@@ -455,13 +455,13 @@ group  etcs.packets  rest
     field  etcs.p65_v_tsr  7  uint
   end
   kind  p66
-  when  8  66
+  when  8  66  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p66_nid_tsr  8  uint
   end
   kind  p67
-  when  8  67
+  when  8  67  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p67_q_scale  2  uint
@@ -473,7 +473,7 @@ group  etcs.packets  rest
     end
   end
   kind  p68
-  when  8  68
+  when  8  68  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p68_q_scale  2  uint
@@ -493,7 +493,7 @@ group  etcs.packets  rest
     end
   end
   kind  p69
-  when  8  69
+  when  8  69  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p69_q_scale  2  uint
@@ -515,7 +515,7 @@ group  etcs.packets  rest
     end
   end
   kind  p70
-  when  8  70
+  when  8  70  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p70_q_scale  2  uint
@@ -561,7 +561,7 @@ group  etcs.packets  rest
     end
   end
   kind  p71
-  when  8  71
+  when  8  71  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p71_q_scale  2  uint
@@ -570,7 +570,7 @@ group  etcs.packets  rest
     field  etcs.p71_m_adhesion  1  uint
   end
   kind  p72
-  when  8  72
+  when  8  72  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p72_q_scale  2  uint
@@ -612,7 +612,7 @@ group  etcs.packets  rest
     end
   end
   kind  p76
-  when  8  76
+  when  8  76  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p76_q_scale  2  uint
@@ -652,7 +652,7 @@ group  etcs.packets  rest
     field  etcs.p76_q_text  8  uint
   end
   kind  p79
-  when  8  79
+  when  8  79  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p79_q_scale  2  uint
@@ -680,7 +680,7 @@ group  etcs.packets  rest
     end
   end
   kind  p80
-  when  8  80
+  when  8  80  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p80_q_scale  2  uint
@@ -700,7 +700,7 @@ group  etcs.packets  rest
     end
   end
   kind  p88
-  when  8  88
+  when  8  88  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p88_q_scale  2  uint
@@ -721,7 +721,7 @@ group  etcs.packets  rest
     end
   end
   kind  p90
-  when  8  90
+  when  8  90  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p90_q_newcountry  1  uint
@@ -733,7 +733,7 @@ group  etcs.packets  rest
     field  etcs.p90_nid_bg  14  uint
   end
   kind  p131
-  when  8  131
+  when  8  131  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p131_q_scale  2  uint
@@ -744,13 +744,13 @@ group  etcs.packets  rest
     field  etcs.p131_q_sleepsession  1  uint
   end
   kind  p132
-  when  8  132
+  when  8  132  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p132_q_aspect  1  uint
   end
   kind  p133
-  when  8  133
+  when  8  133  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p133_q_scale  2  uint
@@ -763,7 +763,7 @@ group  etcs.packets  rest
     field  etcs.p133_nid_bg  14  uint
   end
   kind  p134
-  when  8  134
+  when  8  134  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p134_q_scale  2  uint
@@ -774,12 +774,12 @@ group  etcs.packets  rest
     field  etcs.p134_q_sscode  4  uint
   end
   kind  p135
-  when  8  135
+  when  8  135  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
   end
   kind  p136
-  when  8  136
+  when  8  136  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p136_q_newcountry  1  uint
@@ -791,13 +791,13 @@ group  etcs.packets  rest
     field  etcs.p136_nid_bg  14  uint
   end
   kind  p137
-  when  8  137
+  when  8  137  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p137_q_srstop  1  uint
   end
   kind  p138
-  when  8  138
+  when  8  138  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p138_q_scale  2  uint
@@ -805,7 +805,7 @@ group  etcs.packets  rest
     field  etcs.p138_l_reversearea  15  uint
   end
   kind  p139
-  when  8  139
+  when  8  139  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p139_q_scale  2  uint
@@ -813,20 +813,20 @@ group  etcs.packets  rest
     field  etcs.p139_v_reverse  7  uint
   end
   kind  p140
-  when  8  140
+  when  8  140  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p140_nid_operational  32  uint
   end
   kind  p141
-  when  8  141
+  when  8  141  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p141_q_gdir  1  uint
     field  etcs.p141_g_tsr  8  uint
   end
   kind  p143
-  when  8  143
+  when  8  143  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p143_q_riu  1  uint
@@ -835,12 +835,12 @@ group  etcs.packets  rest
     field  etcs.p143_nid_radio  64  uint
   end
   kind  p145
-  when  8  145
+  when  8  145  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
   end
   kind  p180
-  when  8  180
+  when  8  180  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
     field  etcs.p180_q_lssma  1  uint
@@ -851,17 +851,17 @@ group  etcs.packets  rest
     end
   end
   kind  p181
-  when  8  181
+  when  8  181  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
   end
   kind  p254
-  when  8  254
+  when  8  254  as  etcs.nid_packet
   field  etcs.q_dir  2  uint
   length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
   end
   kind  p255
-  when  8  255
+  when  8  255  as  etcs.nid_packet
   kind  other
   field  etcs.nid_packet  8  uint
   field  etcs.q_dir  2  uint

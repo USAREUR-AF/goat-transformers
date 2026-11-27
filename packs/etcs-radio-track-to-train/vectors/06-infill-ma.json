@@ -12,6 +12,7 @@
     "@kind": "infill_ma",
     "etcs.optional_packets.#": "2",
     "etcs.optional_packets[0].@kind": "p136",
+    "etcs.optional_packets[0].etcs.nid_packet": "136",
     "etcs.optional_packets[0].etcs.p136_nid_bg": "88",
     "etcs.optional_packets[1].@kind": "p12",
     "etcs.optional_packets[1].etcs.p12_l_endsection": "900"

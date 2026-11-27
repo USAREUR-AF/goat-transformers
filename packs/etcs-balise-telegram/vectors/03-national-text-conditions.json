@@ -17,6 +17,7 @@
     "etcs.q_link": "0",
     "etcs.packets.#": "9",
     "etcs.packets[0].@kind": "p3",
+    "etcs.packets[0].etcs.nid_packet": "3",
     "etcs.packets[0].etcs.p3_d_validnv": "100",
     "etcs.packets[0].etcs.p3_areas.#": "0",
     "etcs.packets[0].etcs.p3_m_nvebcl": "9",

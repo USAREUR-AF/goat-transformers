@@ -17,7 +17,7 @@ field  etcs.nid_engine  24  uint
 field  etcs.tm132_q_marqstreason  5  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -44,7 +44,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -73,7 +73,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -81,23 +81,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -120,7 +120,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -145,7 +145,7 @@ field  etcs.nid_engine  24  uint
 field  etcs.tm137_t_train  32  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -172,7 +172,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -201,7 +201,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -209,23 +209,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -248,7 +248,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -273,7 +273,7 @@ field  etcs.nid_engine  24  uint
 field  etcs.tm138_t_train  32  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -300,7 +300,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -329,7 +329,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -337,23 +337,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -376,7 +376,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -401,7 +401,7 @@ field  etcs.nid_engine  24  uint
 field  etcs.tm146_t_train  32  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -428,7 +428,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -457,7 +457,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -465,23 +465,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -504,7 +504,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -530,7 +530,7 @@ field  etcs.tm147_nid_em  4  uint
 field  etcs.tm147_q_emergencystop  2  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -557,7 +557,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -586,7 +586,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -594,23 +594,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -633,7 +633,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -660,7 +660,7 @@ field  etcs.tm153_nid_bg  14  uint
 field  etcs.tm153_q_infill  1  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -687,7 +687,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -716,7 +716,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -724,23 +724,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -763,7 +763,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -788,7 +788,7 @@ field  etcs.nid_engine  24  uint
 field  etcs.tm157_q_status  2  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -815,7 +815,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -844,7 +844,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -852,23 +852,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -891,7 +891,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -916,7 +916,7 @@ field  etcs.nid_engine  24  uint
 field  etcs.tm158_nid_textmessage  8  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -943,7 +943,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -972,7 +972,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -980,23 +980,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -1019,7 +1019,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -1043,7 +1043,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -1070,7 +1070,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -1099,7 +1099,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -1107,23 +1107,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -1146,7 +1146,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -1170,7 +1170,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -1197,7 +1197,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -1226,7 +1226,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -1234,23 +1234,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -1273,7 +1273,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -1297,7 +1297,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -1324,7 +1324,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -1353,7 +1353,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -1361,23 +1361,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -1400,7 +1400,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -1424,7 +1424,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -1451,7 +1451,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -1480,7 +1480,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -1488,23 +1488,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -1527,7 +1527,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -1551,7 +1551,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -1578,7 +1578,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -1607,7 +1607,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -1615,23 +1615,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -1654,7 +1654,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -1678,7 +1678,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -1705,7 +1705,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -1734,7 +1734,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -1742,23 +1742,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -1781,7 +1781,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -1805,7 +1805,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -1832,7 +1832,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -1861,7 +1861,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -1869,23 +1869,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -1908,7 +1908,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -1932,7 +1932,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -1959,7 +1959,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -1988,7 +1988,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -1996,23 +1996,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -2035,7 +2035,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
@@ -2059,7 +2059,7 @@ field  etcs.train_t_train  32  uint
 field  etcs.nid_engine  24  uint
 group  etcs.train_packets  rest
   kind  tp0
-  when  8  0
+  when  8  0  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp0_q_scale  2  uint
     field  etcs.tp0_lrbg_nid_c  10  uint
@@ -2086,7 +2086,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp1
-  when  8  1
+  when  8  1  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp1_q_scale  2  uint
     field  etcs.tp1_lrbg_nid_c  10  uint
@@ -2115,7 +2115,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp2
-  when  8  2
+  when  8  2  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp2_m_version  7  uint
     group  etcs.tp2_versions  count 5                 # N_ITER
@@ -2123,23 +2123,23 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp4
-  when  8  4
+  when  8  4  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp4_m_error  8  uint
   end
   kind  tp5
-  when  8  5
+  when  8  5  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp5_nid_operational  32  uint
   end
   kind  tp9
-  when  8  9
+  when  8  9  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp9_ltrbg_nid_c  10  uint
     field  etcs.tp9_ltrbg_nid_bg  14  uint
   end
   kind  tp11
-  when  8  11
+  when  8  11  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp11_nc_cdtrain  4  uint
     field  etcs.tp11_nc_train  15  uint
@@ -2162,7 +2162,7 @@ group  etcs.train_packets  rest
     end
   end
   kind  tp44
-  when  8  44
+  when  8  44  as  etcs.train_nid_packet
   length  13  bits  plus 21           # L_PACKET counts NID_PACKET and itself (no Q_DIR train to track)
     field  etcs.tp44_nid_xuser  9  uint
     group  etcs.tp44_data  rest
