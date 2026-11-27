@@ -132,3 +132,11 @@ the generator then reloads the pack and replays every vector through a second co
 | `06-sample-north-marker.json` | the North marker message of the README's first example: item 000 = 1, SAC 1, SIC 2 |
 | `07-sample-sector-crossing-0-degrees.json` | the sector crossing message at azimuth 0 degrees of the README's first example |
 | `08-sample-sector-crossing-45-degrees.json` | the sector crossing message at azimuth 45 degrees of the README's first example |
+
+## Golden vectors
+
+`vectors/golden-<n>.json` are written by `tools/gen/golden-asterix.py` from asterix_decoder 0.7.11
+(PROVENANCE.md), not by this generator: single-record blocks of its sample captures, one per field set
+seen, up to six. Their model values are the decoder's under this pack's keys (Mode codes and addresses
+as the raw integer); only items both name are compared, and repetitive and compound items are not.
+Not compared: I034/120 latitude and longitude, whose least significant bit the decoder's definition rounds to 0.00002145767 degrees (the exact value, which this pack uses, is 180/2^23).

@@ -189,3 +189,11 @@ the generator then reloads the pack and replays every vector through a second co
 | `09-sample-record-with-reserved-expansion.json` | the block of the README's reserved expansion example (written there with edition 1.20): SAC 1, SIC 2 and an RE item of 17 octets. The RE item is read over and not written |
 | `10-sample-first-record-of-a-block-of-four.json` | the block of the README's dependent content example (written there with edition 1.20): four records, the first with I062/380 subfield IAS holding IM 0 and the raw value 1. The pack reads the first record and writes it alone |
 | `packs/canonical-track-v2/vectors/gen-to-asterix-cat062-full.json` | from `canonical-track-v2` to this pack: a track at 47.5 N 122.25 W, 1524 m, velocity 3 m/s east and 4 m/s north, at 12:00:00.125 UTC: the record holds I062/070, I062/105, I062/185, I062/130; the fields of those items that no key fills are zero |
+
+## Golden vectors
+
+`vectors/golden-<n>.json` are written by `tools/gen/golden-asterix.py` from asterix_decoder 0.7.11
+(PROVENANCE.md), not by this generator: single-record blocks of its sample captures, one per field set
+seen, up to six. Their model values are the decoder's under this pack's keys (Mode codes and addresses
+as the raw integer); only items both name are compared, and repetitive and compound items are not.
+The decoder reports I062/136 Measured Flight Level in feet; the vectors hold flight levels (ft / 100), the unit of this pack's key. One record of `cat062cat065.raw` is left out: a compound item's presence octets end in an all-zero octet, which a round trip drops (the language's canonical form).

@@ -2940,6 +2940,58 @@ def md_beside_hand_written(a, plan):
         a("record of an operational system with: it holds every item.")
 
 
+# Packs that also hold golden vectors (golden-*.json) written by tools/gen/golden-asterix.py from
+# asterix_decoder, a decoder outside this project. This generator neither writes nor removes them;
+# it states them in pack.md and PROVENANCE.md, with what each comparison leaves out.
+GOLDEN = {
+    "asterix-cat034": "Not compared: I034/120 latitude and longitude, whose least significant bit the decoder's "
+                      "definition rounds to 0.00002145767 degrees (the exact value, which this pack uses, is 180/2^23).",
+    "asterix-cat048": "",
+    "asterix-cat062-full": "The decoder reports I062/136 Measured Flight Level in feet; the vectors hold flight levels "
+                           "(ft / 100), the unit of this pack's key. One record of `cat062cat065.raw` is left out: a "
+                           "compound item's presence octets end in an all-zero octet, which a round trip drops (the "
+                           "language's canonical form).",
+    "asterix-cat065": "",
+}
+
+
+def md_golden(a, fmt):
+    """pack.md: the golden vectors, when the pack has them."""
+    if fmt not in GOLDEN:
+        return
+    a("## Golden vectors")
+    a("")
+    a("`vectors/golden-<n>.json` are written by `tools/gen/golden-asterix.py` from asterix_decoder 0.7.11")
+    a("(PROVENANCE.md), not by this generator: single-record blocks of its sample captures, one per field set")
+    a("seen, up to six. Their model values are the decoder's under this pack's keys (Mode codes and addresses")
+    a("as the raw integer); only items both name are compared, and repetitive and compound items are not.")
+    if GOLDEN[fmt]:
+        a(GOLDEN[fmt])
+    a("")
+
+
+def provenance_golden(fmt):
+    """PROVENANCE.md lines for the golden vectors, when the pack has them."""
+    if fmt not in GOLDEN:
+        return []
+    return [
+        "## Golden vectors: asterix_decoder", "",
+        "`vectors/golden-*.json` are written by `tools/gen/golden-asterix.py` from asterix_decoder, Croatia Control's",
+        "ASTERIX decoder, whose category definitions are its own XML files, written apart from the asterix-specs",
+        "transcription this pack is generated from (shared-model hardening, item 2). It decodes only, so the inputs",
+        "are the recorded captures it ships, split into single-record blocks by the record lengths it reports.", "",
+        "| | |", "|---|---|",
+        "| Package | asterix_decoder 0.7.11, sdist `asterix_decoder-0.7.11.tar.gz`, SHA-256 "
+        "`3eb28379c576ad09c813f6ed482d1f5e397667814d3baaf8ff13dceec2146426`, built with setuptools 84.2.1 (wheel SHA-256 "
+        "`ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2`); pinned in `tools/gen/golden-asterix.txt` and "
+        "`golden-asterix-build.txt`, installed with `pip --require-hashes` |",
+        "| Captures | its `asterix/sample_data` files, each refused unless its SHA-256 is the one the script records |",
+        "| Licence | GPL-2.0 (the sdist's `LICENSE`). asterix_decoder is run, not copied: it is built outside the tree to "
+        "write the vectors, and only its output and the bytes of its sample captures enter this repository; no line of "
+        "its code or definitions does |",
+        ""] + ([GOLDEN[fmt], ""] if GOLDEN[fmt] else [])
+
+
 def md_vectors(a, made, track_vec):
     """pack.md: one row per vector."""
     a("")
@@ -2970,6 +3022,7 @@ def emit_pack_md(plan, sha, made, track_vec):
     md_converting(a, plan)
     md_beside_hand_written(a, plan)
     md_vectors(a, made, track_vec)
+    md_golden(a, plan.cat.format)
     return "\n".join(lines)
 
 
@@ -2988,7 +3041,7 @@ def emit_pack_provenance(cat, sha, master, definition_sha256):
         "| SHA-256 of the definition | `%s` |" % definition_sha256,
         "| licence of the repository | BSD 3-Clause, copyright (c) 2019 KZPS (`LICENSE` at the `master` commit; verbatim in `sources/PROVENANCE.md`) |",
         "| generator | `tools/gen/asterix2pack.py`; key names pinned in `tools/gen/names/%s.json` |" % cat.format,
-        ""])
+        ""] + provenance_golden(cat.format))
 
 
 def emit_names(names):
@@ -3061,7 +3114,8 @@ def generate(cat, pinned, sha, master, definition_sha256):
 def vector_files(out, cat):
     """The `*.json` files of the pack's vectors directory as the run sees them, sorted."""
     vdir = pack_dir(cat) + "/vectors"
-    return [vdir + "/" + name for name in out.listdir(vdir) if name.endswith(".json")]
+    # golden-*.json are tools/gen/golden-asterix.py's (GOLDEN): never this run's to remove
+    return [vdir + "/" + name for name in out.listdir(vdir) if name.endswith(".json") and not name.startswith("golden-")]
 
 
 def write_category(out, g):

@@ -132,3 +132,10 @@ the generator then reloads the pack and replays every vector through a second co
 | `04-frn-the-pack-does-not-map.json` | FSPEC bit 8 set (spare FRN): ruling 1 of engine-spec 0.8 |
 | `05-category-is-not-65.json` | the first octet is 66 |
 | `06-block-shorter-than-len.json` | LEN states 6 octets and the input holds 5 |
+
+## Golden vectors
+
+`vectors/golden-<n>.json` are written by `tools/gen/golden-asterix.py` from asterix_decoder 0.7.11
+(PROVENANCE.md), not by this generator: single-record blocks of its sample captures, one per field set
+seen, up to six. Their model values are the decoder's under this pack's keys (Mode codes and addresses
+as the raw integer); only items both name are compared, and repetitive and compound items are not.

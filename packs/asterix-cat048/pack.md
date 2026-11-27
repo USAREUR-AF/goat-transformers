@@ -149,3 +149,10 @@ the generator then reloads the pack and replays every vector through a second co
 | `06-block-shorter-than-len.json` | LEN states 6 octets and the input holds 5 |
 | `07-sample-plot.json` | the plot of the README's first example: rho 10 NM, theta 45 degrees, Mode 3/A code 7777 (octal) |
 | `08-sample-first-record-of-a-block-of-two.json` | the first data block of the README's SAC/SIC rewriting example (written there with edition 1.31): two records, each SAC 1, SIC 2 and item 040 zero. The pack reads the first record and writes it alone |
+
+## Golden vectors
+
+`vectors/golden-<n>.json` are written by `tools/gen/golden-asterix.py` from asterix_decoder 0.7.11
+(PROVENANCE.md), not by this generator: single-record blocks of its sample captures, one per field set
+seen, up to six. Their model values are the decoder's under this pack's keys (Mode codes and addresses
+as the raw integer); only items both name are compared, and repetitive and compound items are not.

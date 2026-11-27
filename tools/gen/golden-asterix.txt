@@ -1,0 +1,1 @@
+asterix_decoder==0.7.11 --hash=sha256:3eb28379c576ad09c813f6ed482d1f5e397667814d3baaf8ff13dceec2146426
