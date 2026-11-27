@@ -641,10 +641,13 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             opt = options[i]
             if opt == "optional":
                 raise bad("the field option 'optional' in a sequential pack", lineno, len_text)
-            if opt not in ("via", "swap", "trim", "absent", "with", "stop"):
+            if opt not in ("via", "swap", "trim", "absent", "with", "stop", "unlisted"):
                 raise line_bad("unknown field option %r" % opt, lineno, len_text)
             if opt in opts:
                 raise line_bad("field option %r is given twice" % opt, lineno, len_text)
+            if opt == "unlisted":  # 0.64: `part` is not a transform of the bits wire
+                deferred.append((lineno, bad("field option 'unlisted' applies to a 'part' field only", lineno,
+                                             len_text)))
             if opt in ("via", "absent", "with", "stop"):  # the token after `absent` is its argument (ruling 11 of 0.9)
                 if i + 1 >= len(options):
                     raise line_bad("field option %r takes %s" % (
@@ -1237,6 +1240,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                     mapped(body, f, nd)
                 last_field = prev_field
             elif kw == "const":
+                if len(args) == 3:  # 0.64: the parameters of `part` are a line check; `value_node` refuses the rest
+                    _check_transform(fmt, args[1], args[0], where)
                 target(body).append(value_node(T_CONST, kw, args, lineno))
             elif kw == "pad" or kw == "align":
                 if ":" in args[0]:

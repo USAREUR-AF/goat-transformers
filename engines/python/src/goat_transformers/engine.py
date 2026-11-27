@@ -14,7 +14,8 @@ from .errors import (
 from .licence import Licences, check_profile, rank_name
 from .modeldef import parse_model_text, scan_uses
 from .packdef import CORE, DISTRIBUTIONS, load_pack, parse_pack_text, split_key
-from .entity import Entity, Item, _build_via, _via_decode, _via_encode, failure
+from . import parts
+from .entity import Entity, Item, NoEntry, _build_via, _via_decode, _via_encode, failure, via_may_fail
 from .transforms import canonical_value_text, read_typed, table_side_type, value_canon
 
 DERIVE_PASSES = 8  # spec 0.6: the pass repeats until it sets nothing, at most 8 times
@@ -802,15 +803,20 @@ class Engine:
         get = codec.get
         # 0.17: a line of a gate block that does not hold counts as a line whose locator is absent
         held = codec.gates_held(pack, ctx, plan) if plan.gates else None
+        walked = wire == "protobuf" or wire == "cbor"  # a path that does not parse is `malformed-wire`
+        part_groups = parts.groups_of(plan)
+        part_places = {g.parts[0].locator for g in part_groups} if part_groups else ()
         for f in plan.fields:
             key = f.key
-            if key in settled:
-                if read is not None:
-                    raw = get(pack, ctx, f)
-                    if isinstance(raw, _Num):
-                        read.add(id(raw))
-                continue
+            done = key in settled
+            # 0.64 ruling 26: a later line of the key still fails on a missing table entry
             if held is not None and f.gate is not None and not held[f.gate]:
+                continue
+            if done and not via_may_fail(f):
+                if read is not None or walked:  # ruling 27: what the wire states of the line holds
+                    raw = get(pack, ctx, f)
+                    if read is not None and isinstance(raw, _Num):
+                        read.add(id(raw))
                 continue
             raw = get(pack, ctx, f)
             if read is not None and isinstance(raw, _Num):
@@ -826,23 +832,39 @@ class Engine:
                     failed = []
                 failed.append((key, f.locator, str(e), False))
                 continue
-            settled.add(key)
             if f.via_dec is not None:
                 try:
                     value = _via_decode(f, value)
                 except ValueError as e:
+                    if f.unlisted and isinstance(e, NoEntry):
+                        continue  # 0.64: counts as a line whose place is absent
+                    settled.add(key)
                     if failed is None:
                         failed = []
                     failed.append((key, f.locator, str(e), True))
                     continue
+            if done:
+                continue
+            settled.add(key)
             if n2c and key == "type":
                 if value in n2c:
                     value = n2c[value]
-                else:
+                elif f.locator not in part_places:  # ruling 14 of 0.64
                     if keep_in_residue is None:
                         keep_in_residue = set()
                     keep_in_residue.add(f.locator)
             fields[key] = value
+        for g in part_groups:  # 0.64: the `const` parts, checked on decode (ruling 4)
+            for ln in g.consts:
+                raw = get(pack, ctx, ln)
+                if raw is None:
+                    continue
+                try:
+                    parts.check_const(ln, self._decode_value(wire, parts.WHOLE, raw))
+                except ValueError as e:
+                    if failed is None:
+                        failed = []
+                    failed.append((ln.locator, ln.locator, str(e), True))
         if failed:
             failures.extend(
                 failure(prefix + k, loc, why, final) for k, loc, why, final in failed
@@ -1029,6 +1051,14 @@ class Engine:
         c2n = pack.cot_to_native
         values = enc.values
         skip = _CODECS[pack.wire].overridden(plan) if pack.wire in ("tlv", "cbor") else ()
+        part_groups = parts.groups_of(plan)
+        if part_groups:  # 0.64: one token for the lines of a part group
+            skip = set(skip)
+            for g in part_groups:
+                skip.update(g.indexes)
+                token = parts.token_of(pack, g, have, defaults)
+                if token is not None:
+                    values[g.at] = token
         for i, f in plan.ifields:
             if i in skip:
                 continue  # its item holds a `when` or `const` value (ruling 9 of 0.13)

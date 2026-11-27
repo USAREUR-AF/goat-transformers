@@ -153,6 +153,8 @@ def encode(pack, enc, residue):
     for ln in plan.lines:
         if ln.is_field or ln.is_group or ln.present or ln.locator in resolved:
             continue
+        if getattr(ln, "is_part_const", False):
+            continue  # 0.64: written with the token of its part group
         text = when_text(ln)
         resolved[ln.locator] = (
             ln.value if text.startswith('"') else Num(text) if text not in ("true", "false") else RawJSON(text)

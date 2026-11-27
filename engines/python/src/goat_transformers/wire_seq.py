@@ -20,7 +20,7 @@ message is any number of bits, and the output is the bits up to the cursor
 after the last line, not rounded to a byte, zero-filled to a multiple of 6.
 """
 
-from .entity import Entity, Item, _via_decode, _via_encode, failure
+from .entity import Entity, Item, _via_decode, _via_encode, failure, via_may_fail
 from .errors import BadDirective, GTError, MalformedWire, MessageCount, NoKind, TransformDecodeFailure, TransformEncodeFailure
 from .seqdef import (
     T_ALIGN, T_CHAIN, T_CHOICE, T_CONST, T_COUNT, T_EXT, T_FIELD, T_GROUP, T_IF, T_LENGTH, T_OPT, T_PAD,
@@ -69,6 +69,7 @@ def _uper_absent_raw(loc):
         return [0] * (loc.lb or 0)
     return bytes(loc.lb or 0)
 _MISSING = object()
+_NO_ENTRY = object()  # encode: a line of the key fails the decode by its table (0.64 ruling 31)
 _FAILED = object()  # encode: the bits a line wrote for the key do not decode (0.20 ruling 31)
 
 
@@ -593,11 +594,16 @@ class _Reader:
         fields = sc.fields
         for f in nd.bindings:  # the line's key and each `also` key: one transform, the table of each
             key = f.key
-            given = False
+            given = done = False
             if key in fields:
                 if sc.prefix or key not in self.inner_keys:
-                    continue  # an earlier line of the key stands (0.6, "One key at several locators")
-                given = True  # ruling 23 of 0.34: the value stands, a missing table entry here still fails
+                    # an earlier line of the key stands (0.6, "One key at several locators"); a
+                    # missing table entry here still fails the decode (0.64 ruling 26)
+                    if not via_may_fail(f):
+                        continue
+                    done = True
+                else:
+                    given = True  # ruling 23 of 0.34: the value stands, a missing table entry here still fails
             try:
                 value = f.transform.decode(raw)
             except ValueError as e:
@@ -609,6 +615,8 @@ class _Reader:
                 except ValueError as e:
                     self.fail(sc, key, f.locator, str(e), True)
                     continue
+            if done:
+                continue  # 0.64 ruling 26: only its table was checked
             if given:
                 self.inner_keys.discard(key)  # an outer line of the key has been chosen
                 continue
@@ -1084,20 +1092,22 @@ class _Ctx:
     decode would read for each key from the lines written so far (0.20), and
     `token` names the scope: None for the message, the item's id for an item."""
 
-    __slots__ = ("fields", "lists", "defaults", "readback", "token")
+    __slots__ = ("fields", "lists", "defaults", "readback", "token", "switched")
 
-    def __init__(self, fields, lists, defaults, readback=None, token=None):
+    def __init__(self, fields, lists, defaults, readback=None, token=None, switched=None):
         self.fields = fields
         self.lists = lists
         self.defaults = defaults
         self.readback = {} if readback is None else readback
         self.token = token
+        self.switched = set() if switched is None else switched  # the keys of the switches written so far
 
     def inside(self, case):
         """The context of the lines of one case: its defaults over the scope's (rulings 7, 22)."""
         if not case.defaults:
             return self
-        return _Ctx(self.fields, self.lists, case.defaults_over(self.defaults), self.readback, self.token)
+        return _Ctx(self.fields, self.lists, case.defaults_over(self.defaults), self.readback, self.token,
+                    self.switched)
 
 
 def select_kind(pack, body, kind_ref, fields, lists, item=False):
@@ -1202,7 +1212,7 @@ class _Writer:
                 except GTError:
                     continue
                 self.read_back(line, raw, got)
-                if nd.key in got and got[nd.key] is not _FAILED:
+                if nd.key in got and got[nd.key] is not _FAILED and got[nd.key] is not _NO_ENTRY:
                     case = select_case(nd, got[nd.key])
                     break
         self.used[k] = case
@@ -1520,7 +1530,8 @@ class _Writer:
                 self.inner(nd)
             elif t == T_SWITCH:
                 rb = ctx.readback
-                if rb.get(nd.key, _MISSING) is _FAILED:  # ruling 31 of 0.20
+                ctx.switched.add(nd.key)
+                if any(rb.get(nd.key, _MISSING) is x for x in (_FAILED, _NO_ENTRY)):  # ruling 31 of 0.20
                     raise TransformEncodeFailure(
                         "the key of 'switch %s' does not read back from the bits written" % nd.key,
                         format=self.pack.name, locator=nd.key,
@@ -1700,6 +1711,12 @@ class _Writer:
         else:
             self.put(length, out)
         self.read_back(nd, raw, ctx.readback)
+        if ctx.switched:  # 0.64 ruling 31: a line of a switch key after its switch
+            for f in nd.bindings:
+                if f.key in ctx.switched and ctx.readback.get(f.key) is _NO_ENTRY:
+                    raise TransformEncodeFailure("a line of the switch key %s does not read back: its value has no "
+                                                 "entry in table %s" % (f.key, f.via), format=self.pack.name,
+                                                 locator=nd.locator)
         if any(f.key in ctx.fields for f in _live(nd.bindings, ctx)):  # 0.33: bits a held key wrote
             self.held.append((start, self.pos))
         if self.hook is not None:
@@ -1717,14 +1734,21 @@ class _Writer:
         n2c = self.pack.native_to_cot
         for f in nd.bindings:
             key = f.key
-            if key in got and got[key] is not _FAILED:
+            done = got.get(key, _FAILED) is not _FAILED
+            if done and not via_may_fail(f):
                 continue
             try:
                 value = f.transform.decode(raw)
-                if f.via_dec is not None:
-                    value = _via_decode(f, value)
             except ValueError:
                 got.setdefault(key, _FAILED)  # a later line of the key may still read back
+                continue
+            if f.via_dec is not None:
+                try:
+                    value = _via_decode(f, value)
+                except ValueError:
+                    got[key] = _NO_ENTRY  # whatever another line of the key gives (0.64, rulings 26 and 31)
+                    continue
+            if done:
                 continue
             if n2c and key == "type" and value in n2c:
                 value = n2c[value]

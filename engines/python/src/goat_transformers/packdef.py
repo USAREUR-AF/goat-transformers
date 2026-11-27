@@ -11,7 +11,7 @@ from .errors import (
 from .transforms import (
     TRANSFORMS, JSON_TRANSFORMS, build_bits_transform, bits_len_allowed, format_float,
     PROTOBUF_TRANSFORMS, UnknownTransformName, check_transform_text, read_uint_text, transform_valid_on,
-    build_v15_text, v15_family, terminator_code, CharSet, CodeTextT, charset_width, code_family,
+    PartT, build_v15_text, v15_family, terminator_code, CharSet, CodeTextT, charset_width, code_family,
 )
 from ._build import WIRES as BUILD_WIRES
 
@@ -103,7 +103,8 @@ _SEQ_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also",
 _GROUP_LINES = ("field", "const", "default", "group", "if", "end")
 # The lines of a gate block (0.17).
 _GATE_LINES = ("field", "const", "default", "if", "end")
-FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent", "with", "stop")  # `stop`: 0.22
+FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent", "with", "stop",  # `stop`: 0.22
+                 "unlisted")  # 0.64
 _JSON_NUMBER = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\Z")
 TEXT_DIRECTIVES = ("delimiter", "start", "checksum")  # the `text` wire (0.10)
 ARMORS = ("hex", "sixbit")  # the `bits` wire (0.14)
@@ -129,6 +130,7 @@ class Field:
     absent_out: object = None
     gate: object = None     # bits, fixed layout: the innermost gate block holding the line (0.17)
     with_key: str = None    # `with <other-key>` (0.18): written only when the scope holds that key
+    unlisted: bool = False  # 0.64: a part with no table entry counts as absent
 
     is_field = True
     is_const = False
@@ -189,6 +191,33 @@ class Const:
     is_const = True
     is_group = False
     present = False
+
+
+class PartConst:
+    """`const <locator> part:<sep>:<n> <text>` (0.64): one part of a token,
+    checked on decode; `parts` writes the token."""
+
+    __slots__ = ("locator", "loc", "transform", "value", "lineno")
+
+    is_field = False
+    is_const = True
+    is_group = False
+    is_part_const = True
+    present = False
+    gate = None
+
+    def __init__(self, locator, loc, transform, value, lineno):
+        self.locator = locator
+        self.loc = loc
+        self.transform = transform
+        self.value = value
+        self.lineno = lineno
+
+
+def is_part_text(text):
+    """Whether the second argument of a `const` line makes it one of three
+    arguments (0.64, ruling 23): its text up to the first `:` is `part`."""
+    return text.partition(":")[0] == "part"
 
 
 @dataclass
@@ -654,6 +683,8 @@ def line_head(raw, source, lineno, seen, directives=PACK_DIRECTIVES, arg_counts=
         # syntax, and whether the pack is `layout sequential`, are checked after
         # the file (ruling 16 of 0.30, ruling 10 of 0.33)
         hi = None
+    if kw == "const" and len(args) == 3 and is_part_text(args[1]):
+        hi = 3  # 0.64: `const <locator> part:<sep>:<n> <text>`
     if (len(args) < lo or (hi is not None and len(args) > hi)
             or (kw == "checksum" and len(args) == 2 and args[0] not in CHECKSUMS)):
         # ruling 12 of 0.13, ruling 2 of 0.27
@@ -1090,6 +1121,9 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
     # step 9: the field options
     opts = _parse_options(options, name, locator, where)
     via = opts.get("via")
+    code_part = is_part_text(tname)
+    if "unlisted" in opts and (not code_part or via is None):
+        defer("field option 'unlisted' applies to a 'part' field with 'via' only")
     if wire == "bits":
         if "swap" in opts and tname in ("sixbit", "hex"):  # 0.14, 0.22
             defer("field option 'swap' does not apply to the '%s' transform" % tname)
@@ -1105,6 +1139,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
                 defer("field option %r applies to the bits wire only" % opt)
         if wire == "text" and "absent" in opts:  # ruling 16 of 0.10
             defer("field option 'absent' is not a field option of the text wire")
+        if code_part and any(o in opts for o in ("absent", "with")):
+            defer("a part line takes the options 'via', 'unlisted' and, on 'text', 'optional' only")
         if "stop" in opts:  # 0.22: a `chars` field of the bits wire
             defer("field option 'stop' applies to a 'chars' field of the bits wire only")
 
@@ -1123,6 +1159,12 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
                     defer(why)
         elif wire == "protobuf":
             transform = PROTOBUF_TRANSFORMS[tname]
+        elif code_part:  # 0.64
+            transform = PartT(tname)
+            if wire == "text" and loc[0] != "f":
+                defer("a part is of a whole field, not of a column or a pair")
+            if wire == "geojson" and not in_group and loc[0] == "coord":
+                defer("a part is not of a geojson coordinate")
         elif wire == "text":
             transform = wire_text.build_transform(tname)
             if (loc[0] == "p") != transform.pair:
@@ -1139,7 +1181,7 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
     f = None
     if transform is not None:
         f = Field(key, locator, transform, loc, lineno, via=via, swap="swap" in opts, optional="optional" in opts,
-                  with_key=opts.get("with"))
+                  with_key=opts.get("with"), unlisted="unlisted" in opts)
         # step 10: the values of `absent`
         if wire != "text":
             try:
@@ -1190,7 +1232,7 @@ def _resolve_tlv_field(name, key, locator, tname, options, where, lineno, deferr
             bad("transform %r: parameters that do not parse: %s" % (tname, e))
         except ValueError as e:
             bad(str(e))
-    for opt in ("swap", "trim", "optional", "stop"):
+    for opt in ("swap", "trim", "optional", "stop", "unlisted"):
         if opt in opts:
             bad("field option %r is not an option of the tlv wire" % opt)
     if "absent" in opts:  # ruling 10 of 0.13: an empty value is already absent on tlv
@@ -1398,6 +1440,30 @@ def _open_group(proto, lineno, stack, common_lists, kind_lists, fmt, where, defe
     g = Group(name, proto.locator, proto.loc, lineno, proto.item_bits, proto.count_loc, proto.count_n)
     g.broken = proto.broken
     return g
+
+
+def _resolve_part_const(wire, name, args, source, lineno, deferred, in_group):
+    """-> PartConst for one `const` line of three arguments (0.64), or None.
+    The parameters of `part` are a line check on every wire (rulings 11 and
+    23), before the locator; the wire, the text and the place are checked
+    after the file is read."""
+    locator, tname, text = args
+    where = "%s:%d" % (source, lineno)
+    _check_transform(name, tname, locator, where)
+    w = _resolve_when(wire, name, locator, text, source, lineno, deferred, directive="const", in_group=in_group)
+
+    def later(msg):
+        deferred.append((lineno, BadDirective("%s, at %s" % (msg, where), format=name, locator=locator)))
+
+    if not transform_valid_on(tname, wire):
+        return later("transform %r is not valid on the %s wire" % (tname, wire))
+    if w is None:
+        return None
+    if wire == "text" and w.loc[0] != "f":
+        return later("a part is of a whole field, not of a column or a pair")
+    if wire == "geojson" and not in_group and w.loc[0] == "coord":
+        return later("a part is not of a geojson coordinate")
+    return PartConst(locator, w.loc, PartT(tname), w.value, lineno)
 
 
 def _resolve_when(wire, name, locator, value, source, lineno, deferred, directive="when", in_group=False):
@@ -2164,7 +2230,7 @@ def parse_pack_text(text, *, source="pack.def"):
                 (current.lines if current is not None else common).append(el)
                 elements.append((el, current))
             elif kw == "when" or kw == "const":
-                if len(args) > 2:  # 0.30 `as`, 0.33 `at` (let through by `line_head`) need `layout sequential`
+                if kw == "when" and len(args) > 2:  # 0.30 `as`, 0.33 `at` (let through by `line_head`) need `layout sequential`
                     err = BadDirective(
                         "'%s' on a 'when' of a pack that is not 'layout sequential', at %s"
                         % ("at" if holds_at(args[2:]) else "as", where), format=fmt, locator=args[0])
@@ -2174,8 +2240,11 @@ def parse_pack_text(text, *, source="pack.def"):
                         deferred.append((lineno, err))
                 if kw == "when" and first_when is None:
                     first_when = (lineno, args[0])
-                w = _resolve_when(wire, fmt, args[0], args[1], source, lineno, deferred, directive=kw,
-                                  in_group=bool(stack))
+                if kw == "const" and len(args) == 3:
+                    w = _resolve_part_const(wire, fmt, args, source, lineno, deferred, bool(stack))
+                else:
+                    w = _resolve_when(wire, fmt, args[0], args[1], source, lineno, deferred, directive=kw,
+                                      in_group=bool(stack))
                 if w is not None:
                     if gstack:
                         w.gate = gstack[-1]
@@ -2255,6 +2324,9 @@ def parse_pack_text(text, *, source="pack.def"):
             deferred.append((ln, BadDirective(
                 "%r is a directive of the text wire, at %s:%d" % (kw, source, ln), format=name, locator=kw
             )))
+    if wire in ("xml", "json", "geojson", "text"):
+        from .parts import check_parts  # 0.64; `parts` imports nothing of this module
+        check_parts(wire, common, kinds, deferred, source, name, delimiter, text_values.get("checksum", "none"))
     tlv = _check_tlv_lines(tlv_lines, wire, deferred, source, name)
     if wire == "tlv":
         wire_tlv.check_pack(
