@@ -130,6 +130,11 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/pyais"
           "$RUNNER_TEMP/pyais/bin/pip" install --quiet --disable-pip-version-check --require-hashes -r tools/gen/golden-pyais.txt
           "$RUNNER_TEMP/pyais/bin/python" -I tools/gen/golden-pyais.py --check
+      - name: CoT golden vectors are what takproto writes
+        run: |
+          python3 -m venv "$RUNNER_TEMP/takproto"
+          "$RUNNER_TEMP/takproto/bin/pip" install --quiet --disable-pip-version-check --require-hashes -r tools/gen/golden-takproto.txt
+          "$RUNNER_TEMP/takproto/bin/python" -I tools/gen/golden-takproto.py --check --cache "$RUNNER_TEMP/takproto-cache"
   # Spec 0.24: each wire builds alone, and with every wire but it, with no
   # warning; its vectors pass on the build that has it and json. A job of its
   # own: the rust job is near its time limit.

@@ -1,0 +1,33 @@
+{
+ "name": "golden-pb-10",
+ "from": "cot-protobuf",
+ "to": "cot-protobuf",
+ "input": "0a0c1a0a414e44524f49442d343212b9010a05622d742d662a2647656f436861742e414e44524f49442d34322e416c6c204368617420526f6f6d732e3161326230b8aaee8c893238b8aaee8c893240b8e287b689324a09682d672d692d672d6f61000000e0cf12634169000000e0cf12634171000000e0cf1263417a4d0a4b3c72656d61726b7320736f757263653d2242414f2e462e4154414b2e414e44524f49442d34322220746f3d22416c6c204368617420526f6f6d73223e68656c6c6f3c2f72656d61726b733e",
+ "expect": "0a0c1a0a414e44524f49442d343212b9010a05622d742d662a2647656f436861742e414e44524f49442d34322e416c6c204368617420526f6f6d732e3161326230b8aaee8c893238b8aaee8c893240b8e287b689324a09682d672d692d672d6f61000000e0cf12634169000000e0cf12634171000000e0cf1263417a4d0a4b3c72656d61726b7320736f757263653d2242414f2e462e4154414b2e414e44524f49442d34322220746f3d22416c6c204368617420526f6f6d73223e68656c6c6f3c2f72656d61726b733e",
+ "model": {
+  "@kind": "cot_event",
+  "takproto.tak_control_contact_uid": "ANDROID-42",
+  "takproto.cot_event_type": "b-t-f",
+  "takproto.cot_event_uid": "GeoChat.ANDROID-42.All Chat Rooms.1a2b",
+  "takproto.cot_event_send_time": "1720429811000",
+  "takproto.cot_event_start_time": "1720429811000",
+  "takproto.cot_event_stale_time": "1720516211000",
+  "takproto.cot_event_how": "h-g-i-g-o",
+  "takproto.cot_event_hae": "9999999.0",
+  "takproto.cot_event_ce": "9999999.0",
+  "takproto.cot_event_le": "9999999.0",
+  "takproto.detail_xml_detail": "<remarks source=\"BAO.F.ATAK.ANDROID-42\" to=\"All Chat Rooms\">hello</remarks>",
+  "uid": "GeoChat.ANDROID-42.All Chat Rooms.1a2b",
+  "type": "b-t-f",
+  "how": "h-g-i-g-o",
+  "stale_ms": "1720516211000",
+  "time_ms": "1720429811000",
+  "@absent": [
+   "hae",
+   "ce",
+   "le"
+  ]
+ },
+ "source": "takproto 3.0.1: xml2proto of golden-takproto INPUTS[8], read back by parse_proto (github.com/snstac/takproto). Written by tools/gen/golden-takproto.py; no engine is run.",
+ "reference": "The TakMessage takproto (MIT) writes for the event, without its mesh header; expect is that message with any empty sub-message cleared, serialized by the protobuf runtime."
+}

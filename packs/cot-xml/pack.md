@@ -39,3 +39,15 @@ Read 2026-11-24, public release, in the repository deptofdefense/AndroidTactical
 A `start` that differs from `time` does not survive a round trip: both leave
 with the value of `time`. Unmapped attributes of `<event>` round-trip through
 residue; unmapped child elements are not carried.
+
+## Golden vectors
+
+5 vectors `golden-xml-<n>.json`, written by `tools/gen/golden-takproto.py` from takproto 3.0.1
+(MIT; run, not copied; its pin, hashes and licence are in `packs/cot-protobuf/PROVENANCE.md`), a
+reference codec of TAK Protocol Version 1. Each is a CoT XML event converted to `cot-protobuf`: the
+expected output is the TakMessage takproto writes for the event, in canonical form, and the model
+values are what takproto read from it. Only events that hold nothing but what both packs bind are
+used (the rule in the script): `<event>` attributes `uid`, `type`, `time` and `start` (equal),
+`stale` and `how`; all five point values; `contact/@callsign` and `track`; no point or track value
+0, since this pack decodes a 0 and `cot-protobuf` writes it, where a proto3 writer such as
+takproto's leaves it out. A `hae`, `ce` or `le` of `9999999` is an absent key.

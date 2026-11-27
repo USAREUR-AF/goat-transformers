@@ -114,3 +114,18 @@ with the codec of `tools/gen/proto2pack.py` by `tools/gen/cot-protobuf-vectors.p
 `packs/cot-xml/vectors/19-full-event-to-cot-protobuf.json` and
 `packs/geojson/vectors/90-to-cot-protobuf-no-position.json` (an entity with no `lat` and `lon`:
 `no-kind`).
+
+## Golden vectors
+
+11 vectors `golden-pb-<n>.json`, written by `tools/gen/golden-takproto.py` from takproto
+(PROVENANCE.md), a reference codec of TAK Protocol Version 1: takproto turns a CoT XML event into a
+TakMessage and reads it back. The input is that message without its 3-byte mesh header, the expected
+output its canonical form (an empty sub-message cleared: takproto marks a track present when it sets
+speed and course to 0, decode reads no key from it), and the model values are takproto's, under the
+`takproto` module's keys and the shared keys; a `hae`, `ce` or `le` of 9999999 is an absent shared
+key. The events are takproto's own test event and ten written for the script, together setting every
+field takproto maps: `takControl.contactUid` (a GeoChat event), `access`, `qos`, `opex`, the times,
+the point, `xmlDetail` (detail elements takproto does not map), and each detail sub-message. Every
+event has `time` and `start`, equal: an event with one of them, or two that differ, does not return
+unchanged (above). `packs/cot-xml/vectors/golden-xml-<n>.json` hold the XML events of the same set
+that carry only what both packs bind.

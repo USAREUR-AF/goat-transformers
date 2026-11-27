@@ -1,0 +1,2 @@
+takproto==3.0.1 --hash=sha256:4215cf5abc5581d85e26f6b2eee4c57cfeb16cba5e384a43f2b503398fd1a3a5
+protobuf==7.36.2 --hash=sha256:bdb3a345d48db958e6ce1f18e508beb0cc981d64f24088427549c866cd039f1e
