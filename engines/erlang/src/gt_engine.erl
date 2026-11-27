@@ -65,7 +65,7 @@
 -endif.
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
--define(NO_OPTS, {none, false, false, false, none, none}).
+-define(NO_OPTS, {none, false, false, false, none, none, #{}}).
 
 %% the limit on list items of one decode (ruling 7 of 0.11)
 -define(DEFAULT_MAX_ITEMS, 100000).
@@ -2229,7 +2229,7 @@ bits_static_end(Lines) ->
                 end, 0, Lines).
 
 bits_inner_end(#{word_bytes := WB} = Pack, {Msg, _} = Ctx, All, Held, GroupsEnd) ->
-    Optional = [Off + Len || {field, _, {Off, Len}, _, _, {_, _, _, true, _, _}} <- Held],
+    Optional = [Off + Len || {field, _, {Off, Len}, _, _, {_, _, _, true, _, _, _}} <- Held],
     End = lists:max([GroupsEnd, bits_static_end(Held), held_gates_end(Ctx, All) | Optional]),
     inner_end(Pack, whole_words(End, WB) * 8, gt_bits:bit_size(Msg)).
 
@@ -3670,14 +3670,14 @@ part_join(#{sep := Sep, parts := Parts} = G, {Value, _, _}, Pack) ->
                             end || P <- Parts]))}.
 
 %% a value with no entry never passes through (ruling 3)
-part_text({none, _, _, _, _, _}, V, _Pack) -> V;
-part_text({Table, _, _, _, _, _}, V, #{tables := Tables}) ->
+part_text({none, _, _, _, _, _, _}, V, _Pack) -> V;
+part_text({Table, _, _, _, _, _, _}, V, #{tables := Tables}) ->
     #{enc := Enc} = maps:get(Table, Tables),
     maps:get(gt_num:canon(V), maps:get(type_of(V), Enc), error).
 
 %% The value a part's text gives its key -> {ok, V} | absent | failed.
-part_value({none, _, _, _, _, _}, T, _Tr, Key, Pack) -> {ok, typemap_decode(Key, T, Pack)};
-part_value({Table, _, _, _, _, _}, T, {part, _, _, Unlisted}, Key, #{tables := Tables, key_types := Types} = Pack) ->
+part_value({none, _, _, _, _, _, _}, T, _Tr, Key, Pack) -> {ok, typemap_decode(Key, T, Pack)};
+part_value({Table, _, _, _, _, _, _}, T, {part, _, _, Unlisted}, Key, #{tables := Tables, key_types := Types} = Pack) ->
     #{dec := Dec} = maps:get(Table, Tables),
     case maps:find(gt_num:canon(T), maps:get(string, Dec)) of
         {ok, ModelText} ->

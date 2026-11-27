@@ -554,7 +554,7 @@ set_key_with({Key, Via}, Decode, Tr, LenT, #d{model = Model, pack = Pack} = D) -
                     %% a value with no table entry fails the decode when it
                     %% ends, so that the limit on list items read later still
                     %% wins (ruling 7f of 0.11)
-                    case gt_engine:key_value({Via, false, false, false, none, none}, V0, Tr, Key, LenT, Pack) of
+                    case gt_engine:key_value({Via, false, false, false, none, none, #{}}, V0, Tr, Key, LenT, Pack) of
                         {ok, V} when not Have -> D#d{model = Model#{Key => V}};
                         {ok, _} -> D;
                         %% a switch on the key fails (ruling 35 of 0.20)
@@ -962,7 +962,7 @@ set_ukey({Key, Via}, Res, Tr, LenT, #d{model = Model, pack = Pack} = D) ->
         false ->
             try uvalue(Res, Tr) of
                 V0 ->
-                    case gt_engine:key_value({Via, false, false, false, none, none}, V0, Tr, Key, LenT, Pack) of
+                    case gt_engine:key_value({Via, false, false, false, none, none, #{}}, V0, Tr, Key, LenT, Pack) of
                         {ok, V} when not Have -> D#d{model = Model#{Key => V}};
                         _ -> D
                     end
@@ -1589,7 +1589,7 @@ rb_keys(Keys, Decode, Tr, Wrote, Pack) ->
                   false ->
                       try Decode() of
                           V0 ->
-                              try gt_engine:via_decode({Via, false, false, false, none, none},
+                              try gt_engine:via_decode({Via, false, false, false, none, none, #{}},
                                                        V0, Tr, Key, <<>>, Pack) of
                                   _ when Have -> W;
                                   V -> W#{Key => gt_engine:typemap_decode(Key, V, Pack)}
@@ -1861,7 +1861,7 @@ item_scope(Item, #{lines := Common, defaults := Defaults, kinds := Kinds}, Pack)
 %% The options a value is written through: the line's `range` (0.56)
 %% belongs to the key of its field line, not to an `also` key.
 wopts([{Key, _} | _], Key, Via, SExt) -> {Via, false, false, false, none, none, SExt};
-wopts(_, _, Via, _) -> {Via, false, false, false, none, none}.
+wopts(_, _, Via, _) -> {Via, false, false, false, none, none, #{}}.
 
 %% Ruling 9 of 0.56: the default of a line's own key, when the scope does
 %% not hold the key, is checked against the line's `range` also where a held

@@ -1066,8 +1066,11 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
                 Bad <- try part_place(Wire, Loc, LocS, TrS), []
                        catch error:{load_error, K, M} -> [{raw, K, M}]
                        end ++
+                    %% the options of 0.56 too (its ruling 15), range sentinels
+                    %% of `absent` included
                     [{bad, "~s on ~s: a field option other than via, unlisted and optional", [TrS, LocS]}
-                     || Swap orelse Trim orelse Abs0 =/= none orelse With0 =/= none]] ++
+                     || Swap orelse Trim orelse Abs0 =/= none orelse With0 =/= none
+                            orelse element(7, Opts) =/= #{}]] ++
         [{bad, "~s on ~s: a pair is only for dm and hms_dmy, and they only take a pair",
           [TrS, LocS]}
          || Wire =:= text, IsPair =/= text_pair_transform(Tr)] ++
@@ -4115,7 +4118,9 @@ part_group(LocT, Lines, #{wire := Wire, delimiter := Delim, checksum := Sum}) ->
           end,
     Fields = [{S, N, K} || {field, K, _, {part, S, N, _}, _, _} <- Lines],
     Consts = [{S, N} || {const, _, {part, S, N, _}, _} <- Lines],
-    Wholes = [K || {field, K, _, string, _, {none, false, false, Opt, none, none}} <- Lines,
+    %% a whole line takes none of the 0.56 options either (its ruling 15)
+    Wholes = [K || {field, K, _, string, _, {none, false, false, Opt, none, none, Ext}} <- Lines,
+                   Ext =:= #{},
                    Opt =:= false orelse Wire =:= text],
     Ns = [N || {_, N, _} <- Fields] ++ [N || {_, N} <- Consts],
     Seps = lists:usort([S || {S, _, _} <- Fields] ++ [S || {S, _} <- Consts]),
