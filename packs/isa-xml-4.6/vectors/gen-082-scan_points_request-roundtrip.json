@@ -1,0 +1,16 @@
+{
+  "name": "gen-scan_points_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><ScanPointsRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/><Points><Points Latitude=\"3.5\" Longitude=\"0.75\" Altitude=\"0.5\" A=\"1.5\" B=\"0.25\" C=\"2.5\" Phi=\"0.125\" Theta=\"3.5\"/><Points Latitude=\"0.75\" Longitude=\"0.5\" Altitude=\"1.5\" A=\"0.25\" B=\"2.5\" C=\"0.125\" Phi=\"3.5\" Theta=\"0.75\"/></Points><Stop Value=\"1.5\" Error=\"0.25\"/></ScanPointsRequest></Request>",
+  "expect": "<Request><ScanPointsRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/><Points><Points Latitude=\"3.5\" Longitude=\"0.75\" Altitude=\"0.5\" A=\"1.5\" B=\"0.25\" C=\"2.5\" Phi=\"0.125\" Theta=\"3.5\"/><Points Latitude=\"0.75\" Longitude=\"0.5\" Altitude=\"1.5\" A=\"0.25\" B=\"2.5\" C=\"0.125\" Phi=\"3.5\" Theta=\"0.75\"/></Points><Stop Value=\"1.5\" Error=\"0.25\"/></ScanPointsRequest></Request>",
+  "model": {
+    "@kind": "scan_points_request",
+    "isaxml46.scan_points_request_source": "s0",
+    "isaxml46.scan_points_request_identifier": "2",
+    "isaxml46.scan_points_request_access_control.#": "2",
+    "isaxml46.scan_points_request_access_control[1].isaxml46.name": "s11",
+    "isaxml46.scan_points_request_points_points.#": "2",
+    "isaxml46.scan_points_request_points_points[1].isaxml46.latitude": "0.75"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-set_property_reporting_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><SetPropertyReportingRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Name=\"s4\" Reporting=\"false\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/></SetPropertyReportingRequest></Request>",
+  "expect": "<Request><SetPropertyReportingRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Name=\"s4\" Reporting=\"false\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/></SetPropertyReportingRequest></Request>",
+  "model": {
+    "@kind": "set_property_reporting_request",
+    "isaxml.set_property_reporting_request_source": "s0",
+    "isaxml.set_property_reporting_request_identifier": "2",
+    "isaxml.set_property_reporting_request_access_control.#": "2",
+    "isaxml.set_property_reporting_request_access_control[1].isaxml.name": "s11"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-change_iris_size_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><ChangeIrisSizeRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Size=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></ChangeIrisSizeRequest></Request>",
+  "expect": "<Request><ChangeIrisSizeRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Size=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></ChangeIrisSizeRequest></Request>",
+  "model": {
+    "@kind": "change_iris_size_request",
+    "isaxml.change_iris_size_request_source": "s0",
+    "isaxml.change_iris_size_request_identifier": "2",
+    "isaxml.change_iris_size_request_access_control.#": "2",
+    "isaxml.change_iris_size_request_access_control[1].isaxml.name": "s10"
+  }
+}

@@ -882,6 +882,20 @@ class Walker:
             self._settle_choices(self.leaves)
         return self.leaves, self.skipped
 
+    def walk_branch(self, branch):
+        """Lines and skipped places of one branch of a --branch-message: the branch
+        element is walked under the message root, so its locators start with its name."""
+        self.leaves, self.skipped, self.seen = [], [], set()
+        self.base, self.nest = (), 0
+        try:
+            qref = self.s.element_type(branch)
+            self._element(branch.name, qref, (), True, None, branch, "(branch of a message)")
+        except GenError as e:
+            raise located(e, branch)
+        if self.sg:
+            self._settle_choices(self.leaves)
+        return self.leaves, self.skipped
+
     def rel(self, path):
         """A path as a locator of the scope being walked."""
         return "/".join(path[len(self.base):])
@@ -1672,6 +1686,8 @@ def decode_scope(node, lines, tally):
     `tally[0]` counts the wire places read."""
     ent, read = {}, set()
     for ln in lines:
+        if ln.d == "when":
+            continue
         if ln.d == "field":
             raw = xml_get(node, ln.loc)
             if raw is not None and ln.key not in ent:
@@ -1691,7 +1707,9 @@ def decode(pack, text):
     """engine-spec 0.5 Decode with 0.6 `root` per kind and 0.7 groups. Returns
     (kind, entity, residue [(locator, value)], wire places read)."""
     root = xml_parse(text)
-    kind = next((k for k in pack.kinds if root_of(pack, k) == root.name), None)
+    # 0.6 root per kind; a --branch-message kind also needs its `when` attribute present
+    kind = next((k for k in pack.kinds if root_of(pack, k) == root.name
+                 and all(xml_get(root, w.loc) is not None for w in k.lines if w.d == "when")), None)
     if kind is None:
         raise WireError("no-kind", "no kind has root <%s>" % root.name)
     lines = pack.common + kind.lines
@@ -1707,7 +1725,7 @@ def encode_scope(node, lines, ent):
     0.7 Encode: a group writes one element per item where its line stands."""
     text_set = set()
     for ln in lines:
-        if ln.key not in ent:
+        if ln.d == "when" or ln.key not in ent:
             continue
         *path, last = ln.loc.split("/")
         if ln.d == "group" and not ent[ln.key]:
@@ -1823,8 +1841,15 @@ def check_only_fields_and_groups(pack):
         raise pack_error(pack, None, "the pack is not wire xml")
     if pack.tables or pack.typemap:
         raise pack_error(pack, None, "the pack has a `map` or `typemap` line")
+    for k in pack.kinds:
+        for node in k.lines:
+            # --branch-message: a kind tells its branch by `when <Branch>/@<attr> present`
+            if node.d == "when" and not (node.value == "present" and re.match(r"%s/@%s\Z" % (NAME_RE, NAME_RE), node.loc)):
+                raise pack_error(pack, node, "a `when` line other than `<Branch>/@<attr> present`")
     for _, lines in pack.scopes():
         for node in gtcheck.walk(lines):
+            if node.d == "when" and any(node in k.lines for k in pack.kinds):
+                continue
             if node.d not in ("field", "group"):
                 raise pack_error(pack, node, "a `%s` line in a generated pack" % node.d)
             if node.d == "field" and (node.via or node.opts or node.also):
@@ -1851,8 +1876,9 @@ def check_locator_shapes(pack):
 
 def check_one_kind_per_root(pack):
     """Every kind has a root element name, its own or the pack's, and no two
-    kinds share one: the generator writes no `when` line, so nothing else would
-    tell them apart on decode (0.6 "XML: a root per kind")."""
+    kinds share one unless each has a `when` (--branch-message) and their `when`
+    attributes differ: nothing else would tell them apart on decode (0.6 "XML: a
+    root per kind")."""
     if not pack.kinds and pack.root is None:
         raise pack_error(pack, None, "an xml pack with no kind and no root")
     roots = {}
@@ -1862,10 +1888,12 @@ def check_one_kind_per_root(pack):
             raise GenError("kind %s has no root and the pack has none" % kind.name, pack.label, kind.line)
         if not re.fullmatch(NAME_RE, root):
             raise GenError("root name %s of kind %s" % (root, kind.name), pack.label, kind.line)
-        if root in roots:
-            raise GenError("kinds %s and %s share root <%s> and nothing tells them apart"
-                           % (roots[root], kind.name, root), pack.label, kind.line)
-        roots[root] = kind.name
+        whens = frozenset(w.loc for w in kind.lines if w.d == "when")
+        for other, owhens in roots.get(root, []):
+            if not whens or not owhens or whens == owhens:
+                raise GenError("kinds %s and %s share root <%s> and nothing tells them apart"
+                               % (other, kind.name, root), pack.label, kind.line)
+        roots.setdefault(root, []).append((kind.name, whens))
 
 
 def check_one_place_per_key(pack, lines, where):
@@ -1930,7 +1958,7 @@ def check_catalog_pack(pack):
     check_locator_shapes(pack)
     check_one_kind_per_root(pack)
     for kind in pack.kinds:
-        lines = pack.common + kind.lines
+        lines = pack.common + [n for n in kind.lines if n.d != "when"]
         check_one_place_per_key(pack, lines, "kind " + kind.name)
         check_groups_do_not_overlap(pack, lines, "kind " + kind.name)
     check_kinds_do_not_shadow(pack)
@@ -2041,7 +2069,7 @@ def replay_vector(pack, fmt, rel, text, seen_names):
         fail("%d values in the document, %d carried" % (doc_values, places + len(residue)))
     if any(k not in ent for k in kind.requires):
         fail("the vector lacks a key its kind requires")
-    check_every_list_has_items(pack.common + kind.lines, ent, rel,
+    check_every_list_has_items(pack.common + [n for n in kind.lines if n.d != "when"], ent, rel,
                                frozenset(k for k, val in v.get("model", {}).items() if val == "absent"))
     return kind, ent, doc_values
 
@@ -2086,6 +2114,8 @@ class MessageKind:
     def __init__(self, root):
         self.root = root            # global element Particle
         self.name = snake(root.name)
+        self.branch = None          # --branch-message: the branch element walked under the root
+        self.when = None            # (locator, value) of the kind's `when`, for a branch kind
         self.items = []             # lines in schema order: Leaf and Group
         self.leaves, self.skipped = [], []      # leaves: the Leaf lines outside any group
         self.requires = []
@@ -2122,6 +2152,25 @@ def select_messages(schema, type_suffix, choice_types, element_names):
     return out, rule
 
 
+def select_branches(schema, names):
+    """[(message, branch element)] for --branch-message: the message's type must be one
+    choice whose branches are element refs."""
+    out = []
+    for m in names:
+        e = schema.elements.get(m)
+        if e is None:
+            raise GenError("--branch-message %s: no such global element" % m)
+        q = schema.element_type(e)
+        ct = schema.complex.get(q[1])
+        if ct is None or ct.particle is None or ct.particle.kind != "choice":
+            raise GenError("--branch-message %s: its type is not one choice" % m)
+        for c in ct.particle.children:
+            if c.kind != "element" or c.type[0] != "ref":
+                raise GenError("--branch-message %s: branch %s is not an element ref" % (m, c.name), c.file, c.line)
+            out.append((m, c.name))
+    return out
+
+
 class Walked:
     """The messages walked under the limits that keep the module in budget."""
 
@@ -2149,7 +2198,7 @@ def leaf_ident(leaf):
     return (leaf.locator, leaf.mtype)
 
 
-def walk_messages(schema, msg_names, max_depth, max_nest, key_budget=KEY_BUDGET):
+def walk_messages(schema, msg_names, max_depth, max_nest, key_budget=KEY_BUDGET, branches=()):
     """Walk every message; while the module would hold more than `key_budget`
     keys and lists, lower the nesting of groups, then the depth, and walk
     again."""
@@ -2164,6 +2213,17 @@ def walk_messages(schema, msg_names, max_depth, max_nest, key_budget=KEY_BUDGET)
             k = MessageKind(schema.elements[n])
             k.items, k.skipped = walker.walk(k.root)
             k.leaves = [x for x in k.items if isinstance(x, Leaf)]
+            kinds.append(k)
+        for msg, b in branches:
+            k = MessageKind(schema.elements[msg])
+            k.branch, k.name = b, snake(b)
+            k.items, k.skipped = walker.walk_branch(schema.elements[b])
+            k.leaves = [x for x in k.items if isinstance(x, Leaf)]
+            # the branch is told apart by one of its mandatory attributes, present
+            k.when = next(((x.locator, "present") for x in k.leaves
+                           if x.mandatory and x.locator.startswith(b + "/@") and x.locator.count("/") == 1), None)
+            if k.when is None:
+                k.items, k.leaves = [], []
             kinds.append(k)
         key_idents = {leaf_ident(lf) for k in kinds for lf in all_leaves(k.items)}
         list_idents = {list_ident(g) for k in kinds for g in all_groups(k.items)}
@@ -2348,7 +2408,13 @@ def make_plan(schema, statements, shared, pinned, args, key_budget=KEY_BUDGET):
     plan.format, plan.module, plan.title, plan.version = args.format, args.module, args.title, args.version
     plan.shared, plan.pinned, plan.name_drop, plan.key_budget = shared, pinned, tuple(args.name_drop), key_budget
     plan.msg_names, plan.rule = select_messages(schema, args.message_type_suffix, args.message_choice, args.message)
-    plan.walked = w = walk_messages(schema, plan.msg_names, args.max_depth, args.max_nest, key_budget)
+    plan.branches = select_branches(schema, getattr(args, "branch_message", []))
+    if plan.branches:
+        done = {m for m, _ in plan.branches}
+        plan.msg_names = [n for n in plan.msg_names if n not in done]
+        for m in sorted(done):
+            plan.rule.append("for `%s`, one kind per element its choice refers to, told apart by a mandatory attribute" % m)
+    plan.walked = w = walk_messages(schema, plan.msg_names, args.max_depth, args.max_nest, key_budget, plan.branches)
     kn = collections.Counter(k.name for k in w.kinds)
     if any(c > 1 for c in kn.values()):
         raise GenError("two root elements give the same kind name: %s" % [n for n, c in kn.items() if c > 1])
@@ -2539,6 +2605,8 @@ def pack_text(plan):
             L.append("\n# The default kind: an entity from another format that has %s encodes as it.\n"
                      % " and ".join("`%s`" % r for r in k.requires))
         L.append("\nkind      %s\nroot      %s\n" % (k.name, k.root.name))
+        if k.when:
+            L.append("when      %s  %s\n" % k.when)
         if k.requires:
             L.append("requires  %s\n" % " ".join(k.requires))
         L += pack_lines(k.items[plan.ncommon:])
@@ -2863,7 +2931,11 @@ def md_counts(schema, plan, s, n_cross):
 def md_messages(plan):
     default, empty = plan.default, plan.empty
     L = ["\n## Which global elements are messages\n",
-         "A kind is written for %s. Each kind has `root <element>` and no `when`; the pack has no" % "; and ".join(plan.rule),
+         ("A kind is written for %s. Each kind has `root <element>` and no `when`; the pack has no" % "; and ".join(plan.rule))
+         if not plan.branches else
+         ("A kind is written for %s. Each kind has `root <element>`; a kind of a branch also has `when <Branch>/@<attribute>"
+          " present`, a mandatory attribute of the branch element, and no other kind has a `when`; the pack has no"
+          % "; and ".join(plan.rule)),
          "pack-level `root`. Kind names are the element names in snake case. Kinds are in schema order%s."
          % (", except `%s`, which is last (see `requires`)" % default.name if default is not None else "")]
     if empty:
@@ -3302,6 +3374,9 @@ def build_parser():
     genio.add_arguments(ap, what="the directory that receives model/ and packs/")
     ap.add_argument("--model-dir", required=True, help="directory holding core.def and track.def (copied into <out>/model)")
     ap.add_argument("--message-type-suffix", help="every global element whose type name ends in this is a message")
+    ap.add_argument("--branch-message", action="append", default=[], metavar="ELEMENT",
+                    help="a message whose type is one choice of element refs: one kind per branch, rooted at the "
+                         "message and told apart by a mandatory attribute of the branch (`when <Branch>/@A present`)")
     ap.add_argument("--message-choice", action="append", default=[], metavar="TYPE",
                     help="every global element the choice in this complex type refers to is a message")
     ap.add_argument("--message", action="append", default=[], metavar="ELEMENT", help="this global element is a message")

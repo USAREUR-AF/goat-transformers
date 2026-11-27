@@ -1,0 +1,14 @@
+{
+  "name": "gen-start_data_output_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><StartDataOutputRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Name=\"s4\" Url=\"s5\" DataName=\"s6\"><Time Value=\"0.5\" Error=\"1.5\"/><Stale Value=\"0.25\" Error=\"2.5\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/></StartDataOutputRequest></Request>",
+  "expect": "<Request><StartDataOutputRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Name=\"s4\" Url=\"s5\" DataName=\"s6\"><Time Value=\"0.5\" Error=\"1.5\"/><Stale Value=\"0.25\" Error=\"2.5\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/></StartDataOutputRequest></Request>",
+  "model": {
+    "@kind": "start_data_output_request",
+    "isaxml.start_data_output_request_source": "s0",
+    "isaxml.start_data_output_request_identifier": "2",
+    "isaxml.start_data_output_request_access_control.#": "2",
+    "isaxml.start_data_output_request_access_control[1].isaxml.name": "s12"
+  }
+}

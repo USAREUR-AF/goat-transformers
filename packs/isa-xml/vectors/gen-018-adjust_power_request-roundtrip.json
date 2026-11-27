@@ -1,0 +1,14 @@
+{
+  "name": "gen-adjust_power_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><AdjustPowerRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Direction=\"LD_NONE\" Duration=\"3.5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/></AdjustPowerRequest></Request>",
+  "expect": "<Request><AdjustPowerRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Direction=\"LD_NONE\" Duration=\"3.5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/></AdjustPowerRequest></Request>",
+  "model": {
+    "@kind": "adjust_power_request",
+    "isaxml.adjust_power_request_source": "s0",
+    "isaxml.adjust_power_request_identifier": "2",
+    "isaxml.adjust_power_request_access_control.#": "2",
+    "isaxml.adjust_power_request_access_control[1].isaxml.name": "s11"
+  }
+}

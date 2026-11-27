@@ -1,0 +1,14 @@
+{
+  "name": "gen-create_zip_archive_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><CreateZipArchiveRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" ResultKey=\"5\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></CreateZipArchiveRequest></Request>",
+  "expect": "<Request><CreateZipArchiveRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" ResultKey=\"5\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></CreateZipArchiveRequest></Request>",
+  "model": {
+    "@kind": "create_zip_archive_request",
+    "isaxml.create_zip_archive_request_source": "s0",
+    "isaxml.create_zip_archive_request_identifier": "2",
+    "isaxml.create_zip_archive_request_access_control.#": "2",
+    "isaxml.create_zip_archive_request_access_control[1].isaxml.name": "s10"
+  }
+}

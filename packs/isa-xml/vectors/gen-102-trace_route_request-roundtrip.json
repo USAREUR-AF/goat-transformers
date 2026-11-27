@@ -1,0 +1,16 @@
+{
+  "name": "gen-trace_route_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><TraceRouteRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Target=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/><Visited>s13</Visited><Visited>s14</Visited><Ttl Value=\"1\" Error=\"2\"/></TraceRouteRequest></Request>",
+  "expect": "<Request><TraceRouteRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Target=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/><Visited>s13</Visited><Visited>s14</Visited><Ttl Value=\"1\" Error=\"2\"/></TraceRouteRequest></Request>",
+  "model": {
+    "@kind": "trace_route_request",
+    "isaxml.trace_route_request_source": "s0",
+    "isaxml.trace_route_request_identifier": "2",
+    "isaxml.trace_route_request_access_control.#": "2",
+    "isaxml.trace_route_request_access_control[1].isaxml.name": "s12",
+    "isaxml.trace_route_request_visited.#": "2",
+    "isaxml.trace_route_request_visited[1].isaxml.item_string": "s14"
+  }
+}

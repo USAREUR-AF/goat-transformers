@@ -1,0 +1,14 @@
+{
+  "name": "gen-slew_percent_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><SlewPercentRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Duration=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s12\"/><AccessControl Name=\"s13\"/><Orientation PitchRate=\"0.25\" RollRate=\"2.5\" YawRate=\"0.125\"/></SlewPercentRequest></Request>",
+  "expect": "<Request><SlewPercentRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Duration=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s12\"/><AccessControl Name=\"s13\"/><Orientation PitchRate=\"0.25\" RollRate=\"2.5\" YawRate=\"0.125\"/></SlewPercentRequest></Request>",
+  "model": {
+    "@kind": "slew_percent_request",
+    "isaxml46.slew_percent_request_source": "s0",
+    "isaxml46.slew_percent_request_identifier": "2",
+    "isaxml46.slew_percent_request_access_control.#": "2",
+    "isaxml46.slew_percent_request_access_control[1].isaxml46.name": "s13"
+  }
+}

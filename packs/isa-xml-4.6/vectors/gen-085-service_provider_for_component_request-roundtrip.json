@@ -1,0 +1,14 @@
+{
+  "name": "gen-service_provider_for_component_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><ServiceProviderForComponentRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Service=\"s4\" Component=\"s5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/></ServiceProviderForComponentRequest></Request>",
+  "expect": "<Request><ServiceProviderForComponentRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Service=\"s4\" Component=\"s5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/></ServiceProviderForComponentRequest></Request>",
+  "model": {
+    "@kind": "service_provider_for_component_request",
+    "isaxml46.service_provider_for_component_request_source": "s0",
+    "isaxml46.service_provider_for_component_request_identifier": "2",
+    "isaxml46.service_provider_for_component_request_access_control.#": "2",
+    "isaxml46.service_provider_for_component_request_access_control[1].isaxml46.name": "s11"
+  }
+}

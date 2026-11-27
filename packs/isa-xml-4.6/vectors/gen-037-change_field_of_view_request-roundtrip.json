@@ -1,0 +1,14 @@
+{
+  "name": "gen-change_field_of_view_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><ChangeFieldOfViewRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s12\"/><AccessControl Name=\"s13\"/><Fov><Height Value=\"1.5\" Error=\"0.25\"/><Width Value=\"2.5\" Error=\"0.125\"/></Fov></ChangeFieldOfViewRequest></Request>",
+  "expect": "<Request><ChangeFieldOfViewRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s12\"/><AccessControl Name=\"s13\"/><Fov><Height Value=\"1.5\" Error=\"0.25\"/><Width Value=\"2.5\" Error=\"0.125\"/></Fov></ChangeFieldOfViewRequest></Request>",
+  "model": {
+    "@kind": "change_field_of_view_request",
+    "isaxml46.change_field_of_view_request_source": "s0",
+    "isaxml46.change_field_of_view_request_identifier": "2",
+    "isaxml46.change_field_of_view_request_access_control.#": "2",
+    "isaxml46.change_field_of_view_request_access_control[1].isaxml46.name": "s13"
+  }
+}

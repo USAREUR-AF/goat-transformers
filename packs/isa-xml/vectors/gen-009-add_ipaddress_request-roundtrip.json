@@ -1,0 +1,14 @@
+{
+  "name": "gen-add_ipaddress_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><AddIPAddressRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Iface=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></AddIPAddressRequest></Request>",
+  "expect": "<Request><AddIPAddressRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Iface=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></AddIPAddressRequest></Request>",
+  "model": {
+    "@kind": "add_ipaddress_request",
+    "isaxml.add_ipaddress_request_source": "s0",
+    "isaxml.add_ipaddress_request_identifier": "2",
+    "isaxml.add_ipaddress_request_access_control.#": "2",
+    "isaxml.add_ipaddress_request_access_control[1].isaxml.name": "s10"
+  }
+}
