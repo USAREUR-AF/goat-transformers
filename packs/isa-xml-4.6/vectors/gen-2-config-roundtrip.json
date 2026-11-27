@@ -1,0 +1,23 @@
+{
+  "name": "gen-config-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Config Source=\"s0\" Identifier=\"2\" Priority=\"3\"><Time Value=\"2.5\" Error=\"0.125\"/><Stale Value=\"3.5\" Error=\"0.75\"/><Ccd><Types Name=\"s7\" Description=\"s8\"><Fields Name=\"s9\" Description=\"s10\" Optional=\"false\"><Type><CustomTypeName>s12</CustomTypeName></Type></Fields></Types><Types Name=\"s13\" Description=\"s14\"><Fields Name=\"s15\" Description=\"s16\" Optional=\"false\"><Type><CustomTypeName>s18</CustomTypeName></Type></Fields></Types></Ccd><PropertyStates Name=\"s19\" Ready=\"true\" Reporting=\"false\"/><PropertyStates Name=\"s22\" Ready=\"false\" Reporting=\"true\"/><ObservableStates Name=\"s25\" Ready=\"true\" Reporting=\"false\"/><ObservableStates Name=\"s28\" Ready=\"false\" Reporting=\"true\"/><CommandStates Name=\"s31\" Ready=\"true\"/><CommandStates Name=\"s33\" Ready=\"true\"/><Extras Name=\"s35\"/><Extras Name=\"s36\"/></Config>",
+  "expect": "<Config Source=\"s0\" Identifier=\"2\" Priority=\"3\"><Time Value=\"2.5\" Error=\"0.125\"/><Stale Value=\"3.5\" Error=\"0.75\"/><Ccd><Types Name=\"s7\" Description=\"s8\"><Fields Name=\"s9\" Description=\"s10\" Optional=\"false\"><Type><CustomTypeName>s12</CustomTypeName></Type></Fields></Types><Types Name=\"s13\" Description=\"s14\"><Fields Name=\"s15\" Description=\"s16\" Optional=\"false\"><Type><CustomTypeName>s18</CustomTypeName></Type></Fields></Types></Ccd><PropertyStates Name=\"s19\" Ready=\"true\" Reporting=\"false\"/><PropertyStates Name=\"s22\" Ready=\"false\" Reporting=\"true\"/><ObservableStates Name=\"s25\" Ready=\"true\" Reporting=\"false\"/><ObservableStates Name=\"s28\" Ready=\"false\" Reporting=\"true\"/><CommandStates Name=\"s31\" Ready=\"true\"/><CommandStates Name=\"s33\" Ready=\"true\"/><Extras Name=\"s35\"/><Extras Name=\"s36\"/></Config>",
+  "model": {
+    "@kind": "config",
+    "isaxml46.source": "s0",
+    "isaxml46.identifier": "2",
+    "isaxml46.ccd_types[0].isaxml46.fields.#": "1",
+    "isaxml46.ccd_types.#": "2",
+    "isaxml46.ccd_types[1].isaxml46.name": "s13",
+    "isaxml46.property_states.#": "2",
+    "isaxml46.property_states[1].isaxml46.name": "s22",
+    "isaxml46.observable_states.#": "2",
+    "isaxml46.observable_states[1].isaxml46.name": "s28",
+    "isaxml46.command_states.#": "2",
+    "isaxml46.command_states[1].isaxml46.name": "s33",
+    "isaxml46.extras.#": "2",
+    "isaxml46.extras[1].isaxml46.name": "s36"
+  }
+}

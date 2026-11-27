@@ -1,0 +1,16 @@
+{
+  "name": "gen-request-roundtrip",
+  "from": "isa-xml-2.6",
+  "to": "isa-xml-2.6",
+  "input": "<Request Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Command=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><Parameters Name=\"s9\"/><Parameters Name=\"s10\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/></Request>",
+  "expect": "<Request Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Command=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><Parameters Name=\"s9\"/><Parameters Name=\"s10\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/></Request>",
+  "model": {
+    "@kind": "request",
+    "isaxml26.source": "s0",
+    "isaxml26.identifier": "2",
+    "isaxml26.parameters.#": "2",
+    "isaxml26.parameters[1].isaxml26.name": "s10",
+    "isaxml26.access_control.#": "2",
+    "isaxml26.access_control[1].isaxml26.name": "s12"
+  }
+}

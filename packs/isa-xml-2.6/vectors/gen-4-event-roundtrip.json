@@ -1,0 +1,16 @@
+{
+  "name": "gen-event-roundtrip",
+  "from": "isa-xml-2.6",
+  "to": "isa-xml-2.6",
+  "input": "<Event Source=\"s0\" Identifier=\"2\" Priority=\"3\" EventID=\"4\" Type=\"ET_OTHER\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><EventReference Creator=\"s9\" Id=\"2\"><Time Value=\"0.125\" Error=\"3.5\"/></EventReference><Observables Name=\"s13\"/><Observables Name=\"s14\"/><DetectorProperties Name=\"s15\"/><DetectorProperties Name=\"s16\"/></Event>",
+  "expect": "<Event Source=\"s0\" Identifier=\"2\" Priority=\"3\" EventID=\"4\" Type=\"ET_OTHER\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><EventReference Creator=\"s9\" Id=\"2\"><Time Value=\"0.125\" Error=\"3.5\"/></EventReference><Observables Name=\"s13\"/><Observables Name=\"s14\"/><DetectorProperties Name=\"s15\"/><DetectorProperties Name=\"s16\"/></Event>",
+  "model": {
+    "@kind": "event",
+    "isaxml26.source": "s0",
+    "isaxml26.identifier": "2",
+    "isaxml26.observables.#": "2",
+    "isaxml26.observables[1].isaxml26.name": "s14",
+    "isaxml26.detector_properties.#": "2",
+    "isaxml26.detector_properties[1].isaxml26.name": "s16"
+  }
+}

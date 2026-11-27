@@ -1,0 +1,14 @@
+{
+  "name": "gen-status-roundtrip",
+  "from": "isa-xml-2.6",
+  "to": "isa-xml-2.6",
+  "input": "<Status Source=\"s0\" Identifier=\"2\" Priority=\"3\"><Time Value=\"2.5\" Error=\"0.125\"/><Stale Value=\"3.5\" Error=\"0.75\"/><Properties Name=\"s7\"/><Properties Name=\"s8\"/></Status>",
+  "expect": "<Status Source=\"s0\" Identifier=\"2\" Priority=\"3\"><Time Value=\"2.5\" Error=\"0.125\"/><Stale Value=\"3.5\" Error=\"0.75\"/><Properties Name=\"s7\"/><Properties Name=\"s8\"/></Status>",
+  "model": {
+    "@kind": "status",
+    "isaxml26.source": "s0",
+    "isaxml26.identifier": "2",
+    "isaxml26.properties.#": "2",
+    "isaxml26.properties[1].isaxml26.name": "s8"
+  }
+}

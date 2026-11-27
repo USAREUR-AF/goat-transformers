@@ -1,0 +1,16 @@
+{
+  "name": "gen-registration-roundtrip",
+  "from": "isa-xml-2.6",
+  "to": "isa-xml-2.6",
+  "input": "<Registration Source=\"s0\" Identifier=\"2\" Priority=\"3\" Opcode=\"RO_REMOVED\" ErrorDescription=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><Credentials Name=\"s9\"/><Credentials Name=\"s10\"/><Extras Name=\"s11\"/><Extras Name=\"s12\"/></Registration>",
+  "expect": "<Registration Source=\"s0\" Identifier=\"2\" Priority=\"3\" Opcode=\"RO_REMOVED\" ErrorDescription=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><Credentials Name=\"s9\"/><Credentials Name=\"s10\"/><Extras Name=\"s11\"/><Extras Name=\"s12\"/></Registration>",
+  "model": {
+    "@kind": "registration",
+    "isaxml26.source": "s0",
+    "isaxml26.identifier": "2",
+    "isaxml26.credentials.#": "2",
+    "isaxml26.credentials[1].isaxml26.name": "s10",
+    "isaxml26.extras.#": "2",
+    "isaxml26.extras[1].isaxml26.name": "s12"
+  }
+}

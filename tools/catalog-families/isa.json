@@ -4,8 +4,11 @@
   "exact": [
     "isa",
     "isa-message",
+    "isa-message-3.6",
     "isa-ipl1",
-    "isa-xml"
+    "isa-xml",
+    "isa-xml-2.6",
+    "isa-xml-4.6"
   ],
-  "detail": "IPL 1.6, 3.7, 4.7"
+  "detail": "IPL 1.6, 2.6, 3.6, 3.7, 4.6, 4.7"
 }
