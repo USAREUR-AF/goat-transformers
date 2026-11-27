@@ -1,0 +1,11 @@
+{
+  "name": "sbp-signing-var-roundtrip-aes_cmac_signature",
+  "from": "sbp-signing-var",
+  "to": "sbp-signing-var",
+  "input": "55100c0101193c13eac1986f461df4cba2795027fed5ac835a3108dfb611e6",
+  "expect": "55100c0101193c13eac1986f461df4cba2795027fed5ac835a3108dfb611e6",
+  "model": {
+    "@kind": "aes_cmac_signature",
+    "sbpsigning.aes_cmac_signature_signed_messages.#": "2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "sbp-observation-var-roundtrip-sv_az_el",
+  "from": "sbp-observation-var",
+  "to": "sbp-observation-var",
+  "input": "5597000401089a7148116f461dc4",
+  "expect": "5597000401089a7148116f461dc4",
+  "model": {
+    "@kind": "sv_az_el",
+    "sbpobservation.sv_az_el_azel.#": "2"
+  }
+}

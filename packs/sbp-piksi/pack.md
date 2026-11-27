@@ -83,6 +83,9 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
+The 6 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-piksi-var`.
+
 Messages with no kind:
 
 | Message | Type id | Reason |
@@ -93,17 +96,7 @@ Messages with no kind:
 | MSG_CW_RESULTS | 0x00C0 | an empty payload: a kind needs at least one field |
 | MSG_CW_START | 0x00C1 | an empty payload: a kind needs at least one field |
 | MSG_INIT_BASE_DEP | 0x0023 | an empty payload: a kind needs at least one field |
-| MSG_COMMAND_REQ | 0x00B8 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_COMMAND_OUTPUT | 0x00BC | ends in a string with no stated length that runs to the end of the frame |
 | MSG_NETWORK_STATE_REQ | 0x00BA | an empty payload: a kind needs at least one field |
-| MSG_NETWORK_BANDWIDTH_USAGE | 0x00BD | ends in an array with no stated length that runs to the end of the frame |
-| MSG_CELL_MODEM_STATUS | 0x00BE | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SPECAN_DEP | 0x0050 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SPECAN | 0x0051 | ends in an array with no stated length that runs to the end of the frame |
-
-6 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

@@ -1,0 +1,11 @@
+{
+  "name": "sbp-integrity-var-roundtrip-ssr_flag_iono_tile_sat_los",
+  "from": "sbp-integrity-var",
+  "to": "sbp-integrity-var",
+  "input": "55cd0b0301132f47e15a069bddb48b62ea393e100204dbd9b0",
+  "expect": "55cd0b0301132f47e15a069bddb48b62ea393e100204dbd9b0",
+  "model": {
+    "@kind": "ssr_flag_iono_tile_sat_los",
+    "sbpintegrity.ssr_flag_iono_tile_sat_los_faulty_los.#": "2"
+  }
+}

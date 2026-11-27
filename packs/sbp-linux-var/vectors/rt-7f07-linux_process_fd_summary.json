@@ -1,0 +1,11 @@
+{
+  "name": "sbp-linux-var-roundtrip-linux_process_fd_summary",
+  "from": "sbp-linux-var",
+  "to": "sbp-linux-var",
+  "input": "55077f05010655d5271e2aff",
+  "expect": "55077f05010655d5271e2aff",
+  "model": {
+    "@kind": "linux_process_fd_summary",
+    "sbplinux.linux_process_fd_summary_most_opened.#": "2"
+  }
+}

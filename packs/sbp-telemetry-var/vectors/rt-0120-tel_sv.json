@@ -1,0 +1,11 @@
+{
+  "name": "sbp-telemetry-var-roundtrip-tel_sv",
+  "from": "sbp-telemetry-var",
+  "to": "sbp-telemetry-var",
+  "input": "5520010001202c9a03eede7cdab10180af027f83d2340be2b990d63384b5ea363e09e0b78e65",
+  "expect": "5520010001202c9a03eede7cdab10180af027f83d2340be2b990d63384b5ea363e09e0b78e65",
+  "model": {
+    "@kind": "tel_sv",
+    "sbptelemetry.tel_sv_sv_tel.#": "2"
+  }
+}

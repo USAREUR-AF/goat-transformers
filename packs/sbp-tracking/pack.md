@@ -89,18 +89,8 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
-Messages with no kind:
-
-| Message | Type id | Reason |
-|---|---|---|
-| MSG_TRACKING_STATE | 0x0041 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_MEASUREMENT_STATE | 0x0061 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_TRACKING_STATE_DEP_A | 0x0016 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_TRACKING_STATE_DEP_B | 0x0013 | ends in an array with no stated length that runs to the end of the frame |
-
-4 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
+The 4 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-tracking-var`.
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

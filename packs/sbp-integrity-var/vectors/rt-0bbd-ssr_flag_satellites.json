@@ -1,0 +1,11 @@
+{
+  "name": "sbp-integrity-var-roundtrip-ssr_flag_satellites",
+  "from": "sbp-integrity-var",
+  "to": "sbp-integrity-var",
+  "input": "55bd0b00010e3f80654f16d4edc49b72490214e9",
+  "expect": "55bd0b00010e3f80654f16d4edc49b72490214e9",
+  "model": {
+    "@kind": "ssr_flag_satellites",
+    "sbpintegrity.ssr_flag_satellites_faulty_sats.#": "2"
+  }
+}

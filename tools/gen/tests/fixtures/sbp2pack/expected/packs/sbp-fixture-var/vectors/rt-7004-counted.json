@@ -1,0 +1,11 @@
+{
+  "name": "sbp-fixture-var-roundtrip-counted",
+  "from": "sbp-fixture-var",
+  "to": "sbp-fixture-var",
+  "input": "55047002010602ddb4b289b6",
+  "expect": "55047002010602ddb4b289b6",
+  "model": {
+    "@kind": "counted",
+    "sbpfixture.counted_items.#": "2"
+  }
+}

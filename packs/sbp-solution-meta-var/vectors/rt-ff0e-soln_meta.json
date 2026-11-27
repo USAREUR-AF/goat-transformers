@@ -1,0 +1,11 @@
+{
+  "name": "sbp-solution-meta-var-roundtrip-soln_meta",
+  "from": "sbp-solution-meta-var",
+  "to": "sbp-solution-meta-var",
+  "input": "550eff0101145e7c651935d00c24e377bacb911ffb3a330a08df",
+  "expect": "550eff0101145e7c651935d00c24e377bacb911ffb3a330a08df",
+  "model": {
+    "@kind": "soln_meta",
+    "sbpsolutionmeta.soln_meta_sol_in.#": "2"
+  }
+}

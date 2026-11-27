@@ -1,0 +1,11 @@
+{
+  "name": "sbp-signing-var-roundtrip-ed25519_certificate_dep",
+  "from": "sbp-signing-var",
+  "to": "sbp-signing-var",
+  "input": "55020c0501172a01d8af865d340be2b990673e15ecc39a71481ff6ffd4",
+  "expect": "55020c0501172a01d8af865d340be2b990673e15ecc39a71481ff6ffd4",
+  "model": {
+    "@kind": "ed25519_certificate_dep",
+    "sbpsigning.ed25519_certificate_dep_certificate_bytes.#": "2"
+  }
+}

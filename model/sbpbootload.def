@@ -6,6 +6,8 @@ module        sbpbootload
 version       0.1.0
 distribution  public
 source        "https://github.com/swift-nav/libsbp spec/yaml/swiftnav/sbp/bootload.yaml at v6.5.2 (commit 925825dea5174f069b5d6e23548f213e09f0235c)"
+key  bootloader_handshake_resp_flags  int  -  "field flags of MSG_BOOTLOADER_HANDSHAKE_RESP"
+key  bootloader_handshake_resp_version_byte  int  -  "field version_byte of MSG_BOOTLOADER_HANDSHAKE_RESP"
 key  bootloader_jump_to_app_jump  int  -  "field jump of MSG_BOOTLOADER_JUMP_TO_APP"
 key  nap_device_dna_resp_dna_0  int  -  "field dna_0 of MSG_NAP_DEVICE_DNA_RESP"
 key  nap_device_dna_resp_dna_1  int  -  "field dna_1 of MSG_NAP_DEVICE_DNA_RESP"
@@ -15,3 +17,6 @@ key  nap_device_dna_resp_dna_4  int  -  "field dna_4 of MSG_NAP_DEVICE_DNA_RESP"
 key  nap_device_dna_resp_dna_5  int  -  "field dna_5 of MSG_NAP_DEVICE_DNA_RESP"
 key  nap_device_dna_resp_dna_6  int  -  "field dna_6 of MSG_NAP_DEVICE_DNA_RESP"
 key  nap_device_dna_resp_dna_7  int  -  "field dna_7 of MSG_NAP_DEVICE_DNA_RESP"
+key  bootloader_handshake_dep_a_handshake_item  int  -  "field handshake_item of MSG_BOOTLOADER_HANDSHAKE_DEP_A"
+list  bootloader_handshake_resp_version  "the bytes of text field version of MSG_BOOTLOADER_HANDSHAKE_RESP, one per item"
+list  bootloader_handshake_dep_a_handshake  "the items of field handshake of MSG_BOOTLOADER_HANDSHAKE_DEP_A"

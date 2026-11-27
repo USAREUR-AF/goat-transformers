@@ -133,11 +133,41 @@ class Layout(SbpCase):
         self.assertNotIn("kind      trailing", self.pdef)
         self.assertNotIn("kind      counted", self.pdef)
         self.assertNotIn("kind      empty", self.pdef)
-        self.assertIn("| MSG_TRAILING | 0x7002 | ends in an array with no stated length that runs to "
-                      "the end of the frame |", self.md)
-        self.assertIn("| MSG_TRAILING_TEXT | 0x7003 | ends in a string", self.md)
-        self.assertIn("| MSG_COUNTED | 0x7004 | an array counted by field `n` |", self.md)
+        self.assertNotIn("| MSG_TRAILING |", self.md)
+        self.assertNotIn("| MSG_COUNTED |", self.md)
+        self.assertIn("The 3 messages of this package whose payload length is not fixed are kinds of\n"
+                      "the sequential pack `sbp-fixture-var`.", self.md)
         self.assertIn("| MSG_EMPTY | 0x7005 | an empty payload", self.md)
+
+    def test_variable_messages_in_a_sequential_pack(self):
+        vdef = self.text(self.root, "packs", FMT + "-var", "pack.def")
+        self.assertIn("layout        sequential\n", vdef)
+        # an array running to the end of the frame: a rest group of its elements
+        self.assertIn("kind  trailing\nwhen  16  28674\nrequires  sbpfixture.trailing_seq\n"
+                      "field  sbp.sender  16  uint\nlength  8  bytes\n"
+                      "  field  sbpfixture.trailing_seq  32  uint\n"
+                      "  group  sbpfixture.trailing_data  rest\n"
+                      "    field  sbpfixture.trailing_data_item  8  uint\n  end\nend\n", vdef)
+        # a text running to the end: a rest group, one byte per item
+        self.assertIn("  group  sbpfixture.trailing_text_text  rest\n"
+                      "    field  sbpfixture.trailing_text_text_byte  8  uint\n", vdef)
+        # an array counted by an earlier field: that field's line is the count (0.21),
+        # and fields after the group follow it
+        self.assertIn("  count  n_n  8\n  group  sbpfixture.counted_items  count @n_n\n"
+                      "    field  sbpfixture.counted_items_sat  8  uint\n"
+                      "    field  sbpfixture.counted_items_code  8  uint\n  end\n"
+                      "  field  sbpfixture.counted_tail  8  uint\nend\n", vdef)
+        mod = self.text(self.root, "model", "sbpfixture.def")
+        self.assertNotIn("key  counted_n ", mod)
+        self.assertIn('list  counted_items  "the items of field items of MSG_COUNTED"', mod)
+        # the round trip of the counted kind: n = 2, two (sat, code) items, then tail
+        vec = json.loads(self.text(self.root, "packs", FMT + "-var", "vectors",
+                                     "rt-7004-counted.json"))
+        frame = bytes.fromhex(vec["input"])
+        self.assertEqual(frame[5], len(frame) - 6)
+        self.assertEqual(frame[6], 2)
+        self.assertEqual(len(frame) - 6, 1 + 2 * 2 + 1)
+        self.assertEqual(vec["model"]["sbpfixture.counted_items.#"], "2")
 
     def test_vectors_decode_through_the_pack(self):
         pack = self.pack(self.root)

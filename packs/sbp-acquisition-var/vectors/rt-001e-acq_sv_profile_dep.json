@@ -1,0 +1,11 @@
+{
+  "name": "sbp-acquisition-var-roundtrip-acq_sv_profile_dep",
+  "from": "sbp-acquisition-var",
+  "to": "sbp-acquisition-var",
+  "input": "551e0001014623fad15ca87f04562d0400db533428b2a7b87b374daac2b8a0aec239f4b2c20ef7c949f8cfa65f7d54072b02d902b056171487aa9b67eab8e8c26b0cedc2ec5ff1c2e3f9ac35",
+  "expect": "551e0001014623fad15ca87f04562d0400db533428b2a7b87b374daac2b8a0aec239f4b2c20ef7c949f8cfa65f7d54072b02d902b056171487aa9b67eab8e8c26b0cedc2ec5ff1c2e3f9ac35",
+  "model": {
+    "@kind": "acq_sv_profile_dep",
+    "sbpacquisition.acq_sv_profile_dep_acq_sv_profile.#": "2"
+  }
+}

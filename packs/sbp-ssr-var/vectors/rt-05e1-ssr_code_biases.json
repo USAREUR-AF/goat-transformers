@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_code_biases",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55e105000110db65d13ab2b98960370eb06923851c8f",
+  "expect": "55e105000110db65d13ab2b98960370eb06923851c8f",
+  "model": {
+    "@kind": "ssr_code_biases",
+    "sbpssr.ssr_code_biases_biases.#": "2"
+  }
+}

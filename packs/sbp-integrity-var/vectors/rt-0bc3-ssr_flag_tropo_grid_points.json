@@ -1,0 +1,11 @@
+{
+  "name": "sbp-integrity-var-roundtrip-ssr_flag_tropo_grid_points",
+  "from": "sbp-integrity-var",
+  "to": "sbp-integrity-var",
+  "input": "55c30b010113d9eab343b03e875e350c8ee3e1ba02aeed83f0",
+  "expect": "55c30b010113d9eab343b03e875e350c8ee3e1ba02aeed83f0",
+  "model": {
+    "@kind": "ssr_flag_tropo_grid_points",
+    "sbpintegrity.ssr_flag_tropo_grid_points_faulty_points.#": "2"
+  }
+}

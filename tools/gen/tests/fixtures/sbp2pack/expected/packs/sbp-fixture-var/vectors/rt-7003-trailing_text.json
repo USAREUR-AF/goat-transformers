@@ -1,0 +1,11 @@
+{
+  "name": "sbp-fixture-var-roundtrip-trailing_text",
+  "from": "sbp-fixture-var",
+  "to": "sbp-fixture-var",
+  "input": "55037001010499626e43",
+  "expect": "55037001010499626e43",
+  "model": {
+    "@kind": "trailing_text",
+    "sbpfixture.trailing_text_text.#": "2"
+  }
+}

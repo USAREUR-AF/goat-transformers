@@ -63,22 +63,8 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
-Messages with no kind:
-
-| Message | Type id | Reason |
-|---|---|---|
-| MSG_ECDSA_CERTIFICATE | 0x0C04 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_AES_CMAC_SIGNATURE | 0x0C10 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_ECDSA_SIGNATURE | 0x0C08 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_ECDSA_SIGNATURE_DEP_B | 0x0C07 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_ECDSA_SIGNATURE_DEP_A | 0x0C06 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_ED25519_CERTIFICATE_DEP | 0x0C02 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_ED25519_SIGNATURE_DEP_A | 0x0C01 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_ED25519_SIGNATURE_DEP_B | 0x0C03 | ends in an array with no stated length that runs to the end of the frame |
-
-8 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
+The 8 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-signing-var`.
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

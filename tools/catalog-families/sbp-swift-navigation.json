@@ -5,7 +5,7 @@
     "sbp-"
   ],
   "members": {
-    "pattern": "^sbp-(.+)$",
+    "pattern": "^sbp-(.+?)(?:-var)?$",
     "label": "{n} message packages",
     "list": false
   }

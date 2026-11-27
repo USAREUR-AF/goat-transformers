@@ -101,18 +101,14 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
+The 3 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-fixture-var`.
+
 Messages with no kind:
 
 | Message | Type id | Reason |
 |---|---|---|
-| MSG_TRAILING | 0x7002 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_TRAILING_TEXT | 0x7003 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_COUNTED | 0x7004 | an array counted by field `n` |
 | MSG_EMPTY | 0x7005 | an empty payload: a kind needs at least one field |
-
-2 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

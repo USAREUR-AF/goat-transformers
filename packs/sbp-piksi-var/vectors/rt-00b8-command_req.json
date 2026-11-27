@@ -1,0 +1,11 @@
+{
+  "name": "sbp-piksi-var-roundtrip-command_req",
+  "from": "sbp-piksi-var",
+  "to": "sbp-piksi-var",
+  "input": "55b800000106140db61ee9be",
+  "expect": "55b800000106140db61ee9be",
+  "model": {
+    "@kind": "command_req",
+    "sbppiksi.command_req_command.#": "2"
+  }
+}

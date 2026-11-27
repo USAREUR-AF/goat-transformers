@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_grid_definition_dep_a",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55f5050b010b875e7235c60c1ae3ba5c31",
+  "expect": "55f5050b010b875e7235c60c1ae3ba5c31",
+  "model": {
+    "@kind": "ssr_grid_definition_dep_a",
+    "sbpssr.ssr_grid_definition_dep_a_rle_list.#": "2"
+  }
+}

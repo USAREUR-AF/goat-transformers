@@ -1,0 +1,11 @@
+{
+  "name": "sbp-tracking-var-roundtrip-tracking_state",
+  "from": "sbp-tracking-var",
+  "to": "sbp-tracking-var",
+  "input": "5541000001085027fed525fcd3aa",
+  "expect": "5541000001085027fed525fcd3aa",
+  "model": {
+    "@kind": "tracking_state",
+    "sbptracking.tracking_state_states.#": "2"
+  }
+}

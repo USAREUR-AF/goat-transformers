@@ -1,0 +1,11 @@
+{
+  "name": "sbp-piksi-var-roundtrip-cell_modem_status",
+  "from": "sbp-piksi-var",
+  "to": "sbp-piksi-var",
+  "input": "55be000301079a000088408358",
+  "expect": "55be000301079a000088408358",
+  "model": {
+    "@kind": "cell_modem_status",
+    "sbppiksi.cell_modem_status_reserved.#": "2"
+  }
+}

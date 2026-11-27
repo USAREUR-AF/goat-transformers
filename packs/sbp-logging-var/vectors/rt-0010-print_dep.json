@@ -1,0 +1,11 @@
+{
+  "name": "sbp-logging-var-roundtrip-print_dep",
+  "from": "sbp-logging-var",
+  "to": "sbp-logging-var",
+  "input": "55100002010211e6",
+  "expect": "55100002010211e6",
+  "model": {
+    "@kind": "print_dep",
+    "sbplogging.print_dep_text.#": "2"
+  }
+}

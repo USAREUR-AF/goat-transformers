@@ -62,18 +62,8 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
-Messages with no kind:
-
-| Message | Type id | Reason |
-|---|---|---|
-| MSG_MEASUREMENT_POINT | 0xCF00 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_PROFILING_THREAD_INFO | 0xCF02 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_PROFILING_RESOURCE_COUNTER | 0xCF03 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_PROFILING_QUEUE_INFO | 0xCF04 | ends in an array with no stated length that runs to the end of the frame |
-
-4 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
+The 4 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-profiling-var`.
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

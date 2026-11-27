@@ -63,18 +63,15 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
+The 2 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-bootload-var`.
+
 Messages with no kind:
 
 | Message | Type id | Reason |
 |---|---|---|
 | MSG_BOOTLOADER_HANDSHAKE_REQ | 0x00B3 | an empty payload: a kind needs at least one field |
-| MSG_BOOTLOADER_HANDSHAKE_RESP | 0x00B4 | ends in a string with no stated length that runs to the end of the frame |
 | MSG_NAP_DEVICE_DNA_REQ | 0x00DE | an empty payload: a kind needs at least one field |
-| MSG_BOOTLOADER_HANDSHAKE_DEP_A | 0x00B0 | ends in an array with no stated length that runs to the end of the frame |
-
-2 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

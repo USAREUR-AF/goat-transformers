@@ -1,0 +1,11 @@
+{
+  "name": "sbp-system-var-roundtrip-status_report",
+  "from": "sbp-system-var",
+  "to": "sbp-system-var",
+  "input": "55feff0101146e2445781cccae6cf31f334043271af1182aefc6",
+  "expect": "55feff0101146e2445781cccae6cf31f334043271af1182aefc6",
+  "model": {
+    "@kind": "status_report",
+    "sbpsystem.status_report_status.#": "2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "sbp-user-var-roundtrip-user_data",
+  "from": "sbp-user-var",
+  "to": "sbp-user-var",
+  "input": "55000800010221f6",
+  "expect": "55000800010221f6",
+  "model": {
+    "@kind": "user_data",
+    "sbpuser.user_data_contents.#": "2"
+  }
+}

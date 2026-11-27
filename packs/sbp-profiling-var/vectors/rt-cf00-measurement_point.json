@@ -1,0 +1,11 @@
+{
+  "name": "sbp-profiling-var-roundtrip-measurement_point",
+  "from": "sbp-profiling-var",
+  "to": "sbp-profiling-var",
+  "input": "5500cf00012a4c5e046c23b2fa050d13d1599166a8ad153a000000807f019a0d0000000056551e61000000802da921f6",
+  "expect": "5500cf00012a4c5e046c23b2fa050d13d1599166a8ad153a000000807f019a0d0000000056551e61000000802da921f6",
+  "model": {
+    "@kind": "measurement_point",
+    "sbpprofiling.measurement_point_func.#": "2"
+  }
+}

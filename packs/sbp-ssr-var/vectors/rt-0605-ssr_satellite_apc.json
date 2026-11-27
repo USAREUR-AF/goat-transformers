@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_satellite_apc",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55050607014977e5a7744e3925fcd34c23fad1e3b0d53129b27cb334b536b738b93abb3cbd3ebf40c142c344c546c721f8cfa6e66341e49465e866e768e96aeb6ced6eef70f172f374f576f778f97a",
+  "expect": "55050607014977e5a7744e3925fcd34c23fad1e3b0d53129b27cb334b536b738b93abb3cbd3ebf40c142c344c546c721f8cfa6e66341e49465e866e768e96aeb6ced6eef70f172f374f576f778f97a",
+  "model": {
+    "@kind": "ssr_satellite_apc",
+    "sbpssr.ssr_satellite_apc_apc.#": "2"
+  }
+}

@@ -6,6 +6,11 @@ module        sbpflash
 version       0.1.0
 distribution  public
 source        "https://github.com/swift-nav/libsbp spec/yaml/swiftnav/sbp/flash.yaml at v6.5.2 (commit 925825dea5174f069b5d6e23548f213e09f0235c)"
+key  flash_program_target  int  -  "field target of MSG_FLASH_PROGRAM"
+key  flash_program_addr_start_0  int  bytes  "field addr_start_0 of MSG_FLASH_PROGRAM"
+key  flash_program_addr_start_1  int  bytes  "field addr_start_1 of MSG_FLASH_PROGRAM"
+key  flash_program_addr_start_2  int  bytes  "field addr_start_2 of MSG_FLASH_PROGRAM"
+key  flash_program_data_item  int  -  "field data_item of MSG_FLASH_PROGRAM"
 key  flash_done_response  int  -  "field response of MSG_FLASH_DONE"
 key  flash_read_req_target  int  -  "field target of MSG_FLASH_READ_REQ"
 key  flash_read_req_addr_start_0  int  bytes  "field addr_start_0 of MSG_FLASH_READ_REQ"
@@ -34,3 +39,4 @@ key  stm_unique_id_resp_stm_id_9  int  -  "field stm_id_9 of MSG_STM_UNIQUE_ID_R
 key  stm_unique_id_resp_stm_id_10  int  -  "field stm_id_10 of MSG_STM_UNIQUE_ID_RESP"
 key  stm_unique_id_resp_stm_id_11  int  -  "field stm_id_11 of MSG_STM_UNIQUE_ID_RESP"
 key  m25_flash_write_status_status_0  int  -  "field status_0 of MSG_M25_FLASH_WRITE_STATUS"
+list  flash_program_data  "the items of field data of MSG_FLASH_PROGRAM"

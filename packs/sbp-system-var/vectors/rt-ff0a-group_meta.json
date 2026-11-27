@@ -1,0 +1,11 @@
+{
+  "name": "sbp-system-var-roundtrip-group_meta",
+  "from": "sbp-system-var",
+  "to": "sbp-system-var",
+  "input": "550aff050107a27902778d4c90",
+  "expect": "550aff050107a27902778d4c90",
+  "model": {
+    "@kind": "group_meta",
+    "sbpsystem.group_meta_group_msgs.#": "2"
+  }
+}

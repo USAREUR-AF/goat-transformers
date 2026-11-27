@@ -64,18 +64,16 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
+The 5 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-file-io-var`.
+
 Messages with no kind:
 
 | Message | Type id | Reason |
 |---|---|---|
-| MSG_FILEIO_READ_REQ | 0x00A8 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_FILEIO_READ_RESP | 0x00A3 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_FILEIO_READ_DIR_REQ | 0x00A9 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_FILEIO_READ_DIR_RESP | 0x00AA | ends in a string with no stated length that runs to the end of the frame |
-| MSG_FILEIO_REMOVE | 0x00AC | ends in a string with no stated length that runs to the end of the frame |
-| MSG_FILEIO_WRITE_REQ | 0x00AD | ends in a string with no stated length that runs to the end of the frame |
+| MSG_FILEIO_WRITE_REQ | 0x00AD | ends in a string with no stated length that runs to the end of the frame; in a sequential pack: a text of no stated length before other fields |
 
-6 of them end in an array or a string that runs to the end of the frame;
+1 of them end in an array or a string that runs to the end of the frame;
 stating one needs a trailing field whose length is what remains of the
 payload (the payload length minus the fixed part).
 

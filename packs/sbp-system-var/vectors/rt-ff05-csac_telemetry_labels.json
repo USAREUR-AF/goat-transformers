@@ -1,0 +1,11 @@
+{
+  "name": "sbp-system-var-roundtrip-csac_telemetry_labels",
+  "from": "sbp-system-var",
+  "to": "sbp-system-var",
+  "input": "5505ff040103774c21",
+  "expect": "5505ff040103774c21",
+  "model": {
+    "@kind": "csac_telemetry_labels",
+    "sbpsystem.csac_telemetry_labels_telemetry_labels.#": "2"
+  }
+}

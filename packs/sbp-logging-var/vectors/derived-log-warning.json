@@ -1,0 +1,16 @@
+{
+  "name": "derived-log-warning",
+  "from": "sbp-logging-var",
+  "to": "sbp-logging-var",
+  "input": "550104c8420804474e5353206f6b",
+  "expect": "550104c8420804474e5353206f6b",
+  "model": {
+    "@kind": "log",
+    "sbp.sender": "17096",
+    "sbplogging.log_level": "4",
+    "sbplogging.log_text.#": "7",
+    "sbplogging.log_text[0].sbplogging.log_text_byte": "71"
+  },
+  "source": "synthetic: values chosen by the vector deriver (sender 0x42C8, level 4 = WARN, text \"GNSS ok\" as 7 ASCII bytes with no terminator); bytes derived by hand and by a standalone Python program, no engine or generator run",
+  "reference": "libsbp v6.5.2 spec/yaml/swiftnav/sbp/logging.yaml MSG_LOG 0x0401 (level u8, text unterminated string), base.yaml framing (preamble 0x55, msg_type u16 LE, sender u16 LE, length u8, payload; CRC not part of the pack); engine-spec 0.2 lsb order, 0.8 sequential and length 8 bytes (length = 8), 0.21 rest group to the end of the length extent"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "sbp-file-io-var-roundtrip-fileio_remove",
+  "from": "sbp-file-io-var",
+  "to": "sbp-file-io-var",
+  "input": "55ac00040102b58a",
+  "expect": "55ac00040102b58a",
+  "model": {
+    "@kind": "fileio_remove",
+    "sbpfileio.fileio_remove_filename.#": "2"
+  }
+}

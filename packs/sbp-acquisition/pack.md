@@ -65,16 +65,8 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
-Messages with no kind:
-
-| Message | Type id | Reason |
-|---|---|---|
-| MSG_ACQ_SV_PROFILE | 0x002E | ends in an array with no stated length that runs to the end of the frame |
-| MSG_ACQ_SV_PROFILE_DEP | 0x001E | ends in an array with no stated length that runs to the end of the frame |
-
-2 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
+The 2 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-acquisition-var`.
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

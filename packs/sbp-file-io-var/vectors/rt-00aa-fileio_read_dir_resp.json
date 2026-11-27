@@ -1,0 +1,11 @@
+{
+  "name": "sbp-file-io-var-roundtrip-fileio_read_dir_resp",
+  "from": "sbp-file-io-var",
+  "to": "sbp-file-io-var",
+  "input": "55aa0003010602bfa964d7ac",
+  "expect": "55aa0003010602bfa964d7ac",
+  "model": {
+    "@kind": "fileio_read_dir_resp",
+    "sbpfileio.fileio_read_dir_resp_contents.#": "2"
+  }
+}

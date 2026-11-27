@@ -437,6 +437,7 @@ def factor_text(f):
 
 
 Line = collections.namedtuple("Line", "key pos bits tr leaf")
+VarKind = collections.namedtuple("VarKind", "name msg_name msg_id lines requires")
 
 
 class KindPlan:
@@ -503,6 +504,9 @@ class PackagePlan:
         self.skipped = []              # (message, field, reason)
         self.core = []                 # (kind, field, core or track key, transform)
         self.scaled = []               # (kind, field, units, transform)
+        self.var_kinds = []            # VarKind: messages of variable length, a sequential pack
+        self.lists = collections.OrderedDict()   # list name -> (message, field, description)
+        self.var_format = self.format + "-var"
         for msg_name, mid, spec in pkg.messages:
             self.plan_message(msg_name, mid, spec, types)
         own = self.module + "."
@@ -511,6 +515,97 @@ class PackagePlan:
             raw = [l.key for l in k.lines if l.key.startswith(own)]
             ranked = sorted(range(len(raw)), key=lambda i: (usage[raw[i]], i))
             k.requires = [raw[i] for i in sorted(ranked[:MAX_REQUIRES])]
+
+    def transform(self, kind, leaf, record=True):
+        """(transform, key type, unit) of a leaf that binds no shared key."""
+        if leaf.base == "string":
+            return "ascii", "string", "-"
+        if leaf.base in ("float", "double"):
+            return ("f32" if leaf.base == "float" else "f64"), "float", unit_token(leaf.units)
+        sc = unit_scale(leaf.units)
+        if sc and sc[0] == 1:          # `1 day`: an integer in the base unit
+            return ("twos" if leaf.base[0] == "s" else "uint"), "int", unit_token(sc[1])
+        if sc:
+            tr = ("sscale:" if leaf.base[0] == "s" else "uscale:") + factor_text(sc[0])
+            if record:
+                self.scaled.append((kind, "_".join(leaf.path), str(leaf.units), tr))
+            return tr, "float", unit_token(sc[1])
+        return ("twos" if leaf.base[0] == "s" else "uint"), "int", unit_token(leaf.units)
+
+    def var_field(self, kind, leaf, msg_name, item=False):
+        """A ("field", key, bits, transform, base) line of a sequential kind."""
+        key = "%s.%s_%s" % (self.module, kind, "_".join(p if p.isdigit() else slug(p) for p in leaf.path))
+        tr, typ, unit = self.transform(kind, leaf, record=False)
+        name = key.split(".", 1)[1]
+        if name in self.keys:
+            raise GenError("%s: key %s twice" % (msg_name, name))
+        self.keys[name] = (typ, unit, msg_name, "_".join(leaf.path))
+        return ("field", key, 8 * leaf.size, tr, leaf.base, leaf.size)
+
+    def fixed_lines(self, kind, fields, types, prefix, msg_name, item=False):
+        """The field lines of fields of fixed length, in order (flatten's leaves)."""
+        leaves, skipped = [], []
+        size = flatten(fields, types, prefix, 0, msg_name, leaves, skipped)
+        if skipped:
+            raise Variable("a field it cannot map (%s)" % skipped[0][1])
+        return [self.var_field(kind, lf, msg_name, item) for lf in leaves], size
+
+    def plan_variable(self, msg_name, mid, fields, types):
+        """A message whose length is not fixed, as a kind of the sequential pack:
+        fields of fixed length in order; an array counted by an earlier field as a
+        group counted by that field (engine-spec 0.21, the field's line a count);
+        an array or text to the end of the frame as a `rest` group."""
+        kind = slug(re.sub(r"^MSG_", "", msg_name))
+        lines, fixed, placed = [], 0, {}
+        for i, (name, fs) in enumerate(fields):
+            t = str(fs.get("type"))
+            last = i == len(fields) - 1
+            if t == "string" and "size" not in fs:
+                if not last:
+                    raise Variable("a text of no stated length before other fields")
+                listname = "%s_%s" % (kind, slug(name))
+                item = Leaf([name, "byte"], "u8", 0, 1, None, fs.get("desc"), None)
+                body = [self.var_field(kind, item, msg_name, True)]
+                lines.append(("group", "%s.%s" % (self.module, listname), "rest", body))
+                self.lists[listname] = (msg_name, name, "the bytes of text field %s of %s, one per item" % (name, msg_name))
+                continue
+            if t == "array" and "size" not in fs:
+                fill = str(fs["fill"])
+                if fill in PRIMS:
+                    body = [self.var_field(kind, Leaf([name, "item"], fill, 0, PRIMS[fill], fs.get("units"),
+                                                      fs.get("desc"), None), msg_name, True)]
+                elif fill in types:
+                    body, _ = self.fixed_lines(kind, field_list(types[fill]), types, [name], msg_name, True)
+                else:
+                    raise GenError("%s: unknown type %s" % (msg_name, fill))
+                listname = "%s_%s" % (kind, slug(name))
+                self.lists[listname] = (msg_name, name, "the items of field %s of %s" % (name, msg_name))
+                if "size_fn" in fs:
+                    by = str(fs["size_fn"])
+                    if by not in placed:
+                        raise Variable("an array counted by `%s`, which is not a whole-number field before it" % by)
+                    at, bits = placed.pop(by)
+                    cname = slug(by) if slug(by).startswith("n_") else "n_%s" % slug(by)
+                    lines[at] = ("count", cname, bits)
+                    del self.keys["%s_%s" % (kind, slug(by))]
+                    lines.append(("group", "%s.%s" % (self.module, listname), "@" + cname, body))
+                else:
+                    if not last:
+                        raise Variable("an array of no stated length before other fields")
+                    lines.append(("group", "%s.%s" % (self.module, listname), "rest", body))
+                continue
+            sub, size = self.fixed_lines(kind, [(name, fs)], types, [], msg_name)
+            if t in PRIMS and t[0] == "u" and len(sub) == 1:
+                placed[name] = (len(lines), sub[0][2])
+            lines += sub
+            fixed += size
+        if fixed > 255:
+            raise Variable("a fixed part of %d bytes (the length byte holds 255)" % fixed)
+        if any(k.name == kind for k in self.kinds + self.var_kinds):
+            raise GenError("two messages give the kind %s" % kind)
+        own = [l[1] for l in lines if l[0] == "field"]
+        req = own[:1] or [l[1] for l in lines if l[0] == "group"][:1]
+        self.var_kinds.append(VarKind(kind, msg_name, mid, lines, req))
 
     def plan_message(self, msg_name, mid, spec, types):
         leaves, skipped = [], []
@@ -521,8 +616,11 @@ class PackagePlan:
             last = fields[-1][1] if fields else {}
             trailing = (last.get("type") in ("string", "array") and "size" not in last
                         and "size_fn" not in last)
-            self.not_built.append((msg_name, mid, ("ends in %s that runs to the end of the frame" % e)
-                                   if trailing else str(e)))
+            why = ("ends in %s that runs to the end of the frame" % e) if trailing else str(e)
+            try:
+                self.plan_variable(msg_name, mid, fields, types)
+            except Variable as v:
+                self.not_built.append((msg_name, mid, "%s; in a sequential pack: %s" % (why, v)))
             return
         if size > 255:
             self.not_built.append((msg_name, mid, "payload of %d bytes (the length byte holds 255)" % size))
@@ -553,20 +651,7 @@ class PackagePlan:
                 self.core.append((kind, "_".join(leaf.path), mv[0], mv[1]))
                 continue
             key = "%s.%s_%s" % (self.module, kind, "_".join(p if p.isdigit() else slug(p) for p in leaf.path))
-            if leaf.base == "string":
-                tr, typ, unit = "ascii", "string", "-"
-            elif leaf.base in ("float", "double"):
-                tr, typ, unit = ("f32" if leaf.base == "float" else "f64"), "float", unit_token(leaf.units)
-            else:
-                sc = unit_scale(leaf.units)
-                if sc and sc[0] == 1:          # `1 day`: an integer in the base unit
-                    tr, typ, unit = ("twos" if leaf.base[0] == "s" else "uint"), "int", unit_token(sc[1])
-                elif sc:
-                    tr = ("sscale:" if leaf.base[0] == "s" else "uscale:") + factor_text(sc[0])
-                    typ, unit = "float", unit_token(sc[1])
-                    self.scaled.append((kind, "_".join(leaf.path), str(leaf.units), tr))
-                else:
-                    tr, typ, unit = ("twos" if leaf.base[0] == "s" else "uint"), "int", unit_token(leaf.units)
+            tr, typ, unit = self.transform(kind, leaf)
             name = key.split(".", 1)[1]
             if name in self.keys:
                 raise GenError("%s: key %s twice" % (msg_name, name))
@@ -620,6 +705,110 @@ def pack_text(pp, sha, tag):
     return "\n".join(o) + "\n"
 
 
+def var_body(lines, ind):
+    o = []
+    for l in lines:
+        if l[0] == "field":
+            o.append("%sfield  %s  %d  %s" % (ind, l[1], l[2], l[3]))
+        elif l[0] == "count":
+            o.append("%scount  %s  %d" % (ind, l[1], l[2]))
+        else:
+            how = "rest" if l[2] == "rest" else "count %s" % l[2]
+            o.append("%sgroup  %s  %s" % (ind, l[1], how))
+            o += var_body(l[3], ind + "  ")
+            o.append("%send" % ind)
+    return o
+
+
+def var_pack_text(pp, sha, tag):
+    """The sequential pack of the package's messages of variable length."""
+    o = ["# SBP frames of the package swiftnav.sbp.%s whose payload length is not fixed," % pp.pkg.name,
+         "# one kind per message. Generated by tools/gen/sbp2pack.py; do not edit by hand.",
+         "# The frame: preamble 0x55, message type (u16), sender (u16), length (u8),",
+         "# payload, without the CRC. The payload is a `length 8 bytes` extent; an array",
+         "# or text that runs to its end is a `rest` group (engine-spec 0.8, 0.21).",
+         "format        %s" % pp.var_format,
+         "version       %s" % VERSION,
+         "distribution  public",
+         'source        "%s %s at %s (commit %s)"' % (REPO, pp.pkg.path, tag, sha),
+         "uses          %s" % HEADER_MODULE,
+         "uses          %s" % pp.module,
+         "wire          bits",
+         "layout        sequential",
+         "bit_order     lsb",
+         "when  8  %d" % PREAMBLE]
+    for k in pp.var_kinds:
+        o += ["", "kind  %s" % k.name, "when  16  %d" % k.msg_id]
+        if k.requires:
+            o.append("requires  %s" % " ".join(k.requires))
+        o.append("field  %s.sender  16  uint" % HEADER_MODULE)
+        o.append("length  8  bytes")
+        o += var_body(k.lines, "  ")
+        o.append("end")
+    return "\n".join(o) + "\n"
+
+
+def var_payload(lines, salt, items=2):
+    """The payload bytes of a sequential kind's lines: sample values, `items`
+    items in each group, each count the number of items."""
+    out = bytearray()
+    for j, l in enumerate(lines):
+        if l[0] == "field":
+            base, size = l[4], l[5]
+            leaf = Leaf([], base, 0, size, None, None, size if base == "string" else None)
+            v = sample(leaf, Line(l[1], 0, l[2], l[3], leaf), salt + 7 * j)
+            if base == "string":
+                out += v.encode("ascii").ljust(size, b"\0")
+            else:
+                out += struct.pack("<" + STRUCT[base], v)
+        elif l[0] == "count":
+            out += items.to_bytes(l[2] // 8, "little")
+        else:
+            for n in range(items):
+                out += var_payload(l[3], salt + 101 * (n + 1), items)
+    return out
+
+
+def var_vector_files(pp):
+    files = []
+    for i, k in enumerate(pp.var_kinds):
+        payload = var_payload(k.lines, k.msg_id * 31 + 3)
+        if len(payload) > 255:
+            raise GenError("%s: a vector payload of %d bytes" % (k.msg_name, len(payload)))
+        data = frame(k.msg_id, 0x0100 + i % 256, payload, False).hex()
+        model = collections.OrderedDict([("@kind", k.name)])
+        for l in k.lines:
+            if l[0] == "group":
+                model[l[1] + ".#"] = "2"
+        files.append(("rt-%04x-%s.json" % (k.msg_id, k.name), vector_text([
+            ("name", "%s-roundtrip-%s" % (pp.var_format, k.name)), ("from", pp.var_format), ("to", pp.var_format),
+            ("input", data), ("expect", data), ("model", model)])))
+    return files
+
+
+def var_pack_md(pp, sha, tag, nvec):
+    o = ["# %s" % pp.var_format, "",
+         "The messages of the SBP package `swiftnav.sbp.%s` whose payload length is not fixed, as one" % pp.pkg.name,
+         "`layout sequential` pack written by `tools/gen/sbp2pack.py` from libsbp %s (commit %s)." % (tag, sha),
+         "The messages of fixed length are in `%s`. Each kind is selected by the message type;" % pp.format,
+         "the payload is a `length 8 bytes` extent. An array or a text that runs to the end of",
+         "the frame is a `rest` group (a text one byte per item), and an array counted by an",
+         "earlier field is a group counted by it, whose line is then the count (engine-spec 0.21).",
+         "No field binds a shared key. The CRC is left to a framer.", "",
+         "A text that runs to the end of the frame is a list of byte values, not one text key:",
+         "the pack language has no text field whose length is what remains of its extent, so",
+         "a model check can test single bytes but not the text as a whole.", "",
+         "| Kind | Message | Id | Lines |", "|---|---|---:|---:|"]
+    for k in pp.var_kinds:
+        o.append("| `%s` | %s | %d | %d |" % (k.name, k.msg_name, k.msg_id, len(var_body(k.lines, ""))))
+    o += ["", "%d round-trip vectors `rt-*`, written by the generator's serializer from the definitions; each" % nvec,
+          "group holds two items. Vectors `derived-*` were derived by hand from the definitions,",
+          "independently of the generator and of every engine; the generator keeps them.", "",
+          "Do not edit `pack.def`, `PROVENANCE.md`, the module or the vectors by hand: change the",
+          "generator or its inputs and run it again."]
+    return "\n".join(o) + "\n"
+
+
 def module_text(pp, sha, tag):
     o = ["# The %s module: the message fields of the SBP package swiftnav.sbp.%s." % (pp.module, pp.pkg.name),
          "# Generated by tools/gen/sbp2pack.py; do not edit by hand. A key is",
@@ -631,6 +820,8 @@ def module_text(pp, sha, tag):
          'source        "%s %s at %s (commit %s)"' % (REPO, pp.pkg.path, tag, sha)]
     for name, (typ, unit, mname, fname) in pp.keys.items():
         o.append('key  %s  %s  %s  "field %s of %s"' % (name, typ, unit, fname, mname))
+    for name, (_, _, text) in pp.lists.items():
+        o.append('list  %s  "%s"' % (name, text))
     return "\n".join(o) + "\n"
 
 
@@ -981,6 +1172,10 @@ def pack_md(pp, sha, tag, nvec):
     a("")
     a("## What is not mapped")
     a("")
+    if pp.var_kinds:
+        a("The %d messages of this package whose payload length is not fixed are kinds of" % len(pp.var_kinds))
+        a("the sequential pack `%s`." % pp.var_format)
+        a("")
     if pp.not_built:
         a("Messages with no kind:")
         a("")
@@ -1088,6 +1283,7 @@ def run(args, out):
     packages, types = load_packages(src)
     plans = [PackagePlan(p, types) for p in packages]
     built = [pp for pp in plans if pp.kinds]
+    with_var = [pp for pp in plans if pp.var_kinds]
     core_text = read_text(args.core_def) if args.core_def else out.read("model/core.def")
     track_text = read_text(args.track_def) if args.track_def else out.read("model/track.def")
     out.write("model/%s.def" % HEADER_MODULE, header_module_text(sha, tag))
@@ -1112,6 +1308,27 @@ def run(args, out):
         total += check_vectors(pack, [(n, out.read("%s/vectors/%s" % (pdir, n))) for n, _ in vecs], pp.format)
         out.write(pdir + "/pack.md", pack_md(pp, sha, tag, len(vecs)))
         out.write(pdir + "/PROVENANCE.md", provenance_md(pp, sha, tag, table))
+    nvar = 0
+    for pp in with_var:
+        pdir = "packs/" + pp.var_format
+        out.write("model/%s.def" % pp.module, module_text(pp, sha, tag))
+        out.write(pdir + "/pack.def", var_pack_text(pp, sha, tag))
+        vecs = var_vector_files(pp)
+        keep = {n for n, _ in vecs}
+        for old in out.listdir(pdir + "/vectors"):     # rt-* only: derived-* vectors are kept
+            if old.startswith("rt-") and old.endswith(".json") and old not in keep:
+                out.remove("%s/vectors/%s" % (pdir, old))
+        for n, t in vecs:
+            out.write("%s/vectors/%s" % (pdir, n), t)
+        model = gtcheck.Model()
+        model.add(core_text, "model/core.def")
+        model.add(track_text, "model/track.def")
+        model.add(out.read("model/%s.def" % HEADER_MODULE), "model/%s.def" % HEADER_MODULE)
+        model.add(out.read("model/%s.def" % pp.module), "model/%s.def" % pp.module)
+        gtcheck.load_pack(out.read(pdir + "/pack.def"), model, pdir + "/pack.def")
+        out.write(pdir + "/pack.md", var_pack_md(pp, sha, tag, len(vecs)))
+        out.write(pdir + "/PROVENANCE.md", provenance_md(pp, sha, tag, table).replace(pp.format, pp.var_format))
+        nvar += len(vecs)
     nb = collections.Counter(("trailing" if "end of the frame" in w else w.split(" (")[0])
                              for pp in plans for _, _, w in pp.not_built)
     return ["tag             %s (commit %s)" % (tag, sha),
@@ -1124,6 +1341,8 @@ def run(args, out):
             "core bindings   %d" % sum(len(pp.core) for pp in built),
             "not built       %d %s" % (sum(nb.values()), dict(nb)),
             "fields left     %d" % sum(len(pp.skipped) for pp in plans),
+            "variable        %d packs, %d kinds, %d round trips (sequential)" % (
+                len(with_var), sum(len(pp.var_kinds) for pp in with_var), nvar),
             "vectors         %d checked" % total,
             "self-check      ok"]
 
