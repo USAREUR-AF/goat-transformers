@@ -1,0 +1,30 @@
+{
+ "name": "golden-traffic-1",
+ "from": "gdl90",
+ "to": "gdl90",
+ "input": "1410a1b2c3400000a000005a09891c2fe1800355414c313233414200",
+ "expect": "1410a1b2c3400000a000005a09891c2fe1800355414c313233414200",
+ "model": {
+  "@kind": "traffic",
+  "gdl90.address_type": "0",
+  "gdl90.address": "10597059",
+  "lat": "90.0",
+  "lon": "-135.0",
+  "gdl90.pressure_alt_ft": "35000",
+  "gdl90.alt_raw": "1440",
+  "gdl90.airborne": "1",
+  "gdl90.extrapolated": "0",
+  "gdl90.track_type": "1",
+  "gdl90.nic": "8",
+  "gdl90.nacp": "9",
+  "gdl90.speed_kt": "450",
+  "gdl90.vvel_fpm": "-1984",
+  "gdl90.vvel_raw": "-31",
+  "gdl90.track_raw": "128",
+  "gdl90.emitter_category": "3",
+  "callsign": "UAL123AB",
+  "gdl90.priority_status": "0"
+ },
+ "source": "gdl90 (github.com/etdey/gdl90) at a026ec7: Encoder.msgTrafficReport with BUILD[3] of tools/gen/golden-gdl90.py, unframed and its CRC checked with the reference's crcCheck. Written by tools/gen/golden-gdl90.py; no engine is run.",
+ "reference": "what the reference's messageToObject (MIT) decodes, under the pack's keys; the alert status is not compared (tools/gen/golden-gdl90.py)"
+}

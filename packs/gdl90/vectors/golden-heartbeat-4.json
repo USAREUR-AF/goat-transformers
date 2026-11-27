@@ -1,0 +1,23 @@
+{
+ "name": "golden-heartbeat-4",
+ "from": "gdl90",
+ "to": "gdl90",
+ "input": "000100caa8292c",
+ "expect": "000100caa8292c",
+ "model": {
+  "@kind": "heartbeat",
+  "gdl90.hb_gps_valid": "0",
+  "gdl90.hb_maint_required": "0",
+  "gdl90.hb_status1_bit5": "0",
+  "gdl90.hb_addr_talkback": "0",
+  "gdl90.hb_status1_bits3_1": "0",
+  "gdl90.hb_uat_initialized": "1",
+  "gdl90.hb_time_bit16": "0",
+  "gdl90.hb_status2_bits6_1": "0",
+  "gdl90.hb_utc_ok": "0",
+  "gdl90.hb_time_low16": "43210",
+  "gdl90.hb_msg_counts_raw": "10540"
+ },
+ "source": "gdl90 (github.com/etdey/gdl90) at a026ec7: Encoder.msgHeartbeat with BUILD[2] of tools/gen/golden-gdl90.py, unframed and its CRC checked with the reference's crcCheck. Written by tools/gen/golden-gdl90.py; no engine is run.",
+ "reference": "what the reference's messageToObject (MIT) decodes, under the pack's keys; the alert status is not compared (tools/gen/golden-gdl90.py)"
+}

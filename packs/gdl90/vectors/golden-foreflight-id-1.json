@@ -1,0 +1,20 @@
+{
+ "name": "golden-foreflight-id-1",
+ "from": "gdl90",
+ "to": "gdl90",
+ "input": "650001ffffffffffffffff537472617475783167646c39302d656e636f6465722d313600000001",
+ "expect": "650001ffffffffffffffff537472617475783167646c39302d656e636f6465722d313600000001",
+ "model": {
+  "@kind": "foreflight-id",
+  "gdl90.ff_version": 1,
+  "gdl90.ff_short_name": "Stratux1",
+  "gdl90.ff_long_name": "gdl90-encoder-16",
+  "gdl90.ff_reserved": 0,
+  "gdl90.ff_capabilities": 1,
+  "@absent": [
+   "gdl90.ff_serial"
+  ]
+ },
+ "source": "gdl90 (github.com/etdey/gdl90) at a026ec7: Encoder.msgForeFlightMessage101 with BUILD[12] of tools/gen/golden-gdl90.py, unframed and its CRC checked with the reference's crcCheck. Written by tools/gen/golden-gdl90.py; no engine is run.",
+ "reference": "the arguments the reference's Encoder took (its decoder has no ForeFlight ID message)"
+}

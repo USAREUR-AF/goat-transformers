@@ -1,0 +1,14 @@
+{
+ "name": "golden-ownship-geometric-altitude-4",
+ "from": "gdl90",
+ "to": "gdl90",
+ "input": "0b7fff7ffe",
+ "expect": "0b7fff7ffe",
+ "model": {
+  "@kind": "ownship-geometric-altitude",
+  "gdl90.geo_alt_ft": "163835",
+  "gdl90.geo_fom_raw": "32766"
+ },
+ "source": "gdl90 (github.com/etdey/gdl90) at a026ec7: Encoder.msgOwnshipGeometricAltitude with BUILD[11] of tools/gen/golden-gdl90.py, unframed and its CRC checked with the reference's crcCheck. Written by tools/gen/golden-gdl90.py; no engine is run.",
+ "reference": "what the reference's messageToObject (MIT) decodes, under the pack's keys; the alert status is not compared (tools/gen/golden-gdl90.py)"
+}

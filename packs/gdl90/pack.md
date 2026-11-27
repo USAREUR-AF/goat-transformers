@@ -151,3 +151,26 @@ values keeps them under the same context; a GeoJSON point with a pressure
 altitude in feet from the context encodes the altitude code 220; an AHRS roll
 of 0x7FFF takes its degrees from the context. The vectors of version 0.1 whose
 fields hold sentinels now pin no key for them.
+
+## Golden vectors
+
+16 vectors `golden-<kind>-<n>.json`, written by `tools/gen/golden-gdl90.py` from gdl90
+(github.com/etdey/gdl90, MIT; PROVENANCE.md), a reference GDL 90 encoder and decoder, run, not
+copied. The inputs are the heartbeat and geometric altitude messages of its decoder tests and
+messages its encoder builds: 3 heartbeats, 5 traffic and 2 ownship reports (positions in every
+quadrant and at the ends of the field, altitudes from -1,000 to 101,350 ft, vertical rates of
+both signs), 3 geometric altitudes and 2 ForeFlight ID messages. Each frame is unframed and its
+CRC checked with the reference's own check; the payload is a round trip, and the model values are
+what the reference decodes (for the ForeFlight ID message, which it does not decode, the arguments
+its encoder took). Not compared, each for a reason in the reference (the script names them): the
+alert status (its decoder reports 0 for every status), velocities of "no data" (it reports 0), the
+reserved bit of the heartbeat's message counts, and the uplink and AHRS messages (it has no encoder
+for them).
+
+Text padding. Every call sign and ForeFlight name in these vectors fills its field. The GDL 90
+ICD (Rev A, 3.5.1.11) allows only `0` to `9`, `A` to `Z` and the space in a call sign, the space
+as the trailing pad; the reference pads with spaces, and so do the two report messages of its tests.
+This pack writes NUL padding, as Stratux does (above) and as `ascii` encodes; decode, with `trim`,
+reads either. So a report with a short call sign written by an ICD-conformant sender comes back
+NUL-padded: the call sign is kept, the bytes are not. The ForeFlight specification says only
+"UTF8 string" for the two names.

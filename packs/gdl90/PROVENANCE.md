@@ -55,3 +55,17 @@ name: `makeOwnshipReport` (altitude 0xFFF, vertical velocity 0x800),
 `makeFFAHRSMessage` (0x7FFF and 0xFFFF). Read again on 2026-11-19 at the same
 commit.
 
+## Golden vectors: gdl90 (etdey)
+
+`packs/gdl90/vectors/golden-*.json` are written by `tools/gen/golden-gdl90.py` from gdl90, a
+reference GDL 90 encoder and decoder, not from this pack and not by any engine (shared-model
+hardening, item 2).
+
+| | |
+|---|---|
+| Repository | https://github.com/etdey/gdl90, commit `a026ec784acecb82741e729b658fc532f396a597` (the head of `master` when fetched, 2026-11-27) |
+| Files run | `gdl90/__init__.py`, `gdl90/encoder.py`, `gdl90/fcs.py`, `gdl90/messages.py`, fetched at that commit into a cache and refused unless each SHA-256 is the one `tools/gen/golden-gdl90.py` records; no package is installed |
+| Test messages | `gdl90/tests/test_decoder.py` at that commit (SHA-256 recorded in the script): the framed heartbeat and geometric altitude messages are inputs |
+| Licence | MIT (`LICENSE` at that commit, SHA-256 `27130c67ffdc08f55a8a8fedc6e9652e2b632c9882ff970faab2e42d17bf4bc1`). It is run, not copied: none of its code is in this repository |
+| Also read | `Docs/GDL90_Public_ICD_RevA.pdf` and `Docs/ForeFlight - GDL 90 Extended Specification.pdf` in that repository, for text padding (pack.md); read, not kept |
+| CI | conformance, "GDL 90 golden vectors are what the gdl90 reference writes" |
