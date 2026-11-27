@@ -1952,6 +1952,7 @@ pub enum Sentinel {
 
 impl Sentinel {
     /// An exact sentinel, the kind encode may write.
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf"))]
     pub(crate) fn exact(&self) -> bool {
         matches!(self, Sentinel::Num(_) | Sentinel::Text(..))
     }
