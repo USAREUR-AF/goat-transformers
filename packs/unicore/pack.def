@@ -2492,7 +2492,7 @@ field     unicore.dophd2_satslist 0:392:32 uint
 
 kind      bestsat
 when      0:8:16 1041
-requires  unicore.bestsat_groupsat_gnss
+requires  unicore.bestsat_groupsat
 field     unicore.payload_length 0:24:16 uint
 group     unicore.bestsat_groupsat 0:200 item 128 count 0:168:32
   field   unicore.bestsat_groupsat_gnss 0:0:32 uint
@@ -2538,7 +2538,7 @@ end
 
 kind      satecef
 when      0:8:16 2115
-requires  unicore.satecef_groupsat_gnss
+requires  unicore.satecef_groupsat
 field     unicore.payload_length 0:24:16 uint
 group     unicore.satecef_groupsat 0:200 item 320 count 0:168:32
   field   unicore.satecef_groupsat_gnss 0:0:32 uint

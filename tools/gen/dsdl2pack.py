@@ -2841,7 +2841,8 @@ def cy_check_keys(scope, module, mods):
         for k in sc["kinds"]:
             walk(k["lines"])
             for rk in k["requires"]:
-                if rk.split(".", 1)[1] not in mods[module]["keys"]:
+                # a requires names a key or a list (engine-spec: a list holds when it has an item)
+                if rk.split(".", 1)[1] not in mods[module]["keys"] and rk.split(".", 1)[1] not in mods[module]["lists"]:
                     raise GenError("requires undeclared " + rk)
     scope_walk(scope)
 

@@ -13,7 +13,7 @@ layout        sequential
 bit_order     lsb
 kind   sparse_list
 when   8  1
-requires  cyuavcannodeport.subject_id_list_0_1_sparse_list_item_value
+requires  cyuavcannodeport.subject_id_list_0_1_sparse_list
 align  8
 group  cyuavcannodeport.subject_id_list_0_1_sparse_list  count 8
   align  8

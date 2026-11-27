@@ -41,8 +41,19 @@ def _parse(lines):
         body = lines[a:b]
         while body and body[-1].strip() == "":
             body = body[:-1]
-        k = {"name": lines[a].split()[1], "lines": body, "when": {}, "req": False, "keys": [], "last_when": 0}
+        k = {"name": lines[a].split()[1], "lines": body, "when": {}, "req": False, "keys": [], "lists": set(),
+             "last_when": 0}
+        groups = []  # indents of the groups open at this line
         for j, l in enumerate(body[1:], 1):
+            s = l.strip()
+            if not s or s.startswith("#"):
+                continue
+            ind = len(l) - len(l.lstrip())
+            while groups and ind <= groups[-1] and not (ind == groups[-1] and s == "end"):
+                groups.pop()
+            if groups and ind == groups[-1] and s == "end":
+                groups.pop()
+                continue
             if l.startswith("when"):
                 parts = l.split(None, 2)
                 if len(parts) == 3:
@@ -50,8 +61,17 @@ def _parse(lines):
                 k["last_when"] = j
             elif l.startswith("requires"):
                 k["req"] = True
-            m = _FIELD.search(l)
-            if m and m.group(1) not in k["keys"]:
+            # `requires` sees the entity's own keys and its lists (engine-spec: a list holds
+            # when it has an item), not the keys inside a list's items
+            g = re.match(r"group\s+(\S+)", s)
+            if g:
+                if not groups and g.group(1) not in k["keys"]:
+                    k["keys"].append(g.group(1))
+                    k["lists"].add(g.group(1))
+                groups.append(ind)
+                continue
+            m = _FIELD.search(s)
+            if m and not groups and m.group(1) not in k["keys"]:
                 k["keys"].append(m.group(1))
         kinds.append(k)
     return starts, kinds
@@ -85,7 +105,9 @@ def order(text):
     for k in kinds:
         for key in k["keys"]:
             count[key] = count.get(key, 0) + 1
-    own = {k["name"]: [key for key in k["keys"] if count[key] == 1] for k in kinds}
+    # a kind's own field comes before its own list: a list may be empty, and then requires on it fails
+    own = {k["name"]: sorted((key for key in k["keys"] if count[key] == 1), key=lambda key: key in k["lists"])
+           for k in kinds}
     # trailing kinds with no `when` are fallbacks for decode: they stay last, as they are
     tail = []
     while kinds and not kinds[-1]["when"]:

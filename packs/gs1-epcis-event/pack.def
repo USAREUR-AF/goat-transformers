@@ -25,7 +25,7 @@ wire          json
 
 kind      transformation_event
 when      type  TransformationEvent
-requires  epcis.input_epclist_value
+requires  epcis.transformation_id
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string
@@ -114,7 +114,7 @@ end
 
 kind      aggregation_event
 when      type  AggregationEvent
-requires  epcis.parent_id  epcis.child_epcs_value  epcis.child_quantity_list_epc_class  epcis.child_quantity_list_quantity  epcis.child_quantity_list_uom  epcis.action
+requires  epcis.parent_id  epcis.child_epcs  epcis.child_quantity_list  epcis.action
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string
@@ -190,7 +190,7 @@ end
 
 kind      association_event
 when      type  AssociationEvent
-requires  epcis.parent_id  epcis.child_epcs_value  epcis.child_quantity_list_epc_class  epcis.child_quantity_list_quantity  epcis.child_quantity_list_uom  epcis.action
+requires  epcis.parent_id  epcis.child_epcs  epcis.child_quantity_list  epcis.action
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string
@@ -266,7 +266,7 @@ end
 
 kind      transaction_event
 when      type  TransactionEvent
-requires  epcis.parent_id  epcis.epc_list_value  epcis.quantity_list_epc_class  epcis.quantity_list_quantity  epcis.quantity_list_uom  epcis.action
+requires  epcis.parent_id  epcis.epc_list  epcis.quantity_list  epcis.action
 field  epcis.event_time  eventTime  string
 field  epcis.record_time  recordTime  string
 field  epcis.event_time_zone_offset  eventTimeZoneOffset  string

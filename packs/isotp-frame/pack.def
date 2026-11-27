@@ -11,7 +11,7 @@ bit_order     msb
 
 kind  single-frame-escape
 when  8  0
-requires  isotp.octet
+requires  isotp.data  isotp.padding
 count  sf_escape_length  8
 group  isotp.data  count  @sf_escape_length
   field  isotp.octet  8  uint
@@ -22,7 +22,7 @@ end
 
 kind  single-frame
 when  4  0
-requires  isotp.octet
+requires  isotp.data  isotp.padding
 count  sf_length  4
 group  isotp.data  count  @sf_length
   field  isotp.octet  8  uint
@@ -33,7 +33,7 @@ end
 
 kind  first-frame-escape
 when  16  4096
-requires  isotp.message_length
+requires  isotp.message_length  isotp.data
 field  isotp.message_length  32  uint
 group  isotp.data  rest
   field  isotp.octet  8  uint
@@ -41,7 +41,7 @@ end
 
 kind  first-frame
 when  4  1
-requires  isotp.message_length
+requires  isotp.message_length  isotp.data
 field  isotp.message_length  12  uint
 group  isotp.data  rest
   field  isotp.octet  8  uint

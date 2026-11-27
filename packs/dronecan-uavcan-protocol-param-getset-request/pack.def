@@ -32,7 +32,7 @@ field  dcuavcanprotocolparam.get_set_request_value_boolean_value  8  uint
 
 kind   string_value
 when   3  4
-requires  dcuavcanprotocolparam.get_set_request_value_string_value_item
+requires  dcuavcanprotocolparam.get_set_request_value_string_value
 group  dcuavcanprotocolparam.get_set_request_value_string_value  count 8
   field  dcuavcanprotocolparam.get_set_request_value_string_value_item  8  uint
 end
