@@ -232,7 +232,9 @@ python3 -I "$GEN/proto2pack.py" \
 # track.scoped_id and then uid, as packs/cot-xml binds @uid. takControl may
 # stand beside cotEvent, so its fields are common lines (--common-member) and the kind
 # `cot_event` is first. The bindings are those of packs/cot-xml, field for field; sendTime
-# and startTime both hold time_ms, as @time and @start do there. --cross writes
+# and startTime both hold time_ms, as @time and @start do there. --raw-first 2.7: startTime's raw
+# key is written first, so a round trip of this pack keeps a startTime that differs from sendTime
+# (a same-format round trip is lossless), and time_ms still writes it for an entity from another format. --cross writes
 # gen-cot-xml-to-cot-protobuf.json; --cross-text on cot-xml then writes the vector into
 # cot-xml and checks the way back without writing it again.
 # An unknown hae, ce and le is 9999999.0, as TAK's own library at that commit writes it
@@ -250,6 +252,7 @@ python3 -I "$GEN/proto2pack.py" \
   --map 2.10=lat --map 2.11=lon --map 2.12=hae --map 2.13=ce --map 2.14=le \
   --absent 2.12=4711630319185297408 --absent 2.13=4711630319185297408 --absent 2.14=4711630319185297408 \
   --map 2.15.2.2=callsign --map 2.15.7.1=speed_ms --map 2.15.7.2=course \
+  --raw-first 2.7 \
   --default-kind cot_event --default-requires lat lon \
   --names-file "$NAMES/cot-protobuf.json" \
   --cross "$ROOT/packs/cot-xml/pack.def=$ROOT/packs/cot-xml/vectors/02-cot-roundtrip.json:input" \

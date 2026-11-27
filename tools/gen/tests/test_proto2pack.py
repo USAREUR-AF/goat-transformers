@@ -404,6 +404,20 @@ class RefusalTest(FixtureCase):
         self.assertIn("--map paths that are not mapped leaves of the schema: ['10.99']", err)
         self.assertEqual(support.tree(self.tmp), before)
 
+    def test_a_raw_first_option_for_a_path_with_no_map_is_refused(self):
+        err = self.run_refused(depot_args(self.tmp) + ["--raw-first", "10.3"])
+        self.assertIn("--raw-first 10.3: no --map binding at that path", err)
+
+    def test_raw_first_puts_the_raw_key_line_before_the_shared_key_line(self):
+        self.run_ok(depot_args(self.tmp) + ["--raw-first", "10.2.1"])
+        pack = self.read("packs/depot/pack.def")
+        lat = [ln.split()[1] for ln in pack.splitlines() if ln.startswith("field") and ln.split()[2] == "10.2.1"]
+        lon = [ln.split()[1] for ln in pack.splitlines() if ln.startswith("field") and ln.split()[2] == "10.2.2"]
+        self.assertEqual(len(lat), 2, pack)
+        self.assertTrue(lat[0].startswith("depot.") and lat[1] == "lat", lat)
+        self.assertTrue(lon[0] == "lon" and lon[1].startswith("depot."), lon)
+        self.assertIn("Except at `10.2.1` (`--raw-first`)", self.read("packs/depot/pack.md"))
+
     def test_a_bind_option_on_a_walked_path_is_refused(self):
         err = self.run_refused(depot_args(self.tmp) + ["--bind", "parcel_report:10.3=type:pstring"])
         self.assertIn("the walk maps that path; use --map", err)

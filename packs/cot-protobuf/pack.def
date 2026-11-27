@@ -28,8 +28,8 @@ field  uid                                             2.5       pstring
 field  takproto.cot_event_uid                          2.5       pstring
 field  time_ms                                         2.6       pvarint
 field  takproto.cot_event_send_time                    2.6       pvarint
-field  time_ms                                         2.7       pvarint
 field  takproto.cot_event_start_time                   2.7       pvarint
+field  time_ms                                         2.7       pvarint
 field  stale_ms                                        2.8       pvarint
 field  takproto.cot_event_stale_time                   2.8       pvarint
 field  how                                             2.9       pstring

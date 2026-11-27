@@ -67,7 +67,7 @@ CASES = [
     ("02-event-to-geojson", EVENT, "geojson", ["uid", "lat", "lon", "time_ms", "callsign"]),
     ("03-full-message-roundtrip", FULL, "cot-protobuf", None),
     ("04-full-message-to-cot-xml", FULL, "cot-xml", ["time_ms", "stale_ms", "course", "speed_ms"]),
-    ("05-start-differs-time-is-written-at-both", START_DIFFERS, "cot-protobuf",
+    ("05-start-differs-roundtrip-keeps-start", START_DIFFERS, "cot-protobuf",
      ["time_ms", "takproto.cot_event_send_time", "takproto.cot_event_start_time"]),
     ("06-start-alone-fills-time", START_ONLY, "cot-protobuf", ["time_ms", "takproto.cot_event_start_time"]),
     ("07-control-alone", CONTROL, "cot-protobuf", None),
