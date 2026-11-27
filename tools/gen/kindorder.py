@@ -59,6 +59,10 @@ def _parse(lines):
                 if len(parts) == 3:
                     k["when"][parts[1]] = parts[2].split("#")[0].strip()
                 k["last_when"] = j
+                # a `when ... as <key>` that is not `optional` is an implicit requires term
+                # (engine-spec 0.30 Encode, 0.94 ruling 1): the kind does not always qualify
+                if re.search(r"\sas\s+\S+", l.split("#")[0]) and not re.search(r"\soptional\b", l.split("#")[0]):
+                    k["req"] = True
             elif l.startswith("requires"):
                 k["req"] = True
             # `requires` sees the entity's own keys and its lists (engine-spec: a list holds

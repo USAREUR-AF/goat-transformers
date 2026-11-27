@@ -5,6 +5,8 @@ module        mrt
 version       0.1.0
 distribution  public
 source        "IETF RFC 6396 and RFC 8050 (MRT), RFC 4271 section 4 (BGP messages); restated by goat-transformers"
+key   type                  int   -    "MRT type: 13 TABLE_DUMP_V2, 16 BGP4MP, 17 BGP4MP_ET"
+key   subtype               int   -    "MRT subtype within the type (RFC 6396 4.3 and 4.4, RFC 8050)"
 key   collector_bgp_id      int   -    "BGP identifier of the collector that wrote the table (PEER_INDEX_TABLE)"
 list  view_name             "name of the view, as its octets (PEER_INDEX_TABLE); an empty list when the view has no name"
 key   view_name_octet       int   -    "one octet of the view name"

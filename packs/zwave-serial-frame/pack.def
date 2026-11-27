@@ -9,6 +9,15 @@ wire          bits
 layout        sequential
 bit_order     msb
 
+kind  ack
+when  8  6  as  zwave.start
+
+kind  nak
+when  8  21  as  zwave.start
+
+kind  can
+when  8  24  as  zwave.start
+
 kind  data-frame
 when  8  1  as  zwave.start
 requires  zwave.message_type  zwave.function_id  zwave.checksum
@@ -20,12 +29,3 @@ length  8  bytes  plus  1
   end
 end
 field  zwave.checksum  8  uint
-
-kind  ack
-when  8  6  as  zwave.start
-
-kind  nak
-when  8  21  as  zwave.start
-
-kind  can
-when  8  24  as  zwave.start

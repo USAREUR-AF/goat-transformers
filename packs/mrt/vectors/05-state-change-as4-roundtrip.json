@@ -7,6 +7,8 @@
   "model": {
     "@kind": "bgp4mp-state-change-as4",
     "time_ms": "1763640001000",
+    "mrt.type": "16",
+    "mrt.subtype": "5",
     "mrt.peer_as": "4200000001",
     "mrt.local_as": "64496",
     "mrt.address_family": "1",
