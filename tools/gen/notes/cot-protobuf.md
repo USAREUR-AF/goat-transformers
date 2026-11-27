@@ -54,10 +54,14 @@ format that maps it) sees that identity in the event, in this pack as in `cot-xm
 `time_ms` has two lines, `sendTime` (2.6) first and `startTime` (2.7) second, as `cot-xml` has
 `@time` first and `@start` second. Decode takes `sendTime`, and `startTime` only when `sendTime`
 is not on the wire (`06-start-alone-fills-time`). Encode writes `time_ms` at both. Each path also
-has its raw key, second on the path, so decode keeps both values as
-`takproto.cot_event_send_time` and `takproto.cot_event_start_time`; on encode the shared line is
-first on each path, so a `startTime` that differs from `sendTime` leaves with the value of
-`sendTime` (`05-start-differs-time-is-written-at-both`).
+has its raw key, so decode keeps both values as `takproto.cot_event_send_time` and
+`takproto.cot_event_start_time`. On `sendTime` the shared line is first. On `startTime` the raw
+key's line is first (`--raw-first 2.7`): encode writes `takproto.cot_event_start_time` when the
+entity has it, so a round trip of this pack keeps a `startTime` that differs from `sendTime`
+(`05-start-differs-roundtrip-keeps-start`), and writes `time_ms` there only when the raw key is
+absent, as for an entity from another format. An event with only one of the two times still comes
+back with both: decode fills `time_ms` from the one on the wire and encode writes `time_ms` at the
+other (`06-start-alone-fills-time`).
 
 ## Numbers that are not written
 
