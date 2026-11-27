@@ -1,0 +1,19 @@
+{
+ "name": "golden-airborne-position-baro-tc11-1",
+ "from": "adsb",
+ "to": "adsb",
+ "input": "8D406B9058B975870B738754F480",
+ "expect": "8d406b9058b975870b738754f480",
+ "model": {
+  "@kind": "airborne-position-baro-tc11",
+  "adsb.df": "17",
+  "adsb.icao": "4221840",
+  "adsb.tc": "11",
+  "adsb.cpr_odd": "1",
+  "adsb.cpr_lat": "50053",
+  "adsb.cpr_lon": "95111",
+  "adsb.ss": "0"
+ },
+ "source": "pyModeS 3.7.0: pyModeS.decode of a message from tests/data/sample_data_adsb.csv at 4bf0832 (github.com/junzis/pyModeS). Written by tools/gen/golden-pymodes.py; no engine is run.",
+ "reference": "DF17 type code 11 as pyModeS (GPL-3.0) decodes it; raw fields that pyModeS reports scaled are turned back by the DO-260B scaling named in tools/gen/golden-pymodes.py."
+}

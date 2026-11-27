@@ -135,6 +135,13 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/takproto"
           "$RUNNER_TEMP/takproto/bin/pip" install --quiet --disable-pip-version-check --require-hashes -r tools/gen/golden-takproto.txt
           "$RUNNER_TEMP/takproto/bin/python" -I tools/gen/golden-takproto.py --check --cache "$RUNNER_TEMP/takproto-cache"
+      # pyModeS is installed from a wheel pinned by SHA-256; its test messages are
+      # fetched at the v3.7.0 commit and refused unless their SHA-256 matches.
+      - name: ADS-B golden vectors are what pyModeS decodes
+        run: |
+          python3 -m venv "$RUNNER_TEMP/pymodes"
+          "$RUNNER_TEMP/pymodes/bin/pip" install --quiet --disable-pip-version-check --require-hashes -r tools/gen/golden-pymodes.txt
+          "$RUNNER_TEMP/pymodes/bin/python" -I tools/gen/golden-pymodes.py --check --cache "$RUNNER_TEMP/pymodes-cache"
   # Spec 0.24: each wire builds alone, and with every wire but it, with no
   # warning; its vectors pass on the build that has it and json. A job of its
   # own: the rust job is near its time limit.

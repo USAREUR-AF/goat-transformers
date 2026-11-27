@@ -1,0 +1,17 @@
+{
+ "name": "golden-identification-tc4-1",
+ "from": "adsb",
+ "to": "adsb",
+ "input": "8D406B902015A678D4D220AA4BDA",
+ "expect": "8d406b902015a678d4d220aa4bda",
+ "model": {
+  "@kind": "identification-tc4",
+  "adsb.df": "17",
+  "adsb.icao": "4221840",
+  "adsb.tc": "4",
+  "adsb.category": "0",
+  "callsign": "EZY85MH"
+ },
+ "source": "pyModeS 3.7.0: pyModeS.decode of a message from tests/data/sample_data_adsb.csv at 4bf0832 (github.com/junzis/pyModeS). Written by tools/gen/golden-pymodes.py; no engine is run.",
+ "reference": "DF17 type code 4 as pyModeS (GPL-3.0) decodes it; raw fields that pyModeS reports scaled are turned back by the DO-260B scaling named in tools/gen/golden-pymodes.py."
+}

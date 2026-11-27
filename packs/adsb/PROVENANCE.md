@@ -99,3 +99,16 @@ The `chars:icao6` binding of the identification characters rests on pyModeS
 alphabet of the field (1-26 letters, 32 space, 48-57 digits, every other code
 invalid). Read on 2026-11-19; no code copied.
 
+## Golden vectors: pyModeS
+
+`packs/adsb/vectors/golden-*.json` are written by `tools/gen/golden-pymodes.py`
+from pyModeS, a reference Mode S and ADS-B decoder, not from this pack and not
+by any engine (shared-model hardening, item 2). pyModeS decodes only, so the
+inputs are the real DF17 messages of its own test suite, and the model values
+are what pyModeS decodes from them.
+
+| | |
+|---|---|
+| Package | pyModeS 3.7.0, wheel `pymodes-3.7.0-py3-none-any.whl`, SHA-256 `78e64e9c9ac81c6ea986b1a77729c1c517b5d6200c17418ca4ae0db3c4478c3d`; pinned in `tools/gen/golden-pymodes.txt`, installed with `pip --require-hashes` |
+| Messages | https://github.com/junzis/pyModeS at commit `4bf083284c0d9878ca0c88f16b9b5f6514ca194a` (tag v3.7.0): `tests/data/sample_data_adsb.csv` (SHA-256 `7534e8186adec1aa44589c27d6059d0cde102c12d7e77c2584041f33afb99d9f`) and the messages written into eight `tests/*.py` files, each refused unless its SHA-256 is the one the script records |
+| Licence | GPL-3.0 (the wheel's `LICENSE`, GNU General Public License, Version 3). pyModeS is run, not copied: it is installed outside the tree to write the vectors, and only its output and its published test messages (the capture and the hex strings of its tests) enter this repository; no line of its code does |

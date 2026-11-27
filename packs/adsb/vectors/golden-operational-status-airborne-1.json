@@ -1,0 +1,24 @@
+{
+ "name": "golden-operational-status-airborne-1",
+ "from": "adsb",
+ "to": "adsb",
+ "input": "8D400000F8000000005A38AF6F85",
+ "expect": "8d400000f8000000005a38af6f85",
+ "model": {
+  "@kind": "operational-status-airborne",
+  "adsb.df": "17",
+  "adsb.icao": "4194304",
+  "adsb.tc": "31",
+  "adsb.version": "2",
+  "adsb.nic_supp_a": "1",
+  "adsb.nac_p": "10",
+  "adsb.sil": "3",
+  "adsb.hrd": "0",
+  "adsb.capability_class": "0",
+  "adsb.operational_mode": "0",
+  "adsb.nic_baro": "1",
+  "adsb.sil_supp": "0"
+ },
+ "source": "pyModeS 3.7.0: pyModeS.decode of a message from tests/test_schema.py at 4bf0832 (github.com/junzis/pyModeS). Written by tools/gen/golden-pymodes.py; no engine is run.",
+ "reference": "DF17 type code 31 as pyModeS (GPL-3.0) decodes it; raw fields that pyModeS reports scaled are turned back by the DO-260B scaling named in tools/gen/golden-pymodes.py."
+}

@@ -1,0 +1,30 @@
+{
+ "name": "golden-target-state-1",
+ "from": "adsb",
+ "to": "adsb",
+ "input": "8DA05629EA21485CBF3F8CADAEEB",
+ "expect": "8da05629ea21485cbf3f8cadaeeb",
+ "model": {
+  "@kind": "target-state",
+  "adsb.df": "17",
+  "adsb.icao": "10507817",
+  "adsb.tc": "29",
+  "adsb.nac_p": "9",
+  "adsb.nic_baro": "1",
+  "adsb.sil": "3",
+  "adsb.autopilot": "1",
+  "adsb.vnav": "1",
+  "adsb.alt_hold": "0",
+  "adsb.approach": "0",
+  "adsb.lnav": "1",
+  "adsb.tcas_operational": "1",
+  "adsb.sel_alt_fms": "0",
+  "adsb.sel_alt_raw": "532",
+  "adsb.baro_setting_raw": "267",
+  "adsb.sel_heading_valid": "1",
+  "adsb.sel_heading_sign": "0",
+  "adsb.sel_heading_raw": "95"
+ },
+ "source": "pyModeS 3.7.0: pyModeS.decode of a message from tests/test_bds62.py at 4bf0832 (github.com/junzis/pyModeS). Written by tools/gen/golden-pymodes.py; no engine is run.",
+ "reference": "DF17 type code 29 as pyModeS (GPL-3.0) decodes it; raw fields that pyModeS reports scaled are turned back by the DO-260B scaling named in tools/gen/golden-pymodes.py."
+}
