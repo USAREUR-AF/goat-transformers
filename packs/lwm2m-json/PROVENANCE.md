@@ -10,7 +10,7 @@ written for them. No source file is kept in this repository. Read on 2026-11-20.
 | Document | Version | Where | SHA-256 |
 |---|---|---|---|
 | OMA Lightweight M2M Technical Specification, section 6.4.4 JSON | Approved Version 1.0.2, 2018-02-09, OMA-TS-LightweightM2M-V1_0_2-20180209-A | https://www.openmobilealliance.org/release/LightweightM2M/V1_0_2-20180209-A/OMA-TS-LightweightM2M-V1_0_2-20180209-A.pdf | `79061ccd170d288b3051b54605b43e5b905b34e0e61a6f8905161cca389bab82` |
-| OMA LwM2M registry, objects 3, 6, 3303, 3336 (and 3301, 3304, 3315, checked to share 3303's resources) | commit `a763bb5414099844fadf0797b2c8223d169d0c7e` | https://github.com/OpenMobileAlliance/lwm2m-registry | 3.xml `dacf39a733f0c002e1695637d59833ca207cd785c2e1686b2e30620c51c6535b`, 6.xml `885b70b70411e4b96d34d95f630618c2ff85d88e9e86768b5cd5adc50a5facb0`, 3303.xml `2d667c1003550d68799303e7ea76d0606efe35b1e179ed80aa589e1f57cd5184`, 3336.xml `a90678061209efe52753d9e0d112c716685d5598b98a11f496ed427d84dcb083` |
+| OMA LwM2M registry, objects 3, 6, 3303, 3336 (and 3301, 3304, 3315, checked to share 3303's resources) | commit `a763bb5414099844fadf0797b2c8223d169d0c7e` | https://github.com/OpenMobileAlliance/lwm2m-registry | 3.xml `576ab98d1c39a2a672b42947432d89db4f4b9e72d153196de11b6a4a017cf52a`, 6.xml `a8b24da5e63ec5e423066fa5c9856338621c8532de3824ce8982f897622f30c6`, 3303.xml `627ba7642817e8cb63301774611530616925b5443da0f4d4ea133836c918c051`, 3336.xml `ae7855852fbeafccdd23bb67014a14d75d999ac4970d6454e94232bd25dfd542` |
 
 ## Licence of the content format: `LicenseRef-OMA-Internal`
 

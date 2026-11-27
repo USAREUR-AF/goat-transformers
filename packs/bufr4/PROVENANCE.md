@@ -7,7 +7,7 @@ written for them. No source file is kept in this repository. Read on 2026-11-20.
 |---|---|---|
 | https://github.com/wmo-im/GRIB2 | `83abc9f3858260734191f55ffb68f6ad37d2b722` | WMO's GRIB2 templates and code tables as CSV, with the template notes (the 1e-6 degree unit, the sign rule of regulation 92.1.5) |
 | https://github.com/wmo-im/BUFR4 | `6a993796bf2661deb9cfe4da25435d5870566b20` | WMO's BUFR edition 4 tables A to D as CSV |
-| https://github.com/ecmwf/eccodes | `f03b3c35e2914e607b226b8c167b78758c9e7385` | `definitions/grib2/section.0.def` to `section.8.def` and templates; `definitions/bufr/section.0.def` to `section.5.def`, `section.1.4.def` (the section layouts) |
+| https://github.com/ecmwf/eccodes | `f03b3c35e2914e607b226b8c167b78758c9e7385` | `definitions/grib2/section.0.def` to `section.8.def` and templates; `definitions/bufr/boot_edition_4.def` (section 0: `BUFR`, the total length, the edition), `section.1.4.def` to `section.5.def` (the other section layouts; `section.0.def` holds no layout) |
 
 ## Licence: Apache-2.0
 

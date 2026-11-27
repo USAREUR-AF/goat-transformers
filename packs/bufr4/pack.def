@@ -6,7 +6,7 @@
 format     bufr4
 version    0.1.0
 distribution public
-source     "ECMWF ecCodes definitions, https://github.com/ecmwf/eccodes commit f03b3c35e2914e607b226b8c167b78758c9e7385, definitions/bufr/section.0.def, section.1.4.def, section.2.def, section.3.def, section.4.def, section.5.def (Apache-2.0)"
+source     "ECMWF ecCodes definitions, https://github.com/ecmwf/eccodes commit f03b3c35e2914e607b226b8c167b78758c9e7385, definitions/bufr/boot_edition_4.def (section 0), section.1.4.def, section.2.def, section.3.def, section.4.def, section.5.def (Apache-2.0)"
 source     "WMO BUFR edition 4 tables, https://github.com/wmo-im/BUFR4 commit 6a993796bf2661deb9cfe4da25435d5870566b20 (MIT)"
 uses       bufr4
 wire       bits
