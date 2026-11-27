@@ -159,13 +159,19 @@ final class XmlCodec extends Codec<Xml.Element> {
                 if (items != null) e.putList(g.list, items);   // no item occurs: the list is absent
                 continue;
             }
+            if (l instanceof Part.Const) {
+                if (mapped != null) mapped.add(l.locator);
+                String token = raw(el, (Loc) l.loc);
+                if (token != null) checkConst((Part.Const) l, token, e, fails);
+                continue;
+            }
             if (!(l instanceof Pack.Field)) {
                 // `when <locator> present` does not map the member (ruling 27 of 0.5); a value or a const does.
                 if (mapped != null && !((Pack.When) l).present) mapped.add(l.locator);
                 continue;
             }
             if (mapped != null) mapped.add(l.locator);
-            if (e.get(((Pack.Field) l).key) != null) continue;   // an earlier line already gave the key its value
+            if (settled((Pack.Field) l, e)) continue;   // an earlier line already gave the key its value
             String raw = raw(el, (Loc) l.loc);
             if (raw == null) continue;
             // the text with references resolved, not trimmed (ruling 14 of 0.9): a sentinel yields no value
@@ -233,6 +239,13 @@ final class XmlCodec extends Codec<Xml.Element> {
                 }
                 continue;
             }
+            Part.Group pg = scope.parts.get(l.locator);
+            if (pg != null) {
+                // the token, where the group's first line stands (ruling 8 of 0.64)
+                String token = pg.first == l ? partToken(pg, e, scope) : null;
+                if (token != null && written.add(l.locator)) put(root, loc, token);
+                continue;
+            }
             // A when or const value is written over any field, at the position of the first line naming the locator.
             Pack.When w = scope.fixed.get(l.locator);
             if (w != null) {
@@ -283,7 +296,7 @@ final class XmlCodec extends Codec<Xml.Element> {
     private static void placeAttributes(Xml.Element root, Pack.Scope scope) {
         Map<Xml.Element, List<String>> order = null;
         for (Pack.Line l : scope.lines) {
-            if (!(l instanceof Pack.Field) && !(l instanceof Pack.When && !((Pack.When) l).present)) continue;
+            if (!(l instanceof Pack.Field) && !(l instanceof Part.Const) && !(l instanceof Pack.When && !((Pack.When) l).present)) continue;
             Loc loc = (Loc) l.loc;
             if (loc.attr == null) continue;
             Xml.Element el = find(root, loc.path);

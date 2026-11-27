@@ -334,20 +334,25 @@ abstract class Codec<W> {
 
     /**
      * Store a decoded value: through the field's value table, then the typemap for model key {@code type} (an
-     * unmapped code passes through). The earliest line that yields a value for a key wins; later lines leave it.
+     * unmapped code passes through). The earliest line that yields a value for a key wins; later lines leave it, but
+     * a missing entry in a later line's table still fails (ruling 26 of 0.64).
      */
     void putDecoded(Pack.Field f, Object v, Entity e, Failures fails) {
         boolean given = e.get(f.key) != null;
-        if (given && !(e == fails.joined && fails.innerKeys.contains(f.key))) return;
+        boolean inner = given && e == fails.joined && fails.innerKeys.contains(f.key);
+        // a later line whose table has no entry still fails the decode (ruling 26 of 0.64)
+        if (given && !inner && !f.strictTable()) return;
         if (f.viaDecode != null) {
             Object m = f.viaDecode.get(Pack.canonText(v));
             if (m == null) {
-                if (!f.yields().equals(f.keyType)) {
+                if (f.unlisted) return;   // as a line whose place is absent (engine-spec 0.64)
+                if (f.strictTable()) {
                     // The transform succeeded and the table has no entry: later lines of the key do not make it good.
                     fails.add(f, "table " + f.via + " has no entry for " + Pack.canonText(v), e, true);
                     return;
                 }
             } else if (m == Pack.UNREADABLE) {
+                if (given && !inner) return;
                 fails.add(f, "table " + f.via + " maps " + Pack.canonText(v) + " to a value that is not " + f.keyType, e, true);
                 return;
             } else {
@@ -386,7 +391,7 @@ abstract class Codec<W> {
         if (f.viaEncode != null) {
             Object n = f.viaEncode.get(Pack.canonText(v));
             if (n == null) {
-                if (!f.yields().equals(f.keyType)) {
+                if (f.part != null || !f.yields().equals(f.keyType)) {
                     throw encodeFailure(f, new IllegalArgumentException("table " + f.via + " has no entry for " + Pack.canonText(v)));
                 }
             } else if (n == Pack.UNREADABLE) {
@@ -399,11 +404,90 @@ abstract class Codec<W> {
         return v;
     }
 
+    /**
+     * True when a line has nothing left to decode: its key has a value and its table cannot fail the decode (a
+     * missing entry fails it whichever line of the key came first, ruling 26 of 0.64).
+     */
+    static boolean settled(Pack.Field f, Entity e) { return e.get(f.key) != null && !f.strictTable(); }
+
+    // ---- part groups (engine-spec 0.64) ----
+
+    /** A {@code const ... part} line against the token; its failure is never forgiven (ruling 4). */
+    static void checkConst(Part.Const c, String token, Entity e, Failures fails) {
+        String why = c.why(token);
+        if (why != null) fails.add(c.report, why, e, true);
+    }
+
+    /** The token a part group writes for the entity (or item), or null when it writes nothing. */
+    String partToken(Part.Group g, Entity e, Pack.Scope scope) {
+        if (g.whole != null && e.get(g.whole.key) != null) return wholeToken(g, e, scope);
+        boolean any = false, all = true;
+        for (Pack.Field f : g.fields) {
+            if (e.get(f.key) != null) any = true;
+            else if (!scope.defaultValues.containsKey(f.key)) all = false;
+        }
+        if (any || all) {
+            StringBuilder b = new StringBuilder();
+            for (int i = 0; i < g.parts.size(); i++) {
+                if (i > 0) b.append(g.sep);
+                Pack.Line l = g.parts.get(i);
+                if (l instanceof Part.Const) {
+                    b.append(((Part.Const) l).text);
+                    continue;
+                }
+                Pack.Field f = (Pack.Field) l;
+                Object v = valueToEncode(f, e, scope);
+                if (v == null) throw encodeFailure(f, new IllegalArgumentException("part " + i + " has no value"));
+                String t = Transform.STRING.encode(v);
+                if (t.contains(g.sep)) throw encodeFailure(f, new IllegalArgumentException("\"" + t + "\" holds the separator"));
+                b.append(t);
+            }
+            return b.toString();
+        }
+        return g.whole != null && scope.defaultValues.containsKey(g.whole.key) ? wholeToken(g, e, scope) : null;
+    }
+
+    /** The whole line's text, checked against the part lines (Encode, step 1). */
+    private String wholeToken(Part.Group g, Entity e, Pack.Scope scope) {
+        String token = Transform.STRING.encode(valueToEncode(g.whole, e, scope));
+        for (Part.Const c : g.consts) {
+            String why = c.why(token);
+            if (why != null) throw encodeFailure(g.whole, new IllegalArgumentException(why));
+        }
+        for (int i = 0; i < g.fields.size(); i++) {
+            if (!g.alone.get(i)) continue;   // left to the order of lines (ruling 2)
+            Pack.Field f = g.fields.get(i);
+            Entity read = new Entity();
+            Failures fails = new Failures(pack.format);
+            try {
+                putDecoded(f, f.part.of(token), read, fails);
+            } catch (IllegalArgumentException ex) {
+                throw encodeFailure(f, ex);
+            }
+            if (!fails.fields.isEmpty()) throw encodeFailure(f, new IllegalArgumentException(fails.whys.get(0)));
+            Object got = read.get(f.key), held = e.get(f.key);
+            if (held != null && !sameValue(got, held)) {
+                throw encodeFailure(f, new IllegalArgumentException("the whole text \"" + token + "\" gives "
+                        + (got == null ? "no value" : Pack.canonText(got)) + " and the entity holds " + Pack.canonText(held)));
+            }
+        }
+        return token;
+    }
+
+    /** Numbers as numbers: -0 equals 0 (ruling 22). */
+    private static boolean sameValue(Object a, Object b) {
+        if (a instanceof Double || b instanceof Double) {
+            return a instanceof Number && b instanceof Number && ((Number) a).doubleValue() == ((Number) b).doubleValue();
+        }
+        return b.equals(a);
+    }
+
     /** Decode one text-wire value into the entity. */
     void decodeField(Pack.Field f, String raw, Entity e, Failures fails) {
         Object v;
         try {
             v = f.scale != null ? f.scale.decode(raw) : f.codes != null ? f.codes.decodeText(raw) : f.transform.decode(raw);
+            if (f.part != null) v = f.part.of((String) v);
         } catch (IllegalArgumentException ex) {
             fails.add(f, ex.getMessage(), e);
             return;

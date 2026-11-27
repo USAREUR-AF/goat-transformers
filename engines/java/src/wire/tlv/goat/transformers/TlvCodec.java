@@ -242,7 +242,7 @@ final class TlvCodec extends Codec<TlvCodec.Msg> {
             Item it = find(msg.top, ((Loc) l.loc).tags);
             if (!(l instanceof Pack.Field)) continue;
             Pack.Field f = (Pack.Field) l;
-            if (e.get(f.key) != null || it == null) continue;
+            if (settled(f, e) || it == null) continue;
             if (it.from == it.to && !f.tlv.text()) continue;   // an empty value is absent (ruling 1 of 0.13)
             Object v;
             try {

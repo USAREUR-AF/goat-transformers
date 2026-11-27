@@ -175,9 +175,14 @@ final class TextCodec extends Codec<String[]> {
                 e.putList(g.list, items);
                 continue;
             }
+            if (l instanceof Part.Const) {
+                String token = text(rec, loc, base, false);
+                if (token != null) checkConst((Part.Const) l, token, e, fails);
+                continue;
+            }
             if (!(l instanceof Pack.Field)) continue;
             Pack.Field f = (Pack.Field) l;
-            if (e.get(f.key) != null) continue;                    // an earlier line already gave the key its value
+            if (settled(f, e)) continue;                    // an earlier line already gave the key its value
             Object v;
             try {
                 if (loc.type == PAIR) {
@@ -188,6 +193,7 @@ final class TextCodec extends Codec<String[]> {
                     String t = text(rec, loc, base, f.text.numeric());
                     if (t == null) continue;
                     v = f.text.decode(t);
+                    if (f.part != null) v = f.part.of((String) v);
                 }
             } catch (IllegalArgumentException ex) {
                 fails.add(f, ex.getMessage(), e);
@@ -302,6 +308,16 @@ final class TextCodec extends Codec<String[]> {
                 int first = base + loc.i, n = loc.len;
                 for (int k = 0; k < items.size(); k++) encodeScope(items.get(k), g.body, first + k * n, bufs, fixed, groupEnd);
                 groupEnd[0] = Math.max(groupEnd[0], first + items.size() * n);
+                continue;
+            }
+            Part.Group pg = scope.parts.get(l.locator);
+            if (pg != null) {
+                // the token; a const part writes nothing of its own (ruling 8 of 0.64)
+                String token = pg.first == l ? partToken(pg, e, scope) : null;
+                if (token == null) continue;
+                check(pg.fields.get(0), token);
+                Buf b = buf(bufs, base + loc.i);
+                if (b.whole == null) b.whole = token;
                 continue;
             }
             if (l instanceof Pack.When) {

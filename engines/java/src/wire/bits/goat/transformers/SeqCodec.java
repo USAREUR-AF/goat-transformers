@@ -1097,6 +1097,9 @@ final class SeqCodec extends BitsWire<byte[]> {
         boolean mismatch;
         /** Per shadow entity: the keys whose bits did not read back through their transform or table. */
         final Map<Entity, java.util.Set<String>> failed = new IdentityHashMap<>();
+        /** Of those, the keys of a line whose table has no entry; and the keys a switch has read (ruling 31 of 0.64). */
+        final Map<Entity, java.util.Set<String>> hard = new IdentityHashMap<>();
+        final Map<Entity, java.util.Set<String>> switched = new IdentityHashMap<>();
         /** engine-spec 0.33: the bit positions a held key wrote (ruling 12). */
         final java.util.BitSet held = new java.util.BitSet();
 
@@ -1566,7 +1569,7 @@ final class SeqCodec extends BitsWire<byte[]> {
         final int common;
         long start;
         Map<String, Object> shadowAtStart;
-        java.util.Set<String> failedAtStart;
+        java.util.Set<String> failedAtStart, hardAtStart;
 
         Settle(Seq.Kind kind, int common) {
             this.kind = kind;
@@ -1581,6 +1584,8 @@ final class SeqCodec extends BitsWire<byte[]> {
             st.shadowAtStart = new HashMap<>(shadow.fields());
             java.util.Set<String> f = w.failed.get(shadow);
             st.failedAtStart = f == null ? null : new java.util.HashSet<>(f);
+            java.util.Set<String> h = w.hard.get(shadow);
+            st.hardAtStart = h == null ? null : new java.util.HashSet<>(h);
         }
         if (idx == st.common + st.kind.prefix) settleWindows(st, w, e, shadow);
     }
@@ -1620,6 +1625,8 @@ final class SeqCodec extends BitsWire<byte[]> {
         shadow.fields().putAll(st.shadowAtStart);
         if (st.failedAtStart == null) w.failed.remove(shadow);
         else w.failed.put(shadow, new java.util.HashSet<>(st.failedAtStart));
+        if (st.hardAtStart == null) w.hard.remove(shadow);
+        else w.hard.put(shadow, new java.util.HashSet<>(st.hardAtStart));
         Failures fails = new Failures(pack.format);
         long pos = st.start;
         List<Seq.Node> own = kind.all.subList(st.common, kind.all.size());
@@ -1800,6 +1807,9 @@ final class SeqCodec extends BitsWire<byte[]> {
                     // the case decode would select from the bits the key's line wrote (engine-spec 0.20)
                     Object v = shadow.get(n.switchKey);
                     java.util.Set<String> bad = w.failed.get(shadow);
+                    w.switched.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(n.switchKey);
+                    java.util.Set<String> hard = w.hard.get(shadow);
+                    if (hard != null && hard.contains(n.switchKey)) throw switchKeyFails(n.switchKey);
                     if (v == null && bad != null && bad.contains(n.switchKey)) {
                         // the key's bits would not decode: the output would not decode either (ruling 31)
                         throw encodeError("switch " + n.switchKey + " (line " + n.line
@@ -1818,6 +1828,25 @@ final class SeqCodec extends BitsWire<byte[]> {
         }
     }
 
+    /**
+     * Record the keys of lines whose table has no entry for the bits written. Such a line fails the decode whatever
+     * the key's other lines give, so when a switch reads the key the encode fails (ruling 31 of 0.64).
+     */
+    private void noteFailed(Failures fails, Writer w, Entity shadow) {
+        for (int i = 0; i < fails.fields.size(); i++) {
+            String key = fails.fields.get(i).key;
+            w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(key);
+            if (!fails.hard.get(i)) continue;
+            w.hard.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(key);
+            java.util.Set<String> read = w.switched.get(shadow);
+            if (read != null && read.contains(key)) throw switchKeyFails(key);
+        }
+    }
+
+    private GtException switchKeyFails(String key) {
+        return encodeError("a line of the switch key " + key + " has no table entry for the value it writes: the output would not decode");
+    }
+
     /** Decode the bits a field line just wrote into {@code shadow}, as decode would read them. */
     private void readBack(Seq.Node n, Writer w, long at, Entity shadow) {
         Pack.Field f = n.keys.get(0);
@@ -1831,7 +1860,7 @@ final class SeqCodec extends BitsWire<byte[]> {
             }
             Failures fails = new Failures(pack.format);
             for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
-            for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+            noteFailed(fails, w, shadow);
             return;
         }
         if (n.u != null) {
@@ -1847,7 +1876,7 @@ final class SeqCodec extends BitsWire<byte[]> {
             }
             Failures fails = new Failures(pack.format);
             for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
-            for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+            noteFailed(fails, w, shadow);
             return;
         }
         if (f.absent != null) {
@@ -1864,7 +1893,7 @@ final class SeqCodec extends BitsWire<byte[]> {
         }
         Failures fails = new Failures(pack.format);
         for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
-        for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+        noteFailed(fails, w, shadow);
     }
 
     /**
