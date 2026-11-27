@@ -1,18 +1,18 @@
 #!/bin/bash
-# Regenerate the four XSD packs.
+# Regenerate the six XSD packs.
 #
 # Usage: tools/gen/xsd2pack-run.sh [--check] <root> <goat-transformers checkout>
 #
-# <root> holds sources/ and receives model/ and packs/: the four packs, and under
+# <root> holds sources/ and receives model/ and packs/: the six packs, and under
 # packs/cot-xml/vectors the vectors gen-cot-xml-to-uci.json, gen-cot-xml-to-uci-2.5.json
 # and gen-cot-xml-to-a-gra.json.
 # The checkout supplies model/core.def, model/track.def and the cot-xml pack with its
 # round-trip vector; the names files beside this script (names/) are read and extended.
-# Copy model/{uci,uci25,agra,isaxml}.def, packs/{uci,uci-2.5,a-gra,isa-xml}/ and the three cot-xml
+# Copy model/{uci,uci25,agra,isaxml,isaxml26,isaxml46}.def, packs/{uci,uci-2.5,a-gra,isa-xml,isa-xml-2.6,isa-xml-4.6}/ and the three cot-xml
 # vectors from <root> into the checkout afterwards; PROVENANCE.md files are not generated.
 #
-# With --check nothing is written: each of the four runs compares what it would write
-# with the files under <root> and with its names file, all four runs are made, and the
+# With --check nothing is written: each of the six runs compares what it would write
+# with the files under <root> and with its names file, all six runs are made, and the
 # exit status is 1 when any file differs. Without it the script stops at the first run
 # that fails.
 set -euo pipefail
@@ -99,5 +99,19 @@ xsd2pack \
   --title "Integrated Sensor Architecture IPL 4.7 XML schema ipl-4.7-6.0.13.xsd (ISA IPL Format 6.0)" \
   --message-choice Message --message Envelope \
   --names-file "$GEN/names/isa-xml.json"
+
+xsd2pack \
+  --xsd "$ROOT/sources/isa-xml/ipl-2.6-6.0.13.xsd" \
+  --format isa-xml-2.6 --module isaxml26 --out "$ROOT" --model-dir "$GT/model" \
+  --title "Integrated Sensor Architecture IPL 2.6 XML schema ipl-2.6-6.0.13.xsd (ISA IPL Format 6.0)" \
+  --message-choice Message --message Envelope \
+  --names-file "$GEN/names/isa-xml-2.6.json"
+
+xsd2pack \
+  --xsd "$ROOT/sources/isa-xml/ipl-4.6-6.0.13.xsd" \
+  --format isa-xml-4.6 --module isaxml46 --out "$ROOT" --model-dir "$GT/model" \
+  --title "Integrated Sensor Architecture IPL 4.6 XML schema ipl-4.6-6.0.13.xsd (ISA IPL Format 6.0)" \
+  --message-choice Message --message Envelope \
+  --names-file "$GEN/names/isa-xml-4.6.json"
 
 exit "$STATUS"

@@ -1,0 +1,31 @@
+{
+  "name": "gen-config-roundtrip",
+  "from": "isa-xml-2.6",
+  "to": "isa-xml-2.6",
+  "input": "<Config Source=\"s0\" Identifier=\"2\" Priority=\"3\"><Time Value=\"2.5\" Error=\"0.125\"/><Stale Value=\"3.5\" Error=\"0.75\"/><Ccd><Properties Name=\"s7\" Description=\"s8\" Mutability=\"M_READ_ONLY\"><Type><CustomTypeName>s10</CustomTypeName></Type></Properties><Properties Name=\"s11\" Description=\"s12\" Mutability=\"M_READ_ONLY\"><Type><CustomTypeName>s14</CustomTypeName></Type></Properties><Commands Name=\"s15\" Description=\"s16\"><Args Name=\"s17\" Description=\"s18\" Optional=\"false\"><Type><CustomTypeName>s20</CustomTypeName></Type></Args><Results Name=\"s21\" Description=\"s22\" Optional=\"false\"><Type><CustomTypeName>s24</CustomTypeName></Type></Results></Commands><Commands Name=\"s25\" Description=\"s26\"><Args Name=\"s27\" Description=\"s28\" Optional=\"false\"><Type><CustomTypeName>s30</CustomTypeName></Type></Args><Results Name=\"s31\" Description=\"s32\" Optional=\"false\"><Type><CustomTypeName>s34</CustomTypeName></Type></Results></Commands><Observables Name=\"s35\" Description=\"s36\"><Type><CustomTypeName>s37</CustomTypeName></Type></Observables><Observables Name=\"s38\" Description=\"s39\"><Type><CustomTypeName>s40</CustomTypeName></Type></Observables><Types Name=\"s41\" Description=\"s42\"><Fields Name=\"s43\" Description=\"s44\" Optional=\"false\"><Type><CustomTypeName>s46</CustomTypeName></Type></Fields></Types><Types Name=\"s47\" Description=\"s48\"><Fields Name=\"s49\" Description=\"s50\" Optional=\"false\"><Type><CustomTypeName>s52</CustomTypeName></Type></Fields></Types></Ccd><PropertyStates Name=\"s53\" Ready=\"true\" Reporting=\"false\"/><PropertyStates Name=\"s56\" Ready=\"false\" Reporting=\"true\"/><ObservableStates Name=\"s59\" Ready=\"true\" Reporting=\"false\"/><ObservableStates Name=\"s62\" Ready=\"false\" Reporting=\"true\"/><CommandStates Name=\"s65\" Ready=\"true\"/><CommandStates Name=\"s67\" Ready=\"true\"/><Extras Name=\"s69\"/><Extras Name=\"s70\"/></Config>",
+  "expect": "<Config Source=\"s0\" Identifier=\"2\" Priority=\"3\"><Time Value=\"2.5\" Error=\"0.125\"/><Stale Value=\"3.5\" Error=\"0.75\"/><Ccd><Properties Name=\"s7\" Description=\"s8\" Mutability=\"M_READ_ONLY\"><Type><CustomTypeName>s10</CustomTypeName></Type></Properties><Properties Name=\"s11\" Description=\"s12\" Mutability=\"M_READ_ONLY\"><Type><CustomTypeName>s14</CustomTypeName></Type></Properties><Commands Name=\"s15\" Description=\"s16\"><Args Name=\"s17\" Description=\"s18\" Optional=\"false\"><Type><CustomTypeName>s20</CustomTypeName></Type></Args><Results Name=\"s21\" Description=\"s22\" Optional=\"false\"><Type><CustomTypeName>s24</CustomTypeName></Type></Results></Commands><Commands Name=\"s25\" Description=\"s26\"><Args Name=\"s27\" Description=\"s28\" Optional=\"false\"><Type><CustomTypeName>s30</CustomTypeName></Type></Args><Results Name=\"s31\" Description=\"s32\" Optional=\"false\"><Type><CustomTypeName>s34</CustomTypeName></Type></Results></Commands><Observables Name=\"s35\" Description=\"s36\"><Type><CustomTypeName>s37</CustomTypeName></Type></Observables><Observables Name=\"s38\" Description=\"s39\"><Type><CustomTypeName>s40</CustomTypeName></Type></Observables><Types Name=\"s41\" Description=\"s42\"><Fields Name=\"s43\" Description=\"s44\" Optional=\"false\"><Type><CustomTypeName>s46</CustomTypeName></Type></Fields></Types><Types Name=\"s47\" Description=\"s48\"><Fields Name=\"s49\" Description=\"s50\" Optional=\"false\"><Type><CustomTypeName>s52</CustomTypeName></Type></Fields></Types></Ccd><PropertyStates Name=\"s53\" Ready=\"true\" Reporting=\"false\"/><PropertyStates Name=\"s56\" Ready=\"false\" Reporting=\"true\"/><ObservableStates Name=\"s59\" Ready=\"true\" Reporting=\"false\"/><ObservableStates Name=\"s62\" Ready=\"false\" Reporting=\"true\"/><CommandStates Name=\"s65\" Ready=\"true\"/><CommandStates Name=\"s67\" Ready=\"true\"/><Extras Name=\"s69\"/><Extras Name=\"s70\"/></Config>",
+  "model": {
+    "@kind": "config",
+    "isaxml26.source": "s0",
+    "isaxml26.identifier": "2",
+    "isaxml26.ccd_properties.#": "2",
+    "isaxml26.ccd_properties[1].isaxml26.name": "s11",
+    "isaxml26.ccd_commands[0].isaxml26.args.#": "1",
+    "isaxml26.ccd_commands[0].isaxml26.results.#": "1",
+    "isaxml26.ccd_commands.#": "2",
+    "isaxml26.ccd_commands[1].isaxml26.name": "s25",
+    "isaxml26.ccd_observables.#": "2",
+    "isaxml26.ccd_observables[1].isaxml26.name": "s38",
+    "isaxml26.ccd_types[0].isaxml26.fields.#": "1",
+    "isaxml26.ccd_types.#": "2",
+    "isaxml26.ccd_types[1].isaxml26.name": "s47",
+    "isaxml26.property_states.#": "2",
+    "isaxml26.property_states[1].isaxml26.name": "s56",
+    "isaxml26.observable_states.#": "2",
+    "isaxml26.observable_states[1].isaxml26.name": "s62",
+    "isaxml26.command_states.#": "2",
+    "isaxml26.command_states[1].isaxml26.name": "s67",
+    "isaxml26.extras.#": "2",
+    "isaxml26.extras[1].isaxml26.name": "s70"
+  }
+}

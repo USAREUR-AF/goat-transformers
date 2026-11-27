@@ -523,9 +523,10 @@ ripv2-header, geneve-header; module inet
   2236, 2328, 2453, 2784, 2890, 3032, 3376, 3550, 4271 and 4443, the last two
   with BCP 78). Field layouts restated.
 
-Packs isa, isa-message, isa-ipl1, isa-xml; modules isa, isa1, isaxml
-  Integrated Sensor Architecture (ISA) schema set 6.0.13: IPL 3.7 and IPL 1.6
-  protobuf declaration files, IPL 4.7 XML schema.
+Packs isa, isa-message, isa-message-3.6, isa-ipl1, isa-xml, isa-xml-2.6, isa-xml-4.6;
+  modules isa, isa36, isa1, isaxml, isaxml26, isaxml46
+  Integrated Sensor Architecture (ISA) schema set 6.0.13: IPL 3.7, IPL 3.6 and
+  IPL 1.6 protobuf declaration files, IPL 4.7, IPL 4.6 and IPL 2.6 XML schemas.
   File header: Distribution Statement A. Approved for Public Release.
   Distribution is Unlimited. The files carry no license text and no copyright
   line.

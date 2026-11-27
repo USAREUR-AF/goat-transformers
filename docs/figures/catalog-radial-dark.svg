@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 922" width="100%" role="img" aria-labelledby="t d">
-<title id="t">Every public format, by family: 233 families, 4,256 formats</title>
+<title id="t">Every public format, by family: 233 families, 4,259 formats</title>
 <desc id="d">One bar per family around the shared model, its length the logarithm of its pack count, coloured by domain. A dashed outer ring stands for private overlays, which the same engines read.</desc>
 <style>
   .rd-bg{fill:#0b131a} .rd-t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"Liberation Sans","DejaVu Sans",sans-serif;fill:#e2e9ee}
@@ -16,7 +16,7 @@
   .rd-air{--rd:#3987e5} .rd-land{--rd:#d95926} .rd-sea{--rd:#199e70} .rd-space{--rd:#9085e9} .rd-uncrewed{--rd:#e66767} .rd-c2{--rd:#6d8ff0} .rd-sensors{--rd:#0ca30c} .rd-transport{--rd:#d55181} .rd-iot{--rd:#c98500} .rd-networks{--rd:#1fa08f} .rd-maps{--rd:#c77a3a}
 </style>
 <rect x="0" y="0" width="680" height="922" class="rd-bg"/>
-<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">Every public format, by family: 233 families, 4,256 formats</text>
+<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">Every public format, by family: 233 families, 4,259 formats</text>
 <text x="20" y="50" class="rd-t rd-q" font-size="13">Bar length: the pack count on a log scale, read against the faint rings; colour: the domain.</text>
 <g transform="translate(0 64)">
 <circle cx="340" cy="340" r="318" class="rd-private"/>
@@ -128,8 +128,8 @@
 <path d="M432.47 540.87A221 221 0 0 1 429.17 542.35L399.68 475.43A148 148 0 0 0 401.89 474.44Z" class="rd-bar rd-sensors"><title>u-blox UBX: 14 packs (Sensors)</title></path>
 <path d="M424.6 535.29A212 212 0 0 1 421.4 536.65L396.6 476.75A148 148 0 0 0 398.83 475.81Z" class="rd-bar rd-sensors"><title>Inertial Sense: 10 packs (Sensors)</title></path>
 <path d="M419.18 534.74A210 210 0 0 1 415.99 536.01L393.5 477.99A148 148 0 0 0 395.74 477.1Z" class="rd-bar rd-sensors"><title>Ouster lidar: 9 packs (Sensors)</title></path>
-<path d="M407.64 517.78A190 190 0 0 1 404.73 518.86L390.36 479.17A148 148 0 0 0 392.63 478.33Z" class="rd-bar rd-sensors"><title>GNSS correction transport and network timing (NTRIP, NTP/NTS, PTP): 4 packs (Sensors)</title></path>
-<path d="M403.6 519.26A190 190 0 0 1 400.66 520.28L387.2 480.27A148 148 0 0 0 389.49 479.48Z" class="rd-bar rd-sensors"><title>ISA: 4 packs (Sensors)</title></path>
+<path d="M412.55 530.69A204 204 0 0 1 409.43 531.85L390.36 479.17A148 148 0 0 0 392.63 478.33Z" class="rd-bar rd-sensors"><title>ISA: 7 packs (Sensors)</title></path>
+<path d="M403.6 519.26A190 190 0 0 1 400.66 520.28L387.2 480.27A148 148 0 0 0 389.49 479.48Z" class="rd-bar rd-sensors"><title>GNSS correction transport and network timing (NTRIP, NTP/NTS, PTP): 4 packs (Sensors)</title></path>
 <path d="M399.53 520.66A190 190 0 0 1 396.57 521.61L384.02 481.3A148 148 0 0 0 386.32 480.57Z" class="rd-bar rd-sensors"><title>MISB local sets: 4 packs (Sensors)</title></path>
 <path d="M395.43 521.96A190 190 0 0 1 392.45 522.84L380.81 482.26A148 148 0 0 0 383.13 481.58Z" class="rd-bar rd-sensors"><title>STANAG 4607 GMTI: 4 packs (Sensors)</title></path>
 <path d="M386.69 506.69A173 173 0 0 1 383.96 507.43L377.58 483.15A148 148 0 0 0 379.92 482.52Z" class="rd-bar rd-sensors"><title>GNSS receiver binary (NovAtel OEM, SiRF): 2 packs (Sensors)</title></path>
@@ -311,7 +311,7 @@
 <rect x="340" y="794" width="12" height="12" rx="2" class="rd-sw rd-c2"/>
 <text x="358" y="804" class="rd-t" font-size="13">C2 and tactical <tspan class="rd-q">14</tspan></text>
 <rect x="20" y="816" width="12" height="12" rx="2" class="rd-sw rd-sensors"/>
-<text x="38" y="826" class="rd-t" font-size="13">Sensors <tspan class="rd-q">159</tspan></text>
+<text x="38" y="826" class="rd-t" font-size="13">Sensors <tspan class="rd-q">162</tspan></text>
 <rect x="340" y="816" width="12" height="12" rx="2" class="rd-sw rd-transport"/>
 <text x="358" y="826" class="rd-t" font-size="13">Transport <tspan class="rd-q">229</tspan></text>
 <rect x="20" y="838" width="12" height="12" rx="2" class="rd-sw rd-iot"/>

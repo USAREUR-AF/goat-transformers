@@ -1,10 +1,10 @@
 #!/bin/bash
-# Regenerate the six protobuf packs: sapient, isa, isa-message, isa-ipl1, sapient-v1,
+# Regenerate the seven protobuf packs: sapient, isa, isa-message, isa-ipl1, isa-message-3.6, sapient-v1,
 # cot-protobuf.
 #
 # Usage: tools/gen/proto2pack-run.sh [--check] <checkout> <sources>
 #
-# With --check nothing in <checkout> is written: the six runs write into a
+# With --check nothing in <checkout> is written: the seven runs write into a
 # temporary copy of its model/, packs/ and tools/gen/names/, the copy is compared
 # with <checkout>, every file that differs is listed and the exit status is 1
 # when there is one. The runs cannot each be given `proto2pack.py --check`
@@ -15,7 +15,7 @@
 # <checkout> is a goat-transformers checkout. It is read (model/core.def,
 # model/track.def, the cot-xml and geojson packs, the hand-written vectors of
 # sapient, isa and cot-protobuf) and written: model/sapient.def, model/isa.def,
-# model/isa1.def, model/sapient1.def, model/takproto.def, packs/<the six>/, the
+# model/isa1.def, model/isa36.def, model/sapient1.def, model/takproto.def, packs/<the seven>/, the
 # gen-*-to-<format>.json vectors under packs/cot-xml, packs/geojson and packs/isa, and
 # tools/gen/names/.
 #
@@ -42,6 +42,7 @@
 #   <sources>/isa/ipl-3.7-6.0.13.proto   packs isa and isa-message
 #     sha256 a959dde49e752d326b8e050a07d798d131e59853e45c74add51b02b339235927
 #   <sources>/isa/ipl-1.6-6.0.13.proto   pack isa-ipl1
+#   <sources>/isa/ipl-3.6-6.0.13.proto   pack isa-message-3.6
 #     sha256 aff034e73a12435c2176f5af6d68ffa4be7116f09fe68e4dda1c1dfec3f645a5
 #     Both from the ISA 6.0.13 schema set (ISA IPL Format 6.0, Git Hash c02e800),
 #     directory sources/schemas/. There is no download address for them: copy
@@ -90,6 +91,7 @@ fi
 SHA=244a741c13bcee628f84944aef91e4a66854bd7d
 ISA37="Integrated Sensor Architecture IPL 3.7 protobuf declaration file ipl-3.7-6.0.13.proto (ISA IPL Format 6.0, Iteration 149, Git Hash c02e800), sha256 a959dde49e752d326b8e050a07d798d131e59853e45c74add51b02b339235927"
 ISA16="Integrated Sensor Architecture IPL 1.6 protobuf declaration file ipl-1.6-6.0.13.proto (ISA IPL Format 6.0, Iteration 90, Git Hash c02e800), sha256 aff034e73a12435c2176f5af6d68ffa4be7116f09fe68e4dda1c1dfec3f645a5"
+ISA36="Integrated Sensor Architecture IPL 3.6 protobuf declaration file ipl-3.6-6.0.13.proto (ISA IPL Format 6.0, Iteration 91, Git Hash c02e800), sha256 3604d3880c655fcc477f7ea386d270d89ee603cd6ddeefcabfde14640b31e2c2"
 DISTA="File header: Distribution Statement A. Approved for Public Release. Distribution is Unlimited."
 LICENCE="LICENCE.txt at that commit: Crown owned Copyright 2023; licensed under the Apache License, Version 2.0, except where noted otherwise"
 
@@ -195,6 +197,20 @@ python3 -I "$GEN/proto2pack.py" \
   --names-file "$NAMES/isa-ipl1.json" \
   --cross-text "$ROOT/packs/geojson/pack.def" --cross-kind event \
   --notes-file "$GEN/notes/isa-ipl1.md"
+
+# isa-message-3.6: the seven-kind pack for `Message` of IPL 3.6, with its own module isa36
+# (a different schema from the 3.7 file module isa follows). altitude stays raw: the file
+# does not say what it is measured from (tools/gen/notes/isa-message-3.6.md).
+python3 -I "$GEN/proto2pack.py" \
+  --proto "$SRC/isa/ipl-3.6-6.0.13.proto" \
+  --envelope Message --kinds-from-fields --format isa-message-3.6 --module isa36 --out "$ROOT" \
+  --max-depth 14 \
+  --names-file "$NAMES/isa-message-3.6.json" \
+  --source "$ISA36" --source "$DISTA" \
+  --map 3.25.1=lat --map 3.25.2=lon --map 3.29.1.1=course --map 3.29.3.1=speed_ms \
+  --default-kind event --default-requires lat lon \
+  --cross-text "$ROOT/packs/geojson/pack.def" \
+  --notes-file "$GEN/notes/isa-message-3.6.md"
 
 # --cross-omit: model/track.def derives `le` from track.sigma_up_m (7.6.6) and `course`
 # and `speed_ms` from track.vel_east_ms and track.vel_north_ms (7.19.1, 7.19.2); geojson

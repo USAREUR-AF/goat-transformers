@@ -1,0 +1,16 @@
+{
+  "name": "gen-administrative-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Administrative Source=\"s0\" Identifier=\"2\" Priority=\"3\" Code=\"AC_DEVICE_ADDED\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><About>s8</About><About>s9</About><Extras Name=\"s10\"/><Extras Name=\"s11\"/></Administrative>",
+  "expect": "<Administrative Source=\"s0\" Identifier=\"2\" Priority=\"3\" Code=\"AC_DEVICE_ADDED\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><About>s8</About><About>s9</About><Extras Name=\"s10\"/><Extras Name=\"s11\"/></Administrative>",
+  "model": {
+    "@kind": "administrative",
+    "isaxml46.source": "s0",
+    "isaxml46.identifier": "2",
+    "isaxml46.about.#": "2",
+    "isaxml46.about[1].isaxml46.item_string": "s9",
+    "isaxml46.extras.#": "2",
+    "isaxml46.extras[1].isaxml46.name": "s11"
+  }
+}
