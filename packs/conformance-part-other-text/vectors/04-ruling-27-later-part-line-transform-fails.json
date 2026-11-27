@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-later-part-line-transform-fails",
+  "from": "conformance-part-other-text",
+  "to": "conformance-part-mirror",
+  "input": "{\"l\":\"x\",\"t\":5}",
+  "expect": "{\"label\":\"x\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 27: a line whose transform fails changes nothing"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-28-agrees",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-kind-whole",
+  "input": "{\"x\":6,\"tag\":\"h\"}",
+  "expect": "{\"k\":\"a\",\"t\":\"h\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 28: another line is counted over the pack's lines; 6 agrees"
+}

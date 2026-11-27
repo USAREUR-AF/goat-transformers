@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-in-the-later-line",
+  "from": "conformance-twolines-later-xml",
+  "to": "conformance-twolines-later-xml",
+  "input": "<e a=\"3\" b=\"zz\"/>",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.7 ruling 10: the transform succeeds and the table has no entry, so the line fails the decode; that the earlier line succeeds does not matter"
+}

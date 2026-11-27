@@ -298,7 +298,9 @@ fields(Pack, Sets, Lines) ->
     {Model, Failed} =
         lists:foldl(
           fun({field, Key, {Path, _}, Tr, LocT, Opts}, {M, F} = Acc) ->
-                  case maps:is_key(Key, M) of
+                  Have = maps:is_key(Key, M),
+                  %% ruling 26 of 0.64
+                  case Have andalso element(1, Opts) =:= none of
                       true -> Acc;
                       false ->
                           case value_of(item_at(Sets, Path), Tr) of
@@ -306,8 +308,10 @@ fields(Pack, Sets, Lines) ->
                               {ok, Raw} ->
                                   try decode_value(Tr, Raw) of
                                       V0 ->
-                                          V1 = gt_engine:via_decode(Opts, V0, Tr, Key, LocT, Pack),
-                                          {M#{Key => gt_engine:typemap_decode(Key, V1, Pack)}, F}
+                                          case gt_engine:key_value(Opts, V0, Tr, Key, LocT, Pack) of
+                                              {ok, V} when not Have -> {M#{Key => V}, F};
+                                              _ -> Acc
+                                          end
                                   catch
                                       _:_ -> {M, [{Key, LocT} | F]}
                                   end

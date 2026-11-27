@@ -1,0 +1,9 @@
+{
+  "name": "no-via-entry-on-encode",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-type-via",
+  "input": "{\"type\":\"z\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3: passes the typemap, has no table entry"
+}

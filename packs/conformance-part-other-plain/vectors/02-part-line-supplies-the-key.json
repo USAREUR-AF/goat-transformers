@@ -1,0 +1,12 @@
+{
+  "name": "part-line-supplies-the-key",
+  "from": "conformance-part-other-plain",
+  "to": "conformance-part-other-plain",
+  "input": "{\"t\":\"h\"}",
+  "expect": "{\"x\":6,\"t\":\"h\"}",
+  "model": {
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, 0.6: one key at several locators"
+}

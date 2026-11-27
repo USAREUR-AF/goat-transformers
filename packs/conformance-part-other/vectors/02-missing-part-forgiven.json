@@ -1,0 +1,12 @@
+{
+  "name": "missing-part-forgiven",
+  "from": "conformance-part-other",
+  "to": "conformance-part-other",
+  "input": "{\"x\":3,\"t\":\"k\"}",
+  "expect": "{\"x\":3,\"t\":\"k\"}",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 5: a missing part is a failed transform (0.6 ruling 5); ruling 2: a key with another line in the scope is left to the order of lines and not checked"
+}

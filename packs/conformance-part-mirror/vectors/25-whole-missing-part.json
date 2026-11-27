@@ -1,0 +1,9 @@
+{
+  "name": "whole-missing-part",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-json-whole",
+  "input": "{\"tag\":\"k-h\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: part 2 does not decode"
+}

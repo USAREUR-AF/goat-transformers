@@ -770,11 +770,21 @@ impl<'a, 's> Session<'a, 's> {
 
     /// One line whose bits are in the input: the transform's result, through
     /// the table. The key takes the value of the earliest line that succeeds;
-    /// a table that refuses a value fails the decode (rulings 4 and 5 of 0.6).
+    /// a table that refuses a value fails the decode (rulings 4 and 5 of 0.6),
+    /// also on a line after the one that gave the key its value (ruling 26 of
+    /// 0.64).
     fn put(&mut self, scope: u16, key: u16, table: u16, v: Option<Val>) -> Result<(), Error> {
         match self.val(scope, key) {
             None | Some(Val::Failed) => {}
-            Some(_) => return Ok(()),
+            Some(Val::Hard) => return Ok(()),
+            Some(_) => {
+                if let Some(v) = v {
+                    if self.through(table, v, true)?.is_none() {
+                        return self.set(scope, key, Val::Hard);
+                    }
+                }
+                return Ok(());
+            }
         }
         let val = match v {
             None => Val::Failed,

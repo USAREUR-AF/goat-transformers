@@ -1,0 +1,12 @@
+{
+  "name": "typemap-entry",
+  "from": "conformance-part-type",
+  "to": "conformance-part-type",
+  "input": "<e t=\"k-h\"/>",
+  "expect": "<e t=\"k-h\"/>",
+  "model": {
+    "type": "a-h"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3: `typemap` sees the part's text"
+}

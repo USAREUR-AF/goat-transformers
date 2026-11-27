@@ -1,0 +1,9 @@
+{
+  "name": "missing-entry-not-forgiven",
+  "from": "conformance-part-other",
+  "to": "conformance-part-other",
+  "input": "{\"x\":3,\"t\":\"k-a\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 5: a missing table entry is a failed table (0.7 ruling 10)"
+}

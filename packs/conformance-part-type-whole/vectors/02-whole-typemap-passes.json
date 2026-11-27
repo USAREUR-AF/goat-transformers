@@ -1,0 +1,13 @@
+{
+  "name": "whole-typemap-passes",
+  "from": "conformance-part-type-whole",
+  "to": "conformance-part-type-whole",
+  "input": "<e t=\"k-z\"/>",
+  "expect": "<e t=\"k-z\"/>",
+  "model": {
+    "type": "k-z",
+    "probe.label": "z"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3: a code without an entry passes, on a whole line too"
+}

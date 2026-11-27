@@ -526,12 +526,12 @@ func (r *seqReader) node(n *seqNode) error {
 		// A key whose line failed its transform fails the decode (0.20
 		// ruling 35).
 		// In a message at a `run` line also when another line forgives it (0.92
-		// ruling 3).
-		if _, ok := d.rec.Fields[n.sw.key]; !ok || d.strict {
-			for i := d.failFrom; i < len(d.failed); i++ {
-				if d.failedKey[i] == n.sw.key && d.failedIn[i] == d.rec {
-					return d.failed[i]
-				}
+		// ruling 3). So does a key with a value of which another line has no
+		// table entry (0.64 ruling 26).
+		_, has := d.rec.Fields[n.sw.key]
+		for i := d.failFrom; i < len(d.failed); i++ {
+			if d.failedKey[i] == n.sw.key && d.failedIn[i] == d.rec && (!has || d.strict || d.failedHard[i]) {
+				return d.failed[i]
 			}
 		}
 		c := n.sw.selectCase(d.rec.Fields)
@@ -728,6 +728,7 @@ func (w *seqWriter) settle(ks *seqKindWrite, sc seqScope) error {
 				sc.vals[f.Key] = v
 			}
 			sc.bad[f.Key] = ks.before.bad[f.Key]
+			sc.hard[f.Key] = ks.before.hard[f.Key]
 		}
 	}
 	for _, fa := range ks.fields {
@@ -1137,6 +1138,23 @@ type seqScope struct {
 	// bad holds the keys a written line gave that would not read back: the
 	// bits fail the transform or the table on decode (0.20 ruling 31).
 	bad map[string]bool
+	// hard holds the keys of which a written line has no table entry for
+	// what decode would read: the decode fails whatever another line of the
+	// key gives (0.64 rulings 26 and 31). switched holds the keys a switch
+	// of the scope selected by.
+	hard     map[string]bool
+	switched map[string]bool
+}
+
+// hardSwitch returns a key that a switch selected by and that fails the
+// decode by ruling 26 of 0.64, "" for none.
+func (sc seqScope) hardSwitch() string {
+	for k := range sc.switched {
+		if sc.hard[k] {
+			return k
+		}
+	}
+	return ""
 }
 
 // withVals returns the scope with a copy of its decoded values, for a
@@ -1148,24 +1166,29 @@ func (sc seqScope) withVals() seqScope {
 	}
 	sc.vals = vals
 	sc.bad = map[string]bool{}
+	sc.hard = map[string]bool{}
+	sc.switched = map[string]bool{}
 	return sc
 }
 
 // snapshot returns a copy of the scope's decoded values and marks.
 func (sc seqScope) snapshot() seqScope {
-	out := seqScope{vals: map[string]Value{}, bad: map[string]bool{}}
+	out := seqScope{vals: map[string]Value{}, bad: map[string]bool{}, hard: map[string]bool{}}
 	for k, v := range sc.vals {
 		out.vals[k] = v
 	}
 	for k, v := range sc.bad {
 		out.bad[k] = v
 	}
+	for k, v := range sc.hard {
+		out.hard[k] = v
+	}
 	return out
 }
 
 // newScope is the scope of a message or an item with nothing written yet.
 func newScope(p *Pack, rec *Item, defs map[string]*Default) seqScope {
-	return seqScope{rec: rec, defs: defs, uper: p.uper, vals: map[string]Value{}, bad: map[string]bool{}}
+	return seqScope{rec: rec, defs: defs, uper: p.uper, vals: map[string]Value{}, bad: map[string]bool{}, hard: map[string]bool{}, switched: map[string]bool{}}
 }
 
 // inCase returns the scope of the lines of a case: its defaults over those
@@ -1185,18 +1208,24 @@ func (sc seqScope) inCase(c *seqCase) seqScope {
 	return sc
 }
 
+// switchesRead refuses a scope in which a line of a switch key, wherever it
+// stands, has no table entry for the bits written (0.64 ruling 31).
+func (w *seqWriter) switchesRead(sc seqScope) error {
+	if k := sc.hardSwitch(); k != "" {
+		return w.fail("a line of the switch key %s does not read back through its table, so the output would not decode", k)
+	}
+	return nil
+}
+
 // storeBack puts a value read back from written bits in vals as a decode
 // stores it: through the line's value table and the typemap, the first value
 // of a key staying.
 func storeBack(p *Pack, sc seqScope, f *Field, v Value) {
 	vals := sc.vals
-	if _, done := vals[f.Key]; done {
-		return
-	}
 	if f.table != nil {
 		mv, err := f.viaDecode(v)
 		if err != nil {
-			sc.bad[f.Key] = true
+			sc.bad[f.Key], sc.hard[f.Key] = true, true
 			return
 		}
 		v = mv
@@ -1206,7 +1235,9 @@ func storeBack(p *Pack, sc seqScope, f *Field, v Value) {
 			v.S = cot
 		}
 	}
-	vals[f.Key] = v
+	if _, done := vals[f.Key]; !done {
+		vals[f.Key] = v
+	}
 }
 
 // readBack reads the bits a field line wrote at a bit of data as a decode
@@ -1464,6 +1495,9 @@ func (w *seqWriter) encodePass(nodes []*seqNode, sc seqScope) ([]byte, error) {
 	w.cntAt = map[*seqCountDef]*seqCountAt{}
 	w.exts = []*seqExtent{{}}
 	if err := w.emit(nodes, sc, false); err != nil {
+		return nil, err
+	}
+	if err := w.switchesRead(sc); err != nil {
 		return nil, err
 	}
 	// Armored text is the bits up to the cursor, not rounded to a byte
@@ -1994,7 +2028,8 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			w.cntAt[n.cnt] = c
 		case seqSwitchOp:
 			// The case decode would select from the bits written (0.20).
-			if _, ok := sc.vals[n.sw.key]; !ok && sc.bad[n.sw.key] {
+			sc.switched[n.sw.key] = true
+			if _, ok := sc.vals[n.sw.key]; !ok && sc.bad[n.sw.key] || sc.hard[n.sw.key] {
 				return &Error{Kind: ErrTransformEncode, Format: p.Format, Detail: fmt.Sprintf("the switch on line %d: the value written for %s does not read back, so the output would not decode", n.sw.line, n.sw.key)}
 			}
 			c := n.sw.selectCase(sc.vals)
@@ -2133,7 +2168,11 @@ func (w *seqWriter) group(g *Group, sc seqScope) error {
 		if err != nil {
 			return err
 		}
-		return w.emit(nodes, newScope(w.p, it, defs), false)
+		isc := newScope(w.p, it, defs)
+		if err := w.emit(nodes, isc, false); err != nil {
+			return err
+		}
+		return w.switchesRead(isc)
 	}
 	bit := func(one bool) {
 		at := w.alloc(1)

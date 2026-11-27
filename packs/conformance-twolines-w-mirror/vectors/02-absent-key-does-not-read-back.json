@@ -1,0 +1,9 @@
+{
+  "name": "absent-key-does-not-read-back",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch",
+  "input": "{\"y\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.20 rulings 31 and 33 with 0.64 ruling 26: the zero bits of the second line have no entry, so the output would not decode"
+}

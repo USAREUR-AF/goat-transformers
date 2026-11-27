@@ -15,18 +15,29 @@ def _canon(text, type_name):
         return None
 
 
+UNREADABLE = object()  # a part line's entry whose model text does not read as the key's type
+
+
+def via_may_fail(f):
+    """Whether a value may have no entry in the line's table (0.6; 0.64 ruling 3)."""
+    return f.via_dec is not None and (
+        f.transform.yields != f.key_type or getattr(f.transform, "strict_via", False))
+
+
 def _build_via(f, table):
     """The two lookups of a `via` field: canonical native text -> model value,
     and canonical model text -> native text. The first entry for a value wins."""
     nt, kt = f.transform.yields, f.key_type
     f.via_dec, f.via_enc = {}, {}
+    strict = getattr(f.transform, "strict_via", False)
     for native, model in table:
         n = _canon(native, nt)
         if n is not None and n not in f.via_dec:
             try:
                 f.via_dec[n] = read_typed(model, kt)
             except (ValueError, OverflowError):
-                pass
+                if strict:  # 0.64 ruling 30: an entry, which fails the decode with `unlisted` too
+                    f.via_dec[n] = UNREADABLE
         m = _canon(model, kt)
         if m is not None and m not in f.via_enc:
             f.via_enc[m] = native
@@ -53,10 +64,17 @@ def _via_decode(f, value):
     nt = f.transform.yields
     text = canonical_text(value, nt)
     if text in f.via_dec:
-        return f.via_dec[text]
-    if nt == f.key_type:
-        return value  # no entry and both sides one type: passes through
-    raise ValueError("%s has no entry in table %s" % (text, f.via))
+        value = f.via_dec[text]
+        if value is UNREADABLE:
+            raise ValueError("the entry of %s in table %s does not read as %s" % (text, f.via, f.key_type))
+        return value
+    if nt == f.key_type and not getattr(f.transform, "strict_via", False):
+        return value  # no entry and both sides one type: passes through (never on a part line, 0.64)
+    raise NoEntry("%s has no entry in table %s" % (text, f.via))
+
+
+class NoEntry(ValueError):
+    """A value with no entry in its line's table."""
 
 
 def _via_encode(f, value):
@@ -68,7 +86,7 @@ def _via_encode(f, value):
         raise ValueError("%r is not a %s value" % (value, kt))
     native = f.via_enc.get(text)
     if native is None:
-        if nt == kt:
+        if nt == kt and not getattr(f.transform, "strict_via", False):
             return value
         raise ValueError("%s has no entry in table %s" % (text, f.via))
     return read_typed(native, nt)

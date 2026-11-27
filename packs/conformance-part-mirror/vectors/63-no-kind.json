@@ -1,0 +1,9 @@
+{
+  "name": "no-kind",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-kinds",
+  "input": "{\"y\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 12"
+}

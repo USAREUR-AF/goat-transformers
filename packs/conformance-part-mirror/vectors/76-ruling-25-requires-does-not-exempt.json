@@ -1,0 +1,9 @@
+{
+  "name": "ruling-25-requires-does-not-exempt",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-requires-whole",
+  "input": "{\"x\":3,\"tag\":\"h\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 25: only a `field` line of the scope is another line; x is named by `requires` and is checked: 6 is not the held 3"
+}

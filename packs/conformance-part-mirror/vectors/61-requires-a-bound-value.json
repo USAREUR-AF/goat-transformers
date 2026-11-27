@@ -1,0 +1,9 @@
+{
+  "name": "requires-a-bound-value",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-kinds",
+  "input": "{\"y\":2,\"label\":\"q\"}",
+  "expect": "{\"t\":\"k-S-q\",\"k\":\"b\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 12"
+}

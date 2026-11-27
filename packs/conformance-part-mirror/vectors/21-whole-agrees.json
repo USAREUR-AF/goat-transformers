@@ -1,0 +1,9 @@
+{
+  "name": "whole-agrees",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-json-whole",
+  "input": "{\"x\":6,\"y\":1,\"tag\":\"k-h-A-M\"}",
+  "expect": "{\"t\":\"k-h-A-M\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the held parts agree"
+}

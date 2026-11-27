@@ -1,0 +1,9 @@
+{
+  "name": "ruling-30-held-value-in-its-place",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default-noentry",
+  "input": "{\"x\":6,\"y\":1}",
+  "expect": "{\"t\":\"h-A\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 30: step 2 takes a `default` whether or not its value has an entry; without one transform-encode; x is held"
+}

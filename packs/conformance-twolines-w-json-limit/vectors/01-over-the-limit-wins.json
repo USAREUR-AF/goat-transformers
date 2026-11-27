@@ -1,0 +1,10 @@
+{
+  "name": "over-the-limit-wins",
+  "from": "conformance-twolines-w-json-limit",
+  "to": "conformance-twolines-w-json-limit",
+  "input": "{\"a\":3,\"b\":\"zz\",\"nums\":[1,2]}",
+  "expect_error": "malformed-wire",
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27 and 7f of 0.11: over the limit wins"
+}

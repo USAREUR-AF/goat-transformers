@@ -145,6 +145,12 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 e.putList(g.list, items.decodeItems(g, v, fails));
                 continue;
             }
+            if (l instanceof Part.Const) {
+                mapped.add(l.locator);
+                Object token = member(d, l.locator);
+                if (token != null) checkConst((Part.Const) l, rawText(token, Transform.STRING), e, fails);
+                continue;
+            }
             if (!(l instanceof Pack.Field)) {
                 // `when <locator> present` does not map the member (ruling 27 of 0.5); a value or a const does.
                 if (!((Pack.When) l).present) mapped.add(l.locator);
@@ -152,7 +158,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             }
             mapped.add(l.locator);
             Pack.Field f = (Pack.Field) l;
-            if (e.get(f.key) != null) continue;         // an earlier line already gave the key its value
+            if (settled(f, e)) continue;         // an earlier line already gave the key its value
             Object v = member(d, f.locator);
             if (v == null) continue;
             // a string's text, or a number's (also a coordinate's) or boolean's canonical text (rulings 9 and 10 of 0.9)
@@ -167,6 +173,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                     dv = JsonTree.decodeCodes(f, v);
                 } else {
                     dv = decodeGeo(f.transform, v);
+                    if (f.part != null) dv = f.part.of((String) dv);
                 }
             } catch (IllegalArgumentException ex) {
                 fails.add(f, ex.getMessage(), e);
@@ -241,6 +248,15 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
         LinkedHashMap<String, Object> top = new LinkedHashMap<>();
         for (Pack.Line l : kind.lines) {
             int ci = Locators.geojsonCoord(l.locator);
+            Part.Group pg = kind.scope.parts.get(l.locator);
+            if (pg != null) {
+                // the token, where the group's first line stands (ruling 8 of 0.64)
+                String token = pg.first == l ? partToken(pg, e, kind.scope) : null;
+                if (token == null) continue;
+                if (l.locator.startsWith("properties.")) putFirst(props, l.locator.substring("properties.".length()), token);
+                else putFirst(top, l.locator, token);
+                continue;
+            }
             // A when or const value is written over any field, at the position of the first line naming the locator.
             Pack.When w = kind.fixed.get(l.locator);
             if (w != null) {

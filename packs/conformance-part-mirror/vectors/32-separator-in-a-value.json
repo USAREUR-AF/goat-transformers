@@ -1,0 +1,9 @@
+{
+  "name": "separator-in-a-value",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-strict",
+  "input": "{\"x\":6,\"label\":\"beta\",\"w1\":\"q-r\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: a text that holds the separator"
+}

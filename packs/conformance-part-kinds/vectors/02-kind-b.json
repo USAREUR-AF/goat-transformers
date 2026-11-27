@@ -1,0 +1,14 @@
+{
+  "name": "kind-b",
+  "from": "conformance-part-kinds",
+  "to": "conformance-part-kinds",
+  "input": "{\"t\":\"k-S-q\",\"k\":\"b\"}",
+  "expect": "{\"t\":\"k-S-q\",\"k\":\"b\"}",
+  "model": {
+    "@kind": "b",
+    "probe.y": "2",
+    "probe.label": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 6"
+}

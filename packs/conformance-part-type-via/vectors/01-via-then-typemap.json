@@ -1,0 +1,12 @@
+{
+  "name": "via-then-typemap",
+  "from": "conformance-part-type-via",
+  "to": "conformance-part-type-via",
+  "input": "<e t=\"1\"/>",
+  "expect": "<e t=\"1\"/>",
+  "model": {
+    "type": "a-h"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3"
+}

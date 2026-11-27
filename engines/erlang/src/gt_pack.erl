@@ -11,6 +11,8 @@
 %% Line = {field, Key, Loc, Transform, LocText, Opts}
 %%      | {wh, Loc, Value, LocText}          % `when`
 %%      | {const, Loc, Value, LocText}
+%%   a part line (0.64) has the Transform {part, Sep, N, Unlisted}, a const
+%%   part the Value {part, Sep, N, Text}
 %%      | {element, [ElementName], PathText}   (xml, 0.18; decode ignores it)
 %%      | {group, List, GroupLoc, Spec, Body, LocText}
 %%      | {gate, {BitOffset, Len}, Negated, [Value], Body, LocText}   (bits, 0.17)
@@ -255,6 +257,7 @@ parse(Bin) ->
                        [name_str(P2)]);
         _ -> ok
     end,
+    part_checks(P2),
     case Wire of
         text -> text_checks(P2);
         tlv -> tlv_checks(P2);
@@ -360,6 +363,7 @@ yields({scale, _, _}) -> float;
 yields({chars, _}) -> string;
 yields({chars_stop, _, _}) -> string;
 yields(octal) -> string;
+yields({part, _, _, _}) -> string;             % 0.64
 yields({charcode, codenum, _}) -> int;       % 0.46
 yields({charcode, _, _}) -> string;
 yields(f64)     -> float;
@@ -636,6 +640,8 @@ pre_line([Dir | Args], P0) ->
                   %% the module checks (ruling 10); any other third token
                   %% stays this check (ruling 29)
                   {<<"when">>, [_, _, <<"at">> | _]} -> true;
+                  %% `const <locator> part:<sep>:<n> <text>` (ruling 23 of 0.64)
+                  {<<"const">>, [_, PartS, _]} -> hd(binary:split(PartS, <<":">>)) =:= <<"part">>;
                   _ -> arg_count_ok(Dir, length(Args))
               end,
     case CountOk of
@@ -678,6 +684,11 @@ pre_line([Dir | Args], P0) ->
              true -> P2#{listed_seen := true};
              false -> P2
          end,
+    %% the parameters of a const part (rulings 11 and 23 of 0.64)
+    case {Dir, Args} of
+        {<<"const">>, [_, PartTr, _]} -> _ = part_transform(PartTr);
+        _ -> ok
+    end,
     case Dir of
         <<"when">> ->
             case when_form(Args, P3) of
@@ -897,6 +908,24 @@ apply_line([<<"const">>, LocS, ValS], P0) ->
     no_pair(Loc, "const", LocS),
     {Val, P1} = fixed_value(const, Wire, Loc, LocS, ValS, P0),
     add_line({const, Loc, Val, LocS}, P1);
+%% a const part (0.64); its parameters were read by pre_line/2
+apply_line([<<"const">>, LocS, PartS, ValS], P0) ->
+    Wire = need_wire(P0),
+    {part, Sep, N, _} = part_transform(PartS),
+    Loc = parse_loc(Wire, LocS, P0),
+    dot_refused(Wire, Loc, "const"),
+    part_place(Wire, Loc, LocS, PartS),
+    case Loc of
+        [] -> load_error('bad-directive', "const . names the item itself", []);
+        _ -> ok
+    end,
+    {{text, V, _}, P1} = fixed_value(const, Wire, Loc, LocS, ValS, P0),
+    case V =:= <<>> orelse binary:match(V, Sep) =/= nomatch of
+        true -> load_error('bad-directive', "const ~s ~s: the text is empty or holds the separator",
+                           [LocS, PartS]);
+        false -> ok
+    end,
+    add_line({const, Loc, {part, Sep, N, V}, LocS}, P1);
 apply_line([<<"default">>, Key, Val], #{bstack := [#{defaults := D} = B | Rest]} = P) ->
     P#{bstack := [B#{defaults := [{Key, Val} | D]} | Rest]};
 apply_line([<<"default">>, Key, Val], #{gstack := [#{defaults := D} = G | Rest]} = P) ->
@@ -998,7 +1027,7 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
     {Tr0, TrChecks} = parse_transform(Wire, TrS),
     %% `stop <code>` (0.22) is part of the field's transform
     {Stop, OptToks} = take_stop(OptToks0),
-    {Tr, StopChecks} = stop_checked(Stop, Tr0, TrS),
+    {Tr1, StopChecks} = stop_checked(Stop, Tr0, TrS),
     case Wire =:= bits andalso binary:match(LocS, <<"until:">>) =:= {0, 6} of
         true -> load_error('bad-directive', "until: is a locator of sequential layouts only", []);
         false -> ok
@@ -1007,17 +1036,24 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
           catch error:{load_error, _, _} = UperLoc ->
                   %% a UPER locator in a fixed-layout pack is refused after the
                   %% file (ruling 24 of 0.19); the options are still line checks
-                  _ = parse_opts(OptToks, {none, false, false, false, none, none}),
+                  _ = field_opts(OptToks),
                   erlang:error(UperLoc)
           end,
-    {_Via, Swap, Trim, Optional, _, _With} = Opts0 = parse_opts(OptToks, {none, false, false, false, none, none}),
+    {Unlisted, {Via0, Swap, Trim, Optional, Abs0, With0} = Opts0} = field_opts(OptToks),
+    {Tr, UnlistedChecks} = unlisted(Unlisted, Tr1, TrS, Via0),
     Len = case Wire of
               bits -> element(2, Loc);
               _ -> Loc                            % a geojson coordinate (ruling 25 of 0.9)
           end,
     {Opts, AbsentChecks} = sentinels(Wire, Tr, Len, Opts0),
     IsPair = case Loc of {pair, _, _} -> true; _ -> false end,
-    Checks = TrChecks ++ StopChecks ++
+    Checks = TrChecks ++ StopChecks ++ UnlistedChecks ++
+        [Bad || {part, _, _, _} <- [Tr],
+                Bad <- try part_place(Wire, Loc, LocS, TrS), []
+                       catch error:{load_error, K, M} -> [{raw, K, M}]
+                       end ++
+                    [{bad, "~s on ~s: a field option other than via, unlisted and optional", [TrS, LocS]}
+                     || Swap orelse Trim orelse Abs0 =/= none orelse With0 =/= none]] ++
         [{bad, "~s on ~s: a pair is only for dm and hms_dmy, and they only take a pair",
           [TrS, LocS]}
          || Wire =:= text, IsPair =/= text_pair_transform(Tr)] ++
@@ -1087,6 +1123,21 @@ dot_refused(_, _, _) -> ok.
 
 %% Field options after the transform, in any order.
 %% An unknown or repeated option is bad-directive.
+%% The options of a field -> {Unlisted, Opts}: `unlisted` (0.64) stands
+%% apart from the others.
+field_opts(Toks0) ->
+    {Unlisted, Toks} = take_unlisted(Toks0, false, []),
+    {Unlisted, parse_opts(Toks, {none, false, false, false, none, none})}.
+
+take_unlisted([], Unl, Acc) -> {Unl, lists:reverse(Acc)};
+take_unlisted([<<"unlisted">> | _], true, _) ->
+    line_error('bad-directive', "field option unlisted is given twice", []);
+take_unlisted([<<"unlisted">> | Rest], false, Acc) -> take_unlisted(Rest, true, Acc);
+%% the token after these is their argument
+take_unlisted([O, A | Rest], Unl, Acc) when O =:= <<"absent">>; O =:= <<"via">>; O =:= <<"with">> ->
+    take_unlisted(Rest, Unl, [A, O | Acc]);
+take_unlisted([T | Rest], Unl, Acc) -> take_unlisted(Rest, Unl, [T | Acc]).
+
 parse_opts([], Opts) -> Opts;
 parse_opts([<<"via">>, Table | Rest], Opts) -> parse_opts(Rest, set_opt(1, none, Table, <<"via">>, Opts));
 parse_opts([<<"swap">> | Rest], Opts) -> parse_opts(Rest, set_opt(2, false, true, <<"swap">>, Opts));
@@ -1970,6 +2021,7 @@ parse_transform1(Wire, S) ->
                      _ when Cw =:= xml; Cw =:= json; Cw =:= geojson; Cw =:= text -> Kind =/= code;
                      _ -> false
                  end;
+             {part, Pw} -> lists:member(Pw, [xml, json, geojson, text]);     % 0.64
              {bits15, bits} -> true;
              {text15, Tw} when Tw =/= tlv -> true;
              {text26, Tw} when Tw =/= tlv -> true;
@@ -2048,6 +2100,8 @@ transform(<<"smscale:", Rest/binary>> = S) -> {bits15, float_scale(smscale, Rest
 transform(<<"f32scale:", Rest/binary>> = S) -> {bits15, float_scale(f32scale, Rest, S)};
 transform(<<"f64scale:", Rest/binary>> = S) -> {bits15, float_scale(f64scale, Rest, S)};
 transform(<<"scale:", Rest/binary>> = S) -> {text15, float_scale(scale, Rest, S)};
+transform(<<"part">> = S) -> {part, part_transform(S)};          % 0.64
+transform(<<"part:", _/binary>> = S) -> {part, part_transform(S)};
 %% code, codestr and codenum (0.46): {charcode, Kind, ListText} until the
 %% file is read (ruling 15), then {charcode, Kind, [{Characters, Size, Width}]}
 transform(<<"code:", L/binary>>) -> {charcode, {charcode, code, L}};
@@ -2343,14 +2397,15 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks0], P0) ->
     {Stop, OptToks} = take_stop(OptToks0),
     {Tr, StopChecks} = stop_checked(Stop, Tr0, TrS),
     Len = seq_loc(LenS, infinity),
-    {Via, Swap, Trim, Optional, _, With} = Opts0 = parse_opts(OptToks, {none, false, false, false, none, none}),
+    {Unlisted, {Via, Swap, Trim, Optional, _, With} = Opts0} = field_opts(OptToks),
+    {_, UnlistedChecks} = unlisted(Unlisted, Tr, TrS, Via),
     {Opts, AbsentChecks} = sentinels(bits, Tr, Len, Opts0),
     Absent = element(5, Opts),
     case Optional of
         true -> load_error('bad-directive', "optional is not a field option of a sequential pack", []);
         false -> ok
     end,
-    Checks = TrChecks ++ StopChecks ++
+    Checks = TrChecks ++ StopChecks ++ UnlistedChecks ++
         [{bad, "~s does not allow the bit length ~s", [TrS, LenS]}
          || not len_ok(bits, Tr, {0, Len})] ++
         [{bad, "swap on a field of ~s bits: the length is not a multiple of 8", [LenS]}
@@ -3254,11 +3309,12 @@ uper_field(Key, LocS, TrS, OptToks, P0) ->
     %% bad-locator for it; its form, like every other refusal of 0.19, is
     %% bad-directive after the file is read.
     {_Class, Tr} = transform(TrS),
-    {Via, Swap, Trim, Optional, Absent, With} = parse_opts(OptToks, {none, false, false, false, none, none}),
+    {Unlisted, {Via, Swap, Trim, Optional, Absent, With}} = field_opts(OptToks),
+    {_, UnlistedChecks} = unlisted(Unlisted, Tr, TrS, Via),
     {Loc, LocChecks} = try {uper_loc(LocS), []}
                        catch error:{load_error, K, M} -> {{int, 0, 0, false}, [{raw, K, M}]}
                        end,
-    Checks = LocChecks ++
+    Checks = LocChecks ++ UnlistedChecks ++
         [{bad, "optional is not a field option of a sequential pack", []} || Optional] ++
         [{need_uper, ["locator ", LocS]}] ++
         [{bad, "transform ~s is not one locator ~s takes", [TrS, LocS]}
@@ -3512,6 +3568,10 @@ text_checks(#{delimiter := Delim, start := Start, checksum := Sum,
               case L of
                   {wh, _, present, _} -> ok;
                   {W, _, {text, V, _}, LocS} when W =:= wh; W =:= const ->
+                      text_value_ok(V, Loc, Delim, Sum) orelse
+                          load_error('bad-directive', "the value ~s at ~s cannot be written on this wire",
+                                     [V, LocS]);
+                  {const, _, {part, _, _, V}, LocS} ->
                       text_value_ok(V, Loc, Delim, Sum) orelse
                           load_error('bad-directive', "the value ~s at ~s cannot be written on this wire",
                                      [V, LocS]);
@@ -3849,6 +3909,105 @@ wire_line({uchoice, N, IsExt, Alts}) ->
 wire_line(_) -> true.
 
 %% ===================================================================
+%% parts of a text token (Version 0.64)
+%% ===================================================================
+%% `part:<sep>:<n>` -> {part, Sep, N, Unlisted}; its parameters are a line
+%% check (ruling 11).
+part_transform(S) ->
+    Bad = fun() -> line_error('bad-directive', "~s is not part:<sep>:<n>, n from 0 to 255", [S]) end,
+    case S of
+        <<"part:", Rest/binary>> ->
+            {Sep, NS} = try gt_derive:sep_and_rest(Rest, S)
+                        catch error:{load_error, _, _} -> Bad()
+                        end,
+            case uint(NS) of
+                N when is_integer(N), N =< 255 ->
+                    case integer_to_binary(N) of
+                        NS -> {part, Sep, N, false};
+                        _ -> Bad()
+                    end;
+                _ -> Bad()
+            end;
+        _ -> Bad()
+    end.
+
+%% The option `unlisted` on a transform -> {Tr, Checks}.
+unlisted(false, Tr, _TrS, _Via) -> {Tr, []};
+unlisted(true, {part, Sep, N, _}, TrS, Via) ->
+    {{part, Sep, N, true}, [{bad, "unlisted on ~s without via", [TrS]} || Via =:= none]};
+unlisted(true, Tr, TrS, _Via) -> {Tr, [{bad, "unlisted on ~s: valid only on part", [TrS]}]}.
+
+%% Where a part line may stand: a whole text place of four wires.
+part_place(Wire, Loc, LocS, PartS) ->
+    Ok = case {Wire, Loc} of
+             {text, {fld, _}} -> true;
+             {geojson, {geom, _}} -> false;
+             _ -> lists:member(Wire, [xml, json, geojson])
+         end,
+    case Ok of
+        true -> ok;
+        false -> load_error('bad-directive', "~s at ~s: not a place it is valid on", [PartS, LocS])
+    end.
+
+%% The part groups of every reading scope: the common lines with each kind,
+%% or alone when there are no kinds (ruling 6), and every group body.
+part_checks(#{common := Common, kinds := Kinds} = P) ->
+    KLs = [maps:get(lines, K) || K <- Kinds],
+    case any_part(Common) orelse lists:any(fun any_part/1, KLs) of
+        false -> ok;
+        true ->
+            Scopes = case KLs of
+                         [] -> [Common];
+                         _ -> [Common ++ Ls || Ls <- KLs]
+                     end,
+            lists:foreach(fun(Ls) -> part_scope(Ls, P) end,
+                          Scopes ++ lists:append([part_bodies(Ls) || Ls <- [Common | KLs]]))
+    end.
+
+any_part(Lines) ->
+    lists:any(fun({field, _, _, {part, _, _, _}, _, _}) -> true;
+                 ({const, _, {part, _, _, _}, _}) -> true;
+                 ({group, _, _, _, #{lines := Ls}, _}) -> any_part(Ls);
+                 (_) -> false
+              end, Lines).
+
+part_bodies(Lines) ->
+    lists:append([[Ls | part_bodies(Ls)] || {group, _, _, _, #{lines := Ls}, _} <- Lines]).
+
+part_scope(Lines, P) ->
+    Locs = lists:usort([T || {field, _, _, {part, _, _, _}, T, _} <- Lines] ++
+                           [T || {const, _, {part, _, _, _}, T} <- Lines]),
+    lists:foreach(fun(LocT) -> part_group(LocT, [L || L <- Lines, part_loc(L) =:= LocT], P) end, Locs).
+
+%% the locator of a line as text; an `element` line has a path
+part_loc({field, _, _, _, T, _}) -> T;
+part_loc({const, _, _, T}) -> T;
+part_loc({wh, _, _, T}) -> T;
+part_loc({group, _, _, _, _, T}) -> T;
+part_loc(_) -> none.
+
+part_group(LocT, Lines, #{wire := Wire, delimiter := Delim, checksum := Sum}) ->
+    Bad = fun(true, Why) -> load_error('bad-directive', "the parts of ~s: ~s", [LocT, Why]);
+             (false, _) -> ok
+          end,
+    Fields = [{S, N, K} || {field, K, _, {part, S, N, _}, _, _} <- Lines],
+    Consts = [{S, N} || {const, _, {part, S, N, _}, _} <- Lines],
+    Wholes = [K || {field, K, _, string, _, {none, false, false, Opt, none, none}} <- Lines,
+                   Opt =:= false orelse Wire =:= text],
+    Ns = [N || {_, N, _} <- Fields] ++ [N || {_, N} <- Consts],
+    Seps = lists:usort([S || {S, _, _} <- Fields] ++ [S || {S, _} <- Consts]),
+    Bad(length(Seps) > 1, "two separators"),
+    Bad(length(Lines) > length(Ns) + length(Wholes), "another line on the locator"),
+    Bad(length(Wholes) > 1, "a second whole line"),
+    Bad(Fields =:= [], "no part field"),
+    Bad([K || {_, _, K} <- Fields, lists:member(K, Wholes)] =/= [], "a whole line and a part line of one key"),
+    Bad(length(lists:usort(Ns)) =/= length(Ns), "two lines for one part"),
+    Bad(lists:max(Ns) =/= length(Ns) - 1, "a part below the highest that no line names"),
+    [Sep] = Seps,
+    Bad(Wire =:= text andalso Sep =:= Delim, "the separator is the delimiter"),
+    Bad(Wire =:= text andalso Sum =:= nmea andalso Sep =:= <<"*">>, "the separator * under checksum nmea").
+
+%% ===================================================================
 %% character codes (Version 0.46)
 %% ===================================================================
 %% `charset <name> <characters> [<width>]`: every failure is checked after
@@ -3931,8 +4090,8 @@ charcode_term(X, _P) -> X.
 until_field(Key, LocS, CodeS, TrS, OptToks0, P0) ->
     {Tr, TrChecks} = parse_transform(bits, TrS),
     {Stop, OptToks} = take_stop(OptToks0),
-    {Via, Swap, Trim, Optional, Absent, With} =
-        parse_opts(OptToks, {none, false, false, false, none, none}),
+    {Unlisted, {Via, Swap, Trim, Optional, Absent, With}} = field_opts(OptToks),
+    {_, UnlistedChecks} = unlisted(Unlisted, Tr, TrS, Via),
     Set = case Tr of
               {chars, S} -> S;
               _ -> load_error('bad-directive', "~s: until: takes chars:<set> only, not ~s", [LocS, TrS])
@@ -3948,7 +4107,7 @@ until_field(Key, LocS, CodeS, TrS, OptToks0, P0) ->
     [load_error('bad-directive', "~s with ~s", [LocS, What])
      || {What, true} <- [{"stop", Stop =/= none}, {"absent", Absent =/= none}, {"swap", Swap},
                          {"trim", Trim}, {"optional", Optional}]],
-    Checks = TrChecks ++ [{via, Via} || Via =/= none],
+    Checks = TrChecks ++ UnlistedChecks ++ [{via, Via} || Via =/= none],
     P1 = lists:foldl(fun late/2, P0, Checks),
     seq_add({sfield, [{Key, Via}], {until, Code}, Tr, LocS, false, false, none, With}, P1).
 

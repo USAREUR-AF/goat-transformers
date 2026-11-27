@@ -1,0 +1,9 @@
+{
+  "name": "part-defaults-before-the-whole-default",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default-whole-all",
+  "input": "{}",
+  "expect": "{\"t\":\"k-h-S\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2"
+}

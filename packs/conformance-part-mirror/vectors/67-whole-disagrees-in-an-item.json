@@ -1,0 +1,9 @@
+{
+  "name": "whole-disagrees-in-an-item",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-items-json",
+  "input": "{\"recs\":[{\"x\":3,\"tag\":\"k-h\"}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: ruling 13: in a group body \"the entity\" is the item"
+}

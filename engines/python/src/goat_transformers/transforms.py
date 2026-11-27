@@ -183,6 +183,26 @@ class StringT(Transform):
         return value
 
 
+class PartT(StringT):
+    """`part:<sep>:<n>` (0.64): one part of a token. Encode gives the text of
+    the part alone; `parts` writes the token."""
+
+    is_part = True
+    strict_via = True  # a value with no table entry never passes through (ruling 3)
+    numeric = False
+    pair = False
+
+    def __init__(self, name):
+        self.name = name
+        self.sep, self.n = part_params(name)
+
+    def decode(self, text):
+        parts = text.split(self.sep)
+        if self.n >= len(parts):
+            raise ValueError("%r has no part %d" % (text, self.n))
+        return parts[self.n]
+
+
 class FloatT(Transform):
     name = "float"
     kind = "number"
@@ -757,8 +777,33 @@ TRANSFORM_WIRES = {
     "scale": ("xml", "geojson", "json"), "iscale": ("xml", "geojson", "json"),
     # 0.46: characters of the sets a pack declares with `charset`
     "code": ("bits",), "codestr": _TEXTUAL, "codenum": ("bits",) + _TEXTUAL,
+    "part": _TEXTUAL,  # 0.64
 }
 CODE_FAMILIES = frozenset(("code", "codestr", "codenum"))  # 0.46
+
+_SEP_NAMES = {"space": " ", "comma": ",", "colon": ":"}
+_PART_NUMBER = re.compile(r"(?:0|[1-9][0-9]{0,2})\Z")
+
+
+def parse_sep(text):
+    """-> the separator character of `tokens` and `has_token` (0.18, ruling 9)
+    and of `part` (0.64, ruling 10)."""
+    if text in _SEP_NAMES:
+        return _SEP_NAMES[text]
+    if len(text) != 1 or text in ":, \t\n\r":
+        raise ValueError("a separator is one character other than ':', ',' or whitespace, or space, comma or colon;"
+                         " got %r" % text)
+    return text
+
+
+def part_params(name):
+    """`part:<sep>:<n>` (0.64) -> (separator, number). Raises ValueError (`bad-directive`)."""
+    parts = name.split(":")
+    if len(parts) != 3:
+        raise ValueError("part takes the form part:<sep>:<n>")
+    if not _PART_NUMBER.match(parts[2]) or int(parts[2]) > 255:
+        raise ValueError("a part number is 0 to 255 without leading zeros, got %r" % parts[2])
+    return parse_sep(parts[1]), int(parts[2])
 
 
 def code_family(name):
@@ -963,7 +1008,9 @@ def check_transform_text(name):
     head, colon, _ = name.partition(":")
     if head not in TRANSFORM_WIRES:
         raise UnknownTransformName(head)
-    if head in CODE_FAMILIES:
+    if head == "part":  # 0.64, ruling 11
+        part_params(name)
+    elif head in CODE_FAMILIES:
         pass  # 0.46 ruling 15: every error of the list is a check after the file
     elif head == "linscale":
         linscale_params(name)

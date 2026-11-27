@@ -538,28 +538,31 @@ set_key(KV, U, Len, Tr, LenT, Trim, #d{pack = Pack} = D) ->
 
 %% Set a key from the value Decode() gives, through `via` and `typemap`.
 set_key_with({Key, Via}, Decode, Tr, LenT, #d{model = Model, pack = Pack} = D) ->
-    case maps:is_key(Key, Model) of
+    Have = maps:is_key(Key, Model),
+    case Have of
         %% the inner message gave the key: a value with no table entry still
         %% fails the decode (ruling 23 of 0.34)
         true when D#d.top, Via =/= none, is_map_key(Key, D#d.given) ->
             D1 = set_key_with({Key, Via}, Decode, Tr, LenT, D#d{model = maps:remove(Key, Model)}),
             D1#d{model = Model};
-        true -> D;
-        false ->
+        true when Via =:= none -> D;
+        _ ->
+            %% with a value already, a line's table still has to hold what it
+            %% reads (ruling 26 of 0.64)
             try Decode() of
                 V0 ->
                     %% a value with no table entry fails the decode when it
                     %% ends, so that the limit on list items read later still
                     %% wins (ruling 7f of 0.11)
-                    try gt_engine:via_decode({Via, false, false, false, none, none}, V0, Tr, Key, LenT, Pack) of
-                        V1 -> D#d{model = Model#{Key => gt_engine:typemap_decode(Key, V1, Pack)}}
-                    catch
-                        error:{convert_error, 'transform-decode', Msg} ->
-                            gt_engine:record_failure_msg(Msg),
-                            %% a switch on the key fails (ruling 35 of 0.20)
-                            D#d{failed = [{Key, LenT} | D#d.failed]}
+                    case gt_engine:key_value({Via, false, false, false, none, none}, V0, Tr, Key, LenT, Pack) of
+                        {ok, V} when not Have -> D#d{model = Model#{Key => V}};
+                        {ok, _} -> D;
+                        %% a switch on the key fails (ruling 35 of 0.20)
+                        _ when not Have -> D#d{failed = [{Key, LenT} | D#d.failed]};
+                        _ -> D
                     end
             catch
+                _:_ when Have -> D;
                 _:_ -> D#d{failed = [{Key, LenT} | D#d.failed]}
             end
     end.
@@ -606,7 +609,7 @@ present(Id, Bits, #d{named = Named, env = Env} = D) ->
 %% the else -> Case | none. An absent key selects the else.
 select(Key, Values, Cases, Else) ->
     case maps:find(Key, Values) of
-        {ok, readback_failed} -> failed;
+        {ok, F} when F =:= readback_failed; F =:= table_failed -> failed;
         {ok, V} ->
             C = gt_num:canon(V),
             case [Case || #{vals := Vals} = Case <- Cases, lists:member(C, Vals)] of
@@ -953,13 +956,16 @@ uchars(C, Ext, D) ->
     {{ok, << <<X>> || <<X:7>> <= <<V:(7 * C)>> >>}, D1}.
 
 set_ukey({Key, Via}, Res, Tr, LenT, #d{model = Model, pack = Pack} = D) ->
-    case maps:is_key(Key, Model) of
+    Have = maps:is_key(Key, Model),
+    case Have andalso Via =:= none of
         true -> D;
         false ->
             try uvalue(Res, Tr) of
                 V0 ->
-                    V1 = gt_engine:via_decode({Via, false, false, false, none, none}, V0, Tr, Key, LenT, Pack),
-                    D#d{model = Model#{Key => gt_engine:typemap_decode(Key, V1, Pack)}}
+                    case gt_engine:key_value({Via, false, false, false, none, none}, V0, Tr, Key, LenT, Pack) of
+                        {ok, V} when not Have -> D#d{model = Model#{Key => V}};
+                        _ -> D
+                    end
             catch
                 _:_ -> D#d{failed = [{Key, LenT} | D#d.failed]}
             end
@@ -1018,7 +1024,9 @@ uscale(V, {frac, Num, Den}, O) -> float(V) * Num / Den + O.
 -record(e, {pos = 0, segs = [], env = #{}, wrote = #{}, pack,
             path = [], forced = #{}, icount = #{},
             counts = #{}, cvals = #{}, unit = bytes, starts = [], rest_hit = false,
-            held = [], wins = []}).
+            held = [], wins = [], swkeys = [], pend = false}).
+%% swkeys  the keys of the switches of the scope written so far; pend  a window of the kind
+%%         is not settled yet (rb_checked/1)
 %% 0.33:
 %% held  [{Pos, Len}]: the bits of field lines that wrote a key the scope
 %%       holds (ruling 12)
@@ -1160,7 +1168,7 @@ eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With} = L, _Rest, Src, #e{p
     %% a switch key on a UPER locator selects from the value decode would
     %% read back from these pieces (0.20)
     case maps:get(has_switch, Pack, false) of
-        true -> E1#e{wrote = uread_back(L, Pieces, Wrote, Pack)};
+        true -> rb_checked(E1#e{wrote = uread_back(L, Pieces, Wrote, Pack)});
         false -> E1
     end;
 eline({uext, Body}, _Rest, Src, E) -> elines(Body, Src, emit(1, 0, E));
@@ -1201,14 +1209,14 @@ eline({sfield, _, {until, _}, {chars, Set}, _, _, _, _, _} = L, _Rest, Src,
     Width = gt_engine:chars_width(Set),
     E1 = lists:foldl(fun(C, Acc) -> emit(Width, C, Acc) end, E, Codes),
     case maps:get(has_switch, Pack, false) of
-        true -> E1#e{wrote = until_read_back(L, Codes, W, Pack)};
+        true -> rb_checked(E1#e{wrote = until_read_back(L, Codes, W, Pack)});
         false -> E1
     end;
 eline({sfield, Keys, Len, _, _, _, _, _, With} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
     {Bits, Raw} = field_bits(L, Src, Pack),
     E1 = held(Keys, With, Src, Len, emit(Len, Bits, E)),
     case maps:get(has_switch, Pack, false) of
-        true -> E1#e{wrote = read_back(L, Raw, W, Pack)};
+        true -> rb_checked(E1#e{wrote = read_back(L, Raw, W, Pack)});
         false -> E1
     end;
 %% `inner <format>` (0.34): encode(<format>, entity) written at the cursor,
@@ -1327,7 +1335,10 @@ eline({switch, Key, Ref, Cases, Else}, _Rest, Src, #e{pack = Pack, wrote = W, pa
         none -> gt_engine:conv_error('no-kind', Pack,
                                      "switch ~s: no case holds the value the key's line wrote, and there is no else",
                                      [Key]);
-        Case -> elines(maps:get(lines, Case), case_src(Case, Src), E)
+        Case ->
+            %% the lines of the key after it are checked where they stand
+            %% (ruling 31 of 0.64)
+            elines(maps:get(lines, Case), case_src(Case, Src), E#e{swkeys = [Key | E#e.swkeys]})
     end;
 eline({sgroup, List, Mode, Body}, _Rest, Src, #e{pack = Pack} = E) ->
     Items = maps:get(List, maps:get(lists, Src), []),
@@ -1552,28 +1563,55 @@ read_back({sfield, Keys, Len, Tr, _LenT, _Swap, Trim, Absent, _With}, Raw, Wrote
     case Absent =/= none andalso lists:member(Raw, Absent) of
         true -> Wrote;
         false ->
-            lists:foldl(
-              fun({Key, Via}, W) ->
-                      case maps:is_key(Key, W) of
-                          true -> W;
-                          false ->
-                              try
-                                  V0 = gt_engine:bits_decode(Tr, Raw, Len, maps:get(bit_order, Pack)),
-                                  V1 = case Trim of
-                                           true -> gt_engine:trim(Tr, V0);
-                                           false -> V0
-                                       end,
-                                  V2 = gt_engine:via_decode({Via, false, false, false, none, none},
-                                                            V1, Tr, Key, <<>>, Pack),
-                                  gt_engine:typemap_decode(Key, V2, Pack)
-                              of
-                                  V -> W#{Key => V}
+            rb_keys(Keys, fun() ->
+                                  V = gt_engine:bits_decode(Tr, Raw, Len, maps:get(bit_order, Pack)),
+                                  case Trim of
+                                      true -> gt_engine:trim(Tr, V);
+                                      false -> V
+                                  end
+                          end, Tr, Wrote, Pack)
+    end.
+
+%% What decode reads of the keys of one line, in `wrote`. The earliest line
+%% that succeeds gives the value; a line whose transform fails is forgiven by
+%% another (readback_failed while none has succeeded); a line whose table has
+%% no entry fails the decode whichever line succeeds (table_failed; ruling 26
+%% of 0.64).
+rb_keys(Keys, Decode, Tr, Wrote, Pack) ->
+    lists:foldl(
+      fun({Key, Via}, W) ->
+              Cur = maps:get(Key, W, readback_failed),
+              Have = Cur =/= readback_failed,
+              case Cur =:= table_failed orelse (Have andalso Via =:= none) of
+                  true -> W;
+                  false ->
+                      try Decode() of
+                          V0 ->
+                              try gt_engine:via_decode({Via, false, false, false, none, none},
+                                                       V0, Tr, Key, <<>>, Pack) of
+                                  _ when Have -> W;
+                                  V -> W#{Key => gt_engine:typemap_decode(Key, V, Pack)}
                               catch
-                                  %% the output would not decode (ruling 31)
-                                  _:_ -> W#{Key => readback_failed}
+                                  _:_ -> W#{Key => table_failed}
                               end
+                      catch
+                          _:_ -> W#{Key => Cur}
                       end
-              end, Wrote, Keys)
+              end
+      end, Wrote, Keys).
+
+%% The output would not decode: a line of a switch key fails its table,
+%% whatever another line of the key gives (ruling 31 of 0.64). The error
+%% stands at the line or at the switch, whichever is later: a switch not yet
+%% written fails itself when it selects (select/4), so here only the keys of
+%% the switches of the scope written so far count. Under a look-ahead window
+%% the bits are read once it is settled.
+rb_checked(#e{pend = true} = E) -> E;
+rb_checked(#e{wrote = W, swkeys = Sw, pack = Pack} = E) ->
+    case [K || K <- Sw, maps:get(K, W, none) =:= table_failed] of
+        [] -> E;
+        [K | _] -> gt_engine:conv_error('transform-encode', Pack,
+                                        "switch key ~s: a line's table has no entry for what it writes", [K])
     end.
 
 %% The codes an `until:` line writes, its terminator last. More than
@@ -1593,52 +1631,21 @@ until_out({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, With},
     end.
 
 %% As read_back/4 for an `until:` field: the text decode reads from Codes.
-until_read_back({sfield, Keys, {until, _}, {chars, Set} = Tr, LenT, _, _, _, _}, Codes, Wrote, Pack) ->
-    lists:foldl(
-      fun({Key, Via}, W) ->
-              case maps:is_key(Key, W) of
-                  true -> W;
-                  false ->
-                      try
-                          V0 = gt_engine:until_text(Set, lists:droplast(Codes)),
-                          V1 = gt_engine:via_decode({Via, false, false, false, none, none},
-                                                    V0, Tr, Key, LenT, Pack),
-                          gt_engine:typemap_decode(Key, V1, Pack)
-                      of
-                          V -> W#{Key => V}
-                      catch
-                          _:_ -> W#{Key => readback_failed}
-                      end
-              end
-      end, Wrote, Keys).
+until_read_back({sfield, Keys, {until, _}, {chars, Set} = Tr, _LenT, _, _, _, _}, Codes, Wrote, Pack) ->
+    rb_keys(Keys, fun() -> gt_engine:until_text(Set, lists:droplast(Codes)) end, Tr, Wrote, Pack).
 
 %% As read_back/4 for a field on a UPER locator (0.19): the pieces written
 %% are read as decode reads them.
-uread_back({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, _}, Pieces, Wrote, Pack) ->
+uread_back({sfield, Keys, {uper, Loc}, Tr, _LenT, _, _, _, _}, Pieces, Wrote, Pack) ->
     Len = lists:sum([L || {L, _} <- Pieces]),
     Pad = (8 - Len rem 8) rem 8,
     Bin = << << <<V:L>> || {L, V} <- Pieces >>/bits, 0:Pad >>,
     Msg = gt_bits:open(Bin, msb),
     D = #d{msg = Msg, hard = gt_bits:bit_size(Msg), pack = Pack, named = #{}},
-    lists:foldl(
-      fun({Key, Via}, W) ->
-              case maps:is_key(Key, W) of
-                  true -> W;
-                  false ->
-                      try
+    rb_keys(Keys, fun() ->
                           {Res, _} = uread(Loc, none, D),
-                          V0 = uvalue(Res, Tr),
-                          V1 = gt_engine:via_decode({Via, false, false, false, none, none},
-                                                    V0, Tr, Key, LenT, Pack),
-                          gt_engine:typemap_decode(Key, V1, Pack)
-                      of
-                          V -> W#{Key => V}
-                      catch
-                          %% the output would not decode (ruling 31 of 0.20)
-                          _:_ -> W#{Key => readback_failed}
-                      end
-              end
-      end, Wrote, Keys).
+                          uvalue(Res, Tr)
+                  end, Tr, Wrote, Pack).
 
 %% An fx bit is 1 when a line after it in the chain has content; the parts
 %% after a 0 bit are not written. The bit of a closing fx line is 0.
@@ -1688,16 +1695,23 @@ ncommon(_Pack) -> infinity.
 %% settled once every line under them is written (ewalk/7). Every line is
 %% written with all the lines after it in the scope, the kind's included, so
 %% that a presence line among the common lines sees them (ruling 12 of 0.8).
-escope(Lines, infinity, Src, E) -> elines(Lines, Src, E);
-escope(Lines, N, Src, E) when N >= length(Lines) -> elines(Lines, Src, E);
-escope(Lines, N, Src, E) ->
+escope(Lines, N, Src, #e{pack = Pack, swkeys = Sw0} = E) ->
+    case maps:get(has_switch, Pack, false) of
+        false -> escope1(Lines, N, Src, E);
+        true -> (escope1(Lines, N, Src, E#e{swkeys = []}))#e{swkeys = Sw0}
+    end.
+
+escope1(Lines, infinity, Src, E) -> elines(Lines, Src, E);
+escope1(Lines, N, Src, E) when N >= length(Lines) -> elines(Lines, Src, E);
+escope1(Lines, N, Src, E) ->
     Kind = lists:nthtail(N, Lines),
     case [W || {swhen, _, _, _, At, _} = W <- Kind, At =/= none] of
         [] -> elines(Lines, Src, E);
         Wins -> ecommon(Lines, N, Wins, Src, E)
     end.
 
-ecommon(Lines, 0, Wins, Src, #e{pos = KS} = E) ->
+ecommon(Lines, 0, Wins, Src, #e{pos = KS} = E0) ->
+    E = E0#e{pend = true},
     %% the kind start: where the common lines ended
     ewalk(Lines, Wins, KS, KS + lists:max([At + Len || {swhen, Len, _, _, At, _} <- Wins]), Src, E, {E#e.wrote, []});
 ecommon([L | Rest], N, Wins, Src, E) -> ecommon(Rest, N - 1, Wins, Src, eline(L, Rest, Src, E)).
@@ -1710,7 +1724,7 @@ ewalk(Lines, [_ | _] = Wins, KS, End, Src, #e{pos = Pos} = E, Fs) when Pos >= En
     %% window may stand before it)
     {KW, Fs0} = Fs,
     Fs1 = [{KS + At, W} || {swhen, _, _, As, At, _} = W <- Wins, As =/= none] ++ Fs0,
-    ewalk(Lines, [], KS, End, Src, reread({KW, Fs1}, E1), Fs);
+    ewalk(Lines, [], KS, End, Src, rb_checked((reread({KW, Fs1}, E1))#e{pend = false}), Fs);
 ewalk([], [], _KS, _End, _Src, E, _Fs) -> E;
 ewalk([L | Rest], Wins, KS, End, Src, #e{pos = Pos} = E, {KW, Fs}) ->
     Fs1 = case {Wins, L} of

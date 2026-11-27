@@ -1,0 +1,13 @@
+{
+  "name": "element-text",
+  "from": "conformance-part-empty-element",
+  "to": "conformance-part-empty-element",
+  "input": "<e><a>x-y</a></e>",
+  "expect": "<e><a>x-y</a></e>",
+  "model": {
+    "probe.label": "x",
+    "probe.w1": "y"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, the text of the place"
+}

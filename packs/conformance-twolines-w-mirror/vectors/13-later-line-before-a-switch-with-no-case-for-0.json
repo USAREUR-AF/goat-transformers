@@ -1,0 +1,9 @@
+{
+  "name": "later-line-before-a-switch-with-no-case-for-0",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-no0-before",
+  "input": "{}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: the error stands at the switch, and the encode is transform-encode whatever the first line gives"
+}

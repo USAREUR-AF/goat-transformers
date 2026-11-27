@@ -1,0 +1,9 @@
+{
+  "name": "e10-env-to-xml",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-xml",
+  "input": "{\"x\":6,\"y\":4}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: a value with no table entry; `unlisted` is for decode (ruling 3)"
+}

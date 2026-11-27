@@ -1,0 +1,9 @@
+{
+  "name": "switch-in-a-case-written-held",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-case",
+  "input": "{\"x\":6,\"y\":1,\"z\":9}",
+  "expect": "01060968",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: both lines carry 6"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "whole-no-entry",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-strict-whole",
+  "input": "{\"tag\":\"a-a-q\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: part 0 does not decode"
+}

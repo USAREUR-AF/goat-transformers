@@ -1,0 +1,9 @@
+{
+  "name": "ruling-28-suppressed-line-is-another-line",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-with-whole",
+  "input": "{\"x\":3,\"tag\":\"h\"}",
+  "expect": "{\"t\":\"h\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 28: another line is counted over the pack's lines; z is not held, so the line is suppressed, and x is still not checked"
+}

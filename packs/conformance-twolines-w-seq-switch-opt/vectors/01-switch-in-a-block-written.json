@@ -1,0 +1,13 @@
+{
+  "name": "switch-in-a-block-written",
+  "from": "conformance-twolines-w-seq-switch-opt",
+  "to": "conformance-twolines-w-seq-switch-opt",
+  "input": "06800968",
+  "expect": "06800968",
+  "model": {
+    "probe.x": "6",
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: the later line has an entry"
+}

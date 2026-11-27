@@ -1,0 +1,12 @@
+{
+  "name": "submessage-absent",
+  "from": "conformance-twolines-w-pb-path",
+  "to": "conformance-twolines-w-pb-path",
+  "input": "0803",
+  "expect": "080312030a0166",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27: an absent line changes nothing"
+}

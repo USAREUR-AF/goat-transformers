@@ -90,6 +90,7 @@ const char* key_type_name(KeyType t) {
 KeyType transform_yields(Transform t) {
     switch (t) {
         case Transform::String:
+        case Transform::Part:
         case Transform::Pstring: return KeyType::String;
         case Transform::Float:
         case Transform::Linscale:
@@ -463,7 +464,84 @@ void check_bits_field_len(const Pack& p, const FieldLine& f) {
                         "' does not allow a length of " + std::to_string(loc.len) + " bits");
 }
 
+// v0.64, after the file: what one part line may be, then the part groups of
+// every reading scope (common lines plus one kind, or alone when there are no
+// kinds; one group body).
+void check_parts(Pack& p) {
+    auto bad = [&](const std::string& locator, std::size_t line, const std::string& why) {
+        throw Error(ErrorKind::BadDirective, p.format, locator, p.source + ":" + std::to_string(line) + ": " + why);
+    };
+    const bool takes = p.wire == Wire::Xml || p.wire == Wire::Json || p.wire == Wire::GeoJson || p.wire == Wire::Text;
+    each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>& consts, bool in_group) {
+        auto part_line = [&](const FieldLine& f) {
+            if (!takes) bad(f.locator, f.line, std::string("transform 'part' is not valid on wire ") + wire_name(p.wire));
+            if (p.wire == Wire::GeoJson && !in_group && f.locator.compare(0, 9, "geometry.") == 0)
+                bad(f.locator, f.line, "transform 'part' does not apply to a geojson coordinate");
+            if (p.wire != Wire::Text) return;
+            if (f.text_loc.kind != TextLocator::Kind::Field) bad(f.locator, f.line, "'part' takes a whole field of the record");
+            if (!p.delimiter_none && f.part_sep == std::string(1, p.delimiter))
+                bad(f.locator, f.line, "the separator of 'part' is the delimiter");
+            if (p.checksum_nmea && f.part_sep == "*") bad(f.locator, f.line, "the separator '*' under 'checksum nmea'");
+        };
+        for (const auto& f : fields) {
+            if (f.unlisted && (f.transform != Transform::Part || f.via.empty()))
+                bad(f.locator, f.line, "'unlisted' applies to a 'part' field with 'via'");
+            if (f.transform != Transform::Part) continue;
+            part_line(f);
+            if (f.swap || f.trim || f.has_stop || f.has_absent || !f.with.empty() ||
+                (f.optional && p.wire != Wire::Text))
+                bad(f.locator, f.line, "a 'part' field takes 'via', 'unlisted' and, on wire text, 'optional' only");
+        }
+        for (auto& w : consts) {
+            if (!w.part) continue;
+            part_line(*w.part);
+            if (w.value == "present") bad(w.locator, w.line, "'const' cannot write 'present'; write '=present' for the text");
+            w.text = !w.value.empty() && w.value[0] == '=' ? w.value.substr(1) : w.value;
+            if (w.text.empty()) bad(w.locator, w.line, "the text of a const part is empty");
+            if (w.text.find(w.part->part_sep) != std::string::npos)
+                bad(w.locator, w.line, "the text of a const part holds the separator");
+            w.part->const_text = w.text;
+        }
+    });
+    if (!p.has_parts) return;
+    auto scope = [&](const std::vector<detail::LineRef>& lines) {
+        for (const auto& g : detail::part_groups(p, lines)) {
+            std::set<unsigned> named;
+            std::size_t first = 0;
+            const FieldLine* whole = nullptr;
+            for (const auto& line : lines) {
+                if (line.locator() != *g.locator) continue;
+                if (const FieldLine* f = line.reads(); f && f->transform == Transform::Part) {
+                    if (first == 0) first = f->line;
+                    if (f->part_sep != g.sep) bad(f->locator, f->line, "two separators in one part group");
+                    if (!named.insert(f->part_n).second)
+                        bad(f->locator, f->line, "part " + std::to_string(f->part_n) + " is named twice");
+                    continue;
+                }
+                const FieldLine* f = line.field;
+                const std::size_t at = f ? f->line : line.group ? line.group->line : line.fixed()->line;
+                // The whole line (ruling 24).
+                if (!f || f->transform != Transform::String || !f->via.empty() || f->has_absent || !f->with.empty() ||
+                    f->swap || f->trim || f->has_stop || f->unlisted || (f->optional && p.wire != Wire::Text))
+                    bad(*g.locator, at, "another line on the locator of a part group");
+                if (whole) bad(f->locator, at, "a second whole line of a part group");
+                whole = f;
+            }
+            if (g.fields.empty()) bad(*g.locator, first, "a part group with no part 'field'");
+            if (*named.rbegin() + 1 != named.size()) bad(*g.locator, first, "a part group with a gap in its parts");
+            for (const FieldLine* f : g.fields)
+                if (whole && whole->key == f->key)
+                    bad(f->locator, f->line, "a whole line and a part line of one key '" + f->key + "'");
+        }
+    };
+    if (p.kinds.empty()) scope(detail::active_lines(p, nullptr));
+    for (const auto& k : p.kinds) scope(detail::active_lines(p, &k));
+    each_group(p, [&](GroupLine& g) { scope(detail::group_lines(g)); });
+    for (auto& k : p.kinds) each_group(k, [&](GroupLine& g) { scope(detail::group_lines(g)); });
+}
+
 void resolve_when(const Pack& p, WhenLine& w, const std::string& word) {
+    if (w.part) return;  // v0.64: settled by check_parts
     if (p.wire == Wire::Tlv || p.wire == Wire::Cbor) return;  // checked by detail::check_tlv_pack, check_cbor_pack
     const std::string where = p.source + ":" + std::to_string(w.line);
     if (p.wire == Wire::Bits) {
@@ -1512,6 +1590,23 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'end' with no open group");
             arity(0);
             open.pop_back();
+        } else if (detail::is_const_part(t)) {
+            // v0.64: `const <locator> part:<sep>:<n> <text>`.
+            WhenLine w;
+            w.locator = t[1];
+            w.value = t[3];
+            w.line = lineno;
+            w.gate = cur_gate();
+            w.part = std::make_shared<FieldLine>();
+            w.part->locator = t[1];
+            w.part->transform = Transform::Part;
+            w.part->const_part = true;
+            w.part->line = lineno;
+            std::string perr;
+            if (!detail::parse_part_params(t[2], *w.part, perr))  // a line check already
+                throw Error(ErrorKind::BadDirective, p.format, t[1], where + ": " + perr);
+            p.has_parts = true;
+            cur_consts().push_back(std::move(w));
         } else if (kw == "const") {
             if (t.size() > 3 && t[3] == "with")
                 throw Error(ErrorKind::BadDirective, p.format, t[1], where + ": 'with' applies to a 'field' line only");
@@ -1668,6 +1763,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 if (t[k] == "swap") flag = &f.swap;
                 else if (t[k] == "trim") flag = &f.trim;
                 else if (t[k] == "optional") flag = &f.optional;
+                else if (t[k] == "unlisted") flag = &f.unlisted;  // v0.64
                 if (!flag || *flag)
                     throw Error(ErrorKind::BadDirective, p.format, f.locator,
                                 where + ": '" + t[k] + "' is not a field option, or is given twice");
@@ -1675,6 +1771,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             }
             // A model key may be mapped by several lines (0.6: `duplicate-field` is withdrawn).
             f.gate = cur_gate();
+            if (f.transform == Transform::Part) p.has_parts = true;
             cur_fields().push_back(std::move(f));
         } else if (kw == "typemap") {
             not_in_group();
@@ -1774,6 +1871,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
 #if GT_WIRE_TEXT
         if (p.wire == Wire::Text) detail::parse_text_locators(p);
 #endif
+        check_parts(p);  // v0.64
         if (p.wire != Wire::Text) {
             if (text_directive_line != 0)
                 throw Error(ErrorKind::BadDirective, p.format, "",

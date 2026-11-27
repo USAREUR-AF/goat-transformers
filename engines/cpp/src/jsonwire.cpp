@@ -236,17 +236,42 @@ void decode_item_value(Decoder& d, const FieldLine& f, const json::Value& v, boo
     }
 }
 
+// A part group's token at its first line's place (0.64). `scalar`: the item of a `.` locator.
+void write_part_token(const Pack& p, const EncodeSource& src, const std::vector<LineRef>& lines, PartGroup& g,
+                      const LineRef& line, OutNode& root, OutNode* scalar) {
+    if (g.written) return;
+    g.written = true;
+    OutNode* slot = scalar;
+    if (!scalar || line.locator() != ".") {
+        std::vector<std::string> path_tmp;
+        const std::vector<std::string>* path = &path_tmp;
+        json_locator(p, line.locator(), path, path_tmp);  // validated at pack load
+        slot = out_slot(root, *path);
+    }
+    std::string token;
+    if (!part_token(src, lines, g, token)) return;
+    if (!slot || slot->is_object) return;  // the path is also used as an object
+    slot->text = json::quote(token);
+    slot->has_value = true;
+    slot->sentinel = false;
+}
+
 // The JSON text of one item: an object of the members its lines write, or the
 // scalar a `.` field writes. An item with no members written is `{}`.
 std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<LineRef>& lines, const Item& item,
                         bool geo) {
     const EncodeSource src(p, g, item);
+    std::vector<PartGroup> parts = part_groups(p, lines);
     OutNode root;
     root.is_object = true;
     OutNode scalar;
     std::vector<std::string> path_tmp;
     const std::vector<std::string>* path = &path_tmp;
     for (const auto& line : lines) {
+        if (PartGroup* pg = part_group_of(parts, line)) {
+            write_part_token(p, src, lines, *pg, line, root, &scalar);
+            continue;
+        }
         if (line.field && line.field->locator == ".") {
             // An item without the value writes the sentinel, not `null` (0.9 ruling 5).
             write_field(p, src, *line.field, scalar);
@@ -295,7 +320,7 @@ std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const jso
     std::vector<std::vector<std::string>> paths_tmp(lines.size());
     std::vector<const std::vector<std::string>*> paths(lines.size(), &no_path);  // empty for a `.` field and for a const
     for (std::size_t k = 0; k < lines.size(); ++k)
-        if (!lines[k].fixed() && lines[k].locator() != ".") json_locator(p, lines[k].locator(), paths[k], paths_tmp[k]);
+        if ((!lines[k].fixed() || lines[k].const_part()) && lines[k].locator() != ".") json_locator(p, lines[k].locator(), paths[k], paths_tmp[k]);
     for (const json::Value& el : arr.items) {
         items.emplace_back();
         Item& item = items.back();
@@ -308,8 +333,8 @@ std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const jso
                     item.lists[line.group->list] = json_decode_items(p, *line.group, *v, geo);
                 continue;
             }
-            if (!line.field || !d.wants(*line.field)) continue;
-            const FieldLine& f = *line.field;
+            if (!line.reads() || !d.wants(*line.reads())) continue;
+            const FieldLine& f = *line.reads();
             if (f.locator == ".") {
                 // The element itself, when it is a scalar (0.7 ruling 6).
                 if (el.is(json::Value::Kind::Object) || el.is(json::Value::Kind::Array))
@@ -425,9 +450,9 @@ Entity decode_json(const Pack& p, const std::string& bytes) {
                 e.lists[line.group->list] = json_decode_items(p, *line.group, *v, false);
             continue;
         }
-        if (!line.field || !d.wants(*line.field)) continue;
-        json_locator(p, line.field->locator, path, path_tmp);
-        if (const json::Value* v = json_lookup(doc, *path)) decode_member(d, *line.field, *v);
+        if (!line.reads() || !d.wants(*line.reads())) continue;
+        json_locator(p, line.locator(), path, path_tmp);
+        if (const json::Value* v = json_lookup(doc, *path)) decode_member(d, *line.reads(), *v);
     }
     std::unordered_set<std::string> seen;
     collect_residue(e, p.format, doc, "", plan ? plan->mapped[kind_slot(p, kind)] : mapped_tmp, seen);
@@ -452,10 +477,16 @@ std::string encode_json(const Pack& p, const Entity& e) {
     // present` line maps nothing and takes no place. A group writes an array at
     // its member: `[]` for an empty list, nothing for an absent one.
     std::vector<LineRef> lines_tmp;
-    for (const auto& line : scope_lines(p, kind, lines_tmp)) {
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
+    std::vector<PartGroup> parts = part_groups(p, lines);
+    for (const auto& line : lines) {
         if (!line.maps()) continue;
         const std::string& locator = line.locator();
         if (!plan) mapped_tmp.insert(locator);
+        if (PartGroup* pg = part_group_of(parts, line)) {
+            write_part_token(p, src, lines, *pg, line, root, nullptr);
+            continue;
+        }
         const std::vector<std::string>* lpath = &path;
         json_locator(p, locator, lpath, path);  // validated at pack load
         OutNode* slot = out_slot(root, *lpath);

@@ -1,0 +1,9 @@
+{
+  "name": "block-written-absent-key",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-opt",
+  "input": "{\"y\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: y of case 0 is content, so the switch is written and the later line is read back"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "written",
+  "from": "conformance-part-text-optional-const",
+  "to": "conformance-part-text-optional-const",
+  "input": "9,k-h",
+  "expect": "9,k-h",
+  "model": {
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 15"
+}

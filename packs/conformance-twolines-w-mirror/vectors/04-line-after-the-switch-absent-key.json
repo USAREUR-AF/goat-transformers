@@ -1,0 +1,9 @@
+{
+  "name": "line-after-the-switch-absent-key",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-after",
+  "input": "{\"y\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: a line after a `switch` that is written is read back, and its zero bits have no entry"
+}

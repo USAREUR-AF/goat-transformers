@@ -1,0 +1,16 @@
+{
+  "name": "e6",
+  "from": "conformance-part-geojson-whole",
+  "to": "conformance-part-geojson-whole",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"k-o-A\"}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"k-o-A\"}}",
+  "model": {
+    "probe.y": "1",
+    "probe.tag": "k-o-A",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

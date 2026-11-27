@@ -1,0 +1,12 @@
+{
+  "name": "transform-of-the-table-line-fails-and-is-forgiven",
+  "from": "conformance-twolines-later-json",
+  "to": "conformance-twolines-later-json",
+  "input": "{\"a\":3,\"b\":5}",
+  "expect": "{\"a\":3,\"b\":\"f\"}",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 ruling 5 and 0.7 ruling 10: the transform fails, so the table is not reached"
+}

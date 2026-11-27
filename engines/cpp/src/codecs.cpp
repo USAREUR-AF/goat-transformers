@@ -488,7 +488,7 @@ Value table_decode(const Pack& p, const FieldLine& f, const Value& native) {
     const std::string text = canonical_text(native);
     for (const auto& entry : table.entries)  // several entries share a <native> value: the first
         if (canonical_entry(entry.first, wire_type) == text) return read_as(entry.second, f.key_type, true);
-    if (wire_type == f.key_type) return native;
+    if (wire_type == f.key_type && f.transform != Transform::Part) return native;  // 0.64 ruling 3
     throw std::invalid_argument("table '" + table.name + "' has no entry for the wire value " + text);
 }
 
@@ -498,7 +498,7 @@ Value table_encode(const Pack& p, const FieldLine& f, const Value& model) {
     const std::string text = canonical_text(model);
     for (const auto& entry : table.entries)  // several entries share a <model> value: the first
         if (canonical_entry(entry.second, f.key_type) == text) return read_as(entry.first, wire_type);
-    if (wire_type == f.key_type) return model;
+    if (wire_type == f.key_type && f.transform != Transform::Part) return model;  // 0.64 ruling 3
     throw std::invalid_argument("table '" + table.name + "' has no entry for the model value " + text);
 }
 
@@ -563,6 +563,12 @@ std::uint64_t count_items(const std::vector<Item>& items) {
 // ---- decode bookkeeping
 
 bool Decoder::wants(const FieldLine& f) const {
+    if (f.const_part) return true;
+    if (f.table >= 0 && (f.transform == Transform::Part || transform_yields(f.transform) != f.key_type)) return true;
+    return open(f);
+}
+
+bool Decoder::open(const FieldLine& f) const {
     if (out.fields.find(f.key) != out.fields.end()) return false;
     for (const auto& k : closed)
         if (k == f.key) return false;
@@ -605,7 +611,25 @@ void Decoder::put(const FieldLine& f, Value native) {
         }
         return;
     }
+    if (f.const_part) {
+        // v0.64: a `const ... part` compares its part; never forgiven (ruling 4).
+        if (native.s != f.const_text)
+            failures.push_back({"const", f.locator,
+                                "part " + std::to_string(f.part_n) + " is \"" + native.s + "\", not \"" +
+                                    f.const_text + "\"",
+                                true});
+        return;
+    }
     if (f.table >= 0) {
+        if (f.unlisted) {
+            // v0.64: no entry is a line whose place is absent.
+            const MapTable& table = p.tables[static_cast<std::size_t>(f.table)];
+            const std::string text = canonical_text(native);
+            bool listed = false;
+            for (const auto& entry : table.entries)
+                listed = listed || canonical_entry(entry.first, KeyType::String) == text;
+            if (!listed) return;
+        }
         try {
             native = table_decode(p, f, native);
         } catch (const std::invalid_argument& ex) {
@@ -616,12 +640,14 @@ void Decoder::put(const FieldLine& f, Value native) {
             return;
         }
     }
+    if (!open(f)) return;
     out.fields.emplace(f.key, std::move(native));
 }
 
 void Decoder::fail(const FieldLine& f, const std::string& why) {
     if (!wants(f)) return;
-    failures.push_back({f.key, f.locator, why, false});
+    // A `const ... part` is never forgiven by another line (0.64 ruling 4).
+    failures.push_back({f.const_part ? "const" : f.key, f.locator, why, f.const_part});
 }
 
 void Decoder::finish() {
@@ -734,6 +760,126 @@ Value typemapped_out(const Pack& p, const FieldLine& f, const Value& v) {
         for (const auto& tm : p.typemap)
             if (tm.second == v.s) return Value::of_string(tm.first);
     return v;
+}
+
+// ---- part groups (Version 0.64)
+
+std::vector<PartGroup> part_groups(const Pack& p, const std::vector<LineRef>& lines) {
+    std::vector<PartGroup> out;
+    if (!p.has_parts) return out;
+    auto find = [&](const std::string& locator) -> PartGroup* {
+        for (auto& g : out)
+            if (*g.locator == locator) return &g;
+        return nullptr;
+    };
+    for (const auto& line : lines) {
+        const FieldLine* f = line.reads();
+        if (!f || f->transform != Transform::Part) continue;
+        PartGroup* g = find(f->locator);
+        if (!g) {
+            out.emplace_back();
+            g = &out.back();
+            g->locator = &line.locator();
+            g->sep = f->part_sep;
+        }
+        if (line.field) g->fields.push_back(f);
+        else g->consts.push_back(line.konst);
+    }
+    for (const auto& line : lines)
+        if (line.field && line.field->transform != Transform::Part)
+            if (PartGroup* g = find(line.field->locator)) g->whole = line.field;
+    return out;
+}
+
+PartGroup* part_group_of(std::vector<PartGroup>& groups, const LineRef& line) {
+    for (auto& g : groups)
+        if (*g.locator == line.locator()) return &g;
+    return nullptr;
+}
+
+namespace {
+// Two model values of one key, numbers compared as numbers (ruling 22).
+bool same_value(const Value& a, const Value& b) {
+    if (a.kind == Value::Kind::String || b.kind == Value::Kind::String) return a.kind == b.kind && a.s == b.s;
+    if (a.kind == Value::Kind::Int && b.kind == Value::Kind::Int) return a.i == b.i;
+    return (a.kind == Value::Kind::Int ? static_cast<double>(a.i) : a.f) ==
+           (b.kind == Value::Kind::Int ? static_cast<double>(b.i) : b.f);
+}
+
+// Encode step 1: the whole text against the group's part lines.
+void check_whole_token(const EncodeSource& src, const std::vector<LineRef>& lines, const PartGroup& g,
+                       const std::string& token) {
+    const Pack& p = src.p;
+    auto refuse = [&](const std::string& why) {
+        throw Error(ErrorKind::TransformEncode, p.format, *g.locator, "the token \"" + token + "\": " + why);
+    };
+    const std::vector<std::string> parts = token_parts(token, g.sep);
+    for (const WhenLine* c : g.consts)
+        if (c->part->part_n >= parts.size() || parts[c->part->part_n] != c->text)
+            refuse("part " + std::to_string(c->part->part_n) + " is not \"" + c->text + "\"");
+    for (const FieldLine* f : g.fields) {
+        bool another = false;  // rulings 18 and 25
+        for (const auto& line : lines) another = another || (line.field && line.field != f && line.field->key == f->key);
+        if (another) continue;
+        auto held = src.e.fields.find(f->key);
+        // The part as decode reads it, into an item of its own.
+        Item back;
+        Decoder d(p, back);
+        d.set(*f, token);
+        if (!d.failures.empty()) refuse(f->key + ": " + d.failures.front().why);
+        auto got = back.fields.find(f->key);
+        if (held == src.e.fields.end()) continue;
+        if (got == back.fields.end()) refuse(f->key + " is held, and its part has no entry in its table");
+        d.finish();  // type mapping
+        if (!same_value(got->second, held->second)) refuse(f->key + " is held with another value");
+    }
+}
+}  // namespace
+
+bool part_token(const EncodeSource& src, const std::vector<LineRef>& lines, const PartGroup& g, std::string& token) {
+    const Pack& p = src.p;
+    Value v;
+    if (g.whole && src.e.fields.count(g.whole->key)) {
+        src.value(*g.whole, v);
+        token = field_text(p, *g.whole, v);
+        check_whole_token(src, lines, g, token);
+        return true;
+    }
+    bool any_held = false, all_valued = true;
+    for (const FieldLine* f : g.fields) {
+        if (src.e.fields.count(f->key)) {
+            any_held = true;
+            continue;
+        }
+        bool valued;
+        try {
+            valued = src.value(*f, v);
+        } catch (const Error&) {
+            valued = true;  // a `default` its table has no entry for: refused below
+        }
+        all_valued = all_valued && valued;
+    }
+    if (any_held || all_valued) {
+        std::vector<std::string> parts(g.fields.size() + g.consts.size());  // no gaps: checked at load
+        for (const WhenLine* c : g.consts) parts[c->part->part_n] = c->text;
+        for (const FieldLine* f : g.fields) {
+            if (!src.value(*f, v))
+                throw Error(ErrorKind::TransformEncode, p.format, f->locator,
+                            f->key + ": part " + std::to_string(f->part_n) + " has no value");
+            const std::string text = field_text(p, *f, v);
+            if (text.find(g.sep) != std::string::npos)
+                throw Error(ErrorKind::TransformEncode, p.format, f->locator,
+                            f->key + ": the text \"" + text + "\" holds the separator");
+            parts[f->part_n] = text;
+        }
+        token.clear();
+        for (std::size_t k = 0; k < parts.size(); ++k) token += (k ? g.sep : std::string()) + parts[k];
+        return true;
+    }
+    if (!g.whole || !src.value(*g.whole, v)) return false;
+    token = field_text(p, *g.whole, v);
+    check_whole_token(src, lines, g, token);
+    return true;
 }
 
 std::string field_text(const Pack& p, const FieldLine& f, const Value& v) {
@@ -1294,12 +1440,12 @@ void xml_decode_scope(const Pack& p, const std::vector<LineRef>& lines, const xm
             if (!items.empty()) out.lists[g.list] = std::move(items);
             continue;
         }
-        if (!line.field) continue;
-        const FieldLine& f = *line.field;
+        if (!line.reads()) continue;
+        const FieldLine& f = *line.reads();
         if (!d.wants(f)) continue;
         XmlLocator tmp;
         const XmlLocator* loc = nullptr;
-        xml_locator(p, f.locator, loc, tmp);
+        xml_locator(p, line.locator(), loc, tmp);
         if (!xml_value(node, *loc, text)) continue;
         // A sentinel is compared with the text as resolved, not trimmed (0.9 ruling 14).
         if (f.has_absent && sentinel_text(f, text)) continue;
@@ -1439,6 +1585,7 @@ std::vector<ElementAt> place_elements(const std::vector<LineRef>& lines, const s
 void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeSource& src, xml::Node& node,
                       TextSlots& out, const std::vector<ElementAt>* placed = nullptr) {
     Value v;
+    std::vector<PartGroup> parts = part_groups(p, lines);
     static const std::vector<ElementAt> no_elements;
     const std::vector<ElementAt>& els = placed ? *placed : no_elements;
     std::size_t next_el = 0;
@@ -1457,6 +1604,13 @@ void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const En
             out.slots.emplace_back();
             out.slots.back().group = line.group;
             out.slots.back().items = items;
+            continue;
+        }
+        if (PartGroup* g = part_group_of(parts, line)) {
+            if (g->written) continue;
+            g->written = true;
+            auto& slot = out.at(line.locator());  // the token's place (0.64 ruling 8)
+            slot.has = part_token(src, lines, *g, slot.value);
             continue;
         }
         if (const WhenLine* w = line.fixed()) {
@@ -1642,26 +1796,27 @@ Entity decode_geojson(const Pack& p, const std::string& bytes) {
                 e.lists[line.group->list] = json_decode_items(p, *line.group, *v, true);
             continue;
         }
-        if (!line.field) continue;
+        const FieldLine* read = line.reads();
+        if (!read) continue;
         const json::Value* v = lookup(loc);
         std::string text;
-        if (v && line.field->has_absent && json_raw_text(*v, text) && sentinel_text(*line.field, text)) continue;
-        if (v && transform_is_text_scale(line.field->transform) && !v->is(json::Value::Kind::Null) &&
+        if (v && read->has_absent && json_raw_text(*v, text) && sentinel_text(*read, text)) continue;
+        if (v && transform_is_text_scale(read->transform) && !v->is(json::Value::Kind::Null) &&
             !v->is(json::Value::Kind::Number)) {
             // scale and iscale read a number, on geojson as on json (0.15 ruling 23).
-            d.fail(*line.field, std::string("the member is not a number, which transform '") +
-                                    transform_name(line.field->transform) + "' reads");
+            d.fail(*read, std::string("the member is not a number, which transform '") +
+                                    transform_name(read->transform) + "' reads");
             continue;
         }
         // codestr and codenum read a string (0.46 ruling 11).
-        if (v && transform_is_code(line.field->transform) && !v->is(json::Value::Kind::Null) &&
+        if (v && transform_is_code(read->transform) && !v->is(json::Value::Kind::Null) &&
             !v->is(json::Value::Kind::String)) {
-            d.fail(*line.field, std::string("the member is not a string, which transform '") +
-                                    transform_name(line.field->transform) + "' reads");
+            d.fail(*read, std::string("the member is not a string, which transform '") +
+                                    transform_name(read->transform) + "' reads");
             continue;
         }
-        if (v && v->is(json::Value::Kind::Number)) d.set_json_number(*line.field, v->text);
-        else if (v && json_text(*v, text)) d.set(*line.field, text);
+        if (v && v->is(json::Value::Kind::Number)) d.set_json_number(*read, v->text);
+        else if (v && json_text(*v, text)) d.set(*read, text);
     }
     // Residue keeps its 0.1 form (0.5 ruling 28, 0.6 ruling 13): a string or a
     // number keeps its text as written and encode writes it back as a string;
@@ -1702,11 +1857,22 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
     Value v;
 
     std::vector<LineRef> lines_tmp;
-    for (const auto& line : scope_lines(p, kind, lines_tmp)) {
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
+    std::vector<PartGroup> parts = part_groups(p, lines);
+    for (const auto& line : lines) {
         GeoLocator tmp;
         const GeoLocator* locp = nullptr;
         geo_locator(p, line.locator(), locp, tmp);  // validated at pack load
         const GeoLocator& loc = *locp;
+        if (PartGroup* g = part_group_of(parts, line)) {
+            if (g->written) continue;
+            g->written = true;
+            auto& slot = (loc.kind == GeoLocator::Kind::Property ? props : members).at(line.locator());
+            std::string token;
+            slot.has = part_token(src, lines, *g, token);
+            slot.value = json::quote(token);
+            continue;
+        }
         if (const WhenLine* w = line.fixed()) {
             if (w->present) continue;  // a property or a member, checked at load
             auto& slot = (loc.kind == GeoLocator::Kind::Property ? props : members).at(w->locator);

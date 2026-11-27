@@ -252,15 +252,37 @@ compares `model_keys` of every loaded format and the capability report of
 every converted pair with the full build. It prints the sizes and exits 1 on
 any failure. `--wires <set>` checks another set the same way.
 
-One run on 2026-11-26: 1750 packs loaded; 8516 of the 25823 conversion
-vectors run, 8516 passed; 402 load vectors run, 402 passed; the six `unknown-wire` loads and the
-load of `wire morse` as specified; `model_keys` of 1750 formats and the
-capability report of 251 pairs the same in both builds. Sizes:
+One run on 2026-11-27: 1812 packs loaded; 8784 of the 26279 conversion
+vectors run, 8784 passed; 543 load vectors run, 543 passed; the six `unknown-wire` loads and the
+load of `wire morse` as specified; `model_keys` of 1812 formats and the
+capability report of 289 pairs the same in both builds. Sizes:
 
 | Build | Wheel | Package source |
 |---|---|---|
-| all eight wires | 180605 bytes | 645501 bytes, 25 modules |
-| `xml`, `json`, `geojson` | 95716 bytes (53%) | 334581 bytes, 16 modules |
+| all eight wires | 188714 bytes | 673344 bytes, 26 modules |
+| `xml`, `json`, `geojson` | 103187 bytes (55%) | 359959 bytes, 17 modules |
+
+## Version 0.64: one text token split into coded fields
+
+Status: Built. `field <key> <locator> part:<sep>:<n> [via <table>] [unlisted]`
+and `const <locator> part:<sep>:<n> <text>` on `xml`, `json`, `geojson` and
+`text` (`parts.py`, `PartT` in `transforms.py`). The load checks of a part
+group run after the file, per scope (the common lines with each kind, or
+alone; each group body). On decode each part line reads its part of the
+token, a `const` part is checked after kind selection, and `unlisted` makes
+a part with no table entry a line whose place is absent. On encode a group
+writes one token where its first line stands: the whole key checked against
+every part key that no other `field` line of the scope maps (step 1), else
+the parts joined (step 2), else the whole key's `default` (step 3). A part
+line's table never passes a value through, whatever the types (ruling 3).
+Ruling 26 holds on every wire, the sequential `bits` layout included: a line
+of a key whose transform succeeds and whose table has no entry fails the
+decode whichever other line of the key succeeds. Ruling 31: every written
+line of a `switch` key is read back; a line that fails by ruling 26 is
+`transform-encode` at the `switch` when it stands before it, at the line
+itself when after it, so a later line's own error comes second
+(`tests/test_parts64.py`). Every vector of `conformance-part-*`,
+`conformance-twolines-*` and load vectors 6400 to 6556 passes.
 
 ## Version 0.94: a conversion into a kind holds one of its keys
 
@@ -314,18 +336,19 @@ in `engines/python`:
 PYTHONPATH=src python -m unittest discover -s tests
 ```
 
-It loads every pack and model module. One run on 2026-11-26 gave
-`Ran 379 tests … OK`.
+It loads every pack and model module. One run on 2026-11-27 gave
+`Ran 401 tests … OK`.
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (25823, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1753, all passed); every capability vector (29, all passed) |
-| `test_malformed.py` | the input of every conversion vector cut and changed (151352 damaged inputs from 25819 vectors over 5052 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
+| `test_vectors.py` | every conversion vector of every pack (26279, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1991, all passed); every capability vector (29, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (153732 damaged inputs from 26275 vectors over 5164 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool; the `iso8601_s` transform of Version 0.26 (whole seconds written, milliseconds dropped; valid on `xml`, `geojson`, `json` and `text` only, no parameter, an `int` key only) |
 | `test_whenas30.py` | Version 0.30, what `convert` cannot reach: a kind or item kind recorded on the entity skips the implicit term, writes the held value or the first listed value, and is `transform-encode` for a held value its `when` does not match (ruling 25); a 64-bit label with the top bit set decodes negative and encodes back (ruling 7); `when 8 1 as as` is `bad-directive` (ruling 31) |
 | `test_lookahead33.py` | Version 0.33, what the vectors do not reach: overlapping windows, a written window overwritten without a check and a standing one leaving held bits (ruling 26); a switch on an `as` key a window binds (ruling 22) and on a field a window wrote; a partial window in the `msb`, `lsb` and `msb-lsb` bit orders |
 | `test_licences.py` | Version 0.29: `Engine.from_dir` with each profile on the fixture trees of `packs/conformance/tool-fixtures/licences-*`, a profile not one of the three, and the line forms of ruling 1 (`REUSE.toml`, `.def.license`, `licences.toml`) and the profiles of ruling 2 on temporary trees |
 | `test_controlled93.py` | Version 0.93: the forms of ruling 1 (shown public), a controlled pack, module and `core` under a public licence (ruling 2), and the distribution limit of rulings 5 and 6: `public` beside `controlled`, a file changed to `controlled` between its two reads, set before and after, a later direct load and a later load without a profile, an engine already holding a controlled module or pack, and the order of the errors; with `with_inner` (0.34), an inner pack that is controlled or uses a controlled module is never loaded under a profile (the outer pack loads, its `inner` line is `unknown-format`) and is `distribution-refused` under a `public` limit |
+| `test_parts64.py` | Version 0.64, what the vectors do not reach: `model_keys` in line order (ruling 14), a second part line of one key (ruling 18), `const .` in a scalar item (ruling 17), scalar items on `json` and `xml` (ruling 13), a type code without a `typemap` entry is not residue (ruling 14), a `geojson` number read as its text (ruling 16), `unlisted` and `const … part` on the other wires; ruling 26 in both orders on a sequential pack, ruling 27 on `protobuf`, a table text that does not read as the key's type (ruling 30), a line of a `switch` key after the `switch`, and the order of its error before a later line's own (ruling 31) |
 | `test_parse_once.py` | Version 0.25, ruling 1: the cases of `bench/set.json` (each input whole, cut and changed, `expect` converted back, decodes) give a new engine's result on an engine that converted the others, and from eight threads at once on one new engine; a load opens each file once |
 | `reduced-build-check.py`, run from the repository root as `python3 -I engines/python/reduced-build-check.py` | a build with `xml`, `json` and `geojson` only (Version 0.24; "Builds with fewer wires" above) |
 | `tools/tool-vectors.py`, run from the repository root as `python3 -I tools/tool-vectors.py -- engines/python/goat-xf-py.py` | every tool vector of `packs/conformance/tool-vectors` (183, all passed): the command-line contract of Version 0.23 and the licence profiles of Versions 0.29 and 0.93 |

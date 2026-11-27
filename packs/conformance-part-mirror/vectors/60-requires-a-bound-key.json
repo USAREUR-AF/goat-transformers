@@ -1,0 +1,9 @@
+{
+  "name": "requires-a-bound-key",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-kinds",
+  "input": "{\"x\":6}",
+  "expect": "{\"t\":\"k-h\",\"k\":\"a\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 12"
+}

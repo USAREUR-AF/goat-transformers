@@ -1,0 +1,9 @@
+{
+  "name": "every-default",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default-all",
+  "input": "{}",
+  "expect": "{\"t\":\"k-h-S\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: every part field has a default"
+}

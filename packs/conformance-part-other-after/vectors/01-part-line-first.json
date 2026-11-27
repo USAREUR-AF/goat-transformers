@@ -1,0 +1,12 @@
+{
+  "name": "part-line-first",
+  "from": "conformance-part-other-after",
+  "to": "conformance-part-other-after",
+  "input": "{\"t\":\"h\",\"x\":3}",
+  "expect": "{\"t\":\"h\",\"x\":6}",
+  "model": {
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, 0.6: the earliest line that succeeds"
+}

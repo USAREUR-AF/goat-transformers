@@ -1,0 +1,14 @@
+{
+  "name": "null-is-absent",
+  "from": "conformance-part-json",
+  "to": "conformance-part-json",
+  "input": "{\"t\":null}",
+  "expect": "{}",
+  "model": {
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: an absent place"
+}

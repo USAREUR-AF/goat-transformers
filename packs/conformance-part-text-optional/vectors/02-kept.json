@@ -1,0 +1,15 @@
+{
+  "name": "kept",
+  "from": "conformance-part-text-optional",
+  "to": "conformance-part-text-optional",
+  "input": "9,a-b",
+  "expect": "9,a-b",
+  "model": {
+    "probe.tag": "a-b",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1 on text"
+}

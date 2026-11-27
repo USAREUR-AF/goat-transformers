@@ -1,0 +1,9 @@
+{
+  "name": "missing-part",
+  "from": "conformance-part-json",
+  "to": "conformance-part-json",
+  "input": "{\"t\":\"k-h\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: a field whose part is missing is transform-decode, with `unlisted` too"
+}

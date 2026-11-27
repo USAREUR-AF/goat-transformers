@@ -1,0 +1,9 @@
+{
+  "name": "ruling-28-line-of-another-kind-is-not",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-kind-whole",
+  "input": "{\"x\":3,\"tag\":\"h\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 28: another line is counted over the pack's lines; the line of kind b is not one, so 6 is checked against 3"
+}

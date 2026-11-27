@@ -1,0 +1,12 @@
+{
+  "name": "same-type-text-passes",
+  "from": "conformance-twolines-later-xml",
+  "to": "conformance-twolines-later-xml",
+  "input": "<e c=\"q\" d=\"zz\"/>",
+  "expect": "<e c=\"q\" d=\"q\"/>",
+  "model": {
+    "probe.label": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 Value tables: with no entry the value passes through when the two types are the same; 0.6 One key at several locators: the earliest line that succeeds; encode writes both"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "whole-no-entry-not-checked",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-other",
+  "input": "{\"x\":3,\"tag\":\"k-a\"}",
+  "expect": "{\"x\":3,\"t\":\"k-a\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 2: a key with another line in the scope is left to the order of lines and not checked"
+}

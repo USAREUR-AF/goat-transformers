@@ -1,0 +1,12 @@
+{
+  "name": "entry-in-the-earlier-line",
+  "from": "conformance-twolines-earlier-xml",
+  "to": "conformance-twolines-earlier-xml",
+  "input": "<e b=\"h\" a=\"3\"/>",
+  "expect": "<e b=\"h\" a=\"6\"/>",
+  "model": {
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 One key at several locators: the earliest line that succeeds; encode writes both"
+}

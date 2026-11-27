@@ -1,0 +1,12 @@
+{
+  "name": "same-type-integer-passes",
+  "from": "conformance-twolines-earlier-xml",
+  "to": "conformance-twolines-earlier-xml",
+  "input": "<e f=\"7\" e=\"5\"/>",
+  "expect": "<e f=\"7\" e=\"7\"/>",
+  "model": {
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 Value tables: with no entry the value passes through when the two types are the same; the earlier line succeeds with it"
+}

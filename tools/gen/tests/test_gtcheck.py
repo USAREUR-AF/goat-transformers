@@ -569,6 +569,21 @@ V011_ORDER |= {"9248", "9259", "9260", "9261", "9262", "9263", "9264", "9265"}
 # gtcheck names an unknown directive `bad-directive`.
 V011_ORDER |= {"4637", "4659", "4663", "4656", "4658", "4633", "4655", "4657", "4664",
                "4669", "4671", "4673"}
+# Ruling 11 of 0.64: all but the parameters of `part` and a repeated `unlisted` is
+# checked after the file, so a later `bogus` line gives `unknown-directive`;
+# gtcheck refuses `bogus` as `bad-directive`.
+V011_ORDER |= {"6503", "6504", "6505", "6506", "6507", "6508", "6509", "6510", "6511", "6512",
+               "6513", "6514", "6515", "6516", "6517", "6518", "6519", "6520", "6521", "6522",
+               "6523"}
+# Rulings 23 and 24 of 0.64 likewise; and an unknown transform (0.11 5b step 7),
+# which gtcheck names `bad-directive`.
+V011_ORDER |= {"6525", "6526", "6532", "6533"}
+# Ruling 29 of 0.64: the same order, and a `bad-locator` line check of 0.11 5a,
+# which gtcheck names `bad-directive`.
+V011_ORDER |= {"6540", "6541", "6542", "6543", "6544", "6545", "6546", "6547"}
+# A sequential-only line in a pack that is not sequential is checked after the
+# file (0.11 5b), so a later `bogus` line gives `unknown-directive`.
+V011_ORDER |= {"6548", "6549", "6550", "6551", "6552", "6553", "6554", "6555", "6556"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line

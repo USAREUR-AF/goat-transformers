@@ -1,0 +1,12 @@
+{
+  "name": "later-line-a-sentinel",
+  "from": "conformance-twolines-w-json-sentinel",
+  "to": "conformance-twolines-w-json-sentinel",
+  "input": "{\"a\":3,\"b\":\"NA\"}",
+  "expect": "{\"a\":3,\"b\":\"f\"}",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27: a sentinel changes nothing"
+}

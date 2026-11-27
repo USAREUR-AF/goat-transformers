@@ -1,0 +1,9 @@
+{
+  "name": "unreadable-place-fails-the-const",
+  "from": "conformance-part-other",
+  "to": "conformance-part-other",
+  "input": "{\"x\":3,\"t\":5}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 4: the place is a failure of the const line too, which no line forgives"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "part-0-of-many",
+  "from": "conformance-part-empty-xml",
+  "to": "conformance-part-empty-xml",
+  "input": "<e t=\"a--b\"/>",
+  "expect": "<e t=\"a--b\"/>",
+  "model": {
+    "probe.label": "a",
+    "probe.tag": "a--b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: empty parts count, other parts are ignored"
+}

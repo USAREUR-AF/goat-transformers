@@ -1,0 +1,13 @@
+{
+  "name": "scalar-items",
+  "from": "conformance-part-items-dot",
+  "to": "conformance-part-items-dot",
+  "input": "{\"recs\":[\"h-q\",\"f-r-s\"]}",
+  "expect": "{\"recs\":[\"h-q\",\"f-r\"]}",
+  "model": {
+    "probe.recs[0].probe.x": "6",
+    "probe.recs[1].probe.label": "r"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 13: in a group body \"the entity\" is the item"
+}

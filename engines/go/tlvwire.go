@@ -448,9 +448,6 @@ func decodeTLV(d *decodeState, b []byte) error {
 		if f == nil {
 			continue
 		}
-		if _, done := d.rec.Fields[f.Key]; done {
-			continue
-		}
 		set := r
 		for _, t := range f.loc.tags[:len(f.loc.tags)-1] {
 			if set = set.subs[t]; set == nil {

@@ -1,0 +1,12 @@
+{
+  "name": "entry-in-the-later-line",
+  "from": "conformance-twolines-w-text-later",
+  "to": "conformance-twolines-w-text-later",
+  "input": "3,h",
+  "expect": "3,f",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: the earliest line's value is kept; encode writes both lines (0.6)"
+}

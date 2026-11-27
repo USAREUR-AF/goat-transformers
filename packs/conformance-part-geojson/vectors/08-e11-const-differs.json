@@ -1,0 +1,9 @@
+{
+  "name": "e11-const-differs",
+  "from": "conformance-part-geojson",
+  "to": "conformance-part-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"b-m-p-s\"}}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: a const part that differs is transform-decode"
+}

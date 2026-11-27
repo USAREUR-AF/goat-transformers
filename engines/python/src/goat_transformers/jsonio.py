@@ -279,6 +279,8 @@ def resolve(pack, enc):
     for ln in lines:
         if ln.is_field or ln.is_group or ln.present or ln.locator in resolved:
             continue
+        if getattr(ln, "is_part_const", False):
+            continue  # 0.64: written with the token of its part group
         resolved[ln.locator] = when_text(ln)
     values = enc.values
     sentinels = enc.sentinels

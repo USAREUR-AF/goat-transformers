@@ -1,0 +1,9 @@
+{
+  "name": "ruling-25-requires-agrees",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-requires-whole",
+  "input": "{\"x\":6,\"tag\":\"h\"}",
+  "expect": "{\"k\":\"a\",\"t\":\"h\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 25: only a `field` line of the scope is another line; 6 agrees; the `when` line stands first (0.5 ruling 10)"
+}

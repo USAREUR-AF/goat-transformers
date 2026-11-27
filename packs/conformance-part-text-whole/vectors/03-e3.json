@@ -1,0 +1,14 @@
+{
+  "name": "e3",
+  "from": "conformance-part-text-whole",
+  "to": "conformance-part-text-whole",
+  "input": "k-p-S,9",
+  "expect": "k-p-S,9",
+  "model": {
+    "probe.x": "0",
+    "probe.y": "2",
+    "probe.tag": "k-p-S"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

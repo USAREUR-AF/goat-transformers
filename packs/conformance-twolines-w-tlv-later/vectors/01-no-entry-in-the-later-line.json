@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-in-the-later-line",
+  "from": "conformance-twolines-w-tlv-later",
+  "to": "conformance-twolines-w-tlv-later",
+  "input": "01010302017a",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: no entry and another type fails the decode, after a line that succeeds"
+}

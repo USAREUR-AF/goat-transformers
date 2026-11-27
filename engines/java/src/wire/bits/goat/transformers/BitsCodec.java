@@ -209,12 +209,13 @@ final class BitsCodec extends BitsWire<BitsWire.BitMsg> {
             if (!(l instanceof Pack.Field)) continue;
             Pack.Field f = (Pack.Field) l;
             Loc loc = (Loc) l.loc;
-            if (e.get(f.key) != null) continue;          // an earlier line already gave the key its value
             long start = base + loc.start;
             if (start + loc.len > bits) {
+                // whatever other lines of the key do (ruling 27 of 0.64)
                 if (f.optional) continue;                // beyond the input: absent
                 throw malformed("the input ends before " + f.key + " at " + f.locator);
             }
+            if (settled(f, e)) continue;                 // an earlier line already gave the key its value
             if (f.absent != null) {
                 // the raw value, as uint reads it, after swap: a sentinel is a line whose locator is absent
                 long raw = readBits(msg, start, loc.len);

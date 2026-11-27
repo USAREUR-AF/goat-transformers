@@ -2117,6 +2117,39 @@ int main() {
         fs::remove_all(dir, ec);
     }
 
+    {
+        // 0.64 ruling 31: a line of a `switch` key after the switch, whose table
+        // has no entry for the bits written, fails the encode at that line, so
+        // an encode error of a later line does not come first; one of an earlier
+        // line does.
+        try {
+            const char* core = "module core\nversion 0.1.0\ndistribution public\nsource s\nkey uid string -\nkey time_ms int ms\n";
+            const char* mod = "module q\nversion 0.1.0\ndistribution public\nsource s\nkey x int -\nkey y int -\nkey z int -\nkey n int -\n";
+            gt::Engine r;
+            r.load_model(core);
+            r.load_model(mod);
+            const std::string seq = HDR "uses q\nwire bits\nlayout sequential\nbit_order msb\n";
+            const std::string sw = "field q.x 8 uint\nswitch q.x\n  case 0\n    field q.y 8 uint\n  case 6\n    field q.z 8 uint\nend\n";
+            r.add_pack(gt::parse_pack(seq + "format r31a\n" + sw + "field q.x 8 ascii via t\nfield q.n 8 uint\nmap t h 6\n"));
+            r.add_pack(gt::parse_pack(seq + "format r31b\n" + sw + "field q.n 8 uint\nfield q.x 8 ascii via t\nmap t h 6\n"));
+            gt::Entity e;
+            e.fields["q.y"] = gt::Value::of_int(9);
+            e.fields["q.n"] = gt::Value::of_int(300);  // does not fit 8 bits: transform-encode at its line
+            const std::string a = error_text([&] { r.encode("r31a", e); });
+            check(begins(a, "transform-encode") && a.find("'switch' key q.x") != std::string::npos,
+                  "0.64 r31: the failing line after the switch wins over a later line's error: " + a);
+            const std::string b = error_text([&] { r.encode("r31b", e); });
+            check(begins(b, "transform-encode") && b.find("'switch' key") == std::string::npos,
+                  "0.64 r31: an earlier line's error wins over the failing line: " + b);
+            e.fields.erase("q.n");
+            const std::string c = error_text([&] { r.encode("r31a", e); });
+            check(begins(c, "transform-encode") && c.find("'switch' key q.x") != std::string::npos,
+                  "0.64 r31: the failing line alone: " + c);
+        } catch (const std::exception& ex) {
+            check(false, std::string("0.64 r31 threw: ") + ex.what());
+        }
+    }
+
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";
     return failures == 0 ? 0 : 1;
 }

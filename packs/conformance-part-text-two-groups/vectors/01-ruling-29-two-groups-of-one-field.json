@@ -1,0 +1,9 @@
+{
+  "name": "ruling-29-two-groups-of-one-field",
+  "from": "conformance-part-text-two-groups",
+  "to": "conformance-part-mirror",
+  "input": "a-b/c",
+  "expect": "{\"label\":\"a\",\"w1\":\"a-b\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 29: a part group is by locator text"
+}

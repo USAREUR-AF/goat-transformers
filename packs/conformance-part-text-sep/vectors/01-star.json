@@ -1,0 +1,13 @@
+{
+  "name": "star",
+  "from": "conformance-part-text-sep",
+  "to": "conformance-part-text-sep",
+  "input": "a*b|9",
+  "expect": "a*b|9",
+  "model": {
+    "probe.label": "a",
+    "probe.w1": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Load errors: `*` is refused under `checksum nmea` only"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "e5",
+  "from": "conformance-part-json-whole",
+  "to": "conformance-part-json-whole",
+  "input": "{\"t\":\"k-h-U\"}",
+  "expect": "{\"t\":\"k-h-U\"}",
+  "model": {
+    "probe.x": "6",
+    "probe.tag": "k-h-U",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

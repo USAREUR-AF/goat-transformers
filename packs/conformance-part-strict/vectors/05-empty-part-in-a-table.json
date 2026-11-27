@@ -1,0 +1,9 @@
+{
+  "name": "empty-part-in-a-table",
+  "from": "conformance-part-strict",
+  "to": "conformance-part-strict",
+  "input": "{\"t\":\"h--q\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, the empty part has no entry"
+}

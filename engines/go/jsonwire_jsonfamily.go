@@ -170,9 +170,6 @@ func (d *decodeState) fieldJSON(f *Field, v *jval) {
 		d.field(f, v.s)
 		return
 	}
-	if _, done := d.rec.Fields[f.Key]; done {
-		return
-	}
 	if f.tf.strOnly {
 		d.fail(f, "wire value is not a JSON string")
 		return
@@ -183,6 +180,12 @@ func (d *decodeState) fieldJSON(f *Field, v *jval) {
 		return
 	}
 	d.store(f, val)
+}
+
+// partJSON decodes one part line from its member, as `string` reads it: a
+// string, and on geojson a number's text too.
+func (d *decodeState) partJSON(ln line, m *jval, geo bool) {
+	d.part(ln, m.s, m.k == jStr || geo && m.k == jNum)
 }
 
 // jsonScope decodes the lines of one scope from v: the message, or one item
@@ -203,6 +206,10 @@ func (d *decodeState) jsonScope(lay *layout, v *jval, geo bool) error {
 				continue
 			}
 			m.mapped = true
+			if f.part != nil {
+				d.partJSON(ln, m, geo)
+				continue
+			}
 			if f.sentinelJSON(m) {
 				continue
 			}
@@ -223,6 +230,11 @@ func (d *decodeState) jsonScope(lay *layout, v *jval, geo bool) error {
 				continue
 			}
 			d.store(f, val)
+		case ln.w != nil && ln.w.part != nil:
+			if m := jsonLookup(v, ln.w.loc.path); m != nil && m.k != jNull {
+				m.mapped = true
+				d.partJSON(ln, m, geo)
+			}
 		case ln.g != nil:
 			if err := d.jsonGroup(ln.g, jsonLookup(v, ln.g.loc.path), geo); err != nil {
 				return err
@@ -393,6 +405,25 @@ func encodeJSONItems(p *Pack, g *Group, items []*Item, geo bool) (string, error)
 // present, `[]` when it is empty.
 func encodeJSONScope(p *Pack, lay *layout, rec *Item, root *jnode, geo bool) error {
 	for _, ln := range lay.lines {
+		if pg := lay.parts[lineLocator(ln)]; pg != nil {
+			if !pg.isFirst(ln) {
+				continue
+			}
+			n := root.at(pg.fields[0].loc.path)
+			tok, ok, err := pg.token(p, lay, rec)
+			if err != nil {
+				return err
+			}
+			if ok {
+				if geo {
+					n.raw = jsonString(tok)
+				} else {
+					n.raw = jsonQuote(tok)
+				}
+				n.set, n.weak = true, false
+			}
+			continue
+		}
 		if g := ln.g; g != nil {
 			n := root.at(g.loc.path)
 			items, ok := rec.Lists[g.List]

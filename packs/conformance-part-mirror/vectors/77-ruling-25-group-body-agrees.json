@@ -1,0 +1,9 @@
+{
+  "name": "ruling-25-group-body-agrees",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-body-whole",
+  "input": "{\"x\":6,\"tag\":\"h\",\"recs\":[{\"x\":3}]}",
+  "expect": "{\"t\":\"h\",\"recs\":[{\"x\":3}]}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 25: only a `field` line of the scope is another line; 6 agrees; the item's 3 is another scope"
+}

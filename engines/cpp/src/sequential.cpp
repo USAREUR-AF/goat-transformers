@@ -2476,10 +2476,10 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
         case Type::Switch: {
             // v0.20: the case the key's value selects, read at the cursor. A
             // key whose line failed its transform or table fails the decode
-            // (ruling 35).
-            if (in.strict || !out.fields.count(n.field.key))  // in.strict: 0.92 ruling 3
-                for (const auto& f : d.failures)
-                    if (f.key == n.field.key)
+            // (ruling 35). So does a table with no entry beside a line that
+            // gave the key its value (0.64 ruling 26).
+            for (const auto& f : d.failures)
+                if (f.key == n.field.key && (in.strict || f.table || !out.fields.count(n.field.key)))  // in.strict: 0.92 ruling 3
                         throw Error(ErrorKind::TransformDecode, p.format, f.locator,
                                     "the 'switch' key " + f.key + " failed: " + f.why);
             const SeqCase* c = select_case(p, n, out);
@@ -2861,10 +2861,11 @@ struct Scope {
     // v0.20: the written bits read back as decode reads them, for the switches.
     mutable Item shadow;
     mutable Decoder shadow_d;
+    mutable std::set<std::string> switch_keys;  // v0.64: the keys of the switches written
 
     Scope(const Pack& pack, const Item& it, const SeqBody& b, const SeqKind* k, SwitchState* state)
         : p(pack), item(it), body(b), kind(k), src(pack, static_cast<const Kind*>(nullptr), it), sw(state),
-          shadow(), shadow_d(pack, shadow) {
+          shadow(), shadow_d(pack, shadow), switch_keys() {
         src.defaults = Defaults{k ? &k->defaults : nullptr, &b.defaults};
     }
     // v0.20: the default of a case holding the line, the innermost first
@@ -3452,6 +3453,17 @@ void encode_group(SeqOut& out, const SeqNode& n, const Scope& s) {
     }
 }
 
+// 0.64 ruling 31: a line of a `switch` key read back after that switch was
+// written, whose table has no entry, makes the encode fail at that line.
+void check_after_switch(const Pack& p, const Scope& s, std::size_t before) {
+    for (std::size_t i = before; i < s.shadow_d.failures.size(); ++i) {
+        const auto& f = s.shadow_d.failures[i];
+        if (f.table && s.switch_keys.count(f.key))
+            throw Error(ErrorKind::TransformEncode, p.format, f.locator,
+                        "the 'switch' key " + f.key + " does not read back from the bits written: " + f.why);
+    }
+}
+
 void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t index, const Scope& s,
                  const std::vector<SeqNode>* tail) {
     const Pack& p = out.p;
@@ -3471,14 +3483,18 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             }
             encode_field(out, n, s);
             if (held) out.held.emplace_back(start, out.cur);
+            const std::size_t before = s.shadow_d.failures.size();
             read_back(p, out.data, start, out.cur, n, out.msb, s.shadow_d);
+            check_after_switch(p, s, before);
             return;
         }
         case Type::Switch: {
             // A key whose written bits do not read back (ruling 31).
-            if (!s.shadow.fields.count(n.field.key))
-                for (const auto& f : s.shadow_d.failures)
-                    if (f.key == n.field.key)
+            // Every line of the key counts (0.64 ruling 31): one after the switch
+            // fails where it is read back (check_after_switch).
+            s.switch_keys.insert(n.field.key);
+            for (const auto& f : s.shadow_d.failures)
+                if (f.key == n.field.key && (f.table || !s.shadow.fields.count(n.field.key)))
                         throw Error(ErrorKind::TransformEncode, p.format, f.locator,
                                     "the 'switch' key " + f.key + " does not read back from the bits written: " + f.why);
             const SeqCase* c = select_case(p, n, s.shadow);
@@ -3503,7 +3519,9 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             encode_when(out, n, s);
             // 0.52 ruling 16: bits of a held key, for the windows.
             if (out.track_held && s.item.fields.count(n.field.key)) out.held.emplace_back(start, out.cur);
+            const std::size_t before = s.shadow_d.failures.size();
             read_back(p, out.data, start, out.cur, n, out.msb, s.shadow_d);
+            check_after_switch(p, s, before);
             return;
         }
         case Type::Pad: out.zeros(n.len); return;
@@ -3747,10 +3765,16 @@ void settle_windows(SeqOut& out, const Scope& s, const SeqKind& k, std::uint64_t
     }
 }
 
+void encode_kind(SeqOut& out, const Scope& s);
+
 void encode_body(SeqOut& out, const SeqBody& body, const Item& item) {
     const Scope s(out.p, item, body, select_kind(out.p, body, item), out.sw);
     encode_lines(out, body.lines, s, s.kind ? &s.kind->lines : nullptr);
-    if (!s.kind) return;
+    if (s.kind) encode_kind(out, s);
+}
+
+// The lines of the selected kind.
+void encode_kind(SeqOut& out, const Scope& s) {
     const SeqKind& k = *s.kind;
     if (k.window_lines == 0) {
         encode_lines(out, k.lines, s, nullptr);
@@ -3781,10 +3805,12 @@ void encode_body(SeqOut& out, const SeqBody& body, const Item& item) {
     for (std::size_t i = 0; i < k.lines.size() && (i < k.window_lines || k.lines[i].type == Type::When); ++i) {
         const SeqNode& n = k.lines[i];
         if (i >= k.window_lines && !n.has_at) continue;
+        const std::size_t before = s.shadow_d.failures.size();
         if (n.type == Type::Field || (n.type == Type::When && n.has_as && !n.has_at))
             read_back(out.p, out.data, starts[i], starts[i + 1], n, out.msb, s.shadow_d);
         else if (n.type == Type::When && n.has_as)
             read_back(out.p, out.data, kind_start + n.at, kind_start + n.at + n.len, n, out.msb, s.shadow_d);
+        check_after_switch(out.p, s, before);
     }
     for (std::size_t i = k.window_lines; i < k.lines.size(); ++i) encode_node(out, k.lines, i, s, nullptr);
 }

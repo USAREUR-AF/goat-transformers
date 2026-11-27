@@ -1,0 +1,13 @@
+{
+  "name": "whole-typemap",
+  "from": "conformance-part-type-whole",
+  "to": "conformance-part-type-whole",
+  "input": "<e t=\"k-h\"/>",
+  "expect": "<e t=\"k-h\"/>",
+  "model": {
+    "type": "a-f",
+    "probe.label": "h"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: its text after `typemap` is checked"
+}

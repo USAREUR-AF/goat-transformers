@@ -1,0 +1,12 @@
+{
+  "name": "entry-in-the-earlier-line",
+  "from": "conformance-twolines-w-bits-earlier",
+  "to": "conformance-twolines-w-bits-earlier",
+  "input": "6803",
+  "expect": "6806",
+  "model": {
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: the earliest line's value is kept; encode writes both lines (0.6)"
+}

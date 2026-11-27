@@ -1,0 +1,12 @@
+{
+  "name": "earlier-transform-fails-and-is-forgiven",
+  "from": "conformance-twolines-later-json",
+  "to": "conformance-twolines-later-json",
+  "input": "{\"a\":\"q\",\"b\":\"h\"}",
+  "expect": "{\"a\":6,\"b\":\"h\"}",
+  "model": {
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 ruling 5 and 0.7 ruling 10: a failed transform is forgiven when another line succeeds"
+}

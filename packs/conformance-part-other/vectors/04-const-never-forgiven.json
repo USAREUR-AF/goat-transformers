@@ -1,0 +1,9 @@
+{
+  "name": "const-never-forgiven",
+  "from": "conformance-part-other",
+  "to": "conformance-part-other",
+  "input": "{\"x\":3,\"t\":\"b-h\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 4"
+}

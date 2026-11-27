@@ -1,0 +1,9 @@
+{
+  "name": "block-not-written-absent-key",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-opt",
+  "input": "{}",
+  "expect": "000000",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: a `switch` in a block that is not written does not count, so the lines are not read back"
+}

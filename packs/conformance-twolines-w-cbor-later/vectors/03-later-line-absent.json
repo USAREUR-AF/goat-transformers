@@ -1,0 +1,12 @@
+{
+  "name": "later-line-absent",
+  "from": "conformance-twolines-w-cbor-later",
+  "to": "conformance-twolines-w-cbor-later",
+  "input": "a10103",
+  "expect": "a20103026166",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27: an absent line changes nothing"
+}

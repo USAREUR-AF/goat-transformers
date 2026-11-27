@@ -427,7 +427,9 @@ scope(Pack, Ctx, Lines) ->
     {Model, Lists, Failed} =
         lists:foldl(
           fun({field, Key, Path, Tr, LocT, Opts}, {M, Ls, F} = Acc) ->
-                  case maps:is_key(Key, M) of
+                  Have = maps:is_key(Key, M),
+                  %% ruling 26 of 0.64
+                  case Have andalso element(1, Opts) =:= none of
                       true -> Acc;
                       false ->
                           case walk(Ctx, Path) of
@@ -437,8 +439,10 @@ scope(Pack, Ctx, Lines) ->
                                       false ->
                                           try value(Tr, I) of
                                               V0 ->
-                                                  V1 = gt_engine:via_decode(Opts, V0, Tr, Key, LocT, Pack),
-                                                  {M#{Key => gt_engine:typemap_decode(Key, V1, Pack)}, Ls, F}
+                                                  case gt_engine:key_value(Opts, V0, Tr, Key, LocT, Pack) of
+                                                      {ok, V} when not Have -> {M#{Key => V}, Ls, F};
+                                                      _ -> Acc
+                                                  end
                                           catch
                                               _:_ -> {M, Ls, [{Key, LocT} | F]}
                                           end

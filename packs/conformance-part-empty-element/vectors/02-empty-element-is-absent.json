@@ -1,0 +1,14 @@
+{
+  "name": "empty-element-is-absent",
+  "from": "conformance-part-empty-element",
+  "to": "conformance-part-empty-element",
+  "input": "<e><a/></e>",
+  "expect": "<e/>",
+  "model": {
+    "@absent": [
+      "probe.label"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, an element with no text is absent (0.11 1m)"
+}

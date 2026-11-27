@@ -91,7 +91,9 @@ type Field struct {
 	WithLine  bool     // the line has `with`
 	Stop      string   // `stop <code>` (0.22): the code as written; "" when the line has none
 	StopLine  bool     // the line has `stop`
+	Unlisted  bool     // `unlisted` (0.64): a part with no table entry is absent
 
+	part     *partSpec  // a `part` line (0.64), nil otherwise
 	absent   *sentinels // the sentinels read for the pack's wire; nil when the line has no `absent`
 	loc      locator
 	group    *Group   // the innermost group the line is in, nil outside a group
@@ -134,6 +136,7 @@ type When struct {
 	texts   []string   // text wires: every listed value, a leading `=` stripped (0.20)
 	ranges  []numRange // bits and protobuf: every listed value or range (0.20)
 	cv      cborVal    // cbor: the value, typed (spec 0.28, Kinds)
+	part    *partSpec  // `const … part` (0.64), nil otherwise; text is its text
 }
 
 // numRange is one value (lo = hi) or one range lo..hi of a `when` list.
@@ -269,23 +272,24 @@ type KindDef struct {
 type layout struct {
 	kind     *KindDef // nil in a pack with no kind, and in a group body
 	lines    []line
-	fieldsAt map[string][]*Field // locator -> the field lines bound to it
-	elemAt   map[int][][]string  // xml: line index -> the element paths an encode creates there, shortest first (0.18 ruling 13)
-	whenAt   map[string]bool     // locators a `when` or `const` line maps
-	forced   map[string]*When    // text wires: locator -> the when or const whose value is written there
-	defaults map[string]*Default // model key -> the default in scope
-	groups   []*Group            // the scope's group blocks, in line order
-	groupAt  map[string]*Group   // locator -> the group mapped there
-	root     string              // xml: the root element of this layout
-	maxBit   int                 // bits: the furthest bit a line outside any gate block with a fixed place reaches, from the scope's first bit
-	allBit   int                 // bits: the same over every line, gate blocks and their gates included
-	gates    []*Gate             // bits: the scope's gate blocks, in line order (0.17)
-	needBit  int                 // bits: the same, over the lines that are not optional
-	bytes    int                 // bits: the length an encode writes before any counted items, in bytes
-	decBytes int                 // bits: the shortest input a decode accepts, in bytes
-	text     *textScope          // text: the fields the scope addresses
-	tlv      *tlvSet             // tlv: the sets the scope addresses
-	cbor     *cNode              // cbor: the paths of the scope (spec 0.28)
+	fieldsAt map[string][]*Field   // locator -> the field lines bound to it
+	elemAt   map[int][][]string    // xml: line index -> the element paths an encode creates there, shortest first (0.18 ruling 13)
+	whenAt   map[string]bool       // locators a `when` or `const` line maps
+	forced   map[string]*When      // text wires: locator -> the when or const whose value is written there
+	defaults map[string]*Default   // model key -> the default in scope
+	groups   []*Group              // the scope's group blocks, in line order
+	groupAt  map[string]*Group     // locator -> the group mapped there
+	parts    map[string]*partGroup // locator -> the part group there (0.64)
+	root     string                // xml: the root element of this layout
+	maxBit   int                   // bits: the furthest bit a line outside any gate block with a fixed place reaches, from the scope's first bit
+	allBit   int                   // bits: the same over every line, gate blocks and their gates included
+	gates    []*Gate               // bits: the scope's gate blocks, in line order (0.17)
+	needBit  int                   // bits: the same, over the lines that are not optional
+	bytes    int                   // bits: the length an encode writes before any counted items, in bytes
+	decBytes int                   // bits: the shortest input a decode accepts, in bytes
+	text     *textScope            // text: the fields the scope addresses
+	tlv      *tlvSet               // tlv: the sets the scope addresses
+	cbor     *cNode                // cbor: the paths of the scope (spec 0.28)
 }
 
 // maps reports whether a field, a const or a when line of the layout maps loc.
@@ -651,8 +655,10 @@ func parseFieldOptions(f *Field, opts []string) error {
 			f.Trim = true
 		case "optional":
 			f.Optional = true
+		case "unlisted":
+			f.Unlisted = true
 		default:
-			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>, with <key>, stop <code>)", o)
+			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>, with <key>, stop <code>, unlisted)", o)
 		}
 	}
 	return nil
@@ -829,7 +835,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		// `when … at <n>` (0.33): the same, its errors reported after the
 		// key and value checks (ruling 10).
 		whenAt := kw == "when" && len(args) >= 3 && args[2] == "at"
-		if w >= 0 && len(args) != w && !whenAs && !whenAt {
+		// `const <locator> part:<sep>:<n> <text>` (0.64 ruling 23).
+		constPart := kw == "const" && len(args) == 3 && isPartName(args[1])
+		if w >= 0 && len(args) != w && !constPart && !whenAs && !whenAt {
 			return nil, perr(ErrBadDirective, n, "", "%s takes %d argument(s), got %d", kw, w, len(args))
 		}
 		if needsWire[kw] {
@@ -882,6 +890,15 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 		if p.seq {
 			if seqStructural[kw] {
+				if constPart {
+					if _, err := parsePart(args[1]); err != nil {
+						return nil, perr(ErrBadDirective, n, args[0], "%v", err)
+					}
+					if late == nil {
+						late = perr(ErrBadDirective, n, args[0], "const … part is not valid on wire bits")
+					}
+					args = args[:2]
+				}
 				if err := sp.line(kw, args, n); err != nil {
 					return nil, err
 				}
@@ -917,7 +934,12 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		} else if seqOnly[kw] && kw != "if" && !(kw == "length" && len(args) == 1) {
 			// `if` outside a sequential layout opens a gate block (0.17);
 			// `length` with one argument is a tlv directive (0.13).
-			return nil, perr(ErrBadDirective, n, "", "%s is valid only in a pack with `layout sequential`", kw)
+			// Not among the line checks of ruling 5b of 0.11, so reported after
+			// the file (0.64 ruling 11 for `also` after a part line).
+			if late == nil {
+				late = perr(ErrBadDirective, n, "", "%s is valid only in a pack with `layout sequential`", kw)
+			}
+			continue
 		}
 		if g := topGate(); g != nil {
 			// Inside a gate block only these lines are allowed (0.17, Load
@@ -1164,6 +1186,15 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				args = args[:2]
 			}
 			w := &When{Locator: args[0], Value: args[1], Line: n, Const: kw == "const", group: inner(), gate: topGate()}
+			if constPart {
+				// The parameters are a line check on every wire (0.64
+				// rulings 11 and 23).
+				ps, err := parsePart(args[1])
+				if err != nil {
+					return nil, perr(ErrBadDirective, n, w.Locator, "%v", err)
+				}
+				w.part, w.Value = ps, args[2]
+			}
 			if kind, err := p.checkWhenLine(w.Locator, w.group != nil); err != nil {
 				return nil, perr(kind, n, w.Locator, "%v", err)
 			}
@@ -1412,6 +1443,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	if !p.uper && p.uperLine != 0 {
 		return nil, perr(ErrBadDirective, p.uperLine, "", "ext, choice, alt and group … size are valid only in a pack with encoding uper")
 	}
+	if err := p.checkPartLines(whens, perr); err != nil {
+		return nil, err
+	}
 	hasType := false
 	if g, prev := p.listMappedTwice(); g != nil {
 		return nil, perr(ErrBadDirective, g.Line, g.Locator, "list %s is already mapped by the group on line %d of the same scope", g.List, prev.Line)
@@ -1647,6 +1681,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				}
 			}
 		}
+	}
+	if err := p.checkParts(whens, perr); err != nil {
+		return nil, err
 	}
 
 	if p.Distribution == "" {
@@ -2166,6 +2203,7 @@ func (p *Pack) checkBitsGroups() (int, string, error) {
 // defaults, then the kind's) or a group body (the group's defaults).
 func (p *Pack) newLayout(k *KindDef, lines []line, defaults ...[]*Default) *layout {
 	l := &layout{kind: k, lines: lines, fieldsAt: map[string][]*Field{}, whenAt: map[string]bool{}, root: p.Root}
+	l.parts = p.partGroups(lines, func(int, string, string, ...any) {})
 	textWire := p.Wire == WireXML || p.Wire == WireGeoJSON || p.Wire == WireJSON
 	maxBit, needBit, allBit := 0, 0, 0
 	if p.Wire == WireXML {
@@ -2215,7 +2253,7 @@ func (p *Pack) newLayout(k *KindDef, lines []line, defaults ...[]*Default) *layo
 			if !textWire || !w.present {
 				l.whenAt[w.Locator] = true
 			}
-			if textWire && !w.present {
+			if textWire && !w.present && w.part == nil {
 				if l.forced == nil {
 					l.forced = map[string]*When{}
 				}

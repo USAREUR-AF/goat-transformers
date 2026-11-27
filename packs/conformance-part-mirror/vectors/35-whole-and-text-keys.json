@@ -1,0 +1,9 @@
+{
+  "name": "whole-and-text-keys",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-strict-whole",
+  "input": "{\"tag\":\"h-b-q\",\"label\":\"beta\",\"w1\":\"q\"}",
+  "expect": "{\"t\":\"h-b-q\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the keys held agree, the key not held still decodes"
+}

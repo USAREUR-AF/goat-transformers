@@ -254,6 +254,10 @@ bool when_holds_at(const std::vector<std::string>& t) {
     return false;
 }
 
+bool is_const_part(const std::vector<std::string>& t) {
+    return t.size() == 4 && t[0] == "const" && t[2].substr(0, t[2].find(':')) == "part";
+}
+
 void check_pack_lines(const std::string& text, const std::string& source) {
     LineChecker c;
     c.source = source;
@@ -304,6 +308,7 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         // key, are checked after the file (ruling 16).
         // v0.33: `at <n>` likewise (ruling 10).
         else if (kw == "when" && nargs >= 3 && (t[3] == "as" || t[3] == "at")) {
+        } else if (is_const_part(t)) {  // v0.64: three arguments (ruling 23)
         } else if (kw == "when" || kw == "const" || kw == "default") count(nargs == 2, "two arguments");
         // v0.34: the word after the format is checked after the file.
         else if (kw == "inner") count(nargs == 1 || nargs == 2, "one or two arguments");
@@ -372,8 +377,14 @@ void check_pack_lines(const std::string& text, const std::string& source) {
             continue;
         }
         if (kw == "when" || kw == "const") {
+            // 7. the parameters of `const <locator> part:<sep>:<n> <text>`, on every wire (0.64 ruling 23)
+            if (is_const_part(t)) {
+                FieldLine part;
+                if (!parse_part_params(t[2], part, err)) c.fail(ErrorKind::BadDirective, err, t[1]);
+            }
             // 8. the locator form
-            check_locator(c, wire, sequential, group_depth > 0, false, t[1]);
+            // A const part on a geojson coordinate is refused after the file (0.64 ruling 29).
+            check_locator(c, wire, sequential, group_depth > 0, wire == Wire::GeoJson && is_const_part(t), t[1]);
             continue;
         }
         if (kw != "field") continue;
@@ -425,7 +436,11 @@ void check_pack_lines(const std::string& text, const std::string& source) {
                 f.absent_arg = t[++k];
                 continue;
             }
-            bool* flag = t[k] == "swap" ? &swap : t[k] == "trim" ? &trim : t[k] == "optional" ? &optional : nullptr;
+            bool* flag = t[k] == "swap"       ? &swap
+                         : t[k] == "trim"     ? &trim
+                         : t[k] == "optional" ? &optional
+                         : t[k] == "unlisted" ? &f.unlisted  // v0.64
+                                              : nullptr;
             if (!flag || *flag)
                 c.fail(ErrorKind::BadDirective, "'" + t[k] + "' is not a field option, or is given twice", f.locator);
             *flag = true;

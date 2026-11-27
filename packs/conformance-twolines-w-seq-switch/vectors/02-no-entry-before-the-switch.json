@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-before-the-switch",
+  "from": "conformance-twolines-w-seq-switch",
+  "to": "conformance-twolines-w-seq-switch",
+  "input": "000009",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec ruling 26: the NUL text is the empty text (0.5 ruling 3), which has no entry"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "const-part-missing",
+  "from": "conformance-part-const",
+  "to": "conformance-part-const",
+  "input": "{\"t\":\"5-q-present\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: a const part that is missing is transform-decode"
+}

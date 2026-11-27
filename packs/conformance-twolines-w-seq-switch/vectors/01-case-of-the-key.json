@@ -1,0 +1,13 @@
+{
+  "name": "case-of-the-key",
+  "from": "conformance-twolines-w-seq-switch",
+  "to": "conformance-twolines-w-seq-switch",
+  "input": "066809",
+  "expect": "066809",
+  "model": {
+    "probe.x": "6",
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 and 0.64 ruling 26: the second line has an entry, the first gives the key"
+}

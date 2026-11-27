@@ -816,7 +816,7 @@ func (d *decodeState) cborLines(lines []line, root *cItem) error {
 // cborField decodes one field from its item, tags passed over. null and
 // undefined are absent.
 func (d *decodeState) cborField(f *Field, x *cItem) {
-	if _, done := d.rec.Fields[f.Key]; done || x.isNull() {
+	if x.isNull() {
 		return
 	}
 	v, err := cborDecodeTf(f.ctf, x)

@@ -1,0 +1,9 @@
+{
+  "name": "e11-const-differs",
+  "from": "conformance-part-text",
+  "to": "conformance-part-text",
+  "input": "b-m-p-s,9",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: a const part that differs is transform-decode"
+}

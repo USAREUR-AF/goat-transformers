@@ -17,6 +17,7 @@ pub use exact::Exact;
 mod layout;
 use layout::Layout;
 mod licence;
+mod part;
 pub use licence::{profile_name, LoadOptions, LoadedPack, PackLicence, Profile};
 
 // ---------------------------------------------------------------------------
@@ -183,6 +184,8 @@ pub enum Transform {
     Codestr,
     /// bits, xml, json, geojson, text: the mixed-radix number of the codes
     Codenum,
+    /// `part:<sep>:<n>` (engine-spec v0.64): part `n` of a token
+    Part(char, u8),
 }
 
 /// The character set of `chars:<set>` (engine-spec v0.15).
@@ -318,6 +321,8 @@ impl Transform {
             "text", "bytes", "epoch_s",
             // engine-spec v0.46
             "code", "codestr", "codenum",
+            // engine-spec v0.64
+            "part",
         ];
         if !NAMES.contains(&head) {
             return err(format!("unknown-transform: `{}` is not a transform", head));
@@ -330,6 +335,12 @@ impl Transform {
             _ => {}
         }
         let params = |what: &str| err(format!("bad-directive: the parameters of transform `{}` are not valid: {}", name, what));
+        if head == "part" {
+            return match name.strip_prefix("part:").and_then(part::params) {
+                Some((sep, n)) => Ok(Transform::Part(sep, n)),
+                None => params("<sep>:<n>, a separator and a number from 0 to 255"),
+            };
+        }
         if head == "linscale" {
             // ruling 4d of 0.11: exactly <maxpos>:<range>
             let args: Vec<&str> = name.split(':').skip(1).collect();
@@ -471,6 +482,7 @@ impl Transform {
             | Transform::Chars(_)
             | Transform::Octal
             | Transform::CborText
+            | Transform::Part(..)
             | Transform::CborBytes
             | Transform::Code
             | Transform::Codestr => KeyType::Str,
@@ -687,6 +699,7 @@ impl Transform {
     fn decode(&self, raw: &str) -> Result<Value, Error> {
         match self {
             Transform::StringT => Ok(Value::Str(raw.to_string())),
+            Transform::Part(sep, n) => part::nth(raw, *sep, *n).map(|t| Value::Str(t.to_string())),
             // rulings 2a, 2b and 1n of 0.11: no trimming, the grammars exactly
             Transform::Float => number_text(raw)
                 .map(Value::F64)
@@ -771,6 +784,7 @@ impl Transform {
             | Transform::Chars(_)
             | Transform::Octal
             | Transform::CborText
+            | Transform::Part(..)
             | Transform::CborBytes
             // a string, `codenum` included (ruling 11 of 0.46)
             | Transform::Code
@@ -1759,6 +1773,9 @@ pub struct FieldDef {
     /// `code`, `codestr`, `codenum` (engine-spec v0.46): the character sets,
     /// one per position
     pub code: Option<std::sync::Arc<CodeSeq>>,
+    /// `unlisted` (engine-spec v0.64): a part with no entry in its `via` table
+    /// leaves the line as one whose place is absent
+    pub unlisted: bool,
 }
 
 /// One gate block `if [!]<locator> <value>[,…]` … `end` of a fixed-layout
@@ -1885,6 +1902,8 @@ fn field_options_at(f: &mut FieldDef, toks: &[String], ln: usize, allow_optional
             }
             "swap" => &mut f.swap,
             "trim" => &mut f.trim,
+            // where it is valid is checked after the file (ruling 11 of 0.64)
+            "unlisted" => &mut f.unlisted,
             "optional" if allow_optional => &mut f.optional,
             "optional" => return bad(ln, "`optional` is not valid in a `layout sequential` pack"),
             o => return bad(ln, format!("unknown field option `{}`", o)),
@@ -2118,6 +2137,8 @@ pub struct WhenDef {
     pub nums: Vec<(u64, u64)>,
     /// text wires: every listed text, `=` stripped; the first is `text`
     pub texts: Vec<String>,
+    /// `const <locator> part:<sep>:<n> <text>` (engine-spec v0.64)
+    pub part: Option<(char, u8)>,
 }
 
 impl WhenDef {
@@ -2365,10 +2386,11 @@ impl<'a> Sel<'a> {
             }
         })
     }
-    /// The values written over any field: every `when` that is not `present`, and every `const`.
+    /// The values written over any field: every `when` that is not `present`, and every `const`
+    /// that is not a part of a token (engine-spec v0.64).
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "cbor"))]
     fn fixed(&self) -> impl Iterator<Item = &'a WhenDef> + '_ {
-        self.whens.iter().copied().filter(|w| !w.present).chain(self.consts.iter().copied())
+        self.whens.iter().copied().filter(|w| !w.present).chain(self.consts.iter().copied().filter(|c| c.part.is_none()))
     }
     /// The locators a decode treats as mapped: every field, every `when` that
     /// is not `present` (ruling 27 of 0.5) and every `const`.
@@ -2737,12 +2759,18 @@ impl Pack {
                 }
                 "source" => sources.push(req_arg(&toks, 1, ln)?),
                 "const" => {
-                    if toks.len() != 3 {
-                        return bad(ln, "const needs <locator> <value>");
-                    }
+                    // engine-spec v0.64: `const <locator> part:<sep>:<n> <text>`
+                    let part = match toks.len() {
+                        3 => None,
+                        4 => match Transform::parse(&toks[2])? {
+                            Transform::Part(sep, n) => Some((sep, n)),
+                            _ => return bad(ln, "const needs <locator> [part:<sep>:<n>] <value>"),
+                        },
+                        _ => return bad(ln, "const needs <locator> [part:<sep>:<n>] <value>"),
+                    };
                     let c = WhenDef {
                         locator: toks[1].clone(),
-                        value: toks[2].clone(),
+                        value: toks[toks.len() - 1].clone(),
                         present: false,
                         text: String::new(),
                         forced: false,
@@ -2751,6 +2779,7 @@ impl Pack {
                         gate: gate_stack.last().copied(),
                         nums: Vec::new(),
                         texts: Vec::new(),
+                        part,
                     };
                     match (open.last_mut(), kinds.last_mut()) {
                         (Some(g), _) => g.consts.push(c),
@@ -2865,6 +2894,7 @@ impl Pack {
                         gate: None,
                         nums: Vec::new(),
                         texts: Vec::new(),
+                        part: None,
                     };
                     match kinds.last_mut() {
                         Some(k) => k.whens.push(w),
@@ -2911,6 +2941,7 @@ impl Pack {
                         until: None,
                         stop: None,
                         code: CodeSeq::of(&toks[3]),
+                        unlisted: false,
                     };
                     // options after the transform, in any order (engine-spec v0.6)
                     field_options(&mut f, &toks, ln, true)?;
@@ -3067,6 +3098,7 @@ impl Pack {
         };
         for f in fields.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.fields.iter_mut())) {
             check_field_for_wire(wire, f, false)?;
+            part::check_field(wire, f, false)?;
             via_ok(f)?;
             resolve_absent(wire, f, fixed_bits_len(wire, f))?;
         }
@@ -3080,6 +3112,7 @@ impl Pack {
             Ok(())
         };
         for c in consts.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.consts.iter_mut())) {
+            part::check_const(wire, c, false)?;
             resolve_when(wire, c, false, false)?;
             no_present(c)?;
         }
@@ -3100,10 +3133,12 @@ impl Pack {
                     }
                     for f in g.fields.iter_mut() {
                         check_field_for_wire(wire, f, true)?;
+                        part::check_field(wire, f, true)?;
                         via_ok(f)?;
                         resolve_absent(wire, f, fixed_bits_len(wire, f))?;
                     }
                     for c in g.consts.iter_mut() {
+                        part::check_const(wire, c, true)?;
                         resolve_when(wire, c, true, false)?;
                         no_present(c)?;
                     }
@@ -3154,6 +3189,33 @@ impl Pack {
                 let gs: Vec<&GroupDef> = g.groups.iter().collect();
                 check_scope(wire, word_bytes, &ls, &lines(&g.fields, &[], &[]), &gs)?;
                 check_gates_off_items(word_bytes, &gl, &gs)?;
+            }
+        }
+        // engine-spec v0.64: the part groups of every scope
+        {
+            let conf = (wire == Wire::Text).then_some(&text_conf);
+            let scope = |k: Option<&KindDef>| -> Result<(), Error> {
+                let fs: Vec<&FieldDef> = fields.iter().chain(k.into_iter().flat_map(|k| k.fields.iter())).collect();
+                let ws: Vec<&WhenDef> = whens.iter().chain(k.into_iter().flat_map(|k| k.whens.iter())).collect();
+                let cs: Vec<&WhenDef> = consts.iter().chain(k.into_iter().flat_map(|k| k.consts.iter())).collect();
+                let gs: Vec<&GroupDef> = groups.iter().chain(k.into_iter().flat_map(|k| k.groups.iter())).collect();
+                part::check_scope(conf, &fs, &ws, &cs, &gs)
+            };
+            if kinds.is_empty() {
+                scope(None)?;
+            }
+            for k in &kinds {
+                scope(Some(k))?;
+            }
+            let mut every: Vec<&GroupDef> = Vec::new();
+            for g in groups.iter().chain(kinds.iter().flat_map(|k| k.groups.iter())) {
+                g.walk(&mut every);
+            }
+            for g in every {
+                let fs: Vec<&FieldDef> = g.fields.iter().collect();
+                let cs: Vec<&WhenDef> = g.consts.iter().collect();
+                let gs: Vec<&GroupDef> = g.groups.iter().collect();
+                part::check_scope(conf, &fs, &[], &cs, &gs)?;
             }
         }
         if wire == Wire::Text {
@@ -3331,13 +3393,25 @@ impl Pack {
             let model = match self.table(t).iter().find(|(native, _)| canon_text(native_ty, native) == text) {
                 Some((_, model)) => read_as(key_ty, model)
                     .ok_or(Error { msg: format!("table `{}`: `{}` is not a {}", t, model, key_ty.name()) })?,
-                None if native_ty == key_ty => v,
+                // a part never passes through a table (ruling 3 of 0.64)
+                None if native_ty == key_ty && !matches!(f.transform, Transform::Part(..)) => v,
                 None => return err(format!("table `{}` has no entry for wire value `{}`", t, text)),
             };
             // the table, then the typemap (ruling 6 of 0.6)
             return Ok(self.typemap_in(f, model));
         }
         Ok(self.typemap_in(f, v))
+    }
+
+    /// Is `v` a part with no entry in the table of an `unlisted` line? The
+    /// line then counts as one whose place is absent (engine-spec v0.64).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
+    fn unlisted(&self, f: &FieldDef, v: &Value) -> bool {
+        let (table, text) = match (&f.via, v) {
+            (Some(t), Value::Str(s)) if f.unlisted => (t, s),
+            _ => return false,
+        };
+        !self.table(table).iter().any(|(native, _)| native == text)
     }
 
     /// Decode: the pack-wide typemap, applied to the key `type`.
@@ -3369,7 +3443,7 @@ impl Pack {
             return match self.table(t).iter().find(|(_, model)| canon_text(key_ty, model) == text) {
                 Some((native, _)) => read_as(native_ty, native)
                     .ok_or(Error { msg: format!("table `{}`: `{}` is not a {}", t, native, native_ty.name()) }),
-                None if native_ty == key_ty => Ok(v.clone()),
+                None if native_ty == key_ty && !matches!(f.transform, Transform::Part(..)) => Ok(v.clone()),
                 None => err(format!("table `{}` has no entry for model value `{}`", t, text)),
             };
         }
@@ -3774,18 +3848,24 @@ impl Decoded {
     /// One line whose locator is present: the transform's result, through the table.
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
     fn put(&mut self, p: &Pack, f: &FieldDef, v: Result<Value, Error>) {
+        // a line whose transform succeeds and whose table fails is never
+        // forgiven, whichever line of the key came first (ruling 10 of 0.7);
+        // a key an inner message gave is checked too, and its value kept
         let held = self.has(f);
-        if self.hard_keys.contains(&f.model_key) || (held && !self.inner_keys.contains(&f.model_key)) {
+        if self.hard_keys.contains(&f.model_key)
+            || (held && f.via.is_none() && !self.inner_keys.contains(&f.model_key))
+        {
             return;
         }
         let at = |e: Error| format!("`{}` at `{}`: {}", f.model_key, f.locator, e.msg);
         match v {
             Err(e) => self.soft.push((f.model_key.clone(), at(e))),
+            Ok(v) if p.unlisted(f, &v) => {}
             Ok(v) => match p.to_model(f, v) {
                 // the value the inner message gave is kept
                 Ok(_) if held => {}
                 Ok(v) => {
-                    self.ent.fields.insert(f.model_key.clone(), v);
+                    self.ent.fields.entry(f.model_key.clone()).or_insert(v);
                 }
                 Err(e) => {
                     self.hard_keys.push(f.model_key.clone());
@@ -3793,6 +3873,23 @@ impl Decoded {
                 }
             },
         }
+    }
+    /// One `const … part` line whose place is present: a failure is never
+    /// forgiven (ruling 4 of 0.64).
+    #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "text"))]
+    fn check_part(&mut self, c: &WhenDef, token: Result<&str, Error>) {
+        let (sep, n) = match c.part {
+            Some(p) => p,
+            None => return,
+        };
+        let why = match token.and_then(|t| part::nth(t, sep, n)) {
+            Ok(t) if t == c.text => return,
+            Ok(t) => format!("part {} is `{}`, not `{}`", n, t, c.text),
+            Err(e) => e.msg,
+        };
+        // a `const` has no key; like a refused table value it stands
+        // whatever is held (the flag of ruling 21 of 0.34)
+        self.hard.push((String::new(), true, format!("`const` at `{}`: {}", c.locator, why)));
     }
     /// The entity so far and every failure that stands.
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "protobuf", feature = "text", feature = "tlv", feature = "cbor"))]
@@ -3961,6 +4058,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
             matches!(
                 t,
                 Transform::StringT
+                    | Transform::Part(..)
                     | Transform::Float
                     | Transform::Int
                     | Transform::Iso8601Ms
@@ -3992,6 +4090,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
             if !matches!(
                 t,
                 Transform::StringT
+                    | Transform::Part(..)
                     | Transform::Float
                     | Transform::Int
                     | Transform::Iso8601Ms
@@ -5889,6 +5988,16 @@ pub mod xml {
                 }
             }
         }
+        for c in sel.consts.iter().filter(|c| c.part.is_some()) {
+            let raw = match resolve(node, &c.locator) {
+                Some((n, Loc::Attr(a))) => n.attr(&a),
+                Some((n, Loc::Text)) => n.text.as_deref(),
+                None => None,
+            };
+            if let Some(t) = raw {
+                d.check_part(c, Ok(t));
+            }
+        }
         for g in &sel.groups {
             let found = items(node, &g.locator);
             // the list is present when at least one item occurs
@@ -5977,6 +6086,7 @@ pub mod xml {
                 .iter()
                 .map(|f| (f.line, f.locator.as_str()))
                 .chain(sel.fixed().map(|w| (w.line, w.locator.as_str())))
+                .chain(sel.consts.iter().filter(|c| c.part.is_some()).map(|c| (c.line, c.locator.as_str())))
                 .chain(elements.iter().copied()),
         );
         let lines = sel
@@ -6000,7 +6110,14 @@ pub mod xml {
             Element(&'a str),
         }
         let mut lines: Vec<(usize, Line)> = Vec::new();
-        for f in &sel.fields {
+        // engine-spec v0.64: one token for the lines of a part group
+        let parts = part::groups(sel);
+        for g in &parts {
+            if let Some(t) = g.token(p, sel, ent)? {
+                lines.push((g.line, Line::Value(g.locator, t, false)));
+            }
+        }
+        for f in sel.fields.iter().filter(|f| !parts.iter().any(|g| g.locator == f.locator)) {
             let v = match sel.value_of(ent, f) {
                 Some(v) => v,
                 None => continue,
@@ -7206,6 +7323,11 @@ pub mod geojson {
                 d.put(p, f, charset::decode_field(f, &r));
             }
         }
+        for c in sel.consts.iter().filter(|c| c.part.is_some()) {
+            if let Some(j) = when_member(&root, &c.locator) {
+                d.check_part(c, Ok(&json_scalar_string(j)));
+            }
+        }
         // groups: a `properties.<name>` or top-level member whose value is an array
         // an unmapped number outside the double range stays residue with its
         // text as written (ruling 27 of 0.15 limits malformed-wire to `json`)
@@ -7281,7 +7403,14 @@ pub mod geojson {
         }
         // fields and `when` values in line order (ruling 10 of 0.5)
         let mut lines: Vec<(usize, &str, Json, bool)> = Vec::new();
-        for f in &sel.fields {
+        // engine-spec v0.64: one token for the lines of a part group
+        let parts = part::groups(&sel);
+        for g in &parts {
+            if let Some(t) = g.token(p, &sel, ent)? {
+                lines.push((g.line, g.locator, Json::Str(t), false));
+            }
+        }
+        for f in sel.fields.iter().filter(|f| !parts.iter().any(|g| g.locator == f.locator)) {
             let v = match sel.value_of(ent, f) {
                 Some(v) => v,
                 None => continue,
@@ -7417,6 +7546,7 @@ pub mod jsonwire {
         }
         match (t, j) {
             (Transform::StringT, Json::Str(s)) => Ok(Value::Str(s.clone())),
+            (Transform::Part(..), Json::Str(s)) => t.decode(s),
             (Transform::Float, Json::Int(n)) => Ok(Value::F64(*n as f64)),
             (Transform::Float, Json::Num(x)) => finite(*x),
             (Transform::Int, Json::Int(n)) => Ok(Value::I64(*n)),
@@ -7484,6 +7614,17 @@ pub mod jsonwire {
                     texts.mark(j);
                     d.put(p, f, charset::decode_json(f, j).unwrap_or_else(|| dec(&f.transform, j, texts)))
                 }
+            }
+        }
+        for c in sel.consts.iter().filter(|c| c.part.is_some()) {
+            match lookup(obj, &c.locator) {
+                None | Some(Json::Null) => {}
+                // the token as `string` reads it there
+                Some(j) => match dec(&Transform::StringT, j, texts) {
+                    Ok(Value::Str(t)) => d.check_part(c, Ok(&t)),
+                    Ok(_) => d.check_part(c, err("the value is not text")),
+                    Err(e) => d.check_part(c, Err(e)),
+                },
             }
         }
         decode_groups(p, sel, obj, dec, texts, d)
@@ -7632,8 +7773,17 @@ pub mod jsonwire {
         let body = g.body();
         let mut out = Vec::new();
         for item in items {
+            // engine-spec v0.64: the token of a part group on `.`
+            let token = match part::groups(&body).iter().find(|g| g.locator == ".") {
+                Some(g) => Some(g.token(p, &body, item)?),
+                None => None,
+            };
+            if let Some(Some(t)) = token {
+                out.push(Json::Str(t));
+                continue;
+            }
             // a `.` line: the element is the scalar itself
-            let scalar = body.fields.iter().filter(|f| f.locator == ".").find_map(|f| body.value_of(item, f).map(|v| (f, v)));
+            let scalar = body.fields.iter().filter(|f| f.locator == "." && token.is_none()).find_map(|f| body.value_of(item, f).map(|v| (f, v)));
             out.push(match scalar {
                 Some((f, v)) => {
                     p.to_wire(f, v).and_then(|w| charset::encode_json(f, &w).unwrap_or_else(|| enc(&f.transform, &w))).map_err(|e| transform_encode_err(p, f, e))?
@@ -7664,7 +7814,13 @@ pub mod jsonwire {
     fn build(p: &Pack, sel: &Sel, ent: &Entity, enc: Enc) -> Result<Vec<(String, Json)>, Error> {
         // every line in force, in line order: (line, path, value to write if any)
         let mut lines: Vec<(usize, &str, Option<Json>, bool)> = Vec::new();
-        for f in sel.fields.iter().filter(|f| f.locator != ".") {
+        // engine-spec v0.64: one token for the lines of a part group
+        let mut parts = part::groups(sel);
+        parts.retain(|g| g.locator != ".");
+        for g in &parts {
+            lines.push((g.line, g.locator, g.token(p, sel, ent)?.map(Json::Str), false));
+        }
+        for f in sel.fields.iter().filter(|f| f.locator != "." && !parts.iter().any(|g| g.locator == f.locator)) {
             let jv = match sel.value_of(ent, f) {
                 None => None,
                 Some(v) => Some(
@@ -9524,6 +9680,9 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
         // 5e: `checksum` takes one argument; `checksum sum16 <tag>` (0.13) and
         // `checksum crc32 <tag>` (0.27) two
         let most = if name == "checksum" && toks[1] != "sum16" && toks[1] != "crc32" { 1 } else { most };
+        // engine-spec v0.64: `const <locator> part:<sep>:<n> <text>` takes three
+        let const_part = name == "const" && n == 3 && toks[2].split(':').next() == Some("part");
+        let most = if const_part { 3 } else { most };
         // engine-spec v0.30: `when <len> <values> as <key>`; every syntax error
         // of `as`, on any pack, is checked after the file (ruling 16)
         // engine-spec v0.33: `when <len> <values> at <n> [as <key>]`, likewise
@@ -9587,7 +9746,6 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                 sequential = true;
             }
             "field" => {
-                check_locator(wire, sequential, &toks[2], ln)?;
                 // ruling 8 of 0.13: on tlv a transform that does not parse is
                 // `bad-directive`, checked after the file is read
                 let transform = match Transform::parse(&toks[3]) {
@@ -9597,6 +9755,8 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     Err(_) if wire == Some(Wire::Cbor) => Transform::CborText,
                     t => t.map_err(|e| Error { msg: e.msg.replacen(": ", &format!(": line {}: ", ln), 1) })?,
                 };
+                // the locator form is step 8, after the transform (5b of 0.11)
+                check_locator(wire, sequential, &toks[2], ln)?;
                 // the options and the values of an `absent` option are line
                 // checks too; a bit length above 64 is checked after the file (4d)
                 let mut f = FieldDef {
@@ -9616,6 +9776,7 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     until: None,
                     stop: None,
                     code: CodeSeq::of(&toks[3]),
+                    unlisted: false,
                 };
                 field_options_at(&mut f, &toks, ln, true, false)?;
                 if let Some(w) = wire {
@@ -9632,7 +9793,13 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     }
                 }
             }
-            "when" | "const" => check_locator(wire, sequential, &toks[1], ln)?,
+            "when" | "const" => {
+                // the parameters of `part`: step 7, before the locator (ruling 11 of 0.64)
+                if const_part {
+                    Transform::parse(&toks[2]).map_err(|e| Error { msg: e.msg.replacen(": ", &format!(": line {}: ", ln), 1) })?;
+                }
+                check_locator(wire, sequential, &toks[1], ln)?
+            }
             // 5a: an empty step of an `xml` group locator is a line check too
             "group" if wire == Some(Wire::Xml) && toks[2].split('/').any(|s| s.is_empty()) => {
                 return err(format!("bad-locator: line {}: `{}`: an empty step", ln, toks[2]));

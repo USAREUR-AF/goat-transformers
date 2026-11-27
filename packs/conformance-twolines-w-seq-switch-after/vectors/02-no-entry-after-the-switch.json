@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-after-the-switch",
+  "from": "conformance-twolines-w-seq-switch-after",
+  "to": "conformance-twolines-w-seq-switch-after",
+  "input": "000900",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: the empty text after the switch has no entry"
+}

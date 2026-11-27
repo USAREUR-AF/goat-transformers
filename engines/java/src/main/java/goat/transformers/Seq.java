@@ -270,6 +270,7 @@ final class Seq {
     static boolean isKnownTransform(String t) {
         return Transform.byName(t) != null || BitsTransform.isBitsName(t) || PbTransform.isPbName(t)
                 || CodeSeq.isHead(BitsTransform.headOf(t))   // engine-spec 0.46
+                || Part.isName(t)   // engine-spec 0.64
                 || TextTransform.isTextOnlyName(t) || TlvTransform.isTlvOnlyName(t)
                 || TextScale.isName(t.indexOf(':') < 0 ? t : t.substring(0, t.indexOf(':')));   // 0.15 text-wire scales
     }

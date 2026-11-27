@@ -1,0 +1,14 @@
+{
+  "name": "e2",
+  "from": "conformance-part-xml-whole",
+  "to": "conformance-part-xml-whole",
+  "input": "<e t=\"k-f-S-C\"/>",
+  "expect": "<e t=\"k-f-S-C\"/>",
+  "model": {
+    "probe.x": "3",
+    "probe.y": "2",
+    "probe.tag": "k-f-S-C"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

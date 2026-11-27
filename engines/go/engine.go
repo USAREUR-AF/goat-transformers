@@ -1017,9 +1017,6 @@ func (d *decodeState) residue(loc, val string, isJSON bool) {
 
 // field decodes one mapped text value.
 func (d *decodeState) field(f *Field, raw string) {
-	if _, done := d.rec.Fields[f.Key]; done {
-		return
-	}
 	v, err := f.tf.decode(raw)
 	if err != nil {
 		d.fail(f, err.Error())
@@ -1032,13 +1029,12 @@ func (d *decodeState) field(f *Field, raw string) {
 // table when it has one, and through the pack's typemap when the key is
 // `type`. An unmapped native code passes through unchanged and is not
 // residue. The first value a key receives stays: a key mapped by several
-// lines takes its value from the earliest line that yields one.
+// lines takes its value from the earliest line that yields one. A later line
+// is still passed through its table, whose missing entry fails the decode
+// (0.64 ruling 26).
 func (d *decodeState) store(f *Field, v Value) {
 	_, done := d.rec.Fields[f.Key]
 	given := done && d.rec == d.top && d.innerKeys[f.Key]
-	if done && !given {
-		return
-	}
 	if f.table != nil {
 		mv, err := f.viaDecode(v)
 		if err != nil {
@@ -1057,6 +1053,9 @@ func (d *decodeState) store(f *Field, v Value) {
 		if cot, ok := d.pack.nativeToCot[v.S]; ok {
 			v.S = cot
 		}
+	}
+	if _, done := d.rec.Fields[f.Key]; done {
+		return
 	}
 	d.rec.Fields[f.Key] = v
 }
@@ -1111,7 +1110,8 @@ func (f *Field) viaDecode(v Value) (Value, error) {
 		}
 		return mv, nil
 	}
-	if f.yields == f.keyType {
+	// On a part line a value never passes through (0.64 ruling 3).
+	if f.yields == f.keyType && f.part == nil {
 		return v, nil
 	}
 	return Value{}, fmt.Errorf("table %s has no entry for wire value %q", f.table.name, v.String())
@@ -1127,7 +1127,8 @@ func (f *Field) viaEncode(v Value) (Value, error) {
 		}
 		return nv, nil
 	}
-	if f.yields == f.keyType {
+	// On a part line a value never passes through (0.64 ruling 3).
+	if f.yields == f.keyType && f.part == nil {
 		return v, nil
 	}
 	return Value{}, fmt.Errorf("table %s has no entry for model value %q", f.table.name, v.String())

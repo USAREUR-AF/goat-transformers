@@ -1,0 +1,9 @@
+{
+  "name": "only-the-separator-splits",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-sep-space",
+  "input": "{\"label\":\"a-\",\"w1\":\"b,\"}",
+  "expect": "<e t=\"a- b,\"/>",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2"
+}

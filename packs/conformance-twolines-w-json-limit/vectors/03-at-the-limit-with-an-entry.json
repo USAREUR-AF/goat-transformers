@@ -1,0 +1,13 @@
+{
+  "name": "at-the-limit-with-an-entry",
+  "from": "conformance-twolines-w-json-limit",
+  "to": "conformance-twolines-w-json-limit",
+  "input": "{\"a\":3,\"b\":\"h\",\"nums\":[1]}",
+  "expect": "{\"a\":3,\"b\":\"f\",\"nums\":[1]}",
+  "model": {
+    "probe.x": "3"
+  },
+  "max_items": 1,
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: the earliest line's value is kept; encode writes both lines (0.6)"
+}

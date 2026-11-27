@@ -1,0 +1,14 @@
+{
+  "name": "removed",
+  "from": "conformance-part-text-optional",
+  "to": "conformance-part-text-optional",
+  "input": "9",
+  "expect": "9",
+  "model": {
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 15, 0.10 step 5"
+}

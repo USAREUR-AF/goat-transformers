@@ -1,0 +1,9 @@
+{
+  "name": "whole-default-checked",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default-whole-bad",
+  "input": "{}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 3: checked as in step 1"
+}

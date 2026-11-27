@@ -111,6 +111,12 @@ abstract class JsonTree<W> extends Codec<W> {
                 e.putList(g.list, decodeItems(g, v, fails));
                 continue;
             }
+            if (l instanceof Part.Const) {
+                if (mapped != null) mapped.add(l.locator);
+                Object token = obj == null ? null : member(obj, path);
+                if (token != null) checkConst((Part.Const) l, token, e, fails);
+                continue;
+            }
             if (!(l instanceof Pack.Field)) {
                 // `when <locator> present` does not map the member (ruling 27 of 0.5); a value or a const does.
                 if (mapped != null && !((Pack.When) l).present) mapped.add(l.locator);
@@ -120,7 +126,7 @@ abstract class JsonTree<W> extends Codec<W> {
             Pack.Field f = (Pack.Field) l;
             Object v = path.length == 0 ? (el == Json.NULL ? null : el) : obj == null ? null : member(obj, path);
             if (v instanceof Json.Num) fails.read.put(v, Boolean.TRUE);  // a field maps it (ruling 27 of 0.15)
-            if (e.get(f.key) != null) continue;         // an earlier line already gave the key its value
+            if (settled(f, e)) continue;         // an earlier line already gave the key its value
             if (path.length == 0) {
                 if (v instanceof Map || v instanceof List) {
                     fails.add(f, "the item is " + typeName(v) + ", not a scalar", e);
@@ -140,6 +146,7 @@ abstract class JsonTree<W> extends Codec<W> {
                     d = decodeCodes(f, v);
                 } else {
                     d = readValue(f.transform, v);
+                    if (f.part != null) d = f.part.of((String) d);
                 }
             } catch (IllegalArgumentException ex) {
                 fails.add(f, ex.getMessage(), e);
@@ -147,6 +154,18 @@ abstract class JsonTree<W> extends Codec<W> {
             }
             putDecoded(f, d, e, fails);
         }
+    }
+
+    /** A {@code const ... part} line against a member; one {@code string} cannot read fails it too (ruling 4 of 0.64). */
+    private void checkConst(Part.Const c, Object v, Entity e, Failures fails) {
+        String token;
+        try {
+            token = (String) readValue(Transform.STRING, v);
+        } catch (IllegalArgumentException ex) {
+            fails.add(c.report, ex.getMessage(), e, true);
+            return;
+        }
+        checkConst(c, token, e, fails);
     }
 
     /** The items of a group from the value at its locator: one item per array element, in order. */
@@ -240,6 +259,21 @@ abstract class JsonTree<W> extends Codec<W> {
         Object itself = null;
         for (Pack.Line l : scope.lines) {
             String[] path = (String[]) l.loc;
+            Part.Group pg = scope.parts.get(l.locator);
+            if (pg != null) {
+                // the token, where the group's first line stands (ruling 8 of 0.64)
+                if (pg.first != l) continue;
+                String token = partToken(pg, e, scope);
+                if (path.length == 0) {
+                    if (token != null) itself = token;
+                    continue;
+                }
+                Map<String, Object> in = parent(top, path);
+                String name = path[path.length - 1];
+                Object at = in == null ? null : in.get(name);
+                if (in != null && token != null && (at == null || at == RESERVED || isEmptyObject(at))) in.put(name, token);
+                continue;
+            }
             if (path.length == 0) {                      // `.`: the item itself as a scalar
                 Pack.Field f = (Pack.Field) l;
                 if (itself != null && !(itself instanceof Placed)) continue;

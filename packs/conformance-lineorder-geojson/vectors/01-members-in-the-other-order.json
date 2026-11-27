@@ -1,0 +1,12 @@
+{
+  "name": "members-in-the-other-order",
+  "from": "conformance-lineorder-geojson",
+  "to": "conformance-lineorder-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"b\":4,\"a\":3}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"a\":3,\"b\":3}}",
+  "model": {
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6, One key at several locators: the earliest line whose locator is present and whose transform succeeds, not the earliest member; encode writes both"
+}

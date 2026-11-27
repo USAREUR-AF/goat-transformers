@@ -29,6 +29,8 @@
 // <key>=<value>…`, and the sequential `switch` / `case` / `else` block.
 // Character codes (spec Version 0.46): `charset` lines, `code` and `codenum`
 // on bits, `codestr` and `codenum` on the text wires.
+// Token parts (spec Version 0.64): `part:<sep>:<n>`, `unlisted` and `const …
+// part` on the text wires.
 // Stdlib only.
 //
 // Errors the specification names are Zig errors whose name IS the spec token
@@ -427,6 +429,8 @@ const TKind = enum {
     code,
     codestr,
     codenum,
+    // one part of a token, on the text wires (Version 0.64)
+    part,
 };
 
 // A transform of Version 0.15: on a wire it does not list it is `bad-directive`.
@@ -445,7 +449,7 @@ const KindCat = enum { text, bits, proto, rec, tlv, cbor };
 
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
-        .string, .float, .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .tscale, .iscale => .text,
+        .string, .float, .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .tscale, .iscale, .part => .text,
         // `codenum` is a transform of `bits` too: see `bitsTransform`
         .codestr, .codenum => .text,
         .uint, .twos, .linscale, .uscale, .sscale, .f32_, .f64_, .ascii, .sixbit => .bits,
@@ -499,6 +503,9 @@ const Transform = struct {
     ioff: i64 = 0,
     // chars
     cset: CharSet = .ascii7,
+    // part (Version 0.64): the separator and the number of the part
+    psep: []const u8 = "",
+    pn: usize = 0,
     // code, codestr, codenum (Version 0.46): the list as written, and the
     // set of each position, resolved once the file is read
     sets_raw: []const u8 = "",
@@ -614,6 +621,17 @@ const Group = struct {
     cbody_array: bool = false,
 };
 
+// Version 0.64: the lines of one scope that share a locator and split its
+// token. `slots`: the line of each part, 0 to the highest; `sole`: the part's
+// key is mapped by no other `field` line of the scope (ruling 25).
+const PartGroup = struct {
+    first: *const Line,
+    whole: ?*const Line,
+    sep: []const u8,
+    slots: []const *const Line,
+    sole: []const bool,
+};
+
 // The lines that apply together: common lines plus one kind's, or one group
 // body.
 const Scope = struct {
@@ -632,6 +650,15 @@ const Scope = struct {
     // Version 0.17: the gate blocks of the scope, in line order, depth
     // first; a gate's `idx` is its position here
     gates: []const *const Gate = &.{},
+    // Version 0.64: the part groups of the scope
+    parts: []const PartGroup = &.{},
+
+    // The part group the line at `ln` (one of `lines`) belongs to.
+    fn partGroup(self: *const Scope, ln: *const Line) ?*const PartGroup {
+        if (ln.tag != .field and ln.tag != .constant) return null;
+        for (self.parts) |*g| if (std.mem.eql(u8, g.first.locator, ln.locator)) return g;
+        return null;
+    }
 
     fn defaultFor(self: *const Scope, key: []const u8) ?MV {
         if (self.defaults.count() == 0) return null;
@@ -666,6 +693,8 @@ const Line = struct {
     // `with <other-key>` (Version 0.18): the line writes only when the
     // entity (inside a group, the item) holds that key
     with_key: ?[]const u8 = null,
+    // `unlisted` (Version 0.64): a part with no table entry is absent
+    unlisted: bool = false,
     // `absent <value>[,<value>…]` (Version 0.9): the argument as written,
     // then, once the line is resolved against its wire, the sentinels
     absent_raw: ?[]const u8 = null,
@@ -729,6 +758,17 @@ const Line = struct {
     }
     fn isWhen(self: *const Line) bool {
         return self.tag == .when;
+    }
+    // a `field` or `const` line of one part of a token (Version 0.64)
+    fn isPart(self: *const Line) bool {
+        return self.transform.kind == .part;
+    }
+    // a `string` line with no option but, on `text`, `optional`: the whole
+    // line of a part group when its locator has part lines
+    fn isPlainString(self: *const Line, wire: Wire) bool {
+        return self.tag == .field and self.transform.kind == .string and self.via_name.len == 0 and
+            !self.swap and !self.trim and !self.unlisted and self.with_key == null and
+            self.absent_raw == null and self.stop_raw == null and (!self.optional or wire == .text);
     }
     // a `when` or `const` line: a value the encoder writes
     fn isFixed(self: *const Line) bool {
@@ -1289,6 +1329,37 @@ fn isWs(c: u8) bool {
     return c == ' ' or c == '\t' or c == '\n' or c == '\r';
 }
 
+// A separator: `space`, `comma`, `colon`, or one code point other than `:`,
+// `,` or whitespace.
+fn parseSep(st: []const u8) ?[]const u8 {
+    if (std.mem.eql(u8, st, "space")) return " ";
+    if (std.mem.eql(u8, st, "comma")) return ",";
+    if (std.mem.eql(u8, st, "colon")) return ":";
+    if (st.len == 0) return null;
+    const n = std.unicode.utf8ByteSequenceLength(st[0]) catch return null;
+    if (n != st.len or !std.unicode.utf8ValidateSlice(st)) return null;
+    if (n == 1 and (st[0] == ':' or st[0] == ',' or isWs(st[0]))) return null;
+    return st;
+}
+
+// Version 0.64: is the text, up to its first `:`, the word `part`?
+fn isPartWord(s: []const u8) bool {
+    return std.mem.eql(u8, s[0 .. std.mem.indexOfScalar(u8, s, ':') orelse s.len], "part");
+}
+
+// `part:<sep>:<n>`, n 0 to 255 without leading zeros.
+fn parsePart(s: []const u8) !Transform {
+    const bd = E.@"bad-directive";
+    var it = std.mem.splitScalar(u8, s, ':');
+    _ = it.next();
+    const st = it.next() orelse return bd;
+    const ns = it.next() orelse return bd;
+    if (it.next() != null) return bd;
+    const n = parseUnsigned(ns) orelse return bd;
+    if (n > 255 or (ns.len > 1 and ns[0] == '0')) return bd;
+    return .{ .kind = .part, .psep = parseSep(st) orelse return bd, .pn = @intCast(n) };
+}
+
 // The parameter of `tokens:<sep>:<t…>` or `has_token:<sep>:<t>` (the text
 // after the function name and its colon): the separator, and the tokens.
 // null: it does not parse, a token is empty or repeated.
@@ -1296,23 +1367,8 @@ const SepParam = struct { sep: []const u8, toks: []const []const u8 };
 
 fn parseSepParam(alloc: std.mem.Allocator, param: []const u8) ?SepParam {
     const c = std.mem.indexOfScalar(u8, param, ':') orelse return null;
-    const st = param[0..c];
+    const sep = parseSep(param[0..c]) orelse return null;
     const rest = param[c + 1 ..];
-    var sep: []const u8 = undefined;
-    if (std.mem.eql(u8, st, "space")) {
-        sep = " ";
-    } else if (std.mem.eql(u8, st, "comma")) {
-        sep = ",";
-    } else if (std.mem.eql(u8, st, "colon")) {
-        sep = ":";
-    } else {
-        // one code point other than `:`, `,` or whitespace
-        if (st.len == 0) return null;
-        const n = std.unicode.utf8ByteSequenceLength(st[0]) catch return null;
-        if (n != st.len or !std.unicode.utf8ValidateSlice(st)) return null;
-        if (n == 1 and (st[0] == ',' or isWs(st[0]))) return null;
-        sep = st;
-    }
     var list = std.ArrayList([]const u8).init(alloc);
     var it = std.mem.splitScalar(u8, rest, ',');
     while (it.next()) |t| {
@@ -1335,7 +1391,7 @@ fn textIfOk(text: []const u8) bool {
 // The type a transform yields (spec: "The type a transform yields").
 fn yields(k: TKind) KeyType {
     return switch (k) {
-        .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal, .text_, .bytes, .code, .codestr => .string,
+        .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal, .text_, .bytes, .code, .codestr, .part => .string,
         .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms, .smscale, .f32scale, .f64scale, .tscale => .float,
         .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale, .epoch_s, .codenum => .int,
     };
@@ -1610,6 +1666,7 @@ fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
 
     var it = std.mem.splitScalar(u8, s, ':');
     const head = it.next() orelse return E.@"unknown-transform";
+    if (std.mem.eql(u8, head, "part")) return parsePart(s);
     // Version 0.46: every error of the list is a check after the file, a
     // missing list included (ruling 15)
     for ([_]struct { n: []const u8, k: TKind }{ .{ .n = "code", .k = .code }, .{ .n = "codestr", .k = .codestr }, .{ .n = "codenum", .k = .codenum } }) |e| {
@@ -2208,6 +2265,210 @@ fn codeBitsEncode(t: Transform, mv: MV) !u64 {
     return v;
 }
 
+// Version 0.64: what one line of a part group must be, once the file is read.
+fn partLineCheck(alloc: std.mem.Allocator, p: *const Pack, ln: *const Line, in_group: bool, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    if (ln.unlisted and (!ln.isPart() or ln.via_name.len == 0)) return bad(diag, alloc, bd, "line {d}: unlisted is an option of a part line with via", .{ln.lineno});
+    if (!ln.isPart()) return;
+    if (p.wire != .xml and p.wire != .json and p.wire != .geojson and p.wire != .text) return bad(diag, alloc, bd, "line {d}: part on the {s} wire", .{ ln.lineno, @tagName(p.wire) });
+    if (p.wire == .geojson and !in_group and std.mem.startsWith(u8, ln.locator, geom_prefix)) return bad(diag, alloc, bd, "line {d}: part on the coordinate {s}", .{ ln.lineno, ln.locator });
+    if (isW(p.wire, .text)) {
+        if (std.mem.indexOfAny(u8, ln.locator, ":+") != null) return bad(diag, alloc, bd, "line {d}: part on the column or pair {s}", .{ ln.lineno, ln.locator });
+        const sep = ln.transform.psep;
+        if (p.delim) |d| if (sep.len == 1 and sep[0] == d) return bad(diag, alloc, bd, "line {d}: the separator of the part is the delimiter", .{ln.lineno});
+        if (p.nmea and std.mem.eql(u8, sep, "*")) return bad(diag, alloc, bd, "line {d}: the separator * under checksum nmea", .{ln.lineno});
+    }
+    if (ln.tag == .field) {
+        if (ln.swap or ln.trim or ln.stop_raw != null or ln.absent_raw != null or ln.with_key != null or (ln.optional and p.wire != .text)) {
+            return bad(diag, alloc, bd, "line {d}: a part line takes via, unlisted and, on the text wire, optional", .{ln.lineno});
+        }
+        return;
+    }
+    const text = if (ln.wraw.len > 0 and ln.wraw[0] == '=') ln.wraw[1..] else ln.wraw;
+    if (text.len == 0) return bad(diag, alloc, bd, "line {d}: an empty const part", .{ln.lineno});
+    if (std.mem.indexOf(u8, text, ln.transform.psep) != null) return bad(diag, alloc, bd, "line {d}: the const part {s} holds the separator", .{ ln.lineno, text });
+}
+
+// The part groups of one scope: the lines `a` then `b` (common plus one kind,
+// or one group body; rulings 6 and 19 of 0.64).
+fn partScopeCheck(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []const Line, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    const both = [2][]const Line{ a, b };
+    var done = std.StringHashMap(void).init(alloc);
+    defer done.deinit();
+    for (both) |ls| for (ls) |*pl| {
+        if (!pl.isPart()) continue;
+        if ((try done.getOrPut(pl.locator)).found_existing) continue;
+        const loc = pl.locator;
+        var named = [_]bool{false} ** 256;
+        var high: usize = 0;
+        var any_field = false;
+        var whole: ?*const Line = null;
+        for (both) |lines| for (lines) |*ln| {
+            if (!std.mem.eql(u8, ln.locator, loc) or ln.tag == .element) continue;
+            if (ln.isPart()) {
+                if (!std.mem.eql(u8, ln.transform.psep, pl.transform.psep)) return bad(diag, alloc, bd, "line {d}: a second separator at {s}", .{ ln.lineno, loc });
+                const n = ln.transform.pn;
+                if (named[n]) return bad(diag, alloc, bd, "line {d}: part {d} of {s} is named twice", .{ ln.lineno, n, loc });
+                named[n] = true;
+                high = @max(high, n);
+                if (ln.tag == .field) any_field = true;
+            } else if (ln.isPlainString(p.wire)) {
+                if (whole != null) return bad(diag, alloc, bd, "line {d}: a second whole line at {s}", .{ ln.lineno, loc });
+                whole = ln;
+            } else return bad(diag, alloc, bd, "line {d}: {s} at {s}, which a part line splits", .{ ln.lineno, @tagName(ln.tag), loc });
+        };
+        if (!any_field) return bad(diag, alloc, bd, "line {d}: no part of {s} is a field", .{ pl.lineno, loc });
+        for (named[0 .. high + 1], 0..) |on, n| if (!on) return bad(diag, alloc, bd, "line {d}: no line names part {d} of {s}", .{ pl.lineno, n, loc });
+        if (whole) |w| for (both) |lines| for (lines) |*ln| {
+            if (ln.tag == .field and ln.isPart() and std.mem.eql(u8, ln.locator, loc) and std.mem.eql(u8, ln.key, w.key)) {
+                return bad(diag, alloc, bd, "line {d}: the key {s} is on a part and on the whole of {s}", .{ ln.lineno, w.key, loc });
+            }
+        };
+    };
+}
+
+fn partBodyChecks(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, diag: *Diag) anyerror!void {
+    for (lines) |*ln| {
+        if (ln.tag != .group) continue;
+        try partScopeCheck(alloc, p, ln.grp.?.lines, &.{}, diag);
+        try partBodyChecks(alloc, p, ln.grp.?.lines, diag);
+    }
+}
+
+// The part groups of a scope's lines. A group that a kind completes is not
+// one of the common lines alone.
+fn buildParts(alloc: std.mem.Allocator, lines: []const Line) ![]const PartGroup {
+    var out = std.ArrayListUnmanaged(PartGroup){};
+    next: for (lines, 0..) |*pl, at| {
+        if (!pl.isPart()) continue;
+        for (lines[0..at]) |*x| if (x.isPart() and std.mem.eql(u8, x.locator, pl.locator)) continue :next;
+        var by = [_]?*const Line{null} ** 256;
+        var count: usize = 0;
+        var first: ?*const Line = null;
+        var whole: ?*const Line = null;
+        for (lines) |*ln| {
+            if ((ln.tag != .field and ln.tag != .constant) or !std.mem.eql(u8, ln.locator, pl.locator)) continue;
+            if (first == null) first = ln;
+            if (ln.isPart()) {
+                by[ln.transform.pn] = ln;
+                count = @max(count, ln.transform.pn + 1);
+            } else whole = ln;
+        }
+        const slots = try alloc.alloc(*const Line, count);
+        const sole = try alloc.alloc(bool, count);
+        for (by[0..count], 0..) |m, i| {
+            const sl = m orelse continue :next;
+            slots[i] = sl;
+            sole[i] = true;
+            for (lines) |*ln| {
+                if (ln != sl and ln.tag == .field and std.mem.eql(u8, ln.key, sl.key)) sole[i] = false;
+            }
+        }
+        try out.append(alloc, .{ .first = first.?, .whole = whole, .sep = pl.transform.psep, .slots = slots, .sole = sole });
+    }
+    return out.items;
+}
+
+// Part `n` of a token; null: the token has no such part.
+fn partOf(token: []const u8, sep: []const u8, n: usize) ?[]const u8 {
+    var it = std.mem.splitSequence(u8, token, sep);
+    var i: usize = 0;
+    while (it.next()) |x| : (i += 1) if (i == n) return x;
+    return null;
+}
+
+// The key's value for a part's text, before `typemap`; null: the table has no
+// entry (a value never passes through it, ruling 3).
+fn partValue(ln: *const Line, text: []const u8) !?MV {
+    const t = ln.via orelse return MV{ .str = text };
+    for (t.entries.items) |en| {
+        if (std.mem.eql(u8, text, en.native)) return readAs(ln.kty, en.model) catch E.@"transform-decode";
+    }
+    return null;
+}
+
+fn sameValue(a: MV, b: MV) bool {
+    if (a == .str or b == .str) return a == .str and b == .str and std.mem.eql(u8, a.str, b.str);
+    if (a == .int and b == .int) return a.int == b.int;
+    const x: f64 = if (a == .int) @floatFromInt(a.int) else a.float;
+    const y: f64 = if (b == .int) @floatFromInt(b.int) else b.float;
+    return x == y; // -0 equals 0 (ruling 22)
+}
+
+// Encode, step 1: does the whole text agree with the pack's parts and with
+// the part keys the entity holds?
+fn partCheckWhole(p: *const Pack, g: *const PartGroup, e: *const Entity, token: []const u8) bool {
+    for (g.slots, g.sole, 0..) |ln, sole, n| {
+        const text = partOf(token, g.sep, n);
+        if (ln.tag == .constant) {
+            if (text == null or !std.mem.eql(u8, text.?, ln.wtext)) return false;
+            continue;
+        }
+        if (!sole) continue;
+        const held = e.get(ln.key);
+        const got = partValue(ln, text orelse return false) catch return false;
+        if (got) |v| {
+            var mv = v;
+            if (mv == .str and std.mem.eql(u8, ln.key, "type")) {
+                if (p.tm_nat2cot.get(mv.str)) |cot| mv = MV{ .str = cot };
+            }
+            if (held) |h| if (!sameValue(h, mv)) return false;
+        } else if (!ln.unlisted or held != null) return false;
+    }
+    return true;
+}
+
+// The text a part field writes, from its held value or its `default`.
+fn partText(p: *const Pack, sc: *const Scope, e: *const Entity, ln: *const Line, sep: []const u8) ![]const u8 {
+    const te = E.@"transform-encode";
+    var mv = e.get(ln.key) orelse sc.lineDefault(ln) orelse return te;
+    if (mv == .str and std.mem.eql(u8, ln.key, "type")) {
+        if (p.tm_cot2nat.get(mv.str)) |nat| mv = MV{ .str = nat };
+    }
+    const text = if (ln.via) |t| blk: {
+        for (t.entries.items) |en| if (tableMatches(mv, en.model)) break :blk en.native;
+        return te;
+    } else if (mv == .str) mv.str else return te;
+    if (std.mem.indexOf(u8, text, sep) != null) return te;
+    return text;
+}
+
+// The token a part group writes; null: nothing.
+fn partToken(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, g: *const PartGroup, e: *const Entity, diag: *Diag) anyerror!?[]const u8 {
+    const te = E.@"transform-encode";
+    const loc = g.first.locator;
+    var whole: ?MV = null;
+    if (g.whole) |w| whole = e.get(w.key);
+    if (whole == null) {
+        var held = false;
+        var all = true;
+        for (g.slots) |ln| {
+            if (ln.tag != .field) continue;
+            if (e.get(ln.key) != null) held = true else if (sc.lineDefault(ln) == null) all = false;
+        }
+        if (held or all) {
+            var buf = std.ArrayList(u8).init(alloc);
+            for (g.slots, 0..) |ln, n| {
+                if (n > 0) try buf.appendSlice(g.sep);
+                if (ln.tag == .constant) {
+                    try buf.appendSlice(ln.wtext);
+                } else try buf.appendSlice(partText(p, sc, e, ln, g.sep) catch |err|
+                    return bad(diag, alloc, err, "field {s} at {s}: part {d} has no value, no table entry, or holds the separator", .{ ln.key, loc, n }));
+            }
+            return buf.items;
+        }
+        const w = g.whole orelse return null;
+        whole = sc.lineDefault(w) orelse return null;
+    }
+    const w = g.whole.?;
+    if (whole.? != .str) return bad(diag, alloc, te, "field {s} at {s}", .{ w.key, loc });
+    var token = whole.?.str;
+    if (std.mem.eql(u8, w.key, "type")) token = p.tm_cot2nat.get(token) orelse token;
+    if (!partCheckWhole(p, g, e, token)) return bad(diag, alloc, te, "field {s} at {s}: the text does not agree with its parts", .{ w.key, loc });
+    return token;
+}
+
 // Resolve one line against the pack's wire: parse its locator, check its
 // transform belongs to the wire, check the bit length its transform allows.
 fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, diag: *Diag) anyerror!void {
@@ -2224,6 +2485,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         const why = if (p.wire == .tlv or p.wire == .cbor) E.@"bad-directive" else err;
         return bad(diag, alloc, why, "line {d}: unknown transform or parameters that do not parse", .{ln.lineno});
     }
+    try partLineCheck(alloc, p, ln, in_group, diag);
     // `.`: the item itself as a scalar, inside a group only
     if (std.mem.eql(u8, ln.locator, ".") and (p.wire == .json or p.wire == .geojson or p.wire == .protobuf)) {
         if (!in_group) return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator `.` outside a group", .{ln.lineno});
@@ -2391,7 +2653,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                     ln.wtext = ln.wraw;
                 }
                 // the text encode writes, kept with the line (Version 0.25)
-                if (p.wire != .xml and !ln.wpresent) ln.wjson = try whenJsonRaw(alloc, ln.*);
+                if (p.wire != .xml and !ln.wpresent and !ln.isPart()) ln.wjson = try whenJsonRaw(alloc, ln.*);
             }
             // json, and geojson inside an item: a member path
             if ((p.wire == .json or (p.wire == .geojson and in_group)) and !ln.dot) {
@@ -3086,7 +3348,9 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         // Version 0.33: or `at …`; a third token that is neither stays this
         // check (ruling 29)
         .when => n == 2 or (n >= 3 and (std.mem.eql(u8, toks[3], "as") or std.mem.eql(u8, toks[3], "at"))),
-        .@"const", .default, .typemap => n == 2,
+        // Version 0.64: `const <locator> part:<sep>:<n> <text>`
+        .@"const" => n == 2 or (n == 3 and isPartWord(toks[2])),
+        .default, .typemap => n == 2,
         .map => n == 3,
         // Version 0.46: `charset <name> <characters> [<width>]`
         .charset => n == 2 or n == 3,
@@ -3361,7 +3625,11 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
             // pack only (ruling 1), checked after the file (ruling 16)
             return bad(diag, alloc, E.@"bad-directive", "line {d}: when … as: `as` is for a pack with `layout sequential` on the bits wire", .{lineno});
         }
-        if (!at_line and toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes a locator and a value", .{ lineno, kw });
+        // Version 0.64: the parameters of a part are a line check, before the
+        // locator's (ruling 11)
+        const part_const: ?Transform = if (!is_when and toks.len == 4) parsePart(toks[2]) catch |err|
+            return lineBad(diag, alloc, err, "line {d}: the parameters of {s} are not valid", .{ lineno, toks[2] }) else null;
+        if (!at_line and part_const == null and toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes a locator and a value", .{ lineno, kw });
         if (is_when and !at_line) st.any_when = true;
         // a UPER locator on `bits` is `bad-directive` after the file
         // (rulings 24 and 26 of 0.19), not `bad-locator` here
@@ -3376,7 +3644,11 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
             if (p.at_err == null) p.at_err = try std.fmt.allocPrint(alloc, "line {d}: when … at: `at` is for a kind's `when` in a pack with `layout sequential` on the bits wire", .{lineno});
             return;
         }
-        const ln = Line{ .tag = if (is_when) .when else .constant, .locator = toks[1], .wraw = toks[2], .lineno = lineno, .gate = cur_gate };
+        var ln = Line{ .tag = if (is_when) .when else .constant, .locator = toks[1], .wraw = toks[2], .lineno = lineno, .gate = cur_gate };
+        if (part_const) |t| {
+            ln.transform = t;
+            ln.wraw = toks[3];
+        }
         try curLines(p, in_group, gtmp).append(ln);
     } else if (is(kw, "default")) {
         if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: default takes a key and a value", .{lineno});
@@ -3466,6 +3738,10 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
             } else if (is(o, "trim")) {
                 again = ln.trim;
                 ln.trim = true;
+            } else if (is(o, "unlisted")) {
+                // Version 0.64, checked after the file is read
+                again = ln.unlisted;
+                ln.unlisted = true;
             } else if (is(o, "optional")) {
                 again = ln.optional;
                 ln.optional = true;
@@ -3618,6 +3894,11 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     for (p.kinds.items) |*k| try checkScope(alloc, p, p.common.items, k.lines.items, p.common_gates.items, k.gates.items, null, false, diag);
     try checkGroupBodies(alloc, p, p.common.items, diag);
     for (p.kinds.items) |*k| try checkGroupBodies(alloc, p, k.lines.items, diag);
+    // the part groups (Version 0.64)
+    if (p.kinds.items.len == 0) try partScopeCheck(alloc, p, p.common.items, &.{}, diag);
+    for (p.kinds.items) |*k| try partScopeCheck(alloc, p, p.common.items, k.lines.items, diag);
+    try partBodyChecks(alloc, p, p.common.items, diag);
+    for (p.kinds.items) |*k| try partBodyChecks(alloc, p, k.lines.items, diag);
     if (isW(p.wire, .text)) {
         if (p.kinds.items.len == 0) try textCheckScope(alloc, p.common.items, &.{}, diag);
         for (p.kinds.items) |*k| try textCheckScope(alloc, p.common.items, k.lines.items, diag);
@@ -3645,6 +3926,7 @@ pub const KV = struct { key: []const u8, value: []const u8 };
 // over `d2` (a kind's default over the common one).
 fn buildScope(alloc: std.mem.Allocator, lines: []const Line, d1: []const Default, d2: []const Default, body: bool, ga: []const *Gate, gb: []const *Gate) !Scope {
     var sc = Scope{ .lines = lines };
+    sc.parts = try buildParts(alloc, lines);
     if (ga.len + gb.len > 0) {
         // the gates of the scope; a common gate has the same position in
         // every kind's scope, since the common lines come first
@@ -7507,7 +7789,8 @@ fn jsonIsSentinel(alloc: std.mem.Allocator, ln: *const Line, v: JValue) !bool {
 // Read one field through its transform. null: the field is absent, also when
 // its raw value is one of its sentinels (Version 0.9).
 fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line) anyerror!?MV {
-    const t = ln.transform.kind;
+    // a part line reads the token, as `string` does (Version 0.64)
+    const t = if (ln.isPart()) TKind.string else ln.transform.kind;
     switch (doc) {
         .xml => |root| { if (comptime !built(.xml)) unreachable;
             const raw = xmlGet(root, ln.locator) orelse return null;
@@ -7641,6 +7924,26 @@ fn jsonResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, ob
     }
 }
 
+// Ruling 26 of 0.64: a `via` line of a key that an earlier line set. false:
+// its transform succeeds and its table refuses the value.
+fn laterTableOk(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line) !bool {
+    // the line reads no number for ruling 27 of 0.15
+    var d = doc;
+    if (d == .json) d.json.reads = null;
+    const got = readField(alloc, p, d, ln) catch |err| switch (err) {
+        error.OutOfMemory, E.@"malformed-wire" => return err,
+        else => return true,
+    };
+    const mv = got orelse return true;
+    if (ln.isPart()) {
+        const text = partOf(mv.str, ln.transform.psep, ln.transform.pn) orelse return true;
+        const v = partValue(ln, text) catch return false;
+        return v != null or ln.unlisted;
+    }
+    _ = tableDecode(ln.via.?, mv, ln.kty) catch return false;
+    return true;
+}
+
 // Decode the lines of one scope into `e`: the fields, then each group as a
 // list. A key takes its value from the earliest line whose locator is present
 // on the wire and whose transform succeeds; a key that some line failed on and
@@ -7676,12 +7979,44 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
             end = @max(end, try decodeGroup(alloc, p, ln.grp.?, doc, e, diag));
             continue;
         }
-        if (ln.tag != .field) continue;
+        const part_const = ln.tag == .constant and ln.isPart();
+        if (ln.tag != .field and !part_const) continue;
         if (diag.count_only) continue;
-        if (e.fields.contains(ln.key) or listHolds(dead.items, ln.key)) continue;
+        if (part_const) {
+            // Version 0.64, ruling 4: never forgiven
+            const token = (readField(alloc, p, doc, ln) catch |err| switch (err) {
+                error.OutOfMemory, E.@"malformed-wire" => return err,
+                else => return bad(diag, alloc, E.@"transform-decode", "const at {s}: the place is not text", .{ln.locator}),
+            }) orelse continue;
+            const text = partOf(token.str, ln.transform.psep, ln.transform.pn);
+            if (text == null or !std.mem.eql(u8, text.?, ln.wtext)) {
+                return bad(diag, alloc, E.@"transform-decode", "const at {s}: part {d} is not {s}", .{ ln.locator, ln.transform.pn, ln.wtext });
+            }
+            continue;
+        }
+        if (listHolds(dead.items, ln.key)) continue;
         // a line of a block that does not hold counts as a line whose
         // locator is absent: decode goes on to the key's next line
         if (ln.gate) |gt| if (!held[gt.idx]) continue;
+        if (e.fields.contains(ln.key)) {
+            // a submessage on the line's path that does not parse is
+            // `malformed-wire` all the same (9c of 0.11, ruling 27 of 0.64)
+            if (built(.protobuf) and doc == .protobuf and ln.ppath.len > 1) {
+                _ = pbDescend(alloc, doc.protobuf, ln.ppath[0 .. ln.ppath.len - 1]) catch |err| switch (err) {
+                    error.OutOfMemory => return err,
+                    else => return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator }),
+                };
+            }
+            // the earliest line's value stands; a later line whose transform
+            // succeeds and whose table has no entry for a value of another
+            // type still fails the decode (ruling 26 of 0.64)
+            if (ln.via != null and !try laterTableOk(alloc, p, doc, ln)) {
+                const err = bad(diag, alloc, E.@"transform-decode", "field {s} at {s}: the table {s} has no entry for the value", .{ ln.key, ln.locator, ln.via_name });
+                const sf = diag.soft orelse return err;
+                if (sf.msg == null) sf.msg = diag.msg;
+            }
+            continue;
+        }
         var ok = true;
         const got: ?MV = readField(alloc, p, doc, ln) catch |err| switch (err) {
             error.OutOfMemory => return err,
@@ -7692,7 +8027,17 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
             },
         };
         var mv: MV = undefined;
-        if (ok) {
+        if (ok and ln.isPart()) {
+            // Version 0.64: a missing part fails the line; a part without a
+            // table entry fails the decode, or is absent with `unlisted`
+            const token = got orelse continue;
+            if (partOf(token.str, ln.transform.psep, ln.transform.pn)) |text| {
+                mv = (try partValue(ln, text)) orelse {
+                    if (ln.unlisted) continue;
+                    return bad(diag, alloc, E.@"transform-decode", "field {s} at {s}: the table {s} has no entry for the part", .{ ln.key, ln.locator, ln.via_name });
+                };
+            } else ok = false;
+        } else if (ok) {
             mv = got orelse continue;
             // `via`: through the table after the transform. A line whose
             // transform succeeds and whose table has no entry for a value of
@@ -8519,6 +8864,14 @@ fn jnodeWrite(buf: *std.ArrayList(u8), n: *const JNode) anyerror!void {
 // mapped values, `when` and `const` values and groups in line order.
 fn xmlEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, node: *XmlNode, e: *const Entity, diag: *Diag) anyerror!void {
     for (sc.lines) |*ln| {
+        if (sc.partGroup(ln)) |g| {
+            // the token, at the group's first line (Version 0.64)
+            if (g.first != ln) continue;
+            const token = try partToken(alloc, p, sc, g, e, diag);
+            if (token) |t| if (!xmlWritable(t)) return bad(diag, alloc, E.@"transform-encode", "the token at {s} holds a character xml cannot hold", .{ln.locator});
+            try xmlSet(alloc, node, ln.locator, token orelse "", if (token == null) .reserve else .field);
+            continue;
+        }
         switch (ln.tag) {
             .when, .constant => {
                 if (!ln.wpresent) try xmlSet(alloc, node, ln.locator, ln.wtext, .fixed);
@@ -8586,7 +8939,11 @@ fn jsonEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, r
     for (sc.lines) |*ln| {
         var raw: ?[]const u8 = null;
         var mode: WMode = .field;
-        switch (ln.tag) {
+        if (sc.partGroup(ln)) |g| {
+            // the token, at the group's first line (Version 0.64)
+            if (g.first != ln) continue;
+            if (try partToken(alloc, p, sc, g, e, diag)) |t| raw = try jsonStr(alloc, t) else mode = .reserve;
+        } else switch (ln.tag) {
             .when, .constant => {
                 // `present` writes nothing; the objects on its path keep this position
                 if (!ln.wpresent) raw = try whenJsonRaw(alloc, ln.*);
@@ -9049,7 +9406,11 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             for (lines) |*ln| {
                 var raw: []const u8 = undefined;
                 var mode: WMode = .field;
-                if (ln.tag == .group) {
+                if (sc.partGroup(ln)) |g| {
+                    if (g.first != ln) continue;
+                    raw = "";
+                    if (try partToken(alloc, p, sc, g, e, diag)) |t| raw = try jsonStr(alloc, t) else mode = .reserve;
+                } else if (ln.tag == .group) {
                     // an array at the member; an absent list writes nothing
                     raw = (try jsonGroupRaw(alloc, p, ln.grp.?, e, diag)) orelse continue;
                 } else if (ln.isFixed()) {
@@ -9447,7 +9808,7 @@ fn parseHms(s: []const u8) !Hms {
 
 fn textDecode(t: Transform, raw: []const u8) !MV {
     return switch (t.kind) {
-        .string => MV{ .str = raw },
+        .string, .part => MV{ .str = raw },
         .int, .int_w => MV{ .int = try parseTextInt(raw) },
         .float, .dec => MV{ .float = try textDecimal(raw) },
         .iso8601_ms, .iso8601_s => MV{ .int = try isoToMs(raw) },
@@ -9738,6 +10099,15 @@ const TextEnc = struct {
     // for the end.
     fn scope(self: *TextEnc, sc: *const Scope, e: *const Entity, base: usize) anyerror!void {
         for (sc.lines) |*ln| {
+            if (sc.partGroup(ln)) |g| {
+                // the token, at the group's first line (Version 0.64)
+                if (g.first != ln) continue;
+                if (try partToken(self.alloc, self.p, sc, g, e, self.diag)) |t| {
+                    try self.check(ln, t);
+                    try self.whole(base + ln.ti, t);
+                }
+                continue;
+            }
             switch (ln.tag) {
                 .when, .constant => try self.fixed.append(self.alloc, .{ .ln = ln, .base = base }),
                 .element => {}, // xml only (Version 0.18)
@@ -12420,6 +12790,11 @@ const SParser = struct {
                     // ruling 31: any second `as` token, not a key named `as`
                     as_err = self.err(bd, "when … as: `as` is given twice", .{});
                 } else as_key = toks[4];
+            } else if (!is_when and toks.len == 4) {
+                // Version 0.64: a part is for the text wires; its parameters
+                // are a line check on every wire (ruling 23)
+                _ = parsePart(toks[2]) catch |e| return self.lineErr(e, "the parameters of {s} are not valid", .{toks[2]});
+                as_err = self.err(bd, "const … part on the bits wire", .{});
             } else if (toks.len != 3) return self.err(bd, "{s} takes a bit length and a value", .{kw});
             if (!locatorFormOk(.bits, true, toks[1], false)) return self.lineErr(E.@"bad-locator", "{s}: {s} is not a bit length", .{ kw, toks[1] });
             if (as_err) |e| return e;
@@ -12512,6 +12887,9 @@ const SParser = struct {
                 } else if (is(o, "trim")) {
                     again = ln.trim;
                     ln.trim = true;
+                } else if (is(o, "unlisted")) {
+                    again = ln.unlisted;
+                    ln.unlisted = true;
                 } else if (is(o, "optional")) {
                     return self.err(bd, "the field option optional is not for a sequential pack", .{});
                 } else if (is(o, "absent")) {
@@ -12837,6 +13215,7 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
     for (nodes) |*n| {
         if (n.tag == .field) {
             const t = n.ln.transform;
+            if (n.ln.unlisted) return bad(diag, alloc, bd, "line {d}: unlisted is an option of a part line", .{n.lineno});
             if (n.uloc) |u| {
                 // Version 0.19: the transforms a UPER locator takes; `swap`,
                 // `trim` (ruling 10) and `absent` (ruling 22) are refused
@@ -13526,12 +13905,13 @@ const SDec = struct {
 
     fn setKey(self: *SDec, se: *SEnt, key: []const u8, via: ?*const Table, via_name: []const u8, kty: KeyType, raw: MV) !void {
         if (se.e.fields.contains(key)) { // the earliest line of a key wins
-            // a table with no entry is an error also when the inner message
-            // gave the key (ruling 23 of 0.34)
-            if (via) |t| if (se.e == self.root and listHolds(self.inner_keys.items, key)) {
+            // a table with no entry is an error also when an earlier line,
+            // or the inner message, gave the key (ruling 23 of 0.34, ruling
+            // 26 of 0.64)
+            if (via) |t| {
                 _ = tableDecode(t, raw, kty) catch
                     return self.fieldFailed("field {s}: the table {s} has no entry for the value", .{ key, via_name });
-            };
+            }
             return;
         }
         var mv = raw;
@@ -14719,6 +15099,10 @@ const SEnc = struct {
     kv: ?*std.StringHashMapUnmanaged(MV) = null,
     // keys whose line wrote bits that do not read back
     kv_failed: ?*std.StringHashMapUnmanaged(void) = null,
+    // Version 0.64, ruling 31: the lines of the message or item whose table
+    // refuses what they wrote, with their key, and the keys a `switch` read
+    kv_dead: ?*DeadLines = null,
+    kv_switched: ?*std.StringHashMapUnmanaged(void) = null,
     // Version 0.92: the messages of a run to write; null: the entity itself
     run_write: ?*RunWrite = null,
     // Version 0.21: the count fields written, filled in when the message is
@@ -14756,7 +15140,41 @@ const SEnc = struct {
 
     // As `readBack`, telling a sentinel (`absent`) from a value that fails
     // its transform or table (`failed`, ruling 31 of 0.20).
-    const RB = union(enum) { val: MV, absent, failed };
+    // `no_entry`: its transform succeeds and its table refuses the value,
+    // which fails the decode whatever other lines give (ruling 26 of 0.64).
+    const RB = union(enum) { val: MV, absent, failed, no_entry };
+    const LineKey = struct { n: usize, j: usize };
+    const DeadLines = std.AutoHashMapUnmanaged(LineKey, []const u8);
+
+    // What decode reads for key `j` of a line from the bits it wrote, for a
+    // `switch`: the earliest line's value is kept, and a line whose table
+    // refuses its value is noted, also after the key has one (ruling 31 of
+    // 0.64).
+    fn noteRead(self: *SEnc, n: *const SNode, j: usize, rb: RB) !void {
+        const alloc = self.alloc;
+        const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
+        const lk = LineKey{ .n = @intFromPtr(n), .j = j };
+        if (rb == .no_entry) {
+            try self.kv_dead.?.put(alloc, lk, key);
+            // a line after a `switch` on its key
+            if (!self.dry and self.kv_switched.?.contains(key)) {
+                return bad(self.diag, alloc, te, "field {s}: the bits its line wrote have no entry in its table, and a switch reads the key", .{key});
+            }
+        } else _ = self.kv_dead.?.remove(lk);
+        const m = self.kv.?;
+        if (m.contains(key)) return;
+        switch (rb) {
+            .val => |mv| try m.put(alloc, key, mv),
+            .failed, .no_entry => try self.kv_failed.?.put(alloc, key, {}),
+            .absent => {},
+        }
+    }
+
+    fn hasDead(self: *const SEnc, key: []const u8) bool {
+        var it = (self.kv_dead orelse return false).valueIterator();
+        while (it.next()) |k| if (std.mem.eql(u8, k.*, key)) return true;
+        return false;
+    }
 
     fn readBackR(self: *SEnc, buf: []const u8, at: usize, n: *const SNode, j: usize) RB {
         const ln = &n.ln;
@@ -14765,7 +15183,7 @@ const SEnc = struct {
         const key = if (j == 0) ln.key else n.also.items[j - 1].key;
         const via = if (j == 0) ln.via else n.also.items[j - 1].via;
         const kty = if (j == 0) ln.kty else n.also.items[j - 1].kty;
-        if (via) |t| mv = tableDecode(t, mv, kty) catch return .failed;
+        if (via) |t| mv = tableDecode(t, mv, kty) catch return .no_entry;
         if (mv == .str and std.mem.eql(u8, key, "type")) {
             if (self.p.tm_nat2cot.get(mv.str)) |cot| mv = MV{ .str = cot };
         }
@@ -14837,9 +15255,10 @@ const SEnc = struct {
         var se = SEnt{ .e = &e };
         var d = SDec{ .alloc = self.alloc, .p = self.p, .buf = buf, .diag = self.diag, .pos = at, .hard_end = end, .soft_end = end };
         d.uperField(n, u, &se) catch return .failed;
-        if (d.failed_msg != null) return .failed;
         const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
-        for (se.failed.items) |fk| if (std.mem.eql(u8, fk, key)) return .failed;
+        // a table failure sets the message, a transform failure does not
+        for (se.failed.items) |fk| if (std.mem.eql(u8, fk, key)) return if (d.failed_msg != null) .no_entry else .failed;
+        if (d.failed_msg != null) return .failed;
         return if (e.get(key)) |v| .{ .val = v } else .absent;
     }
 
@@ -14894,9 +15313,10 @@ const SEnc = struct {
         var se = SEnt{ .e = &e };
         var d = SDec{ .alloc = self.alloc, .p = self.p, .buf = buf, .diag = self.diag, .pos = at, .hard_end = end, .soft_end = end };
         d.untilField(n, &se) catch return .failed;
-        if (d.failed_msg != null) return .failed;
         const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
-        for (se.failed.items) |fk| if (std.mem.eql(u8, fk, key)) return .failed;
+        // a table failure sets the message, a transform failure does not
+        for (se.failed.items) |fk| if (std.mem.eql(u8, fk, key)) return if (d.failed_msg != null) .no_entry else .failed;
+        if (d.failed_msg != null) return .failed;
         return if (e.get(key)) |v| .{ .val = v } else .absent;
     }
 
@@ -15101,13 +15521,21 @@ const SEnc = struct {
         var kvf = std.StringHashMapUnmanaged(void){};
         const save_kv = self.kv;
         const save_kvf = self.kv_failed;
+        var kvd = DeadLines{};
+        var kvs = std.StringHashMapUnmanaged(void){};
+        const save_kvd = self.kv_dead;
+        const save_kvs = self.kv_switched;
         if (self.table != null) {
             self.kv = &kv;
             self.kv_failed = &kvf;
+            self.kv_dead = &kvd;
+            self.kv_switched = &kvs;
         }
         defer {
             self.kv = save_kv;
             self.kv_failed = save_kvf;
+            self.kv_dead = save_kvd;
+            self.kv_switched = save_kvs;
         }
         const k = try self.selectKind(b, ent, is_item);
         // Version 0.94: the message's kind, between choosing and the first
@@ -15277,16 +15705,27 @@ const SEnc = struct {
     // bits as they stand: that of the earliest line that yields one. A key
     // that a line before the kind's set keeps that value.
     fn rereadKey(self: *SEnc, key: []const u8, st: *const WinState) !void {
-        if (st.before.contains(key)) return;
+        // every line of the key is read again: one whose table refuses its
+        // bits fails the decode whatever the others give (ruling 31 of 0.64)
+        var got = st.before.contains(key);
         const m = self.kv.?;
-        _ = m.remove(key);
-        if (!st.before_failed.contains(key)) _ = self.kv_failed.?.remove(key);
+        if (!got) {
+            _ = m.remove(key);
+            if (!st.before_failed.contains(key)) _ = self.kv_failed.?.remove(key);
+        }
         for (st.fields.items) |f| {
             for (0..f.n.also.items.len + 1) |j| {
                 if (!std.mem.eql(u8, fieldKey(f.n, j), key)) continue;
-                switch (self.readBackR(self.out.items, f.at, f.n, j)) {
-                    .val => |mv| return m.put(self.alloc, key, mv),
-                    .failed => try self.kv_failed.?.put(self.alloc, key, {}),
+                const rb = self.readBackR(self.out.items, f.at, f.n, j);
+                const lk = LineKey{ .n = @intFromPtr(f.n), .j = j };
+                if (rb == .no_entry) try self.kv_dead.?.put(self.alloc, lk, key) else _ = self.kv_dead.?.remove(lk);
+                if (got) continue;
+                switch (rb) {
+                    .val => |mv| {
+                        try m.put(self.alloc, key, mv);
+                        got = true;
+                    },
+                    .failed, .no_entry => try self.kv_failed.?.put(self.alloc, key, {}),
                     .absent => {},
                 }
             }
@@ -15313,16 +15752,8 @@ const SEnc = struct {
                     try self.uperField(n, u, ent, ds);
                     // Version 0.20 beside 0.19: what decode reads back from
                     // the bits the UPER field wrote, for a switch
-                    if (self.kv) |m| {
-                        for (0..n.also.items.len + 1) |j| {
-                            const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
-                            if (m.contains(key)) continue;
-                            switch (self.uperReadBackR(self.out.items, at, self.pos, n, u, j)) {
-                                .val => |mv| try m.put(alloc, key, mv),
-                                .failed => try self.kv_failed.?.put(alloc, key, {}),
-                                .absent => {},
-                            }
-                        }
+                    if (self.kv != null) {
+                        for (0..n.also.items.len + 1) |j| try self.noteRead(n, j, self.uperReadBackR(self.out.items, at, self.pos, n, u, j));
                     }
                     return;
                 }
@@ -15330,16 +15761,8 @@ const SEnc = struct {
                     const at = self.pos;
                     try self.untilField(n, ent, ds);
                     // what decode reads back from these bits, for a switch
-                    if (self.kv) |m| {
-                        for (0..n.also.items.len + 1) |j| {
-                            const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
-                            if (m.contains(key)) continue;
-                            switch (self.untilReadBackR(self.out.items, at, self.pos, n, j)) {
-                                .val => |mv| try m.put(alloc, key, mv),
-                                .failed => try self.kv_failed.?.put(alloc, key, {}),
-                                .absent => {},
-                            }
-                        }
+                    if (self.kv != null) {
+                        for (0..n.also.items.len + 1) |j| try self.noteRead(n, j, self.untilReadBackR(self.out.items, at, self.pos, n, j));
                     }
                     return;
                 }
@@ -15356,16 +15779,8 @@ const SEnc = struct {
                     bitsWriteRaw(self.p, self.out.items, self.pos, ln, ln.abs_ints[0]);
                 }
                 // Version 0.20: what decode reads back, for a switch
-                if (self.kv) |m| {
-                    for (0..n.also.items.len + 1) |j| {
-                        const key = if (j == 0) ln.key else n.also.items[j - 1].key;
-                        if (m.contains(key)) continue;
-                        switch (self.readBackR(self.out.items, self.pos, n, j)) {
-                            .val => |mv| try m.put(alloc, key, mv),
-                            .failed => try self.kv_failed.?.put(alloc, key, {}),
-                            .absent => {},
-                        }
-                    }
+                if (self.kv != null) {
+                    for (0..n.also.items.len + 1) |j| try self.noteRead(n, j, self.readBackR(self.out.items, self.pos, n, j));
                 }
                 self.pos += ln.blen;
             },
@@ -15374,6 +15789,12 @@ const SEnc = struct {
                 // the key's line wrote
                 const sw = n.sw.?;
                 const val = if (self.kv) |m| m.get(sw.key) else null;
+                if (self.kv_switched) |ks| try ks.put(alloc, sw.key, {});
+                // a line of the key whose table refuses what it wrote, beside
+                // another line's value (ruling 31 of 0.64)
+                if (!self.dry and self.hasDead(sw.key)) {
+                    return bad(self.diag, alloc, te, "switch {s}: a line of the key wrote bits that have no entry in its table", .{sw.key});
+                }
                 // a key whose line wrote bits that do not decode (ruling 31)
                 if (val == null and !self.dry and self.kv_failed != null and self.kv_failed.?.contains(sw.key)) {
                     return bad(self.diag, alloc, te, "switch {s}: the bits its line wrote do not read back", .{sw.key});

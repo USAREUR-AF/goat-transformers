@@ -64,6 +64,10 @@ struct LineRef {
     const GroupLine* group = nullptr;
     // The `when` or `const` line: both are written on encode, typed the same way.
     const WhenLine* fixed() const { return when ? when : konst; }
+    // v0.64: a `const ... part` line, whose place decode reads and checks.
+    const FieldLine* const_part() const { return konst ? konst->part.get() : nullptr; }
+    // The line decode reads a value with: a `field`, or a `const ... part`.
+    const FieldLine* reads() const { return field ? field : const_part(); }
     const std::string& locator() const {
         return field ? field->locator : group ? group->locator : fixed()->locator;
     }
@@ -231,11 +235,15 @@ struct Decoder {
     Decoder(const Pack& pack, Item& target) : p(pack), out(target) {}
     // False once an earlier line has given the key its value, or failed in its
     // table: later lines are not read.
+    // A line whose table can fail is read all the same: a transform that
+    // succeeds and a table with no entry fail the decode whichever line of the
+    // key succeeds (0.64 ruling 26); and so is a `const ... part`.
     bool wants(const FieldLine& f) const;
     void set(const FieldLine& f, const std::string& text);  // text-wire transform, then put
     void set_json_number(const FieldLine& f, const std::string& text);  // a JSON number (0.11 ruling 2d), then put
     void put(const FieldLine& f, Value native);             // the value table, then the key
     void fail(const FieldLine& f, const std::string& why);
+    bool open(const FieldLine& f) const;  // may the line still give the key its value?
     void finish();  // type mapping; throws transform-decode listing every failed field
 };
 
@@ -328,6 +336,26 @@ struct EncodeSource {
     // The items of a group's list; null when the item has no such list.
     const std::vector<Item>* list(const GroupLine& g) const;
 };
+
+// ---- part groups (Version 0.64)
+
+// The lines of one scope with one locator, some of them part lines. The token
+// is written at the group's first line (ruling 8).
+struct PartGroup {
+    const std::string* locator = nullptr;
+    std::string sep;
+    std::vector<const FieldLine*> fields;  // part fields
+    std::vector<const WhenLine*> consts;   // `const ... part` lines
+    const FieldLine* whole = nullptr;
+    bool written = false;                  // encode: the group's first line has been reached
+};
+// The part groups of a scope; empty when the pack has no part line.
+std::vector<PartGroup> part_groups(const Pack& p, const std::vector<LineRef>& lines);
+// The group of a line; null when it is in none. A group's `when` is refused at load.
+PartGroup* part_group_of(std::vector<PartGroup>& groups, const LineRef& line);
+// Encode: the token of a group (Encode steps 1 to 3). False when nothing is
+// written. Throws transform-encode.
+bool part_token(const EncodeSource& src, const std::vector<LineRef>& lines, const PartGroup& g, std::string& token);
 
 // ---- absent-value sentinels (Version 0.9)
 

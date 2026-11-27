@@ -628,7 +628,7 @@ def _compose(pack, enc, base, out):
             else:
                 text = _pad(pack, ln, _checked(pack, ln, v), loc[3], ln.transform.numeric)
                 cols.setdefault(base + loc[1], []).append((loc[2], text))
-        elif not ln.present:
+        elif not ln.present and not getattr(ln, "is_part_const", False):
             over.setdefault(base + loc[1], []).append(ln)
     for k in set(whole) | set(cols) | set(over):
         if k in whole:

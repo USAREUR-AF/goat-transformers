@@ -1,0 +1,9 @@
+{
+  "name": "switch-in-a-case-written",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-case",
+  "input": "{\"y\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: the case is written, so the later line is read back"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "no-kind-before-the-later-line",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-after",
+  "input": "{\"x\":5}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 12: the error of the earliest line in reading order; the switch has no case 5, and the table without 5 stands after it"
+}

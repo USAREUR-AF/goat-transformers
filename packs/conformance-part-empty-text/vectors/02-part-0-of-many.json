@@ -1,0 +1,13 @@
+{
+  "name": "part-0-of-many",
+  "from": "conformance-part-empty-text",
+  "to": "conformance-part-empty-text",
+  "input": "a--b,9",
+  "expect": "a--b,9",
+  "model": {
+    "probe.label": "a",
+    "probe.tag": "a--b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Decode: empty parts count, other parts are ignored"
+}

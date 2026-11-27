@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-later-part-line-with-an-entry",
+  "from": "conformance-part-other-text",
+  "to": "conformance-part-mirror",
+  "input": "{\"l\":\"x\",\"t\":\"a\"}",
+  "expect": "{\"label\":\"x\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 27: a part line has no entry when its table lacks the text, also where the types are the same; it has one"
+}

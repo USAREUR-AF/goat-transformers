@@ -1,0 +1,16 @@
+{
+  "name": "e7",
+  "from": "conformance-part-geojson-whole",
+  "to": "conformance-part-geojson-whole",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"k-j-P\"}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"k-j-P\"}}",
+  "model": {
+    "probe.tag": "k-j-P",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1: the whole key is checked and written as it is"
+}

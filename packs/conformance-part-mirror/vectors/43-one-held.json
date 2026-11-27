@@ -1,0 +1,9 @@
+{
+  "name": "one-held",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default-all",
+  "input": "{\"x\":3}",
+  "expect": "{\"t\":\"k-f-S\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2"
+}

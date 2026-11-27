@@ -1,0 +1,13 @@
+{
+  "name": "empty-token",
+  "from": "conformance-part-empty-json",
+  "to": "conformance-part-empty-json",
+  "input": "{\"t\":\"\"}",
+  "expect": "{\"t\":\"\"}",
+  "model": {
+    "probe.label": "",
+    "probe.tag": ""
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, an empty token has one part, the empty text"
+}

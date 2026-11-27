@@ -1,0 +1,9 @@
+{
+  "name": "6546-part-ruling-29-field-on-another-geometry-locator-is-a-line-check",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\nkey lat float deg\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey ratio float -\nkey label string -\nkey tag string -\nkey w1 string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.64.0\ndistribution public\nsource \"probe\"\nuses probe\nwire geojson\nfield probe.label properties.t part:-:0\nfield probe.w1 geometry.x part:-:0\nbogus\n",
+  "expect_error": "bad-locator"
+}

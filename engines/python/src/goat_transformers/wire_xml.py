@@ -369,7 +369,7 @@ def _fill(node, enc):
                 first_at[ln.locator] = i
         fixed = {}  # the `when` and `const` values, the first for each locator
         for ln in plan.lines:
-            if not (ln.is_field or ln.is_group or ln.present):
+            if not (ln.is_field or ln.is_group or ln.present or getattr(ln, "is_part_const", False)):
                 fixed.setdefault(ln.locator, ln.value)
         layout = plan.cache["xml-fill"] = (first, first_at, _element_places(plan), fixed)
     first, first_at, elements, fixed = layout

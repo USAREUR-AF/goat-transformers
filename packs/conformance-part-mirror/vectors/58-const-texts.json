@@ -1,0 +1,9 @@
+{
+  "name": "const-texts",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-const",
+  "input": "{\"label\":\"q\"}",
+  "expect": "{\"u\":\"part:-:1\",\"t\":\"5-q-present-a b\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 4: always written as text; the two-argument form is a const of 0.6"
+}

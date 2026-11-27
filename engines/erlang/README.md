@@ -10,17 +10,17 @@ An independent, clean-room implementation of the gt engine, written from
 ./run_tests       # loads ../../model and ../../packs, runs every vector
 ```
 
-| Test | Command (repository root) | Measured (2026-11-26; the benchmark table below 2026-11-21) |
+| Test | Command (repository root) | Measured (2026-11-27; the benchmark table below 2026-11-21) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 25823/25823 |
-| load vectors | same run | 1753/1753 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 26279/26279 |
+| load vectors | same run | 1991/1991 |
 | capability vectors | same run | 29/29 |
-| malformed inputs | same run | 168760/168760 |
-| concurrent conversions (Version 0.25) | same run | 1194/1194 |
+| malformed inputs | same run | 173244/173244 |
+| concurrent conversions (Version 0.25) | same run | 1357/1357 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 16 vectors, 16 packs (below) |
 | unit checks (the CRC of 0.27; rulings 5 and 6 of 0.93, a controlled inner pack) | same run | 42/42 |
 | tool vectors (Versions 0.23, 0.29, 0.93) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 183/183 |
-| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8516/8516 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8784/8784 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
@@ -224,19 +224,19 @@ message; loads a pack whose `wire` is `nowire`, which must be `unknown-wire`
 without that reason. It then prints the size of both builds, the `.beam`
 files `build.sh` writes, and exits non-zero on any failure.
 
-Measured (2026-11-24, one machine):
+Measured (2026-11-27, one machine):
 
 | Check | Result |
 |---|---|
-| conversion vectors on xml, json and geojson | 8396/8396 passed |
-| packs on bits refused as `unknown-wire` | 1960/1960 |
-| packs on protobuf refused as `unknown-wire` | 876/876 |
-| packs on text refused as `unknown-wire` | 86/86 |
-| packs on tlv refused as `unknown-wire` | 11/11 |
-| packs on cbor refused as `unknown-wire` | 7/7 |
+| conversion vectors on xml, json and geojson | 8784/8784 passed |
+| packs on bits refused as `unknown-wire` | 2353/2353 |
+| packs on protobuf refused as `unknown-wire` | 879/879 |
+| packs on text refused as `unknown-wire` | 98/98 |
+| packs on tlv refused as `unknown-wire` | 13/13 |
+| packs on cbor refused as `unknown-wire` | 9/9 |
 | `wire nowire` | `unknown-wire`, without the reason |
-| full build, 8 wires | 428916 bytes, 19 `.beam` files |
-| reduced build, xml, json and geojson | 268960 bytes, 12 `.beam` files (62% of full) |
+| full build, 8 wires | 485128 bytes, 19 `.beam` files |
+| reduced build, xml, json and geojson | 305820 bytes, 12 `.beam` files (63% of full) |
 
 Both sizes count `gt_cli` and the conformance runner `gt_test`, which every
 build with json or geojson holds.
@@ -503,6 +503,30 @@ joined message as `convert`, kept kinds included.
 
 Every vector passes, the four that ruling 8 rederived included; an empty
 list does not meet `requires` (0.7, ruling 1).
+
+## One text token split into coded fields (engine-spec Version 0.64)
+
+`field <key> <locator> part:<sep>:<n> [via <table>] [unlisted]` and
+`const <locator> part:<sep>:<n> <text>` on xml, json, geojson and text. A
+part line has the transform `{part, Sep, N, Unlisted}`, a const part the
+value `{part, Sep, N, Text}` (`gt_pack:part_transform/1`); the load errors
+of a part group are checked per reading scope after the file
+(`gt_pack:part_checks/1`). Decode reads the token as `string` and splits it
+(`field_decode/6`); a const part is checked by `scope_read/4` and never
+forgiven. Encode: `gt_engine:part_groups/1` (kept in the scope plan since
+load) and `part_token/3` choose step 1 (the whole key held, checked against
+every part line no other `field` line maps), step 2 (the parts joined) or
+step 3 (the whole key's default), and the token is written at the group's
+first line (`text_plan/9`, `gt_text:plan/6`).
+
+Ruling 26 on every wire (`gt_engine:key_value/6`): a line with a `via`
+table is read even when an earlier line gave the key, and a value with no
+entry, the types differing, is a failure of the decode recorded and raised
+when it ends (so a list over the limit still wins). On a sequential layout
+the read-back of 0.20 marks such a key `table_failed`: a `switch` on it is
+`transform-encode` before its case is chosen, and a line of the key after a
+`switch` on it that is written is `transform-encode` at that line (ruling
+31; `gt_seq:rb_keys/5`, `rb_checked/1`).
 
 ## Layout
 

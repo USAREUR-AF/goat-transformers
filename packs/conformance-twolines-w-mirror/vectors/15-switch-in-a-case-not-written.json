@@ -1,0 +1,9 @@
+{
+  "name": "switch-in-a-case-not-written",
+  "from": "conformance-twolines-w-mirror",
+  "to": "conformance-twolines-w-seq-switch-case",
+  "input": "{\"y\":2}",
+  "expect": "02000000",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 31: a `switch` in a case that is not written does not count, so the lines are not read back"
+}

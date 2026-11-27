@@ -47,6 +47,10 @@ public final class Pack {
         CodeSeq codes;
         /** The name of {@link #codes} as written. */
         String codesName;
+        /** {@code part:<sep>:<n>} (engine-spec 0.64), or null; the line's transform is then {@code string}. */
+        Part part;
+        /** {@code unlisted} (engine-spec 0.64): on decode a text without a table entry leaves the line absent. */
+        boolean unlisted;
         /** The value table named by {@code via}, or null. */
         public final String via;
         /** bits: the field's bytes are reversed before the transform reads them and after it writes them. */
@@ -78,6 +82,18 @@ public final class Pack {
             if (e.get(key) != null) return true;
             List<Entity> items = e.list(key);
             return items != null && !items.isEmpty();
+        }
+
+        /**
+         * True when a value without an entry in the field's table fails the line, not passes: the two types differ
+         * (0.6), or the line is a part line (ruling 3 of 0.64).
+         */
+        boolean strictTable() { return viaDecode != null && (part != null || !yields().equals(keyType)); }
+
+        /** A {@code string} line that may be the whole line of a part group: no option but {@code optional} on text. */
+        boolean plainString() {
+            return part == null && scale == null && via == null && absent == null && with == null
+                    && (transform == Transform.STRING || (text != null && text.kind == TextTransform.Kind.STRING));
         }
 
         Field(String key, String locator, Transform transform, BitsTransform bits, PbTransform pb,
@@ -116,6 +132,7 @@ public final class Pack {
 
         /** The transform's name as written in the pack. */
         public String transformName() {
+            if (part != null) return part.name;
             if (scale != null) return scale.wireName();
             if (codes != null) return codesName;
             if (cbor != null) return cbor.wireName;
@@ -294,6 +311,8 @@ public final class Pack {
         final Map<String, When> fixed = new java.util.HashMap<>();
         /** Scratch for the codec (for example the bit extent of a bits scope). */
         Object info;
+        /** engine-spec 0.64: the part groups by locator; set once the scope's lines are checked. */
+        Map<String, Part.Group> parts = Collections.emptyMap();
 
         Scope(List<Line> lines, Map<String, String> defaults) {
             this.lines = Collections.unmodifiableList(lines);
@@ -511,6 +530,8 @@ public final class Pack {
         boolean not;
         /** An {@code element} line of an xml pack: {@code locator} is its path. */
         boolean element;
+        /** {@code const <locator> part:<sep>:<n> <text>} (engine-spec 0.64): the second argument. */
+        String partName;
 
         LineSpec(String key, String locator, String arg, List<String> opts, boolean isConst, int line) {
             this.key = key;
@@ -781,7 +802,8 @@ public final class Pack {
             // engine-spec 0.28, the cbor wire
             "text", "bytes", "epoch_s",
             // engine-spec 0.46
-            "code", "codestr", "codenum");
+            "code", "codestr", "codenum",
+            "part");   // engine-spec 0.64
 
     /** Check 3 of ruling 5b: the number of arguments of the directives whose count does not depend on the layout. */
     private static void lineArity(String kw, List<String> args, String where, String format) {
@@ -792,7 +814,8 @@ public final class Pack {
             // engine-spec 0.30: `when <len> <values> as …` passes here; its syntax is checked after the file (ruling 16)
             // engine-spec 0.33: and `when <len> <values> at …`, whose form is checked after the module checks (ruling 10)
             case "when": ok = n == 2 || (n >= 3 && (args.get(2).equals("as") || args.get(2).equals("at"))); break;   // ruling 27 of 0.33: the rest after the file
-            case "const":
+            // engine-spec 0.64: three arguments only when the second is a part (ruling 23)
+            case "const": ok = n == 2 || (n == 3 && Part.isName(args.get(1))); break;
             case "default":
             case "typemap": ok = n == 2; break;
             case "map": ok = n == 3; break;
@@ -826,7 +849,9 @@ public final class Pack {
         if (!TRANSFORMS.contains(head)) {
             throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, locator, where + ": unknown transform \"" + name + "\"");
         }
-        if (CodeSeq.isHead(head)) {
+        if (Part.isName(name)) {
+            Part.parse(name, format, locator, where);
+        } else if (CodeSeq.isHead(head)) {
             return;   // the list names sets of the whole file: every error of it is after the file (ruling 15 of 0.46)
         } else if (TextTransform.isTextOnlyName(name)) {
             TextTransform.parseTextOnly(name, format, locator, where);
@@ -980,6 +1005,7 @@ public final class Pack {
                 case "swap":
                 case "trim":
                 case "optional":
+                case "unlisted":   // engine-spec 0.64
                     if (!seen.add(o)) throw badDirective(format, loc, where + ": " + o + " given twice");
                     break;
                 default:
@@ -1201,6 +1227,7 @@ public final class Pack {
                 throw bad(format, null, where + ": distribution must be public or controlled, got \"" + args.get(0) + "\"");
             }
             // checks 7 to 10
+            if (kw.equals("const") && args.size() == 3) Part.parse(args.get(1), format, args.get(0), where);   // step 7 (0.64)
             if (kw.equals("field") && seq == null) {
                 lineCheckField(args, wire, !open.isEmpty(), format, where);
             } else if (kw.equals("field")) {
@@ -1392,6 +1419,12 @@ public final class Pack {
                     root = args.get(0);
                     break;
                 case "const":
+                    if (args.size() == 3) {
+                        LineSpec c = new LineSpec(null, args.get(0), args.get(2), null, true, ln);
+                        c.partName = args.get(1);
+                        body.lines.add(c);
+                        break;
+                    }
                     if (args.contains("with")) throw badDirective(format, null, where + ": with is not an option of a const line");
                     arity(kw, args, 2, where, format);
                     body.lines.add(new LineSpec(null, args.get(0), args.get(1), null, true, ln));
@@ -1668,6 +1701,7 @@ public final class Pack {
                 notThroughAGroup(commonLines, ctx);
                 if (wire == Wire.TLV) TlvLayout.checkScope(commonLines, format, source);
                 kinds.add(new Kind(null, new ArrayList<>(), commonLines, new ArrayList<>(), root, common.defaults));
+                kinds.get(0).scope.parts = Part.groups(commonLines, format, source);
             }
             for (KindSpec ks : kindSpecs) {
                 List<Line> all = new ArrayList<>(commonLines.size() + ks.lines.size());
@@ -1687,7 +1721,9 @@ public final class Pack {
                 if (wire == Wire.TLV) TlvLayout.checkScope(all, format, source);
                 LinkedHashMap<String, String> defaults = new LinkedHashMap<>(common.defaults);
                 defaults.putAll(ks.defaults);
-                kinds.add(new Kind(ks.name, ks.requires, all, whens, ks.root != null ? ks.root : root, defaults));
+                Kind kind = new Kind(ks.name, ks.requires, all, whens, ks.root != null ? ks.root : root, defaults);
+                kind.scope.parts = Part.groups(all, format, source);
+                kinds.add(kind);
             }
             if (wire == Wire.CBOR) CborLayout.checkPack(kinds, format, source);
             if (wire == Wire.TEXT) {
@@ -2068,6 +2104,7 @@ public final class Pack {
             }
         }
         Scope body = new Scope(lines, s.body.defaults);
+        body.parts = Part.groups(lines, format, ctx.source);
         Group g = new Group(s.key, s.locator, body, itemBits, countLocator, countFixed, s.line);
         g.loc = ctx.wire == Wire.CBOR ? CborLayout.parsePath(s.locator) : textLoc;
         if (ctx.wire == Wire.BITS && ctx.wordBytes > 0) BitsLayout.prepare(body, ctx.wordBytes, itemBits, format, ctx.source);
@@ -2094,9 +2131,10 @@ public final class Pack {
         if (dot && (!inGroup || s.key == null)) {
             throw badDirective(format, s.locator, where + ": the locator . is for a field inside a group");
         }
+        if (s.partName != null) return resolvePartConst(s, ctx, where, inGroup);
         if (s.key == null) return resolveWhen(s, ctx, where, inGroup);
         String via = null, absent = null, with = null, stop = null;
-        boolean swap = false, trim = false, optional = false;
+        boolean swap = false, trim = false, optional = false, unlisted = false;
         for (int i = 0; i < s.opts.size(); i++) {
             String o = s.opts.get(i);
             switch (o) {
@@ -2136,8 +2174,22 @@ public final class Pack {
                     if (optional) throw badDirective(format, s.locator, where + ": optional given twice");
                     optional = true;
                     break;
+                case "unlisted":
+                    if (unlisted) throw badDirective(format, s.locator, where + ": unlisted given twice");
+                    unlisted = true;
+                    break;
                 default:
                     throw badDirective(format, s.locator, where + ": unknown field option \"" + o + "\"");
+            }
+        }
+        boolean isPart = Part.isName(s.arg);
+        if (unlisted && (!isPart || via == null)) {
+            throw badDirective(format, s.locator, where + ": unlisted is for a part line with via");
+        }
+        if (isPart) {
+            partPlace(s.arg, s, ctx, where, inGroup);
+            if (absent != null || with != null) {
+                throw badDirective(format, s.locator, where + ": the options of a part line are via, unlisted and, on text, optional");
             }
         }
         if (wire == Wire.TEXT && optional && inGroup) {
@@ -2203,7 +2255,7 @@ public final class Pack {
             } else if (TextTransform.isTextOnlyName(s.arg)) {
                 tt = TextTransform.parseTextOnly(s.arg, format, s.locator, where);
             } else {
-                Transform t = Transform.byName(s.arg);
+                Transform t = isPart ? Transform.STRING : Transform.byName(s.arg);
                 tt = t == null ? null : TextTransform.base(t);
                 if (tt == null) {
                     if (t != null || BitsTransform.isBitsName(s.arg) || PbTransform.isPbName(s.arg)) {
@@ -2287,7 +2339,7 @@ public final class Pack {
             else if (wire == Wire.GEOJSON && !inGroup) why = Locators.geojsonField(s.locator);
             else why = Locators.json(s.locator);
         } else {
-            Transform t = Transform.byName(s.arg);
+            Transform t = isPart ? Transform.STRING : Transform.byName(s.arg);
             if (t == null || (t == Transform.BOOL && wire != Wire.JSON)) {
                 String w = (t != null || BitsTransform.isBitsName(s.arg) || PbTransform.isPbName(s.arg))
                         ? "transform \"" + s.arg + "\" is not valid on wire " + wire.name().toLowerCase()
@@ -2313,9 +2365,48 @@ public final class Pack {
             }
         }
         f.with = with;
+        if (isPart) f.part = Part.parse(s.arg, format, s.locator, where);
+        f.unlisted = unlisted;
         ctx.fields.add(f);
         ctx.typed.add(f);
         return f;
+    }
+
+    /**
+     * The checks of a part line's place (engine-spec 0.64): its wire, no geometry coordinate, and on text a whole
+     * field and a separator the record's fields can hold. Returns the parsed part.
+     */
+    private static Part partPlace(String name, LineSpec s, Ctx ctx, String where, boolean inGroup) {
+        if (ctx.wire != Wire.XML && ctx.wire != Wire.JSON && ctx.wire != Wire.GEOJSON && ctx.wire != Wire.TEXT) {
+            throw badDirective(ctx.format, s.locator, where + ": part is not valid on wire " + ctx.wire.name().toLowerCase());
+        }
+        Part p = Part.parse(name, ctx.format, s.locator, where);
+        if (ctx.wire == Wire.GEOJSON && !inGroup && Locators.geojsonCoord(s.locator) >= 0) {
+            throw badDirective(ctx.format, s.locator, where + ": part is not valid on a geojson coordinate");
+        }
+        if (ctx.wire == Wire.TEXT) {
+            if (textLocator(s, ctx, where, inGroup).type != TextLayout.FIELD) {
+                throw badDirective(ctx.format, s.locator, where + ": part takes a whole field");
+            }
+            if (p.sep.equals(ctx.delimiter) || (ctx.nmea && p.sep.equals("*"))) {
+                throw badDirective(ctx.format, s.locator, where + ": a part separator cannot be the delimiter, or * under checksum nmea");
+            }
+        }
+        return p;
+    }
+
+    /** {@code const <locator> part:<sep>:<n> <text>} (engine-spec 0.64). */
+    private static Part.Const resolvePartConst(LineSpec s, Ctx ctx, String where, boolean inGroup) {
+        Part p = partPlace(s.partName, s, ctx, where, inGroup);
+        String v = s.arg;
+        if (v.equals("present")) throw badDirective(ctx.format, s.locator, where + ": const takes a value; write =present for the text");
+        if (v.startsWith("=")) v = v.substring(1);
+        if (v.isEmpty() || v.contains(p.sep)) {
+            throw badDirective(ctx.format, s.locator, where + ": the text of a const part is not empty and does not hold its separator");
+        }
+        Part.Const c = new Part.Const(s.locator, p, v, s.line);
+        if (ctx.wire == Wire.TEXT) c.loc = textLocator(s, ctx, where, inGroup);
+        return c;
     }
 
     /** The {@code absent} values of a field, read as its wire's raw value (Version 0.9, The raw value). */

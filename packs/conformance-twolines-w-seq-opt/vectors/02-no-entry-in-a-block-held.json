@@ -1,0 +1,9 @@
+{
+  "name": "no-entry-in-a-block-held",
+  "from": "conformance-twolines-w-seq-opt",
+  "to": "conformance-twolines-w-seq-opt",
+  "input": "03807a",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 26: no entry and another type fails the decode, in a block that is read"
+}

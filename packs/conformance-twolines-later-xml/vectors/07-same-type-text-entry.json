@@ -1,0 +1,12 @@
+{
+  "name": "same-type-text-entry",
+  "from": "conformance-twolines-later-xml",
+  "to": "conformance-twolines-later-xml",
+  "input": "<e c=\"alpha\" d=\"p\"/>",
+  "expect": "<e c=\"alpha\" d=\"p\"/>",
+  "model": {
+    "probe.label": "alpha"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 One key at several locators: the earliest line that succeeds; encode writes both"
+}

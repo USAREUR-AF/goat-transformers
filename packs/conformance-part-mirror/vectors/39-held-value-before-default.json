@@ -1,0 +1,9 @@
+{
+  "name": "held-value-before-default",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-default",
+  "input": "{\"x\":6,\"y\":1}",
+  "expect": "{\"t\":\"k-h-A\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 2: its held value"
+}

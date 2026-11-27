@@ -152,7 +152,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                 // a path prefix that is not a submessage (ruling 13 of 0.7)
                 throw malformed(f.key + " at " + f.locator + ": " + ex.getMessage());
             }
-            if (e.get(f.key) != null) continue;                     // an earlier line already gave the key its value
+            if (settled(f, e)) continue;                     // an earlier line already gave the key its value
             if (val == null) continue;                              // a field absent from the wire is not an error
             decodeValue(f, val.wt, val.num, val.bytes, e, fails);
         }

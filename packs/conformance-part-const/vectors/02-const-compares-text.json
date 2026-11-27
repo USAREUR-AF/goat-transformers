@@ -1,0 +1,9 @@
+{
+  "name": "const-compares-text",
+  "from": "conformance-part-const",
+  "to": "conformance-part-const",
+  "input": "{\"t\":\"05-q-present-a b\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 4: compared as text"
+}

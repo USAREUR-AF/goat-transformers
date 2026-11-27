@@ -9,7 +9,7 @@ from .errors import (
     MissingModule, MissingSource, MissingVersion, UnknownDirective, UnknownModule, UnterminatedQuote,
 )
 from .packdef import CORE, DISTRIBUTIONS, split_key, tokenize
-from .transforms import parse_factor, read_typed
+from .transforms import parse_factor, parse_sep, read_typed
 
 KEY_TYPES = ("string", "float", "int")
 _SINGLE = ("module", "version", "distribution")
@@ -116,17 +116,6 @@ _ARG_COUNT = {"copy": 1, "hypot": 2, "bearing": 2, "east_of": 2, "north_of": 2, 
 
 # 0.18: whitespace in a derive parameter is space, tab, line feed and carriage return.
 _WS18 = " \t\n\r"
-_SEP_NAMES = {"space": " ", "comma": ",", "colon": ":"}
-
-
-def _parse_sep(text):
-    """-> the separator character of `tokens` and `has_token` (0.18, ruling 9)."""
-    if text in _SEP_NAMES:
-        return _SEP_NAMES[text]
-    if len(text) != 1 or text in ":," or text in _WS18:
-        raise ValueError("a separator is one character other than ':', ',' or whitespace, or space, comma or colon;"
-                         " got %r" % text)
-    return text
 
 
 def _parse_token(tok, sep):
@@ -146,7 +135,7 @@ def _parse_param18(name, param):
     sep_text, colon, rest = param.partition(":")
     if not colon:
         raise ValueError("%s takes <sep>:<token%s>" % (name, "s" if name == "tokens" else ""))
-    sep = _parse_sep(sep_text)
+    sep = parse_sep(sep_text)
     if name == "has_token":
         return sep, _parse_token(rest, sep)
     toks = rest.split(",")

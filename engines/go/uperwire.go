@@ -646,6 +646,11 @@ func uperReadBack(w *seqWriter, f *Field, sc seqScope) {
 	r := &seqReader{d: d, p: w.p, data: tmp.buf.data, input: tmp.pos, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}}
 	if err := r.uperField(f); err != nil || len(d.failed) > 0 {
 		bad()
+		for i, k := range d.failedKey {
+			if d.failedHard[i] {
+				sc.hard[k] = true
+			}
+		}
 		return
 	}
 	for _, k := range keys {

@@ -1,0 +1,14 @@
+{
+  "name": "entries",
+  "from": "conformance-part-strict",
+  "to": "conformance-part-strict",
+  "input": "{\"t\":\"h-a-q-z\"}",
+  "expect": "{\"t\":\"h-a-q\"}",
+  "model": {
+    "probe.x": "6",
+    "probe.label": "alpha",
+    "probe.w1": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Decode, Encode step 2"
+}

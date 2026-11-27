@@ -82,8 +82,8 @@ final class TextLayout {
                     continue;
                 }
                 if (none && loc.max() != 0) throw badDirective(format, l, source, "under delimiter none every locator is of field 0");
-                if (l instanceof Pack.When && !((Pack.When) l).present) {
-                    String v = ((Pack.When) l).text;
+                if ((l instanceof Pack.When && !((Pack.When) l).present) || l instanceof Part.Const) {
+                    String v = l instanceof Part.Const ? ((Part.Const) l).text : ((Pack.When) l).text;
                     String why = v.isEmpty() ? "is empty"
                             : v.charAt(0) == ' ' || v.charAt(v.length() - 1) == ' ' ? "has a space at its start or end"
                             : loc.type == COLUMN && v.length() > loc.len ? "is longer than its column of " + loc.len : null;

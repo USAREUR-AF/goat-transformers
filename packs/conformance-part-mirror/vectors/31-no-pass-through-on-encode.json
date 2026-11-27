@@ -1,0 +1,9 @@
+{
+  "name": "no-pass-through-on-encode",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-strict",
+  "input": "{\"x\":6,\"label\":\"gamma\",\"w1\":\"q\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 3, in either direction"
+}

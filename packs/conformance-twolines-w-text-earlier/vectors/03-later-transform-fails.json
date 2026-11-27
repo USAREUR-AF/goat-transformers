@@ -1,0 +1,12 @@
+{
+  "name": "later-transform-fails",
+  "from": "conformance-twolines-w-text-earlier",
+  "to": "conformance-twolines-w-text-earlier",
+  "input": "h,q",
+  "expect": "h,6",
+  "model": {
+    "probe.x": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27: a line whose transform fails changes nothing"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "kind-c-whole",
+  "from": "conformance-part-kinds",
+  "to": "conformance-part-kinds",
+  "input": "{\"t\":\"k-z-w\",\"k\":\"c\"}",
+  "expect": "{\"t\":\"k-z-w\",\"k\":\"c\"}",
+  "model": {
+    "@kind": "c",
+    "probe.tag": "k-z-w",
+    "probe.label": "z"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, Encode step 1"
+}

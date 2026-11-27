@@ -526,7 +526,7 @@ final class CborCodec extends Codec<CborCodec.Msg> {
             if (v == null) continue;
             v = strip(v);
             if (nullish(v)) continue;                   // null and undefined are absent
-            if (e.get(f.key) != null) continue;         // an earlier line gave the key its value
+            if (settled(f, e)) continue;         // an earlier line gave the key its value
             Object d;
             try {
                 d = decodeValue(f.cbor, v);

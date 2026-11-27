@@ -1,0 +1,9 @@
+{
+  "name": "submessage-that-does-not-parse",
+  "from": "conformance-twolines-w-pb-path",
+  "to": "conformance-twolines-w-pb-path",
+  "input": "08031201ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.64 ruling 27 and 9c of 0.11: ff is a cut varint, whatever the earlier line gave"
+}

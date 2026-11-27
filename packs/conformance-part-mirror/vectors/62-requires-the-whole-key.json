@@ -1,0 +1,9 @@
+{
+  "name": "requires-the-whole-key",
+  "from": "conformance-part-mirror",
+  "to": "conformance-part-kinds",
+  "input": "{\"tag\":\"k-z\"}",
+  "expect": "{\"t\":\"k-z\",\"k\":\"c\"}",
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 12"
+}

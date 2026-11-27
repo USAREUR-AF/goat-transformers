@@ -1,0 +1,13 @@
+{
+  "name": "two-parts",
+  "from": "conformance-part-sep-unicode",
+  "to": "conformance-part-sep-unicode",
+  "input": "<e t=\"aéb\"/>",
+  "expect": "<e t=\"aéb\"/>",
+  "model": {
+    "probe.label": "a",
+    "probe.w1": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.64, ruling 10: separators as for `tokens`"
+}
