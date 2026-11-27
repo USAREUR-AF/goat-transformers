@@ -81,6 +81,14 @@ def build(out):
               v("knx-cemi-dpt14-1013-25", "knx-cemi-dpt14", HEAD + "05" + "0080" + "447d5000",
                 dict(HDR_MODEL, **{"knx.apci": "2", "knx.apci_data": "0", "knx.dpt14_value": "1013.25"}),
                 "1013.25 as a big-endian single")))
+    # A GroupValueRead (APCI 0) carries no value: the TPDU is the two octets 00 00, and the value
+    # lines sit under `case 1,2` of `switch knx.apci`, so they are absent and nothing is added on encode.
+    for pk, key in (("knx-cemi-dpt1", "knx.dpt1_value"), ("knx-cemi-dpt5", "knx.dpt5_value"),
+                    ("knx-cemi-dpt9", "knx.dpt9_mantissa"), ("knx-cemi-dpt14", "knx.dpt14_value")):
+        f.append((pk, "02-group-value-read.json",
+                  v(pk + "-read", pk, HEAD + "01" + "0000",
+                    dict(HDR_MODEL, **{"knx.apci": "0", "knx.apci_data": "0", "@absent": [key]}),
+                    "a GroupValueRead: APCI 0, a two-octet TPDU and no value (calimero passes no ASDU for a read)")))
     cemi_len = len(DPT9) // 2
     f.append(("knx-ip", "01-routing-indication.json",
               v("knx-ip-routing-indication", "knx-ip", "0610" "0530" + "%04x" % (6 + cemi_len) + DPT9,

@@ -9,7 +9,9 @@ only); the KNX Standard was not used.
 
 DPT 1 (1-bit, boolean): the value is the low bit of the six data bits in the second TPDU byte; the five bits above it are a raw key.
 
-A GroupValueRead carries no value: the value key is absent.
+A GroupValueRead carries no value: the value lines are read only when `knx.apci` is 1
+(GroupValueResponse) or 2 (GroupValueWrite); otherwise the TPDU is the six data bits
+(`knx.apci_data`), the value key is absent and a read round-trips as two octets (vector 02).
 
 ## Not mapped
 

@@ -9,7 +9,9 @@ only); the KNX Standard was not used.
 
 DPT 9 (2-byte float): value = 0.01 x M x 2^E, with a 12-bit two's-complement mantissa M whose sign bit stands apart from its other 11 bits and a 4-bit exponent E. The pack keeps the sign, the exponent and the 11 mantissa bits as raw keys: no transform computes 0.01 x M x 2^E. Missing: a transform for this float form (and for a mantissa split around the exponent).
 
-A GroupValueRead carries no value: the value key is absent.
+A GroupValueRead carries no value: the value lines are read only when `knx.apci` is 1
+(GroupValueResponse) or 2 (GroupValueWrite); otherwise the TPDU is the six data bits
+(`knx.apci_data`), the value key is absent and a read round-trips as two octets (vector 02).
 
 ## Not mapped
 

@@ -31,8 +31,13 @@ field  knx.destination  16  uint
 length  8  bytes  plus -1
   field  knx.tpci  6  uint
   field  knx.apci  4  uint
-  field  knx.apci_data  6  uint
-  field  knx.dpt9_sign  1  uint
-  field  knx.dpt9_exponent  4  uint
-  field  knx.dpt9_mantissa  11  uint
+  switch  knx.apci                 # 1 GroupValueResponse, 2 GroupValueWrite carry the value
+    case  1,2
+      field  knx.apci_data  6  uint
+      field  knx.dpt9_sign  1  uint
+      field  knx.dpt9_exponent  4  uint
+      field  knx.dpt9_mantissa  11  uint
+    else                           # 0 GroupValueRead and the rest: the six data bits only
+      field  knx.apci_data  6  uint
+  end
 end
