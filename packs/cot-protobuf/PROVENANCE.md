@@ -54,3 +54,20 @@ e6fcb08990cb05f886edb0af346bd80d64b32780f9a2f7a2e57db7be09ac7335  takproto/READM
 3db8b919e1f1cb3dff5114ea875d3a758ff367e6490622780d0f7092daebd8f9  LICENSE.md
 58118c32b89c320ae3dc81a31affa9b01eb925ca999b2a61d1190c7cee9d5da9  INTENT.md
 ```
+
+## Golden vectors: takproto
+
+`packs/cot-protobuf/vectors/golden-pb-*.json` and `packs/cot-xml/vectors/golden-xml-*.json` are
+written by `tools/gen/golden-takproto.py` from takproto, a reference TAK Protocol Version 1 codec,
+not from this pack and not by any engine (shared-model hardening, item 2). takproto converts each
+CoT XML event to a TakMessage and parses it back; the vector's expected output is takproto's message
+and its model values are what takproto read.
+
+| | |
+|---|---|
+| Package | takproto 3.0.1, https://github.com/snstac/takproto, wheel `takproto-3.0.1-py3-none-any.whl`, SHA-256 `4215cf5abc5581d85e26f6b2eee4c57cfeb16cba5e384a43f2b503398fd1a3a5` |
+| Dependency | protobuf 7.36.2, wheel `protobuf-7.36.2-py3-none-any.whl`, SHA-256 `bdb3a345d48db958e6ce1f18e508beb0cc981d64f24088427549c866cd039f1e` (the protobuf runtime, which serializes takproto's messages) |
+| Test event | `tests/test_functions.py` of the sdist `takproto-3.0.1.tar.gz`, SHA-256 `1a76c13d32783029dc64aaff9cd297abcd3f7ba3083225e82edd876d543ea476`: the event of `test_xml2proto_default` is an input, and the script refuses to run unless takproto writes the bytes that test records |
+| Other inputs | ten CoT XML events written for the script (`INPUTS` in it) |
+| Pins | `tools/gen/golden-takproto.txt`, installed with `pip --require-hashes` (CI: conformance, "CoT golden vectors are what takproto writes") |
+| Licence | takproto: MIT (the sdist's `LICENSE`); protobuf: BSD-3-Clause. Both are run, not copied: none of their code is in this repository |

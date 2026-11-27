@@ -1,0 +1,24 @@
+{
+ "name": "golden-xml-5",
+ "from": "cot-xml",
+ "to": "cot-protobuf",
+ "input": "<event version=\"2.0\" uid=\"KX7\" type=\"a-f-G\" time=\"2025-06-15T15:06:43Z\" start=\"2025-06-15T15:06:43Z\" stale=\"2025-06-15T15:16:43Z\" how=\"m-g\"><point lat=\"64.8378\" lon=\"-147.7164\" hae=\"136.5\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"KX7\"/></detail></event>",
+ "expect": "125c0a05612d662d472a034b583730b8cf83a1f73238b8cf83a1f73240f89ea8a1f7324a036d2d6751af25e4839e35504059575bb1bfec7662c061000000000010614069000000e0cf12634171000000e0cf1263417a07120512034b5837",
+ "model": {
+  "uid": "KX7",
+  "type": "a-f-G",
+  "how": "m-g",
+  "lat": "64.8378",
+  "lon": "-147.7164",
+  "stale_ms": "1750000603000",
+  "time_ms": "1750000003000",
+  "hae": "136.5",
+  "callsign": "KX7",
+  "@absent": [
+   "ce",
+   "le"
+  ]
+ },
+ "source": "takproto 3.0.1: xml2proto of golden-takproto INPUTS[4], read back by parse_proto (github.com/snstac/takproto). Written by tools/gen/golden-takproto.py; no engine is run.",
+ "reference": "The TakMessage takproto (MIT) writes for the event, in canonical form; the event holds only what cot-xml and cot-protobuf both bind (RULE in tools/gen/golden-takproto.py)."
+}

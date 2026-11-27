@@ -1,0 +1,33 @@
+{
+ "name": "golden-pb-3",
+ "from": "cot-protobuf",
+ "to": "cot-protobuf",
+ "input": "125b0a05612d682d472a074a2d303133333530809ccea8fe2e38809ccea8fe2e4a03682d6551e561a1d634ef40c059b1e1e995b2e66240610000000000004d40690000000000002440710000000000002e407a09120712054b4f414c41",
+ "expect": "125b0a05612d682d472a074a2d303133333530809ccea8fe2e38809ccea8fe2e4a03682d6551e561a1d634ef40c059b1e1e995b2e66240610000000000004d40690000000000002440710000000000002e407a09120712054b4f414c41",
+ "model": {
+  "@kind": "cot_event",
+  "takproto.cot_event_type": "a-h-G",
+  "takproto.cot_event_uid": "J-01335",
+  "takproto.cot_event_send_time": "1614456000000",
+  "takproto.cot_event_start_time": "1614456000000",
+  "takproto.cot_event_how": "h-e",
+  "takproto.cot_event_lat": "-33.8688",
+  "takproto.cot_event_lon": "151.2093",
+  "takproto.cot_event_hae": "58.0",
+  "takproto.cot_event_ce": "10.0",
+  "takproto.cot_event_le": "15.0",
+  "takproto.detail_contact_callsign": "KOALA",
+  "uid": "J-01335",
+  "type": "a-h-G",
+  "how": "h-e",
+  "lat": "-33.8688",
+  "lon": "151.2093",
+  "time_ms": "1614456000000",
+  "hae": "58.0",
+  "ce": "10.0",
+  "le": "15.0",
+  "callsign": "KOALA"
+ },
+ "source": "takproto 3.0.1: xml2proto of golden-takproto INPUTS[1], read back by parse_proto (github.com/snstac/takproto). Written by tools/gen/golden-takproto.py; no engine is run.",
+ "reference": "The TakMessage takproto (MIT) writes for the event, without its mesh header; expect is that message with any empty sub-message cleared, serialized by the protobuf runtime."
+}
