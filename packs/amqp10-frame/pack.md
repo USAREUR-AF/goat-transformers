@@ -14,6 +14,13 @@ and output are hex. Licensed under the OASIS notice (PROVENANCE.md). Written by
 | `empty_frame` | a frame size of 8 | data offset, type, channel; no body (a heartbeat) |
 | `frame` | any other frame | the size (a `length 32 whole` line), data offset, type (0 AMQP, 1 SASL), channel; with a data offset of 2, the described-type marker, the encoding of the descriptor (smallulong or ulong) and the descriptor code: the performative (16 open to 24 close; 64 to 68 the SASL frames); then the rest of the body as octets |
 
+On encode with no recorded kind (an entity built by a library, or converted from another pack),
+`protocol_header` is chosen only when `amqp.protocol_id` is present. Otherwise `empty_frame`, which
+has no key of its own to require and must stand before `frame` for decode, is chosen: an entity
+with a frame body is written as an 8-octet empty frame and the body is dropped. The language has
+no `requires` on an absent key, which would let `empty_frame` stand aside when a body is present.
+A same-format round trip keeps its kind and is not affected.
+
 A frame whose data offset is not 2 has an extended header of 4 × (offset − 2) octets; the pack
 keeps the extended header and the body together as octets.
 

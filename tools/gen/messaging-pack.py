@@ -446,7 +446,7 @@ def amqp_pack():
                  'source        "OASIS, Advanced Message Queuing Protocol (AMQP) Version 1.0, Part 2: Transport, OASIS Standard, 29 October 2012, https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.xml (sha256 %s); layout restated"' % SHA["amqp"],
                  'source        "OASIS, AMQP Version 1.0, Part 1: Types, https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.xml (sha256 %s), the encodings of the descriptor"' % SHA["amqptypes"],
                  "uses          amqp", "wire          bits", "layout        sequential", "bit_order     msb", "",
-                 "kind    protocol_header", "when    32  1095586128", "field  amqp.protocol_id  8  uint",
+                 "kind    protocol_header", "when    32  1095586128", "requires  amqp.protocol_id", "field  amqp.protocol_id  8  uint",
                  "field  amqp.major  8  uint", "field  amqp.minor  8  uint", "field  amqp.revision  8  uint", "",
                  "kind    empty_frame", "when    32  8", "field  amqp.doff  8  uint", "field  amqp.frame_type  8  uint",
                  "field  amqp.channel  16  uint", "",

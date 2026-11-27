@@ -14,6 +14,7 @@ bit_order     msb
 
 kind    protocol_header
 when    32  1095586128
+requires  amqp.protocol_id
 field  amqp.protocol_id  8  uint
 field  amqp.major  8  uint
 field  amqp.minor  8  uint
