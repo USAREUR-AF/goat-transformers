@@ -22,6 +22,13 @@ hex. A TCP stream of PDUs is one message per PDU.
 
 The zero fields are `pad` lines: read over, written as zero.
 
+On encode with no recorded kind, each PDU type requires its keys: a key of its own where it has
+one, otherwise all of its keys, the kinds with most keys first; the PDU types are distinct, so the
+order does not change decode. Serial Notify and Serial Query carry the same keys, so an entity
+with a session ID and serial is written as Serial Notify; Reset Query and Cache Reset carry no
+key, so an entity with none is written as Reset Query. Choosing between them needs `requires` on
+a value, a language addition.
+
 ## Shared keys
 
 None: the protocol carries validated route origins, not a reported entity.

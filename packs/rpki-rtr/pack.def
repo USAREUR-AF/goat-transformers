@@ -11,30 +11,9 @@ bit_order     msb
 
 when    8  1
 
-kind    serial_notify
-when    8  0
-field   rtr.session_id  16  uint
-length  32  whole
-field   rtr.serial  32  uint
-
-kind    serial_query
-when    8  1
-field   rtr.session_id  16  uint
-length  32  whole
-field   rtr.serial  32  uint
-
-kind    reset_query
-when    8  2
-pad     16
-length  32  whole
-
-kind    cache_response
-when    8  3
-field   rtr.session_id  16  uint
-length  32  whole
-
 kind    ipv4_prefix
 when    8  4
+requires  rtr.ipv4_prefix
 pad     16
 length  32  whole
 field   rtr.flags_high  7  uint
@@ -47,6 +26,7 @@ field   rtr.asn  32  uint
 
 kind    ipv6_prefix
 when    8  6
+requires  rtr.ipv6_prefix_high
 pad     16
 length  32  whole
 field   rtr.flags_high  7  uint
@@ -60,6 +40,7 @@ field   rtr.asn  32  uint
 
 kind    end_of_data
 when    8  7
+requires  rtr.refresh_interval
 field   rtr.session_id  16  uint
 length  32  whole
 field   rtr.serial  32  uint
@@ -67,13 +48,9 @@ field   rtr.refresh_interval  32  uint
 field   rtr.retry_interval  32  uint
 field   rtr.expire_interval  32  uint
 
-kind    cache_reset
-when    8  8
-pad     16
-length  32  whole
-
 kind    router_key
 when    8  9
+requires  rtr.ski_0
 field   rtr.flags_high  7  uint
 field   rtr.announce  1  uint
 pad     8
@@ -88,6 +65,7 @@ end
 
 kind    error_report
 when    8  10
+requires  rtr.error_code
 field   rtr.error_code  16  uint
 length  32  whole
 length  32  bytes
@@ -100,3 +78,33 @@ length  32  bytes
     field  rtr.octet  8  uint
   end
 end
+
+kind    serial_notify
+when    8  0
+requires  rtr.session_id  rtr.serial
+field   rtr.session_id  16  uint
+length  32  whole
+field   rtr.serial  32  uint
+
+kind    serial_query
+when    8  1
+requires  rtr.session_id  rtr.serial
+field   rtr.session_id  16  uint
+length  32  whole
+field   rtr.serial  32  uint
+
+kind    cache_response
+when    8  3
+requires  rtr.session_id
+field   rtr.session_id  16  uint
+length  32  whole
+
+kind    reset_query
+when    8  2
+pad     16
+length  32  whole
+
+kind    cache_reset
+when    8  8
+pad     16
+length  32  whole

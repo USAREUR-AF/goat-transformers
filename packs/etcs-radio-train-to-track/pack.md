@@ -35,6 +35,13 @@ chapter 7 assigns to no train-to-track packet. A train-to-track packet has no Q_
 bit length of the whole packet, follows NID_PACKET (`length 13 bits plus 21`). Whether a message
 carries the packets its definition requires (packet 0 or 1, packet 11, packet 2) is not checked.
 
+On encode with no recorded kind, each message requires its keys: a key of its own where it has
+one, otherwise all of its keys; the NID_MESSAGE values are distinct, so the order does not change
+decode. Nine messages (validated train data, request for shunting, train position report, track
+ahead free granted, end of mission, no compatible version, session initiation, termination and
+established) carry the same keys and differ only in NID_MESSAGE, so such an entity is written as
+validated train data. Choosing by a key's value is a language addition.
+
 ## Shared keys
 
 None. The position report gives the train's position as a distance from the LRBG along the track
