@@ -432,10 +432,32 @@ drop_optional(Fields, _I, _Addressed) -> lists:reverse(Fields).
 plan(Pack, Lines, {_, Lists, _} = Src, Base, Writes0, End0) ->
     %% a line suppressed by `with` is a line whose key is absent (0.18)
     Value = fun(K, Opts) -> gt_engine:line_value(Src, K, Opts) end,
+    %% the tokens of the part groups (0.64): a token is written whole at the
+    %% group's first line, and no line of the group writes by itself
+    Tokens = maps:map(fun(_, G) -> gt_engine:part_token(G, Src, Pack) end,
+                      gt_engine:part_groups(Lines)),
+    Token = fun(Loc, LocT, {W, E, Done}) ->
+                    case {maps:get(LocT, Tokens), lists:member(LocT, Done)} of
+                        {{ok, T}, false} ->
+                            [{I, Wr}] = gt_engine:guard_encode(
+                                          Pack, "of a part group", LocT,
+                                          fun() ->
+                                                  field_out(Loc, string, T, maps:get(delimiter, Pack),
+                                                            maps:get(checksum, Pack) =:= nmea)
+                                          end),
+                            {add(Base + I, Wr, W), E, [LocT | Done]};
+                        _ -> {W, E, Done}
+                    end
+            end,
     %% a field written whole by a line whose key has a value: its columns
     %% are not written (ruling 3)
     Whole = lists:foldl(
-              fun({field, K, {fld, I}, _, _, Opts}, S) ->
+              fun({field, _, {fld, I}, _, LocT, _}, S) when is_map_key(LocT, Tokens) ->
+                      case maps:get(LocT, Tokens) of
+                          none -> S;
+                          _ -> S#{I => true}
+                      end;
+                 ({field, K, {fld, I}, _, _, Opts}, S) ->
                       case Value(K, Opts) of
                           error -> S;
                           _ -> S#{I => true}
@@ -449,15 +471,17 @@ plan(Pack, Lines, {_, Lists, _} = Src, Base, Writes0, End0) ->
               end, #{}, Lines),
     Delim = maps:get(delimiter, Pack),
     Nmea = maps:get(checksum, Pack) =:= nmea,
-    lists:foldl(
-      fun({field, Key, Loc, Tr, LocT, Opts}, {W, E}) ->
+    {Writes, End, _} = lists:foldl(
+      fun({field, _, Loc, _, LocT, _}, Acc) when is_map_key(LocT, Tokens) -> Token(Loc, LocT, Acc);
+         ({const, Loc, {part, _, _, _}, LocT}, Acc) -> Token(Loc, LocT, Acc);
+         ({field, Key, Loc, Tr, LocT, Opts}, {W, E, D}) ->
               Skip = case Loc of
                          {col, I, _, _} -> maps:is_key(I, Whole);
                          _ -> false
                      end,
               case {Skip, Value(Key, Opts)} of
-                  {true, _} -> {W, E};
-                  {_, error} -> {W, E};
+                  {true, _} -> {W, E, D};
+                  {_, error} -> {W, E, D};
                   {false, {ok, Val}} ->
                       Out = gt_engine:guard_encode(
                               Pack, Key, LocT,
@@ -465,12 +489,12 @@ plan(Pack, Lines, {_, Lists, _} = Src, Base, Writes0, End0) ->
                                       T = encode_value(Tr, gt_engine:wire_value(Pack, Key, Tr, Opts, Val)),
                                       field_out(Loc, Tr, T, Delim, Nmea)
                               end),
-                      {lists:foldl(fun({I, Wr}, Acc) -> add(Base + I, Wr, Acc) end, W, Out), E}
+                      {lists:foldl(fun({I, Wr}, Acc) -> add(Base + I, Wr, Acc) end, W, Out), E, D}
               end;
          ({wh, _, present, _}, Acc) -> Acc;
-         ({wh, Loc, {text, V, _}, _}, {W, E}) -> {add_fixed(Base, Loc, V, W), E};
-         ({const, Loc, {text, V, _}, _}, {W, E}) -> {add_fixed(Base, Loc, V, W), E};
-         ({group, List, Start, {text_item, N}, Body, _}, {W, E}) ->
+         ({wh, Loc, {text, V, _}, _}, {W, E, D}) -> {add_fixed(Base, Loc, V, W), E, D};
+         ({const, Loc, {text, V, _}, _}, {W, E, D}) -> {add_fixed(Base, Loc, V, W), E, D};
+         ({group, List, Start, {text_item, N}, Body, _}, {W, E, D}) ->
               case maps:find(List, Lists) of
                   {ok, [_ | _] = Items} ->
                       First = Base + Start,
@@ -481,11 +505,12 @@ plan(Pack, Lines, {_, Lists, _} = Src, Base, Writes0, End0) ->
                                                          First + K * N, WAcc, -1),
                                           {WI, K + 1}
                                   end, {W, 0}, Items),
-                      {W2, max(E, First + length(Items) * N - 1)};
-                  _ -> {W, E}
+                      {W2, max(E, First + length(Items) * N - 1), D};
+                  _ -> {W, E, D}
               end;
          (_, Acc) -> Acc
-      end, {Writes0, End0}, Lines).
+      end, {Writes0, End0, []}, Lines),
+    {Writes, End}.
 
 add(I, Wr, W) -> maps:update_with(I, fun(L) -> [Wr | L] end, [Wr], W).
 

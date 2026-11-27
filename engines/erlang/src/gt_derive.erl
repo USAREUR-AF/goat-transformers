@@ -15,6 +15,7 @@
 %% Sep, Token and Text are binaries (UTF-8).
 %% `add` and `sub` are resolved by check_types to {add | sub, int | float}.
 -module(gt_derive).
+-export([sep_and_rest/2]).                 % for `part` (0.64)
 -export([parse_function/2, check_types/3, apply_all/2]).
 
 %% Function text and argument count -> {ok, Function} | {error, Why}.

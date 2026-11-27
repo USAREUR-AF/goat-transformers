@@ -46,6 +46,7 @@
 -export([conv_error/4, item_source/2,
          items_reserve/2, items_check/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
+         key_value/6, part_groups/1, part_token/3,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4,
          holds/3, line_value/3, req_holds/3,
          inner_pack/3, inner_apart/4, run_mode/0, run_passed/0, run_messages/3, decode_inner/2, encode_inner/2, pass/1, inner_end/3]).
@@ -64,6 +65,7 @@
 -endif.
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
+-define(NO_OPTS, {none, false, false, false, none, none}).
 
 %% the limit on list items of one decode (ruling 7 of 0.11)
 -define(DEFAULT_MAX_ITEMS, 100000).
@@ -1713,8 +1715,16 @@ scope_read(Wire, Ctx, Lines, Pack) ->
     {Model, Lists, Failed, _Cache, End} =
         lists:foldl(
           fun({field, Key, Loc, Tr, LocT, Opts}, {M, Ls, F, C, E} = Acc) ->
-                  case maps:is_key(Key, M) of
+                  Have = maps:is_key(Key, M),
+                  case Have andalso element(1, Opts) =:= none of
+                      %% a path that does not parse is malformed-wire whatever
+                      %% other lines do (9c of 0.11, ruling 27 of 0.64)
+                      true when Wire =:= protobuf; Wire =:= pbitem ->
+                          {_, C1} = raw_tr(Wire, Ctx, Loc, Tr, Opts, C),
+                          {M, Ls, F, C1, E};
                       true -> Acc;
+                      %% with a value already, the line's table still has to
+                      %% hold what it reads (ruling 26 of 0.64)
                       false ->
                           case raw_tr(Wire, Ctx, Loc, Tr, Opts, C) of
                               {absent, C1} -> {M, Ls, F, C1, E};
@@ -1726,10 +1736,9 @@ scope_read(Wire, Ctx, Lines, Pack) ->
                                       false ->
                                           try field_decode(Wire, Tr, Raw, Loc, Opts, Pack) of
                                               V0 ->
-                                                  case scope_via(Opts, V0, Tr, Key, LocT, Pack) of
-                                                      {ok, V1} ->
-                                                          {M#{Key => typemap_decode(Key, V1, Pack)}, Ls, F, C1, E};
-                                                      failed -> {M, Ls, F, C1, E}
+                                                  case key_value(Opts, V0, Tr, Key, LocT, Pack) of
+                                                      {ok, V} when not Have -> {M#{Key => V}, Ls, F, C1, E};
+                                                      _ -> {M, Ls, F, C1, E}
                                                   end
                                           catch
                                               _:_ -> {M, Ls, [{Key, LocT} | F], C1, E}
@@ -1744,20 +1753,25 @@ scope_read(Wire, Ctx, Lines, Pack) ->
                       {{ok, _}, C1, E1} when Discard -> {M, Ls, F, C1, max(E, E1)};
                       {{ok, Items}, C1, E1} -> {M, Ls#{List => Items}, F, C1, max(E, E1)}
                   end;
+             %% a const part is checked, and no line forgives it (0.64, ruling 4)
+             ({const, Loc, {part, Sep, N, Text}, LocT}, {M, Ls, F, C, E}) ->
+                  {Raw, C1} = raw_tr(Wire, Ctx, Loc, string, ?NO_OPTS, C),
+                  Holds = case Raw of
+                              absent -> true;
+                              {ok, R} ->
+                                  try field_decode(Wire, {part, Sep, N, false}, R, Loc, ?NO_OPTS, Pack) =:= Text
+                                  catch _:_ -> false
+                                  end
+                          end,
+                  case Holds of
+                      true -> ok;
+                      false -> record_failure(Pack, "part ~p at ~s is not ~s", [N, LocT, Text])
+                  end,
+                  {M, Ls, F, C1, E};
              (_, Acc) -> Acc
           end, {#{}, #{}, [], #{}, 0}, Lines),
     Bad = [KL || {K, _} = KL <- lists:reverse(Failed), not maps:is_key(K, Model)],
     {Model, Lists, Bad, End}.
-
-%% `via` of a field. In an inner message (0.34) a value with no table entry
-%% does not stop the decode (ruling 19): the failure is raised when it ends.
-scope_via(Opts, V0, Tr, Key, LocT, Pack) ->
-    try {ok, via_decode(Opts, V0, Tr, Key, LocT, Pack)}
-    catch
-        error:{convert_error, 'transform-decode', Msg} when is_map_key(shadow, Pack) ->
-            record_failure_msg(Msg),
-            failed
-    end.
 
 %% The pack a group of a scope is read with, and whether its items are
 %% discarded (0.34, Decode step 4): `shadow` holds the lists of the message
@@ -2172,9 +2186,9 @@ mapped_locs(Lines) ->
 %% (xml_ensure/1): the same plan, without `mapped`, is kept with the body of
 %% every group (plan_bodies/2), whose items are written with it.
 scope_plan(xml, Lines) ->
-    ?XML(#{mapped => mapped_locs(Lines), fixed => fixed_locs(Lines), ensure => xml_ensure(Lines)});
-scope_plan(json, Lines) -> ?JSON(#{mapped => mapped_locs(Lines), fixed => fixed_locs(Lines)});
-scope_plan(geojson, Lines) -> ?GEOJSON(#{mapped => mapped_locs(Lines), fixed => fixed_locs(Lines)});
+    ?XML(#{parts => part_groups(Lines), mapped => mapped_locs(Lines), fixed => fixed_locs(Lines), ensure => xml_ensure(Lines)});
+scope_plan(json, Lines) -> ?JSON(#{parts => part_groups(Lines), mapped => mapped_locs(Lines), fixed => fixed_locs(Lines)});
+scope_plan(geojson, Lines) -> ?GEOJSON(#{parts => part_groups(Lines), mapped => mapped_locs(Lines), fixed => fixed_locs(Lines)});
 scope_plan(tlv, Lines) -> ?TLV(gt_tlv:plan(Lines));
 scope_plan(_Wire, _Lines) -> #{}.
 
@@ -2280,6 +2294,10 @@ swap_bytes(U, Len) ->
     V.
 -endif.
 
+%% one part of the token `string` reads (0.64); a missing part raises
+field_decode(Wire, {part, Sep, N, _}, Raw, Loc, Opts, Pack) ->
+    Token = field_decode(Wire, string, Raw, Loc, Opts, Pack),
+    lists:nth(N + 1, binary:split(Token, Sep, [global]));
 field_decode(xml, Tr, Raw, _Loc, _Opts, _Pack) -> ?XML(xml_decode(Tr, Raw));
 field_decode(text, Tr, Raw, _Loc, _Opts, _Pack) -> ?TEXT(gt_text:decode_value(Tr, Raw));
 field_decode(Wire, {iscale, N, D, Off}, Raw, _Loc, _Opts, _Pack)
@@ -2570,8 +2588,8 @@ json_encode(Pack, Lines, Src, Residue) ->
 %% empty list.
 %% The plan of the scope (scope_plan/2) holds its fixed values and where
 %% its `element` lines make elements, both kept since load.
-xml_build(Elem, Lines, #{fixed := Fixed, ensure := Ensure}, Src, Pack) ->
-    Ops = text_plan(Lines, Fixed, Src, Pack, fun xml_render/1, fun({text, T, _}) -> T end,
+xml_build(Elem, Lines, #{fixed := Fixed, parts := Parts, ensure := Ensure}, Src, Pack) ->
+    Ops = text_plan(Lines, Fixed, Parts, Src, Pack, fun xml_render/1, fun({text, T, _}) -> T end,
                     fun(Group, Items) -> xml_items(Group, Items, Pack) end),
     {R9, _} =
         lists:foldl(
@@ -2624,8 +2642,8 @@ xml_items({group, _, Path, _, #{lines := Ls, plan := Plan} = Body, _}, Items, Pa
 
 %% ---- json, geojson: what each line of a scope writes ----
 -if(?W_JSON orelse ?W_GEOJSON).
-json_plan(Lines, #{fixed := Fixed}, Src, Pack) ->
-    text_plan(Lines, Fixed, Src, Pack, fun json_render/1, fun fixed_json/1,
+json_plan(Lines, #{fixed := Fixed, parts := Parts}, Src, Pack) ->
+    text_plan(Lines, Fixed, Parts, Src, Pack, fun json_render/1, fun fixed_json/1,
               fun(Group, Items) -> json_array(Group, Items, Pack) end).
 
 json_tree(Ops) ->
@@ -3192,8 +3210,9 @@ guard_encode(Pack, Key, LocT, Fun) ->
 %% line's position. A `group` whose list the scope has writes what
 %% RenderGroup makes of the items. A line that writes nothing still holds
 %% its place (`none`).
-%% Fixed is fixed_locs/1 of the scope's lines, kept since load.
-text_plan(Lines0, Fixed, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGroup) ->
+%% Fixed is fixed_locs/1 of the scope's lines, Parts part_groups/1, kept
+%% since load.
+text_plan(Lines0, Fixed, Parts, {Value, Lists, Held} = Src, Pack, RenderField, RenderFixed, RenderGroup) ->
     Lines = suppress(Lines0, Held),
     %% a sentinel is written only at a locator no line with a value writes
     %% (ruling 16 of 0.9)
@@ -3208,6 +3227,12 @@ text_plan(Lines0, Fixed, {Value, Lists, Held}, Pack, RenderField, RenderFixed, R
                           {ok, FV} -> {fixed, FV};
                           error ->
                               case Line of
+                                  %% the token of a part group (0.64) stands
+                                  %% at its first line
+                                  {field, _, _, _, PT, _} when is_map_key(PT, Parts) ->
+                                      part_cand(Loc, Placed, maps:get(PT, Parts), Src, Pack);
+                                  {const, _, {part, _, _, _}, PT} ->
+                                      part_cand(Loc, Placed, maps:get(PT, Parts), Src, Pack);
                                   {field, K, _, Tr, LocT, Opts} ->
                                       case {Value(K), element(5, Opts)} of
                                           {error, [S0 | _]} ->
@@ -3237,6 +3262,7 @@ text_plan(Lines0, Fixed, {Value, Lists, Held}, Pack, RenderField, RenderFixed, R
                                   {fixed, W} -> RenderFixed(W);
                                   {sentinel, S} -> text_sentinel(S);
                                   {group, G} -> G;
+                                  {token, T} -> RenderField({str, T});
                                   {field, Key, Tr1, Val1, LocT1, Opts1} ->
                                       guard_encode(
                                         Pack, Key, LocT1,
@@ -3278,12 +3304,19 @@ text_plan(Lines0, Fixed, {Value, Lists, Held}, Pack, RenderField, RenderFixed, R
                     end, #{}, lists:zip(Lines, InOrder)),
     Placed.
 
+part_cand(Loc, Placed, _Group, _Src, _Pack) when is_map_key(Loc, Placed) -> none;
+part_cand(_Loc, _Placed, Group, Src, Pack) ->
+    case part_token(Group, Src, Pack) of
+        none -> none;
+        {ok, T} -> {token, T}
+    end.
+
 %% The values a scope's `const` and valued `when` lines write, by locator
 %% (ruling 26 of 0.5); a `when` with a list writes its first value (ruling
 %% 15 of 0.20). `with` (suppress/2) never touches these lines, so the map is
 %% one per scope, computed at load (scope_plan/2).
 fixed_locs(Lines) ->
-    Consts = maps:from_list([{Loc, V} || {const, Loc, V, _} <- Lines]),
+    Consts = maps:from_list([{Loc, V} || {const, Loc, V, _} <- Lines, element(1, V) =/= part]),
     maps:merge(Consts,
                maps:from_list([{Loc, V} || {wh, Loc, {text, _, _} = V, _} <- Lines] ++
                               [{Loc, V} || {wh, Loc, {anyof, [{text, _, _} = V | _]}, _} <- Lines])).
@@ -3348,8 +3381,141 @@ text_sentinel({str, T}) -> ?JSONTEXT([$", gt_json:escape(T), $"]).
 -endif.
 
 %% ===================================================================
+%% parts of a text token (Version 0.64)
+%% ===================================================================
+%% The part groups of a scope's lines -> #{LocText => Group}; Group =
+%% #{loct, sep, whole => Key | none, parts => [{const, N, Text} |
+%%   {field, N, Key, Opts, Transform, Alone}]}, in part order. Alone: no
+%% other `field` line of the scope maps the key (rulings 18 and 25).
+part_groups(Lines) ->
+    Ps = [{T, S, {field, N, K, Opts, Tr}} || {field, K, _, {part, S, N, _} = Tr, T, Opts} <- Lines] ++
+        [{T, S, {const, N, Text}} || {const, _, {part, S, N, Text}, T} <- Lines],
+    case Ps of
+        [] -> #{};
+        _ ->
+            Uses = lists:foldl(fun({field, K, _, _, _, _}, M) ->
+                                       maps:update_with(K, fun(C) -> C + 1 end, 1, M);
+                                  (_, M) -> M
+                               end, #{}, Lines),
+            maps:from_list(
+              [{T, #{loct => T, sep => S,
+                     whole => hd([K || {field, K, _, string, WT, _} <- Lines, WT =:= T] ++ [none]),
+                     parts => lists:keysort(2, [case P of
+                                                    {field, N, K, Opts, Tr} ->
+                                                        {field, N, K, Opts, Tr, maps:get(K, Uses) =:= 1};
+                                                    _ -> P
+                                                end || {T1, _, P} <- Ps, T1 =:= T])}}
+               || {T, S, _} <- Ps])
+    end.
+
+%% What the encode writes at the place of a part group -> none | {ok, Text}.
+part_token(#{whole := Whole, parts := Parts} = G, {Value, _, Held} = Src, Pack) ->
+    Fields = [F || F <- Parts, element(1, F) =:= field],
+    AnyHeld = lists:any(fun(F) -> Held(element(3, F)) end, Fields),
+    AllValued = lists:all(fun(F) -> Value(element(3, F)) =/= error end, Fields),
+    case Whole =/= none andalso Held(Whole) of
+        true -> part_whole(G, Src, Pack);                           % step 1
+        false when AnyHeld; AllValued -> part_join(G, Src, Pack);   % step 2
+        false when Whole =:= none -> none;
+        false ->                                                    % step 3
+            case Value(Whole) of
+                error -> none;
+                _ -> part_whole(G, Src, Pack)
+            end
+    end.
+
+part_fail(#{loct := T}, Pack, Fmt, Args) ->
+    conv_error('transform-encode', Pack, "the token at ~s: " ++ Fmt, [T | Args]).
+
+%% The text of the whole key, checked against every part line.
+part_whole(#{whole := Whole, sep := Sep, parts := Parts} = G, {Value, _, Held}, Pack) ->
+    {ok, Val} = Value(Whole),
+    Text = typemap_encode(Whole, Val, Pack),
+    Pieces = binary:split(Text, Sep, [global]),
+    lists:foreach(
+      fun({const, N, T}) ->
+              case N < length(Pieces) andalso lists:nth(N + 1, Pieces) =:= T of
+                  true -> ok;
+                  false -> part_fail(G, Pack, "part ~p of ~s is not ~s", [N, Text, T])
+              end;
+         ({field, _, _, _, _, false}) -> ok;
+         ({field, N, Key, Opts, Tr, true}) ->
+              Read = case N < length(Pieces) of
+                         true -> part_value(Opts, lists:nth(N + 1, Pieces), Tr, Key, Pack);
+                         false -> failed
+                     end,
+              Ok = case {Read, Held(Key)} of
+                       {failed, _} -> false;
+                       {absent, H} -> not H;
+                       {{ok, _}, false} -> true;
+                       {{ok, V}, true} -> {ok, HeldV} = Value(Key), V == HeldV      % ruling 22
+                   end,
+              case Ok of
+                  true -> ok;
+                  false -> part_fail(G, Pack, "part ~p of ~s does not agree with ~s", [N, Text, Key])
+              end
+      end, Parts),
+    {ok, Text}.
+
+%% The parts joined, each from its const or its field.
+part_join(#{sep := Sep, parts := Parts} = G, {Value, _, _}, Pack) ->
+    {ok, iolist_to_binary(
+           lists:join(Sep, [case P of
+                                {const, _, T} -> T;
+                                {field, N, Key, Opts, _, _} ->
+                                    T = case Value(Key) of
+                                            {ok, V} -> part_text(Opts, typemap_encode(Key, V, Pack), Pack);
+                                            error -> error
+                                        end,
+                                    case is_binary(T) andalso binary:match(T, Sep) =:= nomatch of
+                                        true -> T;
+                                        false -> part_fail(G, Pack, "part ~p cannot be written from ~s", [N, Key])
+                                    end
+                            end || P <- Parts]))}.
+
+%% a value with no entry never passes through (ruling 3)
+part_text({none, _, _, _, _, _}, V, _Pack) -> V;
+part_text({Table, _, _, _, _, _}, V, #{tables := Tables}) ->
+    #{enc := Enc} = maps:get(Table, Tables),
+    maps:get(gt_num:canon(V), maps:get(type_of(V), Enc), error).
+
+%% The value a part's text gives its key -> {ok, V} | absent | failed.
+part_value({none, _, _, _, _, _}, T, _Tr, Key, Pack) -> {ok, typemap_decode(Key, T, Pack)};
+part_value({Table, _, _, _, _, _}, T, {part, _, _, Unlisted}, Key, #{tables := Tables, key_types := Types} = Pack) ->
+    #{dec := Dec} = maps:get(Table, Tables),
+    case maps:find(gt_num:canon(T), maps:get(string, Dec)) of
+        {ok, ModelText} ->
+            try {ok, typemap_decode(Key, gt_num:read_as(maps:get(Key, Types), ModelText), Pack)}
+            catch _:_ -> failed
+            end;
+        error when Unlisted -> absent;
+        error -> failed
+    end.
+
+%% ===================================================================
 %% value tables (`via`) and the typemap
 %% ===================================================================
+%% The value a field line's transform result gives its key, through `via`
+%% and `typemap` -> {ok, V} | absent | failed. A missing table entry is kept
+%% as a failure of the decode, raised when it ends, so that the limit on list
+%% items read later still wins (ruling 7f of 0.11) and no other line of the
+%% key forgives it (0.7 ruling 10, ruling 26 of 0.64).
+key_value(Opts, V0, {part, _, N, _} = Tr, Key, LocT, Pack) ->
+    case part_value(Opts, V0, Tr, Key, Pack) of
+        failed ->
+            record_failure(Pack, "field ~s at ~s: part ~p has no table entry for its text", [Key, LocT, N]),
+            failed;
+        Other -> Other
+    end;
+key_value(Opts, V0, Tr, Key, LocT, Pack) ->
+    try via_decode(Opts, V0, Tr, Key, LocT, Pack) of
+        V1 -> {ok, typemap_decode(Key, V1, Pack)}
+    catch
+        error:{convert_error, 'transform-decode', Msg} ->
+            record_failure_msg(Msg),
+            failed
+    end.
+
 %% Decode: after the transform. The value is looked up by its canonical
 %% text, the entries canonicalised as a value of its type is; the result is
 %% read as the key's declared type. A value with no entry passes through
