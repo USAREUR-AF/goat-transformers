@@ -28,6 +28,10 @@ None. No IPP field has the meaning and unit of a `core` or `track` key.
 
 ## Not mapped
 
+- The version number's two octets are read as unsigned (`uint`). RFC 8010 section 3 types them
+  SIGNED-BYTE, so an octet from 0x80 to 0xFF decodes as 128 to 255 where the RFC gives -128 to
+  -1. No defined IPP version uses those values; changing the keys' reading would change what
+  their stored numbers mean, so it is stated here instead.
 - **The end-of-attributes tag as a list terminator.** The attribute list ends at tag 0x03; the pack has no
   list that ends at a value of its first octet. It reads the items as a `rest` list instead and puts the
   document data inside the end-tag item, which reads the same messages and writes them back unchanged. A

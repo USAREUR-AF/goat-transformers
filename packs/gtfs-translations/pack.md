@@ -49,6 +49,12 @@ accepts characters 0x20 to 0x7E only, so a row with any other character (an
 accented stop name, for example) is `malformed-wire`. Missing addition:
 **UTF-8 text fields** on the `text` wire.
 
+### Required columns
+
+The reference marks each column Required, Conditionally Required, Optional or
+Recommended. The pack does not check it: on the `text` wire an empty value is an
+absent key, so a row with a Required column empty decodes without an error.
+
 ## Columns
 
 | Field | Column | Reference type |
