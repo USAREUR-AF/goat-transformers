@@ -106,6 +106,7 @@ Run from the repository root unless a directory is named.
 | Rust engine and CLI | `cd engines/rust && cargo build --release` gives `target/release/goat-xf` |
 | Rust, every vector | `cd engines/rust && cargo test --release` |
 | Decoded values are plausible; heights name a datum | `python3 -I tools/model-checks.py --check` (CI); without `--check` it lists every failure, allowed or not. Rules: `tools/model-ranges.json`; today's failures: `tools/model-checks-allow.txt`, burned down, never grown without a reason |
+| A declared route drops no key without a written reason | `python3 -I tools/route-coverage.py --check` (CI). `tools/route-coverage.txt` lists the routes a deployment runs and, for each key a route drops, `derived:<target key>` or `not-carried` with the reason; `--print <from> <to>` writes the lines a new route needs |
 | A core or track change carries an ADR | `python3 -I tools/model-governance.py --base origin/main` (CI on every pull request) |
 | Sections shared by README.md and the site (`docs/<name>-section.md`) | `python3 -I tools/doc-sections.py` writes them into both; `--check` (CI) fails when either is stale. Edit the source, never the copies |
 | Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them (the counts pull request); `--check` (CI) fails on a pack with no known licence (stale files are a note); `--check-current` (counts PR) also fails on stale files; `--list --profile open`; `reuse lint` (pip `reuse`) |
