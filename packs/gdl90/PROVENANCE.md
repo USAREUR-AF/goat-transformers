@@ -68,4 +68,4 @@ hardening, item 2).
 | Test messages | `gdl90/tests/test_decoder.py` at that commit (SHA-256 recorded in the script): the framed heartbeat and geometric altitude messages are inputs |
 | Licence | MIT (`LICENSE` at that commit, SHA-256 `27130c67ffdc08f55a8a8fedc6e9652e2b632c9882ff970faab2e42d17bf4bc1`). It is run, not copied: none of its code is in this repository |
 | Also read | `Docs/GDL90_Public_ICD_RevA.pdf` and `Docs/ForeFlight - GDL 90 Extended Specification.pdf` in that repository, for text padding (pack.md); read, not kept |
-| CI | conformance, "GDL 90 golden vectors are what the gdl90 reference writes" |
+| CI | `.github/workflows/golden-gdl90.yml`, "GDL 90 golden vectors are what the gdl90 reference writes" |
