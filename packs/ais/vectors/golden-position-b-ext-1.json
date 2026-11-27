@@ -1,0 +1,30 @@
+{
+ "name": "golden-position-b-ext-1",
+ "from": "ais",
+ "to": "ais",
+ "input": "C5RTgt00Nmjj@8VrtWDDl050>NH8:M1R000000000000B0`2Q1S0",
+ "expect": "C5RTgt00Nmjj@8VrtWDDl050>NH8:M1R000000000000B0`2Q1S0",
+ "model": {
+  "@kind": "position-b-ext",
+  "ais.mmsi": "371798000",
+  "ais.accuracy": "0",
+  "ais.raim": "1",
+  "ais.second": "10",
+  "ais.heading": "0",
+  "ais.epfd": "1",
+  "ais.dte": "0",
+  "ais.assigned": "0",
+  "lat": "48.381635",
+  "lon": "-123.395385",
+  "course": "33.3",
+  "ais.shipname": "GOLDEN 1",
+  "ais.shiptype": "36",
+  "ais.to_bow": "10",
+  "ais.to_stern": "5",
+  "ais.to_port": "2",
+  "ais.to_starboard": "3",
+  "speed_ms": "6.3276666666666666"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"accuracy\": 0, \"assigned\": 0, \"course\": 33.3, \"dte\": 0, \"epfd\": 1, \"heading\": 0, \"lat\": 48.381635, \"lon\": -123.395385, \"mmsi\": 371798000, \"radio\": 2249, \"raim\": 1, \"second\": 10, \"ship_type\": 36, \"shipname\": \"GOLDEN 1\", \"speed\": 12.3, \"to_bow\": 10, \"to_port\": 2, \"to_starboard\": 3, \"to_stern\": 5, \"type\": 19}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 19 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s."
+}

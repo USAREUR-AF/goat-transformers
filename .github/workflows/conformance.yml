@@ -124,6 +124,12 @@ jobs:
       # and refused unless their SHA-256 is the one its PROVENANCE.md records.
       - name: Remote ID golden vectors are what opendroneid-core-c writes
         run: python3 -I tools/gen/golden-opendroneid.py --check
+      # pyais and its one dependency are installed from wheels pinned by SHA-256.
+      - name: AIS golden vectors are what pyais writes
+        run: |
+          python3 -m venv "$RUNNER_TEMP/pyais"
+          "$RUNNER_TEMP/pyais/bin/pip" install --quiet --disable-pip-version-check --require-hashes -r tools/gen/golden-pyais.txt
+          "$RUNNER_TEMP/pyais/bin/python" -I tools/gen/golden-pyais.py --check
   # Spec 0.24: each wire builds alone, and with every wire but it, with no
   # warning; its vectors pass on the build that has it and json. A job of its
   # own: the rust job is near its time limit.

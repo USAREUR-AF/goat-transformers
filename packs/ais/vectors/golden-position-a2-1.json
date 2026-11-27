@@ -1,0 +1,24 @@
+{
+ "name": "golden-position-a2-1",
+ "from": "ais",
+ "to": "ais",
+ "input": "25RTgt0P1sG;90RKcjMHh6fD20S9",
+ "expect": "25RTgt0P1sG;90RKcjMHh6fD20S9",
+ "model": {
+  "@kind": "position-a2",
+  "ais.mmsi": "371798000",
+  "ais.accuracy": "0",
+  "ais.raim": "1",
+  "ais.second": "10",
+  "ais.radio": "2249",
+  "ais.heading": "215",
+  "lat": "48.381635",
+  "lon": "-123.395385",
+  "course": "224",
+  "ais.nav_status": "0",
+  "ais.maneuver": "0",
+  "speed_ms": "6.3276666666666666"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"accuracy\": 0, \"course\": 224.0, \"heading\": 215, \"lat\": 48.381635, \"lon\": -123.395385, \"maneuver\": 0, \"mmsi\": 371798000, \"radio\": 2249, \"raim\": 1, \"second\": 10, \"speed\": 12.3, \"status\": 0, \"type\": 2}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 2 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s."
+}

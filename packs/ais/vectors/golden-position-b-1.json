@@ -1,0 +1,28 @@
+{
+ "name": "golden-position-b-1",
+ "from": "ais",
+ "to": "ais",
+ "input": "B5RTgt00Nmjj@8VrtWD6@655l0S9",
+ "expect": "B5RTgt00Nmjj@8VrtWD6@655l0S9",
+ "model": {
+  "@kind": "position-b",
+  "ais.mmsi": "371798000",
+  "ais.accuracy": "0",
+  "ais.raim": "1",
+  "ais.second": "10",
+  "ais.radio": "2249",
+  "ais.heading": "12",
+  "ais.assigned": "0",
+  "lat": "48.381635",
+  "lon": "-123.395385",
+  "course": "10",
+  "ais.cs": "1",
+  "ais.display": "0",
+  "ais.dsc": "1",
+  "ais.band": "1",
+  "ais.msg22": "1",
+  "speed_ms": "6.3276666666666666"
+ },
+ "source": "pyais 3.3.1: pyais.encode_dict({\"accuracy\": 0, \"assigned\": 0, \"band\": 1, \"course\": 10.0, \"cs\": 1, \"display\": 0, \"dsc\": 1, \"heading\": 12, \"lat\": 48.381635, \"lon\": -123.395385, \"mmsi\": 371798000, \"msg22\": 1, \"radio\": 2249, \"raim\": 1, \"second\": 10, \"speed\": 12.3, \"type\": 18}), then pyais.decode of that sentence for the model values. Written by tools/gen/golden-pyais.py; no engine is run.",
+ "reference": "AIS message type 18 as pyais (MIT, github.com/M0r13n/pyais) encodes and decodes it; speed from pyais's knots at 1 kn = 1852/3600 m/s."
+}
