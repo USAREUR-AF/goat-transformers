@@ -1,0 +1,12 @@
+{
+  "name": "ruling-06-first-position-at-the-most-significant-end",
+  "from": "conformance-charset-lsb",
+  "to": "conformance-charset-lsb",
+  "input": "231100",
+  "expect": "231100",
+  "model": {
+    "probe.s1": "AB123"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, On bits; ruling 6: the positions run from the top of the number uint reads"
+}

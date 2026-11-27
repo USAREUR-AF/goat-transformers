@@ -27,6 +27,8 @@
 // integer arithmetic (big integers where a text number needs them). Kind
 // selection (spec Version 0.20): `when` value lists and ranges, `requires
 // <key>=<value>…`, and the sequential `switch` / `case` / `else` block.
+// Character codes (spec Version 0.46): `charset` lines, `code` and `codenum`
+// on bits, `codestr` and `codenum` on the text wires.
 // Stdlib only.
 //
 // Errors the specification names are Zig errors whose name IS the spec token
@@ -420,6 +422,11 @@ const TKind = enum {
     text_,
     bytes,
     epoch_s,
+    // Version 0.46: characters of the pack's own sets. `code` on bits,
+    // `codestr` on the text wires, `codenum` on both
+    code,
+    codestr,
+    codenum,
 };
 
 // A transform of Version 0.15: on a wire it does not list it is `bad-directive`.
@@ -439,13 +446,25 @@ const KindCat = enum { text, bits, proto, rec, tlv, cbor };
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
         .string, .float, .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .tscale, .iscale => .text,
+        // `codenum` is a transform of `bits` too: see `bitsTransform`
+        .codestr, .codenum => .text,
         .uint, .twos, .linscale, .uscale, .sscale, .f32_, .f64_, .ascii, .sixbit => .bits,
-        .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal => .bits,
+        .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal, .code => .bits,
         .pstring, .pvarint, .psint, .pdouble, .pfloat => .proto,
         .int_w, .dec, .dm, .hms, .hms_dmy => .rec,
         .utf8, .hex => .tlv,
         .text_, .bytes, .epoch_s => .cbor,
     };
+}
+
+// The transforms of the `bits` wire.
+fn bitsTransform(k: TKind) bool {
+    return kindCategory(k) == .bits or k == .hex or k == .codenum;
+}
+
+// Version 0.46: the transforms over a list of the pack's character sets.
+fn isCode(k: TKind) bool {
+    return k == .code or k == .codestr or k == .codenum;
 }
 
 fn wireCategory(w: Wire) KindCat {
@@ -480,7 +499,26 @@ const Transform = struct {
     ioff: i64 = 0,
     // chars
     cset: CharSet = .ascii7,
+    // code, codestr, codenum (Version 0.46): the list as written, and the
+    // set of each position, resolved once the file is read
+    sets_raw: []const u8 = "",
+    sets: []const *const CodeSet = &.{},
 };
+
+// Version 0.46: a `charset` line. `width` is the bits per character on `bits`.
+const CodeSet = struct {
+    name: []const u8,
+    chars: []const u8,
+    width_raw: ?[]const u8,
+    width: usize = 0,
+    lineno: usize,
+
+    fn codeOf(self: *const CodeSet, c: u8) ?u64 {
+        return std.mem.indexOfScalar(u8, self.chars, c);
+    }
+};
+
+const max_positions = 16;
 
 const LineTag = enum { field, when, constant, group, element };
 
@@ -992,6 +1030,10 @@ const Pack = struct {
     // for the value checks at load; does the sequential pack hold a `switch`
     vchecks: std.ArrayListUnmanaged(VCheck) = .{},
     seq_switch: bool = false,
+    // Version 0.46: the `charset` lines, and the first one that stands after
+    // the first message kind (0: none)
+    charsets: std.ArrayListUnmanaged(*CodeSet) = .{},
+    charset_late: usize = 0,
     // Version 0.33: the first `at` form error and the first window not fixed
     // in its kind, reported last among the module checks (rulings 10, 25)
     at_err: ?[]const u8 = null,
@@ -1008,6 +1050,19 @@ const Pack = struct {
     // Version 0.52, ruling 20, and Version 0.94: where in `key_uses` each
     // message kind begins
     kind_starts: std.ArrayListUnmanaged(usize) = .{},
+
+    fn charset(self: *const Pack, name: []const u8) ?*const CodeSet {
+        for (self.charsets.items) |c| if (std.mem.eql(u8, c.name, name)) return c;
+        return null;
+    }
+
+    // A `charset` line, kept as written until the file is read.
+    fn addCharset(self: *Pack, alloc: std.mem.Allocator, toks: []const []const u8, lineno: usize, late: bool) !void {
+        if (late and self.charset_late == 0) self.charset_late = lineno;
+        const c = try alloc.create(CodeSet);
+        c.* = .{ .name = toks[1], .chars = toks[2], .width_raw = if (toks.len > 3) toks[3] else null, .lineno = lineno };
+        try self.charsets.append(alloc, c);
+    }
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -1280,9 +1335,9 @@ fn textIfOk(text: []const u8) bool {
 // The type a transform yields (spec: "The type a transform yields").
 fn yields(k: TKind) KeyType {
     return switch (k) {
-        .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal, .text_, .bytes => .string,
+        .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal, .text_, .bytes, .code, .codestr => .string,
         .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms, .smscale, .f32scale, .f64scale, .tscale => .float,
-        .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale, .epoch_s => .int,
+        .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale, .epoch_s, .codenum => .int,
     };
 }
 
@@ -1555,6 +1610,11 @@ fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
 
     var it = std.mem.splitScalar(u8, s, ':');
     const head = it.next() orelse return E.@"unknown-transform";
+    // Version 0.46: every error of the list is a check after the file, a
+    // missing list included (ruling 15)
+    for ([_]struct { n: []const u8, k: TKind }{ .{ .n = "code", .k = .code }, .{ .n = "codestr", .k = .codestr }, .{ .n = "codenum", .k = .codenum } }) |e| {
+        if (std.mem.eql(u8, head, e.n)) return .{ .kind = e.k, .sets_raw = if (s.len > head.len) s[head.len + 1 ..] else "" };
+    }
     // A parameter on a transform that takes none is `bad-directive` (ruling
     // 27 of 0.22). `int:<w>` is the transform of the `text` wire.
     for (simple) |e| {
@@ -2009,6 +2069,145 @@ fn checkDerives(alloc: std.mem.Allocator, m: *Module, mods: *const ModuleMap, di
     }
 }
 
+// Version 0.46: the `charset` lines, once the file is read. The width counts
+// on `bits` only (ruling 14).
+fn charsetCheck(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    if (p.charset_late != 0) return bad(diag, alloc, bd, "line {d}: charset after the first kind", .{p.charset_late});
+    for (p.charsets.items, 0..) |c, i| {
+        if (c.name.len == 0) return bad(diag, alloc, bd, "line {d}: charset with an empty name", .{c.lineno});
+        for (c.name) |ch| {
+            if (!std.ascii.isAlphanumeric(ch) and ch != '_' and ch != '-') return bad(diag, alloc, bd, "line {d}: charset name {s} holds a character other than A-Z, a-z, 0-9, _ and -", .{ c.lineno, c.name });
+        }
+        for (p.charsets.items[0..i]) |o| {
+            if (std.mem.eql(u8, o.name, c.name)) return bad(diag, alloc, bd, "line {d}: charset {s} is declared twice", .{ c.lineno, c.name });
+        }
+        if (c.chars.len == 0) return bad(diag, alloc, bd, "line {d}: charset {s} holds no character", .{ c.lineno, c.name });
+        for (c.chars, 0..) |ch, j| {
+            if (ch < 0x21 or ch > 0x7e) return bad(diag, alloc, bd, "line {d}: charset {s} holds a character outside 0x21 to 0x7E", .{ c.lineno, c.name });
+            if (std.mem.indexOfScalar(u8, c.chars[0..j], ch) != null) return bad(diag, alloc, bd, "line {d}: charset {s} holds a character twice", .{ c.lineno, c.name });
+        }
+        if (p.wire != .bits) continue;
+        // max(1, ceil(log2(size))); at most 94 characters, so at most 7
+        c.width = @max(1, std.math.log2_int_ceil(usize, c.chars.len));
+        if (c.width_raw) |raw| {
+            const w = if (allDigits(raw)) parseUnsigned(raw) else null;
+            if (w == null or w.? < c.width or w.? > 8) return bad(diag, alloc, bd, "line {d}: charset {s}: the width {s} is not {d} to 8", .{ c.lineno, c.name, raw, c.width });
+            c.width = @intCast(w.?);
+        }
+    }
+}
+
+// Version 0.46: the sets a `code`, `codestr` or `codenum` list names, first
+// position first.
+fn resolveCodeSets(alloc: std.mem.Allocator, p: *const Pack, ln: *Line, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    const t = &ln.transform;
+    if (!isCode(t.kind)) return;
+    if (t.sets_raw.len == 0) return bad(diag, alloc, bd, "line {d}: {s} names no position", .{ ln.lineno, @tagName(t.kind) });
+    var sets = std.ArrayListUnmanaged(*const CodeSet){};
+    var product: u128 = 1;
+    var it = std.mem.splitScalar(u8, t.sets_raw, ',');
+    while (it.next()) |name| {
+        if (sets.items.len == max_positions) return bad(diag, alloc, bd, "line {d}: {s} names more than {d} positions", .{ ln.lineno, @tagName(t.kind), max_positions });
+        const c = p.charset(name) orelse return bad(diag, alloc, bd, "line {d}: {s}: no charset is named `{s}`", .{ ln.lineno, @tagName(t.kind), name });
+        // a character the record cannot carry (ruling 12)
+        if (isW(p.wire, .text)) {
+            if (p.delim) |d| if (c.codeOf(d) != null) return bad(diag, alloc, bd, "line {d}: charset {s} holds the delimiter", .{ ln.lineno, name });
+            if (p.nmea and c.codeOf('*') != null) return bad(diag, alloc, bd, "line {d}: charset {s} holds a * under checksum nmea", .{ ln.lineno, name });
+        }
+        product *= c.chars.len; // at most 94^16, below 2^128
+        try sets.append(alloc, c);
+    }
+    if (t.kind == .codenum and product > (@as(u128, 1) << 63)) return bad(diag, alloc, bd, "line {d}: codenum: the product of the sizes is above 2^63", .{ln.lineno});
+    t.sets = sets.items;
+}
+
+// The codes of a text, one character per position, each in its set; null
+// when the text does not have that form.
+fn codesOfText(t: Transform, text: []const u8) ?[max_positions]u64 {
+    if (text.len != t.sets.len) return null;
+    var codes = [_]u64{0} ** max_positions;
+    for (t.sets, text, 0..) |c, ch, i| codes[i] = c.codeOf(ch) orelse return null;
+    return codes;
+}
+
+// The value of codes that lie within their sets: the characters, or for
+// `codenum` the mixed-radix number, first position most significant.
+fn valueOfCodes(alloc: std.mem.Allocator, t: Transform, codes: [max_positions]u64) !MV {
+    if (t.kind == .codenum) {
+        // the product of the sizes is at most 2^63
+        var v: u64 = 0;
+        for (t.sets, 0..) |c, i| v = v * c.chars.len + codes[i];
+        return MV{ .int = @intCast(v) };
+    }
+    const out = try alloc.alloc(u8, t.sets.len);
+    for (t.sets, 0..) |c, i| out[i] = c.chars[@intCast(codes[i])];
+    return MV{ .str = out };
+}
+
+// The codes of a model value (encode).
+fn codesOfValue(t: Transform, mv: MV) ![max_positions]u64 {
+    const te = E.@"transform-encode";
+    if (t.kind != .codenum) {
+        if (mv != .str) return te;
+        return codesOfText(t, mv.str) orelse te;
+    }
+    if (mv != .int or mv.int < 0) return te;
+    var codes = [_]u64{0} ** max_positions;
+    var x: u64 = @intCast(mv.int);
+    var i = t.sets.len;
+    while (i > 0) {
+        i -= 1;
+        codes[i] = x % t.sets[i].chars.len;
+        x /= t.sets[i].chars.len;
+    }
+    if (x != 0) return te;
+    return codes;
+}
+
+// `codestr` and `codenum` on the text wires.
+fn codeTextDecode(alloc: std.mem.Allocator, t: Transform, raw: []const u8) !MV {
+    return valueOfCodes(alloc, t, codesOfText(t, raw) orelse return E.@"transform-decode");
+}
+
+fn codeTextEncode(alloc: std.mem.Allocator, t: Transform, mv: MV) ![]const u8 {
+    const codes = try codesOfValue(t, mv);
+    const out = try alloc.alloc(u8, t.sets.len);
+    for (t.sets, 0..) |c, i| out[i] = c.chars[@intCast(codes[i])];
+    return out;
+}
+
+// On `json` and `geojson` the member is a string (ruling 11).
+fn codeJsonDecode(alloc: std.mem.Allocator, t: Transform, v: JValue) !MV {
+    if (v != .string) return E.@"transform-decode";
+    return codeTextDecode(alloc, t, v.string);
+}
+
+// `code` and `codenum` on bits: the field as `uint` reads it, position 0 at
+// its most significant end whatever the bit order (ruling 6).
+fn codeBitsDecode(alloc: std.mem.Allocator, t: Transform, bits: u64) !MV {
+    var codes = [_]u64{0} ** max_positions;
+    var v = bits;
+    var i = t.sets.len;
+    while (i > 0) {
+        i -= 1;
+        const c = t.sets[i];
+        const w: u6 = @intCast(c.width); // at most 8
+        codes[i] = v & ((@as(u64, 1) << w) - 1);
+        v >>= w;
+        if (codes[i] >= c.chars.len) return E.@"transform-decode";
+    }
+    return valueOfCodes(alloc, t, codes);
+}
+
+fn codeBitsEncode(t: Transform, mv: MV) !u64 {
+    const codes = try codesOfValue(t, mv);
+    var v: u64 = 0;
+    for (t.sets, 0..) |c, i| v = (v << @as(u6, @intCast(c.width))) | codes[i];
+    return v;
+}
+
 // Resolve one line against the pack's wire: parse its locator, check its
 // transform belongs to the wire, check the bit length its transform allows.
 fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, diag: *Diag) anyerror!void {
@@ -2047,8 +2246,8 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             .uint, .twos, .uscale, .sscale, .f32_, .f64_, .utf8, .hex => {},
             else => return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is not valid on the tlv wire", .{ ln.lineno, ln.key }),
         }
-    } else if (ln.isField() and ln.transform.kind == .hex and p.wire == .bits) {
-        // `hex` on bits (Version 0.22)
+    } else if (ln.isField() and (ln.transform.kind == .hex or ln.transform.kind == .codenum) and p.wire == .bits) {
+        // `hex` (Version 0.22) and `codenum` (Version 0.46) on bits
     } else if (ln.isField() and kindCategory(ln.transform.kind) == .tlv) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is valid only on the tlv wire", .{ ln.lineno, ln.key });
     } else if (ln.isField() and p.wire == .text) {
@@ -2068,6 +2267,12 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         // a transform of 0.15 on a wire it does not list, as every transform
         // off its wire (ruling 26 of 0.15)
         return bad(diag, alloc, E.@"bad-directive", "line {d}: transform of {s} does not belong to wire {s}", .{ ln.lineno, ln.key, @tagName(p.wire) });
+    }
+    if (ln.isField()) try resolveCodeSets(alloc, p, ln, diag);
+    // a coordinate is a number; inside a group the locator is a member path
+    // (ruling 23 of 0.46)
+    if (ln.isField() and isCode(ln.transform.kind) and p.wire == .geojson and !in_group and std.mem.startsWith(u8, ln.locator, geom_prefix)) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} on the coordinate {s}", .{ ln.lineno, ln.key, ln.locator });
     }
     if (ln.isField() and ln.transform.kind == .bool_ and p.wire != .json and p.wire != .cbor) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: bool is valid only on the json wire", .{ln.lineno});
@@ -2820,7 +3025,7 @@ fn fixedLen(loc: []const u8) ?u64 {
 }
 
 // The directives of a pack (ruling 5 of 0.11).
-const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else", count, inner, framing };
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else", count, inner, framing, charset };
 
 // The header lines a pack has given so far, for the line checks.
 const HeaderSeen = struct {
@@ -2883,6 +3088,8 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         .when => n == 2 or (n >= 3 and (std.mem.eql(u8, toks[3], "as") or std.mem.eql(u8, toks[3], "at"))),
         .@"const", .default, .typemap => n == 2,
         .map => n == 3,
+        // Version 0.46: `charset <name> <characters> [<width>]`
+        .charset => n == 2 or n == 3,
         .requires, .@"if", .length => n >= 1,
         .group => n >= 2,
         .presence => n == 2,
@@ -3098,6 +3305,9 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         slot.* = toks[1];
     } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also") or is(kw, "switch") or is(kw, "case") or is(kw, "else") or is(kw, "count")) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a line of a sequential pack (`layout sequential` on the bits wire)", .{ lineno, kw });
+    } else if (is(kw, "charset")) {
+        // Version 0.46, checked after the file is read
+        try p.addCharset(alloc, toks, lineno, p.kinds.items.len > 0);
     } else if (is(kw, "typemap")) {
         if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: typemap takes two arguments", .{lineno});
         try p.tm_nat2cot.put(toks[1], toks[2]);
@@ -3379,6 +3589,7 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     if (p.uper_line != 0) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: a line of a pack with `encoding uper`", .{p.uper_line});
     }
+    try charsetCheck(alloc, p, diag);
     try armorCheck(alloc, p, diag);
     if (st.any_when and p.kinds.items.len == 0) {
         return bad(diag, alloc, E.@"bad-directive", "a `when` line in a pack with no `kind` line", .{});
@@ -5933,6 +6144,7 @@ fn exactJsonInt(s: []const u8) ?i64 {
 // The JSON text a model value is written as, through a text transform.
 fn jsonRaw(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
     switch (tr.kind) {
+        .codestr, .codenum => return jsonStr(alloc, try codeTextEncode(alloc, tr, mv)),
         .tscale, .iscale => return textScaleEncode(alloc, tr, mv),
         .string => {
             if (mv != .str) return E.@"transform-encode";
@@ -6287,6 +6499,7 @@ fn bitsDecodeField(alloc: std.mem.Allocator, p: *const Pack, buf_in: []const u8,
             if (!std.math.isFinite(r)) return E.@"transform-decode";
             return MV{ .float = r };
         },
+        .code, .codenum => return codeBitsDecode(alloc, t, bits),
         .octal => {
             const nd = ln.blen / 3;
             const out = try alloc.alloc(u8, nd);
@@ -6579,6 +6792,7 @@ fn bitsEncodeField(ln: *const Line, mv: MV) !u64 {
             if (!std.math.isFinite(y)) return E.@"transform-encode";
             return @bitCast(y);
         },
+        .code, .codenum => return codeBitsEncode(t, mv),
         .octal => {
             if (mv != .str or mv.str.len != ln.blen / 3) return E.@"transform-encode";
             var v: u64 = 0;
@@ -7299,6 +7513,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             const raw = xmlGet(root, ln.locator) orelse return null;
             if (ln.abs_set and absentText(ln, raw)) return null; // not trimmed (ruling 14)
             if (t == .tscale or t == .iscale) return try textScaleDecode(alloc, ln.transform, raw);
+            if (isCode(t)) return try codeTextDecode(alloc, ln.transform, raw);
             return try textToMV(t, raw);
         },
         .geojson => |d| { if (comptime !built(.geojson)) unreachable;
@@ -7308,6 +7523,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             if (v == .null) return null;
             if (try jsonIsSentinel(alloc, ln, v)) return null;
             if (t == .tscale or t == .iscale) return try jsonScaleDecode(alloc, ln.transform, v);
+            if (isCode(t)) return try codeJsonDecode(alloc, ln.transform, v);
             const raw = (try geoText(alloc, v)) orelse return E.@"transform-decode";
             return try textToMV(t, raw);
         },
@@ -7319,6 +7535,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             if (v == .null) return null; // a member whose value is null is absent
             if (try jsonIsSentinel(alloc, ln, v)) return null;
             if (t == .tscale or t == .iscale) return try jsonScaleDecode(alloc, ln.transform, v);
+            if (isCode(t)) return try codeJsonDecode(alloc, ln.transform, v);
             if (it.geo) {
                 // an item of a geojson group: the json locators and null
                 // rule, the geojson value types (ruling 7 of 0.7)
@@ -7355,6 +7572,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
                 return try textDecodePair(ln.transform, a, b);
             }
             const raw = textRead(td, ln, ln.ti, textNumeric(t)) orelse return null;
+            if (isCode(t)) return try codeTextDecode(alloc, ln.transform, raw);
             return try textDecode(ln.transform, raw);
         },
         .tlv => |items| if (comptime !built(.tlv)) unreachable else return try tlvReadField(alloc, p, items, ln),
@@ -8046,6 +8264,7 @@ fn fieldValue(p: *const Pack, sc: *const Scope, e: *const Entity, ln: *const Lin
 
 fn xmlText(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
     switch (tr.kind) {
+        .codestr, .codenum => return codeTextEncode(alloc, tr, mv),
         .tscale, .iscale => return textScaleEncode(alloc, tr, mv),
         .string => {
             if (mv != .str) return E.@"transform-encode";
@@ -9353,7 +9572,7 @@ fn textEncodeValue(alloc: std.mem.Allocator, t: Transform, mv: MV) !TextOut {
     const te = E.@"transform-encode";
     var buf = std.ArrayList(u8).init(alloc);
     switch (t.kind) {
-        .string, .float, .int, .iso8601_ms, .iso8601_s => return .{ .a = try xmlText(alloc, t, mv) },
+        .string, .float, .int, .iso8601_ms, .iso8601_s, .codestr, .codenum => return .{ .a = try xmlText(alloc, t, mv) },
         .int_w => {
             if (mv != .int) return te;
             if (mv.int < 0) try buf.append('-');
@@ -11629,6 +11848,12 @@ fn bitsLenOk(t: Transform, blen: usize) bool {
         },
         .octal => blen >= 3 and blen <= 63 and blen % 3 == 0,
         .hex => blen >= 4 and blen <= 2040 and blen % 4 == 0, // Version 0.22
+        // Version 0.46: the sum of the positions' widths
+        .code, .codenum => blk: {
+            var sum: usize = 0;
+            for (t.sets) |c| sum += c.width;
+            break :blk blen == sum and blen <= 64;
+        },
         else => blen >= 1 and blen <= 64,
     };
 }
@@ -11961,7 +12186,7 @@ const SParser = struct {
         // header and table directives belong to the pack, not to a block
         // (ruling 24 of 0.8)
         if (self.frames.items.len > 1) {
-            for ([_][]const u8{ "format", "version", "distribution", "source", "uses", "wire", "layout", "bit_order", "armor", "encoding", "framing", "map", "typemap" }) |h| {
+            for ([_][]const u8{ "format", "version", "distribution", "source", "uses", "wire", "layout", "bit_order", "armor", "encoding", "framing", "map", "typemap", "charset" }) |h| {
                 if (is(kw, h)) return self.err(bd, "{s} inside a block", .{kw});
             }
         }
@@ -12075,6 +12300,10 @@ const SParser = struct {
             return self.err(bd, "{s} is not used in a sequential pack", .{kw});
         } else if (is(kw, "delimiter") or is(kw, "start") or is(kw, "checksum")) {
             return self.err(bd, "{s} is a directive of the text wire", .{kw});
+        } else if (is(kw, "charset")) {
+            // Version 0.46: before the first message kind, checked after the
+            // file is read (ruling 16)
+            try p.addCharset(alloc, toks, self.lineno, self.frames.items[0].kinds.items.len > 0);
         } else if (is(kw, "typemap")) {
             if (toks.len != 3) return self.err(E.@"bad-directive", "typemap takes two arguments", .{});
             try p.tm_nat2cot.put(toks[1], toks[2]);
@@ -12621,8 +12850,9 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
                 if (n.ln.swap or n.ln.trim or n.ln.absent_raw != null or n.ln.stop_raw != null) return bad(diag, alloc, bd, "line {d}: until: takes no absent, swap, trim or stop", .{n.lineno});
                 n.ln.until_code = charCodeParam(raw, t.cset) orelse return bad(diag, alloc, bd, "line {d}: until:{s} is not a code of the set", .{ n.lineno, raw });
             } else {
-                if (kindCategory(t.kind) != .bits and t.kind != .hex) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not belong to wire bits", .{ n.lineno, n.ln.key });
-                if (!bitsLenOk(t, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
+                if (!bitsTransform(t.kind)) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not belong to wire bits", .{ n.lineno, n.ln.key });
+                try resolveCodeSets(alloc, p, &n.ln, diag);
+                if (!bitsLenOk(n.ln.transform, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
                 try stopCheck(alloc, &n.ln, n.lineno, diag);
                 if (n.ln.swap and t.kind == .hex) return bad(diag, alloc, bd, "line {d}: swap on hex", .{n.lineno});
                 if (n.ln.trim and t.kind != .ascii and t.kind != .sixbit) return bad(diag, alloc, bd, "line {d}: trim is for the ascii and sixbit transforms", .{n.lineno});
@@ -13025,6 +13255,7 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     // Version 0.30: the bans of ruling 9 need only key names; they run
     // before the other checks that need the whole file (rulings 16 and 29)
     try seqCheckAsBody(alloc, root, diag);
+    try charsetCheck(alloc, p, diag);
     try armorCheck(alloc, p, diag);
     // `encoding <none | uper>` (Version 0.19)
     if (p.enc_raw) |raw| {

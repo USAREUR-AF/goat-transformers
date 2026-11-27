@@ -1,0 +1,9 @@
+{
+  "name": "absent-key-writes-the-sentinel",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-absent",
+  "input": "{\"n\":1122}",
+  "expect": "ffffff001122",
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`absent`, 0.9); s1 is absent; n = 1122 is written though its raw number is the sentinel"
+}

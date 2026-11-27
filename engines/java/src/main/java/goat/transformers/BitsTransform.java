@@ -15,7 +15,9 @@ public final class BitsTransform {
         // engine-spec 0.15
         UISCALE, SISCALE, SMAG, SMSCALE, F32SCALE, F64SCALE, CHARS, OCTAL,
         // engine-spec 0.22
-        HEX }
+        HEX,
+        // engine-spec 0.46
+        CODE, CODENUM }
 
     /** The character sets of {@code chars:<set>}. */
     enum CharSet { ICAO6, AIS6, ASCII7, ASCII8,
@@ -35,6 +37,8 @@ public final class BitsTransform {
     private Scales.Exact exact;       // uiscale, siscale
     private Scales.Floating floating; // smscale, f32scale, f64scale
     private CharSet set;              // chars
+    /** {@code code}, {@code codenum}: the positions, set once the file is read ({@link #bindCodes}). */
+    private CodeSeq codes;
 
     private BitsTransform(Kind kind, String name) {
         this.kind = kind;
@@ -50,7 +54,9 @@ public final class BitsTransform {
             case TWOS:
             case UISCALE:
             case SISCALE:
+            case CODENUM:
             case SMAG: return "int";
+            case CODE:
             case ASCII:
             case SIXBIT:
             case CHARS:
@@ -111,6 +117,11 @@ public final class BitsTransform {
 
     static String headOf(String n) { return head(n); }
 
+    /** {@code code} and {@code codenum}: read the positions with the pack's charsets; nothing for another transform. */
+    void bindCodes(java.util.Map<String, CodeSeq.CharSet> charsets, String format, String locator, String where) {
+        if (kind == Kind.CODE || kind == Kind.CODENUM) codes = CodeSeq.parse(name, charsets, format, locator, where);
+    }
+
     private static String head(String n) {
         int c = n.indexOf(':');
         return c < 0 ? n : n.substring(0, c);
@@ -131,6 +142,8 @@ public final class BitsTransform {
             case "f64scale":
             case "chars":
             case "octal":
+            case "code":      // engine-spec 0.46: their list is checked after the file
+            case "codenum":
                 return true;
             case "uint":
             case "twos":
@@ -177,6 +190,8 @@ public final class BitsTransform {
         }
         switch (p[0]) {
             case "uint": return new BitsTransform(Kind.UINT, name);
+            case "code": return new BitsTransform(Kind.CODE, name);
+            case "codenum": return new BitsTransform(Kind.CODENUM, name);
             case "twos": return new BitsTransform(Kind.TWOS, name);
             case "f32": return new BitsTransform(Kind.F32, name);
             case "f64": return new BitsTransform(Kind.F64, name);
@@ -259,6 +274,9 @@ public final class BitsTransform {
     /** Null when a field of {@code len} bits may carry this transform, else the reason. */
     String checkLen(int len) {
         switch (kind) {
+            case CODE:
+            case CODENUM:
+                return codes.checkLen(len);
             case UISCALE:
             case SISCALE:
                 return (len >= 1 && len <= 64) ? null : name + " needs a length of 1 to 64 bits, got " + len;
@@ -314,6 +332,9 @@ public final class BitsTransform {
         switch (kind) {
             case UINT:
                 return raw;
+            case CODE:
+            case CODENUM:
+                return codes.decodeRaw(raw);
             case TWOS:
                 return twosValue(raw, len);
             case LINSCALE:
@@ -439,6 +460,9 @@ public final class BitsTransform {
      */
     long encode(Object value, int len) {
         switch (kind) {
+            case CODE:
+            case CODENUM:
+                return codes.encodeRaw(value);
             case UINT: {
                 long v = Transform.asLong(value);
                 if (len < 64 && (v < 0 || v > mask(len))) {

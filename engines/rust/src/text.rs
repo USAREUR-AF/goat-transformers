@@ -131,6 +131,7 @@ pub(crate) fn two_parts(t: &Transform) -> bool {
 /// The transforms the text wire accepts.
 pub(crate) fn valid_on_text(t: &Transform) -> bool {
     matches!(t, Transform::StringT | Transform::Int | Transform::Float | Transform::Iso8601Ms | Transform::Iso8601S)
+        || matches!(t, Transform::Codestr | Transform::Codenum)
         || t.is_text_only()
 }
 
@@ -652,12 +653,12 @@ fn decode_fields(p: &Pack, lay: &Layout, fields: &[&FieldDef], rec: &[&str], bas
         match l {
             Loc::Field(i) => {
                 if let Some(s) = whole(rec, i) {
-                    d.put(p, f, decode_one(&f.transform, s));
+                    d.put(p, f, charset::decode_text(f, s).unwrap_or_else(|| decode_one(&f.transform, s)));
                 }
             }
             Loc::Col(i, from, len) => {
                 if let Some(s) = column(rec, i, from, len, numeric(&f.transform)) {
-                    d.put(p, f, decode_one(&f.transform, s));
+                    d.put(p, f, charset::decode_text(f, s).unwrap_or_else(|| decode_one(&f.transform, s)));
                 }
             }
             // a pair is absent when either of its fields is absent
@@ -891,12 +892,12 @@ fn write_scope(
                 rec.at(j).put_whole(&b);
             }
             Loc::Field(i) => {
-                let s = encode_one(&f.transform, &v).map_err(e)?;
+                let s = charset::encode_text(f, &v).unwrap_or_else(|| encode_one(&f.transform, &v)).map_err(e)?;
                 check_text(p, &s).map_err(e)?;
                 rec.at(i).put_whole(&s);
             }
             Loc::Col(i, from, len) => {
-                let s = encode_one(&f.transform, &v).map_err(e)?;
+                let s = charset::encode_text(f, &v).unwrap_or_else(|| encode_one(&f.transform, &v)).map_err(e)?;
                 check_text(p, &s).map_err(e)?;
                 let padded = pad(&s, len, numeric(&f.transform)).map_err(|m| e(Error { msg: m }))?;
                 rec.at(i).put_col(from, &padded);

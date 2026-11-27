@@ -1,0 +1,9 @@
+{
+  "name": "text-that-is-not-the-sentinel",
+  "from": "conformance-charset-absent-json",
+  "to": "conformance-charset-absent-json",
+  "input": "{\"num\":\"NB\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`absent`, 0.9); ruling 3"
+}

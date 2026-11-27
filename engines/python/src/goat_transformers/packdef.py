@@ -11,7 +11,7 @@ from .errors import (
 from .transforms import (
     TRANSFORMS, JSON_TRANSFORMS, build_bits_transform, bits_len_allowed, format_float,
     PROTOBUF_TRANSFORMS, UnknownTransformName, check_transform_text, read_uint_text, transform_valid_on,
-    build_v15_text, v15_family, terminator_code,
+    build_v15_text, v15_family, terminator_code, CharSet, CodeTextT, charset_width, code_family,
 )
 from ._build import WIRES as BUILD_WIRES
 
@@ -51,6 +51,7 @@ PACK_DIRECTIVES = frozenset((
     "count",  # sequential layouts (0.21)
     "framing",  # sequential layouts (0.92)
     "inner",  # sequential layouts (0.34): a message of another pack
+    "charset",  # 0.46
 ))
 # The lines that stand after the `wire` line (5b): before it, `missing-wire`.
 NEEDS_WIRE = frozenset((
@@ -87,6 +88,8 @@ ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     # 0.34: `inner <format> [partial]`; the second word is checked after the file
     "inner": (1, 2),
     "framing": (1, 1),  # 0.92: `framing self`; the word is checked after the file
+    # 0.46: `charset <name> <characters> [<width>]`
+    "charset": (2, 3),
 })
 HEADER_ONCE = ("format", "version", "wire", "distribution")  # a second one is `bad-directive` (5b step 5)
 _SINGLE = ("word_bytes", "bit_order", "layout")
@@ -797,6 +800,61 @@ class _Deferred(Exception):
         self.err = err
 
 
+_CHARSET_NAME = re.compile(r"[A-Za-z0-9_-]+\Z")
+
+
+def charset_line(args, lines, after_kind, lineno):
+    """Keep one `charset` line (0.46); `check_charsets` checks it after the file."""
+    lines.append((args, after_kind, lineno))
+
+
+def check_charsets(lines, wire, key_refs, deferred, source, name, delimiter=None, checksum="none"):
+    """The checks of 0.46 made after the file is read: the `charset` lines,
+    then the sets each `code`, `codestr` and `codenum` field names, which are
+    bound to its transform. Each failure is `bad-directive`, appended to
+    `deferred` as (lineno, error)."""
+
+    def bad(lineno, msg, locator=None):
+        deferred.append((lineno, BadDirective("%s, at %s:%d" % (msg, source, lineno), format=name, locator=locator)))
+
+    charsets = {}
+    for args, after_kind, lineno in lines:
+        sname, chars = args[0], args[1]
+        if after_kind:
+            bad(lineno, "'charset' after the first 'kind'")
+        if not _CHARSET_NAME.match(sname):
+            bad(lineno, "a 'charset' name is letters, digits, '_' and '-', got %r" % sname)
+        if sname in charsets:
+            bad(lineno, "a second 'charset' %r" % sname)
+        if not chars or any(not "!" <= c <= "~" for c in chars):
+            bad(lineno, "a 'charset' holds one or more characters from 0x21 to 0x7E, got %r" % chars)
+        if len(set(chars)) != len(chars):
+            bad(lineno, "a 'charset' with a repeated character")
+        width = least = charset_width(len(chars))
+        if wire == "bits" and len(args) == 3:  # ignored elsewhere (ruling 14)
+            digits = args[2].lstrip("0")
+            width = int(digits) if len(digits) == 1 and digits.isascii() and digits.isdigit() else 0
+            if not args[2].isascii() or not least <= width <= 8:
+                bad(lineno, "the width of a 'charset' of %d character(s) is %d to 8, got %r"
+                    % (len(chars), least, args[2]))
+        charsets[sname] = CharSet(chars, width)
+    for _, f in key_refs:
+        t = getattr(f, "transform", None)
+        if not getattr(t, "code_sets", False):
+            continue
+        try:
+            t.resolve(charsets)
+        except ValueError as e:
+            bad(f.lineno, "transform %r: %s" % (t.name, e), f.locator)
+            continue
+        if wire == "text":  # ruling 12
+            for s in t.sets:
+                if delimiter is not None and delimiter in s.chars:
+                    bad(f.lineno, "transform %r: a set holds the delimiter" % t.name, f.locator)
+                elif checksum == "nmea" and "*" in s.chars:
+                    bad(f.lineno, "transform %r: a set holds '*' under 'checksum nmea'" % t.name, f.locator)
+
+
 def set_stop(transform, tname, text):
     """The field option `stop <code>` (0.22) on a fixed-size `chars` field:
     -> why it is refused (`bad-directive` after the file), or None."""
@@ -1069,6 +1127,10 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
             transform = wire_text.build_transform(tname)
             if (loc[0] == "p") != transform.pair:
                 defer("transform %s %s" % (tname, "takes a pair <i>+<j>" if transform.pair else "does not take a pair"))
+        elif code_family(tname) is not None:
+            transform = CodeTextT(tname)  # `codestr`, `codenum` (0.46)
+            if wire == "geojson" and not in_group and loc[0] == "coord":  # ruling 23; a member path in a group
+                defer("transform %r on a geojson coordinate" % tname)
         elif v15_family(tname) is not None:
             transform = build_v15_text(tname)  # `scale`, `iscale` (0.15)
         else:
@@ -1889,6 +1951,7 @@ def parse_pack_text(text, *, source="pack.def"):
     tlv_lines = []       # tlv (0.13): `tag`, `length`, `key`, `checksum sum16 <tag>` as (kw, args, lineno, after a kind, in a group)
     armor = []           # bits (0.14): the `armor` lines, checked after the file (`check_armor`)
     encoding = []        # 0.19: the `encoding` lines, checked after the file (`check_encoding`)
+    charsets = []        # 0.46: the `charset` lines, checked after the file (`check_charsets`)
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if not line:
@@ -2007,6 +2070,8 @@ def parse_pack_text(text, *, source="pack.def"):
                 armor_line(args, armor, current is not None, lineno)
             elif kw == "encoding":  # 0.19: checked after the file is read (`check_encoding`)
                 encoding.append((args[0], lineno, current is not None))
+            elif kw == "charset":  # 0.46
+                charset_line(args, charsets, current is not None, lineno)
             elif kw == "root":
                 if current is None:
                     if root is not None:
@@ -2179,6 +2244,7 @@ def parse_pack_text(text, *, source="pack.def"):
     delimiter = text_values.get("delimiter", ",")
     if delimiter == "none":
         delimiter = None
+    check_charsets(charsets, wire, key_refs, deferred, source, name, delimiter, text_values.get("checksum", "none"))
     if wire == "text":
         wire_text.check_pack(
             delimiter, text_values.get("start"), text_values.get("checksum", "none"), common, kinds,

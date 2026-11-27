@@ -1,0 +1,8 @@
+{
+  "name": "4678-charset-ruling-24-charset-after-a-group-with-item-kinds-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey s1 string -\nkey n int -\nkey x int -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.46.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ngroup probe.items count 8\n  kind a\n  when 8 1\n  field probe.n 8 uint\nend\ncharset D 0123456789\nfield probe.s1 8 code:D,D\nkind m\nwhen 8 1\n"
+}

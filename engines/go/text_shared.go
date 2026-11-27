@@ -151,6 +151,7 @@ const (
 	ttDM
 	ttHMS
 	ttHMSDMY
+	ttCode // codestr, codenum (0.46)
 )
 
 // textTf is a transform of the text wire. A pair transform reads and writes
@@ -159,9 +160,10 @@ type textTf struct {
 	name    string
 	kind    int
 	w, f, d int
-	pl, nl  byte // dm: the letters of the positive and negative halves
-	numeric bool // int, int:<w>, float, dec: columns trim leading spaces and pad with 0
-	pair    bool // dm, hms_dmy
+	pl, nl  byte       // dm: the letters of the positive and negative halves
+	numeric bool       // int, int:<w>, float, dec: columns trim leading spaces and pad with 0
+	pair    bool       // dm, hms_dmy
+	code    *transform // codestr, codenum (0.46)
 }
 
 // isTextOnlyTransform reports a transform valid only on the text wire, by its
@@ -331,7 +333,14 @@ func (p *Pack) resolveText(whens []*When, perr perrFunc, note func(error) error)
 		if err := checkIdx(&f.loc, f.group); err != nil {
 			return perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
 		}
-		tf, kind, err := resolveTextTransform(f.Transform)
+		var tf *textTf
+		var kind ErrorKind
+		if codeBase(f.Transform) != "" {
+			kind = ErrBadDirective
+			tf, err = p.resolveCodeText(f)
+		} else {
+			tf, kind, err = resolveTextTransform(f.Transform)
+		}
 		if err != nil {
 			if err := note(perr(kind, f.Line, f.Locator, "%v", err)); err != nil {
 				return err

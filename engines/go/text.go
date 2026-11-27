@@ -114,6 +114,8 @@ func (t *textTf) decode(a, b string) (Value, error) {
 	switch t.kind {
 	case ttString:
 		return Value{Kind: KindString, S: a}, nil
+	case ttCode:
+		return t.code.decode(a)
 	case ttInt, ttIntW:
 		n, err := readTextInt(a)
 		if err != nil {
@@ -200,6 +202,9 @@ func (t *textTf) encode(v Value) (string, string, error) {
 	switch t.kind {
 	case ttString:
 		s, err := encString(v)
+		return s, "", err
+	case ttCode:
+		s, err := t.code.encode(v)
 		return s, "", err
 	case ttInt:
 		s, err := encInt(v)

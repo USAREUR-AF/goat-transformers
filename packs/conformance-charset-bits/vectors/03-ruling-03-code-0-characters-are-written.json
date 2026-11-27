@@ -1,0 +1,13 @@
+{
+  "name": "ruling-03-code-0-characters-are-written",
+  "from": "conformance-charset-bits",
+  "to": "conformance-charset-bits",
+  "input": "000000000000",
+  "expect": "000000000000",
+  "model": {
+    "probe.s1": "AA000",
+    "probe.n": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, On bits; ruling 3: every code 0 is a character; the number is 0"
+}

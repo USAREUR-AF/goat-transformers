@@ -1,0 +1,20 @@
+# Conformance probe pack for spec 0.46 ruling 6 on a fixed layout, bit order
+# msb: five positions of 5, 5, 3, 3 and 3 bits, 19 in all, every set full.
+# The bits of s1 are also read by `codenum` (n) and by `uint` (x), which are
+# equal; s2 is the same field at bit 29, off a byte boundary. Public. No kinds.
+format  conformance-charset-five-msb
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset L  ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
+charset E  01234567
+field   probe.s1  0:0:19   code:L,L,E,E,E
+field   probe.n   0:0:19   codenum:L,L,E,E,E
+field   probe.x   0:0:19   uint
+field   probe.y   0:19:5   uint
+field   probe.z   0:24:5   uint
+field   probe.s2  0:29:19  code:L,L,E,E,E

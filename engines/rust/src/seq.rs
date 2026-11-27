@@ -447,6 +447,8 @@ struct Parser<'a> {
     armor: crate::armor::ArmorLines,
     /// engine-spec v0.19: `encoding`, and the first line only a UPER pack may hold
     encoding: crate::uper::EncodingLines,
+    /// engine-spec v0.46: `charset` lines
+    charsets: crate::charset::CharsetLines,
     uper_line: Option<usize>,
     to_cot: BTreeMap<String, String>,
     from_cot: BTreeMap<String, String>,
@@ -502,9 +504,9 @@ fn value_of(text: &str, len: u32, ln: usize) -> Result<u64, Error> {
     Ok(v)
 }
 
-const HEADER: [&str; 18] = [
+const HEADER: [&str; 19] = [
     "format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map", "typemap", "word_bytes", "root",
-    "delimiter", "start", "checksum", "armor", "encoding", "framing",
+    "delimiter", "start", "checksum", "armor", "encoding", "framing", "charset",
 ];
 
 impl<'a> Parser<'a> {
@@ -631,6 +633,8 @@ impl<'a> Parser<'a> {
                         self.encoding.record(toks, ln, !out.kinds.is_empty());
                     } else if d == "framing" {
                         self.framing(toks, ln, !out.kinds.is_empty());
+                    } else if d == "charset" {
+                        self.charsets.record(toks, ln, !out.kinds.is_empty());
                     } else {
                         self.header(ln, toks)?;
                     }
@@ -1020,6 +1024,7 @@ impl<'a> Parser<'a> {
                     with: None,
                     until: None,
                     stop: None,
+                    code: CodeSeq::of(&toks[3]),
                 };
                 for table in field_options(&mut f, toks, ln, false)? {
                     self.vias.push((table, ln));
@@ -2075,6 +2080,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         maps: Vec::new(),
         armor: Default::default(),
         encoding: Default::default(),
+        charsets: Default::default(),
         uper_line: None,
         to_cot: BTreeMap::new(),
         from_cot: BTreeMap::new(),
@@ -2158,6 +2164,20 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
             return bad(*ln, format!("`via {}` names a table with no `map` line", table));
         }
     }
+    // engine-spec v0.46: the sets, then the transforms that name them (the
+    // locator of such a field is its bit length)
+    let sets = p.charsets.check(Wire::Bits)?;
+    let mut given: Result<(), Error> = Ok(());
+    body.visit_mut(
+        &mut |f| {
+            if given.is_ok() {
+                let len = f.locator.parse().ok();
+                given = charset::resolve(f, &sets, len, None);
+            }
+        },
+        &mut |_| {},
+    );
+    given?;
     let format = p.format.expect("checked above");
     let distribution =
         p.distribution.ok_or(Error { msg: format!("missing-distribution: pack `{}` has no `distribution`", format) })?;

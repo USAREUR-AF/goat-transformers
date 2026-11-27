@@ -1,0 +1,15 @@
+{
+  "name": "nineteen-bits-sequential-lsb",
+  "from": "conformance-charset-five-seq-lsb",
+  "to": "conformance-charset-five-seq-lsb",
+  "input": "ef44a8ef4450",
+  "expect": "ef44a8ef4450",
+  "model": {
+    "probe.s1": "BC357",
+    "probe.y": "21",
+    "probe.n": "17647",
+    "probe.z": "10"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 6; sequential; the same characters from the same number under both bit orders; full sets: codenum equals uint"
+}

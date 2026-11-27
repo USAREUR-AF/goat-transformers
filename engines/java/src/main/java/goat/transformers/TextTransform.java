@@ -12,7 +12,9 @@ import java.util.regex.Pattern;
  * decode and encode throw IllegalArgumentException with a reason; the codec turns it into the error kind.
  */
 final class TextTransform {
-    enum Kind { STRING, INT, FLOAT, ISO, ISOS, INTW, DEC, DM, HMS, HMS_DMY }
+    enum Kind { STRING, INT, FLOAT, ISO, ISOS, INTW, DEC, DM, HMS, HMS_DMY,
+        /** engine-spec 0.46: {@code codestr} and {@code codenum}. */
+        CODES }
 
     final Kind kind;
     final String name;
@@ -24,6 +26,8 @@ final class TextTransform {
     final int d;
     /** {@code dm}: the letters of the positive and the negative side. */
     final char pos, neg;
+    /** {@code codestr}, {@code codenum}: the positions. */
+    private CodeSeq codes;
     /** {@code dm}: the pattern of the degrees and minutes part, built once at load (ruling 1a of 0.25). */
     private final Pattern dmPattern;
 
@@ -48,6 +52,12 @@ final class TextTransform {
             case ISO8601_S: return new TextTransform(Kind.ISOS, "iso8601_s", 0, 0, 0, ' ', ' ');
             default: return null;
         }
+    }
+
+    static TextTransform codes(String name, CodeSeq codes) {
+        TextTransform t = new TextTransform(Kind.CODES, name, 0, 0, 0, ' ', ' ');
+        t.codes = codes;
+        return t;
     }
 
     private static String head(String name) {
@@ -132,6 +142,7 @@ final class TextTransform {
     String yields() {
         switch (kind) {
             case STRING: return "string";
+            case CODES: return codes.yields();
             case FLOAT: case DEC: case DM: case HMS: return "float";
             default: return "int";
         }
@@ -164,6 +175,7 @@ final class TextTransform {
     Object decode(String s) {
         switch (kind) {
             case STRING: return s;
+            case CODES: return codes.decodeText(s);
             case INT: case INTW: return readInt(s);
             case FLOAT: case DEC: return readFloat(s);
             case ISO: case ISOS: return Transform.parseIso(s);
@@ -243,6 +255,7 @@ final class TextTransform {
     String encode(Object v) {
         switch (kind) {
             case STRING: return Transform.STRING.encode(v);
+            case CODES: return codes.encodeText(v);
             case INT: return Transform.INT.encode(v);
             case FLOAT: return Transform.FLOAT.encode(v);
             case ISO: return Transform.ISO8601_MS.encode(v);

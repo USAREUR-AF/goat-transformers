@@ -1,0 +1,9 @@
+{
+  "name": "encode-code-and-codenum",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-bits",
+  "input": "{\"s1\":\"AB123\",\"n\":1123}",
+  "expect": "001123001123",
+  "source": "constructed",
+  "reference": "spec 0.46, On bits; 1123 = ((((0*24+1)*10+1)*10+2)*10+3): codes 0 1 1 2 3, the bits of AB123"
+}

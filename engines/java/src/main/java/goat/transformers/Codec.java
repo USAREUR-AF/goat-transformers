@@ -403,7 +403,7 @@ abstract class Codec<W> {
     void decodeField(Pack.Field f, String raw, Entity e, Failures fails) {
         Object v;
         try {
-            v = f.scale != null ? f.scale.decode(raw) : f.transform.decode(raw);
+            v = f.scale != null ? f.scale.decode(raw) : f.codes != null ? f.codes.decodeText(raw) : f.transform.decode(raw);
         } catch (IllegalArgumentException ex) {
             fails.add(f, ex.getMessage(), e);
             return;
@@ -442,7 +442,7 @@ abstract class Codec<W> {
         Object v = valueToEncode(f, e, scope);
         if (v == null) return null;
         try {
-            return f.scale != null ? f.scale.encode(v) : f.transform.encode(v);
+            return f.scale != null ? f.scale.encode(v) : f.codes != null ? f.codes.encodeText(v) : f.transform.encode(v);
         } catch (IllegalArgumentException ex) {
             throw encodeFailure(f, ex);
         }

@@ -847,7 +847,7 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
         }
         return;
     }
-    if (is_bits || is_pb) return;
+    if ((is_bits && f.transform != Transform::CodeNum) || is_pb) return;
     // xml, json, geojson: a leading `=` is stripped.
     const bool json_wire = wire == Wire::Json || wire == Wire::GeoJson;
     for (std::size_t k = 0; k < values.size(); ++k) {
@@ -1650,6 +1650,13 @@ Entity decode_geojson(const Pack& p, const std::string& bytes) {
             !v->is(json::Value::Kind::Number)) {
             // scale and iscale read a number, on geojson as on json (0.15 ruling 23).
             d.fail(*line.field, std::string("the member is not a number, which transform '") +
+                                    transform_name(line.field->transform) + "' reads");
+            continue;
+        }
+        // codestr and codenum read a string (0.46 ruling 11).
+        if (v && transform_is_code(line.field->transform) && !v->is(json::Value::Kind::Null) &&
+            !v->is(json::Value::Kind::String)) {
+            d.fail(*line.field, std::string("the member is not a string, which transform '") +
                                     transform_name(line.field->transform) + "' reads");
             continue;
         }

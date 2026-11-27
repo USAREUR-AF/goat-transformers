@@ -1,0 +1,15 @@
+# Conformance probe pack for spec 0.46 under `armor sixbit` (0.14): the
+# identifier of conformance-charset-bits in four armored characters.
+# Public. No kinds.
+format  conformance-charset-armor
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+armor   sixbit
+charset L  ABCDEFGHJKLMNPQRSTUVWXYZ  6
+charset D  0123456789
+field   probe.s1  0:0:24  code:L,L,D,D,D

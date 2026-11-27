@@ -57,7 +57,9 @@ bool valid_on_text(Transform t) {
         case Transform::Dec:
         case Transform::Dm:
         case Transform::Hms:
-        case Transform::HmsDmy: return true;
+        case Transform::HmsDmy:
+        case Transform::CodeStr:  // v0.46
+        case Transform::CodeNum: return true;
         default: return false;
     }
 }
@@ -191,6 +193,8 @@ double finite_model(const Value& v) {
 Value text_decode(const FieldLine& f, const std::string& a, const std::string& b) {
     switch (f.transform) {
         case Transform::String: return Value::of_string(a);
+        case Transform::CodeStr:
+        case Transform::CodeNum: return decode_value(f, a);  // v0.46
         case Transform::Int:
         case Transform::IntW: {
             std::int64_t n;
@@ -262,7 +266,9 @@ void text_encode(const FieldLine& f, const Value& v, std::string& a, std::string
         case Transform::Int:
         case Transform::Float:
         case Transform::Iso8601Ms:
-        case Transform::Iso8601S: a = encode_value(f, v); return;
+        case Transform::Iso8601S:
+        case Transform::CodeStr:  // v0.46
+        case Transform::CodeNum: a = encode_value(f, v); return;
         case Transform::IntW: {
             const std::int64_t n = model_int(v);
             const std::uint64_t mag = n < 0 ? 0 - static_cast<std::uint64_t>(n) : static_cast<std::uint64_t>(n);

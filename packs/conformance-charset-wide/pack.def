@@ -1,0 +1,16 @@
+# Conformance probe pack for spec 0.46 at its limits: a `code` of 64 bits (16
+# positions of 4 bits) and a `codenum` whose product of sizes is exactly 2^63
+# (15 sets of 16 and one of 8). Public. No kinds.
+format  conformance-charset-wide
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset D  0123456789
+charset X  0123456789abcdef
+charset E  01234567
+field   probe.s1   0:0:64   code:D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D
+field   probe.big  0:64:63  codenum:E,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X

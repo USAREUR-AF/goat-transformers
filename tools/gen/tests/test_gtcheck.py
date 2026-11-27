@@ -563,6 +563,12 @@ V011_ORDER |= {"9210"}
 # Ruling 16 of 0.92: the same order for `framing` (9259 to 9265), and
 # `missing-wire` (9248), which gtcheck does not name.
 V011_ORDER |= {"9248", "9259", "9260", "9261", "9262", "9263", "9264", "9265"}
+# 0.46: a `charset` error other than its argument count, and every error of a
+# `code`, `codestr` or `codenum` parameter, is a check after the file, so a later
+# `bogus` line gives `unknown-directive`, as a `charset` line in a module does;
+# gtcheck names an unknown directive `bad-directive`.
+V011_ORDER |= {"4637", "4659", "4663", "4656", "4658", "4633", "4655", "4657", "4664",
+               "4669", "4671", "4673"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 # And the 0.34 vectors that pin how the `inner` line meets the 0.11 line

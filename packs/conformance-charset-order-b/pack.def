@@ -1,0 +1,12 @@
+# Conformance probe pack for spec 0.46 ruling 1: the characters of
+# conformance-charset-order-a with other codes. Public. No kinds.
+format  conformance-charset-order-b
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+word_bytes 1
+bit_order  msb
+charset S  DCBA
+field   probe.s1  0:0:8  code:S,S,S,S

@@ -1,0 +1,9 @@
+{
+  "name": "no-trimming",
+  "from": "conformance-charset-json",
+  "to": "conformance-charset-json",
+  "input": "{\"call\":\"AB123 \"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46, On text wires (json); no character is trimmed"
+}

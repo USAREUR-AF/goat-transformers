@@ -1,0 +1,9 @@
+{
+  "name": "number-that-is-not-the-sentinel",
+  "from": "conformance-charset-absent-text",
+  "to": "conformance-charset-absent-text",
+  "input": "{\"a\":6}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 22 (0.9 unchanged); 6 is no sentinel; ruling 11: the member must be a string"
+}

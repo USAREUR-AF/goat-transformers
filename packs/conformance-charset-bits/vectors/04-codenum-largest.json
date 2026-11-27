@@ -1,0 +1,12 @@
+{
+  "name": "codenum-largest",
+  "from": "conformance-charset-bits",
+  "to": "conformance-charset-bits",
+  "input": "0011235d7999",
+  "expect": "0011235d7999",
+  "model": {
+    "probe.n": "575999"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, On bits; the product of the sizes less 1"
+}

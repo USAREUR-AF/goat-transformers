@@ -1,0 +1,9 @@
+{
+  "name": "codenum-short-text",
+  "from": "conformance-charset-xml",
+  "to": "conformance-charset-xml",
+  "input": "<R num=\"42\"/>",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46, On text wires (xml); ruling 3"
+}

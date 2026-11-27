@@ -269,6 +269,7 @@ final class Seq {
     /** True when {@code t} names a transform of some wire (well-formed or not); another name is unknown-transform. */
     static boolean isKnownTransform(String t) {
         return Transform.byName(t) != null || BitsTransform.isBitsName(t) || PbTransform.isPbName(t)
+                || CodeSeq.isHead(BitsTransform.headOf(t))   // engine-spec 0.46
                 || TextTransform.isTextOnlyName(t) || TlvTransform.isTlvOnlyName(t)
                 || TextScale.isName(t.indexOf(':') < 0 ? t : t.substring(0, t.indexOf(':')));   // 0.15 text-wire scales
     }
@@ -1618,7 +1619,7 @@ final class Seq {
          * The checks that need the whole file: every block is ended, each field's transform is a transform of the
          * bits wire and allows its length (ruling 25 of 0.5), and every table a line names has a map line.
          */
-        Body finish(Map<String, List<String[]>> tables, String format) {
+        Body finish(Map<String, List<String[]>> tables, Map<String, CodeSeq.CharSet> charsets, String format) {
             if (stack.size() > 1) {
                 Frame f = stack.peek();
                 throw bad(format, null, source + ":" + f.line + ": " + f.what + " has no end");
@@ -1631,6 +1632,7 @@ final class Seq {
                 if (fl.trim && !fl.bits.takesTrim()) throw bad(format, fl.locator, where + ": trim is for the ascii and sixbit transforms only");
                 if (fl.swap && fl.bits.isSixbit()) throw bad(format, fl.locator, where + ": swap is not an option of sixbit");
                 if (fl.swap && fl.bits.refusesSwap()) throw bad(format, fl.locator, where + ": swap is not allowed with " + tname);
+                fl.bits.bindCodes(charsets, format, fl.locator, where);
                 String lenWhy = fl.bits.checkLen(len);
                 if (lenWhy != null) throw bad(format, fl.locator, where + ": " + lenWhy);
                 if (fl.swap && len % 8 != 0) throw bad(format, fl.locator, where + ": swap needs a length that is a multiple of 8, got " + len);

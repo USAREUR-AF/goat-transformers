@@ -1,0 +1,12 @@
+{
+  "name": "finding-41-2-bits-00",
+  "from": "conformance-charset-one",
+  "to": "conformance-charset-one",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.s1": "00"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 8; a one-character set takes 1 bit: 0 0 is 00"
+}

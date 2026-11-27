@@ -1,0 +1,9 @@
+{
+  "name": "ruling-02-unused-code-in-codenum",
+  "from": "conformance-charset-bits",
+  "to": "conformance-charset-bits",
+  "input": "001123001a23",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46, On bits; codenum refuses an unused code too"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "encode-character-outside-its-set",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-bits",
+  "input": "{\"s1\":\"AI123\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.46, On bits; I is not in L"
+}

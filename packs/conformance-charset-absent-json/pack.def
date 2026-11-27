@@ -1,0 +1,12 @@
+# Conformance probe pack for spec 0.46 with `absent` (0.9) on `json`: the text
+# is compared before any lookup. Public. No kinds.
+format  conformance-charset-absent-json
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    json
+charset L  ABCDEFGHJKLMNPQRSTUVWXYZ
+charset D  0123456789
+field   probe.s1  call  codestr:L,L,D,D,D  absent NONE
+field   probe.x   num   codenum:D,D        absent NA

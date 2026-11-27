@@ -1,0 +1,9 @@
+{
+  "name": "ruling-14-leading-space-refused",
+  "from": "conformance-charset-text",
+  "to": "conformance-charset-text",
+  "input": "AB123, 0042 ,7",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46, On text wires (text); ruling 14: codenum keeps the leading space, which is not in D"
+}

@@ -87,6 +87,12 @@ abstract class JsonTree<W> extends Codec<W> {
         }
     }
 
+    /** {@code codestr} and {@code codenum}: the member must be a string, on geojson too (ruling 11 of 0.46). */
+    static Object decodeCodes(Pack.Field f, Object v) {
+        if (!(v instanceof String)) throw new IllegalArgumentException(f.codesName + " needs a JSON string, found " + typeName(v));
+        return f.codes.decodeText((String) v);
+    }
+
     /**
      * Decode the lines of one scope from a JSON value into {@code e}: the message object, or one array element of
      * a group ({@code mapped} is then null: items carry no residue). The items of a {@code geojson} group read
@@ -130,6 +136,8 @@ abstract class JsonTree<W> extends Codec<W> {
                     // scale and iscale need a number, on geojson too (ruling 23 of 0.15); iscale reads its text as written
                     if (!(v instanceof Json.Num)) throw new IllegalArgumentException(f.scale.wireName() + " needs a JSON number, found " + typeName(v));
                     d = f.scale.decode(((Json.Num) v).text);
+                } else if (f.codes != null) {
+                    d = decodeCodes(f, v);
                 } else {
                     d = readValue(f.transform, v);
                 }
@@ -277,6 +285,7 @@ abstract class JsonTree<W> extends Codec<W> {
         if (v == null) return null;
         try {
             if (f.scale != null) return new Json.Num(f.scale.encode(v));
+            if (f.codes != null) return f.codes.encodeText(v);   // a string, codenum included (ruling 11 of 0.46)
             return encodeValue(f.transform, v);
         } catch (IllegalArgumentException ex) {
             throw encodeFailure(f, ex);

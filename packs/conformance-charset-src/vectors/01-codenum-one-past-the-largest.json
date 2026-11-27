@@ -1,0 +1,9 @@
+{
+  "name": "codenum-one-past-the-largest",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-bits",
+  "input": "{\"n\":576000}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.46, On bits; x at the product"
+}

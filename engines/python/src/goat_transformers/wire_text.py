@@ -19,7 +19,8 @@ from datetime import date
 
 from .errors import BadDirective, MalformedWire, TransformEncodeFailure
 from .transforms import (
-    Iso8601MsT, Iso8601ST, StringT, Transform, format_float, format_int, is_text_only_name, round_half_away, text_params,
+    CodeTextT, Iso8601MsT, Iso8601ST, StringT, Transform, code_family, format_float, format_int, is_text_only_name,
+    round_half_away, text_params,
 )
 
 _HEX = "0123456789abcdefABCDEF"
@@ -340,6 +341,8 @@ def build_transform(name):
     t = _BASE.get(name)
     if t is not None:
         return t
+    if code_family(name) is not None:  # `codestr`, `codenum` (0.46)
+        return CodeTextT(name)
     if not is_text_only_name(name):
         return None
     head, p = text_params(name)

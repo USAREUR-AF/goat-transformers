@@ -57,6 +57,9 @@ const char* transform_name(Transform t) {
         case Transform::CborText: return "text";
         case Transform::CborBytes: return "bytes";
         case Transform::EpochS: return "epoch_s";
+        case Transform::Code: return "code";
+        case Transform::CodeStr: return "codestr";
+        case Transform::CodeNum: return "codenum";
     }
     return "?";
 }
@@ -207,6 +210,12 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
             f.transform = e.t;
             return 0;
         }
+    // v0.46: every error of the list is found after the file is read (ruling 15).
+    if (name == "code" || name == "codestr" || name == "codenum") {
+        f.transform = name == "code" ? Transform::Code : name == "codestr" ? Transform::CodeStr : Transform::CodeNum;
+        f.code_list = has_params ? std::string(token.substr(colon + 1)) : std::string();
+        return 0;
+    }
     if (name == "linscale") {
         // 0.11 ruling 4d: exactly <maxpos>:<range>; maxpos an unsigned decimal
         // integer of at least 1, range number text that does not read as zero.
@@ -389,7 +398,11 @@ bool transform_is_cbor_only(Transform t) {
 
 bool transform_is_textual(Transform t) {
     return t == Transform::String || t == Transform::Iso8601Ms || t == Transform::Iso8601Short ||
-           t == Transform::Iso8601S;
+           t == Transform::Iso8601S || t == Transform::CodeStr || t == Transform::CodeNum;
+}
+
+bool transform_is_code(Transform t) {
+    return t == Transform::Code || t == Transform::CodeStr || t == Transform::CodeNum;
 }
 
 bool transform_is_bits(Transform t) {
@@ -414,6 +427,8 @@ bool transform_is_bits(Transform t) {
         case Transform::CharsAscii7:
         case Transform::CharsAscii8:  // v0.22
         case Transform::Hex:          // v0.22: on bits as on tlv
+        case Transform::Code:         // v0.46
+        case Transform::CodeNum:      // v0.46: on the text wires too
         case Transform::Octal: return true;
         default: return false;
     }
@@ -486,6 +501,8 @@ int protobuf_wire_type(Transform t) {
 namespace {
 Value decode_text_scale(const FieldLine& f, const std::string& text);
 std::string encode_text_scale(const FieldLine& f, const Value& v);
+Value decode_code_text(const FieldLine& f, const std::string& text);
+std::string encode_code_text(const FieldLine& f, const Value& v);
 }  // namespace
 
 Value decode_json_number(const FieldLine& f, const std::string& text) {
@@ -511,6 +528,8 @@ Value decode_value(const FieldLine& f, const std::string& text) {
     if (transform_is_text_scale(t)) return decode_text_scale(f, text);
     switch (t) {
         case Transform::String: return Value::of_string(text);
+        case Transform::CodeStr:
+        case Transform::CodeNum: return decode_code_text(f, text);
         // 0.11 ruling 2c: number text (2b) and integer text (2a), nothing trimmed.
         case Transform::Float: {
             double d;
@@ -670,6 +689,87 @@ std::string model_text(const Value& v) {
             }
     }
     return std::string();
+}
+
+// ---- v0.46: one code per position, first position first
+
+// Text -> codes: exactly one character per position, each in its set.
+std::vector<unsigned> codes_of_text(const FieldLine& f, const std::string& text) {
+    if (text.size() != f.code_sets.size())
+        throw std::invalid_argument("text \"" + text + "\" is not exactly " + std::to_string(f.code_sets.size()) +
+                                    " characters");
+    std::vector<unsigned> codes(text.size());
+    for (std::size_t k = 0; k < text.size(); ++k) {
+        const std::size_t at = f.code_sets[k]->chars.find(text[k]);
+        if (at == std::string::npos)
+            throw std::invalid_argument("character " + std::to_string(k) + " of \"" + text +
+                                        "\" is not in the set '" + f.code_sets[k]->name + "'");
+        codes[k] = static_cast<unsigned>(at);
+    }
+    return codes;
+}
+
+std::string text_of_codes(const FieldLine& f, const std::vector<unsigned>& codes) {
+    std::string text(codes.size(), ' ');
+    for (std::size_t k = 0; k < codes.size(); ++k) text[k] = f.code_sets[k]->chars[codes[k]];
+    return text;
+}
+
+// The mixed-radix number; the load check keeps the product of the sizes at or below 2^63.
+std::int64_t number_of_codes(const FieldLine& f, const std::vector<unsigned>& codes) {
+    std::uint64_t v = 0;
+    for (std::size_t k = 0; k < codes.size(); ++k) v = v * f.code_sets[k]->chars.size() + codes[k];
+    return static_cast<std::int64_t>(v);
+}
+
+std::vector<unsigned> codes_of_number(const FieldLine& f, std::int64_t n) {
+    std::uint64_t rest = static_cast<std::uint64_t>(n);
+    std::vector<unsigned> codes(f.code_sets.size());
+    if (n >= 0)
+        for (std::size_t k = codes.size(); k-- > 0;) {
+            const std::uint64_t size = f.code_sets[k]->chars.size();
+            codes[k] = static_cast<unsigned>(rest % size);
+            rest /= size;
+        }
+    if (n < 0 || rest != 0)
+        throw std::invalid_argument("the number " + std::to_string(n) + " is outside the codes of its positions");
+    return codes;
+}
+
+// The model value -> codes: `codenum` from its integer, the others from their text.
+std::vector<unsigned> codes_of_value(const FieldLine& f, const Value& v) {
+    if (f.transform == Transform::CodeNum) return codes_of_number(f, model_int(v));
+    return codes_of_text(f, model_text(v));
+}
+
+Value value_of_codes(const FieldLine& f, const std::vector<unsigned>& codes) {
+    if (f.transform == Transform::CodeNum) return Value::of_int(number_of_codes(f, codes));
+    return Value::of_string(text_of_codes(f, codes));
+}
+
+Value decode_code_text(const FieldLine& f, const std::string& text) { return value_of_codes(f, codes_of_text(f, text)); }
+
+std::string encode_code_text(const FieldLine& f, const Value& v) { return text_of_codes(f, codes_of_value(f, v)); }
+
+// The codes of a bits field, the first position in the most significant bits.
+Value decode_code_bits(const FieldLine& f, std::uint64_t raw) {
+    std::vector<unsigned> codes(f.code_sets.size());
+    for (std::size_t k = codes.size(); k-- > 0;) {
+        const CharSet& s = *f.code_sets[k];
+        codes[k] = static_cast<unsigned>(raw & low_mask(s.width));
+        raw >>= s.width;
+        if (codes[k] >= s.chars.size())
+            throw std::invalid_argument("position " + std::to_string(k) + " holds the code " +
+                                        std::to_string(codes[k]) + ", which the set '" + s.name + "' does not have");
+    }
+    return value_of_codes(f, codes);
+}
+
+std::uint64_t encode_code_bits(const FieldLine& f, const Value& v) {
+    const std::vector<unsigned> codes = codes_of_value(f, v);
+    std::uint64_t raw = 0;
+    for (std::size_t k = 0; k < codes.size(); ++k) raw = (raw << f.code_sets[k]->width) | codes[k];
+    return raw;
 }
 }  // namespace
 
@@ -853,6 +953,8 @@ Value decode_bits_value(const FieldLine& f, std::uint64_t raw, std::uint32_t len
             for (std::size_t k = s.size(); k-- > 0; raw >>= 3) s[k] = static_cast<char>('0' + (raw & 7u));
             return Value::of_string(std::move(s));
         }
+        case Transform::Code:
+        case Transform::CodeNum: return decode_code_bits(f, raw);
         default:
             break;
     }
@@ -977,6 +1079,8 @@ std::uint64_t encode_bits_value(const FieldLine& f, const Value& v, std::uint32_
             }
             return u;
         }
+        case Transform::Code:
+        case Transform::CodeNum: return encode_code_bits(f, v);
         default:
             break;
     }
@@ -1087,6 +1191,7 @@ std::string encode_value(const FieldLine& f, const Value& v) {
     const Transform t = f.transform;
     try {
         if (transform_is_text_scale(t)) return encode_text_scale(f, v);
+        if (t == Transform::CodeStr || t == Transform::CodeNum) return encode_code_text(f, v);
         switch (t) {
             case Transform::String:
                 switch (v.kind) {

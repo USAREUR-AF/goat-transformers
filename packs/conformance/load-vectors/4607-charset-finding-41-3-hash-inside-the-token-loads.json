@@ -1,0 +1,8 @@
+{
+  "name": "4607-charset-finding-41-3-hash-inside-the-token-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey s1 string -\nkey n int -\nkey x int -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.46.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\ncharset S AB#C\nfield probe.s1 0:0:2 code:S\n"
+}

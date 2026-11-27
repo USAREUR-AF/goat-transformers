@@ -1,0 +1,13 @@
+{
+  "name": "codenum-on-an-attribute",
+  "from": "conformance-charset-xml",
+  "to": "conformance-charset-xml",
+  "input": "<R num=\"00042\"><call>AB123</call></R>",
+  "expect": "<R num=\"00042\"><call>AB123</call></R>",
+  "model": {
+    "probe.x": "42",
+    "probe.s1": "AB123"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46, On text wires (xml); codenum 00042 is 42; the width 99 of D is ignored off bits (ruling 14)"
+}

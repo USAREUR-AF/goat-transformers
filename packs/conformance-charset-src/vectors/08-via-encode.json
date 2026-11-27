@@ -1,0 +1,9 @@
+{
+  "name": "via-encode",
+  "from": "conformance-charset-src",
+  "to": "conformance-charset-via",
+  "input": "{\"s1\":\"beta\"}",
+  "expect": "0200",
+  "source": "constructed",
+  "reference": "spec 0.46, Where the rules apply (`via`, 0.6); beta is 02"
+}

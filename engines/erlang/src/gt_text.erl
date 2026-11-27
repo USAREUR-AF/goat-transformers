@@ -199,6 +199,7 @@ mark(Loc, Opt, M) ->
 %% ===================================================================
 %% transforms: decode (any failure raises; the caller names it)
 %% ===================================================================
+decode_value({charcode, Kind, Sets}, T) -> gt_num:charcode_decode(Kind, Sets, T);   % 0.46
 decode_value(string, T) -> T;
 decode_value(int, T) -> int_text(T);
 decode_value({int_w, _}, T) -> int_text(T);
@@ -302,6 +303,7 @@ fraction_ok(_) -> false.
 %% ===================================================================
 %% transforms: encode -> Text | {Text, Text} for a pair
 %% ===================================================================
+encode_value({charcode, Kind, Sets}, V) -> gt_num:charcode_encode(Kind, Sets, V);
 encode_value(string, V) -> to_str(V);
 encode_value(int, V) when is_integer(V) -> integer_to_binary(V);
 encode_value({int_w, W}, V) when is_integer(V) ->

@@ -1,0 +1,16 @@
+{
+  "name": "full-sets-largest-number",
+  "from": "conformance-charset-five-lsb",
+  "to": "conformance-charset-five-lsb",
+  "input": "ffff07000000",
+  "expect": "ffff07000000",
+  "model": {
+    "probe.s1": "77777",
+    "probe.n": "524287",
+    "probe.x": "524287",
+    "probe.y": "0",
+    "probe.s2": "AA000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.46 ruling 6; the same characters from the same number under both bit orders; full sets: codenum equals uint"
+}

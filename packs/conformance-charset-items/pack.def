@@ -1,0 +1,18 @@
+# Conformance probe pack for spec 0.46: `code` and `codenum` in the items of a
+# sequential group. Each item is 19 bits of `code`, 6 bits of `codenum` and 7
+# bits of padding. Public. No kinds.
+format  conformance-charset-items
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    bits
+layout  sequential
+bit_order  msb
+charset L  ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
+charset E  01234567
+group   probe.items count 8
+  field  probe.label  19  code:L,L,E,E,E
+  field  probe.qty    6   codenum:E,E
+  pad    7
+end

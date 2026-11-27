@@ -221,6 +221,12 @@ void decode_item_value(Decoder& d, const FieldLine& f, const json::Value& v, boo
                       transform_name(f.transform) + "' does not read");
         return;
     }
+    // codestr and codenum read a string, on geojson as on json (0.46 ruling 11).
+    if (transform_is_code(f.transform) && !v.is(json::Value::Kind::Null) && !v.is(json::Value::Kind::String)) {
+        d.fail(f, std::string("the member is ") + json_kind_name(v) + ", which transform '" +
+                      transform_name(f.transform) + "' does not read");
+        return;
+    }
     switch (v.kind) {
         case json::Value::Kind::Null: break;
         case json::Value::Kind::String: d.set(f, v.text); break;

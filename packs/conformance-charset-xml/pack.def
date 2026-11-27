@@ -1,0 +1,14 @@
+# Conformance probe pack for spec 0.46 on `xml`: `codenum` on an attribute
+# and `codestr` on an element's text. The width 99 of D is ignored off
+# `bits` (ruling 14). Public. No kinds.
+format  conformance-charset-xml
+version 0.46.0
+distribution public
+source  "synthetic format, no external standard"
+uses    probe
+wire    xml
+root    R
+charset L  ABCDEFGHJKLMNPQRSTUVWXYZ
+charset D  0123456789  99
+field   probe.x   @num       codenum:D,D,D,D,D
+field   probe.s1  call/#text  codestr:L,L,D,D,D

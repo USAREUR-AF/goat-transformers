@@ -1,0 +1,9 @@
+{
+  "name": "finding-41-5-number-member-under-codestr",
+  "from": "conformance-charset-json",
+  "to": "conformance-charset-json",
+  "input": "{\"id\":12345}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.46, On text wires (json); ruling 11: the member must be a string"
+}

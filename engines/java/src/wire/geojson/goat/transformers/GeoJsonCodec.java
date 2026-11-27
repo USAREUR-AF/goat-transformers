@@ -163,6 +163,8 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                     // scale and iscale refuse a string member (ruling 23 of 0.15); iscale reads the text as written
                     if (!(v instanceof Json.Num)) throw new IllegalArgumentException(f.scale.wireName() + " needs a JSON number");
                     dv = f.scale.decode(((Json.Num) v).text);
+                } else if (f.codes != null) {
+                    dv = JsonTree.decodeCodes(f, v);
                 } else {
                     dv = decodeGeo(f.transform, v);
                 }
