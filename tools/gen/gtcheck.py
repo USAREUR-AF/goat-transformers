@@ -1810,8 +1810,9 @@ class _Loader:
             self.bad(node, "`unlisted` needs `part` and `via`")
         if node.part is not None:
             self._part(node, group)
-            if node.opts & {"swap", "trim"} or node.absent is not None or node.with_ is not None \
-                    or node.stop is not None:
+            # engine-spec 0.56 ruling 15: nor `null`, `implicit`, `range` or `wrap`
+            if node.opts & {"swap", "trim", "null", "implicit"} or node.absent is not None \
+                    or node.with_ is not None or node.stop is not None or node.range is not None:
                 self.bad(node, "a `part` line takes only `via`, `unlisted` and, on text, `optional`")
         self._terminated(node, bits_wire)
         self._output_options(node, group)
@@ -2469,7 +2470,9 @@ class _Loader:
                         self.bad(n, "part %d of `%s` is named twice" % (n.part[1], loc))
                     numbers.add(n.part[1])
                 elif n.d == "field" and n.tr == "string" and n.via is None and n.absent is None \
-                        and n.with_ is None and whole is None:
+                        and n.with_ is None and n.stop is None and n.range is None \
+                        and not n.opts - {"optional"} and whole is None:
+                    # 0.64 ruling 24 and 0.56 ruling 15: no option but `optional` on text
                     whole = n
                 else:
                     self.bad(n, "a `%s` on `%s`, whose token is read in parts" % (n.d, loc))

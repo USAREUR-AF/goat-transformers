@@ -390,6 +390,20 @@ class OutputConditions056Test(Refusals):
         self.refuse_pack(self.PROTO + "group probe.items 1\n  field probe.items.n . pvarint implicit\nend\n",
                          "bad-directive", 8)
 
+    def test_a_part_line_and_its_whole_line_refuse_the_options(self):
+        # ruling 15: none of the four options, nor a range sentinel, on a part
+        # line of 0.64 or on the whole line of its group; the 0.64 options stay
+        tables = self.JSON + "map t a 1\nmap t b 2\n"
+        gtcheck.load_pack(tables + "field probe.qty t part:-:0 via t unlisted\nfield probe.label t string\n",
+                          model())
+        gtcheck.load_pack(HEAD + "wire text\nfield probe.label 0 part:-:0 optional\n"
+                          "field uid 0 string optional\n", model())
+        for option in ("range 0 10", "range 0 10 wrap", "null", "implicit", "absent >=1"):
+            self.refuse_pack(tables + "field probe.qty t part:-:0 via t %s\n" % option, "bad-directive", 9)
+        for option in ("null", "implicit", "absent <=1"):
+            self.refuse_pack(tables + "field probe.qty t part:-:0 via t\nfield probe.label t string %s\n" % option,
+                             "bad-directive", 10)
+
 
 class GroupsTest(Refusals):
     def test_a_group_holds_its_body_and_nests(self):

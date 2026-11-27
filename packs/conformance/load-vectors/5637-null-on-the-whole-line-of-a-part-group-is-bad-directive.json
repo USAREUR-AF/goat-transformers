@@ -1,0 +1,9 @@
+{
+  "name": "5637-null-on-the-whole-line-of-a-part-group-is-bad-directive",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\nkey lat float deg\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey ratio float -\nkey label string -\nkey tag string -\nkey w1 string -\nlist recs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.64.0\ndistribution public\nsource \"probe\"\nuses probe\nwire json\nmap t a 1\nmap t b 2\nfield probe.x t part:-:0 via t\nfield probe.tag t string null\n",
+  "expect_error": "bad-directive"
+}

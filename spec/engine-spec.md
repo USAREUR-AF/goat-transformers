@@ -7791,6 +7791,13 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
    0.33) is compared with the bits after the wrap, so where that same key
    wraps on its field line the two differ: `transform-encode`. A sentinel
    written for an absent key is not held bits (0.33 ruling 12).
+15. **A part line of 0.64.** On a part line of 0.64 (`field <key> <locator>
+    part:<sep>:<n>`) and on the whole line of its part group, the field
+    options `null`, `implicit`, `range` and `wrap`, and the `absent`
+    sentinels of a range (`>=` and `<=`), are `bad-directive`, as a check
+    after the file (0.11 5b). A part line keeps the options 0.64 gives it
+    (`via`, `unlisted`, and `optional` on `text`), and a whole line keeps
+    none but `optional` on `text`.
 
 Stated, not yet pinned by a vector: a submessage holding only fields that
 `implicit` leaves out, without a `when … present`.
