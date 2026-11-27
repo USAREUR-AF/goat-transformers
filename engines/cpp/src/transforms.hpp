@@ -24,6 +24,12 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err);
 // set when its parameters are not valid (bad-directive).
 int parse_text_transform(std::string_view token, FieldLine& f, std::string& err);
 
+// v0.64: the parameters of a `part:<sep>:<n>` token into `f.part_sep` and
+// `f.part_n`. False with `err` set when they are not valid.
+bool parse_part_params(std::string_view token, FieldLine& f, std::string& err);
+// v0.64: the pieces of a token between separators; an empty token has one.
+std::vector<std::string> token_parts(const std::string& token, const std::string& sep);
+
 // True for the transforms valid only on the text wire.
 bool transform_is_text_only(Transform t);
 

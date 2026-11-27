@@ -228,7 +228,8 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        CborText, CborBytes, EpochS,      // v0.28, cbor wire only: `text`, `bytes`, `epoch_s`
                        Code,                             // v0.46, bits wire
                        CodeStr,                          // v0.46, xml, json, geojson and text
-                       CodeNum                           // v0.46, bits and those four
+                       CodeNum,                          // v0.46, bits and those four
+                       Part                              // v0.64, xml, json, geojson and text
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv, Cbor };
 
@@ -300,6 +301,14 @@ struct FieldLine {
     // position, first position first (parse_pack resolves it).
     std::string code_list;
     std::vector<std::shared_ptr<const CharSet>> code_sets;
+    // v0.64 `part:<sep>:<n>`: the separator (one character) and the part's number.
+    std::string part_sep;
+    unsigned part_n = 0;
+    bool unlisted = false;      // v0.64: no entry in the `via` table leaves the line absent
+    // v0.64: the line stands for a `const ... part` line, whose text decode
+    // compares with `const_text`; it has no key.
+    bool const_part = false;
+    std::string const_text;
     std::size_t line = 0;       // line number in pack.def
     // v0.6 field options.
     std::string via;            // `via <table>`: the value table's name; empty when none
@@ -353,6 +362,7 @@ struct WhenLine {
     bool cbor_negative = false;
     std::size_t line = 0;         // line number in pack.def
     int gate = -1;                // v0.17, a `const` only: the innermost gate block holding it
+    std::shared_ptr<FieldLine> part;  // v0.64, a `const ... part` only: the line as decode reads it
     // v0.20, a `when` only: the values it holds for. bits and the integer form
     // of protobuf: closed ranges, a single value as lo == hi, in line order (the
     // first is `number`). Text wires: the texts, each with a leading `=`
@@ -626,6 +636,7 @@ struct Pack {
     std::vector<DefaultLine> defaults;                        // common `default` lines
     std::vector<GroupLine> groups;                            // common `group` blocks (v0.7)
     std::vector<MapTable> tables;                             // value tables, first appearance order
+    bool has_parts = false;                                   // v0.64: some line is a part line
     std::vector<std::shared_ptr<CharSet>> charsets;           // v0.46: the `charset` lines, line order
     std::vector<Kind> kinds;                                  // pack order; empty when the pack has no `kind` line
     std::vector<std::pair<std::string, std::string>> typemap; // native code -> CoT type

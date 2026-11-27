@@ -22,6 +22,8 @@ ErrorKind tokenize_kind(const std::string& err);
 // Does a `when` line hold the word `at` (0.33 ruling 27)? The third token on; the
 // token after the first `as` is a key and not that word (0.52 rulings 4 and 14).
 bool when_holds_at(const std::vector<std::string>& t);
+// v0.64 ruling 23: `const <locator> part... <text>`, a const of three arguments.
+bool is_const_part(const std::vector<std::string>& t);
 void check_pack_lines(const std::string& text, const std::string& source);
 
 // A module: for each line, unterminated-quote; unknown-directive; the number

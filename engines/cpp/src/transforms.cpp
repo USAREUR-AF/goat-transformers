@@ -60,6 +60,7 @@ const char* transform_name(Transform t) {
         case Transform::Code: return "code";
         case Transform::CodeStr: return "codestr";
         case Transform::CodeNum: return "codenum";
+        case Transform::Part: return "part";
     }
     return "?";
 }
@@ -215,6 +216,10 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
         f.transform = name == "code" ? Transform::Code : name == "codestr" ? Transform::CodeStr : Transform::CodeNum;
         f.code_list = has_params ? std::string(token.substr(colon + 1)) : std::string();
         return 0;
+    }
+    if (name == "part") {  // v0.64
+        f.transform = Transform::Part;
+        return parse_part_params(token, f, err) ? 0 : -1;
     }
     if (name == "linscale") {
         // 0.11 ruling 4d: exactly <maxpos>:<range>; maxpos an unsigned decimal
@@ -384,6 +389,44 @@ int parse_text_transform(std::string_view token, FieldLine& f, std::string& err)
     return 1;
 }
 
+bool parse_part_params(std::string_view token, FieldLine& f, std::string& err) {
+    const std::vector<std::string_view> parts = split_colons(token);
+    auto bad = [&](const std::string& why) {
+        err = "'" + std::string(token) + "': " + why;
+        return false;
+    };
+    if (parts.size() != 3) return bad("'part' takes <sep>:<n>");
+    // A separator as `tokens` has it (0.18): a name, or one character.
+    const std::string sep(parts[1]);
+    if (sep == "space") f.part_sep = " ";
+    else if (sep == "comma") f.part_sep = ",";
+    else if (sep == "colon") f.part_sep = ":";
+    else {
+        const unsigned char c = sep.empty() ? 0 : static_cast<unsigned char>(sep[0]);
+        const std::size_t len = c >= 0xF0 && c < 0xF8 ? 4 : c >= 0xE0 && c < 0xF0 ? 3 : c >= 0xC0 && c < 0xE0 ? 2 : 1;
+        if (sep.size() != len) return bad("the separator is not one character or a separator name");
+        if (sep == "," || c == ' ' || c == '\t' || c == '\n' || c == '\r') return bad("the separator is not allowed");
+        f.part_sep = sep;
+    }
+    const std::string_view n = parts[2];
+    int v = 0;
+    if ((n.size() > 1 && n[0] == '0') || !text_param(n, 0, 255, v))
+        return bad("the part's number is 0 to 255, without leading zeros");
+    f.part_n = static_cast<unsigned>(v);
+    return true;
+}
+
+std::vector<std::string> token_parts(const std::string& token, const std::string& sep) {
+    std::vector<std::string> out;
+    std::size_t at = 0;
+    for (;;) {
+        const std::size_t e = token.find(sep, at);
+        out.push_back(token.substr(at, e == std::string::npos ? std::string::npos : e - at));
+        if (e == std::string::npos) return out;
+        at = e + sep.size();
+    }
+}
+
 bool transform_is_text_only(Transform t) {
     return t == Transform::IntW || t == Transform::Dec || t == Transform::Dm || t == Transform::Hms ||
            t == Transform::HmsDmy;
@@ -398,7 +441,8 @@ bool transform_is_cbor_only(Transform t) {
 
 bool transform_is_textual(Transform t) {
     return t == Transform::String || t == Transform::Iso8601Ms || t == Transform::Iso8601Short ||
-           t == Transform::Iso8601S || t == Transform::CodeStr || t == Transform::CodeNum;
+           t == Transform::Iso8601S || t == Transform::CodeStr || t == Transform::CodeNum ||
+           t == Transform::Part;
 }
 
 bool transform_is_code(Transform t) {
@@ -528,6 +572,12 @@ Value decode_value(const FieldLine& f, const std::string& text) {
     if (transform_is_text_scale(t)) return decode_text_scale(f, text);
     switch (t) {
         case Transform::String: return Value::of_string(text);
+        case Transform::Part: {  // v0.64
+            std::vector<std::string> parts = token_parts(text, f.part_sep);
+            if (f.part_n >= parts.size())
+                throw std::invalid_argument("the token \"" + text + "\" has no part " + std::to_string(f.part_n));
+            return Value::of_string(std::move(parts[f.part_n]));
+        }
         case Transform::CodeStr:
         case Transform::CodeNum: return decode_code_text(f, text);
         // 0.11 ruling 2c: number text (2b) and integer text (2a), nothing trimmed.
@@ -1193,6 +1243,7 @@ std::string encode_value(const FieldLine& f, const Value& v) {
         if (transform_is_text_scale(t)) return encode_text_scale(f, v);
         if (t == Transform::CodeStr || t == Transform::CodeNum) return encode_code_text(f, v);
         switch (t) {
+            case Transform::Part:  // the text of the part; the token is written by its group (0.64)
             case Transform::String:
                 switch (v.kind) {
                     case Value::Kind::String: return v.s;

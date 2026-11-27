@@ -49,6 +49,7 @@ bool numeric(Transform t) {
 bool valid_on_text(Transform t) {
     switch (t) {
         case Transform::String:
+        case Transform::Part:  // v0.64
         case Transform::Int:
         case Transform::Float:
         case Transform::Iso8601Ms:
@@ -193,6 +194,7 @@ double finite_model(const Value& v) {
 Value text_decode(const FieldLine& f, const std::string& a, const std::string& b) {
     switch (f.transform) {
         case Transform::String: return Value::of_string(a);
+        case Transform::Part:  // v0.64
         case Transform::CodeStr:
         case Transform::CodeNum: return decode_value(f, a);  // v0.46
         case Transform::Int:
@@ -438,7 +440,7 @@ std::vector<Item> decode_items(const Pack& p, const GroupLine& g, const Record& 
         items.emplace_back();
         Decoder d(p, items.back());
         for (const auto& line : lines)
-            if (line.field) decode_field(d, *line.field, rec, i + t * n);
+            if (line.reads()) decode_field(d, *line.reads(), rec, i + t * n);
         d.finish();
     }
     return items;
@@ -558,6 +560,24 @@ struct Writer {
         }
     }
 
+    // One line of a part group (0.64): the token at the group's first line; a
+    // const part is a line without `optional` (ruling 15).
+    void part(const EncodeSource& src, const std::vector<LineRef>& lines, PartGroup& g, const LineRef& line,
+              std::uint64_t base) {
+        const FieldLine& f = *line.reads();
+        address(base + f.text_loc.i, line.field && f.optional);
+        if (g.written) return;
+        g.written = true;
+        std::string token;
+        if (!part_token(src, lines, g, token)) return;
+        check_text(*g.fields.front(), token);
+        Slot& s = slots[base + f.text_loc.i];
+        if (!s.whole_set) {
+            s.whole_set = true;
+            s.whole = token;
+        }
+    }
+
     void fixed(const WhenLine& w, std::uint64_t base) {
         if (w.present) return;  // addresses nothing and writes nothing
         const Loc& l = w.text_loc;
@@ -583,8 +603,10 @@ struct Writer {
         for (std::size_t t = 0; t < items->size(); ++t) {
             const std::uint64_t base = g.text_index + t * n;
             const EncodeSource item_src(p, g, (*items)[t]);
+            std::vector<PartGroup> parts = part_groups(p, lines);
             for (const auto& line : lines) {
-                if (line.field) field(item_src, *line.field, base);
+                if (PartGroup* pg = part_group_of(parts, line)) part(item_src, lines, *pg, line, base);
+                else if (line.field) field(item_src, *line.field, base);
                 else if (line.konst) fixed(*line.konst, base);
             }
             for (std::uint64_t k = 0; k < n; ++k) address(base + k, false);
@@ -717,7 +739,10 @@ void parse_text_locators(Pack& p) {
     };
     auto fixed = [&](std::vector<WhenLine>& ws) {
         for (auto& w : ws)
+        {
             if (!parse_text_locator(w.locator, w.text_loc)) invalid(w.locator, w.line, "'when' or 'const'");
+            if (w.part) w.part->text_loc = w.text_loc;
+        }
     };
     struct Groups {
         decltype(fields)& f;
@@ -783,6 +808,7 @@ Entity decode_text(const Pack& p, const std::string& bytes) {
         }
         if (const WhenLine* w = line.fixed()) {
             if (line.maps()) mark(addressed, w->text_loc, 0);
+            if (w->part) decode_field(d, *w->part, rec, 0);  // v0.64
             continue;
         }
         mark(addressed, line.field->text_loc, 0);
@@ -806,8 +832,14 @@ std::string encode_text(const Pack& p, const Entity& e) {
     const GroupLine* group = scope_group(lines);
     Writer w(p);
     std::set<std::uint64_t> addressed;  // by a line of the scope other than a group
+    std::vector<PartGroup> parts = part_groups(p, lines);
     for (const auto& line : lines) {
         if (line.group) continue;
+        if (PartGroup* pg = part_group_of(parts, line)) {
+            mark(addressed, line.reads()->text_loc, 0);
+            w.part(src, lines, *pg, line, 0);
+            continue;
+        }
         if (const WhenLine* fx = line.fixed()) {
             if (line.maps()) mark(addressed, fx->text_loc, 0);
             w.fixed(*fx, 0);

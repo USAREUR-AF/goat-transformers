@@ -116,20 +116,17 @@ the build's lack said, at least one per wire. Then it builds the library and
 the sizes of both. It exits non-zero on any failure. `GT_JOBS` sets the
 parallel jobs (4).
 
-Measured on 2026-11-24 on Linux x86-64 with GCC 15.2, Release, not stripped:
+Measured on 2026-11-27 on Linux x86-64 with GCC 15.2, Release, not stripped:
 
 | File | All eight wires | `xml`, `json`, `geojson` |
 |---|---|---|
-| `libgoat_transformers.a` | 3,420,664 bytes | 2,415,622 bytes (71%) |
-| `goat-xf` | 1,915,376 bytes | 1,364,408 bytes (71%) |
+| `libgoat_transformers.a` | 3,758,978 bytes | 2,685,682 bytes (71%) |
+| `goat-xf` | 2,103,456 bytes | 1,508,456 bytes (72%) |
 
-On 2026-11-26 it ran 8519 conversion vectors (8518 passed; the one failure is
-`conformance-held-src/40-reqlist-requires-met-by-an-empty-list`, below, so
-the check exits 1 before its size step), 402
-of 402 load vectors and 16 of 16 capability vectors, and refused 3298 packs
-with `unknown-wire` (bits 2317, protobuf 876, text 87, tlv 11, cbor 7). The
-sizes are those of 2026-11-24. What stays in the reduced build is the pack reader and the transforms
-every wire shares.
+On 2026-11-27 it ran 8787 of 8787 conversion vectors, 543 of 543 load vectors
+and 16 of 16 capability vectors, and refused 3352 packs with `unknown-wire`
+(bits 2353, protobuf 879, text 98, tlv 13, cbor 9). What stays in the reduced
+build is the pack reader and the transforms every wire shares.
 
 ### Single-wire check
 
@@ -156,16 +153,16 @@ cd build && ctest --output-on-failure
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
 | `parse_once` | `goat_transformers_parse_once` | what an instance keeps (0.25 ruling 1), below: every vector gives the same output, error and decoded entity on a new instance (the benchmark set's vectors), in reverse order after failing conversions, and from eight threads at once |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
-| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29 and 0.93): 183/183 pass (2026-11-26). The entry exists when CMake finds a Python 3 interpreter |
+| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23, and the licence profiles of 0.29 and 0.93): 183/183 pass (2026-11-27). The entry exists when CMake finds a Python 3 interpreter |
 
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
 
-Measured on 2026-11-26 (Release, all eight wires, through Version 0.94, on
-top of 0.92's runs): `vectors` ran 25823 of 25823 conversion vectors, 1753 of
-1753 load vectors and 29 of 29 capability vectors, none failed; `unit` made
-2339 checks, none failed; `malformed_input` made 9705345 convert calls over
-25823 vector inputs, 0 failed; `parse_once` ran 25733 vectors, 0 failures;
+Measured on 2026-11-27 (Release, all eight wires, through Version 0.64, on
+top of 0.94's runs): `vectors` ran 26279 of 26279 conversion vectors, 1991 of
+1991 load vectors and 29 of 29 capability vectors, none failed; `unit` made
+2345 checks, none failed; `malformed_input` made 9776511 convert calls over
+26279 vector inputs, 0 failed; `parse_once` ran 26186 vectors, 0 failures;
 `tool_vectors` passed 183 of 183.
 
 ## What an instance keeps
