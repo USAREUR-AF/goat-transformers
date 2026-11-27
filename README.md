@@ -15,7 +15,7 @@ no engine holds code for any of the three formats.
 [![REUSE](https://img.shields.io/badge/REUSE-compliant-green.svg)](LICENSING.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-**4,256 formats · 16,749 message kinds · 25,941 conversion vectors · 7 engines**, counted
+**4,259 formats · 16,993 message kinds · 26,552 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
 
 ```console
@@ -59,14 +59,14 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 
 | | Count |
 |---|---:|
-| Formats | 4,256 |
-| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 16,749 |
-| Typed keys in the shared model, in 3,134 modules | 327,757 |
-| Lists in the shared model (parts of a message that repeat) | 35,967 |
-| Conversion vectors (an input message and the exact expected output) | 25,941 |
-| Load vectors (a pack that must load, or must be refused with a named error) | 1,834 |
-| Synthetic formats that exercise each rule of the specification | 824 |
-| Packs in each licence profile, `open` / `open+copyleft` / `everything` ([LICENSING.md](LICENSING.md)) | 4,623 / 4,629 / 5,080 |
+| Formats | 4,259 |
+| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 16,993 |
+| Typed keys in the shared model, in 3,137 modules | 346,141 |
+| Lists in the shared model (parts of a message that repeat) | 38,969 |
+| Conversion vectors (an input message and the exact expected output) | 26,552 |
+| Load vectors (a pack that must load, or must be refused with a named error) | 2,015 |
+| Synthetic formats that exercise each rule of the specification | 914 |
+| Packs in each licence profile, `open` / `open+copyleft` / `everything` ([LICENSING.md](LICENSING.md)) | 4,716 / 4,722 / 5,173 |
 | Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits`, `text`, `tlv`, `cbor` | 8 |
 | Engines, each using only its language's standard library | 7 |
 | WebAssembly module of the Rust engine, small build, no imports | 376,470 bytes |
