@@ -97,7 +97,7 @@ xsd2pack \
   --xsd "$ROOT/sources/isa-xml/ipl-4.7-6.0.13.xsd" \
   --format isa-xml --module isaxml --out "$ROOT" --model-dir "$GT/model" \
   --title "Integrated Sensor Architecture IPL 4.7 XML schema ipl-4.7-6.0.13.xsd (ISA IPL Format 6.0)" \
-  --message-choice Message --message Envelope \
+  --message-choice Message --message Envelope --branch-message Request \
   --names-file "$GEN/names/isa-xml.json"
 
 xsd2pack \
@@ -111,7 +111,7 @@ xsd2pack \
   --xsd "$ROOT/sources/isa-xml/ipl-4.6-6.0.13.xsd" \
   --format isa-xml-4.6 --module isaxml46 --out "$ROOT" --model-dir "$GT/model" \
   --title "Integrated Sensor Architecture IPL 4.6 XML schema ipl-4.6-6.0.13.xsd (ISA IPL Format 6.0)" \
-  --message-choice Message --message Envelope \
+  --message-choice Message --message Envelope --branch-message Request \
   --names-file "$GEN/names/isa-xml-4.6.json"
 
 exit "$STATUS"

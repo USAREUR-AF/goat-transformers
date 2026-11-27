@@ -1,0 +1,14 @@
+{
+  "name": "gen-change_scan_time_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><ChangeScanTimeRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Seconds=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></ChangeScanTimeRequest></Request>",
+  "expect": "<Request><ChangeScanTimeRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Seconds=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></ChangeScanTimeRequest></Request>",
+  "model": {
+    "@kind": "change_scan_time_request",
+    "isaxml.change_scan_time_request_source": "s0",
+    "isaxml.change_scan_time_request_identifier": "2",
+    "isaxml.change_scan_time_request_access_control.#": "2",
+    "isaxml.change_scan_time_request_access_control[1].isaxml.name": "s10"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-adjust_level_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><AdjustLevelRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Direction=\"LD_NONE\" Rate=\"3.5\" Duration=\"0.75\"><Time Value=\"0.5\" Error=\"1.5\"/><Stale Value=\"0.25\" Error=\"2.5\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/></AdjustLevelRequest></Request>",
+  "expect": "<Request><AdjustLevelRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Direction=\"LD_NONE\" Rate=\"3.5\" Duration=\"0.75\"><Time Value=\"0.5\" Error=\"1.5\"/><Stale Value=\"0.25\" Error=\"2.5\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/></AdjustLevelRequest></Request>",
+  "model": {
+    "@kind": "adjust_level_request",
+    "isaxml.adjust_level_request_source": "s0",
+    "isaxml.adjust_level_request_identifier": "2",
+    "isaxml.adjust_level_request_access_control.#": "2",
+    "isaxml.adjust_level_request_access_control[1].isaxml.name": "s12"
+  }
+}

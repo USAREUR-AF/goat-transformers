@@ -1,0 +1,14 @@
+{
+  "name": "gen-change_minimum_status_interval_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><ChangeMinimumStatusIntervalRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Interval=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></ChangeMinimumStatusIntervalRequest></Request>",
+  "expect": "<Request><ChangeMinimumStatusIntervalRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Interval=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></ChangeMinimumStatusIntervalRequest></Request>",
+  "model": {
+    "@kind": "change_minimum_status_interval_request",
+    "isaxml.change_minimum_status_interval_request_source": "s0",
+    "isaxml.change_minimum_status_interval_request_identifier": "2",
+    "isaxml.change_minimum_status_interval_request_access_control.#": "2",
+    "isaxml.change_minimum_status_interval_request_access_control[1].isaxml.name": "s10"
+  }
+}

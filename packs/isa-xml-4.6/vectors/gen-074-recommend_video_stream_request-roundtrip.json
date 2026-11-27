@@ -1,0 +1,14 @@
+{
+  "name": "gen-recommend_video_stream_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><RecommendVideoStreamRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Original=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></RecommendVideoStreamRequest></Request>",
+  "expect": "<Request><RecommendVideoStreamRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Original=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></RecommendVideoStreamRequest></Request>",
+  "model": {
+    "@kind": "recommend_video_stream_request",
+    "isaxml46.recommend_video_stream_request_source": "s0",
+    "isaxml46.recommend_video_stream_request_identifier": "2",
+    "isaxml46.recommend_video_stream_request_access_control.#": "2",
+    "isaxml46.recommend_video_stream_request_access_control[1].isaxml46.name": "s10"
+  }
+}

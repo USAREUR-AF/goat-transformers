@@ -1,0 +1,14 @@
+{
+  "name": "gen-cancel_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><CancelRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" OriginalSource=\"s4\" OriginalRequestId=\"6\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/></CancelRequest></Request>",
+  "expect": "<Request><CancelRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" OriginalSource=\"s4\" OriginalRequestId=\"6\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/></CancelRequest></Request>",
+  "model": {
+    "@kind": "cancel_request",
+    "isaxml.cancel_request_source": "s0",
+    "isaxml.cancel_request_identifier": "2",
+    "isaxml.cancel_request_access_control.#": "2",
+    "isaxml.cancel_request_access_control[1].isaxml.name": "s11"
+  }
+}

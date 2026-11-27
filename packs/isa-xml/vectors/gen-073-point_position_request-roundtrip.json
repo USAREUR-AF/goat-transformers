@@ -1,0 +1,14 @@
+{
+  "name": "gen-point_position_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><PointPositionRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s16\"/><AccessControl Name=\"s17\"/><Position Latitude=\"1.5\" Longitude=\"0.25\" Altitude=\"2.5\" A=\"0.125\" B=\"3.5\" C=\"0.75\" Phi=\"0.5\" Theta=\"1.5\"/></PointPositionRequest></Request>",
+  "expect": "<Request><PointPositionRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s16\"/><AccessControl Name=\"s17\"/><Position Latitude=\"1.5\" Longitude=\"0.25\" Altitude=\"2.5\" A=\"0.125\" B=\"3.5\" C=\"0.75\" Phi=\"0.5\" Theta=\"1.5\"/></PointPositionRequest></Request>",
+  "model": {
+    "@kind": "point_position_request",
+    "isaxml.point_position_request_source": "s0",
+    "isaxml.point_position_request_identifier": "2",
+    "isaxml.point_position_request_access_control.#": "2",
+    "isaxml.point_position_request_access_control[1].isaxml.name": "s17"
+  }
+}

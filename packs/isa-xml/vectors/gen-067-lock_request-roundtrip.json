@@ -1,0 +1,18 @@
+{
+  "name": "gen-lock_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><LockRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" To=\"s4\" LockTime=\"6\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/><LockHolders>s12</LockHolders><LockHolders>s13</LockHolders><Commands>s14</Commands><Commands>s15</Commands></LockRequest></Request>",
+  "expect": "<Request><LockRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" To=\"s4\" LockTime=\"6\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s10\"/><AccessControl Name=\"s11\"/><LockHolders>s12</LockHolders><LockHolders>s13</LockHolders><Commands>s14</Commands><Commands>s15</Commands></LockRequest></Request>",
+  "model": {
+    "@kind": "lock_request",
+    "isaxml.lock_request_source": "s0",
+    "isaxml.lock_request_identifier": "2",
+    "isaxml.lock_request_access_control.#": "2",
+    "isaxml.lock_request_access_control[1].isaxml.name": "s11",
+    "isaxml.lock_request_lock_holders.#": "2",
+    "isaxml.lock_request_lock_holders[1].isaxml.item_string": "s13",
+    "isaxml.lock_request_commands.#": "2",
+    "isaxml.lock_request_commands[1].isaxml.item_string": "s15"
+  }
+}

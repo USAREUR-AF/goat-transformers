@@ -1,0 +1,14 @@
+{
+  "name": "gen-point_orientation_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><PointOrientationRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s14\"/><AccessControl Name=\"s15\"/><Orientation><Pitch Value=\"1.5\" Error=\"0.25\"/><Roll Value=\"2.5\" Error=\"0.125\"/><Yaw Value=\"3.5\" Error=\"0.75\"/></Orientation></PointOrientationRequest></Request>",
+  "expect": "<Request><PointOrientationRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s14\"/><AccessControl Name=\"s15\"/><Orientation><Pitch Value=\"1.5\" Error=\"0.25\"/><Roll Value=\"2.5\" Error=\"0.125\"/><Yaw Value=\"3.5\" Error=\"0.75\"/></Orientation></PointOrientationRequest></Request>",
+  "model": {
+    "@kind": "point_orientation_request",
+    "isaxml46.point_orientation_request_source": "s0",
+    "isaxml46.point_orientation_request_identifier": "2",
+    "isaxml46.point_orientation_request_access_control.#": "2",
+    "isaxml46.point_orientation_request_access_control[1].isaxml46.name": "s15"
+  }
+}

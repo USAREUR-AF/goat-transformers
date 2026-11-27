@@ -1,0 +1,18 @@
+{
+  "name": "gen-authorize_registration_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><AuthorizeRegistrationRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Client=\"s4\" Server=\"s5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s19\"/><AccessControl Name=\"s20\"/><Registration Source=\"s10\" Identifier=\"3\" Priority=\"4\" Opcode=\"RO_REQUEST_ADD\" ErrorDescription=\"s14\"><Time Value=\"1.5\" Error=\"0.25\"/><Stale Value=\"2.5\" Error=\"0.125\"/><Credentials Name=\"s21\"/><Credentials Name=\"s22\"/><Extras Name=\"s23\"/><Extras Name=\"s24\"/></Registration></AuthorizeRegistrationRequest></Request>",
+  "expect": "<Request><AuthorizeRegistrationRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Client=\"s4\" Server=\"s5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s19\"/><AccessControl Name=\"s20\"/><Registration Source=\"s10\" Identifier=\"3\" Priority=\"4\" Opcode=\"RO_REQUEST_ADD\" ErrorDescription=\"s14\"><Time Value=\"1.5\" Error=\"0.25\"/><Stale Value=\"2.5\" Error=\"0.125\"/><Credentials Name=\"s21\"/><Credentials Name=\"s22\"/><Extras Name=\"s23\"/><Extras Name=\"s24\"/></Registration></AuthorizeRegistrationRequest></Request>",
+  "model": {
+    "@kind": "authorize_registration_request",
+    "isaxml46.authorize_registration_request_source": "s0",
+    "isaxml46.authorize_registration_request_identifier": "2",
+    "isaxml46.authorize_registration_request_access_control.#": "2",
+    "isaxml46.authorize_registration_request_access_control[1].isaxml46.name": "s20",
+    "isaxml46.authorize_registration_request_registration_credentials.#": "2",
+    "isaxml46.authorize_registration_request_registration_credentials[1].isaxml46.name": "s22",
+    "isaxml46.authorize_registration_request_registration_extras.#": "2",
+    "isaxml46.authorize_registration_request_registration_extras[1].isaxml46.name": "s24"
+  }
+}

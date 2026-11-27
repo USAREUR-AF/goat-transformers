@@ -1,0 +1,14 @@
+{
+  "name": "gen-change_contrast_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><ChangeContrastRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Contrast=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></ChangeContrastRequest></Request>",
+  "expect": "<Request><ChangeContrastRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Contrast=\"0.125\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></ChangeContrastRequest></Request>",
+  "model": {
+    "@kind": "change_contrast_request",
+    "isaxml.change_contrast_request_source": "s0",
+    "isaxml.change_contrast_request_identifier": "2",
+    "isaxml.change_contrast_request_access_control.#": "2",
+    "isaxml.change_contrast_request_access_control[1].isaxml.name": "s10"
+  }
+}

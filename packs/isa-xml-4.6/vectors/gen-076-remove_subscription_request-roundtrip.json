@@ -1,0 +1,14 @@
+{
+  "name": "gen-remove_subscription_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><RemoveSubscriptionRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/><SubscriptionId Creator=\"s8\" Consumer=\"s9\" Name=\"s10\"/></RemoveSubscriptionRequest></Request>",
+  "expect": "<Request><RemoveSubscriptionRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s11\"/><AccessControl Name=\"s12\"/><SubscriptionId Creator=\"s8\" Consumer=\"s9\" Name=\"s10\"/></RemoveSubscriptionRequest></Request>",
+  "model": {
+    "@kind": "remove_subscription_request",
+    "isaxml46.remove_subscription_request_source": "s0",
+    "isaxml46.remove_subscription_request_identifier": "2",
+    "isaxml46.remove_subscription_request_access_control.#": "2",
+    "isaxml46.remove_subscription_request_access_control[1].isaxml46.name": "s12"
+  }
+}

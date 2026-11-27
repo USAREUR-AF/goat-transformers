@@ -1,0 +1,14 @@
+{
+  "name": "gen-menu_navigation_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><MenuNavigationRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Button=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></MenuNavigationRequest></Request>",
+  "expect": "<Request><MenuNavigationRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Button=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></MenuNavigationRequest></Request>",
+  "model": {
+    "@kind": "menu_navigation_request",
+    "isaxml46.menu_navigation_request_source": "s0",
+    "isaxml46.menu_navigation_request_identifier": "2",
+    "isaxml46.menu_navigation_request_access_control.#": "2",
+    "isaxml46.menu_navigation_request_access_control[1].isaxml46.name": "s10"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-stop_data_input_request-roundtrip",
+  "from": "isa-xml-4.6",
+  "to": "isa-xml-4.6",
+  "input": "<Request><StopDataInputRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Name=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></StopDataInputRequest></Request>",
+  "expect": "<Request><StopDataInputRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Name=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></StopDataInputRequest></Request>",
+  "model": {
+    "@kind": "stop_data_input_request",
+    "isaxml46.stop_data_input_request_source": "s0",
+    "isaxml46.stop_data_input_request_identifier": "2",
+    "isaxml46.stop_data_input_request_access_control.#": "2",
+    "isaxml46.stop_data_input_request_access_control[1].isaxml46.name": "s10"
+  }
+}

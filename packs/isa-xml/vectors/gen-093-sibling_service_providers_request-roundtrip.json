@@ -1,0 +1,16 @@
+{
+  "name": "gen-sibling_service_providers_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><SiblingServiceProvidersRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Service=\"s4\" Provider=\"s5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s12\"/><AccessControl Name=\"s13\"/><Visited>s14</Visited><Visited>s15</Visited><Ttl Value=\"2\" Error=\"3\"/></SiblingServiceProvidersRequest></Request>",
+  "expect": "<Request><SiblingServiceProvidersRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Service=\"s4\" Provider=\"s5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><AccessControl Name=\"s12\"/><AccessControl Name=\"s13\"/><Visited>s14</Visited><Visited>s15</Visited><Ttl Value=\"2\" Error=\"3\"/></SiblingServiceProvidersRequest></Request>",
+  "model": {
+    "@kind": "sibling_service_providers_request",
+    "isaxml.sibling_service_providers_request_source": "s0",
+    "isaxml.sibling_service_providers_request_identifier": "2",
+    "isaxml.sibling_service_providers_request_access_control.#": "2",
+    "isaxml.sibling_service_providers_request_access_control[1].isaxml.name": "s13",
+    "isaxml.sibling_service_providers_request_visited.#": "2",
+    "isaxml.sibling_service_providers_request_visited[1].isaxml.item_string": "s15"
+  }
+}

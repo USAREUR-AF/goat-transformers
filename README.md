@@ -92,8 +92,8 @@ The figure is drawn from `packs/` by `python3 -I tools/catalog-figure.py`; `tool
 | `isa-message` | Integrated Sensor Architecture, IPL 3.7 message union | `protobuf` | 7 |
 | `isa-message-3.6` | Integrated Sensor Architecture, IPL 3.6 message union | `protobuf` | 7 |
 | `isa-ipl1` | Integrated Sensor Architecture, IPL 1.6 message union | `protobuf` | 7 |
-| `isa-xml` | Integrated Sensor Architecture, IPL 4.7 XML form | `xml` | 7 |
-| `isa-xml-4.6` | Integrated Sensor Architecture, IPL 4.6 XML form | `xml` | 7 |
+| `isa-xml` | Integrated Sensor Architecture, IPL 4.7 XML form | `xml` | 104 |
+| `isa-xml-4.6` | Integrated Sensor Architecture, IPL 4.6 XML form | `xml` | 104 |
 | `isa-xml-2.6` | Integrated Sensor Architecture, IPL 2.6 XML form | `xml` | 8 |
 | `uci` | Universal Command and Control Interface (UCI) 2.6 | `xml` | 725 |
 | `a-gra` | Autonomy Government Reference Architecture (A-GRA) 6.0a | `xml` | 860 |

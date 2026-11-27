@@ -1635,3 +1635,39 @@ class ChameleonIncludeTest(Workspace):
                       "`cham.xsd`.", md)
         vec = json.loads(self.read_out("packs", "demo", "vectors", "gen-1-doc-roundtrip.json"))
         self.assertTrue(vec["input"].startswith('<Doc xmlns="urn:example:c">'), vec["input"])
+
+
+class BranchMessageTest(Workspace):
+    """--branch-message: a message whose type is one choice of element refs gets one kind per
+    branch, rooted at the message and told apart by a mandatory attribute of the branch."""
+
+    BODY = '''<xs:element name="Root" type="t:R"/>
+<xs:complexType name="R"><xs:choice><xs:element ref="t:Ping"/><xs:element ref="t:Stop"/></xs:choice></xs:complexType>
+<xs:element name="Ping" type="t:P"/>
+<xs:complexType name="P"><xs:sequence><xs:element name="Note" type="xs:string" minOccurs="0"/></xs:sequence>
+  <xs:attribute name="Source" type="xs:string" use="required"/></xs:complexType>
+<xs:element name="Stop" type="t:S"/>
+<xs:complexType name="S"><xs:attribute name="Source" type="xs:string" use="required"/>
+  <xs:attribute name="Code" type="xs:int" use="required"/></xs:complexType>'''
+
+    def test_one_kind_per_branch_with_the_message_root_and_a_present_when(self):
+        self.assertEqual(self.run_schema(self.BODY, "--branch-message", "Root")[0], 0)
+        pack = self.read_out("packs", "demo", "pack.def")
+        self.assertIn("kind      ping\nroot      Root\nwhen      Ping/@Source  present\n", pack)
+        self.assertIn("kind      stop\nroot      Root\nwhen      Stop/@Source  present\n", pack)
+        self.assertNotIn("kind      root\n", pack)
+
+    def test_each_branch_has_a_vector_that_decodes_as_its_kind(self):
+        self.assertEqual(self.run_schema(self.BODY, "--branch-message", "Root")[0], 0)
+        names = sorted(os.listdir(self.path("out", "packs", "demo", "vectors")))
+        self.assertEqual(len(names), 2)
+        docs = [json.loads(self.read_out("packs", "demo", "vectors", n)) for n in names]
+        self.assertTrue(docs[0]["input"].startswith("<Root") and "<Ping " in docs[0]["input"], docs[0]["input"])
+        self.assertTrue("<Stop " in docs[1]["input"], docs[1]["input"])
+
+    def test_a_message_whose_type_is_not_one_choice_is_refused(self):
+        body = '<xs:element name="Root" type="t:R"/><xs:complexType name="R"><xs:sequence>' \
+               '<xs:element name="A" type="xs:string"/></xs:sequence></xs:complexType>'
+        status, _, err = self.run_schema(body, "--branch-message", "Root")
+        self.assertNotEqual(status, 0)
+        self.assertIn("--branch-message Root: its type is not one choice", err)

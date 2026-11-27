@@ -1,0 +1,14 @@
+{
+  "name": "gen-set_live_data_service_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><SetLiveDataServiceRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Service=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></SetLiveDataServiceRequest></Request>",
+  "expect": "<Request><SetLiveDataServiceRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\" Service=\"s4\"><Time Value=\"3.5\" Error=\"0.75\"/><Stale Value=\"0.5\" Error=\"1.5\"/><AccessControl Name=\"s9\"/><AccessControl Name=\"s10\"/></SetLiveDataServiceRequest></Request>",
+  "model": {
+    "@kind": "set_live_data_service_request",
+    "isaxml.set_live_data_service_request_source": "s0",
+    "isaxml.set_live_data_service_request_identifier": "2",
+    "isaxml.set_live_data_service_request_access_control.#": "2",
+    "isaxml.set_live_data_service_request_access_control[1].isaxml.name": "s10"
+  }
+}

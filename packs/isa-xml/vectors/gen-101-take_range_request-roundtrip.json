@@ -1,0 +1,14 @@
+{
+  "name": "gen-take_range_request-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Request><TakeRangeRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s8\"/><AccessControl Name=\"s9\"/></TakeRangeRequest></Request>",
+  "expect": "<Request><TakeRangeRequest Source=\"s0\" Identifier=\"2\" Priority=\"3\" RequestId=\"4\"><Time Value=\"0.125\" Error=\"3.5\"/><Stale Value=\"0.75\" Error=\"0.5\"/><AccessControl Name=\"s8\"/><AccessControl Name=\"s9\"/></TakeRangeRequest></Request>",
+  "model": {
+    "@kind": "take_range_request",
+    "isaxml.take_range_request_source": "s0",
+    "isaxml.take_range_request_identifier": "2",
+    "isaxml.take_range_request_access_control.#": "2",
+    "isaxml.take_range_request_access_control[1].isaxml.name": "s9"
+  }
+}

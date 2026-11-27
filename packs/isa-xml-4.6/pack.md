@@ -19,40 +19,37 @@ version 0.7 (a `root` line per kind, a `group` block per repeated element). Edit
 | global elements | 400 |
 | complex types | 331 |
 | simple types | 69 |
-| messages | 8 |
-| kinds | 7 |
-| global elements that are not messages | 392 |
-| leaves mapped outside any group, summed over kinds | 452 |
-| of those, on a path the schema makes mandatory | 26 |
-| groups (repeated elements mapped), summed over kinds | 41 |
-| of those, directly in a message (first level) | 34 |
+| messages | 7 |
+| kinds | 104 |
+| global elements that are not messages | 393 |
+| leaves mapped outside any group, summed over kinds | 1428 |
+| of those, on a path the schema makes mandatory | 510 |
+| groups (repeated elements mapped), summed over kinds | 181 |
+| of those, directly in a message (first level) | 174 |
 | of those, inside an item of another group (nested) | 7 |
-| of those, items that are one text value (`"#text"` alone) | 6 |
-| leaves mapped inside items of groups, summed over kinds | 114 |
-| `field` lines in pack.def | 566 |
-| `group` blocks in pack.def | 41 |
+| of those, items that are one text value (`"#text"` alone) | 43 |
+| leaves mapped inside items of groups, summed over kinds | 268 |
+| `field` lines in pack.def | 1696 |
+| `group` blocks in pack.def | 181 |
 | common lines (every kind starts with them): `field` | 0 |
 | common lines: `group` blocks, first level | 0 |
-| keys in module `isaxml46` | 296 |
-| lists in module `isaxml46` | 26 |
+| keys in module `isaxml46` | 1272 |
+| lists in module `isaxml46` | 166 |
 | `field` lines bound to `core` or `track` keys | 0 |
-| places not mapped, summed over kinds | 25 |
-| vectors (one same-format round trip per kind) | 7 |
+| places not mapped, summed over kinds | 132 |
+| vectors (one same-format round trip per kind) | 104 |
 | vectors from another format | 0 |
 | depth limit (element steps below the root) | 8 |
 | deepest group nesting | 2 |
 
-Mapped leaves by depth (element steps below the root, inside groups too): 119 at depth 0, 228 at depth 1, 211 at depth 2, 6 at depth 3, 2 at depth 5.
+Mapped leaves by depth (element steps below the root, inside groups too): 119 at depth 0, 711 at depth 1, 756 at depth 2, 81 at depth 3, 27 at depth 4, 2 at depth 5.
 
-Groups by nesting: 34 at level 1, 7 at level 2.
+Groups by nesting: 174 at level 1, 7 at level 2.
 
 ## Which global elements are messages
 
-A kind is written for every global element the choice in type `Message` refers to; and the global element `Envelope`. Each kind has `root <element>` and no `when`; the pack has no
+A kind is written for every global element the choice in type `Message` refers to; and the global element `Envelope`; and for `Request`, one kind per element its choice refers to, told apart by a mandatory attribute. Each kind has `root <element>`; a kind of a branch also has `when <Branch>/@<attribute> present`, a mandatory attribute of the branch element, and no other kind has a `when`; the pack has no
 pack-level `root`. Kind names are the element names in snake case. Kinds are in schema order.
-
-No kind is written for 1 message in which nothing can be mapped (`Request`: choice with a branch that is not a simple leaf): a kind with no
-`field` and no `requires` would be selected on encode by any entity. Such a document decodes as `no-kind`.
 
 ## How a message is walked
 
@@ -84,26 +81,26 @@ name together.
 
 | XSD built-in base | Transform | Leaves |
 |---|---|---|
-| `xs:decimal` | `float` | 349 |
-| `xs:string` | `string` | 132 |
-| `xs:boolean` | `string` | 52 |
-| `xs:integer` | `int` | 33 |
+| `xs:decimal` | `float` | 847 |
+| `xs:string` | `string` | 424 |
+| `xs:integer` | `int` | 335 |
+| `xs:boolean` | `string` | 90 |
 
-Totals: `string` 184, `float` 349, `int` 33.
+Totals: `string` 514, `float` 847, `int` 335.
 
 | Mapped with a loss or a limit | Leaves |
 |---|---|
-| xs:boolean kept as string | 52 |
-| xs:unsignedLong or unbounded integer: values beyond 64 bits do not fit `int` | 33 |
+| xs:unsignedLong or unbounded integer: values beyond 64 bits do not fit `int` | 335 |
+| xs:boolean kept as string | 90 |
 
 ## Mapped
 
 | What | Lines | Summed over kinds |
 |---|---|---|
-| leaves outside any group | `field <key> <path>/@name` or `<path>/#text` | 452 |
-| repeated elements, first level | `group <list> <path>` | 34 |
+| leaves outside any group | `field <key> <path>/@name` or `<path>/#text` | 1428 |
+| repeated elements, first level | `group <list> <path>` | 174 |
 | repeated elements inside an item | nested `group` | 7 |
-| leaves inside items | `field` lines of a group, relative to the item | 114 |
+| leaves inside items | `field` lines of a group, relative to the item | 268 |
 
 ## Not mapped
 
@@ -112,8 +109,8 @@ place is not counted.
 
 | Reason | Places |
 |---|---|
-| element of xs:anyType | 15 |
-| choice with a branch that is not a simple leaf | 10 |
+| element of xs:anyType | 116 |
+| choice with a branch that is not a simple leaf | 16 |
 
 An unmapped child element is dropped on decode (0.1.1 ruling 6; inside an item, 0.7), so a
 document that uses any of these places does not round-trip whole: the mapped leaves survive,
@@ -142,7 +139,7 @@ the locator; a locator with two model types gets `_<type>`; a name two places wo
 gets `_attr` on the attribute, `_list` on a list that meets a key, or the hash. One list per group path: the
 path from the root element for a first-level group, the path within the item for a nested
 one, named by the same rule. Names are pinned in `tools/gen/names/isa-xml-4.6.json`: a later
-run never renames a pinned key or list. 296 keys and 26 lists, longest name 59 characters, 0 carry a hash.
+run never renames a pinned key or list. 1272 keys and 166 lists, longest name 70 characters, 0 carry a hash.
 
 ## Mapped to shared keys
 
@@ -154,7 +151,7 @@ Every kind lists up to 6 raw keys of module `isaxml46`, chosen so that as few ot
 possible map all of them: first from the kind's own leaves on a path the schema makes
 mandatory; while another kind still maps the whole list, from its own optional leaves (1 kinds
 list an optional key); a kind with no own leaf lists a common one. Keys inside items are not used.
-For 5 of 7 such kinds no other kind maps the whole list.
+For 102 of 104 such kinds no other kind maps the whole list.
 The other 2 have the same mapped leaves as some other kind (their difference lies in
 groups or in places that are not mapped); for those, encode from an entity with no kind takes the first in pack order.
 Because every list holds raw keys, an entity decoded from another format selects no kind of
@@ -200,3 +197,100 @@ reached the entity, an item or the residue.
 | `registration` | `Registration` | 11 | 2 | 2 | 1 |
 | `response` | `Response` | 11 | 1 | 1 | 1 |
 | `status` | `Status` | 202 | 12 | 5 | 2 (not unique) |
+| `custom_request` | `Request` | 11 | 2 | 2 | 1 |
+| `add_ipaddress_request` | `Request` | 10 | 1 | 2 | 1 |
+| `add_subscription_request` | `Request` | 31 | 12 | 2 | 1 |
+| `add_zone_request` | `Request` | 10 | 2 | 2 | 1 |
+| `adjust_brightness_request` | `Request` | 12 | 1 | 1 | 1 |
+| `adjust_contrast_request` | `Request` | 12 | 1 | 1 | 1 |
+| `adjust_focus_request` | `Request` | 12 | 1 | 1 | 1 |
+| `adjust_gain_request` | `Request` | 12 | 1 | 1 | 1 |
+| `adjust_iris_size_request` | `Request` | 12 | 1 | 1 | 1 |
+| `adjust_level_request` | `Request` | 12 | 1 | 1 | 1 |
+| `adjust_power_request` | `Request` | 11 | 1 | 1 | 1 |
+| `adjust_zoom_request` | `Request` | 12 | 1 | 1 | 1 |
+| `arm_request` | `Request` | 9 | 1 | 1 | 1 |
+| `authorize_registration_request` | `Request` | 22 | 3 | 3 | 1 |
+| `authorize_request_request` | `Request` | 10 | 1 | 2 | 1 |
+| `calibrate_request` | `Request` | 9 | 1 | 1 | 1 |
+| `cancel_request` | `Request` | 11 | 1 | 1 | 1 |
+| `change_active_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_auto_brightness_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_auto_contrast_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_auto_focus_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_auto_gain_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_auto_level_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_auto_scan_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_brightness_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_camera_mode_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_contrast_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_enabled_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_field_of_regard_request` | `Request` | 13 | 1 | 1 | 1 |
+| `change_field_of_view_request` | `Request` | 13 | 1 | 1 | 1 |
+| `change_focus_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_frame_rate_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_gain_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_iris_size_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_level_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_maximum_status_interval_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_minimum_status_interval_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_name_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_polarity_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_power_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_pulse_interval_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_quality_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_radar_mode_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_resolution_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_scan_time_request` | `Request` | 10 | 1 | 1 | 1 |
+| `change_zoom_request` | `Request` | 9 | 1 | 1 | 1 |
+| `clear_property_request` | `Request` | 10 | 1 | 1 | 1 |
+| `create_zip_archive_request` | `Request` | 10 | 1 | 1 | 1 |
+| `designate_request` | `Request` | 10 | 1 | 1 | 1 |
+| `disarm_request` | `Request` | 9 | 1 | 1 | 1 |
+| `discover_request` | `Request` | 30 | 12 | 2 | 1 |
+| `get_config_request` | `Request` | 9 | 1 | 1 | 1 |
+| `get_last_operation_state_request` | `Request` | 10 | 1 | 1 | 1 |
+| `get_operation_state_history_request` | `Request` | 11 | 1 | 1 | 1 |
+| `get_property_request` | `Request` | 10 | 1 | 1 | 1 |
+| `get_status_request` | `Request` | 9 | 1 | 1 | 1 |
+| `history_request` | `Request` | 33 | 12 | 2 | 1 |
+| `illuminate_request` | `Request` | 10 | 1 | 1 | 1 |
+| `initiate_nucrequest` | `Request` | 9 | 1 | 1 | 1 |
+| `lock_request` | `Request` | 13 | 3 | 1 | 1 |
+| `menu_navigation_request` | `Request` | 10 | 1 | 1 | 1 |
+| `move_request` | `Request` | 17 | 1 | 1 | 1 |
+| `observe_request` | `Request` | 19 | 1 | 1 | 1 |
+| `ping_request` | `Request` | 9 | 1 | 1 | 1 |
+| `point_orientation_request` | `Request` | 15 | 1 | 1 | 1 |
+| `point_position_request` | `Request` | 17 | 1 | 1 | 1 |
+| `recommend_video_stream_request` | `Request` | 10 | 1 | 1 | 1 |
+| `remove_ipaddress_request` | `Request` | 10 | 1 | 1 | 1 |
+| `remove_subscription_request` | `Request` | 12 | 1 | 1 | 1 |
+| `remove_zone_request` | `Request` | 10 | 1 | 1 | 1 |
+| `render_useless_request` | `Request` | 9 | 1 | 1 | 1 |
+| `reset_request` | `Request` | 9 | 1 | 1 | 1 |
+| `sanitize_request` | `Request` | 9 | 1 | 1 | 1 |
+| `scan_area_request` | `Request` | 19 | 2 | 1 | 1 |
+| `scan_points_request` | `Request` | 19 | 2 | 1 | 1 |
+| `self_test_request` | `Request` | 9 | 1 | 1 | 1 |
+| `service_notify_request` | `Request` | 13 | 1 | 1 | 1 |
+| `service_provider_for_component_request` | `Request` | 11 | 1 | 1 | 1 |
+| `set_authorization_service_request` | `Request` | 10 | 1 | 1 | 1 |
+| `set_communication_service_request` | `Request` | 10 | 1 | 1 | 1 |
+| `set_live_data_service_request` | `Request` | 10 | 1 | 1 | 1 |
+| `set_observable_reporting_request` | `Request` | 11 | 1 | 1 | 1 |
+| `set_property_request` | `Request` | 10 | 1 | 2 | 1 |
+| `set_property_reporting_request` | `Request` | 11 | 1 | 1 | 1 |
+| `shutdown_request` | `Request` | 9 | 1 | 1 | 1 |
+| `sibling_service_providers_request` | `Request` | 14 | 2 | 1 | 1 |
+| `slew_percent_request` | `Request` | 13 | 1 | 1 | 1 |
+| `slew_velocity_request` | `Request` | 16 | 1 | 1 | 1 |
+| `start_data_input_request` | `Request` | 11 | 1 | 1 | 1 |
+| `start_data_output_request` | `Request` | 12 | 1 | 1 | 1 |
+| `stop_data_input_request` | `Request` | 10 | 1 | 1 | 1 |
+| `stop_data_output_request` | `Request` | 10 | 1 | 1 | 1 |
+| `take_picture_request` | `Request` | 9 | 1 | 1 | 1 |
+| `take_range_request` | `Request` | 9 | 1 | 1 | 1 |
+| `trace_route_request` | `Request` | 13 | 2 | 1 | 1 |
+| `unlock_request` | `Request` | 10 | 1 | 1 | 1 |
+| `zeroize_request` | `Request` | 9 | 1 | 1 | 1 |
