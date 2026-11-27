@@ -56,6 +56,9 @@ final class Sentinels {
     /** True when the option holds an exact value: encode of an absent key writes the first (engine-spec 0.56). */
     boolean writes() { return nums.length > 0 || texts.length > 0; }
 
+    /** True when the option holds a range sentinel, {@code >=} or {@code <=} (engine-spec 0.56). */
+    boolean hasRange() { return rangeAtLeast.length > 0; }
+
     /** True when {@code v} begins with {@code >=} or {@code <=}: a range sentinel (engine-spec 0.56). */
     static boolean isRange(String v) { return v.startsWith(">=") || v.startsWith("<="); }
 
