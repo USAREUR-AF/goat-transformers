@@ -101,7 +101,8 @@ has a pack:
 | Per-wire feature gates in each engine, so that a package for `xml` formats only does not compile the binary codecs | Built, seven engines (spec 0.24): each engine's README names its switch; `tools/goat-pkg plan` prints it |
 | Licence profiles `open`, `open+copyleft` and `everything`: every pack and model module belongs to the profiles its licence allows (`licences.toml`, `LICENSING.md`), and each engine loads only the files of a profile when asked; a file is in a profile only when it says itself that it is public, so a controlled pack is in none | Built, seven engines and `tools/licences.py` (spec 0.29, 0.93) |
 | The capability matrix as a checked CI artifact: one command-line contract for all seven engines' tools (spec 0.23), pinned by tool vectors, and the matrix of the formats in `tools/matrix-formats.txt` produced by every engine's tool and compared byte for byte | Built, seven engines (spec 0.23): 97 tool vectors; the matrix is a CI artifact all seven write alike |
-| Parse-once caching for packs and protobuf submessages; a benchmark for each engine | Designed |
+| Parse-once caching of packs, and a benchmark for each engine: each engine keeps the parsed form of its packs for the life of an instance; `bench/set.json` runs in all seven, and `tools/bench-table.py` tabulates the runs ([docs/benchmark.md](benchmark.md)) | Built, seven engines (spec 0.25) |
+| Parse-once caching of protobuf submessages within one conversion | Designed |
 | An HTTP front end over the package planner (`tools/goat-pkg serve`) | Built |
 | Transport adapters in `adapters/`: stdin, files, directories, TCP, UDP, serial and MQTT 3.1.1 through `goat-xf-pipe`, standard library only (`docs/adapters.md`) | Built |
 | A Zenoh adapter, its own crate outside the adapters workspace | Built; not built in CI |

@@ -590,3 +590,33 @@ jobs:
           embedded/measure.sh thumbv7em-none-eabihf "gt-core/sqrt gt-core/trig"
       - name: The linked image holds no panic machinery
         run: "! grep -qi panic embedded/target/firmware.map"
+
+  # Spec 0.25, ruling 2d: one table of the seven benchmark runs of this
+  # workflow (each job keeps bench-<engine>.jsonl), in the job summary and as an
+  # artifact. Each engine ran on its own runner, so the columns are listed side
+  # by side, not compared. The job never fails the run, and no number fails it.
+  bench-table:
+    needs: [rust, go, python, java, cpp, erlang, zig]
+    if: always()
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: bench-*
+          merge-multiple: true
+          path: bench-runs
+      - name: The benchmark table (tools/bench-table.py)
+        run: |
+          set -- $(for e in rust go cpp zig java erlang python; do [ -f "bench-runs/bench-$e.jsonl" ] && echo "bench-runs/bench-$e.jsonl"; done)
+          [ "$#" -gt 0 ] || { echo "no benchmark run to tabulate" >> "$GITHUB_STEP_SUMMARY"; exit 0; }
+          python3 -I tools/bench-table.py "$@" > bench-table.md
+          { echo "### Benchmark, bench/set.json, microseconds per conversion (commit ${GITHUB_SHA::9})"; echo; cat bench-table.md; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: bench-table
+          path: bench-table.md
+          if-no-files-found: ignore
