@@ -26,8 +26,10 @@ REF_CEF = "Implementing ArcSight Common Event Format (CEF), Version 26 (OpenText
 REF_LEEF = "IBM QRadar DSM documentation, LEEF event components"
 
 
-def vec(name, frm, to, inp, expect=None, model=None, error=None, ref="", note=None):
+def vec(name, frm, to, inp, expect=None, model=None, error=None, ref="", note=None, context=None):
     v = {"name": name, "from": frm, "to": to, "input": inp}
+    if context:
+        v["context"] = {k: str(x) for k, x in context.items()}
     if error:
         v["expect_error"] = error
     else:
@@ -186,7 +188,8 @@ def mrt_vectors():
     body = u32(4200000001) + u32(64496) + u16(0) + u16(1) + u32(ip4("198.51.100.1")) + u32(ip4("198.51.100.254")) + u16(4) + u16(6)
     rec = record(T0 + 1, 16, 5, body)
     V["05-state-change-as4-roundtrip"] = vec("state-change-as4-roundtrip", F, F, hx(rec), hx(rec), {
-        "@kind": "bgp4mp-state-change-as4", "time_ms": (T0 + 1) * 1000, "mrt.peer_as": 4200000001,
+        "@kind": "bgp4mp-state-change-as4", "time_ms": (T0 + 1) * 1000, "mrt.type": 16, "mrt.subtype": 5,
+        "mrt.peer_as": 4200000001,
         "mrt.local_as": 64496, "mrt.address_family": 1, "mrt.peer_ipv4": ip4("198.51.100.1"),
         "mrt.old_state": 4, "mrt.new_state": 6}, ref=REF_MRT, note="a session from OpenConfirm (4) to Established (6)")
     # 6. BGP4MP_ET MESSAGE_AS4, an UPDATE
@@ -261,6 +264,16 @@ def mrt_vectors():
                  u32(ip4("198.51.100.254")) + u16(4) + u16(6))
     V["14-input-shorter-than-its-length"] = vec("input-shorter-than-its-length", F, F, hx(rec[:-2]), error="malformed-wire",
         ref=REF_MRT, note="a state change whose last two octets are missing: the length states more than the input holds")
+    # 15. from another format: the type and subtype choose the kind (engine-spec 0.30 `when ... as`)
+    rec = record(T0 + 1, 16, 0, u16(0) + u16(0) + u16(0) + u16(1) + u32(0) + u32(0) + u16(1) + u16(6))
+    V["to-mrt-state-change-chosen-by-type-and-subtype"] = vec(
+        "state-change-chosen-by-type-and-subtype", "geojson", F,
+        '{"type":"Feature","geometry":null,"properties":{}}', hx(rec), ref=REF_MRT,
+        context={"time_ms": (T0 + 1) * 1000, "mrt.type": 16, "mrt.subtype": 0, "mrt.address_family": 1,
+                 "mrt.old_state": 1, "mrt.new_state": 6},
+        note="an entity from another format with type 16 (BGP4MP) and subtype 0 (STATE_CHANGE) is written as that "
+             "record; the fields it does not hold are written as 0. Before the type and subtype were bound, the "
+             "first kind (PEER_INDEX_TABLE) took every such entity")
     return V
 
 
@@ -333,7 +346,8 @@ def build(out):
     w = {}
     for fmt, vs in (("mrt", mrt_vectors()), ("cef", cef_vectors()), ("leef", leef_vectors())):
         for fn, v in vs.items():
-            out.write("packs/%s/vectors/%s.json" % (fmt, fn), dump(v))
+            # a vector lives in the pack it converts from
+            out.write("packs/%s/vectors/%s.json" % (v["from"], fn), dump(v))
             w[fmt] = w.get(fmt, 0) + 1
     return w
 

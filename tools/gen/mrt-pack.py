@@ -57,7 +57,7 @@ def prefix(w):
         for i in range(1, n + 1):
             w("field  mrt.prefix_octet_%d  8  uint" % i)
         w.ind -= 1
-    w("end")
+    w.end()
 
 
 def attributes(w, asn_bits):
@@ -93,10 +93,10 @@ def attributes(w, asn_bits):
         w.block("else")
         octets(w, "attr_value", "attr_octet")
         w.ind -= 1
-        w("end")
+        w.end()
         w.end()
         w.ind -= 1
-    w("end")
+    w.end()
     w.end()
 
 
@@ -129,8 +129,8 @@ def pack_text(sha):
     for sub, name, addpath, _ in TD2:
         w("")
         w("kind    table-dump-v2-%s" % name)
-        w("when    16  13")
-        w("when    16  %d" % sub)
+        w("when    16  13  as  mrt.type")
+        w("when    16  %d  as  mrt.subtype" % sub)
         w.block("length 32 bytes")
         if sub == 1:
             w("field  mrt.collector_bgp_id  32  uint")
@@ -150,7 +150,7 @@ def pack_text(sha):
                     w("field  mrt.peer_ipv4  32  uint")
                 w("field  mrt.peer_as  %d  uint" % (32 if as4 else 16))
                 w.ind -= 1
-            w("end")
+            w.end()
             w.end()
         else:
             w("field  mrt.sequence_number  32  uint")
@@ -169,8 +169,8 @@ def pack_text(sha):
         for sub, name, as4, message, addpath in BGP4MP:
             w("")
             w("kind    bgp4mp-%s%s" % ("et-" if et else "", name))
-            w("when    16  %d" % (17 if et else 16))
-            w("when    16  %d" % sub)
+            w("when    16  %d  as  mrt.type" % (17 if et else 16))
+            w("when    16  %d  as  mrt.subtype" % sub)
             w.block("length 32 bytes")
             if et:
                 w("field  mrt.microseconds  32  uint")
@@ -187,7 +187,7 @@ def pack_text(sha):
             for k in ("peer_ipv6_high", "peer_ipv6_low", "local_ipv6_high", "local_ipv6_low"):
                 w("field  mrt.%s  64  uint" % k)
             w.ind -= 1
-            w("end")
+            w.end()
             if not message:
                 w("field  mrt.old_state  16  uint")
                 w("field  mrt.new_state  16  uint")
@@ -232,13 +232,17 @@ def pack_text(sha):
                 w.block("else")
                 octets(w, "bgp_body", "bgp_body_octet")
                 w.ind -= 1
-                w("end")
+                w.end()
                 w.end()
             w.end()
     return "\n".join(w.lines) + "\n"
 
 
 KEYS = [
+    # the record header's type and subtype choose the kind; bound by `when ... as` (engine-spec
+    # 0.30), they cross to another format and choose the kind on encode from one
+    ("key", "type", "int", "-", "MRT type: 13 TABLE_DUMP_V2, 16 BGP4MP, 17 BGP4MP_ET"),
+    ("key", "subtype", "int", "-", "MRT subtype within the type (RFC 6396 4.3 and 4.4, RFC 8050)"),
     ("key", "collector_bgp_id", "int", "-", "BGP identifier of the collector that wrote the table (PEER_INDEX_TABLE)"),
     ("list", "view_name", None, None, "name of the view, as its octets (PEER_INDEX_TABLE); an empty list when the view has no name"),
     ("key", "view_name_octet", "int", "-", "one octet of the view name"),

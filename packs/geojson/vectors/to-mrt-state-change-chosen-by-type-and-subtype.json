@@ -1,0 +1,17 @@
+{
+  "name": "state-change-chosen-by-type-and-subtype",
+  "from": "geojson",
+  "to": "mrt",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "context": {
+    "time_ms": "1763640001000",
+    "mrt.type": "16",
+    "mrt.subtype": "0",
+    "mrt.address_family": "1",
+    "mrt.old_state": "1",
+    "mrt.new_state": "6"
+  },
+  "expect": "691f02c100100000000000140000000000000001000000000000000000010006",
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); an entity from another format with type 16 (BGP4MP) and subtype 0 (STATE_CHANGE) is written as that record; the fields it does not hold are written as 0. Before the type and subtype were bound, the first kind (PEER_INDEX_TABLE) took every such entity"
+}
