@@ -3299,7 +3299,7 @@ impl<'p> Look<'p> {
                     pos: 0,
                     presence: BTreeMap::new(),
                     wholes: Vec::new(),
-                    back: Vec::new(),
+                    back: Vec::new(), switched: Vec::new(),
                     look: self,
                     count_fields: Vec::new(),
                     counts: HashMap::new(),
@@ -3631,6 +3631,9 @@ pub(crate) struct Writer<'a> {
     /// what decode would read back from the lines written so far, one per
     /// scope being written, innermost last: a switch selects from it
     back: Vec<Decoded>,
+    /// (key, line) of the switches written so far, one list per scope being
+    /// written: a later line of such a key is read back too (ruling 31 of 0.64)
+    switched: Vec<Vec<(String, usize)>>,
     look: &'a Look<'a>,
     /// every `count` field written: (bit, len, plus, what its group or block
     /// counts), filled in and checked when the message is finished (ruling 30
@@ -3661,6 +3664,19 @@ impl<'a> Writer<'a> {
         self.zeros(len as u64);
         set_bits(&mut self.buf, at, len, v, self.p.order);
     }
+    /// A line whose table fails on the bits written fails the decode, so the
+    /// key of a switch written before it does not read back (ruling 31 of 0.64).
+    #[cfg(feature = "bits")]
+    fn reads_back(&self) -> Result<(), Error> {
+        let (back, switched) = match (self.back.last(), self.switched.last()) {
+            (Some(b), Some(s)) if !s.is_empty() && !b.hard_keys.is_empty() => (b, s),
+            _ => return Ok(()),
+        };
+        match switched.iter().find(|(k, _)| back.hard_keys.contains(k)) {
+            Some((k, line)) => Err(self.fail(format!("`switch {}` of line {}: a later line of the key does not read back", k, line))),
+            None => Ok(()),
+        }
+    }
     #[cfg(feature = "bits")]
     pub(crate) fn fail(&self, what: impl AsRef<str>) -> Error {
         Error { msg: format!("transform-encode: format `{}`: {}", self.p.format, what.as_ref()) }
@@ -3678,6 +3694,7 @@ fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Resu
     let defs = Defaults::of(w.p, body, kind);
     let kind_lines: &[SeqLine] = kind.map_or(&[], |k| k.lines.as_slice());
     w.back.push(Decoded::new());
+    w.switched.push(Vec::new());
     // a presence among the common lines is visible in the kind's lines
     encode_lines(&body.common, kind_lines, ent, defs, w)?;
     if let Some(k) = kind {
@@ -3691,14 +3708,21 @@ fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Resu
             write_when(w, line, ent)?;
         }
         if let Some(before) = before {
+            // the bits a window covers are final once it is settled
+            let switched = w.switched.last_mut().map(std::mem::take).unwrap_or_default();
             encode_lines(&kind_lines[..k.prefix], &[], ent, defs, w)?;
             settle_windows(k, start, before, ent, w)?;
+            if let Some(s) = w.switched.last_mut() {
+                *s = switched;
+            }
+            w.reads_back()?;
             encode_lines(&kind_lines[k.prefix..], &[], ent, defs, w)?;
         } else {
             encode_lines(kind_lines, &[], ent, defs, w)?;
         }
     }
     w.back.pop();
+    w.switched.pop();
     Ok(())
 }
 
@@ -3816,6 +3840,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                     }
                     back.put(p, f, v);
                 }
+                w.reads_back()?;
             }
             SeqLine::Field { f, len, also, uper } => {
                 // the earliest of the field's keys that the entity holds; when
@@ -3827,6 +3852,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                     write_uper_line(w, f, loc, also, ent, defs)?;
                     // what decode reads back from these bits (engine-spec v0.20)
                     read_back_uper(p, f, loc, also, &w.buf, at, w.back.last_mut().expect("a scope"));
+                    w.reads_back()?;
                     continue;
                 }
                 let at = w.pos;
@@ -3835,6 +3861,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 write_line(p, f, *len, also, ent, defs, at, &mut w.buf)?;
                 // what decode reads back from these bits (engine-spec v0.20)
                 read_back(p, f, *len, also, &w.buf, at, w.back.last_mut().expect("a scope"));
+                w.reads_back()?;
             }
             SeqLine::Const { len, value } => w.put(*len, *value),
             SeqLine::When(line) => write_when(w, line, ent)?,
@@ -4070,6 +4097,9 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 };
                 let pick = sw.pick(value.as_deref());
                 w.look.set(sw, ent, pick);
+                if let Some(s) = w.switched.last_mut() {
+                    s.push((sw.key.clone(), sw.line));
+                }
                 let c = match pick {
                     Some(i) => sw.case(i),
                     None => {
@@ -4158,7 +4188,7 @@ pub(crate) fn encode_run(
     let mut w = loop {
         pass += 1;
         look.changed.set(false);
-        let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new(), back: Vec::new(), look: &look, count_fields: Vec::new(), counts: HashMap::new(), extents: vec![(0, false)], rests: 0 };
+        let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new(), back: Vec::new(), switched: Vec::new(), look: &look, count_fields: Vec::new(), counts: HashMap::new(), extents: vec![(0, false)], rests: 0 };
         let res = encode_body(body, ent, false, &mut w);
         if !look.changed.get() {
             res?;
