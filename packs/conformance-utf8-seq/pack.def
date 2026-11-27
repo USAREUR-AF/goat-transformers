@@ -1,0 +1,16 @@
+# Conformance probe pack for the transform `utf8` in a sequential `bits`
+# layout (spec 0.55: valid wherever `ascii` is, at a bit length). Most
+# significant bit first. Public. No kinds.
+#
+#   16 bits   probe.s1  utf8 (2 bytes)
+#   8 bits    probe.n   uint
+format     conformance-utf8-seq
+version    0.55.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.s1  16  utf8
+field   probe.n   8   uint

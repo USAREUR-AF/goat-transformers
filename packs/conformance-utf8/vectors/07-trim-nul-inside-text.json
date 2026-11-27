@@ -1,0 +1,9 @@
+{
+  "name": "trim-nul-inside-text",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "00000000000000006100200000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; decode: s2 61 00 20 00 with trim: one pass removes the last NUL, then the space; 61 00 is left and holds a NUL"
+}

@@ -402,6 +402,14 @@ std::string format_iso8601_short(std::int64_t ms) {
     return s.substr(0, 19) + (frac.empty() ? "" : "." + frac) + "Z";
 }
 
+std::string format_iso8601_si(std::int64_t ms) {
+    // 0.55 rulings 1 and 2: years 0001 to 9999; no fraction at a whole second,
+    // otherwise all three digits.
+    std::string s = format_iso8601_ms(ms);  // YYYY-MM-DDTHH:MM:SS.mmmZ
+    if (s.compare(20, 3, "000") == 0) return s.substr(0, 19) + "Z";
+    return s;
+}
+
 void append_utf8(std::string& out, std::uint32_t cp) {
     if (cp < 0x80) {
         out += static_cast<char>(cp);

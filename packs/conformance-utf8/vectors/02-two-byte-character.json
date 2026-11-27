@@ -1,0 +1,12 @@
+{
+  "name": "two-byte-character",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "636166c3a90000000000000000000000",
+  "expect": "636166c3a90000000000000000000000",
+  "model": {
+    "probe.s1": "caf\u00e9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; U+00E9 is c3 a9; other fields all NUL (empty, present; ruling 3 of 0.5)"
+}

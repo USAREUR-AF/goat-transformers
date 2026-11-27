@@ -1,0 +1,9 @@
+{
+  "name": "5518-places-on-a-uper-int-locator-is-bad-directive",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey a float -\nkey ratio float -\nkey label string -\nkey s1 string -\nkey s2 string -\n"
+  ],
+  "pack": "format probe\nversion 0.55.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nbit_order msb\nencoding uper\nfield probe.a int:0:255 uscale:0.1:0:1\n",
+  "expect_error": "bad-directive"
+}

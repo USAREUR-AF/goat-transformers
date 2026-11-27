@@ -1,0 +1,12 @@
+{
+  "name": "encode-999",
+  "from": "conformance-si-time",
+  "to": "conformance-si-time",
+  "input": "{\"ms\":999}",
+  "expect": "{\"ms\":999,\"t\":\"1970-01-01T00:00:00.999Z\"}",
+  "model": {
+    "time_ms": "999"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, A time with three fraction digits or none; encode; 999 ms is .999; the date from Python datetime (proleptic Gregorian) at floor(ms/1000) seconds after 1970-01-01T00:00:00"
+}

@@ -1160,6 +1160,23 @@ bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t
         out = decode_ascii(text, f.trim);
         return true;
     }
+    if (f.transform == Transform::Utf8) {
+        // v0.55: the bytes as `ascii` takes them, trailing NULs (and with `trim`
+        // the spaces before them) removed, then valid UTF-8 with no NUL.
+        std::string text;
+        for (std::uint32_t k = 0; k < len / 8; ++k)
+            text += static_cast<char>(read_bits(data, start + 8ull * k, 8, msb));
+        if (f.swap) std::reverse(text.begin(), text.end());
+        std::size_t n = text.size();
+        while (n > 0 && text[n - 1] == '\0') --n;
+        if (f.trim)
+            while (n > 0 && text[n - 1] == ' ') --n;
+        text.resize(n);
+        if (text.find('\0') != std::string::npos) throw std::invalid_argument("the text holds a NUL byte");
+        if (!utf8_is_valid(text)) throw std::invalid_argument("the bytes are not valid UTF-8");
+        out = Value::of_string(std::move(text));
+        return true;
+    }
     if (f.transform == Transform::Sixbit) {
         // Characters first to last, each one's six bits in the pack's bit order.
         std::string codes;
@@ -1201,6 +1218,22 @@ bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std
                       BitMode msb) {
     if (f.transform == Transform::Ascii) {
         std::string text = encode_ascii(v, len / 8);
+        if (f.swap) std::reverse(text.begin(), text.end());
+        for (std::uint32_t k = 0; k < len / 8; ++k)
+            write_bits(data, start + 8ull * k, 8, static_cast<std::uint8_t>(text[k]), msb);
+        return true;
+    }
+    if (f.transform == Transform::Utf8) {
+        // v0.55: the text's UTF-8 bytes, NUL-padded to `len / 8`.
+        FieldLine as_string;
+        as_string.transform = Transform::String;
+        std::string text = encode_value(as_string, v);
+        if (text.find('\0') != std::string::npos) throw std::invalid_argument("the text holds U+0000");
+        if (!utf8_is_valid(text)) throw std::invalid_argument("the text is not valid UTF-8");
+        if (text.size() > len / 8)
+            throw std::invalid_argument("text of " + std::to_string(text.size()) + " UTF-8 bytes does not fit " +
+                                        std::to_string(len / 8));
+        text.resize(len / 8, '\0');
         if (f.swap) std::reverse(text.begin(), text.end());
         for (std::uint32_t k = 0; k < len / 8; ++k)
             write_bits(data, start + 8ull * k, 8, static_cast<std::uint8_t>(text[k]), msb);

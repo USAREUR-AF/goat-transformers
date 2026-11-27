@@ -794,7 +794,7 @@ public final class Pack {
             "framing");   // engine-spec 0.92
 
     /** Every transform of the specification, by the text before its first {@code :}. */
-    private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "iso8601_short", "iso8601_s", "bool", "uint", "twos",
+    private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "iso8601_short", "iso8601_s", "iso8601_si", "bool", "uint", "twos",
             "linscale", "uscale", "sscale", "f32", "f64", "ascii", "pstring", "pvarint", "psint", "pdouble", "pfloat",
             "dec", "dm", "hms", "hms_dmy", "utf8", "hex", "sixbit",
             // engine-spec 0.15
@@ -2204,8 +2204,9 @@ public final class Pack {
         if (wire != Wire.BITS && s.arg.equals("sixbit")) {
             throw badDirective(format, s.locator, where + ": transform \"sixbit\" is valid on the bits wire only");
         }
-        // `hex` is also a bits transform (engine-spec 0.22)
-        if (wire != Wire.TLV && TlvTransform.isTlvOnlyName(s.arg) && !(wire == Wire.BITS && s.arg.equals("hex"))) {
+        // `hex` is also a bits transform (engine-spec 0.22), and so is `utf8` (engine-spec 0.55)
+        if (wire != Wire.TLV && TlvTransform.isTlvOnlyName(s.arg)
+                && !(wire == Wire.BITS && (s.arg.equals("hex") || s.arg.equals("utf8")))) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is valid on the tlv wire only");
         }
         String why;
@@ -2213,9 +2214,10 @@ public final class Pack {
         // The transforms of 0.15 on a wire they do not list are bad-directive (engine-spec 0.15, Load errors).
         String head = BitsTransform.headOf(s.arg);
         boolean textWire = wire == Wire.XML || wire == Wire.JSON || wire == Wire.GEOJSON;
-        // so is iso8601_short on bits or protobuf (ruling 11 of 0.18)
+        // so is iso8601_short on bits or protobuf (ruling 11 of 0.18), and iso8601_si on bits, protobuf, text, tlv or cbor
+        // (engine-spec 0.55, Load errors)
         if ((BitsTransform.isV015(head) && wire != Wire.BITS) || (TextScale.isName(head) && !textWire)
-                || (s.arg.equals("iso8601_short") && !textWire)) {
+                || ((s.arg.equals("iso8601_short") || s.arg.equals("iso8601_si")) && !textWire)) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire " + wire.name().toLowerCase());
         }
         if (wire == Wire.CBOR) {

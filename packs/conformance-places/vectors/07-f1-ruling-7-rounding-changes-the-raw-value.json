@@ -1,0 +1,12 @@
+{
+  "name": "f1-ruling-7-rounding-changes-the-raw-value",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "0000000000020000000000000000",
+  "expect": "0000000000030000000000000000",
+  "model": {
+    "probe.f1": "0.02"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; the rounded value re-encodes to another raw value; decode: x = 2 * 1 / 128 + 0 = 0.015625; y = x * 100 = 1.5625; round = 2; / 100 = 0.02; encode: q = 2.56, round = 3; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

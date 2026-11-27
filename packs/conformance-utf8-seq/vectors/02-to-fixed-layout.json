@@ -1,0 +1,13 @@
+{
+  "name": "to-fixed-layout",
+  "from": "conformance-utf8-seq",
+  "to": "conformance-utf8",
+  "input": "686907",
+  "expect": "68690000000000000000000000000000",
+  "model": {
+    "probe.s1": "hi",
+    "probe.n": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; s1 hi encodes as 68 69 NUL-padded to 8 bytes; s2 and label absent write zero bits; n has no line in the target"
+}

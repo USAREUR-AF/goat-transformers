@@ -1,0 +1,9 @@
+{
+  "name": "encode-ruling-2-first-instant-of-10000",
+  "from": "conformance-si-time",
+  "to": "conformance-si-time",
+  "input": "{\"ms\":253402300800000}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.55, A time with three fraction digits or none; ruling 2: 253402300800000 lies after 9999-12-31T23:59:59.999Z: transform-encode"
+}

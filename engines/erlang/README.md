@@ -535,8 +535,8 @@ the read-back of 0.20 marks such a key `table_failed`: a `switch` on it is
 - `src/gt_derive.erl` — the derivation functions and the derivation pass.
 - `src/gt_num.erl`   — number parsing and canonical float text (ruling 3).
 - `src/gt_iso.erl`   — ISO 8601 <-> epoch ms (`Z`, `z` or an offset in; `Z` out), for
-  `iso8601_ms`, `iso8601_short` (0.18) and `iso8601_s` (0.26, whole seconds out, the
-  milliseconds dropped).
+  `iso8601_ms`, `iso8601_short` (0.18), `iso8601_s` (0.26, whole seconds out, the
+  milliseconds dropped) and `iso8601_si` (0.55, no fraction or three digits).
 - `src/gt_xml.erl`   — XML reader + canonical writer.
 - `src/gt_json.erl`  — JSON reader (member order preserved) and canonical writer.
 - `src/gt_bits.erl`  — bit-range access, both bit orders, and six-bit armor.

@@ -19,6 +19,7 @@ const char* transform_name(Transform t) {
         case Transform::Iso8601Ms: return "iso8601_ms";
         case Transform::Iso8601Short: return "iso8601_short";
         case Transform::Iso8601S: return "iso8601_s";
+        case Transform::Iso8601Si: return "iso8601_si";
         case Transform::Uint: return "uint";
         case Transform::Twos: return "twos";
         case Transform::Linscale: return "linscale";
@@ -137,15 +138,37 @@ bool parse_scale_factor(std::string_view factor, bool& fraction, double& value, 
 }
 
 namespace {
-// uscale / sscale arguments: <factor>[:<offset>], factor number text or <num>/<den>.
-bool parse_scale_args(std::string_view args, FieldLine& f, std::string& err) {
+// uscale / sscale arguments: <factor>[:<offset>[:<places>]] (the places of
+// 0.55 only when `places` is true), factor number text or <num>/<den>.
+bool parse_scale_args(std::string_view args, FieldLine& f, std::string& err, bool places = false) {
     std::string_view factor = args, offset;
     bool have_offset = false;
+    f.scale_places = -1;
     std::size_t colon = args.find(':');
     if (colon != std::string_view::npos) {
         factor = args.substr(0, colon);
         offset = args.substr(colon + 1);
         have_offset = true;
+        const std::size_t c2 = offset.find(':');
+        if (places && c2 != std::string_view::npos) {
+            // 0.55: a decimal integer as 2c of 0.11 states, 0 to 15; no empty argument.
+            const std::string_view ptext = offset.substr(c2 + 1);
+            offset = offset.substr(0, c2);
+            std::uint64_t pv = 0;
+            if (ptext.find(':') != std::string_view::npos) {
+                err = "uscale and sscale take at most three arguments";
+                return false;
+            }
+            if (!parse_unsigned_text(ptext, pv) || pv > 15) {
+                err = "the <places> of a scale is not a decimal integer from 0 to 15";
+                return false;
+            }
+            if (offset.empty()) {
+                err = "an empty scale offset: write 0";
+                return false;
+            }
+            f.scale_places = static_cast<int>(pv);
+        }
     }
     if (!parse_scale_factor(factor, f.scale_fraction, f.scale_factor, f.scale_num, f.scale_den, err, true))
         return false;
@@ -189,6 +212,7 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
                   {"int", Transform::Int},         {"iso8601_ms", Transform::Iso8601Ms},
                   {"iso8601_short", Transform::Iso8601Short},
                   {"iso8601_s", Transform::Iso8601S},
+                  {"iso8601_si", Transform::Iso8601Si},
                   {"uint", Transform::Uint},       {"twos", Transform::Twos},
                   {"pstring", Transform::Pstring}, {"pvarint", Transform::Pvarint},
                   {"psint", Transform::Psint},     {"pdouble", Transform::Pdouble},
@@ -252,12 +276,7 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
             return -1;
         }
         const std::string_view args = token.substr(colon + 1);
-        const std::size_t c2 = args.find(':');
-        if (c2 != std::string_view::npos && args.find(':', c2 + 1) != std::string_view::npos) {
-            err = std::string(name) + " takes a factor and an optional offset";
-            return -1;
-        }
-        return parse_scale_args(args, f, err) ? 0 : -1;
+        return parse_scale_args(args, f, err, true) ? 0 : -1;
     }
     // v0.15. A known name with parameters that do not parse is bad-directive.
     {
@@ -432,9 +451,6 @@ bool transform_is_text_only(Transform t) {
            t == Transform::HmsDmy;
 }
 
-// `hex` is also a transform of the bits wire from 0.22.
-bool transform_is_tlv_only(Transform t) { return t == Transform::Utf8; }
-
 bool transform_is_cbor_only(Transform t) {
     return t == Transform::CborText || t == Transform::CborBytes || t == Transform::EpochS;
 }
@@ -442,7 +458,7 @@ bool transform_is_cbor_only(Transform t) {
 bool transform_is_textual(Transform t) {
     return t == Transform::String || t == Transform::Iso8601Ms || t == Transform::Iso8601Short ||
            t == Transform::Iso8601S || t == Transform::CodeStr || t == Transform::CodeNum ||
-           t == Transform::Part;
+           t == Transform::Part || t == Transform::Iso8601Si;
 }
 
 bool transform_is_code(Transform t) {
@@ -473,6 +489,7 @@ bool transform_is_bits(Transform t) {
         case Transform::Hex:          // v0.22: on bits as on tlv
         case Transform::Code:         // v0.46
         case Transform::CodeNum:      // v0.46: on the text wires too
+        case Transform::Utf8:         // v0.55: on bits as on tlv
         case Transform::Octal: return true;
         default: return false;
     }
@@ -516,7 +533,8 @@ bool bits_len_allowed(Transform t, std::uint32_t len) {
         case Transform::F32scale: return len == 32;
         case Transform::F64:
         case Transform::F64scale: return len == 64;
-        case Transform::Ascii: return len >= 8 && len <= 2040 && len % 8 == 0;
+        case Transform::Ascii:
+        case Transform::Utf8: return len >= 8 && len <= 2040 && len % 8 == 0;  // utf8: v0.55
         case Transform::Sixbit: return len >= 6 && len <= 1530 && len % 6 == 0;  // v0.14
         case Transform::Smag:
         case Transform::Smscale: return len >= 2 && len <= 64;
@@ -593,7 +611,8 @@ Value decode_value(const FieldLine& f, const std::string& text) {
         }
         case Transform::Iso8601Ms:
         case Transform::Iso8601Short:  // 0.18: decode is that of iso8601_ms
-        case Transform::Iso8601S: {    // 0.26 ruling 2: likewise
+        case Transform::Iso8601S:      // 0.26 ruling 2: likewise
+        case Transform::Iso8601Si: {   // 0.55: likewise
             std::int64_t ms;
             if (!parse_iso8601_ms(text, ms))
                 throw std::invalid_argument("not an ISO 8601 time: \"" + text + "\"");
@@ -689,6 +708,20 @@ float narrow_single(double d) {
 double finite_result(double d) {
     if (!std::isfinite(d)) throw std::invalid_argument("the scaled value is not finite");
     return d;
+}
+
+// v0.55: the <places> of uscale and sscale. Without it, `x` as it is.
+double round_places(const FieldLine& f, double x) {
+    if (f.scale_places < 0) return x;
+    if (!std::isfinite(x)) throw std::invalid_argument("the scaled value is not finite");  // ruling 5
+    double p = 1.0;
+    for (int k = 0; k < f.scale_places; ++k) p *= 10.0;  // exact up to 10^15
+    const double y = x * p;
+    if (!std::isfinite(y)) return x;
+    const double r = std::round(y);  // half away from zero
+    if (!(std::fabs(r) < 1e15)) return x;
+    const double out = r / p;
+    return out == 0.0 ? 0.0 : out;  // a zero result is +0
 }
 
 Value decode_text_scale(const FieldLine& f, const std::string& text) {
@@ -962,9 +995,9 @@ Value decode_bits_value(const FieldLine& f, std::uint64_t raw, std::uint32_t len
             return Value::of_float(v / f.scale_maxpos * f.scale_range);
         }
         case Transform::Uscale:
-            return Value::of_float(scale_decode(f, static_cast<double>(raw)));
+            return Value::of_float(round_places(f, scale_decode(f, static_cast<double>(raw))));
         case Transform::Sscale:
-            return Value::of_float(scale_decode(f, static_cast<double>(sign_extend(raw, len))));
+            return Value::of_float(round_places(f, scale_decode(f, static_cast<double>(sign_extend(raw, len)))));
         case Transform::F32: {
             std::uint32_t u = static_cast<std::uint32_t>(raw);
             float fl;
@@ -1277,7 +1310,8 @@ std::string encode_value(const FieldLine& f, const Value& v) {
             }
             case Transform::Iso8601Ms:
             case Transform::Iso8601Short:
-            case Transform::Iso8601S: {
+            case Transform::Iso8601S:
+            case Transform::Iso8601Si: {
                 std::int64_t ms = 0;
                 switch (v.kind) {
                     case Value::Kind::Int: ms = v.i; break;
@@ -1291,6 +1325,7 @@ std::string encode_value(const FieldLine& f, const Value& v) {
                 }
                 if (f.transform == Transform::Iso8601Short) return format_iso8601_short(ms);
                 if (f.transform == Transform::Iso8601S) return format_iso8601_s(ms);
+                if (f.transform == Transform::Iso8601Si) return format_iso8601_si(ms);
                 return format_iso8601_ms(ms);
             }
             default: throw std::invalid_argument("not a text transform");

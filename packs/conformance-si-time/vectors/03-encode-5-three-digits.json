@@ -1,0 +1,12 @@
+{
+  "name": "encode-5-three-digits",
+  "from": "conformance-si-time",
+  "to": "conformance-si-time",
+  "input": "{\"ms\":5}",
+  "expect": "{\"ms\":5,\"t\":\"1970-01-01T00:00:00.005Z\"}",
+  "model": {
+    "time_ms": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, A time with three fraction digits or none; encode; 5 ms is .005; the date from Python datetime (proleptic Gregorian) at floor(ms/1000) seconds after 1970-01-01T00:00:00"
+}

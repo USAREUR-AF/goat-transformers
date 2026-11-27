@@ -351,6 +351,8 @@ yields(float)   -> float;
 yields({linscale, _, _}) -> float;
 yields({uscale, _, _}) -> float;
 yields({sscale, _, _}) -> float;
+yields({uscale, _, _, _}) -> float;
+yields({sscale, _, _, _}) -> float;
 yields(f32)     -> float;
 yields({uiscale, _, _, _}) -> int;
 yields({siscale, _, _, _}) -> int;
@@ -378,6 +380,7 @@ yields(int)        -> int;
 yields(iso8601_ms) -> int;
 yields(iso8601_short) -> int;
 yields(iso8601_s) -> int;
+yields(iso8601_si) -> int;
 yields(bool)       -> int;
 yields(uint)       -> int;
 yields(twos)       -> int;
@@ -1064,8 +1067,8 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
         [{bad, "swap on ~s: valid only on a bits wire, with a length that is a multiple of 8", [LocS]}
          || Swap, not (Wire =:= bits andalso element(2, Loc) rem 8 =:= 0)] ++
         [{bad, "swap with ~s on ~s", [TrS, LocS]} || Swap, not swap_ok(Tr)] ++
-        [{bad, "trim on ~s: valid only on a bits wire, with ascii or sixbit", [LocS]}
-         || Trim, not (Wire =:= bits andalso (Tr =:= ascii orelse Tr =:= sixbit))] ++
+        [{bad, "trim on ~s: valid only on a bits wire, with ascii, utf8 or sixbit", [LocS]}
+         || Trim, not (Wire =:= bits andalso (Tr =:= ascii orelse Tr =:= utf8 orelse Tr =:= sixbit))] ++
         [{bad, "optional on ~s: valid only on a bits or text wire", [LocS]}
          || Optional, Wire =/= bits, Wire =/= text] ++
         [{via, T} || T <- [element(1, Opts)], T =/= none] ++
@@ -1757,6 +1760,7 @@ len_ok(bits, Tr, {_Off, Len}) ->
         f32 -> Len =:= 32;
         f64 -> Len =:= 64;
         ascii -> Len rem 8 =:= 0 andalso Len >= 8 andalso Len =< 2040;
+        utf8 -> Len rem 8 =:= 0 andalso Len >= 8 andalso Len =< 2040;
         sixbit -> Len rem 6 =:= 0 andalso Len >= 6 andalso Len =< 1530;
         smag -> Len >= 2 andalso Len =< 64;
         {smscale, _, _} -> Len >= 2 andalso Len =< 64;
@@ -2039,6 +2043,8 @@ parse_transform1(Wire, S) ->
              {tlvonly, tlv} -> true;
              %% `hex` on bits (Version 0.22)
              {tlvonly, bits} when Tr =:= hex -> true;
+             %% `utf8` on bits (Version 0.55)
+             {tlvonly, bits} when Tr =:= utf8 -> true;
              {tlvonly, _} -> late;
              {bits, tlv} ->
                  case tlv_transform(Tr) of
@@ -2063,6 +2069,7 @@ transform(<<"int">>)        -> {text, int};
 transform(<<"iso8601_ms">>) -> {text, iso8601_ms};
 transform(<<"iso8601_short">>) -> {text15, iso8601_short};     % 0.18
 transform(<<"iso8601_s">>) -> {text26, iso8601_s};             % 0.26
+transform(<<"iso8601_si">>) -> {text15, iso8601_si};           % 0.55
 transform(<<"bool">>)       -> {json, bool};
 transform(<<"uint">>)       -> {bits, uint};
 transform(<<"twos">>)       -> {bits, twos};
@@ -2146,7 +2153,8 @@ transform(<<"hms_dmy:", F/binary>> = S) -> {textonly, {hms_dmy, tparam(F, 0, 3, 
 transform(T) ->
     %% a transform's name is the text before its first `:`
     [Name | _] = binary:split(T, <<":">>),
-    Known = [<<"string">>, <<"float">>, <<"int">>, <<"iso8601_ms">>, <<"iso8601_s">>, <<"bool">>, <<"uint">>,
+    Known = [<<"string">>, <<"float">>, <<"int">>, <<"iso8601_ms">>, <<"iso8601_s">>, <<"iso8601_si">>,
+             <<"bool">>, <<"uint">>,
              <<"twos">>, <<"f32">>, <<"f64">>, <<"ascii">>, <<"linscale">>, <<"uscale">>,
              <<"sscale">>, <<"pstring">>, <<"pvarint">>, <<"psint">>, <<"pdouble">>,
              <<"pfloat">>, <<"dec">>, <<"dm">>, <<"hms">>, <<"hms_dmy">>,
@@ -2164,6 +2172,15 @@ scale(Name, Rest, S) ->
             case gt_num:num_text(O) of
                 {ok, Off} -> {Name, scale_factor(F, S), Off};
                 error -> line_error('bad-directive', "~s: offset ~s is not number text", [S, O])
+            end;
+        %% <places> (Version 0.55): uscale and sscale only, a decimal
+        %% integer from 0 to 15, leading zeros allowed
+        [F, O, PlS] when Name =:= uscale; Name =:= sscale ->
+            {Name, Fac, Off} = scale(Name, <<F/binary, ":", O/binary>>, S),
+            case gt_num:uint_text(PlS) of
+                {ok, Pl} when Pl =< 15 -> {Name, Fac, Off, Pl};
+                _ -> line_error('bad-directive', "~s: places ~s is not a decimal integer from 0 to 15",
+                                [S, PlS])
             end;
         _ -> line_error('bad-directive', "~s has too many parameters", [S])
     end.
@@ -2411,8 +2428,8 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks0], P0) ->
         [{bad, "swap on a field of ~s bits: the length is not a multiple of 8", [LenS]}
          || Swap, Len rem 8 =/= 0] ++
         [{bad, "swap with ~s", [TrS]} || Swap, not swap_ok(Tr)] ++
-        [{bad, "trim on a field of ~s bits: valid only with ascii or sixbit", [LenS]}
-         || Trim, Tr =/= ascii, Tr =/= sixbit] ++
+        [{bad, "trim on a field of ~s bits: valid only with ascii, utf8 or sixbit", [LenS]}
+         || Trim, Tr =/= ascii, Tr =/= utf8, Tr =/= sixbit] ++
         [{charcode, Tr, TrS, Len} || is_charcode(Tr)] ++
         [{via, Via} || Via =/= none] ++
         AbsentChecks,

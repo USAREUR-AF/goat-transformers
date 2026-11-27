@@ -1,0 +1,24 @@
+# Conformance probe pack for the <places> argument of `uscale` and `sscale`
+# (spec 0.55, Rounding a scale to decimal places). Fixed `bits` layout, most
+# significant bit first, one byte per word. Public. No kinds.
+#
+#   bytes 0-1    probe.a      uscale:0.1:-40:1     (a temperature in 0.1 steps, offset -40)
+#   byte  2      probe.ratio  uscale:0.01:0:2
+#   byte  3      probe.f0     sscale:0.5:0:0       (places 0: halves round away from zero)
+#   bytes 4-5    probe.f1     uscale:1/128:0:2     (a fraction factor, ruling 7)
+#   bytes 6-11   probe.pr_f   uscale:1:0:1         (48 bits: a value at 10^14 or more is left as it is)
+#   bytes 12-13  probe.at_lat sscale:0.05:0:1      (a half at one place, positive and negative)
+format     conformance-places
+version    0.55.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.a       0:0:16    uscale:0.1:-40:1
+field   probe.ratio   2:0:8     uscale:0.01:0:2
+field   probe.f0      3:0:8     sscale:0.5:0:0
+field   probe.f1      4:0:16    uscale:1/128:0:2
+field   probe.pr_f    6:0:48    uscale:1:0:1
+field   probe.at_lat  12:0:16   sscale:0.05:0:1

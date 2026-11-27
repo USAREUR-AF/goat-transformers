@@ -1,0 +1,12 @@
+{
+  "name": "f1-ruling-7-fraction-factor",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "0000000000c80000000000000000",
+  "expect": "0000000000c80000000000000000",
+  "model": {
+    "probe.f1": "1.56"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; decode: x = 200 * 1 / 128 + 0 = 1.5625; y = x * 100 = 156.25; round = 156; / 100 = 1.56; encode: q = 199.68, round = 200; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

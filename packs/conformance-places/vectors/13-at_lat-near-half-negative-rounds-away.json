@@ -1,0 +1,12 @@
+{
+  "name": "at_lat-near-half-negative-rounds-away",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "000000000000000000000000fff9",
+  "expect": "000000000000000000000000fff8",
+  "model": {
+    "probe.at_lat": "-0.4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; y lies just beyond -3.5, rounds away from zero; decode: x = -7 * 0.05 + 0 = -0.35000000000000003 (product -0.35000000000000003); y = x * 10 = -3.5000000000000004; round = -4; / 10 = -0.4; encode: q = -8.0, round = -8; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

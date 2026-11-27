@@ -106,6 +106,9 @@ pub enum Transform {
     Iso8601Short,
     /// xml, geojson, json, text (engine-spec v0.26): `iso8601_ms` read, written to the whole second
     Iso8601S,
+    /// xml, json, geojson (engine-spec v0.55): `iso8601_ms` with no fraction at
+    /// a whole second, three digits otherwise
+    Iso8601Si,
     // bits-wire transforms (raw integer <-> model value, bit length from the locator)
     Uint,
     Twos,
@@ -268,6 +271,9 @@ pub struct Scale {
     /// the denominator when the factor was written `<num>/<den>`
     pub den: Option<f64>,
     pub offset: f64,
+    /// `<places>` of `uscale` / `sscale` (engine-spec v0.55): the decoded
+    /// value rounded to this many decimal places
+    pub places: Option<u32>,
 }
 
 impl Scale {
@@ -275,10 +281,19 @@ impl Scale {
     /// `<num>/<den>` of two unsigned decimal integers, neither zero; the
     /// offset is number text.
     fn parse(args: &str) -> Option<Scale> {
+        Scale::parse_places(args, false)
+    }
+    /// As `parse`; with `places`, a third argument `<places>` is allowed: a
+    /// decimal integer (2c of 0.11) from 0 to 15 (engine-spec v0.55).
+    fn parse_places(args: &str, places: bool) -> Option<Scale> {
         let parts: Vec<&str> = args.split(':').collect();
-        if parts.is_empty() || parts.len() > 2 {
+        if parts.is_empty() || parts.len() > if places { 3 } else { 2 } {
             return None;
         }
+        let places = match parts.get(2) {
+            Some(s) => Some(unsigned_text(s).filter(|n| *n <= 15)? as u32),
+            None => None,
+        };
         let offset = match parts.get(1) {
             Some(s) => number_text(s)?,
             None => 0.0,
@@ -288,7 +303,26 @@ impl Scale {
             Some((n, d)) => (int(n)?, Some(int(d)?)),
             None => (number_text(parts[0]).filter(|x| *x != 0.0)?, None),
         };
-        Some(Scale { num, den, offset })
+        Some(Scale { num, den, offset, places })
+    }
+    /// `<places>` applied to a decoded value `x` (engine-spec v0.55, steps 1
+    /// to 4): `round(x * p) / p` when that is finite and below 10^15, else `x`.
+    /// A non-finite `x` is the caller's `transform-decode` (ruling 5).
+    #[cfg(any(feature = "bits", feature = "tlv"))]
+    fn round_places(&self, x: f64) -> Result<f64, Error> {
+        let Some(places) = self.places else { return Ok(x) };
+        if !x.is_finite() {
+            return err(format!("the scaled value {} is not finite", x));
+        }
+        let p = 10f64.powi(places as i32);
+        let y = x * p;
+        let r = y.round();
+        if y.is_finite() && r.abs() < 1e15 {
+            let v = r / p;
+            Ok(if v == 0.0 { 0.0 } else { v })
+        } else {
+            Ok(x)
+        }
     }
     /// `v * factor` (or `v * num / den`), then `+ offset`
     #[cfg(any(feature = "xml", feature = "geojson", feature = "json", feature = "bits", feature = "tlv"))]
@@ -313,7 +347,7 @@ impl Transform {
         // ruling 5 of 0.11: the name is the text before the first `:`
         let head = name.split(':').next().unwrap_or("");
         const NAMES: &[&str] = &[
-            "string", "float", "int", "iso8601_ms", "iso8601_short", "iso8601_s", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
+            "string", "float", "int", "iso8601_ms", "iso8601_short", "iso8601_s", "iso8601_si", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
             "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "sixbit", "dec", "dm", "hms", "hms_dmy", "utf8", "hex",
             // engine-spec v0.15
             "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale",
@@ -371,7 +405,9 @@ impl Transform {
         ];
         for (prefix, make) in floats {
             if head == prefix {
-                return match name.strip_prefix(prefix).and_then(|a| a.strip_prefix(':')).and_then(Scale::parse) {
+                // engine-spec v0.55: `<places>` on `uscale` and `sscale` only
+                let places = matches!(prefix, "uscale" | "sscale");
+                return match name.strip_prefix(prefix).and_then(|a| a.strip_prefix(':')).and_then(|a| Scale::parse_places(a, places)) {
                     Some(sc) => Ok(make(sc)),
                     None => params("<factor>[:<offset>]: the factor is number text and not zero, or <num>/<den>"),
                 };
@@ -419,6 +455,7 @@ impl Transform {
             "iso8601_ms" => Ok(Transform::Iso8601Ms),
             "iso8601_short" => Ok(Transform::Iso8601Short),
             "iso8601_s" => Ok(Transform::Iso8601S),
+            "iso8601_si" => Ok(Transform::Iso8601Si),
             "uint" => Ok(Transform::Uint),
             "twos" => Ok(Transform::Twos),
             "pstring" => Ok(Transform::Pstring),
@@ -505,6 +542,7 @@ impl Transform {
             | Transform::Iso8601Ms
             | Transform::Iso8601Short
             | Transform::Iso8601S
+            | Transform::Iso8601Si
             | Transform::Uint
             | Transform::Twos
             | Transform::Pvarint
@@ -542,6 +580,8 @@ impl Transform {
                 | Transform::Hex
                 | Transform::Code
                 | Transform::Codenum
+                // engine-spec v0.55
+                | Transform::Utf8
         )
     }
 
@@ -555,7 +595,7 @@ impl Transform {
         match self {
             Transform::F32 | Transform::F32scale(_) => len == 32,
             Transform::F64 | Transform::F64scale(_) => len == 64,
-            Transform::Ascii => len % 8 == 0 && (8..=2040).contains(&len),
+            Transform::Ascii | Transform::Utf8 => len % 8 == 0 && (8..=2040).contains(&len),
             Transform::Sixbit => armor::sixbit_len_ok(len as u64),
             Transform::Chars(set) => len % set.width() == 0 && (set.width()..=2040).contains(&len),
             Transform::Octal => len % 3 == 0 && (3..=63).contains(&len),
@@ -589,8 +629,8 @@ impl Transform {
             Transform::Linscale(maxpos, range) => {
                 Ok(Value::F64(signed(raw, len) as f64 / maxpos * range))
             }
-            Transform::Uscale(sc) => Ok(Value::F64(sc.decode(raw as f64))),
-            Transform::Sscale(sc) => Ok(Value::F64(sc.decode(signed(raw, len) as f64))),
+            Transform::Uscale(sc) => Ok(Value::F64(sc.round_places(sc.decode(raw as f64))?)),
+            Transform::Sscale(sc) => Ok(Value::F64(sc.round_places(sc.decode(signed(raw, len) as f64))?)),
             Transform::F32 => finite(f32::from_bits(raw as u32) as f64),
             Transform::F64 => finite(f64::from_bits(raw)),
             Transform::Uiscale(ex) => ex
@@ -707,7 +747,7 @@ impl Transform {
             Transform::Int => int_text(raw)
                 .map(Value::I64)
                 .ok_or(Error { msg: format!("int decode failed: `{}` is not integer text", raw) }),
-            Transform::Iso8601Ms | Transform::Iso8601Short | Transform::Iso8601S => iso8601_to_ms(raw).map(Value::I64),
+            Transform::Iso8601Ms | Transform::Iso8601Short | Transform::Iso8601S | Transform::Iso8601Si => iso8601_to_ms(raw).map(Value::I64),
             Transform::TextScale(sc) => match Transform::Float.decode(raw)? {
                 Value::F64(v) => finite(sc.decode(v)),
                 other => err(format!("scale decode failed: {:?}", other)),
@@ -732,6 +772,7 @@ impl Transform {
             (Transform::Iso8601Ms, Value::I64(ms)) => ms_to_iso8601_checked(*ms),
             (Transform::Iso8601Short, Value::I64(ms)) => ms_to_iso8601_short(*ms),
             (Transform::Iso8601S, Value::I64(ms)) => ms_to_iso8601_s(*ms),
+            (Transform::Iso8601Si, Value::I64(ms)) => ms_to_iso8601_si(*ms),
             (Transform::TextScale(sc), Value::F64(x)) => Ok(fmt_f64(text_unscale(sc, *x)?)),
             (Transform::TextIscale(ex), Value::I64(x)) => ex
                 .encode_decimal(*x)
@@ -776,6 +817,7 @@ impl Transform {
             | Transform::Iso8601Ms
             | Transform::Iso8601Short
             | Transform::Iso8601S
+            | Transform::Iso8601Si
             | Transform::Pstring
             | Transform::Ascii
             | Transform::Sixbit
@@ -1121,7 +1163,7 @@ impl DeriveFn {
                 Some((n, d)) => {
                     let num = int_text(n)? as f64;
                     let den = unsigned_text(d).filter(|v| *v != 0).and_then(|_| d.parse::<f64>().ok())?;
-                    Some(DeriveFn::Scale(Scale { num, den: Some(den), offset: 0.0 }))
+                    Some(DeriveFn::Scale(Scale { num, den: Some(den), offset: 0.0, places: None }))
                 }
                 None => Scale::parse(a).map(DeriveFn::Scale),
             };
@@ -4011,8 +4053,8 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     if wire == Wire::Text && !text::valid_on_text(t) {
         return bad(f.line, format!("the transform of `{}` is not valid on the text wire", f.model_key));
     }
-    if f.trim && !matches!(t, Transform::Ascii | Transform::Sixbit) {
-        return bad(f.line, "`trim` is valid only with `ascii` or `sixbit`");
+    if f.trim && !matches!(t, Transform::Ascii | Transform::Sixbit | Transform::Utf8) {
+        return bad(f.line, "`trim` is valid only with `ascii`, `sixbit` or `utf8`");
     }
     // engine-spec v0.14
     if *t == Transform::Sixbit && wire != Wire::Bits {
@@ -4038,8 +4080,9 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                 | Transform::F64
                 | Transform::Ascii
                 | Transform::Sixbit
-                // `hex` is a tlv transform too (engine-spec v0.13, v0.22)
+                // `hex` and `utf8` are tlv transforms too (engine-spec v0.13, v0.22, v0.55)
                 | Transform::Hex
+                | Transform::Utf8
                 // a transform of the text wires too (engine-spec v0.46)
                 | Transform::Codenum
         );
@@ -4064,6 +4107,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                     | Transform::Iso8601Ms
                     | Transform::Iso8601Short
                     | Transform::Iso8601S
+                    | Transform::Iso8601Si
                     | Transform::TextScale(_)
                     | Transform::TextIscale(_)
                     | Transform::Codestr
@@ -4083,6 +4127,10 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     if *t == Transform::Iso8601Short && !matches!(wire, Wire::Xml | Wire::Json | Wire::GeoJson) {
         return bad(f.line, format!("`iso8601_short` of `{}` is valid only on xml, json and geojson", f.model_key));
     }
+    // engine-spec v0.55: `iso8601_si` likewise
+    if *t == Transform::Iso8601Si && !matches!(wire, Wire::Xml | Wire::Json | Wire::GeoJson) {
+        return bad(f.line, format!("`iso8601_si` of `{}` is valid only on xml, json and geojson", f.model_key));
+    }
     // inside a group `.` is the item itself (json, geojson, protobuf)
     let item_itself = in_group && f.locator == ".";
     match wire {
@@ -4096,6 +4144,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                     | Transform::Iso8601Ms
                     | Transform::Iso8601Short
                     | Transform::Iso8601S
+                    | Transform::Iso8601Si
                     | Transform::Bool
                     | Transform::TextScale(_)
                     | Transform::TextIscale(_)
@@ -7552,7 +7601,7 @@ pub mod jsonwire {
             (Transform::Int, Json::Int(n)) => Ok(Value::I64(*n)),
             // an integer within i64 was read as `Int`; negative zero is 0 (ruling 2d of 0.11)
             (Transform::Int, Json::Num(x)) if *x == 0.0 => Ok(Value::I64(0)),
-            (Transform::Iso8601Ms | Transform::Iso8601Short | Transform::Iso8601S, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
+            (Transform::Iso8601Ms | Transform::Iso8601Short | Transform::Iso8601S | Transform::Iso8601Si, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
             (Transform::Bool, Json::Bool(b)) => Ok(Value::I64(*b as i64)),
             _ => err(format!("JSON value `{}` has the wrong type for the transform", json::serialize(j))),
         }
@@ -7567,6 +7616,7 @@ pub mod jsonwire {
             (Transform::Iso8601Ms, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_checked(*ms)?)),
             (Transform::Iso8601Short, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_short(*ms)?)),
             (Transform::Iso8601S, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_s(*ms)?)),
+            (Transform::Iso8601Si, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_si(*ms)?)),
             (Transform::Bool, Value::I64(1)) => Ok(Json::Bool(true)),
             (Transform::Bool, Value::I64(0)) => Ok(Json::Bool(false)),
             (Transform::Bool, other) => err(format!("bool encodes 1 or 0, got {}", other.as_display())),
@@ -8093,6 +8143,26 @@ pub mod bits {
                 Some(b) => err(format!("byte 0x{:02x} is not printable ASCII", b)),
                 None => Ok(Value::Str(bytes.iter().map(|b| *b as char).collect())),
             }
+        } else if f.transform == Transform::Utf8 {
+            // engine-spec v0.55: bytes as `ascii` takes them, read as UTF-8
+            let mut bytes: Vec<u8> =
+                (0..len as u64 / 8).map(|k| get_bits(raw, start + k * 8, 8, p.order).unwrap_or(0) as u8).collect();
+            if f.swap {
+                bytes.reverse();
+            }
+            while bytes.last() == Some(&0) {
+                bytes.pop();
+            }
+            while f.trim && bytes.last() == Some(&0x20) {
+                bytes.pop();
+            }
+            if bytes.contains(&0) {
+                return err("a NUL byte inside utf8 text".to_string());
+            }
+            match String::from_utf8(bytes) {
+                Ok(s) => Ok(Value::Str(s)),
+                Err(e) => err(format!("not valid UTF-8: {}", e)),
+            }
         } else if f.transform == Transform::Hex {
             // digit k: the 4-bit field at bit 4k, as `uint` reads it (engine-spec v0.22)
             let text: String = (0..len as u64 / 4)
@@ -8168,6 +8238,27 @@ pub mod bits {
             // ruling 19 of 0.5
             if let Some(b) = text.iter().find(|b| !(0x20..=0x7e).contains(*b)) {
                 return Err(fail(format!("byte 0x{:02x} is not printable ASCII", b)));
+            }
+            let mut bytes: Vec<u8> = (0..room).map(|k| text.get(k).copied().unwrap_or(0)).collect();
+            if f.swap {
+                bytes.reverse();
+            }
+            for (k, b) in bytes.iter().enumerate() {
+                set_bits(msg, start + k as u64 * 8, 8, *b as u64, p.order);
+            }
+        } else if f.transform == Transform::Utf8 {
+            // engine-spec v0.55: the text's UTF-8 bytes, NUL-padded
+            let fail = |m: String| transform_encode_err(p, f, Error { msg: m });
+            let text = match v {
+                Value::Str(s) => s.as_bytes(),
+                other => return Err(fail(format!("utf8 encodes text, got {:?}", other))),
+            };
+            let room = (len / 8) as usize;
+            if text.contains(&0) {
+                return Err(fail("the text holds U+0000".to_string()));
+            }
+            if text.len() > room {
+                return Err(fail(format!("text is {} bytes, the field holds {}", text.len(), room)));
             }
             let mut bytes: Vec<u8> = (0..room).map(|k| text.get(k).copied().unwrap_or(0)).collect();
             if f.swap {
@@ -10064,6 +10155,14 @@ pub fn ms_to_iso8601_short(ms: i64) -> Result<String, Error> {
 pub fn ms_to_iso8601_s(ms: i64) -> Result<String, Error> {
     let full = ms_to_iso8601_checked(ms)?;
     Ok(format!("{}Z", &full[..19]))
+}
+
+/// `iso8601_si` (engine-spec v0.55): `YYYY-MM-DDTHH:MM:SSZ` when the
+/// milliseconds are 0, else three fraction digits; years 0001 to 9999 only
+/// (ruling 2 of 0.55).
+pub fn ms_to_iso8601_si(ms: i64) -> Result<String, Error> {
+    let full = ms_to_iso8601_checked(ms)?;
+    Ok(if ms.rem_euclid(1000) == 0 { format!("{}Z", &full[..19]) } else { full })
 }
 
 pub fn ms_to_iso8601(ms: i64) -> String {

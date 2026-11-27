@@ -703,8 +703,8 @@ func checkFieldOptions(wire string, f *Field) error {
 		return fmt.Errorf("`swap` is not valid with the %s transform", f.Transform)
 	}
 	// trim with a transform of 0.15 is bad-directive (0.15 ruling 18).
-	if f.Trim && f.Transform != "ascii" && f.Transform != "sixbit" {
-		return fmt.Errorf("`trim` is valid only with the ascii or sixbit transform, not %s", f.Transform)
+	if f.Trim && f.Transform != "ascii" && f.Transform != "sixbit" && f.Transform != "utf8" {
+		return fmt.Errorf("`trim` is valid only with the ascii, utf8 or sixbit transform, not %s", f.Transform)
 	}
 	return nil
 }
