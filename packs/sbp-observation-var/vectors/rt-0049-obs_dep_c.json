@@ -1,0 +1,11 @@
+{
+  "name": "sbp-observation-var-roundtrip-obs_dep_c",
+  "from": "sbp-observation-var",
+  "to": "sbp-observation-var",
+  "input": "554900030127f3580b77caaca1c85bee621132bbc5764d24abfbfed2a99d5ed14ec49df9c54b22f9add001a77e",
+  "expect": "554900030127f3580b77caaca1c85bee621132bbc5764d24abfbfed2a99d5ed14ec49df9c54b22f9add001a77e",
+  "model": {
+    "@kind": "obs_dep_c",
+    "sbpobservation.obs_dep_c_obs.#": "2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "sbp-linux-var-roundtrip-linux_mem_state_dep_a",
+  "from": "sbp-linux-var",
+  "to": "sbp-linux-var",
+  "input": "55017f010115bb92be695330000000000000000000000000009065",
+  "expect": "55017f010115bb92be695330000000000000000000000000009065",
+  "model": {
+    "@kind": "linux_mem_state_dep_a",
+    "sbplinux.linux_mem_state_dep_a_cmdline.#": "2"
+  }
+}

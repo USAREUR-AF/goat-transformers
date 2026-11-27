@@ -1,0 +1,17 @@
+{
+  "name": "derived-group-meta-three",
+  "from": "sbp-system-var",
+  "to": "sbp-system-var",
+  "input": "550aff0001090102030a020e020201",
+  "expect": "550aff0001090102030a020e020201",
+  "model": {
+    "@kind": "group_meta",
+    "sbp.sender": "256",
+    "sbpsystem.group_meta_group_id": "1",
+    "sbpsystem.group_meta_flags": "2",
+    "sbpsystem.group_meta_group_msgs.#": "3",
+    "sbpsystem.group_meta_group_msgs[2].sbpsystem.group_meta_group_msgs_item": "258"
+  },
+  "source": "synthetic: values chosen by the vector deriver (sender 0x0100, group_id 1 = Bestpos, flags 2 = GNSS+INS, message types 0x020A, 0x020E, 0x0102); bytes derived by hand and by a standalone Python program, no engine or generator run",
+  "reference": "libsbp v6.5.2 spec/yaml/swiftnav/sbp/system.yaml MSG_GROUP_META 0xFF0A (group_id u8, flags u8, n_group_msgs u8, group_msgs array of u16 with size_fn n_group_msgs), base.yaml framing (preamble 0x55, msg_type u16 LE, sender u16 LE, length u8, payload; CRC not part of the pack); engine-spec 0.2 lsb order, 0.8 sequential and length 8 bytes (length = 9), 0.21 count n_n_group_msgs 8 then group count @n_n_group_msgs (count = 3)"
+}

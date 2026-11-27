@@ -64,22 +64,8 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
-Messages with no kind:
-
-| Message | Type id | Reason |
-|---|---|---|
-| MSG_LINUX_CPU_STATE_DEP_A | 0x7F00 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_LINUX_MEM_STATE_DEP_A | 0x7F01 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_LINUX_PROCESS_SOCKET_COUNTS | 0x7F03 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_LINUX_PROCESS_SOCKET_QUEUES | 0x7F04 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_LINUX_PROCESS_FD_COUNT | 0x7F06 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_LINUX_PROCESS_FD_SUMMARY | 0x7F07 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_LINUX_CPU_STATE | 0x7F08 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_LINUX_MEM_STATE | 0x7F09 | ends in a string with no stated length that runs to the end of the frame |
-
-8 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
+The 8 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-linux-var`.
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

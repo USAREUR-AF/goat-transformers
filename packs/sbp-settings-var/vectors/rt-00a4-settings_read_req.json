@@ -1,0 +1,11 @@
+{
+  "name": "sbp-settings-var-roundtrip-settings_read_req",
+  "from": "sbp-settings-var",
+  "to": "sbp-settings-var",
+  "input": "55a4000201023d12",
+  "expect": "55a4000201023d12",
+  "model": {
+    "@kind": "settings_read_req",
+    "sbpsettings.settings_read_req_setting.#": "2"
+  }
+}

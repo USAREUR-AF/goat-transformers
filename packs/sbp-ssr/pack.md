@@ -104,28 +104,8 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
-Messages with no kind:
-
-| Message | Type id | Reason |
-|---|---|---|
-| MSG_SSR_CODE_BIASES | 0x05E1 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_PHASE_BIASES | 0x05E6 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_STEC_CORRECTION_DEP | 0x05FB | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_STEC_CORRECTION | 0x05FD | an array counted by field `n_sats` |
-| MSG_SSR_GRIDDED_CORRECTION | 0x05FC | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_GRIDDED_CORRECTION_BOUNDS | 0x05FE | an array counted by field `n_sats` |
-| MSG_SSR_SATELLITE_APC_DEP | 0x0604 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_SATELLITE_APC | 0x0605 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_STEC_CORRECTION_DEP_A | 0x05EB | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_GRIDDED_CORRECTION_NO_STD_DEP_A | 0x05F0 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_GRIDDED_CORRECTION_DEP_A | 0x05FA | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_GRID_DEFINITION_DEP_A | 0x05F5 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SSR_ORBIT_CLOCK_BOUNDS | 0x05DE | an array counted by field `n_sats` |
-| MSG_SSR_CODE_PHASE_BIASES_BOUNDS | 0x05EC | an array counted by field `n_sats_signals` |
-
-10 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
+The 14 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-ssr-var`.
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

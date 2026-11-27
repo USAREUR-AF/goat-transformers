@@ -1,0 +1,11 @@
+{
+  "name": "sbp-observation-var-roundtrip-osr",
+  "from": "sbp-observation-var",
+  "to": "sbp-observation-var",
+  "input": "5540060501310c5300576d4ec437bafa91e155e34220ba02388f663d14ebc2a099f47048b658c62ed3254138643b12e9c097a36ef7454b",
+  "expect": "5540060501310c5300576d4ec437bafa91e155e34220ba02388f663d14ebc2a099f47048b658c62ed3254138643b12e9c097a36ef7454b",
+  "model": {
+    "@kind": "osr",
+    "sbpobservation.osr_obs.#": "2"
+  }
+}

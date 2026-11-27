@@ -1,0 +1,11 @@
+{
+  "name": "sbp-integrity-var-roundtrip-ssr_flag_iono_grid_points",
+  "from": "sbp-integrity-var",
+  "to": "sbp-integrity-var",
+  "input": "55c70b02011395dc92666c30431af1c87f9fd376026adf3fe2",
+  "expect": "55c70b02011395dc92666c30431af1c87f9fd376026adf3fe2",
+  "model": {
+    "@kind": "ssr_flag_iono_grid_points",
+    "sbpintegrity.ssr_flag_iono_grid_points_faulty_points.#": "2"
+  }
+}

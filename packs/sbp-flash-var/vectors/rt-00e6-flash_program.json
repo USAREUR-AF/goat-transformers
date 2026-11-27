@@ -1,0 +1,11 @@
+{
+  "name": "sbp-flash-var-roundtrip-flash_program",
+  "from": "sbp-flash-var",
+  "to": "sbp-flash-var",
+  "input": "55e60000010706ddb48b02dbb0",
+  "expect": "55e60000010706ddb48b02dbb0",
+  "model": {
+    "@kind": "flash_program",
+    "sbpflash.flash_program_data.#": "2"
+  }
+}

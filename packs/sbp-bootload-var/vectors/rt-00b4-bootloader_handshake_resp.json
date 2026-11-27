@@ -1,0 +1,11 @@
+{
+  "name": "sbp-bootload-var-roundtrip-bootloader_handshake_resp",
+  "from": "sbp-bootload-var",
+  "to": "sbp-bootload-var",
+  "input": "55b400000106581bd77b2d02",
+  "expect": "55b400000106581bd77b2d02",
+  "model": {
+    "@kind": "bootloader_handshake_resp",
+    "sbpbootload.bootloader_handshake_resp_version.#": "2"
+  }
+}

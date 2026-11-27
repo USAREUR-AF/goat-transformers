@@ -1,0 +1,11 @@
+{
+  "name": "sbp-logging-var-roundtrip-log",
+  "from": "sbp-logging-var",
+  "to": "sbp-logging-var",
+  "input": "550104000103bb9065",
+  "expect": "550104000103bb9065",
+  "model": {
+    "@kind": "log",
+    "sbplogging.log_text.#": "2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "sbp-fixture-var-roundtrip-trailing",
+  "from": "sbp-fixture-var",
+  "to": "sbp-fixture-var",
+  "input": "5502700001062aa6860effd4",
+  "expect": "5502700001062aa6860effd4",
+  "model": {
+    "@kind": "trailing",
+    "sbpfixture.trailing_data.#": "2"
+  }
+}

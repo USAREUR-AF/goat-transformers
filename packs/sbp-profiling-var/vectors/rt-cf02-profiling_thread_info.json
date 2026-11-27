@@ -1,0 +1,11 @@
+{
+  "name": "sbp-profiling-var-roundtrip-profiling_thread_info",
+  "from": "sbp-profiling-var",
+  "to": "sbp-profiling-var",
+  "input": "5502cf01011b2ad7733d00000080012bf81000000000d8afd200388626850bffd4",
+  "expect": "5502cf01011b2ad7733d00000080012bf81000000000d8afd200388626850bffd4",
+  "model": {
+    "@kind": "profiling_thread_info",
+    "sbpprofiling.profiling_thread_info_name.#": "2"
+  }
+}

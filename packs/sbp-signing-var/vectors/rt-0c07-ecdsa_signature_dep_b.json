@@ -1,0 +1,11 @@
+{
+  "name": "sbp-signing-var-roundtrip-ecdsa_signature_dep_b",
+  "from": "sbp-signing-var",
+  "to": "sbp-signing-var",
+  "input": "55070c030152552c03dab1885f360de4bb92694017eec59c734a21f8cfa67d542b02d9b0875e350ce3ba91683f16edc49b724920f7cea57c532a01d8af865d340be2b990673e15ecc39a71481ff6cda47b522900d7ae2aff",
+  "expect": "55070c030152552c03dab1885f360de4bb92694017eec59c734a21f8cfa67d542b02d9b0875e350ce3ba91683f16edc49b724920f7cea57c532a01d8af865d340be2b990673e15ecc39a71481ff6cda47b522900d7ae2aff",
+  "model": {
+    "@kind": "ecdsa_signature_dep_b",
+    "sbpsigning.ecdsa_signature_dep_b_signed_messages.#": "2"
+  }
+}

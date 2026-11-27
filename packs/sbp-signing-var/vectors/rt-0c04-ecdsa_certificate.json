@@ -1,0 +1,11 @@
+{
+  "name": "sbp-signing-var-roundtrip-ecdsa_certificate",
+  "from": "sbp-signing-var",
+  "to": "sbp-signing-var",
+  "input": "55040c00010808dfb68d643bddb2",
+  "expect": "55040c00010808dfb68d643bddb2",
+  "model": {
+    "@kind": "ecdsa_certificate",
+    "sbpsigning.ecdsa_certificate_certificate_bytes.#": "2"
+  }
+}

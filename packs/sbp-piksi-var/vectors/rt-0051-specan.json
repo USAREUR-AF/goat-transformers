@@ -1,0 +1,11 @@
+{
+  "name": "sbp-piksi-var-roundtrip-specan",
+  "from": "sbp-piksi-var",
+  "to": "sbp-piksi-var",
+  "input": "55510005011e6b3c42904d10275f1ac6f0370000a0c0000050c00000c0bf0000803e4015",
+  "expect": "55510005011e6b3c42904d10275f1ac6f0370000a0c0000050c00000c0bf0000803e4015",
+  "model": {
+    "@kind": "specan",
+    "sbppiksi.specan_amplitude_value.#": "2"
+  }
+}

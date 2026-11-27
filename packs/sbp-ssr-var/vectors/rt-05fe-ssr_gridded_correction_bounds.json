@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_gridded_correction_bounds",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55fe0505012d6ebea15745121cf3caa1784f09265dfdd404e595e6593007deb502431a0f12c89f764d2418efc27d9d744b22f9",
+  "expect": "55fe0505012d6ebea15745121cf3caa1784f09265dfdd404e595e6593007deb502431a0f12c89f764d2418efc27d9d744b22f9",
+  "model": {
+    "@kind": "ssr_gridded_correction_bounds",
+    "sbpssr.ssr_gridded_correction_bounds_stec_sat_list.#": "2"
+  }
+}

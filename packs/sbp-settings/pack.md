@@ -62,23 +62,15 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
+The 7 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-settings-var`.
+
 Messages with no kind:
 
 | Message | Type id | Reason |
 |---|---|---|
 | MSG_SETTINGS_SAVE | 0x00A1 | an empty payload: a kind needs at least one field |
-| MSG_SETTINGS_WRITE | 0x00A0 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_SETTINGS_WRITE_RESP | 0x00AF | ends in a string with no stated length that runs to the end of the frame |
-| MSG_SETTINGS_READ_REQ | 0x00A4 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_SETTINGS_READ_RESP | 0x00A5 | ends in a string with no stated length that runs to the end of the frame |
-| MSG_SETTINGS_READ_BY_INDEX_RESP | 0x00A7 | ends in a string with no stated length that runs to the end of the frame |
 | MSG_SETTINGS_READ_BY_INDEX_DONE | 0x00A6 | an empty payload: a kind needs at least one field |
-| MSG_SETTINGS_REGISTER | 0x00AE | ends in a string with no stated length that runs to the end of the frame |
-| MSG_SETTINGS_REGISTER_RESP | 0x01AF | ends in a string with no stated length that runs to the end of the frame |
-
-7 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

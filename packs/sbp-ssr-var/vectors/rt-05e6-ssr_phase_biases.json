@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_phase_biases",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55e60501011f06146806dd67b48b623910e7beb28bdbb2896039695331b0875e35ecd49131",
+  "expect": "55e60501011f06146806dd67b48b623910e7beb28bdbb2896039695331b0875e35ecd49131",
+  "model": {
+    "@kind": "ssr_phase_biases",
+    "sbpssr.ssr_phase_biases_biases.#": "2"
+  }
+}

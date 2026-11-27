@@ -64,15 +64,8 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
-Messages with no kind:
-
-| Message | Type id | Reason |
-|---|---|---|
-| MSG_SSR_FLAG_SATELLITES | 0x0BBD | an array counted by field `n_faulty_sats` |
-| MSG_SSR_FLAG_TROPO_GRID_POINTS | 0x0BC3 | an array counted by field `n_faulty_points` |
-| MSG_SSR_FLAG_IONO_GRID_POINTS | 0x0BC7 | an array counted by field `n_faulty_points` |
-| MSG_SSR_FLAG_IONO_TILE_SAT_LOS | 0x0BCD | an array counted by field `n_faulty_los` |
-| MSG_SSR_FLAG_IONO_GRID_POINT_SAT_LOS | 0x0BD1 | an array counted by field `n_faulty_los` |
+The 5 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-integrity-var`.
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

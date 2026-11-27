@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_stec_correction",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55fd05030126ff01ea2ed655ad845b3209e04cb7a002d4ab82e73c6890e9e36a37a980579aa81bfc9c4f1da3",
+  "expect": "55fd05030126ff01ea2ed655ad845b3209e04cb7a002d4ab82e73c6890e9e36a37a980579aa81bfc9c4f1da3",
+  "model": {
+    "@kind": "ssr_stec_correction",
+    "sbpssr.ssr_stec_correction_stec_sat_list.#": "2"
+  }
+}

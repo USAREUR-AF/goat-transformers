@@ -1,0 +1,11 @@
+{
+  "name": "sbp-settings-var-roundtrip-settings_write",
+  "from": "sbp-settings-var",
+  "to": "sbp-settings-var",
+  "input": "55a0000001028156",
+  "expect": "55a0000001028156",
+  "model": {
+    "@kind": "settings_write",
+    "sbpsettings.settings_write_setting.#": "2"
+  }
+}

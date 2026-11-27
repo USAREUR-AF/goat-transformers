@@ -132,20 +132,8 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
-Messages with no kind:
-
-| Message | Type id | Reason |
-|---|---|---|
-| MSG_OBS | 0x004A | ends in an array with no stated length that runs to the end of the frame |
-| MSG_OBS_DEP_A | 0x0045 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_OBS_DEP_B | 0x0043 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_OBS_DEP_C | 0x0049 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_SV_AZ_EL | 0x0097 | ends in an array with no stated length that runs to the end of the frame |
-| MSG_OSR | 0x0640 | ends in an array with no stated length that runs to the end of the frame |
-
-6 of them end in an array or a string that runs to the end of the frame;
-stating one needs a trailing field whose length is what remains of the
-payload (the payload length minus the fixed part).
+The 6 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-observation-var`.
 
 - The CRC (see The message), and frames whose payload length is not the
   message's fixed size: such a frame selects no kind (`no-kind`).

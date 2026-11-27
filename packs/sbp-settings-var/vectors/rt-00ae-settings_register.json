@@ -1,0 +1,11 @@
+{
+  "name": "sbp-settings-var-roundtrip-settings_register",
+  "from": "sbp-settings-var",
+  "to": "sbp-settings-var",
+  "input": "55ae000501029368",
+  "expect": "55ae000501029368",
+  "model": {
+    "@kind": "settings_register",
+    "sbpsettings.settings_register_setting.#": "2"
+  }
+}

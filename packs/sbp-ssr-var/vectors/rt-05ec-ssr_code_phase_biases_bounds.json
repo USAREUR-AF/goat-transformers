@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_code_phase_biases_bounds",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55ec050d0119a07eb67a77d24e25fcd3aa8102754c23fad1a84a21f8cfa67d",
+  "expect": "55ec050d0119a07eb67a77d24e25fcd3aa8102754c23fad1a84a21f8cfa67d",
+  "model": {
+    "@kind": "ssr_code_phase_biases_bounds",
+    "sbpssr.ssr_code_phase_biases_bounds_satellites_signals.#": "2"
+  }
+}

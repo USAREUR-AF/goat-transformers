@@ -1,0 +1,11 @@
+{
+  "name": "sbp-signing-var-roundtrip-ed25519_signature_dep_b",
+  "from": "sbp-signing-var",
+  "to": "sbp-signing-var",
+  "input": "55030c07015e9970471ef5cca37a5128ffd6ad845b3209e0b78e653c13eac1986f461df4cba2795027fed5ac835a3108dfb68d643b12e9c0976e451cf3caa1784f26fdd4ab82593007deb58c633a11e8bf966d441bf2c9a0774e25fc6e09865d430c6949",
+  "expect": "55030c07015e9970471ef5cca37a5128ffd6ad845b3209e0b78e653c13eac1986f461df4cba2795027fed5ac835a3108dfb68d643b12e9c0976e451cf3caa1784f26fdd4ab82593007deb58c633a11e8bf966d441bf2c9a0774e25fc6e09865d430c6949",
+  "model": {
+    "@kind": "ed25519_signature_dep_b",
+    "sbpsigning.ed25519_signature_dep_b_signed_messages.#": "2"
+  }
+}

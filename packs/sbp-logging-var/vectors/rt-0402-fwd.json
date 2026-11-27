@@ -1,0 +1,11 @@
+{
+  "name": "sbp-logging-var-roundtrip-fwd",
+  "from": "sbp-logging-var",
+  "to": "sbp-logging-var",
+  "input": "5502040101042a01ffd4",
+  "expect": "5502040101042a01ffd4",
+  "model": {
+    "@kind": "fwd",
+    "sbplogging.fwd_fwd_payload.#": "2"
+  }
+}

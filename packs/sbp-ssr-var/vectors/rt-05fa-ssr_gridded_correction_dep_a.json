@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_gridded_correction_dep_a",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55fa050a011db2ccc2348920607437c80ee5bc9317bef8bf18875e6b6f0c5c331edbe1",
+  "expect": "55fa050a011db2ccc2348920607437c80ee5bc9317bef8bf18875e6b6f0c5c331edbe1",
+  "model": {
+    "@kind": "ssr_gridded_correction_dep_a",
+    "sbpssr.ssr_gridded_correction_dep_a_stec_residuals.#": "2"
+  }
+}

@@ -69,11 +69,13 @@ selects a kind only when it holds them.
 
 ## What is not mapped
 
+The 1 messages of this package whose payload length is not fixed are kinds of
+the sequential pack `sbp-flash-var`.
+
 Messages with no kind:
 
 | Message | Type id | Reason |
 |---|---|---|
-| MSG_FLASH_PROGRAM | 0x00E6 | an array counted by field `addr_len` |
 | MSG_STM_UNIQUE_ID_REQ | 0x00E8 | an empty payload: a kind needs at least one field |
 
 - The CRC (see The message), and frames whose payload length is not the

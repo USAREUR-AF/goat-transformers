@@ -1,0 +1,11 @@
+{
+  "name": "sbp-system-var-roundtrip-csac_telemetry",
+  "from": "sbp-system-var",
+  "to": "sbp-system-var",
+  "input": "5504ff03010308ddb2",
+  "expect": "5504ff03010308ddb2",
+  "model": {
+    "@kind": "csac_telemetry",
+    "sbpsystem.csac_telemetry_telemetry.#": "2"
+  }
+}

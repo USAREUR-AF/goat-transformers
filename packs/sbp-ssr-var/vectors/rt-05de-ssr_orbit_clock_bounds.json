@@ -1,0 +1,11 @@
+{
+  "name": "sbp-ssr-var-roundtrip-ssr_orbit_clock_bounds",
+  "from": "sbp-ssr-var",
+  "to": "sbp-ssr-var",
+  "input": "55de050c011f8e30aa4065843c13eac1986f02633a11e8bf966d441b380fe6bd946b4219f0",
+  "expect": "55de050c011f8e30aa4065843c13eac1986f02633a11e8bf966d441b380fe6bd946b4219f0",
+  "model": {
+    "@kind": "ssr_orbit_clock_bounds",
+    "sbpssr.ssr_orbit_clock_bounds_orbit_clock_bounds.#": "2"
+  }
+}

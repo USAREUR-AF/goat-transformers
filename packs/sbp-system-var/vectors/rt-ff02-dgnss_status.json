@@ -1,0 +1,11 @@
+{
+  "name": "sbp-system-var-roundtrip-dgnss_status",
+  "from": "sbp-system-var",
+  "to": "sbp-system-var",
+  "input": "5502ff0001062a01fbd8ffd4",
+  "expect": "5502ff0001062a01fbd8ffd4",
+  "model": {
+    "@kind": "dgnss_status",
+    "sbpsystem.dgnss_status_source.#": "2"
+  }
+}

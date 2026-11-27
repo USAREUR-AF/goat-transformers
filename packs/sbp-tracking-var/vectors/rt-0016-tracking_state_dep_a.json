@@ -1,0 +1,11 @@
+{
+  "name": "sbp-tracking-var-roundtrip-tracking_state_dep_a",
+  "from": "sbp-tracking-var",
+  "to": "sbp-tracking-var",
+  "input": "55160002010cab820000803e80570000a040",
+  "expect": "55160002010cab820000803e80570000a040",
+  "model": {
+    "@kind": "tracking_state_dep_a",
+    "sbptracking.tracking_state_dep_a_states.#": "2"
+  }
+}

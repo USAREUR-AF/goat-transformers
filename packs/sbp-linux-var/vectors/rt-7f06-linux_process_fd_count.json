@@ -1,0 +1,11 @@
+{
+  "name": "sbp-linux-var-roundtrip-linux_process_fd_count",
+  "from": "sbp-linux-var",
+  "to": "sbp-linux-var",
+  "input": "55067f040107e6bd6c94c0bb90",
+  "expect": "55067f040107e6bd6c94c0bb90",
+  "model": {
+    "@kind": "linux_process_fd_count",
+    "sbplinux.linux_process_fd_count_cmdline.#": "2"
+  }
+}
