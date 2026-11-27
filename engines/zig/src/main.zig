@@ -788,7 +788,13 @@ const Line = struct {
     fn isPlainString(self: *const Line, wire: Wire) bool {
         return self.tag == .field and self.transform.kind == .string and self.via_name.len == 0 and
             !self.swap and !self.trim and !self.unlisted and self.with_key == null and
-            self.absent_raw == null and self.stop_raw == null and (!self.optional or wire == .text);
+            self.absent_raw == null and self.stop_raw == null and (!self.optional or wire == .text) and
+            !self.hasOutputOption();
+    }
+    // Version 0.56: `null`, `implicit`, `range` or `wrap` on the line; none
+    // is an option of a part line or of the whole line of its group (ruling 15)
+    fn hasOutputOption(self: *const Line) bool {
+        return self.null_opt or self.implicit or self.rng_min_raw != null or self.wrap or self.abs_ranges.len > 0;
     }
     // a `when` or `const` line: a value the encoder writes
     fn isFixed(self: *const Line) bool {
@@ -2309,7 +2315,7 @@ fn partLineCheck(alloc: std.mem.Allocator, p: *const Pack, ln: *const Line, in_g
         if (p.nmea and std.mem.eql(u8, sep, "*")) return bad(diag, alloc, bd, "line {d}: the separator * under checksum nmea", .{ln.lineno});
     }
     if (ln.tag == .field) {
-        if (ln.swap or ln.trim or ln.stop_raw != null or ln.absent_raw != null or ln.with_key != null or (ln.optional and p.wire != .text)) {
+        if (ln.swap or ln.trim or ln.stop_raw != null or ln.absent_raw != null or ln.with_key != null or (ln.optional and p.wire != .text) or ln.hasOutputOption()) {
             return bad(diag, alloc, bd, "line {d}: a part line takes via, unlisted and, on the text wire, optional", .{ln.lineno});
         }
         return;
