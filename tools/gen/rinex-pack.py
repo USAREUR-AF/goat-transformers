@@ -94,8 +94,12 @@ OBS_HEADERS = [  # slug, label, fields (key, start, length)
 def obs_pack():
     L = head("rinex-obs-line", ["One line of a RINEX 3.05 or 4.01 GNSS observation file: a header line by its label, an epoch line, or an",
                                 "observation line. Every value is its column text. Written by tools/gen/rinex-pack.py; do not edit by hand."], O)
+    # END OF HEADER maps no key, so it goes just before the last kind: a kind with no requires hides the
+    # kinds after it on encode (engine-spec Encode step 2). Its line has blanks in columns 0-5, so no
+    # data kind's when matches it, and decode is unchanged.
     for slug, label, fields in OBS_HEADERS:
-        L += label_kind(O, slug, label, fields)
+        if slug != "end-of-header":
+            L += label_kind(O, slug, label, fields)
     L += ["kind  epoch", "when  0:0:1  >", col(O, "year", 2, 4), col(O, "month", 7, 2), col(O, "day", 10, 2),
           col(O, "hour", 13, 2), col(O, "minute", 16, 2), col(O, "second", 18, 11), col(O, "epoch_flag", 31, 1),
           col(O, "satellite_count_epoch", 32, 3), col(O, "clock_offset", 41, 15), ""]
@@ -106,6 +110,7 @@ def obs_pack():
             s = 3 + 16 * (k - 1)
             L += [col(O, "obs_%d" % k, s, 14), col(O, "lli_%d" % k, s + 14, 1), col(O, "ssi_%d" % k, s + 15, 1)]
         L += [""]
+    L += label_kind(O, "end-of-header", "END OF HEADER", [])
     L += ["kind  header-other", "when  0:60:20  present", col(O, "content", 0, 60), col(O, "label", 60, 20)]
     return "\n".join(L) + "\n"
 
@@ -197,8 +202,12 @@ def nav_pack():
     L = head("rinex-nav-line", ["One line of a RINEX 3.05 or 4.01 navigation file: a header line by its label, a record line (version 4),",
                                 "the first line of a record (satellite and epoch, or epoch alone), or a line of four values. Every value is",
                                 "its column text. Written by tools/gen/rinex-pack.py; do not edit by hand."], N)
+    # END OF HEADER maps no key, so it goes just before the last kind: a kind with no requires hides the
+    # kinds after it on encode (engine-spec Encode step 2). Its line has blanks in columns 0-5, so no
+    # data kind's when matches it, and decode is unchanged.
     for slug, label, fields in NAV_HEADERS:
-        L += label_kind(N, slug, label, fields)
+        if slug != "end-of-header":
+            L += label_kind(N, slug, label, fields)
     L += ["kind  record", "when  0:0:1  >", col(N, "record_type", 2, 3), col(N, "satellite_system", 6, 1),
           col(N, "satellite_number", 7, 2), col(N, "message_type", 10, 4), ""]
     for letter, name in SYSTEMS:
@@ -206,6 +215,7 @@ def nav_pack():
               col(N, "satellite_number", 1, 2)] + [col(N, k, s, n) for k, s, n in EPOCH] + [""]
     for century in ("19", "20"):
         L += ["kind  epoch-%sxx" % century, "when  0:4:2  %s" % century] + [col(N, k, s, n) for k, s, n in EPOCH] + [""]
+    L += label_kind(N, "end-of-header", "END OF HEADER", [])
     L += ["kind  values", col(N, "value_0", 4, 19), col(N, "value_1", 23, 19), col(N, "value_2", 42, 19), col(N, "value_3", 61, 19)]
     return "\n".join(L) + "\n"
 

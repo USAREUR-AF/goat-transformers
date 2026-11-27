@@ -1398,6 +1398,22 @@ def check_pack_keys(root_scope, module, mods):
 
 # ------------------------------------------------------------- documents ---
 
+def keyless_note(ps):
+    """The pack.md sentence for union variants that map no key: on encode with no recorded kind
+    (engine-spec Encode step 2) only the first of them can be chosen (tools/gen/kindorder.py)."""
+    import kindorder
+    _, kinds = kindorder._parse(list(ps.lines_text))
+    names = [k["name"] for k in kinds if not k["keys"]]
+    if len(kinds) < 2 or not names:
+        return []
+    if len(names) == 1:
+        return ["", "On encode with no recorded kind, each variant is chosen by its keys; an entity",
+                "with none of them is written as `%s`, the variant that maps no key." % names[0]]
+    return ["", "On encode with no recorded kind, each variant is chosen by its keys. The variants",
+            "%s map no key, so an entity with none is written as `%s`;" % (", ".join("`%s`" % n for n in names), names[0]),
+            "the others are chosen only by a recorded kind."]
+
+
 def pack_md(ps, sha, nvec):
     t = ps.t
     o = []
@@ -1520,6 +1536,8 @@ def pack_md(ps, sha, nvec):
     if ps.stops:
         a("")
         a("Mapping ends early: %s." % "; ".join(sorted(set(ps.stops))))
+    for line in keyless_note(ps):
+        a(line)
     a("")
     a("- Constants of the definition (they are not on the wire).")
     a("- The transfer layer: CAN identifier, tail byte, toggle bit, transfer CRC.")
@@ -2738,6 +2756,8 @@ def cy_pack_md(ps, sha, nvec):
         a("Mapping ends early: %s. In a delimited composite the rest of that composite" % "; ".join(
             sorted(set(ps.stops))))
         a("is skipped by its length; anywhere else decode ignores the rest of the payload.")
+    for line in keyless_note(ps):
+        a(line)
     a("")
     a("- Implicit zero extension: Cyphal reads a field beyond the end of a short")
     a("  payload, or of a delimited composite, as zero. The pack reads the first as")
@@ -2821,7 +2841,8 @@ def cy_check_keys(scope, module, mods):
         for k in sc["kinds"]:
             walk(k["lines"])
             for rk in k["requires"]:
-                if rk.split(".", 1)[1] not in mods[module]["keys"]:
+                # a requires names a key or a list (engine-spec: a list holds when it has an item)
+                if rk.split(".", 1)[1] not in mods[module]["keys"] and rk.split(".", 1)[1] not in mods[module]["lists"]:
                     raise GenError("requires undeclared " + rk)
     scope_walk(scope)
 

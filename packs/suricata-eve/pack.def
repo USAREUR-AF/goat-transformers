@@ -17,197 +17,9 @@ source        "Suricata user guide, doc/userguide/output/eve/eve-json-format.rst
 uses          suricataeve
 wire          json
 
-kind      alert
-when      event_type  alert
-field  suricataeve.app_proto  app_proto  string
-field  suricataeve.app_proto_expected  app_proto_expected  string
-field  suricataeve.app_proto_orig  app_proto_orig  string
-field  suricataeve.app_proto_tc  app_proto_tc  string
-field  suricataeve.app_proto_ts  app_proto_ts  string
-field  suricataeve.capture_file  capture_file  string
-field  suricataeve.community_id  community_id  string
-field  suricataeve.dest_ip  dest_ip  string
-field  suricataeve.dest_port  dest_port  int
-field  suricataeve.direction  direction  string
-field  suricataeve.event_type  event_type  string
-field  suricataeve.flow_id  flow_id  int
-field  suricataeve.host  host  string
-field  suricataeve.icmp_code  icmp_code  int
-field  suricataeve.icmp_type  icmp_type  int
-field  suricataeve.in_iface  in_iface  string
-field  suricataeve.ip_v  ip_v  int
-field  suricataeve.log_level  log_level  string
-field  suricataeve.packet  packet  string
-field  suricataeve.parent_id  parent_id  int
-field  suricataeve.payload  payload  string
-field  suricataeve.payload_length  payload_length  int
-field  suricataeve.payload_printable  payload_printable  string
-field  suricataeve.pcap_cnt  pcap_cnt  int
-field  suricataeve.pcap_filename  pcap_filename  string
-field  suricataeve.pkt_src  pkt_src  string
-field  suricataeve.proto  proto  string
-field  suricataeve.response_icmp_code  response_icmp_code  int
-field  suricataeve.response_icmp_type  response_icmp_type  int
-field  suricataeve.spi  spi  int
-field  suricataeve.src_ip  src_ip  string
-field  suricataeve.src_port  src_port  int
-field  suricataeve.stream  stream  int
-field  suricataeve.suricata_version  suricata_version  string
-field  suricataeve.tc_progress  tc_progress  string
-field  suricataeve.timestamp  timestamp  string
-field  suricataeve.ts_progress  ts_progress  string
-field  suricataeve.tx_guessed  tx_guessed  bool
-field  suricataeve.tx_id  tx_id  int
-field  suricataeve.verdict_action  verdict.action  string
-group  suricataeve.verdict_reject  verdict.reject
-  field  suricataeve.verdict_reject_value  .  string
-end
-field  suricataeve.verdict_reject_target  verdict.reject-target  string
-field  suricataeve.alert_action  alert.action  string
-field  suricataeve.alert_category  alert.category  string
-field  suricataeve.alert_engine  alert.engine  string
-field  suricataeve.alert_gid  alert.gid  int
-group  suricataeve.alert_metadata_affected_product  alert.metadata.affected_product
-  field  suricataeve.alert_metadata_affected_product_value  .  string
-end
-group  suricataeve.alert_metadata_attack_target  alert.metadata.attack_target
-  field  suricataeve.alert_metadata_attack_target_value  .  string
-end
-group  suricataeve.alert_metadata_created_at  alert.metadata.created_at
-  field  suricataeve.alert_metadata_created_at_value  .  string
-end
-group  suricataeve.alert_metadata_deployment  alert.metadata.deployment
-  field  suricataeve.alert_metadata_deployment_value  .  string
-end
-group  suricataeve.alert_metadata_former_category  alert.metadata.former_category
-  field  suricataeve.alert_metadata_former_category_value  .  string
-end
-group  suricataeve.alert_metadata_malware_family  alert.metadata.malware_family
-  field  suricataeve.alert_metadata_malware_family_value  .  string
-end
-group  suricataeve.alert_metadata_policy  alert.metadata.policy
-  field  suricataeve.alert_metadata_policy_value  .  string
-end
-group  suricataeve.alert_metadata_signature_severity  alert.metadata.signature_severity
-  field  suricataeve.alert_metadata_signature_severity_value  .  string
-end
-group  suricataeve.alert_metadata_tag  alert.metadata.tag
-  field  suricataeve.alert_metadata_tag_value  .  string
-end
-group  suricataeve.alert_metadata_updated_at  alert.metadata.updated_at
-  field  suricataeve.alert_metadata_updated_at_value  .  string
-end
-group  suricataeve.alert_references  alert.references
-  field  suricataeve.alert_references_value  .  string
-end
-field  suricataeve.alert_rev  alert.rev  int
-field  suricataeve.alert_rule  alert.rule  string
-field  suricataeve.alert_severity  alert.severity  int
-field  suricataeve.alert_signature  alert.signature  string
-field  suricataeve.alert_signature_id  alert.signature_id  int
-field  suricataeve.alert_source_ip  alert.source.ip  string
-field  suricataeve.alert_source_port  alert.source.port  int
-field  suricataeve.alert_target_ip  alert.target.ip  string
-field  suricataeve.alert_target_port  alert.target.port  int
-field  suricataeve.alert_xff  alert.xff  string
-field  suricataeve.flow_action  flow.action  string
-field  suricataeve.flow_age  flow.age  int
-field  suricataeve.flow_alerted  flow.alerted  bool
-field  suricataeve.flow_bypass  flow.bypass  string
-field  suricataeve.flow_bypassed_bytes_toclient  flow.bypassed.bytes_toclient  int
-field  suricataeve.flow_bypassed_bytes_toserver  flow.bypassed.bytes_toserver  int
-field  suricataeve.flow_bypassed_pkts_toclient  flow.bypassed.pkts_toclient  int
-field  suricataeve.flow_bypassed_pkts_toserver  flow.bypassed.pkts_toserver  int
-field  suricataeve.flow_bytes_toclient  flow.bytes_toclient  int
-field  suricataeve.flow_bytes_toserver  flow.bytes_toserver  int
-field  suricataeve.flow_dest_ip  flow.dest_ip  string
-field  suricataeve.flow_dest_port  flow.dest_port  int
-field  suricataeve.flow_elephant  flow.elephant  bool
-field  suricataeve.flow_emergency  flow.emergency  bool
-field  suricataeve.flow_end  flow.end  string
-field  suricataeve.flow_pkts_toclient  flow.pkts_toclient  int
-field  suricataeve.flow_pkts_toserver  flow.pkts_toserver  int
-field  suricataeve.flow_reason  flow.reason  string
-field  suricataeve.flow_src_ip  flow.src_ip  string
-field  suricataeve.flow_src_port  flow.src_port  int
-field  suricataeve.flow_start  flow.start  string
-field  suricataeve.flow_state  flow.state  string
-field  suricataeve.flow_tx_cnt  flow.tx_cnt  int
-field  suricataeve.flow_wrong_thread  flow.wrong_thread  bool
-
-kind      flow
-when      event_type  flow
-field  suricataeve.app_proto  app_proto  string
-field  suricataeve.app_proto_expected  app_proto_expected  string
-field  suricataeve.app_proto_orig  app_proto_orig  string
-field  suricataeve.app_proto_tc  app_proto_tc  string
-field  suricataeve.app_proto_ts  app_proto_ts  string
-field  suricataeve.capture_file  capture_file  string
-field  suricataeve.community_id  community_id  string
-field  suricataeve.dest_ip  dest_ip  string
-field  suricataeve.dest_port  dest_port  int
-field  suricataeve.direction  direction  string
-field  suricataeve.event_type  event_type  string
-field  suricataeve.flow_id  flow_id  int
-field  suricataeve.host  host  string
-field  suricataeve.icmp_code  icmp_code  int
-field  suricataeve.icmp_type  icmp_type  int
-field  suricataeve.in_iface  in_iface  string
-field  suricataeve.ip_v  ip_v  int
-field  suricataeve.log_level  log_level  string
-field  suricataeve.packet  packet  string
-field  suricataeve.parent_id  parent_id  int
-field  suricataeve.payload  payload  string
-field  suricataeve.payload_length  payload_length  int
-field  suricataeve.payload_printable  payload_printable  string
-field  suricataeve.pcap_cnt  pcap_cnt  int
-field  suricataeve.pcap_filename  pcap_filename  string
-field  suricataeve.pkt_src  pkt_src  string
-field  suricataeve.proto  proto  string
-field  suricataeve.response_icmp_code  response_icmp_code  int
-field  suricataeve.response_icmp_type  response_icmp_type  int
-field  suricataeve.spi  spi  int
-field  suricataeve.src_ip  src_ip  string
-field  suricataeve.src_port  src_port  int
-field  suricataeve.stream  stream  int
-field  suricataeve.suricata_version  suricata_version  string
-field  suricataeve.tc_progress  tc_progress  string
-field  suricataeve.timestamp  timestamp  string
-field  suricataeve.ts_progress  ts_progress  string
-field  suricataeve.tx_guessed  tx_guessed  bool
-field  suricataeve.tx_id  tx_id  int
-field  suricataeve.verdict_action  verdict.action  string
-group  suricataeve.verdict_reject  verdict.reject
-  field  suricataeve.verdict_reject_value  .  string
-end
-field  suricataeve.verdict_reject_target  verdict.reject-target  string
-field  suricataeve.flow_action  flow.action  string
-field  suricataeve.flow_age  flow.age  int
-field  suricataeve.flow_alerted  flow.alerted  bool
-field  suricataeve.flow_bypass  flow.bypass  string
-field  suricataeve.flow_bypassed_bytes_toclient  flow.bypassed.bytes_toclient  int
-field  suricataeve.flow_bypassed_bytes_toserver  flow.bypassed.bytes_toserver  int
-field  suricataeve.flow_bypassed_pkts_toclient  flow.bypassed.pkts_toclient  int
-field  suricataeve.flow_bypassed_pkts_toserver  flow.bypassed.pkts_toserver  int
-field  suricataeve.flow_bytes_toclient  flow.bytes_toclient  int
-field  suricataeve.flow_bytes_toserver  flow.bytes_toserver  int
-field  suricataeve.flow_dest_ip  flow.dest_ip  string
-field  suricataeve.flow_dest_port  flow.dest_port  int
-field  suricataeve.flow_elephant  flow.elephant  bool
-field  suricataeve.flow_emergency  flow.emergency  bool
-field  suricataeve.flow_end  flow.end  string
-field  suricataeve.flow_pkts_toclient  flow.pkts_toclient  int
-field  suricataeve.flow_pkts_toserver  flow.pkts_toserver  int
-field  suricataeve.flow_reason  flow.reason  string
-field  suricataeve.flow_src_ip  flow.src_ip  string
-field  suricataeve.flow_src_port  flow.src_port  int
-field  suricataeve.flow_start  flow.start  string
-field  suricataeve.flow_state  flow.state  string
-field  suricataeve.flow_tx_cnt  flow.tx_cnt  int
-field  suricataeve.flow_wrong_thread  flow.wrong_thread  bool
-
 kind      dns
 when      event_type  dns
+requires  suricataeve.dns_aa
 field  suricataeve.app_proto  app_proto  string
 field  suricataeve.app_proto_expected  app_proto_expected  string
 field  suricataeve.app_proto_orig  app_proto_orig  string
@@ -418,6 +230,7 @@ field  suricataeve.dns_z  dns.z  bool
 
 kind      http
 when      event_type  http
+requires  suricataeve.http_content_range_end
 field  suricataeve.app_proto  app_proto  string
 field  suricataeve.app_proto_expected  app_proto_expected  string
 field  suricataeve.app_proto_orig  app_proto_orig  string
@@ -514,6 +327,7 @@ field  suricataeve.http_xff  http.xff  string
 
 kind      tls
 when      event_type  tls
+requires  suricataeve.tls_certificate
 field  suricataeve.app_proto  app_proto  string
 field  suricataeve.app_proto_expected  app_proto_expected  string
 field  suricataeve.app_proto_orig  app_proto_orig  string
@@ -617,6 +431,7 @@ field  suricataeve.tls_version  tls.version  string
 
 kind      fileinfo
 when      event_type  fileinfo
+requires  suricataeve.fileinfo_end
 field  suricataeve.app_proto  app_proto  string
 field  suricataeve.app_proto_expected  app_proto_expected  string
 field  suricataeve.app_proto_orig  app_proto_orig  string
@@ -681,6 +496,7 @@ field  suricataeve.fileinfo_tx_id  fileinfo.tx_id  int
 
 kind      anomaly
 when      event_type  anomaly
+requires  suricataeve.anomaly_app_proto
 field  suricataeve.app_proto  app_proto  string
 field  suricataeve.app_proto_expected  app_proto_expected  string
 field  suricataeve.app_proto_orig  app_proto_orig  string
@@ -733,6 +549,7 @@ field  suricataeve.anomaly_type  anomaly.type  string
 
 kind      stats
 when      event_type  stats
+requires  suricataeve.stats_app_layer_error_bittorrent_dht_alloc
 field  suricataeve.app_proto  app_proto  string
 field  suricataeve.app_proto_expected  app_proto_expected  string
 field  suricataeve.app_proto_orig  app_proto_orig  string
@@ -1803,3 +1620,193 @@ field  suricataeve.stats_transform_lua_errors  stats.transform.lua.errors  int
 field  suricataeve.stats_transform_lua_instruction_limit_errors  stats.transform.lua.instruction_limit_errors  int
 field  suricataeve.stats_transform_lua_memory_limit_errors  stats.transform.lua.memory_limit_errors  int
 field  suricataeve.stats_uptime  stats.uptime  int
+
+kind      flow
+when      event_type  flow
+requires  suricataeve.flow_action  suricataeve.flow_age  suricataeve.flow_alerted  suricataeve.flow_bypass  suricataeve.flow_bypassed_bytes_toclient  suricataeve.flow_bypassed_bytes_toserver  suricataeve.flow_bypassed_pkts_toclient  suricataeve.flow_bypassed_pkts_toserver  suricataeve.flow_bytes_toclient  suricataeve.flow_bytes_toserver  suricataeve.flow_dest_ip  suricataeve.flow_dest_port  suricataeve.flow_elephant  suricataeve.flow_emergency  suricataeve.flow_end  suricataeve.flow_pkts_toclient  suricataeve.flow_pkts_toserver  suricataeve.flow_reason  suricataeve.flow_src_ip  suricataeve.flow_src_port  suricataeve.flow_start  suricataeve.flow_state  suricataeve.flow_tx_cnt  suricataeve.flow_wrong_thread
+field  suricataeve.app_proto  app_proto  string
+field  suricataeve.app_proto_expected  app_proto_expected  string
+field  suricataeve.app_proto_orig  app_proto_orig  string
+field  suricataeve.app_proto_tc  app_proto_tc  string
+field  suricataeve.app_proto_ts  app_proto_ts  string
+field  suricataeve.capture_file  capture_file  string
+field  suricataeve.community_id  community_id  string
+field  suricataeve.dest_ip  dest_ip  string
+field  suricataeve.dest_port  dest_port  int
+field  suricataeve.direction  direction  string
+field  suricataeve.event_type  event_type  string
+field  suricataeve.flow_id  flow_id  int
+field  suricataeve.host  host  string
+field  suricataeve.icmp_code  icmp_code  int
+field  suricataeve.icmp_type  icmp_type  int
+field  suricataeve.in_iface  in_iface  string
+field  suricataeve.ip_v  ip_v  int
+field  suricataeve.log_level  log_level  string
+field  suricataeve.packet  packet  string
+field  suricataeve.parent_id  parent_id  int
+field  suricataeve.payload  payload  string
+field  suricataeve.payload_length  payload_length  int
+field  suricataeve.payload_printable  payload_printable  string
+field  suricataeve.pcap_cnt  pcap_cnt  int
+field  suricataeve.pcap_filename  pcap_filename  string
+field  suricataeve.pkt_src  pkt_src  string
+field  suricataeve.proto  proto  string
+field  suricataeve.response_icmp_code  response_icmp_code  int
+field  suricataeve.response_icmp_type  response_icmp_type  int
+field  suricataeve.spi  spi  int
+field  suricataeve.src_ip  src_ip  string
+field  suricataeve.src_port  src_port  int
+field  suricataeve.stream  stream  int
+field  suricataeve.suricata_version  suricata_version  string
+field  suricataeve.tc_progress  tc_progress  string
+field  suricataeve.timestamp  timestamp  string
+field  suricataeve.ts_progress  ts_progress  string
+field  suricataeve.tx_guessed  tx_guessed  bool
+field  suricataeve.tx_id  tx_id  int
+field  suricataeve.verdict_action  verdict.action  string
+group  suricataeve.verdict_reject  verdict.reject
+  field  suricataeve.verdict_reject_value  .  string
+end
+field  suricataeve.verdict_reject_target  verdict.reject-target  string
+field  suricataeve.flow_action  flow.action  string
+field  suricataeve.flow_age  flow.age  int
+field  suricataeve.flow_alerted  flow.alerted  bool
+field  suricataeve.flow_bypass  flow.bypass  string
+field  suricataeve.flow_bypassed_bytes_toclient  flow.bypassed.bytes_toclient  int
+field  suricataeve.flow_bypassed_bytes_toserver  flow.bypassed.bytes_toserver  int
+field  suricataeve.flow_bypassed_pkts_toclient  flow.bypassed.pkts_toclient  int
+field  suricataeve.flow_bypassed_pkts_toserver  flow.bypassed.pkts_toserver  int
+field  suricataeve.flow_bytes_toclient  flow.bytes_toclient  int
+field  suricataeve.flow_bytes_toserver  flow.bytes_toserver  int
+field  suricataeve.flow_dest_ip  flow.dest_ip  string
+field  suricataeve.flow_dest_port  flow.dest_port  int
+field  suricataeve.flow_elephant  flow.elephant  bool
+field  suricataeve.flow_emergency  flow.emergency  bool
+field  suricataeve.flow_end  flow.end  string
+field  suricataeve.flow_pkts_toclient  flow.pkts_toclient  int
+field  suricataeve.flow_pkts_toserver  flow.pkts_toserver  int
+field  suricataeve.flow_reason  flow.reason  string
+field  suricataeve.flow_src_ip  flow.src_ip  string
+field  suricataeve.flow_src_port  flow.src_port  int
+field  suricataeve.flow_start  flow.start  string
+field  suricataeve.flow_state  flow.state  string
+field  suricataeve.flow_tx_cnt  flow.tx_cnt  int
+field  suricataeve.flow_wrong_thread  flow.wrong_thread  bool
+
+kind      alert
+when      event_type  alert
+field  suricataeve.app_proto  app_proto  string
+field  suricataeve.app_proto_expected  app_proto_expected  string
+field  suricataeve.app_proto_orig  app_proto_orig  string
+field  suricataeve.app_proto_tc  app_proto_tc  string
+field  suricataeve.app_proto_ts  app_proto_ts  string
+field  suricataeve.capture_file  capture_file  string
+field  suricataeve.community_id  community_id  string
+field  suricataeve.dest_ip  dest_ip  string
+field  suricataeve.dest_port  dest_port  int
+field  suricataeve.direction  direction  string
+field  suricataeve.event_type  event_type  string
+field  suricataeve.flow_id  flow_id  int
+field  suricataeve.host  host  string
+field  suricataeve.icmp_code  icmp_code  int
+field  suricataeve.icmp_type  icmp_type  int
+field  suricataeve.in_iface  in_iface  string
+field  suricataeve.ip_v  ip_v  int
+field  suricataeve.log_level  log_level  string
+field  suricataeve.packet  packet  string
+field  suricataeve.parent_id  parent_id  int
+field  suricataeve.payload  payload  string
+field  suricataeve.payload_length  payload_length  int
+field  suricataeve.payload_printable  payload_printable  string
+field  suricataeve.pcap_cnt  pcap_cnt  int
+field  suricataeve.pcap_filename  pcap_filename  string
+field  suricataeve.pkt_src  pkt_src  string
+field  suricataeve.proto  proto  string
+field  suricataeve.response_icmp_code  response_icmp_code  int
+field  suricataeve.response_icmp_type  response_icmp_type  int
+field  suricataeve.spi  spi  int
+field  suricataeve.src_ip  src_ip  string
+field  suricataeve.src_port  src_port  int
+field  suricataeve.stream  stream  int
+field  suricataeve.suricata_version  suricata_version  string
+field  suricataeve.tc_progress  tc_progress  string
+field  suricataeve.timestamp  timestamp  string
+field  suricataeve.ts_progress  ts_progress  string
+field  suricataeve.tx_guessed  tx_guessed  bool
+field  suricataeve.tx_id  tx_id  int
+field  suricataeve.verdict_action  verdict.action  string
+group  suricataeve.verdict_reject  verdict.reject
+  field  suricataeve.verdict_reject_value  .  string
+end
+field  suricataeve.verdict_reject_target  verdict.reject-target  string
+field  suricataeve.alert_action  alert.action  string
+field  suricataeve.alert_category  alert.category  string
+field  suricataeve.alert_engine  alert.engine  string
+field  suricataeve.alert_gid  alert.gid  int
+group  suricataeve.alert_metadata_affected_product  alert.metadata.affected_product
+  field  suricataeve.alert_metadata_affected_product_value  .  string
+end
+group  suricataeve.alert_metadata_attack_target  alert.metadata.attack_target
+  field  suricataeve.alert_metadata_attack_target_value  .  string
+end
+group  suricataeve.alert_metadata_created_at  alert.metadata.created_at
+  field  suricataeve.alert_metadata_created_at_value  .  string
+end
+group  suricataeve.alert_metadata_deployment  alert.metadata.deployment
+  field  suricataeve.alert_metadata_deployment_value  .  string
+end
+group  suricataeve.alert_metadata_former_category  alert.metadata.former_category
+  field  suricataeve.alert_metadata_former_category_value  .  string
+end
+group  suricataeve.alert_metadata_malware_family  alert.metadata.malware_family
+  field  suricataeve.alert_metadata_malware_family_value  .  string
+end
+group  suricataeve.alert_metadata_policy  alert.metadata.policy
+  field  suricataeve.alert_metadata_policy_value  .  string
+end
+group  suricataeve.alert_metadata_signature_severity  alert.metadata.signature_severity
+  field  suricataeve.alert_metadata_signature_severity_value  .  string
+end
+group  suricataeve.alert_metadata_tag  alert.metadata.tag
+  field  suricataeve.alert_metadata_tag_value  .  string
+end
+group  suricataeve.alert_metadata_updated_at  alert.metadata.updated_at
+  field  suricataeve.alert_metadata_updated_at_value  .  string
+end
+group  suricataeve.alert_references  alert.references
+  field  suricataeve.alert_references_value  .  string
+end
+field  suricataeve.alert_rev  alert.rev  int
+field  suricataeve.alert_rule  alert.rule  string
+field  suricataeve.alert_severity  alert.severity  int
+field  suricataeve.alert_signature  alert.signature  string
+field  suricataeve.alert_signature_id  alert.signature_id  int
+field  suricataeve.alert_source_ip  alert.source.ip  string
+field  suricataeve.alert_source_port  alert.source.port  int
+field  suricataeve.alert_target_ip  alert.target.ip  string
+field  suricataeve.alert_target_port  alert.target.port  int
+field  suricataeve.alert_xff  alert.xff  string
+field  suricataeve.flow_action  flow.action  string
+field  suricataeve.flow_age  flow.age  int
+field  suricataeve.flow_alerted  flow.alerted  bool
+field  suricataeve.flow_bypass  flow.bypass  string
+field  suricataeve.flow_bypassed_bytes_toclient  flow.bypassed.bytes_toclient  int
+field  suricataeve.flow_bypassed_bytes_toserver  flow.bypassed.bytes_toserver  int
+field  suricataeve.flow_bypassed_pkts_toclient  flow.bypassed.pkts_toclient  int
+field  suricataeve.flow_bypassed_pkts_toserver  flow.bypassed.pkts_toserver  int
+field  suricataeve.flow_bytes_toclient  flow.bytes_toclient  int
+field  suricataeve.flow_bytes_toserver  flow.bytes_toserver  int
+field  suricataeve.flow_dest_ip  flow.dest_ip  string
+field  suricataeve.flow_dest_port  flow.dest_port  int
+field  suricataeve.flow_elephant  flow.elephant  bool
+field  suricataeve.flow_emergency  flow.emergency  bool
+field  suricataeve.flow_end  flow.end  string
+field  suricataeve.flow_pkts_toclient  flow.pkts_toclient  int
+field  suricataeve.flow_pkts_toserver  flow.pkts_toserver  int
+field  suricataeve.flow_reason  flow.reason  string
+field  suricataeve.flow_src_ip  flow.src_ip  string
+field  suricataeve.flow_src_port  flow.src_port  int
+field  suricataeve.flow_start  flow.start  string
+field  suricataeve.flow_state  flow.state  string
+field  suricataeve.flow_tx_cnt  flow.tx_cnt  int
+field  suricataeve.flow_wrong_thread  flow.wrong_thread  bool

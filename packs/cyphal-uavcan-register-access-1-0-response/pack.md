@@ -64,6 +64,9 @@ pack language has no scaling transform for a float.
 A field of fixed length that is not mapped is a `pad` line: decode skips it,
 encode writes zero bits.
 
+On encode with no recorded kind, each variant is chosen by its keys; an entity
+with none of them is written as `empty`, the variant that maps no key.
+
 - Implicit zero extension: Cyphal reads a field beyond the end of a short
   payload, or of a delimited composite, as zero. The pack reads the first as
   `malformed-wire` and the second as absent.

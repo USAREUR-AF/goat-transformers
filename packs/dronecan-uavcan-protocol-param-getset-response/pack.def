@@ -18,26 +18,31 @@ requires dcuavcanprotocolparam.get_set_response_value_integer_value
 field  dcuavcanprotocolparam.get_set_response_value_integer_value  64  twos  swap
 pad    5
 # not mapped from here on: a second union in one scope
+
 kind   real_value
 when   3  2
 requires dcuavcanprotocolparam.get_set_response_value_real_value
 field  dcuavcanprotocolparam.get_set_response_value_real_value  32  f32  swap
 pad    5
 # not mapped from here on: a second union in one scope
+
 kind   boolean_value
 when   3  3
 requires dcuavcanprotocolparam.get_set_response_value_boolean_value
 field  dcuavcanprotocolparam.get_set_response_value_boolean_value  8  uint
 pad    5
 # not mapped from here on: a second union in one scope
-kind   empty
-when   3  0
-pad    5
-# not mapped from here on: a second union in one scope
+
 kind   string_value
 when   3  4
+requires  dcuavcanprotocolparam.get_set_response_value_string_value
 group  dcuavcanprotocolparam.get_set_response_value_string_value  count 8
   field  dcuavcanprotocolparam.get_set_response_value_string_value_item  8  uint
 end
+pad    5
+# not mapped from here on: a second union in one scope
+
+kind   empty
+when   3  0
 pad    5
 # not mapped from here on: a second union in one scope

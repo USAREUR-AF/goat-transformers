@@ -11,6 +11,7 @@ delimiter     none
 
 kind  version-type
 when  0:60:20  "RINEX VERSION / TYPE"
+requires  rinexnav.format_version
 field  rinexnav.format_version  0:0:9  string
 field  rinexnav.file_type  0:20:1  string
 field  rinexnav.file_type_text  0:21:19  string
@@ -19,49 +20,55 @@ field  rinexnav.satellite_system_text  0:41:19  string
 
 kind  program
 when  0:60:20  "PGM / RUN BY / DATE"
+requires  rinexnav.program
 field  rinexnav.program  0:0:20  string
 field  rinexnav.run_by  0:20:20  string
 field  rinexnav.created  0:40:20  string
 
 kind  receiver
 when  0:60:20  "REC # / TYPE / VERS"
+requires  rinexnav.receiver_number
 field  rinexnav.receiver_number  0:0:20  string
 field  rinexnav.receiver_type  0:20:20  string
 field  rinexnav.receiver_version  0:40:20  string
 
 kind  comment
 when  0:60:20  "COMMENT"
+requires  rinexnav.comment
 field  rinexnav.comment  0:0:60  string
 
 kind  merged-file
 when  0:60:20  "MERGED FILE"
+requires  rinexnav.merged_files
 field  rinexnav.merged_files  0:0:9  string
 
 kind  doi
 when  0:60:20  "DOI"
+requires  rinexnav.doi
 field  rinexnav.doi  0:0:60  string
 
 kind  license
 when  0:60:20  "LICENSE OF USE"
+requires  rinexnav.license
 field  rinexnav.license  0:0:60  string
 
 kind  station-information
 when  0:60:20  "STATION INFORMATION"
+requires  rinexnav.station_information
 field  rinexnav.station_information  0:0:60  string
 
 kind  leap-seconds
 when  0:60:20  "LEAP SECONDS"
+requires  rinexnav.leap_seconds
 field  rinexnav.leap_seconds  0:0:6  string
 field  rinexnav.leap_seconds_future  0:6:6  string
 field  rinexnav.leap_week  0:12:6  string
 field  rinexnav.leap_day  0:18:6  string
 field  rinexnav.leap_time_system  0:24:3  string
 
-kind  end-of-header
-when  0:60:20  "END OF HEADER"
-
 kind  record
 when  0:0:1  >
+requires  rinexnav.record_type
 field  rinexnav.record_type  0:2:3  string
 field  rinexnav.satellite_system  0:6:1  string
 field  rinexnav.satellite_number  0:7:2  string
@@ -69,6 +76,7 @@ field  rinexnav.message_type  0:10:4  string
 
 kind  satellite-epoch-gps
 when  0:0:1  G
+requires  rinexnav.satellite_system  rinexnav.satellite_number  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.satellite_system  0:0:1  string
 field  rinexnav.satellite_number  0:1:2  string
 field  rinexnav.year  0:4:4  string
@@ -83,6 +91,7 @@ field  rinexnav.value_3  0:61:19  string
 
 kind  satellite-epoch-glonass
 when  0:0:1  R
+requires  rinexnav.satellite_system  rinexnav.satellite_number  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.satellite_system  0:0:1  string
 field  rinexnav.satellite_number  0:1:2  string
 field  rinexnav.year  0:4:4  string
@@ -97,6 +106,7 @@ field  rinexnav.value_3  0:61:19  string
 
 kind  satellite-epoch-galileo
 when  0:0:1  E
+requires  rinexnav.satellite_system  rinexnav.satellite_number  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.satellite_system  0:0:1  string
 field  rinexnav.satellite_number  0:1:2  string
 field  rinexnav.year  0:4:4  string
@@ -111,6 +121,7 @@ field  rinexnav.value_3  0:61:19  string
 
 kind  satellite-epoch-beidou
 when  0:0:1  C
+requires  rinexnav.satellite_system  rinexnav.satellite_number  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.satellite_system  0:0:1  string
 field  rinexnav.satellite_number  0:1:2  string
 field  rinexnav.year  0:4:4  string
@@ -125,6 +136,7 @@ field  rinexnav.value_3  0:61:19  string
 
 kind  satellite-epoch-qzss
 when  0:0:1  J
+requires  rinexnav.satellite_system  rinexnav.satellite_number  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.satellite_system  0:0:1  string
 field  rinexnav.satellite_number  0:1:2  string
 field  rinexnav.year  0:4:4  string
@@ -139,6 +151,7 @@ field  rinexnav.value_3  0:61:19  string
 
 kind  satellite-epoch-navic
 when  0:0:1  I
+requires  rinexnav.satellite_system  rinexnav.satellite_number  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.satellite_system  0:0:1  string
 field  rinexnav.satellite_number  0:1:2  string
 field  rinexnav.year  0:4:4  string
@@ -153,6 +166,7 @@ field  rinexnav.value_3  0:61:19  string
 
 kind  satellite-epoch-sbas
 when  0:0:1  S
+requires  rinexnav.satellite_system  rinexnav.satellite_number  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.satellite_system  0:0:1  string
 field  rinexnav.satellite_number  0:1:2  string
 field  rinexnav.year  0:4:4  string
@@ -167,6 +181,7 @@ field  rinexnav.value_3  0:61:19  string
 
 kind  epoch-19xx
 when  0:4:2  19
+requires  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.year  0:4:4  string
 field  rinexnav.month  0:9:2  string
 field  rinexnav.day  0:12:2  string
@@ -179,6 +194,7 @@ field  rinexnav.value_3  0:61:19  string
 
 kind  epoch-20xx
 when  0:4:2  20
+requires  rinexnav.year  rinexnav.month  rinexnav.day  rinexnav.hour  rinexnav.minute  rinexnav.second  rinexnav.value_1  rinexnav.value_2  rinexnav.value_3
 field  rinexnav.year  0:4:4  string
 field  rinexnav.month  0:9:2  string
 field  rinexnav.day  0:12:2  string
@@ -188,6 +204,9 @@ field  rinexnav.second  0:21:2  string
 field  rinexnav.value_1  0:23:19  string
 field  rinexnav.value_2  0:42:19  string
 field  rinexnav.value_3  0:61:19  string
+
+kind  end-of-header
+when  0:60:20  "END OF HEADER"
 
 kind  values
 field  rinexnav.value_0  0:4:19  string

@@ -73,6 +73,11 @@ None.
 | `transformation_event` | `@context` | several JSON types (array/object/string) |
 | `transformation_event` | `certificationInfo` | several JSON types (array/string) |
 
+On encode with no recorded kind (engine-spec Encode step 2), each kind is chosen by the keys
+it requires.
+`aggregation_event`, `association_event` require the same keys, so an entity with them is written as `aggregation_event`.
+Choosing between them needs `requires` on a value or on an absent key, a language addition.
+
 ## Keys and lists
 
 Module `epcis`: 71 keys, 16 lists. A key is named by its path (`a.b` is `a_b`; inside a list, the

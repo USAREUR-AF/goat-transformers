@@ -2490,35 +2490,9 @@ field     unicore.dophd2_elev 0:328:32 f32
 field     unicore.dophd2_numsats 0:360:32 uint
 field     unicore.dophd2_satslist 0:392:32 uint
 
-kind      obsvm
-when      0:8:16 12
-field     unicore.payload_length 0:24:16 uint
-group     unicore.obsvm_groupobs 0:200 item 320 count 0:168:32
-  field   unicore.obsvm_groupobs_glofreq 0:0:16 uint
-  field   unicore.obsvm_groupobs_prn 0:16:16 uint
-  field   unicore.obsvm_groupobs_psr 0:32:64 f64
-  field   unicore.obsvm_groupobs_adr 0:96:64 f64
-  field   unicore.obsvm_groupobs_psrstd 0:160:16 uscale:1/100
-  field   unicore.obsvm_groupobs_adrstd 0:176:16 uscale:1/10000
-  field   unicore.obsvm_groupobs_doppfreq 0:192:32 f32
-  field   unicore.obsvm_groupobs_cno 0:224:16 uscale:1/100
-  field   unicore.obsvm_groupobs_reserved1 0:240:16 uint
-  field   unicore.obsvm_groupobs_locktime 0:256:32 f32
-  field   unicore.obsvm_groupobs_reserved2 0:288:5 uint
-  field   unicore.obsvm_groupobs_svchan 0:293:5 uint
-  field   unicore.obsvm_groupobs_cpsflag 0:298:1 uint
-  field   unicore.obsvm_groupobs_reserved3 0:299:1 uint
-  field   unicore.obsvm_groupobs_psrflag 0:300:1 uint
-  field   unicore.obsvm_groupobs_reserved4 0:301:3 uint
-  field   unicore.obsvm_groupobs_gnss 0:304:3 uint
-  field   unicore.obsvm_groupobs_reserved5 0:307:2 uint
-  field   unicore.obsvm_groupobs_sigtype 0:309:5 uint
-  field   unicore.obsvm_groupobs_l2_cflag 0:314:1 uint
-  field   unicore.obsvm_groupobs_reserved6 0:315:5 uint
-end
-
 kind      bestsat
 when      0:8:16 1041
+requires  unicore.bestsat_groupsat
 field     unicore.payload_length 0:24:16 uint
 group     unicore.bestsat_groupsat 0:200 item 128 count 0:168:32
   field   unicore.bestsat_groupsat_gnss 0:0:32 uint
@@ -2564,6 +2538,7 @@ end
 
 kind      satecef
 when      0:8:16 2115
+requires  unicore.satecef_groupsat
 field     unicore.payload_length 0:24:16 uint
 group     unicore.satecef_groupsat 0:200 item 320 count 0:168:32
   field   unicore.satecef_groupsat_gnss 0:0:32 uint
@@ -2617,4 +2592,31 @@ group     unicore.e6_maskblock_groupsys 0:264 item 432 count 0:232:16
   field   unicore.e6_maskblock_groupsys_cm_05 0:336:64 uint
   field   unicore.e6_maskblock_groupsys_nm 0:400:8 uint
   field   unicore.e6_maskblock_groupsys_reserved3 0:408:24 uint
+end
+
+kind      obsvm
+when      0:8:16 12
+field     unicore.payload_length 0:24:16 uint
+group     unicore.obsvm_groupobs 0:200 item 320 count 0:168:32
+  field   unicore.obsvm_groupobs_glofreq 0:0:16 uint
+  field   unicore.obsvm_groupobs_prn 0:16:16 uint
+  field   unicore.obsvm_groupobs_psr 0:32:64 f64
+  field   unicore.obsvm_groupobs_adr 0:96:64 f64
+  field   unicore.obsvm_groupobs_psrstd 0:160:16 uscale:1/100
+  field   unicore.obsvm_groupobs_adrstd 0:176:16 uscale:1/10000
+  field   unicore.obsvm_groupobs_doppfreq 0:192:32 f32
+  field   unicore.obsvm_groupobs_cno 0:224:16 uscale:1/100
+  field   unicore.obsvm_groupobs_reserved1 0:240:16 uint
+  field   unicore.obsvm_groupobs_locktime 0:256:32 f32
+  field   unicore.obsvm_groupobs_reserved2 0:288:5 uint
+  field   unicore.obsvm_groupobs_svchan 0:293:5 uint
+  field   unicore.obsvm_groupobs_cpsflag 0:298:1 uint
+  field   unicore.obsvm_groupobs_reserved3 0:299:1 uint
+  field   unicore.obsvm_groupobs_psrflag 0:300:1 uint
+  field   unicore.obsvm_groupobs_reserved4 0:301:3 uint
+  field   unicore.obsvm_groupobs_gnss 0:304:3 uint
+  field   unicore.obsvm_groupobs_reserved5 0:307:2 uint
+  field   unicore.obsvm_groupobs_sigtype 0:309:5 uint
+  field   unicore.obsvm_groupobs_l2_cflag 0:314:1 uint
+  field   unicore.obsvm_groupobs_reserved6 0:315:5 uint
 end

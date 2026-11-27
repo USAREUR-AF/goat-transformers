@@ -73,6 +73,9 @@ and encode writes nothing after it.
 
 Mapping ends early: tail array: no length prefix, the items run to the end of the payload.
 
+On encode with no recorded kind, each variant is chosen by its keys; an entity
+with none of them is written as `empty`, the variant that maps no key.
+
 - Constants of the definition (they are not on the wire).
 - The transfer layer: CAN identifier, tail byte, toggle bit, transfer CRC.
 - Cast modes (`saturated`, `truncated`): encode writes the low bits of a value.

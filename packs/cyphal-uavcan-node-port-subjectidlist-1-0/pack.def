@@ -11,12 +11,9 @@ uses          cyuavcannodeport
 wire          bits
 layout        sequential
 bit_order     lsb
-kind   mask
-when   8  0
-pad    8192
-align  8
 kind   sparse_list
 when   8  1
+requires  cyuavcannodeport.subject_id_list_1_0_sparse_list
 align  8
 group  cyuavcannodeport.subject_id_list_1_0_sparse_list  count 8
   align  8
@@ -24,6 +21,12 @@ group  cyuavcannodeport.subject_id_list_1_0_sparse_list  count 8
   align  8
 end
 align  8
+
+kind   mask
+when   8  0
+pad    8192
+align  8
+
 kind   total
 when   8  2
 align  8

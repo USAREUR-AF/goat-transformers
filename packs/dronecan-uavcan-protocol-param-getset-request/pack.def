@@ -17,22 +17,27 @@ when   3  1
 requires dcuavcanprotocolparam.get_set_request_value_integer_value
 field  dcuavcanprotocolparam.get_set_request_value_integer_value  64  twos  swap
 # not mapped from here on: tail array: no length prefix, the items run to the end of the payload
+
 kind   real_value
 when   3  2
 requires dcuavcanprotocolparam.get_set_request_value_real_value
 field  dcuavcanprotocolparam.get_set_request_value_real_value  32  f32  swap
 # not mapped from here on: tail array: no length prefix, the items run to the end of the payload
+
 kind   boolean_value
 when   3  3
 requires dcuavcanprotocolparam.get_set_request_value_boolean_value
 field  dcuavcanprotocolparam.get_set_request_value_boolean_value  8  uint
 # not mapped from here on: tail array: no length prefix, the items run to the end of the payload
-kind   empty
-when   3  0
-# not mapped from here on: tail array: no length prefix, the items run to the end of the payload
+
 kind   string_value
 when   3  4
+requires  dcuavcanprotocolparam.get_set_request_value_string_value
 group  dcuavcanprotocolparam.get_set_request_value_string_value  count 8
   field  dcuavcanprotocolparam.get_set_request_value_string_value_item  8  uint
 end
+# not mapped from here on: tail array: no length prefix, the items run to the end of the payload
+
+kind   empty
+when   3  0
 # not mapped from here on: tail array: no length prefix, the items run to the end of the payload

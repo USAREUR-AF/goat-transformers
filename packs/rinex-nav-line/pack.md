@@ -24,6 +24,15 @@ place in the record and on the message type; they are kept as written.
 
 ## Not mapped
 
+On encode with no recorded kind (engine-spec Encode step 2), each kind is chosen by the keys
+it requires.
+`satellite-epoch-gps`, `satellite-epoch-glonass`, `satellite-epoch-galileo`, `satellite-epoch-beidou`, `satellite-epoch-qzss`, `satellite-epoch-navic`, `satellite-epoch-sbas` require the same keys, so an entity with them is written as `satellite-epoch-gps`.
+`epoch-19xx`, `epoch-20xx` require the same keys, so an entity with them is written as `epoch-19xx`.
+`end-of-header`, `values` have no `requires`, so an entity that fits no other kind is written as `end-of-header`.
+Choosing between them needs `requires` on a value or on an absent key, a language addition.
+`end-of-header` maps no key and must stand before `values` for decode, so a kind-less entity
+that fits no other kind is written as END OF HEADER and `values` is not reached.
+
 - **Numbers as numbers**: every value is its column text. RINEX right-justifies numbers in their
   columns with spaces, and the `text` wire's numeric transforms write zeros where a column is wider than
   the number, so a round trip would not be exact; its `float` does not read an exponent (`E+01`,

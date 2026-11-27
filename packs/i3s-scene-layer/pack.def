@@ -8,6 +8,363 @@ source  "Indexed 3D Scene Layers (I3S, OGC Community Standard 17-014), specifica
 uses    i3s
 wire    json
 
+kind    point
+when    layerType  Point
+requires  i3s.point_node_pages_nodes_per_page
+field  i3s.id  id  int
+field  i3s.href  href  string
+field  i3s.layer_type  layerType  string
+field  i3s.spatial_reference_wkid  spatialReference.wkid  int
+field  i3s.spatial_reference_latest_wkid  spatialReference.latestWkid  int
+field  i3s.spatial_reference_vcs_wkid  spatialReference.vcsWkid  int
+field  i3s.spatial_reference_latest_vcs_wkid  spatialReference.latestVcsWkid  int
+field  i3s.spatial_reference_wkt  spatialReference.wkt  string
+field  i3s.height_model_info_height_model  heightModelInfo.heightModel  string
+field  i3s.height_model_info_vert_crs  heightModelInfo.vertCRS  string
+field  i3s.height_model_info_height_unit  heightModelInfo.heightUnit  string
+field  i3s.version  version  string
+field  i3s.name  name  string
+field  i3s.service_update_time_stamp_last_update  serviceUpdateTimeStamp.lastUpdate  float
+field  i3s.alias  alias  string
+field  i3s.description  description  string
+field  i3s.copyright_text  copyrightText  string
+group  i3s.capabilities  capabilities
+  field  i3s.capabilities_value  .  string
+end
+field  i3s.z_factor  ZFactor  float
+field  i3s.cached_drawing_info_color  cachedDrawingInfo.color  bool
+field  i3s.elevation_info_mode  elevationInfo.mode  string
+field  i3s.elevation_info_offset  elevationInfo.offset  float
+field  i3s.elevation_info_unit  elevationInfo.unit  string
+field  i3s.disable_popup  disablePopup  bool
+field  i3s.store_id  store.id  string
+field  i3s.store_profile  store.profile  string
+group  i3s.store_resource_pattern  store.resourcePattern
+  field  i3s.store_resource_pattern_value  .  string
+end
+field  i3s.store_root_node  store.rootNode  string
+field  i3s.store_version  store.version  string
+group  i3s.store_extent  store.extent
+  field  i3s.store_extent_value  .  float
+end
+field  i3s.store_index_crs  store.indexCRS  string
+field  i3s.store_vertex_crs  store.vertexCRS  string
+field  i3s.store_normal_reference_frame  store.normalReferenceFrame  string
+field  i3s.store_nid_encoding  store.nidEncoding  string
+field  i3s.store_feature_encoding  store.featureEncoding  string
+field  i3s.store_geometry_encoding  store.geometryEncoding  string
+field  i3s.store_attribute_encoding  store.attributeEncoding  string
+group  i3s.store_texture_encoding  store.textureEncoding
+  field  i3s.store_texture_encoding_value  .  string
+end
+field  i3s.store_lod_type  store.lodType  string
+field  i3s.store_lod_model  store.lodModel  string
+field  i3s.store_indexing_scheme  store.indexingScheme  string
+field  i3s.store_default_geometry_schema_geometry_type  store.defaultGeometrySchema.geometryType  string
+field  i3s.store_default_geometry_schema_topology  store.defaultGeometrySchema.topology  string
+group  i3s.store_default_geometry_schema_header  store.defaultGeometrySchema.header
+  field  i3s.store_default_geometry_schema_header_property  property  string
+  field  i3s.store_default_geometry_schema_header_type  type  string
+end
+group  i3s.store_default_geometry_schema_ordering  store.defaultGeometrySchema.ordering
+  field  i3s.store_default_geometry_schema_ordering_value  .  string
+end
+field  i3s.store_default_geometry_schema_vertex_attributes_position_byte_offset  store.defaultGeometrySchema.vertexAttributes.position.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_position_value_type  store.defaultGeometrySchema.vertexAttributes.position.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_position_values_per_element  store.defaultGeometrySchema.vertexAttributes.position.valuesPerElement  float
+field  i3s.store_default_geometry_schema_vertex_attributes_normal_byte_offset  store.defaultGeometrySchema.vertexAttributes.normal.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_normal_value_type  store.defaultGeometrySchema.vertexAttributes.normal.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_normal_values_per_element  store.defaultGeometrySchema.vertexAttributes.normal.valuesPerElement  float
+field  i3s.store_default_geometry_schema_vertex_attributes_uv0_byte_offset  store.defaultGeometrySchema.vertexAttributes.uv0.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_uv0_value_type  store.defaultGeometrySchema.vertexAttributes.uv0.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_uv0_values_per_element  store.defaultGeometrySchema.vertexAttributes.uv0.valuesPerElement  float
+field  i3s.store_default_geometry_schema_vertex_attributes_color_byte_offset  store.defaultGeometrySchema.vertexAttributes.color.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_color_value_type  store.defaultGeometrySchema.vertexAttributes.color.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_color_values_per_element  store.defaultGeometrySchema.vertexAttributes.color.valuesPerElement  float
+field  i3s.store_default_geometry_schema_vertex_attributes_region_byte_offset  store.defaultGeometrySchema.vertexAttributes.region.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_region_value_type  store.defaultGeometrySchema.vertexAttributes.region.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_region_values_per_element  store.defaultGeometrySchema.vertexAttributes.region.valuesPerElement  float
+group  i3s.store_default_geometry_schema_feature_attribute_order  store.defaultGeometrySchema.featureAttributeOrder
+  field  i3s.store_default_geometry_schema_feature_attribute_order_value  .  string
+end
+field  i3s.store_default_geometry_schema_feature_attributes_id_value_type  store.defaultGeometrySchema.featureAttributes.id.valueType  string
+field  i3s.store_default_geometry_schema_feature_attributes_id_encoding  store.defaultGeometrySchema.featureAttributes.id.encoding  string
+field  i3s.store_default_geometry_schema_feature_attributes_id_time_encoding  store.defaultGeometrySchema.featureAttributes.id.timeEncoding  string
+field  i3s.store_default_geometry_schema_feature_attributes_id_values_per_element  store.defaultGeometrySchema.featureAttributes.id.valuesPerElement  float
+field  i3s.store_default_geometry_schema_feature_attributes_face_range_value_type  store.defaultGeometrySchema.featureAttributes.faceRange.valueType  string
+field  i3s.store_default_geometry_schema_feature_attributes_face_range_encoding  store.defaultGeometrySchema.featureAttributes.faceRange.encoding  string
+field  i3s.store_default_geometry_schema_feature_attributes_face_range_time_encoding  store.defaultGeometrySchema.featureAttributes.faceRange.timeEncoding  string
+field  i3s.store_default_geometry_schema_feature_attributes_face_range_values_per_element  store.defaultGeometrySchema.featureAttributes.faceRange.valuesPerElement  float
+group  i3s.fields  fields
+  field  i3s.fields_name  name  string
+  field  i3s.fields_type  type  string
+  field  i3s.fields_alias  alias  string
+end
+group  i3s.attribute_storage_info  attributeStorageInfo
+  field  i3s.attribute_storage_info_key  key  string
+  field  i3s.attribute_storage_info_name  name  string
+  group  i3s.attribute_storage_info_header  header
+    field  i3s.attribute_storage_info_header_property  property  string
+    field  i3s.attribute_storage_info_header_value_type  valueType  string
+  end
+  group  i3s.attribute_storage_info_ordering  ordering
+    field  i3s.attribute_storage_info_ordering_value  .  string
+  end
+  field  i3s.attribute_storage_info_attribute_values_value_type  attributeValues.valueType  string
+  field  i3s.attribute_storage_info_attribute_values_encoding  attributeValues.encoding  string
+  field  i3s.attribute_storage_info_attribute_values_time_encoding  attributeValues.timeEncoding  string
+  field  i3s.attribute_storage_info_attribute_values_values_per_element  attributeValues.valuesPerElement  float
+  field  i3s.attribute_storage_info_attribute_byte_counts_value_type  attributeByteCounts.valueType  string
+  field  i3s.attribute_storage_info_attribute_byte_counts_encoding  attributeByteCounts.encoding  string
+  field  i3s.attribute_storage_info_attribute_byte_counts_time_encoding  attributeByteCounts.timeEncoding  string
+  field  i3s.attribute_storage_info_attribute_byte_counts_values_per_element  attributeByteCounts.valuesPerElement  float
+  field  i3s.attribute_storage_info_object_ids_value_type  objectIds.valueType  string
+  field  i3s.attribute_storage_info_object_ids_encoding  objectIds.encoding  string
+  field  i3s.attribute_storage_info_object_ids_time_encoding  objectIds.timeEncoding  string
+  field  i3s.attribute_storage_info_object_ids_values_per_element  objectIds.valuesPerElement  float
+end
+group  i3s.statistics_info  statisticsInfo
+  field  i3s.statistics_info_key  key  string
+  field  i3s.statistics_info_name  name  string
+  field  i3s.statistics_info_href  href  string
+end
+field  i3s.point_node_pages_nodes_per_page  pointNodePages.nodesPerPage  int
+field  i3s.point_node_pages_root_index  pointNodePages.rootIndex  int
+field  i3s.point_node_pages_lod_selection_metric_type  pointNodePages.lodSelectionMetricType  string
+field  i3s.geometry_definition_topology  geometryDefinition.topology  string
+group  i3s.geometry_definition_geometry_buffers  geometryDefinition.geometryBuffers
+  field  i3s.geometry_definition_geometry_buffers_compressed_attributes_encoding  compressedAttributes.encoding  string
+  group  i3s.geometry_definition_geometry_buffers_compressed_attributes_attributes  compressedAttributes.attributes
+    field  i3s.geometry_definition_geometry_buffers_compressed_attributes_attributes_value  .  string
+  end
+end
+field  i3s.full_extent_spatial_reference_wkid  fullExtent.spatialReference.wkid  int
+field  i3s.full_extent_spatial_reference_latest_wkid  fullExtent.spatialReference.latestWkid  int
+field  i3s.full_extent_spatial_reference_vcs_wkid  fullExtent.spatialReference.vcsWkid  int
+field  i3s.full_extent_spatial_reference_latest_vcs_wkid  fullExtent.spatialReference.latestVcsWkid  int
+field  i3s.full_extent_spatial_reference_wkt  fullExtent.spatialReference.wkt  string
+field  i3s.full_extent_xmin  fullExtent.xmin  float
+field  i3s.full_extent_ymin  fullExtent.ymin  float
+field  i3s.full_extent_xmax  fullExtent.xmax  float
+field  i3s.full_extent_ymax  fullExtent.ymax  float
+field  i3s.full_extent_zmin  fullExtent.zmin  float
+field  i3s.full_extent_zmax  fullExtent.zmax  float
+field  i3s.time_info_start_time_field  timeInfo.startTimeField  string
+field  i3s.time_info_end_time_field  timeInfo.endTimeField  string
+field  i3s.range_info_field  rangeInfo.field  string
+field  i3s.range_info_name  rangeInfo.name  string
+
+kind    integrated-mesh
+when    layerType  IntegratedMesh
+requires  i3s.node_pages_nodes_per_page  i3s.node_pages_root_index  i3s.node_pages_lod_selection_metric_type  i3s.material_definitions  i3s.texture_set_definitions  i3s.geometry_definitions
+field  i3s.id  id  int
+field  i3s.href  href  string
+field  i3s.layer_type  layerType  string
+field  i3s.spatial_reference_wkid  spatialReference.wkid  int
+field  i3s.spatial_reference_latest_wkid  spatialReference.latestWkid  int
+field  i3s.spatial_reference_vcs_wkid  spatialReference.vcsWkid  int
+field  i3s.spatial_reference_latest_vcs_wkid  spatialReference.latestVcsWkid  int
+field  i3s.spatial_reference_wkt  spatialReference.wkt  string
+field  i3s.height_model_info_height_model  heightModelInfo.heightModel  string
+field  i3s.height_model_info_vert_crs  heightModelInfo.vertCRS  string
+field  i3s.height_model_info_height_unit  heightModelInfo.heightUnit  string
+field  i3s.version  version  string
+field  i3s.name  name  string
+field  i3s.service_update_time_stamp_last_update  serviceUpdateTimeStamp.lastUpdate  float
+field  i3s.alias  alias  string
+field  i3s.description  description  string
+field  i3s.copyright_text  copyrightText  string
+group  i3s.capabilities  capabilities
+  field  i3s.capabilities_value  .  string
+end
+field  i3s.z_factor  ZFactor  float
+field  i3s.cached_drawing_info_color  cachedDrawingInfo.color  bool
+field  i3s.elevation_info_mode  elevationInfo.mode  string
+field  i3s.elevation_info_offset  elevationInfo.offset  float
+field  i3s.elevation_info_unit  elevationInfo.unit  string
+field  i3s.disable_popup  disablePopup  bool
+field  i3s.store_id  store.id  string
+field  i3s.store_profile  store.profile  string
+group  i3s.store_resource_pattern  store.resourcePattern
+  field  i3s.store_resource_pattern_value  .  string
+end
+field  i3s.store_root_node  store.rootNode  string
+field  i3s.store_version  store.version  string
+group  i3s.store_extent  store.extent
+  field  i3s.store_extent_value  .  float
+end
+field  i3s.store_index_crs  store.indexCRS  string
+field  i3s.store_vertex_crs  store.vertexCRS  string
+field  i3s.store_normal_reference_frame  store.normalReferenceFrame  string
+field  i3s.store_nid_encoding  store.nidEncoding  string
+field  i3s.store_feature_encoding  store.featureEncoding  string
+field  i3s.store_geometry_encoding  store.geometryEncoding  string
+field  i3s.store_attribute_encoding  store.attributeEncoding  string
+group  i3s.store_texture_encoding  store.textureEncoding
+  field  i3s.store_texture_encoding_value  .  string
+end
+field  i3s.store_lod_type  store.lodType  string
+field  i3s.store_lod_model  store.lodModel  string
+field  i3s.store_indexing_scheme  store.indexingScheme  string
+field  i3s.store_default_geometry_schema_geometry_type  store.defaultGeometrySchema.geometryType  string
+field  i3s.store_default_geometry_schema_topology  store.defaultGeometrySchema.topology  string
+group  i3s.store_default_geometry_schema_header  store.defaultGeometrySchema.header
+  field  i3s.store_default_geometry_schema_header_property  property  string
+  field  i3s.store_default_geometry_schema_header_type  type  string
+end
+group  i3s.store_default_geometry_schema_ordering  store.defaultGeometrySchema.ordering
+  field  i3s.store_default_geometry_schema_ordering_value  .  string
+end
+field  i3s.store_default_geometry_schema_vertex_attributes_position_byte_offset  store.defaultGeometrySchema.vertexAttributes.position.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_position_value_type  store.defaultGeometrySchema.vertexAttributes.position.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_position_values_per_element  store.defaultGeometrySchema.vertexAttributes.position.valuesPerElement  float
+field  i3s.store_default_geometry_schema_vertex_attributes_normal_byte_offset  store.defaultGeometrySchema.vertexAttributes.normal.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_normal_value_type  store.defaultGeometrySchema.vertexAttributes.normal.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_normal_values_per_element  store.defaultGeometrySchema.vertexAttributes.normal.valuesPerElement  float
+field  i3s.store_default_geometry_schema_vertex_attributes_uv0_byte_offset  store.defaultGeometrySchema.vertexAttributes.uv0.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_uv0_value_type  store.defaultGeometrySchema.vertexAttributes.uv0.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_uv0_values_per_element  store.defaultGeometrySchema.vertexAttributes.uv0.valuesPerElement  float
+field  i3s.store_default_geometry_schema_vertex_attributes_color_byte_offset  store.defaultGeometrySchema.vertexAttributes.color.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_color_value_type  store.defaultGeometrySchema.vertexAttributes.color.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_color_values_per_element  store.defaultGeometrySchema.vertexAttributes.color.valuesPerElement  float
+field  i3s.store_default_geometry_schema_vertex_attributes_region_byte_offset  store.defaultGeometrySchema.vertexAttributes.region.byteOffset  float
+field  i3s.store_default_geometry_schema_vertex_attributes_region_value_type  store.defaultGeometrySchema.vertexAttributes.region.valueType  string
+field  i3s.store_default_geometry_schema_vertex_attributes_region_values_per_element  store.defaultGeometrySchema.vertexAttributes.region.valuesPerElement  float
+group  i3s.store_default_geometry_schema_feature_attribute_order  store.defaultGeometrySchema.featureAttributeOrder
+  field  i3s.store_default_geometry_schema_feature_attribute_order_value  .  string
+end
+field  i3s.store_default_geometry_schema_feature_attributes_id_value_type  store.defaultGeometrySchema.featureAttributes.id.valueType  string
+field  i3s.store_default_geometry_schema_feature_attributes_id_encoding  store.defaultGeometrySchema.featureAttributes.id.encoding  string
+field  i3s.store_default_geometry_schema_feature_attributes_id_time_encoding  store.defaultGeometrySchema.featureAttributes.id.timeEncoding  string
+field  i3s.store_default_geometry_schema_feature_attributes_id_values_per_element  store.defaultGeometrySchema.featureAttributes.id.valuesPerElement  float
+field  i3s.store_default_geometry_schema_feature_attributes_face_range_value_type  store.defaultGeometrySchema.featureAttributes.faceRange.valueType  string
+field  i3s.store_default_geometry_schema_feature_attributes_face_range_encoding  store.defaultGeometrySchema.featureAttributes.faceRange.encoding  string
+field  i3s.store_default_geometry_schema_feature_attributes_face_range_time_encoding  store.defaultGeometrySchema.featureAttributes.faceRange.timeEncoding  string
+field  i3s.store_default_geometry_schema_feature_attributes_face_range_values_per_element  store.defaultGeometrySchema.featureAttributes.faceRange.valuesPerElement  float
+group  i3s.fields  fields
+  field  i3s.fields_name  name  string
+  field  i3s.fields_type  type  string
+  field  i3s.fields_alias  alias  string
+end
+group  i3s.attribute_storage_info  attributeStorageInfo
+  field  i3s.attribute_storage_info_key  key  string
+  field  i3s.attribute_storage_info_name  name  string
+  group  i3s.attribute_storage_info_header  header
+    field  i3s.attribute_storage_info_header_property  property  string
+    field  i3s.attribute_storage_info_header_value_type  valueType  string
+  end
+  group  i3s.attribute_storage_info_ordering  ordering
+    field  i3s.attribute_storage_info_ordering_value  .  string
+  end
+  field  i3s.attribute_storage_info_attribute_values_value_type  attributeValues.valueType  string
+  field  i3s.attribute_storage_info_attribute_values_encoding  attributeValues.encoding  string
+  field  i3s.attribute_storage_info_attribute_values_time_encoding  attributeValues.timeEncoding  string
+  field  i3s.attribute_storage_info_attribute_values_values_per_element  attributeValues.valuesPerElement  float
+  field  i3s.attribute_storage_info_attribute_byte_counts_value_type  attributeByteCounts.valueType  string
+  field  i3s.attribute_storage_info_attribute_byte_counts_encoding  attributeByteCounts.encoding  string
+  field  i3s.attribute_storage_info_attribute_byte_counts_time_encoding  attributeByteCounts.timeEncoding  string
+  field  i3s.attribute_storage_info_attribute_byte_counts_values_per_element  attributeByteCounts.valuesPerElement  float
+  field  i3s.attribute_storage_info_object_ids_value_type  objectIds.valueType  string
+  field  i3s.attribute_storage_info_object_ids_encoding  objectIds.encoding  string
+  field  i3s.attribute_storage_info_object_ids_time_encoding  objectIds.timeEncoding  string
+  field  i3s.attribute_storage_info_object_ids_values_per_element  objectIds.valuesPerElement  float
+end
+group  i3s.statistics_info  statisticsInfo
+  field  i3s.statistics_info_key  key  string
+  field  i3s.statistics_info_name  name  string
+  field  i3s.statistics_info_href  href  string
+end
+field  i3s.node_pages_nodes_per_page  nodePages.nodesPerPage  int
+field  i3s.node_pages_root_index  nodePages.rootIndex  int
+field  i3s.node_pages_lod_selection_metric_type  nodePages.lodSelectionMetricType  string
+group  i3s.material_definitions  materialDefinitions
+  group  i3s.material_definitions_pbr_metallic_roughness_base_color_factor  pbrMetallicRoughness.baseColorFactor
+    field  i3s.material_definitions_pbr_metallic_roughness_base_color_factor_value  .  float
+  end
+  field  i3s.material_definitions_pbr_metallic_roughness_base_color_texture_texture_set_definition_id  pbrMetallicRoughness.baseColorTexture.textureSetDefinitionId  int
+  field  i3s.material_definitions_pbr_metallic_roughness_base_color_texture_tex_coord  pbrMetallicRoughness.baseColorTexture.texCoord  int
+  field  i3s.material_definitions_pbr_metallic_roughness_metallic_factor  pbrMetallicRoughness.metallicFactor  float
+  field  i3s.material_definitions_pbr_metallic_roughness_roughness_factor  pbrMetallicRoughness.roughnessFactor  float
+  field  i3s.material_definitions_pbr_metallic_roughness_metallic_roughness_texture_texture_set_definition_id  pbrMetallicRoughness.metallicRoughnessTexture.textureSetDefinitionId  int
+  field  i3s.material_definitions_pbr_metallic_roughness_metallic_roughness_texture_tex_coord  pbrMetallicRoughness.metallicRoughnessTexture.texCoord  int
+  field  i3s.material_definitions_normal_texture_texture_set_definition_id  normalTexture.textureSetDefinitionId  int
+  field  i3s.material_definitions_normal_texture_tex_coord  normalTexture.texCoord  int
+  field  i3s.material_definitions_normal_texture_factor  normalTexture.factor  float
+  field  i3s.material_definitions_occlusion_texture_texture_set_definition_id  occlusionTexture.textureSetDefinitionId  int
+  field  i3s.material_definitions_occlusion_texture_tex_coord  occlusionTexture.texCoord  int
+  field  i3s.material_definitions_occlusion_texture_factor  occlusionTexture.factor  float
+  field  i3s.material_definitions_emissive_texture_texture_set_definition_id  emissiveTexture.textureSetDefinitionId  int
+  field  i3s.material_definitions_emissive_texture_tex_coord  emissiveTexture.texCoord  int
+  field  i3s.material_definitions_emissive_texture_factor  emissiveTexture.factor  float
+  group  i3s.material_definitions_emissive_factor  emissiveFactor
+    field  i3s.material_definitions_emissive_factor_value  .  float
+  end
+  field  i3s.material_definitions_alpha_mode  alphaMode  string
+  field  i3s.material_definitions_alpha_cutoff  alphaCutoff  float
+  field  i3s.material_definitions_double_sided  doubleSided  bool
+  field  i3s.material_definitions_cull_face  cullFace  string
+end
+group  i3s.texture_set_definitions  textureSetDefinitions
+  group  i3s.texture_set_definitions_formats  formats
+    field  i3s.texture_set_definitions_formats_name  name  string
+    field  i3s.texture_set_definitions_formats_format  format  string
+  end
+  field  i3s.texture_set_definitions_atlas  atlas  bool
+end
+group  i3s.geometry_definitions  geometryDefinitions
+  field  i3s.geometry_definitions_topology  topology  string
+  group  i3s.geometry_definitions_geometry_buffers  geometryBuffers
+    field  i3s.geometry_definitions_geometry_buffers_offset  offset  int
+    field  i3s.geometry_definitions_geometry_buffers_position_type  position.type  string
+    field  i3s.geometry_definitions_geometry_buffers_position_component  position.component  int
+    field  i3s.geometry_definitions_geometry_buffers_position_encoding  position.encoding  string
+    field  i3s.geometry_definitions_geometry_buffers_position_binding  position.binding  string
+    field  i3s.geometry_definitions_geometry_buffers_normal_type  normal.type  string
+    field  i3s.geometry_definitions_geometry_buffers_normal_component  normal.component  int
+    field  i3s.geometry_definitions_geometry_buffers_normal_encoding  normal.encoding  string
+    field  i3s.geometry_definitions_geometry_buffers_normal_binding  normal.binding  string
+    field  i3s.geometry_definitions_geometry_buffers_uv0_type  uv0.type  string
+    field  i3s.geometry_definitions_geometry_buffers_uv0_component  uv0.component  int
+    field  i3s.geometry_definitions_geometry_buffers_uv0_encoding  uv0.encoding  string
+    field  i3s.geometry_definitions_geometry_buffers_uv0_binding  uv0.binding  string
+    field  i3s.geometry_definitions_geometry_buffers_color_type  color.type  string
+    field  i3s.geometry_definitions_geometry_buffers_color_component  color.component  int
+    field  i3s.geometry_definitions_geometry_buffers_color_encoding  color.encoding  string
+    field  i3s.geometry_definitions_geometry_buffers_color_binding  color.binding  string
+    field  i3s.geometry_definitions_geometry_buffers_uv_region_type  uvRegion.type  string
+    field  i3s.geometry_definitions_geometry_buffers_uv_region_component  uvRegion.component  int
+    field  i3s.geometry_definitions_geometry_buffers_uv_region_encoding  uvRegion.encoding  string
+    field  i3s.geometry_definitions_geometry_buffers_uv_region_binding  uvRegion.binding  string
+    field  i3s.geometry_definitions_geometry_buffers_feature_id_type  featureId.type  string
+    field  i3s.geometry_definitions_geometry_buffers_feature_id_component  featureId.component  int
+    field  i3s.geometry_definitions_geometry_buffers_feature_id_encoding  featureId.encoding  string
+    field  i3s.geometry_definitions_geometry_buffers_feature_id_binding  featureId.binding  string
+    field  i3s.geometry_definitions_geometry_buffers_face_range_type  faceRange.type  string
+    field  i3s.geometry_definitions_geometry_buffers_face_range_component  faceRange.component  int
+    field  i3s.geometry_definitions_geometry_buffers_face_range_encoding  faceRange.encoding  string
+    field  i3s.geometry_definitions_geometry_buffers_face_range_binding  faceRange.binding  string
+    field  i3s.geometry_definitions_geometry_buffers_compressed_attributes_encoding  compressedAttributes.encoding  string
+    group  i3s.geometry_definitions_geometry_buffers_compressed_attributes_attributes  compressedAttributes.attributes
+      field  i3s.geometry_definitions_geometry_buffers_compressed_attributes_attributes_value  .  string
+    end
+  end
+end
+field  i3s.full_extent_spatial_reference_wkid  fullExtent.spatialReference.wkid  int
+field  i3s.full_extent_spatial_reference_latest_wkid  fullExtent.spatialReference.latestWkid  int
+field  i3s.full_extent_spatial_reference_vcs_wkid  fullExtent.spatialReference.vcsWkid  int
+field  i3s.full_extent_spatial_reference_latest_vcs_wkid  fullExtent.spatialReference.latestVcsWkid  int
+field  i3s.full_extent_spatial_reference_wkt  fullExtent.spatialReference.wkt  string
+field  i3s.full_extent_xmin  fullExtent.xmin  float
+field  i3s.full_extent_ymin  fullExtent.ymin  float
+field  i3s.full_extent_xmax  fullExtent.xmax  float
+field  i3s.full_extent_ymax  fullExtent.ymax  float
+field  i3s.full_extent_zmin  fullExtent.zmin  float
+field  i3s.full_extent_zmax  fullExtent.zmax  float
+field  i3s.time_info_start_time_field  timeInfo.startTimeField  string
+field  i3s.time_info_end_time_field  timeInfo.endTimeField  string
+field  i3s.range_info_field  rangeInfo.field  string
+field  i3s.range_info_name  rangeInfo.name  string
+
 kind    3d-object
 when    layerType  3DObject
 field  i3s.id  id  int
@@ -200,361 +557,6 @@ group  i3s.geometry_definitions  geometryDefinitions
     group  i3s.geometry_definitions_geometry_buffers_compressed_attributes_attributes  compressedAttributes.attributes
       field  i3s.geometry_definitions_geometry_buffers_compressed_attributes_attributes_value  .  string
     end
-  end
-end
-field  i3s.full_extent_spatial_reference_wkid  fullExtent.spatialReference.wkid  int
-field  i3s.full_extent_spatial_reference_latest_wkid  fullExtent.spatialReference.latestWkid  int
-field  i3s.full_extent_spatial_reference_vcs_wkid  fullExtent.spatialReference.vcsWkid  int
-field  i3s.full_extent_spatial_reference_latest_vcs_wkid  fullExtent.spatialReference.latestVcsWkid  int
-field  i3s.full_extent_spatial_reference_wkt  fullExtent.spatialReference.wkt  string
-field  i3s.full_extent_xmin  fullExtent.xmin  float
-field  i3s.full_extent_ymin  fullExtent.ymin  float
-field  i3s.full_extent_xmax  fullExtent.xmax  float
-field  i3s.full_extent_ymax  fullExtent.ymax  float
-field  i3s.full_extent_zmin  fullExtent.zmin  float
-field  i3s.full_extent_zmax  fullExtent.zmax  float
-field  i3s.time_info_start_time_field  timeInfo.startTimeField  string
-field  i3s.time_info_end_time_field  timeInfo.endTimeField  string
-field  i3s.range_info_field  rangeInfo.field  string
-field  i3s.range_info_name  rangeInfo.name  string
-
-kind    integrated-mesh
-when    layerType  IntegratedMesh
-field  i3s.id  id  int
-field  i3s.href  href  string
-field  i3s.layer_type  layerType  string
-field  i3s.spatial_reference_wkid  spatialReference.wkid  int
-field  i3s.spatial_reference_latest_wkid  spatialReference.latestWkid  int
-field  i3s.spatial_reference_vcs_wkid  spatialReference.vcsWkid  int
-field  i3s.spatial_reference_latest_vcs_wkid  spatialReference.latestVcsWkid  int
-field  i3s.spatial_reference_wkt  spatialReference.wkt  string
-field  i3s.height_model_info_height_model  heightModelInfo.heightModel  string
-field  i3s.height_model_info_vert_crs  heightModelInfo.vertCRS  string
-field  i3s.height_model_info_height_unit  heightModelInfo.heightUnit  string
-field  i3s.version  version  string
-field  i3s.name  name  string
-field  i3s.service_update_time_stamp_last_update  serviceUpdateTimeStamp.lastUpdate  float
-field  i3s.alias  alias  string
-field  i3s.description  description  string
-field  i3s.copyright_text  copyrightText  string
-group  i3s.capabilities  capabilities
-  field  i3s.capabilities_value  .  string
-end
-field  i3s.z_factor  ZFactor  float
-field  i3s.cached_drawing_info_color  cachedDrawingInfo.color  bool
-field  i3s.elevation_info_mode  elevationInfo.mode  string
-field  i3s.elevation_info_offset  elevationInfo.offset  float
-field  i3s.elevation_info_unit  elevationInfo.unit  string
-field  i3s.disable_popup  disablePopup  bool
-field  i3s.store_id  store.id  string
-field  i3s.store_profile  store.profile  string
-group  i3s.store_resource_pattern  store.resourcePattern
-  field  i3s.store_resource_pattern_value  .  string
-end
-field  i3s.store_root_node  store.rootNode  string
-field  i3s.store_version  store.version  string
-group  i3s.store_extent  store.extent
-  field  i3s.store_extent_value  .  float
-end
-field  i3s.store_index_crs  store.indexCRS  string
-field  i3s.store_vertex_crs  store.vertexCRS  string
-field  i3s.store_normal_reference_frame  store.normalReferenceFrame  string
-field  i3s.store_nid_encoding  store.nidEncoding  string
-field  i3s.store_feature_encoding  store.featureEncoding  string
-field  i3s.store_geometry_encoding  store.geometryEncoding  string
-field  i3s.store_attribute_encoding  store.attributeEncoding  string
-group  i3s.store_texture_encoding  store.textureEncoding
-  field  i3s.store_texture_encoding_value  .  string
-end
-field  i3s.store_lod_type  store.lodType  string
-field  i3s.store_lod_model  store.lodModel  string
-field  i3s.store_indexing_scheme  store.indexingScheme  string
-field  i3s.store_default_geometry_schema_geometry_type  store.defaultGeometrySchema.geometryType  string
-field  i3s.store_default_geometry_schema_topology  store.defaultGeometrySchema.topology  string
-group  i3s.store_default_geometry_schema_header  store.defaultGeometrySchema.header
-  field  i3s.store_default_geometry_schema_header_property  property  string
-  field  i3s.store_default_geometry_schema_header_type  type  string
-end
-group  i3s.store_default_geometry_schema_ordering  store.defaultGeometrySchema.ordering
-  field  i3s.store_default_geometry_schema_ordering_value  .  string
-end
-field  i3s.store_default_geometry_schema_vertex_attributes_position_byte_offset  store.defaultGeometrySchema.vertexAttributes.position.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_position_value_type  store.defaultGeometrySchema.vertexAttributes.position.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_position_values_per_element  store.defaultGeometrySchema.vertexAttributes.position.valuesPerElement  float
-field  i3s.store_default_geometry_schema_vertex_attributes_normal_byte_offset  store.defaultGeometrySchema.vertexAttributes.normal.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_normal_value_type  store.defaultGeometrySchema.vertexAttributes.normal.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_normal_values_per_element  store.defaultGeometrySchema.vertexAttributes.normal.valuesPerElement  float
-field  i3s.store_default_geometry_schema_vertex_attributes_uv0_byte_offset  store.defaultGeometrySchema.vertexAttributes.uv0.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_uv0_value_type  store.defaultGeometrySchema.vertexAttributes.uv0.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_uv0_values_per_element  store.defaultGeometrySchema.vertexAttributes.uv0.valuesPerElement  float
-field  i3s.store_default_geometry_schema_vertex_attributes_color_byte_offset  store.defaultGeometrySchema.vertexAttributes.color.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_color_value_type  store.defaultGeometrySchema.vertexAttributes.color.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_color_values_per_element  store.defaultGeometrySchema.vertexAttributes.color.valuesPerElement  float
-field  i3s.store_default_geometry_schema_vertex_attributes_region_byte_offset  store.defaultGeometrySchema.vertexAttributes.region.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_region_value_type  store.defaultGeometrySchema.vertexAttributes.region.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_region_values_per_element  store.defaultGeometrySchema.vertexAttributes.region.valuesPerElement  float
-group  i3s.store_default_geometry_schema_feature_attribute_order  store.defaultGeometrySchema.featureAttributeOrder
-  field  i3s.store_default_geometry_schema_feature_attribute_order_value  .  string
-end
-field  i3s.store_default_geometry_schema_feature_attributes_id_value_type  store.defaultGeometrySchema.featureAttributes.id.valueType  string
-field  i3s.store_default_geometry_schema_feature_attributes_id_encoding  store.defaultGeometrySchema.featureAttributes.id.encoding  string
-field  i3s.store_default_geometry_schema_feature_attributes_id_time_encoding  store.defaultGeometrySchema.featureAttributes.id.timeEncoding  string
-field  i3s.store_default_geometry_schema_feature_attributes_id_values_per_element  store.defaultGeometrySchema.featureAttributes.id.valuesPerElement  float
-field  i3s.store_default_geometry_schema_feature_attributes_face_range_value_type  store.defaultGeometrySchema.featureAttributes.faceRange.valueType  string
-field  i3s.store_default_geometry_schema_feature_attributes_face_range_encoding  store.defaultGeometrySchema.featureAttributes.faceRange.encoding  string
-field  i3s.store_default_geometry_schema_feature_attributes_face_range_time_encoding  store.defaultGeometrySchema.featureAttributes.faceRange.timeEncoding  string
-field  i3s.store_default_geometry_schema_feature_attributes_face_range_values_per_element  store.defaultGeometrySchema.featureAttributes.faceRange.valuesPerElement  float
-group  i3s.fields  fields
-  field  i3s.fields_name  name  string
-  field  i3s.fields_type  type  string
-  field  i3s.fields_alias  alias  string
-end
-group  i3s.attribute_storage_info  attributeStorageInfo
-  field  i3s.attribute_storage_info_key  key  string
-  field  i3s.attribute_storage_info_name  name  string
-  group  i3s.attribute_storage_info_header  header
-    field  i3s.attribute_storage_info_header_property  property  string
-    field  i3s.attribute_storage_info_header_value_type  valueType  string
-  end
-  group  i3s.attribute_storage_info_ordering  ordering
-    field  i3s.attribute_storage_info_ordering_value  .  string
-  end
-  field  i3s.attribute_storage_info_attribute_values_value_type  attributeValues.valueType  string
-  field  i3s.attribute_storage_info_attribute_values_encoding  attributeValues.encoding  string
-  field  i3s.attribute_storage_info_attribute_values_time_encoding  attributeValues.timeEncoding  string
-  field  i3s.attribute_storage_info_attribute_values_values_per_element  attributeValues.valuesPerElement  float
-  field  i3s.attribute_storage_info_attribute_byte_counts_value_type  attributeByteCounts.valueType  string
-  field  i3s.attribute_storage_info_attribute_byte_counts_encoding  attributeByteCounts.encoding  string
-  field  i3s.attribute_storage_info_attribute_byte_counts_time_encoding  attributeByteCounts.timeEncoding  string
-  field  i3s.attribute_storage_info_attribute_byte_counts_values_per_element  attributeByteCounts.valuesPerElement  float
-  field  i3s.attribute_storage_info_object_ids_value_type  objectIds.valueType  string
-  field  i3s.attribute_storage_info_object_ids_encoding  objectIds.encoding  string
-  field  i3s.attribute_storage_info_object_ids_time_encoding  objectIds.timeEncoding  string
-  field  i3s.attribute_storage_info_object_ids_values_per_element  objectIds.valuesPerElement  float
-end
-group  i3s.statistics_info  statisticsInfo
-  field  i3s.statistics_info_key  key  string
-  field  i3s.statistics_info_name  name  string
-  field  i3s.statistics_info_href  href  string
-end
-field  i3s.node_pages_nodes_per_page  nodePages.nodesPerPage  int
-field  i3s.node_pages_root_index  nodePages.rootIndex  int
-field  i3s.node_pages_lod_selection_metric_type  nodePages.lodSelectionMetricType  string
-group  i3s.material_definitions  materialDefinitions
-  group  i3s.material_definitions_pbr_metallic_roughness_base_color_factor  pbrMetallicRoughness.baseColorFactor
-    field  i3s.material_definitions_pbr_metallic_roughness_base_color_factor_value  .  float
-  end
-  field  i3s.material_definitions_pbr_metallic_roughness_base_color_texture_texture_set_definition_id  pbrMetallicRoughness.baseColorTexture.textureSetDefinitionId  int
-  field  i3s.material_definitions_pbr_metallic_roughness_base_color_texture_tex_coord  pbrMetallicRoughness.baseColorTexture.texCoord  int
-  field  i3s.material_definitions_pbr_metallic_roughness_metallic_factor  pbrMetallicRoughness.metallicFactor  float
-  field  i3s.material_definitions_pbr_metallic_roughness_roughness_factor  pbrMetallicRoughness.roughnessFactor  float
-  field  i3s.material_definitions_pbr_metallic_roughness_metallic_roughness_texture_texture_set_definition_id  pbrMetallicRoughness.metallicRoughnessTexture.textureSetDefinitionId  int
-  field  i3s.material_definitions_pbr_metallic_roughness_metallic_roughness_texture_tex_coord  pbrMetallicRoughness.metallicRoughnessTexture.texCoord  int
-  field  i3s.material_definitions_normal_texture_texture_set_definition_id  normalTexture.textureSetDefinitionId  int
-  field  i3s.material_definitions_normal_texture_tex_coord  normalTexture.texCoord  int
-  field  i3s.material_definitions_normal_texture_factor  normalTexture.factor  float
-  field  i3s.material_definitions_occlusion_texture_texture_set_definition_id  occlusionTexture.textureSetDefinitionId  int
-  field  i3s.material_definitions_occlusion_texture_tex_coord  occlusionTexture.texCoord  int
-  field  i3s.material_definitions_occlusion_texture_factor  occlusionTexture.factor  float
-  field  i3s.material_definitions_emissive_texture_texture_set_definition_id  emissiveTexture.textureSetDefinitionId  int
-  field  i3s.material_definitions_emissive_texture_tex_coord  emissiveTexture.texCoord  int
-  field  i3s.material_definitions_emissive_texture_factor  emissiveTexture.factor  float
-  group  i3s.material_definitions_emissive_factor  emissiveFactor
-    field  i3s.material_definitions_emissive_factor_value  .  float
-  end
-  field  i3s.material_definitions_alpha_mode  alphaMode  string
-  field  i3s.material_definitions_alpha_cutoff  alphaCutoff  float
-  field  i3s.material_definitions_double_sided  doubleSided  bool
-  field  i3s.material_definitions_cull_face  cullFace  string
-end
-group  i3s.texture_set_definitions  textureSetDefinitions
-  group  i3s.texture_set_definitions_formats  formats
-    field  i3s.texture_set_definitions_formats_name  name  string
-    field  i3s.texture_set_definitions_formats_format  format  string
-  end
-  field  i3s.texture_set_definitions_atlas  atlas  bool
-end
-group  i3s.geometry_definitions  geometryDefinitions
-  field  i3s.geometry_definitions_topology  topology  string
-  group  i3s.geometry_definitions_geometry_buffers  geometryBuffers
-    field  i3s.geometry_definitions_geometry_buffers_offset  offset  int
-    field  i3s.geometry_definitions_geometry_buffers_position_type  position.type  string
-    field  i3s.geometry_definitions_geometry_buffers_position_component  position.component  int
-    field  i3s.geometry_definitions_geometry_buffers_position_encoding  position.encoding  string
-    field  i3s.geometry_definitions_geometry_buffers_position_binding  position.binding  string
-    field  i3s.geometry_definitions_geometry_buffers_normal_type  normal.type  string
-    field  i3s.geometry_definitions_geometry_buffers_normal_component  normal.component  int
-    field  i3s.geometry_definitions_geometry_buffers_normal_encoding  normal.encoding  string
-    field  i3s.geometry_definitions_geometry_buffers_normal_binding  normal.binding  string
-    field  i3s.geometry_definitions_geometry_buffers_uv0_type  uv0.type  string
-    field  i3s.geometry_definitions_geometry_buffers_uv0_component  uv0.component  int
-    field  i3s.geometry_definitions_geometry_buffers_uv0_encoding  uv0.encoding  string
-    field  i3s.geometry_definitions_geometry_buffers_uv0_binding  uv0.binding  string
-    field  i3s.geometry_definitions_geometry_buffers_color_type  color.type  string
-    field  i3s.geometry_definitions_geometry_buffers_color_component  color.component  int
-    field  i3s.geometry_definitions_geometry_buffers_color_encoding  color.encoding  string
-    field  i3s.geometry_definitions_geometry_buffers_color_binding  color.binding  string
-    field  i3s.geometry_definitions_geometry_buffers_uv_region_type  uvRegion.type  string
-    field  i3s.geometry_definitions_geometry_buffers_uv_region_component  uvRegion.component  int
-    field  i3s.geometry_definitions_geometry_buffers_uv_region_encoding  uvRegion.encoding  string
-    field  i3s.geometry_definitions_geometry_buffers_uv_region_binding  uvRegion.binding  string
-    field  i3s.geometry_definitions_geometry_buffers_feature_id_type  featureId.type  string
-    field  i3s.geometry_definitions_geometry_buffers_feature_id_component  featureId.component  int
-    field  i3s.geometry_definitions_geometry_buffers_feature_id_encoding  featureId.encoding  string
-    field  i3s.geometry_definitions_geometry_buffers_feature_id_binding  featureId.binding  string
-    field  i3s.geometry_definitions_geometry_buffers_face_range_type  faceRange.type  string
-    field  i3s.geometry_definitions_geometry_buffers_face_range_component  faceRange.component  int
-    field  i3s.geometry_definitions_geometry_buffers_face_range_encoding  faceRange.encoding  string
-    field  i3s.geometry_definitions_geometry_buffers_face_range_binding  faceRange.binding  string
-    field  i3s.geometry_definitions_geometry_buffers_compressed_attributes_encoding  compressedAttributes.encoding  string
-    group  i3s.geometry_definitions_geometry_buffers_compressed_attributes_attributes  compressedAttributes.attributes
-      field  i3s.geometry_definitions_geometry_buffers_compressed_attributes_attributes_value  .  string
-    end
-  end
-end
-field  i3s.full_extent_spatial_reference_wkid  fullExtent.spatialReference.wkid  int
-field  i3s.full_extent_spatial_reference_latest_wkid  fullExtent.spatialReference.latestWkid  int
-field  i3s.full_extent_spatial_reference_vcs_wkid  fullExtent.spatialReference.vcsWkid  int
-field  i3s.full_extent_spatial_reference_latest_vcs_wkid  fullExtent.spatialReference.latestVcsWkid  int
-field  i3s.full_extent_spatial_reference_wkt  fullExtent.spatialReference.wkt  string
-field  i3s.full_extent_xmin  fullExtent.xmin  float
-field  i3s.full_extent_ymin  fullExtent.ymin  float
-field  i3s.full_extent_xmax  fullExtent.xmax  float
-field  i3s.full_extent_ymax  fullExtent.ymax  float
-field  i3s.full_extent_zmin  fullExtent.zmin  float
-field  i3s.full_extent_zmax  fullExtent.zmax  float
-field  i3s.time_info_start_time_field  timeInfo.startTimeField  string
-field  i3s.time_info_end_time_field  timeInfo.endTimeField  string
-field  i3s.range_info_field  rangeInfo.field  string
-field  i3s.range_info_name  rangeInfo.name  string
-
-kind    point
-when    layerType  Point
-field  i3s.id  id  int
-field  i3s.href  href  string
-field  i3s.layer_type  layerType  string
-field  i3s.spatial_reference_wkid  spatialReference.wkid  int
-field  i3s.spatial_reference_latest_wkid  spatialReference.latestWkid  int
-field  i3s.spatial_reference_vcs_wkid  spatialReference.vcsWkid  int
-field  i3s.spatial_reference_latest_vcs_wkid  spatialReference.latestVcsWkid  int
-field  i3s.spatial_reference_wkt  spatialReference.wkt  string
-field  i3s.height_model_info_height_model  heightModelInfo.heightModel  string
-field  i3s.height_model_info_vert_crs  heightModelInfo.vertCRS  string
-field  i3s.height_model_info_height_unit  heightModelInfo.heightUnit  string
-field  i3s.version  version  string
-field  i3s.name  name  string
-field  i3s.service_update_time_stamp_last_update  serviceUpdateTimeStamp.lastUpdate  float
-field  i3s.alias  alias  string
-field  i3s.description  description  string
-field  i3s.copyright_text  copyrightText  string
-group  i3s.capabilities  capabilities
-  field  i3s.capabilities_value  .  string
-end
-field  i3s.z_factor  ZFactor  float
-field  i3s.cached_drawing_info_color  cachedDrawingInfo.color  bool
-field  i3s.elevation_info_mode  elevationInfo.mode  string
-field  i3s.elevation_info_offset  elevationInfo.offset  float
-field  i3s.elevation_info_unit  elevationInfo.unit  string
-field  i3s.disable_popup  disablePopup  bool
-field  i3s.store_id  store.id  string
-field  i3s.store_profile  store.profile  string
-group  i3s.store_resource_pattern  store.resourcePattern
-  field  i3s.store_resource_pattern_value  .  string
-end
-field  i3s.store_root_node  store.rootNode  string
-field  i3s.store_version  store.version  string
-group  i3s.store_extent  store.extent
-  field  i3s.store_extent_value  .  float
-end
-field  i3s.store_index_crs  store.indexCRS  string
-field  i3s.store_vertex_crs  store.vertexCRS  string
-field  i3s.store_normal_reference_frame  store.normalReferenceFrame  string
-field  i3s.store_nid_encoding  store.nidEncoding  string
-field  i3s.store_feature_encoding  store.featureEncoding  string
-field  i3s.store_geometry_encoding  store.geometryEncoding  string
-field  i3s.store_attribute_encoding  store.attributeEncoding  string
-group  i3s.store_texture_encoding  store.textureEncoding
-  field  i3s.store_texture_encoding_value  .  string
-end
-field  i3s.store_lod_type  store.lodType  string
-field  i3s.store_lod_model  store.lodModel  string
-field  i3s.store_indexing_scheme  store.indexingScheme  string
-field  i3s.store_default_geometry_schema_geometry_type  store.defaultGeometrySchema.geometryType  string
-field  i3s.store_default_geometry_schema_topology  store.defaultGeometrySchema.topology  string
-group  i3s.store_default_geometry_schema_header  store.defaultGeometrySchema.header
-  field  i3s.store_default_geometry_schema_header_property  property  string
-  field  i3s.store_default_geometry_schema_header_type  type  string
-end
-group  i3s.store_default_geometry_schema_ordering  store.defaultGeometrySchema.ordering
-  field  i3s.store_default_geometry_schema_ordering_value  .  string
-end
-field  i3s.store_default_geometry_schema_vertex_attributes_position_byte_offset  store.defaultGeometrySchema.vertexAttributes.position.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_position_value_type  store.defaultGeometrySchema.vertexAttributes.position.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_position_values_per_element  store.defaultGeometrySchema.vertexAttributes.position.valuesPerElement  float
-field  i3s.store_default_geometry_schema_vertex_attributes_normal_byte_offset  store.defaultGeometrySchema.vertexAttributes.normal.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_normal_value_type  store.defaultGeometrySchema.vertexAttributes.normal.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_normal_values_per_element  store.defaultGeometrySchema.vertexAttributes.normal.valuesPerElement  float
-field  i3s.store_default_geometry_schema_vertex_attributes_uv0_byte_offset  store.defaultGeometrySchema.vertexAttributes.uv0.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_uv0_value_type  store.defaultGeometrySchema.vertexAttributes.uv0.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_uv0_values_per_element  store.defaultGeometrySchema.vertexAttributes.uv0.valuesPerElement  float
-field  i3s.store_default_geometry_schema_vertex_attributes_color_byte_offset  store.defaultGeometrySchema.vertexAttributes.color.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_color_value_type  store.defaultGeometrySchema.vertexAttributes.color.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_color_values_per_element  store.defaultGeometrySchema.vertexAttributes.color.valuesPerElement  float
-field  i3s.store_default_geometry_schema_vertex_attributes_region_byte_offset  store.defaultGeometrySchema.vertexAttributes.region.byteOffset  float
-field  i3s.store_default_geometry_schema_vertex_attributes_region_value_type  store.defaultGeometrySchema.vertexAttributes.region.valueType  string
-field  i3s.store_default_geometry_schema_vertex_attributes_region_values_per_element  store.defaultGeometrySchema.vertexAttributes.region.valuesPerElement  float
-group  i3s.store_default_geometry_schema_feature_attribute_order  store.defaultGeometrySchema.featureAttributeOrder
-  field  i3s.store_default_geometry_schema_feature_attribute_order_value  .  string
-end
-field  i3s.store_default_geometry_schema_feature_attributes_id_value_type  store.defaultGeometrySchema.featureAttributes.id.valueType  string
-field  i3s.store_default_geometry_schema_feature_attributes_id_encoding  store.defaultGeometrySchema.featureAttributes.id.encoding  string
-field  i3s.store_default_geometry_schema_feature_attributes_id_time_encoding  store.defaultGeometrySchema.featureAttributes.id.timeEncoding  string
-field  i3s.store_default_geometry_schema_feature_attributes_id_values_per_element  store.defaultGeometrySchema.featureAttributes.id.valuesPerElement  float
-field  i3s.store_default_geometry_schema_feature_attributes_face_range_value_type  store.defaultGeometrySchema.featureAttributes.faceRange.valueType  string
-field  i3s.store_default_geometry_schema_feature_attributes_face_range_encoding  store.defaultGeometrySchema.featureAttributes.faceRange.encoding  string
-field  i3s.store_default_geometry_schema_feature_attributes_face_range_time_encoding  store.defaultGeometrySchema.featureAttributes.faceRange.timeEncoding  string
-field  i3s.store_default_geometry_schema_feature_attributes_face_range_values_per_element  store.defaultGeometrySchema.featureAttributes.faceRange.valuesPerElement  float
-group  i3s.fields  fields
-  field  i3s.fields_name  name  string
-  field  i3s.fields_type  type  string
-  field  i3s.fields_alias  alias  string
-end
-group  i3s.attribute_storage_info  attributeStorageInfo
-  field  i3s.attribute_storage_info_key  key  string
-  field  i3s.attribute_storage_info_name  name  string
-  group  i3s.attribute_storage_info_header  header
-    field  i3s.attribute_storage_info_header_property  property  string
-    field  i3s.attribute_storage_info_header_value_type  valueType  string
-  end
-  group  i3s.attribute_storage_info_ordering  ordering
-    field  i3s.attribute_storage_info_ordering_value  .  string
-  end
-  field  i3s.attribute_storage_info_attribute_values_value_type  attributeValues.valueType  string
-  field  i3s.attribute_storage_info_attribute_values_encoding  attributeValues.encoding  string
-  field  i3s.attribute_storage_info_attribute_values_time_encoding  attributeValues.timeEncoding  string
-  field  i3s.attribute_storage_info_attribute_values_values_per_element  attributeValues.valuesPerElement  float
-  field  i3s.attribute_storage_info_attribute_byte_counts_value_type  attributeByteCounts.valueType  string
-  field  i3s.attribute_storage_info_attribute_byte_counts_encoding  attributeByteCounts.encoding  string
-  field  i3s.attribute_storage_info_attribute_byte_counts_time_encoding  attributeByteCounts.timeEncoding  string
-  field  i3s.attribute_storage_info_attribute_byte_counts_values_per_element  attributeByteCounts.valuesPerElement  float
-  field  i3s.attribute_storage_info_object_ids_value_type  objectIds.valueType  string
-  field  i3s.attribute_storage_info_object_ids_encoding  objectIds.encoding  string
-  field  i3s.attribute_storage_info_object_ids_time_encoding  objectIds.timeEncoding  string
-  field  i3s.attribute_storage_info_object_ids_values_per_element  objectIds.valuesPerElement  float
-end
-group  i3s.statistics_info  statisticsInfo
-  field  i3s.statistics_info_key  key  string
-  field  i3s.statistics_info_name  name  string
-  field  i3s.statistics_info_href  href  string
-end
-field  i3s.point_node_pages_nodes_per_page  pointNodePages.nodesPerPage  int
-field  i3s.point_node_pages_root_index  pointNodePages.rootIndex  int
-field  i3s.point_node_pages_lod_selection_metric_type  pointNodePages.lodSelectionMetricType  string
-field  i3s.geometry_definition_topology  geometryDefinition.topology  string
-group  i3s.geometry_definition_geometry_buffers  geometryDefinition.geometryBuffers
-  field  i3s.geometry_definition_geometry_buffers_compressed_attributes_encoding  compressedAttributes.encoding  string
-  group  i3s.geometry_definition_geometry_buffers_compressed_attributes_attributes  compressedAttributes.attributes
-    field  i3s.geometry_definition_geometry_buffers_compressed_attributes_attributes_value  .  string
   end
 end
 field  i3s.full_extent_spatial_reference_wkid  fullExtent.spatialReference.wkid  int

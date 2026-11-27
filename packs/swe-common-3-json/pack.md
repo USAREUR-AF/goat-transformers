@@ -480,6 +480,12 @@ not been approved or adopted by OGC. `PROVENANCE.md` keeps the notice in full.
 | `data_stream` | `elementType.items[].choiceValue` | below depth 4 |
 | `data_stream` | `elementType.items[].(message).items` | recursive schema |
 
+On encode with no recorded kind (engine-spec Encode step 2), each kind is chosen by the keys
+it requires.
+`time`, `time_range` require the same keys, so an entity with them is written as `time`.
+`quantity`, `quantity_range` require the same keys, so an entity with them is written as `quantity`.
+Choosing between them needs `requires` on a value or on an absent key, a language addition.
+
 ## Keys and lists
 
 Module `swecommon3`: 466 keys, 19 lists. A key is named by its path (`a.b` is `a_b`; inside a list, the

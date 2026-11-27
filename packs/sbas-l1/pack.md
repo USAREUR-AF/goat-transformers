@@ -43,6 +43,11 @@ GPS day without the day: `time_ms` is not stated.
 
 ## Not mapped
 
+On encode with no recorded kind (engine-spec Encode step 2), each kind is chosen by the keys
+it requires.
+`type-2`, `type-3`, `type-4`, `type-5`, `type-0` require the same keys, so an entity with them is written as `type-2`.
+Choosing between them needs `requires` on a value or on an absent key, a language addition.
+
 | What | Why |
 |---|---|
 | types 10, 12, 17, 27, 28 (degradation parameters, SBAS network time, GEO almanacs, service message, clock-ephemeris covariance) and 62, 63 | RTKLIB, the open source read, does not decode them; DO-229 is a paid document |
