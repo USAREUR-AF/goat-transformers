@@ -29,8 +29,11 @@ None. The timestamp counts microseconds from the socket's creation, not a date.
 ## Not mapped
 
 - **Handshake extension contents** other than HSREQ and HSRSP (key material, stream ID, congestion
-  control, packet filter, group) are hex: an extension length counts 4-octet units, so the content's
-  size is chosen by a `switch` on the length (lengths 1 to 63).
+  control, packet filter, group) are octets, `srt.ext_octets`: the extension length counts 4-octet
+  units and is read as a count that sizes them (engine-spec 0.83, `length @ext_units units 32`), up
+  to the 512-byte stream ID of section 3.2.1.3 and beyond (vector 11). That count is not a key, so
+  `srt.ext_length` is present only for HSREQ and HSRSP; `srt.ext_content` (hex, at most 63 units)
+  is withdrawn. On encode the content must be a whole number of 4-octet units.
 - The ACK words are not named: a light ACK has one word, a small ACK four, a full ACK seven, and the
   message gives no count for the optional ones.
 - The payload of an encrypted data packet is ciphertext.

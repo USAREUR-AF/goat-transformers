@@ -1,0 +1,15 @@
+{
+  "name": "handshake-initial-seq-top-bit-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "80000000000000000000015e11111111000000050000000080000001000005dc00002000000000011111111100000000c000020a000000000000000000000000",
+  "expect": "80000000000000000000015e11111111000000050000000080000001000005dc00002000000000011111111100000000c000020a000000000000000000000000",
+  "model": {
+    "srt.initial_seq": "2147483649",
+    "@absent": [
+      "srt.hs_reserved"
+    ],
+    "srt.extensions.#": "0"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; a handshake whose initial packet sequence number has its top bit set: one 32-bit field (section 3.2.1, figure 5), no reserved bit; expect derived there, no engine run"
+}

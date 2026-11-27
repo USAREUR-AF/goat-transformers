@@ -13,8 +13,12 @@
     "srt.extensions[0].srt.srt_flags": "191",
     "srt.extensions[0].srt.receiver_tsbpd_delay": "120",
     "srt.extensions[1].srt.ext_type": "5",
-    "srt.extensions[1].srt.ext_length": "2",
-    "srt.extensions[1].srt.ext_content": "23213a3a723d6162"
+    "srt.extensions[1].srt.ext_octets.#": "8",
+    "srt.extensions[1].srt.ext_octets[0].srt.octet": "35",
+    "@absent": [
+      "srt.extensions[1].srt.ext_length",
+      "srt.extensions[1].srt.ext_content"
+    ]
   },
   "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; a conclusion handshake (version 5) with an HSREQ and a stream ID extension; expect derived there, no engine run"
 }
