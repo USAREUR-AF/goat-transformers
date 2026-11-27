@@ -16,6 +16,7 @@ bit_order     msb
 kind      control                                     # session ID 0, then the T bit 1
 when      0:0:32  0
 when      0:32:1  1
+requires  inet.l2tp_control_connection_id
 field  inet.l2tp_length_bit       0:33:1      uint
 field  inet.l2tp_sequence_bit     0:36:1      uint
 field  inet.l2tp_version          0:44:4     uint

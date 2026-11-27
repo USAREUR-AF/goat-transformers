@@ -1,0 +1,8 @@
+{
+  "name": "data-to-l2tpv3-ip-is-data",
+  "from": "l2tpv3-udp",
+  "to": "l2tpv3-ip",
+  "input": "0003000012345678",
+  "expect": "12345678",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a data message over UDP (session 0x12345678) to L2TPv3 over IP: the control kind requires inet.l2tp_control_connection_id, which the entity lacks, so the data kind writes the session ID (engine-spec, Encode step 2)"
+}
