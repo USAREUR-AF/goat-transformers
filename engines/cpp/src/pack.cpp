@@ -489,7 +489,10 @@ void check_parts(Pack& p) {
                 bad(f.locator, f.line, "'unlisted' applies to a 'part' field with 'via'");
             if (f.transform != Transform::Part) continue;
             part_line(f);
+            // 0.56 ruling 15: nor `null`, `implicit`, `range`, `wrap` or a range sentinel
+            // (a sentinel of `absent` is already refused).
             if (f.swap || f.trim || f.has_stop || f.has_absent || !f.with.empty() ||
+                f.null_member || f.implicit || f.has_range || f.range_wrap ||
                 (f.optional && p.wire != Wire::Text))
                 bad(f.locator, f.line, "a 'part' field takes 'via', 'unlisted' and, on wire text, 'optional' only");
         }
@@ -523,7 +526,8 @@ void check_parts(Pack& p) {
                 const std::size_t at = f ? f->line : line.group ? line.group->line : line.fixed()->line;
                 // The whole line (ruling 24).
                 if (!f || f->transform != Transform::String || !f->via.empty() || f->has_absent || !f->with.empty() ||
-                    f->swap || f->trim || f->has_stop || f->unlisted || (f->optional && p.wire != Wire::Text))
+                    f->swap || f->trim || f->has_stop || f->unlisted || f->null_member || f->implicit ||
+                    f->has_range || f->range_wrap || (f->optional && p.wire != Wire::Text))
                     bad(*g.locator, at, "another line on the locator of a part group");
                 if (whole) bad(f->locator, at, "a second whole line of a part group");
                 whole = f;
