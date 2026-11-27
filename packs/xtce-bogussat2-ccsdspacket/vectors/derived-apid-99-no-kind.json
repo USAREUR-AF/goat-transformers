@@ -1,0 +1,9 @@
+{
+  "name": "derived-apid-99-no-kind",
+  "from": "xtce-bogussat2-ccsdspacket",
+  "to": "xtce-bogussat2-ccsdspacket",
+  "input": "0063c4d2000d41e40000bfa00000d55dc929",
+  "expect_error": "no-kind",
+  "source": "synthetic: the derived-ccsds-space-packet1 input with APID 99 in bits 5-15, chosen by the vector deriver; no engine or generator run",
+  "reference": "BogusSAT-2.xml: no container restricts CCSDS_Packet_ID/APID to 99 (ECSS_* need SecHdrFlag Present and APID 100, CCSDS_SpacePacket1-6 need SecHdrFlag NotPresent and APID 1-6); engine-spec 0.33 decode: the ecss kinds fail at the window at 4 (bit 0), the ccsds_space_packet kinds at the window at 5 (99), so no kind holds: no-kind (0.5 Decode step 2)"
+}

@@ -84,7 +84,6 @@ has a pack:
 |---|---|
 | Aviation | AIXM, FIXM, ACARS |
 | Maritime | VDES, IHO S-100 and S-101 |
-| Space | XTCE |
 | Internet of things | the Matter data model, LwM2M, Zigbee Cluster Library |
 | Vehicles and robots | SAE J1939 |
 

@@ -1,0 +1,15 @@
+{
+  "name": "derived-format2",
+  "from": "xtce-diaglog-log-record-header",
+  "to": "xtce-diaglog-log-record-header",
+  "input": "00640501",
+  "expect": "00640501",
+  "model": {
+    "@kind": "format2",
+    "xtcediaglog.log_record_length": "100",
+    "xtcediaglog.fsw_subsys_name": "5",
+    "xtcediaglog.format_id": "1"
+  },
+  "source": "synthetic: values chosen by the vector deriver (record length 100 within ValidRange 17-134, subsystem 5 = INTERFACE, format FMT2); bytes derived by hand, no engine or generator run",
+  "reference": "Diagnostic_Log_Packets.xml LOG_RECORD_HEADER entries (LOG_RECORD_LENGTH 16 unsigned, FSW_SUBSYS_NAME 8 unsigned, FORMAT_ID 8 unsigned), FORMAT2 criterion FORMAT_ID=FMT2=1; engine-spec 0.5 msb order and uint, 0.8 sequential, 0.33 window of 8 bits at offset 24 over the pad, written from the 0.30 as key"
+}

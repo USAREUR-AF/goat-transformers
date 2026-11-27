@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A small XTCE database written for the tests of tools/gen/xtce2pack.py, part of goat-transformers (Apache-2.0). -->
+<SpaceSystem xmlns="http://www.omg.org/space/xtce" name="Probe">
+  <TelemetryMetaData>
+    <ParameterTypeSet>
+      <IntegerParameterType name="IdType" signed="false"><IntegerDataEncoding sizeInBits="8"/></IntegerParameterType>
+      <EnumeratedParameterType name="ModeType">
+        <IntegerDataEncoding sizeInBits="4"/>
+        <EnumerationList><Enumeration value="0" label="OFF"/><Enumeration value="3" label="ON"/></EnumerationList>
+      </EnumeratedParameterType>
+      <FloatParameterType name="TempType">
+        <IntegerDataEncoding sizeInBits="12" encoding="twosComplement">
+          <DefaultCalibrator><PolynomialCalibrator><Term coefficient="-40" exponent="0"/><Term coefficient="0.5" exponent="1"/></PolynomialCalibrator></DefaultCalibrator>
+        </IntegerDataEncoding>
+      </FloatParameterType>
+      <StringParameterType name="NameType">
+        <StringDataEncoding encoding="UTF-8"><SizeInBits><Fixed><FixedValue>32</FixedValue></Fixed></SizeInBits></StringDataEncoding>
+      </StringParameterType>
+      <FloatParameterType name="RateType"><FloatDataEncoding sizeInBits="32"/></FloatParameterType>
+    </ParameterTypeSet>
+    <ParameterSet>
+      <Parameter name="Id" parameterTypeRef="IdType"/>
+      <Parameter name="Mode" parameterTypeRef="ModeType"/>
+      <Parameter name="Temp" parameterTypeRef="TempType"/>
+      <Parameter name="Name" parameterTypeRef="NameType"/>
+      <Parameter name="Rate" parameterTypeRef="RateType"/>
+    </ParameterSet>
+    <ContainerSet>
+      <SequenceContainer name="Header" abstract="true">
+        <EntryList><ParameterRefEntry parameterRef="Id"/></EntryList>
+      </SequenceContainer>
+      <SequenceContainer name="Status">
+        <EntryList><ParameterRefEntry parameterRef="Mode"/><ParameterRefEntry parameterRef="Temp"/></EntryList>
+        <BaseContainer containerRef="Header"><RestrictionCriteria><Comparison parameterRef="Id" value="1"/></RestrictionCriteria></BaseContainer>
+      </SequenceContainer>
+      <SequenceContainer name="Label">
+        <EntryList><ParameterRefEntry parameterRef="Name"/><ContainerRefEntry containerRef="Status"/><ParameterRefEntry parameterRef="Rate"/></EntryList>
+        <BaseContainer containerRef="Header"><RestrictionCriteria><Comparison parameterRef="Id" value="2"/></RestrictionCriteria></BaseContainer>
+      </SequenceContainer>
+      <SequenceContainer name="Ranged">
+        <EntryList><ParameterRefEntry parameterRef="Mode"/></EntryList>
+        <BaseContainer containerRef="Header"><RestrictionCriteria><Comparison parameterRef="Id" value="5" comparisonOperator="&gt;"/></RestrictionCriteria></BaseContainer>
+      </SequenceContainer>
+    </ContainerSet>
+  </TelemetryMetaData>
+</SpaceSystem>

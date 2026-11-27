@@ -1,0 +1,21 @@
+{
+  "name": "rt-ccsds_space_packet6",
+  "from": "xtce-bogussat2-ccsdspacket",
+  "to": "xtce-bogussat2-ccsdspacket",
+  "input": "000600be00e31000",
+  "expect": "000600be00e31000",
+  "model": {
+    "@kind": "ccsds_space_packet6",
+    "xtcebogussat2.ccsds_packet_id_version": "0",
+    "xtcebogussat2.ccsds_packet_id_type": "0",
+    "xtcebogussat2.ccsds_packet_id_sec_hdr_flag": "0",
+    "xtcebogussat2.ccsds_packet_id_apid": "6",
+    "xtcebogussat2.ccsds_packet_sequence_group_flags": "0",
+    "xtcebogussat2.ccsds_packet_sequence_count": "190",
+    "xtcebogussat2.ccsds_packet_length": "227",
+    "xtcebogussat2.sc001_payload1_payload_1_state": "1",
+    "xtcebogussat2.sc001_bus_electronics_solar_array_voltage_1_state": "0"
+  },
+  "source": "written by tools/gen/xtce2pack.py from the container's entries in BogusSAT-2.xml (https://github.com/CesarCoelho/xtcetools @14b7f51c5)",
+  "reference": "CCSDS 660.0-B-2: a sequence container's entries in order, most significant bit first"
+}
