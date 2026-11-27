@@ -5,6 +5,7 @@
 | [0001](0001-data-driven-packs-independent-engines.md) | Data-driven packs and independent per-language engines | Accepted |
 | [0002](0002-shared-model-pivot-measured-fidelity.md) | Shared-model pivot, measured fidelity, pair overrides | Accepted |
 | [0005](0005-time-hygiene-in-core.md) | Time hygiene in core, on two axes, never invented | Accepted |
+| [0006](0006-single-home-of-formats.md) | This library is the single home of every format, mapping and encoder of the goat family | Proposed |
 
 A new record starts from [TEMPLATE.md](TEMPLATE.md). A change to `model/core.def`
 or `model/track.def` needs one; `tools/model-governance.py` checks it on every
