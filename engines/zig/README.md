@@ -47,6 +47,13 @@ the packs directory, the packs `inner` lines name, transitively),
 refuses a conversion into a message kind of which the entity holds no key
 (spec Version 0.94: `no-kind`, after the kind is chosen and before any line
 is written, in `convert` and `convert_run` with `from` different from `to`),
+binds single parts of one text token to keys on `xml`, `json`, `geojson`
+and `text` (`field <key> <locator> part:<sep>:<n> [via <table>] [unlisted]`
+and `const <locator> part:<sep>:<n> <text>`, spec Version 0.64: decode
+splits the token, encode checks a held whole token against the parts or
+joins the parts; a later line of a key whose table has no entry for its
+value fails the decode on every wire, ruling 26, and a `switch` key's every
+written line is read back, ruling 31),
 and converts between formats via the shared model.
 
 ## Build and run the conformance harness
@@ -173,18 +180,18 @@ builds the engine with all eight wires and with `xml`, `json` and `geojson`
 of the packs on those three wires through the reduced harness, loads a pack
 on `bits` (fixed and sequential), `protobuf`, `text`, `tlv` and `cbor`, each of which
 must be `unknown-wire` naming its wire, and prints the sizes of both builds.
-It exits non-zero on any failure. Measured on 2026-11-26 (Zig 0.13.0, x86_64
+It exits non-zero on any failure. Measured on 2026-11-27 (Zig 0.13.0, x86_64
 Linux, `ReleaseSmall`):
 
 | Binary | All eight wires | `xml`, `json`, `geojson` | Reduced / full |
 |---|---|---|---|
-| `gt-engine-zig` (harness) | 881 304 bytes | 471 704 bytes | 53 % |
-| `goat-xf` (command-line tool) | 848 536 bytes | 451 224 bytes | 53 % |
+| `gt-engine-zig` (harness) | 922 264 bytes | 500 376 bytes | 54 % |
+| `goat-xf` (command-line tool) | 889 496 bytes | 483 992 bytes | 54 % |
 
-The reduced harness loaded 1750 packs and left out 3302; it ran 8519
-conversion vectors (8519 passed), 402 load vectors (402 passed) and 16
-capability vectors (16 passed), and did not run 1051 vectors that name a
-pack it left out nor 1351 load vectors with such a pack.
+The reduced harness loaded 1812 packs and left out 3352; it ran 8787
+conversion vectors (8787 passed), 543 load vectors (543 passed) and 16
+capability vectors (16 passed), and did not run 1086 vectors that name a
+pack it left out nor 1448 load vectors with such a pack.
 
 `goat-xf` of a reduced build loads a whole packs directory as Version 0.23
 says, so a directory holding a pack on a wire the build lacks fails with that
