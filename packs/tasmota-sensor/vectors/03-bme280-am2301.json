@@ -3,12 +3,12 @@
   "from": "tasmota-sensor",
   "to": "tasmota-sensor",
   "input": "{\"Time\":\"2026-11-21T10:15:30\",\"BME280\":{\"Temperature\":21.4,\"Humidity\":48.2,\"DewPoint\":10.1,\"Pressure\":1013.2},\"AM2301\":{\"Temperature\":19.9,\"Humidity\":55,\"DewPoint\":10.7},\"SHT3X\":{\"Temperature\":20.6,\"Humidity\":51.3},\"PressureUnit\":\"hPa\",\"TempUnit\":\"C\"}",
-  "expect": "{\"Time\":\"2026-11-21T10:15:30\",\"BME280\":{\"Temperature\":21.4,\"Humidity\":48.2,\"DewPoint\":10.1,\"Pressure\":1013.2},\"AM2301\":{\"Temperature\":19.9,\"Humidity\":55,\"DewPoint\":10.7},\"TempUnit\":\"C\",\"PressureUnit\":\"hPa\",\"SHT3X\":{\"Temperature\":20.6,\"Humidity\":51.3}}",
+  "expect": "{\"Time\":\"2026-11-21T10:15:30\",\"BME280\":{\"Temperature\":21.4,\"Humidity\":48.2,\"DewPoint\":10.1,\"Pressure\":1013.2},\"AM2301\":{\"Temperature\":19.9,\"Humidity\":55,\"DewPoint\":10.7},\"PressureUnit\":\"hPa\",\"TempUnit\":\"C\",\"SHT3X\":{\"Temperature\":20.6,\"Humidity\":51.3}}",
   "model": {
     "tasmota.bme280_pressure": "1013.2",
     "tasmota.am2301_humidity": "55",
     "tasmota.pressure_unit": "hPa"
   },
   "source": "constructed",
-  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; TempUnit before PressureUnit (line order); an unmapped sensor type is residue"
+  "reference": "Tasmota v16.0.0 STATE, SENSOR and RESULT payload shapes; text by tools/gen/tasmota-vectors.py; PressureUnit before TempUnit, as MqttAppendSensorUnits writes them (line order); an unmapped sensor type is residue"
 }

@@ -39,5 +39,5 @@ field  tasmota.bmp280_seapressure  BMP280.SeaPressure  float
 field  tasmota.am2301_temperature  AM2301.Temperature  float
 field  tasmota.am2301_humidity  AM2301.Humidity  float
 field  tasmota.am2301_dewpoint  AM2301.DewPoint  float
+field  tasmota.pressure_unit  PressureUnit  string    # MqttAppendSensorUnits writes PressureUnit first
 field  tasmota.temp_unit  TempUnit  string
-field  tasmota.pressure_unit  PressureUnit  string

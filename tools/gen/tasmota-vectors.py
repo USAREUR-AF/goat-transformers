@@ -95,11 +95,11 @@ def build(out):
            "SHT3X": {"Temperature": 20.6, "Humidity": 51.3}, "PressureUnit": "hPa", "TempUnit": "C"}
     files.append(("packs/tasmota-sensor/vectors/03-bme280-am2301.json",
                   vec("tasmota-sensor-bme280-am2301", "tasmota-sensor", "tasmota-sensor", j(env),
-                      j({"Time": T, "BME280": env["BME280"], "AM2301": env["AM2301"], "TempUnit": "C",
-                         "PressureUnit": "hPa", "SHT3X": env["SHT3X"]}),
+                      j({"Time": T, "BME280": env["BME280"], "AM2301": env["AM2301"], "PressureUnit": "hPa",
+                         "TempUnit": "C", "SHT3X": env["SHT3X"]}),
                       {"tasmota.bme280_pressure": "1013.2", "tasmota.am2301_humidity": "55",
                        "tasmota.pressure_unit": "hPa"},
-                      note="TempUnit before PressureUnit (line order); an unmapped sensor type is residue")))
+                      note="PressureUnit before TempUnit, as MqttAppendSensorUnits writes them (line order); an unmapped sensor type is residue")))
     files.append(("packs/tasmota-sensor/vectors/04-energy-phases.json",
                   vec("tasmota-sensor-energy-phases", "tasmota-sensor", "tasmota-sensor",
                       j({"Time": T, "ENERGY": {"Total": 1.5, "Voltage": [230, 231, 229]}}), error="transform-decode",
