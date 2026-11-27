@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 922" width="100%" role="img" aria-labelledby="t d">
-<title id="t">Every public format, by family: 233 families, 4,254 formats</title>
+<title id="t">Every public format, by family: 233 families, 4,256 formats</title>
 <desc id="d">One bar per family around the shared model, its length the logarithm of its pack count, coloured by domain. A dashed outer ring stands for private overlays, which the same engines read.</desc>
 <style>
   .rd-bg{fill:#f3f5f6} .rd-t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"Liberation Sans","DejaVu Sans",sans-serif;fill:#0f1c26}
@@ -16,7 +16,7 @@
   .rd-air{--rd:#2a78d6} .rd-land{--rd:#eb6834} .rd-sea{--rd:#1baf7a} .rd-space{--rd:#6250d6} .rd-uncrewed{--rd:#e34948} .rd-c2{--rd:#184f95} .rd-sensors{--rd:#008300} .rd-transport{--rd:#e87ba4} .rd-iot{--rd:#eda100} .rd-networks{--rd:#009a8a} .rd-maps{--rd:#a14a1a}
 </style>
 <rect x="0" y="0" width="680" height="922" class="rd-bg"/>
-<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">Every public format, by family: 233 families, 4,254 formats</text>
+<text x="20" y="30" class="rd-t" font-size="18" font-weight="700">Every public format, by family: 233 families, 4,256 formats</text>
 <text x="20" y="50" class="rd-t rd-q" font-size="13">Bar length: the pack count on a log scale, read against the faint rings; colour: the domain.</text>
 <g transform="translate(0 64)">
 <circle cx="340" cy="340" r="318" class="rd-private"/>
@@ -29,7 +29,7 @@
 <path d="M348.67 198.26A142 142 0 0 1 385.65 205.54L374.72 237.73A108 108 0 0 0 346.59 232.2Z" class="rd-dom rd-air"/>
 <path id="rd-light-l0" d="M347.45 218.23A122 122 0 0 1 379.22 224.48" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-light-l0" startOffset="50%" text-anchor="middle">Air</textPath></text>
-<path d="M355.4 100.56A239 239 0 0 1 364.51 101.32L355.12 192.77A148 148 0 0 0 349.5 192.31Z" class="rd-bar rd-air"><title>ASTERIX: 30 packs (Air)</title></path>
+<path d="M355.45 99.75A240 240 0 0 1 364.59 100.51L355.12 192.77A148 148 0 0 0 349.5 192.31Z" class="rd-bar rd-air"><title>ASTERIX: 31 packs (Air)</title></path>
 <path d="M358.76 167.91A173 173 0 0 1 365.3 168.75L361.63 193.59A148 148 0 0 0 356.04 192.87Z" class="rd-bar rd-air"><title>ADS-B: 2 packs (Air)</title></path>
 <path d="M366.38 168.91A173 173 0 0 1 372.87 170.04L368.1 194.69A148 148 0 0 0 362.55 193.73Z" class="rd-bar rd-air"><title>OpenSky Network REST API: 2 packs (Air)</title></path>
 <path d="M373.94 170.25A173 173 0 0 1 380.38 171.67L374.52 196.08A148 148 0 0 0 369.02 194.87Z" class="rd-bar rd-air"><title>readsb JSON: 2 packs (Air)</title></path>
@@ -108,7 +108,7 @@
 <path d="M442.59 438.18A142 142 0 0 1 415.42 460.32L397.36 431.51A108 108 0 0 0 418.03 414.67Z" class="rd-dom rd-c2"/>
 <path id="rd-light-l5" d="M410.11 451.84A132 132 0 0 0 435.37 431.26" fill="none"/>
 <text class="rd-t rd-dom-t"><textPath href="#rd-light-l5" startOffset="50%" text-anchor="middle">C2</textPath></text>
-<path d="M464.69 460.08A173 173 0 0 1 462.45 462.36L444.69 444.61A148 148 0 0 0 446.61 442.66Z" class="rd-bar rd-c2"><title>Cursor on Target: 2 packs (C2 and tactical)</title></path>
+<path d="M471.9 467.02A183 183 0 0 1 469.53 469.43L444.69 444.61A148 148 0 0 0 446.61 442.66Z" class="rd-bar rd-c2"><title>Cursor on Target: 3 packs (C2 and tactical)</title></path>
 <path d="M461.68 463.13A173 173 0 0 1 459.39 465.35L442.07 447.17A148 148 0 0 0 444.03 445.27Z" class="rd-bar rd-c2"><title>goat-processors outputs: 2 packs (C2 and tactical)</title></path>
 <path d="M458.6 466.1A173 173 0 0 1 456.25 468.27L439.39 449.66A148 148 0 0 0 441.4 447.81Z" class="rd-bar rd-c2"><title>UCI: 2 packs (C2 and tactical)</title></path>
 <path d="M444.03 456.25A156 156 0 0 1 441.87 458.15L436.64 452.09A148 148 0 0 0 438.7 450.29Z" class="rd-bar rd-c2"><title>A-GRA: 1 pack (C2 and tactical)</title></path>
@@ -299,7 +299,7 @@
 <text class="rd-t rd-ex-t" text-anchor="end"><tspan x="663.37" y="16" class="rd-ex-name">ArduPilot DataFlash log</tspan><tspan x="663.37" y="38">342 packs, the longest bar</tspan></text>
 </g>
 <rect x="20" y="750" width="12" height="12" rx="2" class="rd-sw rd-air"/>
-<text x="38" y="760" class="rd-t" font-size="13">Air <tspan class="rd-q">38</tspan></text>
+<text x="38" y="760" class="rd-t" font-size="13">Air <tspan class="rd-q">39</tspan></text>
 <rect x="340" y="750" width="12" height="12" rx="2" class="rd-sw rd-land"/>
 <text x="358" y="760" class="rd-t" font-size="13">Land vehicles <tspan class="rd-q">570</tspan></text>
 <rect x="20" y="772" width="12" height="12" rx="2" class="rd-sw rd-sea"/>
@@ -309,7 +309,7 @@
 <rect x="20" y="794" width="12" height="12" rx="2" class="rd-sw rd-uncrewed"/>
 <text x="38" y="804" class="rd-t" font-size="13">Uncrewed systems and robots <tspan class="rd-q">1,640</tspan></text>
 <rect x="340" y="794" width="12" height="12" rx="2" class="rd-sw rd-c2"/>
-<text x="358" y="804" class="rd-t" font-size="13">C2 and tactical <tspan class="rd-q">13</tspan></text>
+<text x="358" y="804" class="rd-t" font-size="13">C2 and tactical <tspan class="rd-q">14</tspan></text>
 <rect x="20" y="816" width="12" height="12" rx="2" class="rd-sw rd-sensors"/>
 <text x="38" y="826" class="rd-t" font-size="13">Sensors <tspan class="rd-q">159</tspan></text>
 <rect x="340" y="816" width="12" height="12" rx="2" class="rd-sw rd-transport"/>
