@@ -38,11 +38,11 @@ field  lat                                             2.10      pdouble
 field  takproto.cot_event_lat                          2.10      pdouble
 field  lon                                             2.11      pdouble
 field  takproto.cot_event_lon                          2.11      pdouble
-field  hae                                             2.12      pdouble  absent 4696837138094751744
+field  hae                                             2.12      pdouble  absent 4711630319185297408
 field  takproto.cot_event_hae                          2.12      pdouble
-field  ce                                              2.13      pdouble  absent 4696837138094751744
+field  ce                                              2.13      pdouble  absent 4711630319185297408
 field  takproto.cot_event_ce                           2.13      pdouble
-field  le                                              2.14      pdouble  absent 4696837138094751744
+field  le                                              2.14      pdouble  absent 4711630319185297408
 field  takproto.cot_event_le                           2.14      pdouble
 field  takproto.detail_xml_detail                      2.15.1    pstring
 field  takproto.detail_contact_endpoint                2.15.2.1  pstring

@@ -56,8 +56,8 @@ START_DIFFERS = {2: {**SMALL, 6: (V, T), 7: (V, T - 60000)}}
 START_ONLY = {2: {**SMALL, 7: (V, T - 60000)}}
 CONTROL = {1: {1: (V, 1), 2: (V, 1)}}
 EMPTY_CONTROL = {1: {}}
-# cotevent.proto: use 999999 for an unknown hae, ce and le
-UNKNOWN = 999999.0
+# an unknown hae, ce and le: 9999999.0, as the TAK library writes it (pack.md of cot-protobuf)
+UNKNOWN = 9999999.0
 UNKNOWN_HEIGHT = {2: {**EVENT[2], 12: (D, UNKNOWN), 13: (D, UNKNOWN), 14: (D, UNKNOWN)}}
 
 # (file name, message, target format, the keys `model` states; None: every decoded key)
@@ -92,7 +92,7 @@ def from_cot_protobuf(pack, others):
         if missing:
             raise proto2pack.GenError("vector %s: the pack does not decode %s" % (name, " ".join(missing)))
         if name.startswith(("09-", "10-")) and any(k in ent for k in ("hae", "ce", "le")):
-            raise proto2pack.GenError("vector %s: 999999 decodes as a value" % name)
+            raise proto2pack.GenError("vector %s: 9999999 decodes as a value" % name)
         model = {"@kind": kind}
         model.update({k: proto2pack.model_text(ent[k]) for k in (ent if keys is None else keys)})
         vectors["packs/cot-protobuf/vectors/%s.json" % name] = {

@@ -12,7 +12,7 @@ files are not kept in this repository.
 | Commit | `889eee292c43d3d2eafdd1f2fbf378ad5cd89ecc` (committed 2024-10-18T12:53:18Z; the head of branch `main` when fetched, 2026-11-16) |
 | Files read by the generator | `takproto/*.proto`, 10 files, 244 lines, proto3, package `atakmap.commoncommo.protobuf.v1` |
 | Fetched from | `https://raw.githubusercontent.com/deptofdefense/AndroidTacticalAssaultKit-CIV/<commit>/takproto/<name>.proto` |
-| Also read, by the author of the pack | `takproto/README.md`, the description of the protocol and its framing |
+| Also read, by the author of the pack | `takproto/README.md`, the description of the protocol and its framing; and, for the value of an unknown `hae`, `ce` and `le` (pack.md), `commoncommo/core/include/cotmessageio.h` (SHA-256 `f7b95d6d1a12c28266d8f45896c09a44537b5b8cc090ddd9501153a545e65867`) and `commoncommo/core/impl/cotmessage.cpp` (SHA-256 `30f6ebfc055d94cb94c9f1790e63c893bde52261ff31509167f7d5e1ba7fb8f4`) at the same commit. Nothing of them is copied. |
 | Same content elsewhere in the repository | `commoncommo/core/impl/protobuf/` holds the same ten `.proto` files, byte for byte, and `protocol.txt`, byte for byte the same as `takproto/README.md` |
 
 ## License statements in the repository at that commit
