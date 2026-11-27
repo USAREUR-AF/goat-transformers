@@ -1,0 +1,41 @@
+# Routes a deployment runs, and every key each one drops (tools/route-coverage.py).
+# <from>	<to>	<key>	<state>	<note>, separated by tabs. <state> is derived:<target key>
+# (the value arrives through a derive line of the model) or not-carried, with the reason.
+# A new route: python3 -I tools/route-coverage.py --print <from> <to>, then give each line its state.
+cot-xml	goat-processors-report	track.scoped_id	not-carried	the runner names a track by its source and uid; the report has no member for a scoped identifier
+cot-xml	goat-processors-report	how	not-carried	the report has no member for how a position was obtained; the runner does not read it
+cot-xml	goat-processors-report	track.opex	not-carried	the report has no member for the status flags; pack does not map them yet
+cot-xml	goat-processors-report	access	not-carried	the report has no member for an access marking
+cot-xml	goat-processors-report	le	not-carried	the runner reads the horizontal error only; the report has no member for the vertical error
+cot-xml	goat-processors-report	track.status_text	not-carried	the report has no member for the status flags; pack does not map them yet
+cot-xml	goat-processors-report	time_text	derived:time_ms	
+cot-xml	goat-processors-report	stale_text	derived:stale_ms	
+cot-xml	goat-processors-report	display_name	not-carried	the report has no member for a display name
+cot-xml-radar	goat-processors-report	track.scoped_id	not-carried	the runner names a track by its source and uid; the report has no member for a scoped identifier
+cot-xml-radar	goat-processors-report	how	not-carried	the report has no member for how a position was obtained; the runner does not read it
+cot-xml-radar	goat-processors-report	track.opex	not-carried	the report has no member for the status flags; pack does not map them yet
+cot-xml-radar	goat-processors-report	access	not-carried	the report has no member for an access marking
+cot-xml-radar	goat-processors-report	le	not-carried	the runner reads the horizontal error only; the report has no member for the vertical error
+cot-xml-radar	goat-processors-report	track.status_text	not-carried	the report has no member for the status flags; pack does not map them yet
+cot-xml-radar	goat-processors-report	time_text	derived:time_ms	
+cot-xml-radar	goat-processors-report	stale_text	derived:stale_ms	
+cot-xml-radar	goat-processors-report	display_name	not-carried	the report has no member for a display name
+asterix-cat062-full	goat-processors-report	cat062full.*	not-carried	raw CAT062 items; the report holds shared keys only, and no shared key exists for most of them
+asterix-cat062-full	goat-processors-report	track.vel_east_ms	derived:course	
+asterix-cat062-full	goat-processors-report	track.vel_north_ms	derived:speed_ms	
+goat-processors-system-track	asterix-cat062	uid	not-carried	CAT062 names a track by I062/040, which the runner publishes as cat062.track_number
+goat-processors-system-track	asterix-cat062	time_ms	derived:cat062.time_of_day_s	
+goat-processors-system-track	asterix-cat062	course	derived:track.vel_east_ms	
+goat-processors-system-track	asterix-cat062	speed_ms	derived:track.vel_north_ms	
+goat-processors-system-track	asterix-cat062	type	not-carried	the pack writes no item for a target type; not mapped yet
+goat-processors-system-track	asterix-cat062	callsign	not-carried	the pack does not write I062/245 yet
+goat-processors-system-track	asterix-cat062-rcs	uid	not-carried	CAT062 names a track by I062/040, which the runner publishes as cat062.track_number
+goat-processors-system-track	asterix-cat062-rcs	time_ms	derived:cat062.time_of_day_s	
+goat-processors-system-track	asterix-cat062-rcs	course	derived:track.vel_east_ms	
+goat-processors-system-track	asterix-cat062-rcs	speed_ms	derived:track.vel_north_ms	
+goat-processors-system-track	asterix-cat062-rcs	type	not-carried	the pack writes no item for a target type; not mapped yet
+goat-processors-system-track	asterix-cat062-rcs	callsign	not-carried	the pack does not write I062/245 yet
+goat-processors-system-track	asterix-cat062	radar.rcs_m2	not-carried	no standard CAT062 item holds it; the format asterix-cat062-rcs writes it in I062/SP
+goat-processors-system-track	cot-xml	cat062.track_number	not-carried	a CAT062 track number has no element in a CoT event
+goat-processors-system-track	cot-xml	cat062.mon	not-carried	the CAT062 mono-sensor flag has no element in a CoT event
+goat-processors-system-track	cot-xml	radar.rcs_m2	not-carried	the event schema has no element for it; the format cot-xml-radar writes it in detail/__radar

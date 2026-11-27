@@ -60,6 +60,10 @@ jobs:
       # The figure's counts are compared (--check) only in the counts PR.
       - name: Every pack has a family in the catalog figure
         run: python3 -I tools/catalog-figure.py --check-families
+      # A route a deployment runs drops no model key without a line in
+      # tools/route-coverage.txt that says why (capability report, Ruling 6).
+      - name: No declared route drops a key without a written reason
+        run: python3 -I tools/route-coverage.py --check
       - name: No pack or module invents time quality (spec 0.32)
         run: python3 -I tools/time-quality-guard.py
       # Every pack and module has one known licence, in its own place; the
