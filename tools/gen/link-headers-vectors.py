@@ -237,15 +237,16 @@ def esp_vectors():
 def ah_vectors():
     out = []
     P = "ah-header"
-    v = {"ip_protocol": 6, "ah_payload_len": 4, "ipsec_spi": 0x00002002, "ipsec_seq": 42}
-    h = pack([("ip_protocol", 8), ("ah_payload_len", 8), ("ah_reserved", 16), ("ipsec_spi", 32), ("ipsec_seq", 32)], v)
-    keys = ["ip_protocol", "ah_payload_len", "ah_reserved", "ipsec_spi", "ipsec_seq"]
-    out.append(vec(P, "tcp-next-icv-not-written", (h + bytes(12)).hex(), h.hex(), model_of(v, keys),
+    v = {"ah_next_header": 6, "ah_payload_len": 4, "ipsec_spi": 0x00002002, "ipsec_seq": 42}
+    h = pack([("ah_next_header", 8), ("ah_payload_len", 8), ("ah_reserved", 16), ("ipsec_spi", 32), ("ipsec_seq", 32)], v)
+    keys = ["ah_next_header", "ah_payload_len", "ah_reserved", "ipsec_spi", "ipsec_seq"]
+    m = model_of(v, keys); m["@absent"] = ["inet.ip_protocol"]
+    out.append(vec(P, "tcp-next-icv-not-written", (h + bytes(12)).hex(), h.hex(), m,
                    SRC + "AH before TCP (next header 6), payload length 4 (3 fixed words and a 96-bit ICV, minus 2), "
                          "SPI 0x2002, sequence 42; the 12-octet ICV read over"))
-    e = {"ip_protocol": 255, "ah_payload_len": 255, "ah_reserved": 0xFFFF, "ipsec_spi": 0xFFFFFFFF,
+    e = {"ah_next_header": 255, "ah_payload_len": 255, "ah_reserved": 0xFFFF, "ipsec_spi": 0xFFFFFFFF,
          "ipsec_seq": 0xFFFFFFFF}
-    he = pack([("ip_protocol", 8), ("ah_payload_len", 8), ("ah_reserved", 16), ("ipsec_spi", 32), ("ipsec_seq", 32)], e)
+    he = pack([("ah_next_header", 8), ("ah_payload_len", 8), ("ah_reserved", 16), ("ipsec_spi", 32), ("ipsec_seq", 32)], e)
     out.append(vec(P, "largest-values", he.hex(), he.hex(), model_of(e, keys),
                    SRC + "every field at its largest value, the reserved bits included (the pack does not check them)"))
     out.append(vec(P, "eleven-octets-is-malformed", h[:11].hex(), error="malformed-wire",

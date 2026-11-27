@@ -11,7 +11,7 @@ wire          bits
 word_bytes    1
 bit_order     msb
 
-field  inet.ip_protocol             0:0:8      uint
+field  inet.ah_next_header           0:0:8      uint
 field  inet.ah_payload_len          0:8:8      uint
 field  inet.ah_reserved             0:16:16    uint
 field  inet.ipsec_spi               0:32:32    uint
