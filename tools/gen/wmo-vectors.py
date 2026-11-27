@@ -99,6 +99,7 @@ def grib2_vectors():
     S = "grib2.sections"
     V["01-temperature-field-roundtrip"] = vec("temperature-field-roundtrip", F, x, x, {
         "@kind": "grib2", "grib2.discipline": 0, "grib2.reserved": 0xFFFF, S + ".#": 7,
+        S + "[6].@kind": "end", S + "[6].grib2.end_marker": 926365495,
         S + "[0].grib2.section_number": 1, S + "[0].grib2.centre": 98, S + "[0].grib2.year": 2026, S + "[0].grib2.hour": 6,
         S + "[1].grib2.grid_template": 0, S + "[1].grib2.ni": 2, S + "[1].grib2.la1": 50000000, S + "[1].grib2.lo2": 10250000,
         S + "[1].grib2.di": 250000, S + "[1].grib2.section_octets.#": 0,

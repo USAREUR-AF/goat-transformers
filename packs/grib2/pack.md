@@ -11,10 +11,18 @@ GRIB2 templates (wmo-im/GRIB2, MIT) and the ecCodes section definitions (Apache-
 |---|---|
 | section 0 | common lines: `when` "GRIB", reserved, discipline, `when` edition 2, `length 64 whole` (the total length) |
 | sections 1 to 7 | `group grib2.sections rest`, one item per section: `length 32 bytes plus 4` (the length counts itself), the section number, then `switch grib2.section_number` |
-| section 8 | the item kind `end`: `when 32` "7777" |
+| section 8 | the item kind `end`: `when 32` "7777", bound to `grib2.end_marker` (`when … as`, engine-spec 0.30) |
 
 Kind `grib2` holds the list. A section is an item of kind `section`; sections 3 to 7 may repeat
 for further fields of one message, each a new item.
+
+`end` stands before `section` because decode tries the item kinds in order, and `section` has no
+`when`: it would read "7777" as a section length. On encode, an item chosen by `requires`
+(one that records no kind) is `end` only when it holds `grib2.end_marker`, which decode sets on the
+end item; any other item is a `section`. Before that binding, `end` had no term, so it was chosen
+for every such item, and the sections were lost. Only a library caller that builds the items
+itself, without a kind, meets this: a decoded message records each item's kind (0.8 ruling 26),
+and no other format has this list, so no conversion vector can show it.
 
 | Section | Read field by field | Kept as octets |
 |---|---|---|

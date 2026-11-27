@@ -24,7 +24,7 @@ length  64 whole                          # total length of the message
 kind    grib2
 group  grib2.sections  rest
   kind    end
-  when    32  926365495                   # section 8: "7777"
+  when    32  926365495  as  grib2.end_marker   # section 8: "7777"; the key chooses this kind on encode
   kind    section
   length 32 bytes plus 4                  # the section length counts itself
     field  grib2.section_number  8  uint
