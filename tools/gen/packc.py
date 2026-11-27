@@ -375,6 +375,13 @@ class Pack:
             if t[0] == "charset" or (t[0] == "field" and len(t) > 3 and t[3].split(":")[0] in ("code", "codenum")):
                 refuse("unsupported-feature", "%s: `charset`, `code` and `codenum` (spec 0.46) are not in the device "
                        "profile" % self.format)
+        for t in rows:      # spec 0.56: `range` and the range sentinels of `absent` are not in the device profile
+            if t[0] in ("field", "also") and len(t) > 4 and (
+                    "range" in t[4:] or any(t[i] == "absent" and i + 1 < len(t)
+                                            and any(v.startswith((">=", "<=")) for v in t[i + 1].split(","))
+                                            for i in range(4, len(t)))):
+                refuse("unsupported-feature", "%s: `range <min> <max> [wrap]` and the `absent` sentinels `>=` and "
+                       "`<=` (spec 0.56) are not in the device profile" % self.format)
         for t in rows:      # spec 0.55: decimal places on a scale and `utf8` on `bits` are not in the device profile
             if t[0] in ("field", "also") and len(t) > 3 and (
                     t[3] == "utf8" or (t[3].split(":")[0] in ("uscale", "sscale") and len(t[3].split(":")) == 4)):
