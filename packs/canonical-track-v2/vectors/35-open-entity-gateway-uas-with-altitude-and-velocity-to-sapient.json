@@ -4,6 +4,6 @@
   "to": "sapient",
   "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"T-0007\",\"sourceId\":\"example-radar-1\",\"trackGeneration\":\"3\",\"observedAt\":\"2025-06-15T15:06:43.250Z\",\"position\":{\"latitudeDeg\":64.8378,\"longitudeDeg\":-147.7164,\"altitudeM\":412.0},\"velocity\":{\"eastMps\":13.0,\"northMps\":0.0,\"upMps\":0.0},\"classification\":\"uas\",\"confidence\":0.82,\"simulated\":true,\"testData\":true,\"identifiers\":[]}",
   "expect": "0a0b0883c3bbc2061080e59a773a652213746573742d646174612c73696d756c61746564321f09575bb1bfec7662c011af25e4839e355040190000000000c07940380140013d85eb513f5a0a0a035541561585eb513f9a011b090000000000002a40110000000000000000190000000000000000",
-  "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
+  "source": "USAREUR-AF/vendor-bridges examples/tracks/example.tracks.jsonl (Apache-2.0)",
   "reference": "the gateway's mapping gives stale 2 minutes after observedAt and how m-g; the CAT062 destination has SAC 25, SIC 4 and numbers tracks in order seen"
 }

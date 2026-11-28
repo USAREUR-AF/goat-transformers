@@ -11,6 +11,6 @@
     "cat062.mrh": "1"
   },
   "expect": "3e001f9b0d1019046a41a000b86d72fe5bd433003400000001a181010000d8",
-  "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
+  "source": "USAREUR-AF/vendor-bridges examples/tracks/example.tracks.jsonl (Apache-2.0)",
   "reference": "as vector 34, with MRH supplied as context: I062/080 first part MON 1, SPI 0, MRH 1, SRC 000, CNF 0, FX 1 is 10100001 = a1 (EUROCONTROL-SPEC-0149-9 Ed. 1.21, I062/080); every other octet as vector 34"
 }
