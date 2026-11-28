@@ -1,0 +1,30 @@
+{
+ "name": "golden-ownship-1",
+ "from": "gdl90",
+ "to": "gdl90",
+ "input": "0a00beef01260000f000000dc99a07800ac8014e3132334d45474100",
+ "expect": "0a00beef01260000f000000dc99a07800ac8014e3132334d45474100",
+ "model": {
+  "@kind": "ownship",
+  "gdl90.address_type": "0",
+  "gdl90.address": "12513025",
+  "lat": "53.4375",
+  "lon": "-22.5",
+  "gdl90.pressure_alt_ft": "4500",
+  "gdl90.alt_raw": "220",
+  "gdl90.airborne": "1",
+  "gdl90.extrapolated": "0",
+  "gdl90.track_type": "1",
+  "gdl90.nic": "9",
+  "gdl90.nacp": "10",
+  "gdl90.speed_kt": "120",
+  "gdl90.vvel_fpm": "640",
+  "gdl90.vvel_raw": "10",
+  "gdl90.track_raw": "200",
+  "gdl90.emitter_category": "1",
+  "callsign": "N123MEGA",
+  "gdl90.priority_status": "0"
+ },
+ "source": "gdl90 (github.com/etdey/gdl90) at a026ec7: Encoder.msgOwnshipReport with BUILD[7] of tools/gen/golden-gdl90.py, unframed and its CRC checked with the reference's crcCheck. Written by tools/gen/golden-gdl90.py; no engine is run.",
+ "reference": "what the reference's messageToObject (MIT) decodes, under the pack's keys; the alert status is not compared (tools/gen/golden-gdl90.py)"
+}

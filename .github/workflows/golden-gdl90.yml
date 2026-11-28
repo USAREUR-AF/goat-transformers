@@ -1,0 +1,22 @@
+# GDL 90 golden vectors are what the gdl90 reference writes (shared-model hardening, item 2).
+# A workflow of its own, so that a golden check added for another reference adds a file
+# and edits no shared list. The reference's files are fetched at the commit
+# packs/gdl90/PROVENANCE.md names and refused unless their SHA-256 is the one the script records.
+name: golden-gdl90
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: golden-gdl90-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  golden-gdl90:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: GDL 90 golden vectors are what the gdl90 reference writes
+        run: python3 -I tools/gen/golden-gdl90.py --check --cache "$RUNNER_TEMP/gdl90-cache"
