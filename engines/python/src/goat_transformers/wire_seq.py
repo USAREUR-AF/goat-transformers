@@ -1320,9 +1320,7 @@ class _Writer:
                         "%s holds %r, which the 'when' of its window does not match" % (w.as_key, hv),
                         format=self.pack.name, locator=w.locator)
                 hv &= (1 << wl) - 1
-            if any(lo <= cur <= hi for lo, hi in w.ranges) and (not held or cur == hv):
-                val = cur
-            else:
+            if not (any(lo <= cur <= hi for lo, hi in w.ranges) and (not held or cur == hv)):
                 val = hv if held else w.value
                 for k in range(wl):
                     if self.is_held(ws + k) and self.bit(cur, wl, k) != self.bit(val, wl, k):

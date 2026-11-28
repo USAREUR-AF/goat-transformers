@@ -129,6 +129,12 @@ class TestBitsTransforms(unittest.TestCase):
         self.assertEqual([round_half_away(v) for v in (2.5, -2.5, 0.5, -0.5, 2.4, 2.6)],
                          [3, -3, 1, -1, 2, 3])
 
+    def test_text_transforms_are_whole_bits_transforms(self):
+        # Every bits transform carries the name, the length and the mask of its field.
+        for name, length in (("ascii", 16), ("sixbit", 12)):
+            t = build_bits_transform(name, length)
+            self.assertEqual((t.name, t.length, t.mask), (name, length, (1 << length) - 1))
+
     def test_build_bits_transform_direct(self):
         self.assertEqual(build_bits_transform("uint", 4).encode(15), 15)
         with self.assertRaises(ValueError):  # ruling 4b of 0.11: never the low bits of a value that does not fit
