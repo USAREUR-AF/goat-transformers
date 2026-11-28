@@ -10,6 +10,6 @@
     "track.confirmed": "1"
   },
   "expect": "3e001f9b0d1019046a41a000b86d72fe5bd433003400000001a181010000d8",
-  "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
+  "source": "USAREUR-AF/vendor-bridges examples/tracks/example.tracks.jsonl (Apache-2.0)",
   "reference": "the gateway's mapping gives stale 2 minutes after observedAt and how m-g; the CAT062 destination has SAC 25, SIC 4 and numbers tracks in order seen; MRH is 1 because I062/130 is written (`derive cat062.mrh present hae`, spec 0.12): the first octet of I062/080 is a1, not 81"
 }

@@ -10,6 +10,6 @@
     "track.confirmed": "1"
   },
   "expect": "3e0018990c19046a420000b86f1ffe5bdf45000281810100",
-  "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
+  "source": "USAREUR-AF/vendor-bridges examples/tracks/example.tracks.jsonl (Apache-2.0)",
   "reference": "the gateway's mapping gives stale 2 minutes after observedAt and how m-g; the CAT062 destination has SAC 25, SIC 4 and numbers tracks in order seen"
 }

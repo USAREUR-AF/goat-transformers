@@ -11,6 +11,6 @@
       "le"
     ]
   },
-  "source": "USAREUR-AF/open-entity-gateway docs/adapters/cot.md, its example event (Apache-2.0)",
+  "source": "USAREUR-AF/vendor-bridges docs/adapters/cot.md, its example event (Apache-2.0)",
   "reference": "access is a mapped attribute, written after how; times in milliseconds; ce and le 9999999 decode absent and are written as the default"
 }

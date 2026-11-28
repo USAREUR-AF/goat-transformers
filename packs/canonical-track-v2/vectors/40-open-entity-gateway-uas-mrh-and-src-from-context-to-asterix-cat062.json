@@ -12,6 +12,6 @@
     "cat062.src": "1"
   },
   "expect": "3e001f9b0d1019046a41a000b86d72fe5bd433003400000001a581010000d8",
-  "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
+  "source": "USAREUR-AF/vendor-bridges examples/tracks/example.tracks.jsonl (Apache-2.0)",
   "reference": "as vector 39, with SRC 1 (GNSS) as context, as open-entity-gateway writes it from altitude_source: I062/080 first part MON 1, SPI 0, MRH 1, SRC 001, CNF 0, FX 1 is 10100101 = a5 (EUROCONTROL-SPEC-0149-9 Ed. 1.21, I062/080)"
 }

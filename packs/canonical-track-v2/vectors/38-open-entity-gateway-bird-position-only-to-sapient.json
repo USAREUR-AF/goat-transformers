@@ -4,6 +4,6 @@
   "to": "sapient",
   "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"T-0008\",\"sourceId\":\"example-radar-1\",\"trackGeneration\":\"1\",\"observedAt\":\"2025-06-15T15:06:44Z\",\"position\":{\"latitudeDeg\":64.8401,\"longitudeDeg\":-147.7012},\"classification\":\"bird\",\"simulated\":true,\"testData\":true}",
   "expect": "0a080884c3bbc20610003a352213746573742d646174612c73696d756c61746564321609917efb3a707662c011a857ca32c4355040380140015a060a0442495244",
-  "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
+  "source": "USAREUR-AF/vendor-bridges examples/tracks/example.tracks.jsonl (Apache-2.0)",
   "reference": "the gateway's mapping gives stale 2 minutes after observedAt and how m-g; the CAT062 destination has SAC 25, SIC 4 and numbers tracks in order seen"
 }
