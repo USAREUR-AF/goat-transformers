@@ -14,6 +14,7 @@ fn packs_compiled_into_the_binary() {
     let mut e = Engine::new();
     e.load_model(include_str!("../../../model/core.def")).unwrap();
     e.load_model(include_str!("../../../model/track.def")).unwrap();
+    e.load_model(include_str!("../../../model/cot.def")).unwrap();
     e.load_def(include_str!("../../../packs/cot-xml/pack.def")).unwrap();
     e.load_def(include_str!("../../../packs/geojson/pack.def")).unwrap();
     assert_eq!(e.formats(), ["cot-xml", "geojson"]);

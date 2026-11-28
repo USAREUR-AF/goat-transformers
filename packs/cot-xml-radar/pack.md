@@ -10,6 +10,7 @@ element.
 | XML | Model key | Note |
 |---|---|---|
 | `detail/__radar/@rcs_m2` | `radar.rcs_m2` | the radar cross section in square metres, as the reporting radar measured it |
+| `@start` | `cot.start_ms` | the raw `start`, written back before `time_ms`, so a round trip keeps a `start` that differs from `time` (as in `cot-xml`) |
 
 The event schema defines no element for a radar cross section. `detail` is
 open content, and tools name their own detail elements with two leading

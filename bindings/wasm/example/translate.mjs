@@ -28,9 +28,9 @@ if (!Number.isInteger(staleAfterMs)) {
   process.exit(2);
 }
 
-// Load only what this conversion needs: two model modules, two packs.
+// Load only what this conversion needs: three model modules, two packs.
 const gt = await GoatTransformers.load(readFileSync(wasmPath));
-for (const module of ["core", "track"]) gt.loadModel(readFileSync(join(root, "model", `${module}.def`)));
+for (const module of ["core", "track", "cot"]) gt.loadModel(readFileSync(join(root, "model", `${module}.def`)));
 for (const pack of ["canonical-track-v2", "cot-xml"]) gt.loadPack(readFileSync(join(root, "packs", pack, "pack.def")));
 
 const input = readFileSync(0, "utf8").trim();

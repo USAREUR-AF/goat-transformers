@@ -15,6 +15,7 @@ format  cot-xml-radar
 version 0.1.0
 distribution public
 source  "Cursor on Target event schema (MITRE, public release); field use cross-checked against pytak"
+uses    cot
 uses    track
 uses    radar
 wire    xml
@@ -24,6 +25,7 @@ field   track.scoped_id  @uid                 string
 field   uid       @uid                        string
 field   type      @type                       string
 field   time_ms   @time                       iso8601_ms
+field   cot.start_ms  @start                  iso8601_ms
 field   time_ms   @start                      iso8601_ms
 field   stale_ms  @stale                      iso8601_ms
 field   how       @how                        string

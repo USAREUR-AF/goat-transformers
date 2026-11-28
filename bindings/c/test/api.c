@@ -40,6 +40,7 @@ static gt_engine *repository_engine(const char *root) {
     check(e != NULL, "gt_engine_new");
     load_file(e, root, "model/core.def", 1);
     load_file(e, root, "model/track.def", 1);
+    load_file(e, root, "model/cot.def", 1);
     load_file(e, root, "packs/cot-xml/pack.def", 0);
     load_file(e, root, "packs/geojson/pack.def", 0);
     load_file(e, root, "packs/canonical-track-v2/pack.def", 0);

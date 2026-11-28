@@ -381,7 +381,8 @@ import { GoatTransformers } from "@usareur-af/goat-transformers";
 
 const gt = await GoatTransformers.load(wasmBytes);   // the file "@usareur-af/goat-transformers/goat_transformers.wasm"
 gt.loadModel(coreDefText);
-gt.loadModel(trackDefText);        // cot-xml uses the module `track`
+gt.loadModel(trackDefText);        // cot-xml uses the modules `track`
+gt.loadModel(cotDefText);          // and `cot`
 gt.loadPack(cotXmlPackText);
 gt.loadPack(geojsonPackText);
 ```
@@ -413,6 +414,7 @@ gt_engine *e = gt_engine_new();
 gt_buf out = {0};
 gt_load_model(e, core_def, core_def_len, &out);      /* vendor/goat/model/core.def */
 gt_load_model(e, track_def, track_def_len, &out);    /* vendor/goat/model/track.def: cot-xml uses track */
+gt_load_model(e, cotm_def, cotm_def_len, &out);      /* vendor/goat/model/cot.def: and cot */
 gt_load_pack(e, cot_def, cot_def_len, &out);         /* vendor/goat/packs/cot-xml/pack.def */
 gt_load_pack(e, geo_def, geo_def_len, &out);         /* vendor/goat/packs/geojson/pack.def */
 int32_t rc = gt_convert(e, (const uint8_t *)"cot-xml", 7, (const uint8_t *)"geojson", 7,

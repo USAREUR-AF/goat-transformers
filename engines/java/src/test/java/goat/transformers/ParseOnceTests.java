@@ -101,17 +101,18 @@ final class ParseOnceTests {
             dir = Files.createTempDirectory("goat-parse-once");
             Files.copy(models.resolve("core.def"), dir.resolve("core.def"));
             Files.copy(models.resolve("track.def"), dir.resolve("track.def"));
+            Files.copy(models.resolve("cot.def"), dir.resolve("cot.def"));
             Files.writeString(dir.resolve("unused.def"), "module unused\nkey \"broken\n", StandardCharsets.UTF_8);
             Engine e = Engine.loadOnly(packsDir, dir, Distribution.CONTROLLED, List.of("geojson", "cot-xml"));
             List<String> names = new ArrayList<>();
             for (ModelModule m : e.modules()) names.add(m.name);
-            eq("parse once: loadOnly reads only the modules it needs", "[core, track]", names.toString());
+            eq("parse once: loadOnly reads only the modules it needs", "[core, cot, track]", names.toString());
             Files.delete(dir.resolve("unused.def"));
             Files.move(dir.resolve("track.def"), dir.resolve("t-renamed.def"));
             e = Engine.loadOnly(packsDir, dir, Distribution.CONTROLLED, List.of("cot-xml"));
             names.clear();
             for (ModelModule m : e.modules()) names.add(m.name);
-            eq("parse once: a module in a file of another name is found in the directory", "[core, track]", names.toString());
+            eq("parse once: a module in a file of another name is found in the directory", "[core, cot, track]", names.toString());
             // the same pack named twice, by directory and by format, is one pack; named again in a second load it loads again
             Engine twice = Engine.loadOnly(packsDir, List.of("geojson", "geojson"));
             eq("parse once: a pack named twice loads once", 1, twice.packs().size());

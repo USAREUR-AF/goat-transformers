@@ -9,6 +9,7 @@ Cursor on Target event XML, the `<event>` document with a `<point>` and
 | `@uid`, `@type`, `@how` | `uid`, `type`, `how` | |
 | `@access` | `access` | text as the sender or the caller gives it; no default, so a conversion never chooses one. The base-event schema of atak-civ (`takcot/mitre`) requires it; a caller that must validate against that schema supplies it as context |
 | `@time`, `@start` | `time_ms` | ISO 8601; both are written from the one key. Decode reads `time`, and `start` only when `time` is absent |
+| `@start` | `cot.start_ms` | ISO 8601, the raw `start` as written; its line is before `time_ms`'s, so encode writes it when the entity has it and `time_ms` only when it does not |
 | `@stale` | `stale_ms` | supplied by the caller: `convert` context, CLI `--set stale_ms=<epoch ms>` |
 | `point/@lat`, `@lon`, `@hae`, `@ce`, `@le` | `lat`, `lon`, `hae`, `ce`, `le` | |
 | `detail/contact/@callsign` | `callsign` | |
@@ -36,8 +37,12 @@ Read 2026-11-24, public release, in the repository deptofdefense/AndroidTactical
 `08da89898d4f37498faf82d03adb7f6fcae6f0d59128f80553c63bfe21000f14`) and Track schema (sha256
 `0b53a2eecb5165cccaa2c7e10291902607d71139a0163c9816a414a7167bd078`).
 
-A `start` that differs from `time` does not survive a round trip: both leave
-with the value of `time`. Unmapped attributes of `<event>` round-trip through
+A round trip of this pack keeps a `start` that differs from `time`: decode puts
+`start` in `cot.start_ms` as well as `time` in `time_ms`, and encode writes
+`cot.start_ms` at `@start` (`06-start-differs-roundtrip-keeps-start`). An entity
+from another format has no `cot.start_ms`, so `@start` takes `time_ms`; no other
+pack binds `cot.start_ms` yet, so a differing `start` reaches another format as
+`time`. An event with no `start` comes back with one, equal to `time`. Unmapped attributes of `<event>` round-trip through
 residue; unmapped child elements are not carried.
 
 ## Golden vectors

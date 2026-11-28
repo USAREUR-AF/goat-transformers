@@ -1034,7 +1034,7 @@ final class UnitTests {
         eq("packs-only: the packs named", "[cot-xml, geojson]", formats.toString());
         java.util.List<String> modules = new java.util.ArrayList<>();
         for (ModelModule m : e.modules()) modules.add(m.name);
-        eq("packs-only: only the modules they need", "[core, track]", modules.toString());
+        eq("packs-only: only the modules they need", "[core, cot, track]", modules.toString());
         Engine all = Engine.load(packsDir);
         // Each loadOnly reads the files of the modules it needs (ruling 1d of 0.25), and the sample keeps the run short. Unless
         // GOAT_SWEEP_FULL=1, the packs loaded one by one are a fixed sample of PACKS_ONLY_SAMPLE: the first pack of

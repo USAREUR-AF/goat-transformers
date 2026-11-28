@@ -1,0 +1,8 @@
+# The cot module: raw keys of Cursor on Target XML events that no shared key
+# carries on its own, so that an event converted to a CoT XML pack and back is
+# unchanged. Written by hand.
+module        cot
+version       0.1.0
+distribution  public
+source        "Cursor on Target event schema (MITRE, public release): the attributes of <event>"
+key  start_ms  int  ms  "the event's start attribute, epoch milliseconds UTC, as written; time_ms takes the time attribute"

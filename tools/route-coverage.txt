@@ -11,6 +11,7 @@ cot-xml	goat-processors-report	track.status_text	not-carried	the report has no m
 cot-xml	goat-processors-report	time_text	derived:time_ms	
 cot-xml	goat-processors-report	stale_text	derived:stale_ms	
 cot-xml	goat-processors-report	display_name	not-carried	the report has no member for a display name
+cot-xml	goat-processors-report	cot.start_ms	not-carried	the report has one time, time_ms (the event's time); a start that differs from it has no member
 cot-xml-radar	goat-processors-report	track.scoped_id	not-carried	the runner names a track by its source and uid; the report has no member for a scoped identifier
 cot-xml-radar	goat-processors-report	how	not-carried	the report has no member for how a position was obtained; the runner does not read it
 cot-xml-radar	goat-processors-report	track.opex	not-carried	the report has no member for the status flags; pack does not map them yet
@@ -20,6 +21,7 @@ cot-xml-radar	goat-processors-report	track.status_text	not-carried	the report ha
 cot-xml-radar	goat-processors-report	time_text	derived:time_ms	
 cot-xml-radar	goat-processors-report	stale_text	derived:stale_ms	
 cot-xml-radar	goat-processors-report	display_name	not-carried	the report has no member for a display name
+cot-xml-radar	goat-processors-report	cot.start_ms	not-carried	the report has one time, time_ms (the event's time); a start that differs from it has no member
 asterix-cat062-full	goat-processors-report	cat062full.*	not-carried	raw CAT062 items; the report holds shared keys only, and no shared key exists for most of them
 asterix-cat062-full	goat-processors-report	track.vel_east_ms	derived:course	
 asterix-cat062-full	goat-processors-report	track.vel_north_ms	derived:speed_ms	
