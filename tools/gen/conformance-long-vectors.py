@@ -51,6 +51,7 @@ differs from what this script writes.
 Usage: python3 -I tools/gen/conformance-long-vectors.py [--out DIR] [--check]
 """
 import json
+import math
 import os
 import struct
 import sys
@@ -369,7 +370,7 @@ def tdec(x, bits, order):
         return -mag if v >> (n - 1) else mag
     if tr == "f32":
         f = struct.unpack(">f", value(bits, order).to_bytes(4, "big"))[0]
-        if f != f or f in (float("inf"), float("-inf")):
+        if math.isnan(f) or f in (float("inf"), float("-inf")):
             raise Fail(TD, "not finite")
         return f
     if tr == "ascii":

@@ -25,6 +25,7 @@ Usage: python3 -I tools/gen/conformance-rulings011-vectors.py [--out DIR] [--che
 """
 import datetime
 import json
+import math
 import os
 import struct
 import sys
@@ -489,7 +490,7 @@ field   probe.a  0:0:64  f64
         ("123456789012345678901234567890", "thirty-digit-integer"),
     ]:
         v = float(text)
-        assert v == v and abs(v) != float("inf")
+        assert not math.isnan(v) and abs(v) != float("inf")
         vec(N, N, "float-" + name, '<e a="%s"/>' % text, '<e a="%s"/>' % float_text(v))
 
     for text, name in [
@@ -840,7 +841,7 @@ field   time_ms  t  int
             q = (x - 10.0) * 4.0 / 1.0
         elif tr == "sscale:1e-10":
             q = (x - 0.0) / 1e-10
-            if q != q or abs(q) == float("inf"):
+            if math.isnan(q) or abs(q) == float("inf"):
                 s_enc(kname, name, text, None)
                 return None
         else:

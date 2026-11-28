@@ -635,10 +635,15 @@ def resolve(reader, ctype, where, dims=None):
         return lay, dims, lay.size, lay.align
 
 
-def layout(reader, st, cache={}):
+# Layouts already worked out, by the identity of the struct. A Layout holds its
+# struct, so an identity here is never given to another struct.
+_LAYOUTS = {}
+
+
+def layout(reader, st):
     key = id(st)
-    if key in cache:
-        return cache[key]
+    if key in _LAYOUTS:
+        return _LAYOUTS[key]
     if st.unsupported:
         raise Unsupported("%s %s at %s: %s" % (st.kind, st.name, st.where, st.unsupported))
     if st.kind == "union":
@@ -669,8 +674,8 @@ def layout(reader, st, cache={}):
         offset += esize * n
         align = max(align, a)
     size = (offset + align - 1) // align * align
-    cache[key] = Layout(st, fields, size, align)
-    return cache[key]
+    _LAYOUTS[key] = Layout(st, fields, size, align)
+    return _LAYOUTS[key]
 
 
 # --------------------------------------------------------------------------
