@@ -395,8 +395,8 @@ def emit_sources_provenance(root, sha, got, master):
     L = ["# Provenance of the inputs in `sources/asterix-specs/`", "",
          "| Fact | Value |", "|---|---|",
          "| repository | https://github.com/%s |" % REPO,
-         "| what it is | \"EUROCONTROL asterix specifications in structured format\" (the repository's description): "
-         "each category edition as a `.ast` source file, and built from it a JSON file of the same content |",
+         ("| what it is | \"EUROCONTROL asterix specifications in structured format\" (the repository's description): "
+          "each category edition as a `.ast` source file, and built from it a JSON file of the same content |"),
          "| commit of the published JSON (branch `gh-pages`): | `%s` |" % sha,
          "| commit of the sources the JSON was built from (branch `master`, stated by `gitrev.txt` at the commit above) | `%s` |" % master,
          "| licence | BSD 3-Clause, copyright (c) 2019 KZPS: the file `LICENSE` at the root of the `master` commit, verbatim below |",

@@ -385,8 +385,8 @@ def run(args):
                 "--names-file", os.path.join(gen, "names", FORMAT + ".json"),
                 "--notes-file", os.path.join(gen, "notes", "vss.md"),
                 "--max-depth", str(args.max_depth),
-                "--limit-reason", "the deepest VSS signals sit below the instance levels; the limit "
-                "keeps every signal of the tree and no more"]
+                "--limit-reason", ("the deepest VSS signals sit below the instance levels; the limit "
+                                   "keeps every signal of the tree and no more")]
         present = {p for p, _, _ in MAPS if _has(doc, p)}
         for path, key, scale in MAPS:
             if path not in present:

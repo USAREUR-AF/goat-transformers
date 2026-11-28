@@ -466,10 +466,10 @@ def md_text(a, tree, keys, lists, made, sources):
          "`tools/gen/bufr-sequence2pack.py` from the WMO BUFR edition 4 tables (wmo-im/BUFR4, MIT). Licence: "
          "Apache-2.0 (PROVENANCE.md)." % (a.sequence[0], a.sequence[1:3], a.sequence[3:]), "",
          "## Layout", "",
-         "Sections 0 to 3 and 5 are read as a BUFR edition 4 message: section 0 as common lines, section 1 field by field "
-         "(with the typical time), section 2 when the flag of section 1 says so, section 3 with its first descriptor and "
-         "any further ones. Section 4 is read through the expansion when the first descriptor is the sequence, the "
-         "message has one subset and is not compressed (`switch` on each); otherwise it is kept as octets.", "",
+         ("Sections 0 to 3 and 5 are read as a BUFR edition 4 message: section 0 as common lines, section 1 field by field "
+          "(with the typical time), section 2 when the flag of section 1 says so, section 3 with its first descriptor and "
+          "any further ones. Section 4 is read through the expansion when the first descriptor is the sequence, the "
+          "message has one subset and is not compressed (`switch` on each); otherwise it is kept as octets."), "",
          "The expansion: %d element fields and %d delayed replications (`group … count <width>`, the count being the "
          "replication factor that precedes its items); fixed replications are written out, their keys numbered. "
          "The one operator expanded is 2 08 YYY, which sets the width of the CCITT IA5 elements after it; any other "
@@ -482,16 +482,16 @@ def md_text(a, tree, keys, lists, made, sources):
          "| every numeric element | `absent <all bits set>`: the missing value leaves the key absent and is written back |",
          "", "The meaning, unit, width, scale and reference of every key are in `model/%s.def`." % a.module, "",
          "## Shared-model keys: none, and why", "",
-         "- The latitude and longitude elements (class 05 and 06 of Table B) are degrees, read exactly, but Table B states "
-         "no datum for them and the tables give no default; `lat` and `lon` mean WGS 84, so they stay raw keys.",
-         "- The observation time is the year, month, day, hour and minute elements (3 01 011, 3 01 012), and no `derive` "
-         "composes a date from its parts into `time_ms`.", "",
+         ("- The latitude and longitude elements (class 05 and 06 of Table B) are degrees, read exactly, but Table B states "
+          "no datum for them and the tables give no default; `lat` and `lon` mean WGS 84, so they stay raw keys."),
+         ("- The observation time is the year, month, day, hour and minute elements (3 01 011, 3 01 012), and no `derive` "
+          "composes a date from its parts into `time_ms`."), "",
          "## Not mapped", "",
-         "- A message whose section 3 holds the sequence followed by further descriptors: section 4 is read through the "
-         "sequence only, and data after it is skipped on decode and not written back.",
+         ("- A message whose section 3 holds the sequence followed by further descriptors: section 4 is read through the "
+          "sequence only, and data after it is skipped on decode and not written back."),
          "- Several subsets and compressed data (another layout of section 4): kept as octets.",
-         "- A missing station name (all bits set): `ascii` reads only characters 0x20 to 0x7E, so the message is "
-         "`transform-decode`.", "",
+         ("- A missing station name (all bits set): `ascii` reads only characters 0x20 to 0x7E, so the message is "
+          "`transform-decode`."), "",
          "## Vectors", "", "| File | Shows |", "|---|---|"]
     L += ["| `%s` | %s |" % (fn, v["note"]) for fn, v in made]
     return "\n".join(L) + "\n"

@@ -88,11 +88,11 @@ def module_text(elems, csv_sha, csv_date):
          'source        "IANA, IP Flow Information Export (IPFIX) Entities, registry IPFIX Information '
          'Elements, https://www.iana.org/assignments/ipfix/ipfix-information-elements.csv, registry updated '
          '%s, sha256 %s; element numbers, names, abstract types, semantics and units only"' % (csv_date, csv_sha),
-         'source        "IANA and IETF joint statement on the Protocol Registries (CC0 1.0), '
-         'https://www.iana.org/help/licensing-terms"',
+         ('source        "IANA and IETF joint statement on the Protocol Registries (CC0 1.0), '
+          'https://www.iana.org/help/licensing-terms"'),
          "",
-         'list  records  "the flow records of one message: one item per Data Record (IPFIX), flow '
-         'record (NetFlow version 9) or flow (NetFlow version 5)"',
+         ('list  records  "the flow records of one message: one item per Data Record (IPFIX), flow '
+          'record (NetFlow version 9) or flow (NetFlow version 5)"'),
          ""]
     seen, skipped = set(), []
     for eid, name, adt, sem, status, units in elems:

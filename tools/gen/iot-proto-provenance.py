@@ -40,8 +40,8 @@ FAMILIES = {
             ">",
             "> Copyright (c) 2018 Otto Winter",
             "",
-            "followed by the MIT permission notice. The two .proto files carry no license line "
-            "of their own.",
+            ("followed by the MIT permission notice. The two .proto files carry no license line "
+             "of their own."),
         ],
         "sums": [
             ("f09b0b6ae7ac51ad2189946c67595f320bec96c29b841624a3dfec5150d384bf", "aioesphomeapi/api.proto"),
@@ -71,8 +71,8 @@ FAMILIES = {
             ">",
             "> Copyright (c) 2022 Orne Brocaar",
             "",
-            "followed by the MIT permission notice. The .proto files carry no license line of "
-            "their own.",
+            ("followed by the MIT permission notice. The .proto files carry no license line of "
+             "their own."),
             "",
             PB_WKT,
         ],
@@ -107,17 +107,17 @@ FAMILIES = {
                  "`any.proto` are the generator's built-in copies",
         "fetched": "a clone of the repository at that tag",
         "license": [
-            "`LICENSE` at the root of the repository is the Apache License, Version 2.0, "
-            "January 2004. Each file of `api/ttn/lorawan/v3/` begins:",
+            ("`LICENSE` at the root of the repository is the Apache License, Version 2.0, "
+             "January 2004. Each file of `api/ttn/lorawan/v3/` begins:"),
             "",
             "> Copyright © 2019 The Things Network Foundation, The Things Industries B.V.",
             ">",
             "> Licensed under the Apache License, Version 2.0 (the \"License\");",
             "",
-            "(the year differs from file to file). The vendored option files under "
-            "`api/third_party/` come from protoc-gen-validate (Apache-2.0), grpc-gateway "
-            "(BSD 3-Clause) and The Things Industries (`SPDX-License-Identifier: Apache-2.0`); "
-            "nothing of them is in a pack.",
+            ("(the year differs from file to file). The vendored option files under "
+             "`api/third_party/` come from protoc-gen-validate (Apache-2.0), grpc-gateway "
+             "(BSD 3-Clause) and The Things Industries (`SPDX-License-Identifier: Apache-2.0`); "
+             "nothing of them is in a pack."),
             "",
             PB_WKT,
         ],
@@ -152,8 +152,8 @@ FAMILIES = {
         "files": "`proto/opamp/v1/opamp.proto` and `proto/opamp/v1/anyvalue.proto`",
         "fetched": "`https://raw.githubusercontent.com/open-telemetry/opamp-spec/<commit>/proto/opamp/v1/<name>`",
         "license": [
-            "`LICENSE` at the root of the repository is the Apache License, Version 2.0, "
-            "January 2004. Each of the two files begins:",
+            ("`LICENSE` at the root of the repository is the Apache License, Version 2.0, "
+             "January 2004. Each of the two files begins:"),
             "",
             "> Copyright 2021, OpenTelemetry Authors",
             ">",

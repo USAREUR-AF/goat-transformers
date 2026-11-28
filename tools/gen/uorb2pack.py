@@ -913,20 +913,20 @@ def emit_pack_md(topic, msg, items, lay, deps, n_vec, cross_to, cross_from, msgs
               "degrees. `timestamp` is microseconds since the system started, not UTC, so it is",
               "not `time_ms`. Every field is a raw key of module `%s`." % MODULE]
     a += ["", "## Not mapped, and why", "", "| What | Why |", "|---|---|",
-          "| Padding bytes | they carry no value. On encode they are zero, so a round trip of "
-          "input whose padding is not zero gives zeros there; the `bits` wire keeps no residue |",
+          ("| Padding bytes | they carry no value. On encode they are zero, so a round trip of "
+           "input whose padding is not zero gives zeros there; the `bits` wire keeps no residue |"),
           "| Constants of the .msg (%d) | the pack language names no constant of a field; the "
           "value is carried as a number |" % len(msg.constants),
-          "| Bytes of a `char` array after its first NUL | `ascii` removes trailing NULs and "
-          "refuses other bytes outside 0x20-0x7E (`transform-decode`), so text followed by "
-          "leftover bytes does not decode |",
-          "| NaN and infinite floats | the `f32` and `f64` transforms refuse them on decode "
-          "(`transform-decode`); PX4 writes NaN for a value it does not know |",
-          "| `uint64` values above 2^63-1 | a model `int` is a signed 64-bit integer; such a "
-          "value decodes to a negative integer with the same bits and encodes back unchanged "
-          "(engine-spec 0.5 ruling 2) |",
-          "| The 'A' subscription, `multi_id` and the ULog header | other messages of the log; "
-          "this format is the data of one 'D' message |"]
+          ("| Bytes of a `char` array after its first NUL | `ascii` removes trailing NULs and "
+           "refuses other bytes outside 0x20-0x7E (`transform-decode`), so text followed by "
+           "leftover bytes does not decode |"),
+          ("| NaN and infinite floats | the `f32` and `f64` transforms refuse them on decode "
+           "(`transform-decode`); PX4 writes NaN for a value it does not know |"),
+          ("| `uint64` values above 2^63-1 | a model `int` is a signed 64-bit integer; such a "
+           "value decodes to a negative integer with the same bits and encodes back unchanged "
+           "(engine-spec 0.5 ruling 2) |"),
+          ("| The 'A' subscription, `multi_id` and the ULog header | other messages of the log; "
+           "this format is the data of one 'D' message |")]
     a += ["", "## Vectors", "",
           "`vectors/gen-rt.json` is a round trip with every field set: values chosen by the",
           "generator, serialized by its own code from the layout, zero padding. `gen-*` files",

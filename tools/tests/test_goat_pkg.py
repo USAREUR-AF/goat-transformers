@@ -160,8 +160,8 @@ class Plan(PkgCase):
             "",
             "convertibility among the requested formats:",
             "         alpha -> beta#2       PARTIAL carries [uid, lat, lon]  (drops callsign: beta#2 has no field for them)",
-            "        beta#2 -> alpha        PARTIAL carries [uid, lat, lon]"
-            "  (drops shape.points[], shape.points[].shape.label, extra.note: alpha has no field for them)",
+            ("        beta#2 -> alpha        PARTIAL carries [uid, lat, lon]"
+             "  (drops shape.points[], shape.points[].shape.label, extra.note: alpha has no field for them)"),
         ])
 
     def test_convertibility_is_the_capability_report_of_the_engine(self):

@@ -303,8 +303,8 @@ def run(args):
                     "--out", gt, "--model-dir", os.path.join(gt, "model"),
                     "--names-file", os.path.join(gen, "names", fmt + ".json"),
                     "--notes-file", npath, "--max-depth", str(MAX_DEPTH),
-                    "--limit-reason", "OCSF objects nest deeply and refer to one another; three levels "
-                    "keep a pack within a few hundred keys",
+                    "--limit-reason", ("OCSF objects nest deeply and refer to one another; three levels "
+                                       "keep a pack within a few hundred keys"),
                     "--map", "%s:time=time_ms" % cname, "--evidence", "%s:time=%s" % (cname, EV_TIME),
                     "--map", "%s:metadata.uid=uid" % cname, "--evidence", "%s:metadata.uid=%s" % (cname, EV_UID)]
             if "device" in doc["properties"] and "location" in \

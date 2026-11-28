@@ -402,8 +402,8 @@ def site_block(domains):
     lines += ['          </svg>',
               '          <div class="radial-tip" id="rd-tip" role="status" aria-live="polite" hidden></div>',
               '        </div>',
-              '        <figcaption>Hover over a bar, or focus the chart and use the arrow keys, for its family and '
-              'number of packs. The table under the chart lists every family.</figcaption>',
+              ('        <figcaption>Hover over a bar, or focus the chart and use the arrow keys, for its family and '
+               'number of packs. The table under the chart lists every family.</figcaption>'),
               '      </figure>',
               '      <ul class="radial-legend">']
     for d in domains:
